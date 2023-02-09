@@ -1,37 +1,8 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="100px"
-    >
-      <el-form-item label="设备厂商名称" prop="supplierName">
-        <el-input
-          v-model="queryParams.supplierName"
-          placeholder="请输入设备厂商名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="简称" prop="shortName">
-        <el-input
-          v-model="queryParams.shortName"
-          placeholder="请输入简称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" type="primary" plain @click="resetQuery"
-          >重置</el-button
-        >
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
         <el-button
           type="primary"
           plain
@@ -65,10 +36,89 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['device:brand:export']"
-          >导出</el-button
-        >
-      </el-form-item>
-    </el-form>
+          >导出</el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+            <el-input
+              v-model="queryParams.supplierName"
+              placeholder="请输入设备厂商名称、简称,回车搜索"
+              clearable
+              size="small"
+              @keyup.enter.native="handleQuery">
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+<!--    <el-form-->
+<!--      :model="queryParams"-->
+<!--      ref="queryForm"-->
+<!--      :inline="true"-->
+<!--      v-show="showSearch"-->
+<!--      label-width="100px"-->
+<!--    >-->
+<!--      <el-form-item label="设备厂商名称" prop="supplierName">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.supplierName"-->
+<!--          placeholder="请输入设备厂商名称"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="简称" prop="shortName">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.shortName"-->
+<!--          placeholder="请输入简称"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item>-->
+<!--        <el-button type="primary" size="mini" @click="handleQuery"-->
+<!--          >搜索</el-button-->
+<!--        >-->
+<!--        <el-button size="mini" type="primary" plain @click="resetQuery"-->
+<!--          >重置</el-button-->
+<!--        >-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          @click="handleAdd"-->
+<!--          v-hasPermi="['device:brand:add']"-->
+<!--          >新增</el-button-->
+<!--        >-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['device:brand:edit']"-->
+<!--          >修改</el-button-->
+<!--        >-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="multiple"-->
+<!--          @click="handleDelete"-->
+<!--          v-hasPermi="['device:brand:remove']"-->
+<!--          >删除</el-button-->
+<!--        >-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :loading="exportLoading"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['device:brand:export']"-->
+<!--          >导出</el-button-->
+<!--        >-->
+<!--      </el-form-item>-->
+<!--    </el-form>-->
 
     <el-table
       v-loading="loading"
@@ -154,6 +204,7 @@ export default {
   name: "Brand",
   data() {
     return {
+      boxShow: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -233,6 +284,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.supplierName = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -312,4 +364,42 @@ export default {
   },
 };
 </script>
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>
 

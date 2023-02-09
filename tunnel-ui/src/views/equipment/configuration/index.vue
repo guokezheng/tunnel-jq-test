@@ -1,159 +1,116 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="名称" prop="sdName">
-        <el-input
-          v-model="queryParams.sdName"
-          placeholder="请输入名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="环境类型" prop="environmentType">
-        <el-select
-          v-model="queryParams.environmentType"
-          placeholder="请选择环境类型"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="dict in dict.type.environment"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="方向" prop="direction">
-        <el-select
-          v-model="queryParams.direction"
-          placeholder="请选择方向"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="dict in dict.type.direction"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-        <!-- <el-input
-          v-model="queryParams.direction"
-          placeholder="请输入方向"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        /> -->
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['system:configuration:add']"
+            >新增</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['system:configuration:edit']"
+            >修改</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['system:configuration:remove']"
+            >删除</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:configuration:export']"
+            >导出</el-button
+          >
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+            <el-input
+              v-model="queryParams.sdName"
+              placeholder="请输入名称"
+              clearable
+              size="small"
+              @keyup.enter.native="handleQuery"
+            >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="80px"
+      >
+          <el-form-item label="环境类型" style="width: 100%" prop="environmentType">
+            <el-select
+              v-model="queryParams.environmentType"
+              placeholder="请选择环境类型"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.environment"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="方向" style="width: 100%" prop="direction">
+            <el-select
+              v-model="queryParams.direction"
+              placeholder="请选择方向"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.direction"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+            <!-- <el-input
+              v-model="queryParams.direction"
+              placeholder="请输入方向"
+              clearable
+              size="small"
+              @keyup.enter.native="handleQuery"
+            /> -->
+          </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
           >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:configuration:add']"
-          >新增</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:configuration:edit']"
-          >修改</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:configuration:remove']"
-          >删除</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:configuration:export']"
-          >导出</el-button
-        >
-      </el-form-item>
-    </el-form>
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:configuration:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:configuration:edit']"
-          >修改</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:configuration:remove']"
-          >删除</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:configuration:export']"
-          >导出</el-button
-        >
-      </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
-    </el-row> -->
+          >
+        </el-form-item>
+      </el-form>
+    </div>
 
     <el-table
       v-loading="loading"
@@ -366,6 +323,7 @@ export default {
       }
     };
     return {
+      boxShow: false,
       //图片放大缩小
       yn: false,
       //图片路径
@@ -478,6 +436,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.sdName = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -590,7 +549,7 @@ export default {
           }
         });
       }
-      
+
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -709,4 +668,41 @@ export default {
   }
 
 </style>
-
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

@@ -102,6 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         on a.state_type_id = b.type_id
         <where>
             <if test="stateTypeId != null "> and b.type_id = #{stateTypeId}</if>
+            <if test="searchValue != null "> AND b.type_name LIKE CONCAT('%',#{searchValue},'%')</if>
         </where>
         group by b.type_id,a.state_type
     </select>

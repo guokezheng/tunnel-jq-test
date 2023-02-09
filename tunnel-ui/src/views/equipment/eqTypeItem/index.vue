@@ -1,51 +1,8 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="90px">
-      <el-form-item label="数据项编号" prop="itemCode">
-        <el-input
-          v-model="queryParams.itemCode"
-          placeholder="请输入数据项编号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="数据项名称" prop="itemName">
-        <el-input
-          v-model="queryParams.itemName"
-          placeholder="请输入数据项名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <!-- <el-form-item label="设备类型id" prop="deviceTypeId">
-        <el-input
-          v-model="queryParams.deviceTypeId"
-          placeholder="请输入设备类型id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <el-form-item label="设备类型" prop="deviceTypeId">
-              <el-select v-model="queryParams.deviceTypeId" placeholder="请选择设备类型" clearable>
-                <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
-                </el-option>
-              </el-select>
-            </el-form-item>
-      <el-form-item label="单位名称" prop="unit">
-        <el-input
-          v-model="queryParams.unit"
-          placeholder="请输入单位名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
         <el-button
           type="primary"
           plain
@@ -77,58 +34,78 @@
           @click="handleExport"
           v-hasPermi="['eqType:item:export']"
         >导出</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['eqType:item:add']"
-        >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['eqType:item:edit']"
-        >修改</el-button>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.searchValue"
+            placeholder="请输入数据项编号、数据项名称、单位名称,回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['eqType:item:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['eqType:item:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row> -->
+    </el-row>
+    <div class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="80px"
+      >
+<!--        <el-form-item label="数据项名称" style="width: 100%" prop="itemName">-->
+<!--          <el-input-->
+<!--            v-model="queryParams.itemName"-->
+<!--            placeholder="请输入数据项名称"-->
+<!--            clearable-->
+<!--            size="small"-->
+<!--            @keyup.enter.native="handleQuery"-->
+<!--          />-->
+<!--        </el-form-item>-->
+        <!-- <el-form-item label="设备类型id" prop="deviceTypeId">
+          <el-input
+            v-model="queryParams.deviceTypeId"
+            placeholder="请输入设备类型id"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item> -->
+        <el-form-item label="设备类型"style="width: 100%" prop="deviceTypeId">
+                <el-select v-model="queryParams.deviceTypeId" placeholder="请选择设备类型" clearable>
+                  <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+<!--        <el-form-item label="单位名称" style="width: 100%" prop="unit">-->
+<!--          <el-input-->
+<!--            v-model="queryParams.unit"-->
+<!--            placeholder="请输入单位名称"-->
+<!--            clearable-->
+<!--            size="small"-->
+<!--            @keyup.enter.native="handleQuery"-->
+<!--          />-->
+<!--        </el-form-item>-->
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
 
     <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange"
-    :row-class-name="tableRowClassName" class="tableClass" 
+    :row-class-name="tableRowClassName" class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
@@ -201,6 +178,7 @@ export default {
   name: "Item",
   data() {
     return {
+      boxShow: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -224,6 +202,7 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
+        searchValue: '',
         pageSize: 10,
         itemCode: null,
         itemName: null,
@@ -323,6 +302,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.searchValue = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -407,6 +387,42 @@ export default {
  .deviceTypeId{
   width: 100%;
  }
-
-
+</style>
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
 </style>

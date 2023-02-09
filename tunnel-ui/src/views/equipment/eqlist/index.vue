@@ -1,71 +1,15 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="90px"
-    >
-      <el-input v-model="queryParams.eqDirection" v-show="false" />
-      <el-form-item
-        label="所属隧道"
-        prop="eqTunnelId"
-        v-show="manageStatin == '0'"
-      >
-        <el-select
-          v-model="queryParams.eqTunnelId"
-          placeholder="请选择所属隧道"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="item in eqTunnelData"
-            :key="item.tunnelId"
-            :label="item.tunnelName"
-            :value="item.tunnelId"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="设备名称" prop="eqName">
-        <el-input
-          v-model="queryParams.eqName"
-          placeholder="请输入设备名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-
-      <el-form-item label="设备类型" prop="eqType">
-        <el-select
-          v-model="queryParams.eqType"
-          placeholder="请选择设备类型"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="item in eqTypeData"
-            :key="item.typeId"
-            :label="item.typeName"
-            :value="item.typeId"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="6">
         <el-button
           type="primary"
           plain
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:devices:add']"
-          >新增
+        >新增
         </el-button>
         <el-button
           type="primary"
@@ -74,7 +18,7 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:devices:edit']"
-          >修改
+        >修改
         </el-button>
         <el-button
           type="primary"
@@ -83,7 +27,7 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:devices:remove']"
-          >删除
+        >删除
         </el-button>
         <el-button
           type="primary"
@@ -91,7 +35,7 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:devices:export']"
-          >导出
+        >导出
         </el-button>
         <el-button
           type="primary"
@@ -99,52 +43,105 @@
           size="mini"
           @click="handleImport"
           v-hasPermi="['system:devices:import']"
-          >导入
+        >导入
         </el-button>
-        <!-- <el-button
-          type="info"
-          icon="el-icon-s-help"
-          size="mini"
-          @click="checkInstruction"
-          >校验指令</el-button
-        > -->
-      </el-form-item>
-    </el-form>
+        <!--          <el-button-->
+        <!--            type="info"-->
+        <!--            icon="el-icon-s-help"-->
+        <!--            size="mini"-->
+        <!--            @click="checkInstruction"-->
+        <!--            >校验指令</el-button>-->
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.searchValue"
+            placeholder="请输入设备名称、设备桩号,回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item
+          label="方向"
+          style="width: 100%;">
+        <el-checkbox-group v-model="checkeBox" @change="handleCheckChange">
+          <el-checkbox
+            v-for="item in dict.type.sd_direction"
+            :key="item.value"
+            :label="item.value"
+            name="check_direction"
+          >{{item.label}}
+          </el-checkbox>
+          <el-checkbox name="check_direction" key="3" label="3"
+          >双向
+<!--            v-for="item in dict.type.sd_direction"-->
+<!--            :key=""-->
+<!--            :label=""-->
 
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
-          v-hasPermi="['system:devices:add']">新增
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['system:devices:edit']">修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['system:devices:remove']">删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-download" size="mini" @click="handleExport"
-          v-hasPermi="['system:devices:export']">导出
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" plain plain icon="el-icon-upload" size="mini" @click="handleImport"
-          v-hasPermi="['system:devices:import']">导入</el-button>
-      </el-col>
-      <div class="top-right-btn">
-        <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-          <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
-          <el-button size="mini" circle icon="el-icon-search" @click="showSearch = !showSearch" />
-        </el-tooltip>
-      </div>
-    </el-row> -->
+          </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item
+          label="所属隧道"
+          style="width: 100%;"
+          prop="eqTunnelId"
+          v-show="manageStatin == '0'"
+        >
+          <el-select
+            v-model="queryParams.eqTunnelId"
+            placeholder="请选择所属隧道"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in eqTunnelData"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="设备类型" style="width: 100%" prop="eqType">
+          <el-select
+            v-model="queryParams.eqType"
+            placeholder="请选择设备类型"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in eqTypeData"
+              :key="item.typeId"
+              :label="item.typeName"
+              :value="item.typeId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
     <el-table
       v-loading="loading"
       :data="devicesList"
@@ -891,6 +888,8 @@ export default {
       }
     };
     return {
+      checkIndex:1,
+      boxShow: false,
       //设备大类
       eqBigTypeList: {},
       //不能选择当前日期
@@ -949,16 +948,18 @@ export default {
       instructionTypeOptions: [],
       // 设备方向字典
       eqDirections: [],
-
+      checkeBox:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         fEqId: null,
         eqTunnelId: null,
+        remark: '',
         eqName: null,
         eqType: null,
         deviceState: null,
+        searchValue: null,
       },
       queryCmdParams: {
         codeDeviceId: null,
@@ -1312,12 +1313,18 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      if(this.queryParams.remark.indexOf('3')!=-1){
+        this.queryParams.remark = "1,2";
+      }
       this.queryParams.pageNum = 1;
       /* this.queryParams.eqDirection = 0; */
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.checkeBox=[];
+      this.queryParams.remark='';
+      this.queryParams.searchValue = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -1525,6 +1532,9 @@ export default {
       this.$download.name("sbsj.xlsx", false);
       /*});*/
     },
+    handleCheckChange(val) {
+        this.queryParams.remark = val.toString();
+    },
     insertEqControlPointAddress() {
       this.$refs["instructionForm"].validate((valid) => {
         if (valid) {
@@ -1603,6 +1613,44 @@ export default {
   .el-message-box__content {
     max-height: 500px !important;
     overflow: auto !important;
+  }
+}
+</style>
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
   }
 }
 </style>

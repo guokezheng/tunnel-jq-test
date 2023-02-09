@@ -1,60 +1,8 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="协议名称" prop="protocolName">
-        <el-input
-          v-model="queryParams.protocolName"
-          placeholder="请输入协议名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="协议类型" prop="protocolType">
-        <el-select v-model="queryParams.protocolType" placeholder="请选择协议类型" clearable size="small" clearable>
-          <el-option
-            v-for="dict in dict.type.device_protocol_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="设备品牌" prop="brandId">
-        <el-select v-model="queryParams.brandId" placeholder="请选择设备品牌" clearable filterable>
-          <el-option
-            v-for="item in brandList"
-            :key="item.supplierId"
-            :label="item.shortName"
-            :value="item.supplierId"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="设备大类" prop="brandId">
-        <el-select v-model="queryParams.eqType" placeholder="请选择设备大类" clearable filterable>
-          <el-option
-            v-for="item in eqBigTypeList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
-
-      <!--<el-form-item label="设备类型" prop="eqType">
-        <el-select v-model="queryParams.eqType" placeholder="请选择设备类型" clearable>
-          <el-option
-            v-for="dict in dict.type.eq_category"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>-->
-      <el-form-item>
-        <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
-        <el-button  size="mini" @click="resetQuery"  type="primary" plain >重置</el-button>
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
         <el-button
           type="primary"
           plain
@@ -81,8 +29,72 @@
           v-hasPermi="['device:protocol:remove']"
         >删除
         </el-button>
-      </el-form-item>
-    </el-form>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.protocolName"
+            placeholder="请输入协议名称"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="协议类型" style="width: 100%" prop="protocolType">
+          <el-select v-model="queryParams.protocolType" placeholder="请选择协议类型" clearable size="small">
+            <el-option
+              v-for="dict in dict.type.device_protocol_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="设备品牌" style="width: 100%"  prop="brandId">
+          <el-select v-model="queryParams.brandId" placeholder="请选择设备品牌">
+            <el-option
+              v-for="item in brandList"
+              :key="item.supplierId"
+              :label="item.shortName"
+              :value="item.supplierId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="设备大类" style="width: 100%" prop="brandId">
+          <el-select v-model="queryParams.eqType" placeholder="请选择设备大类" clearable filterable>
+            <el-option
+              v-for="item in eqBigTypeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
 
     <el-table v-loading="loading" :data="protocolList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center"/>
@@ -216,6 +228,7 @@
     dicts: ['device_protocol_type'],
     data() {
       return {
+        boxShow: false,
         // 遮罩层
         loading: true,
         // 导出遮罩层
@@ -414,3 +427,41 @@
     }
   };
 </script>
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

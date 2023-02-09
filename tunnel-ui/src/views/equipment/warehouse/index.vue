@@ -1,131 +1,108 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
-        <el-select v-model="queryParams.tunnelId" placeholder="请选择所属隧道" clearable size="small">
-          <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId" />
-        </el-select>
-      </el-form-item>
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['system:warehouse:add']"
+          >新增</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['system:warehouse:edit']"
+          >修改</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['system:warehouse:remove']"
+          >删除</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:warehouse:export']"
+          >导出</el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+            <el-input
+              v-model="queryParams.searchValue"
+              placeholder="请输入备件名称、品牌、生产厂家,回车搜索"
+              clearable
+              size="small"
+              @keyup.enter.native="handleQuery"
+            >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="80px"
+      >
+          <el-form-item label="所属隧道" prop="tunnelId" style="width: 100%" v-show="manageStatin == '0'">
+            <el-select v-model="queryParams.tunnelId" placeholder="请选择所属隧道" clearable size="small">
+              <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId" />
+            </el-select>
+          </el-form-item>
 
-      <el-form-item label="备件名称" prop="partName">
-        <el-input
-          v-model="queryParams.partName"
-          placeholder="请输入备件名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="品牌" prop="brand">
-        <el-input
-          v-model="queryParams.brand"
-          placeholder="请输入品牌"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="生产厂家" prop="manufacturer">
-        <el-input
-          v-model="queryParams.manufacturer"
-          placeholder="请输入生产厂家"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="管理员" prop="keeper">
-        <el-input
-          v-model="queryParams.keeper"
-          placeholder="请输入管理员"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:warehouse:add']"
-        >新增</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:warehouse:edit']"
-        >修改</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:warehouse:remove']"
-        >删除</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:warehouse:export']"
-        >导出</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:warehouse:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:warehouse:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:warehouse:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:warehouse:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row> -->
+<!--          <el-form-item label="品牌" style="width: 100%" prop="brand">-->
+<!--            <el-input-->
+<!--              v-model="queryParams.brand"-->
+<!--              placeholder="请输入品牌"-->
+<!--              clearable-->
+<!--              size="small"-->
+<!--              @keyup.enter.native="handleQuery"-->
+<!--            />-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="生产厂家" style="width: 100%" prop="manufacturer">-->
+<!--            <el-input-->
+<!--              v-model="queryParams.manufacturer"-->
+<!--              placeholder="请输入生产厂家"-->
+<!--              clearable-->
+<!--              size="small"-->
+<!--              @keyup.enter.native="handleQuery"-->
+<!--            />-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="管理员" style="width: 100%" prop="keeper">-->
+<!--            <el-input-->
+<!--              v-model="queryParams.keeper"-->
+<!--              placeholder="请输入管理员"-->
+<!--              clearable-->
+<!--              size="small"-->
+<!--              @keyup.enter.native="handleQuery"-->
+<!--            />-->
+<!--          </el-form-item>-->
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
 
     <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange"
     :row-class-name="tableRowClassName" max-height="640"
@@ -245,6 +222,7 @@ export default {
   name: "Warehouse",
   data() {
     return {
+      boxShow: false,
       manageStatin:this.$cache.local.get("manageStation"),
 
       //所属隧道
@@ -275,6 +253,7 @@ export default {
         pageSize: 10,
         tunnelId: null,
         partName: null,
+        searchValue: '',
         brand: null,
         model: null,
         unit: null,
@@ -405,6 +384,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.searchValue = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -489,3 +469,41 @@ export default {
   }
 };
 </script>
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

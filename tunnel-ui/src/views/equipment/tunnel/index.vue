@@ -31,7 +31,7 @@
           </el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.tunnelName"
             placeholder="请输入隧道名称"
@@ -735,6 +735,7 @@ export default {
     this.getTunnelList()
   },
   mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
     if (window.history && window.history.pushState) {
       // 向历史记录中插入了当前页
       history.pushState(null, null, document.URL);
@@ -745,6 +746,14 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     getTunnelList() {
       listAllTunnels().then((response) => {
         this.tunnelList = response.data;

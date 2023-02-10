@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row  :gutter="20" style="margin: 10px 0 25px">
       <el-col :span="6">
         <el-button
           type="primary"
@@ -53,7 +53,7 @@
         <!--            >校验指令</el-button>-->
       </el-col>
       <el-col :span="6" :offset="12">
-        <div class="grid-content bg-purple">
+        <div  ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
             placeholder="请输入设备名称、设备桩号,回车搜索"
@@ -70,6 +70,7 @@
         </div>
       </el-col>
     </el-row>
+
     <div class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
@@ -1113,7 +1114,19 @@ export default {
     this.getDevBrandList();
     this.getExternalSystemList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     getEqBigType() {
       listCategory().then(response => {
         this.eqBigTypeList = response.rows;

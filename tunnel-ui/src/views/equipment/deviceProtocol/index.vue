@@ -31,10 +31,10 @@
         </el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.protocolName"
-            placeholder="请输入协议名称"
+            placeholder="请输入协议名称,回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -291,7 +291,19 @@
       this.getEqBigType();
       this.getDevBrandList()
     },
+    //点击空白区域关闭全局搜索弹窗
+    mounted() {
+      document.addEventListener("click", this.bodyCloseMenus);
+    },
     methods: {
+      bodyCloseMenus(e) {
+        let self = this;
+        if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+          if (self.boxShow == true){
+            self.boxShow = false;
+          }
+        }
+      },
       getName(num, type) {
         if ('brand' == type) {
           for (var item of this.brandList) {

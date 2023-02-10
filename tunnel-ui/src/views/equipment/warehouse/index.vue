@@ -36,7 +36,7 @@
           >导出</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div  ref="main" class="grid-content bg-purple">
             <el-input
               v-model="queryParams.searchValue"
               placeholder="请输入备件名称、品牌、生产厂家,回车搜索"
@@ -324,7 +324,19 @@ export default {
     this.getList();
     this.getTunnel();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     /** 所属隧道 */
     getTunnel() {
       if(this.$cache.local.get("manageStation") == '1'){

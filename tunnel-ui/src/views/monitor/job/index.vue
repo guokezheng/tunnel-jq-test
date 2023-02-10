@@ -47,10 +47,10 @@
             >日志</el-button>
       </el-col>
       <el-col :span="6" :offset="13">
-        <div class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.jobName"
-            placeholder="请输入任务名称"
+            placeholder="请输入任务名称,回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -636,7 +636,19 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     /** 查询定时任务列表 */
     getList() {
       this.loading = true;

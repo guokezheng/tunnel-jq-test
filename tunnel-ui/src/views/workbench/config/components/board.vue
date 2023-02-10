@@ -69,48 +69,6 @@
               </template>
             </el-table-column>
           </el-table>
-          <!-- <div
-            v-for="(item, index) of contentList"
-            class="infoContent"
-            :key="index"
-          >
-           
-            <div class="contentBox">
-              <div
-                class="content"
-                :style="{
-                  color: getColorStyle(item.COLOR),
-                  fontSize: getFontSize(item.FONT_SIZE, addForm.devicePixel),
-                  fontFamily: item.FONT,
-                  width: getDevicePixel(addForm.devicePixel, 0) + 'px',
-                  height: getDevicePixel(addForm.devicePixel, 1) + 'px',
-                }"
-              >
-                <span
-                  :style="{
-                    left: getCoordinate(item.COORDINATE.substring(0, 3),'left'),
-                    top: getCoordinate(item.COORDINATE.substring(3, 6),'top'),
-                  }"
-                  class="boardTextStyle"
-                  v-html="
-                    item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                      / /g,
-                      ' &nbsp'
-                    )
-                  "
-                ></span>
-              </div>
-            </div>
-
-            <div class="infoButton">
-              <div  @click="openQbbDrawer(item, index, 1)"></div>
-              <img
-                src="../../../../assets/cloudControl/edit2.png"
-                @click="openQbbDrawer(item, index, 1)"
-              />
-              <div @click="delQbbDrawer(index)"></div>
-            </div>
-          </div> -->
         </div>
         <div
           class="openMIniDialogStyle"
@@ -507,6 +465,15 @@ export default {
         // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
       ],
     };
+  },
+  watch: {
+    'contentList[0].CONTENT':{
+      deep: true,
+        handler: function (newValue, oldValue) {
+          console.log(newValue,"newValuenewValuenewValue")
+          // this.dataForm.content1 = newValue;
+        },
+    }
   },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
@@ -935,13 +902,14 @@ export default {
     // 关闭弹窗
     handleClosee() {
       getBoardContent(this.associatedDeviceId).then((res) => {
-        console.log(response, "情报板内容查询");
+        console.log(res, "情报板内容查询");
       }).catch(e => {
         console.log(e);
       })
       this.$emit("dialogClose");
     },
     dialogClose1() {
+      this.getmessage()
       this.showEmit = false;
     },
   },
@@ -1178,6 +1146,9 @@ export default {
       }
       >div:nth-of-type(1):hover{
         background-image: url(../../../../assets/cloudControl/edit1.png);
+      }
+      >div:nth-of-type(2):hover{
+        background-image: url(../../../../assets/cloudControl/closeIcon1.png);
       }
     }
 .disabledClass {

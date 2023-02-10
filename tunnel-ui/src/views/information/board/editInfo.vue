@@ -473,12 +473,12 @@
           
         
     //   }
-      "dataForm.CONTENT": {
-        deep: true,
-        handler: function (newValue, oldValue) {
-          this.dataForm.content1 = newValue;
-        },
-      },
+      // "dataForm.CONTENT": {
+      //   deep: true,
+      //   handler: function (newValue, oldValue) {
+      //     this.dataForm.content1 = newValue;
+      //   },
+      // },
     },
     created(){
       console.log(this.boardEmitItem,"this.boardEmitItem")
@@ -615,7 +615,7 @@
         e.preventDefault(); //阻止默认行为
       },
       keyDown(ev){
-        // console.log(ev.keyCode,"ev.keyCode");
+        console.log(ev.keyCode,"ev.keyCode");
       let arr = [];
       let content = "";
       const input = document.getElementById("textContent");
@@ -634,7 +634,7 @@
         }
       }
       content += "</div>";
-      this.dataForm.content1 = content;
+      // this.dataForm.content1 = content;
       // console.log( this.dataForm.content1," this.content");
       },
       // 表单确认

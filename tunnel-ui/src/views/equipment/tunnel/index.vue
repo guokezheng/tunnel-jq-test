@@ -33,8 +33,8 @@
       <el-col :span="6" :offset="14">
         <div ref="main" class="grid-content bg-purple">
           <el-input
-            v-model="queryParams.tunnelName"
-            placeholder="请输入隧道名称"
+            v-model="queryParams.searchValue"
+            placeholder="请输入隧道名称、桩号,回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -48,7 +48,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="boxShow">
+    <div ref="cc" class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -151,7 +151,8 @@
 <!--          >删除-->
 <!--        </el-button>-->
 <!--      </el-form-item>-->
-<!--    </el-form>-->
+<!--    </el-form>-->>
+
     <el-table
       v-loading="loading"
       :data="tunnelsList"
@@ -161,6 +162,7 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column prop="id" label="序号" align="center"></el-table-column>
       <!-- <el-table-column label="隧道ID" align="center" prop="tunnelId" /> -->
       <el-table-column label="隧道ID" align="center" prop="tunnelId" />
       <el-table-column label="隧道名称" align="center" prop="tunnelName" />
@@ -656,6 +658,7 @@ export default {
       pollOptions: [],
       // 查询参数
       queryParams: {
+        searchValue:null,
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
@@ -748,7 +751,7 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.boxShow == true){
           self.boxShow = false;
         }
@@ -921,7 +924,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.tunnelName = '';
+      this.queryParams.searchValue = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -1068,6 +1071,7 @@ export default {
     },
     // 表格行样式
     tableRowClassName({ row, rowIndex }) {
+      row.id = rowIndex+1;
       if (rowIndex % 2 == 0) {
         return "tableEvenRow";
       } else {

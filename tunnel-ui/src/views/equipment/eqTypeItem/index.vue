@@ -10,14 +10,14 @@
           @click="handleAdd"
           v-hasPermi="['eqType:item:add']"
         >新增</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['eqType:item:edit']"
-        >修改</el-button>
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['eqType:item:edit']"-->
+<!--        >修改</el-button>-->
         <el-button
           type="primary"
           plain
@@ -39,7 +39,7 @@
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
-            placeholder="请输入数据项编号、数据项名称、单位名称,回车搜索"
+            placeholder="请输入数据项编号、数据项名称,回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -53,7 +53,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="boxShow">
+    <div ref="cc" class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -108,6 +108,7 @@
     :row-class-name="tableRowClassName" class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />
       <el-table-column label="设备类型" align="center" prop="typeName">
@@ -249,9 +250,13 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.boxShow == true){
           self.boxShow = false;
         }

@@ -10,14 +10,14 @@
             @click="handleAdd"
             v-hasPermi="['system:warehouse:add']"
           >新增</el-button>
-          <el-button
-            type="primary"
-            plain
-            size="mini"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['system:warehouse:edit']"
-          >修改</el-button>
+<!--          <el-button-->
+<!--            type="primary"-->
+<!--            plain-->
+<!--            size="mini"-->
+<!--            :disabled="single"-->
+<!--            @click="handleUpdate"-->
+<!--            v-hasPermi="['system:warehouse:edit']"-->
+<!--          >修改</el-button>-->
           <el-button
             type="primary"
             plain
@@ -53,7 +53,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="boxShow">
+    <div ref="cc" class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -108,6 +108,7 @@
     :row-class-name="tableRowClassName" max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="所属隧道" align="center" prop="tunnelName" min-width="100" show-overflow-tooltip/>
       <el-table-column label="备件名称" align="center" prop="partName" show-overflow-tooltip/>
       <el-table-column label="品牌" align="center" prop="brand" show-overflow-tooltip/>
@@ -329,9 +330,13 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.boxShow == true){
           self.boxShow = false;
         }

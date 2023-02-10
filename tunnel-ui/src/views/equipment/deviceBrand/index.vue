@@ -11,15 +11,15 @@
           v-hasPermi="['device:brand:add']"
           >新增</el-button
         >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['device:brand:edit']"
-          >修改</el-button
-        >
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['device:brand:edit']"-->
+<!--          >修改</el-button-->
+<!--        >-->
         <el-button
           type="primary"
           plain

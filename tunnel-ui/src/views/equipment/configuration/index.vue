@@ -11,15 +11,15 @@
             v-hasPermi="['system:configuration:add']"
             >新增</el-button
           >
-          <el-button
-            type="primary"
-            plain
-            size="mini"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['system:configuration:edit']"
-            >修改</el-button
-          >
+<!--          <el-button-->
+<!--            type="primary"-->
+<!--            plain-->
+<!--            size="mini"-->
+<!--            :disabled="single"-->
+<!--            @click="handleUpdate"-->
+<!--            v-hasPermi="['system:configuration:edit']"-->
+<!--            >修改</el-button-->
+<!--          >-->
           <el-button
             type="primary"
             plain
@@ -57,7 +57,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="boxShow">
+    <div ref = "cc" class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -120,6 +120,7 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
       <el-table-column label="名称" align="center" prop="sdName" />
      <!-- <el-table-column label="图片" align="center" prop="url">
@@ -394,9 +395,13 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.boxShow == true){
           self.boxShow = false;
         }

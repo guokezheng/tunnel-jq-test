@@ -48,7 +48,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="boxShow">
+    <div ref="cc" class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -98,7 +98,8 @@
 
     <el-table v-loading="loading" :data="protocolList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="ID" align="center" prop="id"/>-->
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+      <!--      <el-table-column label="ID" align="center" prop="id"/>-->
       <el-table-column label="设备品牌" align="center" prop="brandId">
         <template slot-scope="scope">
           <span>{{ getName(scope.row.brandId,"brand") }}</span>
@@ -296,9 +297,13 @@
       document.addEventListener("click", this.bodyCloseMenus);
     },
     methods: {
+      //翻页时不刷新序号
+      indexMethod(index){
+        return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+      },
       bodyCloseMenus(e) {
         let self = this;
-        if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
           if (self.boxShow == true){
             self.boxShow = false;
           }

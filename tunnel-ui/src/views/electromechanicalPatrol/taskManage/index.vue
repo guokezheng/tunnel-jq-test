@@ -3,10 +3,9 @@
 
 
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <div>
       <el-col :span="4">
-
-        <el-button
+        <el-button style ="margin: 10px 0px 25px;height: 35px;"
           v-hasPermi="['system:list:add']"
           size="mini"
           type="primary"
@@ -15,76 +14,80 @@
         >新增任务
         </el-button>
       </el-col>
-      <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
-          <el-input
-            placeholder="请输入所属单位"
-            v-model="queryParams.zzjgId"
-            @keyup.enter.native="handleQuery"
-          >
-            <el-button
-              slot="append"
-              icon="el-icon-s-fold"
-              @click="task_boxShow = !task_boxShow"
-            ></el-button>
-          </el-input>
-        </div>
-      </el-col>
-    </el-row>
-
-    <div class="searchBox" v-show="task_boxShow">
-      <el-form
-        ref="queryForm"
-        :inline="true"
-        :model="queryParams"
-        label-width="75px"
-      >
-        <el-form-item
-          style="width: 100%"
-          label="发布状态"
-          prop="publishStatus"
-        >
-          <el-select
-            v-model="queryParams.publishStatus"
-            placeholder="请选择发布状态"
-            clearable
-            size="small"
-          >
-            <el-option
-              v-for="dict in dict.type.publish_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="任务状态" prop="taskStatus" style="width: 100%">
-          <el-select
-            v-model="queryParams.taskStatus"
-            placeholder="请选择任务状态"
-            clearable
-            size="small"
-          >
-            <el-option
-              v-for="dict in dict.type.task_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item class="bottomBox">
-          <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
-          >
-          <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
-          >
-        </el-form-item>
-      </el-form>
     </div>
+    <div ref="main" style = "margin-left: 75%">
+      <el-row :gutter="20" style="margin: 10px 0 25px">
 
+        <el-col :span="6" style="width: 100%;">
+          <div class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入所属单位"
+              v-model="queryParams.zzjgId"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="task_boxShow = !task_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+
+      <div class="task_searchBox" v-show="task_boxShow">
+        <el-form
+          ref="queryForm"
+          :inline="true"
+          :model="queryParams"
+          label-width="75px"
+        >
+          <el-form-item
+            style="width: 100%"
+            label="发布状态"
+            prop="publishStatus"
+          >
+            <el-select
+              v-model="queryParams.publishStatus"
+              placeholder="请选择发布状态"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.publish_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="任务状态" prop="taskStatus" style="width: 100%">
+            <el-select
+              v-model="queryParams.taskStatus"
+              placeholder="请选择任务状态"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.task_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
 
 <!--    <el-form
       :model="queryParams"
@@ -946,7 +949,19 @@ export default {
     this.userName = this.$store.state.user.name;
     this.currentTime = this.getCurrentTime();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.task_boxShow == true){
+          self.task_boxShow = false;
+        }
+      }
+    },
     /*获取当前时间*/
     getCurrentTime() {
       //获取当前时间并打印
@@ -1646,7 +1661,7 @@ export default {
   background-color: transparent;
 }
 
-.searchBox {
+.task_searchBox {
   position: absolute;
   top: 8%;
   right: 1%;
@@ -2020,7 +2035,7 @@ h1 {
   }
 }
 
-.searchBox {
+.task_searchBox {
   ::v-deep .el-form-item__content {
     width: 80%;
     .el-select {

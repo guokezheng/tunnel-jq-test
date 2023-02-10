@@ -2,14 +2,16 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <div ref="main" style = "margin-left: 75%">
+      <el-row :gutter="20" style="margin: 10px 0 25px">
       <el-col :span="4">
 
       </el-col>
-      <el-col :span="6" :offset="14" style ="margin-left: 75%">
+<!--      <el-col :span="6" :offset="14" >-->
+      <el-col :span="6"  style="width: 100%;">
         <div class="grid-content bg-purple">
           <el-input
-            placeholder="请输入车牌"
+            placeholder="请输入车牌，回车搜索"
             v-model="queryParams.plateNumber"
             @keyup.enter.native="handleQuery"
           >
@@ -22,7 +24,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="cl_boxShow">
+      <div class="cl_searchBox" v-show="cl_boxShow" >
       <el-form
         ref="queryForm"
         :inline="true"
@@ -40,7 +42,19 @@
             :props="{ checkStrictly: true }"
             clearable></el-cascader>
         </el-form-item>
-        <el-form-item label="车型" prop="vType" style="width: 100%">
+
+
+        <el-form-item label="车型"  prop="vType" style="width: 100%">
+<!--          <el-checkbox-group v-model="queryParams.vType">&ndash;&gt;-->
+            <el-checkbox
+              v-for="dict in vehicleTypeList"
+              :key="dict.dictValue"
+              :label="dict.dictValue"
+            >{{dict.dictLabel}}</el-checkbox>
+<!--          </el-checkbox-group>-->
+        </el-form-item>
+
+<!--        <el-form-item label="车型" prop="vType" style="width: 100%">
           <el-select
             v-model="queryParams.vType"
             clearable
@@ -54,7 +68,7 @@
               :value="dict.label"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="运行状态" prop="accState" style="width: 100%">
           <el-select
             v-model="queryParams.accState"
@@ -79,6 +93,7 @@
           >
         </el-form-item>
       </el-form>
+    </div>
     </div>
 
 <!--    <el-form
@@ -396,9 +411,12 @@ export default {
         callback();
       }
     };
+
     return {
+      testModel: ['复选框 A'],
       tunnelData: [{ tunnelName: 1, tunnelId: 2 }],
       exportLoading: false,
+      vehicleTypeList:[],
       cl_boxShow:false,
       // 遮罩层
       loading: false,
@@ -418,6 +436,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        vType: []
       },
       form: {},
       mechanismList: [],
@@ -443,7 +462,23 @@ export default {
       this.vehicleTypeList = data.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.cl_boxShow == true){
+          self.cl_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询应急机构列表 */
     getList() {
       // console.log(this.queryParams)
@@ -606,7 +641,7 @@ export default {
 
 
 <style>
-.searchBox {
+.cl_searchBox {
   position: absolute;
   top: 8.5%;
   right: 1%;
@@ -618,7 +653,7 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.searchBox {
+.cl_searchBox {
   ::v-deep .el-form-item__content {
     width: 80%;
     .el-select {
@@ -641,5 +676,9 @@ export default {
     align-items: center;
     width: 100%;
   }
+}
+
+::v-deep .checkboxFormDialog .el-checkbox{
+  width: 80px;
 }
 </style>

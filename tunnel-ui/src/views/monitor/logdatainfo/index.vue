@@ -8,15 +8,17 @@
     <el-form :model="queryParam" ref="queryForm" :inline="true" v-show="searchValue == '1'"
              label-width="68px" style="margin-top: 10px">
       <!-- 全局搜索 -->
+
+      <div ref="main" style = "margin-left: 75%;">
       <el-row :gutter="20" style="margin: 10px 0 25px;">
 
-        <el-col :span="6" :offset="14">
+        <el-col>
           <div class="grid-content bg-purple">
             <el-input
               v-model="queryParam.userName"
               placeholder="请输入登录地址、用户名称"
               clearable
-              style="width: 456px;margin-left: 69%;"
+              style="width: 456px;"
               size="small"
               @keyup.enter.native="handleQuery"
             >
@@ -29,7 +31,7 @@
           </div>
         </el-col>
       </el-row>
-      <div class="searchBox" v-show="xt_boxShow">
+      <div class="xt_searchBox" v-show="xt_boxShow">
         <el-form
           ref="queryForm"
           :inline="true"
@@ -91,6 +93,7 @@
           </el-form-item>
         </el-form>
       </div>
+      </div>
 <!--      <el-form-item label="登录地址" prop="ipaddr">
         <el-input
           v-model="queryParam.ipaddr"
@@ -144,108 +147,104 @@
     <el-form :model="queryParams" ref="queryForms" :inline="true" v-show="searchValue == '2'"
                label-width="68px" style="margin-top: 10px">
       <!-- 全局搜索 -->
-      <el-row :gutter="20" style="margin: 10px 0 25px">
-        <el-col :span="6" :offset="14">
-          <div class="grid-content bg-purple">
-            <el-input
-              style="width: 456px;margin-left: 69%;"
-              @keyup.enter.native="handleQuery"
-            >
-              <el-button
-                slot="append"
-                icon="el-icon-s-fold"
-                @click="cz_boxShow = !cz_boxShow"
-              ></el-button>
-            </el-input>
-          </div>
-        </el-col>
-      </el-row>
-      <div class="searchBox" v-show="cz_boxShow">
-        <el-form
-          ref="queryForm"
-          :inline="true"
-          :model="queryParams"
-          label-width="75px"
-        >
-          <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
-            <el-select
-              v-model="queryParams.eqTypeId"
-              placeholder="请选择设备类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in eqTypeData"
-                :key="item.typeId"
-                :label="item.typeName"
-                :value="item.typeId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'" style="width: 100%">
-            <el-select
-              v-model="queryParams.tunnelId"
-              placeholder="请选择隧道"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in eqTunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="控制方式" prop="controlType" style="width: 100%">
-            <el-select v-model="queryParams.controlType" placeholder="请选择控制方式" clearable size="small">
-              <el-option
-                v-for="dict in controlTypeOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 100%">
-            <el-date-picker
-              v-model="dateRange"
-              size="small"
-              style="width: 335px"
-              value-format="yyyy-MM-dd HH-mm-ss"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :default-time="['00:00:00', '23:59:59']"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item class="bottomBox">
-            <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
-            >
-            <el-button size="small" @click="resetQuery" type="primary" plain
-            >重置</el-button
-            >
-          </el-form-item>
-        </el-form>
+      <div ref="main1" style = "margin-left: 75%;">
+        <el-row :gutter="20" style="margin: 10px 0 25px">
+          <el-col >
+            <div class="grid-content bg-purple">
+              <el-input
+                placeholder="请输入ip地址，回车搜索"
+                v-model="queryParams.operIp"
+                style="width: 456px"
+                @keyup.enter.native="handleQuery"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-s-fold"
+                  @click="cz_boxShow = !cz_boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="xt_searchBox" v-show="cz_boxShow">
+          <el-form
+            ref="queryForm"
+            :inline="true"
+            :model="queryParams"
+            label-width="75px"
+          >
+            <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
+              <el-select
+                v-model="queryParams.eqTypeId"
+                placeholder="请选择设备类型"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in eqTypeData"
+                  :key="item.typeId"
+                  :label="item.typeName"
+                  :value="item.typeId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'" style="width: 100%">
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择隧道"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in eqTunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="控制方式" prop="controlType" style="width: 100%">
+              <el-select v-model="queryParams.controlType" placeholder="请选择控制方式" clearable size="small">
+                <el-option
+                  v-for="dict in controlTypeOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="创建时间" style="width: 100%">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 335px"
+                value-format="yyyy-MM-dd HH-mm-ss"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :default-time="['00:00:00', '23:59:59']"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" type="primary" @click="handleQuery"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
       </div>
-
-<!--      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery"
-        >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-        >重置</el-button
-        >
-      </el-form-item>-->
     </el-form>
 
     <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName" v-show="searchValue == '1'"
             :default-sort="{prop: 'loginTime', order: 'descending'}" @sort-change="handleSortChange" class="tableHeight"  >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="访问编号" align="center" prop="infoId" />
+<!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
+      <el-table-column label="序号" align="center" prop="infoId" display="none"/>
       <el-table-column label="用户名称" align="center" prop="userName" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" />
       <el-table-column label="登录地址" align="center" prop="ipaddr" width="130" :show-overflow-tooltip="true" />
       <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
@@ -382,6 +381,7 @@ export default {
         state: null,
         description: null,
         searchValue:null,
+        operIp:"",
       }
     };
   },
@@ -399,7 +399,28 @@ export default {
       this.loginStatusOptions = response.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+    document.addEventListener("click", this.bodyCloseMenus1);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.xt_boxShow == true){
+          self.xt_boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus1(e) {
+      let self = this;
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+        if (self.cz_boxShow == true){
+          self.cz_boxShow = false;
+        }
+      }
+    },
     // 切换按钮
     qiehuan(inx){
       this.dateRange = [];
@@ -468,6 +489,8 @@ export default {
       this.resetForm("queryForm");
       this.resetForm("queryForms");
       this.queryParam.userName = "";
+      this.queryParam.status = null;
+      this.queryParams.operIp = "";
       // if (this.searchValue == '1') {
       //   this.$refs.tables.sort('loginTime', 'descending')
       // } else if (this.searchValue == '2') {
@@ -528,7 +551,7 @@ export default {
 };
 </script>
 <style>
-.searchBox {
+.xt_searchBox {
   position: absolute;
   top: 13%;
   right: 1%;
@@ -660,7 +683,7 @@ hr {
   max-height: 52vh !important;
   overflow: auto;
 }
-.searchBox {
+.xt_searchBox {
   ::v-deep .el-form-item__content {
     width: 80%;
     .el-select {

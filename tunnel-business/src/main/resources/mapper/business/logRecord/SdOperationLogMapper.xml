@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="tunnelId"    column="tunnel_id"    />
         <result property="userName"    column="user_name"    />
         <result property="eqId"    column="eq_id"    />
-        <!-- <result property="eqName"    column="eq_name"    /> -->
+        <!--<result property="eqName"    column="eq_name"    />-->
         <result property="code"    column="code"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -81,8 +81,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
         <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
         <if test="userName != null  and userName != ''"> and a.user_name like concat('%', #{userName}, '%')</if>
+        <if test="operIp != null  and operIp != ''"> and a.oper_ip like concat('%', #{operIp}, '%')</if>
         <if test="eqId != null  and eqId != ''"> and a.eq_id = #{eqId}</if>
-        <!-- <if test="eqName != null  and eqName != ''"> and a.eq_name like concat('%', #{eqName}, '%')</if> -->
         <if test="code != null  and code != ''"> and a.code = #{code}</if>
         <if test="beforeState != null  and beforeState != ''"> and a.before_state = #{beforeState}</if>
         <if test="operationState != null  and operationState != ''"> and a.operation_state = #{operationState}</if>

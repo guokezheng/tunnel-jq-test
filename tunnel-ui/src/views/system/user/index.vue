@@ -1110,7 +1110,7 @@ export default {
 <style>
 .searchBox {
   position: absolute;
-  top: 12%;
+  top: 60px;
   right: 0.5%;
   width: 28%;
   z-index: 1996;

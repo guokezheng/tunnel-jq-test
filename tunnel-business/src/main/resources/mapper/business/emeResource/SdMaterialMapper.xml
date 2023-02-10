@@ -49,8 +49,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           left join sd_material_type x on s.material_type = x.id
           left join sd_tunnels t on t.tunnel_id = s.tunnel_id
         <where>
+
             <if test="materialId != null  and materialId != ''"> and s.material_id = #{materialId}</if>
-            <if test="materialName != null  and materialName != ''"> and s.material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialName != null  and materialName != ''"> AND CONCAT(s.station, s.material_name) LIKE CONCAT('%',#{materialName},'%')</if>
             <if test="materialType != null  and materialType != ''"> and s.material_type = #{materialType}</if>
             <if test="inventoryQuantity != null "> and s.Inventory_quantity = #{inventoryQuantity}</if>
             <if test="company != null  and company != ''"> and s.company = #{company}</if>

@@ -52,7 +52,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 获取设备类型详细信息
      */
-    @PreAuthorize("@ss.hasPermi('platform:bigType:query')")
+    @PreAuthorize("@ss.hasPermi('device:bigType:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(sdEquipmentCategoryService.selectSdEquipmentCategoryById(id));
@@ -61,7 +61,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 新增设备类型
      */
-    @PreAuthorize("@ss.hasPermi('platform:bigType:add')")
+    @PreAuthorize("@ss.hasPermi('device:bigType:add')")
     @Log(title = "设备类型", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdEquipmentCategory sdEquipmentCategory) {
@@ -71,7 +71,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 修改设备类型
      */
-    @PreAuthorize("@ss.hasPermi('platform:bigType:edit')")
+    @PreAuthorize("@ss.hasPermi('device:bigType:edit')")
     @Log(title = "设备类型", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdEquipmentCategory sdEquipmentCategory) {
@@ -81,7 +81,7 @@ public class SdEquipmentCategoryController extends BaseController {
     /**
      * 删除设备类型
      */
-    @PreAuthorize("@ss.hasPermi('platform:bigType:remove')")
+    @PreAuthorize("@ss.hasPermi('device:bigType:remove')")
     @Log(title = "设备类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {

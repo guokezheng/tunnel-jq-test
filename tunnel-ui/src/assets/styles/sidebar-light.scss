@@ -564,7 +564,6 @@
     background: #004375;
       .el-checkbox{
         color: #fff;
-
       }
       .el-collapse{
         border-top:solid 1px #05afe3;
@@ -592,6 +591,15 @@
      .el-table__body-wrapper .el-table__cell{
       border-left:transparent !important;
      }
+     .el-table tr{
+        background: #004375 !important;
+     }
+     .el-table__cell{
+      height: 9vh !important;
+    }
+    .huiduButton{
+      color: #fff;
+    }
    }
    .infoBoardButton .el-button{
     border: solid 1px #65bfff;
@@ -1280,6 +1288,16 @@
   background: #012E51 !important;
 }
   .workbench-dialog{
+    .mesModeBg{
+      background: #012e51;
+      .el-collapse-item__header {
+        background: #012e51;
+        color: #fff;
+      }
+      .el-collapse-item__wrap{
+        background: #012e51;
+      }
+    }
     .lineClass{
       width: 100%;
       height: 1px;

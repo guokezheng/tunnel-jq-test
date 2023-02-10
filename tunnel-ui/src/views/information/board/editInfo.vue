@@ -46,7 +46,7 @@
           <el-form
             :model="dataForm"
             :rules="dataRule"
-            label-width="80px"
+            label-width="90px"
             ref="dataForm"
             size="mini"
           >
@@ -56,7 +56,7 @@
                 <el-select
                   v-model="dataForm.category"
                   placeholder="请选择所属类别"
-                  size="small"
+                  size="mini"
                   disabled
                 >
                   <el-option
@@ -253,7 +253,7 @@
     editTemplateContent,
     getGalleryList,
     uploadBoardEditInfo,
-
+    getFontSizeByDevicePixel
   } from "@/api/board/template";
   import {
    
@@ -325,21 +325,7 @@
         templateContentModel:'',
         templateContent: [],
         templateDelContent: [],
-        fontTypeOptions: [
-          // {
-          //   code: "KaiTi",
-          //   content: "楷体",
-          // },
-          // {
-          //   code: "SimSun",
-          //   content: "宋体",
-          // },
-          // {
-          //   code: "SimHei",
-          //   content: "黑体",
-          // },
-        
-        ],
+        fontTypeOptions: [],
         screenSizeOptions: [
           {
             type: "400*40",
@@ -348,24 +334,7 @@
             type: "128*64",
           },
         ],
-        colorOptions: [
-          // {
-          //   code: "red",
-          //   content: "红色",
-          // },
-          // {
-          //   code: "yellow",
-          //   content: "黄色",
-          // },
-          // {
-          //   code: "blue",
-          //   content: "蓝色",
-          // },
-          // {
-          //   code: "GreenYellow",
-          //   content: "绿色",
-          // },
-        ],
+        colorOptions: [],
         isCurrencyOptions: [
           {
             code: "0",
@@ -376,96 +345,7 @@
             content: "仅为智能推荐模板",
           },
         ],
-        inScreenModeOptions: [
-          // {
-          //   code: "0",
-          //   name: "清屏（全黑)",
-          // },
-          // {
-          //   code: "1",
-          //   name: "立即显示",
-          // },
-          // {
-          //   code: "2",
-          //   name: "上移",
-          // },
-          // {
-          //   code: "3",
-          //   name: "下移",
-          // },
-          // {
-          //   code: "4",
-          //   name: "左移",
-          // },
-          // {
-          //   code: "5",
-          //   name: "右移",
-          // },
-          // {
-          //   code: "6",
-          //   name: "横百叶窗",
-          // },
-          // {
-          //   code: "7",
-          //   name: "竖百叶窗",
-          // },
-          // {
-          //   code: "8",
-          //   name: "上下合拢",
-          // },
-          // {
-          //   code: "9",
-          //   name: "上下展开",
-          // },
-          // {
-          //   code: "10",
-          //   name: "左右合拢",
-          // },
-          // {
-          //   code: "11",
-          //   name: "左右展开",
-          // },
-          // {
-          //   code: "12",
-          //   name: "中心合拢",
-          // },
-          // {
-          //   code: "13",
-          //   name: "中心展开",
-          // },
-          // {
-          //   code: "14",
-          //   name: "向下马赛克",
-          // },
-          // {
-          //   code: "15",
-          //   name: "向右马赛克",
-          // },
-          // {
-          //   code: "16",
-          //   name: "淡入",
-          // },
-          // {
-          //   code: "17",
-          //   name: "淡出",
-          // },
-          // {
-          //   code: "18",
-          //   name: "字符闪烁（闪后消失）",
-          // },
-          // {
-          //   code: "19",
-          //   name: "字符闪烁（闪后停留）",
-          // },
-          // {
-          //   code: "20",
-          //   name: "区域闪烁（闪后复原）",
-          // },
-          // {
-          //   code: "21",
-          //   name: "区域闪烁（闪后区域为黑）",
-          // },
-        ],
+        inScreenModeOptions: [],
         imgSize: [
           {
             type: "1024*128",
@@ -476,21 +356,7 @@
             name: "正常",
           },
         ],
-        fontSizeOpt: [
-          // {
-          //   code: "32px",
-          //   name: "32px",
-          // },
-          // {
-          //   code: "24px",
-          //   name: "24px",
-          // },
-          // {
-          //   code: "16px",
-          //   name: "16px",
-          // },
-          
-        ],
+        fontSizeOpt: [],
         title: "选择图片",
         loading: false,
         isAdd: false,
@@ -628,10 +494,10 @@
         this.colorOptions = res.data;
         console.log(this.colorOptions, "字体颜色");
       });
-      this.getDicts("iot_device_font_size").then((res) => {
-        this.fontSizeOpt = res.data;
-        console.log(this.fontSizeOpt, "字体大小");
-      });
+      // this.getDicts("iot_device_font_size").then((res) => {
+      //   this.fontSizeOpt = res.data;
+      //   console.log(this.fontSizeOpt, "字体大小");
+      // });
       this.getDicts("iot_device_font_inScreen_mode").then((res) => {
         this.inScreenModeOptions = res.data;
         console.log(this.inScreenModeOptions, "入屏方式");
@@ -653,6 +519,13 @@
         this.dataForm = this.boardEmitItem
         this.dataForm.CONTENT = this.boardEmitItem.CONTENT.replace('<br>','\n').replace(/ /g, ' ')
         this.dataForm.STAY = Number(this.boardEmitItem.STAY)/100
+        this.getFontSizeList()
+      },
+      getFontSizeList(){
+        getFontSizeByDevicePixel(this.dataForm.screenSize).then((res) =>{
+          console.log(res,"根据分辨率筛字体大小")
+          this.fontSizeOpt = res.data
+        })
       },
       alignment(alignmentNum) {
         console.log(alignmentNum,"alignmentNum");
@@ -777,6 +650,7 @@
         this.loading = false;
         this.isAdd = false;
         if(this.dataForm.type == 1){
+          this.dataForm.STAY = Number(this.dataForm.STAY)*100
           this.$emit("receiveForm", this.dataForm);
           console.log(this.dataForm,"this.dataForm修改后给父组件传表单内容")
         }else{

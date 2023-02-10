@@ -38,7 +38,7 @@
           <el-option label="失败" value="1" />
         </el-select>
       </el-form-item>
-      <el-form-item label="发布机构" prop="releaseDeptName">
+      <!-- <el-form-item label="发布机构" prop="releaseDeptName">
         <el-input
           v-model="queryParams.releaseDeptName"
           placeholder="请输入发布机构"
@@ -46,7 +46,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="发布用户" prop="releaseUserName">
         <el-input
           v-model="queryParams.releaseUserName"
@@ -87,17 +87,7 @@
       <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="发布用户" align="center" prop="id" />-->
       <el-table-column label="发布设备" align="center" prop="deviceId" />
-      <el-table-column
-        label="发布时间"
-        align="center"
-        prop="releaseTime"
-        width="180"
-      >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.releaseTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="发布状态" align="center" prop="releaseStatus" />
+      <el-table-column label="设备桩号" align="center" prop="pile" />
       <el-table-column label="发布内容" align="center" prop="releaseNewContent" >
         <template slot-scope="scope">
           <div v-for="(item,index) of scope.row.list" :key="index"
@@ -123,7 +113,20 @@
 
         </template>
       </el-table-column>
-      <el-table-column label="发布机构" align="center" prop="releaseDeptName" />
+      <el-table-column
+        label="发布时间"
+        align="center"
+        prop="releaseTime"
+       
+      >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.releaseTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="发布状态" align="center" prop="releaseStatus" />
+      
+      <!-- <el-table-column label="发布机构" align="center" prop="releaseDeptName" /> -->
+
       <el-table-column label="发布用户" align="center" prop="releaseUserName" />
     </el-table>
 
@@ -277,10 +280,7 @@ export default {
               itm.HEIGHT = this.getDevicePixel(itm.DEVICEPIXEL,'height')
               itm.TOP = this.getCoordinate(itm.COORDINATE.substring(3, 6),'top',itm.DEVICEPIXEL) + 'px';
               itm.LEFT = this.getCoordinate(itm.COORDINATE.substring(0, 3),'left',itm.DEVICEPIXEL) + 'px';
-              itm.CONTENT = itm.CONTENT.replace('\\n', '<br>').replace(
-                      / /g,
-                      ' &nbsp'
-                    )
+              itm.CONTENT = itm.CONTENT.replace('\\n', '<br>').replace(/ /g,' &nbsp')
               arr.push(itm);
             }
           }
@@ -295,13 +295,13 @@ export default {
     getFontSize (font,devicePixel){
       let width = devicePixel.split("*")[0];
       let height = devicePixel.split("*")[1];
-      if (width < 320 && height < 38) {
+      if (width < 250 && height < 38) {
         return font;
       } else {
-        if (width / 320 > height / 38) {
-          return font / (width / 320) - 4;
+        if (width / 250 > height / 38) {
+          return font / (width / 250) - 1;
         } else {
-          return font / (height / 38) - 4;
+          return font / (height / 38) - 1;
         }
       }
     },
@@ -309,21 +309,20 @@ export default {
       let width = screenSize.split("*")[0];
       let height = screenSize.split("*")[1];
      
-      if (width < 320 && height < 38) {
+      if (width < 250 && height < 38) {
         return coordinate;
       } else {
-        if (width / 320 > height / 38) {
+        if (width / 250 > height / 38) {
           if (type == "left") {
-            return coordinate / (width / 320);
+            return coordinate / (width / 250);
           } else if (type == "top") {
-            return coordinate / (width / 320);
+            return coordinate / (width / 250);
           }
         } else {
-          console.log(11111111)
           if (type == "left") {
-            return coordinate / (height / 38) + 8;
-          } else if (type == "top") {
             return coordinate / (height / 38) + 3;
+          } else if (type == "top") {
+            return coordinate / (height / 38) + 1;
           }
         }
       }
@@ -332,18 +331,18 @@ export default {
     getDevicePixel(devicePixel, type) {
       let width = devicePixel.split("*")[0]
       let height = devicePixel.split("*")[1]
-      if(width < 320 && height < 38){
+      if(width < 250 && height < 38){
         if(type == 'width'){
           return width
         }else if (type == 'height'){
           return height
         }
       }else{
-        if (width / 320 > height / 38) {
+        if (width / 250 > height / 38) {
           if (type == "width") {
-            return 320;
+            return 250;
           } else if (type == "height") {
-            return height / (width / 320);
+            return height / (width / 250);
           }
         } else {
           if (type == "width") {
@@ -353,17 +352,17 @@ export default {
           }
         }
       }
-      if (devicePixel) {
-        if(width > 320){
+      // if (devicePixel) {
+      //   if(width > 250){
 
-          if(type == 'width'){
-            return 394 + 'px'
-          }else if(type == 'height'){
-            return 75 + 'px'
-          }
-        }
-        return devicePixel.split("*")[num] + "px";
-      }
+      //     if(type == 'width'){
+      //       return 394 + 'px'
+      //     }else if(type == 'height'){
+      //       return 75 + 'px'
+      //     }
+      //   }
+      //   return devicePixel.split("*")[num] + "px";
+      // }
     },
     // 转颜色
     getColorStyle(font) {
@@ -372,7 +371,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "green";
+        return "greenYellow";
       } else if (font == "蓝色") {
         return "blue";
       } else {

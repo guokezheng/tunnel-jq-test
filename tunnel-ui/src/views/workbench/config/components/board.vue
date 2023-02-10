@@ -3,7 +3,7 @@
     <el-dialog
       class="workbench-dialog boardDialog"
       :title="title"
-      width="620px"
+      width="835px"
       append-to-body
       :visible="cameraVisible"
       :before-close="handleClosee"
@@ -25,26 +25,56 @@
       </div>
       <div v-show="infoType == 'info'">
         <div class="infoBox">
-          <div
+          <el-table :data="contentList" row-key="ID"  max-height="550" v-loading="loading">
+            <el-table-column align="center"  width="645">
+              <template slot-scope="scope">
+                <div class="contentBox">
+                  <div
+                    class="content"
+                    :style="{
+                      color: getColorStyle(scope.row.COLOR),
+                      fontSize: getFontSize(scope.row.FONT_SIZE, addForm.devicePixel),
+                      fontFamily: scope.row.FONT,
+                      width: getDevicePixel(addForm.devicePixel, 0) + 'px',
+                      height: getDevicePixel(addForm.devicePixel, 1) + 'px',
+                    }"
+                  >
+                    <span
+                      :style="{
+                        left: getCoordinate(scope.row.COORDINATE.substring(0, 3),'left'),
+                        top: getCoordinate(scope.row.COORDINATE.substring(3, 6),'top'),
+                      }"
+                      class="boardTextStyle"
+                      v-html="
+                        scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                          / /g,
+                          ' &nbsp'
+                        )
+                      "
+                    ></span>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column  align="center" >
+              <template slot-scope="scope">
+                <div class="infoButton">
+                    <div  @click="openQbbDrawer(scope.row, scope.$index, 1)"></div>
+                    <!-- <img
+                      src="../../../../assets/cloudControl/edit2.png"
+                      @click="openQbbDrawer(scope.row, scope.$index, 1)"
+                    /> -->
+                    <div @click="delQbbDrawer(scope.$index)"></div>
+                  </div>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- <div
             v-for="(item, index) of contentList"
             class="infoContent"
             :key="index"
           >
-            <div class="upDown">
-              <i
-                :class="index == 0 ? 'disabledClass' : ''"
-                class="el-icon-caret-top"
-                size="18"
-                style="cursor: pointer"
-                @click="moveTop(index, item)"
-              ></i>
-              <i
-                :class="contentList.length == index + 1 ? 'disabledClass' : ''"
-                class="el-icon-caret-bottom"
-                style="cursor: pointer"
-                @click="moveBottom(index, item)"
-              ></i>
-            </div>
+           
             <div class="contentBox">
               <div
                 class="content"
@@ -61,7 +91,7 @@
                     left: getCoordinate(item.COORDINATE.substring(0, 3),'left'),
                     top: getCoordinate(item.COORDINATE.substring(3, 6),'top'),
                   }"
-                  style="position: absolute;line-height: 1;caret-color: rgba(0,0,0,0);"
+                  class="boardTextStyle"
                   v-html="
                     item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                       / /g,
@@ -74,13 +104,13 @@
 
             <div class="infoButton">
               <div  @click="openQbbDrawer(item, index, 1)"></div>
-              <!-- <img
+              <img
                 src="../../../../assets/cloudControl/edit2.png"
                 @click="openQbbDrawer(item, index, 1)"
-              /> -->
+              />
               <div @click="delQbbDrawer(index)"></div>
             </div>
-          </div>
+          </div> -->
         </div>
         <div
           class="openMIniDialogStyle"
@@ -195,14 +225,14 @@
     <el-dialog
       class="workbench-dialog mesModeDialog"
       title="信息模板"
-      width="520px"
+      width="800px"
       append-to-body
       :visible="mesModeVisible"
       :before-close="closeMesMode"
     >
       <div class="mesModeBg">
         <div class="mesModeBox">
-          <el-collapse v-model="activeNames" @change="handleChange" accordion>
+          <el-collapse v-model="activeNames" @change="handleChange" >
             <el-collapse-item
               v-for="(item, index) in iotTemplateCategoryList"
               :key="index"
@@ -241,7 +271,7 @@
                         itm.screenSize
                       ),
                     }"
-                    style="position: absolute;line-height: 1;caret-color: rgba(0,0,0,0);"
+                    class="boardTextStyle"
                     v-html="
                       itm.tcontents[0].content
                         .replace(/\n|\r\n/g, '<br>')
@@ -286,7 +316,7 @@ import {
 import boardData from "@/views/information/board/boardData.json";
 import editInfo from "@/views/information/board/editInfo";
 import addinfo from "@/views/information/board//addinfo";
-
+import Sortable from 'sortablejs';
 import { getBoardEditInfo } from "@/api/information/api.js";
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
@@ -296,6 +326,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       openDialog: false,
       associatedDeviceId: "",
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
@@ -468,7 +499,7 @@ export default {
           name: "区域闪烁（闪后区域为黑）",
         },
       ],
-      activeNames: "0",
+      activeNames: [],
       templateList: [],
       contentList: [
         // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
@@ -494,10 +525,25 @@ export default {
       this.fontTypeOptions = res.data;
       console.log(this.fontTypeOptions, "字体类型");
     });
-
-
+  },
+  mounted() {
+    // this.rowDrop()
   },
   methods: {
+    // 行拖拽
+    rowDrop() {
+      // 要侦听拖拽响应的DOM对象
+      const tbody = document.querySelector('.el-table__body-wrapper tbody');
+      console.log(tbody,"tbodytbodytbody")
+      const _this = this;
+      Sortable.create(tbody, {
+        // 结束拖拽后的回调函数
+        onEnd({newIndex, oldIndex}) {
+          const currentRow = _this.contentList.splice(oldIndex, 1)[0];
+          _this.contentList.splice(newIndex, 0, currentRow);
+        }
+      })
+    },
     // 信息发布
     releaseInfo() {
       console.log(this.contentList, "this.contentListthis.contentList");
@@ -565,6 +611,7 @@ export default {
     },
     // 接收子组件新增待发模板
     addInfo(form) {
+      form.ID = this.contentList.length
       console.log(form, "待发新增");
       this.contentList.push(form);
       this.$forceUpdate();
@@ -596,10 +643,12 @@ export default {
     },
    
     onSubmit() {
+      this.loading = true
       getBoardEditInfo(this.associatedDeviceId).then((response) => {
+        console.log(response,"onSubmit")
         var parseObject = JSON.parse(response.data[0]);
         console.log(parseObject,"parseObject");
-        var protocolType = parseObject.support.PROTOCOL_TYPE;
+        // var protocolType = parseObject.support.PROTOCOL_TYPE;
         var contents = parseObject.content;
         this.contentList = []
         for (var i = 0; i < contents.length; i++) {
@@ -608,11 +657,13 @@ export default {
           for(var itm of content[itemId]){
             itm.COLOR = this.getColorStyle(itm.COLOR);
             itm.FONT_SIZE = Number(itm.FONT_SIZE.substring(0, 2)) + "px";
+            itm.ID = i
             this.contentList.push(itm);
           }
         }
         console.log(this.contentList, "this.contentList11");
-
+        this.loading = false
+        this.rowDrop()
       });
     },
     formatNum(num, length) {
@@ -639,6 +690,7 @@ export default {
         ACTION: item.inScreenMode, //出屏方式
         STAY: item.stopTime, //停留时间
         category: item.category, //所属类别
+        ID:this.contentList.length,
       };
       this.contentList.push(contentList);
       console.log(this.contentList, "this.contentList");
@@ -668,6 +720,7 @@ export default {
             let arr = this.iotTemplateCategoryList[j];
             let brr = data[j];
             arr.list = brr
+            this.activeNames.push(j.toString())
         }
         this.$forceUpdate()
         console.log(this.iotTemplateCategoryList,"新模板")
@@ -717,29 +770,29 @@ export default {
         width = screenSize.split("*")[0];
         height = screenSize.split("*")[1];
       }
-      if (width < 394 && height < 65) {
+      if (width < 630 && height < 75) {
         return coordinate + "px";
       } else {
-        if (width / 394 > height / 65) {
+        if (width / 630 > height / 75) {
           if (type == "left") {
-            return coordinate / (width / 394) + "px";
+            return coordinate / (width / 630) + "px";
           } else if (type == "top") {
-            return coordinate / (width / 394) + "px";
+            return coordinate / (width / 630) + "px";
           }
         } else {
           // console.log(coordinate,"coordinate")
           if (type == "left") {
-            if (!screenSize) {
-              return coordinate / (height / 65) + 10 + "px";
-            } else {
-              return coordinate / (height / 65) + "px";
-            }
+            // if (!screenSize) {
+            //   return coordinate / (height / 75) + 10 + "px";
+            // } else {
+              return coordinate / (height / 75) + "px";
+            // }
           } else if (type == "top") {
-            if (!screenSize) {
-              return coordinate / (height / 65) + 4 + "px";
-            } else {
-              return coordinate / (height / 65) + "px";
-            }
+            // if (!screenSize) {
+            //   return coordinate / (height / 75) + 4 + "px";
+            // } else {
+              return coordinate / (height / 75) + "px";
+            // }
           }
         }
       }
@@ -749,7 +802,7 @@ export default {
       let width = devicePixel.split("*")[0];
       let height = devicePixel.split("*")[1];
       // 实际分辨率比页面板子小
-      if (width < 394 && height < 65) {
+      if (width < 630 && height < 75) {
         if (type == 0) {
           return width;
         } else if (type == 1) {
@@ -757,17 +810,17 @@ export default {
         }
       } else {
         // 实际分辨率比页面板子大
-        if (width / 394 > height / 65) {
+        if (width / 630 > height / 75) {
           if (type == 0) {
-            return 394;
+            return 630;
           } else if (type == 1) {
-            return height / (width / 394);
+            return height / (width / 630);
           }
         } else {
           if (type == 0) {
-            return width / (height / 65);
+            return width / (height / 75);
           } else if (type == 1) {
-            return 65;
+            return 75;
           }
         }
       }
@@ -780,24 +833,24 @@ export default {
       let width = screenSize.split("*")[0];
       let height = screenSize.split("*")[1];
       
-      if (width < 394 && height < 65) {
+      if (width < 630 && height < 75) {
         if (font.toString().length == 2) {
           return font + "px";
         } else {
           return font.substring(0, 2) + "px";
         }
       } else {
-        if (width / 394 > height / 65) {
+        if (width / 630 > height / 75) {
           if (font.toString().length == 2) {
-            return font / (width / 394) - 4 + "px";
+            return font / (width / 630) - 1 + "px";
           } else {
-            return font.substring(0, 2) / (width / 394) - 4 + "px";
+            return font.substring(0, 2) / (width / 630) - 1 + "px";
           }
         } else {
           if (font.toString().length == 2) {
-            return font / (height / 65) - 4 + "px";
+            return font / (height / 75) - 1 + "px";
           } else {
-            return font.substring(0, 2) / (height / 65) - 4 + "px";
+            return font.substring(0, 2) / (height / 75) - 1 + "px";
           }
         }
       }
@@ -809,7 +862,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "green";
+        return "GreenYellow";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -929,27 +982,27 @@ export default {
   background: white;
 }
 .boardDialog {
-  left: 20%;
+  left: 6%;
   margin: unset;
-  width: 620px;
+  width: 840px;
   z-index: 2017;
 }
 .mesModeDialog {
-  left: 53%;
+  left: 50%;
   margin: unset;
-  width: 530px;
+  width: 800px;
   z-index: 2017;
   .mesModeBg {
     padding: 10px;
-    background: #012e51;
+    // background: #012e51;
     width: calc(100% - 30px);
-    height: 403px;
+    height: 753px;
     margin: 10px auto;
     overflow: auto;
-    .el-collapse-item__header {
-      background: #012e51;
-      color: #fff;
-    }
+    // .el-collapse-item__header {
+    //   background: #012e51;
+    //   color: #fff;
+    // }
     .mesModeBox {
       width: 100%;
       // height: 100px;
@@ -960,23 +1013,29 @@ export default {
         margin-bottom: 10px;
         overflow: hidden;
         display: flex;
-        border: 1px solid #01aafd;
+        // border: 1px solid #01aafd;
         align-items: center;
         .templateTitle {
           height: 75px;
-          // border: 1px solid #01aafd;
+          border: 1px solid #01aafd;
           // background: black;
           // position: relative;
           display: flex;
           justify-content: center;
           align-items: center;
-          width: 395px;
+          width: 630px;
           float: left;
+          margin-left: 5px;
+          overflow: hidden;
         }
         .downIcon {
-          width: 50px;
-          height: 50px;
-          // border-left: solid 1px #f3f3f3;
+          width: 75px;
+          height: 75px;
+          border: solid 1px #01aafd;
+          margin-left: 10px;
+          justify-content: center;
+          display: flex;
+          align-items: center;
           > div {
             width: 40px;
             height: 40px;
@@ -987,10 +1046,15 @@ export default {
             font-size: 16px;
             color: #00162c;
             display: block;
-            margin-top: 5px;
-            margin-left: 5px;
+            // margin-top: 5px;
+            // margin-left: 5px;
             cursor: pointer;
             background: #f2f8ff;
+          }
+          > div:hover{
+            background: #39ADFF;
+            color:#fff;
+            border: solid 1px #39ADFF;
           }
         }
         .menuBox {
@@ -1039,12 +1103,11 @@ export default {
   }
 }
 .infoBox {
-  width: 93%;
-  height: 200px;
+  width: 94%;
+  height: 550px;
   // background: #fff;
-  margin: 0 30px 0 15px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  margin: 0 18px 0 15px;
+  overflow: hidden;
   border: solid 1px #01aafd;
   .infoContent {
     width: 97%;
@@ -1069,41 +1132,43 @@ export default {
         padding-top: 10px;
       }
     }
-    .contentBox {
-      width: calc(100% - 160px);
-      height: 100%;
-      border: solid 1px #01aafd;
-      margin-left: 4px;
-      overflow: hidden;
-      .content {
-        // width: calc(100% - 10px);
-        // height: calc(100% - 10px);
-        background: #000;
-        margin: 5px auto;
-        overflow: hidden;
-        position: relative;
-      }
-    }
-    .infoButton {
+    
+    
+  }
+}
+.contentBox {
+  width: 630px;
+  height: 75px;
+  border: solid 1px #01aafd;
+  margin-left: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .content {
+    // width: calc(100% - 10px);
+    // height: calc(100% - 10px);
+    background: #000;
+    // margin: 5px auto;
+    overflow: hidden;
+    position: relative;
+  }
+}
+.infoButton {
       width: 112px;
-      height: 100%;
+      height: 75px;
       border: solid 1px #01aafd;
-      margin-left: 4px;
       display: flex;
       align-items: center;
       justify-content: space-around;
-      // img {
-      //   width: 40px;
-      //   height: 40px;
-      //   cursor: pointer;
-      // }
-      > div {
+      > div,img {
         width: 40px;
         height: 40px;
         line-height: 40px;
         background-repeat: no-repeat;
         background-size: 100% 100%;
         cursor: pointer;
+        padding-left: 2px;
       }
       >div:nth-of-type(1){
         background-image: url(../../../../assets/cloudControl/edit3.png);
@@ -1115,8 +1180,6 @@ export default {
         background-image: url(../../../../assets/cloudControl/edit1.png);
       }
     }
-  }
-}
 .disabledClass {
   pointer-events: none;
   cursor: auto !important;
@@ -1124,19 +1187,44 @@ export default {
 }
 ::v-deep .el-collapse-item__header {
   height: 30px;
-  background: #012e51;
-  color: #fff;
+  // background: #012e51;
+  // color: #fff;
   border-bottom: solid 1px #01aafd;
+  padding-left: 10px;
 }
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 10px;
+  padding-bottom: 0px;
 }
 ::v-deep .el-collapse-item__wrap {
   padding: 0 10px;
-  background: #012e51;
+  // background: #012e51;
   border-bottom: solid 1px #01aafd;
 }
 ::v-deep ::-webkit-scrollbar {
   width: 0px !important;
+}
+.boardTextStyle{
+  position: absolute;
+  line-height: 1;
+  caret-color: rgba(0,0,0,0);
+  user-select: none; 
+}
+::v-deep .el-table{
+  border-bottom: none !important;
+  thead{
+    display: none;
+  }
+  th.el-table__cell.is-leaf, td.el-table__cell{
+    border-bottom: none;
+  }
+}
+::v-deep .el-table::before {
+  height: 0px;
+}
+::v-deep .sortable-chosen:not(th) {
+  background-color: rgba(5,175,227,0.1) !important;
+}
+::v-deep .el-loading-mask{
+  background: transparent !important;
 }
 </style>

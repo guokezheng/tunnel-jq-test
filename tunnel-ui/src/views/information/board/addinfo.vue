@@ -82,7 +82,7 @@
                   v-model="dataForm.category"
                   placeholder="请选择所属类别"
                   clearable
-                  size="small"
+                  size="mini"
                 >
                   <el-option
                     v-for="item in iotTemplateCategoryList"
@@ -347,6 +347,7 @@ import {
   deleteTemplate,
   getTemplateContent,
   getGalleryList,
+  getFontSizeByDevicePixel
 } from "@/api/board/template";
 import { devicessize } from "@/api/information/api.js";
 export default {
@@ -473,46 +474,9 @@ export default {
           },
         ],
       },
-      fontTypeOptions: [
-        // {
-        //   code: "KaiTi",
-        //   content: "楷体",
-        // },
-        // {
-        //   code: "SimSun",
-        //   content: "宋体",
-        // },
-        // {
-        //   code: "SimHei",
-        //   content: "黑体",
-        // },
-      ],
-      screenSizeOptions: [
-        // {
-        //   type: "400*40",
-        // },
-        // {
-        //   type: "128*64",
-        // },
-      ],
-      colorOptions: [
-        // {
-        //   code: "red",
-        //   content: "红色",
-        // },
-        // {
-        //   code: "yellow",
-        //   content: "黄色",
-        // },
-        // {
-        //   code: "blue",
-        //   content: "蓝色",
-        // },
-        // {
-        //   code: "GreenYellow",
-        //   content: "绿色",
-        // },
-      ],
+      fontTypeOptions: [],
+      screenSizeOptions: [],
+      colorOptions: [],
       isCurrencyOptions: [
         {
           code: "0",
@@ -523,96 +487,7 @@ export default {
           content: "仅为智能推荐模板",
         },
       ],
-      inScreenModeOptions: [
-        // {
-        //   code: "0",
-        //   name: "清屏（全黑)",
-        // },
-        // {
-        //   code: "1",
-        //   name: "立即显示",
-        // },
-        // {
-        //   code: "2",
-        //   name: "上移",
-        // },
-        // {
-        //   code: "3",
-        //   name: "下移",
-        // },
-        // {
-        //   code: "4",
-        //   name: "左移",
-        // },
-        // {
-        //   code: "5",
-        //   name: "右移",
-        // },
-        // {
-        //   code: "6",
-        //   name: "横百叶窗",
-        // },
-        // {
-        //   code: "7",
-        //   name: "竖百叶窗",
-        // },
-        // {
-        //   code: "8",
-        //   name: "上下合拢",
-        // },
-        // {
-        //   code: "9",
-        //   name: "上下展开",
-        // },
-        // {
-        //   code: "10",
-        //   name: "左右合拢",
-        // },
-        // {
-        //   code: "11",
-        //   name: "左右展开",
-        // },
-        // {
-        //   code: "12",
-        //   name: "中心合拢",
-        // },
-        // {
-        //   code: "13",
-        //   name: "中心展开",
-        // },
-        // {
-        //   code: "14",
-        //   name: "向下马赛克",
-        // },
-        // {
-        //   code: "15",
-        //   name: "向右马赛克",
-        // },
-        // {
-        //   code: "16",
-        //   name: "淡入",
-        // },
-        // {
-        //   code: "17",
-        //   name: "淡出",
-        // },
-        // {
-        //   code: "18",
-        //   name: "字符闪烁（闪后消失）",
-        // },
-        // {
-        //   code: "19",
-        //   name: "字符闪烁（闪后停留）",
-        // },
-        // {
-        //   code: "20",
-        //   name: "区域闪烁（闪后复原）",
-        // },
-        // {
-        //   code: "21",
-        //   name: "区域闪烁（闪后区域为黑）",
-        // },
-      ],
+      inScreenModeOptions: [],
       imgSize: [
         {
           type: "1024*128",
@@ -623,20 +498,7 @@ export default {
           name: "正常",
         },
       ],
-      fontSizeOpt: [
-        // {
-        //   value: "32px",
-        //   label: "32px",
-        // },
-        // {
-        //   value: "24px",
-        //   label: "24px",
-        // },
-        // {
-        //   value: "16px",
-        //   label: "16px",
-        // },
-      ],
+      fontSizeOpt: [],
       title: "选择图片",
       loading: false,
       isAdd: false,
@@ -743,10 +605,10 @@ export default {
       this.colorOptions = res.data;
       console.log(this.colorOptions, "字体颜色");
     });
-    this.getDicts("iot_device_font_size").then((res) => {
-      this.fontSizeOpt = res.data;
-      console.log(this.fontSizeOpt, "字体大小");
-    });
+    // this.getDicts("iot_device_font_size").then((res) => {
+    //   this.fontSizeOpt = res.data;
+    //   console.log(this.fontSizeOpt, "字体大小");
+    // });
     this.getDicts("iot_device_font_inScreen_mode").then((res) => {
       this.inScreenModeOptions = res.data;
       console.log(this.inScreenModeOptions, "入屏方式");
@@ -803,7 +665,14 @@ export default {
           this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
         }
       });
+      this.getFontSizeList()
       this.$forceUpdate();
+    },
+    getFontSizeList(){
+      getFontSizeByDevicePixel(this.dataForm.screenSize).then((res) =>{
+        console.log(res,"根据分辨率筛字体大小")
+        this.fontSizeOpt = res.data
+      })
     },
     // 查分辨率
     getdevicessize() {
@@ -861,6 +730,7 @@ export default {
     },
     // 获取信息
     getInfo() {
+      console.log("=================")
       getTemplateInfo(this.dataForm.id).then((data) => {
         this.dataForm = data.data;
         this.width = this.dataForm.screenSize.split("*")[0];

@@ -212,7 +212,7 @@
                 :key="indx"
                 class="con"
                 :style="{
-                  'font-size': getFontSize(
+                  fontSize: getFontSize(
                     itm.tcontents[0].fontSize,
                     itm.screenSize
                   ),
@@ -339,7 +339,7 @@ export default {
       disabledCheckbox:true,
       loading:false,
       submitButton:false,
-      iotBoardActive: 0,
+      iotBoardActive: '',
       iotBoardList: [],
       boardDirectionList: [],
       siteList: [],
@@ -365,10 +365,10 @@ export default {
       tunnelData: [], //所属隧道下拉框
       positionList: [], //位置信息下拉框
       devicessizeList: [], //分辨率下拉框
-      checkboxList: [], //多选框数组
+      // checkboxList: [], //多选框数组
       deviceList: [],
       checkbox: false,
-      checkboxValue: [],
+      // checkboxValue: [],
       checkedCities: [],
       form: {
         company: null,
@@ -384,7 +384,7 @@ export default {
       dialogVisible: false,
       activeNames: [],
       iotTemplateCategoryList: [],
-      checkAll: true,
+      checkAll: false,
       isIndeterminate: false,
       contentList: [],
       templateList: [],
@@ -392,20 +392,25 @@ export default {
   },
   created() {
     this.getUserDept();
-    this.getDicts("iot_template_category").then((res) => {
-      this.iotTemplateCategoryList = res.data;
-      console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
-    });
+    this.getInfoMode()
+    
   },
   mounted() {
     this.rowDrop()
   },
  
   methods: {
+    getInfoMode(){
+      this.getDicts("iot_template_category").then((res) => {
+        this.iotTemplateCategoryList = res.data;
+        console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
+      });
+    },
     // 行拖拽
     rowDrop() {
       // 要侦听拖拽响应的DOM对象
       const tbody = document.querySelector('.el-table__body-wrapper tbody');
+      console.log(tbody,"tbodytbodytbody")
       const _this = this;
       Sortable.create(tbody, {
         // 结束拖拽后的回调函数
@@ -469,7 +474,7 @@ export default {
         console.log(response.rows, "所属隧道列表");
         this.form.tunnel = response.rows[0].tunnelId;
         this.tunnelData = response.rows;
-        this.getIotBoard();
+        // this.getIotBoard();
         this.changeDirection();
       });
     },
@@ -489,12 +494,13 @@ export default {
     // 改变隧道
     changeTunnel(value) {
       this.checkedCities = [];
-      this.checkboxList = [];
+      // this.checkboxList = [];
       this.contentList = [];
       this.form.tunnel = value;
       this.getIotBoard();
     },
     getIotBoard() {
+      this.checkAll = false;
       let param = {
         eqDirection: this.form.eqDirection,
         tunnelId: this.form.tunnel,
@@ -504,10 +510,14 @@ export default {
         console.log(res, "查询情报板设备列表");
         console.log(this.checkAll,"checkAllcheckAllcheckAllcheckAll")
         this.iotBoardList = res.data;
-        this.checkAll = false;
-        this.iotBoardActive = res.data[0].devicePixel
-        this.handleChange(res.data[0].devicePixel)
-        let arr = ['0','1','2','3','4','5']
+
+        if(res.data.length>0){
+          this.iotBoardActive = res.data[0].devicePixel
+          this.handleChange(res.data[0].devicePixel)
+        }else{
+          this.getInfoMode()
+        }
+
         this.$forceUpdate();
       });
     },
@@ -601,7 +611,8 @@ export default {
         addTemplateContent(params2).catch((err) => {
           throw err;
         });
-        this.getActiveNames(item.category);
+        // this.getActiveNames(item.category);
+        this.allVmsTemplate()
       });
     },
     editOutline(item, index, type) {
@@ -714,11 +725,12 @@ export default {
       console.log(deviceld, "deviceld");
       uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
         console.log(response, "返回结果");
-        setTimeout(() => {
-          getBoardContent(this.checkboxList[0]).then((res) => {
-            console.log(res, "情报板内容查询");
-          });
-        }, 1000);
+        this.$modal.msgSuccess("发布成功");
+        // setTimeout(() => {
+        //   getBoardContent(deviceld).then((res) => {
+        //     console.log(res, "情报板内容查询");
+        //   });
+        // }, 1000);
       });
     },
 
@@ -761,7 +773,7 @@ export default {
     },
     handleCheckedCitiesChange(value) {
       
-      this.checkboxValue = value;
+      this.checkedCities = value;
       let val = JSON.parse(JSON.stringify(value));
       if(val.length>0){
         this.disabledCheckbox = false
@@ -781,28 +793,31 @@ export default {
       console.log(val,"情报板列表手风琴")
       this.contentList = [];
       this.deviceList = [];
-      this.checkboxList = [];
+      // this.checkboxList = [];
+      // this.checkboxValue = []
+      this.checkedCities = []
       this.checkAll = false
       this.form.devicePixel = val;
       this.allVmsTemplate();
       for (let item of this.iotBoardList) {
         if (item.devicePixel == val) {
-          this.checkboxList = item.list;
+          // this.checkboxList = item.list;
           for (let itm of item.list) {
             this.deviceList.push(itm.deviceId);
           }
         }
       }
-      let val2 = JSON.parse(JSON.stringify(this.checkboxValue));
-      if (val2.length>0) {
-        for (let itm of this.deviceList) {
-          if (val2.indexOf(itm) > -1) {
-            this.checkAll = true;
-          } else {
-            this.checkAll = false
-          }
-        }
-      }
+      console.log(this.deviceList,"this.deviceList")
+      // let val2 = JSON.parse(JSON.stringify(this.checkboxValue));
+      // if (val2.length>0) {
+      //   for (let itm of this.deviceList) {
+      //     if (val2.indexOf(itm) > -1) {
+      //       this.checkAll = true;
+      //     } else {
+      //       this.checkAll = false
+      //     }
+      //   }
+      // }
     },
     formatNum(num, length) {
       return (Array(length).join("0") + parseInt(num)).slice(-length);
@@ -816,10 +831,10 @@ export default {
       return "s";
     },
     getColorValue(color) {
-      if (color == "蓝色") return "000000255000";
-      if (color == "绿色") return "000255000000";
-      if (color == "透明色") return "t";
-      if (color == "红色") return "255000000000";
+      if (color == "蓝色" || color == 'blue') return "000000255000";
+      if (color == "绿色" || color == 'GreenYellow') return "000255000000";
+      if (color == "透明色" ) return "t";
+      if (color == "红色" || color == 'red') return "255000000000";
       return "255255000000"; //黄色
     },
 
@@ -863,8 +878,8 @@ export default {
           typeof protocolType == "undefined"
         ) {
           this.$message(response.msg);
-          this.getDeptList()
           this.$forceUpdate();
+          this.loading = false
           return;
         }
         this.supplier = protocolType;
@@ -887,16 +902,11 @@ export default {
         }
         // this.allVmsTemplate();
         console.log(this.contentList, "this.contentList");
+        // this.rowDrop()
         this.submitButton = false
         this.loading = false
 
         this.$forceUpdate();
-      }).catch((e)=>{
-        this.getDeptList()
-        this.$forceUpdate();
-        this.$message.error(`设备网络连接异常，请稍后重试...`);
-
-
       })
       getBoardInfo(deviceId).then((res) => {
         console.log(res, "getBoardInfo");
@@ -992,17 +1002,17 @@ export default {
         } else {
           // console.log(coordinate,"coordinate")
           if (type == "left") {
-            if (!screenSize) {
+            // if (!screenSize) {
               return coordinate / (height / 75) + 10 + "px";
-            } else {
-              return coordinate / (height / 75) + "px";
-            }
+            // } else {
+              // return coordinate / (height / 75) + "px";
+            // }
           } else if (type == "top") {
-            if (!screenSize) {
+            // if (!screenSize) {
               return coordinate / (height / 75) + 4 + "px";
-            } else {
-              return coordinate / (height / 75) + "px";
-            }
+            // } else {
+              // return coordinate / (height / 75) + "px";
+            // }
           }
         }
       }
@@ -1122,6 +1132,9 @@ export default {
             caret-color: rgba(0,0,0,0);
             user-select: none;
           }
+          i:hover{
+            color:#05afe3;
+          }
         }
       // }
       .controlBox {
@@ -1142,6 +1155,7 @@ export default {
         margin-bottom: 10px;
         padding: 0 20px;
         overflow: hidden;
+        display: flex;
 
         .templateTitle {
           height: 75px;
@@ -1170,6 +1184,9 @@ export default {
             caret-color: rgba(0,0,0,0);
             user-select: none;
           }
+          i:hover{
+            color:#05afe3;
+          }
           .disabledClass {
             pointer-events: none;
             cursor: auto !important;
@@ -1187,7 +1204,7 @@ export default {
         max-height: 69vh !important;
         overflow: auto;
         border-bottom: none;
-        border-top: solid 1px #05afe3;
+        border-top: none;
       }
     }
   }
@@ -1214,13 +1231,10 @@ export default {
   padding-top: 10px;
 }
 ::v-deep .el-table {
-  tr{
-    background: #004375 !important;
-    margin-top: 4px;
-  }
   thead{
     display: none;
   }
+ 
 }
 ::v-deep .vue-treeselect__control {
   height: 3vh;
@@ -1235,8 +1249,11 @@ export default {
   height: 19px;
   line-height: 20px;
   padding: 0;
-  color: #fff;
+  // color: #fff;
   font-size: 16px;
+}
+.huiduButton:hover{
+  color:#05afe3 !important;
 }
 .boardTextStyle{
   position: absolute;
@@ -1244,4 +1261,26 @@ export default {
   caret-color: rgba(0,0,0,0);
   user-select: none;
 }
+::v-deep .sortable-chosen:not(th) {
+
+background-color: rgba(5,175,227,0.1) !important;
+}
+
+// .el-table:before {
+
+// height: 0;
+
+// }
+
+// .el-table td {
+
+// border: none;
+
+// }
+
+// .el-table__body tr:hover > td {
+
+// background-color: transparent !important;
+
+// }
 </style>

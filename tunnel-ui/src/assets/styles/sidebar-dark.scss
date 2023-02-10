@@ -103,6 +103,18 @@
     // }
     .infoBoardBox{
       background: #fff;
+      .el-table__body-wrapper .el-table__cell{
+        border-left:none !important;
+      }
+      .el-table__cell{
+        height: 9vh !important;
+      }
+      .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
+        border-bottom:none;
+      }
+      .huiduButton{
+        color: #606266;
+      }
     }
     .el-select .el-input .el-select__caret{
       height: 33px;
@@ -823,6 +835,16 @@
    }
   /*单个设备配置框 */
   .workbench-dialog{
+    .mesModeBg{
+      background: #012e51;
+      .el-collapse-item__header {
+        background: #012e51;
+        color: #fff;
+      }
+      .el-collapse-item__wrap{
+        background: #012e51;
+      }
+    }
     .lineClass{
       width: 100%;
       height: 1px;

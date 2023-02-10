@@ -83,8 +83,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getCategoryList" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
-        select concat('ec_',ec.id) as id,ec.`name`,ec.parent_id as parentId from  sd_equipment_category ec where ec.is_control=1
+        select concat('ec_',ec.id) as id,ec.`name`,ec.parent_id as parentId
+        from sd_equipment_category ec
+        left join sd_equipment_type et on  ec.id=et.eq_category
+        left join sd_devices d on et.type_id=d.eq_type
+        where et.is_control=1
+        group by ec.id having count(d.eq_id)>0
+
         union
-        select et.type_id as id,et.type_name as name,concat('ec_',et.eq_category) as parentId from sd_equipment_type et where et.is_control=1
+
+        select et.type_id as id,et.type_name as name,concat('ec_',et.eq_category) as parentId
+        from sd_equipment_type et left join sd_devices d on et.type_id=d.eq_type
+        where et.is_control=1
+        group by et.type_id having count(d.eq_type)>0
     </select>
 </mapper>

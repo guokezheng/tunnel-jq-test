@@ -133,7 +133,7 @@
                     {{ stateForm.port }}
                   </el-form-item>
                 </el-col>
-                <el-col :span="8">
+                <!-- <el-col :span="8">
                   <el-form-item label="设备厂商:">
                     {{ stateForm.supplierName }}
                   </el-form-item>
@@ -142,7 +142,7 @@
                   <el-form-item label="型号:">
                     {{ stateForm.eqModel }}
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :span="8">
                   <el-form-item label="分辨率:">
                     {{ addForm.devicePixel }}
@@ -466,15 +466,15 @@ export default {
       ],
     };
   },
-  watch: {
-    'contentList[0].CONTENT':{
-      deep: true,
-        handler: function (newValue, oldValue) {
-          console.log(newValue,"newValuenewValuenewValue")
-          // this.dataForm.content1 = newValue;
-        },
-    }
-  },
+  // watch: {
+  //   'contentList[0].CONTENT':{
+  //     deep: true,
+  //       handler: function (newValue, oldValue) {
+  //         console.log(newValue,"newValuenewValuenewValue")
+  //         // this.dataForm.content1 = newValue;
+  //       },
+  //   }
+  // },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getmessage();
@@ -909,7 +909,8 @@ export default {
       this.$emit("dialogClose");
     },
     dialogClose1() {
-      this.getmessage()
+      // this.getmessage()
+      // console.log(this.contentList,"contentListcontentList")
       this.showEmit = false;
     },
   },

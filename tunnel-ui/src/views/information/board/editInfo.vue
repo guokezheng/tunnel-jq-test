@@ -516,9 +516,9 @@
         this.dialogVisible = true;
         this.itemPropertyMap = new HashMap();
 
-        this.dataForm = this.boardEmitItem
-        this.dataForm.CONTENT = this.boardEmitItem.CONTENT.replace('<br>','\n').replace(/ /g, ' ')
-        this.dataForm.STAY = Number(this.boardEmitItem.STAY)/100
+        this.dataForm = JSON.parse(JSON.stringify(this.boardEmitItem))
+        this.dataForm.CONTENT = JSON.parse(JSON.stringify(this.boardEmitItem.CONTENT.replace('<br>','\n').replace(/ /g, ' ')))
+        this.dataForm.STAY = JSON.parse(JSON.stringify(Number(this.boardEmitItem.STAY)/100))
         this.getFontSizeList()
       },
       getFontSizeList(){
@@ -528,11 +528,11 @@
         })
       },
       alignment(alignmentNum) {
-        console.log(alignmentNum,"alignmentNum");
+        // console.log(alignmentNum,"alignmentNum");
         var divContent = document.getElementsByClassName("blackBoard")
         var textBoard = document.getElementsByClassName("textBoard")
-        console.log(textBoard,"textBoard");
-        console.log(divContent,"divContent");
+        // console.log(textBoard,"textBoard");
+        // console.log(divContent,"divContent");
 
         // 获取文字长宽
         let textWidth = textBoard[0].offsetWidth;
@@ -540,9 +540,9 @@
         // 获取黑盒子长宽
         let divWidth = divContent[0].offsetWidth;
         let divHeight = divContent[0].offsetHeight;
-        console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
-        console.log(textBoard[0].style,"textBoard[0].style");
-        console.log(textWidth,divWidth,"999999999999999");
+        // console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
+        // console.log(textBoard[0].style,"textBoard[0].style");
+        // console.log(textWidth,divWidth,"999999999999999");
         switch (alignmentNum) {
           // 左对齐
           case 1:
@@ -589,7 +589,7 @@
         }
         var textLeft = this.addZero(textBoard[0].offsetLeft)
         var textTop = this.addZero(textBoard[0].offsetTop)
-        console.log(textBoard[0].offsetLeft,textBoard[0].offsetTop,"9999999999");
+        // console.log(textBoard[0].offsetLeft,textBoard[0].offsetTop,"9999999999");
         this.dataForm.COORDINATE = textLeft+textTop
         console.log(this.dataForm.COORDINATE,"this.dataForm.COORDINATE");
       },

@@ -551,9 +551,9 @@ export default {
       }
     },
 
-    getActiveNames(active) {
+    getActiveNames() {
       // console.log(active);
-      this.activeNames = active;
+      // this.activeNames = active;
       this.allVmsTemplate();
     },
     arrowLeft(item) {

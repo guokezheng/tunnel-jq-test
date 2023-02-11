@@ -9,14 +9,6 @@
     >
       <el-card class="box-card" style="margin-top: 2vh">
         <div
-          style="
-            backgroundColor: #000000;
-            display: flex;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
-
-          "
           v-on:ondragenter="ondragenter"
           v-on:drop="faceDrop"
           v-on:dragover="allowDrop"
@@ -764,9 +756,11 @@ export default {
       if (this.isAdd) {
         console.log(this.dataForm, "this.dataForm新增组件");
         console.log(this.devicePixelBoolean, "this.devicePixelBoolean");
-        if (this.devicePixelBoolean) {
+        if (this.infoType != 2) {
+          // 不走接口 存到待下发信息里
           this.$emit("addInfo", this.dataForm);
         } else {
+          // 走接口 存到信息模板里
           const params1 = {
             applyType: "",
             category: this.dataForm.category,
@@ -799,8 +793,9 @@ export default {
               templateId: data,
             };
             addTemplateContent(params2).then((res)=>{
+              console.log("-----------------------")
               if(res.code == 200){
-                this.$emit("getActiveNames", this.dataForm.category);
+                this.$emit("getActiveNames");
               }
             }).catch((err) => {
               throw err;
@@ -1029,5 +1024,15 @@ export default {
   line-height: 1;
   caret-color: rgba(0,0,0,0);
   user-select: none;
+
+}
+.blackBoard{
+  background: #000000;
+  display: flex;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  // justify-content: center;
+  // align-items: center;
 }
 </style>

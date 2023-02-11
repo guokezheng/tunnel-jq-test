@@ -11,15 +11,15 @@
           v-hasPermi="['system:devices:add']"
         >新增
         </el-button>
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['system:devices:edit']"-->
-<!--        >修改-->
-<!--        </el-button>-->
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:devices:edit']"
+        >修改
+        </el-button>
         <el-button
           type="primary"
           plain

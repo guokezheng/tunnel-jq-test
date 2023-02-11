@@ -18,7 +18,7 @@
         <el-col :span="6"  style ="width: 100%;">
           <div class="grid-content bg-purple">
             <el-input
-              placeholder="请输入机构、负责人"
+              placeholder="请输入机构、负责人，回车搜索"
               v-model="queryParams.deptName"
               @keyup.enter.native="handleQuery"
             >

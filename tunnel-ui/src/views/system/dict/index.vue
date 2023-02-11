@@ -12,6 +12,13 @@
           @click="handleAdd()"
         >新增字典
         </el-button>
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          @click="handleRefreshCache"
+          v-hasPermi="['system:dict:remove']"
+        >刷新缓存</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple">

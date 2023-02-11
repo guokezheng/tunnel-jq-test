@@ -16,7 +16,7 @@
           <div class="grid-content bg-purple">
             <el-input
               v-model="queryParam.userName"
-              placeholder="请输入登录地址、用户名称"
+              placeholder="请输入登录地址、用户名称，回车搜索"
               clearable
               style="width: 456px;"
               size="small"
@@ -152,7 +152,7 @@
           <el-col >
             <div class="grid-content bg-purple">
               <el-input
-                placeholder="请输入ip地址，回车搜索"
+                placeholder="请输入操作地址，回车搜索"
                 v-model="queryParams.operIp"
                 style="width: 456px"
                 @keyup.enter.native="handleQuery"
@@ -244,7 +244,12 @@
             :default-sort="{prop: 'loginTime', order: 'descending'}" @sort-change="handleSortChange" class="tableHeight"  >
       <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
-      <el-table-column label="序号" align="center" prop="infoId" display="none"/>
+<!--      <el-table-column label="序号" align="center" prop="index"  />-->
+      <el-table-column label="序号"  align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
       <el-table-column label="用户名称" align="center" prop="userName" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" />
       <el-table-column label="登录地址" align="center" prop="ipaddr" width="130" :show-overflow-tooltip="true" />
       <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
@@ -264,8 +269,13 @@
 
       <el-table v-loading="loading" :data="logList" class="tableHeight"  :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" v-show="searchValue == '2'" >
-      <el-table-column label="序号" align="center" prop="id" display="none"/>
-
+        <el-table-column type="selection" width="55" align="center" />
+<!--      <el-table-column label="序号" align="center" prop="id" display="none"/>-->
+      <el-table-column label="序号"  align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
       <el-table-column
         label="隧道名称"
         align="center"

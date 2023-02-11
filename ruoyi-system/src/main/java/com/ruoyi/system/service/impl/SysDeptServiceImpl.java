@@ -401,6 +401,11 @@ public class SysDeptServiceImpl implements ISysDeptService
         return deptMapper.selectTunnelDeptList(deptId);
     }
 
+    @Override
+    public List<SysDept> selectTunnelDeptListBydw(String deptId, String ssdw) {
+        return deptMapper.selectTunnelDeptListBydw(deptId,ssdw);
+    }
+
     private void childrenDeptUser(List<SysDeptUserTreeVO> list) {
         for (SysDeptUserTreeVO sysDeptUserTreeVO : list) {
             if(sysDeptUserTreeVO.getIsUser() != 1) {

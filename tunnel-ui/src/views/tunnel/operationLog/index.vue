@@ -87,8 +87,12 @@
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
     >
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <el-table-column label="序号" align="center" prop="id" display:"none"/>
+       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号" width="100px" align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
 
       <el-table-column
         label="隧道名称"
@@ -101,8 +105,8 @@
         prop="typeName.typeName"
       />
       <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
-      <el-table-column label="识别码" align="center" prop="code" display:"none" />
-      <el-table-column label="操作前状态" align="center" prop="beforeState" display:"none" />
+<!--      <el-table-column label="识别码" align="center" prop="code" display:"none" />
+      <el-table-column label="操作前状态" align="center" prop="beforeState" display:"none" />-->
       <el-table-column
         label="操作状态"
         align="center"
@@ -115,7 +119,7 @@
       </el-table-column>
       <el-table-column label="操作结果" align="center" prop="state" :formatter="stateFormat"/>
 
-      <el-table-column label="描述" align="center" prop="description" display:"none" />
+<!--      <el-table-column label="描述" align="center" prop="description" display:"none" />-->
 
       <el-table-column label="操作地址" align="center" prop="operIp" />
 

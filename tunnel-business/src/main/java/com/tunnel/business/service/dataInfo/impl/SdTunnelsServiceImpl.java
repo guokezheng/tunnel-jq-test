@@ -192,4 +192,14 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
     public List<SdTunnels> selectAllSdTunnelsList1() {
         return sdTunnelsMapper.selectAllSdTunnelsList1();
     }
+
+    /**
+     * 查询隧道所属部门
+     * @param tunnelId
+     * @return
+     */
+    @Override
+    public String selectTunnelDept(String tunnelId) {
+        return sdTunnelsMapper.selectTunnelDept(tunnelId);
+    }
 }

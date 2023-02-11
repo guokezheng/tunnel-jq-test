@@ -163,4 +163,12 @@ public interface ISysDeptService
      * @return
      */
     List<SysDept> selectTunnelDeptList(String deptId);
+
+    /**
+     * 查询单位
+     * @param deptId
+     * @param ssdw
+     * @return
+     */
+    List<SysDept> selectTunnelDeptListBydw(String deptId, String ssdw);
 }

@@ -281,6 +281,11 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号"  align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
       <!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
       <el-table-column label="物资名称" align="center" prop="materialName" />
       <el-table-column

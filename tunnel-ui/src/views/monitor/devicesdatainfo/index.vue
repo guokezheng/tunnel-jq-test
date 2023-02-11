@@ -76,15 +76,14 @@
         >
       </el-form-item>
     </el-form>-->
-
-
+  <div ref="main" style = "margin-left: 75%">
     <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" style="width: 100%;">
         <div class="grid-content bg-purple">
           <el-input
-            placeholder="请输入桩号"
+            placeholder="请输入桩号，回车搜索"
             v-model="queryParams.pile"
-            style="width: 456px;margin-left: 69%;"
+            style="width: 456px;"
             @keyup.enter.native="handleQuery"
           >
             <el-button
@@ -171,7 +170,7 @@
         </el-form-item>
       </el-form>
     </div>
-
+  </div>
 
 
 
@@ -207,11 +206,12 @@
         v-show="searchValue == '1'"
         class="tableHeight"
       >
-        <!--      <el-table-column type="selection" width="55" align="center" />-->
+              <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
-        <el-table-column label="设备编码" align="center" prop="eqId" />
+<!--        <el-table-column label="设备编码" align="center" prop="eqId" />-->
         <el-table-column label="设备名称" align="center" prop="eqName" />
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
         <el-table-column label="CO(ppm)" align="center" prop="CO" />
@@ -227,7 +227,7 @@
         :row-class-name="tableRowClassName"
         v-show="searchValue == '2'"
       >
-        <!--      <el-table-column type="selection" width="55" align="center" />-->
+        <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
@@ -258,7 +258,7 @@
         v-show="searchValue == '3'"
         class="tableHeight"
       >
-        <!--      <el-table-column type="selection" width="55" align="center" />-->
+        <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
@@ -277,7 +277,7 @@
         v-show="searchValue == '4'"
         class="tableHeight"
       >
-        <!--      <el-table-column type="selection" width="55" align="center" />-->
+        <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
@@ -391,10 +391,22 @@ export default {
       this.operationStateOptions = response.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
   mounted() {
     this.watchSize();
+    document.addEventListener("click", this.bodyCloseMenus);
   },
+
   methods: {
+
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.sj_boxShow == true){
+          self.sj_boxShow = false;
+        }
+      }
+    },
     getTreeselect() {
       treeselectExcYG1().then((response) => {
         this.deptOptions = response.data;
@@ -600,6 +612,8 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForms");
+      this.queryParams.pile = "";
+      this.queryParams.deptId = null;
       this.handleQuery();
     },
     /** 多选框选中数据 */

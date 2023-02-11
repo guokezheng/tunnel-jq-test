@@ -45,13 +45,12 @@
 
 
         <el-form-item label="车型"  prop="vType" style="width: 100%">
-<!--          <el-checkbox-group v-model="queryParams.vType">&ndash;&gt;-->
+
             <el-checkbox
               v-for="dict in vehicleTypeList"
               :key="dict.dictValue"
               :label="dict.dictValue"
             >{{dict.dictLabel}}</el-checkbox>
-<!--          </el-checkbox-group>-->
         </el-form-item>
 
 <!--        <el-form-item label="车型" prop="vType" style="width: 100%">
@@ -240,6 +239,12 @@
       :row-class-name="tableRowClassName"
       class="tableClass"
     >
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号"  align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
       <el-table-column label="机构" align="center" prop="orgName" />
       <el-table-column label="车牌" align="center" prop="plateNumber" />
       <el-table-column label="车型" align="center" prop="vType"/>
@@ -504,6 +509,7 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.$refs.queryForm.resetFields();
+      //this.queryParams.vType=null;
       this.queryParams = {
         pageNum: 1,
         pageSize: 10,

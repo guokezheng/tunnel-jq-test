@@ -3,14 +3,18 @@ package com.tunnel.business.service.dataInfo.impl;
 import com.ruoyi.common.core.domain.SdEquipmentCategoryDto;
 import com.ruoyi.common.core.domain.TreeCategorySelect;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.domain.dataInfo.SdEquipmentCategory;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentCategoryMapper;
 import com.tunnel.business.service.dataInfo.ISdEquipmentCategoryService;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class SdEquipmentCategoryServiceImpl implements ISdEquipmentCategoryService {
+    @Autowired
+    private ISdTunnelsService sdTunnelsService;
     @Autowired
     private SdEquipmentCategoryMapper sdEquipmentCategoryMapper;
 
@@ -101,7 +107,14 @@ public class SdEquipmentCategoryServiceImpl implements ISdEquipmentCategoryServi
 
     @Override
     public List<SdEquipmentCategoryDto> getCategoryList() {
-        return sdEquipmentCategoryMapper.getCategoryList();
+        String deptId = SecurityUtils.getDeptId();
+        List<SdTunnels> sdTunnels = sdTunnelsService.selectTunnelsList(deptId);
+        List<String> tunnelIds = sdTunnels.stream().map(tunnel -> tunnel.getTunnelId()).collect(Collectors.toList());
+
+        //Map参数，根据需要可添加其他参数
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("tunnelIds",tunnelIds);
+        return sdEquipmentCategoryMapper.getCategoryList(paramMap);
     }
 
     /**
@@ -134,7 +147,7 @@ public class SdEquipmentCategoryServiceImpl implements ISdEquipmentCategoryServi
         return returnList;
     }
 
-    
+
     @Override
     public List<TreeCategorySelect> buildCategoryTreeSelect(List<SdEquipmentCategoryDto> CategoryDtoList) {
         List<SdEquipmentCategoryDto> categoryList = buildCategoryTree(CategoryDtoList);

@@ -11,15 +11,15 @@
           v-hasPermi="['device:brand:add']"
           >新增</el-button
         >
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['device:brand:edit']"-->
-<!--          >修改</el-button-->
-<!--        >-->
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['device:brand:edit']"
+          >修改</el-button
+        >
         <el-button
           type="primary"
           plain
@@ -58,7 +58,15 @@
       class="allTable tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="设备厂商编号" align="center" prop="supplierId" />
+
+      <el-table-column label="序号" type="index" align="center" :index="indexMethod">
+        <!--<template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>-->
+      </el-table-column>
+
+
+      <!--<el-table-column label="设备厂商编号" align="center" prop="supplierId" />-->
       <el-table-column
         label="设备厂商名称"
         align="center"
@@ -180,6 +188,10 @@ export default {
     this.getList();
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     /** 查询物联设备厂商列表 */
     getList() {
       this.loading = true;

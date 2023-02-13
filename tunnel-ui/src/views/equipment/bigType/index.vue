@@ -64,7 +64,8 @@
 
     <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="类型ID" align="center" prop="id" />
+      <el-table-column label="序号" type="index" align="center" :index="indexMethod"></el-table-column>
+      <!--<el-table-column label="类型ID" align="center" prop="id" />-->
       <el-table-column label="类型名称" align="center" prop="name" />
       <el-table-column label="是否可控" align="center" prop="isControl">
         <template slot-scope="scope">
@@ -176,6 +177,10 @@ export default {
     this.getList();
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     /** 查询设备类型列表 */
     getList() {
       this.loading = true;

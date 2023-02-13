@@ -4,6 +4,7 @@ import com.ruoyi.common.core.domain.SdEquipmentCategoryDto;
 import com.tunnel.business.domain.dataInfo.SdEquipmentCategory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备类型Mapper接口
@@ -63,6 +64,6 @@ public interface SdEquipmentCategoryMapper
 
     List<SdEquipmentCategoryDto> getCategoryDeviceList(String tunnelId);
 
-    List<SdEquipmentCategoryDto> getCategoryList();
+    List<SdEquipmentCategoryDto> getCategoryList(Map<String,Object> paramMap);
 
 }

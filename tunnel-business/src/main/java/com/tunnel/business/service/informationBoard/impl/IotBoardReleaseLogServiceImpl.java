@@ -62,6 +62,9 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
                 continue;
             }
             String[] items = releaseNewContent.split("ITEM");
+            if (items.length == 0) {
+                break;
+            }
             JSONObject jsonObject = new JSONObject();
             JSONArray array = new JSONArray();
             for (int j = 0;j < items.length;j++) {

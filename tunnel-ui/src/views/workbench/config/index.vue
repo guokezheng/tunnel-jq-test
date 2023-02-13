@@ -4757,6 +4757,7 @@ export default {
       };
       batchControlDevice(param).then((res) => {
         console.log(res, "000000000000000");
+        this.$modal.msgSuccess("控制成功");
         this.batchManageDialog = false;
         this.closeBatchManageDialog();
       });
@@ -5272,6 +5273,7 @@ export default {
       const params = { status: 0 };
       getTreeByDeptId(params)
         .then((response) => {
+          console.log(response,"级联")
           const options = response.data;
           let childs = [];
           function a(list) {
@@ -10460,7 +10462,7 @@ input {
 }
 @keyframes boardBox1 {
   from {
-    transform: translateY(100%); /*div多宽就写多宽*/
+    transform: translateY(72px); /*div多宽就写多宽*/
   }
 
   to {

@@ -593,7 +593,7 @@ export default {
     // 接收子组件form表单 修改
     receiveForm(form) {
      console.log(form,"接收子组件form表单 修改")
-      this.contentList[this.index_] = form;
+     this.contentList.splice(this.index_,1,form);
       this.$forceUpdate();
       console.log(this.contentList, "this.contentList");
 

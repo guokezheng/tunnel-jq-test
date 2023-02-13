@@ -16,7 +16,7 @@
       </el-col>
     </div>
     <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-row :gutter="20" style="margin: 10px 0 0px">
 
         <el-col :span="6" style="width: 100%;">
           <div class="grid-content bg-purple">

@@ -72,9 +72,11 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button>
+          >搜索</el-button
+          >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button>
+          >重置</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
@@ -167,8 +169,11 @@
       <el-table-column label="隧道地址" align="center" prop="tunnelAddress" />
       <el-table-column label="经度" align="center" prop="longitude" />
       <el-table-column label="纬度" align="center" prop="latitude" />
-      <!-- <el-table-column label="隧道所ID" align="center" prop="tunnelStationId" />
-      <el-table-column label="隧道所名称" align="center" prop="tunnelStationName" /> -->
+      <el-table-column label="路段ID" align="center" prop="roadId" />
+      <el-table-column label="创建者" align="center" prop="createBy" />
+      <el-table-column label="创建时间" align="center" prop="createTime" />
+      <el-table-column label="修改者" align="center" prop="updateBy" />
+      <el-table-column label="修改时间" align="center" prop="updateTime" />
       <el-table-column label="车道数量" align="center" prop="lane" width="80" />
       <el-table-column
         label="隧道长度(米)"
@@ -857,6 +862,7 @@ export default {
           this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
         }
       listTunnels1(this.queryParams).then((response) => {
+        console.log(response,"隧道管理列表")
         this.tunnelsList = response.rows;
         this.total = response.total;
         this.loading = false;

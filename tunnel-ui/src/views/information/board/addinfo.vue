@@ -27,6 +27,7 @@
               left: dataForm.COORDINATE.substring(0, 3) + 'px',
               top: dataForm.COORDINATE.substring(3, 6) + 'px',
             }"
+            style="position: absolute;"
             class="textBoard boardTextStyle"
             v-html="
               dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
@@ -166,7 +167,7 @@
           <!-- 选择图片弹出框结束 -->
           <el-row :gutter="24">
             <el-col :span="24">
-              <el-form-item label="详细内容">
+              <el-form-item label="详细内容" prop="CONTENT">
                 <el-input
                   type="textarea"
                   clearable
@@ -380,24 +381,24 @@ export default {
       previewContent: "", //预览内容
       ispreviewContent: -1,
       dataForm: {
-        id: "",
-        category: "",
-        inScreenMode: "1", //入屏方式
-        rollSpeed: "1000",
-        stopTime: "500",
-        applyType: "", //适用类型
-        vmsType: "", //情报板类型
-        remark: "", //备注
-        imgSizeFrom: "", //尺寸大小
-        imageUrl: "",
-        height: "",
-        width: "",
-        coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
-        screenSize: "",
-        COORDINATE: "",
-        FONT_SIZE: "",
-        CONTENT: "山东高速欢迎你",
-        COLOR:'yellow',
+        // id: "",
+        // category: "",
+        // inScreenMode: "1", //入屏方式
+        // rollSpeed: "1000",
+        // stopTime: "500",
+        // applyType: "", //适用类型
+        // vmsType: "", //情报板类型
+        // remark: "", //备注
+        // imgSizeFrom: "", //尺寸大小
+        // imageUrl: "",
+        // height: "",
+        // width: "",
+        // coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
+        // screenSize: "",
+        // COORDINATE: "",
+        // FONT_SIZE: "",
+        // CONTENT: "山东高速欢迎你",
+        // COLOR:'yellow',
       },
       templateContent: [],
       templateDelContent: [],
@@ -406,6 +407,13 @@ export default {
           {
             required: true,
             message: "请选择分辨率",
+            trigger: "blur",
+          },
+        ],
+        CONTENT:[
+          {
+            required: true,
+            message: "请输入详细内容",
             trigger: "blur",
           },
         ],
@@ -609,6 +617,8 @@ export default {
   },
   methods: {
     init(devicePixel, type,mode) {
+      console.log(devicePixel, type,mode,"00000000000000000000")
+      console.log(this.dataForm,"(this.dataForm(this.dataForm(this.dataForm")
       if (devicePixel) {
         this.devicePixelBoolean = true;
 
@@ -634,6 +644,7 @@ export default {
       this.templateDelContent = [];
       this.$nextTick(() => {
         if (this.isAdd) {
+          console.log("-----------------------")
           this.$refs["dataForm"] && this.$refs["dataForm"].resetFields();
           this.dataForm.id = "";
           this.dataForm = {};
@@ -641,7 +652,7 @@ export default {
           this.height = "40";
           this.dataForm = {
             CONTENT: "请输入内容",
-            COLOR: "黄色",
+            COLOR: "yellow",
             FONT_SIZE: "24px",
             FONT: "黑体",
             SPEED: "1",
@@ -873,7 +884,7 @@ export default {
           divContent[0].style.justifyContent = 'left'
           divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'left'
-          textBoard[0].style.position = 'static'
+          textBoard[0].style.position = 'static !important'
 
           break;
           // 左右居中
@@ -881,7 +892,7 @@ export default {
           divContent[0].style.justifyContent = 'center'
           divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'center'
-          textBoard[0].style.position = 'static'
+          textBoard[0].style.position = 'static !important'
 
           break;
           // 右对齐
@@ -889,7 +900,7 @@ export default {
           divContent[0].style.justifyContent = 'right'
           divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'right'
-          textBoard[0].style.position = 'static'
+          textBoard[0].style.position = 'static !important'
 
           break;
           // 上对齐
@@ -1020,11 +1031,14 @@ export default {
   justify-content: left;
 }
 .boardTextStyle{
-  position: absolute;
+  // position: absolute;
   line-height: 1;
   caret-color: rgba(0,0,0,0);
   user-select: none;
 
+}
+.textBoard{
+  position: absolute;
 }
 .blackBoard{
   background: #000000;

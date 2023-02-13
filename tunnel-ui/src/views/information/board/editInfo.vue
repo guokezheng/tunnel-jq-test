@@ -86,7 +86,7 @@
               :gutter="24"
             >
               <el-col :span="24">
-                <el-form-item label="详细内容">
+                <el-form-item label="详细内容" prop="CONTENT">
                   <el-input
                     type="textarea"
                     clearable
@@ -407,6 +407,13 @@
       dataRule() {
         return {
           itemPropertyMap:null,
+          CONTENT:[
+            {
+              required: true,
+              message: "请输入详细内容",
+              trigger: "blur",
+            },
+          ],
           fontColor: [
             {
               required: true,
@@ -531,8 +538,8 @@
         // console.log(alignmentNum,"alignmentNum");
         var divContent = document.getElementsByClassName("blackBoard")
         var textBoard = document.getElementsByClassName("textBoard")
-        // console.log(textBoard,"textBoard");
-        // console.log(divContent,"divContent");
+        console.log(textBoard,"textBoard");
+        console.log(divContent,"divContent");
 
         // 获取文字长宽
         let textWidth = textBoard[0].offsetWidth;
@@ -541,12 +548,12 @@
         let divWidth = divContent[0].offsetWidth;
         let divHeight = divContent[0].offsetHeight;
         // console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
-        // console.log(textBoard[0].style,"textBoard[0].style");
+        console.log(textBoard[0].style,"textBoard[0].style");
         // console.log(textWidth,divWidth,"999999999999999");
         switch (alignmentNum) {
           // 左对齐
           case 1:
-            textBoard[0].style.position = 'static'
+            textBoard[0].style.position = 'static !important'
             divContent[0].style.justifyContent = 'left'
             divContent[0].style.alignItems = 'center'
             textBoard[0].style.textAlign = 'left'
@@ -554,10 +561,10 @@
             break;
             // 左右居中
           case 2:
+            textBoard[0].style.position = 'static !important'
             divContent[0].style.justifyContent = 'center'
             divContent[0].style.alignItems = 'center'
             textBoard[0].style.textAlign = 'center'
-            textBoard[0].style.position = 'static'
 
             break;
             // 右对齐
@@ -565,7 +572,7 @@
             divContent[0].style.justifyContent = 'right'
             divContent[0].style.alignItems = 'center'
             textBoard[0].style.textAlign = 'right'
-            textBoard[0].style.position = 'static'
+            textBoard[0].style.position = 'static !important'
 
             break;
             // 上对齐

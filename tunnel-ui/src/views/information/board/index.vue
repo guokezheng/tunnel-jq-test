@@ -49,7 +49,6 @@
               <el-col :span="12" style="padding-left: 5px">
                 <el-select
                   v-model="form.eqDirection"
-                  clearable
                   size="small"
                   placeholder="请选择方向"
                 >
@@ -432,6 +431,7 @@ export default {
       var userDeptId = this.userDeptId;
       const params = { status: 0 };
       getTreeByDeptId(params).then((response) => {
+        console.log(response,"级联")
         const options = response.data;
         let childs = [];
         function a(list) {
@@ -450,10 +450,11 @@ export default {
         } else {
             this.siteList = childs;
         }
-        this.checkData(childs[0]);
+        this.checkData(this.siteList[0]);
       });
     },
     checkData(obj) {
+      console.log(obj,"obj")
       if (obj.children && obj.children.length > 0) {
         this.checkData(obj.children[0]);
       } else {
@@ -746,10 +747,11 @@ export default {
     // 接收子组件form表单 修改
     receiveForm(form) {
       console.log(form, "接收子组件form表单 修改");
-      this.contentList[this.index_] = form;
+      this.contentList.splice(this.index_,1,form);
+      this.$forceUpdate();
+
       console.log(this.contentList, "99999999999");
       this.allVmsTemplate();
-      this.$forceUpdate();
     },
 
     // 打开添加信息弹窗
@@ -795,6 +797,8 @@ export default {
       this.deviceList = [];
       // this.checkboxList = [];
       // this.checkboxValue = []
+      this.disabledButton = true;
+      this.disabledCheckbox = true
       this.checkedCities = []
       this.checkAll = false
       this.form.devicePixel = val;

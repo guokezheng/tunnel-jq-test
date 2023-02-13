@@ -335,7 +335,7 @@
 
       }
       .el-table{
-        background: #012E51 ;
+        background: #00152B ;
         
       }
       .el-table--group, .el-table--border{
@@ -814,6 +814,9 @@
     }
     .tableOddRow{
       background: #00487F;
+    }
+    .hover-row{
+      background: #326CA9;
     }
     // 系统监控-服务监控页面 不规则表格
     .othertableRowClass{

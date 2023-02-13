@@ -66,6 +66,18 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     @ApiModelProperty("设备名称")
     private String eqName;
 
+
+    @ApiModelProperty("隧道名称")
+    private String tunnel;
+
+    public String getTunnel() {
+        return this.tunnel;
+    }
+
+    public void setTunnel(final String tunnel) {
+        this.tunnel = tunnel;
+    }
+
     /**
      * 设备类型
      */

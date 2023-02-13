@@ -33,3 +33,11 @@ export function exportLogininfor(query) {
     params: query
   })
 }
+
+// 查询隧道设备树
+export function getDeviceTreeselect() {
+  return request({
+    url: '/monitor/logininfor/getDeviceTreeselect',
+    method: 'get'
+  })
+}

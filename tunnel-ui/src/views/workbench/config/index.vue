@@ -1197,13 +1197,14 @@
       <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;margin-top: 5%">
         <el-row :gutter="20" style="margin: 10px 0 25px">
 
-          <el-col :span="6"  >
+          <el-col :span="12"  >
             <div class="grid-content bg-purple">
               <el-input
                 placeholder="请输入登录地址、用户名称，回车搜索"
                 v-model="operationParam.ipaddr"
                 @keyup.enter.native="handleQueryOperationParam"
                 v-show="operationActive == 'xitong'"
+                class="zj"
               >
                 <el-button
                   slot="append"
@@ -1307,7 +1308,6 @@
               <el-input
                 placeholder="请输入操作地址，回车搜索"
                 v-model="operationParam.operIp"
-                style="width: 14.4vw !important"
                 @keyup.enter.native="handleQueryOperationParam"
                 v-show="operationActive == 'caozuo'"
               >
@@ -10545,4 +10545,21 @@ input {
     width: 100%;
   }
 }
+</style>
+<style lang="scss" scoped>
+.zj {
+  ::v-deep input {
+    width: 16.5vw !important;
+  }
+
+  ::v-deep .el-input-group__append {
+    padding: 0;
+  }
+
+  ::v-deep button {
+    margin: 0 !important;
+    border-radius: 0px !important;
+  }
+}
+
 </style>

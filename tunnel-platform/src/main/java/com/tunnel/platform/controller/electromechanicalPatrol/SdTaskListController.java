@@ -587,4 +587,16 @@ public class SdTaskListController extends BaseController
     }
 
 
+    /**
+     * 根据所选隧道查询班组
+     * @param tunnelId
+     * @return
+     */
+    @PostMapping("/selectBzByTunnel")
+    public Result selectBzByTunnel(@RequestBody String tunnelId){
+        String bz = sdTaskListService.selectBzByTunnel(tunnelId);
+        return Result.success(bz);
+    }
+
+
 }

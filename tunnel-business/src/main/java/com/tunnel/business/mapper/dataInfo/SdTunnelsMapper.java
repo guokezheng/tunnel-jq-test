@@ -128,4 +128,6 @@ public interface SdTunnelsMapper
      * @return
      */
     String selectTunnelDept(@Param("tunnelId") String tunnelId);
+
+    List<SdTunnels> selectTunnelLineList(String deptId);
 }

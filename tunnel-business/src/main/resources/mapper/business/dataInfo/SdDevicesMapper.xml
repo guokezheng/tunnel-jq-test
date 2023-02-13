@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="lat"    column="lat"    />
         <result property="lng"    column="lng"    />
         <result property="ip"    column="ip"    />
+        <result property="tunnel"    column="tunnel"    />
         <result property="port"    column="port"    />
         <result property="secureKey"    column="secure_key"    />
         <result property="eqUser"    column="eq_user"    />
@@ -951,6 +952,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where associated_device_id = #{deviceId}
     </select>
 
+
+    <select id="selectDevicesLineList" resultMap="SdDevicesResult">
+        select s.tunnel_name tunnel,k.* from sd_devices k
+        left join sd_tunnels s on k.eq_tunnel_id = s.tunnel_id where k.eq_type = '19' and k.eq_tunnel_id in (
+            select tunnel_id from sd_tunnels where dept_id in (select t.dept_id from sys_dept t
+            where 1=1  AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) )))
+        )
+    </select>
 
 
 </mapper>

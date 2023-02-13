@@ -867,4 +867,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public SdDevices getDeviceByAssociationDeviceId(Long deviceId) {
         return sdDevicesMapper.getDeviceByAssociationDeviceId(deviceId);
     }
+
+    @Override
+    public List<SdDevices> selectDevicesLineList(String deptId) {
+        return sdDevicesMapper.selectDevicesLineList(deptId);
+    }
 }

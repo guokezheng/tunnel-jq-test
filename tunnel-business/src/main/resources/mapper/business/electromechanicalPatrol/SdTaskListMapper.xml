@@ -254,4 +254,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 
+    <select id="selectBzByTunnel" parameterType="String" resultType="String">
+        select manager_id from sd_tunnels where tunnel_id = #{tunnelId}
+    </select>
+
 </mapper>

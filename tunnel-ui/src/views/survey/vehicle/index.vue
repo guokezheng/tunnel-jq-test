@@ -50,6 +50,7 @@
               v-for="dict in vehicleTypeList"
               :key="dict.dictValue"
               :label="dict.dictValue"
+              v-model="result"
             >{{dict.dictLabel}}</el-checkbox>
         </el-form-item>
 
@@ -418,7 +419,7 @@ export default {
     };
 
     return {
-      testModel: ['复选框 A'],
+      testModel: [],
       tunnelData: [{ tunnelName: 1, tunnelId: 2 }],
       exportLoading: false,
       vehicleTypeList:[],
@@ -437,6 +438,7 @@ export default {
       model:false,
       updateModel:true,
       disabled:true,
+      result:[],//获取选中后的checkbox的数组值
       upDisabled:false,
       queryParams: {
         pageNum: 1,
@@ -502,14 +504,17 @@ export default {
     handleQuery() {
       console.log(this.queryParams, "useStatususeStatus");
       // this.queryParams.pageNum = 1;
-
+      this.queryParams.vType = this.result
+      console.log(this.queryParams.vType)
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
       this.$refs.queryForm.resetFields();
-      //this.queryParams.vType=null;
+      this.queryParams.vType=[];
+      this.result=[];
+      console.log("ssss"+this.queryParams.vType)
       this.queryParams = {
         pageNum: 1,
         pageSize: 10,

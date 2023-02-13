@@ -185,6 +185,13 @@ public class SdDeviceDataController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping("/dataLogInfoLineList")
+    public TableDataInfo dataLogInfoLineList(SdDeviceData sdDeviceData)
+    {
+        List<Map<String, String>> list = sdDeviceDataService.dataLogInfoList(sdDeviceData);
+        return getDataTable(list);
+    }
+
     @GetMapping(value = "/energyConsumptionDetection/{tunnelId}")
     public AjaxResult energyConsumptionDetection(@PathVariable("tunnelId") String tunnelId)
     {

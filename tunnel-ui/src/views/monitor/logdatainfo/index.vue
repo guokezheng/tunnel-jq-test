@@ -8,6 +8,19 @@
     <el-form :model="queryParam" ref="queryForm" :inline="true" v-show="searchValue == '1'"
              label-width="68px" style="margin-top: 10px">
       <!-- 全局搜索 -->
+      <div>
+        <el-col :span="4">
+          <el-button style ="margin: 10px 0px 25px;height: 35px;margin-top:-5px;"
+                     v-hasPermi="['system:list:add']"
+                     size="mini"
+                     type="primary"
+                     :loading="exportLoading"
+                     plain
+                     @click="handleExport"
+          >导出
+          </el-button>
+        </el-col>
+      </div>
 
       <div ref="main" style = "margin-left: 75%;">
       <el-row :gutter="20" style="margin: 10px 0 25px;">
@@ -83,13 +96,7 @@
             <el-button size="small" @click="resetQuery" type="primary" plain
             >重置</el-button
             >
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :loading="exportLoading"
-              @click="handleExport"
-            >导出</el-button>
+
           </el-form-item>
         </el-form>
       </div>
@@ -540,7 +547,8 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      const queryParams = this.queryParams;
+      const queryParams = this.queryParam;
+      console.log("queryParams========="+queryParams);
       this.$modal.confirm('是否确认导出所有操作日志数据项？').then(() => {
         this.exportLoading = true;
         return exportLogininfor(queryParams);

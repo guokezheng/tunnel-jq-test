@@ -120,4 +120,11 @@ public interface ISdTunnelsService {
      * @return
      */
     String selectTunnelDept(String tunnelId);
+
+    /**
+     * 查询数据报表折线图设备树
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> selectTunnelLineList(String deptId);
 }

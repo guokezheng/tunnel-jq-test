@@ -292,4 +292,5 @@ public interface SdDevicesMapper
 	SdDevices getDeviceByAssociationDeviceId(@Param("deviceId") Long deviceId);
 
 
+    List<SdDevices> selectDevicesLineList(String deptId);
 }

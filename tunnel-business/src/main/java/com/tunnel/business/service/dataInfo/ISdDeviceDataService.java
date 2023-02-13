@@ -89,4 +89,5 @@ public interface ISdDeviceDataService {
      * @return
      */
     AjaxResult getFanSafeData(String deviceId);
+
 }

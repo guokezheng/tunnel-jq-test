@@ -21,7 +21,7 @@
         <el-col :span="6" style="width: 100%;">
           <div class="grid-content bg-purple">
             <el-input
-              placeholder="请输入所属单位"
+              placeholder="请输入所属单位，回车搜索"
               v-model="queryParams.zzjgId"
               @keyup.enter.native="handleQuery"
             >
@@ -163,7 +163,11 @@
       class="allTable"
     >
       <el-table-column type="selection" width="55" align="center" />
-<!--      <el-table-column label="任务编号" align="center" prop="id" />-->
+      <el-table-column label="序号" width="100px" align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
       <el-table-column label="所属单位" align="center" prop="zzjgId" />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
@@ -235,7 +239,7 @@
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-            :style="{ display: scope.row.publishStatus==2?'none':'' }"
+            :style="{ display: scope.row.publishStatus!=0?'none':'' }"
             >修改</el-button
           >
           <el-button
@@ -243,7 +247,7 @@
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-            :style="{ display: scope.row.publishStatus==2?'none':'' }"
+            :style="{ display: scope.row.publishStatus!=0?'none':'' }"
             >删除</el-button
           >
         </template>
@@ -295,8 +299,19 @@
             </div>
           </div>
           <div>
-            <span>指派巡查班组</span>
-            <div>
+            <span>所属隧道</span>
+            <el-select v-model="form.tunnelId"  placeholder="请选择所属隧道" @change="tunnelSelectGet">
+              <el-option
+                v-for="item in eqTunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              ></el-option>
+            </el-select>
+
+          </div>
+
+<!--            <div>
               <el-select v-model="form.bzId" placeholder="请选择班组">
                 <el-option
                   v-for="item in bzData"
@@ -305,36 +320,42 @@
                   :value="item.deptId"
                 ></el-option>
               </el-select>
+            </div>-->
+          </div>
+        <div class="form-two">
+          <div>
+            <span prop="bzId" >指派巡查班组</span>
+            <div >
+              <el-select v-model="form.bzId" placeholder="" id = "bzSel" :disabled="true"  @click.native ="selChange">
+                <el-option
+                  v-for="item in bzData"
+                  :key="item.deptId"
+                  :label="item.deptName"
+                  :value="item.deptId"
+                ></el-option>
+              </el-select>
+<!--              <el-input
+                ref="bzId"
+                disabled = "disabled"
+                v-model="form.bzId"
+              ></el-input>-->
             </div>
           </div>
-        </div>
-
-        <div class="form-two">
           <div>
             <span>需完成日期</span>
             <el-date-picker
               clearable
+              :picker-options="forbiddenTime"
               size="small"
               v-model="form.endPlantime"
               type="date"
-              style="width: 63%"
               value-format="yyyy-MM-dd"
+              style="width: 63%;"
               placeholder="选择完成时间"
             >
             </el-date-picker>
           </div>
-          <div>
-            <span>所属隧道</span>
-               <el-select v-model="form.tunnelId"  placeholder="请选择所属隧道" @change="tunnelSelectGet">
-                 <el-option
-                   v-for="item in eqTunnelData"
-                   :key="item.tunnelId"
-                   :label="item.tunnelName"
-                   :value="item.tunnelId"
-                 ></el-option>
-               </el-select>
 
-        </div>
           <div>
             <span>任务名称</span>
             <el-input
@@ -358,7 +379,9 @@
           >
           </el-input>
         </div>
-      </div>
+        </div>
+
+
       <div class="patrol">
         <div>巡查点信息</div>
         <hr />
@@ -405,9 +428,15 @@
           </div>
         </div>
         <div class="release-father">
-          <el-button style="height: 20%" @click="save">暂存</el-button>
-          <el-button style="height: 20%;display: none"   type="warning" @click="abolish">废止</el-button>
-          <el-button style="height: 20%" type="primary" @click="release"
+          <el-button style="height: 20%"
+                     @click="save">暂存</el-button>
+          <el-button style="height: 20%;
+                     display: none"
+                     type="warning"
+                     @click="abolish">废止</el-button>
+          <el-button style="height: 20%"
+                     type="primary"
+                     @click="release"
             >发布</el-button
           >
         </div>
@@ -746,7 +775,7 @@ import {
   listBz,
   treeselect,
   getDevicesList,
-  abolishList, addTask, getFaultList, updateTask,
+  abolishList, addTask, getFaultList, updateTask, selectBzByTunnel,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import {getEquipmentInfo, getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -907,12 +936,19 @@ export default {
         runStatus: "",
         eqFaultDescription: "",
       },
+      //禁用当前日期之前的日期
+      forbiddenTime:{
+        disabledDate(time) {
+          //Date.now()是javascript中的内置函数，它返回自1970年1月1日00:00:00 UTC以来经过的毫秒数。
+          return time.getTime() < Date.now() - 8.64e7;
+        },
+      },
       // 表单参数
       form: {},
-      // 表单校验
+      // 表单校验指派巡查班组
       rules: {
         bzId: [
-          { required: true, message: '请选择指派巡查班组', trigger: 'bzId' }
+          { required: true, message: '请选择', trigger: 'bzId' }
         ],
         taskDescription: [
           { required: true, message: '请填写任务描述', trigger: 'taskDescription' }
@@ -962,6 +998,17 @@ export default {
         }
       }
     },
+    //班组点击时间
+    selChange(){
+      if(typeof(this.form.tunnelId)=="undefined"){
+        this.$modal.msgWarning("请先选择隧道");
+        return
+      }else{
+        debugger
+        $('#bzSel').attr("pointer-events","none");
+      }
+
+    },
     /*获取当前时间*/
     getCurrentTime() {
       //获取当前时间并打印
@@ -977,10 +1024,16 @@ export default {
     },
 
     tunnelSelectGet(e){
-        treeselect(this.form.tunnelId).then((response) => {
-          this.treeData = response.data;
+      debugger
+      const tunnelId = e;
+      selectBzByTunnel(tunnelId).then((response) => {
+        this.form.bzId = response.data;
+        console.log(response.data, "隧道部门树");
+      });
+        /*treeselect(this.form.tunnelId).then((response) => {
+          this.treeData = reesponse.data;
           console.log(response.data, "隧道部门树");
-        });
+        });*/
     },
 
     //  上移
@@ -1435,11 +1488,11 @@ export default {
           this.form.taskDescription=""
         }
 
-        if(this.form.bzId!=null&&this.form.bzId!=""&&this.form.bzId!="null"){
+        /*if(this.form.bzId!=null&&this.form.bzId!=""&&this.form.bzId!="null"){
             this.form.bzId = parseInt(this.form.bzId)
         }else{
           this.form.bzId=""
-        }
+        }*/
         this.boxList.sort(this.arraySort('xc_sort'))
         this.open = true;
         this.openGz = true;
@@ -1710,6 +1763,9 @@ export default {
     img {
       width: 100px;
       margin-left: 20px;
+    }
+    span{
+      color: #FFFFFF;
     }
   }
   .card-col1 {

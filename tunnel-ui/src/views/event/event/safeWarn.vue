@@ -839,8 +839,8 @@
       width="1000px"
       append-to-body
     >
-      <el-form ref="form" :model="form" label-width="110px">
-        <el-row style="padding: 10px">
+      <el-form ref="form" :model="form" label-width="100px">
+        <el-row style="padding: 10px;display:flex;flex-wrap: wrap;">
           <el-col :span="24">
             <div class="topTxt">故障基本信息</div>
           </el-col>
@@ -989,6 +989,7 @@
               <el-input
                 v-model="form.eqRunStatus"
                 :disabled="disstate"
+                @input="changeEqRunStatus($event)"
                 placeholder="请输入设备运行状态"
               />
             </el-form-item>
@@ -1451,7 +1452,7 @@ export default {
           {
             required: true,
             message: "请选中故障类型",
-            trigger: "faultLocation",
+            trigger: "faultType",
           },
         ],
         faultFxtime: [
@@ -1620,6 +1621,9 @@ export default {
     });
   },
   methods: {
+    changeEqRunStatus(e){
+      this.$forceUpdate()
+    },
     // 打开图片变视频弹窗
     openPicDialog(item) {
       this.videoUrl = item.videoUrl;
@@ -2029,10 +2033,10 @@ export default {
     },
     eqStatusGet(e) {
       getEquipmentInfo({ eqId: e }).then((response) => {
+        console.log(response,"修改设备名称")
         this.form.faultLocation = "";
         this.form.eqRunStatus = "";
         this.form.eqStatus = "";
-        debugger;
         if (response.data.length != 0) {
           this.form.faultLocation = response.data[0].pile;
           this.form.eqRunStatus = response.data[0].runStatus;

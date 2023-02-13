@@ -122,9 +122,9 @@
       :row-class-name="tableRowClassName"
 
     >
-      <el-table-column prop="deptName" label="部门名称" ></el-table-column>
-      <el-table-column prop="orderNum" label="排序"></el-table-column>
-      <el-table-column prop="status" label="状态" >
+      <el-table-column prop="deptName" label="部门名称" align="center"></el-table-column>
+      <el-table-column prop="orderNum" label="排序" align="center"></el-table-column>
+      <el-table-column prop="status" label="状态" align="center">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
         </template>

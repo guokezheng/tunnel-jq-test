@@ -50,25 +50,30 @@
             style="cursor: pointer"
           >
             <el-row style="color: white">
-              <el-col :span="2">
+              <el-col :span="1">
                 <img
                   :src="item.iconUrl"
-                  style="width: 20px; height: 20px; transform: translateY(5px)"
-                  v-if="searchValue == 2 || searchValue == 3"
+                  style="width: 20px; height: 20px; "
+                  v-if="searchValue == 2 || searchValue == 3 "
                 />
                 <img
                   :src="item.eventType.iconUrl"
-                  style="width: 20px; height: 20px; transform: translateY(5px)"
+                  style="width: 20px; height: 20px; "
                   v-else
                 />
               </el-col>
-              <el-col :span="2">
-                <div v-if="searchValue == 2 || searchValue == 3">
+              <el-col :span="3" style="display:flex">
+                <div v-if="searchValue == 2 || searchValue == 3"
+                :style="{color: item.prevControlType == 0?'red':'#F6AC10'}">
                   {{ item.simplifyName }}
                 </div>
-                <div v-else>
+                <div 
+                v-else
+                :style="{color:searchValue == 0?'red':'blue'}"
+                >
                   {{ item.eventType.simplifyName }}
                 </div>
+                <span class="icon-split" style="padding-left:14px;color: #3cd3fe;"> |</span>
               </el-col>
               <el-col
                 :span="20"
@@ -135,7 +140,13 @@ export default {
       activeName: "0",
       pageNum: 1,
       total: 0,
-      list: [],
+      list: [
+        {
+          eventType:{
+            iconUrl:''
+          }
+        }
+      ],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
       eventTime: "",
@@ -148,7 +159,7 @@ export default {
       if (this.total % 10 == 0) {
         return this.pageNum >= parseInt(this.total / 10);
       } else {
-        console.log(this.pageNum, parseInt(this.total / 10) + 1);
+        // console.log(this.pageNum, parseInt(this.total / 10) + 1);
         return this.pageNum >= parseInt(this.total / 10) + 1;
       }
     },
@@ -456,6 +467,7 @@ export default {
     padding: 0 !important;
     width: 100% !important;
     margin: 0 !important;
+    height: 100% !important;
   }
   .title {
     padding-left: 20px;

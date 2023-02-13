@@ -1,67 +1,110 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="70px"
-    >
-      <el-form-item label="图片名称" prop="pictureName" >
-        <el-input
-          v-model="queryParams.pictureName"
-          placeholder="请输入图片名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
+    <!-- 全局搜索 -->
+    <el-row  :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="6">
         <el-button
           type="primary"
           plain
+          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:templateImage:add']"
-          >新增</el-button
+          v-hasPermi="['system:vocabulary:add']"
+        >新增</el-button
         >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:templateImage:edit']"
-          >修改</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:templateImage:remove']"
-          >删除</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:templateImage:export']"
-          >导出</el-button
-        >
-      </el-form-item>
-    </el-form>
+                <el-button
+                  type="primary"
+                  plain
+                  size="mini"
+                  :disabled="multiple"
+                  @click="handleDelete"
+                  v-hasPermi="['system:templateImage:remove']"
+                  >删除</el-button
+                >
+                <el-button
+                  type="primary"
+                  plain
+                  size="mini"
+                  @click="handleExport"
+                  v-hasPermi="['system:templateImage:export']"
+                  >导出</el-button
+                >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div  ref="main" class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.pictureName"
+            placeholder="请输入图片名称,回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+<!--    <el-form-->
+<!--      :model="queryParams"-->
+<!--      ref="queryForm"-->
+<!--      :inline="true"-->
+<!--      v-show="showSearch"-->
+<!--      label-width="70px"-->
+<!--    >-->
+<!--      <el-form-item label="图片名称" prop="pictureName" >-->
+<!--        <el-input-->
+<!--          v-model="queryParams.pictureName"-->
+<!--          placeholder="请输入图片名称,回车搜索"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item>-->
+<!--&lt;!&ndash;        <el-button&ndash;&gt;-->
+<!--&lt;!&ndash;          type="primary"&ndash;&gt;-->
+<!--&lt;!&ndash;          size="mini"&ndash;&gt;-->
+<!--&lt;!&ndash;          @click="handleQuery"&ndash;&gt;-->
+<!--&lt;!&ndash;          >搜索</el-button&ndash;&gt;-->
+<!--&lt;!&ndash;        >&ndash;&gt;-->
+<!--&lt;!&ndash;        <el-button size="mini" @click="resetQuery" type="primary" plain&ndash;&gt;-->
+<!--&lt;!&ndash;          >重置</el-button&ndash;&gt;-->
+<!--&lt;!&ndash;        >&ndash;&gt;-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          @click="handleAdd"-->
+<!--          v-hasPermi="['system:templateImage:add']"-->
+<!--          >新增</el-button-->
+<!--        >-->
+<!--&lt;!&ndash;        <el-button&ndash;&gt;-->
+<!--&lt;!&ndash;          type="primary"&ndash;&gt;-->
+<!--&lt;!&ndash;          plain&ndash;&gt;-->
+<!--&lt;!&ndash;          size="mini"&ndash;&gt;-->
+<!--&lt;!&ndash;          :disabled="single"&ndash;&gt;-->
+<!--&lt;!&ndash;          @click="handleUpdate"&ndash;&gt;-->
+<!--&lt;!&ndash;          v-hasPermi="['system:templateImage:edit']"&ndash;&gt;-->
+<!--&lt;!&ndash;          >修改</el-button&ndash;&gt;-->
+<!--&lt;!&ndash;        >&ndash;&gt;-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="multiple"-->
+<!--          @click="handleDelete"-->
+<!--          v-hasPermi="['system:templateImage:remove']"-->
+<!--          >删除</el-button-->
+<!--        >-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['system:templateImage:export']"-->
+<!--          >导出</el-button-->
+<!--        >-->
+<!--      </el-form-item>-->
+<!--    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -125,7 +168,7 @@
       :row-class-name="tableRowClassName"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" type="index" width="50"> </el-table-column>
+      <el-table-column label="序号" type="index" width="50" align="center"> </el-table-column>
 
       <el-table-column label="图片名称" align="center" prop="pictureName" />
       <el-table-column label="图片" align="center">

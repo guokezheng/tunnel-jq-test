@@ -52,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateType != null "> and a.template_type = #{templateType}</if>
             <if test="vmsType != null  and vmsType != ''"> and a.vms_type = #{vmsType}</if>
             <if test="category != null  and category != ''"> and a.category = #{category}</if>
+            <if test="searchValue != null  and searchValue != ''"> and b.content LIKE CONCAT('%',#{searchValue},'%')</if>
         </where>
     </select>
 

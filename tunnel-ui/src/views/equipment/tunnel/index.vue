@@ -72,86 +72,12 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
-          >
+          >搜索</el-button>
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
-          >
+          >重置</el-button>
         </el-form-item>
       </el-form>
     </div>
-<!--    <el-form-->
-<!--      :model="queryParams"-->
-<!--      ref="queryForm"-->
-<!--      :inline="true"-->
-<!--      v-show="showSearch"-->
-<!--      label-width="80px"-->
-<!--    >-->
-<!--      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">-->
-<!--        <el-select-->
-<!--          v-model="queryParams.tunnelId"-->
-<!--          placeholder="请选择所属隧道"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--        >-->
-<!--          <el-option-->
-<!--            v-for="item in tunnelData"-->
-<!--            :key="item.tunnelId"-->
-<!--            :label="item.tunnelName"-->
-<!--            :value="item.tunnelId"-->
-<!--          />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="是否启用" prop="poll">-->
-<!--        <el-select-->
-<!--          v-model="queryParams.poll"-->
-<!--          placeholder="请选择是否启用"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--        >-->
-<!--          <el-option-->
-<!--            v-for="dict in pollOptions"-->
-<!--            :key="dict.dictValue"-->
-<!--            :label="dict.dictLabel"-->
-<!--            :value="dict.dictValue"-->
-<!--          />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item>-->
-<!--        <el-button type="primary" size="mini" @click="handleQuery"-->
-<!--          >搜索</el-button-->
-<!--        >-->
-<!--        <el-button size="mini" @click="resetQuery" type="primary" plain-->
-<!--          >重置</el-button-->
-<!--        >-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['system:tunnels:add']"-->
-<!--          >新增-->
-<!--        </el-button>-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['system:tunnels:edit']"-->
-<!--          >修改-->
-<!--        </el-button>-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handleDelete"-->
-<!--          v-hasPermi="['system:tunnels:remove']"-->
-<!--          >删除-->
-<!--        </el-button>-->
-<!--      </el-form-item>-->
-<!--    </el-form>-->>
 
     <el-table
       v-loading="loading"

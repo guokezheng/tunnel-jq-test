@@ -34,7 +34,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="releaseOldContent != null  and releaseOldContent != ''"> and a.release_old_content = #{releaseOldContent}</if>
             <if test="releaseNewContent != null  and releaseNewContent != ''"> and a.release_new_content = #{releaseNewContent}</if>
             <if test="releaseBy != null  and releaseBy != ''"> and a.release_by = #{releaseBy}</if>
-            <if test="releaseTime != null "> and a.release_time = #{releaseTime}</if>
+            <if test="releaseTime != null ">and date_format(release_time,'%Y-%m-%d')  = date_format(#{releaseTime},'%Y-%m-%d')</if>
+            <if test="searchValue != null  and searchValue != ''"> and CONCAT(a.device_id,a.release_new_content) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="releaseStatus != null  and releaseStatus != ''"> and a.release_status = #{releaseStatus}</if>
             <if test="releaseDeptName != null  and releaseDeptName != ''"> and a.release_dept_name like concat('%', #{releaseDeptName}, '%')</if>
             <if test="releaseUserName != null  and releaseUserName != ''"> and a.release_user_name like concat('%', #{releaseUserName}, '%')</if>

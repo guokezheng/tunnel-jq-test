@@ -18,11 +18,9 @@ import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.*;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
+import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
-import com.tunnel.business.mapper.event.SdEventMapper;
-import com.tunnel.business.mapper.event.SdLaneStatisticsMapper;
-import com.tunnel.business.mapper.event.SdRoadSectionStatisticsMapper;
-import com.tunnel.business.mapper.event.SdVehicleDrivingMapper;
+import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
@@ -1166,6 +1164,8 @@ public class KafkaReadListenToHuaWeiTopic {
         event.setEventLongitude(jsonObject.getString("eventLongitude"));
         event.setEventLatitude(jsonObject.getString("eventLatitude"));
         event.setEventTypeId(eventTypeId);
+        String eventLevel = jsonObject.getString("eventLevel");
+        event.setEventGrade(eventLevel.substring(eventLevel.length()-1,eventLevel.length()));
         String stakeNum = jsonObject.getString("eventStakeNo");
         if(StrUtil.isNotBlank(stakeNum)){
             event.setStakeNum(jsonObject.getString("eventStakeNo"));
@@ -1184,7 +1184,9 @@ public class KafkaReadListenToHuaWeiTopic {
         switch (eventStatus){
             case 2 : ownStatus = "0"; break;
             case 3 : ownStatus = "1"; break;
+            case 4 : ownStatus = "4"; break;
             case 5 : ownStatus = "2"; break;
+            case 6 : ownStatus = "5"; break;
             default: ownStatus = "3"; break;
         }
         event.setEventState(ownStatus);
@@ -1465,6 +1467,26 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param jsonObject
      */
     public void analysisAnalysisCarsnap(JSONObject jsonObject){
+        //车辆快照数据赋值
+        SdRadarDetectData sdRadarDetectData = setRadarData(jsonObject);
+        SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
+        detectDataMapper.insertSdRadarDetectData(sdRadarDetectData);
+
+        //车辆快照临时数据赋值
+        SdRadarDetectDataTemporary sdRadarDetectDataTemporary = setRadarTemporaryData(jsonObject);
+        SdRadarDetectDataTemporaryMapper temporaryMapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
+        temporaryMapper.insertSdRadarDetectData(sdRadarDetectDataTemporary);
+        if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){
+            setCarsnapRedis(sdRadarDetectData);
+        }
+    }
+
+    /**
+     * 车辆快照数据赋值
+     * @param jsonObject
+     * @return
+     */
+    public SdRadarDetectData setRadarData(JSONObject jsonObject){
         SdRadarDetectData sdRadarDetectData = new SdRadarDetectData();
         sdRadarDetectData.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
         sdRadarDetectData.setRecordSerialNumber(jsonObject.getString("trackID"));
@@ -1486,11 +1508,37 @@ public class KafkaReadListenToHuaWeiTopic {
         sdRadarDetectData.setDetectTime(time);
         sdRadarDetectData.setRoadDir(jsonObject.getString("roadDir"));
         sdRadarDetectData.setVehicleId(jsonObject.getString("uniqId"));
-        SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
-        detectDataMapper.insertSdRadarDetectData(sdRadarDetectData);
-        if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){
-            setCarsnapRedis(sdRadarDetectData);
-        }
+        return sdRadarDetectData;
+    }
+
+    /**
+     * 车辆快照临时数据赋值
+     * @param jsonObject
+     * @return
+     */
+    public SdRadarDetectDataTemporary setRadarTemporaryData(JSONObject jsonObject){
+        SdRadarDetectDataTemporary sdRadarDetectData = new SdRadarDetectDataTemporary();
+        sdRadarDetectData.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        sdRadarDetectData.setRecordSerialNumber(jsonObject.getString("trackID"));
+        sdRadarDetectData.setObjectType(jsonObject.getString("objectType"));
+        sdRadarDetectData.setVehicleType(getVehicleType(jsonObject.getString("vehicleType")));
+        sdRadarDetectData.setVehicleColor(getVehicleColor(jsonObject.getString("vehicleColor")));
+        sdRadarDetectData.setVehicleLicense(jsonObject.getString("plateNumber"));
+        sdRadarDetectData.setLatitude(jsonObject.getString("lat"));
+        sdRadarDetectData.setLongitude(jsonObject.getString("lng"));
+        sdRadarDetectData.setCourseAngle(jsonObject.getString("rriveAngle"));
+        sdRadarDetectData.setSpeed(jsonObject.getString("speed"));
+        sdRadarDetectData.setDistance((950-jsonObject.getInteger("ridOffset"))+"");
+        String matchLane = jsonObject.getString("matchLane");
+        String laneNo = matchLane.substring(matchLane.length() - 1, matchLane.length());
+        sdRadarDetectData.setLaneNum(laneNo);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
+        sdRadarDetectData.setDetectTime(time);
+        sdRadarDetectData.setRoadDir(jsonObject.getString("roadDir"));
+        sdRadarDetectData.setVehicleId(jsonObject.getString("uniqId"));
+        return sdRadarDetectData;
     }
 
     /**
@@ -1557,7 +1605,7 @@ public class KafkaReadListenToHuaWeiTopic {
             case "20":{type = "4"; break;}
             case "21":{type = "4"; break;}
             case "22":{type = "4"; break;}
-            case "23":{type = "4"; break;}
+            case "23":{type = "40"; break;}
             case "24":{type = "4"; break;}
             case "25":{type = "28"; break;}
             default:type = vehicleType;

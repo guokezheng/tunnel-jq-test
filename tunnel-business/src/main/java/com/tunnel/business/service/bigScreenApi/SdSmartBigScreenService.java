@@ -123,4 +123,18 @@ public interface SdSmartBigScreenService {
      * @return
      */
     AjaxResult getRealCars(String tunnelId, String vehicleLicense);
+
+    /**
+     * 查询当日累计车辆
+     * @param tunnelId
+     * @return
+     */
+    AjaxResult getCumulativeCar(String tunnelId);
+
+    /**
+     * 查询车辆在途数
+     * @param tunnelId
+     * @return
+     */
+    AjaxResult getTransitCar(String tunnelId);
 }

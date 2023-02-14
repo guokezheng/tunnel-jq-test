@@ -120,6 +120,7 @@
               :show-count="true"
               placeholder="请选择设备"
               @select="handleChange"
+              :disable-branch-nodes="true"
               size="small"
             />
           </el-form>
@@ -455,6 +456,7 @@ export default {
       this.operationStateOptions = response.data;
     });
   },
+
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     this.watchSize();
@@ -471,6 +473,8 @@ export default {
         }
       }
     },
+
+
     getDeviceTreeselect() {
       getDeviceTreeselect(this.searchValue).then((response) => {
         this.jgOptions = response.data;
@@ -741,14 +745,26 @@ export default {
           type: "category",
           name: "时间",
           data: this.VITime,
+          axisLine: {
+            lineStyle: {
+              color:"#ffffff",// 设置x轴额色为白色
+              fontsize:"29px",
+            }
+          },
           nameTextStyle: {
             fontFamily: "PingFang",
-            fontsize:"19px",
+            fontsize:"29px",
           },
         }];
         var yAxis = [{
           type: "value",
           name: "CO(ppm)/VI(km)",
+          axisLine: {
+            lineStyle: {
+              color:"#ffffff",// 设置x轴额色为白色
+              fontsize:"29px",
+            }
+          },
         }];
         legends = {
           textStyle:{
@@ -778,15 +794,24 @@ export default {
           type: "category",
           name: "时间",
           data: this.fsTime,
+          axisLine: {
+            lineStyle: {
+              color:"#ffffff",// 设置x轴额色为白色
+              fontsize:"29px",
+            }
+          },
         }];
         var yAxis = [{
           type: "value",
           name: "m/s",
+          axisLine: {
+            lineStyle: {
+              color:"#ffffff",// 设置x轴额色为白色
+              fontsize:"29px",
+            }
+          },
         }];
       } else if (this.searchValue == 3) {
-        //   fsData: [],
-        // dnData: [],
-        // dwData: [],
         var series = [
           {
             name: "洞内亮度",
@@ -803,10 +828,22 @@ export default {
           type: "category",
           name: "小时",
           data: this.dnTime,
+          axisLine: {
+            lineStyle: {
+              color:"#ffffff",// 设置x轴额色为白色
+              fontsize:"29px",
+            }
+          },
         }];
         var yAxis = [{
           type: "value",
-          name: "m/s",
+          name: "lux",
+          axisLine: {
+            lineStyle: {
+              color:"#ffffff",// 设置x轴额色为白色
+              fontsize:"29px",
+            }
+          },
         }];
       } else if (this.searchValue == 4) {
         //   fsData: [],
@@ -828,10 +865,22 @@ export default {
             type: "category",
             name: "小时",
             data: this.dwTime,
+            axisLine: {
+              lineStyle: {
+                color:"#ffffff",// 设置x轴额色为白色
+                fontsize:"29px",
+              }
+            },
           }];
         var yAxis = [{
           type: "value",
           name: "cd/㎡",
+          axisLine: {
+            lineStyle: {
+              color:"#ffffff",// 设置x轴额色为白色
+              fontsize:"29px",
+            }
+          },
         }];
       }
       option = {

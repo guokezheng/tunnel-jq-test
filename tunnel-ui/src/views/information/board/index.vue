@@ -616,6 +616,7 @@ export default {
         this.allVmsTemplate()
       });
     },
+    // 修改弹窗
     editOutline(item, index, type) {
       console.log(item, index, "item,index");
       this.index = index;

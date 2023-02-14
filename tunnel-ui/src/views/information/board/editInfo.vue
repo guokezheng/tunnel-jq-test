@@ -10,13 +10,6 @@
         <el-card class="box-card" >
           <div
             class="blackBoard"
-            style="
-              backgroundColor: #000000;
-              margin: 0 auto;
-              overflow: hidden;
-              display:flex;
-              position: relative;
-            "
             v-on:ondragenter="ondragenter"
             v-on:drop="faceDrop"
             v-on:dragover="allowDrop"
@@ -26,8 +19,8 @@
             }"
           >
             <span
-              class="textBoard"
-              style="line-height: 1; position: absolute;"
+              class="textBoard boardTextStyle"
+              style="position: absolute;"
              
               :style="{
                 color: dataForm.COLOR,
@@ -553,7 +546,7 @@
         switch (alignmentNum) {
           // 左对齐
           case 1:
-            textBoard[0].style.position = 'static !important'
+            textBoard[0].style.position = 'static'
             divContent[0].style.justifyContent = 'left'
             divContent[0].style.alignItems = 'center'
             textBoard[0].style.textAlign = 'left'
@@ -561,7 +554,7 @@
             break;
             // 左右居中
           case 2:
-            textBoard[0].style.position = 'static !important'
+            textBoard[0].style.position = 'static'
             divContent[0].style.justifyContent = 'center'
             divContent[0].style.alignItems = 'center'
             textBoard[0].style.textAlign = 'center'
@@ -572,7 +565,7 @@
             divContent[0].style.justifyContent = 'right'
             divContent[0].style.alignItems = 'center'
             textBoard[0].style.textAlign = 'right'
-            textBoard[0].style.position = 'static !important'
+            textBoard[0].style.position = 'static'
 
             break;
             // 上对齐
@@ -912,5 +905,17 @@
   }
   ::v-deep .el-card__body{
     padding:10px 0;
+  }
+  .boardTextStyle{
+    line-height: 1;
+    caret-color: rgba(0,0,0,0);
+    user-select: none;
+  }
+  .blackBoard{
+    background: #000000;
+    display: flex;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
   }
   </style>

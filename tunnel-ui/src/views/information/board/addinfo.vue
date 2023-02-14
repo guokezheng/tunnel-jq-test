@@ -2,7 +2,7 @@
   <div class="container">
     <!-- 添加信息弹窗 -->
     <el-dialog
-      title="提示"
+      title="新增"
       :visible.sync="dialogVisible"
       width="44%"
       :before-close="handleClose"
@@ -24,17 +24,12 @@
               fontSize: dataForm.FONT_SIZE,
               fontFamily: dataForm.FONT,
               zIndex: '1000',
-              left: dataForm.COORDINATE.substring(0, 3) + 'px',
-              top: dataForm.COORDINATE.substring(3, 6) + 'px',
+              left: dataForm.COORDINATE?dataForm.COORDINATE.substring(0, 3) + 'px':'',
+              top: dataForm.COORDINATE?dataForm.COORDINATE.substring(3, 6) + 'px':'',
             }"
-            style="position: absolute;"
             class="textBoard boardTextStyle"
-            v-html="
-              dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                / /g,
-                ' &nbsp'
-              )
-            "
+            style="position: absolute;"
+            v-html="dataForm.CONTENT?dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g,' &nbsp'):''"
           ></span>
         </div>
       </el-card>
@@ -318,7 +313,7 @@
       </el-card>
 
       <template slot="footer">
-        <el-button size="small" @click="dialogVisible = false">取消</el-button>
+        <el-button size="small" @click="handleClose">取消</el-button>
         <el-button
           size="small"
           @click="dataFormSubmitHandle()"
@@ -395,9 +390,9 @@ export default {
         // width: "",
         // coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
         // screenSize: "",
-        // COORDINATE: "",
+        // COORDINATE: "000000",
         // FONT_SIZE: "",
-        // CONTENT: "山东高速欢迎你",
+        // CONTENT: "请输入内容",
         // COLOR:'yellow',
       },
       templateContent: [],
@@ -617,12 +612,8 @@ export default {
   },
   methods: {
     init(devicePixel, type,mode) {
-      console.log(devicePixel, type,mode,"00000000000000000000")
-      console.log(this.dataForm,"(this.dataForm(this.dataForm(this.dataForm")
       if (devicePixel) {
         this.devicePixelBoolean = true;
-
-        console.log(devicePixel, "00000");
         this.dataForm.screenSize = devicePixel;
 
         this.boardWidth = devicePixel.split("*")[0];
@@ -637,7 +628,7 @@ export default {
       }else{
         this.categoryRules = true
       }
-      this.title = "新增";
+      // this.title = "新增";
       this.isAdd = !this.dataForm.id;
       this.dialogVisible = true;
       console.log(this.dataForm.id, "这是模板id");
@@ -664,8 +655,8 @@ export default {
           };
           this.content = "请输入内容";
         } else {
-          this.getInfo();
-          this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
+          // this.getInfo();
+          // this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
         }
       });
       this.getFontSizeList()
@@ -732,29 +723,29 @@ export default {
       e.preventDefault(); //阻止默认行为
     },
     // 获取信息
-    getInfo() {
-      console.log("=================")
-      getTemplateInfo(this.dataForm.id).then((data) => {
-        this.dataForm = data.data;
-        this.width = this.dataForm.screenSize.split("*")[0];
-        this.height = this.dataForm.screenSize.split("*")[1];
-      });
-      getTemplateContent(this.dataForm.id).then((data) => {
-        this.templateContent = data.rows;
+    // getInfo() {
+    //   console.log("=================")
+    //   getTemplateInfo(this.dataForm.id).then((data) => {
+    //     this.dataForm = data.data;
+    //     this.width = this.dataForm.screenSize.split("*")[0];
+    //     this.height = this.dataForm.screenSize.split("*")[1];
+    //   });
+    //   getTemplateContent(this.dataForm.id).then((data) => {
+    //     this.templateContent = data.rows;
 
-        if (this.templateContent.length == 0) {
-          this.templateContent.push({
-            content: "",
-            fontColor: "yellow",
-            fontSize: "24",
-            fontType: "KaiTi",
-            fontSpacing: 0,
-            coordinate: "000000",
-            img: "",
-          });
-        }
-      });
-    },
+    //     if (this.templateContent.length == 0) {
+    //       this.templateContent.push({
+    //         content: "",
+    //         fontColor: "yellow",
+    //         fontSize: "24",
+    //         fontType: "KaiTi",
+    //         fontSpacing: 0,
+    //         coordinate: "000000",
+    //         img: "",
+    //       });
+    //     }
+    //   });
+    // },
     // 表单提交
     async dataFormSubmitHandle() {
       let valid = await this.$refs.dataForm.validate().catch(() => {
@@ -884,7 +875,7 @@ export default {
           divContent[0].style.justifyContent = 'left'
           divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'left'
-          textBoard[0].style.position = 'static !important'
+          textBoard[0].style.position = 'static'
 
           break;
           // 左右居中
@@ -892,7 +883,7 @@ export default {
           divContent[0].style.justifyContent = 'center'
           divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'center'
-          textBoard[0].style.position = 'static !important'
+          textBoard[0].style.position = 'static'
 
           break;
           // 右对齐
@@ -900,7 +891,7 @@ export default {
           divContent[0].style.justifyContent = 'right'
           divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'right'
-          textBoard[0].style.position = 'static !important'
+          textBoard[0].style.position = 'static'
 
           break;
           // 上对齐
@@ -1003,11 +994,16 @@ export default {
       });
     },
     handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
+      console.log(done,"done")
+      var textBoard = document.getElementsByClassName("textBoard");
+      textBoard[0].style.position = 'absolute'
+      this.dialogVisible = false
+      // this.$confirm("确认关闭？")
+      //   .then((_) => {
+         
+      //     done();
+      //   })
+      //   .catch((_) => {});
     },
   },
 };
@@ -1031,14 +1027,10 @@ export default {
   justify-content: left;
 }
 .boardTextStyle{
-  // position: absolute;
   line-height: 1;
   caret-color: rgba(0,0,0,0);
   user-select: none;
 
-}
-.textBoard{
-  position: absolute;
 }
 .blackBoard{
   background: #000000;
@@ -1048,5 +1040,9 @@ export default {
   position: relative;
   // justify-content: center;
   // align-items: center;
+}
+::v-deep .el-select .el-input .el-input__inner{
+  caret-color: rgba(0,0,0,0);
+  user-select: none;
 }
 </style>

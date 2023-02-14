@@ -283,6 +283,34 @@
         </div>
       </el-col>
     </el-row>
+    <el-dialog
+      title="提示"
+      :visible.sync="arrowRightVisible"
+      width="20%"
+      :before-close="dialogClose">
+      <el-row>
+        <el-col :span="18">
+          <el-select
+            v-model="toRightCategory"
+            placeholder="请选择所属类别"
+          >
+            <el-option
+              v-for="item in iotTemplateCategoryList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <el-button type="primary" plain @click="arrowRightAllVmsTemplate">
+            确定
+          </el-button>
+        </el-col>
+      </el-row>
+      
+    </el-dialog>
     <addinfo
       ref="addinfo"
       @addInfo="addInfo"
@@ -335,6 +363,8 @@ export default {
 
   data() {
     return {
+      toRightCategory:'',
+      arrowRightVisible:false,
       disabledCheckbox:true,
       loading:false,
       submitButton:false,
@@ -387,6 +417,7 @@ export default {
       isIndeterminate: false,
       contentList: [],
       templateList: [],
+      toRightItem:{},
     };
   },
   created() {
@@ -399,6 +430,8 @@ export default {
   },
  
   methods: {
+    
+    // 获取信息模板字典表
     getInfoMode(){
       this.getDicts("iot_template_category").then((res) => {
         this.iotTemplateCategoryList = res.data;
@@ -419,6 +452,7 @@ export default {
         }
       })
     },
+    // 级联 管理站
     getUserDept() {
       let that = this;
       getUserDeptId(this.userQueryParams).then((response) => {
@@ -500,6 +534,7 @@ export default {
       this.form.tunnel = value;
       this.getIotBoard();
     },
+    // 情报板设备 折叠面板
     getIotBoard() {
       this.checkAll = false;
       let param = {
@@ -575,14 +610,29 @@ export default {
       console.log(this.contentList, "this.contentList");
     },
     arrowRight(item) {
+      this.toRightItem = item
+
+      if(!item.category){
+        this.arrowRightVisible = true
+      }else{
+        this.arrowRightAllVmsTemplate()
+      }
       console.log(item, "item");
+      
+    },
+    // categoryButton(){
+    //   this.arrowRightAllVmsTemplate()
+    // },
+    arrowRightAllVmsTemplate(){
+      console.log(this.toRightItem,this.toRightCategory)
+      let item = this.toRightItem
       let templateId = "";
       let method = "put";
       const params1 = {
         inScreenMode: item.ACTION,
         screenSize: this.form.devicePixel,
         applyType: "",
-        category: item.category,
+        category: item.category?item.category:this.toRightCategory,
         coordinate: "",
         height: "",
         id: "",
@@ -615,6 +665,7 @@ export default {
         // this.getActiveNames(item.category);
         this.allVmsTemplate()
       });
+      this.arrowRightVisible = false
     },
     // 修改弹窗
     editOutline(item, index, type) {
@@ -667,19 +718,22 @@ export default {
     },
     // 情报板管理右侧查询接口
     allVmsTemplate() {
-      // this.activeNames = []
       const param = {
         devicePixel: this.form.devicePixel,
       };
       getAllVmsTemplate(param).then((res) => {
         let data = res.data;
         console.log(res, "情报板管理右侧查询接口");
+        let jArr = []
+
         for (let j = 0; j < this.iotTemplateCategoryList.length; j++) {
           let arr = this.iotTemplateCategoryList[j];
           let brr = data[j];
           arr.list = brr;
-          this.activeNames.push(j.toString())
+          jArr.push(j.toString())
         }
+        this.activeNames = jArr
+
         this.$forceUpdate();
         console.log(this.iotTemplateCategoryList,"新模板")
       });
@@ -866,6 +920,8 @@ export default {
         console.log(response, "response");
         if (response.code != 200) {
           this.$message.error(`设备网络连接异常，请稍后重试`);
+          this.loading = false
+          this.submitButton = false
 
           return;
         }
@@ -978,9 +1034,9 @@ export default {
           }
         } else {
           if (font.toString().length == 2) {
-            return font / (height / 75) - 4 + "px";
+            return font / (height / 75) - 2 + "px";
           } else {
-            return font.substring(0, 2) / (height / 75) - 4 + "px";
+            return font.substring(0, 2) / (height / 75) - 2 + "px";
           }
         }
       }
@@ -1005,19 +1061,10 @@ export default {
             return coordinate / (width / 630) + "px";
           }
         } else {
-          // console.log(coordinate,"coordinate")
           if (type == "left") {
-            // if (!screenSize) {
-              return coordinate / (height / 75) + 10 + "px";
-            // } else {
-              // return coordinate / (height / 75) + "px";
-            // }
+              return coordinate / (height / 75) + 5 + "px";
           } else if (type == "top") {
-            // if (!screenSize) {
               return coordinate / (height / 75) + 4 + "px";
-            // } else {
-              // return coordinate / (height / 75) + "px";
-            // }
           }
         }
       }
@@ -1064,6 +1111,7 @@ export default {
     },
     dialogClose() {
       this.showEmit = false;
+      this.arrowRightVisible = false
       setTimeout(() => {
         this.allVmsTemplate();
       }, 500);
@@ -1288,4 +1336,12 @@ background-color: rgba(5,175,227,0.1) !important;
 // background-color: transparent !important;
 
 // }
+::v-deep .el-select .el-input .el-input__inner{
+  caret-color: rgba(0,0,0,0);
+  user-select: none;
+}
+::v-deep .el-collapse-item__header,.el-collapse-item__content{
+  caret-color: rgba(0,0,0,0);
+  user-select: none;
+}
 </style>

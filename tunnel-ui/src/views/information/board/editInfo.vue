@@ -533,62 +533,65 @@
         var textBoard = document.getElementsByClassName("textBoard")
         console.log(textBoard,"textBoard");
         console.log(divContent,"divContent");
+        for(let i=0;i<textBoard.length;i++){
+          // 获取文字长宽
+          let textWidth = textBoard[i].offsetWidth;
+          let textHeight = textBoard[i].offsetHeight;
+          // 获取黑盒子长宽
+          let divWidth = divContent[i].offsetWidth;
+          let divHeight = divContent[i].offsetHeight;
+          // console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
+          console.log(textBoard[i].style,"textBoard[i].style");
+          // console.log(textWidth,divWidth,"999999999999999");
+          switch (alignmentNum) {
+            // 左对齐
+            case 1:
+              textBoard[i].style.position = 'static'
+              divContent[i].style.justifyContent = 'left'
+              divContent[i].style.alignItems = 'center'
+              textBoard[i].style.textAlign = 'left'
 
-        // 获取文字长宽
-        let textWidth = textBoard[0].offsetWidth;
-        let textHeight = textBoard[0].offsetHeight;
-        // 获取黑盒子长宽
-        let divWidth = divContent[0].offsetWidth;
-        let divHeight = divContent[0].offsetHeight;
-        // console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
-        console.log(textBoard[0].style,"textBoard[0].style");
-        // console.log(textWidth,divWidth,"999999999999999");
-        switch (alignmentNum) {
-          // 左对齐
-          case 1:
-            textBoard[0].style.position = 'static'
-            divContent[0].style.justifyContent = 'left'
-            divContent[0].style.alignItems = 'center'
-            textBoard[0].style.textAlign = 'left'
+              break;
+              // 左右居中
+            case 2:
+              textBoard[i].style.position = 'static !important'
+              divContent[i].style.justifyContent = 'center'
+              divContent[i].style.alignItems = 'center'
+              textBoard[i].style.textAlign = 'center'
 
-            break;
-            // 左右居中
-          case 2:
-            textBoard[0].style.position = 'static'
-            divContent[0].style.justifyContent = 'center'
-            divContent[0].style.alignItems = 'center'
-            textBoard[0].style.textAlign = 'center'
+              break;
+              // 右对齐
+            case 3:
+              divContent[i].style.justifyContent = 'right'
+              divContent[i].style.alignItems = 'center'
+              textBoard[i].style.textAlign = 'right'
+              textBoard[i].style.position = 'static'
 
-            break;
-            // 右对齐
-          case 3:
-            divContent[0].style.justifyContent = 'right'
-            divContent[0].style.alignItems = 'center'
-            textBoard[0].style.textAlign = 'right'
-            textBoard[0].style.position = 'static'
+              break;
+              // 上对齐
+            case 4:
+              divContent[i].style.alignItems = 'flex-start'
+              textBoard[i].style.position = 'static'
 
-            break;
-            // 上对齐
-          case 4:
-            divContent[0].style.alignItems = 'flex-start'
-            textBoard[0].style.position = 'static'
+              break;
+              // 上下对齐
+            case 5:
+              divContent[i].style.alignItems = 'center'
+              textBoard[i].style.position = 'static'
 
-            break;
-            // 上下对齐
-          case 5:
-            divContent[0].style.alignItems = 'center'
-            textBoard[0].style.position = 'static'
+              break;
+              // 下对齐
+            case 6:
+              divContent[i].style.alignItems = 'flex-end'
+              textBoard[i].style.position = 'static'
 
-            break;
-            // 下对齐
-          case 6:
-            divContent[0].style.alignItems = 'flex-end'
-            textBoard[0].style.position = 'static'
-
-            break;
+              break;
+          }
+          var textLeft = this.addZero(textBoard[i].offsetLeft)
+          var textTop = this.addZero(textBoard[i].offsetTop)
         }
-        var textLeft = this.addZero(textBoard[0].offsetLeft)
-        var textTop = this.addZero(textBoard[0].offsetTop)
+        
+        
         // console.log(textBoard[0].offsetLeft,textBoard[0].offsetTop,"9999999999");
         this.dataForm.COORDINATE = textLeft+textTop
         console.log(this.dataForm.COORDINATE,"this.dataForm.COORDINATE");

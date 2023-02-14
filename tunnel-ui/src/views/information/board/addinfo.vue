@@ -1041,8 +1041,5 @@ export default {
   // justify-content: center;
   // align-items: center;
 }
-::v-deep .el-select .el-input .el-input__inner{
-  caret-color: rgba(0,0,0,0);
-  user-select: none;
-}
+
 </style>

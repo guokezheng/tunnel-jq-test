@@ -30,6 +30,17 @@
         <result property="startPileNum" column="start_pile_num" />
         <result property="endPileNum" column="end_pile_num" />
         <result property="roadId" column="road_id" />
+        <result property="roadCode" column="road_code" />
+        <result property="roadName" column="road_name" />
+        <result property="levelCode" column="level_code" />
+        <result property="levelName" column="level_name" />
+        <result property="lengthCode" column="length_code" />
+        <result property="lengthName" column="length_name" />
+        <result property="constructYear" column="construct_year" />
+        <result property="activateTime" column="activate_time" />
+        <result property="managerId" column="manager_id" />
+        <result property="orgCode" column="org_code" />
+        <result property="orgName" column="org_name" />
         <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
         <collection property="sdTunnelSubareas" ofType="sdTunnelSubarea" javaType="java.util.List" select="getSubareas" column="tunnel_id">
             <result property="sId" column="s_id" />
@@ -76,7 +87,8 @@
         select t.tunnel_id, t.tunnel_name, t.tunnel_code, t.tunnel_address, t.longitude, t.latitude, t.tunnel_station_id,
         t.tunnel_station_name, t.lane, t.coordinates, t.remake, t.tunnel_length, t.poll, t.store_configure, t.create_by,
         t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name,t.start_pile,t.end_pile,t.start_pile_num,t.end_pile_num,
-        ifnull(i.security_percentage,'0') security_percentage, t.road_id
+        ifnull(i.security_percentage,'0') security_percentage, t.road_id, t.road_code, t.road_name, t.level_code, t.level_name, t.length_code,
+        t.length_name, t.construct_year, t.activate_time, t.manager_id, t.org_code, t.org_name
         from sd_tunnels t
         left join sys_dept d on t.dept_id = d.dept_id
         left join sd_safety_index i on i.tunnel_id = t.tunnel_id

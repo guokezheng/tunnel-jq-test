@@ -1,5 +1,6 @@
 package com.tunnel.business.domain.dataInfo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.tunnel.business.domain.event.SdSafetyIndex;
@@ -7,6 +8,7 @@ import com.tunnel.business.domain.event.SdTunnelSubarea;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -99,6 +101,128 @@ public class SdTunnels extends BaseEntity
 
     @ApiModelProperty("祖级列表")
     private String ancestors;
+
+    @ApiModelProperty("道路编码")
+    private String roadCode;
+
+    @ApiModelProperty("道路名称")
+    private String roadName;
+
+    @ApiModelProperty("等级编码")
+    private int levelCode;
+
+    @ApiModelProperty("等级名称")
+    private String levelName;
+
+    @ApiModelProperty("长度编码")
+    private int lengthCode;
+
+    @ApiModelProperty("长度名称")
+    private String lengthName;
+
+    @ApiModelProperty("修建年度")
+    private int constructYear;
+
+    @ApiModelProperty("建成通车日期")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date activateTime;
+
+    @ApiModelProperty("管养单位ID")
+    private String managerId;
+
+    @ApiModelProperty("区划编码")
+    private String orgCode;
+
+    @ApiModelProperty("区划名称")
+    private String orgName;
+
+    public String getRoadCode() {
+        return roadCode;
+    }
+
+    public void setRoadCode(String roadCode) {
+        this.roadCode = roadCode;
+    }
+
+    public String getRoadName() {
+        return roadName;
+    }
+
+    public void setRoadName(String roadName) {
+        this.roadName = roadName;
+    }
+
+    public int getLevelCode() {
+        return levelCode;
+    }
+
+    public void setLevelCode(int levelCode) {
+        this.levelCode = levelCode;
+    }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    public int getLengthCode() {
+        return lengthCode;
+    }
+
+    public void setLengthCode(int lengthCode) {
+        this.lengthCode = lengthCode;
+    }
+
+    public String getLengthName() {
+        return lengthName;
+    }
+
+    public void setLengthName(String lengthName) {
+        this.lengthName = lengthName;
+    }
+
+    public int getConstructYear() {
+        return constructYear;
+    }
+
+    public void setConstructYear(int constructYear) {
+        this.constructYear = constructYear;
+    }
+
+    public Date getActivateTime() {
+        return activateTime;
+    }
+
+    public void setActivateTime(Date activateTime) {
+        this.activateTime = activateTime;
+    }
+
+    public String getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(String managerId) {
+        this.managerId = managerId;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
 
     public String getAncestors() {
         return ancestors;

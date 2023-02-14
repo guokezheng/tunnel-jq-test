@@ -94,10 +94,10 @@
             </el-input>
             <!-- 搜索栏树状结构 -->
             <div class="treeBox" ref="treeBox" v-show="treeShow">
-              <el-tree :data="treeData" :props="defaultProps" 
-              @node-click="handleNodeClick" 
+              <el-tree :data="treeData" :props="defaultProps"
+              @node-click="handleNodeClick"
               accordion
-              default-expand-all 
+              default-expand-all
               :filter-node-method="filterNode"
               ref="tree"
               ></el-tree>
@@ -10477,8 +10477,8 @@ input {
 .treeBox {
   position: absolute;
   z-index: 960619;
-  top: 4%;
-  left: 58.5%;
+  top: 5%;
+  left: 54.5%;
   width: 13.5%;
   height: 60vh;
   overflow: scroll;

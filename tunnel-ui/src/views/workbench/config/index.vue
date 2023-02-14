@@ -81,7 +81,10 @@
               placeholder="请输入内容"
               v-model="screenEqName"
               class="input-with-select"
+              clearable
               @click.native="treeClick()"
+              @keyup.enter.native="screenEqNameButton(screenEqName)"
+              @clear="treeClear"
             >
               <el-button
                 slot="append"
@@ -91,7 +94,13 @@
             </el-input>
             <!-- 搜索栏树状结构 -->
             <div class="treeBox" ref="treeBox" v-show="treeShow">
-              <el-tree :data="treeData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+              <el-tree :data="treeData" :props="defaultProps" 
+              @node-click="handleNodeClick" 
+              accordion
+              default-expand-all 
+              :filter-node-method="filterNode"
+              ref="tree"
+              ></el-tree>
             </div>
           </div>
           <div class="display-box zoomClass">
@@ -3128,6 +3137,7 @@ import {
   getNewBoardEditInfo,
   templateList,
   batchControlDevice,
+  getCategoryTree,
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
 import { listEvent, getWarnEvent } from "@/api/event/event";
@@ -3169,63 +3179,7 @@ export default {
     return {
       treeShow: false,
       //搜索树状数据
-      treeData: [
-        // {
-        //   label: "一级 1",
-        //   children: [
-        //     {
-        //       label: "二级 1-1",
-        //       children: [
-        //         {
-        //           label: "三级 1-1-1",
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // },
-        // {
-        //   label: "一级 2",
-        //   children: [
-        //     {
-        //       label: "二级 2-1",
-        //       children: [
-        //         {
-        //           label: "三级 2-1-1",
-        //         },
-        //       ],
-        //     },
-        //     {
-        //       label: "二级 2-2",
-        //       children: [
-        //         {
-        //           label: "三级 2-2-1",
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // },
-        // {
-        //   label: "一级 3",
-        //   children: [
-        //     {
-        //       label: "二级 3-1",
-        //       children: [
-        //         {
-        //           label: "三级 3-1-1",
-        //         },
-        //       ],
-        //     },
-        //     {
-        //       label: "二级 3-2",
-        //       children: [
-        //         {
-        //           label: "三级 3-2-1",
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // },
-      ],
+      treeData: [],
       defaultProps: {
         children: "children",
         label: "label",
@@ -4016,6 +3970,10 @@ export default {
   },
 
   watch: {
+    // 工作台搜索关键词匹配
+    screenEqName(val) {
+      this.$refs.tree.filter(val);
+    },
     tunnelList: function (newVal, oldVal) {
       console.log(newVal, "8888888888888888");
     },
@@ -4329,8 +4287,20 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
     otherClose(e) {
       if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+    },
+    treeClear(){
+      for (var item of this.selectedIconList) {
+          if (item.eqName.indexOf(this.screenEqName) > -1) {
+            console.log(item.eqName);
+            item.click = false;
+          }
+        }
     },
     // 模糊查询
     treeClick() {
@@ -4344,16 +4314,16 @@ export default {
       this.screenEqNameButton(data.label);
     },
     // 筛选设备名称
-    screenEqNameButton(screenEqName) {
-      // console.log(screenEqName);
-      for (var item of this.selectedIconList) {
-        if (item.eqName.indexOf(screenEqName) != -1) {
-          item.click = true;
-        } else {
-          item.click = false;
-        }
-      }
-    },
+    // screenEqNameButton(screenEqName) {
+    //   // console.log(screenEqName);
+    //   for (var item of this.selectedIconList) {
+    //     if (item.eqName.indexOf(screenEqName) != -1) {
+    //       item.click = true;
+    //     } else {
+    //       item.click = false;
+    //     }
+    //   }
+    // },
     changeStrategyState(row) {
       let data = { strategyId: row.id, change: row.strategyState };
       updateState(data).then((result) => {
@@ -6670,6 +6640,11 @@ export default {
           that.rightDirection = "";
         }
       });
+           // 树状搜索
+    getCategoryTree( tunnelId).then((res) => {
+      console.log(res, "-------------------------");
+      this.treeData = res.data;
+    });
     },
 
     /* 根据车道数获取车道图*/
@@ -10320,6 +10295,11 @@ input {
   z-index: 960619;
   top: 4%;
   left: 58.5%;
-  width: 8.5%;
+  width: 13.5%;
+  height: 60vh;
+  overflow: scroll;
+}
+.treeBox::-webkit-scrollbar {
+  display: none;
 }
 </style>

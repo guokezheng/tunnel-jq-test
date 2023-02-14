@@ -1164,8 +1164,8 @@ public class KafkaReadListenToHuaWeiTopic {
         event.setEventLongitude(jsonObject.getString("eventLongitude"));
         event.setEventLatitude(jsonObject.getString("eventLatitude"));
         event.setEventTypeId(eventTypeId);
-        String eventLevel = jsonObject.getString("eventLevel");
-        event.setEventGrade(eventLevel.substring(eventLevel.length()-1,eventLevel.length()));
+        /*String eventLevel = jsonObject.getString("eventLevel");
+        event.setEventGrade(eventLevel.substring(eventLevel.length()-1,eventLevel.length()));*/
         String stakeNum = jsonObject.getString("eventStakeNo");
         if(StrUtil.isNotBlank(stakeNum)){
             event.setStakeNum(jsonObject.getString("eventStakeNo"));
@@ -1184,9 +1184,7 @@ public class KafkaReadListenToHuaWeiTopic {
         switch (eventStatus){
             case 2 : ownStatus = "0"; break;
             case 3 : ownStatus = "1"; break;
-            case 4 : ownStatus = "4"; break;
             case 5 : ownStatus = "2"; break;
-            case 6 : ownStatus = "5"; break;
             default: ownStatus = "3"; break;
         }
         event.setEventState(ownStatus);

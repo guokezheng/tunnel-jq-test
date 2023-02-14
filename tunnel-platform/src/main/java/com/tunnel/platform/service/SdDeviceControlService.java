@@ -97,20 +97,22 @@ public class SdDeviceControlService {
             log.error("当前设备控制参数为空");
             return 0;
         }
-        if ("GSY".equals(deploymentType)) {
-            //解析map
-            String deviceId = map.get("devId").toString();
-            String deviceState = map.get("state").toString();
-            SdDevices devicesHong = sdDevicesService.selectSdDevicesById(deviceId);
-            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType()) && "AGREE".equals(platformControl)){
-                Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
-                Integer code = Integer.valueOf(hongMap.get("code"));
-                if(code == 200){
-                    return 1;
-                }else {
-                    return 0;
-                }
+
+        //解析map 杭山东隧道下调用瑞华赢接口控制设备
+        String deviceId = map.get("devId").toString();
+        String deviceState = map.get("state").toString();
+        SdDevices devicesHong = sdDevicesService.selectSdDevicesById(deviceId);
+        if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType()) && "AGREE".equals(platformControl)){
+            Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
+            Integer code = Integer.valueOf(hongMap.get("code"));
+            if(code == 200){
+                return 1;
+            }else {
+                return 0;
             }
+        }
+
+        if ("GSY".equals(deploymentType)) {
             return sdOptDeviceService.optSingleDevice(map);
         }
 

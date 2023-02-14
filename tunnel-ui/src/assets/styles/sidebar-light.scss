@@ -570,7 +570,7 @@
       }
       .el-collapse-item__wrap{
         border-bottom:solid 1px #05afe3;
-
+        background: #004375;
       }
       .el-collapse-item__header, .el-collapse-item__content{
       background: #004375;
@@ -1656,14 +1656,14 @@
   }
   // 隔行变色
   .allTable{
-    background: #00487F;
+    background: #004375;
     .el-table__body-wrapper tbody{
-      tr:nth-of-type(even){
+      tr:nth-of-type(odd){
         background-color: #004375 !important;
         color: #fff !important;
 
       }
-      tr:nth-of-type(odd){
+      tr:nth-of-type(even){
         background-color: #00487F !important;
         color: #fff !important;
       }
@@ -1680,7 +1680,7 @@
     }
     
   }
-  .allTable,.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
+  .allTable .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
     background: #165484 !important;
 
   }

@@ -1205,7 +1205,7 @@ export default {
         // align-content: center;
         // column-gap: 20px; //左右
         // row-gap: 40px; //上下
-        margin-bottom: 10px;
+        margin: 10px 0;
         padding: 0 20px;
         overflow: hidden;
         display: flex;
@@ -1254,7 +1254,7 @@ export default {
         justify-content: center;
       }
       .el-collapse {
-        max-height: 69vh !important;
+        max-height: 700px !important;
         overflow: auto;
         border-bottom: none;
         border-top: none;

@@ -55,7 +55,8 @@
       v-loading="loading"
       :data="brandList"
       @selection-change="handleSelectionChange"
-      class="allTable tableClass"
+      class="allTable"
+      height="70vh"
     >
       <el-table-column type="selection" width="55" align="center" />
 

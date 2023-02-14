@@ -7,7 +7,7 @@
       width="44%"
       :before-close="handleClose"
     >
-      <el-card class="box-card" style="margin-top: 2vh">
+      <el-card class="box-card" >
         <div
           v-on:ondragenter="ondragenter"
           v-on:drop="faceDrop"
@@ -16,7 +16,7 @@
             width: boardWidth + 'px',
             height: boardHeight + 'px',
           }"
-          class="blackBoard"
+          class="blackBoard1"
         >
           <span
             :style="{
@@ -27,7 +27,7 @@
               left: dataForm.COORDINATE?dataForm.COORDINATE.substring(0, 3) + 'px':'',
               top: dataForm.COORDINATE?dataForm.COORDINATE.substring(3, 6) + 'px':'',
             }"
-            class="textBoard boardTextStyle"
+            class="textBoard1 boardTextStyle"
             style="position: absolute;"
             v-html="dataForm.CONTENT?dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g,' &nbsp'):''"
           ></span>
@@ -200,12 +200,13 @@
             </el-col>
             <el-col :span="8">
               <el-form-item prop="FONT_SIZE" label="字体大小">
-                <el-select v-model="dataForm.FONT_SIZE" style="width: 100%">
+                <el-select v-model="dataForm.FONT_SIZE" style="width: 100%" @change="changeFontSize">
                   <el-option
                     v-for="item in fontSizeOpt"
                     :key="item.dictValue"
                     :label="item.dictLabel"
                     :value="item.dictValue"
+
                   >
                   </el-option>
                 </el-select>
@@ -679,8 +680,12 @@ export default {
       console.log(size, "00000000000000000000");
       this.boardWidth = size.split("*")[0];
       this.boardHeight = size.split("*")[1];
-
       this.$forceUpdate();
+    },
+    changeFontSize(){
+      this.dataForm.COORDINATE = '000000'
+      var textBoard1 = document.getElementsByClassName("textBoard1");
+      textBoard1[0].style.position = 'absolute'
     },
     keyDown(ev) {
       console.log(ev.keyCode, "ev.keyCode");
@@ -855,66 +860,66 @@ export default {
     },
     // 文字对齐方式
     alignment(alignmentNum) {
-      var divContent = document.getElementsByClassName("blackBoard");
-      var textBoard = document.getElementsByClassName("textBoard");
+      var divContent1 = document.getElementsByClassName("blackBoard1");
+      var textBoard1 = document.getElementsByClassName("textBoard1");
       // 获取文字长宽
-      let textWidth = textBoard[0].offsetWidth;
-      let textHeight = textBoard[0].offsetHeight;
-      // 获取黑盒子长宽
-      let divWidth = divContent[0].offsetWidth;
-      let divHeight = divContent[0].offsetHeight;
-      console.log(
-        document.getElementsByClassName("textBoard"),
-        "document.getElementsByClassName('textBoard')"
-      );
-      console.log(textBoard[0].style, "textBoard[0].style");
-      console.log(textWidth, divWidth, "999999999999999");
+      // let textWidth = textBoard1[0].offsetWidth;
+      // let textHeight = textBoard1[0].offsetHeight;
+      // // 获取黑盒子长宽
+      // let divWidth = divContent1[0].offsetWidth;
+      // let divHeight = divContent1[0].offsetHeight;
+      // console.log(
+      //   document.getElementsByClassName("textBoard1"),
+      //   "document.getElementsByClassName('textBoard1')"
+      // );
+      // console.log(textBoard1[0].style, "textBoard1[0].style");
+      // console.log(textWidth, divWidth, "999999999999999");
       switch (alignmentNum) {
        // 左对齐
         case 1:
-          divContent[0].style.justifyContent = 'left'
-          divContent[0].style.alignItems = 'center'
-          textBoard[0].style.textAlign = 'left'
-          textBoard[0].style.position = 'static'
+          divContent1[0].style.justifyContent = 'left'
+          divContent1[0].style.alignItems = 'center'
+          textBoard1[0].style.textAlign = 'left'
+          textBoard1[0].style.position = 'static'
 
           break;
           // 左右居中
         case 2:
-          divContent[0].style.justifyContent = 'center'
-          divContent[0].style.alignItems = 'center'
-          textBoard[0].style.textAlign = 'center'
-          textBoard[0].style.position = 'static'
+          divContent1[0].style.justifyContent = 'center'
+          divContent1[0].style.alignItems = 'center'
+          textBoard1[0].style.textAlign = 'center'
+          textBoard1[0].style.position = 'static'
 
           break;
           // 右对齐
         case 3:
-          divContent[0].style.justifyContent = 'right'
-          divContent[0].style.alignItems = 'center'
-          textBoard[0].style.textAlign = 'right'
-          textBoard[0].style.position = 'static'
+          divContent1[0].style.justifyContent = 'right'
+          divContent1[0].style.alignItems = 'center'
+          textBoard1[0].style.textAlign = 'right'
+          textBoard1[0].style.position = 'static'
 
           break;
           // 上对齐
         case 4:
-          divContent[0].style.alignItems = 'flex-start'
-          textBoard[0].style.position = 'static'
+          divContent1[0].style.alignItems = 'flex-start'
+          textBoard1[0].style.position = 'static'
 
           break;
           // 上下对齐
         case 5:
-          divContent[0].style.alignItems = 'center'
-          textBoard[0].style.position = 'static'
+          divContent1[0].style.alignItems = 'center'
+          textBoard1[0].style.position = 'static'
 
           break;
           // 下对齐
         case 6:
-          divContent[0].style.alignItems = 'flex-end'
-          textBoard[0].style.position = 'static'
+          divContent1[0].style.alignItems = 'flex-end'
+          textBoard1[0].style.position = 'static'
 
           break;
       }
-      var textLeft = this.addZero(textBoard[0].offsetLeft);
-      var textTop = this.addZero(textBoard[0].offsetTop);
+      var textLeft = this.addZero(textBoard1[0].offsetLeft);
+      var textTop = this.addZero(textBoard1[0].offsetTop);
       this.dataForm.COORDINATE = textLeft + textTop;
       console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
     },
@@ -995,8 +1000,8 @@ export default {
     },
     handleClose(done) {
       console.log(done,"done")
-      var textBoard = document.getElementsByClassName("textBoard");
-      textBoard[0].style.position = 'absolute'
+      var textBoard1 = document.getElementsByClassName("textBoard1");
+      textBoard1[0].style.position = 'absolute'
       this.dialogVisible = false
       // this.$confirm("确认关闭？")
       //   .then((_) => {
@@ -1032,7 +1037,7 @@ export default {
   user-select: none;
 
 }
-.blackBoard{
+.blackBoard1{
   background: #000000;
   display: flex;
   margin: 0 auto;
@@ -1041,5 +1046,7 @@ export default {
   // justify-content: center;
   // align-items: center;
 }
-
+::v-deep .el-card__body{
+    padding:10px 0;
+  }
 </style>

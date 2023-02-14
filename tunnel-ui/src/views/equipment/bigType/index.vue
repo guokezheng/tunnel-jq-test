@@ -94,7 +94,7 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange" class="allTable">
+    <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange" class="allTable" >
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" type="index" align="center" :index="indexMethod"></el-table-column>
       <!--<el-table-column label="类型ID" align="center" prop="id" />-->

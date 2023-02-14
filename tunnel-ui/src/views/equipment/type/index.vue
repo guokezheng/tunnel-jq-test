@@ -47,7 +47,7 @@
       :data="typeList"
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
-      class="tableClass"
+      height="70vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>

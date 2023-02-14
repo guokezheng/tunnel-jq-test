@@ -145,8 +145,8 @@
       v-loading="loading"
       :data="devicesList"
       @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName"
-      class="tableClass"
+      class="allTable"
+      height="70vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -1596,14 +1596,7 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit();
     },
-    // 表格行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
+    
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {

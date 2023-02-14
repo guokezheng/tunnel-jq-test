@@ -964,7 +964,7 @@ export default {
     this.getBz();
     this.getList();
     this.getTunnel();
-    /*this.getTreeSelect();*/
+    this.getTreeSelect();
     //外观情况
     this.getDicts("impression").then((response) => {
       this.impressionOptions = response.data;
@@ -1004,7 +1004,6 @@ export default {
         this.$modal.msgWarning("请先选择隧道");
         return
       }else{
-        debugger
         $('#bzSel').attr("pointer-events","none");
       }
 
@@ -1024,16 +1023,15 @@ export default {
     },
 
     tunnelSelectGet(e){
-      debugger
       const tunnelId = e;
       selectBzByTunnel(tunnelId).then((response) => {
         this.form.bzId = response.data;
         console.log(response.data, "隧道部门树");
       });
-        /*treeselect(this.form.tunnelId).then((response) => {
-          this.treeData = reesponse.data;
+        treeselect(this.form.tunnelId).then((response) => {
+          this.treeData = response.data;
           console.log(response.data, "隧道部门树");
-        });*/
+        });
     },
 
     //  上移
@@ -1336,13 +1334,15 @@ export default {
       });
     },
     /** 隧道部门树 */
-    /*getTreeSelect() {
-      alert(this.form.tunnelId);
+    getTreeSelect() {
+      if(typeof(this.form.tunnelId)=="undefined"){
+        return ;
+      }
       treeselect().then((response) => {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
       });
-    },*/
+    },
 
     // 表单重置
     reset() {
@@ -1576,6 +1576,7 @@ export default {
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点
+      debugger
       if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
         this.$modal.msgWarning("请指派巡查班组");
         return
@@ -1668,6 +1669,10 @@ export default {
       //判断是否选择点
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
+        return
+      }
+      if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
+        this.$modal.msgWarning("请指派巡查班组");
         return
       }
       //判断两个字段是否填写

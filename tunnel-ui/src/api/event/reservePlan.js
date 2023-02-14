@@ -88,3 +88,12 @@ export function getPlanType() {
     method: 'get',
   })
 }
+// 查询级联选择设备列表
+export function getTreeDeviceList(query) {
+  return request({
+    url:'/devices/getTreeDeviceList/',
+    method: 'get',
+    params: query
+  })
+}
+

@@ -97,7 +97,7 @@
               <el-tree :data="treeData" :props="defaultProps" 
               @node-click="handleNodeClick" 
               accordion
-              default-expand-all 
+              :default-expand-all="false"
               :filter-node-method="filterNode"
               ref="tree"
               ></el-tree>

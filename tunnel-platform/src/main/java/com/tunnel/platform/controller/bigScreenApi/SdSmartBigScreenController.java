@@ -185,4 +185,24 @@ public class SdSmartBigScreenController extends BaseController {
     public AjaxResult getRealCars(String tunnelId, String vehicleLicense){
         return sdSmartBigScreenService.getRealCars(tunnelId,vehicleLicense);
     }
+
+    /**
+     * 查询当日累计车辆
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getCumulativeCar")
+    public AjaxResult getCumulativeCar(String tunnelId){
+        return sdSmartBigScreenService.getCumulativeCar(tunnelId);
+    }
+
+    /**
+     * 查询车辆在途数
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getTransitCar")
+    public AjaxResult getTransitCar(String tunnelId){
+        return sdSmartBigScreenService.getTransitCar(tunnelId);
+    }
 }

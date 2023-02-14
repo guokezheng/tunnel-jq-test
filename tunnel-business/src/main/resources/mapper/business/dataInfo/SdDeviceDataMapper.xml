@@ -231,7 +231,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectCOVIDataLineList" resultType="hashmap">
         SELECT @i:=@i+1 as num, j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
-        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
         MAX(CASE a.item_id WHEN 2 THEN a.data ELSE 0 END ) VI
         from sd_device_data_record a
@@ -253,7 +253,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectFSFXDataLineList" resultType="hashmap">
         SELECT @i:=@i+1 as num, j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
-        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
         MAX(CASE a.item_id WHEN 6 THEN a.data ELSE 0 END ) FX
         from sd_device_data_record a
@@ -275,7 +275,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectDNDataLineList" resultType="hashmap">
         SELECT @i:=@i+1 as num, j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
-        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
         left join sd_devices b on b.eq_id = a.device_id
         left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
@@ -295,7 +295,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectDWDataLineList" resultType="hashmap">
         SELECT @i:=@i+1 as num, j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
-        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
         left join sd_devices b on b.eq_id = a.device_id
         left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
@@ -316,7 +316,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectCOVIDevicesDataLineList" resultType="hashmap">
         SELECT @i:=@i+1 as num, j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
-        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
         MAX(CASE a.item_id WHEN 2 THEN a.data ELSE 0 END ) VI
         from sd_device_data_record a
@@ -338,7 +338,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectFSFXDevicesDataLineList" resultType="hashmap">
         SELECT @i:=@i+1 as num, j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
-        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
         MAX(CASE a.item_id WHEN 6 THEN a.data ELSE 0 END ) FX
         from sd_device_data_record a
@@ -360,7 +360,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectDNDevicesDataLineList" resultType="hashmap">
         SELECT @i:=@i+1 as num, j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
-        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
         left join sd_devices b on b.eq_id = a.device_id
         left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
@@ -380,7 +380,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectDWDevicesDataLineList" resultType="hashmap">
         SELECT @i:=@i+1 as num, j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
-        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
         left join sd_devices b on b.eq_id = a.device_id
         left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id

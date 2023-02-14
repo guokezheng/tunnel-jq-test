@@ -638,7 +638,9 @@
           </div>
           <div>
             派单时间：
-            <span>{{ item.dispatchTime }}</span>
+<!--            <span>{{ item.dispatchTime }}</span>-->
+            <span>{{ parseTime(item.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+
           </div>
         </div>
         <div class="card-cols">
@@ -1663,7 +1665,7 @@ export default {
       this.fileData.append("bzId", this.form.bzId);
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","0");
-      this.fileData.append("taskStatus","");
+      this.fileData.append("taskStatus","0");
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点

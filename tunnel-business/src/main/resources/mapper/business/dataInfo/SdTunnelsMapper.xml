@@ -328,4 +328,11 @@
         </where>
         )
     </select>
+
+
+    <select id="isTunnel" resultType="String">
+        select tunnel_name
+        from sd_tunnels where tunnel_id  = #{deviceId}
+    </select>
+
 </mapper>

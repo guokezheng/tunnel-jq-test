@@ -83,17 +83,29 @@ public class SysLogininforController extends BaseController
     }
 
 
-    @GetMapping("/getDeviceTreeselect")
+    @PostMapping("/getDeviceTreeselect")
     @ApiOperation("获取隧道树形结构")
-    public Result getDeviceTreeselect()
+    public Result getDeviceTreeselect(@RequestBody String type)
     {
+        String eqtype = "";
+        if(type !=null&&!"".equals(type)) {
+            if ("1".equals(type)) {
+                eqtype = "19";
+            }else if ("2".equals(type)) {
+                eqtype = "17";
+            }else if ("3".equals(type)) {
+                eqtype = "18";
+            }else if ("4".equals(type)) {
+                eqtype = "5";
+            }
+        }
         String deptId = String.valueOf(SecurityUtils.getDeptId());
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
         List<SysDeptTunnel>tunnelsDevices = new ArrayList<>();
         List<SdTunnels> tunnels = tunnelsService.selectTunnelLineList(deptId);
-        List<SdDevices>devices = sdDevicesService.selectDevicesLineList(deptId);
+        List<SdDevices>devices = sdDevicesService.selectDevicesLineList(deptId,eqtype);
 
         if(tunnels!=null&&tunnels.size()>0){
             for(int i = 0;i<tunnels.size();i++){
@@ -108,7 +120,7 @@ public class SysLogininforController extends BaseController
         if(devices!=null&&devices.size()>0){
             for(int i = 0;i<devices.size();i++){
                 SysDeptTunnel deptTunnel = new SysDeptTunnel();
-                deptTunnel.setDeptId(devices.get(i).getfEqId());
+                deptTunnel.setDeptId(devices.get(i).getEqId());
                 deptTunnel.setDeptName(devices.get(i).getEqName());
                 deptTunnel.setParentId(devices.get(i).getEqTunnelId());
                 deptTunnel.setParentName(devices.get(i).getTunnel());

@@ -472,9 +472,9 @@ export default {
       }
     },
     getDeviceTreeselect() {
-      getDeviceTreeselect().then((response) => {
+      getDeviceTreeselect(this.searchValue).then((response) => {
         this.jgOptions = response.data;
-        console.log(this.jgOptions);
+        console.log(this.jgOptions+"==========设备树");
         //给select-tree默认选中第一个
         this.querysParams.id = this.jgOptions[0].children[0].id;
 
@@ -482,20 +482,18 @@ export default {
         if (this.searchValue == null || this.searchValue == "1" ) {
           this.queryParams.searchValue = "1";
           this.queryParams.deviceId = this.querysParams.id;
+          let viTime = [];
+          this.VITime =[];
           dataLogInfoLineList(
             this.addDateRange(this.queryParams, this.dateRange)
           ).then((response) => {
-            let viTime = [];
             let list1 = response.rows;
             this.CO = list1.map((item) => item.CO);
             this.VI = list1.map((item) => item.VI);
             viTime = list1.map((item) => item.createTime);
             if(viTime.length>0){
               for(let i = 0;i<viTime.length;i++){
-                let sj = viTime[i].substring(viTime[i].length-3,viTime[i].length);
-                if(sj==':00'){
                   this.VITime.push(viTime[i].substring(11,16));
-                }
               }
             }
             this.VITime.sort();
@@ -507,21 +505,20 @@ export default {
         } else if (this.searchValue != null && this.searchValue == "2") {
           this.queryParams.searchValue = "2";
           this.queryParams.deviceId = this.querysParams.id;
+          let fstime  = [];
+          this.fsTime = [];
           dataLogInfoLineList(
             this.addDateRange(this.queryParams, this.dateRange)
           ).then((response) => {
-            let fstime  = [];
             let list1 = response.rows;
             this.fsData = list1.map((item) => item.FS);
             fstime = list1.map((item) => item.createTime);
             if(fstime.length>0){
               for(let i = 0;i<fstime.length;i++){
-                let sj = fstime[i].substring(fstime[i].length-3,fstime[i].length);
-                if(sj==':00'){
                   this.fsTime.push(fstime[i].substring(11,16));
-                }
               }
             }
+            this.fsTime.sort()
             this.total = response.total;
             this.loading = false;
             this.initChart();
@@ -529,43 +526,41 @@ export default {
         } else if (this.searchValue != null && this.searchValue == "3") {
           this.queryParams.searchValue = "3";
           this.queryParams.deviceId = this.querysParams.id;
+          let dntime  = [];
+          this.dnTime =[];
           dataLogInfoLineList(
             this.addDateRange(this.queryParams, this.dateRange)
           ).then((response) => {
             let list1 = response.rows;
-            let dntime  = [];
             this.dnData = list1.map((item) => item.data);
             dntime = list1.map((item) => item.createTime);
             if(dntime.length>0){
               for(let i = 0;i<dntime.length;i++){
-                let sj = dntime[i].substring(dntime[i].length-3,dntime[i].length);
-                if(sj==':00'){
                   this.dnTime.push(dntime[i].substring(11,16));
-                }
               }
             }
+            this.dnTime.sort();
             this.total = response.total;
             this.loading = false;
             this.initChart();
           });
         } else if (this.searchValue != null && this.searchValue == "4") {
           this.queryParams.searchValue = "4";
+          let dwtime = [];
+          this.dwTime = [];
           this.queryParams.deviceId = this.querysParams.id;
           dataLogInfoLineList(
             this.addDateRange(this.queryParams, this.dateRange)
           ).then((response) => {
             let list1 = response.rows;
-            let dwtime = []
             this.dwData = list1.map((item) => item.data);
             dwtime = list1.map((item) => item.createTime);
             if(dwtime.length>0){
               for(let i = 0;i<dwtime.length;i++){
-                let sj = dwtime[i].substring(dwtime[i].length-3,dwtime[i].length);
-                if(sj==':00'){
                   this.dwTime.push(dwtime[i].substring(11,16));
-                }
               }
             }
+            this.dwTime.sort();
             this.total = response.total;
             this.loading = false;
             this.initChart();
@@ -606,7 +601,98 @@ export default {
       const param = {
         id: item.id,
       };
+      this.querysParams.id = item.id;
       console.log("this.querysParams.id==="+item.id)
+
+      if (this.searchValue == null || this.searchValue == "1" ) {
+        this.queryParams.searchValue = "1";
+        this.queryParams.deviceId = item.id;
+        this.VITime = [];
+        let viTime = [];
+        dataLogInfoLineList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          let list1 = response.rows;
+          this.CO = list1.map((item) => item.CO);
+          this.VI = list1.map((item) => item.VI);
+          viTime = list1.map((item) => item.createTime);
+          if(viTime.length>0){
+            for(let i = 0;i<viTime.length;i++){
+                this.VITime.push(viTime[i].substring(11,16));
+            }
+          }
+          this.VITime.sort();
+          this.total = response.total;
+          this.loading = false;
+          this.initChart();
+        });
+      } else if (this.searchValue != null && this.searchValue == "2") {
+        this.queryParams.searchValue = "2";
+        this.queryParams.deviceId = this.querysParams.id;
+        let fstime  = [];
+        this.fsTime =[];
+        dataLogInfoLineList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+
+          let list1 = response.rows;
+          this.fsData = list1.map((item) => item.FS);
+          fstime = list1.map((item) => item.createTime);
+          if(fstime.length>0){
+            for(let i = 0;i<fstime.length;i++){
+                this.fsTime.push(fstime[i].substring(11,16));
+            }
+          }
+          this.fsTime.sort();
+          this.total = response.total;
+          this.loading = false;
+          this.initChart();
+        });
+      } else if (this.searchValue != null && this.searchValue == "3") {
+        this.queryParams.searchValue = "3";
+        this.queryParams.deviceId = this.querysParams.id;
+        let dntime  = [];
+        this.dnTime = [];
+        dataLogInfoLineList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          let list1 = response.rows;
+          this.dnData = list1.map((item) => item.data);
+          dntime = list1.map((item) => item.createTime);
+          if(dntime.length>0){
+            for(let i = 0;i<dntime.length;i++){
+                this.dnTime.push(dntime[i].substring(11,16));
+            }
+          }
+          this.dnTime.sort();
+          this.total = response.total;
+          this.loading = false;
+          this.initChart();
+        });
+      } else if (this.searchValue != null && this.searchValue == "4") {
+        this.queryParams.searchValue = "4";
+        this.queryParams.deviceId = this.querysParams.id;
+        let dwtime = [];
+        this.dwTime = [];
+        dataLogInfoLineList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          let list1 = response.rows;
+
+          this.dwData = list1.map((item) => item.data);
+          dwtime = list1.map((item) => item.createTime);
+          if(dwtime.length>0){
+            for(let i = 0;i<dwtime.length;i++){
+                this.dwTime.push(dwtime[i].substring(11,16));
+            }
+          }
+          this.dwTime.sort();
+          this.total = response.total;
+          this.loading = false;
+          this.initChart();
+        });
+      }
+
       //下面传这个参数，然后重新生成线
       /*getTunnelList(param).then((res) => {
         console.log(res, "根据管理机构筛选所属隧道");
@@ -767,6 +853,7 @@ export default {
       this.searchValue = inx;
       this.getList(inx);
       this.initChart();
+      this.getDeviceTreeselect();
     },
     /** 所属隧道 */
     getTunnel(userDeptId) {
@@ -846,23 +933,19 @@ export default {
         });
       }
       //查询折线图数据
-      if (inx == null || inx == "1" || this.searchValue == "1") {
+     /* if (inx == null || inx == "1" || this.searchValue == "1") {
         this.queryParams.searchValue = "1";
+        this.VITime = [];
+        let viTime = [];
         dataLogInfoLineList(
           this.addDateRange(this.queryParams, this.dateRange)
         ).then((response) => {
-          let viTime = [];
           let list1 = response.rows;
           this.CO = list1.map((item) => item.CO);
           this.VI = list1.map((item) => item.VI);
           viTime = list1.map((item) => item.createTime);
           if(viTime.length>0){
-            for(let i = 0;i<viTime.length;i++){
-              let sj = viTime[i].substring(viTime[i].length-3,viTime[i].length);
-              if(sj==':00'){
                 this.VITime.push(viTime[i].substring(11,16));
-              }
-            }
           }
           this.VITime.sort();
           console.log(this.VITime+"========+时间轴");
@@ -872,68 +955,65 @@ export default {
         });
       } else if ((inx != null && inx == "2") || this.searchValue == "2") {
         this.queryParams.searchValue = "2";
+        this.fsTime = [];
+        let fstime  = [];
         dataLogInfoLineList(
           this.addDateRange(this.queryParams, this.dateRange)
         ).then((response) => {
-          let fstime  = [];
           let list1 = response.rows;
           this.fsData = list1.map((item) => item.FS);
           fstime = list1.map((item) => item.createTime);
           if(fstime.length>0){
             for(let i = 0;i<fstime.length;i++){
-              let sj = fstime[i].substring(fstime[i].length-3,fstime[i].length);
-              if(sj==':00'){
                 this.fsTime.push(fstime[i].substring(11,16));
-              }
             }
           }
+          this.fsTime.sort();
           this.total = response.total;
           this.loading = false;
           this.initChart();
         });
       } else if ((inx != null && inx == "3") || this.searchValue == "3") {
         this.queryParams.searchValue = "3";
+        let dntime  = [];
+        this.dnTime = [];
         dataLogInfoLineList(
           this.addDateRange(this.queryParams, this.dateRange)
         ).then((response) => {
           let list1 = response.rows;
-          let dntime  = [];
           this.dnData = list1.map((item) => item.data);
           dntime = list1.map((item) => item.createTime);
           if(dntime.length>0){
             for(let i = 0;i<dntime.length;i++){
-              let sj = dntime[i].substring(dntime[i].length-3,dntime[i].length);
-              if(sj==':00'){
                 this.dnTime.push(dntime[i].substring(11,16));
-              }
             }
           }
+          this.dnTime.sort();
           this.total = response.total;
           this.loading = false;
           this.initChart();
         });
       } else if ((inx != null && inx == "4") || this.searchValue == "4") {
         this.queryParams.searchValue = "4";
+        let dwtime = [];
+        this.dwTime =[];
         dataLogInfoLineList(
           this.addDateRange(this.queryParams, this.dateRange)
         ).then((response) => {
           let list1 = response.rows;
-          let dwtime = []
           this.dwData = list1.map((item) => item.data);
           dwtime = list1.map((item) => item.createTime);
           if(dwtime.length>0){
             for(let i = 0;i<dwtime.length;i++){
-              let sj = dwtime[i].substring(dwtime[i].length-3,dwtime[i].length);
-              if(sj==':00'){
                 this.dwTime.push(dwtime[i].substring(11,16));
-              }
             }
           }
+          this.dwData.sort();
           this.total = response.total;
           this.loading = false;
           this.initChart();
         });
-      }
+      }*/
 
 
 

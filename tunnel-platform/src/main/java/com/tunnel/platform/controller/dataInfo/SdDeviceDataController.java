@@ -188,7 +188,7 @@ public class SdDeviceDataController extends BaseController
     @GetMapping("/dataLogInfoLineList")
     public TableDataInfo dataLogInfoLineList(SdDeviceData sdDeviceData)
     {
-        List<Map<String, String>> list = sdDeviceDataService.dataLogInfoList(sdDeviceData);
+        List<Map<String, String>> list = sdDeviceDataService.dataLogInfoLineList(sdDeviceData);
         return getDataTable(list);
     }
 

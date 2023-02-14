@@ -869,7 +869,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     @Override
-    public List<SdDevices> selectDevicesLineList(String deptId) {
-        return sdDevicesMapper.selectDevicesLineList(deptId);
+    public List<SdDevices> selectDevicesLineList(String deptId,String eqtype) {
+        return sdDevicesMapper.selectDevicesLineList(deptId,eqtype);
     }
 }

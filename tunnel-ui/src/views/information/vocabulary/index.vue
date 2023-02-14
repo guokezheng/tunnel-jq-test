@@ -1,47 +1,15 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="文本" prop="word">
-        <el-input
-          v-model="queryParams.word"
-          placeholder="请输入文本"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
+    <!-- 全局搜索 -->
+    <el-row  :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="6">
         <el-button
           type="primary"
           plain
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:vocabulary:add']"
-          >新增</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:vocabulary:edit']"
-          >修改</el-button
+        >新增</el-button
         >
         <el-button
           type="primary"
@@ -50,7 +18,7 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:vocabulary:remove']"
-          >删除</el-button
+        >删除</el-button
         >
         <el-button
           type="primary"
@@ -58,10 +26,22 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:vocabulary:export']"
-          >导出</el-button
+        >导出</el-button
         >
-      </el-form-item>
-    </el-form>
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div  ref="main" class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.word"
+            placeholder="请输入文本内容,回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -126,7 +106,7 @@
 
     >
       <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="序号"
+          <el-table-column label="序号" align="center"
       type="index"
       width="50">
     </el-table-column>

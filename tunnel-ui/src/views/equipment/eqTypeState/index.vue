@@ -1,22 +1,25 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="70px">
-      <el-form-item label="设备类型" prop="stateTypeId">
-        <el-select v-model="queryParams.stateTypeId" placeholder="请选择设备类型" clearable size="small">
-          <el-option v-for="item in typeStateData" :key="item.typeId" :label="item.typeName" :value="item.typeId" />
-        </el-select>
-      </el-form-item>
+    <el-form :model="queryParams" align="right" ref="queryForm" :inline="true" v-show="showSearch" label-width="70px">
+<!--      <el-form-item label="设备类型" prop="stateTypeId">-->
+
+<!--      </el-form-item>-->
       <!-- <el-form-item label="是否可控" prop="isControl">
         <el-select v-model="queryParams.isControl" placeholder="请选择是否可控" clearable size="small">
           <el-option v-for="dict in isControlOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />
         </el-select>
       </el-form-item> -->
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
-        <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
-        <el-button type="primary" plain size="mini" :disabled="multiple" @click="handleDeleteAll"
-                   v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
+<!--      <el-form-item>-->
+<!--&lt;!&ndash;        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>&ndash;&gt;-->
+<!--&lt;!&ndash;        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>&ndash;&gt;-->
+<!--        <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>-->
+<!--        <el-button type="primary" plain size="mini" :disabled="multiple" @click="handleDeleteAll"-->
+<!--                   v-hasPermi="['system:eqTypeState:remove']">删除</el-button>-->
+<!--      </el-form-item>-->
+      <el-form-item >
+        <el-input clearable
+                  size="small"
+                  @keyup.enter.native="handleQuery"  v-model="queryParams.searchValue" style="width:360px" placeholder="请输入设备类型名称,回车搜索" />
       </el-form-item>
     </el-form>
     <!--
@@ -49,9 +52,10 @@
               :row-class-name="tableRowClassName"
               class="tableClass"
     >
-      <el-table-column type="selection" width="55" align="center" />
+<!--      <el-table-column type="selection" width="55" align="center" />-->
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
       <!-- <el-table-column label="设备类型" align="center" prop="typeId" /> -->
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="设备类型" align="center" prop="typeName" />
       <el-table-column label="状态类型" align="center" prop="stateType" />
       <!-- <el-table-column label="设备状态code" align="center" prop="deviceState" />
@@ -249,6 +253,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        searchValue: null,
         stateTypeId: null,
         deviceState: null,
         stateName: null,
@@ -339,6 +344,10 @@ export default {
     });
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     addFrom(){
       let now = new Date()
       let item = {
@@ -464,6 +473,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.searchValue='';
       this.resetForm("queryForm");
       this.handleQuery();
     },

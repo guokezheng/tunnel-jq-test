@@ -31,7 +31,7 @@ public class IotBoardTemplateController extends BaseController
     /**
      * 查询情报板模板列表
      */
-    @PreAuthorize("@ss.hasPermi('system:templateConfig:list')")
+//    @PreAuthorize("@ss.hasPermi('system:templateConfig:list')")
     @GetMapping("/list")
     public TableDataInfo list(IotBoardTemplate iotBoardTemplate)
     {
@@ -61,7 +61,7 @@ public class IotBoardTemplateController extends BaseController
     /**
      * 获取情报板模板详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:templateConfig:query')")
+//    @PreAuthorize("@ss.hasPermi('system:templateConfig:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -71,7 +71,7 @@ public class IotBoardTemplateController extends BaseController
     /**
      * 新增情报板模板
      */
-    @PreAuthorize("@ss.hasPermi('system:templateConfig:add')")
+//    @PreAuthorize("@ss.hasPermi('system:templateConfig:add')")
     @Log(title = "情报板模板", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody JSONObject jsonObject)
@@ -82,7 +82,7 @@ public class IotBoardTemplateController extends BaseController
     /**
      * 修改情报板模板
      */
-    @PreAuthorize("@ss.hasPermi('system:templateConfig:edit')")
+//    @PreAuthorize("@ss.hasPermi('system:templateConfig:edit')")
     @Log(title = "情报板模板", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody JSONObject jsonObject)

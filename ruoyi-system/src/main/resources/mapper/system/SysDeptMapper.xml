@@ -262,4 +262,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</where>
 	</select>
 
+
+	<select id="selectTunnelDeptListBydw" resultMap="SysDeptResult">
+		select * from sys_dept t where (t.dept_id = #{ssdw} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{ssdw},d.ancestors) ))
+	</select>
+
 </mapper>

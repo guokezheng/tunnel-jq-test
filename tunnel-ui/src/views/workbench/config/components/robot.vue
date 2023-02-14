@@ -100,8 +100,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="设备状态:">
-              <!-- {{ stateForm.eqStatus }} -->
+            <el-form-item label="设备状态:"
+            :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>

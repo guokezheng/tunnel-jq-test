@@ -79,7 +79,8 @@
             </el-row>
             <el-row>
               <el-col :span="13">
-                <el-form-item label="设备状态:">
+                <el-form-item label="设备状态:"
+                :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
                   {{ geteqType(stateForm.eqStatus) }}
                 </el-form-item>
               </el-col>

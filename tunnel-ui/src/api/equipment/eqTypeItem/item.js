@@ -59,3 +59,13 @@ export function dataLogInfoList(query) {
     params: query
   })
 }
+//查询折线图
+export function dataLogInfoLineList(query) {
+  return request({
+    url: '/system/data/dataLogInfoLineList',
+    method: 'get',
+    params: query
+  })
+}
+
+

@@ -1,130 +1,157 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="80px"
-    >
-      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
-        <el-select
-          v-model="queryParams.tunnelId"
-          placeholder="请选择所属隧道"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="item in tunnelData"
-            :key="item.tunnelId"
-            :label="item.tunnelName"
-            :value="item.tunnelId"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否启用" prop="poll">
-        <el-select
-          v-model="queryParams.poll"
-          placeholder="请选择是否启用"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="dict in pollOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery"
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['system:tunnels:add']"
+            >新增
+          </el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['system:tunnels:edit']"
+            >修改
+          </el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['system:tunnels:remove']"
+            >删除
+          </el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div ref="main" class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.searchValue"
+            placeholder="请输入隧道名称、桩号,回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div ref="cc" class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="80px"
+      >
+        <el-form-item label="是否启用" style="width: 100%" prop="poll">
+          <el-select
+            v-model="queryParams.poll"
+            placeholder="请选择是否启用"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in pollOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
           >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:tunnels:add']"
-          >新增
-        </el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:tunnels:edit']"
-          >修改
-        </el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:tunnels:remove']"
-          >删除
-        </el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:tunnels:add']"
-        >新增
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary" plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:tunnels:edit']"
-        >修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary" plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:tunnels:remove']"
-        >删除
-        </el-button>
-      </el-col>
-           <el-col :span="1.5">
-             <el-button
-               type="warning"
-               icon="el-icon-download"
-               size="mini"
-               @click="handleExport"
-               v-hasPermi="['system:tunnels:export']"
-             >导出</el-button>
-           </el-col>
-      <div class="top-right-btn">
-        <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-          <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery"/>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
-          <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch"/>
-        </el-tooltip>
-      </div>
-    </el-row> -->
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+<!--    <el-form-->
+<!--      :model="queryParams"-->
+<!--      ref="queryForm"-->
+<!--      :inline="true"-->
+<!--      v-show="showSearch"-->
+<!--      label-width="80px"-->
+<!--    >-->
+<!--      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">-->
+<!--        <el-select-->
+<!--          v-model="queryParams.tunnelId"-->
+<!--          placeholder="请选择所属隧道"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in tunnelData"-->
+<!--            :key="item.tunnelId"-->
+<!--            :label="item.tunnelName"-->
+<!--            :value="item.tunnelId"-->
+<!--          />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="是否启用" prop="poll">-->
+<!--        <el-select-->
+<!--          v-model="queryParams.poll"-->
+<!--          placeholder="请选择是否启用"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="dict in pollOptions"-->
+<!--            :key="dict.dictValue"-->
+<!--            :label="dict.dictLabel"-->
+<!--            :value="dict.dictValue"-->
+<!--          />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item>-->
+<!--        <el-button type="primary" size="mini" @click="handleQuery"-->
+<!--          >搜索</el-button-->
+<!--        >-->
+<!--        <el-button size="mini" @click="resetQuery" type="primary" plain-->
+<!--          >重置</el-button-->
+<!--        >-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          @click="handleAdd"-->
+<!--          v-hasPermi="['system:tunnels:add']"-->
+<!--          >新增-->
+<!--        </el-button>-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['system:tunnels:edit']"-->
+<!--          >修改-->
+<!--        </el-button>-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="multiple"-->
+<!--          @click="handleDelete"-->
+<!--          v-hasPermi="['system:tunnels:remove']"-->
+<!--          >删除-->
+<!--        </el-button>-->
+<!--      </el-form-item>-->
+<!--    </el-form>-->
 
     <el-table
       v-loading="loading"
@@ -135,14 +162,18 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column prop="id" label="序号" align="center"></el-table-column>
       <!-- <el-table-column label="隧道ID" align="center" prop="tunnelId" /> -->
       <el-table-column label="隧道ID" align="center" prop="tunnelId" />
       <el-table-column label="隧道名称" align="center" prop="tunnelName" />
       <el-table-column label="隧道地址" align="center" prop="tunnelAddress" />
       <el-table-column label="经度" align="center" prop="longitude" />
       <el-table-column label="纬度" align="center" prop="latitude" />
-      <!-- <el-table-column label="隧道所ID" align="center" prop="tunnelStationId" />
-      <el-table-column label="隧道所名称" align="center" prop="tunnelStationName" /> -->
+      <el-table-column label="路段ID" align="center" prop="roadId" />
+      <el-table-column label="创建者" align="center" prop="createBy" />
+      <el-table-column label="创建时间" align="center" prop="createTime" />
+      <el-table-column label="修改者" align="center" prop="updateBy" />
+      <el-table-column label="修改时间" align="center" prop="updateTime" />
       <el-table-column label="车道数量" align="center" prop="lane" width="80" />
       <el-table-column
         label="隧道长度(米)"
@@ -602,6 +633,7 @@ export default {
       }
     };
     return {
+      boxShow: false,
       manageStatin:this.$cache.local.get("manageStation"),
       oper: "add", //add 添加  edit修改
       // 遮罩层
@@ -629,9 +661,11 @@ export default {
       pollOptions: [],
       // 查询参数
       queryParams: {
+        searchValue:null,
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
+        tunnelName: null,
         poll: null,
         deptId: this.userDeptId,
         /* storeConfigure: null, */
@@ -707,6 +741,7 @@ export default {
     this.getTunnelList()
   },
   mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
     if (window.history && window.history.pushState) {
       // 向历史记录中插入了当前页
       history.pushState(null, null, document.URL);
@@ -717,6 +752,14 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     getTunnelList() {
       listAllTunnels().then((response) => {
         this.tunnelList = response.data;
@@ -819,6 +862,7 @@ export default {
           this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
         }
       listTunnels1(this.queryParams).then((response) => {
+        console.log(response,"隧道管理列表")
         this.tunnelsList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -884,6 +928,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.searchValue = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -1030,6 +1075,7 @@ export default {
     },
     // 表格行样式
     tableRowClassName({ row, rowIndex }) {
+      row.id = rowIndex+1;
       if (rowIndex % 2 == 0) {
         return "tableEvenRow";
       } else {
@@ -1071,5 +1117,43 @@ export default {
   top: 55px;
   left: 23%;
 
+}
+</style>
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
 }
 </style>

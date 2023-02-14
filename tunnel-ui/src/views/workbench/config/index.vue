@@ -306,7 +306,7 @@
 
                     <el-tooltip
                       effect="dark"
-                      
+
                       placement="right"
                       :title="item.pile"
                       :disabled="sensorDisabledTwo(item)"
@@ -1016,7 +1016,7 @@
               </el-row>
             </vue-seamless-scroll>
           </div>
-          
+
         </div>
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
@@ -1201,28 +1201,80 @@
           <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
 
     </el-tabs>
-    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'xitong'"
+
+
+      <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;margin-top: 5%">
+        <el-row :gutter="20" style="margin: 10px 0 25px">
+
+          <el-col :span="12"  >
+            <div class="grid-content bg-purple">
+              <el-input
+                placeholder="请输入登录地址、用户名称，回车搜索"
+                v-model="operationParam.ipaddr"
+                @keyup.enter.native="handleQueryOperationParam"
+                v-show="operationActive == 'xitong'"
+                class="zj"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-s-fold"
+                  @click="syxt_boxShow = !syxt_boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="syxt_searchBox" v-show="syxt_boxShow">
+          <el-form
+            ref="operationParam"
+            :inline="true"
+            :model="operationParam"
+            label-width="68px" style="margin-top: 10px"
+            v-show="operationActive == 'xitong'"
+          >
+            <el-form-item label="登录状态" prop="status" style="width: 100%">
+              <el-select
+                v-model="operationParam.status"
+                clearable
+                placeholder="请选择登录状态"
+                size="small"
+              >
+                <el-option
+                  v-for="dict in dict.type.sys_common_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="登录时间">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 252px;"
+                value-format="yyyy-MM-dd HH-mm-ss"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :default-time="['00:00:00', '23:59:59']"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" type="primary" @click="handleQueryOperationParam"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+
+<!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'xitong'"
              label-width="68px" style="margin-top: 10px">
-      <el-form-item label="登录地址" prop="ipaddr">
-        <el-input
-          v-model="operationParam.ipaddr"
-          placeholder="请输入登录地址"
-          clearable
-          style="width: 240px;"
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="用户名称" prop="userName">
-        <el-input
-          v-model="operationParam.userName"
-          placeholder="请输入用户名称"
-          clearable
-          style="width: 240px;"
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="operationParam.status"
@@ -1256,8 +1308,109 @@
         <el-button type="primary" size="mini" @click="handleQueryOperationParam">搜索</el-button>
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
-    </el-form>
-    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'caozuo'"
+    </el-form>-->
+      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%">
+        <el-row :gutter="20" style="margin: 10px 0 25px">
+
+          <el-col :span="6"  >
+            <div class="grid-content bg-purple">
+              <el-input
+                placeholder="请输入操作地址，回车搜索"
+                v-model="operationParam.operIp"
+                @keyup.enter.native="handleQueryOperationParam"
+                v-show="operationActive == 'caozuo'"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-s-fold"
+                  @click="sycz_boxShow = !sycz_boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="syxt_searchBox" v-show="sycz_boxShow">
+          <el-form
+            ref="operationParam"
+            :inline="true"
+            :model="operationParam"
+            label-width="68px" style="margin-top: 10px"
+            v-show="operationActive == 'caozuo'"
+          >
+            <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
+              <el-select
+
+                v-model="operationParam.eqTypeId"
+                clearable
+                placeholder="请选择设备类型"
+                size="small"
+              >
+                <el-option
+                  v-for="item in eqTypeData"
+                  :key="item.typeId"
+                  :label="item.typeName"
+                  :value="item.typeId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStation == '0'">
+              <el-select
+                v-model="operationParam.tunnelId"
+                placeholder="请选择隧道"
+                style="width: 252px;"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in eqTunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="控制方式" prop="controlType" style="width: 100%">
+              <el-select
+
+                v-model="operationParam.controlType"
+                clearable
+                placeholder="请选择控制方式"
+                size="small"
+              >
+                <el-option
+                  v-for="dict in dict.type.sd_control_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 252px"
+                value-format="yyyy-MM-dd HH-mm-ss"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :default-time="['00:00:00', '23:59:59']"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" type="primary" @click="handleQueryOperationParam"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+
+<!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'caozuo'"
                label-width="68px" style="margin-top: 10px">
       <el-form-item label="设备类型" prop="eqTypeId">
         <el-select
@@ -1320,12 +1473,17 @@
         >重置</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form>-->
     <el-table ref="tables" v-loading="loading" :data="operationList1" @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName" v-show="operationActive == 'xitong'"
             :default-sort="{prop: 'loginTime', order: 'descending'}" max-height="430" >
-      <!-- <el-table-column type="selection" align="center" /> -->
-      <el-table-column label="访问编号" align="center" prop="infoId" />
+       <el-table-column type="selection" align="center" />
+      <el-table-column label="序号" width="55" align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
       <el-table-column label="用户名称" align="center" prop="userName" width="100" :show-overflow-tooltip="true" />
       <el-table-column label="登录地址" align="center" prop="ipaddr" width="130" :show-overflow-tooltip="true" />
       <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
@@ -1345,8 +1503,12 @@
     </el-table>
       <el-table v-loading="loading" :data="operationList2" max-height="430" :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" v-show="operationActive == 'caozuo'" >
-      <el-table-column label="序号" align="center" prop="id" display="none"/>
-
+        <el-table-column type="selection" align="center" />
+        <el-table-column label="序号" width="55" align="center">
+          <template slot-scope="scope">
+            {{scope.$index+1}}
+          </template>
+        </el-table-column>
       <el-table-column
         label="隧道名称"
         align="center"
@@ -3177,6 +3339,9 @@ export default {
 
   data() {
     return {
+
+      syxt_boxShow:false,
+      sycz_boxShow:false,
       treeShow: false,
       //搜索树状数据
       treeData: [],
@@ -4285,11 +4450,30 @@ export default {
     // this.initeChartsEnd();
     // this.loadFocusCar();
     // this.srollAuto()
+    document.addEventListener("click", this.bodyCloseMenus);
+    document.addEventListener("click", this.bodyCloseMenus1);
   },
+
   methods: {
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
+    },
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.syxt_boxShow == true){
+          self.syxt_boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus1(e) {
+      let self = this;
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+        if (self.sycz_boxShow == true){
+          self.sycz_boxShow = false;
+        }
+      }
     },
     otherClose(e) {
       if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
@@ -4431,7 +4615,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "green";
+        return "GreenYellow";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -4543,6 +4727,7 @@ export default {
       };
       batchControlDevice(param).then((res) => {
         console.log(res, "000000000000000");
+        this.$modal.msgSuccess("控制成功");
         this.batchManageDialog = false;
         this.closeBatchManageDialog();
       });
@@ -4934,7 +5119,13 @@ export default {
       this.dateRange = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
-
+      this.operationParam.ipaddr = "";
+      this.operationParam.status = null;
+      this.operationParam.operIp = "";
+      this.operationParam.eqTypeId = null;
+      this.operationParam.tunnelId = null;
+      this.operationParam.controlType = null;
+      this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },
     // 控制方式   3：手动 1：时间控制 2：光强控制字典翻译
@@ -5052,6 +5243,7 @@ export default {
       const params = { status: 0 };
       getTreeByDeptId(params)
         .then((response) => {
+          console.log(response,"级联")
           const options = response.data;
           let childs = [];
           function a(list) {
@@ -5620,13 +5812,9 @@ export default {
               },
               type: "value",
               minInterval: 1,
-              // min: 0,
-              // max: 200,
               axisTick: {
                 show: false,
               },
-              max: 200,
-              min: 0,
               splitNumber: 5,
               splitLine: {
                 show: true,
@@ -6367,9 +6555,9 @@ export default {
           }
         }
         this.getTunnelLane();
-        // this.$nextTick(() => {
-        //   this.getEnergyConsumption(this.currentTunnel.id);
-        // });
+        this.$nextTick(() => {
+          this.getEnergyConsumption(this.currentTunnel.id);
+        });
         // this.timingControl()
       });
     },
@@ -6803,8 +6991,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39, 48, 45
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -6821,7 +7008,7 @@ export default {
                           parseFloat(deviceData.CO).toFixed(2) +
                           "/PPM  VI:" +
                           parseFloat(deviceData.VI).toFixed(2) +
-                          "KM";
+                          "M";
                       } else if (deviceData.eqType == 17) {
                         this.selectedIconList[j].num =
                           parseFloat(deviceData.FS).toFixed(2) +
@@ -6842,10 +7029,7 @@ export default {
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
-                  if (
-                    deviceData.eqStatus == "1" ||
-                    deviceData.eqStatus == "2"
-                  ) {
+                  if (deviceData.eqStatus == "1") {
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
@@ -10253,7 +10437,7 @@ input {
 }
 @keyframes boardBox1 {
   from {
-    transform: translateY(100%); /*div多宽就写多宽*/
+    transform: translateY(72px); /*div多宽就写多宽*/
   }
 
   to {
@@ -10302,4 +10486,60 @@ input {
 .treeBox::-webkit-scrollbar {
   display: none;
 }
+</style>
+
+<style>
+.syxt_searchBox {
+  position: absolute;
+  top: 172px;
+
+  width: 39%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.syxt_searchBox {
+  ::v-deep .el-form-item__content {
+    width: 78%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>
+<style lang="scss" scoped>
+.zj {
+  ::v-deep input {
+    width: 16.5vw !important;
+  }
+
+  ::v-deep .el-input-group__append {
+    padding: 0;
+  }
+
+  ::v-deep button {
+    margin: 0 !important;
+    border-radius: 0px !important;
+  }
+}
+
 </style>

@@ -133,4 +133,11 @@ public interface SdTaskListMapper
      * @return
      */
     List<SdTaskList> getTaskToDo(String deptId);
+
+    /**
+     * 根据隧道查询班组
+     * @param tunnelId
+     * @return
+     */
+    String selectBzByTunnel(String tunnelId);
 }

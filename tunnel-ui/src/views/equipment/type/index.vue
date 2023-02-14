@@ -1,139 +1,46 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="100px"
-    >
-      <el-form-item label="设备类型名称" prop="typeName">
-        <el-input
-          v-model="queryParams.typeName"
-          placeholder="请输入设备类型名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="设备类型代号" prop="typeAbbr">
-        <el-input
-          v-model="queryParams.typeAbbr"
-          placeholder="请输入设备类型代号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
         <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:type:add']"
-          >新增</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:type:edit']"
-          >修改</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:type:remove']"
-          >删除</el-button
-        >
-      </el-form-item>
-    </el-form>
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:type:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:type:edit']"
-          >修改</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:type:remove']"
-          >删除</el-button
-        >
-      </el-col>
-     <el-col :span="1.5">
-       <el-button
-         type="warning"
-         icon="el-icon-download"
-         size="mini"
-         @click="handleExport"
-         v-hasPermi="['system:type:export']"
-         >导出</el-button
-       >
-     </el-col>
-      <div class="top-right-btn">
-        <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-          <el-button
+            type="primary"
+            plain
             size="mini"
-            circle
-            icon="el-icon-refresh"
-            @click="handleQuery"
-          />
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          :content="showSearch ? '隐藏搜索' : '显示搜索'"
-          placement="top"
-        >
+            @click="handleAdd"
+            v-hasPermi="['system:type:add']"
+            >新增</el-button
+          >
+<!--          <el-button-->
+<!--            type="primary"-->
+<!--            plain-->
+<!--            size="mini"-->
+<!--            :disabled="single"-->
+<!--            @click="handleUpdate"-->
+<!--            v-hasPermi="['system:type:edit']"-->
+<!--            >修改</el-button-->
+<!--          >-->
           <el-button
+            type="primary"
+            plain
             size="mini"
-            circle
-            icon="el-icon-search"
-            @click="showSearch = !showSearch"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['system:type:remove']"
+            >删除</el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.typeName"
+            placeholder="请输入设备类型名称、设备类型代号,回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
           />
-        </el-tooltip>
-      </div>
-    </el-row> -->
+        </div>
+      </el-col>
+    </el-row>
 
     <el-table
       v-loading="loading"
@@ -143,6 +50,7 @@
       class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="设备类型名称" align="center" prop="typeName" />
       <el-table-column label="设备类型代号" align="center" prop="typeAbbr" />
       <el-table-column label="是否可控" align="center" prop="isControl" >
@@ -257,7 +165,7 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="所属大类" prop="eqCategory">
-          <el-select
+          <!--<el-select
             v-model="form.eqCategory"
             placeholder="请选择所属大类"
             clearable
@@ -270,6 +178,22 @@
               :label="item.dictLabel"
               :value="item.dictValue"
             />
+          </el-select>-->
+
+          <el-select
+            v-model="form.eqCategory"
+            placeholder="请选择所属大类"
+            clearable
+            size="small"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in eqCategoryData"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="所属系统" prop="eqSystem">
@@ -313,12 +237,15 @@ import {
   eqTypeList,
   loadPicture,
 } from "@/api/equipment/type/api.js";
+import {listCategory} from "@/api/equipment/bigType/category";
 
 export default {
   name: "Type",
   data() {
     return {
+      boxShow: false,
       eqSystemData: {},
+      // 设备大类
       eqCategoryData: {},
       bigType:'',
       eqCategory:'',
@@ -408,12 +335,13 @@ export default {
     this.getDicts("eq_system").then(response => {
       this.eqSystemData = response.data;
     });
-    this.getDicts("eq_category").then(response => {
+    /*this.getDicts("eq_category").then(response => {
       this.eqCategoryData = response.data;
-    });
+    })*/;
 	  this.getDicts("sd_sys_name").then(response => {
 	    this.bigTypeOptions = response.data;
 	  });
+    this.getEqBigType();
     this.getList();
     this.getGroupByBigType();
     this.fileData = new FormData(); // new formData对象
@@ -423,6 +351,15 @@ export default {
       });
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+    getEqBigType() {
+      listCategory().then(response => {
+        this.eqCategoryData = response.rows;
+      });
+    },
     configData(){
       this.$router.push({
         path:'/inductionLamp'
@@ -633,7 +570,7 @@ export default {
     },
      // 表格的行样式
      tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
+       if (rowIndex%2 == 0) {
       return 'tableEvenRow';
       } else {
       return "tableOddRow";
@@ -661,7 +598,7 @@ export default {
   ::v-deep .el-dialog__header{
     padding: 20px;
   }
-  
+
 </style>
 <style lang="scss">
  .eqTypeDialog{
@@ -673,4 +610,42 @@ export default {
       width:0px;
     }
   }
+</style>
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
 </style>

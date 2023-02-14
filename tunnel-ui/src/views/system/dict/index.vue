@@ -1,6 +1,99 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button
+          v-hasPermi="['system:dict:add']"
+          size="small"
+          type="primary"
+          plain
+          @click="handleAdd()"
+        >新增字典
+        </el-button>
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          @click="handleRefreshCache"
+          v-hasPermi="['system:dict:remove']"
+        >刷新缓存</el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入字典名称、类型"
+            v-model="queryParams.dictName"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="dict_boxShow = !dict_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="dict_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="字典状态" prop="status" style="width: 100%">
+          <el-select
+            style="width: 325px"
+            v-model="queryParams.status"
+            clearable
+            placeholder="请选择字典状态"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="dateRange"
+            size="small"
+            style="width: 325px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:post:export']"
+          >导出</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="字典名称" prop="dictName">
         <el-input
           v-model="queryParams.dictName"
@@ -83,7 +176,7 @@
           v-hasPermi="['system:dict:remove']"
         >刷新缓存</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -106,7 +199,7 @@
           @click="handleUpdate"
           v-hasPermi="['system:dict:edit']"
         >修改</el-button>
-        
+
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -143,7 +236,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
 
-    <el-table v-loading="loading" :data="typeList" 
+    <el-table v-loading="loading" :data="typeList"
             max-height="640" @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55" align="center" />
@@ -232,6 +325,7 @@ export default {
   dicts: ['sys_normal_disable'],
   data() {
     return {
+      dict_boxShow:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -314,6 +408,7 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
+      this.queryParams.dictName = "";
       this.handleQuery();
     },
     /** 新增按钮操作 */
@@ -396,3 +491,42 @@ export default {
   }
 };
 </script>
+
+<style>
+.searchBox {
+  position: absolute;
+  top: 8.5%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

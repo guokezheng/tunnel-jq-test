@@ -67,15 +67,16 @@
             </el-col>
 
             <el-col :span="13">
-              <el-form-item label="设备状态:">
-                <!-- {{ stateForm.eqStatus }} -->
+              <el-form-item label="设备状态:"
+              :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
                 {{ geteqType(stateForm.eqStatus) }}
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="eqInfo.clickEqType == 45">
             <el-col >
-              <el-form-item label="亮灯模式:">
+              <div class="lineClass"></div>
+              <el-form-item label="亮灯模式:" style="margin-top: 20px;">
                 <el-select
                   v-model="stateForm2.lampType"
                   placeholder="请选择亮灯模式"
@@ -151,6 +152,7 @@
             console.log(res, "查询单选框弹窗信息");
             this.stateForm = res.data;
             this.title = this.stateForm.eqName;
+            this.stateForm2.lampType = res.data.eqStatus
             console.log(this.stateForm, "stateForm");
           });
         } else {

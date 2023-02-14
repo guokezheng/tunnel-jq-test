@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="lat"    column="lat"    />
         <result property="lng"    column="lng"    />
         <result property="ip"    column="ip"    />
+        <result property="tunnel"    column="tunnel"    />
         <result property="port"    column="port"    />
         <result property="secureKey"    column="secure_key"    />
         <result property="eqUser"    column="eq_user"    />
@@ -236,10 +237,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqName != null  and eqName != ''">and a.eq_name like concat('%', #{eqName}, '%')</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
             <if test="eqStatus != null  and eqStatus != ''">and a.eq_status = #{eqStatus}</if>
+            <if test="remark != null  and remark != ''">and a.eq_direction in (${remark})</if>
             <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
             <if test="isMonitor != null  ">and a.is_monitor = #{isMonitor}</if>
             <if test="pileNum != null  ">and a.pile_num = #{pileNum}</if>
+            <if test="searchValue != null and searchValue != ''">AND CONCAT(a.eq_name, a.pile) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="commProtocol != null and commProtocol !=''">
                 and a.comm_protocol = #{commProtocol}
             </if>
@@ -949,6 +952,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where associated_device_id = #{deviceId}
     </select>
 
+
+    <select id="selectDevicesLineList" resultMap="SdDevicesResult">
+        select s.tunnel_name tunnel,k.* from sd_devices k
+        left join sd_tunnels s on k.eq_tunnel_id = s.tunnel_id where 1=1
+        <if test="eqtype != null and eqtype != ''">and k.eq_type=#{eqtype}</if>
+        and k.eq_tunnel_id in (
+            select tunnel_id from sd_tunnels where dept_id in (select t.dept_id from sys_dept t
+            where 1=1  AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) )))
+        )
+    </select>
 
 
 </mapper>

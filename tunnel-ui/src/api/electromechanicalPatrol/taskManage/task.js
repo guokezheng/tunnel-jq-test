@@ -125,6 +125,16 @@ export function updateTask(data) {
   })
 }
 
+
+//根据隧道信息查询对应的班组
+export function selectBzByTunnel(data) {
+  return request({
+    url: '/task/list/selectBzByTunnel',
+    method: 'post',
+    data: data
+  })
+}
+
 //查询操作记录
 /*export function getTaskOpt(taskId) {
   return request({

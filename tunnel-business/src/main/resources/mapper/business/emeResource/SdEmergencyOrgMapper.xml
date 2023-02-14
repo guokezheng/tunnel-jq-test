@@ -131,11 +131,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="status != null and status != ''">
             AND d.status = #{status}
         </if>
-        <if test="leader != null and leader != ''">
+        <!--<if test="leader != null and leader != ''">
             AND d.leader = #{leader}
-        </if>
+        </if>-->
         <if test="deptName != null and deptName != ''">
             AND INSTR(d.dept_name,#{deptName}) > 0
+            AND CONCAT(d.leader, d.dept_name) LIKE CONCAT('%',#{deptName},'%')
         </if>
     </select>
 </mapper>

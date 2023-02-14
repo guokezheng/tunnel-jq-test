@@ -1,6 +1,95 @@
 <template>
   <div class="app-container">
-    <el-form
+
+
+    <!-- 全局搜索 -->
+    <div>
+      <el-col :span="4">
+        <el-button style ="margin: 10px 0px 25px;height: 35px;"
+          v-hasPermi="['system:list:add']"
+          size="mini"
+          type="primary"
+          plain
+          @click="handleAdd"
+        >新增任务
+        </el-button>
+      </el-col>
+    </div>
+    <div ref="main" style = "margin-left: 75%">
+      <el-row :gutter="20" style="margin: 10px 0 0px">
+
+        <el-col :span="6" style="width: 100%;">
+          <div class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入所属单位，回车搜索"
+              v-model="queryParams.zzjgId"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="task_boxShow = !task_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+
+      <div class="task_searchBox" v-show="task_boxShow">
+        <el-form
+          ref="queryForm"
+          :inline="true"
+          :model="queryParams"
+          label-width="75px"
+        >
+          <el-form-item
+            style="width: 100%"
+            label="发布状态"
+            prop="publishStatus"
+          >
+            <el-select
+              v-model="queryParams.publishStatus"
+              placeholder="请选择发布状态"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.publish_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="任务状态" prop="taskStatus" style="width: 100%">
+            <el-select
+              v-model="queryParams.taskStatus"
+              placeholder="请选择任务状态"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.task_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -65,7 +154,7 @@
         >
 
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <el-table
       v-loading="loading"
@@ -74,7 +163,11 @@
       class="allTable"
     >
       <el-table-column type="selection" width="55" align="center" />
-<!--      <el-table-column label="任务编号" align="center" prop="id" />-->
+      <el-table-column label="序号" width="100px" align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
       <el-table-column label="所属单位" align="center" prop="zzjgId" />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
@@ -146,7 +239,7 @@
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-            :style="{ display: scope.row.publishStatus==2?'none':'' }"
+            :style="{ display: scope.row.publishStatus!=0?'none':'' }"
             >修改</el-button
           >
           <el-button
@@ -154,7 +247,7 @@
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-            :style="{ display: scope.row.publishStatus==2?'none':'' }"
+            :style="{ display: scope.row.publishStatus!=0?'none':'' }"
             >删除</el-button
           >
         </template>
@@ -206,8 +299,19 @@
             </div>
           </div>
           <div>
-            <span>指派巡查班组</span>
-            <div>
+            <span>所属隧道</span>
+            <el-select v-model="form.tunnelId"  placeholder="请选择所属隧道" @change="tunnelSelectGet">
+              <el-option
+                v-for="item in eqTunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              ></el-option>
+            </el-select>
+
+          </div>
+
+<!--            <div>
               <el-select v-model="form.bzId" placeholder="请选择班组">
                 <el-option
                   v-for="item in bzData"
@@ -216,36 +320,42 @@
                   :value="item.deptId"
                 ></el-option>
               </el-select>
+            </div>-->
+          </div>
+        <div class="form-two">
+          <div>
+            <span prop="bzId" >指派巡查班组</span>
+            <div >
+              <el-select v-model="form.bzId" placeholder="" id = "bzSel" :disabled="true"  @click.native ="selChange">
+                <el-option
+                  v-for="item in bzData"
+                  :key="item.deptId"
+                  :label="item.deptName"
+                  :value="item.deptId"
+                ></el-option>
+              </el-select>
+<!--              <el-input
+                ref="bzId"
+                disabled = "disabled"
+                v-model="form.bzId"
+              ></el-input>-->
             </div>
           </div>
-        </div>
-
-        <div class="form-two">
           <div>
             <span>需完成日期</span>
             <el-date-picker
               clearable
+              :picker-options="forbiddenTime"
               size="small"
               v-model="form.endPlantime"
               type="date"
-              style="width: 63%"
               value-format="yyyy-MM-dd"
+              style="width: 63%;"
               placeholder="选择完成时间"
             >
             </el-date-picker>
           </div>
-          <div>
-            <span>所属隧道</span>
-               <el-select v-model="form.tunnelId"  placeholder="请选择所属隧道" @change="tunnelSelectGet">
-                 <el-option
-                   v-for="item in eqTunnelData"
-                   :key="item.tunnelId"
-                   :label="item.tunnelName"
-                   :value="item.tunnelId"
-                 ></el-option>
-               </el-select>
 
-        </div>
           <div>
             <span>任务名称</span>
             <el-input
@@ -269,7 +379,9 @@
           >
           </el-input>
         </div>
-      </div>
+        </div>
+
+
       <div class="patrol">
         <div>巡查点信息</div>
         <hr />
@@ -316,9 +428,15 @@
           </div>
         </div>
         <div class="release-father">
-          <el-button style="height: 20%" @click="save">暂存</el-button>
-          <el-button style="height: 20%;display: none"   type="warning" @click="abolish">废止</el-button>
-          <el-button style="height: 20%" type="primary" @click="release"
+          <el-button style="height: 20%"
+                     @click="save">暂存</el-button>
+          <el-button style="height: 20%;
+                     display: none"
+                     type="warning"
+                     @click="abolish">废止</el-button>
+          <el-button style="height: 20%"
+                     type="primary"
+                     @click="release"
             >发布</el-button
           >
         </div>
@@ -638,27 +756,6 @@
             暂无执行记录
           </div>
         </div>
-<!--        <div class="table-row">
-          <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">派单</div>
-          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width: 30%">2022/09/18 21:13:35</div>
-          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
-        </div>
-        <div class="table-row">
-          <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">派单</div>
-          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width: 30%">2022/09/18 21:13:35</div>
-          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
-        </div>
-        <div class="table-row">
-          <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">派单</div>
-          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width: 30%">2022/09/18 21:13:35</div>
-          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
-        </div>-->
       </div>
     </el-dialog>
   </div>
@@ -678,7 +775,7 @@ import {
   listBz,
   treeselect,
   getDevicesList,
-  abolishList, addTask, getFaultList, updateTask,
+  abolishList, addTask, getFaultList, updateTask, selectBzByTunnel,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import {getEquipmentInfo, getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -727,6 +824,7 @@ export default {
   },
   data() {
     return {
+      task_boxShow:false,
       isClick:true,
       userName:'',
       currentTime:'',
@@ -838,12 +936,19 @@ export default {
         runStatus: "",
         eqFaultDescription: "",
       },
+      //禁用当前日期之前的日期
+      forbiddenTime:{
+        disabledDate(time) {
+          //Date.now()是javascript中的内置函数，它返回自1970年1月1日00:00:00 UTC以来经过的毫秒数。
+          return time.getTime() < Date.now() - 8.64e7;
+        },
+      },
       // 表单参数
       form: {},
-      // 表单校验
+      // 表单校验指派巡查班组
       rules: {
         bzId: [
-          { required: true, message: '请选择指派巡查班组', trigger: 'bzId' }
+          { required: true, message: '请选择', trigger: 'bzId' }
         ],
         taskDescription: [
           { required: true, message: '请填写任务描述', trigger: 'taskDescription' }
@@ -859,7 +964,7 @@ export default {
     this.getBz();
     this.getList();
     this.getTunnel();
-    /*this.getTreeSelect();*/
+    this.getTreeSelect();
     //外观情况
     this.getDicts("impression").then((response) => {
       this.impressionOptions = response.data;
@@ -880,7 +985,29 @@ export default {
     this.userName = this.$store.state.user.name;
     this.currentTime = this.getCurrentTime();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.task_boxShow == true){
+          self.task_boxShow = false;
+        }
+      }
+    },
+    //班组点击时间
+    selChange(){
+      if(typeof(this.form.tunnelId)=="undefined"){
+        this.$modal.msgWarning("请先选择隧道");
+        return
+      }else{
+        $('#bzSel').attr("pointer-events","none");
+      }
+
+    },
     /*获取当前时间*/
     getCurrentTime() {
       //获取当前时间并打印
@@ -896,6 +1023,11 @@ export default {
     },
 
     tunnelSelectGet(e){
+      const tunnelId = e;
+      selectBzByTunnel(tunnelId).then((response) => {
+        this.form.bzId = response.data;
+        console.log(response.data, "隧道部门树");
+      });
         treeselect(this.form.tunnelId).then((response) => {
           this.treeData = response.data;
           console.log(response.data, "隧道部门树");
@@ -1202,13 +1334,15 @@ export default {
       });
     },
     /** 隧道部门树 */
-    /*getTreeSelect() {
-      alert(this.form.tunnelId);
+    getTreeSelect() {
+      if(typeof(this.form.tunnelId)=="undefined"){
+        return ;
+      }
       treeselect().then((response) => {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
       });
-    },*/
+    },
 
     // 表单重置
     reset() {
@@ -1243,6 +1377,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.zzjgId = "";
       this.handleQuery();
     },
     show1() {
@@ -1353,11 +1488,11 @@ export default {
           this.form.taskDescription=""
         }
 
-        if(this.form.bzId!=null&&this.form.bzId!=""&&this.form.bzId!="null"){
+        /*if(this.form.bzId!=null&&this.form.bzId!=""&&this.form.bzId!="null"){
             this.form.bzId = parseInt(this.form.bzId)
         }else{
           this.form.bzId=""
-        }
+        }*/
         this.boxList.sort(this.arraySort('xc_sort'))
         this.open = true;
         this.openGz = true;
@@ -1441,6 +1576,7 @@ export default {
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点
+      debugger
       if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
         this.$modal.msgWarning("请指派巡查班组");
         return
@@ -1535,9 +1671,13 @@ export default {
         this.$modal.msgWarning("请选择巡检点或故障点");
         return
       }
+      if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
+        this.$modal.msgWarning("请指派巡查班组");
+        return
+      }
       //判断两个字段是否填写
       if (this.form.tunnelId == ""||this.form.tunnelId == -1||this.form.tunnelId==null) {
-        return this.$modal.msgWarning('请选择隧道名称')
+        return this.$modal.msgWarning('请选择所属隧道')
       }
       if (this.form.taskName == "") {
         return this.$modal.msgWarning('请填写任务名称')
@@ -1578,6 +1718,17 @@ export default {
 .el-table tr {
   background-color: transparent;
 }
+
+.task_searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
 </style>
 <style lang="scss" scoped>
 .card {
@@ -1617,6 +1768,9 @@ export default {
     img {
       width: 100px;
       margin-left: 20px;
+    }
+    span{
+      color: #FFFFFF;
     }
   }
   .card-col1 {
@@ -1939,6 +2093,31 @@ h1 {
     > .el-tree-node__content {
     background-color: #89c2f7;
     color: #fff;
+  }
+}
+
+.task_searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
   }
 }
 </style>

@@ -228,4 +228,174 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+    <select id="selectCOVIDataLineList" resultType="hashmap">
+        SELECT @i:=@i+1 as num, j.* from
+        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
+        MAX(CASE a.item_id WHEN 2 THEN a.data ELSE 0 END ) VI
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 19 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        GROUP BY DATE( createTime ), HOUR( createTime ),eqId
+        ORDER BY a.create_time desc
+        ) j,(SELECT @i:=0) i
+    </select>
+
+    <select id="selectFSFXDataLineList" resultType="hashmap">
+        SELECT @i:=@i+1 as num, j.* from
+        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
+        MAX(CASE a.item_id WHEN 6 THEN a.data ELSE 0 END ) FX
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 17 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        GROUP BY DATE( createTime ), HOUR( createTime ),eqId
+        ORDER BY a.create_time desc
+        ) j,(SELECT @i:=0) i
+    </select>
+
+    <select id="selectDNDataLineList" resultType="hashmap">
+        SELECT @i:=@i+1 as num, j.* from
+        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 18 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        GROUP BY DATE( createTime ), HOUR( createTime ),eqId
+        ORDER BY a.create_time desc
+        ) j,(SELECT @i:=0) i
+    </select>
+
+    <select id="selectDWDataLineList" resultType="hashmap">
+        SELECT @i:=@i+1 as num, j.* from
+        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 5 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        GROUP BY DATE( createTime ), HOUR( createTime ),eqId
+        ORDER BY a.create_time desc
+        ) j,(SELECT @i:=0) i
+    </select>
+
+
+    <select id="selectCOVIDevicesDataLineList" resultType="hashmap">
+        SELECT @i:=@i+1 as num, j.* from
+        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
+        MAX(CASE a.item_id WHEN 2 THEN a.data ELSE 0 END ) VI
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 19 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_tunnel_id  = #{deviceId}</if>
+        GROUP BY DATE( createTime ), HOUR( createTime ),eqId
+        ORDER BY a.create_time desc
+        ) j,(SELECT @i:=0) i
+    </select>
+
+    <select id="selectFSFXDevicesDataLineList" resultType="hashmap">
+        SELECT @i:=@i+1 as num, j.* from
+        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
+        MAX(CASE a.item_id WHEN 6 THEN a.data ELSE 0 END ) FX
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 17 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_tunnel_id  = #{deviceId}</if>
+        GROUP BY DATE( createTime ), HOUR( createTime ),eqId
+        ORDER BY a.create_time desc
+        ) j,(SELECT @i:=0) i
+    </select>
+
+    <select id="selectDNDevicesDataLineList" resultType="hashmap">
+        SELECT @i:=@i+1 as num, j.* from
+        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 18 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_tunnel_id  = #{deviceId}</if>
+        GROUP BY DATE( createTime ), HOUR( createTime ),eqId
+        ORDER BY a.create_time desc
+        ) j,(SELECT @i:=0) i
+    </select>
+
+    <select id="selectDWDevicesDataLineList" resultType="hashmap">
+        SELECT @i:=@i+1 as num, j.* from
+        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,AVG( a.data ) data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 5 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_tunnel_id  = #{deviceId}</if>
+        GROUP BY DATE( createTime ), HOUR( createTime ),eqId
+        ORDER BY a.create_time desc
+        ) j,(SELECT @i:=0) i
+    </select>
+
+
 </mapper>

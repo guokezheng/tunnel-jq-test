@@ -89,4 +89,20 @@ public interface SdDeviceDataMapper
      * @return 结果
      */
     public int updateKafkaDeviceData(SdDeviceData sdDeviceData);
+
+    List<Map<String, String>> selectCOVIDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<Map<String, String>> selectFSFXDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<Map<String, String>> selectDNDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<Map<String, String>> selectDWDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<Map<String, String>> selectCOVIDevicesDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<Map<String, String>> selectFSFXDevicesDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<Map<String, String>> selectDNDevicesDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<Map<String, String>> selectDWDevicesDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 }

@@ -140,3 +140,13 @@ export function getBoardContent(deviceId) {
 
   })
 }
+
+
+// 情报板根据分辨率筛字体大小
+export function getFontSizeByDevicePixel(screenSize) {
+  return request({
+    url: '/parser/board/getFontSizeByDevicePixel/' + screenSize,
+    method: 'get',
+
+  })
+}

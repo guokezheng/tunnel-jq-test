@@ -1045,4 +1045,9 @@ public class BoardController extends BaseController {
 
         return ajaxResult;
     }
+
+    @GetMapping("/getFontSizeByDevicePixel/{devicePixel}")
+    public AjaxResult getFontSizeByDevicePixel(@PathVariable("devicePixel") String devicePixel) {
+        return AjaxResult.success(iIotBoradFontService.getFontSizeByDevicePixel(devicePixel));
+    }
 }

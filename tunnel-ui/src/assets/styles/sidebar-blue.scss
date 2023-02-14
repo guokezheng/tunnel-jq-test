@@ -97,6 +97,18 @@
       // }
       .infoBoardBox{
         background: #fff;
+        .el-table__body-wrapper .el-table__cell{
+          border-left:none !important;
+        }
+        .el-table__cell{
+          height: 9vh !important;
+        }
+        .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
+          border-bottom:none;
+        }
+        .huiduButton{
+          color: #606266;
+        }
       }
       .el-dialog{
         .evtCarStyle{
@@ -816,6 +828,7 @@
       }
       .el-dialog__body {
         color: #2c5ea2;
+        padding: 1px;
         // background-color: #fff;
         // border-left: solid 2px #00c2ff;
         // border-right: solid 2px #00c2ff;
@@ -879,6 +892,16 @@
       }
       .el-button--cyan,.el-button--default{
         color: white !important;
+      }
+      .mesModeBg{
+        background: #fff;
+        .el-collapse-item__header {
+          background: #fff;
+          color: #2c5ea2;
+        }
+        // .el-collapse-item__wrap{
+
+        // }
       }
     }
     .batch-table{

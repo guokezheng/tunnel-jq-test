@@ -1,6 +1,88 @@
 <template>
   <div class="app-container">
-    <el-form
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button
+          v-hasPermi="['system:type:add']"
+          size="small"
+          type="primary"
+          plain
+          @click="handleAdd()"
+        >新增类型
+        </el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入事件类型"
+            v-model="queryParams.eventType"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="sj_boxShow = !sj_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="sj_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="防控类型" prop="prevControlType" style="width: 100%">
+          <el-select
+            v-model="queryParams.prevControlType"
+            placeholder="请选择防控类型"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in prevControlType"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否可用" prop="isUsable" style="width: 100%">
+          <el-select
+            v-model="queryParams.isUsable"
+            placeholder="请选择是否可用"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+<!--          <el-button type="primary" plain size="mini" :loading="exportLoading"
+                     @click="handleExport"
+                     v-hasPermi="['system:type:export']"
+          >导出</el-button>-->
+        </el-form-item>
+      </el-form>
+    </div>
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -15,20 +97,20 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-        <!--        <el-select-->
-        <!--          v-model="queryParams.eventType"-->
-        <!--          placeholder="请选择事件类型"-->
-        <!--          clearable-->
-        <!--          size="small"-->
-        <!--          style="width: 180px"-->
-        <!--        >-->
-        <!--          <el-option-->
-        <!--            v-for="item in eventTypeData"-->
-        <!--            :key="item.id"-->
-        <!--            :label="item.eventType"-->
-        <!--            :value="item.eventType"-->
-        <!--          />-->
-        <!--        </el-select>-->
+        &lt;!&ndash;        <el-select&ndash;&gt;
+        &lt;!&ndash;          v-model="queryParams.eventType"&ndash;&gt;
+        &lt;!&ndash;          placeholder="请选择事件类型"&ndash;&gt;
+        &lt;!&ndash;          clearable&ndash;&gt;
+        &lt;!&ndash;          size="small"&ndash;&gt;
+        &lt;!&ndash;          style="width: 180px"&ndash;&gt;
+        &lt;!&ndash;        >&ndash;&gt;
+        &lt;!&ndash;          <el-option&ndash;&gt;
+        &lt;!&ndash;            v-for="item in eventTypeData"&ndash;&gt;
+        &lt;!&ndash;            :key="item.id"&ndash;&gt;
+        &lt;!&ndash;            :label="item.eventType"&ndash;&gt;
+        &lt;!&ndash;            :value="item.eventType"&ndash;&gt;
+        &lt;!&ndash;          />&ndash;&gt;
+        &lt;!&ndash;        </el-select>&ndash;&gt;
       </el-form-item>
       <el-form-item label="防控类型" prop="prevControlType">
         <el-select
@@ -96,7 +178,7 @@
         >删除</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -300,6 +382,7 @@ export default {
   name: "EventType",
   data() {
     return {
+      sj_boxShow:false,
       dialogOkDisabled:false,
       from:{},
       dialogImageUrl: "",
@@ -439,6 +522,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.eventType = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -577,3 +661,42 @@ export default {
   },
 };
 </script>
+
+<style>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

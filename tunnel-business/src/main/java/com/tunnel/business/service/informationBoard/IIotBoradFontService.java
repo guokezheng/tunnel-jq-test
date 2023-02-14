@@ -1,6 +1,7 @@
 package com.tunnel.business.service.informationBoard;
 
 
+import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.tunnel.business.domain.informationBoard.IotBoradFont;
 
 import java.util.List;
@@ -59,4 +60,6 @@ public interface IIotBoradFontService {
      * @return 结果
      */
     int deleteIotBoradFontById(Long id);
+
+    List<SysDictData> getFontSizeByDevicePixel(String devicePixel);
 }

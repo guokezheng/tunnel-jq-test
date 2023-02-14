@@ -66,6 +66,18 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     @ApiModelProperty("设备名称")
     private String eqName;
 
+
+    @ApiModelProperty("隧道名称")
+    private String tunnel;
+
+    public String getTunnel() {
+        return this.tunnel;
+    }
+
+    public void setTunnel(final String tunnel) {
+        this.tunnel = tunnel;
+    }
+
     /**
      * 设备类型
      */
@@ -110,7 +122,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      */
     @Excel(name = "设备大类")
     @ApiModelProperty("设备大类")
-    private String fEqType;
+    private Long fEqType;
 
 
     /**
@@ -826,11 +838,11 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
         this.externalSystemId = externalSystemId;
     }
 
-    public String getfEqType() {
+    public Long getfEqType() {
         return fEqType;
     }
 
-    public void setfEqType(String fEqType) {
+    public void setfEqType(Long fEqType) {
         this.fEqType = fEqType;
     }
 

@@ -1,6 +1,89 @@
 <template>
   <div class="app-container">
-    <el-form
+
+    <!-- 全局搜索 -->
+    <div>
+      <el-col :span="4">
+      <el-button style ="margin: 10px 0px 25px;height: 35px;"
+        v-hasPermi="['business:SdEmergencyPer:add']"
+        size="small"
+        type="primary"
+        plain
+        @click="handleAdd()"
+      >新增人员
+      </el-button>
+    </el-col>
+    </div>
+    <div ref="main" style = "margin-left: 75%">
+      <el-row :gutter="20" style="margin: 10px 0 25px">
+
+        <el-col :span="6" style ="width: 100%;">
+          <div class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入人员姓名，回车搜索"
+              v-model="queryParams.userName"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="ry_boxShow = !ry_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="ry_searchBox" v-show="ry_boxShow">
+        <el-form
+          ref="queryForm"
+          :inline="true"
+          :model="queryParams"
+          label-width="75px"
+        >
+
+          <el-form-item label="隧道名称" prop="tunnelId" style="width: 100%">
+            <el-select
+              v-model="queryParams.tunnelId"
+              clearable
+              placeholder="请选择隧道名称"
+              size="small"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelName"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="岗位" prop="groupName" style="width: 100%">
+            <el-select
+              v-model="queryParams.groupName"
+              clearable
+              placeholder="请选择岗位"
+              size="small"
+            >
+              <el-option
+                v-for="item in emergencyPostList"
+                :key="item.dictValue"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -22,9 +105,9 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="机构" prop="tunnelId">
+      &lt;!&ndash; <el-form-item label="机构" prop="tunnelId">
         <el-input style="width:200px;" v-model.number="queryParams.groupName" placeholder="请输入机构名称" size="small" />
-      </el-form-item> -->
+      </el-form-item> &ndash;&gt;
       <el-form-item label="姓名"  prop="stagPointName">
           <el-input style="width:200px;" v-model.number="queryParams.userName" placeholder="请输入人员姓名" size="small" />
       </el-form-item>
@@ -80,7 +163,7 @@
           >删除</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -145,6 +228,11 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号"  align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
       <!--      <el-table-column label="隧道ID" align="center" prop="tunnelId" />  -->
       <el-table-column label="隧道" align="center" prop="tunnelName" />
@@ -250,6 +338,7 @@ export default {
       manageStatin:this.$cache.local.get("manageStation"),
 
       emergencyPostList:[],
+      ry_boxShow:false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -319,7 +408,20 @@ export default {
       this.emergencyPostList = response.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.ry_boxShow == true){
+          self.ry_boxShow = false;
+        }
+      }
+    },
+
     getTunnels() {
       if(this.$cache.local.get("manageStation") == "1"){
         this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
@@ -482,3 +584,43 @@ export default {
   }
 };
 </script>
+
+
+<style>
+.ry_searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.ry_searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

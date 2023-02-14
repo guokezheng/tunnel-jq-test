@@ -1,6 +1,73 @@
 <template>
   <div class="app-container">
-    <el-form
+
+    <!-- 全局搜索 -->
+    <div>
+      <el-col :span="4">
+        <el-button style ="margin: 10px 0px 25px;height: 35px;"
+          type="primary"
+          plain
+          size="mini"
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
+      </el-col>
+    </div>
+    <div ref="main" style = "margin-left: 75%">
+      <el-row :gutter="20" style="margin: 10px 0 25px">
+
+        <el-col :span="6"  style ="width: 100%;">
+          <div class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入机构、负责人，回车搜索"
+              v-model="queryParams.deptName"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="jg_boxShow = !jg_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="jg_searchBox" v-show="jg_boxShow">
+        <el-form
+          ref="queryForm"
+          :inline="true"
+          :model="queryParams"
+          label-width="75px"
+        >
+
+          <el-form-item label="机构状态" prop="status" style="width: 100%">
+            <el-select
+              style="width:335px"
+              v-model="queryParams.status"
+              clearable
+              placeholder="请选择机构状态"
+              size="small"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -49,7 +116,7 @@
           @click="toggleExpandAll"
         >展开/折叠</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
       <el-table
         v-if="refreshTable"
@@ -88,6 +155,7 @@ import { batchDelete } from "@/api/surveyMechanism/api.js";
 export default {
   data() {
     return {
+      jg_boxShow:false,
       //新增弹出
       open: false,
       // 遮罩层
@@ -124,7 +192,19 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.jg_boxShow == true){
+          self.jg_boxShow = false;
+        }
+      }
+    },
     /** 展开/折叠操作 */
     toggleExpandAll() {
       this.refreshTable = false;
@@ -148,10 +228,11 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.deptName = "";
       this.$refs.queryForm.resetFields();
       this.queryForm = {
         deptName: null,
-        leader: null,
+        /*leader: null,*/
         status: null
       };
       this.handleQuery();
@@ -211,4 +292,42 @@ export default {
 </script>
 
 <style>
+.jg_searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
 </style>
+<style lang="scss" scoped>
+.jg_searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>
+
+

@@ -15,11 +15,11 @@ public class SysLogininfor extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** ID */
-    @Excel(name = "序号", cellType = ColumnType.NUMERIC)
+   /* @Excel(name = "序号", cellType = ColumnType.NUMERIC)*/
     private Long infoId;
 
     /** 用户账号 */
-    @Excel(name = "用户账号")
+    @Excel(name = "用户名称")
     private String userName;
 
     /** 登录状态 0成功 1失败 */

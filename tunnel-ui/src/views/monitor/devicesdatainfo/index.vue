@@ -441,6 +441,7 @@ export default {
       deptOptions: undefined,
       // 部门树选项
       jgOptions: undefined,
+      currentData:"",
     };
   },
   created() {
@@ -455,6 +456,8 @@ export default {
     this.getDicts("sd_device_opt_state").then((response) => {
       this.operationStateOptions = response.data;
     });
+
+    this.currentData = "日期"+"("+this.getCurrentTime()+")";
   },
 
   //点击空白区域关闭全局搜索弹窗
@@ -474,6 +477,16 @@ export default {
       }
     },
 
+    /*获取当前时间*/
+    getCurrentTime() {
+      //获取当前时间并打印
+      var _this = this;
+      let yy = new Date().getFullYear();
+      let mm = new Date().getMonth()+1;
+      let dd = new Date().getDate();
+      _this.gettime = yy+'-'+mm+'-'+dd;
+      return  _this.gettime;
+    },
 
     getDeviceTreeselect() {
       getDeviceTreeselect(this.searchValue).then((response) => {
@@ -743,7 +756,7 @@ export default {
         ];
         var  xAxis = [{
           type: "category",
-          name: "时间",
+          name: this.currentData,
           data: this.VITime,
           axisLine: {
             lineStyle: {
@@ -761,9 +774,10 @@ export default {
           name: "CO(ppm)/VI(km)",
           axisLine: {
             lineStyle: {
-              color:"#ffffff",// 设置x轴额色为白色
-              fontsize:"29px",
-            }
+              color: '#ffffff', // 设置y轴线条颜色为黑色
+              width: 2, // 设置y轴线条宽度为2像素
+            },
+            show: true
           },
         }];
         legends = {
@@ -792,7 +806,7 @@ export default {
         ];
         var  xAxis = [{
           type: "category",
-          name: "时间",
+          name: this.currentData,
           data: this.fsTime,
           axisLine: {
             lineStyle: {
@@ -808,7 +822,8 @@ export default {
             lineStyle: {
               color:"#ffffff",// 设置x轴额色为白色
               fontsize:"29px",
-            }
+            },
+            show: true
           },
         }];
       } else if (this.searchValue == 3) {
@@ -826,7 +841,7 @@ export default {
         ];
         var  xAxis = [{
           type: "category",
-          name: "小时",
+          name: this.currentData,
           data: this.dnTime,
           axisLine: {
             lineStyle: {
@@ -842,7 +857,8 @@ export default {
             lineStyle: {
               color:"#ffffff",// 设置x轴额色为白色
               fontsize:"29px",
-            }
+            },
+            show: true
           },
         }];
       } else if (this.searchValue == 4) {
@@ -863,7 +879,7 @@ export default {
         ];
         var  xAxis = [{
             type: "category",
-            name: "小时",
+          name: this.currentData,
             data: this.dwTime,
             axisLine: {
               lineStyle: {
@@ -879,7 +895,8 @@ export default {
             lineStyle: {
               color:"#ffffff",// 设置x轴额色为白色
               fontsize:"29px",
-            }
+            },
+            show: true
           },
         }];
       }

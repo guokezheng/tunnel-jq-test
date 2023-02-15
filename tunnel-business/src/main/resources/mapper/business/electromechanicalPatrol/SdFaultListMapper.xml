@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultCode != null  and faultCode != ''"> and s.fault_code = #{faultCode}</if>
             <if test="faultLevel != null "> and s.fault_level = #{faultLevel}</if>
             <if test="falltRemoveStatue != null "> and s.fallt_remove_statue = #{falltRemoveStatue}</if>
-            <if test="faultDescription != null  and faultDescription != ''"> and s.fault_description = #{faultDescription}</if>
+            <if test="faultDescription != null  and faultDescription != ''"> and concat(s.fault_description,s.fault_location) like concat('%', #{faultDescription}, '%')</if>
             <if test="faultStatus != null "> and s.fault_status = #{faultStatus}</if>
         </where>
         order by s.create_time desc

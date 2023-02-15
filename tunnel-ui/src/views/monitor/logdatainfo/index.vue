@@ -153,6 +153,19 @@
 
     <el-form :model="queryParams" ref="queryForms" :inline="true" v-show="searchValue == '2'"
                label-width="68px" style="margin-top: 10px">
+      <div>
+        <el-col :span="4">
+          <el-button style ="margin: 10px 0px 25px;height: 35px;margin-top:-5px;"
+                     v-hasPermi="['system:list:export']"
+                     size="mini"
+                     type="primary"
+                     :loading="exportLoading"
+                     plain
+                     @click="handleExport1"
+          >导出
+          </el-button>
+        </el-col>
+      </div>
       <!-- 全局搜索 -->
       <div ref="main1" style = "margin-left: 75%;">
         <el-row :gutter="20" style="margin: 10px 0 25px">
@@ -299,8 +312,8 @@
         align="center"
         prop="stateName.stateName"
       />
-      <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat"/>
-      <el-table-column label="操作结果" align="center" prop="state" :formatter="stateFormat"/>
+      <el-table-column label="控制方式" align="center" prop="controlType" />
+      <el-table-column label="操作结果" align="center" prop="state" />
       <el-table-column label="操作地址" align="center" prop="operIp" />
       <el-table-column
         label="创建时间"
@@ -335,7 +348,7 @@
 import { list, delLogininfor, cleanLogininfor, exportLogininfor } from "@/api/monitor/logininfor";
 import {listTunnels} from "@/api/equipment/tunnel/api";
 import {listType} from "@/api/equipment/type/api";
-import {listLog} from "@/api/system/log";
+import {exportLogininfor1, listLog} from "@/api/system/log";
 
 export default {
   name: "Logininfor",
@@ -549,9 +562,22 @@ export default {
     handleExport() {
       const queryParams = this.queryParam;
       console.log("queryParams========="+queryParams);
-      this.$modal.confirm('是否确认导出所有操作日志数据项？').then(() => {
+      this.$modal.confirm('是否确认导出所有系统日志数据项？').then(() => {
         this.exportLoading = true;
         return exportLogininfor(queryParams);
+      }).then(response => {
+        this.$download.name(response.msg);
+        this.exportLoading = false;
+      }).catch(() => {});
+    },
+
+    /** 操作日志导出按钮操作 */
+    handleExport1() {
+      const queryParams = this.queryParams;
+      console.log("queryParams========="+queryParams);
+      this.$modal.confirm('是否确认导出所有操作日志数据项？').then(() => {
+        this.exportLoading = true;
+        return exportLogininfor1(queryParams);
       }).then(response => {
         this.$download.name(response.msg);
         this.exportLoading = false;

@@ -42,3 +42,14 @@ export function delLog(id) {
     method: 'delete'
   })
 }
+
+// 导出操作日志
+export function exportLogininfor1(query) {
+  return request({
+    url: '/log/export',
+    method: 'get',
+    params: query
+  })
+}
+
+

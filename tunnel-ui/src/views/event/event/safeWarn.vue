@@ -8,7 +8,131 @@
         v-for="item in tabList"
         :key="item.name"
       >
-        <el-form
+
+        <el-row :gutter="20" style="margin: 10px 25px" v-show="showElement">
+          <el-col :span="4">
+            <el-button
+              size="small"
+              type="primary"
+              plain
+              @click="getList()"
+            >刷新
+            </el-button>
+          </el-col>
+          <el-col :span="6" :offset="14">
+            <div class="grid-content bg-purple">
+              <el-input
+                @keyup.enter.native="handleQuery"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-s-fold"
+                  @click="zd_boxShow = !zd_boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="searchBox" v-show="zd_boxShow">
+          <el-form
+            :model="queryParams"
+            ref="queryForm"
+            :inline="true"
+            v-if="activeName == '1' || activeName == '0'"
+            label-width="68px"
+            class="formStyle"
+          >
+            <el-form-item label="事件类型" prop="eventTypeId">
+              <el-select
+                v-model="queryParams.eventTypeId"
+                placeholder="请选择事件类型"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="(item, index) in eventTypeData"
+                  :key="index"
+                  :label="item.simplifyName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="管理机构" prop="deptId">
+              <treeselect
+                v-model="queryParams.deptId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="请选择归属部门"
+                @select="changeMechanism"
+                style="width: 325px"
+                size="small"
+              />
+            </el-form-item>
+            <el-form-item
+              label="所属隧道"
+              prop="tunnelId"
+              v-show="manageStation == '0'"
+            >
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择所属隧道"
+                clearable
+                size="small"
+                style="width: 325px"
+                @change="$forceUpdate()"
+              >
+                <el-option
+                  v-for="item in tunnelList"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="事件状态" prop="eventState">
+              <el-select
+                v-model="queryParams.eventState"
+                placeholder="请选择事件状态"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="dict in eventStateOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发生时间" prop="eventTime">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 325px"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="-"
+                unlink-panels
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" type="primary" @click="handleQuery"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+
+
+
+<!--        <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
@@ -109,8 +233,86 @@
               </el-form-item>
             </el-col>
           </el-row>
-        </el-form>
-        <el-form
+        </el-form>-->
+
+
+        <!-- 全局搜索 -->
+        <div v-show="showFaultElement">
+          <el-col :span="4" >
+            <el-button style ="margin: 10px 0px 25px;height: 35px;"
+                       v-hasPermi="['system:list:add']"
+                       size="mini"
+                       type="primary"
+                       plain
+                       @click="handleAdd"
+            >新增故障
+            </el-button>
+          </el-col>
+        </div>
+        <div ref="main1" style = "margin-left: 75%;" v-show="showFaultElement" >
+          <el-row :gutter="20" style="margin: 10px 0 0px" >
+
+            <el-col :span="6" style="width: 100%;">
+              <div class="grid-content bg-purple">
+                <el-input
+                  placeholder="请输入故障位置、故障描述，回车搜索"
+                  v-model="queryParams.faultDescription"
+                  @keyup.enter.native="handleQuery"
+                >
+                  <el-button
+                    slot="append"
+                    icon="el-icon-s-fold"
+                    @click="fault_boxShow = !fault_boxShow"
+                  ></el-button>
+                </el-input>
+              </div>
+            </el-col>
+          </el-row>
+
+          <div class="searchBox"  v-show="fault_boxShow">
+            <el-form
+              ref="queryForm"
+              :inline="true"
+              :model="queryParams"
+              label-width="75px"
+              v-if="activeName == '2'"
+            >
+              <el-form-item
+                style="width: 100%"
+                label="故障类型"
+                prop="faultType"
+              >
+                <el-select
+                  v-model="queryParams.faultType"
+                  placeholder="请选择故障类型"
+                  clearable
+                  size="small"
+                >
+                  <el-option
+                    v-for="dict in dict.type.fault_type"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item class="bottomBox">
+                <el-button size="small" type="primary" @click="handleQuery"
+                >搜索</el-button
+                >
+                <el-button size="small" @click="resetQuery" type="primary" plain
+                >重置</el-button
+                >
+              </el-form-item>
+            </el-form>
+          </div>
+        </div>
+
+
+
+
+<!--        <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
@@ -196,7 +398,7 @@
               >导出
             </el-button>
           </el-form-item>
-        </el-form>
+        </el-form>-->
         <div
           class="contentListBox"
           v-if="activeName == '1' || activeName == '0'"
@@ -255,13 +457,18 @@
 
         <el-table
           v-loading="loading"
-          :data="eventList"
+          :data="eventLists"
           @selection-change="handleSelectionChange"
           :row-class-name="tableRowClassName"
           max-height="600"
           v-if="activeName == '2'"
         >
           <el-table-column type="selection" width="55" align="center" />
+          <el-table-column label="序号" width="100px" align="center">
+            <template slot-scope="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="故障类型" align="center" prop="faultType">
             <template slot-scope="scope">
               <dict-tag
@@ -280,7 +487,9 @@
               <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
             </template> -->
           <!-- </el-table-column> -->
-          <el-table-column label="持续时间" align="center" prop="faultCxtime" />
+<!--          <el-table-column label="持续时间" align="center" prop="faultCxtime" />-->
+          <el-table-column label="故障位置" align="center" prop="faultLocation" />
+          <el-table-column label="故障描述" align="center" prop="faultDescription" />
           <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">
             <template slot-scope="scope">
@@ -358,25 +567,25 @@
             </template>
           </el-table-column>
         </el-table>
-        <pagination
-          v-if="total > 0 && activeName == '2'"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-        />
-        <el-pagination
-          v-if="total > 0 && (activeName == '0' || activeName == '1')"
-          class="specialPagination"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="queryParams.pageNum"
-          :page-sizes="[16, 32, 48, 64]"
-          :page-size="queryParams.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
-        </el-pagination>
+          <pagination
+            v-if="totals > 0 && activeName == '2'"
+            :total="totals"
+            :page.sync="queryParams.pageNum"
+            :limit.sync="queryParams.pageSize"
+            @pagination="getList"
+          />
+          <el-pagination
+            v-if="total > 0 && (activeName == '0' || activeName == '1')"
+            class="specialPagination"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="queryParams.pageNum"
+            :page-sizes="[16, 32, 48, 64]"
+            :page-size="queryParams.pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+          >
+          </el-pagination>
       </el-tab-pane>
     </el-tabs>
 
@@ -1226,6 +1435,9 @@ export default {
   components: { Treeselect, videoPlayer },
   data() {
     return {
+      zd_boxShow:false,
+      fault_boxShow:false,
+      currentMenu:"",
       picUrlDialog: false,
       eventWarnList: [],
       miniDialog: true,
@@ -1365,6 +1577,10 @@ export default {
       total: 0,
       // 事件管理表格数据
       eventList: [],
+      //设备故障表格数据
+      eventLists: [],
+      // 设备故障总条数
+      totals: 0,
       //
       searchValue: "1",
       // 弹出层标题
@@ -1537,6 +1753,9 @@ export default {
       },
       videoList: [],
       cameraVisible: true,
+      isState:false,
+      showElement:true,
+      showFaultElement:false,
     };
   },
   watch: {
@@ -1559,6 +1778,7 @@ export default {
     // this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect");
 
     this.eventList = [];
+    this.eventLists = [];
     this.getTreeselect();
     this.getBz();
 
@@ -1620,7 +1840,22 @@ export default {
       this.mechanism = res.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+
+    bodyCloseMenus(e) {
+      debugger
+      let self = this;
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+        if (self.fault_boxShow == true){
+          self.fault_boxShow = false;
+        }
+      }
+    },
+
     changeEqRunStatus(e){
       this.$forceUpdate()
     },
@@ -2015,10 +2250,21 @@ export default {
     handleExport() {},
     //切换tab页
     handleClick(e) {
+      this.isState = true;
+      this.currentMenu = e.index;
       console.log(e);
+      console.log("0000000000000000==="+this.currentMenu)
       this.resetQuery();
       this.getList();
-      this.getEventType();
+      if(this.currentMenu!="2"){
+        this.getEventType();
+        this.showElement = true;
+        this.showFaultElement = false;
+      }else{
+        this.showElement = false; // 默认隐藏元素
+        this.showFaultElement = true;
+      }
+
     },
     handleSelectionChange(val) {
       this.ids = val.map((item) => item.id);
@@ -2143,25 +2389,21 @@ export default {
     },
     /** 查询事件管理列表 */
     getList() {
-      console.log(new Date());
-      // console.log(this.activeName, "9999999");
       this.loading = true;
       this.eventList = [];
-
+      this.eventLists = [];
       // console.log(this.manageStation, "this.manageStation");
       if (this.manageStation == "1") {
         this.queryParams.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
       }
-      console.log(this.queryParams, "666666666666666666666");
-
-      if (this.activeName == "2") {
-        this.queryParams.pageSize = 10;
+      if (this.currentMenu == "2") {
+       // this.queryParams.pageSize = 10;
         listList(this.queryParams).then((response) => {
-          console.log(response, "列表内容");
-          this.eventList = response.rows;
-          this.eventList.forEach((item) => {
+          this.eventLists = response.rows;
+          console.log(response.rows, "response.rowsresponse.rowsresponse.rows列表内容");
+          this.eventLists.forEach((item) => {
             if (item.faultLocation == "null") {
               item.faultLocation = "";
             }
@@ -2172,10 +2414,10 @@ export default {
               item.faultCode = "";
             }
           });
-          this.total = response.total;
+          this.totals = response.total;
           this.loading = false;
         });
-      } else {
+      } else if(this.currentMenu == "0"||this.currentMenu == "1") {
         if (!this.dateRange) {
           this.dateRange = [];
         }
@@ -2244,6 +2486,9 @@ export default {
     },
     /** 查询事件类型列表 */
     getEventType() {
+      if(this.currentMenu=="2"){
+        return
+      }
       let prevControlType = {
         prevControlType: this.activeName,
         isUsable: "1",
@@ -2709,6 +2954,43 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+
+.searchBox {
+  position: absolute;
+  top: 7%;
+  right: 1.2%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+
 .formStyle {
   .el-form-item {
     margin-bottom: 1vh;
@@ -3025,12 +3307,12 @@ export default {
 }
 ::v-deep .el-input--small .el-input__inner {
   line-height: 3vh;
-  height: 3vh;
+  height: 4vh;
   font-size: 0.7vw;
 }
 ::v-deep .el-input--medium .el-input__inner {
   line-height: 3vh;
-  height: 3vh;
+  height: 4vh;
   font-size: 0.7vw;
 }
 .butBox {

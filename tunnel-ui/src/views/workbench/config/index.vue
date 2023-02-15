@@ -1309,16 +1309,17 @@
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>-->
-      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%">
+      <div ref="main1" style = "margin-left: 60%;margin-bottom: %;margin-top: -4%">
         <el-row :gutter="20" style="margin: 10px 0 25px">
 
-          <el-col :span="6"  >
+          <el-col :span="12"  >
             <div class="grid-content bg-purple">
               <el-input
                 placeholder="请输入操作地址，回车搜索"
                 v-model="operationParam.operIp"
                 @keyup.enter.native="handleQueryOperationParam"
                 v-show="operationActive == 'caozuo'"
+                class="zj"
               >
                 <el-button
                   slot="append"

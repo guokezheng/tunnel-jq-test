@@ -606,13 +606,13 @@
       <div style="text-align: center; font-size: 20px">
         巡检任务及执行记录单
       </div>
-      <div class="col-1" v-for="(ite, index) in taskNews" :key="index">
+      <div class="col-1" v-for="(ite, index) in taskNews2" :key="index">
         发布状态/执行状态：
         <div class="col-card" v-show="ite.publishStatus">{{ ite.publishStatus }}</div>
         <div class="col-card" v-show="ite.taskStatus">{{ ite.taskStatus }}</div>
         <div v-show="!ite.publishStatus && !ite.taskStatus">暂无状态</div>
       </div>
-      <div class="card" v-for="(item, index) in taskNews" :key="index">
+      <div class="card" v-for="(item, index) in taskNews1" :key="index">
         <div class="card-col" style="font-size:16px">
           <div>
             任务编号：
@@ -719,17 +719,18 @@
           </div>
           <div class="test">
             执行巡查班组：
-            <span>{{ tas.bzId }}</span>
+<!--            <span>{{ tas.bzId }}</span>-->
           </div>
           <div class="test">
             执行巡查人：
-            <span>{{ tas.dispatcher }}</span>
+            <span>{{ tas.walkerId }}</span>
           </div>
         </div>
         <div class="card-col">
           <div class="test">
             任务完成时间：
-            <span>{{ tas.taskEndtime }}</span>
+            <span>{{ parseTime(tas.taskEndtime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+
           </div>
           <div class="test">
             任务持续时长：
@@ -751,7 +752,7 @@
           <div style="width: 10%">操作记录</div>
           <div style="width: 10%">{{ item.optType }}</div>
           <div style="width: 20%">{{item.tunnelName}} / {{item.optPersonId}}</div>
-          <div style="width: 30%">{{item.optTime}}</div>
+          <div style="width: 30%">{{ parseTime(item.optTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</div>
         </div>
         <div v-show="taskOpt.length==0">
           <div   style="text-align: center;margin-top: 20px;margin-bottom: 20px">
@@ -906,6 +907,20 @@ export default {
       },
       // 任务详情参数
       taskNews: {
+        bzId: "",
+        dispatcher: "",
+        taskDescription: "",
+        taskStatus:"",
+        ifchaosgu:"",
+        walkerId:"",
+      },
+      // 任务详情参数
+      taskNews2: {
+        taskStatus:"",
+        publishStatus:"",
+      },
+      // 任务详情参数
+      taskNews1: {
         id: "",
         zzjgId: "",
         bzId: "",
@@ -913,9 +928,6 @@ export default {
         dispatcher: "",
         dispatchTime: "",
         taskDescription: "",
-        taskStatus:"",
-        publishStatus:"",
-        ifchaosgu:"",
       },
       //操作记录
       taskOpt:{
@@ -1218,7 +1230,10 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
+        debugger
         this.taskNews = response.data.task;
+        this.taskNews1 = response.data.task;
+        this.taskNews2 = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;
         this.impressionOptions.forEach((opt) => {
@@ -1281,7 +1296,7 @@ export default {
         });
 
 
-          this.taskNews.forEach((taskitem) => {
+         /* this.taskNews.forEach((taskitem) => {
             if(this.bzData!=""){
               this.bzData.forEach((opt) => {
                 if (taskitem.bzId == opt.deptId) {
@@ -1294,7 +1309,7 @@ export default {
               taskitem.bzId = "";
             }
 
-        });
+        });*/
 
       });
     },
@@ -1578,7 +1593,6 @@ export default {
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点
-      debugger
       if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
         this.$modal.msgWarning("请指派巡查班组");
         return

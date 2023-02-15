@@ -28,8 +28,8 @@ public class SdTaskList extends BaseEntity
     private String zzjgId;
 
     /** 计划完成时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endPlantime;
 
     /** 隧道id */
@@ -58,7 +58,7 @@ public class SdTaskList extends BaseEntity
     private String dispatcher;
 
     /** 派单时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "派单时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date dispatchTime;
 
@@ -83,7 +83,7 @@ public class SdTaskList extends BaseEntity
     private String walkerId;
 
     /** 任务完成时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "任务完成时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date taskEndtime;
 

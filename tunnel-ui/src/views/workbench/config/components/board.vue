@@ -33,10 +33,10 @@
                     class="content"
                     :style="{
                       color: getColorStyle(scope.row.COLOR),
-                      fontSize: getFontSize(scope.row.FONT_SIZE, addForm.devicePixel),
+                      fontSize: addForm.devicePixel?getFontSize(scope.row.FONT_SIZE, addForm.devicePixel):'',
                       fontFamily: scope.row.FONT,
-                      width: getDevicePixel(addForm.devicePixel, 0) + 'px',
-                      height: getDevicePixel(addForm.devicePixel, 1) + 'px',
+                      width: addForm.devicePixel?getDevicePixel(addForm.devicePixel, 0) + 'px':'',
+                      height: addForm.devicePixel?getDevicePixel(addForm.devicePixel, 1) + 'px':'',
                     }"
                   >
                     <span
@@ -513,44 +513,56 @@ export default {
     },
     // 信息发布
     releaseInfo() {
-      console.log(this.contentList, "this.contentListthis.contentList");
-      var content = "";
-      var playList = "[Playlist]<r><n>";
-      var Item_Start = "ITEM_NO=";
-      var Item_Content = "ITEM";
-      content += playList;
-      var length = parseInt(this.contentList.length);
-      var Item_No = Item_Start + length + "<r><n>";
-      var value = "";
-      content += Item_No;
-      for (var i = 0; i < this.contentList.length; i++) {
-        // console.log(this.contentList[i].COLOR,"this.contentList[i].COORDINATE")
-        value = ("000" + i).slice(-3);
-        content += Item_Content + value + "=";
-        content += this.contentList[i].STAY + ",";
-        content += this.contentList[i].ACTION + ",";
-        content += this.contentList[i].SPEED + "," + "\\";
-        content += "C" + this.contentList[i].COORDINATE.replace("-",'0') + "\\";
-        content += "S00\\";
-        content += "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
-        content += "f" + this.getFontValue(this.contentList[i].FONT);
+      this.$confirm('是否确定发布情报板?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          console.log(this.contentList, "this.contentListthis.contentList");
+          var content = "";
+          var playList = "[Playlist]<r><n>";
+          var Item_Start = "ITEM_NO=";
+          var Item_Content = "ITEM";
+          content += playList;
+          var length = parseInt(this.contentList.length);
+          var Item_No = Item_Start + length + "<r><n>";
+          var value = "";
+          content += Item_No;
+          for (var i = 0; i < this.contentList.length; i++) {
+            // console.log(this.contentList[i].COLOR,"this.contentList[i].COORDINATE")
+            value = ("000" + i).slice(-3);
+            content += Item_Content + value + "=";
+            content += this.contentList[i].STAY + ",";
+            content += this.contentList[i].ACTION + ",";
+            content += this.contentList[i].SPEED + "," + "\\";
+            content += "C" + this.contentList[i].COORDINATE.replace("-",'0') + "\\";
+            content += "S00\\";
+            content += "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
+            content += "f" + this.getFontValue(this.contentList[i].FONT);
 
-        content +=
-          this.contentList[i].FONT_SIZE.substring(0, 2) +
-          this.contentList[i].FONT_SIZE.substring(0, 2);
-        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, "<r><n>");
+            content +=
+              this.contentList[i].FONT_SIZE.substring(0, 2) +
+              this.contentList[i].FONT_SIZE.substring(0, 2);
+            content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, "<r><n>");
 
-        if (i + 1 != this.contentList.length) {
-          content += "<r><n>";
-        }
-        console.log(content, "content");
-      }
-      let protocolType = "GUANGDIAN_V33";
-      let deviceld = this.associatedDeviceId.toString();
-      uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
-        this.$modal.msgSuccess("发布成功");
-        console.log(response, "返回结果");
-      });
+            if (i + 1 != this.contentList.length) {
+              content += "<r><n>";
+            }
+            console.log(content, "content");
+          }
+          let protocolType = "GUANGDIAN_V33";
+          let deviceld = this.associatedDeviceId.toString();
+          uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
+            this.$modal.msgSuccess("发布成功");
+            console.log(response, "返回结果");
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取发布情报板'
+          });          
+        });
+      
     },
     getFontValue(font) {
       if (font == "黑体") return "h";

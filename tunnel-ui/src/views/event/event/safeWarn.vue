@@ -34,14 +34,14 @@
           </el-col>
         </el-row>
         <div class="searchBox" v-show="zd_boxShow">
-          <el-form
-            :model="queryParams"
-            ref="queryForm"
-            :inline="true"
-            v-if="activeName == '1' || activeName == '0'"
-            label-width="68px"
-            class="formStyle"
-          >
+        <el-form
+          :model="queryParams"
+          ref="queryForm"
+          :inline="true"
+          v-if="activeName == '1' || activeName == '0'"
+          label-width="68px"
+          class="formStyle"
+        >
             <el-form-item label="事件类型" prop="eventTypeId">
               <el-select
                 v-model="queryParams.eventTypeId"
@@ -270,10 +270,10 @@
           </el-row>
 
           <div class="searchBox"  v-show="fault_boxShow">
-            <el-form
+        <el-form
               ref="queryForm"
               :inline="true"
-              :model="queryParams"
+          :model="queryParams"
               label-width="75px"
               v-if="activeName == '2'"
             >
@@ -567,25 +567,25 @@
             </template>
           </el-table-column>
         </el-table>
-          <pagination
+        <pagination
             v-if="totals > 0 && activeName == '2'"
             :total="totals"
-            :page.sync="queryParams.pageNum"
-            :limit.sync="queryParams.pageSize"
-            @pagination="getList"
-          />
-          <el-pagination
-            v-if="total > 0 && (activeName == '0' || activeName == '1')"
-            class="specialPagination"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="queryParams.pageNum"
-            :page-sizes="[16, 32, 48, 64]"
-            :page-size="queryParams.pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-          >
-          </el-pagination>
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getList"
+        />
+        <el-pagination
+          v-if="total > 0 && (activeName == '0' || activeName == '1')"
+          class="specialPagination"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="queryParams.pageNum"
+          :page-sizes="[16, 32, 48, 64]"
+          :page-size="queryParams.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        >
+        </el-pagination>
       </el-tab-pane>
     </el-tabs>
 
@@ -2257,7 +2257,7 @@ export default {
       this.resetQuery();
       this.getList();
       if(this.currentMenu!="2"){
-        this.getEventType();
+      this.getEventType();
         this.showElement = true;
         this.showFaultElement = false;
       }else{

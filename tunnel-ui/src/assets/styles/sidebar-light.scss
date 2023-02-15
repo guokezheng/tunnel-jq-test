@@ -566,27 +566,36 @@
         color: #fff;
       }
       .el-collapse{
-        border-top:solid 1px #05afe3;
+        border-top:transparent;
       }
       .el-collapse-item__wrap{
         border-bottom:solid 1px #05afe3;
         background: #004375;
       }
-      .el-collapse-item__header, .el-collapse-item__content{
-      background: #004375;
+      .el-collapse-item__header{
+        background: #004375;
         color: #fff;
         border-bottom: solid 1px #05afe3;
+      }
+      .el-collapse-item__header.is-active{
+        border-bottom: transparent;
       }
       .con .menuBox i{
         color: #fff;
   
       }
+      .con .menuBox i:hover{
+        color: #05afe3;
+  
+      }
      .contentBox .listBox .menuBox i{
       color: #fff;
-
      }
      .contentBox .menuBox i{
       color: #fff;
+     }
+     .contentBox .menuBox i:hover{
+      color: #05afe3;
      }
      .el-table__body-wrapper .el-table__cell{
       border-left:transparent !important;
@@ -695,6 +704,7 @@
     }
     .el-table__body-wrapper .el-table__cell{
       border-left: solid 1px rgba(225, 228, 230, 0.16);
+
     }
     .el-table__body-wrapper tbody{
       border-right: solid 1px rgba($color: #E1E4E6, $alpha: 0.16);
@@ -737,6 +747,10 @@
       border-left: solid 1px rgba(225,228,230,.16);
       color: white;
     }
+    .el-table .el-table__header-wrapper th:last-of-type{ 
+      border-right: 1px solid rgba(225,228,230,.16);
+
+    }
     // 表格鼠标移入行选中
     .el-table--enable-row-hover .el-table__body tr:hover > td {
       background-color: #326CA9;
@@ -748,6 +762,9 @@
   //  表格下边框
   .el-table td.el-table__cell{
     border-bottom: 1px solid rgba(225,228,230,.16);
+  }
+  .el-table td:last-of-type {
+    border-right: 1px solid rgba(225,228,230,.16);
   }
   .el-table .el-table__expand-icon{
     color:#fff;
@@ -1334,7 +1351,7 @@
       
     }
     .el-form-item__label {
-      color: #01AAFD;
+      color: #01AAFD !important;
     }
     .el-dialog__header {
       padding: 0;

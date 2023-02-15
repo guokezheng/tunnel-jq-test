@@ -179,7 +179,7 @@
 
     <!-- 调度日志详细 -->
     <el-dialog title="调度日志详细" :visible.sync="open" width="700px" append-to-body>
-      <el-form ref="form" :model="form" label-width="100px" size="mini">
+      <el-form ref="form" :model="form" label-width="120px" size="mini">
         <el-row>
           <el-col :span="12">
             <el-form-item label="日志序号：">{{ form.jobLogId }}</el-form-item>
@@ -190,7 +190,7 @@
             <el-form-item label="执行时间：">{{ form.createTime }}</el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="调用方法：">{{ form.invokeTarget }}</el-form-item>
+            <el-form-item label="调用目标字符串：">{{ form.invokeTarget }}</el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="日志信息：">{{ form.jobMessage }}</el-form-item>

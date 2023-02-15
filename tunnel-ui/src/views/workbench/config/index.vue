@@ -101,7 +101,7 @@
               :filter-node-method="filterNode"
               ref="tree"
               ></el-tree>
-            </div>
+          </div>
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>

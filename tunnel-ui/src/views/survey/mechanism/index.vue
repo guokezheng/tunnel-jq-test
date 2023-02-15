@@ -4,7 +4,7 @@
     <!-- 全局搜索 -->
     <div>
       <el-col :span="4">
-        <el-button style ="margin: 10px 0px 25px;height: 35px;"
+        <el-button style ="margin: 10px 0px 0px;height: 35px;"
           type="primary"
           plain
           size="mini"
@@ -126,7 +126,8 @@
         :default-expand-all="isExpandAll"
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         :row-class-name="tableRowClassName"
-        class="menuAdministration tableClass"
+        class="menuAdministration"
+        height="70vh"
       >
       <el-table-column label="机构名称" prop="deptName" />
       <el-table-column label="机构负责人" align="center" prop="leader" />

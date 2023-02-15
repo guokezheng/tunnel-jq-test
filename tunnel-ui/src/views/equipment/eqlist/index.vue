@@ -56,7 +56,7 @@
         <div  ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
-            placeholder="请输入设备名称、设备桩号,回车搜索"
+            placeholder="请输入设备名称、桩号,回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -78,24 +78,22 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item
-          label="方向"
-          style="width: 100%;">
-        <el-checkbox-group v-model="checkeBox" @change="handleCheckChange">
-          <el-checkbox
-            v-for="item in dict.type.sd_direction"
-            :key="item.value"
-            :label="item.value"
-            name="check_direction"
-          >{{item.label}}
-          </el-checkbox>
-          <el-checkbox name="check_direction" key="3" label="3"
-          >双向
-<!--            v-for="item in dict.type.sd_direction"-->
-<!--            :key=""-->
-<!--            :label=""-->
+        <el-form-item label="设备方向" style="width: 100%;">
+          <el-checkbox-group v-model="checkeBox" @change="handleCheckChange">
+            <el-checkbox
+              v-for="item in dict.type.sd_direction"
+              :key="item.value"
+              :label="item.value"
+              name="check_direction"
+            >{{item.label}}
+            </el-checkbox>
+            <el-checkbox name="check_direction" key="3" label="3"
+            >双向
+  <!--            v-for="item in dict.type.sd_direction"-->
+  <!--            :key=""-->
+  <!--            :label=""-->
 
-          </el-checkbox>
+            </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item
@@ -147,8 +145,8 @@
       v-loading="loading"
       :data="devicesList"
       @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName"
-      class="tableClass"
+      class="allTable"
+      height="70vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -1010,10 +1008,10 @@ export default {
             message: "请填写设备ID",
             trigger: "blur",
           },
-          {
+          /*{
             pattern: /^[0-9a-zA-Z_-]{1,}$/,
-            message: "请输入数字字母或横线",
-          },
+            message: "请输入数字字母或1横线",
+          },*/
         ],
         pileNum: [
           {
@@ -1598,14 +1596,7 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit();
     },
-    // 表格行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
+    
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {

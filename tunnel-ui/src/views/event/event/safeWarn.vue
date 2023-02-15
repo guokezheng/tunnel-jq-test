@@ -1847,7 +1847,6 @@ export default {
   methods: {
 
     bodyCloseMenus(e) {
-      debugger
       let self = this;
       if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
         if (self.fault_boxShow == true){

@@ -886,7 +886,7 @@
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
       <div class="footer" v-show="displayThumbnail == true">
-        <div class="footMiniBox" style="cursor: pointer">
+        <div class="footMiniBox" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -900,7 +900,7 @@
           </div>
           <div id="vehicle"></div>
         </div>
-        <div class="footMiniBox footerRight" style="cursor: pointer">
+        <div class="footMiniBox footerRight" >
           <div class="footTitle">
             <!-- <div class="footTriangle"></div> -->
             <div class="footTitleCont">
@@ -916,7 +916,7 @@
           <div id="energyConsumption"></div>
         </div>
 
-        <div class="footMiniBox footerRight" style="cursor: pointer">
+        <div class="footMiniBox footerRight" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -967,7 +967,7 @@
             </vue-seamless-scroll>
           </div> -->
         </div>
-        <div class="footerRight footMiniBox" style="cursor: pointer">
+        <div class="footerRight footMiniBox" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img

@@ -33,7 +33,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="searchBox" v-show="zd_boxShow">
+        <div class="searchBox" v-show="zd_boxShow" >
         <el-form
           :model="queryParams"
           ref="queryForm"
@@ -249,7 +249,7 @@
             </el-button>
           </el-col>
         </div>
-        <div ref="main1" style = "margin-left: 75%;" v-show="showFaultElement" >
+        <div ref ="main" style = "margin-left: 75%;" v-show="showFaultElement" >
           <el-row :gutter="20" style="margin: 10px 0 0px" >
 
             <el-col :span="6" style="width: 100%;">
@@ -1848,7 +1848,7 @@ export default {
 
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
         if (self.fault_boxShow == true){
           self.fault_boxShow = false;
         }
@@ -2259,8 +2259,10 @@ export default {
       this.getEventType();
         this.showElement = true;
         this.showFaultElement = false;
+        this.fault_boxShow = false;
       }else{
         this.showElement = false; // 默认隐藏元素
+        this.zd_boxShow  = false;
         this.showFaultElement = true;
       }
 

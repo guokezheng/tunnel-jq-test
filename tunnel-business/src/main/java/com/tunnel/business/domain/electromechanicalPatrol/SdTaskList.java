@@ -66,6 +66,8 @@ public class SdTaskList extends BaseEntity
     @Excel(name = "指派巡查班组id")
     private String bzId;
 
+    private String bzName;
+
     /** 任务描述 */
     @Excel(name = "任务描述")
     private String taskDescription;
@@ -116,6 +118,13 @@ public class SdTaskList extends BaseEntity
     /*巡检点数量*/
     private Integer totalNum;
 
+    public String getBzName() {
+        return this.bzName;
+    }
+
+    public void setBzName(final String bzName) {
+        this.bzName = bzName;
+    }
 
     public String getTunnelId() {
         return this.tunnelId;

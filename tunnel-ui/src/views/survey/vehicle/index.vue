@@ -443,7 +443,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        vType: []
+        vType: [],
+        cx:"",
       },
       form: {},
       mechanismList: [],
@@ -492,6 +493,7 @@ export default {
       if(this.queryParams.orgName){
         this.queryParams.orgName = this.queryParams.orgName[2]?this.queryParams.orgName[2]:this.queryParams.orgName[1]?this.queryParams.orgName[1]:this.queryParams.orgName[0]?this.queryParams.orgName[0]:''
       }
+      debugger
       handleQueryList(this.queryParams).then((res) => {
         if (res.code == 200) {
           this.mechanismList = res.rows;
@@ -504,8 +506,8 @@ export default {
     handleQuery() {
       console.log(this.queryParams, "useStatususeStatus");
       // this.queryParams.pageNum = 1;
-      this.queryParams.vType = this.result
-      console.log(this.queryParams.vType)
+      this.queryParams.cx = this.result.toString()
+      console.log(this.queryParams.cx)
       this.getList();
     },
     /** 重置按钮操作 */

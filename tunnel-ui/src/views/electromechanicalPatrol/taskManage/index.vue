@@ -180,7 +180,7 @@
           <span>{{ parseTime(scope.row.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="承巡班组" align="center" prop="bzId" >
+      <el-table-column label="承巡班组" align="center" prop="bzName" >
       </el-table-column>
       <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
       <el-table-column
@@ -624,7 +624,7 @@
           </div>
           <div>
             指派巡查班组：
-            <span>{{ item.bzId }}</span>
+            <span>{{ item.bzName }}</span>
           </div>
         </div>
         <div class="card-col">
@@ -923,7 +923,7 @@ export default {
       taskNews1: {
         id: "",
         zzjgId: "",
-        bzId: "",
+        bzName: "",
         endPlantime: "",
         dispatcher: "",
         dispatchTime: "",
@@ -1037,12 +1037,12 @@ export default {
     },
 
     tunnelSelectGet(e){
-      const tunnelId = e;
-      selectBzByTunnel(tunnelId).then((response) => {
+      this.tunnelId = e;
+      selectBzByTunnel(this.tunnelId).then((response) => {
         this.form.bzId = response.data;
         console.log(response.data, "隧道部门树");
       });
-        treeselect(this.form.tunnelId).then((response) => {
+        treeselect(this.tunnelId).then((response) => {
           this.treeData = response.data;
           console.log(response.data, "隧道部门树");
         });
@@ -1230,7 +1230,6 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger
         this.taskNews = response.data.task;
         this.taskNews1 = response.data.task;
         this.taskNews2 = response.data.task;
@@ -1319,7 +1318,7 @@ export default {
       listList(this.queryParams).then((response) => {
         this.listList = response.rows;
         this.total = response.total;
-        this.listList.forEach((item) =>{
+        /*this.listList.forEach((item) =>{
           if(item.bzId=="null"||item.bzId==NaN){
             item.bzId = "";
           }else{
@@ -1334,7 +1333,7 @@ export default {
             }
 
           }
-        })
+        })*/
         this.loading = false;
       });
     },
@@ -1382,6 +1381,7 @@ export default {
         createTime: null,
         updateBy: null,
         updateTime: null,
+        devicesList:"",
       };
       this.boxList=[]
       this.resetForm("form");
@@ -1402,10 +1402,15 @@ export default {
       if(typeof(this.form.tunnelId)=="undefined"){
         return this.$modal.msgWarning('请选择所属隧道')
       }
-     this.dialogSelection = []
-    //  this.$refs.multipleTable1.toggleRowSelection(item, true);
+      this.dialogSelection = []
+      //  this.$refs.multipleTable1.toggleRowSelection(item, true);
       this.isShow1 = true;
       this.tunnelId = this.form.tunnelId;
+      treeselect(this.tunnelId).then((response) => {
+        this.treeData = response.data;
+        console.log(response.data, "隧道部门树");
+      });
+
       this.options1value = "0"
       this.getTable(this.options1value)
       //点击确定，数据还原
@@ -1427,6 +1432,12 @@ export default {
       this.isShow2 = true;
       this.options2value = "0"
       this.tunnelId = this.form.tunnelId;
+
+      treeselect(this.tunnelId ).then((response) => {
+        this.treeData = response.data;
+        console.log(response.data, "隧道部门树");
+      });
+
       this.getGzTable(this.options2value)
       if(this.openGz){
         this.options2value = "0"
@@ -1652,6 +1663,7 @@ export default {
         this.$modal.msgWarning("请选择巡检点或故障点");
         return
       }
+      this.boxIds = "";
       this.boxList.forEach((item) =>{
         this.boxIds = this.boxIds+(item.eq_id+",");
       })
@@ -1698,6 +1710,7 @@ export default {
       if (this.form.taskName == "") {
         return this.$modal.msgWarning('请填写任务名称')
       }
+      this.boxIds = "";
       this.boxList.forEach((item) =>{
         this.boxIds = this.boxIds+(item.eq_id+",");
       })

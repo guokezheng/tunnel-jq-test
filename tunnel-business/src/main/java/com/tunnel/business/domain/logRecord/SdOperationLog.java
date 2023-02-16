@@ -74,6 +74,13 @@ public class SdOperationLog extends BaseEntity
     private String beginTime;
     
     private String endTime;
+    /** 控制方式   3：手动 1：时间控制 2：光强控制 */
+    @Excel(name = "控制方式")
+    private String controlType;
+
+    /** 操作是否成功 0 成功；1失败 */
+    @Excel(name = "操作结果")
+    private String state;
 
     /** 操作地址 */
     @Excel(name = "操作地址")
@@ -147,15 +154,6 @@ public class SdOperationLog extends BaseEntity
     /** 操作前状态 */
    /* @Excel(name = "操作前状态")*/
     private String beforeState;
-
-
-    /** 控制方式   3：手动 1：时间控制 2：光强控制 */
-    @Excel(name = "控制方式   3：手动 1：时间控制 2：光强控制")
-    private String controlType;
-
-    /** 操作是否成功 0 成功；1失败 */
-    @Excel(name = "操作结果 0 成功；1失败")
-    private String state;
 
     /** 描述 */
    /* @Excel(name = "描述")*/

@@ -257,6 +257,7 @@
         :row-class-name="tableRowClassName"
         v-show="searchValue == '1'"
         class="tableHeight"
+        height="70vh"
       >
               <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
@@ -513,7 +514,6 @@ export default {
                   this.VITime.push(viTime[i].substring(11,16));
               }
             }
-            this.VITime.sort();
             console.log(this.VITime+"========+时间轴");
             this.total = response.total;
             this.loading = false;
@@ -535,7 +535,6 @@ export default {
                   this.fsTime.push(fstime[i].substring(11,16));
               }
             }
-            this.fsTime.sort()
             this.total = response.total;
             this.loading = false;
             this.initChart();
@@ -556,7 +555,6 @@ export default {
                   this.dnTime.push(dntime[i].substring(11,16));
               }
             }
-            this.dnTime.sort();
             this.total = response.total;
             this.loading = false;
             this.initChart();
@@ -577,7 +575,6 @@ export default {
                   this.dwTime.push(dwtime[i].substring(11,16));
               }
             }
-            this.dwTime.sort();
             this.total = response.total;
             this.loading = false;
             this.initChart();
@@ -638,7 +635,6 @@ export default {
                 this.VITime.push(viTime[i].substring(11,16));
             }
           }
-          this.VITime.sort();
           this.total = response.total;
           this.loading = false;
           this.initChart();
@@ -660,7 +656,6 @@ export default {
                 this.fsTime.push(fstime[i].substring(11,16));
             }
           }
-          this.fsTime.sort();
           this.total = response.total;
           this.loading = false;
           this.initChart();
@@ -681,7 +676,6 @@ export default {
                 this.dnTime.push(dntime[i].substring(11,16));
             }
           }
-          this.dnTime.sort();
           this.total = response.total;
           this.loading = false;
           this.initChart();
@@ -703,7 +697,6 @@ export default {
                 this.dwTime.push(dwtime[i].substring(11,16));
             }
           }
-          this.dwTime.sort();
           this.total = response.total;
           this.loading = false;
           this.initChart();

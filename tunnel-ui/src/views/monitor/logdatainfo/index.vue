@@ -259,7 +259,7 @@
       </div>
     </el-form>
 
-    <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange"
+    <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange"  height="70vh"
             :row-class-name="tableRowClassName" v-show="searchValue == '1'"
             :default-sort="{prop: 'loginTime', order: 'descending'}" @sort-change="handleSortChange" class="tableHeight"  >
       <el-table-column type="selection" width="55" align="center" />
@@ -287,7 +287,7 @@
 <!--              :row-class-name="tableRowClassName" v-show="searchValue == '2'"-->
 <!--              :default-sort="defaultSort" @sort-change="handleSortChange" max-height="640" >-->
 
-      <el-table v-loading="loading" :data="logList" class="tableHeight"  :default-sort="{ prop: 'createTime', order: 'descending' }"
+      <el-table v-loading="loading" :data="logList" height="70vh" class="tableHeight"  :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" v-show="searchValue == '2'" >
         <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="序号" align="center" prop="id" display="none"/>-->

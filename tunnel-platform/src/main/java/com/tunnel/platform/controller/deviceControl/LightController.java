@@ -75,8 +75,7 @@ public class LightController {
             //设备所属管理站host
             String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
             //接口地址
-            String url = "http://10.168.75.50:8000/light/setBrightness";
-            // String url = host + "/light/setBrightness";
+            String url = host + "/light/setBrightness";
             String response = HttpUtil.get(url, paramMap);
             if (StringUtils.isNotBlank(response) && JSONValidator.from(response).validate()) {
                 JSONObject jsonObject = JSONObject.parseObject(response);
@@ -108,29 +107,6 @@ public class LightController {
             @ApiParam(name = "openClose", value = "状态（1-开启，0-关闭）", required = true) @RequestParam(name = "openClose") Integer openClose,
             @ApiParam(name = "controlType", value = "控制类型(0-手动控制,1-定时控制,4-预案执行)", required = true) @RequestParam(name = "controlType") String controlType,
             @ApiParam(name = "operIp", value = "操作者IP,如果部署在高速云，此参数必传！", required = false) @RequestParam(name = "operIp", required = false) String operIp) throws IOException {
-        /*
-            开关控制不走这里,暂时注释掉
-        if ("GSY".equals(deploymentType)) {
-            Assert.hasText(operIp, "IP参数{operIp}必传");
-            Map<String, Object> uriVariables = new HashMap<>();
-            uriVariables.put("deviceId", deviceId);
-            uriVariables.put("openClose", openClose);
-            uriVariables.put("controlType", controlType);
-            uriVariables.put("operIp", operIp);
-
-            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
-            SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(sdDevices.getEqTunnelId());
-            //设备所属管理站host
-            String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
-            //接口地址
-            String url = "http://10.168.75.50:8000/light/lineControl";
-            // String url = host + "/light/setBrightness";
-
-            ResponseEntity<AjaxResult> forEntity = restTemplate.getForEntity(url, AjaxResult.class, uriVariables);
-            return forEntity.getBody();
-        }
-        */
-
         operIp = InetAddress.getLocalHost().getHostAddress();
         int resultStatus = lightService.lineControl(deviceId, openClose, controlType, operIp);
 

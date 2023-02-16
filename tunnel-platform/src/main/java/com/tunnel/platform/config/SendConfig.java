@@ -14,7 +14,7 @@ import java.io.IOException;
 public class SendConfig {
 
 
-    @Bean
+    @Bean("OkHttpRestTemplate")
     public RestTemplate restTemplate() {
         // 创建 RestTemplate 实例
         OkHttp3ClientHttpRequestFactory okHttp3ClientHttpRequestFactory = new OkHttp3ClientHttpRequestFactory();

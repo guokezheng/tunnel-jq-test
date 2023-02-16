@@ -55,7 +55,9 @@ public class SendMsgServiceImpl implements SendMsgService {
     @Value("${iot.url}")
     private String url;
 
+
     @Autowired
+    @Qualifier("OkHttpRestTemplate")
     private RestTemplate restTemplate;
 
     @Autowired

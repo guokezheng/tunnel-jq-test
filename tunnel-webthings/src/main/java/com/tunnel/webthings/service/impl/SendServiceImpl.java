@@ -10,6 +10,7 @@ import com.tunnel.webthings.service.SendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +35,9 @@ public class SendServiceImpl implements SendService {
     @Value("${iot.url}")
     private String url;
 
+
     @Autowired
+    @Qualifier("OkHttpRestTemplate")
     private RestTemplate restTemplate;
 
     /**

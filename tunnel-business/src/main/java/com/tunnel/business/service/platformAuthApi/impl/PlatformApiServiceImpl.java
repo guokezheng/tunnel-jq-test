@@ -18,15 +18,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.concurrent.ListenableFuture;
-import org.springframework.web.client.RestTemplate;
-import sun.net.www.protocol.http.HttpURLConnection;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
+
 
 /**
  * @author zhai

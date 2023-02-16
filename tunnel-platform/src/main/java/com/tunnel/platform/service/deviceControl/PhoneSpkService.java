@@ -15,8 +15,6 @@ import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
-import com.tunnel.business.mapper.event.SdEventMapper;
-import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -36,7 +34,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -64,12 +61,6 @@ public class PhoneSpkService {
     private ISdTunnelsService sdTunnelsService;
     @Autowired
     private SdOptDeviceService sdOptDeviceService;
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private SdEventMapper sdEventMapper;
-    @Autowired
-    private SdEventTypeMapper sdEventTypeMapper;
     @Autowired
     private ISdOperationLogService sdOperationLogService;
 

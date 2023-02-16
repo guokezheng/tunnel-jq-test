@@ -51,8 +51,6 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
     @Value("${url.detail}")
     private String detailUrl;
 
-//    @Autowired
-//    private RestTemplate restTemplate;
 
     /**
      * 查询应急车辆

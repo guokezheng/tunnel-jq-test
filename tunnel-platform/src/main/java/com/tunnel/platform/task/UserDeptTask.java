@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 定时任务同步集团的部门、用户
+ * 此功能废弃
+ */
 @Component("userDeptTask")
 public class UserDeptTask {
 

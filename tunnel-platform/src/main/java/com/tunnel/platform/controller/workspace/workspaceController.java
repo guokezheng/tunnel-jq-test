@@ -98,8 +98,6 @@ public class workspaceController extends BaseController {
     @Autowired
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
 
-    @Autowired
-    private RestTemplate restTemplate;
 
     //3d测试
     @PostMapping("/test")

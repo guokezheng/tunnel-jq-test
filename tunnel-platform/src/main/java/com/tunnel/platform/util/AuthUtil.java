@@ -88,7 +88,7 @@ public class AuthUtil {
 
 
     public static String getAuthCode(String username) {
-        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean(RestTemplate.class);
+        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean("OkHttpRestTemplate");
 
         //设置请求头
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -109,7 +109,7 @@ public class AuthUtil {
 
 
     public static String getToken(String authCode) {
-        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean(RestTemplate.class);
+        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean("OkHttpRestTemplate");
         RedisCache redisCache = (RedisCache) SpringContextUtils.getBean(RedisCache.class);
 
         String tocc_token = redisCache.getCacheObject(Constants.TOCC_TOKEN_KEY);
@@ -136,7 +136,7 @@ public class AuthUtil {
     }
 
     public static Map<String, Object> getUserInfo(String token) {
-        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean(RestTemplate.class);
+        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean("OkHttpRestTemplate");
 
         //设置请求头
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -157,7 +157,7 @@ public class AuthUtil {
 
 
     public static List<Map<String, Object>> getDeptTree(String token, String id) {
-        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean(RestTemplate.class);
+        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean("OkHttpRestTemplate");
 
         //设置请求头
         HttpHeaders httpHeaders = new HttpHeaders();

@@ -50,10 +50,5 @@ public class ThirdPartLoginController {
         return thirdPartLoginService.login(code);
     }
 
-    @PostMapping(value = "/getUserListByCompanyAndDept")
-    public AjaxResult getUserListByCompanyAndDept(String companyName, String deptName) {
-        List<Map<String, Object>> userList = thirdPartLoginService.getUsersByDept(null, companyName, deptName);
-        return AjaxResult.success(userList);
-    }
 
 }

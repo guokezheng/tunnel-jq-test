@@ -551,7 +551,6 @@
                 v-model="form.warrantyEndTime"
                 type="date"
                 placeholder="请选择维保截至时间"
-                :picker-options="optionsDisable"
                 value-format="yyyy-MM-dd"
                 style="width: 100%"
               >
@@ -961,6 +960,7 @@ export default {
         eqType: null,
         deviceState: null,
         searchValue: null,
+        exportIds:"",
       },
       queryCmdParams: {
         codeDeviceId: null,
@@ -1348,6 +1348,9 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.eqId);
+      if(this.ids.length>0){
+         this.queryParams.exportIds = this.ids.join();
+      }
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
@@ -1596,7 +1599,7 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit();
     },
-    
+
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {

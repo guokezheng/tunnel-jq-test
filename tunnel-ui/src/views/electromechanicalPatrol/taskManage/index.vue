@@ -161,6 +161,7 @@
       :data="listList"
       @selection-change="handleSelectionChange"
       class="allTable"
+      height="70vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" width="100px" align="center">
@@ -183,6 +184,7 @@
       <el-table-column label="承巡班组" align="center" prop="bzName" >
       </el-table-column>
       <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
+
       <el-table-column
         label="计划完成时间"
         align="center"
@@ -190,7 +192,7 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endPlantime, "{y}-{m}-{d}") }}</span>
+          <span>{{ parseTime(scope.row.endPlantime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布状态" align="center" prop="publishStatus">
@@ -348,8 +350,8 @@
               :picker-options="forbiddenTime"
               size="small"
               v-model="form.endPlantime"
-              type="date"
-              value-format="yyyy-MM-dd"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
               style="width: 63%;"
               placeholder="选择完成时间"
             >
@@ -629,7 +631,7 @@
         </div>
         <div class="card-col">
           <div>
-            计划完成日期：
+            计划完成时间：
             <span>{{ item.endPlantime }}</span>
           </div>
           <div>

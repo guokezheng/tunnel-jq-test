@@ -28,7 +28,7 @@
         <el-col>
           <div class="grid-content bg-purple">
             <el-input
-              v-model="queryParam.userName"
+              v-model="queryParam.ipaddr"
               placeholder="请输入登录地址、用户名称，回车搜索"
               clearable
               style="width: 456px;"
@@ -518,7 +518,7 @@ export default {
       this.dateRange = [];
       this.resetForm("queryForm");
       this.resetForm("queryForms");
-      this.queryParam.userName = "";
+      this.queryParam.ipaddr = "";
       this.queryParam.status = null;
       this.queryParams.operIp = "";
       // if (this.searchValue == '1') {

@@ -285,6 +285,7 @@
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
         <el-table-column label="风速(m/s)" align="center" prop="FS" />
@@ -316,6 +317,7 @@
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
         <el-table-column label="洞内亮度(lux)" align="center" prop="data" />
@@ -335,6 +337,7 @@
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
         <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />

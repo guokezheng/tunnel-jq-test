@@ -371,6 +371,19 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private String externalDeviceId;
 
     /**
+     * 导出设备ID
+     **/
+    private String exportIds;
+
+    public String getExportIds() {
+        return this.exportIds;
+    }
+
+    public void setExportIds(final String exportIds) {
+        this.exportIds = exportIds;
+    }
+
+    /**
      * 关联设备ID（关联iot_board中device_id字段）
      * */
     private Long associatedDeviceId;

@@ -14,7 +14,7 @@
         </el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入公告标题、操作人员"
             v-model="queryParams.noticeTitle"
@@ -274,7 +274,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.notice_boxShow == true) {
+          self.notice_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询公告列表 */
     getList() {
       this.loading = true;

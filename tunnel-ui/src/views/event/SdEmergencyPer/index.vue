@@ -2,9 +2,9 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <div>
+    <el-row :gutter="20" style="margin: 10px 0 25px">
       <el-col :span="4">
-      <el-button style ="margin: 10px 0px 25px;height: 35px;"
+        <el-button 
         v-hasPermi="['business:SdEmergencyPer:add']"
         size="small"
         type="primary"
@@ -12,9 +12,25 @@
         @click="handleAdd()"
       >新增人员
       </el-button>
-    </el-col>
-    </div>
-    <div ref="main" style = "margin-left: 75%">
+      </el-col>
+      <el-col :span="6" :offset="14">
+          <div class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入人员姓名，回车搜索"
+              v-model="queryParams.userName"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="ry_boxShow = !ry_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+    </el-row>
+    
+    <!-- <div ref="main" style = "margin-left: 75%">
       <el-row :gutter="20" style="margin: 10px 0 25px">
 
         <el-col :span="6" style ="width: 100%;">
@@ -32,7 +48,7 @@
             </el-input>
           </div>
         </el-col>
-      </el-row>
+      </el-row> -->
       <div class="ry_searchBox" v-show="ry_boxShow">
         <el-form
           ref="queryForm"
@@ -81,7 +97,7 @@
           </el-form-item>
         </el-form>
       </div>
-    </div>
+    <!-- </div> -->
 
 <!--    <el-form
       :model="queryParams"

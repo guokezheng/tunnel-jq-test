@@ -2,7 +2,32 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <div>
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button 
+          type="primary"
+          plain
+          size="mini"
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+              placeholder="请输入机构、负责人，回车搜索"
+              v-model="queryParams.deptName"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="jg_boxShow = !jg_boxShow"
+              ></el-button>
+            </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <!-- <div>
       <el-col :span="4">
         <el-button style ="margin: 10px 0px 0px;height: 35px;"
           type="primary"
@@ -11,9 +36,9 @@
           @click="toggleExpandAll"
         >展开/折叠</el-button>
       </el-col>
-    </div>
-    <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 25px">
+    </div> -->
+    <!-- <div ref="main" style = "margin-left: 75%"> -->
+      <!-- <el-row :gutter="20" style="margin: 10px 0 25px">
 
         <el-col :span="6"  style ="width: 100%;">
           <div class="grid-content bg-purple">
@@ -30,7 +55,7 @@
             </el-input>
           </div>
         </el-col>
-      </el-row>
+      </el-row> -->
       <div class="jg_searchBox" v-show="jg_boxShow">
         <el-form
           ref="queryForm"
@@ -65,7 +90,7 @@
           </el-form-item>
         </el-form>
       </div>
-    </div>
+    <!-- </div> -->
 
 <!--    <el-form
       :model="queryParams"

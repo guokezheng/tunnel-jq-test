@@ -540,6 +540,11 @@
     color:#bbb;
   }
   #app {
+    .cl_searchBox{
+      .el-checkbox{
+        color: #fff;
+      }
+    }
     .patrol .box-father .box .number{
       color: #fff !important;
     }

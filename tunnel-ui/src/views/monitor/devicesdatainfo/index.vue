@@ -98,15 +98,23 @@
         ></i>
       </div>-->
     </div>
-  <div ref="main" style = "margin-left: 72%">
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="6" style="width: 100%;">
+  <div ref="main" >
+    <el-row :gutter="20" style="margin: 10px 0 25px" type="flex" justify="end">
+      <el-col :span="1" style="display: flex;justify-content: right;">
         <div @click="marketChang()">
           <i
             class="el-icon-s-marketing"
             style="font-size: 36px; color: #39adff;float: left"
           ></i>
         </div>
+      </el-col>
+      <el-col :span="6" >
+        <!-- <div @click="marketChang()">
+          <i
+            class="el-icon-s-marketing"
+            style="font-size: 36px; color: #39adff;float: left"
+          ></i>
+        </div> -->
         <div style="width: 91%;float: left;display: none" id="pldiv">
           <el-form
             ref="querysForm"
@@ -254,10 +262,9 @@
         v-loading="loading"
         :data="list"
         @selection-change="handleSelectionChange"
-        :row-class-name="tableRowClassName"
         v-show="searchValue == '1'"
-        class="tableHeight"
-        height="70vh"
+        class="allTable"
+        height="58vh"
       >
               <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
@@ -275,10 +282,10 @@
       <el-table
         v-loading="loading"
         :data="list"
-        class="tableHeight"
+        class="allTable"
         @selection-change="handleSelectionChange"
-        :row-class-name="tableRowClassName"
         v-show="searchValue == '2'"
+        height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
@@ -308,9 +315,9 @@
         v-loading="loading"
         :data="list"
         @selection-change="handleSelectionChange"
-        :row-class-name="tableRowClassName"
         v-show="searchValue == '3'"
-        class="tableHeight"
+        class="allTable"
+        height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
@@ -328,9 +335,9 @@
         v-loading="loading"
         :data="list"
         @selection-change="handleSelectionChange"
-        :row-class-name="tableRowClassName"
         v-show="searchValue == '4'"
-        class="tableHeight"
+        class="allTable"
+        height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
@@ -1146,14 +1153,6 @@ export default {
           this.exportLoading = false;
         })
         .catch(() => {});
-    },
-    // 表格行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
     },
   },
 };

@@ -1,6 +1,15 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" align="right" ref="queryForm" :inline="true" v-show="showSearch" label-width="70px">
+    <el-row style="margin: 10px 0 25px" type="flex" justify="end">
+      <el-col :span="5" >
+        <div class="grid-content bg-purple">
+          <el-input clearable
+                  size="small"
+                  @keyup.enter.native="handleQuery"  v-model="queryParams.searchValue" style="width:360px" placeholder="请输入设备类型名称,回车搜索" />
+        </div>
+      </el-col>
+    </el-row>
+    <!-- <el-form :model="queryParams" align="right" ref="queryForm" :inline="true" v-show="showSearch" label-width="70px"> -->
 <!--      <el-form-item label="设备类型" prop="stateTypeId">-->
 
 <!--      </el-form-item>-->
@@ -16,12 +25,12 @@
 <!--        <el-button type="primary" plain size="mini" :disabled="multiple" @click="handleDeleteAll"-->
 <!--                   v-hasPermi="['system:eqTypeState:remove']">删除</el-button>-->
 <!--      </el-form-item>-->
-      <el-form-item >
+      <!-- <el-form-item >
         <el-input clearable
                   size="small"
                   @keyup.enter.native="handleQuery"  v-model="queryParams.searchValue" style="width:360px" placeholder="请输入设备类型名称,回车搜索" />
       </el-form-item>
-    </el-form>
+    </el-form> -->
     <!--
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">

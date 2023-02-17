@@ -1,9 +1,34 @@
 <template>
   <div class="app-container">
-
-
     <!-- 全局搜索 -->
-    <div>
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button 
+          v-hasPermi="['system:list:add']"
+          size="mini"
+          type="primary"
+          plain
+          @click="handleAdd"
+        >新增任务
+        </el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+              placeholder="请输入所属单位，回车搜索"
+              v-model="queryParams.zzjgId"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="task_boxShow = !task_boxShow"
+              ></el-button>
+            </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <!-- <div>
       <el-col :span="4">
         <el-button style ="margin: 10px 0px 25px;height: 35px;"
           v-hasPermi="['system:list:add']"
@@ -14,8 +39,8 @@
         >新增任务
         </el-button>
       </el-col>
-    </div>
-    <div ref="main" style = "margin-left: 75%">
+    </div> -->
+    <!-- <div ref="main" style = "margin-left: 75%">
       <el-row :gutter="20" style="margin: 10px 0 0px">
 
         <el-col :span="6" style="width: 100%;">
@@ -33,7 +58,7 @@
             </el-input>
           </div>
         </el-col>
-      </el-row>
+      </el-row> -->
 
       <div class="task_searchBox" v-show="task_boxShow">
         <el-form
@@ -87,7 +112,7 @@
           </el-form-item>
         </el-form>
       </div>
-    </div>
+    <!-- </div> -->
 
 <!--    <el-form
       :model="queryParams"
@@ -184,7 +209,6 @@
       <el-table-column label="承巡班组" align="center" prop="bzName" >
       </el-table-column>
       <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
-
       <el-table-column
         label="计划完成时间"
         align="center"
@@ -1232,6 +1256,7 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
+        debugger
         this.taskNews = response.data.task;
         this.taskNews1 = response.data.task;
         this.taskNews2 = response.data.task;
@@ -1404,8 +1429,8 @@ export default {
       if(typeof(this.form.tunnelId)=="undefined"){
         return this.$modal.msgWarning('请选择所属隧道')
       }
-      this.dialogSelection = []
-      //  this.$refs.multipleTable1.toggleRowSelection(item, true);
+     this.dialogSelection = []
+    //  this.$refs.multipleTable1.toggleRowSelection(item, true);
       this.isShow1 = true;
       this.tunnelId = this.form.tunnelId;
       treeselect(this.tunnelId).then((response) => {

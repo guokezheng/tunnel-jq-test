@@ -14,8 +14,7 @@
         </el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-
-        <div class="grid-content bg-purple">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入类型编码、类型名称"
             v-model="queryParams.vehicleTypeCode"
@@ -254,7 +253,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.lx_boxShow == true) {
+          self.lx_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询车辆类型配置列表 */
     getList() {
       this.loading = true;

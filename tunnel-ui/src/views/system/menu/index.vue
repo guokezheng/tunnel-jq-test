@@ -14,7 +14,7 @@
         </el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入菜单名称"
             v-model="queryParams.menuName"
@@ -411,7 +411,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.menu_boxShow == true) {
+          self.menu_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     // 选择图标
     selected(name) {
       this.form.icon = name;

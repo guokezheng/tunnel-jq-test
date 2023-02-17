@@ -2,13 +2,9 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
-
-      </el-col>
-<!--      <el-col :span="6" :offset="14" >-->
-      <el-col :span="6"  style="width: 100%;">
+    <div ref="main" >
+      <el-row style="margin: 10px 0 25px">
+      <el-col :span="6"  :offset="18">
         <div class="grid-content bg-purple">
           <el-input
             placeholder="请输入车牌，回车搜索"
@@ -493,7 +489,6 @@ export default {
       if(this.queryParams.orgName){
         this.queryParams.orgName = this.queryParams.orgName[2]?this.queryParams.orgName[2]:this.queryParams.orgName[1]?this.queryParams.orgName[1]:this.queryParams.orgName[0]?this.queryParams.orgName[0]:''
       }
-      debugger
       handleQueryList(this.queryParams).then((res) => {
         if (res.code == 200) {
           this.mechanismList = res.rows;

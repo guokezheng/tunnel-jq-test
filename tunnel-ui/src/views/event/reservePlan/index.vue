@@ -13,7 +13,7 @@
         </el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入预案名称"
             v-model="queryParams.planName"
@@ -28,6 +28,7 @@
         </div>
       </el-col>
     </el-row>
+
     <div class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
@@ -967,7 +968,22 @@ export default {
     //   this.planTypeData = response.rows;
     // });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.boxShow == true) {
+          self.boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询设备类型列表 */
     getEquipmentType() {
       for (let i = 0; i < this.planTypeIdList.length; i++) {
@@ -1777,7 +1793,7 @@ export default {
 <style>
 .searchBox {
   position: absolute;
-  top: 6%;
+  top: 8%;
   right: 1%;
   width: 24%;
   z-index: 1996;

@@ -31,7 +31,7 @@
         <el-row :gutter="20" class="mb8">
       <!-- 全局搜索 -->
       <el-row :gutter="20" style="margin: 10px 0 25px">
-        <el-col :span="4">
+        <el-col :span="6">
 
           <el-button
             v-hasPermi="['system:user:add']"
@@ -41,9 +41,33 @@
             @click="handleAdd()"
           >新增用户
           </el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="handleImport"
+            v-hasPermi="['system:user:import']"
+          >导入</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:user:export']"
+          >导出</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="resetQuery"
+          >刷新</el-button
+          >
         </el-col>
-        <el-col :span="6" :offset="14">
-          <div class="grid-content bg-purple">
+        <el-col :span="7" :offset="11">
+          <div class="grid-content bg-purple" ref="main">
             <el-input
               placeholder="请输入用户名称、手机号码"
               v-model="queryParams.userName"
@@ -100,31 +124,13 @@
             >重置</el-button
             >
 <!--            <el-col :span="1.5">-->
-              <el-button
-                type="primary"
-                plain
-                size="mini"
-                @click="handleImport"
-                v-hasPermi="['system:user:import']"
-              >导入</el-button
-              >
-<!--            </el-col>
-            <el-col :span="1.5">-->
-              <el-button
-                type="primary"
-                plain
-                size="mini"
-                :loading="exportLoading"
-                @click="handleExport"
-                v-hasPermi="['system:user:export']"
-              >导出</el-button
-              >
+              
 <!--            </el-col>-->
-            <right-toolbar
+            <!-- <right-toolbar
               :showSearch.sync="showSearch"
               @queryTable="getList"
               :columns="columns"
-            ></right-toolbar>
+            ></right-toolbar> -->
           </el-form-item>
         </el-form>
       </div>
@@ -873,7 +879,22 @@ export default {
       this.initPassword = response.msg;
     });
   },
+   //点击空白区域关闭全局搜索弹窗
+   mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.user_boxShow == true) {
+          self.user_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询用户列表 */
     getList() {
       this.loading = true;

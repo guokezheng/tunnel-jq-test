@@ -12,10 +12,10 @@
         <el-row :gutter="20" style="margin: 10px 25px" v-show="showElement">
           <el-col :span="4">
             <el-button
-              size="small"
+              size="mini"
               type="primary"
               plain
-              @click="getList()"
+              @click="resetQuery()"
             >刷新
             </el-button>
           </el-col>
@@ -23,6 +23,7 @@
             <div class="grid-content bg-purple">
               <el-input
                 @keyup.enter.native="handleQuery"
+                placeholder="请选择事件类型、管理机构、所属隧道等"
               >
                 <el-button
                   slot="append"
@@ -129,142 +130,34 @@
             </el-form-item>
           </el-form>
         </div>
-
-
-
-<!--        <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-          v-if="activeName == '1' || activeName == '0'"
-          label-width="68px"
-          class="formStyle"
-        >
-          <el-row>
-            <el-col>
-              <el-form-item label="事件类型" prop="eventTypeId">
-                <div style="display: flex">
-                  <el-button
-                    v-for="(item, index) in eventTypeData"
-                    class="eventTypeButton"
-                    :key="index"
-                    type="primary"
-                    plain
-                    @click="handleEvtButton(item.id)"
-                  >
-                    {{ item.simplifyName }}
-                  </el-button>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="管理机构" prop="deptId">
-                <treeselect
-                  v-model="queryParams.deptId"
-                  :options="deptOptions"
-                  :show-count="true"
-                  placeholder="请选择归属部门"
-                  @select="changeMechanism"
-                  style="width: 300px"
-                  size="small"
-                />
-              </el-form-item>
-              <el-form-item
-                label="所属隧道"
-                prop="tunnelId"
-                v-show="manageStation == '0'"
-              >
-                <el-select
-                  v-model="queryParams.tunnelId"
-                  placeholder="请选择所属隧道"
-                  clearable
-                  size="small"
-                  style="width: 180px"
-                  @change="$forceUpdate()"
-                >
-                  <el-option
-                    v-for="item in tunnelList"
-                    :key="item.tunnelId"
-                    :label="item.tunnelName"
-                    :value="item.tunnelId"
-                  />
-                </el-select>
-              </el-form-item>
-
-              <el-form-item label="事件状态" prop="eventState">
-                <el-select
-                  v-model="queryParams.eventState"
-                  placeholder="请选择事件状态"
-                  clearable
-                  size="small"
-                  style="width: 180px"
-                >
-                  <el-option
-                    v-for="dict in eventStateOptions"
-                    :key="dict.dictValue"
-                    :label="dict.dictLabel"
-                    :value="dict.dictValue"
-                  />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="选择日期" prop="eventTime">
-                <el-date-picker
-                  v-model="dateRange"
-                  size="small"
-                  style="width: 240px"
-                  value-format="yyyy-MM-dd"
-                  type="daterange"
-                  range-separator="-"
-                  unlink-panels
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                ></el-date-picker>
-              </el-form-item>
-
-              <el-form-item>
-                <el-button type="primary" size="mini" @click="handleQuery"
-                  >搜索
-                </el-button>
-                <el-button size="mini" @click="resetQuery" type="primary" plain
-                  >重置
-                </el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>-->
-
-
         <!-- 全局搜索 -->
-        <div v-show="showFaultElement">
-          <el-col :span="4" >
-            <el-button style ="margin: 10px 0px 25px;height: 35px;"
-                       v-hasPermi="['system:list:add']"
-                       size="mini"
-                       type="primary"
-                       plain
-                       @click="handleAdd"
-            >新增故障
-            </el-button>
-          </el-col>
-        </div>
-        <div ref ="main" style = "margin-left: 75%;" v-show="showFaultElement" >
-          <el-row :gutter="20" style="margin: 10px 0 0px" >
-
-            <el-col :span="6" style="width: 100%;">
+          <el-row :gutter="20" style="margin: 10px 25px" v-show="showFaultElement">
+            <el-col :span="4">
+              <el-button 
+                v-hasPermi="['system:list:add']"
+                size="mini"
+                type="primary"
+                plain
+                @click="handleAdd"
+              >新增故障
+              </el-button>
+              <el-button size="mini" @click="resetQuery" type="primary" plain
+                >刷新</el-button
+                >
+            </el-col>
+            <el-col :span="6" :offset="14">
               <div class="grid-content bg-purple">
                 <el-input
-                  placeholder="请输入故障位置、故障描述，回车搜索"
-                  v-model="queryParams.faultDescription"
-                  @keyup.enter.native="handleQuery"
-                >
-                  <el-button
-                    slot="append"
-                    icon="el-icon-s-fold"
-                    @click="fault_boxShow = !fault_boxShow"
-                  ></el-button>
-                </el-input>
+                    placeholder="请输入故障位置、故障描述，回车搜索"
+                    v-model="queryParams.faultDescription"
+                    @keyup.enter.native="handleQuery"
+                  >
+                    <el-button
+                      slot="append"
+                      icon="el-icon-s-fold"
+                      @click="fault_boxShow = !fault_boxShow"
+                    ></el-button>
+                  </el-input>
               </div>
             </el-col>
           </el-row>
@@ -307,7 +200,6 @@
               </el-form-item>
             </el-form>
           </div>
-        </div>
 
 
 
@@ -459,8 +351,8 @@
           v-loading="loading"
           :data="eventLists"
           @selection-change="handleSelectionChange"
-          :row-class-name="tableRowClassName"
-          max-height="600"
+          height="59vh"
+          class="allTable"
           v-if="activeName == '2'"
         >
           <el-table-column type="selection" width="55" align="center" />
@@ -1848,13 +1740,15 @@ export default {
 
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
         if (self.fault_boxShow == true){
           self.fault_boxShow = false;
         }
       }
     },
-
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     changeEqRunStatus(e){
       this.$forceUpdate()
     },
@@ -2251,10 +2145,10 @@ export default {
     handleClick(e) {
       this.isState = true;
       this.currentMenu = e.index;
-      console.log(e);
-      console.log("0000000000000000==="+this.currentMenu)
+      this.zd_boxShow = false;
+      this.fault_boxShow = false;
       this.resetQuery();
-      this.getList();
+      // this.getList();
       if(this.currentMenu!="2"){
       this.getEventType();
         this.showElement = true;
@@ -2418,7 +2312,7 @@ export default {
           this.totals = response.total;
           this.loading = false;
         });
-      } else if(this.currentMenu == "0"||this.currentMenu == "1") {
+      } else if(this.activeName == "0"||this.activeName == "1") {
         if (!this.dateRange) {
           this.dateRange = [];
         }
@@ -2941,14 +2835,6 @@ export default {
       this.reset();
       if (this.detailsButtonType == 2) {
         this.getList();
-      }
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
       }
     },
   },

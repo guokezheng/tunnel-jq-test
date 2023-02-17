@@ -2,9 +2,9 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px -310px;margin-left: 18%">
-      <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="6" :offset="18">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入系统模块、操作人员"
             v-model="queryParams.title"
@@ -328,7 +328,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.rz_boxShow == true) {
+          self.rz_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询登录日志 */
     getList() {
       this.loading = true;

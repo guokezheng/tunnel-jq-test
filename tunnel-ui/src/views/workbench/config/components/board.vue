@@ -167,6 +167,7 @@
             @click="openDialogVisible(1,1)"
             style="width: 80px"
             class="submitButton"
+            v-hasPermi="['workbench:dialog:save']"
             >添加信息</el-button
           >
           <el-button
@@ -174,6 +175,7 @@
             size="mini"
             @click="releaseInfo()"
             style="width: 80px"
+            v-hasPermi="['workbench:dialog:save']"
             >信息发布</el-button
           >
         </div>

@@ -58,8 +58,8 @@
 
     <el-table v-loading="loading" :data="eqTypeStateList"
               @selection-change="handleSelectionChange"
-              :row-class-name="tableRowClassName"
-              class="tableClass"
+              class="allTable"
+              height="59vh"
     >
 <!--      <el-table-column type="selection" width="55" align="center" />-->
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
@@ -900,14 +900,7 @@ export default {
     },
 
     //=======================================文件上传end===============================
-    // 表格行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-        return 'tableEvenRow';
-      } else {
-        return "tableOddRow";
-      }
-    },
+
   }
 };
 </script>

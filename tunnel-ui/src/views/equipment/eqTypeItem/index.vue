@@ -105,7 +105,7 @@
     </div>
 
     <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange"
-    :row-class-name="tableRowClassName" class="tableClass"
+    class="allTable" height="59vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -385,14 +385,6 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
-    },
-    // 表格行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   }
 };

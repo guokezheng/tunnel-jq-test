@@ -628,6 +628,7 @@
                 class="chezhiControlButton"
                 @click="chezhiControl(0)"
                 :disabled="chezhiDisabled"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -681,6 +682,7 @@
                 class="chezhiControlButton"
                 @click="chezhiControl(1)"
                 :disabled="chezhiDisabled"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -729,6 +731,7 @@
                 class="chezhiControlButton"
                 size="mini"
                 @click="phoneControl(directionList[0].dictValue)"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -775,6 +778,7 @@
                 class="chezhiControlButton"
                 size="mini"
                 @click="phoneControl(directionList[1].dictValue)"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -829,6 +833,7 @@
                   size="mini"
                   class="handleLightClass"
                   @click="timingStrategy(item)"
+                  v-hasPermi="['workbench:dialog:save']"
                   >确定
                 </el-button>
             </div>
@@ -5036,7 +5041,7 @@ export default {
     },
     //抽屉
     isDrawerA() {
-      this.drawerA = true;
+      this.drawerA = !this.drawerA;
       this.drawerB = false;
       this.drawerCVisible = false;
       // Object.assign(this.$data.phoneForm1, this.$options.data().phoneForm1)
@@ -5048,7 +5053,7 @@ export default {
       };
     },
     isDrawerB() {
-      this.drawerB = true;
+      this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
       if (this.tunnelId) {
@@ -5063,7 +5068,7 @@ export default {
       }
     },
     isDrawerC() {
-      this.drawerCVisible = true;
+      this.drawerCVisible = !this.drawerCVisible;
       this.drawerA = false;
       this.drawerB = false;
 

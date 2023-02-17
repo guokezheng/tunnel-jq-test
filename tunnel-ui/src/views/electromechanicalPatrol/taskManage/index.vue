@@ -3,7 +3,7 @@
     <!-- 全局搜索 -->
     <el-row :gutter="20" style="margin: 10px 0 25px">
       <el-col :span="4">
-        <el-button 
+        <el-button
           v-hasPermi="['system:list:add']"
           size="mini"
           type="primary"
@@ -672,7 +672,7 @@
         <div class="card-cols">
           <div>
             任务描述：
-            <span>{{ item.taskDescription }}</span>
+            <span>{{ (item.taskDescription=='null')?'':(item.taskDescription) }}</span>
           </div>
         </div>
       </div>
@@ -762,14 +762,14 @@
             任务持续时长：
             <span>{{ tas.taskCxtime }}</span>
             <!-- <div class="chaoshi">{{ tas.ifchaosgu }}</div> -->
-            <div >{{ tas.ifchaosgu }}</div>
+            <div  :class="{ active: isActive }" >{{ tas.ifchaosgu }}</div>
 
           </div>
         </div>
         <div class="card-cols">
           <div class="test">
             任务描述：
-            <span>{{ tas.taskDescription }}</span>
+            <span>{{ (tas.taskDescription=='null')?'':(tas.taskDescription) }}</span>
           </div>
         </div>
       </div>
@@ -853,6 +853,7 @@ export default {
   },
   data() {
     return {
+      isActive: false,
       task_boxShow:false,
       isClick:true,
       userName:'',
@@ -1258,10 +1259,19 @@ export default {
       getTaskInfoList(this.taskId).then((response) => {
         debugger
         this.taskNews = response.data.task;
+        if(response.data.task[0].ifchaosgu == '已超时'){
+          //this.active = true;
+          this.isActive = true;
+        }else{
+          //this.active = false;
+          this.isActive = false;
+        }
         this.taskNews1 = response.data.task;
         this.taskNews2 = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;
+        debugger
+
         this.impressionOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
             if (taskitem.impression == opt.dictValue) {
@@ -1799,13 +1809,14 @@ export default {
     margin-top: 10px;
     display: flex;
     color: #79949c;
-    .chaoshi {
+    .active {
       padding: 5px;
       color: #ffd69a;
       display: inline;
       margin-left: 10px;
       border: 1px solid #ffd69a;
     }
+
     div {
       width: 33%;
       span {
@@ -1849,6 +1860,8 @@ export default {
     }
   }
 }
+
+
 .col-1 {
   font-size: 20px;
   display: flex;

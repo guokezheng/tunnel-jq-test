@@ -25,6 +25,9 @@ public class IotBoardReleaseLog extends BaseEntity
     @Excel(name = "发布设备")
     private String deviceId;
 
+    @Excel(name = "设备桩号")
+    private String pile;
+
     /** 设备名称 */
 //    @Excel(name = "设备名称")
     private String deviceName;
@@ -42,11 +45,11 @@ public class IotBoardReleaseLog extends BaseEntity
     private String releaseBy;
 
     /** 发布时间 */
-    @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date releaseTime;
 
     /** 发布状态：0：正常，1：失败 */
-    @Excel(name = "发布状态", readConverterExp = "0=正常,1=失败")
+    @Excel(name = "发布状态", readConverterExp = "0=成功,1=失败")
     private String releaseStatus;
 
     /** 发布机构 */
@@ -67,7 +70,6 @@ public class IotBoardReleaseLog extends BaseEntity
 
     private List<String> paramsList;
 
-    private String pile;
 
     public String getPile() {
         return pile;

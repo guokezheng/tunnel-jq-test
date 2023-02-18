@@ -35,7 +35,7 @@
 
           <el-button
             v-hasPermi="['system:user:add']"
-            size="small"
+            size="mini"
             type="primary"
             plain
             @click="handleAdd()"

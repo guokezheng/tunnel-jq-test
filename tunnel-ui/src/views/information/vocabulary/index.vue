@@ -28,6 +28,10 @@
           v-hasPermi="['system:vocabulary:export']"
         >导出</el-button
         >
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+        >
+
       </el-col>
       <el-col :span="6" :offset="12">
         <div  ref="main" class="grid-content bg-purple">
@@ -38,11 +42,42 @@
             size="small"
             @keyup.enter.native="handleQuery"
           >
+          <!-- <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button> -->
           </el-input>
         </div>
       </el-col>
     </el-row>
-
+    <!-- <div ref="cc" class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+      <el-form-item label="文本" prop="word" style="width:100%">
+        <el-input
+          v-model="queryParams.word"
+          placeholder="请输入文本"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+          
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div> -->
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -184,6 +219,7 @@ export default {
   components: {},
   data() {
     return {
+      boxShow:false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -255,7 +291,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
+      this.resetForm("queryParams");
+      this.queryParams.word = null
       this.handleQuery();
     },
     // 多选框选中数据
@@ -348,3 +385,30 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    width: 100%;
+    ::v-deep .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+  }
+}
+</style>

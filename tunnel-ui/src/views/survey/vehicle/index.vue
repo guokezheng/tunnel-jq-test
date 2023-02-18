@@ -4,7 +4,12 @@
     <!-- 全局搜索 -->
     <div ref="main" >
       <el-row style="margin: 10px 0 25px">
-      <el-col :span="6"  :offset="18">
+      <el-col :span="4">
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="6"  :offset="14">
         <div class="grid-content bg-purple">
           <el-input
             placeholder="请输入车牌，回车搜索"

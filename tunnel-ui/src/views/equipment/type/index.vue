@@ -28,20 +28,61 @@
             @click="handleDelete"
             v-hasPermi="['system:type:remove']"
             >删除</el-button>
+          <el-button size="mini" @click="resetQuery" type="primary" plain>刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
             v-model="queryParams.typeName"
             placeholder="请输入设备类型名称、设备类型代号,回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
-          />
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
         </div>
       </el-col>
     </el-row>
-
+    <div ref="cc" class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="100px"
+      >
+      <el-form-item label="设备类型名称" prop="typeName" style="width: 100%">
+       <el-input
+         v-model="queryParams.typeName"
+         placeholder="请输入设备类型名称"
+         clearable
+         size="small"
+         @keyup.enter.native="handleQuery"
+       />
+      </el-form-item>
+      <el-form-item label="设备类型代号" prop="typeAbbr" style="width: 100%">
+        <el-input
+          v-model="queryParams.typeAbbr"
+          placeholder="请输入设备类型代号"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
     <el-table
       v-loading="loading"
       :data="typeList"
@@ -350,7 +391,18 @@ export default {
         console.log(this.isControlOptions,'this.isControlOptions')
       });
   },
+  mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
@@ -626,7 +678,7 @@ export default {
 <style lang="scss" scoped>
 .searchBox {
   ::v-deep .el-form-item__content {
-    width: 80%;
+    width: 70%;
     .el-select {
       width: 100%;
     }

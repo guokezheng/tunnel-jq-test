@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-<!--    <el-form
+    <!--    <el-form
       :model="queryParams"
       ref="queryForms"
       :inline="true"
@@ -91,99 +91,107 @@
           洞外光强
         </div>
       </div>
-<!--      <div @click="marketChang()">
+      <!--      <div @click="marketChang()">
         <i
           class="el-icon-s-marketing"
           style="font-size: 36px; color: #39adff"
         ></i>
       </div>-->
     </div>
-  <div ref="main" >
-    <el-row :gutter="20" style="margin: 10px 0 25px" type="flex" justify="end">
-      <el-col :span="1" style="display: flex;justify-content: right;">
-        <div @click="marketChang()">
-          <i
-            class="el-icon-s-marketing"
-            style="font-size: 36px; color: #39adff;float: left"
-          ></i>
-        </div>
-      </el-col>
-      <el-col :span="6" >
-        <!-- <div @click="marketChang()">
+    <div ref="main">
+      <el-row
+        :gutter="20"
+        style="margin: 10px 0 25px"
+      >
+        <el-col :span="4">
+          <el-button size="mini" @click="resetQuery" type="primary" plain
+              >刷新</el-button
+            >
+        </el-col>
+        <el-col :span="1" style="display: flex; justify-content: right" :offset="13">
+          <div @click="marketChang()">
+            <i
+              class="el-icon-s-marketing"
+              style="font-size: 36px; color: #39adff; float: left"
+            ></i>
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <!-- <div @click="marketChang()">
           <i
             class="el-icon-s-marketing"
             style="font-size: 36px; color: #39adff;float: left"
           ></i>
         </div> -->
-        <div style="width: 91%;float: left;display: none" id="pldiv">
-          <el-form
-            ref="querysForm"
-            :inline="true"
-            :model="querysParams"
-            label-width="75px"
-          >
-            <treeselect
-              v-model="querysParams.id"
-              :options="jgOptions"
-              :show-count="true"
-              placeholder="请选择设备"
-              @select="handleChange"
-              :disable-branch-nodes="true"
-              size="small"
-            />
-          </el-form>
-        </div>
-<!--        <div @click="marketChang()">
+          <div style="width: 91%; float: left; display: none" id="pldiv">
+            <el-form
+              ref="querysForm"
+              :inline="true"
+              :model="querysParams"
+              label-width="75px"
+            >
+              <treeselect
+                v-model="querysParams.id"
+                :options="jgOptions"
+                :show-count="true"
+                placeholder="请选择设备"
+                @select="handleChange"
+                :disable-branch-nodes="true"
+                size="small"
+              />
+            </el-form>
+          </div>
+          <!--        <div @click="marketChang()">
           <i
             class="el-icon-s-marketing"
             style="font-size: 36px; color: #39adff;float: left"
           ></i>
         </div>-->
-        <div class="grid-content bg-purple" id="pladiv">
-          <el-input
-            placeholder="请输入桩号，回车搜索"
-            v-model="queryParams.pile"
-            style="width: 456px;"
-            @keyup.enter.native="handleQuery"
-          >
-            <el-button
-              slot="append"
-              icon="el-icon-s-fold"
-              @click="sj_boxShow = !sj_boxShow"
-            ></el-button>
-          </el-input>
-        </div>
-      </el-col>
-    </el-row>
-    <div class="searchBox" v-show="sj_boxShow">
-      <el-form
-        ref="queryForm"
-        :inline="true"
-        :model="queryParams"
-        label-width="75px"
-      >
-        <el-form-item
-          style="width: 100%"
-          label="所属隧道"
-          prop="tunnelId"
-          v-show="manageStatin == '0'"
+          <div class="grid-content bg-purple" id="pladiv">
+            <el-input
+              placeholder="请输入桩号，回车搜索"
+              v-model="queryParams.pile"
+              style="width: 456px"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="sj_boxShow = !sj_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="searchBox" v-show="sj_boxShow">
+        <el-form
+          ref="queryForm"
+          :inline="true"
+          :model="queryParams"
+          label-width="75px"
         >
-          <el-select
-            v-model="queryParams.tunnelId"
-            placeholder="请选择所属隧道"
-            clearable
-            size="small"
+          <el-form-item
+            style="width: 100%"
+            label="所属隧道"
+            prop="tunnelId"
+            v-show="manageStatin == '0'"
           >
-            <el-option
-              v-for="item in eqTunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+            <el-select
+              v-model="queryParams.tunnelId"
+              placeholder="请选择所属隧道"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in eqTunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              ></el-option>
+            </el-select>
+          </el-form-item>
 
-<!--        <el-form-item label="管理机构" prop="deptId">
+          <!--        <el-form-item label="管理机构" prop="deptId">
           <treeselect
             v-model="queryParams.deptId"
             :options="deptOptions"
@@ -193,48 +201,44 @@
           />
         </el-form-item>-->
 
-        <el-form-item label="管理机构" prop="deptId" style="width: 100%">
-          <treeselect
-            v-model="queryParams.deptId"
-            :options="deptOptions"
-            :show-count="true"
-            placeholder="请选择归属部门"
-            clearable
-            size="small"
-          />
-        </el-form-item>
+          <el-form-item label="管理机构" prop="deptId" style="width: 100%">
+            <treeselect
+              v-model="queryParams.deptId"
+              :options="deptOptions"
+              :show-count="true"
+              placeholder="请选择归属部门"
+              clearable
+              size="small"
+            />
+          </el-form-item>
 
-        <el-form-item label="采集时间">
-          <el-date-picker
-            v-model="dateRange"
-            size="small"
-            style="width: 335px"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            type="datetimerange"
-            range-separator="-"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :default-time="['00:00:00', '23:59:59']"
-          ></el-date-picker>
-        </el-form-item>
+          <el-form-item label="采集时间">
+            <el-date-picker
+              v-model="dateRange"
+              size="small"
+              style="width: 335px"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :default-time="['00:00:00', '23:59:59']"
+            ></el-date-picker>
+          </el-form-item>
 
-
-
-        <el-form-item class="bottomBox">
-          <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
-          >
-          <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
-          >
-        </el-form-item>
-      </el-form>
+          <el-form-item class="bottomBox">
+            <el-button size="small" type="primary" @click="handleQuery"
+              >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
-  </div>
 
-
-
-<!--    <div class="topBox" style="display: flex; justify-content: space-between">
+    <!--    <div class="topBox" style="display: flex; justify-content: space-between">
       <div class="butBox">
         <div :class="searchValue == '1' ? 'xz' : ''" @click="qiehuan('1')">
           CO/VI
@@ -266,9 +270,9 @@
         class="allTable"
         height="58vh"
       >
-              <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="序号" align="center" prop="num" />
-<!--        <el-table-column label="设备编码" align="center" prop="eqId" />-->
+        <!--        <el-table-column label="设备编码" align="center" prop="eqId" />-->
         <el-table-column label="设备名称" align="center" prop="eqName" />
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
@@ -371,17 +375,21 @@ import {
   list,
   delLogininfor,
   cleanLogininfor,
-  exportLogininfor, getDeviceTreeselect,
+  exportLogininfor,
+  getDeviceTreeselect,
 } from "@/api/monitor/logininfor";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listType } from "@/api/equipment/type/api";
 import { listLog } from "@/api/system/log";
-import { listDept,treeselect,treeselectExcYG1 } from "@/api/system/dept";
+import { listDept, treeselect, treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
-import {dataLogInfoLineList, dataLogInfoList} from "@/api/equipment/eqTypeItem/item";
+import {
+  dataLogInfoLineList,
+  dataLogInfoList,
+} from "@/api/equipment/eqTypeItem/item";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import {getTunnelList} from "@/api/event/event";
+import { getTunnelList } from "@/api/event/event";
 
 export default {
   name: "Logininfor",
@@ -390,8 +398,8 @@ export default {
 
   data() {
     return {
-      manageStatin:this.$cache.local.get("manageStation"),
-      sj_boxShow:false,
+      manageStatin: this.$cache.local.get("manageStation"),
+      sj_boxShow: false,
       searchValue: "1",
       // 遮罩层
       loading: true,
@@ -432,7 +440,7 @@ export default {
         deptId: null,
         searchValue: "1",
         pile: null,
-        deviceId:null,
+        deviceId: null,
       },
       querysParams: {
         id: null,
@@ -441,18 +449,18 @@ export default {
       echartShow: false,
       CO: [],
       VI: [],
-      VITime:[],
+      VITime: [],
       fsData: [],
-      fsTime:[],
+      fsTime: [],
       dnData: [],
-      dnTime:[],
+      dnTime: [],
       dwData: [],
-      dwTime:[],
+      dwTime: [],
       // 部门树选项
       deptOptions: undefined,
       // 部门树选项
       jgOptions: undefined,
-      currentData:"",
+      currentData: "",
     };
   },
   created() {
@@ -468,7 +476,7 @@ export default {
       this.operationStateOptions = response.data;
     });
 
-    this.currentData = "日期"+"("+this.getCurrentTime()+")";
+    this.currentData = "日期" + "(" + this.getCurrentTime() + ")";
   },
 
   //点击空白区域关闭全局搜索弹窗
@@ -478,11 +486,10 @@ export default {
   },
 
   methods: {
-
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.sj_boxShow == true){
+        if (self.sj_boxShow == true) {
           self.sj_boxShow = false;
         }
       }
@@ -493,25 +500,25 @@ export default {
       //获取当前时间并打印
       var _this = this;
       let yy = new Date().getFullYear();
-      let mm = new Date().getMonth()+1;
+      let mm = new Date().getMonth() + 1;
       let dd = new Date().getDate();
-      _this.gettime = yy+'-'+mm+'-'+dd;
-      return  _this.gettime;
+      _this.gettime = yy + "-" + mm + "-" + dd;
+      return _this.gettime;
     },
 
     getDeviceTreeselect() {
       getDeviceTreeselect(this.searchValue).then((response) => {
         this.jgOptions = response.data;
-        console.log(this.jgOptions+"==========设备树");
+        console.log(this.jgOptions + "==========设备树");
         //给select-tree默认选中第一个
         this.querysParams.id = this.jgOptions[0].children[0].id;
 
         //获取线条的方法
-        if (this.searchValue == null || this.searchValue == "1" ) {
+        if (this.searchValue == null || this.searchValue == "1") {
           this.queryParams.searchValue = "1";
           this.queryParams.deviceId = this.querysParams.id;
           let viTime = [];
-          this.VITime =[];
+          this.VITime = [];
           dataLogInfoLineList(
             this.addDateRange(this.queryParams, this.dateRange)
           ).then((response) => {
@@ -519,12 +526,12 @@ export default {
             this.CO = list1.map((item) => item.CO);
             this.VI = list1.map((item) => item.VI);
             viTime = list1.map((item) => item.createTime);
-            if(viTime.length>0){
-              for(let i = 0;i<viTime.length;i++){
-                  this.VITime.push(viTime[i].substring(11,16));
+            if (viTime.length > 0) {
+              for (let i = 0; i < viTime.length; i++) {
+                this.VITime.push(viTime[i].substring(11, 16));
               }
             }
-            console.log(this.VITime+"========+时间轴");
+            console.log(this.VITime + "========+时间轴");
             this.total = response.total;
             this.loading = false;
             this.initChart();
@@ -532,7 +539,7 @@ export default {
         } else if (this.searchValue != null && this.searchValue == "2") {
           this.queryParams.searchValue = "2";
           this.queryParams.deviceId = this.querysParams.id;
-          let fstime  = [];
+          let fstime = [];
           this.fsTime = [];
           dataLogInfoLineList(
             this.addDateRange(this.queryParams, this.dateRange)
@@ -540,9 +547,9 @@ export default {
             let list1 = response.rows;
             this.fsData = list1.map((item) => item.FS);
             fstime = list1.map((item) => item.createTime);
-            if(fstime.length>0){
-              for(let i = 0;i<fstime.length;i++){
-                  this.fsTime.push(fstime[i].substring(11,16));
+            if (fstime.length > 0) {
+              for (let i = 0; i < fstime.length; i++) {
+                this.fsTime.push(fstime[i].substring(11, 16));
               }
             }
             this.total = response.total;
@@ -552,17 +559,17 @@ export default {
         } else if (this.searchValue != null && this.searchValue == "3") {
           this.queryParams.searchValue = "3";
           this.queryParams.deviceId = this.querysParams.id;
-          let dntime  = [];
-          this.dnTime =[];
+          let dntime = [];
+          this.dnTime = [];
           dataLogInfoLineList(
             this.addDateRange(this.queryParams, this.dateRange)
           ).then((response) => {
             let list1 = response.rows;
             this.dnData = list1.map((item) => item.data);
             dntime = list1.map((item) => item.createTime);
-            if(dntime.length>0){
-              for(let i = 0;i<dntime.length;i++){
-                  this.dnTime.push(dntime[i].substring(11,16));
+            if (dntime.length > 0) {
+              for (let i = 0; i < dntime.length; i++) {
+                this.dnTime.push(dntime[i].substring(11, 16));
               }
             }
             this.total = response.total;
@@ -580,9 +587,9 @@ export default {
             let list1 = response.rows;
             this.dwData = list1.map((item) => item.data);
             dwtime = list1.map((item) => item.createTime);
-            if(dwtime.length>0){
-              for(let i = 0;i<dwtime.length;i++){
-                  this.dwTime.push(dwtime[i].substring(11,16));
+            if (dwtime.length > 0) {
+              for (let i = 0; i < dwtime.length; i++) {
+                this.dwTime.push(dwtime[i].substring(11, 16));
               }
             }
             this.total = response.total;
@@ -590,7 +597,6 @@ export default {
             this.initChart();
           });
         }
-
       });
     },
 
@@ -603,32 +609,31 @@ export default {
     marketChang() {
       this.echartShow = !this.echartShow;
       //点击后判断当前元素的display
-      let divBox = document.getElementById('pladiv').style.display;
-      if(divBox=='none'){
-        document.getElementById('pladiv').style.display = "block"
-      }else {
-        document.getElementById('pladiv').style.display = "none"
+      let divBox = document.getElementById("pladiv").style.display;
+      if (divBox == "none") {
+        document.getElementById("pladiv").style.display = "block";
+      } else {
+        document.getElementById("pladiv").style.display = "none";
       }
 
-      let divbox = document.getElementById('pldiv').style.display;
-      if(divbox=='none'){
-        document.getElementById('pldiv').style.display = "block"
-      }else {
-        document.getElementById('pldiv').style.display = "none"
+      let divbox = document.getElementById("pldiv").style.display;
+      if (divbox == "none") {
+        document.getElementById("pldiv").style.display = "block";
+      } else {
+        document.getElementById("pldiv").style.display = "none";
       }
-
 
       this.initChart();
     },
-    handleChange(item){
-      this.querysParams.id=null;
+    handleChange(item) {
+      this.querysParams.id = null;
       const param = {
         id: item.id,
       };
       this.querysParams.id = item.id;
-      console.log("this.querysParams.id==="+item.id)
+      console.log("this.querysParams.id===" + item.id);
 
-      if (this.searchValue == null || this.searchValue == "1" ) {
+      if (this.searchValue == null || this.searchValue == "1") {
         this.queryParams.searchValue = "1";
         this.queryParams.deviceId = item.id;
         this.VITime = [];
@@ -640,9 +645,9 @@ export default {
           this.CO = list1.map((item) => item.CO);
           this.VI = list1.map((item) => item.VI);
           viTime = list1.map((item) => item.createTime);
-          if(viTime.length>0){
-            for(let i = 0;i<viTime.length;i++){
-                this.VITime.push(viTime[i].substring(11,16));
+          if (viTime.length > 0) {
+            for (let i = 0; i < viTime.length; i++) {
+              this.VITime.push(viTime[i].substring(11, 16));
             }
           }
           this.total = response.total;
@@ -652,18 +657,17 @@ export default {
       } else if (this.searchValue != null && this.searchValue == "2") {
         this.queryParams.searchValue = "2";
         this.queryParams.deviceId = this.querysParams.id;
-        let fstime  = [];
-        this.fsTime =[];
+        let fstime = [];
+        this.fsTime = [];
         dataLogInfoLineList(
           this.addDateRange(this.queryParams, this.dateRange)
         ).then((response) => {
-
           let list1 = response.rows;
           this.fsData = list1.map((item) => item.FS);
           fstime = list1.map((item) => item.createTime);
-          if(fstime.length>0){
-            for(let i = 0;i<fstime.length;i++){
-                this.fsTime.push(fstime[i].substring(11,16));
+          if (fstime.length > 0) {
+            for (let i = 0; i < fstime.length; i++) {
+              this.fsTime.push(fstime[i].substring(11, 16));
             }
           }
           this.total = response.total;
@@ -673,7 +677,7 @@ export default {
       } else if (this.searchValue != null && this.searchValue == "3") {
         this.queryParams.searchValue = "3";
         this.queryParams.deviceId = this.querysParams.id;
-        let dntime  = [];
+        let dntime = [];
         this.dnTime = [];
         dataLogInfoLineList(
           this.addDateRange(this.queryParams, this.dateRange)
@@ -681,9 +685,9 @@ export default {
           let list1 = response.rows;
           this.dnData = list1.map((item) => item.data);
           dntime = list1.map((item) => item.createTime);
-          if(dntime.length>0){
-            for(let i = 0;i<dntime.length;i++){
-                this.dnTime.push(dntime[i].substring(11,16));
+          if (dntime.length > 0) {
+            for (let i = 0; i < dntime.length; i++) {
+              this.dnTime.push(dntime[i].substring(11, 16));
             }
           }
           this.total = response.total;
@@ -702,9 +706,9 @@ export default {
 
           this.dwData = list1.map((item) => item.data);
           dwtime = list1.map((item) => item.createTime);
-          if(dwtime.length>0){
-            for(let i = 0;i<dwtime.length;i++){
-                this.dwTime.push(dwtime[i].substring(11,16));
+          if (dwtime.length > 0) {
+            for (let i = 0; i < dwtime.length; i++) {
+              this.dwTime.push(dwtime[i].substring(11, 16));
             }
           }
           this.total = response.total;
@@ -745,7 +749,7 @@ export default {
               show: true,
               position: "top",
             },
-            data: this.CO
+            data: this.CO,
           },
           {
             name: "VI",
@@ -757,40 +761,44 @@ export default {
             type: "line",
           },
         ];
-        var  xAxis = [{
-          type: "category",
-          name: this.currentData,
-          data: this.VITime,
-          axisLine: {
-            lineStyle: {
-              color:"#ffffff",// 设置x轴额色为白色
-              fontsize:"29px",
-            }
-          },
-          nameTextStyle: {
-            fontFamily: "PingFang",
-            fontsize:"29px",
-          },
-        }];
-        var yAxis = [{
-          type: "value",
-          name: "CO(ppm)/VI(km)",
-          axisLine: {
-            lineStyle: {
-              color: '#ffffff', // 设置y轴线条颜色为黑色
-              width: 2, // 设置y轴线条宽度为2像素
+        var xAxis = [
+          {
+            type: "category",
+            name: this.currentData,
+            data: this.VITime,
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
             },
-            show: true
+            nameTextStyle: {
+              fontFamily: "PingFang",
+              fontsize: "29px",
+            },
           },
-        }];
+        ];
+        var yAxis = [
+          {
+            type: "value",
+            name: "CO(ppm)/VI(km)",
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置y轴线条颜色为黑色
+                width: 2, // 设置y轴线条宽度为2像素
+              },
+              show: true,
+            },
+          },
+        ];
         legends = {
-          textStyle:{
-            fontSize: 13,//字体大小
-            color: '#ffffff'//字体颜色
+          textStyle: {
+            fontSize: 13, //字体大小
+            color: "#ffffff", //字体颜色
           },
           left: "center",
-          data: ["CO", "VI"]
-        }
+          data: ["CO", "VI"],
+        };
       } else if (this.searchValue == 2) {
         //   fsData: [],
         // dnData: [],
@@ -807,28 +815,32 @@ export default {
             type: "line",
           },
         ];
-        var  xAxis = [{
-          type: "category",
-          name: this.currentData,
-          data: this.fsTime,
-          axisLine: {
-            lineStyle: {
-              color:"#ffffff",// 设置x轴额色为白色
-              fontsize:"29px",
-            }
-          },
-        }];
-        var yAxis = [{
-          type: "value",
-          name: "m/s",
-          axisLine: {
-            lineStyle: {
-              color:"#ffffff",// 设置x轴额色为白色
-              fontsize:"29px",
+        var xAxis = [
+          {
+            type: "category",
+            name: this.currentData,
+            data: this.fsTime,
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
             },
-            show: true
           },
-        }];
+        ];
+        var yAxis = [
+          {
+            type: "value",
+            name: "m/s",
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+              show: true,
+            },
+          },
+        ];
       } else if (this.searchValue == 3) {
         var series = [
           {
@@ -842,28 +854,32 @@ export default {
             type: "line",
           },
         ];
-        var  xAxis = [{
-          type: "category",
-          name: this.currentData,
-          data: this.dnTime,
-          axisLine: {
-            lineStyle: {
-              color:"#ffffff",// 设置x轴额色为白色
-              fontsize:"29px",
-            }
-          },
-        }];
-        var yAxis = [{
-          type: "value",
-          name: "lux",
-          axisLine: {
-            lineStyle: {
-              color:"#ffffff",// 设置x轴额色为白色
-              fontsize:"29px",
+        var xAxis = [
+          {
+            type: "category",
+            name: this.currentData,
+            data: this.dnTime,
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
             },
-            show: true
           },
-        }];
+        ];
+        var yAxis = [
+          {
+            type: "value",
+            name: "lux",
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+              show: true,
+            },
+          },
+        ];
       } else if (this.searchValue == 4) {
         //   fsData: [],
         // dnData: [],
@@ -880,34 +896,38 @@ export default {
             type: "line",
           },
         ];
-        var  xAxis = [{
+        var xAxis = [
+          {
             type: "category",
-          name: this.currentData,
+            name: this.currentData,
             data: this.dwTime,
             axisLine: {
               lineStyle: {
-                color:"#ffffff",// 设置x轴额色为白色
-                fontsize:"29px",
-              }
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
             },
-          }];
-        var yAxis = [{
-          type: "value",
-          name: "cd/㎡",
-          axisLine: {
-            lineStyle: {
-              color:"#ffffff",// 设置x轴额色为白色
-              fontsize:"29px",
-            },
-            show: true
           },
-        }];
+        ];
+        var yAxis = [
+          {
+            type: "value",
+            name: "cd/㎡",
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff", // 设置x轴额色为白色
+                fontsize: "29px",
+              },
+              show: true,
+            },
+          },
+        ];
       }
       option = {
         tooltip: {
-            show: true
+          show: true,
         },
-        legend:legends,
+        legend: legends,
         xAxis,
         yAxis,
         series,
@@ -952,8 +972,10 @@ export default {
     /** 查询列表 */
     getList(inx) {
       this.loading = true;
-      if(this.manageStatin == '1'){
-        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      if (this.manageStatin == "1") {
+        this.queryParams.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        );
       }
       if (inx == null || inx == "1" || this.searchValue == "1") {
         this.queryParams.searchValue = "1";
@@ -1002,7 +1024,7 @@ export default {
         });
       }
       //查询折线图数据
-     /* if (inx == null || inx == "1" || this.searchValue == "1") {
+      /* if (inx == null || inx == "1" || this.searchValue == "1") {
         this.queryParams.searchValue = "1";
         this.VITime = [];
         let viTime = [];
@@ -1083,9 +1105,6 @@ export default {
           this.initChart();
         });
       }*/
-
-
-
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -1165,7 +1184,7 @@ export default {
 .searchBox {
   position: absolute;
   top: 14%;
-  right: 2%;
+  right: 1%;
   width: 24%;
   z-index: 1996;
   background-color: #00335a;
@@ -1285,35 +1304,35 @@ hr {
   font-weight: 400;
   color: #303133;
 }
-.tableHeight{
+.tableHeight {
   max-height: 59vh !important;
   overflow: auto;
 }
 </style>
 
 <style lang="scss" scoped>
-  .searchBox {
+.searchBox {
   ::v-deep .el-form-item__content {
-  width: 80%;
-  .el-select {
-  width: 100%;
-  }
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
   }
   .bottomBox {
-  .el-form-item__content {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
   }
-  }
-  }
-  .bottomBox {
+}
+.bottomBox {
   width: 100%;
   ::v-deep .el-form-item__content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
   }
-  }
-  </style>
+}
+</style>

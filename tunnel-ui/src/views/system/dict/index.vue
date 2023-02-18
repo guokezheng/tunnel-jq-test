@@ -1,26 +1,38 @@
 <template>
   <div class="app-container">
-
     <!-- 全局搜索 -->
     <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
+      <el-col :span="6">
         <el-button
           v-hasPermi="['system:dict:add']"
-          size="small"
+          size="mini"
           type="primary"
           plain
           @click="handleAdd()"
-        >新增字典
+          >新增字典
         </el-button>
         <el-button
           type="primary"
           plain
-          size="small"
+          size="mini"
           @click="handleRefreshCache"
           v-hasPermi="['system:dict:remove']"
-        >刷新缓存</el-button>
+          >刷新缓存</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:post:export']"
+          >导出</el-button
+        >
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+        >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入字典名称、类型"
@@ -43,7 +55,6 @@
         :model="queryParams"
         label-width="75px"
       >
-
         <el-form-item label="字典状态" prop="status" style="width: 100%">
           <el-select
             style="width: 325px"
@@ -75,25 +86,16 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
-          <el-button
-            type="primary"
-            plain
-            size="small"
-            :loading="exportLoading"
-            @click="handleExport"
-            v-hasPermi="['system:post:export']"
-          >导出</el-button>
         </el-form-item>
       </el-form>
     </div>
 
-
-<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="字典名称" prop="dictName">
         <el-input
           v-model="queryParams.dictName"
@@ -236,38 +238,73 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
 
-    <el-table v-loading="loading" :data="typeList"
-            max-height="640" @selection-change="handleSelectionChange"
-            :row-class-name="tableRowClassName">
+    <el-table
+      v-loading="loading"
+      :data="typeList"
+      max-height="640"
+      @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="字典编号" align="center" prop="dictId" />
-      <el-table-column label="字典名称" align="center" prop="dictName" :show-overflow-tooltip="true" />
-      <el-table-column label="字典类型" align="center" :show-overflow-tooltip="true">
+      <el-table-column
+        label="字典名称"
+        align="center"
+        prop="dictName"
+        :show-overflow-tooltip="true"
+      />
+      <el-table-column
+        label="字典类型"
+        align="center"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
-          <router-link :to="'/system/dict-data/index/' + scope.row.dictId" class="link-type">
+          <router-link
+            :to="'/system/dict-data/index/' + scope.row.dictId"
+            class="link-type"
+          >
             <span>{{ scope.row.dictType }}</span>
           </router-link>
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+          <dict-tag
+            :options="dict.type.sys_normal_disable"
+            :value="scope.row.status"
+          />
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180" sortable>
+      <el-table-column
+        label="备注"
+        align="center"
+        prop="remark"
+        :show-overflow-tooltip="true"
+      />
+      <el-table-column
+        label="创建时间"
+        align="center"
+        prop="createTime"
+        width="180"
+        sortable
+      >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:dict:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <!-- <el-button
             size="mini"
             type="text"
@@ -280,7 +317,7 @@
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -302,11 +339,16 @@
               v-for="dict in dict.type.sys_normal_disable"
               :key="dict.value"
               :label="dict.value"
-            >{{dict.label}}</el-radio>
+              >{{ dict.label }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
+          <el-input
+            v-model="form.remark"
+            type="textarea"
+            placeholder="请输入内容"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -318,14 +360,22 @@
 </template>
 
 <script>
-import { listType, getType, delType, addType, updateType, exportType, refreshCache } from "@/api/system/dict/type";
+import {
+  listType,
+  getType,
+  delType,
+  addType,
+  updateType,
+  exportType,
+  refreshCache,
+} from "@/api/system/dict/type";
 
 export default {
   name: "Dict",
-  dicts: ['sys_normal_disable'],
+  dicts: ["sys_normal_disable"],
   data() {
     return {
-      dict_boxShow:false,
+      dict_boxShow: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -354,19 +404,19 @@ export default {
         pageSize: 10,
         dictName: undefined,
         dictType: undefined,
-        status: undefined
+        status: undefined,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         dictName: [
-          { required: true, message: "字典名称不能为空", trigger: "blur" }
+          { required: true, message: "字典名称不能为空", trigger: "blur" },
         ],
         dictType: [
-          { required: true, message: "字典类型不能为空", trigger: "blur" }
-        ]
-      }
+          { required: true, message: "字典类型不能为空", trigger: "blur" },
+        ],
+      },
     };
   },
   created() {
@@ -391,7 +441,8 @@ export default {
     /** 查询字典类型列表 */
     getList() {
       this.loading = true;
-      listType(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      listType(this.addDateRange(this.queryParams, this.dateRange)).then(
+        (response) => {
           this.typeList = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -410,7 +461,7 @@ export default {
         dictName: undefined,
         dictType: undefined,
         status: "0",
-        remark: undefined
+        remark: undefined,
       };
       this.resetForm("form");
     },
@@ -434,32 +485,32 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.dictId)
-      this.single = selection.length!=1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.dictId);
+      this.single = selection.length != 1;
+      this.multiple = !selection.length;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const dictId = row.dictId || this.ids
-      getType(dictId).then(response => {
+      const dictId = row.dictId || this.ids;
+      getType(dictId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改字典类型";
       });
     },
     /** 提交按钮 */
-    submitForm: function() {
-      this.$refs["form"].validate(valid => {
+    submitForm: function () {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.dictId != undefined) {
-            updateType(this.form).then(response => {
+            updateType(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addType(this.form).then(response => {
+            addType(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -471,23 +522,31 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictIds = row.dictId || this.ids;
-      this.$modal.confirm('是否确认删除选中数据项？').then(function() {
-        return delType(dictIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否确认删除选中数据项？")
+        .then(function () {
+          return delType(dictIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有类型数据项？').then(() => {
-        this.exportLoading = true;
-        return exportType(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否确认导出所有类型数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportType(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
     /** 刷新缓存按钮操作 */
     handleRefreshCache() {
@@ -497,13 +556,13 @@ export default {
     },
     // 表格样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
-  }
+  },
 };
 </script>
 

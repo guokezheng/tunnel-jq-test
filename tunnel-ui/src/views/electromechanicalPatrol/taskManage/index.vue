@@ -9,22 +9,25 @@
           type="primary"
           plain
           @click="handleAdd"
-        >新增任务
+          >新增任务
         </el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+        >
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple">
           <el-input
-              placeholder="请输入所属单位，回车搜索"
-              v-model="queryParams.zzjgId"
-              @keyup.enter.native="handleQuery"
-            >
-              <el-button
-                slot="append"
-                icon="el-icon-s-fold"
-                @click="task_boxShow = !task_boxShow"
-              ></el-button>
-            </el-input>
+            placeholder="请输入所属单位，回车搜索"
+            v-model="queryParams.zzjgId"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="task_boxShow = !task_boxShow"
+            ></el-button>
+          </el-input>
         </div>
       </el-col>
     </el-row>
@@ -60,61 +63,57 @@
         </el-col>
       </el-row> -->
 
-      <div class="task_searchBox" v-show="task_boxShow">
-        <el-form
-          ref="queryForm"
-          :inline="true"
-          :model="queryParams"
-          label-width="75px"
-        >
-          <el-form-item
-            style="width: 100%"
-            label="发布状态"
-            prop="publishStatus"
+    <div class="task_searchBox" v-show="task_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item style="width: 100%" label="发布状态" prop="publishStatus">
+          <el-select
+            v-model="queryParams.publishStatus"
+            placeholder="请选择发布状态"
+            clearable
+            size="small"
           >
-            <el-select
-              v-model="queryParams.publishStatus"
-              placeholder="请选择发布状态"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in dict.type.publish_status"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
+            <el-option
+              v-for="dict in dict.type.publish_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
-          <el-form-item label="任务状态" prop="taskStatus" style="width: 100%">
-            <el-select
-              v-model="queryParams.taskStatus"
-              placeholder="请选择任务状态"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in dict.type.task_status"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item class="bottomBox">
-            <el-button size="small" type="primary" @click="handleQuery"
+        <el-form-item label="任务状态" prop="taskStatus" style="width: 100%">
+          <el-select
+            v-model="queryParams.taskStatus"
+            placeholder="请选择任务状态"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.task_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
             >搜索</el-button
-            >
-            <el-button size="small" @click="resetQuery" type="primary" plain
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
             >重置</el-button
-            >
-          </el-form-item>
-        </el-form>
-      </div>
+          >
+        </el-form-item>
+      </el-form>
+    </div>
     <!-- </div> -->
 
-<!--    <el-form
+    <!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -191,7 +190,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" width="100px" align="center">
         <template slot-scope="scope">
-          {{scope.$index+1}}
+          {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column label="所属单位" align="center" prop="zzjgId" />
@@ -203,10 +202,12 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+          <span>{{
+            parseTime(scope.row.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
+          }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="承巡班组" align="center" prop="bzName" >
+      <el-table-column label="承巡班组" align="center" prop="bzName">
       </el-table-column>
       <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
       <el-table-column
@@ -216,7 +217,9 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endPlantime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+          <span>{{
+            parseTime(scope.row.endPlantime, "{y}-{m}-{d} {h}:{m}:{s}")
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布状态" align="center" prop="publishStatus">
@@ -245,27 +248,28 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleRecordy(scope.row)"
-          >任务详情</el-button>
+            >任务详情</el-button
+          >
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="handleAbolish(scope.row)"
-            :style="{ display: scope.row.publishStatus==2?'':'none' }"
-          >废止任务</el-button
+            :style="{ display: scope.row.publishStatus == 2 ? '' : 'none' }"
+            >废止任务</el-button
           >
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="exportTaskReport(scope.row)"
-            :style="{ display: scope.row.taskStatus==2?'':'none' }"
-          >巡查报告</el-button
+            :style="{ display: scope.row.taskStatus == 2 ? '' : 'none' }"
+            >巡查报告</el-button
           >
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-            :style="{ display: scope.row.publishStatus!=0?'none':'' }"
+            :style="{ display: scope.row.publishStatus != 0 ? 'none' : '' }"
             >修改</el-button
           >
           <el-button
@@ -273,7 +277,7 @@
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-            :style="{ display: scope.row.publishStatus!=0?'none':'' }"
+            :style="{ display: scope.row.publishStatus != 0 ? 'none' : '' }"
             >删除</el-button
           >
         </template>
@@ -288,7 +292,6 @@
       @pagination="getList"
     />
 
-
     <el-dialog :title="title" :visible.sync="open" width="70%">
       <!--      <h1>新增巡检任务</h1>-->
       <div class="task">
@@ -301,7 +304,7 @@
             <div>
               <el-input
                 ref="dispatcher"
-                disabled = "disabled"
+                disabled="disabled"
                 v-model="form.dispatcher"
                 placeholder="（默认当前登录人）"
               ></el-input>
@@ -314,19 +317,23 @@
               <el-date-picker
                 clearable
                 size="small"
-                disabled = "disabled"
+                disabled="disabled"
                 v-model="form.dispatchTime"
                 type="datetime"
                 style="width: 89%"
                 value-format="yyyy-MM-dd hh:mm:ss"
-                placeholder="选择派单时间">
+                placeholder="选择派单时间"
+              >
               </el-date-picker>
-
             </div>
           </div>
           <div>
             <span>所属隧道</span>
-            <el-select v-model="form.tunnelId"  placeholder="请选择所属隧道" @change="tunnelSelectGet">
+            <el-select
+              v-model="form.tunnelId"
+              placeholder="请选择所属隧道"
+              @change="tunnelSelectGet"
+            >
               <el-option
                 v-for="item in eqTunnelData"
                 :key="item.tunnelId"
@@ -334,10 +341,9 @@
                 :value="item.tunnelId"
               ></el-option>
             </el-select>
-
           </div>
 
-<!--            <div>
+          <!--            <div>
               <el-select v-model="form.bzId" placeholder="请选择班组">
                 <el-option
                   v-for="item in bzData"
@@ -347,12 +353,18 @@
                 ></el-option>
               </el-select>
             </div>-->
-          </div>
+        </div>
         <div class="form-two">
           <div>
-            <span prop="bzId" >指派巡查班组</span>
-            <div >
-              <el-select v-model="form.bzId" placeholder="" id = "bzSel" :disabled="true"  @click.native ="selChange">
+            <span prop="bzId">指派巡查班组</span>
+            <div>
+              <el-select
+                v-model="form.bzId"
+                placeholder=""
+                id="bzSel"
+                :disabled="true"
+                @click.native="selChange"
+              >
                 <el-option
                   v-for="item in bzData"
                   :key="item.deptId"
@@ -360,7 +372,7 @@
                   :value="item.deptId"
                 ></el-option>
               </el-select>
-<!--              <el-input
+              <!--              <el-input
                 ref="bzId"
                 disabled = "disabled"
                 v-model="form.bzId"
@@ -376,7 +388,7 @@
               v-model="form.endPlantime"
               type="datetime"
               value-format="yyyy-MM-dd HH:mm:ss"
-              style="width: 63%;"
+              style="width: 63%"
               placeholder="选择完成时间"
             >
             </el-date-picker>
@@ -388,12 +400,10 @@
               type="text"
               placeholder="请输入内容"
               v-model="form.taskName"
-              style="width: 92%;margin-left: 8%;"
+              style="width: 92%; margin-left: 8%"
             >
             </el-input>
-
           </div>
-
         </div>
         <div class="describe">
           <span>任务描述</span>
@@ -405,8 +415,7 @@
           >
           </el-input>
         </div>
-        </div>
-
+      </div>
 
       <div class="patrol">
         <div>巡查点信息</div>
@@ -418,7 +427,7 @@
           <el-button type="primary" style="height: 15%" @click="show2"
             >选择故障点</el-button
           >
-<!--          <el-button type="primary" style="height: 15%" disabled
+          <!--          <el-button type="primary" style="height: 15%" disabled
             >导入巡查计划</el-button
           >-->
         </div>
@@ -448,21 +457,20 @@
             >
               <i class="el-icon-bottom"></i>
             </div>
-            <div class="delete" @click="clickDelete(index,item)">
+            <div class="delete" @click="clickDelete(index, item)">
               <i class="el-icon-delete-solid"></i>
             </div>
           </div>
         </div>
         <div class="release-father">
-          <el-button style="height: 20%"
-                     @click="save">暂存</el-button>
-          <el-button style="height: 20%;
-                     display: none"
-                     type="warning"
-                     @click="abolish">废止</el-button>
-          <el-button style="height: 20%"
-                     type="primary"
-                     @click="release"
+          <el-button style="height: 20%" @click="save">暂存</el-button>
+          <el-button
+            style="height: 20%; display: none"
+            type="warning"
+            @click="abolish"
+            >废止</el-button
+          >
+          <el-button style="height: 20%" type="primary" @click="release"
             >发布</el-button
           >
         </div>
@@ -521,7 +529,7 @@
               background: '#fff',
               color: '#606266',
             }"
-            style="width: 100%; "
+            style="width: 100%"
             border
             height="358px"
             class="dialogTable allTable"
@@ -547,7 +555,6 @@
     </el-dialog>
 
     <!-- -->
-
 
     <el-dialog :visible.sync="isShow2" width="50%" class="show">
       <div class="show-left">
@@ -602,7 +609,7 @@
               background: '#fff',
               color: '#606266',
             }"
-            style="width: 100%; "
+            style="width: 100%"
             border
             height="358px"
             class="dialogTable allTable"
@@ -611,9 +618,11 @@
             <el-table-column type="selection" width="39"></el-table-column>
             <el-table-column prop="type_name" label="故障类型">
             </el-table-column>
-            <el-table-column prop="eq_name" label="故障设备名称"> </el-table-column>
+            <el-table-column prop="eq_name" label="故障设备名称">
+            </el-table-column>
             <el-table-column prop="pile" label="故障位置"> </el-table-column>
-            <el-table-column prop="dict_label" label="故障描述"> </el-table-column>
+            <el-table-column prop="dict_label" label="故障描述">
+            </el-table-column>
           </el-table>
           <pagination
             v-show="dialogTotal > 0"
@@ -634,12 +643,14 @@
       </div>
       <div class="col-1" v-for="(ite, index) in taskNews2" :key="index">
         发布状态/执行状态：
-        <div class="col-card" v-show="ite.publishStatus">{{ ite.publishStatus }}</div>
+        <div class="col-card" v-show="ite.publishStatus">
+          {{ ite.publishStatus }}
+        </div>
         <div class="col-card" v-show="ite.taskStatus">{{ ite.taskStatus }}</div>
         <div v-show="!ite.publishStatus && !ite.taskStatus">暂无状态</div>
       </div>
       <div class="card" v-for="(item, index) in taskNews1" :key="index">
-        <div class="card-col" style="font-size:16px">
+        <div class="card-col" style="font-size: 16px">
           <div>
             任务编号：
             <span>{{ item.id }}</span>
@@ -664,15 +675,18 @@
           </div>
           <div>
             派单时间：
-<!--            <span>{{ item.dispatchTime }}</span>-->
-            <span>{{ parseTime(item.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
-
+            <!--            <span>{{ item.dispatchTime }}</span>-->
+            <span>{{
+              parseTime(item.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
+            }}</span>
           </div>
         </div>
         <div class="card-cols">
           <div>
             任务描述：
-            <span>{{ (item.taskDescription=='null')?'':(item.taskDescription) }}</span>
+            <span>{{
+              item.taskDescription == "null" ? "" : item.taskDescription
+            }}</span>
           </div>
         </div>
       </div>
@@ -688,7 +702,7 @@
               {{ pat.xcTime }}
             </div>
           </div>
-          <div style=" padding: 10px">
+          <div style="padding: 10px">
             <div class="test">
               设备描述：<span>{{ pat.eqFaultDescription }}</span>
             </div>
@@ -710,7 +724,9 @@
               <div style="width: 80%">
                 设备运行状态:
                 <span
-                  >设备状态:{{ pat.eqStatus }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备运行状态:{{
+                  >设备状态:{{
+                    pat.eqStatus
+                  }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备运行状态:{{
                     pat.runStatus
                   }}</span
                 >
@@ -745,7 +761,7 @@
           </div>
           <div class="test">
             执行巡查班组：
-<!--            <span>{{ tas.bzId }}</span>-->
+            <!--            <span>{{ tas.bzId }}</span>-->
           </div>
           <div class="test">
             执行巡查人：
@@ -755,33 +771,46 @@
         <div class="card-col">
           <div class="test">
             任务完成时间：
-            <span>{{ parseTime(tas.taskEndtime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
-
+            <span>{{
+              parseTime(tas.taskEndtime, "{y}-{m}-{d} {h}:{m}:{s}")
+            }}</span>
           </div>
           <div class="test">
             任务持续时长：
             <span>{{ tas.taskCxtime }}</span>
             <!-- <div class="chaoshi">{{ tas.ifchaosgu }}</div> -->
-            <div  :class="{ active: isActive }" >{{ tas.ifchaosgu }}</div>
-
+            <div :class="{ active: isActive }">{{ tas.ifchaosgu }}</div>
           </div>
         </div>
         <div class="card-cols">
           <div class="test">
             任务描述：
-            <span>{{ (tas.taskDescription=='null')?'':(tas.taskDescription) }}</span>
+            <span>{{
+              tas.taskDescription == "null" ? "" : tas.taskDescription
+            }}</span>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="table-row" v-show="taskOpt.length>0"  v-for="(item, index) in taskOpt" :key="index">
+        <div
+          class="table-row"
+          v-show="taskOpt.length > 0"
+          v-for="(item, index) in taskOpt"
+          :key="index"
+        >
           <div style="width: 10%">操作记录</div>
           <div style="width: 10%">{{ item.optType }}</div>
-          <div style="width: 20%">{{item.tunnelName}} / {{item.optPersonId}}</div>
-          <div style="width: 30%">{{ parseTime(item.optTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</div>
+          <div style="width: 20%">
+            {{ item.tunnelName }} / {{ item.optPersonId }}
+          </div>
+          <div style="width: 30%">
+            {{ parseTime(item.optTime, "{y}-{m}-{d} {h}:{m}:{s}") }}
+          </div>
         </div>
-        <div v-show="taskOpt.length==0">
-          <div   style="text-align: center;margin-top: 20px;margin-bottom: 20px">
+        <div v-show="taskOpt.length == 0">
+          <div
+            style="text-align: center; margin-top: 20px; margin-bottom: 20px"
+          >
             暂无执行记录
           </div>
         </div>
@@ -804,17 +833,32 @@ import {
   listBz,
   treeselect,
   getDevicesList,
-  abolishList, addTask, getFaultList, updateTask, selectBzByTunnel,
+  abolishList,
+  addTask,
+  getFaultList,
+  updateTask,
+  selectBzByTunnel,
 } from "@/api/electromechanicalPatrol/taskManage/task";
-import {getEquipmentInfo, getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
+import {
+  getEquipmentInfo,
+  getRepairRecordList,
+} from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { color } from "echarts";
-import {download} from "@/utils/request";
+import { download } from "@/utils/request";
 
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
-  dicts: ["publish_status", "task_status", "network", "power","eq_system","fault_level","opt_type"],
+  dicts: [
+    "publish_status",
+    "task_status",
+    "network",
+    "power",
+    "eq_system",
+    "fault_level",
+    "opt_type",
+  ],
   props: {
     //开启过滤
     filter: {
@@ -854,18 +898,18 @@ export default {
   data() {
     return {
       isActive: false,
-      task_boxShow:false,
-      isClick:true,
-      userName:'',
-      currentTime:'',
-      deviceType:'',
-      faultLevel:'',
+      task_boxShow: false,
+      isClick: true,
+      userName: "",
+      currentTime: "",
+      deviceType: "",
+      faultLevel: "",
       // 获取巡检点 表格选中项
       dialogSelection: [],
       dialogTotal: 0,
       pageNum: 1,
       pageSize: 10,
-      taskName:"",
+      taskName: "",
       tunnelId: "",
       defaultProps: {
         value: "id",
@@ -879,11 +923,11 @@ export default {
       eqTunnelData: {},
       options1value: "", //设备清单绑定
       options2value: "", //故障清单绑定
-      boxList: [],//巡检点list
-      thatboxList: [],//that巡检点list
-      boxTolList: [],//巡检点故障点总list
-      boxIds: "",//巡检点ids
-      faultList: [],//故障点list
+      boxList: [], //巡检点list
+      thatboxList: [], //that巡检点list
+      boxTolList: [], //巡检点故障点总list
+      boxIds: "", //巡检点ids
+      faultList: [], //故障点list
       options1: [], //设备清单
       record: false,
       // 遮罩层
@@ -937,14 +981,14 @@ export default {
         bzId: "",
         dispatcher: "",
         taskDescription: "",
-        taskStatus:"",
-        ifchaosgu:"",
-        walkerId:"",
+        taskStatus: "",
+        ifchaosgu: "",
+        walkerId: "",
       },
       // 任务详情参数
       taskNews2: {
-        taskStatus:"",
-        publishStatus:"",
+        taskStatus: "",
+        publishStatus: "",
       },
       // 任务详情参数
       taskNews1: {
@@ -957,12 +1001,12 @@ export default {
         taskDescription: "",
       },
       //操作记录
-      taskOpt:{
-        optType:"",
-        optPersonId:"",
-        optTime:"",
-        optDescription:"",
-        tunnelName:""
+      taskOpt: {
+        optType: "",
+        optPersonId: "",
+        optTime: "",
+        optDescription: "",
+        tunnelName: "",
       },
       //巡查点参数
       patrolNews: {
@@ -978,7 +1022,7 @@ export default {
         eqFaultDescription: "",
       },
       //禁用当前日期之前的日期
-      forbiddenTime:{
+      forbiddenTime: {
         disabledDate(time) {
           //Date.now()是javascript中的内置函数，它返回自1970年1月1日00:00:00 UTC以来经过的毫秒数。
           return time.getTime() < Date.now() - 8.64e7;
@@ -988,11 +1032,13 @@ export default {
       form: {},
       // 表单校验指派巡查班组
       rules: {
-        bzId: [
-          { required: true, message: '请选择', trigger: 'bzId' }
-        ],
+        bzId: [{ required: true, message: "请选择", trigger: "bzId" }],
         taskDescription: [
-          { required: true, message: '请填写任务描述', trigger: 'taskDescription' }
+          {
+            required: true,
+            message: "请填写任务描述",
+            trigger: "taskDescription",
+          },
         ],
       },
       impressionOptions: [], //外观情况
@@ -1034,45 +1080,50 @@ export default {
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.task_boxShow == true){
+        if (self.task_boxShow == true) {
           self.task_boxShow = false;
         }
       }
     },
     //班组点击时间
-    selChange(){
-      if(typeof(this.form.tunnelId)=="undefined"){
+    selChange() {
+      if (typeof this.form.tunnelId == "undefined") {
         this.$modal.msgWarning("请先选择隧道");
-        return
-      }else{
-        $('#bzSel').attr("pointer-events","none");
+        return;
+      } else {
+        $("#bzSel").attr("pointer-events", "none");
       }
-
     },
     /*获取当前时间*/
     getCurrentTime() {
       //获取当前时间并打印
       var _this = this;
       let yy = new Date().getFullYear();
-      let mm = new Date().getMonth()+1;
+      let mm = new Date().getMonth() + 1;
       let dd = new Date().getDate();
       let hh = new Date().getHours();
-      let mf = new Date().getMinutes()<10 ? '0'+new Date().getMinutes() : new Date().getMinutes();
-      let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
-      _this.gettime = yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss;
-      return  _this.gettime;
+      let mf =
+        new Date().getMinutes() < 10
+          ? "0" + new Date().getMinutes()
+          : new Date().getMinutes();
+      let ss =
+        new Date().getSeconds() < 10
+          ? "0" + new Date().getSeconds()
+          : new Date().getSeconds();
+      _this.gettime = yy + "-" + mm + "-" + dd + " " + hh + ":" + mf + ":" + ss;
+      return _this.gettime;
     },
 
-    tunnelSelectGet(e){
+    tunnelSelectGet(e) {
       this.tunnelId = e;
       selectBzByTunnel(this.tunnelId).then((response) => {
         this.form.bzId = response.data;
         console.log(response.data, "隧道部门树");
       });
-        treeselect(this.tunnelId).then((response) => {
-          this.treeData = response.data;
-          console.log(response.data, "隧道部门树");
-        });
+      treeselect(this.tunnelId).then((response) => {
+        this.treeData = response.data;
+        console.log(response.data, "隧道部门树");
+      });
     },
 
     //  上移
@@ -1099,27 +1150,27 @@ export default {
     },
     arraySort(property) {
       return function (a, b) {
-        var value1 = a[property]
-        var value2 = b[property]
-        return value1 - value2
-      }
+        var value1 = a[property];
+        var value2 = b[property];
+        return value1 - value2;
+      };
     },
-    clickDelete(i,item) {
+    clickDelete(i, item) {
       if (item && typeof i === "number") {
         //splice 操作数组的方法
         if (i > -1) {
           this.boxList.splice(i, 1);
         }
-        console.log("clickDelete===================="+this.boxList);
+        console.log("clickDelete====================" + this.boxList);
       }
     },
     // 弹窗表格翻页
     getDialogList() {
-      this.getTable()
+      this.getTable();
     },
     // 弹窗表格翻页
     getDialogGzList() {
-      this.getGzTable()
+      this.getGzTable();
     },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
@@ -1128,8 +1179,10 @@ export default {
     },
     /** 所属隧道 */
     getTunnel() {
-      if(this.$cache.local.get("manageStation") == "1"){
-        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      if (this.$cache.local.get("manageStation") == "1") {
+        this.queryParams.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        );
       }
       listTunnels(this.queryParams).then((response) => {
         console.log(response.rows, "所属隧道列表");
@@ -1138,25 +1191,30 @@ export default {
     },
     // 获取设备table
     getTable(deviceType) {
-      if(deviceType){
-        this.deviceType = deviceType
+      if (deviceType) {
+        this.deviceType = deviceType;
       }
-      getDevicesList(this.tunnelId, this.deviceType,this.pageNum,this.pageSize).then((res) => {
+      getDevicesList(
+        this.tunnelId,
+        this.deviceType,
+        this.pageNum,
+        this.pageSize
+      ).then((res) => {
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
           //console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
-            this.tableData1.forEach((item) => {
-              this.boxList.forEach((row) => {
-                const eq_id = row.eq_id.slice(0, -2);
-                if (item.eq_id == eq_id) {
-                  this.$nextTick(() => {
-                    this.$refs.multipleTable1.toggleRowSelection(item, true);
-                  });
-                }
-              });
+          this.tableData1.forEach((item) => {
+            this.boxList.forEach((row) => {
+              const eq_id = row.eq_id.slice(0, -2);
+              if (item.eq_id == eq_id) {
+                this.$nextTick(() => {
+                  this.$refs.multipleTable1.toggleRowSelection(item, true);
+                });
+              }
             });
+          });
           // }
         } else {
           this.$refs.multipleTable1.clearSelection();
@@ -1165,27 +1223,35 @@ export default {
     },
     // 获取设备table
     getGzTable(deviceType) {
-      if(deviceType){
-        this.faultLevel = deviceType
+      if (deviceType) {
+        this.faultLevel = deviceType;
       }
-      getFaultList(this.tunnelId, this.faultLevel,this.pageNum,this.pageSize).then((res) => {
+      getFaultList(
+        this.tunnelId,
+        this.faultLevel,
+        this.pageNum,
+        this.pageSize
+      ).then((res) => {
         console.log(res, "获取故障table");
-        console.log("==================getFaultListthis.boxList=="+this.boxList, "boxList");
+        console.log(
+          "==================getFaultListthis.boxList==" + this.boxList,
+          "boxList"
+        );
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
-         // console.log(this.boxList[0].eq_type, deviceType, "0000000000");
+          // console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
-            this.tableData2.forEach((item) => {
-              this.boxList.forEach((row) => {
-                const eq_id = row.eq_id.slice(0, -2);
-                if (item.eq_id == eq_id) {
-                  this.$nextTick(() => {
-                    this.$refs.multipleTable2.toggleRowSelection(item, true);
-                  });
-                }
-              });
+          this.tableData2.forEach((item) => {
+            this.boxList.forEach((row) => {
+              const eq_id = row.eq_id.slice(0, -2);
+              if (item.eq_id == eq_id) {
+                this.$nextTick(() => {
+                  this.$refs.multipleTable2.toggleRowSelection(item, true);
+                });
+              }
             });
+          });
           // }
         } else {
           this.$refs.multipleTable2.clearSelection();
@@ -1196,7 +1262,12 @@ export default {
     handleNodeClick1(data) {
       this.tunnelId = data.id;
 
-      getDevicesList(this.tunnelId, this.deviceType,this.pageNum,this.pageSize).then((res) => {
+      getDevicesList(
+        this.tunnelId,
+        this.deviceType,
+        this.pageNum,
+        this.pageSize
+      ).then((res) => {
         console.log(res, "获取设备table");
         console.log(this.boxList, "boxList");
 
@@ -1223,9 +1294,17 @@ export default {
     //故障节点单击事件
     handleNodeClick2(data) {
       this.tunnelId = data.id;
-      getFaultList(this.tunnelId, this.faultLevel,this.pageNum,this.pageSize).then((res) => {
+      getFaultList(
+        this.tunnelId,
+        this.faultLevel,
+        this.pageNum,
+        this.pageSize
+      ).then((res) => {
         console.log(res, "获取故障table");
-        console.log("==================getFaultListthis.boxList=="+this.boxList, "boxList");
+        console.log(
+          "==================getFaultListthis.boxList==" + this.boxList,
+          "boxList"
+        );
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
@@ -1257,12 +1336,12 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger
+        debugger;
         this.taskNews = response.data.task;
-        if(response.data.task[0].ifchaosgu == '已超时'){
+        if (response.data.task[0].ifchaosgu == "已超时") {
           //this.active = true;
           this.isActive = true;
-        }else{
+        } else {
           //this.active = false;
           this.isActive = false;
         }
@@ -1270,8 +1349,6 @@ export default {
         this.taskNews2 = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;
-        debugger
-
         this.impressionOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
             if (taskitem.impression == opt.dictValue) {
@@ -1280,7 +1357,7 @@ export default {
           });
         });
 
-     /*   this.networkOptions.forEach((opt) => {
+        /*   this.networkOptions.forEach((opt) => {
           if (opt.dictValue == "0") {
             this.patrolNews.forEach((taskitem) => {
               taskitem.network = opt.dictLabel;
@@ -1301,7 +1378,7 @@ export default {
           });
         });
 
-     /*  this.powerOptions.forEach((opt) => {
+        /*  this.powerOptions.forEach((opt) => {
           if (opt.dictValue == "0") {
             this.patrolNews.forEach((taskitem) => {
               taskitem.power = opt.dictLabel;
@@ -1314,7 +1391,7 @@ export default {
           }
         });*/
 
-       this.powerOptions.forEach((opt) => {
+        this.powerOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
             if (taskitem.power == opt.dictValue) {
               taskitem.power = opt.dictLabel;
@@ -1322,17 +1399,15 @@ export default {
           });
         });
 
-
         this.optTypeOptions.forEach((opt) => {
-            this.taskOpt.forEach((taskitem) => {
-              if (taskitem.optType == opt.dictValue) {
-                  taskitem.optType = opt.dictLabel;
-              }
-           });
+          this.taskOpt.forEach((taskitem) => {
+            if (taskitem.optType == opt.dictValue) {
+              taskitem.optType = opt.dictLabel;
+            }
+          });
         });
 
-
-         /* this.taskNews.forEach((taskitem) => {
+        /* this.taskNews.forEach((taskitem) => {
             if(this.bzData!=""){
               this.bzData.forEach((opt) => {
                 if (taskitem.bzId == opt.deptId) {
@@ -1346,7 +1421,6 @@ export default {
             }
 
         });*/
-
       });
     },
     /** 查询巡查任务列表 */
@@ -1388,8 +1462,8 @@ export default {
     },
     /** 隧道部门树 */
     getTreeSelect() {
-      if(typeof(this.form.tunnelId)=="undefined"){
-        return ;
+      if (typeof this.form.tunnelId == "undefined") {
+        return;
       }
       treeselect().then((response) => {
         this.treeData = response.data;
@@ -1412,15 +1486,15 @@ export default {
         walkerId: null,
         taskEndtime: null,
         taskCxtime: null,
-        taskName:"",
+        taskName: "",
         siteDescription: null,
         createBy: null,
         createTime: null,
         updateBy: null,
         updateTime: null,
-        devicesList:"",
+        devicesList: "",
       };
-      this.boxList=[]
+      this.boxList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -1435,12 +1509,12 @@ export default {
       this.handleQuery();
     },
     show1() {
-     //this.tableData1 = null
-      if(typeof(this.form.tunnelId)=="undefined"){
-        return this.$modal.msgWarning('请选择所属隧道')
+      //this.tableData1 = null
+      if (typeof this.form.tunnelId == "undefined") {
+        return this.$modal.msgWarning("请选择所属隧道");
       }
-     this.dialogSelection = []
-    //  this.$refs.multipleTable1.toggleRowSelection(item, true);
+      this.dialogSelection = [];
+      //  this.$refs.multipleTable1.toggleRowSelection(item, true);
       this.isShow1 = true;
       this.tunnelId = this.form.tunnelId;
       treeselect(this.tunnelId).then((response) => {
@@ -1448,61 +1522,59 @@ export default {
         console.log(response.data, "隧道部门树");
       });
 
-      this.options1value = "0"
-      this.getTable(this.options1value)
+      this.options1value = "0";
+      this.getTable(this.options1value);
       //点击确定，数据还原
-      if(this.openCz){
-        this.options1value = "0"
-        this.tableData1 = null
-        this.dialogTotal = null
-        console.log("========="+this.options1value);
-        this.getTable(this.options1value)
+      if (this.openCz) {
+        this.options1value = "0";
+        this.tableData1 = null;
+        this.dialogTotal = null;
+        console.log("=========" + this.options1value);
+        this.getTable(this.options1value);
       }
       this.openCz = false;
-
     },
     show2() {
       //this.tableData1 = null
-      if(typeof(this.form.tunnelId)=="undefined"){
-        return this.$modal.msgWarning('请选择所属隧道')
+      if (typeof this.form.tunnelId == "undefined") {
+        return this.$modal.msgWarning("请选择所属隧道");
       }
       this.isShow2 = true;
-      this.options2value = "0"
+      this.options2value = "0";
       this.tunnelId = this.form.tunnelId;
 
-      treeselect(this.tunnelId ).then((response) => {
+      treeselect(this.tunnelId).then((response) => {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
       });
 
-      this.getGzTable(this.options2value)
-      if(this.openGz){
-        this.options2value = "0"
-        this.tableData2 = null
-        this.dialogTotal = null
-        console.log("========="+this.options2value);
-        this.getGzTable(this.options2value)
+      this.getGzTable(this.options2value);
+      if (this.openGz) {
+        this.options2value = "0";
+        this.tableData2 = null;
+        this.dialogTotal = null;
+        console.log("=========" + this.options2value);
+        this.getGzTable(this.options2value);
       }
       this.openGz = false;
     },
-    cancelDetermine1(){
-      this.dialogSelection = []
+    cancelDetermine1() {
+      this.dialogSelection = [];
       this.isShow1 = false;
-
     },
     determine1() {
       this.isShow1 = false;
-      this.dialogSelection.forEach((item) =>{
-        item.eq_id= item.eq_id+"_1";
-      })
+      this.dialogSelection.forEach((item) => {
+        item.eq_id = item.eq_id + "_1";
+      });
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
       this.dialogSelection = [];
     },
     determine2() {
       this.isShow2 = false;
-      this.dialogSelection.forEach((item) =>{
-        item.eq_id= item.eq_id+"_2";
-      })
+      this.dialogSelection.forEach((item) => {
+        item.eq_id = item.eq_id + "_2";
+      });
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
       this.dialogSelection = [];
     },
@@ -1515,14 +1587,14 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.boxList = "";
-      this.boxIds = ""
+      this.boxIds = "";
       this.reset();
       this.open = true;
       this.openGz = true;
       this.openCz = true;
       this.title = "新增巡查任务";
-      this.tableData1 = null
-      this.tableData2 = null
+      this.tableData1 = null;
+      this.tableData2 = null;
       this.form.dispatcher = this.userName;
       this.form.dispatchTime = this.currentTime;
     },
@@ -1530,27 +1602,27 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
-      let that = this
+      let that = this;
       getList(id).then((response) => {
         that.form = response.data.task[0];
         this.boxList = response.data.list;
-        console.log("handleUpdate============="+this.boxList);
+        console.log("handleUpdate=============" + this.boxList);
         // this.tableData1 = response.data.devicesPatrolList;//巡检点
         // this.tableData2 = response.data.faultPatrolList;//故障点
         this.boxList.forEach((item) => {
-            this.$nextTick(() => {
-              this.$refs.multipleTable2.toggleRowSelection(item, true);
-          })
+          this.$nextTick(() => {
+            this.$refs.multipleTable2.toggleRowSelection(item, true);
+          });
         });
-        this.boxList.forEach((item) =>{
-          if(item.patrol_type==0){
-              item.eq_id= item.eq_id+"_1";
-          }else{
-              item.eq_id= item.eq_id+"_2";
+        this.boxList.forEach((item) => {
+          if (item.patrol_type == 0) {
+            item.eq_id = item.eq_id + "_1";
+          } else {
+            item.eq_id = item.eq_id + "_2";
           }
-        })
-        if(this.form.taskDescription=="null"){
-          this.form.taskDescription=""
+        });
+        if (this.form.taskDescription == "null") {
+          this.form.taskDescription = "";
         }
 
         /*if(this.form.bzId!=null&&this.form.bzId!=""&&this.form.bzId!="null"){
@@ -1558,7 +1630,7 @@ export default {
         }else{
           this.form.bzId=""
         }*/
-        this.boxList.sort(this.arraySort('xc_sort'))
+        this.boxList.sort(this.arraySort("xc_sort"));
         this.open = true;
         this.openGz = true;
         this.openCz = true;
@@ -1566,15 +1638,19 @@ export default {
       });
     },
     exportTaskReport(row) {
-      let time = parseInt(new Date().getTime() / 1000) + '';
-      let fileName = '巡查报告'+time;
-      download("/task/list/exportPatrolTaskReport", {taskNo:row.id}, fileName+".docx");
+      let time = parseInt(new Date().getTime() / 1000) + "";
+      let fileName = "巡查报告" + time;
+      download(
+        "/task/list/exportPatrolTaskReport",
+        { taskNo: row.id },
+        fileName + ".docx"
+      );
     },
     /** 废止按钮操作 */
     handleAbolish(row) {
-      const id = row.id || this.ids
+      const id = row.id || this.ids;
       if (id != null) {
-        abolishList(id).then(response => {
+        abolishList(id).then((response) => {
           this.$modal.msgSuccess("废止成功");
           this.getList();
         });
@@ -1635,35 +1711,43 @@ export default {
       this.fileData.append("id", this.form.id);
       this.fileData.append("endPlantime", this.form.endPlantime);
       this.fileData.append("bzId", this.form.bzId);
-      this.fileData.append("taskDescription",this.form.taskDescription);
-      this.fileData.append("publishStatus","2");
-      this.fileData.append("taskStatus","0");
+      this.fileData.append("taskDescription", this.form.taskDescription);
+      this.fileData.append("publishStatus", "2");
+      this.fileData.append("taskStatus", "0");
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点
-      if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
+      if (
+        this.form.bzId == -1 ||
+        this.form.bzId == "" ||
+        this.form.bzId == null
+      ) {
         this.$modal.msgWarning("请指派巡查班组");
-        return
+        return;
       }
       //判断两个字段是否填写
-      if (this.form.tunnelId == ""||this.form.tunnelId == -1||this.form.tunnelId==null) {
-        return this.$modal.msgWarning('请选择所属隧道')
+      if (
+        this.form.tunnelId == "" ||
+        this.form.tunnelId == -1 ||
+        this.form.tunnelId == null
+      ) {
+        return this.$modal.msgWarning("请选择所属隧道");
       }
       if (this.form.taskName == "") {
-        return this.$modal.msgWarning('请填写任务名称')
+        return this.$modal.msgWarning("请填写任务名称");
       }
-      if(this.boxList==[]||this.boxList==""){
+      if (this.boxList == [] || this.boxList == "") {
         this.$modal.msgWarning("请选择巡检点或故障点");
-        return
+        return;
       }
 
       this.boxIds = "";
-      this.boxList.forEach((item) =>{
-        this.boxIds = this.boxIds+(item.eq_id+",");
-      })
-      this.fileData.append("devicesList",this.boxIds);
+      this.boxList.forEach((item) => {
+        this.boxIds = this.boxIds + (item.eq_id + ",");
+      });
+      this.fileData.append("devicesList", this.boxIds);
       if (this.form.id != null) {
-        if(this.isClick){
+        if (this.isClick) {
           updateTask(this.fileData).then((response) => {
             this.isClick = false;
             this.$modal.msgSuccess("发布成功");
@@ -1671,8 +1755,8 @@ export default {
             this.getList();
           });
         }
-      }else{
-        if(this.isClick){
+      } else {
+        if (this.isClick) {
           addTask(this.fileData).then((response) => {
             this.isClick = false;
             this.$modal.msgSuccess("发布成功");
@@ -1680,31 +1764,30 @@ export default {
             this.getList();
           });
         }
-
       }
       setTimeout(() => {
         this.isClick = true;
-      }, 500)
+      }, 500);
     },
-//废止
+    //废止
     abolish() {
       this.fileData = new FormData(); // new formData对象
       this.fileData.append("id", this.form.id);
       this.fileData.append("endPlantime", this.form.endPlantime);
       this.fileData.append("bzId", this.form.bzId);
-      this.fileData.append("taskDescription",this.form.taskDescription);
-      this.fileData.append("publishStatus","1");
-      this.fileData.append("taskStatus","");
+      this.fileData.append("taskDescription", this.form.taskDescription);
+      this.fileData.append("publishStatus", "1");
+      this.fileData.append("taskStatus", "");
       //判断是否选择点
-      if(this.boxList==[]||this.boxList==""){
+      if (this.boxList == [] || this.boxList == "") {
         this.$modal.msgWarning("请选择巡检点或故障点");
-        return
+        return;
       }
       this.boxIds = "";
-      this.boxList.forEach((item) =>{
-        this.boxIds = this.boxIds+(item.eq_id+",");
-      })
-      this.fileData.append("devicesList",this.boxIds);
+      this.boxList.forEach((item) => {
+        this.boxIds = this.boxIds + (item.eq_id + ",");
+      });
+      this.fileData.append("devicesList", this.boxIds);
 
       if (this.form.id != null) {
         updateTask(this.fileData).then((response) => {
@@ -1712,49 +1795,57 @@ export default {
           this.open = false;
           this.getList();
         });
-      }else{
+      } else {
         addTask(this.fileData).then((response) => {
           this.$modal.msgSuccess("废止成功");
           this.open = false;
           this.getList();
         });
       }
-  },
-//暂存
+    },
+    //暂存
     save() {
       this.fileData = new FormData(); // new formData对象
       this.fileData.append("id", this.form.id);
       this.fileData.append("endPlantime", this.form.endPlantime);
       this.fileData.append("bzId", this.form.bzId);
-      this.fileData.append("taskDescription",this.form.taskDescription);
-      this.fileData.append("publishStatus","0");
-      this.fileData.append("taskStatus","0");
+      this.fileData.append("taskDescription", this.form.taskDescription);
+      this.fileData.append("publishStatus", "0");
+      this.fileData.append("taskStatus", "0");
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点
-      if(this.boxList==[]||this.boxList==""){
+      if (this.boxList == [] || this.boxList == "") {
         this.$modal.msgWarning("请选择巡检点或故障点");
-        return
+        return;
       }
-      if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
+      if (
+        this.form.bzId == -1 ||
+        this.form.bzId == "" ||
+        this.form.bzId == null
+      ) {
         this.$modal.msgWarning("请指派巡查班组");
-        return
+        return;
       }
       //判断两个字段是否填写
-      if (this.form.tunnelId == ""||this.form.tunnelId == -1||this.form.tunnelId==null) {
-        return this.$modal.msgWarning('请选择所属隧道')
+      if (
+        this.form.tunnelId == "" ||
+        this.form.tunnelId == -1 ||
+        this.form.tunnelId == null
+      ) {
+        return this.$modal.msgWarning("请选择所属隧道");
       }
       if (this.form.taskName == "") {
-        return this.$modal.msgWarning('请填写任务名称')
+        return this.$modal.msgWarning("请填写任务名称");
       }
       this.boxIds = "";
-      this.boxList.forEach((item) =>{
-        this.boxIds = this.boxIds+(item.eq_id+",");
-      })
-      this.fileData.append("devicesList",this.boxIds);
+      this.boxList.forEach((item) => {
+        this.boxIds = this.boxIds + (item.eq_id + ",");
+      });
+      this.fileData.append("devicesList", this.boxIds);
 
       if (this.form.id != null) {
-        if(this.isClick) {
+        if (this.isClick) {
           updateTask(this.fileData).then((response) => {
             this.isClick = false;
             this.$modal.msgSuccess("暂存成功");
@@ -1762,8 +1853,8 @@ export default {
             this.getList();
           });
         }
-      }else{
-        if(this.isClick){
+      } else {
+        if (this.isClick) {
           addTask(this.fileData).then((response) => {
             this.isClick = false;
             this.$modal.msgSuccess("暂存成功");
@@ -1771,11 +1862,10 @@ export default {
             this.getList();
           });
         }
-
       }
-        setTimeout(() => {
-          this.isClick = true;
-        }, 500)
+      setTimeout(() => {
+        this.isClick = true;
+      }, 500);
     },
   },
 };
@@ -1816,7 +1906,6 @@ export default {
       margin-left: 10px;
       border: 1px solid #ffd69a;
     }
-
     div {
       width: 33%;
       span {
@@ -1836,8 +1925,8 @@ export default {
       width: 100px;
       margin-left: 20px;
     }
-    span{
-      color: #FFFFFF;
+    span {
+      color: #ffffff;
     }
   }
   .card-col1 {
@@ -1860,8 +1949,6 @@ export default {
     }
   }
 }
-
-
 .col-1 {
   font-size: 20px;
   display: flex;

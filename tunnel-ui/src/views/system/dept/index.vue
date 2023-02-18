@@ -6,17 +6,26 @@
       <el-col :span="4">
         <el-button
           v-hasPermi="['system:dept:add']"
-          size="small"
+          size="mini"
           type="primary"
           plain
           @click="handleAdd()"
         >新增部门
         </el-button>
+        <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="toggleExpandAll"
+          >展开/折叠</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请输入部门名称"
+            placeholder="请输入部门名称，回车搜索"
             v-model="queryParams.deptName"
             @keyup.enter.native="handleQuery"
           >
@@ -59,12 +68,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          <el-button
-            type="primary"
-            plain
-            size="small"
-            @click="toggleExpandAll"
-          >展开/折叠</el-button>
+          
         </el-form-item>
       </el-form>
     </div>

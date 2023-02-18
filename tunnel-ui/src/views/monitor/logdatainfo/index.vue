@@ -25,6 +25,9 @@
           @click="handleExport"
           >导出
         </el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+            >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
@@ -163,6 +166,9 @@
           @click="handleExport1"
           >导出
         </el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+            >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple"  ref="main1">

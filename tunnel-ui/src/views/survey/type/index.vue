@@ -6,12 +6,19 @@
       <el-col :span="4">
         <el-button
           v-hasPermi="['system:type:add']"
-          size="small"
+          size="mini"
           type="primary"
           plain
           @click="handleAdd()"
         >新增类型
         </el-button>
+        <el-button type="primary" plain size="mini" :loading="exportLoading"
+                     @click="handleExport"
+                     v-hasPermi="['system:type:export']"
+          >导出</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
@@ -58,10 +65,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          <el-button type="primary" plain size="mini" :loading="exportLoading"
-                     @click="handleExport"
-                     v-hasPermi="['system:type:export']"
-          >导出</el-button>
+          
         </el-form-item>
       </el-form>
     </div>

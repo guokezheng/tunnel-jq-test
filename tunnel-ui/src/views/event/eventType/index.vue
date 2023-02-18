@@ -6,18 +6,21 @@
       <el-col :span="4">
         <el-button
           v-hasPermi="['system:type:add']"
-          size="small"
+          size="mini"
           type="primary"
           plain
           @click="handleAdd()"
         >新增类型
         </el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="14">
 
         <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请输入事件类型"
+            placeholder="请输入事件类型，回车搜索"
             v-model="queryParams.eventType"
             @keyup.enter.native="handleQuery"
           >

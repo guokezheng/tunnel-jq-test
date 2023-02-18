@@ -18,13 +18,15 @@
           @click="handleDelete"
           v-hasPermi="['system:templateConfig:remove']"
           >删除</el-button>
+          <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="12">
         <div  ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
             placeholder="请输入模板内容,回车搜索"
-            clearable
             size="small"
             @keyup.enter.native="handleQuery"
           >
@@ -45,6 +47,15 @@
         :model="queryParams"
         label-width="75px"
       >
+          <!-- <el-form-item label="模板内容" style="width: 100%" prop="searchValue">
+            <el-input
+            v-model="queryParams.searchValue"
+            placeholder="请输入模板内容"
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+          </el-input>
+          </el-form-item> -->
           <el-form-item label="屏幕尺寸" style="width: 100%" prop="screenSize">
             <el-select
               @change="resolvingPowerType"

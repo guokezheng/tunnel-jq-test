@@ -49,14 +49,14 @@ public class SdEnvironmentConfiguration extends BaseEntity {
     /**
      * 图片宽度
      */
-    @Excel(name = "图片宽度")
+    @Excel(name = "图片宽度(px)")
     @ApiModelProperty("图片宽度(px)")
     private String width;
 
     /**
      * 图片高度
      */
-    @Excel(name = "图片高度")
+    @Excel(name = "图片高度(px)")
     @ApiModelProperty("图片高度(px)")
     private String height;
 

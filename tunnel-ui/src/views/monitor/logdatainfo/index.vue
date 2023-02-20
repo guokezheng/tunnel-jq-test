@@ -584,6 +584,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParam.pageNum = 1;
       this.getList(this.searchValue);
     },
     /** 重置按钮操作 */

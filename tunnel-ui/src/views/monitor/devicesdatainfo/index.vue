@@ -1007,6 +1007,7 @@ export default {
       this.searchValue = inx;
       this.getList(inx);
       this.initChart();
+      this.resetQuery();
       this.getDeviceTreeselect();
     },
     /** 所属隧道 */

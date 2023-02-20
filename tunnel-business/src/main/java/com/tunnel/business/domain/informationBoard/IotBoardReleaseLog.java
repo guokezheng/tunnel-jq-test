@@ -33,11 +33,11 @@ public class IotBoardReleaseLog extends BaseEntity
     private String deviceName;
 
     /** 发布前的内容 */
-    @Excel(name = "发布前的内容")
+//    @Excel(name = "发布前的内容")
     private String releaseOldContent;
 
     /** 发布后的内容 */
-    @Excel(name = "发布后的内容")
+    @Excel(name = "发布内容")
     private String releaseNewContent;
 
     /** 发布人 */

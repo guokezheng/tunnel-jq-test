@@ -201,7 +201,7 @@
           />
         </el-form-item>-->
 
-          <el-form-item label="管理机构" prop="deptId" style="width: 100%">
+<!--          <el-form-item label="管理机构" prop="deptId" style="width: 100%">
             <treeselect
               v-model="queryParams.deptId"
               :options="deptOptions"
@@ -210,7 +210,7 @@
               clearable
               size="small"
             />
-          </el-form-item>
+          </el-form-item>-->
 
           <el-form-item label="采集时间">
             <el-date-picker
@@ -271,10 +271,11 @@
         height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" align="center" prop="num" />
+<!--        <el-table-column label="序号" align="center" prop="num" />-->
+        <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
         <!--        <el-table-column label="设备编码" align="center" prop="eqId" />-->
         <el-table-column label="设备名称" align="center" prop="eqName" />
-        <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
@@ -292,10 +293,11 @@
         height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" align="center" prop="num" />
+<!--        <el-table-column label="序号" align="center" prop="num" />-->
+        <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
-        <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
@@ -324,10 +326,11 @@
         height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" align="center" prop="num" />
+<!--        <el-table-column label="序号" align="center" prop="num" />-->
+        <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
-        <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
@@ -344,10 +347,11 @@
         height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="序号" align="center" prop="num" />
+<!--        <el-table-column label="序号" align="center" prop="num" />-->
+        <el-table-column type="index" :index="indexMethod3" label="序号" width="68" align="center"></el-table-column>
         <el-table-column label="设备编码" align="center" prop="eqId" />
         <el-table-column label="设备名称" align="center" prop="eqName" />
-        <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
@@ -355,10 +359,31 @@
         <el-table-column label="采集时间" align="center" prop="createTime" />
       </el-table>
       <pagination
-        v-show="total > 0"
+        v-show="total > 0&&this.searchValue == '1'"
         :total="total"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+      <pagination
+        v-show="total > 0&&this.searchValue == '2'"
+        :total="total"
+        :page.sync="queryParams1.pageNum"
+        :limit.sync="queryParams1.pageSize"
+        @pagination="getList"
+      />
+      <pagination
+        v-show="total > 0&&this.searchValue == '3'"
+        :total="total"
+        :page.sync="queryParams2.pageNum"
+        :limit.sync="queryParams2.pageSize"
+        @pagination="getList"
+      />
+      <pagination
+        v-show="total > 0&&this.searchValue == '4'"
+        :total="total"
+        :page.sync="queryParams3.pageNum"
+        :limit.sync="queryParams3.pageSize"
         @pagination="getList"
       />
     </div>
@@ -432,8 +457,39 @@ export default {
       userQueryParams: {
         userName: this.$store.state.user.name,
       },
-      // 查询参数
+      // 查询参数  covi
       queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        deptId: null,
+        searchValue: "1",
+        pile: null,
+        deviceId: null,
+      },
+
+      // 查询参数  风速风向
+      queryParams1: {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        deptId: null,
+        searchValue: "1",
+        pile: null,
+        deviceId: null,
+      },
+      // 查询参数  洞内
+      queryParams2: {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        deptId: null,
+        searchValue: "1",
+        pile: null,
+        deviceId: null,
+      },
+      // 查询参数 洞外
+      queryParams3: {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
@@ -494,6 +550,23 @@ export default {
         }
       }
     },
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+
+    //翻页时不刷新序号
+    indexMethod1(index){
+      return index+(this.queryParams1.pageNum-1)*this.queryParams1.pageSize+1
+    },
+   //翻页时不刷新序号
+    indexMethod2(index){
+      return index+(this.queryParams2.pageNum-1)*this.queryParams2.pageSize+1
+    },
+    //翻页时不刷新序号
+    indexMethod3(index){
+      return index+(this.queryParams3.pageNum-1)*this.queryParams3.pageSize+1
+    },
 
     /*获取当前时间*/
     getCurrentTime() {
@@ -532,17 +605,16 @@ export default {
               }
             }
             console.log(this.VITime + "========+时间轴");
-            this.total = response.total;
             this.loading = false;
             this.initChart();
           });
         } else if (this.searchValue != null && this.searchValue == "2") {
-          this.queryParams.searchValue = "2";
-          this.queryParams.deviceId = this.querysParams.id;
+          this.queryParams1.searchValue = "2";
+          this.queryParams1.deviceId = this.querysParams.id;
           let fstime = [];
           this.fsTime = [];
           dataLogInfoLineList(
-            this.addDateRange(this.queryParams, this.dateRange)
+            this.addDateRange(this.queryParams1, this.dateRange)
           ).then((response) => {
             let list1 = response.rows;
             this.fsData = list1.map((item) => item.FS);
@@ -552,17 +624,16 @@ export default {
                 this.fsTime.push(fstime[i].substring(11, 16));
               }
             }
-            this.total = response.total;
             this.loading = false;
             this.initChart();
           });
         } else if (this.searchValue != null && this.searchValue == "3") {
-          this.queryParams.searchValue = "3";
-          this.queryParams.deviceId = this.querysParams.id;
+          this.queryParams2.searchValue = "3";
+          this.queryParams2.deviceId = this.querysParams.id;
           let dntime = [];
           this.dnTime = [];
           dataLogInfoLineList(
-            this.addDateRange(this.queryParams, this.dateRange)
+            this.addDateRange(this.queryParams2, this.dateRange)
           ).then((response) => {
             let list1 = response.rows;
             this.dnData = list1.map((item) => item.data);
@@ -572,17 +643,16 @@ export default {
                 this.dnTime.push(dntime[i].substring(11, 16));
               }
             }
-            this.total = response.total;
             this.loading = false;
             this.initChart();
           });
         } else if (this.searchValue != null && this.searchValue == "4") {
-          this.queryParams.searchValue = "4";
+          this.queryParams3.searchValue = "4";
           let dwtime = [];
           this.dwTime = [];
-          this.queryParams.deviceId = this.querysParams.id;
+          this.queryParams3.deviceId = this.querysParams.id;
           dataLogInfoLineList(
-            this.addDateRange(this.queryParams, this.dateRange)
+            this.addDateRange(this.queryParams3, this.dateRange)
           ).then((response) => {
             let list1 = response.rows;
             this.dwData = list1.map((item) => item.data);
@@ -592,7 +662,6 @@ export default {
                 this.dwTime.push(dwtime[i].substring(11, 16));
               }
             }
-            this.total = response.total;
             this.loading = false;
             this.initChart();
           });
@@ -650,17 +719,16 @@ export default {
               this.VITime.push(viTime[i].substring(11, 16));
             }
           }
-          this.total = response.total;
           this.loading = false;
           this.initChart();
         });
       } else if (this.searchValue != null && this.searchValue == "2") {
-        this.queryParams.searchValue = "2";
-        this.queryParams.deviceId = this.querysParams.id;
+        this.queryParams1.searchValue = "2";
+        this.queryParams1.deviceId = this.querysParams.id;
         let fstime = [];
         this.fsTime = [];
         dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
+          this.addDateRange(this.queryParams1, this.dateRange)
         ).then((response) => {
           let list1 = response.rows;
           this.fsData = list1.map((item) => item.FS);
@@ -670,17 +738,16 @@ export default {
               this.fsTime.push(fstime[i].substring(11, 16));
             }
           }
-          this.total = response.total;
           this.loading = false;
           this.initChart();
         });
       } else if (this.searchValue != null && this.searchValue == "3") {
-        this.queryParams.searchValue = "3";
-        this.queryParams.deviceId = this.querysParams.id;
+        this.queryParams3.searchValue = "3";
+        this.queryParams3.deviceId = this.querysParams.id;
         let dntime = [];
         this.dnTime = [];
         dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
+          this.addDateRange(this.queryParams3, this.dateRange)
         ).then((response) => {
           let list1 = response.rows;
           this.dnData = list1.map((item) => item.data);
@@ -690,7 +757,6 @@ export default {
               this.dnTime.push(dntime[i].substring(11, 16));
             }
           }
-          this.total = response.total;
           this.loading = false;
           this.initChart();
         });
@@ -711,7 +777,6 @@ export default {
               this.dwTime.push(dwtime[i].substring(11, 16));
             }
           }
-          this.total = response.total;
           this.loading = false;
           this.initChart();
         });
@@ -976,6 +1041,15 @@ export default {
         this.queryParams.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
+        this.queryParams1.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        );
+        this.queryParams2.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        );
+        this.queryParams3.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        );
       }
       if (inx == null || inx == "1" || this.searchValue == "1") {
         this.queryParams.searchValue = "1";
@@ -990,9 +1064,9 @@ export default {
           //this.initChart();
         });
       } else if ((inx != null && inx == "2") || this.searchValue == "2") {
-        this.queryParams.searchValue = "2";
+        this.queryParams1.searchValue = "2";
         dataLogInfoList(
-          this.addDateRange(this.queryParams, this.dateRange)
+          this.addDateRange(this.queryParams1, this.dateRange)
         ).then((response) => {
           this.list = response.rows;
           //this.fsData = this.list.map((item) => item.FS);
@@ -1001,9 +1075,9 @@ export default {
           //this.initChart();
         });
       } else if ((inx != null && inx == "3") || this.searchValue == "3") {
-        this.queryParams.searchValue = "3";
+        this.queryParams2.searchValue = "3";
         dataLogInfoList(
-          this.addDateRange(this.queryParams, this.dateRange)
+          this.addDateRange(this.queryParams2, this.dateRange)
         ).then((response) => {
           this.list = response.rows;
           //this.dnData = this.list.map((item) => item.data);
@@ -1012,9 +1086,9 @@ export default {
           //this.initChart();
         });
       } else if ((inx != null && inx == "4") || this.searchValue == "4") {
-        this.queryParams.searchValue = "4";
+        this.queryParams3.searchValue = "4";
         dataLogInfoList(
-          this.addDateRange(this.queryParams, this.dateRange)
+          this.addDateRange(this.queryParams3, this.dateRange)
         ).then((response) => {
           this.list = response.rows;
           //this.dwData = this.list.map((item) => item.data);
@@ -1109,6 +1183,9 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams1 = this.queryParams;
+      this.queryParams2 = this.queryParams;
+      this.queryParams3 = this.queryParams;
       this.getList(this.searchValue);
     },
     /** 重置按钮操作 */
@@ -1118,6 +1195,7 @@ export default {
       this.queryParams.pile = "";
       this.queryParams.deptId = null;
       this.queryParams.tunnelId = null;
+
       this.handleQuery();
     },
     /** 多选框选中数据 */
@@ -1129,6 +1207,15 @@ export default {
     handleSortChange(column, prop, order) {
       this.queryParams.orderByColumn = column.prop;
       this.queryParams.isAsc = column.order;
+
+      this.queryParams1.orderByColumn = column.prop;
+      this.queryParams1.isAsc = column.order;
+
+      this.queryParams2.orderByColumn = column.prop;
+      this.queryParams2.isAsc = column.order;
+
+      this.queryParams3.orderByColumn = column.prop;
+      this.queryParams3.isAsc = column.order;
       this.getList();
     },
     /** 删除按钮操作 */
@@ -1160,7 +1247,20 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      const queryParams = this.queryParams;
+      let queryParams = "";
+      if(this.searchValue=='1'){
+        queryParams = this.queryParams;
+      }
+      if(this.searchValue=='2'){
+        queryParams = this.queryParams1;
+      }
+      if(this.searchValue=='3'){
+        queryParams = this.queryParams2;
+      }
+      if(this.searchValue=='4'){
+        queryParams = this.queryParams3;
+      }
+
       this.$modal
         .confirm("是否确认导出所有操作日志数据项？")
         .then(() => {

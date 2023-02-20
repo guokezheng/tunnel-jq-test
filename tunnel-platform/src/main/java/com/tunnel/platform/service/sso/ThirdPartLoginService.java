@@ -109,8 +109,8 @@ public class ThirdPartLoginService {
                 String thirdUserName = (String) userInfo.get("username");
                 //查询己方系统中是否存在此用户
                 SysUser sysUser = sysUserService.selectUserByUserName(thirdUserName);
-                String username = sysUser.getUserName();
                 if (null != sysUser) {
+                    String username = sysUser.getUserName();
                     Authentication authentication = null;
                     try {
                         authentication = authenticationManager.authenticate(new PreAuthenticatedAuthenticationToken(username, sysUser.getPassword()));

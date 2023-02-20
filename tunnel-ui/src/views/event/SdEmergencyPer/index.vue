@@ -4,7 +4,7 @@
     <!-- 全局搜索 -->
     <el-row :gutter="20" style="margin: 10px 0 25px">
       <el-col :span="4">
-        <el-button 
+        <el-button
         v-hasPermi="['business:SdEmergencyPer:add']"
         size="mini"
         type="primary"
@@ -32,7 +32,7 @@
           </div>
         </el-col>
     </el-row>
-    
+
     <!-- <div ref="main" style = "margin-left: 75%">
       <el-row :gutter="20" style="margin: 10px 0 25px">
 
@@ -247,11 +247,12 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号"  align="center">
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号"  align="center">
         <template slot-scope="scope">
           {{scope.$index+1}}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
       <!--      <el-table-column label="隧道ID" align="center" prop="tunnelId" />  -->
       <el-table-column label="隧道" align="center" prop="tunnelName" />
@@ -439,6 +440,11 @@ export default {
           self.ry_boxShow = false;
         }
       }
+    },
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
 
     getTunnels() {

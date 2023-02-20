@@ -242,11 +242,12 @@
       class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号"  align="center">
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号"  align="center">
         <template slot-scope="scope">
           {{scope.$index+1}}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="机构" align="center" prop="orgName" />
       <el-table-column label="车牌" align="center" prop="plateNumber" />
       <el-table-column label="车型" align="center" prop="vType"/>
@@ -484,6 +485,11 @@ export default {
           self.cl_boxShow = false;
         }
       }
+    },
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);

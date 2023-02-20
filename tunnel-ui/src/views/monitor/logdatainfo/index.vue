@@ -281,11 +281,12 @@
       <el-table-column type="selection" width="55" align="center" />
       <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
       <!--      <el-table-column label="序号" align="center" prop="index"  />-->
-      <el-table-column label="序号" align="center">
+<!--      <el-table-column label="序号" align="center">
         <template slot-scope="scope">
           {{ scope.$index + 1 }}
         </template>
-      </el-table-column>
+      </el-table-column>-->
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column
         label="用户名称"
         align="center"
@@ -334,7 +335,7 @@
         </template>
       </el-table-column>
     </el-table>
-  
+
     <el-table
       v-loading="loading"
       :data="logList"
@@ -346,11 +347,12 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <!--      <el-table-column label="序号" align="center" prop="id" display="none"/>-->
-      <el-table-column label="序号" align="center">
+<!--      <el-table-column label="序号" align="center">
         <template slot-scope="scope">
           {{ scope.$index + 1 }}
         </template>
-      </el-table-column>
+      </el-table-column>-->
+      <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
       <el-table-column
         label="隧道名称"
         align="center"
@@ -502,6 +504,15 @@ export default {
           self.xt_boxShow = false;
         }
       }
+    },
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParam.pageNum-1)*this.queryParam.pageSize+1
+    },
+    //翻页时不刷新序号
+    indexMethod1(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
     bodyCloseMenus1(e) {
       let self = this;
@@ -661,7 +672,7 @@ export default {
         })
         .catch(() => {});
     },
-  
+
   },
 };
 </script>

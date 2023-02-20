@@ -34,7 +34,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 父设备ID-PLC
      */
-    @Excel(name = "父设备ID-PLC")
+   /* @Excel(name = "父设备ID-PLC")*/
     @ApiModelProperty("父设备ID-PLC")
     private String fEqId;
 
@@ -46,7 +46,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 所属隧道 ID
      */
-    @Excel(name = "所属隧道 ID")
+    /*@Excel(name = "所属隧道 ID")*/
     @ApiModelProperty("所属隧道 ID")
     private String eqTunnelId;
 
@@ -54,7 +54,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      * tunnel对象
      */
     @Excels({
-            @Excel(name = "隧道名称", targetAttr = "tunnelName", type = Excel.Type.EXPORT),
+            @Excel(name = "所属隧道", targetAttr = "tunnelName", type = Excel.Type.EXPORT),
     })
     @ApiModelProperty("tunnel对象")
     private SdTunnels tunnelName;
@@ -96,23 +96,42 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private SdEquipmentType eqTypeName;
 
     /**
+     * 设备品牌编号
+     */
+   /* @Excel(name = "设备品牌编号")*/
+    @ApiModelProperty("设备品牌编号")
+    private String brandId;
+
+    /**
+     * 设备品牌
+     */
+    @Excel(name = "设备品牌")
+    @ApiModelProperty("设备品牌")
+    private String brandName;
+
+
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    /**
      * 设备型号
      */
     @Excel(name = "设备型号")
     @ApiModelProperty("设备型号")
     private String eqModel;
 
-    /**
-     * 设备品牌编号
-     */
-    @Excel(name = "设备品牌编号")
-    @ApiModelProperty("设备品牌编号")
-    private String brandId;
+
 
     /**
      * 外部系统ID
      */
-    @Excel(name = "外部系统ID")
+   /* @Excel(name = "外部系统ID")*/
     @ApiModelProperty("外部系统ID")
     private Long externalSystemId;
 
@@ -120,7 +139,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 设备大类
      */
-    @Excel(name = "设备大类")
+    /*@Excel(name = "设备大类")*/
     @ApiModelProperty("设备大类")
     private Long fEqType;
 
@@ -128,44 +147,16 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 所属道路方向(上行、下行)
      */
-    @Excel(name = "所属道路方向(上行、下行)", dictType = "sd_direction")
+    @Excel(name = "设备方向", dictType = "sd_direction")
     @ApiModelProperty("所属道路方向(上行、下行)")
     private String eqDirection;
 
     /**
      * 设备所属车道
      */
-    @Excel(name = "设备所属车道")
+    /*@Excel(name = "设备所属车道")*/
     @ApiModelProperty("设备所属车道")
     private String lane;
-
-    /**
-     * 设备桩号
-     */
-    @Excel(name = "设备桩号")
-    @ApiModelProperty("设备桩号")
-    private String pile;
-
-    /**
-     * 设备整形桩号
-     */
-    @Excel(name = "设备整形桩号")
-    @ApiModelProperty("设备整形桩号")
-    private Long pileNum;
-
-    /**
-     * 纬度
-     */
-    @Excel(name = "纬度")
-    @ApiModelProperty("纬度")
-    private String lat;
-
-    /**
-     * 经度
-     */
-    @Excel(name = "经度")
-    @ApiModelProperty("经度")
-    private String lng;
 
     /**
      * 设备IP
@@ -182,30 +173,65 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private String port;
 
     /**
+     * 设备桩号
+     */
+    @Excel(name = "桩号")
+    @ApiModelProperty("设备桩号")
+    private String pile;
+
+    @Excel(name = "备注")
+    private String remark;
+
+
+
+    /**
+     * 设备整形桩号
+     */
+   /* @Excel(name = "设备整形桩号")*/
+    @ApiModelProperty("设备整形桩号")
+    private Long pileNum;
+
+    /**
+     * 纬度
+     */
+   /* @Excel(name = "纬度")*/
+    @ApiModelProperty("纬度")
+    private String lat;
+
+    /**
+     * 经度
+     */
+    /*@Excel(name = "经度")*/
+    @ApiModelProperty("经度")
+    private String lng;
+
+
+
+    /**
      * 设备密钥
      */
-    @Excel(name = "设备密钥")
+    /*@Excel(name = "设备密钥")*/
     @ApiModelProperty("设备密钥")
     private String secureKey;
 
     /**
      * 设备用户名
      */
-    @Excel(name = "设备用户名")
+    /*@Excel(name = "设备用户名")*/
     @ApiModelProperty("设备用户名")
     private String eqUser;
 
     /**
      * 设备密码
      */
-    @Excel(name = "设备密码")
+   /* @Excel(name = "设备密码")*/
     @ApiModelProperty("设备密码")
     private String eqPwd;
 
     /**
      * 协议类型（tcp/udp/api）
      */
-    @Excel(name = "协议类型")
+    /*@Excel(name = "协议类型")*/
     @ApiModelProperty("协议类型")
     private String commProtocol;
 
@@ -214,7 +240,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("出厂时间")
-    @Excel(name = "出厂时间", width = 30, dateFormat = "yyyy-MM-dd")
+   /* @Excel(name = "出厂时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private Date deliveryTime;
 
     /**
@@ -222,7 +248,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("维保截止时间")
-    @Excel(name = "维保截止时间", width = 30, dateFormat = "yyyy-MM-dd")
+   /* @Excel(name = "维保截止时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private Date warrantyEndTime;
 
     /**
@@ -230,20 +256,20 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("设备安装时间")
-    @Excel(name = "设备安装时间", width = 30, dateFormat = "yyyy-MM-dd")
+  /*  @Excel(name = "设备安装时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private Date installTime;
 
     /**
      * 预期寿命/设计寿命,单位为年
      */
-    @Excel(name = "预期寿命/设计寿命,单位为年")
+    /*@Excel(name = "预期寿命/设计寿命,单位为年")*/
     @ApiModelProperty("预期寿命/设计寿命,单位为年")
     private String useLife;
 
     /**
      * 使用状态:1-在用 2-停用 3-备用
      */
-    @Excel(name = "使用状态:1-在用 2-停用 3-备用")
+    /*@Excel(name = "使用状态:1-在用 2-停用 3-备用")*/
     @ApiModelProperty("使用状态:1-在用 2-停用 3-备用")
     private String useStatus;
 
@@ -251,13 +277,13 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      * 是否监控
      */
     @ApiModelProperty("是否监控")
-    @Excel(name = "是否监控:0=是 1=否")
+    /*@Excel(name = "是否监控:0=是 1=否")*/
     private Long isMonitor;
 
     /**
      * 端口状态
      */
-    @Excel(name = "端口状态")
+   /* @Excel(name = "端口状态")*/
     @ApiModelProperty("端口状态")
     private String portStatus;
 
@@ -266,13 +292,13 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("端口状态更新时间")
-    @Excel(name = "端口状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")
+    /*@Excel(name = "端口状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")*/
     private Date portStatusTime;
 
     /**
      * 网关与设备连通状态	1-在线，2-离线
      */
-    @Excel(name = "网关与设备连通状态	1-在线，2-离线")
+  /*  @Excel(name = "网关与设备连通状态	1-在线，2-离线")*/
     @ApiModelProperty("网关与设备连通状态\t1-在线，2-离线")
     private String gatewayNetstatus;
 
@@ -280,14 +306,14 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      * 网关状态更新时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "网关状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")
+   /* @Excel(name = "网关状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")*/
     @ApiModelProperty("网关状态更新时间")
     private Date gatewayNetstatusTime;
 
     /**
      * 设备状态	1-故障，2-告警
      */
-    @Excel(name = "设备状态	1-故障，2-告警")
+   /* @Excel(name = "设备状态	1-故障，2-告警")*/
     @ApiModelProperty("设备状态\t1-故障，2-告警")
     private String eqStatus;
 
@@ -296,20 +322,20 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("设备状态更新时间")
-    @Excel(name = "设备状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")
+   /* @Excel(name = "设备状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")*/
     private Date eqStatusTime;
 
     /**
      * 控制点位地址
      */
-    @Excel(name = "控制点位地址")
+    /*@Excel(name = "控制点位地址")*/
     @ApiModelProperty("控制点位地址")
     private String controlPointAddress;
 
     /**
      * 点位地址1
      */
-    @Excel(name = "点位地址")
+  /*  @Excel(name = "点位地址")*/
     @ApiModelProperty("点位地址")
     private String queryPointAddress;
 
@@ -321,7 +347,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
 
 
     /** 图片id */
-    @Excel(name = "图片id")
+    /*@Excel(name = "图片id")*/
     private String iconFileId;
 
     @ApiModelProperty("设备类型图片")
@@ -381,6 +407,16 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
 
     public void setExportIds(final String exportIds) {
         this.exportIds = exportIds;
+    }
+
+    @Override
+    public String getRemark() {
+        return this.remark;
+    }
+
+    @Override
+    public void setRemark(final String remark) {
+        this.remark = remark;
     }
 
     /**

@@ -347,7 +347,7 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有物联设备厂商数据项？")
+        .confirm("是否确认导出所有设备厂商数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportBrand(queryParams);

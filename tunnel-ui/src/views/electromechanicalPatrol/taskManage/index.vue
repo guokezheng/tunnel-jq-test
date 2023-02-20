@@ -188,11 +188,12 @@
       height="70vh"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" width="100px" align="center">
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号" width="100px" align="center">
         <template slot-scope="scope">
           {{ scope.$index + 1 }}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="所属单位" align="center" prop="zzjgId" />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
@@ -1085,6 +1086,11 @@ export default {
         }
       }
     },
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+
     //班组点击时间
     selChange() {
       if (typeof this.form.tunnelId == "undefined") {

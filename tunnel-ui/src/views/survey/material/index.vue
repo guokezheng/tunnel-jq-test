@@ -275,11 +275,12 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center">
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号" align="center">
         <template slot-scope="scope">
           {{ scope.$index + 1 }}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
       <el-table-column label="物资名称" align="center" prop="materialName" />
       <el-table-column
@@ -918,6 +919,11 @@ export default {
           self.wz_boxShow = false;
         }
       }
+    },
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
     focus() {
       this.$nextTick(() => {

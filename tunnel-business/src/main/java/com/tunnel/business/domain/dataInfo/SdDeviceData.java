@@ -38,6 +38,25 @@ public class SdDeviceData extends BaseEntity
 
     private String pile;
 
+    private Integer limit;
+
+    private Integer page;
+
+    public Integer getLimit() {
+        return this.limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public Integer getPage() {
+        return this.page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
 
     public String getPile() {
         return pile;

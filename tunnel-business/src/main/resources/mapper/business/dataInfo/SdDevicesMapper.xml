@@ -55,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="iconFileId"    column="icon_file_id"    />
         <result property="externalDeviceId"    column="external_device_id"    />
         <result property="associatedDeviceId"    column="associated_device_id"    />
+        <result property="brandName"    column="brand_name"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -64,6 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="tunnelName" column="tunnel_name"/>
         <result property="tunnelAddress" column="tunnel_address"/>
     </resultMap>
+
 
     <resultMap id="eqTypeResult" type="SdEquipmentType">
         <id property="typeId" column="type_id"/>
@@ -122,7 +124,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdDevicesList_exp" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
-        dit.dict_label as eq_direction,
+        dit.dict_label as eq_direction
         a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.comm_protocol,
         a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
@@ -217,7 +219,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!-- 下拉查询 -->
     <select id="selectDropSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
-        a.eq_direction,
+        a.eq_direction,b.supplier_name brand_name,
         a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.comm_protocol,
         a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
@@ -228,6 +230,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
         left join sys_dept e on e.dept_id = c.dept_id
+        left join sd_devices_brand b on b.supplier_id = a.brand_id
         <where>
             <if test="fEqId != null and fEqId != ''">
                 and a.f_eq_id = #{fEqId}

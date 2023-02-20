@@ -200,7 +200,7 @@
       :row-class-name="tableRowClassName"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" type="index" width="50" align="center">
+      <el-table-column label="序号" :index="indexMethod" type="index" width="50" align="center">
       </el-table-column>
 
       <el-table-column label="图片名称" align="center" prop="pictureName" />
@@ -458,6 +458,10 @@ export default {
     this.fileData = new FormData();
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     getList() {
       this.loading = true;
       console.log(this.queryParams, "this.queryParams");

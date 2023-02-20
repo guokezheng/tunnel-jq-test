@@ -142,6 +142,7 @@
     >
       <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="序号" align="center"
+          :index="indexMethod"
       type="index"
       width="50">
     </el-table-column>
@@ -261,6 +262,10 @@ export default {
     this.getList();
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     /** 查询情报板敏感字管理列表 */
     getList() {
       this.loading = true;

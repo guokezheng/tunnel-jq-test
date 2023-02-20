@@ -622,6 +622,8 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
+      //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
+      queryParams.ids = this.ids;
       this.$confirm("是否确认导出所有情报板模板图片数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -632,6 +634,7 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
+          queryParams.ids = null;
         });
     },
     //监控上传文件列表

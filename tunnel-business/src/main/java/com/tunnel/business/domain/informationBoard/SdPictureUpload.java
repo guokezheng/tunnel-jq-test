@@ -23,40 +23,42 @@ public class SdPictureUpload extends BaseEntity
     private String pictureName;
 
     /** 图片url */
-    @Excel(name = "图片url")
+    @Excel(name = "图片地址")
     private String pictureUrl;
+
+    /** 宽度 */
+    @Excel(name = "图片宽度")
+    private String imageWidth;
+
+    /** 高度 */
+    @Excel(name = "图片高度")
+    private String imageHeight;
+
+    /** 图片分辨率 */
+    @Excel(name = "图片分辨率")
+    private String vmsSize;
 
     /** 图片备注 */
     @Excel(name = "图片备注")
     private String imageRemark;
 
-    /** 宽度 */
-    @Excel(name = "宽度")
-    private String imageWidth;
-
-    /** 高度 */
-    @Excel(name = "高度")
-    private String imageHeight;
-
     /** 图片类型 */
     //@Excel(name = "图片类型")
     private String imageType;
-
-    /** 图片分辨率 */
-    @Excel(name = "图片分辨率")
-    private String vmsSize;
 
     /** 速度 */
     @Excel(name = "速度")
     private String speed;
 
     /** 是否停用：0启用，1停用 */
-    @Excel(name = "是否停用：0启用，1停用")
+    //@Excel(name = "是否停用：0启用，1停用")
     private String deleteflag;
 
     /** 是否删除：0正常，1删除 */
-    @Excel(name = "是否删除：0正常，1删除")
+    //@Excel(name = "是否删除：0正常，1删除")
     private String logically;
+
+    private long[] ids;
 
     public void setId(Long id)
     {
@@ -156,6 +158,14 @@ public class SdPictureUpload extends BaseEntity
     public String getLogically()
     {
         return logically;
+    }
+
+    public long[] getIds() {
+        return ids;
+    }
+
+    public void setIds(long[] ids) {
+        this.ids = ids;
     }
 
     @Override

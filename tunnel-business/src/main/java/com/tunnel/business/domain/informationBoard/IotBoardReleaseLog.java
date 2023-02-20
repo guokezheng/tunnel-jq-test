@@ -70,6 +70,8 @@ public class IotBoardReleaseLog extends BaseEntity
 
     private List<String> paramsList;
 
+    //批量导出单选id导出数据
+    private Long[] ids;
 
     public String getPile() {
         return pile;
@@ -189,6 +191,14 @@ public class IotBoardReleaseLog extends BaseEntity
     public Date getReleaseTime()
     {
         return releaseTime;
+    }
+
+    public Long[] getIds() {
+        return ids;
+    }
+
+    public void setIds(Long[] ids) {
+        this.ids = ids;
     }
 
     @Override

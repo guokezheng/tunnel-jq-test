@@ -20,14 +20,14 @@
           v-hasPermi="['system:vocabulary:remove']"
         >删除</el-button
         >
-        <el-button
+        <!-- <el-button
           type="primary"
           plain
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:vocabulary:export']"
         >导出</el-button
-        >
+        > -->
         <el-button size="mini" @click="resetQuery" type="primary" plain
           >刷新</el-button
         >
@@ -362,6 +362,8 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
+      //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
+      queryParams.ids = this.ids;
       this.$confirm("是否确认导出所有情报板敏感字管理数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -372,6 +374,7 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
+          queryParams.ids = null;
         });
     },
     // 表格的行样式

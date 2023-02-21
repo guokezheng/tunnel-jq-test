@@ -119,14 +119,14 @@
           <div class="controlBox">
             <el-button
               @click.native="openDialogVisible(1, 2)"
-              :disabled="disabledButton"
+              :disabled="form.devicePixel?false:disabledButton"
               >添加信息</el-button
             >
-            <el-button type="primary" @click="publishInfo" :disabled="disabledCheckbox">发布信息</el-button>
+            <el-button type="primary" @click="publishInfo" 
+            :disabled="!form.devicePixel || contentList.length==0 || checkedCities.length==0">发布信息</el-button>
           </div>
         </div>
         <div class="contentBox">
-          
           <el-table :data="contentList" row-key="ID" v-loading="loading" max-height="700">
             <el-table-column align="right"  width="560">
               <template slot-scope="scope">
@@ -378,7 +378,6 @@ export default {
     return {
       toRightCategory:'',
       arrowRightVisible:false,
-      disabledCheckbox:true,
       loading:false,
       submitButton:false,
       iotBoardActive: '',
@@ -607,7 +606,7 @@ export default {
     },
     arrowLeft(item) {
       console.log(item, "item");
-      var contentList = {
+      var list = {
         FONT_SIZE: item.tcontents[0].fontSize + "px",
         COLOR: item.tcontents[0].fontColor,
         CONTENT: item.tcontents[0].content,
@@ -619,7 +618,7 @@ export default {
         category: item.category, //所属类别
         ID:this.contentList.length,
       };
-      this.contentList.push(contentList);
+      this.contentList.push(list);
       console.log(this.contentList, "this.contentList");
     },
     arrowRight(item) {
@@ -849,23 +848,12 @@ export default {
     },
 
     handleCheckAllChange(val) {
-      if(val){
-        this.disabledCheckbox = false
-      }else{
-        this.disabledCheckbox = true
-      }
       this.checkedCities = val ? this.deviceList : [];
     },
     handleCheckedCitiesChange(value) {
       
       this.checkedCities = value;
       let val = JSON.parse(JSON.stringify(value));
-      if(val.length>0){
-        this.disabledCheckbox = false
-      }else{
-        this.disabledCheckbox = true
-      }
-      this.$forceUpdate()
       for (let itm of this.deviceList) {
         if (val.indexOf(itm) > -1) {
           this.checkAll = true;
@@ -873,6 +861,8 @@ export default {
           this.checkAll = false;
         }
       }
+      this.$forceUpdate()
+
     },
     handleChange(val) {
       console.log(val,"情报板列表手风琴")
@@ -881,7 +871,6 @@ export default {
       // this.checkboxList = [];
       // this.checkboxValue = []
       this.disabledButton = true;
-      this.disabledCheckbox = true
       this.checkedCities = []
       this.checkAll = false
       this.form.devicePixel = val;

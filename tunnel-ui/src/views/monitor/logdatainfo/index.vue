@@ -1,19 +1,29 @@
 <template>
   <div class="app-container">
-    <div class="butBox">
+    <!-- <div class="butBox">
       <div :class="searchValue == '1' ? 'xz' : ''" @click="qiehuan('1')">
         系统日志
       </div>
       <div :class="searchValue == '2' ? 'xz' : ''" @click="qiehuan('2')">
         操作日志
       </div>
-    </div>
+    </div> -->
     <!-- 全局搜索 -->
+    <el-tabs v-model="activeName" @tab-click="handleClick" style="100%">
+      <el-tab-pane
+        :label="item.title"
+        :name="item.name"
+        v-for="item in tabList"
+        :key="item.name"
+      >
+
+      </el-tab-pane>
+    </el-tabs>
 
     <el-row
       :gutter="20"
       style="margin: 10px 0 25px"
-      v-show="searchValue == '1'"
+      v-show="activeName == '1'"
     >
       <el-col :span="4">
         <el-button
@@ -154,7 +164,7 @@
     <el-row
       :gutter="20"
       style="margin: 10px 0 25px"
-      v-show="searchValue == '2'"
+      v-show="activeName == '2'"
     >
       <el-col :span="4">
         <el-button
@@ -248,7 +258,7 @@
           <el-date-picker
             v-model="dateRange"
             size="small"
-            style="width: 335px"
+            style="width: 100%"
             value-format="yyyy-MM-dd HH-mm-ss"
             type="datetimerange"
             range-separator="-"
@@ -272,7 +282,7 @@
       v-loading="loading"
       :data="list"
       @selection-change="handleSelectionChange"
-      v-show="searchValue == '1'"
+      v-show="activeName == '1'"
       :default-sort="{ prop: 'loginTime', order: 'descending' }"
       @sort-change="handleSortChange"
       class="allTable"
@@ -335,7 +345,7 @@
         </template>
       </el-table-column>
     </el-table>
-
+  
     <el-table
       v-loading="loading"
       :data="logList"
@@ -343,7 +353,7 @@
       :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="handleSelectionChange"
       height="59vh"
-      v-show="searchValue == '2'"
+      v-show="activeName == '2'"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!--      <el-table-column label="序号" align="center" prop="id" display="none"/>-->
@@ -385,14 +395,14 @@
       </el-table-column>
     </el-table>
     <pagination
-      v-show="total > 0 && this.searchValue == 1"
+      v-show="total > 0 && this.activeName == 1"
       :total="total"
       :page.sync="queryParam.pageNum"
       :limit.sync="queryParam.pageSize"
       @pagination="getList"
     />
     <pagination
-      v-show="total > 0 && this.searchValue == 2"
+      v-show="total > 0 && this.activeName == 2"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -417,10 +427,21 @@ export default {
   dicts: ["sys_common_status, sd_control_type"],
   data() {
     return {
+      activeName: "1",
+      tabList: [
+        {
+          title: "系统日志",
+          name: "1",
+        },
+        {
+          title: "操作日志",
+          name: "2",
+        },
+      ],
       manageStatin: this.$cache.local.get("manageStation"),
       xt_boxShow: false,
       cz_boxShow: false,
-      searchValue: "1",
+      // searchValue: "1",
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -472,7 +493,7 @@ export default {
         controlType: null,
         state: null,
         description: null,
-        searchValue: null,
+        // searchValue: null,
         operIp: "",
       },
     };
@@ -522,14 +543,20 @@ export default {
         }
       }
     },
-    // 切换按钮
-    qiehuan(inx) {
+    handleClick(e){
       this.dateRange = [];
       this.resetForm("queryForm");
       this.resetForm("queryForms");
-      this.searchValue = inx;
-      this.getList(inx);
+      this.getList(this.activeName);
     },
+    // // 切换按钮
+    // qiehuan(inx) {
+    //   this.dateRange = [];
+    //   this.resetForm("queryForm");
+    //   this.resetForm("queryForms");
+    //   this.searchValue = inx;
+    //   this.getList(inx);
+    // },
     /** 所属隧道 */
     getTunnel() {
       listTunnels().then((response) => {
@@ -555,8 +582,8 @@ export default {
     /** 查询登录日志列表 */
     getList(inx) {
       this.loading = true;
-      if (inx == null || inx == "1" || this.searchValue == "1") {
-        console.log(this.searchValue, "this.searchValue");
+      if (inx == null || inx == "1" || this.activeName == "1") {
+        console.log(this.activeName, "this.activeName");
         console.log(this.queryParams, "this.queryParams");
         list(this.addDateRange(this.queryParam, this.dateRange)).then(
           (response) => {
@@ -565,7 +592,7 @@ export default {
             this.loading = false;
           }
         );
-      } else if ((inx != null && inx == "2") || this.searchValue == "2") {
+      } else if ((inx != null && inx == "2") || this.activeName == "2") {
         if (this.manageStatin == "1") {
           this.queryParams.tunnelId = this.$cache.local.get(
             "manageStationSelect"
@@ -584,8 +611,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      this.queryParam.pageNum = 1;
-      this.getList(this.searchValue);
+      this.getList(this.activeName);
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -673,14 +699,14 @@ export default {
         })
         .catch(() => {});
     },
-
+  
   },
 };
 </script>
 <style>
 .xt_searchBox {
   position: absolute;
-  top: 13%;
+  top: 15%;
   right: 1%;
   width: 24%;
   z-index: 1996;

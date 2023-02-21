@@ -40,27 +40,14 @@
     // }
   }
   .specialPagination{
-    position:fixed;left: 30%;right: 50%;bottom: 40px;
     .el-pager li{
       background: white;
       border: solid 1px #DCDFE6;
-      margin: 0 2px;
-      border-radius: 2px;
-      width: 30px;
-      height: 30px;
     }
     .el-pager li.active{
-      background-color: #00afe0 !important;
+      background-color: #39ADFF !important;
       color: white !important;
     }
-    .btn-next{
-      height: 30px;
-    }
-    .el-select .el-input .el-input__inner{
-      height: 30px;
-    }
-
-    
   }
   .menuitem{
     height:52px;line-height:50px;overflow-y: auto;
@@ -90,11 +77,42 @@
       }
     }
     #app {
+      // 表格上方虚线
+      .tableTopHr{
+        height: 1px;
+        margin: 14px 0;
+        background-image: linear-gradient(
+          to right,
+          #CFD5E0 0%,
+          #CFD5E0 50%,
+          transparent 50%
+        );
+        background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
+        background-repeat: repeat-x;
+      }
+      .searchBox,.searchBoxTab{
+        background-color: #fff;
+        border: solid 1px #DCDFE6;
+      }
       // .eventTypeButton{
       //   border: solid 1px #65bfff;
       //   color: #189fff;
       //   background: #fff;
       // }
+      // tab页下方横线
+      .el-tabs__nav-wrap::after{
+        background: #F2F8FF;
+      }
+      // 输入框自带搜索按钮
+      .el-input-group__append, .el-input-group__prepend{
+        background-color: #39ADFF;
+        border: solid 1px #00C8FF;
+        color: #fff;
+      }
+      // 鼠标移入表格
+      .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
+        background: rgba(57,173,255,0.13);;
+      }
       .infoBoardBox{
         background: #fff;
         .el-table__body-wrapper .el-table__cell{
@@ -160,7 +178,7 @@
       }
       // 下拉框背景色
       .el-input--medium .el-input__inner{
-        background-color: #F2F8FF;
+        background-color: #fff;
       }
       // 时间框背景色
       .el-range-editor.el-input__inner{
@@ -204,11 +222,11 @@
         }
        
         .el-pagination.is-background .el-pager li .active{
-          background-color: #00afe0 !important;
+          background-color: #39ADFF !important;
   
         }
         .el-pagination .el-pager .active{
-          background-color: #00afe0 !important;
+          background-color: #39ADFF !important;
           color: white !important;
         }
       }
@@ -241,7 +259,7 @@
         padding: 0 5px;
         font-size: 14px;
         color: #39ADFF;
-        height: 28px;
+        height: 3vh;
         border-radius: 3px;
         border: 1px solid #39ADFF;
       }
@@ -1395,10 +1413,14 @@
   // 安全预警
   .safeWarnStyle{
     .contentText{
-      color: #0087e7;
+      color: #189FFF;
     }
     .contentBox .video{
-      color: #0087e7;
+      color: #189FFF;
+    }
+    .contentBox{
+      background: #F2F8FF;
+      border: solid 1px #65BFFF;
     }
   }
   .phoneBox1{

@@ -128,16 +128,8 @@
     color: #fff;
 
   }
-  .el-input--medium .el-input__inner{
-    background: #004375 !important;
-    border: solid 1px #05AFE3;
-    color: #fff;
-  }
-  .el-input--small .el-input__inner{
-    background: #004375 ;
-    border: solid 1px #05AFE3;
-    color: #fff;
-  }
+  
+  
   .el-card{
     .el-input--mini .el-input__inner{
       background: #012E51 !important;
@@ -166,14 +158,7 @@
     color: white;
     border: 1px solid #05AFE3;
   }
-  .vue-treeselect__control{
-    background: #004375 !important;
-    color: white !important;
-    border: 1px solid #05AFE3 !important;
-  }
-  .vue-treeselect__single-value{
-    color: #fff;
-  }
+  
     ::-webkit-scrollbar-track {
       background-color: #022A54;
     }
@@ -237,7 +222,7 @@
       padding: 15px 20px ;
       color: #fff;
       .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
-        background-color: rgba($color: #fff, $alpha: 0.2) !important;
+        background-color: #0064B0 !important;
       }
       .el-tabs--border-card > .el-tabs__header{
         background: #326CA9 !important;
@@ -440,65 +425,36 @@
   }
   
   .specialPagination{
-    position:fixed;left: 30%;right: 50%;bottom: 40px;
+   
     .el-pager li{
       background: #326CA9;
-      border: solid 1px #05AFE3;
-      margin: 0 2px;
-      border-radius: 2px;
-      width: 30px;
-      height: 30px;
+      border: solid 1px #25678D;
       color: #fff;
     }
     .el-pager li.active{
       background-color: #00afe0 !important;
       color: white !important;
+      border: solid 1px #00afe0;
     }
     .btn-next,.btn-prev{
-      height: 30px;
-      background-color: #326CA9;
+      background-color: #004375;
       color: white;
-      border: 1px solid #05AFE3;
+      border: 1px solid #25678D;
     }
     .el-select .el-input .el-input__inner{
-      height: 30px;
-      background-color: #326CA9;
+      background-color: #004375 !important;
       color: white;
-      border: 1px solid #05AFE3;
+      border: 1px solid #25678D !important;
+      
     }
     .el-pagination__total,.el-pagination__jump{
       color: #fff;
     }
     .el-input--medium .el-input__inner{
-      height: 30px;
-      background-color: #326CA9 !important;
+      background-color: #004375 !important;
       color: white;
-      border: 1px solid #05AFE3;
+      border: 1px solid #25678D !important;
     }
-    // .el-input__inner{
-    //   background-color: #326CA9;
-    //   color: white;
-    //   border: 1px solid #05AFE3;
-    // }
-    // .el-pagination__total {
-    //   color: white;
-    // }
-    // .el-pagination__jump {
-    //   color: #fff;
-    // }
-    // .el-pagination.is-background .btn-prev,
-    // .el-pagination.is-background .btn-next,
-    // .el-pagination.is-background .el-pager li {
-    //   background-color: #326CA9;
-    //   color: white;
-    //   border: 1px solid #05AFE3;
-    // }
-    // .el-pagination .el-pager .active{
-    //   background-color: #00afe0 !important;
-    //   color: white !important;
-    // }
-
-    
   }
   .menuitem{
     height:52px;line-height:50px;overflow-y: auto;
@@ -523,9 +479,10 @@
     background-color: #00598f;
   }
   .el-input-group__append, .el-input-group__prepend{
-    background: #326CA9 !important;
-    color: white;
-    border: 1px solid #05AFE3;
+    background: #004F8B !important;
+    color: #00C8FF;
+    border: solid 1px #00C8FF;
+    border-left: transparent;
   }
   .el-input-number__increase, .el-input-number__decrease{
     background: #012E51 !important;
@@ -540,7 +497,24 @@
     color:#bbb;
   }
   #app {
-    .cl_searchBox,.searchBox{
+    // 表格上方虚线
+    .tableTopHr{
+      height: 1px;
+      margin: 14px 0;
+      background-image: linear-gradient(
+      to right,
+      rgb(104,141,171) 0%,
+      rgb(104,141,171) 50%,
+      transparent 50%
+    );
+    background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
+    background-repeat: repeat-x;
+    }
+    .el-input-group__prepend .el-button{
+      background: #fff !important;
+    }
+    .cl_searchBox,.searchBoxTab,.searchBox{
+      background-color: #00335a;
       .el-checkbox{
         color: #fff;
       }
@@ -681,6 +655,7 @@
       height: 28px;
       border-radius: 3px;
       border: 1px solid #FA6F8E;
+      background-color: transparent;
     }
     .tableDelButtton:hover{
       color: white;
@@ -690,9 +665,10 @@
       padding: 0 5px;
       font-size: 14px;
       color: #39ADFF;
-      height: 28px;
+      height: 3vh;
       border-radius: 3px;
       border: 1px solid #39ADFF;
+      background-color: transparent;
     }
     .tableBlueButtton:hover{
       color: white;
@@ -721,33 +697,66 @@
     // }
     // 输入框背景色
     .el-input--small .el-input__inner{
-      background-color: #004375;
-      border: solid 1px #05AFE3;
-
+      background-color: #004F8B;
+      border: solid 1px #00C8FF;
+      color: #fff;
     }
     .el-input--mini .el-input__inner{
-      background-color: #004375;
-      border: solid 1px #05AFE3;
-
+      background-color: #004F8B;
+      border: solid 1px #00C8FF;
+      color: #fff;
     }
     // 下拉框背景色
     .el-input--medium .el-input__inner{
-      background-color: #004375;
-    border: solid 1px #05AFE3;
-
+      background-color: #004F8B;
+      border: solid 1px #05AFE3;
+      color: #fff;
+    }
+    // 右上角搜索框
+    .bg-purple{
+      .el-input--small .el-input__inner{
+        background-color: #004F8B;
+        border: solid 1px #00C8FF;
+        border-right: transparent !important;
+        color: #fff;
+      }
+      .el-input--mini .el-input__inner{
+        background-color: #004F8B;
+        border: solid 1px #00C8FF;
+        border-right: transparent !important;
+        color: #fff;
+      }
+      .el-input--medium .el-input__inner{
+        background-color: #004F8B;
+        border: solid 1px #00C8FF;
+        border-right: transparent !important;
+        color: #fff;
+      }
+      
+    }
+    .vue-treeselect__control{
+      background: #004F8B !important;
+      color: white !important;
+      border: 1px solid #00C8FF !important;
+    }
+    .vue-treeselect__single-value{
+      color: #fff;
     }
     // 时间框背景色
     .el-range-editor.el-input__inner{
-      background-color: #004375;
-    border: solid 1px #05AFE3;
-
+      background-color: #004F8B;
+      border: solid 1px #00C8FF;
+      color: #fff;
     }
     .el-range-editor--small .el-range-input{
-      background-color: #004375;
+      background-color: transparent;
+      color: #fff;
+    }
+    .el-range-separator{
       color: #fff;
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-      background-color: #00518d;
+      background-color: #0090D8;
       border-bottom: solid 1px rgba(225,228,230,.16);
       border-left: solid 1px rgba(225,228,230,.16);
       color: white;
@@ -758,11 +767,10 @@
     }
     // 表格鼠标移入行选中
     .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #326CA9;
+      background-color: #0064B0;
    }
    .el-table__body tr .hover-row > td .el-table__cell{
-    background-color: #326CA9;
-
+    background-color: #0064B0;
   }
   //  表格下边框
   .el-table td.el-table__cell{
@@ -798,9 +806,9 @@
     .pagination-container {
       background-color: transparent;
       .el-input__inner{
-        background-color: #326CA9;
+        background-color: transparent;
         color: white;
-        border: 1px solid #05AFE3;
+        border: 1px solid #25678D;
       }
       .el-pagination__total {
         color: white;
@@ -811,13 +819,14 @@
       .el-pagination.is-background .btn-prev,
       .el-pagination.is-background .btn-next,
       .el-pagination.is-background .el-pager li {
-        background-color: #326CA9;
+        background-color: transparent;
         color: white;
-        border: 1px solid #05AFE3;
+        border: 1px solid #25678D;
       }
       .el-pagination .el-pager .active{
-        background-color: #00afe0 !important;
+        background-color: #39ADFF !important;
         color: white !important;
+        border: solid 1px #39ADFF;
       }
     }
     // 面包屑
@@ -1179,7 +1188,7 @@
     }
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover>td {
-      background-color: #022A54 !important;
+      background-color: #0064B0 !important;
       color: white;
       /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
     
@@ -1273,7 +1282,7 @@
   }
   /* 鼠标悬浮*/
   .el-table--enable-row-hover .el-table__body tr:hover>td {
-    background-color: #022A54 !important;
+    background-color: #0064B0 !important;
     color: white;
     /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
   
@@ -1584,7 +1593,7 @@
     }
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #0e2c53;
+      background-color: #0064B0;
     }
   }
   // 表格页 tooltip
@@ -1635,7 +1644,7 @@
     }
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #0e2c53;
+      background-color: #0064B0;
     }
     .el-pagination.is-background .el-pager li:not(.disabled).active{
       background-color: #00afe0 !important;
@@ -1678,15 +1687,14 @@
   }
   // 隔行变色
   .allTable{
-    background: #004375;
+    background: #00518D;
     .el-table__body-wrapper tbody{
       tr:nth-of-type(odd){
-        background-color: #004375 !important;
+        background-color: #00518D !important;
         color: #fff !important;
-
       }
       tr:nth-of-type(even){
-        background-color: #00487F !important;
+        background: rgba(0,100,176,0.3);
         color: #fff !important;
       }
       
@@ -1697,14 +1705,13 @@
 
     }
     .el-table--enable-row-hover .el-table__body tr:hover > td{
-      background: #165484 !important;
+      background: #0064B0 !important;
       color: #fff;
     }
     
   }
   .allTable .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
-    background: #165484 !important;
-
+    background: #0064B0 !important;
   }
   .explain-table {
     .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
@@ -1735,7 +1742,7 @@
     }
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #0e2c53;
+      background-color: #0064B0;
     }
   }
   // .workbench-dialog .el-button--mini {padding: 0 !important;}
@@ -2180,5 +2187,19 @@
     .contentBox .video{
       color: #fff;
     }
+    .contentBox{
+      background: #023668;
+    }
+  }
+  .icon-list{
+    color: #fff;
+  }
+  .el-popover{
+    background-color: #012E51;
+    border: solid 1px #05AFE3;
+  }
+      // tab页下方横线
+  .el-tabs__nav-wrap::after{
+    background-color: #054D83;
   }
 }

@@ -9,32 +9,31 @@
         :key="item.name"
       >
 
-        <el-row :gutter="20" style="margin: 10px 25px" v-show="showElement">
-          <el-col :span="4">
+        <el-row :gutter="20" style="margin: 10px 0 14px" v-show="showElement">
+          <el-col :span="6" style="padding:0">
             <el-button
-              size="mini"
-              type="primary"
-              plain
+              size="small"
               @click="resetQuery()"
             >刷新
             </el-button>
           </el-col>
-          <el-col :span="6" :offset="14">
+          <el-col :span="6" :offset="12" style="padding:0">
             <div class="grid-content bg-purple">
               <el-input
                 @keyup.enter.native="handleQuery"
+                size="small"
                 placeholder="请选择事件类型、管理机构、所属隧道等"
               >
                 <el-button
                   slot="append"
-                  icon="el-icon-s-fold"
+                  icon="icon-gym-Gsearch"
                   @click="zd_boxShow = !zd_boxShow"
                 ></el-button>
               </el-input>
             </div>
           </el-col>
         </el-row>
-        <div class="searchBox" v-show="zd_boxShow" >
+        <div class="searchBoxTab" v-show="zd_boxShow" >
         <el-form
           :model="queryParams"
           ref="queryForm"
@@ -121,36 +120,35 @@
               ></el-date-picker>
             </el-form-item>
             <el-form-item class="bottomBox">
-              <el-button size="small" type="primary" @click="handleQuery"
+              <el-button size="small"  @click="handleQuery"
               >搜索</el-button
               >
-              <el-button size="small" @click="resetQuery" type="primary" plain
+              <el-button size="small" @click="resetQuery" 
               >重置</el-button
               >
             </el-form-item>
           </el-form>
         </div>
         <!-- 全局搜索 -->
-          <el-row :gutter="20" style="margin: 10px 25px" v-show="showFaultElement">
-            <el-col :span="4">
-              <el-button
+          <el-row :gutter="20" style="margin: 10px 0 14px" v-show="showFaultElement">
+            <el-col :span="6" style="padding:0">
+              <el-button 
                 v-hasPermi="['system:list:add']"
-                size="mini"
-                type="primary"
-                plain
+                size="small"
                 @click="handleAdd"
               >新增故障
               </el-button>
-              <el-button size="mini" @click="resetQuery" type="primary" plain
+              <el-button size="small" @click="resetQuery" 
                 >刷新</el-button
                 >
             </el-col>
-            <el-col :span="6" :offset="14">
+            <el-col :span="6" :offset="12" style="padding:0">
               <div class="grid-content bg-purple" ref="main">
                 <el-input
                     placeholder="请输入故障位置、故障描述，回车搜索"
-                    v-model="queryParams1.faultDescription"
+                    v-model="queryParams.faultDescription"
                     @keyup.enter.native="handleQuery"
+                    size="small"
                   >
                     <el-button
                       slot="append"
@@ -162,7 +160,7 @@
             </el-col>
           </el-row>
 
-          <div class="searchBox"  v-show="fault_boxShow">
+          <div class="searchBoxTab"  v-show="fault_boxShow">
         <el-form
               ref="queryForm"
               :inline="true"
@@ -191,10 +189,10 @@
               </el-form-item>
 
               <el-form-item class="bottomBox">
-                <el-button size="small" type="primary" @click="handleQuery"
+                <el-button size="small"  @click="handleQuery"
                 >搜索</el-button
                 >
-                <el-button size="small" @click="resetQuery" type="primary" plain
+                <el-button size="small" @click="resetQuery" 
                 >重置</el-button
                 >
               </el-form-item>
@@ -299,6 +297,7 @@
             class="contentBox"
             v-for="(item, index) in eventList"
             :key="index"
+            :style="{width:topNav?'24.2%':'24%'}"
           >
             <div class="video">
               <img
@@ -318,7 +317,7 @@
               <div>
                 来源 <span>{{ getFrom(item.eventSource) }}</span>
               </div>
-              <div>
+              <div style="width: 100%;overflow: hidden;white-space: nowrap;">
                 位置 <span>{{ item.position }}</span>
               </div>
               <div>
@@ -346,7 +345,7 @@
             </div>
           </div>
         </div>
-
+        <div class="tableTopHr" v-if="activeName == '2'"></div>
         <el-table
           v-loading="loading"
           :data="eventLists"
@@ -382,7 +381,8 @@
           <!-- </el-table-column> -->
 <!--          <el-table-column label="持续时间" align="center" prop="faultCxtime" />-->
           <el-table-column label="故障位置" align="center" prop="faultLocation" />
-          <el-table-column label="故障描述" align="center" prop="faultDescription"/>
+          <el-table-column label="故障描述" align="center" prop="faultDescription" width="180" 
+          :show-overflow-tooltip='true'/>
           <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">
             <template slot-scope="scope">
@@ -424,6 +424,7 @@
             label="操作"
             align="center"
             class-name="small-padding fixed-width"
+            width="200"
           >
             <template slot-scope="scope">
               <el-button
@@ -1218,9 +1219,6 @@
           </div>
         </div>
         <div class="card-col" style="font-size: 16px">
-
-
-
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -1663,6 +1661,13 @@ export default {
       showElement:true,
       showFaultElement:false,
     };
+  },
+  computed:{
+    topNav: {
+      get() {
+        return this.$store.state.settings.topNav;
+      },
+    },
   },
   watch: {
     "queryParams.deptId": function (newVal, oldVal) {
@@ -2178,7 +2183,6 @@ export default {
         this.zd_boxShow  = false;
         this.showFaultElement = true;
       }
-
     },
     handleSelectionChange(val) {
       this.ids = val.map((item) => item.id);
@@ -2529,12 +2533,12 @@ export default {
         if(that.news.length>0){
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("impression")){
-              that.impressionOptions.forEach((opt) => {
+        that.impressionOptions.forEach((opt) => {
                 if (opt.dictValue == that.news[i].impression) {
                   that.news[i].impression = opt.dictLabel;
-                }
-              });
-            }
+          }
+        });
+          }
           }
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("network")){
@@ -2542,8 +2546,8 @@ export default {
                 if (opt.dictValue == that.news[i].network) {
                   that.news[i].network = opt.dictLabel;
                 }
-              });
-            }
+        });
+          }
           }
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("power")){
@@ -2551,9 +2555,9 @@ export default {
                 if (opt.dictValue == that.news[i].power) {
                   that.news[i].power = opt.dictLabel;
                 }
-              });
+        });
             }
-          }
+            }
         }
 
 
@@ -2569,7 +2573,7 @@ export default {
            // }
          // });
         //});
-      });
+          });
     },
     // 关闭弹窗
     close() {
@@ -2920,19 +2924,15 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-
-.searchBox {
+.searchBoxTab {
   position: absolute;
-  top: 7%;
-  right: 1.2%;
-  width: 24%;
+  top: 6%;
+  right: 0%;
+  width: 25%;
   z-index: 1996;
-  background-color: #00335a;
+  // background-color: #00335a;
   padding: 20px;
   box-sizing: border-box;
-}
-
-.searchBox {
   ::v-deep .el-form-item__content {
     width: 80%;
     .el-select {
@@ -2940,22 +2940,16 @@ export default {
     }
   }
   .bottomBox {
+  width: 100%;
     .el-form-item__content {
       display: flex;
       justify-content: center;
-      align-items: flex-end;
+      align-items: center;
+      width: 100%;
     }
   }
 }
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
+
 
 .formStyle {
   .el-form-item {
@@ -2963,36 +2957,36 @@ export default {
   }
 }
 ::v-deep .el-form-item--medium .el-form-item__label {
-  line-height: 3vh;
+  // line-height: 3vh;
   font-size: 0.7vw;
 }
 ::v-deep .el-form-item--medium .el-form-item__content {
-  line-height: 3vh;
+  // line-height: 3vh;
   font-size: 0.7vw;
 }
-::v-deep .el-input--medium .el-input__icon {
-  line-height: 3vh;
-}
-::v-deep .el-input--small .el-input__icon {
-  line-height: 3vh;
-}
-.el-tabs__header {
-  margin: 0 0 12px !important;
+// ::v-deep .el-input--medium .el-input__icon {
+//   line-height: 3vh;
+// // }
+// ::v-deep .el-input--small .el-input__icon {
+//   line-height: 3vh;
+// }
+::v-deep .el-tabs__header {
+  margin: 0 0 8px !important;
 }
 .contentListBox {
   width: 100%;
-  // height: 570px;
   word-wrap: break-word;
   word-break: normal;
+  overflow: auto;
   //display: flex;
   .contentBox {
-    width: 24%;
     // height: 135px;
-    border: solid 1px #2aa6ff;
+    // border: solid 1px #2aa6ff;
     display: inline-flex;
     margin-right: 1vw;
     margin-bottom: 5px;
     position: relative;
+    border-radius: 2px;
     .video {
       width: 200px;
       height: 100%;
@@ -3020,14 +3014,14 @@ export default {
       margin-right: 20px;
       width: 213px;
       float: right;
-      margin-left: 10px;
+      margin-left: 2px;
       .stateTab {
         position: absolute;
         top: -34px;
         right: -21px;
       }
       div {
-        padding: 0.4vh 0;
+        padding: 0.6vh 0;
         span {
           padding-left: 6px;
         }
@@ -3264,23 +3258,23 @@ export default {
   padding: 0px 10px;
   font-size: 0.7vw;
 }
-::v-deep .vue-treeselect__control {
-  height: 3vh;
-}
-::v-deep .vue-treeselect__placeholder,
-.vue-treeselect__single-value {
-  line-height: 3vh;
-}
-::v-deep .el-input--small .el-input__inner {
-  line-height: 3vh;
-  height: 4vh;
-  font-size: 0.7vw;
-}
-::v-deep .el-input--medium .el-input__inner {
-  line-height: 3vh;
-  height: 4vh;
-  font-size: 0.7vw;
-}
+// ::v-deep .vue-treeselect__control {
+//   height: 4vh;
+// }
+// ::v-deep .vue-treeselect__placeholder,
+// .vue-treeselect__single-value {
+//   line-height: 4vh;
+// }
+// ::v-deep .el-input--small .el-input__inner {
+//   line-height: 3vh;
+//   height: 4vh;
+//   font-size: 0.7vw;
+// }
+// ::v-deep .el-input--medium .el-input__inner {
+//   line-height: 3vh;
+//   height: 4vh;
+//   font-size: 0.7vw;
+// }
 .butBox {
   width: 280px;
   display: flex;
@@ -3426,7 +3420,7 @@ hr {
 .video {
   height: 300px;
   border-radius: 0;
-  padding: 5px;
+  padding: 10px;
   margin-top: 0;
 }
 
@@ -3530,11 +3524,11 @@ hr {
     .el-tab-pane {
       height: 100%;
       .contentListBox {
-        height: 60vh;
+        max-height: 64vh;
         overflow-x: hidden;
         overflow-y: auto;
         .contentBox {
-          height: 14vh;
+          height: 15vh;
         }
       }
     }

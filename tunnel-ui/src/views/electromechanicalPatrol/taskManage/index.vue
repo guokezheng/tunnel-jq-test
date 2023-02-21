@@ -63,7 +63,7 @@
         </el-col>
       </el-row> -->
 
-    <div class="task_searchBox" v-show="task_boxShow">
+    <div class="searchBox" v-show="task_boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -1881,13 +1881,12 @@ export default {
   background-color: transparent;
 }
 
-.task_searchBox {
+.searchBox {
   position: absolute;
   top: 8%;
   right: 1%;
   width: 24%;
   z-index: 1996;
-  background-color: #00335a;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -2258,7 +2257,7 @@ h1 {
   }
 }
 
-.task_searchBox {
+.searchBox {
   ::v-deep .el-form-item__content {
     width: 80%;
     .el-select {

@@ -558,15 +558,16 @@
           "
           :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
-          <div class="indicatorLight" @click="isDrawerA()">
-            <i class="el-icon-caret-left"></i>一键控制模块
+          <div class="indicatorLight" @click="isDrawerA()"
+          >
+            <i :class="[drawerA ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>一键控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
-            <i class="el-icon-caret-left"></i>分时控制模块
+            <i :class="[drawerB ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>分时控制模块
           </div>
           <div class="triggerControl" @click="isDrawerC()">
-            <i class="el-icon-caret-left"></i>触发控制模块
+            <i :class="[drawerCVisible ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>触发控制模块
           </div>
         </div>
 
@@ -5051,6 +5052,7 @@ export default {
       this.phoneForm2 = {
         loopCount: "1",
       };
+      this.$forceUpdate()
     },
     isDrawerB() {
       this.drawerB = !this.drawerB;

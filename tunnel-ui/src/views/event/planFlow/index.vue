@@ -20,7 +20,7 @@
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请选择事件类型"
+            placeholder="请选择事件类型，回车搜索"
             v-model="queryParams.planName"
             @keyup.enter.native="handleQuery"
           >

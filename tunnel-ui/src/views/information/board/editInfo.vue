@@ -538,14 +538,7 @@
         var textBoard1 = document.getElementsByClassName("textBoard1")
         console.log(textBoard1,"textBoard1");
         console.log(divContent1,"divContent1");
-       
-          // 获取文字长宽
-          // let textWidth = textBoard1[i].offsetWidth;
-          // let textHeight = textBoard1[i].offsetHeight;
-          // // 获取黑盒子长宽
-          // let divWidth = divContent1[i].offsetWidth;
-          // let divHeight = divContent1[i].offsetHeight;
-          // console.log(document.getElementsByClassName("textBoard1"),"document.getElementsByClassName('textBoard1')");
+      
           console.log(textBoard1[0].style,"textBoard1[i].style");
           // console.log(textWidth,divWidth,"999999999999999");
           switch (alignmentNum) {

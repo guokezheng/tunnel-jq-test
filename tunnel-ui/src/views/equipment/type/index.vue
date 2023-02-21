@@ -4,9 +4,7 @@
     <el-row :gutter="20" style="margin: 10px 0 25px">
       <el-col :span="4">
         <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             @click="handleAdd"
             v-hasPermi="['system:type:add']"
             >新增</el-button
@@ -21,14 +19,12 @@
 <!--            >修改</el-button-->
 <!--          >-->
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['system:type:remove']"
             >删除</el-button>
-          <el-button size="mini" @click="resetQuery" type="primary" plain>刷新</el-button>
+          <el-button size="small" @click="resetQuery" >刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
@@ -41,7 +37,7 @@
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -74,10 +70,10 @@
         />
       </el-form-item>
         <el-form-item class="bottomBox">
-          <el-button size="small" type="primary" @click="handleQuery"
+          <el-button size="small" @click="handleQuery"
           >搜索</el-button
           >
-          <el-button size="small" @click="resetQuery" type="primary" plain
+          <el-button size="small" @click="resetQuery" 
           >重置</el-button
           >
         </el-form-item>

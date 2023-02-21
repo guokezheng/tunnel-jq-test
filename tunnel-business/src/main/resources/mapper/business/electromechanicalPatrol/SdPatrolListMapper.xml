@@ -293,4 +293,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
 
+    <select id="faultOrDevices" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
+        select  patrol_type from sd_patrol_list where eq_fault_id = #{faultId} group by patrol_type
+    </select>
+
+
 </mapper>

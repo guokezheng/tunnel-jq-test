@@ -133,7 +133,7 @@
         <!-- 全局搜索 -->
           <el-row :gutter="20" style="margin: 10px 25px" v-show="showFaultElement">
             <el-col :span="4">
-              <el-button 
+              <el-button
                 v-hasPermi="['system:list:add']"
                 size="mini"
                 type="primary"
@@ -146,10 +146,10 @@
                 >
             </el-col>
             <el-col :span="6" :offset="14">
-              <div class="grid-content bg-purple">
+              <div class="grid-content bg-purple" ref="main">
                 <el-input
                     placeholder="请输入故障位置、故障描述，回车搜索"
-                    v-model="queryParams.faultDescription"
+                    v-model="queryParams1.faultDescription"
                     @keyup.enter.native="handleQuery"
                   >
                     <el-button
@@ -166,7 +166,7 @@
         <el-form
               ref="queryForm"
               :inline="true"
-          :model="queryParams"
+          :model="queryParams1"
               label-width="75px"
               v-if="activeName == '2'"
             >
@@ -176,7 +176,7 @@
                 prop="faultType"
               >
                 <el-select
-                  v-model="queryParams.faultType"
+                  v-model="queryParams1.faultType"
                   placeholder="请选择故障类型"
                   clearable
                   size="small"
@@ -356,11 +356,12 @@
           v-if="activeName == '2'"
         >
           <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="序号" width="100px" align="center">
+          <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--          <el-table-column label="序号" width="100px" align="center">
             <template slot-scope="scope">
               {{scope.$index+1}}
             </template>
-          </el-table-column>
+          </el-table-column>-->
           <el-table-column label="故障类型" align="center" prop="faultType">
             <template slot-scope="scope">
               <dict-tag
@@ -381,7 +382,7 @@
           <!-- </el-table-column> -->
 <!--          <el-table-column label="持续时间" align="center" prop="faultCxtime" />-->
           <el-table-column label="故障位置" align="center" prop="faultLocation" />
-          <el-table-column label="故障描述" align="center" prop="faultDescription" />
+          <el-table-column label="故障描述" align="center" prop="faultDescription"/>
           <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">
             <template slot-scope="scope">
@@ -462,8 +463,8 @@
         <pagination
             v-if="totals > 0 && activeName == '2'"
             :total="totals"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
+          :page.sync="queryParams1.pageNum"
+          :limit.sync="queryParams1.pageSize"
           @pagination="getList"
         />
         <el-pagination
@@ -1203,18 +1204,23 @@
         <div class="card-col" style="font-size: 16px">
           <div>
             巡检时间:
-            <span>{{ item.xcTime }}</span>
+            <span>{{
+                parseTime(item.xcTime, "{y}-{m}-{d} {h}:{m}:{s}")
+            }}</span>
           </div>
           <div>
             检修班组:
-            <span>{{ item.bzId }}</span>
+            <span>{{ item.bzName }}</span>
           </div>
           <div>
             检修人:
-            <span>{{ item.walkerId }}</span>
+            <span>{{ item.userName }}</span>
           </div>
         </div>
         <div class="card-col" style="font-size: 16px">
+
+
+
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -1499,6 +1505,14 @@ export default {
         endTime: null,
         deptId: null,
       },
+
+      queryParams1: {
+        pageNum: 1,
+        pageSize: 10,
+        faultType:null,
+        faultDescription:"",
+
+      },
       allmsg: "",
       process: "",
       proportion: "",
@@ -1740,12 +1754,17 @@ export default {
 
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
         if (self.fault_boxShow == true){
           self.fault_boxShow = false;
         }
       }
     },
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams1.pageNum-1)*this.queryParams1.pageSize+1
+    },
+
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);
     },
@@ -2295,7 +2314,7 @@ export default {
       }
       if (this.currentMenu == "2") {
        // this.queryParams.pageSize = 10;
-        listList(this.queryParams).then((response) => {
+        listList(this.queryParams1).then((response) => {
           this.eventLists = response.rows;
           console.log(response.rows, "response.rowsresponse.rowsresponse.rows列表内容");
           this.eventLists.forEach((item) => {
@@ -2454,9 +2473,19 @@ export default {
         if (this.form.faultDescription == "null") {
           this.form.faultDescription = "";
         }
-        /*console.log(
-          "that.form.iFileList====================" + that.form.iFileList.length
-        );*/
+        if (this.form.faultCxtime == "null") {
+          this.form.faultCxtime = "";
+        }
+        if (this.form.faultLevel == "null") {
+          this.form.faultLevel = "";
+        }
+        if (this.form.falltRemoveStatue == "null") {
+          this.form.falltRemoveStatue = "";
+        }
+        if (this.form.faultLocation == "null") {
+          this.form.faultLocation = "";
+        }
+
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
 
@@ -2497,43 +2526,49 @@ export default {
       let that = this;
       getRepairRecordList(this.faultId).then((response) => {
         that.news = response.data;
-        that.impressionOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].impression = opt.dictLabel;
+        if(that.news.length>0){
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("impression")){
+              that.impressionOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].impression) {
+                  that.news[i].impression = opt.dictLabel;
+                }
+              });
+            }
           }
-          if (opt.dictValue == "1") {
-            that.news[0].impression = opt.dictLabel;
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("network")){
+              that.networkOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].network) {
+                  that.news[i].network = opt.dictLabel;
+                }
+              });
+            }
           }
-        });
-        that.networkOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].network = opt.dictLabel;
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("power")){
+              that.powerOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].power) {
+                  that.news[i].power = opt.dictLabel;
+                }
+              });
+            }
           }
-          if (opt.dictValue == "1") {
-            that.news[0].network = opt.dictLabel;
-          }
-        });
-        that.powerOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].power = opt.dictLabel;
-          }
-          if (opt.dictValue == "1") {
-            that.news[0].power = opt.dictLabel;
-          }
-        });
+        }
 
-        this.news.forEach((taskitem) => {
-          this.bzData.forEach((opt) => {
-            if (taskitem.bzId == opt.deptId) {
-              taskitem.bzId = opt.deptName;
-            } else {
-              taskitem.bzId = "";
-            }
-            if (taskitem.bzId == null || taskitem.bzId == "null") {
-              taskitem.bzId = "";
-            }
-          });
-        });
+
+        //this.news.forEach((taskitem) => {
+          //this.bzData.forEach((opt) => {
+            //if (taskitem.bzId == opt.deptId) {
+             // taskitem.bzId = opt.deptName;
+           // } else {
+            //  taskitem.bzId = "";
+            //}
+            //if (taskitem.bzId == null || taskitem.bzId == "null") {
+             // taskitem.bzId = "";
+           // }
+         // });
+        //});
       });
     },
     // 关闭弹窗
@@ -2668,9 +2703,11 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams = { pageNum: 1, pageSize: 16 };
+      this.queryParams1 = { pageNum: 1, pageSize: 10 };
       this.dateRange = [];
       this.tunnelList = [];
       this.queryParams.eventTypeId = "";
+      this.queryParams1.faultDescription = "";
       // this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -2745,6 +2782,28 @@ export default {
                 console.log("================"+this.fileList)
                 return
               }*/
+
+
+      if (this.form.tunnelId == "" ||
+        this.form.tunnelId == -1 ||
+        this.form.tunnelId == null) {
+        return this.$modal.msgWarning("请选择所在路段隧道");
+      }
+
+      if (this.form.faultType == "" ||
+        this.form.faultType == -1 ||
+        this.form.faultType == null) {
+        return this.$modal.msgWarning("请选择故障类型");
+      }
+      if (this.form.eqId == "" ||
+        this.form.eqId == -1 ||
+        this.form.eqId == null) {
+        return this.$modal.msgWarning("请选择设备");
+      }
+      if (this.form.faultDescription == "") {
+        return this.$modal.msgWarning("请填写故障描述");
+      }
+
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
@@ -2792,6 +2851,26 @@ export default {
       this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 0);
+
+      if (this.form.tunnelId == "" ||
+        this.form.tunnelId == -1 ||
+        this.form.tunnelId == null) {
+        return this.$modal.msgWarning("请选择所在路段隧道");
+      }
+
+      if (this.form.faultType == "" ||
+        this.form.faultType == -1 ||
+        this.form.faultType == null) {
+        return this.$modal.msgWarning("请选择故障类型");
+      }
+      if (this.form.eqId == "" ||
+        this.form.eqId == -1 ||
+        this.form.eqId == null) {
+        return this.$modal.msgWarning("请选择设备");
+      }
+      if (this.form.faultDescription == "") {
+        return this.$modal.msgWarning("请填写故障描述");
+      }
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {

@@ -10,6 +10,7 @@ import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
+import com.tunnel.business.mapper.electromechanicalPatrol.SdPatrolListMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
@@ -45,6 +46,10 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     @Autowired
     private ISdDevicesService sdDevicesService;
+
+    @Autowired
+    private SdPatrolListMapper sdPatrolListService;
+
 
     /**
      * 查询故障清单
@@ -306,7 +311,18 @@ public class SdFaultListServiceImpl implements ISdFaultListService
      */
     @Override
     public List<SdPatrolList> getFaultRepairInfo(String faultId) {
-        List<SdPatrolList> patrolList = sdFaultListMapper.getFaultRepairInfo(faultId);
+        List<SdPatrolList> patrolList = new ArrayList<>();
+        //先判断是巡检点还是故障点
+        SdPatrolList sdPatrolList = sdPatrolListService.faultOrDevices(faultId);
+        //故障点
+        if(sdPatrolList!=null&&"1".equals(sdPatrolList.getPatrolType())){
+            patrolList = sdFaultListMapper.getFaultRepairInfo(faultId);
+
+        }
+        //巡检点
+        if(sdPatrolList!=null&&"0".equals(sdPatrolList.getPatrolType())){
+            patrolList = sdFaultListMapper.getDevicesRepairInfo(faultId);
+        }
         if(patrolList!=null&&patrolList.size()>0){
             String fileId = patrolList.get(0).getImgFileId();
             if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
@@ -315,6 +331,8 @@ public class SdFaultListServiceImpl implements ISdFaultListService
                 patrolList.get(0).setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
             }
         }
+
+
 
         return patrolList;
     }

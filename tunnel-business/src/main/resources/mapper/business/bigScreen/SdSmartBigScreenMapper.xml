@@ -524,10 +524,20 @@
                     sd_vehicle_driving vd
                 WHERE
                     1 = 1
+                  AND FIND_IN_SET(
+                    vd.plate_number,(
+                        SELECT
+                            GROUP_CONCAT( plate_number )
+                        FROM
+                            sd_vehicle_driving
+                        WHERE
+                        1 = 1
+                        AND travel_type = '2'
+                    )) = 0
+                  AND vd.travel_type = '1'
                   AND vd.plate_number != ''
                   AND vd.plate_number IS NOT NULL
-                  AND vd.travel_type = '1'
-                  AND DATE_FORMAT( vd.start_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
+                  AND DATE_FORMAT( vd.start_time, '%Y-%m-%d' ) = DATE_FORMAT( '2023-02-15', '%Y-%m-%d' )
                   <if test="tunnelId != null and tunnelId != ''">
                       AND vd.tunnel_id = #{tunnelId}
                   </if>

@@ -98,7 +98,7 @@
         ></i>
       </div>-->
     </div>
-    <div ref="main">
+    <div >
       <el-row
         :gutter="20"
         style="margin: 10px 0 25px"
@@ -147,7 +147,7 @@
             style="font-size: 36px; color: #39adff;float: left"
           ></i>
         </div>-->
-          <div class="grid-content bg-purple" id="pladiv">
+          <div ref="main" class="grid-content bg-purple" id="pladiv">
             <el-input
               placeholder="请输入桩号，回车搜索"
               v-model="queryParams.pile"

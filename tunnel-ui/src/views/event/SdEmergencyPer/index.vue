@@ -17,7 +17,7 @@
             >
       </el-col>
       <el-col :span="6" :offset="14">
-          <div class="grid-content bg-purple">
+          <div ref="main" class="grid-content bg-purple">
             <el-input
               placeholder="请输入人员姓名，回车搜索"
               v-model="queryParams.userName"

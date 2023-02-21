@@ -12,15 +12,15 @@
           @click="handleAdd()"
           >新增物资
         </el-button>
-        <el-button type="primary" plain size="mini" @click="toggleExpandAll"
+<!--        <el-button type="primary" plain size="mini" @click="toggleExpandAll"
           >展开/折叠</el-button
-        >
+        >-->
         <el-button size="mini" @click="resetQuery" type="primary" plain
           >刷新</el-button
         >
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div  ref = "main" class="grid-content bg-purple">
           <el-input
             placeholder="请输入物资名称、桩号，回车搜索"
             v-model="queryParams.materialName"

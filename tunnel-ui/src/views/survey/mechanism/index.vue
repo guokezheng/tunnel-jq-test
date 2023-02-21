@@ -4,7 +4,7 @@
     <!-- 全局搜索 -->
     <el-row :gutter="20" style="margin: 10px 0 25px">
       <el-col :span="4">
-        <el-button 
+        <el-button
           type="primary"
           plain
           size="mini"
@@ -15,7 +15,7 @@
             >
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
               placeholder="请输入机构、负责人，回车搜索"
               v-model="queryParams.deptName"

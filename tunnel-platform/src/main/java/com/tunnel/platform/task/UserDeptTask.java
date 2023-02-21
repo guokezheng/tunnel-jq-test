@@ -2,7 +2,7 @@ package com.tunnel.platform.task;
 
 import com.ruoyi.common.core.domain.entity.SysDeptSg;
 import com.ruoyi.system.mapper.SysDeptSgMapper;
-import com.tunnel.platform.util.AuthUtil;
+import com.tunnel.business.utils.sso.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

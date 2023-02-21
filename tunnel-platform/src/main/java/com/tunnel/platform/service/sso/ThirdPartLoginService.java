@@ -11,15 +11,13 @@ import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.framework.web.service.TokenService;
 import com.ruoyi.system.service.ISysUserService;
-import com.tunnel.platform.util.AuthUtil;
+import com.tunnel.business.utils.sso.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -28,9 +26,6 @@ import java.util.Map;
 public class ThirdPartLoginService {
 
 
-    @Autowired
-    @Qualifier("OkHttpRestTemplate")
-    private RestTemplate restTemplate;
 
     @Autowired
     private ISysUserService sysUserService;
@@ -135,6 +130,8 @@ public class ThirdPartLoginService {
         }
         return ajaxResult;
     }
+
+
 
 
 

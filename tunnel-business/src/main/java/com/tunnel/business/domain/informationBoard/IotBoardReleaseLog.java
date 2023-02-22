@@ -53,7 +53,7 @@ public class IotBoardReleaseLog extends BaseEntity
     private String releaseStatus;
 
     /** 发布机构 */
-    @Excel(name = "发布机构")
+//    @Excel(name = "发布机构")
     private String releaseDeptName;
 
     /** 发布机构 */

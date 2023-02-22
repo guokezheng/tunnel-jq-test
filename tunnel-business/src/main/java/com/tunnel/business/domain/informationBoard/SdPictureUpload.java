@@ -23,7 +23,7 @@ public class SdPictureUpload extends BaseEntity
     private String pictureName;
 
     /** 图片url */
-    @Excel(name = "图片地址")
+    @Excel(name = "图片")
     private String pictureUrl;
 
     /** 宽度 */

@@ -6,6 +6,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,29 +29,37 @@ public class SysUser extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 用户ID */
-    @Excel(name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
+    @Excel(name = "用户编号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
     @ApiModelProperty("用户id")
     private Long userId;
 
     /** 部门ID */
-    @Excel(name = "部门编号", type = Type.IMPORT)
+//    @Excel(name = "部门编号", type = Type.IMPORT)
     @ApiModelProperty("部门id")
     private String deptId;
 
     /** 用户账号 */
-    @Excel(name = "登录名称")
+    @Excel(name = "用户名称")
     @ApiModelProperty("用户账号")
     private String userName;
 
     /** 用户昵称 */
-    @Excel(name = "用户名称")
+    @Excel(name = "用户昵称")
     @ApiModelProperty("用户昵称")
     private String nickName;
 
     /** 用户邮箱 */
-    @Excel(name = "用户邮箱")
+//    @Excel(name = "用户邮箱")
     @ApiModelProperty("用户邮箱")
     private String email;
+
+    /** 部门对象 */
+    @Excels({
+            @Excel(name = "部门", targetAttr = "deptName", type = Type.EXPORT)
+//            @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
+    })
+    @ApiModelProperty("部门对象")
+    private SysDept dept;
 
     /** 手机号码 */
     @Excel(name = "手机号码")
@@ -58,7 +67,7 @@ public class SysUser extends BaseEntity
     private String phonenumber;
 
     /** 用户性别 */
-    @Excel(name = "用户性别", readConverterExp = "0=男,1=女,2=未知")
+//    @Excel(name = "用户性别", readConverterExp = "0=男,1=女,2=未知")
     @ApiModelProperty("用户性别")
     private String sex;
 
@@ -75,7 +84,7 @@ public class SysUser extends BaseEntity
     private String salt;
 
     /** 帐号状态（0正常 1停用） */
-    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
+    @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
     @ApiModelProperty("帐号状态（0正常 1停用）")
     private String status;
 
@@ -84,22 +93,20 @@ public class SysUser extends BaseEntity
     private String delFlag;
 
     /** 最后登录IP */
-    @Excel(name = "最后登录IP", type = Type.EXPORT)
+//    @Excel(name = "最后登录IP", type = Type.EXPORT)
     @ApiModelProperty("最后登录IP")
     private String loginIp;
 
     /** 最后登录时间 */
-    @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
+//    @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
     @ApiModelProperty("最后登录的时间")
     private Date loginDate;
 
-    /** 部门对象 */
-    @Excels({
-        @Excel(name = "部门名称", targetAttr = "deptName", type = Type.EXPORT),
-        @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
-    })
-    @ApiModelProperty("部门对象")
-    private SysDept dept;
+    /** 创建时间 */
+    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
+    @ApiModelProperty("创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
     /** 角色对象 */
     @ApiModelProperty("角色管理")
@@ -333,6 +340,16 @@ public class SysUser extends BaseEntity
     public void setRoleId(Long roleId)
     {
         this.roleId = roleId;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     @Override

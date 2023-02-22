@@ -333,7 +333,7 @@
       />
       <el-table-column label="操作信息" align="center" prop="msg" />
       <el-table-column
-        label="登录日期"
+        label="登录时间"
         align="center"
         prop="loginTime"
         sortable="custom"

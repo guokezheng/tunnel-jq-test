@@ -100,7 +100,7 @@ public interface SdEventMapper
      * 事件当日未处理总条数
      * @return
      */
-    int getEventUntreatedNum();
+    Integer getEventUntreatedNum();
 
     /**
      * 事件弹窗设备故障

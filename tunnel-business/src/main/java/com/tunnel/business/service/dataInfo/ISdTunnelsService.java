@@ -113,4 +113,18 @@ public interface ISdTunnelsService {
      * @return
      */
     List<SdTunnels> selectAllSdTunnelsList1();
+
+    /**
+     * 查询隧道所属部门
+     * @param tunnelId
+     * @return
+     */
+    String selectTunnelDept(String tunnelId);
+
+    /**
+     * 查询数据报表折线图设备树
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> selectTunnelLineList(String deptId);
 }

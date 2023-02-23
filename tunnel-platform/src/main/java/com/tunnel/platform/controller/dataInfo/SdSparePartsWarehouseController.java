@@ -66,7 +66,7 @@ public class SdSparePartsWarehouseController extends BaseController
     {
         List<SdSparePartsWarehouse> list = sdSparePartsWarehouseService.selectSdSparePartsWarehouseList(sdSparePartsWarehouse);
         ExcelUtil<SdSparePartsWarehouse> util = new ExcelUtil<SdSparePartsWarehouse>(SdSparePartsWarehouse.class);
-        return util.exportExcel(list, "备品备件库数据");
+        return util.exportExcel(list, "备品备件数据");
     }
 
     /**

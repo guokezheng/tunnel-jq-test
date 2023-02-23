@@ -107,3 +107,11 @@ export function workTriggerInfo(id) {
     method: 'get'
   })
 }
+
+// 查询设备类型大小类 树结构
+export function getCategoryTree() {
+  return request({
+    url: '/bigType/getCategoryTree',
+    method: 'get'
+  })
+}

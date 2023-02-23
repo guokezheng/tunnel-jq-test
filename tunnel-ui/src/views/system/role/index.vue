@@ -1,6 +1,92 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          v-hasPermi="['system:role:add']"
+          size="small"
+          @click="handleAdd()"
+        >新增角色
+        </el-button>
+        <el-button size="small" @click="resetQuery"
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入角色名称、权限字符"
+            v-model="queryParams.roleName"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="role_boxShow = !role_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="role_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="角色状态" prop="status" >
+          <el-select
+            v-model="queryParams.status"
+            placeholder="请选择角色状态"
+            clearable
+            size="small"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="dateRange"
+            size="small"
+            style="width: 100%"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:role:export']"
+          >导出</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+
+<!--    <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
       <el-form-item label="角色名称" prop="roleName">
         <el-input
           v-model="queryParams.roleName"
@@ -84,7 +170,7 @@
           v-hasPermi="['system:role:export']"
         >导出</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -132,8 +218,9 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-
-    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" max-height="640">
+    <div class="tableTopHr" ></div>
+    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange" 
+    class="allTable" height="62vh">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="角色编号" prop="roleId" sortable />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" />
@@ -303,6 +390,7 @@ export default {
   dicts: ['sys_normal_disable'],
   data() {
     return {
+      role_boxShow:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -389,7 +477,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.role_boxShow == true) {
+          self.role_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询角色列表 */
     getList() {
       this.loading = true;
@@ -498,6 +601,7 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
+      this.queryParams.roleName ="";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -657,14 +761,8 @@ export default {
         this.exportLoading = false;
       }).catch(() => {});
     },
-    // 表格样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
   }
 };
 </script>
+
+

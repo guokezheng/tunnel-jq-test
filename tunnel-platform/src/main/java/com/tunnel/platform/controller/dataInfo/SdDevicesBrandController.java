@@ -46,7 +46,7 @@ public class SdDevicesBrandController extends BaseController {
     public AjaxResult export(SdDevicesBrand sdDevicesBrand) {
         List<SdDevicesBrand> list = sdDevicesBrandService.selectSdDevicesBrandList(sdDevicesBrand);
         ExcelUtil<SdDevicesBrand> util = new ExcelUtil<SdDevicesBrand>(SdDevicesBrand.class);
-        return util.exportExcel(list, "物联设备厂商数据");
+        return util.exportExcel(list, "设备厂商");
     }
 
     /**

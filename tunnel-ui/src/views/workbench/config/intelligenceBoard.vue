@@ -509,7 +509,7 @@ export default {
         //   content: "白色",
         // },
         // {
-        //   code: "GreenYellow",
+        //   code: "#00FF00",
         //   content: "绿色",
         // },
       ],

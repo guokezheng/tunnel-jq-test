@@ -174,5 +174,22 @@ public interface SdSmartBigScreenMapper {
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>>getRiskIndicators(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getRiskIndicators(@Param("tunnelId") String tunnelId);
+
+    /**
+     * 查询当日累计车辆
+     * @param tunnelId
+     * @return
+     */
+    Map<String, Object> getCumulativeCar(@Param("tunnelId") String tunnelId,
+                                         @Param("model") String model);
+
+    /**
+     * 查询车辆在途数
+     * @param tunnelId
+     * @param model
+     * @return
+     */
+    Map<String, Object> getTransitCar(@Param("tunnelId") String tunnelId,
+                                      @Param("model") String model);
 }

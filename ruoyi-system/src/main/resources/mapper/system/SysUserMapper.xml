@@ -63,14 +63,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			AND u.user_id = #{userId}
 		</if>
 		<if test="userName != null and userName != ''">
-			AND u.user_name like concat('%', #{userName}, '%')
+			AND CONCAT(u.user_name, u.phonenumber) LIKE CONCAT('%',#{userName},'%')
 		</if>
 		<if test="status != null and status != ''">
 			AND u.status = #{status}
 		</if>
-		<if test="phonenumber != null and phonenumber != ''">
-			AND u.phonenumber like concat('%', #{phonenumber}, '%')
-		</if>
+
 		<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
 			AND date_format(u.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
 		</if>

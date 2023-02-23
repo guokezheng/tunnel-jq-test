@@ -101,7 +101,7 @@
                     v-for="(item, index) of eventForm.iconUrlList"
                     :key="index"
                     :src="item.imgUrl"
-                    :preview-src-list="Array(item.imgUrl)" 
+                    :preview-src-list="Array(item.imgUrl)"
                   ></el-image>
                 </div>
                 <img
@@ -205,7 +205,7 @@
                   <el-image
                     class="back-img"
                     :src="backImg"
-                    :style="{ 
+                    :style="{
                       width: picWidth / 1.37 + 'px',
                   }"
                   ></el-image>
@@ -319,7 +319,7 @@
                   </div>
                 </div>
               </div>
-              
+
             </div>
             <div class="tunnelBox3" v-show="activeMap == 2">
               <iframe
@@ -579,7 +579,7 @@
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 35].includes(this.eqInfo.clickEqType)"
+      v-if="[14, 21, 32, 33, 15, 35,40,39,48,45].includes(this.eqInfo.clickEqType)"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>
@@ -1150,7 +1150,7 @@ export default {
           })
         })
         setTimeout(()=>{
-          getEventCamera( 
+          getEventCamera(
             this.eventForm.tunnelId,
             this.eventForm.stakeNum,
             this.eventForm.direction
@@ -1173,7 +1173,7 @@ export default {
               })
           })
         },500)
-        
+
     },
     /** 查询应急人员信息列表 */
     async getpersonnelList() {
@@ -1297,8 +1297,7 @@ export default {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
                   // 5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
-                  5,
-                  14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39, 48, 45
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -1314,7 +1313,7 @@ export default {
                         parseFloat(deviceData.CO).toFixed(2) +
                         "/PPM  VI:" +
                         parseFloat(deviceData.VI).toFixed(2) +
-                        "KM";
+                        "M";
                     } else if (deviceData.eqType == 17) {
                       this.selectedIconList[j].num =
                         parseFloat(deviceData.FS).toFixed(2) +

@@ -1,13 +1,61 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="文本" prop="word">
+    <!-- 全局搜索 -->
+    <el-row  :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          size="small"
+          @click="handleAdd"
+          v-hasPermi="['system:vocabulary:add']"
+        >新增</el-button
+        >
+        <el-button
+          size="small"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:vocabulary:remove']"
+        >删除</el-button
+        >
+        <!-- <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['system:vocabulary:export']"
+        >导出</el-button
+        > -->
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+        >
+
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div  ref="main" class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.word"
+            placeholder="请输入文本内容,回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+            style="border-right:#00C8FF solid 1px !important;border-radius:3px"
+          >
+          <!-- <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button> -->
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <!-- <div ref="cc" class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+      <el-form-item label="文本" prop="word" style="width:100%">
         <el-input
           v-model="queryParams.word"
           placeholder="请输入文本"
@@ -16,53 +64,17 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
+          
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
           >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:vocabulary:add']"
-          >新增</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:vocabulary:edit']"
-          >修改</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:vocabulary:remove']"
-          >删除</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:vocabulary:export']"
-          >导出</el-button
-        >
-      </el-form-item>
-    </el-form>
-
+          >
+        </el-form-item>
+      </el-form>
+    </div> -->
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -115,18 +127,18 @@
         @queryTable="getList"
       ></right-toolbar>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="vocabularyList"
-      max-height="640"
+      max-height="62vh"
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'creatTime', order: 'descending'}"
-      :row-class-name="tableRowClassName"
-
+      class="allTable"
     >
       <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="序号"
+          <el-table-column label="序号" align="center"
+          :index="indexMethod"
       type="index"
       width="50">
     </el-table-column>
@@ -204,6 +216,7 @@ export default {
   components: {},
   data() {
     return {
+      boxShow:false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -245,6 +258,10 @@ export default {
     this.getList();
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     /** 查询情报板敏感字管理列表 */
     getList() {
       this.loading = true;
@@ -275,7 +292,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
+      this.resetForm("queryParams");
+      this.queryParams.word = null
       this.handleQuery();
     },
     // 多选框选中数据
@@ -345,6 +363,8 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
+      //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
+      queryParams.ids = this.ids;
       this.$confirm("是否确认导出所有情报板敏感字管理数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -355,16 +375,37 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
+          queryParams.ids = null;
         });
     },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
+    
   },
 };
 </script>
+<style lang="scss" scoped>
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    width: 100%;
+    ::v-deep .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+  }
+}
+</style>

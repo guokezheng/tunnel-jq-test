@@ -1,6 +1,77 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          v-hasPermi="['system:menu:add']"
+          size="small"
+          @click="handleAdd()"
+        >新增菜单
+        </el-button>
+        <el-button
+            size="small"
+            @click="toggleExpandAll"
+          >展开/折叠</el-button>
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入菜单名称，回车搜索"
+            v-model="queryParams.menuName"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="menu_boxShow = !menu_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="menu_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="菜单状态" prop="status">
+          <el-select
+            style="width: 325px"
+            v-model="queryParams.status"
+            clearable
+            placeholder="请选择菜单状态"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          
+        </el-form-item>
+
+      </el-form>
+    </div>
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
       <el-form-item label="菜单名称" prop="menuName">
         <el-input
           v-model="queryParams.menuName"
@@ -37,7 +108,7 @@
           @click="toggleExpandAll"
         >展开/折叠</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -61,7 +132,7 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-if="refreshTable"
       v-loading="loading"
@@ -69,9 +140,8 @@
       row-key="menuId"
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-      max-height="640"
-      :row-class-name="tableRowClassName"
-      class="menuAdministration"
+      height="62vh"
+      class="menuAdministration allTable"
     >
       <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="160"></el-table-column>
       <el-table-column prop="icon" label="图标" align="center" width="100">
@@ -79,10 +149,10 @@
           <svg-icon :icon-class="scope.row.icon" />
         </template>
       </el-table-column>
-      <el-table-column prop="orderNum" label="排序" width="60"></el-table-column>
-      <el-table-column prop="perms" label="权限标识" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="status" label="状态" width="80">
+      <el-table-column prop="orderNum" label="排序" width="60" align="center"></el-table-column>
+      <el-table-column prop="perms" label="权限标识" :show-overflow-tooltip="true" align="center"></el-table-column>
+      <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true" align="center"></el-table-column>
+      <el-table-column prop="status" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
         </template>
@@ -116,7 +186,7 @@
     </el-table>
 
     <!-- 添加或修改菜单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="680px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="680px" append-to-body class="addUserDialog">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="24">
@@ -299,6 +369,7 @@ export default {
   components: { Treeselect, IconSelect },
   data() {
     return {
+      menu_boxShow:false,
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -339,7 +410,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.menu_boxShow == true) {
+          self.menu_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     // 选择图标
     selected(name) {
       this.form.icon = name;
@@ -400,6 +486,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.menuName = "";
       this.handleQuery();
     },
     /** 新增按钮操作 */
@@ -461,14 +548,7 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    // 表格样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
   }
 };
 </script>
+

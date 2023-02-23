@@ -216,6 +216,42 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         }
     }
 
+    @Override
+    public AjaxResult getCumulativeCar(String tunnelId) {
+        //查询当日所有车辆
+        Map<String, Object> cumulativeCarAll = sdSmartBigScreenMapper.getCumulativeCar(tunnelId,null);
+        //查询客车
+        Map<String, Object> cumulativeCarKe = sdSmartBigScreenMapper.getCumulativeCar(tunnelId, "1");
+        //查询货车
+        Map<String, Object> cumulativeCarHuo = sdSmartBigScreenMapper.getCumulativeCar(tunnelId, "2");
+        //查询重点车辆
+        Map<String, Object> cumulativeCarKey = sdSmartBigScreenMapper.getCumulativeCar(tunnelId, "3");
+        Map<String, Object> map = new HashMap<>();
+        map.put("allCars",cumulativeCarAll == null ? 0 : cumulativeCarAll.get("num"));
+        map.put("passengerCars",cumulativeCarKe == null ? 0 : cumulativeCarKe.get("num"));
+        map.put("goodsCars",cumulativeCarHuo == null ? 0 : cumulativeCarHuo.get("num"));
+        map.put("keyCars",cumulativeCarKey == null ? 0 : cumulativeCarKey.get("num"));
+        return AjaxResult.success(map);
+    }
+
+    @Override
+    public AjaxResult getTransitCar(String tunnelId) {
+        //查询车辆在途数
+        Map<String, Object> transitCarAll = sdSmartBigScreenMapper.getTransitCar(tunnelId, null);
+        //查询客车
+        Map<String, Object> transitCarKe = sdSmartBigScreenMapper.getTransitCar(tunnelId, "1");
+        //查询货车
+        Map<String, Object> transitCarHuo = sdSmartBigScreenMapper.getTransitCar(tunnelId, "2");
+        //查询重点车辆
+        Map<String, Object> transitCarKey = sdSmartBigScreenMapper.getTransitCar(tunnelId, "3");
+        Map<String, Object> map = new HashMap<>();
+        map.put("allCars",transitCarAll == null ? 0 : transitCarAll.get("num"));
+        map.put("passengerCars",transitCarKe == null ? 0 : transitCarKe.get("num"));
+        map.put("goodsCars",transitCarHuo == null ? 0 : transitCarHuo.get("num"));
+        map.put("keyCars",transitCarKey == null ? 0 : transitCarKey.get("num"));
+        return AjaxResult.success(map);
+    }
+
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){
         List<Map<String, Object>> list = new ArrayList<>();
         //已完成数量

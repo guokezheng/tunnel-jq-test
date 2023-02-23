@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备列Controller
@@ -34,6 +35,12 @@ public class SdIotDeviceController extends BaseController
         startPage();
         List<SdIotDevice> list = sdIotDeviceService.selectIotDeviceArrayList(sdIotDevice);
         return getDataTable(list);
+    }
+
+    @GetMapping("/getIotBoardList")
+    public AjaxResult getIotBoardList(SdIotDevice sdIotDevice)
+    {
+        return AjaxResult.success(sdIotDeviceService.getIotBoardList(sdIotDevice));
     }
 
     @GetMapping(value = "/getdevicessize")

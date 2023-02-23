@@ -1,6 +1,78 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="4">
+        <el-button
+          v-hasPermi="['system:post:add']"
+          size="small"
+          @click="handleAdd()"
+        >新增岗位
+        </el-button>
+        <el-button
+            type="primary"
+            plain
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:post:export']"
+          >导出</el-button>
+        <el-button size="small" @click="resetQuery"
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入岗位名称、编码，回车搜索"
+            v-model="queryParams.postCode"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="post_boxShow = !post_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="post_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="岗位状态" prop="status" >
+          <el-select
+            v-model="queryParams.status"
+            clearable
+            placeholder="请选择岗位状态"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="岗位编码" prop="postCode">
         <el-input
           v-model="queryParams.postCode"
@@ -64,7 +136,7 @@
           v-hasPermi="['system:post:export']"
         >导出</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -112,9 +184,9 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-
-    <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange" 
-              :row-class-name="tableRowClassName" max-height="640">
+    <div class="tableTopHr" ></div>
+    <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange"
+               height="62vh" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="岗位编号" align="center" prop="postId" />
       <el-table-column label="岗位编码" align="center" prop="postCode" />
@@ -197,6 +269,7 @@ export default {
   dicts: ['sys_normal_disable'],
   data() {
     return {
+      post_boxShow:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -244,7 +317,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.post_boxShow == true) {
+          self.post_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询岗位列表 */
     getList() {
       this.loading = true;
@@ -279,6 +367,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.postCode = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -343,14 +432,6 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
-    },
-    // 表格样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   }
 };

@@ -45,6 +45,17 @@ public class SdEmergencyVehicle extends BaseEntity
     @Excel(name = "车型")
     private String vType;
 
+
+    private String cx;
+
+    public String getCx() {
+        return this.cx;
+    }
+
+    public void setCx(final String cx) {
+        this.cx = cx;
+    }
+
     /** 存放地点 */
     @Excel(name = "存放地点")
     private String vPlace;

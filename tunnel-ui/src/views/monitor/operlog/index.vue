@@ -1,6 +1,92 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+          >
+          <el-button
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['monitor:operlog:export']"
+          >导出</el-button>
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入系统模块、操作人员"
+            v-model="queryParams.title"
+            @keyup.enter.native="handleQuery"
+            size="small"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="rz_boxShow = !rz_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="rz_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="操作类型" prop="businessType">
+          <el-select
+            v-model="queryParams.businessType"
+            placeholder="请选择操作类型"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_oper_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="操作状态" prop="status">
+          <el-select
+            v-model="queryParams.status"
+            clearable
+            placeholder="请选择操作状态"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_common_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+
+
+
+
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="系统模块" prop="title">
         <el-input
           v-model="queryParams.title"
@@ -74,7 +160,7 @@
           v-hasPermi="['monitor:operlog:export']"
         >导出</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
      <el-col :span="1.5">
@@ -111,9 +197,9 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table ref="tables" v-loading="loading"
-              max-height="610" :data="list" @selection-change="handleSelectionChange" 
+              max-height="610" :data="list" @selection-change="handleSelectionChange"
               :default-sort="defaultSort" @sort-change="handleSortChange"
               :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55" align="center" />
@@ -210,6 +296,7 @@ export default {
   dicts: ['sys_oper_type', 'sys_common_status'],
   data() {
     return {
+      rz_boxShow:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -246,7 +333,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.rz_boxShow == true) {
+          self.rz_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询登录日志 */
     getList() {
       this.loading = true;
@@ -270,6 +372,7 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
+      this.queryParams.title = "";
       this.$refs.tables.sort(this.defaultSort.prop, this.defaultSort.order)
       this.handleQuery();
     },
@@ -330,4 +433,3 @@ export default {
   }
 };
 </script>
-

@@ -1,144 +1,102 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="设备编号" prop="deviceId">
-        <el-input
-          v-model="queryParams.deviceId"
-          placeholder="请输入设备编号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="设备名称" prop="deviceName">
-        <el-input
-          v-model="queryParams.deviceName"
-          placeholder="请输入设备名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="更换时间">
-        <el-date-picker
-          v-model="daterangeChangeTime"
-          size="small"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item>
+    <!-- 全局搜索 -->
+    <el-row  :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
           type="primary"
-          size="mini"
-          @click="handleQuery"
+          plain
+          size="small"
+          @click="handleAdd"
+          v-hasPermi="['system:change:add']"
+          >新增</el-button
+        >
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['system:change:edit']"-->
+<!--          >修改</el-button-->
+<!--        >-->
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:change:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:change:export']"
+          >导出</el-button>
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
+        <!--          <el-button-->
+        <!--            type="info"-->
+        <!--            icon="el-icon-s-help"-->
+        <!--            size="mini"-->
+        <!--            @click="checkInstruction"-->
+        <!--            >校验指令</el-button>-->
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div  ref="main" class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.deviceName"
+            placeholder="请输入设备名称、设备编号，回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+
+    <div ref="cc" class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+          <el-form-item style="width: 100%;" label="更换时间">
+            <el-date-picker
+              v-model="daterangeChangeTime"
+              size="small"
+              style="width: 320px"
+              value-format="yyyy-MM-dd"
+              type="daterange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            ></el-date-picker>
+          </el-form-item>
+        <el-form-item class="bottomBox" align="center">
+          <el-button size="small" type="primary" @click="handleQuery"
           >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:change:add']"
-          >新增</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:change:edit']"
-          >修改</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:change:remove']"
-          >删除</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:change:export']"
-          >导出</el-button
-        >
-      </el-form-item>
-    </el-form>
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:change:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:change:edit']"
-          >修改</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:change:remove']"
-          >删除</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:change:export']"
-          >导出</el-button
-        >
-      </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
-    </el-row> -->
-
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="changeList"
@@ -149,6 +107,7 @@
 
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <!-- <el-table-column label="更换时间" align="center" prop="id" /> -->
       <el-table-column label="设备编号" align="center" prop="deviceId" />
       <el-table-column label="设备名称" align="center" prop="deviceName" />
@@ -262,6 +221,7 @@ export default {
   name: "Change",
   data() {
     return {
+      boxShow: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -307,7 +267,23 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     /** 查询设备变更列表 */
     getList() {
       this.loading = true;
@@ -318,6 +294,7 @@ export default {
         this.queryParams.params["endChangeTime"] = this.daterangeChangeTime[1];
       }
       listChange(this.queryParams).then((response) => {
+        console.log(response,"查询设备变更列表")
         this.changeList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -355,6 +332,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.deviceName='';
       this.daterangeChangeTime = [];
       this.resetForm("queryForm");
       this.handleQuery();
@@ -441,3 +419,4 @@ export default {
   },
 };
 </script>
+

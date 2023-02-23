@@ -43,3 +43,13 @@ export function getBoardEditInfo(deviceId) {
     method: 'get',
   })
 }
+
+// 查询情报板设备列表
+export function getIotBoardList(query) {
+  return request({
+    url: '/information/getIotBoardList',
+    method: 'get',
+    params: query
+  })
+}
+

@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="tunnelId"    column="tunnel_id"    />
         <result property="userName"    column="user_name"    />
         <result property="eqId"    column="eq_id"    />
-        <!-- <result property="eqName"    column="eq_name"    /> -->
+        <!--<result property="eqName"    column="eq_name"    />-->
         <result property="code"    column="code"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -68,8 +68,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.before_state,
         a.operation_state,
         e.state_name,
-        a.control_type,
-        a.state,
+        CASE a.control_type WHEN 1 THEN '时间控制' WHEN 2 THEN '光强控制' ELSE '手动' END AS control_type ,
+        CASE a.state WHEN 0 THEN '成功' WHEN 1 THEN '失败' END AS state,
         a.description,
         a.oper_ip
         from sd_operation_log a
@@ -77,12 +77,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_devices c on a.eq_id = c.eq_id
         left join sd_equipment_type d on a.eq_type_id = d.type_id
         left join sd_equipment_state e on a.operation_state = e.device_state AND  e.state_type_id=a.eq_type_id and state_type = 2
-        where 1=1 and a.create_time <![CDATA[ > ]]> DATE_SUB(CURDATE(),INTERVAL 3 day)
+        where 1=1
         <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
         <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
         <if test="userName != null  and userName != ''"> and a.user_name like concat('%', #{userName}, '%')</if>
+        <if test="operIp != null  and operIp != ''"> and a.oper_ip like concat('%', #{operIp}, '%')</if>
         <if test="eqId != null  and eqId != ''"> and a.eq_id = #{eqId}</if>
-        <!-- <if test="eqName != null  and eqName != ''"> and a.eq_name like concat('%', #{eqName}, '%')</if> -->
         <if test="code != null  and code != ''"> and a.code = #{code}</if>
         <if test="beforeState != null  and beforeState != ''"> and a.before_state = #{beforeState}</if>
         <if test="operationState != null  and operationState != ''"> and a.operation_state = #{operationState}</if>
@@ -105,6 +105,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdOperationLogVo"/>
         where id = #{id}
     </select>
+
 
     <insert id="insertSdOperationLog" parameterType="SdOperationLog" useGeneratedKeys="true" keyProperty="id">
         insert into sd_operation_log

@@ -1,47 +1,16 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="70px"
-    >
-      <el-form-item label="图片名称" prop="pictureName" >
-        <el-input
-          v-model="queryParams.pictureName"
-          placeholder="请输入图片名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="6">
         <el-button
           type="primary"
           plain
+          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:templateImage:add']"
+          v-hasPermi="['system:vocabulary:add']"
           >新增</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:templateImage:edit']"
-          >修改</el-button
         >
         <el-button
           type="primary"
@@ -60,8 +29,114 @@
           v-hasPermi="['system:templateImage:export']"
           >导出</el-button
         >
-      </el-form-item>
-    </el-form>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>刷新</el-button>
+       
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div ref="main" class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.pictureName"
+            placeholder="请输入图片名称,回车搜索"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+          <!-- <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button> -->
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <!-- <div ref="cc" class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+      <el-form-item label="图片名称" prop="pictureName" style="width:100%" >
+           <el-input
+             v-model="queryParams.pictureName"
+             placeholder="请输入图片名称"
+             clearable
+             size="small"
+           />
+         </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div> -->
+    <!--    <el-form-->
+    <!--      :model="queryParams"-->
+    <!--      ref="queryForm"-->
+    <!--      :inline="true"-->
+    <!--      v-show="showSearch"-->
+    <!--      label-width="70px"-->
+    <!--    >-->
+    <!--      <el-form-item label="图片名称" prop="pictureName" >-->
+    <!--        <el-input-->
+    <!--          v-model="queryParams.pictureName"-->
+    <!--          placeholder="请输入图片名称,回车搜索"-->
+    <!--          clearable-->
+    <!--          size="small"-->
+    <!--          @keyup.enter.native="handleQuery"-->
+    <!--        />-->
+    <!--      </el-form-item>-->
+    <!--      <el-form-item>-->
+    <!--&lt;!&ndash;        <el-button&ndash;&gt;-->
+    <!--&lt;!&ndash;          type="primary"&ndash;&gt;-->
+    <!--&lt;!&ndash;          size="mini"&ndash;&gt;-->
+    <!--&lt;!&ndash;          @click="handleQuery"&ndash;&gt;-->
+    <!--&lt;!&ndash;          >搜索</el-button&ndash;&gt;-->
+    <!--&lt;!&ndash;        >&ndash;&gt;-->
+    <!--&lt;!&ndash;        <el-button size="mini" @click="resetQuery" type="primary" plain&ndash;&gt;-->
+    <!--&lt;!&ndash;          >重置</el-button&ndash;&gt;-->
+    <!--&lt;!&ndash;        >&ndash;&gt;-->
+    <!--        <el-button-->
+    <!--          type="primary"-->
+    <!--          plain-->
+    <!--          size="mini"-->
+    <!--          @click="handleAdd"-->
+    <!--          v-hasPermi="['system:templateImage:add']"-->
+    <!--          >新增</el-button-->
+    <!--        >-->
+    <!--&lt;!&ndash;        <el-button&ndash;&gt;-->
+    <!--&lt;!&ndash;          type="primary"&ndash;&gt;-->
+    <!--&lt;!&ndash;          plain&ndash;&gt;-->
+    <!--&lt;!&ndash;          size="mini"&ndash;&gt;-->
+    <!--&lt;!&ndash;          :disabled="single"&ndash;&gt;-->
+    <!--&lt;!&ndash;          @click="handleUpdate"&ndash;&gt;-->
+    <!--&lt;!&ndash;          v-hasPermi="['system:templateImage:edit']"&ndash;&gt;-->
+    <!--&lt;!&ndash;          >修改</el-button&ndash;&gt;-->
+    <!--&lt;!&ndash;        >&ndash;&gt;-->
+    <!--        <el-button-->
+    <!--          type="primary"-->
+    <!--          plain-->
+    <!--          size="mini"-->
+    <!--          :disabled="multiple"-->
+    <!--          @click="handleDelete"-->
+    <!--          v-hasPermi="['system:templateImage:remove']"-->
+    <!--          >删除</el-button-->
+    <!--        >-->
+    <!--        <el-button-->
+    <!--          type="primary"-->
+    <!--          plain-->
+    <!--          size="mini"-->
+    <!--          @click="handleExport"-->
+    <!--          v-hasPermi="['system:templateImage:export']"-->
+    <!--          >导出</el-button-->
+    <!--        >-->
+    <!--      </el-form-item>-->
+    <!--    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -125,7 +200,8 @@
       :row-class-name="tableRowClassName"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" type="index" width="50"> </el-table-column>
+      <el-table-column label="序号" :index="indexMethod" type="index" width="50" align="center">
+      </el-table-column>
 
       <el-table-column label="图片名称" align="center" prop="pictureName" />
       <el-table-column label="图片" align="center">
@@ -144,7 +220,12 @@
       <el-table-column label="图片高度" align="center" prop="imageHeight" />
       <!-- <el-table-column label="图片类型" align="center" prop=" imageType" /> -->
       <el-table-column label="图片分辨率" align="center" prop="vmsSize" />
-      <el-table-column label="图片备注" align="center" prop="imageRemark" :show-overflow-tooltip="true"/>
+      <el-table-column
+        label="图片备注"
+        align="center"
+        prop="imageRemark"
+        :show-overflow-tooltip="true"
+      />
       <el-table-column label="速度" align="center" prop="speed" />
       <!-- <el-table-column label="是否停用" align="center" prop="deleteflag" /> -->
       <el-table-column
@@ -258,7 +339,8 @@
           <el-switch
             v-model="form.deleteflag"
             active-color="#ff4949"
-            inactive-color="#13ce66">
+            inactive-color="#13ce66"
+          >
           </el-switch>
         </el-form-item>
       </el-form>
@@ -307,8 +389,9 @@ export default {
       }
     };
     return {
-      dialogImageUrl:'',
-      dialogVisible:false,
+      boxShow:false,
+      dialogImageUrl: "",
+      dialogVisible: false,
       //需要移除的文件ids
       removeIds: [],
       fileData: "", // 文件上传数据（多文件合一）
@@ -375,9 +458,13 @@ export default {
     this.fileData = new FormData();
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     getList() {
       this.loading = true;
-      console.log(this.queryParams,"this.queryParams");
+      console.log(this.queryParams, "this.queryParams");
       getTemplateImageList(this.queryParams).then((response) => {
         console.log(response, "情报板列表");
         this.vocabularyList = response.rows;
@@ -523,15 +610,11 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm(
-        '是否确认删除该条情报板模板图片?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
+      this.$confirm("是否确认删除该条情报板模板图片?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(function () {
           return deleteTemplateImage(ids);
         })
@@ -543,6 +626,8 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
+      //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
+      queryParams.ids = this.ids;
       this.$confirm("是否确认导出所有情报板模板图片数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -553,6 +638,7 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
+          queryParams.ids = null;
         });
     },
     //监控上传文件列表
@@ -562,7 +648,7 @@ export default {
         this.eqObj.uploadDisabled = true;
         this.$set(this.eqObj, "uploadDisabled", true);
       } else {
-          this.eqObj.uploadDisabled = false;
+        this.eqObj.uploadDisabled = false;
         this.$set(this.eqObj, "uploadDisabled", false);
       }
       this.$forceUpdate();
@@ -605,20 +691,45 @@ export default {
       this.img = url;
       this.yn = !this.yn;
     },
-     // 表格的行样式
-     tableRowClassName({ row, rowIndex }) {
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
       if (rowIndex % 2 == 0) {
         return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
   },
 };
 </script>
 <style scoped lang="scss">
-::v-deep .el-dialog__header{
-    padding: 20px;
-    padding-bottom: 20px;
+::v-deep .el-dialog__header {
+  padding: 20px;
+  padding-bottom: 20px;
+}
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
   }
+  .bottomBox {
+    width: 100%;
+    ::v-deep .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+  }
+}
 </style>

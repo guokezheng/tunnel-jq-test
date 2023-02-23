@@ -98,8 +98,6 @@ public class workspaceController extends BaseController {
     @Autowired
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
 
-    @Autowired
-    private RestTemplate restTemplate;
 
     //3d测试
     @PostMapping("/test")
@@ -119,21 +117,21 @@ public class workspaceController extends BaseController {
             throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
         }
 
+        //解析map 杭山东隧道下调用瑞华赢接口控制设备
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-
-        if ("GSY".equals(deploymentType)) {
-            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
-                Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
-                Integer code = Integer.valueOf(hongMap.get("code"));
-                String msg = hongMap.get("msg").toString();
-                if(code == 200){
-                    return AjaxResult.success(1);
-                }else {
-                    return AjaxResult.success(msg,0);
-                }
+        if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
+            Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
+            Integer code = Integer.valueOf(hongMap.get("code"));
+            String msg = hongMap.get("msg").toString();
+            if(code == 200){
+                return AjaxResult.success(1);
+            }else {
+                return AjaxResult.success(msg,0);
             }
+        }
+        if ("GSY".equals(deploymentType)) {
             map.put("controlType", "0");
             map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);

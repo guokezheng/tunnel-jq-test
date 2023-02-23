@@ -81,7 +81,7 @@ public class IotBoardReleaseLogController extends BaseController
     /**
      * 获取情报板内容发布日志最后10条信息
      */
-    @GetMapping(value = "/getLastReleaseLogsByDeviceId/{id}")
+    @GetMapping(value = "/getLastReleaseLogsByDeviceId/{deviceId}")
     public AjaxResult getLastReleaseLogsByDeviceId(String deviceId)
     {
         return AjaxResult.success(iotBoardReleaseLogService.getLastReleaseLogsByDeviceId(deviceId));

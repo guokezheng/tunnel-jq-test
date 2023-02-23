@@ -40,6 +40,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="speed != null  and speed != ''"> and speed = #{speed}</if>
             <if test="deleteflag != null  and deleteflag != ''"> and deleteflag = #{deleteflag}</if>
             <if test="logically != null  and logically != ''"> and logically = #{logically}</if>
+            <if test="ids != null ">        <!-- id 筛选 -->
+                AND id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
         </where>
     </select>
 

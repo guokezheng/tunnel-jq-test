@@ -163,7 +163,7 @@ public class SdDevicesController extends BaseController {
         List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);
         //List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
-        return util.exportExcel(list, "设备详情");
+        return util.exportExcel(list, "设备管理数据");
     }
 
     /**

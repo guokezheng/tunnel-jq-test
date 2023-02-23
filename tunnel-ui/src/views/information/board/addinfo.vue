@@ -2,21 +2,13 @@
   <div class="container">
     <!-- 添加信息弹窗 -->
     <el-dialog
-      title="提示"
+      title="新增"
       :visible.sync="dialogVisible"
       width="44%"
       :before-close="handleClose"
     >
-      <el-card class="box-card" style="margin-top: 2vh">
+      <el-card class="box-card" >
         <div
-          style="
-            backgroundColor: #000000;
-            display: flex;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
-
-          "
           v-on:ondragenter="ondragenter"
           v-on:drop="faceDrop"
           v-on:dragover="allowDrop"
@@ -24,25 +16,20 @@
             width: boardWidth + 'px',
             height: boardHeight + 'px',
           }"
-          class="blackBoard"
+          class="blackBoard2"
         >
           <span
-            style="line-height: 1; white-space: nowrap;position: absolute;"
             :style="{
               color: dataForm.COLOR,
               fontSize: dataForm.FONT_SIZE,
               fontFamily: dataForm.FONT,
               zIndex: '1000',
-              left: dataForm.COORDINATE.substring(0, 3) + 'px',
-              top: dataForm.COORDINATE.substring(3, 6) + 'px',
+              left: dataForm.COORDINATE?dataForm.COORDINATE.substring(0, 3) + 'px':'',
+              top: dataForm.COORDINATE?dataForm.COORDINATE.substring(3, 6) + 'px':'',
             }"
-            class="textBoard"
-            v-html="
-              dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                / /g,
-                ' &nbsp'
-              )
-            "
+            class="textBoard2 boardTextStyle"
+            style="position: absolute;"
+            v-html="dataForm.CONTENT?dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g,' &nbsp'):''"
           ></span>
         </div>
       </el-card>
@@ -83,7 +70,7 @@
                   v-model="dataForm.category"
                   placeholder="请选择所属类别"
                   clearable
-                  size="small"
+                  size="mini"
                 >
                   <el-option
                     v-for="item in iotTemplateCategoryList"
@@ -105,14 +92,14 @@
               <el-button type="info" plain @click="alignment(4)" size="mini"
                 >上对齐</el-button
               > -->
-              <el-button type="info" plain @click="alignment(3)" size="mini"
-                >右对齐</el-button
+              <el-button type="primary" @click="alignment(1)" size="mini"
+                >左对齐</el-button
               >
-              <el-button type="info" plain @click="alignment(2)" size="mini"
+              <el-button type="primary" @click="alignment(2)" size="mini"
                 >左右居中</el-button
               >
-              <el-button type="info" plain @click="alignment(1)" size="mini"
-                >左对齐</el-button
+              <el-button type="primary" @click="alignment(3)" size="mini"
+                >右对齐</el-button
               >
               <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
             </el-col>
@@ -175,7 +162,7 @@
           <!-- 选择图片弹出框结束 -->
           <el-row :gutter="24">
             <el-col :span="24">
-              <el-form-item label="详细内容">
+              <el-form-item label="详细内容" prop="CONTENT">
                 <el-input
                   type="textarea"
                   clearable
@@ -213,12 +200,13 @@
             </el-col>
             <el-col :span="8">
               <el-form-item prop="FONT_SIZE" label="字体大小">
-                <el-select v-model="dataForm.FONT_SIZE" style="width: 100%">
+                <el-select v-model="dataForm.FONT_SIZE" style="width: 100%" @change="changeFontSize">
                   <el-option
                     v-for="item in fontSizeOpt"
                     :key="item.dictValue"
                     :label="item.dictLabel"
                     :value="item.dictValue"
+
                   >
                   </el-option>
                 </el-select>
@@ -266,7 +254,7 @@
               </el-form-item>
             </el-col> -->
             <el-col :span="8">
-              <el-form-item prop="STAY" label="停留时间">
+              <el-form-item prop="STAY" label="停留时间(秒)">
                 <el-input-number
                   :min="0"
                   controls-position="right"
@@ -326,9 +314,9 @@
       </el-card>
 
       <template slot="footer">
-        <el-button size="small" @click="dialogVisible = false">取消</el-button>
+        <el-button size="mini" type="primary" plain @click="handleClose">取消</el-button>
         <el-button
-          size="small"
+          size="mini"
           @click="dataFormSubmitHandle()"
           type="primary"
           v-loading="loading"
@@ -348,6 +336,7 @@ import {
   deleteTemplate,
   getTemplateContent,
   getGalleryList,
+  getFontSizeByDevicePixel
 } from "@/api/board/template";
 import { devicessize } from "@/api/information/api.js";
 export default {
@@ -388,24 +377,24 @@ export default {
       previewContent: "", //预览内容
       ispreviewContent: -1,
       dataForm: {
-        id: "",
-        category: "",
-        inScreenMode: "1", //入屏方式
-        rollSpeed: "1000",
-        stopTime: "500",
-        applyType: "", //适用类型
-        vmsType: "", //情报板类型
-        remark: "", //备注
-        imgSizeFrom: "", //尺寸大小
-        imageUrl: "",
-        height: "",
-        width: "",
-        coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
-        screenSize: "",
-        COORDINATE: "",
-        FONT_SIZE: "",
-        CONTENT: "山东高速欢迎你",
-        COLOR:'yellow',
+        // id: "",
+        // category: "",
+        // inScreenMode: "1", //入屏方式
+        // rollSpeed: "1000",
+        // stopTime: "500",
+        // applyType: "", //适用类型
+        // vmsType: "", //情报板类型
+        // remark: "", //备注
+        // imgSizeFrom: "", //尺寸大小
+        // imageUrl: "",
+        // height: "",
+        // width: "",
+        // coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
+        // screenSize: "",
+        // COORDINATE: "000000",
+        // FONT_SIZE: "",
+        // CONTENT: "请输入内容",
+        // COLOR:'yellow',
       },
       templateContent: [],
       templateDelContent: [],
@@ -414,6 +403,13 @@ export default {
           {
             required: true,
             message: "请选择分辨率",
+            trigger: "blur",
+          },
+        ],
+        CONTENT:[
+          {
+            required: true,
+            message: "请输入详细内容",
             trigger: "blur",
           },
         ],
@@ -474,46 +470,9 @@ export default {
           },
         ],
       },
-      fontTypeOptions: [
-        // {
-        //   code: "KaiTi",
-        //   content: "楷体",
-        // },
-        // {
-        //   code: "SimSun",
-        //   content: "宋体",
-        // },
-        // {
-        //   code: "SimHei",
-        //   content: "黑体",
-        // },
-      ],
-      screenSizeOptions: [
-        // {
-        //   type: "400*40",
-        // },
-        // {
-        //   type: "128*64",
-        // },
-      ],
-      colorOptions: [
-        // {
-        //   code: "red",
-        //   content: "红色",
-        // },
-        // {
-        //   code: "yellow",
-        //   content: "黄色",
-        // },
-        // {
-        //   code: "blue",
-        //   content: "蓝色",
-        // },
-        // {
-        //   code: "GreenYellow",
-        //   content: "绿色",
-        // },
-      ],
+      fontTypeOptions: [],
+      screenSizeOptions: [],
+      colorOptions: [],
       isCurrencyOptions: [
         {
           code: "0",
@@ -524,96 +483,7 @@ export default {
           content: "仅为智能推荐模板",
         },
       ],
-      inScreenModeOptions: [
-        // {
-        //   code: "0",
-        //   name: "清屏（全黑)",
-        // },
-        // {
-        //   code: "1",
-        //   name: "立即显示",
-        // },
-        // {
-        //   code: "2",
-        //   name: "上移",
-        // },
-        // {
-        //   code: "3",
-        //   name: "下移",
-        // },
-        // {
-        //   code: "4",
-        //   name: "左移",
-        // },
-        // {
-        //   code: "5",
-        //   name: "右移",
-        // },
-        // {
-        //   code: "6",
-        //   name: "横百叶窗",
-        // },
-        // {
-        //   code: "7",
-        //   name: "竖百叶窗",
-        // },
-        // {
-        //   code: "8",
-        //   name: "上下合拢",
-        // },
-        // {
-        //   code: "9",
-        //   name: "上下展开",
-        // },
-        // {
-        //   code: "10",
-        //   name: "左右合拢",
-        // },
-        // {
-        //   code: "11",
-        //   name: "左右展开",
-        // },
-        // {
-        //   code: "12",
-        //   name: "中心合拢",
-        // },
-        // {
-        //   code: "13",
-        //   name: "中心展开",
-        // },
-        // {
-        //   code: "14",
-        //   name: "向下马赛克",
-        // },
-        // {
-        //   code: "15",
-        //   name: "向右马赛克",
-        // },
-        // {
-        //   code: "16",
-        //   name: "淡入",
-        // },
-        // {
-        //   code: "17",
-        //   name: "淡出",
-        // },
-        // {
-        //   code: "18",
-        //   name: "字符闪烁（闪后消失）",
-        // },
-        // {
-        //   code: "19",
-        //   name: "字符闪烁（闪后停留）",
-        // },
-        // {
-        //   code: "20",
-        //   name: "区域闪烁（闪后复原）",
-        // },
-        // {
-        //   code: "21",
-        //   name: "区域闪烁（闪后区域为黑）",
-        // },
-      ],
+      inScreenModeOptions: [],
       imgSize: [
         {
           type: "1024*128",
@@ -624,20 +494,7 @@ export default {
           name: "正常",
         },
       ],
-      fontSizeOpt: [
-        // {
-        //   value: "32px",
-        //   label: "32px",
-        // },
-        // {
-        //   value: "24px",
-        //   label: "24px",
-        // },
-        // {
-        //   value: "16px",
-        //   label: "16px",
-        // },
-      ],
+      fontSizeOpt: [],
       title: "选择图片",
       loading: false,
       isAdd: false,
@@ -744,10 +601,10 @@ export default {
       this.colorOptions = res.data;
       console.log(this.colorOptions, "字体颜色");
     });
-    this.getDicts("iot_device_font_size").then((res) => {
-      this.fontSizeOpt = res.data;
-      console.log(this.fontSizeOpt, "字体大小");
-    });
+    // this.getDicts("iot_device_font_size").then((res) => {
+    //   this.fontSizeOpt = res.data;
+    //   console.log(this.fontSizeOpt, "字体大小");
+    // });
     this.getDicts("iot_device_font_inScreen_mode").then((res) => {
       this.inScreenModeOptions = res.data;
       console.log(this.inScreenModeOptions, "入屏方式");
@@ -758,8 +615,6 @@ export default {
     init(devicePixel, type,mode) {
       if (devicePixel) {
         this.devicePixelBoolean = true;
-
-        console.log(devicePixel, "00000");
         this.dataForm.screenSize = devicePixel;
 
         this.boardWidth = devicePixel.split("*")[0];
@@ -774,13 +629,14 @@ export default {
       }else{
         this.categoryRules = true
       }
-      this.title = "新增";
+      // this.title = "新增";
       this.isAdd = !this.dataForm.id;
       this.dialogVisible = true;
       console.log(this.dataForm.id, "这是模板id");
       this.templateDelContent = [];
       this.$nextTick(() => {
         if (this.isAdd) {
+          console.log("-----------------------")
           this.$refs["dataForm"] && this.$refs["dataForm"].resetFields();
           this.dataForm.id = "";
           this.dataForm = {};
@@ -788,23 +644,32 @@ export default {
           this.height = "40";
           this.dataForm = {
             CONTENT: "请输入内容",
-            COLOR: "黄色",
+            COLOR: "yellow",
             FONT_SIZE: "24px",
             FONT: "黑体",
             SPEED: "1",
             ACTION: "1",
             COORDINATE: "000000",
             STATE: "true",
-            STAY: "500",
+            STAY: "5",
             screenSize: devicePixel,
           };
           this.content = "请输入内容";
         } else {
-          this.getInfo();
-          this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
+          // this.getInfo();
+          // this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
         }
       });
+      if(this.dataForm.screenSize){
+        this.getFontSizeList()
+      }
       this.$forceUpdate();
+    },
+    getFontSizeList(){
+      getFontSizeByDevicePixel(this.dataForm.screenSize).then((res) =>{
+        console.log(res,"根据分辨率筛字体大小")
+        this.fontSizeOpt = res.data
+      })
     },
     // 查分辨率
     getdevicessize() {
@@ -817,8 +682,13 @@ export default {
       console.log(size, "00000000000000000000");
       this.boardWidth = size.split("*")[0];
       this.boardHeight = size.split("*")[1];
-
+      this.getFontSizeList()
       this.$forceUpdate();
+    },
+    changeFontSize(){
+      this.dataForm.COORDINATE = '000000'
+      var textBoard2 = document.getElementsByClassName("textBoard2");
+      textBoard2[0].style.position = 'absolute'
     },
     keyDown(ev) {
       console.log(ev.keyCode, "ev.keyCode");
@@ -861,28 +731,29 @@ export default {
       e.preventDefault(); //阻止默认行为
     },
     // 获取信息
-    getInfo() {
-      getTemplateInfo(this.dataForm.id).then((data) => {
-        this.dataForm = data.data;
-        this.width = this.dataForm.screenSize.split("*")[0];
-        this.height = this.dataForm.screenSize.split("*")[1];
-      });
-      getTemplateContent(this.dataForm.id).then((data) => {
-        this.templateContent = data.rows;
+    // getInfo() {
+    //   console.log("=================")
+    //   getTemplateInfo(this.dataForm.id).then((data) => {
+    //     this.dataForm = data.data;
+    //     this.width = this.dataForm.screenSize.split("*")[0];
+    //     this.height = this.dataForm.screenSize.split("*")[1];
+    //   });
+    //   getTemplateContent(this.dataForm.id).then((data) => {
+    //     this.templateContent = data.rows;
 
-        if (this.templateContent.length == 0) {
-          this.templateContent.push({
-            content: "",
-            fontColor: "yellow",
-            fontSize: "24",
-            fontType: "KaiTi",
-            fontSpacing: 0,
-            coordinate: "000000",
-            img: "",
-          });
-        }
-      });
-    },
+    //     if (this.templateContent.length == 0) {
+    //       this.templateContent.push({
+    //         content: "",
+    //         fontColor: "yellow",
+    //         fontSize: "24",
+    //         fontType: "KaiTi",
+    //         fontSpacing: 0,
+    //         coordinate: "000000",
+    //         img: "",
+    //       });
+    //     }
+    //   });
+    // },
     // 表单提交
     async dataFormSubmitHandle() {
       let valid = await this.$refs.dataForm.validate().catch(() => {
@@ -895,9 +766,11 @@ export default {
       if (this.isAdd) {
         console.log(this.dataForm, "this.dataForm新增组件");
         console.log(this.devicePixelBoolean, "this.devicePixelBoolean");
-        if (this.devicePixelBoolean) {
+        if (this.infoType != 2) {
+          // 不走接口 存到待下发信息里
           this.$emit("addInfo", this.dataForm);
         } else {
+          // 走接口 存到信息模板里
           const params1 = {
             applyType: "",
             category: this.dataForm.category,
@@ -909,7 +782,7 @@ export default {
             inScreenMode: this.dataForm.ACTION,
             remark: "",
             screenSize: this.dataForm.screenSize,
-            stopTime: this.dataForm.STAY,
+            stopTime: Number(this.dataForm.STAY)*100,
             vmsType: "",
             width: "",
           };
@@ -930,8 +803,9 @@ export default {
               templateId: data,
             };
             addTemplateContent(params2).then((res)=>{
+              console.log("-----------------------")
               if(res.code == 200){
-                this.$emit("getActiveNames", this.dataForm.category);
+                this.$emit("getActiveNames");
               }
             }).catch((err) => {
               throw err;
@@ -963,6 +837,8 @@ export default {
       this.dialogVisible = false;
       this.isAdd = false;
       this.$emit("refreshDataList", this.dataForm);
+      var textBoard2 = document.getElementsByClassName("textBoard2");
+      textBoard2[0].style.position = 'absolute'
     },
     /*********************************************业务代码***********************************************/
     getFontStyle(font) {
@@ -980,73 +856,75 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "green";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
+      }else{
+        return font
       }
     },
     // 文字对齐方式
     alignment(alignmentNum) {
-      var divContent = document.getElementsByClassName("blackBoard");
-      var textBoard = document.getElementsByClassName("textBoard");
+      var divContent2 = document.getElementsByClassName("blackBoard2");
+      var textBoard2 = document.getElementsByClassName("textBoard2");
       // 获取文字长宽
-      let textWidth = textBoard[0].offsetWidth;
-      let textHeight = textBoard[0].offsetHeight;
-      // 获取黑盒子长宽
-      let divWidth = divContent[0].offsetWidth;
-      let divHeight = divContent[0].offsetHeight;
-      console.log(
-        document.getElementsByClassName("textBoard"),
-        "document.getElementsByClassName('textBoard')"
-      );
-      console.log(textBoard[0].style, "textBoard[0].style");
-      console.log(textWidth, divWidth, "999999999999999");
+      // let textWidth = textBoard2[0].offsetWidth;
+      // let textHeight = textBoard2[0].offsetHeight;
+      // // 获取黑盒子长宽
+      // let divWidth = divContent2[0].offsetWidth;
+      // let divHeight = divContent2[0].offsetHeight;
+      // console.log(
+      //   document.getElementsByClassName("textBoard2"),
+      //   "document.getElementsByClassName('textBoard2')"
+      // );
+      // console.log(textBoard2[0].style, "textBoard2[0].style");
+      // console.log(textWidth, divWidth, "999999999999999");
       switch (alignmentNum) {
        // 左对齐
         case 1:
-          divContent[0].style.justifyContent = 'left'
-          divContent[0].style.alignItems = 'center'
-          textBoard[0].style.textAlign = 'left'
-          textBoard[0].style.position = 'static'
+          divContent2[0].style.justifyContent = 'left'
+          divContent2[0].style.alignItems = 'center'
+          textBoard2[0].style.textAlign = 'left'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 左右居中
         case 2:
-          divContent[0].style.justifyContent = 'center'
-          divContent[0].style.alignItems = 'center'
-          textBoard[0].style.textAlign = 'center'
-          textBoard[0].style.position = 'static'
+          divContent2[0].style.justifyContent = 'center'
+          divContent2[0].style.alignItems = 'center'
+          textBoard2[0].style.textAlign = 'center'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 右对齐
         case 3:
-          divContent[0].style.justifyContent = 'right'
-          divContent[0].style.alignItems = 'center'
-          textBoard[0].style.textAlign = 'right'
-          textBoard[0].style.position = 'static'
+          divContent2[0].style.justifyContent = 'right'
+          divContent2[0].style.alignItems = 'center'
+          textBoard2[0].style.textAlign = 'right'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 上对齐
         case 4:
-          divContent[0].style.alignItems = 'flex-start'
-          textBoard[0].style.position = 'static'
+          divContent2[0].style.alignItems = 'flex-start'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 上下对齐
         case 5:
-          divContent[0].style.alignItems = 'center'
-          textBoard[0].style.position = 'static'
+          divContent2[0].style.alignItems = 'center'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 下对齐
         case 6:
-          divContent[0].style.alignItems = 'flex-end'
-          textBoard[0].style.position = 'static'
+          divContent2[0].style.alignItems = 'flex-end'
+          textBoard2[0].style.position = 'static'
 
           break;
       }
-      var textLeft = this.addZero(textBoard[0].offsetLeft);
-      var textTop = this.addZero(textBoard[0].offsetTop);
+      var textLeft = this.addZero(textBoard2[0].offsetLeft);
+      var textTop = this.addZero(textBoard2[0].offsetTop);
       this.dataForm.COORDINATE = textLeft + textTop;
       console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
     },
@@ -1126,11 +1004,16 @@ export default {
       });
     },
     handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
+      console.log(done,"done")
+      var textBoard2 = document.getElementsByClassName("textBoard2");
+      textBoard2[0].style.position = 'absolute'
+      this.dialogVisible = false
+      // this.$confirm("确认关闭？")
+      //   .then((_) => {
+         
+      //     done();
+      //   })
+      //   .catch((_) => {});
     },
   },
 };
@@ -1153,4 +1036,22 @@ export default {
   display: flex;
   justify-content: left;
 }
+.boardTextStyle{
+  line-height: 1;
+  caret-color: rgba(0,0,0,0);
+  user-select: none;
+
+}
+.blackBoard2{
+  background: #000000;
+  display: flex;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  // justify-content: center;
+  // align-items: center;
+}
+::v-deep .el-card__body{
+    padding:10px 0;
+  }
 </style>

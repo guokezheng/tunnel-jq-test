@@ -479,4 +479,81 @@
             AND fl.tunnel_id = #{tunnelId}
         </if>
     </select>
+
+    <select id="getCumulativeCar" resultType="hashmap">
+        SELECT
+            count( cumu.vehicle_license ) AS num
+        FROM
+            (
+                SELECT
+                    ddt.vehicle_license
+                FROM
+                    sd_radar_detect_data_temporary ddt
+                WHERE
+                    1 = 1
+                  AND ddt.vehicle_license != ''
+                  AND ddt.vehicle_license IS NOT NULL
+                  AND DATE_FORMAT( detect_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
+                  <if test="tunnelId != null and tunnelId != ''">
+                      AND ddt.tunnel_id = #{tunnelId}
+                  </if>
+                  <if test="model == 1">
+                      AND ddt.vehicle_type IN ( '15', '16', '25' )
+                  </if>
+                  <if test="model == 2">
+                      AND ddt.vehicle_type IN ( '14', '17', '26' )
+                  </if>
+                  <if test="model == 3">
+                      AND ddt.vehicle_type IN ( '16', '40' )
+                  </if>
+                GROUP BY
+                  ddt.vehicle_license
+            ) AS cumu
+        WHERE
+        1 = 1
+    </select>
+
+    <select id="getTransitCar" resultType="hashmap">
+        SELECT
+            count( tarn.plate_number ) AS num
+        FROM
+            (
+                SELECT
+                    vd.plate_number
+                FROM
+                    sd_vehicle_driving vd
+                WHERE
+                    1 = 1
+                  AND FIND_IN_SET(
+                    vd.plate_number,(
+                        SELECT
+                            GROUP_CONCAT( plate_number )
+                        FROM
+                            sd_vehicle_driving
+                        WHERE
+                        1 = 1
+                        AND travel_type = '2'
+                    )) = 0
+                  AND vd.travel_type = '1'
+                  AND vd.plate_number != ''
+                  AND vd.plate_number IS NOT NULL
+                  AND DATE_FORMAT( vd.start_time, '%Y-%m-%d' ) = DATE_FORMAT( '2023-02-15', '%Y-%m-%d' )
+                  <if test="tunnelId != null and tunnelId != ''">
+                      AND vd.tunnel_id = #{tunnelId}
+                  </if>
+                  <if test="model == 1">
+                      AND vd.vehicle_type IN ( '15', '16', '25' )
+                  </if>
+                  <if test="model == 2">
+                      AND vd.vehicle_type IN ( '14', '17', '26' )
+                  </if>
+                  <if test="model == 3">
+                      AND vd.vehicle_type IN ( '16', '40' )
+                  </if>
+                GROUP BY
+                    vd.plate_number
+            ) AS tarn
+        WHERE
+            1 = 1
+    </select>
 </mapper>

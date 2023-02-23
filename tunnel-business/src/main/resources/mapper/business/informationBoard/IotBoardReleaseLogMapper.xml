@@ -25,25 +25,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectIotBoardReleaseLogList" parameterType="IotBoardReleaseLog" resultMap="IotBoardReleaseLogResult">
-        <include refid="selectIotBoardReleaseLogVo"/>
+        select a.id, a.device_id, a.device_name, a.release_old_content, a.release_new_content, a.release_by, a.release_time,
+        if(a.release_status is null, "1",a.release_status) release_status, a.release_dept_name, a.release_dept_id,
+        a.release_user_name, a.release_user_id, b.pile from iot_board_release_log a
+        left join sd_devices b on a.device_id = b.associated_device_id
         <where>
-            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
-            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
-            <if test="releaseOldContent != null  and releaseOldContent != ''"> and release_old_content = #{releaseOldContent}</if>
-            <if test="releaseNewContent != null  and releaseNewContent != ''"> and release_new_content = #{releaseNewContent}</if>
-            <if test="releaseBy != null  and releaseBy != ''"> and release_by = #{releaseBy}</if>
-            <if test="releaseTime != null "> and release_time = #{releaseTime}</if>
-            <if test="releaseStatus != null  and releaseStatus != ''"> and release_status = #{releaseStatus}</if>
-            <if test="releaseDeptName != null  and releaseDeptName != ''"> and release_dept_name like concat('%', #{releaseDeptName}, '%')</if>
-            <if test="releaseUserName != null  and releaseUserName != ''"> and release_user_name like concat('%', #{releaseUserName}, '%')</if>
+            <if test="deviceId != null  and deviceId != ''"> and a.device_id = #{deviceId}</if>
+            <if test="deviceName != null  and deviceName != ''"> and a.device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="releaseOldContent != null  and releaseOldContent != ''"> and a.release_old_content = #{releaseOldContent}</if>
+            <if test="releaseNewContent != null  and releaseNewContent != ''"> and a.release_new_content = #{releaseNewContent}</if>
+            <if test="releaseBy != null  and releaseBy != ''"> and a.release_by = #{releaseBy}</if>
+            <if test="releaseTime != null ">and date_format(release_time,'%Y-%m-%d')  = date_format(#{releaseTime},'%Y-%m-%d')</if>
+            <if test="searchValue != null  and searchValue != ''"> and CONCAT(a.device_id,a.release_new_content) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="releaseStatus != null  and releaseStatus != ''"> and a.release_status = #{releaseStatus}</if>
+            <if test="releaseDeptName != null  and releaseDeptName != ''"> and a.release_dept_name like concat('%', #{releaseDeptName}, '%')</if>
+            <if test="releaseUserName != null  and releaseUserName != ''"> and a.release_user_name like concat('%', #{releaseUserName}, '%')</if>
             <if test="params.beginReleaseTime != null and params.beginReleaseTime != ''"><!-- 开始时间检索 -->
-                AND date_format(release_time,'%y%m%d%H%i%s') &gt;= date_format(#{params.beginReleaseTime},'%y%m%d%H%i%s')
+                AND date_format(a.release_time,'%y%m%d%H%i%s') &gt;= date_format(#{params.beginReleaseTime},'%y%m%d%H%i%s')
             </if>
             <if test="params.endReleaseTime != null and params.endReleaseTime != ''"><!-- 结束时间检索 -->
-                AND date_format(release_time,'%y%m%d%H%i%s') &lt;= date_format(#{params.endReleaseTime},'%y%m%d%H%i%s')
+                AND date_format(a.release_time,'%y%m%d%H%i%s') &lt;= date_format(#{params.endReleaseTime},'%y%m%d%H%i%s')
+            </if>
+            <if test="ids != null "><!-- id 筛选 -->
+                AND a.id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
         </where>
-        ORDER BY id DESC
+        ORDER BY a.id DESC
     </select>
 
     <select id="selectIotBoardReleaseLogById" parameterType="Long" resultMap="IotBoardReleaseLogResult">

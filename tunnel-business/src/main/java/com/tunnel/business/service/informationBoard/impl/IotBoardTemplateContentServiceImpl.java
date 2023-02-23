@@ -73,7 +73,8 @@ public class IotBoardTemplateContentServiceImpl implements IIotBoardTemplateCont
                         word = iotBoardVocabularies.get(i).getWord();
                         if (!word.equals("") && content.contains(word)) {
                             flag = true;
-                            break;
+                            content = content.replaceAll(word, "");
+//                            break;
                         }
                     }
                     if (flag) {

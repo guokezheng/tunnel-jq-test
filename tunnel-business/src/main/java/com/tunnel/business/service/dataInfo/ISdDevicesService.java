@@ -246,4 +246,5 @@ public interface ISdDevicesService {
 
     SdDevices getDeviceByAssociationDeviceId(Long deviceId);
 
+    List<SdDevices> selectDevicesLineList(String deptId,String eqtype);
 }

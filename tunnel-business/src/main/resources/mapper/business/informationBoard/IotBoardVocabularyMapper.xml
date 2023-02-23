@@ -19,6 +19,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="word != null  and word != ''"> and word like concat('%', #{word}, '%')</if>
             <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+            <if test="ids != null ">        <!-- id 筛选 -->
+                AND id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
         </where>
         order by creat_time desc
     </select>

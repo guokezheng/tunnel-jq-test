@@ -73,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="location != null  and location != ''"> and w.location = #{location}</if>
             <if test="remake != null  and remake != ''"> and w.remake = #{remake}</if>
             <if test="remake1 != null  and remake1 != ''"> and w.remake1 = #{remake1}</if>
+            <if test="searchValue != null  and searchValue != ''">and CONCAT(w.part_name,w.unit,w.brand) LIKE CONCAT('%',#{searchValue},'%')</if>
         </where>
     </select>
 

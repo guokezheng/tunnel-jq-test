@@ -214,7 +214,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         String deptId = StringUtils.isNull(dept.getDeptId()) ? "" : dept.getDeptId();
         SysDept info = deptMapper.checkDeptNameUnique(dept.getDeptName(), dept.getParentId());
-        if (StringUtils.isNotNull(info) && deptId.equals(info.getDeptId()) )
+        if (StringUtils.isNotNull(info) && !deptId.equals(info.getDeptId()) )
         {
             return UserConstants.NOT_UNIQUE;
         }
@@ -399,6 +399,11 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public List<SysDept> selectTunnelDeptList(String deptId) {
         return deptMapper.selectTunnelDeptList(deptId);
+    }
+
+    @Override
+    public List<SysDept> selectTunnelDeptListBydw(String deptId, String ssdw) {
+        return deptMapper.selectTunnelDeptListBydw(deptId,ssdw);
     }
 
     private void childrenDeptUser(List<SysDeptUserTreeVO> list) {

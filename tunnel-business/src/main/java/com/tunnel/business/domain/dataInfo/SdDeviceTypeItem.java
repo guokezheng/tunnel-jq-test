@@ -27,12 +27,17 @@ public class SdDeviceTypeItem extends BaseEntity
     /** 设备类型id */
     private Long deviceTypeId;
 
+    @Excel(name = "设备类型")
+    public String typeName;
+
     /** 单位 */
-    @Excel(name = "单位")
+    @Excel(name = "单位名称")
     private String unit;
 
-    @Excel(name = "设备类型名称")
-    public String typeName;
+    @Excel(name = "备注")
+    public String remark;
+
+
 
     @Override
     public String toString() {

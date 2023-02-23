@@ -1,6 +1,78 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          v-hasPermi="['system:type:add']"
+          size="small"
+          @click="handleAdd()"
+        >新增类型
+        </el-button>
+        <el-button size="small" :loading="exportLoading"
+                     @click="handleExport"
+                     v-hasPermi="['system:type:export']"
+          >导出</el-button>
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入类型编码、类型名称"
+            v-model="queryParams.vehicleTypeCode"
+            @keyup.enter.native="handleQuery"
+            size="small"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="lx_boxShow = !lx_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="lx_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="重点车辆" prop="iskeyVehicle">
+          <el-select
+            v-model="queryParams.iskeyVehicle"
+            placeholder="请选择重点车辆"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
       <el-form-item label="类型编码" prop="vehicleTypeCode">
         <el-input
           v-model="queryParams.vehicleTypeCode"
@@ -21,13 +93,13 @@
         />
       </el-form-item>
       <el-form-item label="重点车辆" prop="iskeyVehicle">
-<!--        <el-input
+&lt;!&ndash;        <el-input
           v-model="queryParams.iskeyVehicle"
           placeholder="请选择重点车辆"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
-        />-->
+        />&ndash;&gt;
         <el-select v-model="queryParams.iskeyVehicle" clearable placeholder="请选择重点车辆" size="small">
           <el-option
             v-for="item in options"
@@ -55,8 +127,8 @@
           v-hasPermi="['system:type:export']"
         >导出</el-button>
       </el-form-item>
-    </el-form>
-
+    </el-form>-->
+    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange"
               :row-class-name="tableRowClassName"
               max-height="640">
@@ -131,6 +203,7 @@ export default {
   name: "Type",
   data() {
     return {
+      lx_boxShow:false,
       iskeyVehicle:'0',
       // 遮罩层
       loading: true,
@@ -183,7 +256,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.lx_boxShow == true) {
+          self.lx_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询车辆类型配置列表 */
     getList() {
       this.loading = true;
@@ -220,6 +308,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.vehicleTypeCode = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -303,3 +392,5 @@ export default {
   }
 };
 </script>
+
+

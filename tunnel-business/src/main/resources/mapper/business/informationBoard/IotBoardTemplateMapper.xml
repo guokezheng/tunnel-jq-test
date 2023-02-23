@@ -52,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateType != null "> and a.template_type = #{templateType}</if>
             <if test="vmsType != null  and vmsType != ''"> and a.vms_type = #{vmsType}</if>
             <if test="category != null  and category != ''"> and a.category = #{category}</if>
+            <if test="searchValue != null  and searchValue != ''"> and b.content LIKE CONCAT('%',#{searchValue},'%')</if>
         </where>
     </select>
 
@@ -59,7 +60,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
                a.template_type, a.vms_type, a.remark, a.category
         from iot_board_template a
-        where a.category = #{category}
+        where 1=1
+        <if test="category != null and category != ''"> and a.category = #{category}</if>
         <if test="devicePixel != null and devicePixel != ''"> and a.screen_size = #{devicePixel}</if>
     </select>
 

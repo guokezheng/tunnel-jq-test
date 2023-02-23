@@ -19,6 +19,8 @@ npm install gis-map-tunnel@0.1.3
 #新增精确计算
 npm install mathjs
 
+# 新安装阿里云iconfont图标库，文件地址src\assets\icon\iconfont.css
+
 #新增树形穿梭框
 npm install --save el-tree-transfer
 

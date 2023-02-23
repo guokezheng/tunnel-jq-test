@@ -219,11 +219,7 @@ tunnelDeviceBaseData: "tunnelDeviceBaseData"
 #物联中台隧道基础数据topic
 tunnelBaseData: "tunnelBaseData"
 
-#应急车辆第三方接口
-url:
-  syn: "http://10.166.154.213:30001/equipment/CarInfo/list"
-  edit: "http://10.166.154.213:30001/equipment/commandCenter/updateDispatchByDispatch"
-  detail: "http://10.166.154.213:30001/equipment/deviceCar/getCarInfo"
+
 
 #视频平台接口调用地址、组织机构ID
 video-platform:

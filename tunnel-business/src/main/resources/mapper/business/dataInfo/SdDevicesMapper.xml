@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="lat"    column="lat"    />
         <result property="lng"    column="lng"    />
         <result property="ip"    column="ip"    />
+        <result property="tunnel"    column="tunnel"    />
         <result property="port"    column="port"    />
         <result property="secureKey"    column="secure_key"    />
         <result property="eqUser"    column="eq_user"    />
@@ -54,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="iconFileId"    column="icon_file_id"    />
         <result property="externalDeviceId"    column="external_device_id"    />
         <result property="associatedDeviceId"    column="associated_device_id"    />
+        <result property="brandName"    column="brand_name"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -63,6 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="tunnelName" column="tunnel_name"/>
         <result property="tunnelAddress" column="tunnel_address"/>
     </resultMap>
+
 
     <resultMap id="eqTypeResult" type="SdEquipmentType">
         <id property="typeId" column="type_id"/>
@@ -121,7 +124,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdDevicesList_exp" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
-        dit.dict_label as eq_direction,
+        dit.dict_label as eq_direction
         a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.comm_protocol,
         a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
@@ -216,7 +219,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!-- 下拉查询 -->
     <select id="selectDropSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
-        a.eq_direction,
+        a.eq_direction,b.supplier_name brand_name,
         a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.comm_protocol,
         a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
@@ -227,6 +230,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
         left join sys_dept e on e.dept_id = c.dept_id
+        left join sd_devices_brand b on b.supplier_id = a.brand_id
         <where>
             <if test="fEqId != null and fEqId != ''">
                 and a.f_eq_id = #{fEqId}
@@ -236,10 +240,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqName != null  and eqName != ''">and a.eq_name like concat('%', #{eqName}, '%')</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
             <if test="eqStatus != null  and eqStatus != ''">and a.eq_status = #{eqStatus}</if>
+            <if test="remark != null  and remark != ''">and a.eq_direction in (${remark})</if>
             <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
             <if test="isMonitor != null  ">and a.is_monitor = #{isMonitor}</if>
             <if test="pileNum != null  ">and a.pile_num = #{pileNum}</if>
+            <if test="searchValue != null and searchValue != ''">AND CONCAT(a.eq_name, a.pile) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="commProtocol != null and commProtocol !=''">
                 and a.comm_protocol = #{commProtocol}
             </if>
@@ -949,6 +955,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where associated_device_id = #{deviceId}
     </select>
 
+
+    <select id="selectDevicesLineList" resultMap="SdDevicesResult">
+        select s.tunnel_name tunnel,k.* from sd_devices k
+        left join sd_tunnels s on k.eq_tunnel_id = s.tunnel_id where 1=1
+        <if test="eqtype != null and eqtype != ''">and k.eq_type=#{eqtype}</if>
+        and k.eq_tunnel_id in (
+            select tunnel_id from sd_tunnels where dept_id in (select t.dept_id from sys_dept t
+            where 1=1  AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) )))
+        )
+    </select>
 
 
 </mapper>

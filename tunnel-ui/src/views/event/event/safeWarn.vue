@@ -8,108 +8,327 @@
         v-for="item in tabList"
         :key="item.name"
       >
+      </el-tab-pane>
+    </el-tabs>
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '1'" class="tabTopFormRow">
+          <el-col :span="6" >
+            <el-button
+              size="small"
+              @click="resetQuery()"
+            >刷新
+            </el-button>
+          </el-col>
+          <el-col :span="6" :offset="12" >
+            <div class="grid-content bg-purple" ref="main1">
+              <el-input
+                @keyup.enter.native="handleQuery"
+                size="small"
+                placeholder="请输入事件位置、来源，回车搜索"
+                v-model="fuzzySearch1"
+              >
+                <el-button
+                  slot="append"
+                  icon="icon-gym-Gsearch"
+                  @click="zd_boxShow = !zd_boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '0'" class="tabTopFormRow">
+          <el-col :span="6" >
+            <el-button
+              size="small"
+              @click="resetQuery()"
+            >刷新
+            </el-button>
+          </el-col>
+          <el-col :span="6" :offset="12" >
+            <div class="grid-content bg-purple" ref="main0">
+              <el-input
+                @keyup.enter.native="handleQuery"
+                size="small"
+                placeholder="请输入事件位置、来源，回车搜索"
+                v-model="fuzzySearch1"
+
+              >
+                <el-button
+                  slot="append"
+                  icon="icon-gym-Gsearch"
+                  @click="boxShow = !boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" > 
+            <el-col :span="6" >
+              <el-button 
+                v-hasPermi="['system:list:add']"
+                size="small"
+                @click="handleAdd"
+              >新增故障
+              </el-button>
+              <el-button size="small" @click="resetQuery" 
+                >刷新</el-button
+                >
+            </el-col>
+            <el-col :span="6" :offset="12" >
+              <div class="grid-content bg-purple" ref="main2">
+                <el-input
+                    placeholder="请输入故障位置、故障描述，回车搜索"
+                    v-model="queryParams.faultDescription"
+                    @keyup.enter.native="handleQuery"
+                    size="small"
+                  >
+                    <el-button
+                      slot="append"
+                      icon="icon-gym-Gsearch"
+                      @click="fault_boxShow = !fault_boxShow"
+                    ></el-button>
+                  </el-input>
+              </div>
+            </el-col>
+          </el-row>
+          <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn" v-show="zd_boxShow" >
         <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-          v-if="activeName == '1' || activeName == '0'"
           label-width="68px"
           class="formStyle"
         >
-          <el-row>
-            <el-col>
-              <el-form-item label="事件类型" prop="eventTypeId">
-                <div style="display: flex">
-                  <el-button
-                    v-for="(item, index) in eventTypeData"
-                    class="eventTypeButton"
-                    :key="index"
-                    type="primary" plain
-                    @click="handleEvtButton(item.id)"
-                  >
-                    {{ item.simplifyName }}
-                  </el-button>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="管理机构" prop="deptId">
-                <treeselect
-                  v-model="queryParams.deptId"
-                  :options="deptOptions"
-                  :show-count="true"
-                  placeholder="请选择归属部门"
-                  @select="changeMechanism"
-                  style="width: 300px"
-                  size="small"
+            <el-form-item label="事件类型" prop="eventTypeId">
+              <el-select
+                v-model="queryParams.eventTypeId"
+                placeholder="请选择事件类型"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="(item, index) in eventTypeData"
+                  :key="index"
+                  :label="item.simplifyName"
+                  :value="item.id"
                 />
-              </el-form-item>
+              </el-select>
+            </el-form-item>
+            <!-- <el-form-item label="管理机构" prop="deptId">
+              <treeselect
+                v-model="queryParams.deptId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="请选择归属部门"
+                @select="changeMechanism"
+                style="width: 325px"
+                size="small"
+              />
+            </el-form-item> -->
+            <el-form-item
+              label="所属隧道"
+              prop="tunnelId"
+              v-show="manageStation == '0'"
+            >
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择所属隧道"
+                clearable
+                size="small"
+                style="width: 325px"
+                @change="$forceUpdate()"
+              >
+                <el-option
+                  v-for="item in tunnelList"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="事件状态" prop="eventState">
+              <el-select
+                v-model="queryParams.eventState"
+                placeholder="请选择事件状态"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="dict in eventStateOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发生时间" prop="eventTime">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 325px"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="-"
+                unlink-panels
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small"  @click="handleQuery"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" 
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+            <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn" v-show="boxShow" >
+        <el-form
+          :model="queryParams"
+          ref="queryForm"
+          :inline="true"
+          label-width="68px"
+          class="formStyle"
+        >
+            <el-form-item label="事件类型" prop="eventTypeId">
+              <el-select
+                v-model="queryParams.eventTypeId"
+                placeholder="请选择事件类型"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="(item, index) in eventTypeData"
+                  :key="index"
+                  :label="item.simplifyName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <!-- <el-form-item label="管理机构" prop="deptId">
+              <treeselect
+                v-model="queryParams.deptId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="请选择归属部门"
+                @select="changeMechanism"
+                style="width: 325px"
+                size="small"
+              />
+            </el-form-item> -->
+            <el-form-item
+              label="所属隧道"
+              prop="tunnelId"
+              v-show="manageStation == '0'"
+            >
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择所属隧道"
+                clearable
+                size="small"
+                style="width: 325px"
+                @change="$forceUpdate()"
+              >
+                <el-option
+                  v-for="item in tunnelList"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="事件状态" prop="eventState">
+              <el-select
+                v-model="queryParams.eventState"
+                placeholder="请选择事件状态"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="dict in eventStateOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发生时间" prop="eventTime">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 325px"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="-"
+                unlink-panels
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small"  @click="handleQuery"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" 
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+          <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn"  v-show="fault_boxShow" ref="cc">
+        <el-form
+              ref="queryForm"
+              :inline="true"
+          :model="queryParams1"
+              label-width="75px"
+              v-if="activeName == '2'"
+            >
               <el-form-item
-                label="所属隧道"
-                prop="tunnelId"
-                v-show="manageStation == '0'"
+                style="width: 100%"
+                label="故障类型"
+                prop="faultType"
               >
                 <el-select
-                  v-model="queryParams.tunnelId"
-                  placeholder="请选择所属隧道"
+                  v-model="queryParams1.faultType"
+                  placeholder="请选择故障类型"
                   clearable
                   size="small"
-                  style="width: 180px"
-                  @change="$forceUpdate()"
                 >
                   <el-option
-                    v-for="item in tunnelList"
-                    :key="item.tunnelId"
-                    :label="item.tunnelName"
-                    :value="item.tunnelId"
-                  />
+                    v-for="dict in dict.type.fault_type"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  ></el-option>
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="事件状态" prop="eventState">
-                <el-select
-                  v-model="queryParams.eventState"
-                  placeholder="请选择事件状态"
-                  clearable
-                  size="small"
-                  style="width: 180px"
+              <el-form-item class="bottomBox">
+                <el-button size="small"  @click="handleQuery"
+                >搜索</el-button
                 >
-                  <el-option
-                    v-for="dict in eventStateOptions"
-                    :key="dict.dictValue"
-                    :label="dict.dictLabel"
-                    :value="dict.dictValue"
-                  />
-                </el-select>
+                <el-button size="small" @click="resetQuery" 
+                >重置</el-button
+                >
               </el-form-item>
-              <el-form-item label="选择日期" prop="eventTime">
-                <el-date-picker
-                  v-model="dateRange"
-                  size="small"
-                  style="width: 240px"
-                  value-format="yyyy-MM-dd"
-                  type="daterange"
-                  range-separator="-"
-                  unlink-panels
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                ></el-date-picker>
-              </el-form-item>
+            </el-form>
+          </div>
 
-              <el-form-item>
-                <el-button type="primary" size="mini" @click="handleQuery"
-                  >搜索
-                </el-button>
-                <el-button size="mini" @click="resetQuery" type="primary" plain
-                  >重置
-                </el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <el-form
+
+
+
+<!--        <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
@@ -195,7 +414,7 @@
               >导出
             </el-button>
           </el-form-item>
-        </el-form>
+        </el-form>-->
         <div
           class="contentListBox"
           v-if="activeName == '1' || activeName == '0'"
@@ -204,10 +423,19 @@
             class="contentBox"
             v-for="(item, index) in eventList"
             :key="index"
+            :style="{width:topNav?'24.2%':'24%'}"
           >
             <div class="video">
-              <img :src="item.picUrl" v-show="item.picUrl" style="width:100%" @click="openPicDialog(item)"/>
-              <img src="../../../assets/cloudControl/nullImg.png" v-show="!item.picUrl" />
+              <img
+                :src="item.picUrl"
+                v-show="item.picUrl"
+                style="width: 100%"
+                @click="openPicDialog(item)"
+              />
+              <img
+                src="../../../assets/cloudControl/nullImg.png"
+                v-show="!item.picUrl"
+              />
 
               <div>{{ item.simplifyName }}</div>
             </div>
@@ -215,7 +443,7 @@
               <div>
                 来源 <span>{{ getFrom(item.eventSource) }}</span>
               </div>
-              <div>
+              <div style="width: 100%;overflow: hidden;white-space: nowrap;">
                 位置 <span>{{ item.position }}</span>
               </div>
               <div>
@@ -223,8 +451,16 @@
               </div>
               <div class="contentButton">
                 <div @click="detailsButton(item, 1)">详情</div>
-                <div @click="detailsButton(item, 2)"
-                :class="item.eventState == '1'|| item.eventState == '2'?'disabledButton':''">复核</div>
+                <div
+                  @click="detailsButton(item, 2)"
+                  :class="
+                    item.eventState == '1' || item.eventState == '2'
+                      ? 'disabledButton'
+                      : ''
+                  "
+                >
+                  复核
+                </div>
               </div>
               <div class="stateTab">
                 <img :src="safeWarn0" v-show="item.eventState == '0'" />
@@ -235,16 +471,22 @@
             </div>
           </div>
         </div>
-
+        <div class="tableTopHr" v-if="activeName == '2'"></div>
         <el-table
           v-loading="loading"
-          :data="eventList"
+          :data="eventLists"
           @selection-change="handleSelectionChange"
-          :row-class-name="tableRowClassName"
-          max-height="600"
+          height="62vh"
+          class="allTable"
           v-if="activeName == '2'"
         >
           <el-table-column type="selection" width="55" align="center" />
+          <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--          <el-table-column label="序号" width="100px" align="center">
+            <template slot-scope="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>-->
           <el-table-column label="故障类型" align="center" prop="faultType">
             <template slot-scope="scope">
               <dict-tag
@@ -258,12 +500,15 @@
             align="center"
             prop="faultFxtime"
             width="180"
-          >
-            <template slot-scope="scope">
+          />
+            <!-- <template slot-scope="scope">
               <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="持续时间" align="center" prop="faultCxtime" />
+            </template> -->
+          <!-- </el-table-column> -->
+<!--          <el-table-column label="持续时间" align="center" prop="faultCxtime" />-->
+          <el-table-column label="故障位置" align="center" prop="faultLocation" />
+          <el-table-column label="故障描述" align="center" prop="faultDescription" width="180" 
+          :show-overflow-tooltip='true'/>
           <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">
             <template slot-scope="scope">
@@ -305,6 +550,7 @@
             label="操作"
             align="center"
             class-name="small-padding fixed-width"
+            width="200"
           >
             <template slot-scope="scope">
               <el-button
@@ -342,14 +588,14 @@
           </el-table-column>
         </el-table>
         <pagination
-          v-if="total > 0 && activeName == '2'"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
+            v-if="totals > 0 && activeName == '2'"
+            :total="totals"
+          :page.sync="queryParams1.pageNum"
+          :limit.sync="queryParams1.pageSize"
           @pagination="getList"
         />
         <el-pagination
-          v-if="total>0 && (activeName == '0' || activeName == '1')"
+          v-if="total > 0 && (activeName == '0' || activeName == '1')"
           class="specialPagination"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -360,8 +606,6 @@
           :total="total"
         >
         </el-pagination>
-      </el-tab-pane>
-    </el-tabs>
 
     <!-- 查看详情弹窗 -->
     <el-dialog
@@ -377,42 +621,56 @@
       :modal="false"
       append-to-body
     >
-    <!-- append-to-body -->
+      <!-- append-to-body -->
 
-    <!--  -->
+      <!--  -->
       <div class="videoDialogBox">
         <div
+          style="display: none"
           class="processButton"
           @click="openProcess()"
           :class="processType ? 'el-icon-s-fold' : 'el-icon-s-unfold'"
-        >预警处置</div>
+        >
+          预警处置
+        </div>
         <div class="dialogBg">
-          <div>三图一视<span>(事前、事中、事后三张抓图+录像判断)</span></div>
+          <div>
+            事发时抓图或录像<span>(事前、事中、事后三张抓图+录像判断)</span>
+          </div>
           <video :src="eventForm.videoUrl" controls muted loop fluid></video>
           <div class="picBox">
-            <div v-if="arrowLeft" class="turnPages"  @click="turnLeft()"><</div>
+            <div v-if="arrowLeft" class="turnPages" @click="turnLeft()"><</div>
             <div class="picList">
               <div
-              v-show="eventForm && eventForm.iconUrlList != []"
-              v-for="item in imgUrlList" :key="item.imgId">
-                <el-image  :src="item.imgUrl"  :preview-src-list="Array(item.imgUrl)" ></el-image>
+                v-show="eventForm && eventForm.iconUrlList != []"
+                v-for="item in imgUrlList"
+                :key="item.imgId"
+              >
+                <el-image
+                  :src="item.imgUrl"
+                  :preview-src-list="Array(item.imgUrl)"
+                ></el-image>
               </div>
               <div
-                v-show="eventForm && eventForm.iconUrlList == []" class="noPic"
-                v-for="(item,index) of 4" :key="index">
-                <img src="../../../assets/cloudControl/nullImg.png"/>
+                v-show="eventForm && eventForm.iconUrlList == []"
+                class="noPic"
+                v-for="(item, index) of 4"
+                :key="index"
+              >
+                <img src="../../../assets/cloudControl/nullImg.png" />
               </div>
             </div>
-            <div v-if="arrowRight" class="turnPages" @click="turnRight()">></div>
-
+            <div v-if="arrowRight" class="turnPages" @click="turnRight()">
+              >
+            </div>
           </div>
         </div>
         <div class="dialogBg dialogBg2">
-          <div>实时视频<span>(事发位置最近的监控视频录像)</span></div>
+          <div>实时视频<span>(事发位置最近的监控视频)</span></div>
           <el-carousel trigger="click" height="calc(100% - 14px)">
-            <el-carousel-item v-for="(item,index) in videoList" :key="index">
+            <el-carousel-item v-for="(item, index) in videoList" :key="index">
               <videoPlayer
-                v-if="item.liveUrl "
+                v-if="item.liveUrl"
                 :rtsp="item.liveUrl"
                 :open="cameraPlayer"
               ></videoPlayer>
@@ -446,7 +704,7 @@
                   v-model="eventForm.eventSource"
                   disabled
                   placeholder="请选择告警来源"
-                  style="width:calc(100% - 10px)"
+                  style="width: calc(100% - 10px)"
                 >
                   <el-option
                     v-for="item in fromList"
@@ -467,7 +725,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择告警时间"
-                  style="width:calc(100% - 10px)"
+                  style="width: calc(100% - 10px)"
                   :picker-options="setDisabled"
                 >
                 </el-date-picker>
@@ -487,7 +745,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择预计解除时间"
-                  style="width:calc(100% - 10px)"
+                  style="width: calc(100% - 10px)"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -500,7 +758,7 @@
                   clearable
                   size="small"
                   disabled
-                  style="width:calc(100% - 10px)"
+                  style="width: calc(100% - 10px)"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -513,7 +771,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="事件起点">
-                <el-row >
+                <el-row>
                   <el-col :span="11">
                     <el-input
                       v-model="eventForm.stakeNum1"
@@ -555,7 +813,6 @@
                     />
                   </el-col>
                 </el-row>
-
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -596,8 +853,6 @@
                     </el-select>
                   </el-col>
                 </el-row>
-
-
               </el-form-item>
             </el-col>
             <el-col :span="16">
@@ -628,7 +883,7 @@
                     <div>
                       速度
                       <el-input
-                      style="width: 110px;"
+                        style="width: 110px"
                         v-model="item.speed"
                         :disabled="detailsDisabled"
                       ></el-input>
@@ -647,11 +902,22 @@
           </el-row>
         </el-form>
       </div>
-      <div class="dialogFooterButton" >
-        <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
-        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)">应急调度</div>
-        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1,eventForm.id)">处置</div>
-
+      <div class="dialogFooterButton">
+        <div @click="submitDialog" v-show="detailsButtonType == 2">
+          复核提交
+        </div>
+        <div
+          v-show="detailsButtonType == 2 && activeName == '0'"
+          @click="management(eventForm.id)"
+        >
+          应急调度
+        </div>
+        <div
+          v-show="detailsButtonType == 2 && activeName == '1'"
+          @click="openProcess(1, eventForm.id)"
+        >
+          处置
+        </div>
       </div>
     </el-dialog>
     <!--    流程弹窗-->
@@ -665,48 +931,119 @@
       :before-close="cancelProcessDialog"
       :close-on-click-modal="closeProcessDialog"
     >
-      <div style="padding: 10px; background: #f7f7f7; height: 686px;overflow:auto">
-        <div v-for="(item,index) of incHandList" :key="index" class="incHandContent" v-if="activeName == '1'">
+      <div
+        style="
+          padding: 10px;
+          background: #f7f7f7;
+          height: 686px;
+          overflow: auto;
+        "
+      >
+        <div
+          v-for="(item, index) of incHandList"
+          :key="index"
+          class="incHandContent"
+          v-if="activeName == '1'"
+        >
           <div class="classification">
-            <div class="type"
-                  :style="{
-            padding:item.flowContent?item.flowContent.toString().length>2?'8px':'15px 12px':'',
-            marginTop:item.children?item.flowContent == '设备联控' ? (item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 35 +'px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 25 +'px':''
-
-            }"
-            v-if="item.flowContent">{{item.flowContent}}
+            <div
+              class="type"
+              :style="{
+                padding: item.flowContent
+                  ? item.flowContent.toString().length > 2
+                    ? '8px'
+                    : '15px 12px'
+                  : '',
+                marginTop: item.children
+                  ? item.flowContent == '设备联控'
+                    ? (item.children.length * 40 +
+                        4 * (item.children.length - 1)) /
+                        2 -
+                      35 +
+                      'px'
+                    : (item.children.length * 40 +
+                        4 * (item.children.length - 1)) /
+                        2 -
+                      25 +
+                      'px'
+                  : '',
+              }"
+              v-if="item.flowContent"
+            >
+              {{ item.flowContent }}
             </div>
 
-            <div v-show="item.flowId == 7" class="yijian"  @click="getYiJian(item)"
-            :class="!miniDialog?'disabledButton':''">一键</div>
-            <div v-show="item.flowId == 1" class="hulue" @click="hulue()"
-            :class="!miniDialog?'disabledButton':''">忽略</div>
-
+            <div
+              v-show="item.flowId == 7"
+              class="yijian"
+              @click="getYiJian(item)"
+              :class="!miniDialog ? 'disabledButton' : ''"
+            >
+              一键
+            </div>
+            <div
+              v-show="item.flowId == 1"
+              class="hulue"
+              @click="hulue()"
+              :class="!miniDialog ? 'disabledButton' : ''"
+            >
+              忽略
+            </div>
           </div>
 
-          <div class="heng1"
-          v-if="item.children"
-                :style="{
-            marginTop:item.children?item.children.length==1?'20px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 +'px':''
+          <div
+            class="heng1"
+            v-if="item.children"
+            :style="{
+              marginTop: item.children
+                ? item.children.length == 1
+                  ? '20px'
+                  : (item.children.length * 40 +
+                      4 * (item.children.length - 1)) /
+                      2 +
+                    'px'
+                : '',
             }"
-            ></div>
-          <div class="shu"
-          v-if="item.children"
-                :style="{
-            height:item.children?item.children.length >1 ?item.children.length * 40 + (4 * item.children.length) - 40 +'px':'0px':'',
-            borderTop: item.children && item.children.length >1 ?'solid 1px #39adff':'',
-          }"
+          ></div>
+          <div
+            class="shu"
+            v-if="item.children"
+            :style="{
+              height: item.children
+                ? item.children.length > 1
+                  ? item.children.length * 40 +
+                    4 * item.children.length -
+                    40 +
+                    'px'
+                  : '0px'
+                : '',
+              borderTop:
+                item.children && item.children.length > 1
+                  ? 'solid 1px #39adff'
+                  : '',
+            }"
           ></div>
           <div>
-            <div v-for="(itm,inx) of item.children" :key="inx" class="contentList">
-              <div style="float:left">{{ itm.flowContent }}</div>
-              <img :src="incHand2"  style="float:right;" v-show="itm.eventState != '0'" >
-              <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm)"
-              :class="!miniDialog?'disabledButton':''">
-
+            <div
+              v-for="(itm, inx) of item.children"
+              :key="inx"
+              class="contentList"
+            >
+              <div style="float: left">{{ itm.flowContent }}</div>
+              <img
+                :src="incHand2"
+                style="float: right"
+                v-show="itm.eventState != '0'"
+              />
+              <img
+                :src="incHand1"
+                style="float: right; cursor: pointer"
+                v-show="itm.eventState == '0'"
+                @click="changeIncHand(itm)"
+                :class="!miniDialog ? 'disabledButton' : ''"
+              />
             </div>
           </div>
-
         </div>
         <div v-if="activeName == '0'">
           <el-timeline style="height: calc(100% - 40px); overflow: auto">
@@ -729,14 +1066,18 @@
       width="1000px"
       append-to-body
     >
-      <el-form ref="form" :model="form" label-width="110px">
-        <el-row style="padding:10px">
+      <el-form ref="form" :model="form" label-width="100px">
+        <el-row style="padding: 10px;display:flex;flex-wrap: wrap;">
           <el-col :span="24">
             <div class="topTxt">故障基本信息</div>
           </el-col>
           <el-col :span="8" :style="{ display: 'none' }">
             <el-form-item label="故障id" prop="id" :style="{ display: 'none' }">
-              <el-input v-model="form.id" placeholder="请输入发现源" style="width:100%"/>
+              <el-input
+                v-model="form.id"
+                placeholder="请输入发现源"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -745,7 +1086,7 @@
                 v-model="form.tunnelId"
                 :disabled="disstate"
                 placeholder="请选择所属隧道"
-                style="width:100%"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in tunnelList"
@@ -762,7 +1103,7 @@
                 v-model="form.faultType"
                 :disabled="disstate"
                 placeholder="请选择故障类型"
-                style="width:100%"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in faultTypeOptions"
@@ -779,7 +1120,7 @@
                 :disabled="disstate"
                 v-model="form.faultSource"
                 placeholder="请输入发现源"
-                style="width:100%"
+                style="width: 100%"
               />
             </el-form-item>
           </el-col>
@@ -793,7 +1134,7 @@
                 type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择故障发现时间"
-                style="width:100%"
+                style="width: 100%"
               >
               </el-date-picker>
             </el-form-item>
@@ -875,6 +1216,7 @@
               <el-input
                 v-model="form.eqRunStatus"
                 :disabled="disstate"
+                @input="changeEqRunStatus($event)"
                 placeholder="请输入设备运行状态"
               />
             </el-form-item>
@@ -970,31 +1312,34 @@
         </el-row>
       </el-form>
       <div class="dialogFooterButton">
-        <div v-if="isWritable"  @click="submitForm"
-          >仅保存</div
-        >
-        <div v-if="isWritable"  @click="publishForm"
-          >保存并发布</div
-        >
+        <div v-if="isWritable" @click="submitForm">仅保存</div>
+        <div v-if="isWritable" @click="publishForm">保存并发布</div>
         <div @click="cancel">取 消</div>
       </div>
     </el-dialog>
 
     <el-dialog :visible.sync="record" width="70%">
       <div style="text-align: center; font-size: 18px">故障检修记录</div>
-      <div class="card" v-if="news.length > 0" v-for="(item,index) in news" :key="index">
+      <div
+        class="card"
+        v-if="news.length > 0"
+        v-for="(item, index) in news"
+        :key="index"
+      >
         <div class="card-col" style="font-size: 16px">
           <div>
             巡检时间:
-            <span>{{ item.xcTime }}</span>
+            <span>{{
+                parseTime(item.xcTime, "{y}-{m}-{d} {h}:{m}:{s}")
+            }}</span>
           </div>
           <div>
             检修班组:
-            <span>{{ item.bzId }}</span>
+            <span>{{ item.bzName }}</span>
           </div>
           <div>
             检修人:
-            <span>{{ item.walkerId }}</span>
+            <span>{{ item.userName }}</span>
           </div>
         </div>
         <div class="card-col" style="font-size: 16px">
@@ -1028,7 +1373,7 @@
         </div>
         <div class="card-cols" style="font-size: 16px">
           现场图片:
-          <div v-for="(pic,index) in item.iFileList" :key="index">
+          <div v-for="(pic, index) in item.iFileList" :key="index">
             <img :src="pic.imgUrl" :title="pic.imgName" />
           </div>
         </div>
@@ -1039,7 +1384,12 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="picUrlDialog" width="70%" title="事件视频" class="videoDialog">
+    <el-dialog
+      :visible.sync="picUrlDialog"
+      width="70%"
+      title="事件视频"
+      class="videoDialog"
+    >
       <div class="videoDialogClass">
         <video :src="videoUrl" controls muted loop fluid autoplay></video>
       </div>
@@ -1102,10 +1452,15 @@ export default {
     "power",
   ],
   //字典值：故障类型、故障等级，故障消除状态
-  components: { Treeselect, videoPlayer},
+  components: { Treeselect, videoPlayer },
   data() {
     return {
-      picUrlDialog:false,
+      fuzzySearch1:'',
+      zd_boxShow:false,
+      boxShow:false,
+      fault_boxShow:false,
+      currentMenu:"",
+      picUrlDialog: false,
       eventWarnList: [],
       miniDialog: true,
       eventTypeId: "",
@@ -1148,7 +1503,7 @@ export default {
           value: 1,
         },
       ],
-      videoUrl: '',
+      videoUrl: "",
       safeWarn0: require("@/assets/cloudControl/safeWarn0.png"),
       safeWarn1: require("@/assets/cloudControl/safeWarn1.png"),
       safeWarn2: require("@/assets/cloudControl/safeWarn2.png"),
@@ -1244,6 +1599,10 @@ export default {
       total: 0,
       // 事件管理表格数据
       eventList: [],
+      //设备故障表格数据
+      eventLists: [],
+      // 设备故障总条数
+      totals: 0,
       //
       searchValue: "1",
       // 弹出层标题
@@ -1269,6 +1628,14 @@ export default {
         startTime: null,
         endTime: null,
         deptId: null,
+      },
+
+      queryParams1: {
+        pageNum: 1,
+        pageSize: 10,
+        faultType:null,
+        faultDescription:"",
+
       },
       allmsg: "",
       process: "",
@@ -1331,7 +1698,7 @@ export default {
           {
             required: true,
             message: "请选中故障类型",
-            trigger: "faultLocation",
+            trigger: "faultType",
           },
         ],
         faultFxtime: [
@@ -1383,18 +1750,18 @@ export default {
         stakeEndNum2: "",
         iconUrlList: [],
       },
-      iconUrlListAll:[],
-      imgUrlList:[],
+      iconUrlListAll: [],
+      imgUrlList: [],
       urls: [],
-      urlsList:[],
-      urlsAll:[],
+      urlsList: [],
+      urlsAll: [],
       // 翻页
-      arrowRight:false,
-      arrowLeft:false,
-      arrowRight2:false,
-      arrowLeft2:false,
-      imgPage:1,
-      imgPage2:1,
+      arrowRight: false,
+      arrowLeft: false,
+      arrowRight2: false,
+      arrowLeft2: false,
+      imgPage: 1,
+      imgPage2: 1,
 
       // 遮罩层
       dloading: false,
@@ -1410,22 +1777,31 @@ export default {
       networkOptions: [], //网络情况
       powerOptions: [], //配电情况
 
-
       // 实时视频
-      videoForm:{
-        liveUrl:'',
+      videoForm: {
+        liveUrl: "",
       },
-      videoList:[],
-      cameraVisible:true,
+      videoList: [],
+      cameraVisible: true,
+      isState:false,
+      showElement:true,
+      showFaultElement:false,
     };
   },
-  watch: {
-    "queryParams.deptId": function(newVal, oldVal){
-      if(!newVal){
-        this.tunnelList = null;
-        this.queryParams.tunnelId = null;
-      }
+  computed:{
+    topNav: {
+      get() {
+        return this.$store.state.settings.topNav;
+      },
     },
+  },
+  watch: {
+    // "queryParams.deptId": function (newVal, oldVal) {
+    //   if (!newVal) {
+    //     this.tunnelList = null;
+    //     this.queryParams.tunnelId = null;
+    //   }
+    // },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
       this.manageStationSelect = newVal;
@@ -1439,19 +1815,20 @@ export default {
     // this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect");
 
     this.eventList = [];
+    this.eventLists = [];
     this.getTreeselect();
     this.getBz();
 
     await this.getList();
     await this.getEventMsg();
     this.getEventType();
-    // this.getTunnel();
+    this.getTunnel();
     this.getEqType();
     this.getDevices();
     this.getTunnelLane();
     // 事件来源
     this.getDicts("sd_event_source").then((data) => {
-      console.log(data,"事件来源")
+      console.log(data, "事件来源");
       this.fromList = data.data;
     });
     this.fileData = new FormData(); // new formData对象
@@ -1500,11 +1877,58 @@ export default {
       this.mechanism = res.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus1);
+    document.addEventListener("click", this.bodyCloseMenus0);
+    document.addEventListener("click", this.bodyCloseMenus2);
+
+  },
   methods: {
+    changeInput(){
+      this.$forceUpdate()
+    },
+    bodyCloseMenus1(e) {
+      let self = this;
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+        if (self.zd_boxShow == true){
+          self.zd_boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus0(e) {
+      let self = this;
+      if (this.$refs.main0 && !this.$refs.main0.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus2(e) {
+      let self = this;
+      if (this.$refs.main2 && !this.$refs.main2.contains(e.target)) {
+        if (self.fault_boxShow == true){
+          self.fault_boxShow = false;
+        }
+      }
+    },
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams1.pageNum-1)*this.queryParams1.pageSize+1
+    },
+
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus1);
+      document.removeEventListener("click", this.bodyCloseMenus0);
+      document.removeEventListener("click", this.bodyCloseMenus2);
+    },
+    changeEqRunStatus(e){
+      this.$forceUpdate()
+    },
     // 打开图片变视频弹窗
-    openPicDialog(item){
-      this.videoUrl = item.videoUrl
-      this.picUrlDialog = true
+    openPicDialog(item) {
+      this.videoUrl = item.videoUrl;
+      this.picUrlDialog = true;
     },
     // 忽略
     hulue() {
@@ -1692,7 +2116,7 @@ export default {
       this.processDialog = false;
       this.processType = false;
     },
-    openProcess(type,id) {
+    openProcess(type, id) {
       console.log(type, "00000000000000");
       if (type && id) {
         this.processType = true;
@@ -1742,8 +2166,8 @@ export default {
     detailsButton(item, type) {
       console.log(item, "点击弹窗");
 
-      this.imgUrlList = []
-      this.iconUrlListAll = []
+      this.imgUrlList = [];
+      this.iconUrlListAll = [];
 
       if (type == 1) {
         this.miniDialog = false;
@@ -1761,18 +2185,18 @@ export default {
 
       this.details = true;
       this.eventForm = item;
-      console.log(this.eventForm.iconUrlList,"iconUrlList")
+      console.log(this.eventForm.iconUrlList, "iconUrlList");
       // 图片分组翻页
-      if(this.eventForm.iconUrlList.length>4){
-        this.arrowRight = true
-        for(let i=0;i<this.eventForm.iconUrlList.length;){
-          this.iconUrlListAll.push(this.eventForm.iconUrlList.splice(0,4))
+      if (this.eventForm.iconUrlList.length > 4) {
+        this.arrowRight = true;
+        for (let i = 0; i < this.eventForm.iconUrlList.length; ) {
+          this.iconUrlListAll.push(this.eventForm.iconUrlList.splice(0, 4));
         }
-        this.imgUrlList = this.iconUrlListAll[0]
-        this.imgPage = 0
-      }else{
-        this.arrowRight = false
-        this.imgUrlList = this.eventForm.iconUrlList
+        this.imgUrlList = this.iconUrlListAll[0];
+        this.imgPage = 0;
+      } else {
+        this.arrowRight = false;
+        this.imgUrlList = this.eventForm.iconUrlList;
       }
 
       this.getEventList();
@@ -1798,91 +2222,88 @@ export default {
       }
       this.title = item.eventTitle;
       // 获取实时视频
-      this.getVideoUrl(item)
+      this.getVideoUrl(item);
       // 获取实时视频截图
-      this.getImgUrl(item)
-
+      this.getImgUrl(item);
     },
-    getImgUrl(item){
-      this.urlsList = []
-      this.urlsAll = []
+    getImgUrl(item) {
+      this.urlsList = [];
+      this.urlsAll = [];
       const param = {
         businessId: item.id,
       };
       image(param).then((response) => {
         console.log(response.data, "获取图片");
         this.urls = response.data;
-        if(response.data.length > 4){
-          this.arrowRight2 = true
-          for(let i=0;i<this.urls.length;){
-            this.urlsAll.push(this.urls.splice(0,4))
+        if (response.data.length > 4) {
+          this.arrowRight2 = true;
+          for (let i = 0; i < this.urls.length; ) {
+            this.urlsAll.push(this.urls.splice(0, 4));
           }
-          this.urlsList = this.urlsAll[0]
-          this.imgPage2 = 0
-        }else{
-          this.arrowRight2 = false
-          this.urlsList = this.urls
+          this.urlsList = this.urlsAll[0];
+          this.imgPage2 = 0;
+        } else {
+          this.arrowRight2 = false;
+          this.urlsList = this.urls;
         }
       });
     },
-    getVideoUrl(item){
+    getVideoUrl(item) {
       // console.log(item,"item")
-      this.cameraPlayer = false
-      this.videoList = []
-      getEventCamera(
-        item.tunnelId,
-        item.stakeNum,
-        item.direction
-      ).then((res) => {
-        console.log(res,"获取实时视频上游相机")
-        if(res.data){
-          // let videoId = res.data[0].eqId
-          let videoId = ''
-          for(let item of res.data){
-            videoId = item.eqId
-            videoStreaming(videoId).then((response) =>{
-              console.log(response,"视频流");
-              if(response.code == 200){
-                this.videoList.push(response.data)
-                this.cameraPlayer = true
-              }
-            })
+      this.cameraPlayer = false;
+      this.videoList = [];
+      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
+        (res) => {
+          console.log(res, "获取实时视频上游相机");
+          if (res.data) {
+            // let videoId = res.data[0].eqId
+            let videoId = "";
+            for (let item of res.data) {
+              videoId = item.eqId;
+              videoStreaming(videoId).then((response) => {
+                console.log(response, "视频流");
+                if (response.code == 200) {
+                  this.videoList.push(response.data);
+                  this.cameraPlayer = true;
+                }
+              });
+            }
+            console.log(this.videoList, " this.videoList");
           }
-          console.log( this.videoList," this.videoList")
+          console.log(this.videoList, "this.videoList");
         }
-        console.log(this.videoList,"this.videoList")
-      });
+      );
     },
-    turnLeft(){
-      this.arrowRight = true
-      this.imgPage --
-      this.imgUrlList = this.iconUrlListAll[this.imgPage]
-      if(this.imgPage == 0){
-        this.arrowLeft = false
+    turnLeft() {
+      this.arrowRight = true;
+      this.imgPage--;
+      this.imgUrlList = this.iconUrlListAll[this.imgPage];
+      if (this.imgPage == 0) {
+        this.arrowLeft = false;
       }
     },
-    turnRight(){
-      this.imgPage ++
-      this.imgUrlList = this.iconUrlListAll[this.imgPage]
-      this.arrowLeft = true
-      if(this.imgPage == this.iconUrlListAll.length-1){
-        this.arrowRight = false
+    turnRight() {
+      this.imgPage++;
+      this.imgUrlList = this.iconUrlListAll[this.imgPage];
+      this.arrowLeft = true;
+      if (this.imgPage == this.iconUrlListAll.length - 1) {
+        this.arrowRight = false;
       }
     },
-    turnLeft2(){
-      this.arrowRight2 = true
-      this.imgPage2 --
-      this.urlsList = this.urlsAll[this.imgPage2]
-      if(this.imgPage2 == 0){
-        this.arrowLeft2 = false
+    turnLeft2() {
+      this.arrowRight2 = true;
+      this.imgPage2--;
+      this.urlsList = this.urlsAll[this.imgPage2];
+      if (this.imgPage2 == 0) {
+        this.arrowLeft2 = false;
       }
     },
-    turnRight2(){
-      this.imgPage2 ++
-      this.urlsList = this.urlsAll[this.imgPage2]
-      this.arrowLeft2 = true
-      if(this.imgPage2 == this.urlsAll.length-1){
-        this.arrowRight2 = false
+    turnRight2() {
+      this.imgPage2++;
+      this.urlsList = this.urlsAll[this.imgPage2];
+      this.arrowLeft2 = true;
+      if (this.imgPage2 == this.urlsAll.length - 1) {
+        this.arrowRight2 = false;
       }
     },
     //选事件类型
@@ -1895,10 +2316,17 @@ export default {
     handleExport() {},
     //切换tab页
     handleClick(e) {
-      console.log(e);
+      this.isState = true;
+      this.currentMenu = e.index;
+      this.zd_boxShow = false;
+      this.boxShow = false;
+      this.fault_boxShow = false;
       this.resetQuery();
-      this.getList();
-      this.getEventType();
+      // this.getList();
+      if(this.currentMenu!="2"){
+        this.getEventType();
+      }else{
+      }
     },
     handleSelectionChange(val) {
       this.ids = val.map((item) => item.id);
@@ -1908,15 +2336,15 @@ export default {
     getTreeselect() {
       treeselectExcYG1().then((response) => {
         this.deptOptions = response.data;
-        console.log(this.deptOptions,"00000000000000");
+        console.log(this.deptOptions, "00000000000000");
       });
     },
     eqStatusGet(e) {
       getEquipmentInfo({ eqId: e }).then((response) => {
+        console.log(response,"修改设备名称")
         this.form.faultLocation = "";
         this.form.eqRunStatus = "";
         this.form.eqStatus = "";
-        debugger;
         if (response.data.length != 0) {
           this.form.faultLocation = response.data[0].pile;
           this.form.eqRunStatus = response.data[0].runStatus;
@@ -2023,25 +2451,21 @@ export default {
     },
     /** 查询事件管理列表 */
     getList() {
-      console.log(new Date())
-      // console.log(this.activeName, "9999999");
       this.loading = true;
-      this.eventList = []
-
+      this.eventList = [];
+      this.eventLists = [];
       // console.log(this.manageStation, "this.manageStation");
       if (this.manageStation == "1") {
         this.queryParams.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
       }
-      console.log(this.queryParams, "666666666666666666666");
-
-      if (this.activeName == "2") {
-        this.queryParams.pageSize = 10
-        listList(this.queryParams).then((response) => {
-          console.log(response,"列表内容")
-          this.eventList = response.rows;
-          this.eventList.forEach((item) => {
+      if (this.currentMenu == "2") {
+       // this.queryParams.pageSize = 10;
+        listList(this.queryParams1).then((response) => {
+          this.eventLists = response.rows;
+          console.log(response.rows, "response.rowsresponse.rowsresponse.rows列表内容");
+          this.eventLists.forEach((item) => {
             if (item.faultLocation == "null") {
               item.faultLocation = "";
             }
@@ -2052,33 +2476,41 @@ export default {
               item.faultCode = "";
             }
           });
-          this.total = response.total;
+          this.totals = response.total;
           this.loading = false;
         });
-      } else {
+      } else if(this.activeName == "0"||this.activeName == "1") {
         if (!this.dateRange) {
           this.dateRange = [];
         }
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.activeName;
-        console.log(new Date())
+        if(this.fuzzySearch1){
+          this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
+        }
+    
+        // const params = {
+        //   fuzzySearch : this.queryParams.fuzzySearch
+        // }
+
+        // this.queryParams.params = params
+        // console.log(new Date());
 
         listEvent(this.queryParams).then((response) => {
-          console.log(new Date())
+          console.log(new Date());
 
           console.log(response, "查询事件管理列表");
-          for(let item of response.rows){
-            if(item.iconUrlList){
-              for(let i=0;i<item.iconUrlList.length;i++){
-                item.picUrl = item.iconUrlList[0].imgUrl
+          for (let item of response.rows) {
+            if (item.iconUrlList) {
+              for (let i = 0; i < item.iconUrlList.length; i++) {
+                item.picUrl = item.iconUrlList[0].imgUrl;
               }
             }
           }
           this.eventList = response.rows;
           this.total = response.total;
           this.loading = false;
-
         });
       }
     },
@@ -2125,13 +2557,16 @@ export default {
     },
     /** 查询事件类型列表 */
     getEventType() {
+      if(this.currentMenu=="2"){
+        return
+      }
       let prevControlType = {
         prevControlType: this.activeName,
-        isUsable: "1"
+        isUsable: "1",
       };
       listEventType(prevControlType).then((response) => {
         console.log(response, "responseresponse1111");
-        response.rows.unshift({simplifyName: "全部"})
+        response.rows.unshift({ simplifyName: "全部" });
         this.eventTypeData = response.rows;
       });
     },
@@ -2195,9 +2630,19 @@ export default {
         if (this.form.faultDescription == "null") {
           this.form.faultDescription = "";
         }
-        /*console.log(
-          "that.form.iFileList====================" + that.form.iFileList.length
-        );*/
+        if (this.form.faultCxtime == "null") {
+          this.form.faultCxtime = "";
+        }
+        if (this.form.faultLevel == "null") {
+          this.form.faultLevel = "";
+        }
+        if (this.form.falltRemoveStatue == "null") {
+          this.form.falltRemoveStatue = "";
+        }
+        if (this.form.faultLocation == "null") {
+          this.form.faultLocation = "";
+        }
+
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
 
@@ -2238,44 +2683,50 @@ export default {
       let that = this;
       getRepairRecordList(this.faultId).then((response) => {
         that.news = response.data;
+        if(that.news.length>0){
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("impression")){
         that.impressionOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].impression = opt.dictLabel;
-          }
-          if (opt.dictValue == "1") {
-            that.news[0].impression = opt.dictLabel;
+                if (opt.dictValue == that.news[i].impression) {
+                  that.news[i].impression = opt.dictLabel;
           }
         });
-        that.networkOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].network = opt.dictLabel;
           }
-          if (opt.dictValue == "1") {
-            that.news[0].network = opt.dictLabel;
           }
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("network")){
+              that.networkOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].network) {
+                  that.news[i].network = opt.dictLabel;
+                }
         });
-        that.powerOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].power = opt.dictLabel;
           }
-          if (opt.dictValue == "1") {
-            that.news[0].power = opt.dictLabel;
           }
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("power")){
+              that.powerOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].power) {
+                  that.news[i].power = opt.dictLabel;
+                }
         });
+            }
+            }
+        }
 
-        this.news.forEach((taskitem) => {
-          this.bzData.forEach((opt) => {
-            if (taskitem.bzId == opt.deptId) {
-              taskitem.bzId = opt.deptName;
-            } else {
-              taskitem.bzId = "";
-            }
-            if (taskitem.bzId == null || taskitem.bzId == "null") {
-              taskitem.bzId = "";
-            }
+
+        //this.news.forEach((taskitem) => {
+          //this.bzData.forEach((opt) => {
+            //if (taskitem.bzId == opt.deptId) {
+             // taskitem.bzId = opt.deptName;
+           // } else {
+            //  taskitem.bzId = "";
+            //}
+            //if (taskitem.bzId == null || taskitem.bzId == "null") {
+             // taskitem.bzId = "";
+           // }
+         // });
+        //});
           });
-        });
-      });
     },
     // 关闭弹窗
     close() {
@@ -2409,9 +2860,13 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams = { pageNum: 1, pageSize: 16 };
+      this.queryParams1 = { pageNum: 1, pageSize: 10 };
       this.dateRange = [];
       this.tunnelList = [];
       this.queryParams.eventTypeId = "";
+      this.queryParams1.faultDescription = "";
+      this.fuzzySearch1 = ''
+
       // this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -2486,6 +2941,28 @@ export default {
                 console.log("================"+this.fileList)
                 return
               }*/
+
+
+      if (this.form.tunnelId == "" ||
+        this.form.tunnelId == -1 ||
+        this.form.tunnelId == null) {
+        return this.$modal.msgWarning("请选择所在路段隧道");
+      }
+
+      if (this.form.faultType == "" ||
+        this.form.faultType == -1 ||
+        this.form.faultType == null) {
+        return this.$modal.msgWarning("请选择故障类型");
+      }
+      if (this.form.eqId == "" ||
+        this.form.eqId == -1 ||
+        this.form.eqId == null) {
+        return this.$modal.msgWarning("请选择设备");
+      }
+      if (this.form.faultDescription == "") {
+        return this.$modal.msgWarning("请填写故障描述");
+      }
+
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
@@ -2512,7 +2989,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 500)
+      }, 500);
     },
     publishForm() {
       this.fileData = new FormData(); // new formData对象
@@ -2533,6 +3010,26 @@ export default {
       this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 0);
+
+      if (this.form.tunnelId == "" ||
+        this.form.tunnelId == -1 ||
+        this.form.tunnelId == null) {
+        return this.$modal.msgWarning("请选择所在路段隧道");
+      }
+
+      if (this.form.faultType == "" ||
+        this.form.faultType == -1 ||
+        this.form.faultType == null) {
+        return this.$modal.msgWarning("请选择故障类型");
+      }
+      if (this.form.eqId == "" ||
+        this.form.eqId == -1 ||
+        this.form.eqId == null) {
+        return this.$modal.msgWarning("请选择设备");
+      }
+      if (this.form.faultDescription == "") {
+        return this.$modal.msgWarning("请填写故障描述");
+      }
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
@@ -2559,11 +3056,10 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 500)
+      }, 500);
     },
     // 表单重置
     resetEvent() {
-
       this.$refs.form1.resetFields();
       this.eventForm.eventTypeId = null;
       this.eventForm.eventInjured = null;
@@ -2575,16 +3071,8 @@ export default {
       this.processDialog = false;
       this.processType = false;
       this.reset();
-      if(this.detailsButtonType == 2){
+      if (this.detailsButtonType == 2) {
         this.getList();
-      }
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
       }
     },
   },
@@ -2594,40 +3082,40 @@ export default {
 .formStyle {
   .el-form-item {
     margin-bottom: 1vh;
-
   }
 }
-::v-deep .el-form-item--medium .el-form-item__label{
-  line-height: 3vh;
+::v-deep .el-form-item--medium .el-form-item__label {
+  // line-height: 3vh;
   font-size: 0.7vw;
 }
-::v-deep .el-form-item--medium .el-form-item__content{
-  line-height: 3vh;
+::v-deep .el-form-item--medium .el-form-item__content {
+  // line-height: 3vh;
   font-size: 0.7vw;
 }
-::v-deep .el-input--medium .el-input__icon{
-  line-height: 3vh;
-}
-::v-deep .el-input--small .el-input__icon{
-  line-height: 3vh;
-}
-.el-tabs__header {
-  margin: 0 0 12px !important;
+// ::v-deep .el-input--medium .el-input__icon {
+//   line-height: 3vh;
+// // }
+// ::v-deep .el-input--small .el-input__icon {
+//   line-height: 3vh;
+// }
+::v-deep .el-tabs__header {
+  margin: 0 0 8px !important;
 }
 .contentListBox {
   width: 100%;
-  // height: 570px;
   word-wrap: break-word;
   word-break: normal;
+  overflow-y: auto;
+  overflow-x: hidden;
   //display: flex;
   .contentBox {
-    width: 24%;
     // height: 135px;
-    border: solid 1px #2aa6ff;
+    // border: solid 1px #2aa6ff;
     display: inline-flex;
     margin-right: 1vw;
     margin-bottom: 5px;
     position: relative;
+    border-radius: 2px;
     .video {
       width: 200px;
       height: 100%;
@@ -2655,14 +3143,14 @@ export default {
       margin-right: 20px;
       width: 213px;
       float: right;
-      margin-left: 10px;
+      margin-left: 2px;
       .stateTab {
         position: absolute;
         top: -34px;
         right: -21px;
       }
       div {
-        padding: 0.4vh 0;
+        padding: 0.6vh 0;
         span {
           padding-left: 6px;
         }
@@ -2717,10 +3205,10 @@ export default {
     font-size: 14px;
     color: #fff;
   }
-  .dialogBg2{
+  .dialogBg2 {
     width: 55% !important;
     padding: 20px 20px 10px 10px !important;
-    .video-box{
+    .video-box {
       height: calc(100% - 10px) !important;
     }
   }
@@ -2746,12 +3234,12 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      .picList{
+      .picList {
         width: 100%;
         height: 100%;
         // display: flex;
         // justify-content: left;
-        >div{
+        > div {
           overflow: hidden;
           margin-left: 10px;
           width: 21%;
@@ -2765,33 +3253,29 @@ export default {
             margin: 0 auto;
           }
         }
-
-
       }
-      .turnPages{
-        width:20px !important;
-        height:20px !important;
-        border:solid 1px #0087e7;
-        border-radius:10px;
+      .turnPages {
+        width: 20px !important;
+        height: 20px !important;
+        border: solid 1px #0087e7;
+        border-radius: 10px;
         text-align: center;
         cursor: pointer;
-        caret-color: rgba(0,0,0,0);
+        caret-color: rgba(0, 0, 0, 0);
       }
-      .turnPages:hover{
+      .turnPages:hover {
         background: #0087e7;
-        color:#fff
+        color: #fff;
       }
-      .noPic{
-        border:solid 1px #0087e7;
-        display:flex;
+      .noPic {
+        border: solid 1px #0087e7;
+        display: flex;
         justify-content: center;
         align-items: center;
-        img{
-          width:50%;
+        img {
+          width: 50%;
         }
       }
-
-
     }
   }
 }
@@ -2866,15 +3350,14 @@ export default {
   width: 53%;
   position: absolute;
   left: 20%;
-
 }
-  ::v-deep .detailsDialog .el-dialog{
-    height:calc(100% - 8vh) !important;
-    .el-dialog__body{
-      height: calc(100% - 4vh - 30px);
-      padding:0 !important;
-    }
+::v-deep .detailsDialog .el-dialog {
+  height: calc(100% - 8vh) !important;
+  .el-dialog__body {
+    height: calc(100% - 4vh - 30px);
+    padding: 0 !important;
   }
+}
 
 .animationDialog {
   z-index: 2008 !important;
@@ -2904,22 +3387,23 @@ export default {
   padding: 0px 10px;
   font-size: 0.7vw;
 }
-::v-deep .vue-treeselect__control{
-  height: 3vh;
-}
-::v-deep .vue-treeselect__placeholder, .vue-treeselect__single-value{
-  line-height: 3vh;
-}
-::v-deep .el-input--small .el-input__inner{
-  line-height: 3vh;
-  height: 3vh;
-  font-size: 0.7vw;
-}
-::v-deep .el-input--medium .el-input__inner{
-  line-height: 3vh;
-  height: 3vh;
-  font-size: 0.7vw;
-}
+// ::v-deep .vue-treeselect__control {
+//   height: 4vh;
+// }
+// ::v-deep .vue-treeselect__placeholder,
+// .vue-treeselect__single-value {
+//   line-height: 4vh;
+// }
+// ::v-deep .el-input--small .el-input__inner {
+//   line-height: 3vh;
+//   height: 4vh;
+//   font-size: 0.7vw;
+// }
+// ::v-deep .el-input--medium .el-input__inner {
+//   line-height: 3vh;
+//   height: 4vh;
+//   font-size: 0.7vw;
+// }
 .butBox {
   width: 280px;
   display: flex;
@@ -3065,7 +3549,7 @@ hr {
 .video {
   height: 300px;
   border-radius: 0;
-  padding: 5px;
+  padding: 10px;
   margin-top: 0;
 }
 
@@ -3158,60 +3642,42 @@ hr {
   }
 }
 
-
-::v-deep .el-tabs{
-  height: 100%;
-  .el-tabs__item {
-    height: 4vh;
-    font-size: 0.7vw;
-  }
-  .el-tabs__content {
-    height: calc(100% - 5vh);
-    .el-tab-pane {
-      height: 100%;
-      .contentListBox {
-        height: 60vh;
-        overflow-x: hidden;
-        overflow-y: auto;
-        .contentBox {
-          height: 14vh;
-        }
-      }
-    }
-  }
-}
-
 .disabledButton {
   cursor: no-drop;
   pointer-events: none;
 }
-.video-box{
+.video-box {
   height: 70%;
 }
-::-webkit-scrollbar{
-  width:6px;
+::-webkit-scrollbar {
+  width: 6px;
 }
-.videoDialog{
+.videoDialog {
   height: 92%;
 }
-.videoDialogClass{
-  width:100%;
-  height:100%;
+.videoDialogClass {
+  width: 100%;
+  height: 100%;
 
-  video{
-    width:100%;
-    height:auto;
+  video {
+    width: 100%;
+    height: auto;
   }
 }
-.el-carousel{
-  height:100%;
+.el-carousel {
+  height: 100%;
 }
-::v-deep .el-carousel__indicators{
+::v-deep .el-carousel__indicators {
   display: none;
 }
-.topTxt{
+.topTxt {
   margin-left: 15px;
   margin-top: 10px;
+}
+.searchSafeWarn{
+  top: 12% !important;
+  right: 0.8% !important;
+  width: 23.8% !important;
 }
 </style>
 

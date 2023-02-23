@@ -1,6 +1,72 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          v-hasPermi="['system:notice:add']"
+          size="small"
+          @click="handleAdd()"
+        >新增公告
+        </el-button>
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入公告标题、操作人员，回车搜索"
+            v-model="queryParams.noticeTitle"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="notice_boxShow = !notice_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="notice_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="公告类型" prop="noticeType" >
+          <el-select
+            style="width: 100%"
+            v-model="queryParams.noticeType"
+            clearable
+            placeholder="请选择公告类型"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_notice_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="公告标题" prop="noticeTitle">
         <el-input
           v-model="queryParams.noticeTitle"
@@ -56,46 +122,11 @@
           v-hasPermi="['system:notice:remove']"
         >删除</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:notice:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:notice:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:notice:remove']"
-        >删除</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="noticeList" @selection-change="handleSelectionChange"
-    :row-class-name="tableRowClassName">
+    height="62vh" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="noticeId" width="100" />
       <el-table-column
@@ -147,7 +178,7 @@
     />
 
     <!-- 添加或修改公告对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="780px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="780px" append-to-body class="noticeDialog">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -157,7 +188,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="公告类型" prop="noticeType">
-              <el-select v-model="form.noticeType" placeholder="请选择">
+              <el-select v-model="form.noticeType" placeholder="请选择" style="width:100%">
                 <el-option
                   v-for="dict in dict.type.sys_notice_type"
                   :key="dict.value"
@@ -201,6 +232,7 @@ export default {
   dicts: ['sys_notice_status', 'sys_notice_type'],
   data() {
     return {
+      notice_boxShow:false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -243,7 +275,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.notice_boxShow == true) {
+          self.notice_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询公告列表 */
     getList() {
       this.loading = true;
@@ -277,6 +324,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.noticeTitle = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -330,14 +378,6 @@ export default {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
-    },
-     // 表格的行样式
-     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   }
 };

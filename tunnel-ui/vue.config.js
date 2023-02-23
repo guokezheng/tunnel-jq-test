@@ -35,7 +35,7 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
 
-        target: `http://127.0.0.1:8000`, // 服务器
+         target: `http://127.0.0.1:8000`, // 服务器
         // target: `http://10.3.16.40:8000`, // 服务器
         // target: `http://10.168.56.206:8000`, // 服务器
 
@@ -60,8 +60,9 @@ module.exports = {
         // target: `http://10.168.65.230:7075/`, // 展双、
         // target: `http://10.168.78.127:8000/`, // 王畅
         // target: `http://10.168.64.75:8000/`, // 吴昊阳
-        // target: `http://10.168.64.171:8000/`, // 翟昌宏
+        //target: `http://10.168.64.171:8000/`, // 翟昌宏
         // target: `http://10.3.16.252:8000/`,
+        // target: `http://10.168.67.129:8000/`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

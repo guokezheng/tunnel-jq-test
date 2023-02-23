@@ -121,4 +121,15 @@ public interface SdTunnelsMapper
      * @return
      */
     List<SdTunnels> selectAllSdTunnelsList1();
+
+    /**
+     * 查询隧道所属部门
+     * @param tunnelId
+     * @return
+     */
+    String selectTunnelDept(@Param("tunnelId") String tunnelId);
+
+    List<SdTunnels> selectTunnelLineList(String deptId);
+
+    String isTunnel(@Param("deviceId") String deviceId);
 }

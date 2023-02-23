@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 情报板内容发布日志对象 iot_board_release_log
@@ -21,39 +22,42 @@ public class IotBoardReleaseLog extends BaseEntity
     private Long id;
 
     /** 设备编号 */
-    @Excel(name = "设备编号")
+    @Excel(name = "发布设备")
     private String deviceId;
 
+    @Excel(name = "设备桩号")
+    private String pile;
+
     /** 设备名称 */
-    @Excel(name = "设备名称")
+//    @Excel(name = "设备名称")
     private String deviceName;
 
     /** 发布前的内容 */
-    @Excel(name = "发布前的内容")
+//    @Excel(name = "发布前的内容")
     private String releaseOldContent;
 
     /** 发布后的内容 */
-    @Excel(name = "发布后的内容")
+    @Excel(name = "发布内容")
     private String releaseNewContent;
 
     /** 发布人 */
-    @Excel(name = "发布人")
+//    @Excel(name = "发布人")
     private String releaseBy;
 
     /** 发布时间 */
-    @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date releaseTime;
 
     /** 发布状态：0：正常，1：失败 */
-    @Excel(name = "发布状态：0：正常，1：失败")
+    @Excel(name = "发布状态", readConverterExp = "0=成功,1=失败")
     private String releaseStatus;
 
     /** 发布机构 */
-    @Excel(name = "发布机构")
+//    @Excel(name = "发布机构")
     private String releaseDeptName;
 
     /** 发布机构 */
-    @Excel(name = "发布机构")
+//    @Excel(name = "发布机构")
     private Long releaseDeptId;
 
     /** 发布用户 */
@@ -61,8 +65,29 @@ public class IotBoardReleaseLog extends BaseEntity
     private String releaseUserName;
 
     /** 发布用户 */
-    @Excel(name = "发布用户")
+//    @Excel(name = "发布用户")
     private String releaseUserId;
+
+    private List<String> paramsList;
+
+    //批量导出单选id导出数据
+    private Long[] ids;
+
+    public String getPile() {
+        return pile;
+    }
+
+    public void setPile(String pile) {
+        this.pile = pile;
+    }
+
+    public List<String> getParamsList() {
+        return paramsList;
+    }
+
+    public void setParamsList(List<String> paramsList) {
+        this.paramsList = paramsList;
+    }
 
     public String getReleaseStatus() {
         return releaseStatus;
@@ -166,6 +191,14 @@ public class IotBoardReleaseLog extends BaseEntity
     public Date getReleaseTime()
     {
         return releaseTime;
+    }
+
+    public Long[] getIds() {
+        return ids;
+    }
+
+    public void setIds(Long[] ids) {
+        this.ids = ids;
     }
 
     @Override

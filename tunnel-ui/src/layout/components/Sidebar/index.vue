@@ -54,45 +54,46 @@
       >
         <i
           class="el-icon-arrow-left"
-          @click="prevScroll"
+          @click="moveMethod('left')"
           :style="{ visibility: leftIcon ? 'visible' : 'hidden' }"
         ></i>
       </el-tooltip>
     </template>
-
-    <el-scrollbar
-      :class="settings.sideTheme"
-      wrap-class="scrollbar-wrapper"
-      :style="topNav ? 'width:55%;height:100%;' : ''"
-      ref="scroll"
-    >
-      <el-menu
-        ref="currentNav"
-        :default-active="activeMenu"
-        :collapse="isCollapse"
-        :text-color="
-          settings.sideTheme === 'theme-dark'
-            ? variables.menuColor
-            : variables.menuLightColor
-        "
-        :unique-opened="true"
-        :active-text-color="settings.theme"
-        :collapse-transition="true"
-        :mode="topNav ? 'horizontal' : 'vertical'"
-        :style="
-          topNav ? 'background:transparent !important' : 'white-space:unset;'
-        "
+      <el-scrollbar
+        :class="settings.sideTheme"
+        wrap-class="scrollbar-wrapper"
+        :style="topNav ? 'width:55%;height:100%;' : ''"
+        ref="scroll"
       >
-        <sidebar-item
-          v-for="(route, index) in sidebarRouters"
-          :key="route.path + index"
-          :item="route"
-          :base-path="route.path"
-          :class="topNav ? 'menu-item is_top' : 'menu-item is_left'"
-          :style="topNav ? style : 'width:100%;'"
-        />
-      </el-menu>
-    </el-scrollbar>
+        <el-menu
+          ref="currentNav"
+          :default-active="activeMenu"
+          :collapse="isCollapse"
+          :text-color="
+            settings.sideTheme === 'theme-dark'
+              ? variables.menuColor
+              : variables.menuLightColor
+          "
+          :unique-opened="true"
+          :active-text-color="settings.theme"
+          :collapse-transition="true"
+          :mode="topNav ? 'horizontal' : 'vertical'"
+          :style="
+            topNav ? 'background:transparent !important' : 'white-space:unset;'
+          "
+        >
+          <sidebar-item
+            v-for="(route, index) in sidebarRouters"
+            :key="route.path + index"
+            :item="route"
+            :base-path="route.path"
+            :class="topNav ? 'menu-item is_top' : 'menu-item is_left'"
+            :style="topNav ? style : 'width:100%;'"
+            style="caret-color: rgba(0,0,0,0);user-select: none;"
+          />
+        </el-menu>
+      </el-scrollbar>
+    
     <template v-if="topNav">
       <el-tooltip
         class="item"
@@ -102,7 +103,7 @@
       >
         <i
           class="el-icon-arrow-right"
-          @click="nextScroll"
+          @click="moveMethod('right')"
           :style="{ visibility: rightIcon ? 'visible' : 'hidden' }"
         ></i>
       </el-tooltip>
@@ -146,6 +147,8 @@ export default {
   },
   data() {
     return {
+      wrapWith: 0,
+      navWidth: 0,
       style: null,
       path: null,
       leftIcon: false,
@@ -176,6 +179,7 @@ export default {
   mounted() {
     // 当前导航栏子元素数量
     const childrenLength = this.$refs.currentNav.$el["childElementCount"];
+    console.log(childrenLength,"childrenLengthchildrenLength")
     // 导航栏菜单
     if (childrenLength > 6) {
       this.style = "min-width:20.7%;";
@@ -183,6 +187,10 @@ export default {
       this.style = "width:20%;";
     }
     console.log(this.sidebarRouters, "sidebarRouters");
+
+    // 初始化
+
+    this.wrapWith  = childrenLength * 164; //总长度
   },
   async created() {
     console.log(
@@ -228,29 +236,19 @@ export default {
       //   // this.manageStation = '0'
       // }
     },
-    prevScroll() {
+    moveMethod(flag){
+    // console.log(this.wrapWith,"总长度")
       let wrap = this.$refs.scroll.$refs.wrap;
-      wrap.scrollLeft = wrap.scrollLeft - 150;
-      console.log(wrap.scrollLeft);
-      if (wrap.scrollLeft == 0) {
-        this.leftIcon = false;
-        this.rightIcon = true;
-      } else {
-        this.leftIcon = true;
-        this.rightIcon = true;
+      // console.log(wrap.offsetWidth,"可视区域")
+      if(flag == 'left'){
+        wrap.scrollLeft = wrap.scrollLeft - 148;
+      }else if(flag == 'right'){
+        wrap.scrollLeft = wrap.scrollLeft + 148;
       }
-    },
-    nextScroll() {
-      let wrap = this.$refs.scroll.$refs.wrap;
-      wrap.scrollLeft = wrap.scrollLeft + 150;
-      console.log(wrap.scrollLeft);
-      if (wrap.scrollLeft == 782) {
-        this.rightIcon = false;
-        this.leftIcon = true;
-      } else {
-        this.rightIcon = true;
-        this.leftIcon = true;
-      }
+      let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
+      this.rightIcon = rollWidth - 148 < wrap.offsetWidth ? false : true;
+      this.leftIcon = wrap.scrollLeft == 0 ? false : true;
+    
     },
     changeScroll(e) {
       let wrap = this.$refs.scroll.$refs.wrap;
@@ -484,6 +482,7 @@ export default {
     height: 100%;
   }
 }
+
 </style>
 <style lang="scss">
 .topNavSelect {

@@ -50,28 +50,36 @@
             style="cursor: pointer"
           >
             <el-row style="color: white">
-              <el-col :span="2">
-                <img
-                  :src="item.iconUrl"
-                  style="width: 20px; height: 20px; transform: translateY(5px)"
-                  v-if="searchValue == 2 || searchValue == 3"
-                />
-                <img
-                  :src="item.eventType.iconUrl"
-                  style="width: 20px; height: 20px; transform: translateY(5px)"
-                  v-else
-                />
+              <el-col :span="1">
+                <div style="width: 20px; height: 20px; display: flex;justify-content: center;align-items: center;transform:scale(0.8)">
+                  <img
+                    :src="item.iconUrl"
+                    v-if="searchValue == 2 || searchValue == 3 "
+                  />
+                  <img
+                    :src="item.eventType.iconUrl"
+                    v-else
+                  />
+                </div>
+                
               </el-col>
-              <el-col :span="2">
-                <div v-if="searchValue == 2 || searchValue == 3">
+              <el-col :span="4" style="display:flex">
+                <div v-if="searchValue == 2 || searchValue == 3"
+                :style="{color: item.prevControlType == 0?'red':'#F6AC10'}"
+                style="width:100%">
                   {{ item.simplifyName }}
                 </div>
-                <div v-else>
+                <div 
+                v-else
+                style="width:100%"
+                :style="{color:searchValue == 0?'red':'blue'}"
+                >
                   {{ item.eventType.simplifyName }}
                 </div>
+                <span class="icon-split" style="padding: 0 12px;color: #3cd3fe;"> |</span>
               </el-col>
               <el-col
-                :span="20"
+                :span="19"
                 style="display: flex; justify-content: space-between"
               >
               <el-tooltip class="item" effect="dark" :content="item.frameEventTitle" placement="top">
@@ -135,7 +143,13 @@ export default {
       activeName: "0",
       pageNum: 1,
       total: 0,
-      list: [],
+      list: [
+        {
+          eventType:{
+            iconUrl:''
+          }
+        }
+      ],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
       eventTime: "",
@@ -148,7 +162,7 @@ export default {
       if (this.total % 10 == 0) {
         return this.pageNum >= parseInt(this.total / 10);
       } else {
-        console.log(this.pageNum, parseInt(this.total / 10) + 1);
+        // console.log(this.pageNum, parseInt(this.total / 10) + 1);
         return this.pageNum >= parseInt(this.total / 10) + 1;
       }
     },
@@ -229,7 +243,7 @@ export default {
       }, 2000);
     },
     handleSee(id) {
-      if(searchValue != 2){
+      if(this.searchValue != 2){
         setTimeout(() => {
           bus.$emit("getPicId", id);
         }, 200);
@@ -456,6 +470,7 @@ export default {
     padding: 0 !important;
     width: 100% !important;
     margin: 0 !important;
+    height: 100% !important;
   }
   .title {
     padding-left: 20px;
@@ -534,7 +549,7 @@ export default {
   }
 }
 .overflowText{
-  width:280px;
+  width:260px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

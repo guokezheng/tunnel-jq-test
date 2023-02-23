@@ -604,4 +604,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         return sdTaskListMapper.getTaskToDo(deptId);
     }
 
+    @Override
+    public String selectBzByTunnel(String tunnelId) {
+        return sdTaskListMapper.selectBzByTunnel(tunnelId);
+    }
+
 }

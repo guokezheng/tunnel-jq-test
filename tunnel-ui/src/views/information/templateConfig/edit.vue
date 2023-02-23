@@ -451,7 +451,7 @@ export default {
         //   content: "蓝色",
         // },
         // {
-        //   code: "GreenYellow",
+        //   code: "#00FF00",
         //   content: "绿色",
         // },
       ],

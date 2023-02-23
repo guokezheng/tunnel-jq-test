@@ -196,9 +196,15 @@ public class SdTaskListController extends BaseController
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
         //List<SysDept> depts = deptService.selectTunnelDeptList(deptId);
+        String ssdw = tunnelsService.selectTunnelDept(tunnelId);
         List<SysDeptTunnel>deptTunnels = new ArrayList<>();
+        List<SysDept> depts = new ArrayList<>();
+        if("1".equals(deptId))
+            depts = deptService.selectTunnelDeptListBydw(deptId,ssdw);
+        else{
+            depts = deptService.selectTunnelDeptList(deptId);
+        }
 
-        List<SysDept> depts = deptService.selectTunnelDeptList(deptId);
         List<SdTunnels> tunnels = tunnelsService.selectTunnelList(deptId,tunnelId);
         if(depts!=null&&depts.size()>0){
             for(int i = 0;i<depts.size();i++){
@@ -578,6 +584,18 @@ public class SdTaskListController extends BaseController
         map.put("task",taskList);
         map.put("num", taskList.size());
         return Result.success(map);
+    }
+
+
+    /**
+     * 根据所选隧道查询班组
+     * @param tunnelId
+     * @return
+     */
+    @PostMapping("/selectBzByTunnel")
+    public Result selectBzByTunnel(@RequestBody String tunnelId){
+        String bz = sdTaskListService.selectBzByTunnel(tunnelId);
+        return Result.success(bz);
     }
 
 

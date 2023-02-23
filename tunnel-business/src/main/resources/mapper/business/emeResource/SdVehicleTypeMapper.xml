@@ -22,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdVehicleTypeList" parameterType="SdVehicleType" resultMap="SdVehicleTypeResult">
         <include refid="selectSdVehicleTypeVo"/>
         <where>  
-            <if test="vehicleTypeCode != null  and vehicleTypeCode != ''"> and INSTR(vehicle_type_code, #{vehicleTypeCode}) > 0</if>
+            <if test="vehicleTypeCode != null  and vehicleTypeCode != ''"> AND CONCAT(vehicle_type_name, vehicle_type_code) LIKE CONCAT('%',#{vehicleTypeCode},'%')</if>
             <if test="vehicleTypeName != null  and vehicleTypeName != ''"> and INSTR(vehicle_type_name, #{vehicleTypeName}) > 0</if>
             <if test="iskeyVehicle != null  and iskeyVehicle != ''"> and is_key_vehicle = #{iskeyVehicle}</if>
         </where>

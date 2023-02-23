@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdEquipmentTypeList" parameterType="SdEquipmentType" resultMap="SdEquipmentTypeResult">
         <include refid="selectSdEquipmentTypeVo"/>
         <where>
-            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="typeName != null  and typeName != ''"> AND CONCAT(type_abbr, type_name) like concat('%', #{typeName}, '%')</if>
             <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>
             <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
             <if test="isAnalog != null  and isAnalog != ''"> and is_analog = #{isAnalog}</if>

@@ -114,19 +114,28 @@ spring:
         max.poll.interval.ms: 1000000
 
 sso:
+  url: http://10.166.157.192:31315
   # 获取授权码
-  authCode: http://10.166.157.192:31315/auth/sso/test/code
+  authCode: ${sso.url}/auth/sso/test/code
   # 获取Token
-  token: http://10.166.157.192:31315/auth/sso/token
+  token: ${sso.url}/auth/sso/token
   # 获取当前登录用户信息
-  userInfo: http://10.166.157.192:31315/sys/user/info
+  userInfo: ${sso.url}/sys/user/info
   # 获取组织机构树
-  deptTree: http://10.166.157.192:31315/sys/dept/tree/get_tree_all
+  deptTree: ${sso.url}/sys/dept/tree/get_tree_all
   # 获取组织机构下的用户信息
-  userList: http://10.166.157.192:31315/sys/user/getUserListByCompanyAndDept
-
+  userList: ${sso.url}/sys/user/getUserListByCompanyAndDept
+  #应急车辆第三方接口
+  emergencyVehicle:
+    syn: ${sso.url}/equipment/CarInfo/list
+    edit: ${sso.url}/equipment/commandCenter/updateDispatchByDispatch
+    detail: ${sso.url}/equipment/deviceCar/getCarInfo
   #业务中台分配应用ID
   appId: jq_tunnel_server
+  clientSecret: qz_opm
+  # 请求接口时获取token；使用单点登录方式获取token请求接口，如果系统中没有对应用户，获取token报错“账号或密码错误”
+  generalTokenUrl: ${sso.url}/auth/client/token?appId=${sso.appId}&clientSecret=${sso.clientSecret}
+
 
 device:
   hongmeng:
@@ -139,5 +148,3 @@ device:
       trafficLight: ${device.hongmeng.url}/deviceCtrl/trafficLight/alterTrafficLightRunStatus
       laneIndicator: ${device.hongmeng.url}/deviceCtrl/laneIndicator/alterLaneIndicatorRunStatus
       rollDoor: ${device.hongmeng.url}/deviceCtrl/rollDoor/alterRollDoorRunStatus
-
-

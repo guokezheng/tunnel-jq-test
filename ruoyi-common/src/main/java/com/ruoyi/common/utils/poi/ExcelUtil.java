@@ -281,6 +281,9 @@ public class ExcelUtil<T>
                     fieldsMap.put(column, objects);
                 }
             }
+            if(fieldsMap.isEmpty()){//为空
+                throw new IOException("抱歉，导入失败，请检查数据");
+            }
             for (int i = titleNum + 1; i <= rows; i++)
             {
                 // 从第2行开始取数据,默认第一行是表头.

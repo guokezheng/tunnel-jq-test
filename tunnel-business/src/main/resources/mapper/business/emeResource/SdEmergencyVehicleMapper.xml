@@ -49,8 +49,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="orgName != null and orgName != ''">
             AND ev.org_id = #{orgName}
         </if>
-        <if test="vType != null  and vType != ''">
-            AND ev.v_type = #{vType}
+        <if test="cx != null  and cx != ''">
+            and ev.v_type in (${cx})
         </if>
         <if test="plateNumber != null  and plateNumber != ''">
             AND INSTR(ev.plate_number, #{plateNumber}) > 0

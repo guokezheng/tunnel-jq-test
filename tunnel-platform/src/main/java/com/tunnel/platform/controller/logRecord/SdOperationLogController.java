@@ -6,6 +6,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.SysLogininfor;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.platform.controller.informationBoard.AjaxResultb;
@@ -118,5 +119,18 @@ public class SdOperationLogController extends BaseController
     public AjaxResult getDispatchExecuted(String eventId)
     {
         return AjaxResult.success(sdOperationLogService.getDispatchExecuted(eventId));
+    }
+
+    /**
+     * 导出操作日志
+     * @param sdOperationLog
+     * @return
+     */
+    @GetMapping("/export")
+    public AjaxResult export(SdOperationLog sdOperationLog)
+    {
+        List<SdOperationLog> list = sdOperationLogService.selectSdOperationLogList(sdOperationLog);
+        ExcelUtil<SdOperationLog> util = new ExcelUtil<SdOperationLog>(SdOperationLog.class);
+        return util.exportExcel(list, "操作日志");
     }
 }

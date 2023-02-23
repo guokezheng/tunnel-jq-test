@@ -81,7 +81,10 @@
               placeholder="请输入内容"
               v-model="screenEqName"
               class="input-with-select"
-              @keyup.enter.native="screenEqNameButton"
+              clearable
+              @click.native="treeClick()"
+              @keyup.enter.native="screenEqNameButton(screenEqName)"
+              @clear="treeClear"
             >
               <el-button
                 slot="append"
@@ -90,9 +93,15 @@
               ></el-button>
             </el-input>
             <!-- 搜索栏树状结构 -->
-            <!-- <div class="treeBox" ref="treeBox" v-show="treeShow">
-              <el-tree :data="treeData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-            </div> -->
+            <div class="treeBox" ref="treeBox" v-show="treeShow">
+              <el-tree :data="treeData" :props="defaultProps"
+              @node-click="handleNodeClick"
+              accordion
+              :default-expand-all="false"
+              :filter-node-method="filterNode"
+              ref="tree"
+              ></el-tree>
+          </div>
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
@@ -297,7 +306,7 @@
 
                     <el-tooltip
                       effect="dark"
-                      
+
                       placement="right"
                       :title="item.pile"
                       :disabled="sensorDisabledTwo(item)"
@@ -377,10 +386,8 @@
                             item.click == true ? 'solid 2px #09C3FC' : '',
                           width:item.associated_device_id?getBoardStyle(item.associated_device_id,'width',item.eqType) + 'px':item.iconWidth + 'px',
                           height:item.associated_device_id?getBoardStyle(item.associated_device_id,'height',item.eqType) + 'px':item.iconHeight + 'px',
-                          color:item.associated_device_id?getBoardStyle(item.associated_device_id,'color') :'yellow',
                           fontSize:item.associated_device_id?getBoardStyle(item.associated_device_id,'fontSize',item.eqType) + 'px':'15px'
                           }"
-
                           :src= getTypePic(item)
                           :class="
                             item.eqName == screenEqName
@@ -388,12 +395,19 @@
                               : ''
                           "
                           >
-
-                          <span
+                          <div
                           :style="{
                               animation: 'boardBox1 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite'
-                          }"
-                          >{{getBoardStyle(item.associated_device_id,'content') }}</span>
+                          }">
+                            <span
+                            v-for="(item,index) in getBoardStyle(item.associated_device_id,'array')" :key="index"
+                            :style="{
+                              color:getColorStyle(item.COLOR)
+                              }"
+                            style="padding-top:10px"
+                          >{{item.CONTENT}}</span>
+                          </div>
+                          
                         </div>
                         <div v-show="item.eqType == 36"
                         class="boardBox2"
@@ -405,7 +419,6 @@
                               item.click == true ? 'solid 2px #09C3FC' : '',
                             width:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'width',item.eqType) + 'px':item.iconWidth + 'px',
                             height:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'height',item.eqType) + 'px':item.iconHeight + 'px',
-                            color:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'color') :'yellow',
                             fontSize:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'fontSize',item.eqType) + 'px':'15px'
                           }"
 
@@ -415,11 +428,21 @@
                               ? 'screenEqNameClass'
                               : ''
                           "
-                          ><span
+                          >
+                          <div 
                           :style="{
-                              animation: 'boardBox2 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite'
-                          }"
-                          >{{getBoardStyle(item.associated_device_id,'content')}}</span>
+                                animation: 'boardBox2 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite',
+                              
+                            }">
+                            <span
+                            v-for="(item,index) in getBoardStyle(item.associated_device_id,'array')" :key="index"
+                            :style="{
+                                color:getColorStyle(item.COLOR)
+                            }"
+                            style="padding-top:10px"
+                            >{{item.CONTENT}}</span>
+                          </div>
+                          
                         </div>
                         <!-- 调光数值 -->
                         <label
@@ -535,15 +558,16 @@
           "
           :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
-          <div class="indicatorLight" @click="isDrawerA()">
-            <i class="el-icon-caret-left"></i>一键控制模块
+          <div class="indicatorLight" @click="isDrawerA()"
+          >
+            <i :class="[drawerA ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>一键控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
-            <i class="el-icon-caret-left"></i>分时控制模块
+            <i :class="[drawerB ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>分时控制模块
           </div>
           <div class="triggerControl" @click="isDrawerC()">
-            <i class="el-icon-caret-left"></i>触发控制模块
+            <i :class="[drawerCVisible ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>触发控制模块
           </div>
         </div>
 
@@ -605,6 +629,7 @@
                 class="chezhiControlButton"
                 @click="chezhiControl(0)"
                 :disabled="chezhiDisabled"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -658,6 +683,7 @@
                 class="chezhiControlButton"
                 @click="chezhiControl(1)"
                 :disabled="chezhiDisabled"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -706,6 +732,7 @@
                 class="chezhiControlButton"
                 size="mini"
                 @click="phoneControl(directionList[0].dictValue)"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -752,6 +779,7 @@
                 class="chezhiControlButton"
                 size="mini"
                 @click="phoneControl(directionList[1].dictValue)"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -806,6 +834,7 @@
                   size="mini"
                   class="handleLightClass"
                   @click="timingStrategy(item)"
+                  v-hasPermi="['workbench:dialog:save']"
                   >确定
                 </el-button>
             </div>
@@ -863,7 +892,7 @@
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
       <div class="footer" v-show="displayThumbnail == true">
-        <div class="footMiniBox" style="cursor: pointer">
+        <div class="footMiniBox" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -877,7 +906,7 @@
           </div>
           <div id="vehicle"></div>
         </div>
-        <div class="footMiniBox footerRight" style="cursor: pointer">
+        <div class="footMiniBox footerRight" >
           <div class="footTitle">
             <!-- <div class="footTriangle"></div> -->
             <div class="footTitleCont">
@@ -893,7 +922,7 @@
           <div id="energyConsumption"></div>
         </div>
 
-        <div class="footMiniBox footerRight" style="cursor: pointer">
+        <div class="footMiniBox footerRight" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -944,7 +973,7 @@
             </vue-seamless-scroll>
           </div> -->
         </div>
-        <div class="footerRight footMiniBox" style="cursor: pointer">
+        <div class="footerRight footMiniBox" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -973,41 +1002,57 @@
               class="listContent"
               :data="trafficList"
             >
-              <el-row
-                v-for="(item, index) in trafficList"
-                :key="index"
-                class="listRow"
-                style="margin-top:4px"
-                :data-index="JSON.stringify(item)"
-                :id="item.id"
-              >
-              <!-- @click.native="jumpYingJi(item.id)"  -->
-                <el-col style="text-align: center" :span="2">
-                  <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
-                </el-col>
-                <el-col style="text-align: center" :span="3"
-                :style="{color:item.eventType.prevControlType == '0'?'#E0281B':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
-                  {{item.eventType.simplifyName}}
-                </el-col>
-                <el-col :span="19" style="display: flex;">
-                  <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
-                    item.eventType.eventType
-                  }}事件 -->
-                  <div
-                    style="width:300px;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    z-index:10;
-                    ">
-                    {{item.eventTitle}}</div>
-                  <div style="font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
+              <ul style="padding-left:0">
+                <li
+                  v-for="(item, index) of trafficList"
+                  :key="index"
+                  style="cursor: pointer;list-style: none;"
+                >
+                  <el-row
+                    class="listRow"
+                    :data-index="JSON.stringify(item)"
+                    :id="item.id"
+                  >
+                  <!-- @click.native="jumpYingJi(item.id)"  -->
+                    <el-col  :span="2">
+                      <div style="width: 100%; height: 20px; display: flex;justify-content: right;align-items: center;transform:scale(0.7) translateY(8px)">
+                        <img :src="item.eventType.iconUrl"   />
+                      </div>
+                    </el-col>
+                    <el-col style="display:flex" :span="4">
+                    <div 
+                      style="width:100%" 
+                      :style="{color:item.eventType.prevControlType == '0'?'red':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
+                      {{item.eventType.simplifyName}}
+                    </div>
+                      
+                    </el-col>
+                    <el-col :span="18" style="display: flex;">
+                      <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
+                        item.eventType.eventType
+                      }}事件 -->
+                      <div
+                        style="width:300px;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        z-index:10;
+                        ">
+                        {{item.eventTitle}}</div>
+                      <div style="font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
 
-                </el-col>
-              </el-row>
+                    </el-col>
+                  </el-row>
+                  <div class="lineBT" >
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </li>
+              </ul>
             </vue-seamless-scroll>
           </div>
-          
+
         </div>
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
@@ -1192,28 +1237,80 @@
           <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
 
     </el-tabs>
-    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'xitong'"
+
+
+      <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;margin-top: 5%">
+        <el-row :gutter="20" style="margin: 10px 0 25px">
+
+          <el-col :span="12"  >
+            <div class="grid-content bg-purple">
+              <el-input
+                placeholder="请输入登录地址、用户名称，回车搜索"
+                v-model="operationParam.ipaddr"
+                @keyup.enter.native="handleQueryOperationParam"
+                v-show="operationActive == 'xitong'"
+                class="zj"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-s-fold"
+                  @click="syxt_boxShow = !syxt_boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="syxt_searchBox" v-show="syxt_boxShow">
+          <el-form
+            ref="operationParam"
+            :inline="true"
+            :model="operationParam"
+            label-width="68px" style="margin-top: 10px"
+            v-show="operationActive == 'xitong'"
+          >
+            <el-form-item label="登录状态" prop="status" style="width: 100%">
+              <el-select
+                v-model="operationParam.status"
+                clearable
+                placeholder="请选择登录状态"
+                size="small"
+              >
+                <el-option
+                  v-for="dict in dict.type.sys_common_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="登录时间">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 252px;"
+                value-format="yyyy-MM-dd HH-mm-ss"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :default-time="['00:00:00', '23:59:59']"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" type="primary" @click="handleQueryOperationParam"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+
+<!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'xitong'"
              label-width="68px" style="margin-top: 10px">
-      <el-form-item label="登录地址" prop="ipaddr">
-        <el-input
-          v-model="operationParam.ipaddr"
-          placeholder="请输入登录地址"
-          clearable
-          style="width: 240px;"
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="用户名称" prop="userName">
-        <el-input
-          v-model="operationParam.userName"
-          placeholder="请输入用户名称"
-          clearable
-          style="width: 240px;"
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="operationParam.status"
@@ -1247,8 +1344,110 @@
         <el-button type="primary" size="mini" @click="handleQueryOperationParam">搜索</el-button>
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
-    </el-form>
-    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'caozuo'"
+    </el-form>-->
+      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%" >
+        <el-row :gutter="20" style="margin: 10px 0 25px">
+
+          <el-col :span="12"  >
+            <div class="grid-content bg-purple">
+              <el-input
+                placeholder="请输入操作地址，回车搜索"
+                v-model="operationParam.operIp"
+                @keyup.enter.native="handleQueryOperationParam"
+                v-show="operationActive == 'caozuo'"
+                class="zj"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-s-fold"
+                  @click="sycz_boxShow = !sycz_boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="syxt_searchBox" v-show="sycz_boxShow">
+          <el-form
+            ref="operationParam"
+            :inline="true"
+            :model="operationParam"
+            label-width="68px" style="margin-top: 10px"
+            v-show="operationActive == 'caozuo'"
+          >
+            <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
+              <el-select
+
+                v-model="operationParam.eqTypeId"
+                clearable
+                placeholder="请选择设备类型"
+                size="small"
+              >
+                <el-option
+                  v-for="item in eqTypeData"
+                  :key="item.typeId"
+                  :label="item.typeName"
+                  :value="item.typeId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStation == '0'">
+              <el-select
+                v-model="operationParam.tunnelId"
+                placeholder="请选择隧道"
+                style="width: 252px;"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in eqTunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="控制方式" prop="controlType" style="width: 100%">
+              <el-select
+
+                v-model="operationParam.controlType"
+                clearable
+                placeholder="请选择控制方式"
+                size="small"
+              >
+                <el-option
+                  v-for="dict in dict.type.sd_control_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 252px"
+                value-format="yyyy-MM-dd HH-mm-ss"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :default-time="['00:00:00', '23:59:59']"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" type="primary" @click="handleQueryOperationParam"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+
+<!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'caozuo'"
                label-width="68px" style="margin-top: 10px">
       <el-form-item label="设备类型" prop="eqTypeId">
         <el-select
@@ -1311,12 +1510,17 @@
         >重置</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form>-->
     <el-table ref="tables" v-loading="loading" :data="operationList1" @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName" v-show="operationActive == 'xitong'"
             :default-sort="{prop: 'loginTime', order: 'descending'}" max-height="430" >
-      <!-- <el-table-column type="selection" align="center" /> -->
-      <el-table-column label="访问编号" align="center" prop="infoId" />
+       <el-table-column type="selection" align="center" />
+      <el-table-column label="序号" width="55" align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
       <el-table-column label="用户名称" align="center" prop="userName" width="100" :show-overflow-tooltip="true" />
       <el-table-column label="登录地址" align="center" prop="ipaddr" width="130" :show-overflow-tooltip="true" />
       <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
@@ -1336,8 +1540,12 @@
     </el-table>
       <el-table v-loading="loading" :data="operationList2" max-height="430" :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" v-show="operationActive == 'caozuo'" >
-      <el-table-column label="序号" align="center" prop="id" display="none"/>
-
+        <el-table-column type="selection" align="center" />
+        <el-table-column label="序号" width="55" align="center">
+          <template slot-scope="scope">
+            {{scope.$index+1}}
+          </template>
+        </el-table-column>
       <el-table-column
         label="隧道名称"
         align="center"
@@ -2147,7 +2355,7 @@
     <com-light
       class="comClass"
       v-if="
-        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13].includes(this.eqInfo.clickEqType)
+        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 45].includes(this.eqInfo.clickEqType)
       "
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
@@ -2169,7 +2377,7 @@
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 35,40,39,48,45].includes(this.eqInfo.clickEqType)"
+      v-if="[14, 21, 32, 33, 15, 35,40,39,48].includes(this.eqInfo.clickEqType)"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>
@@ -3128,6 +3336,7 @@ import {
   getNewBoardEditInfo,
   templateList,
   batchControlDevice,
+  getCategoryTree,
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
 import { listEvent, getWarnEvent } from "@/api/event/event";
@@ -3167,65 +3376,12 @@ export default {
 
   data() {
     return {
+
+      syxt_boxShow:false,
+      sycz_boxShow:false,
       treeShow: false,
       //搜索树状数据
-      treeData: [
-        {
-          label: "一级 1",
-          children: [
-            {
-              label: "二级 1-1",
-              children: [
-                {
-                  label: "三级 1-1-1",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: "一级 2",
-          children: [
-            {
-              label: "二级 2-1",
-              children: [
-                {
-                  label: "三级 2-1-1",
-                },
-              ],
-            },
-            {
-              label: "二级 2-2",
-              children: [
-                {
-                  label: "三级 2-2-1",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: "一级 3",
-          children: [
-            {
-              label: "二级 3-1",
-              children: [
-                {
-                  label: "三级 3-1-1",
-                },
-              ],
-            },
-            {
-              label: "二级 3-2",
-              children: [
-                {
-                  label: "三级 3-2-1",
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      treeData: [],
       defaultProps: {
         children: "children",
         label: "label",
@@ -4016,6 +4172,10 @@ export default {
   },
 
   watch: {
+    // 工作台搜索关键词匹配
+    screenEqName(val) {
+      this.$refs.tree.filter(val);
+    },
     tunnelList: function (newVal, oldVal) {
       console.log(newVal, "8888888888888888");
     },
@@ -4327,10 +4487,41 @@ export default {
     // this.initeChartsEnd();
     // this.loadFocusCar();
     // this.srollAuto()
+    document.addEventListener("click", this.bodyCloseMenus);
+    document.addEventListener("click", this.bodyCloseMenus1);
   },
+
   methods: {
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.syxt_boxShow == true){
+          self.syxt_boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus1(e) {
+      let self = this;
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+        if (self.sycz_boxShow == true){
+          self.sycz_boxShow = false;
+        }
+      }
+    },
     otherClose(e) {
       if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+    },
+    treeClear(){
+      for (var item of this.selectedIconList) {
+          if (item.eqName.indexOf(this.screenEqName) > -1) {
+            console.log(item.eqName);
+            item.click = false;
+          }
+        }
     },
     // 模糊查询
     treeClick() {
@@ -4344,16 +4535,16 @@ export default {
       this.screenEqNameButton(data.label);
     },
     // 筛选设备名称
-    screenEqNameButton(screenEqName) {
-      // console.log(screenEqName);
-      for (var item of this.selectedIconList) {
-        if (item.eqName.indexOf(screenEqName) != -1) {
-          item.click = true;
-        } else {
-          item.click = false;
-        }
-      }
-    },
+    // screenEqNameButton(screenEqName) {
+    //   // console.log(screenEqName);
+    //   for (var item of this.selectedIconList) {
+    //     if (item.eqName.indexOf(screenEqName) != -1) {
+    //       item.click = true;
+    //     } else {
+    //       item.click = false;
+    //     }
+    //   }
+    // },
     changeStrategyState(row) {
       let data = { strategyId: row.id, change: row.strategyState };
       updateState(data).then((result) => {
@@ -4397,27 +4588,30 @@ export default {
               return devicePixel.split("*")[0] / 4;
             }
           }
+          let array = []
           let arr = "";
           let fontS = "";
-          let color = "";
           for (let i = 0; i < content.length; i++) {
             var itemId = "ITEM" + this.formatNum(i, 3);
             var con = content[i][itemId][0];
+            con.CONTENT = con.CONTENT.replace("<br>", " ").replace(" &nbsp", " ");
+            array.push(con)
             arr += con.CONTENT.replace("<br>", " ").replace(" &nbsp", " ");
             arr += " ";
-            color = this.getColorStyle(con.COLOR);
             fontS = Number(con.FONT_SIZE.substring(0, 2));
           }
+
           if (type == "content") {
             return arr;
-          } else if (type == "color") {
-            return color;
-          } else if (type == "fontSize") {
+          } 
+          else if (type == "fontSize") {
             if (eqType && eqType == 16) {
               return fontS / 2;
             } else if (eqType && eqType == 36) {
               return fontS / 4;
             }
+          }else if(type == 'array'){
+            return array
           }
         } else {
           let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
@@ -4435,10 +4629,11 @@ export default {
             }
           } else if (type == "content") {
             return "山东高速欢迎您";
-          } else if (type == "color") {
-            return "yellow";
-          } else if (type == "fontSize") {
+          }else if (type == "fontSize") {
             return 15;
+          }else if(type == 'array'){
+            let array = [{CONTENT:'山东高速欢迎您',COLOR:'黄色'}]
+            return array
           }
         }
       } else {
@@ -4461,7 +4656,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "green";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -4573,6 +4768,7 @@ export default {
       };
       batchControlDevice(param).then((res) => {
         console.log(res, "000000000000000");
+        this.$modal.msgSuccess("控制成功");
         this.batchManageDialog = false;
         this.closeBatchManageDialog();
       });
@@ -4846,7 +5042,7 @@ export default {
     },
     //抽屉
     isDrawerA() {
-      this.drawerA = true;
+      this.drawerA = !this.drawerA;
       this.drawerB = false;
       this.drawerCVisible = false;
       // Object.assign(this.$data.phoneForm1, this.$options.data().phoneForm1)
@@ -4856,9 +5052,10 @@ export default {
       this.phoneForm2 = {
         loopCount: "1",
       };
+      this.$forceUpdate()
     },
     isDrawerB() {
-      this.drawerB = true;
+      this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
       if (this.tunnelId) {
@@ -4873,7 +5070,7 @@ export default {
       }
     },
     isDrawerC() {
-      this.drawerCVisible = true;
+      this.drawerCVisible = !this.drawerCVisible;
       this.drawerA = false;
       this.drawerB = false;
 
@@ -4964,7 +5161,13 @@ export default {
       this.dateRange = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
-
+      this.operationParam.ipaddr = "";
+      this.operationParam.status = null;
+      this.operationParam.operIp = "";
+      this.operationParam.eqTypeId = null;
+      this.operationParam.tunnelId = null;
+      this.operationParam.controlType = null;
+      this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },
     // 控制方式   3：手动 1：时间控制 2：光强控制字典翻译
@@ -5082,6 +5285,7 @@ export default {
       const params = { status: 0 };
       getTreeByDeptId(params)
         .then((response) => {
+          console.log(response,"级联")
           const options = response.data;
           let childs = [];
           function a(list) {
@@ -5650,13 +5854,9 @@ export default {
               },
               type: "value",
               minInterval: 1,
-              // min: 0,
-              // max: 200,
               axisTick: {
                 show: false,
               },
-              max: 200,
-              min: 0,
               splitNumber: 5,
               splitLine: {
                 show: true,
@@ -6397,9 +6597,9 @@ export default {
           }
         }
         this.getTunnelLane();
-        // this.$nextTick(() => {
-        //   this.getEnergyConsumption(this.currentTunnel.id);
-        // });
+        this.$nextTick(() => {
+          this.getEnergyConsumption(this.currentTunnel.id);
+        });
         // this.timingControl()
       });
     },
@@ -6670,6 +6870,11 @@ export default {
           that.rightDirection = "";
         }
       });
+           // 树状搜索
+    getCategoryTree( tunnelId).then((res) => {
+      console.log(res, "-------------------------");
+      this.treeData = res.data;
+    });
     },
 
     /* 根据车道数获取车道图*/
@@ -6828,8 +7033,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39, 48, 45
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -6846,7 +7050,7 @@ export default {
                           parseFloat(deviceData.CO).toFixed(2) +
                           "/PPM  VI:" +
                           parseFloat(deviceData.VI).toFixed(2) +
-                          "KM";
+                          "M";
                       } else if (deviceData.eqType == 17) {
                         this.selectedIconList[j].num =
                           parseFloat(deviceData.FS).toFixed(2) +
@@ -6867,10 +7071,7 @@ export default {
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
-                  if (
-                    deviceData.eqStatus == "1" ||
-                    deviceData.eqStatus == "2"
-                  ) {
+                  if (deviceData.eqStatus == "1") {
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
@@ -8765,8 +8966,16 @@ export default {
     .listContent {
       height: 70%;
       font-size: 14px;
-      margin-top: 5px;
       overflow: hidden;
+      ul{
+        margin:0;
+      }
+      > li {
+        // margin-bottom: 6px;
+        list-style: none;
+        padding: 10px;
+        padding-bottom: 0px;
+      }
     }
   }
 }
@@ -10278,7 +10487,7 @@ input {
 }
 @keyframes boardBox1 {
   from {
-    transform: translateY(100%); /*div多宽就写多宽*/
+    transform: translateY(72px); /*div多宽就写多宽*/
   }
 
   to {
@@ -10318,8 +10527,88 @@ input {
 .treeBox {
   position: absolute;
   z-index: 960619;
-  top: 4%;
-  left: 58.5%;
-  width: 8.5%;
+  top: 5%;
+  left: 54.5%;
+  width: 13.5%;
+  height: 60vh;
+  overflow: scroll;
 }
+.treeBox::-webkit-scrollbar {
+  display: none;
+}
+</style>
+
+<style>
+.syxt_searchBox {
+  position: absolute;
+  top: 172px;
+
+  width: 39%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.lineBT {
+  width: 100%;
+  margin: 2px 0px auto;
+  // border-bottom: solid 1px white;
+  // transform: translateY(-30px);
+  display: flex;
+  > div:nth-of-type(1) {
+    width: 5%;
+    border-bottom: #2dbaf5 solid 1px;
+  }
+  > div:nth-of-type(2) {
+    width: 90%;
+    border-bottom: 1px solid rgba($color: #00b0ff, $alpha: 0.2);
+  }
+  > div:nth-of-type(3) {
+    width: 5%;
+    border-bottom: #2dbaf5 solid 1px;
+  }
+}
+.syxt_searchBox {
+  ::v-deep .el-form-item__content {
+    width: 78%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>
+<style lang="scss" scoped>
+.zj {
+  ::v-deep input {
+    width: 16.5vw !important;
+  }
+
+  ::v-deep .el-input-group__append {
+    padding: 0;
+  }
+
+  ::v-deep button {
+    margin: 0 !important;
+    border-radius: 0px !important;
+  }
+}
+
 </style>

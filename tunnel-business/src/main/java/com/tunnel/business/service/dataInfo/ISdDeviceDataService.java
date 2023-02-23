@@ -89,4 +89,6 @@ public interface ISdDeviceDataService {
      * @return
      */
     AjaxResult getFanSafeData(String deviceId);
+
+    List<Map<String, String>> dataLogInfoLineList(SdDeviceData sdDeviceData);
 }

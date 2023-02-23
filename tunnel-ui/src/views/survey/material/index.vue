@@ -1,15 +1,130 @@
 <template>
   <div class="app-container">
-    <el-form
+    <!-- 全局搜索 -->
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          v-hasPermi="['system:material:add']"
+          size="small"
+          @click="handleAdd()"
+          >新增物资
+        </el-button>
+<!--        <el-button type="primary" plain size="mini" @click="toggleExpandAll"
+          >展开/折叠</el-button
+        >-->
+        <el-button size="small" @click="resetQuery"
+          >刷新</el-button
+        >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div  ref = "main" class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入物资名称、桩号，回车搜索"
+            v-model="queryParams.materialName"
+            @keyup.enter.native="handleQuery"
+            size="small"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="wz_boxShow = !wz_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="wz_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="物资类型" prop="materialType">
+          <el-select
+            v-model="queryParams.materialType"
+            clearable
+            placeholder="请选择物资类型"
+            size="small"
+          >
+            <el-option
+              v-for="dict in materialTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <!--        <el-form-item label="开始桩号:">
+            <el-form-item prop="station">
+              <el-input
+                style="width:335px"
+                class="dateClass"
+                v-model.number="queryParams.station"
+                placeholder="0~999"
+                clearable
+                size="small"
+                oninput="value=value.replace(/[^\d]/g,'')"
+              >
+                <template slot="prepend">K</template>
+              </el-input>
+            </el-form-item>
+            <span style="margin: 0 5px" class="formAddClass">+</span>
+            <el-form-item prop="deviation">
+              <el-input
+                style="width:335px"
+                class="dateClass"
+                v-model.number="queryParams.deviation"
+                placeholder="桩号偏差"
+                clearable
+                size="small"
+              />
+            </el-form-item>
+          </el-form-item>
+          <el-form-item label="结束桩号:">
+            <el-form-item prop="endStation">
+              <el-input
+                style="width: 335px"
+                class="dateClass"
+                v-model.number="queryParams.endStation"
+                placeholder="0~999"
+                clearable
+                size="small"
+                oninput="value=value.replace(/[^\d]/g,'')"
+              >
+                <template slot="prepend">K</template>
+              </el-input>
+            </el-form-item>
+            <span style="margin: 0 5px" class="formAddClass">+</span>
+            <el-form-item prop="endDeviation">
+              <el-input
+                style="width: 335px"
+                class="dateClass"
+                v-model.number="queryParams.endDeviation"
+                placeholder="桩号偏差"
+                clearable
+                size="small"
+              />
+            </el-form-item>
+          </el-form-item>-->
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+    <!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
       v-show="showSearch"
       :rules="queryParamsRules"
     >
-      <!--      <el-form-item label="物资编号" prop="materialId">-->
-      <!--        <el-input class="dateClass" v-model="queryParams.materialId" placeholder="请输入物资编号" clearable size="small" @keyup.enter.native="handleQuery" />-->
-      <!--      </el-form-item>-->
       <el-form-item label="物资类型" prop="materialType">
         <el-select
           v-model="queryParams.materialType"
@@ -77,11 +192,11 @@
           />
         </el-form-item>
       </el-form-item>
-      <!--      <el-form-item label="状态" prop="state">-->
-      <!--        <el-select v-model="queryParams.state" placeholder="请选择状态" clearable size="small">-->
-      <!--          <el-option v-for="dict in stateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
+      &lt;!&ndash;      <el-form-item label="状态" prop="state">&ndash;&gt;
+      &lt;!&ndash;        <el-select v-model="queryParams.state" placeholder="请选择状态" clearable size="small">&ndash;&gt;
+      &lt;!&ndash;          <el-option v-for="dict in stateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />&ndash;&gt;
+      &lt;!&ndash;        </el-select>&ndash;&gt;
+      &lt;!&ndash;      </el-form-item>&ndash;&gt;
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
@@ -116,7 +231,7 @@
           >删除</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form>-->
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增物资</el-button>
@@ -150,7 +265,7 @@
         </el-tooltip>
       </div>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="materialList"
@@ -159,6 +274,12 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号" align="center">
+        <template slot-scope="scope">
+          {{ scope.$index + 1 }}
+        </template>
+      </el-table-column>-->
       <!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
       <el-table-column label="物资名称" align="center" prop="materialName" />
       <el-table-column
@@ -585,6 +706,7 @@ export default {
       },
       disabled: false,
       // 遮罩层
+      wz_boxShow: false,
       loading: true,
       dloading: false,
       // 选中数组
@@ -715,7 +837,7 @@ export default {
           message: "隧道名称不能为空",
           trigger: "change",
         },
-        station: [
+        /*station: [
           {
             required: true,
             message: "桩号格式为K、YK、ZKxxx+xxx组成",
@@ -726,7 +848,7 @@ export default {
             message: "桩号格式为K、YK、ZKxxx+xxx组成",
             trigger: "blur",
           },
-        ],
+        ],*/
         direction: {
           required: true,
           message: "隧道方向不能为空",
@@ -784,7 +906,24 @@ export default {
       this.directionData = response.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.wz_boxShow == true) {
+          self.wz_boxShow = false;
+        }
+      }
+    },
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     focus() {
       this.$nextTick(() => {
         document
@@ -817,27 +956,28 @@ export default {
         pageNum: obj.pageNum,
         pageSize: obj.pageSize,
         materialType: obj.materialType,
+        materialName: obj.materialName,
       };
       // 有开始桩号
-      if (obj.station) {
+      /*if (obj.station) {
         if (!obj.endStation) {
           this.loading = false;
           return this.$modal.msgWarning(
             "桩号查询必须同时有'开始桩号'和'结束桩号'"
           );
         }
-      }
+      }*/
       // 有结束桩号
-      if (obj.endStation) {
+      /*if (obj.endStation) {
         if (!obj.station) {
           this.loading = false;
           return this.$modal.msgWarning(
             "桩号查询必须同时有'开始桩号'和'结束桩号'"
           );
         }
-      }
+      }*/
       // 开始桩号 和 结束桩号 都有
-      if (obj.station && obj.endStation) {
+      /*if (obj.station && obj.endStation) {
         if (obj.endStation < obj.station) {
           return this.$modal.msgWarning("'结束桩号'要大于'开始桩号'");
         }
@@ -859,7 +999,7 @@ export default {
         }
         params.station = "K" + "." + obj.station + "." + obj.deviation;
         params.endStation = "K" + "." + obj.endStation + "." + obj.endDeviation;
-      }
+      }*/
       if (this.$cache.local.get("manageStation") == "1") {
         params.tunnelId = this.$cache.local.get("manageStationSelect");
       }
@@ -941,6 +1081,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.materialName = "";
       this.$refs.queryForm.resetFields();
       this.queryForm = {
         pageNum: 1,
@@ -1192,8 +1333,8 @@ h3 {
 .el-input {
   position: relative;
   /* font-size: 14px; */
-  display: inline;
-  width: 65%;
+  /*display: inline;*/
+  width: 100%;
 }
 
 .material-msg {

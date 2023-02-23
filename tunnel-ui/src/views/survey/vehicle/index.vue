@@ -1,6 +1,104 @@
 <template>
   <div class="app-container">
-    <el-form
+
+    <!-- 全局搜索 -->
+    <div >
+      <el-row class="topFormRow" :gutter="20">
+      <el-col :span="6">
+        <el-button size="small" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="6"  :offset="12">
+        <div  ref="main" class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入车牌，回车搜索"
+            v-model="queryParams.plateNumber"
+            @keyup.enter.native="handleQuery"
+            size="small"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="cl_boxShow = !cl_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+      <div class="searchBox" v-show="cl_boxShow" >
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="机构" prop="orgName">
+          <el-cascader
+            style="width: 100%"
+            popper-class="jigou"
+            v-model="queryParams.orgName"
+            :show-all-levels="false"
+            :options="orgData"
+            :props="{ checkStrictly: true }"
+            clearable></el-cascader>
+        </el-form-item>
+
+
+        <el-form-item label="车型"  prop="vType" >
+
+            <el-checkbox
+              v-for="dict in vehicleTypeList"
+              :key="dict.dictValue"
+              :label="dict.dictValue"
+              v-model="result"
+            >{{dict.dictLabel}}</el-checkbox>
+        </el-form-item>
+
+<!--        <el-form-item label="车型" prop="vType" style="width: 100%">
+          <el-select
+            v-model="queryParams.vType"
+            clearable
+            placeholder="请选择车型"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sd_emergency_vehicle_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.label"
+            />
+          </el-select>
+        </el-form-item>-->
+        <el-form-item label="运行状态" prop="accState" style="width: 100%">
+          <el-select
+            v-model="queryParams.accState"
+            clearable
+            placeholder="请选择运行状态"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sd_vehicle_run_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+    </div>
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -8,7 +106,7 @@
       v-show="showSearch"
     >
       <el-form-item label="机构" prop="orgName">
-        <!-- <el-input style="width:200px"  v-model.number="queryParams.orgId" placeholder="请输入机构名称" size="small" /> -->
+        &lt;!&ndash; <el-input style="width:200px"  v-model.number="queryParams.orgId" placeholder="请输入机构名称" size="small" /> &ndash;&gt;
         <el-cascader
           popper-class="jigou"
           v-model="queryParams.orgName"
@@ -41,7 +139,7 @@
           size="small"
         />
       </el-form-item>
-<!--      <el-form-item label="使用状态" prop="tunnelId">
+&lt;!&ndash;      <el-form-item label="使用状态" prop="tunnelId">
         <el-select
           v-model="queryParams.useStatus"
           placeholder="请选择使用状态"
@@ -55,7 +153,7 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>-->
+      </el-form-item>&ndash;&gt;
       <el-form-item label="运行状态" prop="tunnelId">
         <el-select
           v-model="queryParams.accState"
@@ -78,14 +176,14 @@
         <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
-<!--        <el-button
+&lt;!&ndash;        <el-button
           type="primary"
           plain
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:material:add']"
           >新增</el-button
-        >-->
+        >&ndash;&gt;
         <el-button
           type="primary"
           plain
@@ -95,11 +193,11 @@
           v-hasPermi="['system:vehicle:edit']"
           >修改</el-button
         >
-        <!-- <el-col :span="1.5"> -->
+        &lt;!&ndash; <el-col :span="1.5"> &ndash;&gt;
 
-        <!-- </el-col> -->
+        &lt;!&ndash; </el-col> &ndash;&gt;
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
@@ -137,13 +235,20 @@
           </el-tooltip>
         </div>
       </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="mechanismList"
       :row-class-name="tableRowClassName"
       class="tableClass"
     >
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号"  align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>-->
       <el-table-column label="机构" align="center" prop="orgName" />
       <el-table-column label="车牌" align="center" prop="plateNumber" />
       <el-table-column label="车型" align="center" prop="vType"/>
@@ -315,9 +420,13 @@ export default {
         callback();
       }
     };
+
     return {
+      testModel: [],
       tunnelData: [{ tunnelName: 1, tunnelId: 2 }],
       exportLoading: false,
+      vehicleTypeList:[],
+      cl_boxShow:false,
       // 遮罩层
       loading: false,
       // 选中数组
@@ -332,10 +441,13 @@ export default {
       model:false,
       updateModel:true,
       disabled:true,
+      result:[],//获取选中后的checkbox的数组值
       upDisabled:false,
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        vType: [],
+        cx:"",
       },
       form: {},
       mechanismList: [],
@@ -361,7 +473,28 @@ export default {
       this.vehicleTypeList = data.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.cl_boxShow == true){
+          self.cl_boxShow = false;
+        }
+      }
+    },
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询应急机构列表 */
     getList() {
       // console.log(this.queryParams)
@@ -380,13 +513,17 @@ export default {
     handleQuery() {
       console.log(this.queryParams, "useStatususeStatus");
       // this.queryParams.pageNum = 1;
-
+      this.queryParams.cx = this.result.toString()
+      console.log(this.queryParams.cx)
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
       this.$refs.queryForm.resetFields();
+      this.queryParams.vType=[];
+      this.result=[];
+      console.log("ssss"+this.queryParams.vType)
       this.queryParams = {
         pageNum: 1,
         pageSize: 10,
@@ -521,3 +658,5 @@ export default {
   right: 15px;
 }
 </style>
+
+

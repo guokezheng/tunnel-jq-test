@@ -67,15 +67,16 @@
             </el-col>
 
             <el-col :span="13">
-              <el-form-item label="设备状态:">
-                <!-- {{ stateForm.eqStatus }} -->
+              <el-form-item label="设备状态:"
+              :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
                 {{ geteqType(stateForm.eqStatus) }}
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="eqInfo.clickEqType == 45">
+          <!-- <el-row v-if="eqInfo.clickEqType == 45">
             <el-col >
-              <el-form-item label="亮灯模式:">
+              <div class="lineClass"></div>
+              <el-form-item label="亮灯模式:" style="margin-top: 20px;">
                 <el-select
                   v-model="stateForm2.lampType"
                   placeholder="请选择亮灯模式"
@@ -90,12 +91,43 @@
                   />
                 </el-select>
               </el-form-item>
-
+            </el-col>
+          </el-row> -->
+          <div class="lineClass" v-if="eqInfo.clickEqType == 48" style="margin-bottom:10px"></div>
+          <el-row v-if="eqInfo.clickEqType == 48">
+            <el-col :span="13">
+              <el-form-item label="振动速度值:" label-width="90px">
+                {{ stateForm2.shakeSpeed }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="振动幅度值:" label-width="90px">
+                {{ stateForm2.amplitude }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="13">
+              <el-form-item label="沉降值:" label-width="90px">
+                {{ stateForm2.subside }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="倾斜值:" label-width="90px">
+                {{ stateForm2.slope }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="13">
+              <el-form-item label="振动告警:" label-width="90px">
+                {{ stateForm2.shakeAlaram }}
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="沉降倾斜告警:" label-width="100px">
+                {{ stateForm2.subsideSlopeAlaram }}
+              </el-form-item>
             </el-col>
           </el-row>
-
         </el-form>
-        <div slot="footer" style="float: right; margin-bottom: 20px" v-if="eqInfo.clickEqType == 45">
+        <!-- <div slot="footer" style="float: right; margin-bottom: 20px" v-if="eqInfo.clickEqType == 45">
           <el-button
             type="primary"
             size="mini"
@@ -112,13 +144,13 @@
             style="width: 80px"
             >取 消</el-button
           >
-        </div>
+        </div> -->
       </el-dialog>
     </div>
   </template>
   <script>
   import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
-  import { controlWarningLightStripDevice  } from "@/api/workbench/config.js"; //提交控制信息
+  import { controlWarningLightStripDevice, getFanSafeData  } from "@/api/workbench/config.js"; //提交控制信息
   import { getStateByData } from "@/api/equipment/eqTypeState/api.js"; //查询单选框弹窗信息
 
   export default {
@@ -151,8 +183,15 @@
             console.log(res, "查询单选框弹窗信息");
             this.stateForm = res.data;
             this.title = this.stateForm.eqName;
+            // this.stateForm2.lampType = res.data.eqStatus
             console.log(this.stateForm, "stateForm");
           });
+          if(this.eqInfo.clickEqType == 10){
+            await getFanSafeData(this.eqInfo.equipmentId).then((res) => {
+              console.log(res,"风机")
+              this.stateForm2 = res.data
+            })
+          }
         } else {
           this.$modal.msgWarning("没有设备Id");
         }

@@ -82,10 +82,10 @@ h6 {
   max-height: 70vh;
   padding: 10px 20px 0;
 }
-.tableClass{
-  max-height: 66vh;
-  overflow: auto;
-}
+// .tableClass{
+//   max-height: 66vh;
+//   overflow: auto;
+// }
 
 .el-table {
   font-size: 0.7vw;
@@ -121,14 +121,14 @@ h6 {
 .el-form-item__label{
   font-size: 0.7vw;
 }
-.el-form-item--medium .el-form-item__label{
-  line-height: 4vh;
-}
-.el-input--small .el-input__inner{
-  height: 4vh;
-  line-height: 4vh;
-  font-size: 0.7vw;
-}
+// .el-form-item--medium .el-form-item__label{
+//   line-height: 4vh;
+// }
+// .el-input--small .el-input__inner{
+//   height: 4vh;
+//   line-height: 4vh;
+//   font-size: 0.7vw;
+// }
 /** 表格布局 **/
 .pagination-container {
   position: relative;

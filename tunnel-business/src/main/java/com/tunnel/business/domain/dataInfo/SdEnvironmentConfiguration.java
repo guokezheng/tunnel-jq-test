@@ -15,7 +15,7 @@ import java.util.List;
  * @author 刘方堃
  * @date 2021-12-13
  */
-@ApiModel("道环境配置对象")
+@ApiModel("隧道环境配置对象")
 public class SdEnvironmentConfiguration extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -28,14 +28,14 @@ public class SdEnvironmentConfiguration extends BaseEntity {
     /**
      * 上传名称
      */
-    @Excel(name = "上传名称")
+    @Excel(name = "名称")
     @ApiModelProperty("上传名称")
     private String sdName;
 
     /**
      * 图片路径
      */
-    @Excel(name = "图片路径")
+//    @Excel(name = "图片路径")
     @ApiModelProperty("图片路径")
     private String url;
 
@@ -49,15 +49,15 @@ public class SdEnvironmentConfiguration extends BaseEntity {
     /**
      * 图片宽度
      */
-    @Excel(name = "图片宽度")
-    @ApiModelProperty("图片宽度")
+    @Excel(name = "图片宽度(px)")
+    @ApiModelProperty("图片宽度(px)")
     private String width;
 
     /**
      * 图片高度
      */
-    @Excel(name = "图片高度")
-    @ApiModelProperty("图片高度")
+    @Excel(name = "图片高度(px)")
+    @ApiModelProperty("图片高度(px)")
     private String height;
 
     /**

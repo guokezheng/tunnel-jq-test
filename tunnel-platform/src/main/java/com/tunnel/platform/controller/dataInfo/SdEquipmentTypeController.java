@@ -155,7 +155,7 @@ public class SdEquipmentTypeController extends BaseController
     		@RequestParam("typeName") String typeName,
 			@RequestParam("typeAbbr") String typeAbbr,
 			@RequestParam("bigType") String bigType,
-			@RequestParam("eqCategory") String eqCategory,
+			@RequestParam("eqCategory") Long eqCategory,
 			@RequestParam("eqSystem") String eqSystem,
     		@RequestParam("removeIds") Long[] removeIds,
     		@RequestParam("isControl") String isControl

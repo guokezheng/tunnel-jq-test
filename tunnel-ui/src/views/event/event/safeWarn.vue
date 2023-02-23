@@ -24,7 +24,8 @@
               <el-input
                 @keyup.enter.native="handleQuery"
                 size="small"
-                placeholder="请选择事件类型、管理机构、所属隧道等"
+                placeholder="请输入事件位置、来源，回车搜索"
+                v-model="fuzzySearch1"
               >
                 <el-button
                   slot="append"
@@ -49,7 +50,9 @@
               <el-input
                 @keyup.enter.native="handleQuery"
                 size="small"
-                placeholder="请选择事件类型、管理机构、所属隧道等"
+                placeholder="请输入事件位置、来源，回车搜索"
+                v-model="fuzzySearch1"
+
               >
                 <el-button
                   slot="append"
@@ -473,7 +476,7 @@
           v-loading="loading"
           :data="eventLists"
           @selection-change="handleSelectionChange"
-          height="59vh"
+          height="62vh"
           class="allTable"
           v-if="activeName == '2'"
         >
@@ -1452,6 +1455,7 @@ export default {
   components: { Treeselect, videoPlayer },
   data() {
     return {
+      fuzzySearch1:'',
       zd_boxShow:false,
       boxShow:false,
       fault_boxShow:false,
@@ -2320,14 +2324,8 @@ export default {
       this.resetQuery();
       // this.getList();
       if(this.currentMenu!="2"){
-      this.getEventType();
-        // this.showElement = true;
-        // this.showFaultElement = false;
-        // this.fault_boxShow = false;
+        this.getEventType();
       }else{
-        // this.showElement = false; // 默认隐藏元素
-        // this.zd_boxShow  = false;
-        // this.showFaultElement = true;
       }
     },
     handleSelectionChange(val) {
@@ -2488,7 +2486,16 @@ export default {
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.activeName;
-        console.log(new Date());
+        if(this.fuzzySearch1){
+          this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
+        }
+    
+        // const params = {
+        //   fuzzySearch : this.queryParams.fuzzySearch
+        // }
+
+        // this.queryParams.params = params
+        // console.log(new Date());
 
         listEvent(this.queryParams).then((response) => {
           console.log(new Date());
@@ -2858,6 +2865,8 @@ export default {
       this.tunnelList = [];
       this.queryParams.eventTypeId = "";
       this.queryParams1.faultDescription = "";
+      this.fuzzySearch1 = ''
+
       // this.resetForm("queryForm");
       this.handleQuery();
     },

@@ -279,13 +279,13 @@
         @selection-change="handleSelectionChange"
         v-show="activeName == '1'"
         class="allTable"
-        height="58vh"
+        height="62vh"
       >
         <el-table-column type="selection" width="55" align="center" />
 <!--        <el-table-column label="序号" align="center" prop="num" />-->
         <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-        <!--        <el-table-column label="设备编码" align="center" prop="eqId" />-->
-        <el-table-column label="设备名称" align="center" prop="eqName" />
+        <el-table-column label="设备编码" align="center" prop="eqId" width="300"/>
+        <el-table-column label="设备名称" align="center" prop="eqName" width="200"/>
         <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
@@ -301,13 +301,13 @@
         class="allTable"
         @selection-change="handleSelectionChange"
         v-show="activeName == '2'"
-        height="58vh"
+        height="62vh"
       >
         <el-table-column type="selection" width="55" align="center" />
 <!--        <el-table-column label="序号" align="center" prop="num" />-->
         <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
-        <el-table-column label="设备编码" align="center" prop="eqId" />
-        <el-table-column label="设备名称" align="center" prop="eqName" />
+        <el-table-column label="设备编码" align="center" prop="eqId" width="300"/>
+        <el-table-column label="设备名称" align="center" prop="eqName" width="200"/>
         <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
@@ -334,13 +334,13 @@
         @selection-change="handleSelectionChange"
         v-show="activeName == '3'"
         class="allTable"
-        height="58vh"
+        height="62vh"
       >
         <el-table-column type="selection" width="55" align="center" />
 <!--        <el-table-column label="序号" align="center" prop="num" />-->
         <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
-        <el-table-column label="设备编码" align="center" prop="eqId" />
-        <el-table-column label="设备名称" align="center" prop="eqName" />
+        <el-table-column label="设备编码" align="center" prop="eqId" width="300"/>
+        <el-table-column label="设备名称" align="center" prop="eqName" width="200"/>
         <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
@@ -355,13 +355,13 @@
         @selection-change="handleSelectionChange"
         v-show="activeName == '4'"
         class="allTable"
-        height="58vh"
+        height="62vh"
       >
         <el-table-column type="selection" width="55" align="center" />
 <!--        <el-table-column label="序号" align="center" prop="num" />-->
         <el-table-column type="index" :index="indexMethod3" label="序号" width="68" align="center"></el-table-column>
-        <el-table-column label="设备编码" align="center" prop="eqId" />
-        <el-table-column label="设备名称" align="center" prop="eqName" />
+        <el-table-column label="设备编码" align="center" prop="eqId" width="300"/>
+        <el-table-column label="设备名称" align="center" prop="eqName" width="200"/>
         <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />

@@ -118,7 +118,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="管理机构" prop="deptId">
+            <!-- <el-form-item label="管理机构" prop="deptId">
               <treeselect
                 v-model="queryParams.deptId"
                 :options="deptOptions"
@@ -128,7 +128,7 @@
                 style="width: 325px"
                 size="small"
               />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item
               label="所属隧道"
               prop="tunnelId"
@@ -214,7 +214,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="管理机构" prop="deptId">
+            <!-- <el-form-item label="管理机构" prop="deptId">
               <treeselect
                 v-model="queryParams.deptId"
                 :options="deptOptions"
@@ -224,7 +224,7 @@
                 style="width: 325px"
                 size="small"
               />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item
               label="所属隧道"
               prop="tunnelId"
@@ -1796,12 +1796,12 @@ export default {
     },
   },
   watch: {
-    "queryParams.deptId": function (newVal, oldVal) {
-      if (!newVal) {
-        this.tunnelList = null;
-        this.queryParams.tunnelId = null;
-      }
-    },
+    // "queryParams.deptId": function (newVal, oldVal) {
+    //   if (!newVal) {
+    //     this.tunnelList = null;
+    //     this.queryParams.tunnelId = null;
+    //   }
+    // },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
       this.manageStationSelect = newVal;
@@ -1822,7 +1822,7 @@ export default {
     await this.getList();
     await this.getEventMsg();
     this.getEventType();
-    // this.getTunnel();
+    this.getTunnel();
     this.getEqType();
     this.getDevices();
     this.getTunnelLane();

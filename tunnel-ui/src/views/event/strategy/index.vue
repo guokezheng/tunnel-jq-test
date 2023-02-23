@@ -273,7 +273,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="searchBoxTab1" v-show="boxShow1" >
+        <div class="searchBoxTab" v-show="boxShow1" >
           <el-form
             ref="queryForm"
             :inline="true"

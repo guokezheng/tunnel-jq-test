@@ -278,6 +278,7 @@ p {
 .el-button:hover{
   background-color: none;
 }
+// 所有页面small按钮样式统一 且不带鼠标移入效果
 .el-button--small{
   background: linear-gradient(180deg, #4CBFFF 0%, #259BFF 100%) !important;
   border: 1px solid #65BFFF !important;

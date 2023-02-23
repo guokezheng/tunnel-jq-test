@@ -8,8 +8,10 @@
         v-for="item in tabList"
         :key="item.name"
       >
-
-        <el-row :gutter="20" v-show="showElement" class="tabTopFormRow">
+      </el-tab-pane>
+    </el-tabs>
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '1'" class="tabTopFormRow">
           <el-col :span="6" >
             <el-button
               size="small"
@@ -18,7 +20,7 @@
             </el-button>
           </el-col>
           <el-col :span="6" :offset="12" >
-            <div class="grid-content bg-purple">
+            <div class="grid-content bg-purple" ref="main1">
               <el-input
                 @keyup.enter.native="handleQuery"
                 size="small"
@@ -33,12 +35,67 @@
             </div>
           </el-col>
         </el-row>
-        <div class="searchBoxTab" v-show="zd_boxShow" >
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '0'" class="tabTopFormRow">
+          <el-col :span="6" >
+            <el-button
+              size="small"
+              @click="resetQuery()"
+            >刷新
+            </el-button>
+          </el-col>
+          <el-col :span="6" :offset="12" >
+            <div class="grid-content bg-purple" ref="main0">
+              <el-input
+                @keyup.enter.native="handleQuery"
+                size="small"
+                placeholder="请选择事件类型、管理机构、所属隧道等"
+              >
+                <el-button
+                  slot="append"
+                  icon="icon-gym-Gsearch"
+                  @click="boxShow = !boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" > 
+            <el-col :span="6" >
+              <el-button 
+                v-hasPermi="['system:list:add']"
+                size="small"
+                @click="handleAdd"
+              >新增故障
+              </el-button>
+              <el-button size="small" @click="resetQuery" 
+                >刷新</el-button
+                >
+            </el-col>
+            <el-col :span="6" :offset="12" >
+              <div class="grid-content bg-purple" ref="main2">
+                <el-input
+                    placeholder="请输入故障位置、故障描述，回车搜索"
+                    v-model="queryParams.faultDescription"
+                    @keyup.enter.native="handleQuery"
+                    size="small"
+                  >
+                    <el-button
+                      slot="append"
+                      icon="icon-gym-Gsearch"
+                      @click="fault_boxShow = !fault_boxShow"
+                    ></el-button>
+                  </el-input>
+              </div>
+            </el-col>
+          </el-row>
+          <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn" v-show="zd_boxShow" >
         <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-          v-if="activeName == '1' || activeName == '0'"
           label-width="68px"
           class="formStyle"
         >
@@ -129,38 +186,104 @@
             </el-form-item>
           </el-form>
         </div>
-        <!-- 全局搜索 -->
-          <el-row :gutter="20" v-show="showFaultElement" class="tabTopFormRow" ref="main"> 
-            <el-col :span="6" >
-              <el-button 
-                v-hasPermi="['system:list:add']"
+            <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn" v-show="boxShow" >
+        <el-form
+          :model="queryParams"
+          ref="queryForm"
+          :inline="true"
+          label-width="68px"
+          class="formStyle"
+        >
+            <el-form-item label="事件类型" prop="eventTypeId">
+              <el-select
+                v-model="queryParams.eventTypeId"
+                placeholder="请选择事件类型"
+                clearable
                 size="small"
-                @click="handleAdd"
-              >新增故障
-              </el-button>
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="(item, index) in eventTypeData"
+                  :key="index"
+                  :label="item.simplifyName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="管理机构" prop="deptId">
+              <treeselect
+                v-model="queryParams.deptId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="请选择归属部门"
+                @select="changeMechanism"
+                style="width: 325px"
+                size="small"
+              />
+            </el-form-item>
+            <el-form-item
+              label="所属隧道"
+              prop="tunnelId"
+              v-show="manageStation == '0'"
+            >
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择所属隧道"
+                clearable
+                size="small"
+                style="width: 325px"
+                @change="$forceUpdate()"
+              >
+                <el-option
+                  v-for="item in tunnelList"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="事件状态" prop="eventState">
+              <el-select
+                v-model="queryParams.eventState"
+                placeholder="请选择事件状态"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="dict in eventStateOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发生时间" prop="eventTime">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 325px"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="-"
+                unlink-panels
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small"  @click="handleQuery"
+              >搜索</el-button
+              >
               <el-button size="small" @click="resetQuery" 
-                >刷新</el-button
-                >
-            </el-col>
-            <el-col :span="6" :offset="12" >
-              <div class="grid-content bg-purple" >
-                <el-input
-                    placeholder="请输入故障位置、故障描述，回车搜索"
-                    v-model="queryParams.faultDescription"
-                    @keyup.enter.native="handleQuery"
-                    size="small"
-                  >
-                    <el-button
-                      slot="append"
-                      icon="icon-gym-Gsearch"
-                      @click="fault_boxShow = !fault_boxShow"
-                    ></el-button>
-                  </el-input>
-              </div>
-            </el-col>
-          </el-row>
-
-          <div class="searchBoxTab"  v-show="fault_boxShow" ref="cc">
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+          <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn"  v-show="fault_boxShow" ref="cc">
         <el-form
               ref="queryForm"
               :inline="true"
@@ -480,8 +603,6 @@
           :total="total"
         >
         </el-pagination>
-      </el-tab-pane>
-    </el-tabs>
 
     <!-- 查看详情弹窗 -->
     <el-dialog
@@ -1332,6 +1453,7 @@ export default {
   data() {
     return {
       zd_boxShow:false,
+      boxShow:false,
       fault_boxShow:false,
       currentMenu:"",
       picUrlDialog: false,
@@ -1753,31 +1875,48 @@ export default {
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
-    document.addEventListener("click", this.bodyCloseMenus);
+    document.addEventListener("click", this.bodyCloseMenus1);
+    document.addEventListener("click", this.bodyCloseMenus0);
+    document.addEventListener("click", this.bodyCloseMenus2);
+
   },
   methods: {
-
-    bodyCloseMenus(e) {
+    changeInput(){
+      this.$forceUpdate()
+    },
+    bodyCloseMenus1(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+        if (self.zd_boxShow == true){
+          self.zd_boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus0(e) {
+      let self = this;
+      if (this.$refs.main0 && !this.$refs.main0.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus2(e) {
+      let self = this;
+      if (this.$refs.main2 && !this.$refs.main2.contains(e.target)) {
         if (self.fault_boxShow == true){
           self.fault_boxShow = false;
         }
       }
-      // if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-      //   if (self.fault_boxShow == true){
-      //     self.fault_boxShow = false;
-      //   }
-      // }
     },
-   
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams1.pageNum-1)*this.queryParams1.pageSize+1
     },
 
     beforeDestroy() {
-      document.removeEventListener("click", this.bodyCloseMenus);
+      document.removeEventListener("click", this.bodyCloseMenus1);
+      document.removeEventListener("click", this.bodyCloseMenus0);
+      document.removeEventListener("click", this.bodyCloseMenus2);
     },
     changeEqRunStatus(e){
       this.$forceUpdate()
@@ -2176,18 +2315,19 @@ export default {
       this.isState = true;
       this.currentMenu = e.index;
       this.zd_boxShow = false;
+      this.boxShow = false;
       this.fault_boxShow = false;
       this.resetQuery();
       // this.getList();
       if(this.currentMenu!="2"){
       this.getEventType();
-        this.showElement = true;
-        this.showFaultElement = false;
-        this.fault_boxShow = false;
+        // this.showElement = true;
+        // this.showFaultElement = false;
+        // this.fault_boxShow = false;
       }else{
-        this.showElement = false; // 默认隐藏元素
-        this.zd_boxShow  = false;
-        this.showFaultElement = true;
+        // this.showElement = false; // 默认隐藏元素
+        // this.zd_boxShow  = false;
+        // this.showFaultElement = true;
       }
     },
     handleSelectionChange(val) {
@@ -2930,33 +3070,6 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-// .searchBoxTab {
-//   position: absolute;
-//   top: 6%;
-//   right: 0%;
-//   width: 24%;
-//   z-index: 1996;
-//   // background-color: #00335a;
-//   padding: 20px;
-//   box-sizing: border-box;
-//   ::v-deep .el-form-item__content {
-//     width: 80%;
-//     .el-select {
-//       width: 100%;
-//     }
-//   }
-//   .bottomBox {
-//   width: 100%;
-//     .el-form-item__content {
-//       display: flex;
-//       justify-content: center;
-//       align-items: center;
-//       width: 100%;
-//     }
-//   }
-// }
-
-
 .formStyle {
   .el-form-item {
     margin-bottom: 1vh;
@@ -2983,7 +3096,8 @@ export default {
   width: 100%;
   word-wrap: break-word;
   word-break: normal;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   //display: flex;
   .contentBox {
     // height: 135px;
@@ -3519,28 +3633,6 @@ hr {
   }
 }
 
-::v-deep .el-tabs {
-  height: 100%;
-  .el-tabs__item {
-    height: 4vh;
-    font-size: 0.7vw;
-  }
-  .el-tabs__content {
-    height: calc(100% - 5vh);
-    .el-tab-pane {
-      height: 100%;
-      .contentListBox {
-        max-height: 64vh;
-        overflow-x: hidden;
-        overflow-y: auto;
-        .contentBox {
-          height: 15vh;
-        }
-      }
-    }
-  }
-}
-
 .disabledButton {
   cursor: no-drop;
   pointer-events: none;
@@ -3572,6 +3664,11 @@ hr {
 .topTxt {
   margin-left: 15px;
   margin-top: 10px;
+}
+.searchSafeWarn{
+  top: 12% !important;
+  right: 0.8% !important;
+  width: 23.8% !important;
 }
 </style>
 

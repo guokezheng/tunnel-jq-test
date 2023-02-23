@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
           >
       </el-col>
@@ -18,7 +18,7 @@
           >
           <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
             </el-input>
@@ -33,7 +33,7 @@
         :model="queryParams"
         label-width="80px"
       >
-      <el-form-item label="设备类型" prop="stateTypeId" style="width: 100%">
+      <el-form-item label="设备类型" prop="stateTypeId" >
         <el-select v-model="queryParams.stateTypeId" placeholder="请选择设备类型" clearable size="small">
           <el-option v-for="item in typeStateData" :key="item.typeId" :label="item.typeName" :value="item.typeId" />
         </el-select>
@@ -94,7 +94,7 @@
             </el-tooltip>
           </div>
         </el-row> -->
-
+        <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="eqTypeStateList"
@@ -513,7 +513,18 @@ export default {
       this.isStateType = response.data;
     });
   },
+  mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     //翻页时不刷新序号
     indexMethod(index) {
       return (
@@ -1116,30 +1127,4 @@ export default {
   top: 55px;
   left: 25%;
 }
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    width: 100%;
-    ::v-deep .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-    }
-  }
-}
-
 </style>

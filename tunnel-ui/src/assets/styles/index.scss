@@ -197,6 +197,69 @@ p {
     height: 28px;
   }
 }
+// 表格上方el-row
+.tabTopFormRow{
+  margin: 10px 0 14px;
+  >.el-col{
+    padding:0;
+  }
+}
+.topFormRow{
+  margin: 14px 0;
+  >.el-col{
+    padding:0;
+  }
+}
+// 右侧搜索框下拉框
+.searchBoxTab,.searchBox,.searchBox1 {
+  position: absolute;
+  z-index: 1996;
+  padding: 20px;
+  box-sizing: border-box;
+  .el-form-item{
+    width: 100%;
+    .el-form-item__content {
+      width: 80%;
+      .el-select {
+        width: 100%;
+      }
+    }
+  }
+  .bottomBox {
+    width: 100%;
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100% !important;
+      margin-left: 0 !important;
+    }
+  }
+}
+.searchBoxMini{
+  .el-form-item__content {
+    width: 72% !important;
+  }
+}
+.treeSearchBox{
+  top: 13% !important;
+  right: 0% !important;
+  width: 28.2% !important;
+}
+.searchBoxTab,.searchBoxTab1{
+  top: 6%;
+  right: 0%;
+  width: 24%;
+}
+.searchBox,.searchBox1 {
+  top: 6.8%;
+  right: 0.8%;
+  width: 23.8%;
+}
+// 级联树形菜单
+.vue-treeselect__control{
+  height: 32px !important;
+}
 // 时间日期选择框
 .el-range-editor--small.el-input__inner{
   height: 4vh;

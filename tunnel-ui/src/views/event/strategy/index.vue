@@ -3,8 +3,8 @@
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane :label="strategyTypeGroup[0]?strategyTypeGroup[0].dictLabel:''" name="one">
         <!-- 全局搜索 -->
-        <el-row :gutter="20" style="margin: 10px 0 25px">
-          <el-col :span="4">
+        <el-row :gutter="20" class="tabTopFormRow">
+          <el-col :span="6">
             <el-button
               size="small"
               @click="openInsertStrategy('richang')"
@@ -15,7 +15,7 @@
               >刷新</el-button
             >
           </el-col>
-          <el-col :span="6" :offset="14">
+          <el-col :span="6" :offset="12">
             <div class="grid-content bg-purple" ref="main">
               <el-input
                 v-model="queryParams.strategyName"
@@ -26,21 +26,21 @@
               >
                 <el-button
                   slot="append"
-                  icon="el-icon-s-fold"
+                  icon="icon-gym-Gsearch"
                   @click="boxShow = !boxShow"
                 ></el-button>
               </el-input>
             </div>
           </el-col>
         </el-row>
-        <div class="searchBox" v-show="boxShow" >
+        <div class="searchBoxTab" v-show="boxShow" >
           <el-form
             ref="queryForm"
             :inline="true"
             :model="queryParams"
             label-width="75px"
           >
-          <el-form-item label="隧道名称" prop="tunnelId" style="width: 100%">
+          <el-form-item label="隧道名称" prop="tunnelId" >
             <el-select
               v-model="queryParams.tunnelId"
               placeholder="请选择隧道"
@@ -55,7 +55,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType" style="width: 100%">
+          <el-form-item label="策略类型" prop="strategyType" >
             <el-select
               v-model="queryParams.strategyType"
               placeholder="请选择策略类型"
@@ -243,8 +243,8 @@
       </el-tab-pane>
       <el-tab-pane :label="strategyTypeGroup[1]?strategyTypeGroup[1].dictLabel:''" name="two">
         <!-- 全局搜索 -->
-        <el-row :gutter="20" style="margin: 10px 0 25px">
-          <el-col :span="4">
+        <el-row :gutter="20" class="tabTopFormRow">
+          <el-col :span="6">
             <el-button
               size="small"
               @click="openInsertStrategy('event')"
@@ -255,7 +255,7 @@
               >刷新</el-button
             >
           </el-col>
-          <el-col :span="6" :offset="14">
+          <el-col :span="6" :offset="12">
             <div class="grid-content bg-purple" ref="main1">
               <el-input
                 v-model="queryParams.strategyName"
@@ -273,14 +273,14 @@
             </div>
           </el-col>
         </el-row>
-        <div class="searchBox1" v-show="boxShow1" >
+        <div class="searchBoxTab1" v-show="boxShow1" >
           <el-form
             ref="queryForm"
             :inline="true"
             :model="queryParams"
             label-width="75px"
           >
-          <el-form-item label="隧道名称" prop="tunnelId" style="width: 100%">
+          <el-form-item label="隧道名称" prop="tunnelId" >
             <el-select
               v-model="queryParams.tunnelId"
               placeholder="请选择隧道"
@@ -295,7 +295,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType" style="width: 100%">
+          <el-form-item label="策略类型" prop="strategyType" >
             <el-select
               v-model="queryParams.strategyType"
               placeholder="请选择策略类型"
@@ -1302,34 +1302,7 @@ export default {
 }
 </style>
 <style scoped lang="scss">
-.el-input--small .el-input__icon {
-  height: 34px;
-}
-.searchBox,.searchBox1 {
-  position: absolute;
-  top: 7%;
-  right: 0%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-  }
-}
+
 ::v-deep .el-tabs {
   height: 100%;
   .el-tabs__item {
@@ -1350,6 +1323,9 @@ export default {
       }
     }
   }
+}
+::v-deep .el-tabs__header {
+  margin: 0 0 8px !important;
 }
 </style>
 

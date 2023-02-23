@@ -1345,7 +1345,7 @@
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>-->
-      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%">
+      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%" >
         <el-row :gutter="20" style="margin: 10px 0 25px">
 
           <el-col :span="12"  >
@@ -4656,7 +4656,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "GreenYellow";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -8966,8 +8966,10 @@ export default {
     .listContent {
       height: 70%;
       font-size: 14px;
-      margin-top: 5px;
       overflow: hidden;
+      ul{
+        margin:0;
+      }
       > li {
         // margin-bottom: 6px;
         list-style: none;

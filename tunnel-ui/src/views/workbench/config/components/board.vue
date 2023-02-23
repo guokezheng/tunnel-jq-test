@@ -365,7 +365,7 @@ export default {
         //   content: "蓝色",
         // },
         // {
-        //   code: "GreenYellow",
+        //   code: "#00FF00",
         //   content: "绿色",
         // },
       ],
@@ -575,7 +575,7 @@ export default {
     },
     getColorValue(color) {
       if (color == "蓝色" || color == 'blue') return "000000255000";
-      if (color == "绿色" || color == 'GreenYellow') return "000255000000";
+      if (color == "绿色" || color == '#00FF00') return "000255000000";
       if (color == "透明色" || color == 'transparent') return "t";
       if (color == "红色" || color == 'red') return "255000000000";
       return "255255000000"; //黄色
@@ -843,7 +843,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "GreenYellow";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       } else {

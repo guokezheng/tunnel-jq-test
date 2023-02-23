@@ -2,27 +2,23 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
           v-hasPermi="['system:dept:add']"
-          size="mini"
-          type="primary"
-          plain
+          size="small"
           @click="handleAdd()"
         >新增部门
         </el-button>
         <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             @click="toggleExpandAll"
           >展开/折叠</el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery" 
           >刷新</el-button
           >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入部门名称，回车搜索"
@@ -31,7 +27,7 @@
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="dept_boxShow = !dept_boxShow"
             ></el-button>
           </el-input>
@@ -46,7 +42,7 @@
         label-width="75px"
       >
 
-        <el-form-item label="部门状态" prop="status" style="width: 100%">
+        <el-form-item label="部门状态" prop="status" >
           <el-select
             v-model="queryParams.status"
             clearable
@@ -122,9 +118,8 @@
       row-key="deptId"
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-      max-height="640"
-      :row-class-name="tableRowClassName"
-
+      height="62vh"
+      class="allTable"
     >
       <el-table-column prop="deptName" label="部门名称" align="center"></el-table-column>
       <el-table-column prop="orderNum" label="排序" align="center"></el-table-column>
@@ -164,7 +159,7 @@
     </el-table>
 
     <!-- 添加或修改部门对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body class="addUserDialog">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
@@ -411,54 +406,7 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    // 表格样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
   }
 };
 </script>
-
-<style>
-.searchBox {
-  position: absolute;
-  top: 8.5%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
 

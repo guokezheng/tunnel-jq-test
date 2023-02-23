@@ -9,15 +9,15 @@
         :key="item.name"
       >
 
-        <el-row :gutter="20" style="margin: 10px 0 14px" v-show="showElement">
-          <el-col :span="6" style="padding:0">
+        <el-row :gutter="20" v-show="showElement" class="tabTopFormRow">
+          <el-col :span="6" >
             <el-button
               size="small"
               @click="resetQuery()"
             >刷新
             </el-button>
           </el-col>
-          <el-col :span="6" :offset="12" style="padding:0">
+          <el-col :span="6" :offset="12" >
             <div class="grid-content bg-purple">
               <el-input
                 @keyup.enter.native="handleQuery"
@@ -130,8 +130,8 @@
           </el-form>
         </div>
         <!-- 全局搜索 -->
-          <el-row :gutter="20" style="margin: 10px 0 14px" v-show="showFaultElement">
-            <el-col :span="6" style="padding:0">
+          <el-row :gutter="20" v-show="showFaultElement" class="tabTopFormRow" ref="main"> 
+            <el-col :span="6" >
               <el-button 
                 v-hasPermi="['system:list:add']"
                 size="small"
@@ -142,8 +142,8 @@
                 >刷新</el-button
                 >
             </el-col>
-            <el-col :span="6" :offset="12" style="padding:0">
-              <div class="grid-content bg-purple" ref="main">
+            <el-col :span="6" :offset="12" >
+              <div class="grid-content bg-purple" >
                 <el-input
                     placeholder="请输入故障位置、故障描述，回车搜索"
                     v-model="queryParams.faultDescription"
@@ -152,7 +152,7 @@
                   >
                     <el-button
                       slot="append"
-                      icon="el-icon-s-fold"
+                      icon="icon-gym-Gsearch"
                       @click="fault_boxShow = !fault_boxShow"
                     ></el-button>
                   </el-input>
@@ -160,7 +160,7 @@
             </el-col>
           </el-row>
 
-          <div class="searchBoxTab"  v-show="fault_boxShow">
+          <div class="searchBoxTab"  v-show="fault_boxShow" ref="cc">
         <el-form
               ref="queryForm"
               :inline="true"
@@ -1764,7 +1764,13 @@ export default {
           self.fault_boxShow = false;
         }
       }
+      // if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+      //   if (self.fault_boxShow == true){
+      //     self.fault_boxShow = false;
+      //   }
+      // }
     },
+   
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams1.pageNum-1)*this.queryParams1.pageSize+1
@@ -2924,31 +2930,31 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-.searchBoxTab {
-  position: absolute;
-  top: 6%;
-  right: 0%;
-  width: 25%;
-  z-index: 1996;
-  // background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-  width: 100%;
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-    }
-  }
-}
+// .searchBoxTab {
+//   position: absolute;
+//   top: 6%;
+//   right: 0%;
+//   width: 24%;
+//   z-index: 1996;
+//   // background-color: #00335a;
+//   padding: 20px;
+//   box-sizing: border-box;
+//   ::v-deep .el-form-item__content {
+//     width: 80%;
+//     .el-select {
+//       width: 100%;
+//     }
+//   }
+//   .bottomBox {
+//   width: 100%;
+//     .el-form-item__content {
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       width: 100%;
+//     }
+//   }
+// }
 
 
 .formStyle {

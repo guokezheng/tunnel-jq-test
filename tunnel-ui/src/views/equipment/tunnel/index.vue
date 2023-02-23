@@ -1,35 +1,29 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             @click="handleAdd"
             v-hasPermi="['system:tunnels:add']"
             >新增
           </el-button>
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :disabled="single"
             @click="handleUpdate"
             v-hasPermi="['system:tunnels:edit']"
             >修改
           </el-button>
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['system:tunnels:remove']"
             >删除
           </el-button>
-          <el-button size="mini" @click="resetQuery" type="primary" plain
+          <el-button size="small" @click="resetQuery" 
           >刷新</el-button
           >
       </el-col>
@@ -44,7 +38,7 @@
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -58,7 +52,7 @@
         :model="queryParams"
         label-width="80px"
       >
-        <el-form-item label="是否启用" style="width: 100%" prop="poll">
+        <el-form-item label="是否启用" prop="poll">
           <el-select
             v-model="queryParams.poll"
             placeholder="请选择是否启用"
@@ -155,7 +149,7 @@
 <!--        </el-button>-->
 <!--      </el-form-item>-->
 <!--    </el-form>-->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="tunnelsList"
@@ -1222,44 +1216,8 @@ export default {
 
 }
 </style>
-<style lang="scss">
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
 
-</style>
 <style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
 .tunnelInfoDialog {
   .el-col{
     display: flex;

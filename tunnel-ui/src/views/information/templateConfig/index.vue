@@ -263,7 +263,7 @@ export default {
               content: '白色',
           },
           {
-              code: 'GreenYellow',
+              code: '#00FF00',
               content: '绿色',
           },
         ],
@@ -622,18 +622,7 @@ export default {
 </script>
 <style lang="scss">
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
+
 <style lang="scss" scoped>
 .searchBox {
   ::v-deep .el-form-item__content {

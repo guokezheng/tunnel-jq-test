@@ -892,6 +892,7 @@
       border-left: solid 1px rgba($color: #0198FF, $alpha: 0.8);
       border-right: solid 1px rgba($color: #0198FF, $alpha: 0.8);
       border-top: solid 1px rgba($color: #0198FF, $alpha: 0.8);
+      
     }
     .dialogLine{
       
@@ -1033,6 +1034,9 @@
     .el-table tr{
       background-color: #00152B;
       color: white;
+    }
+    .el-table{
+      background-color: #00152B;
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
       background-color: #00152B;

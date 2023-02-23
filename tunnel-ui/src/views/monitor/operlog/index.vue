@@ -2,22 +2,29 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button size="small" @click="resetQuery" 
           >刷新</el-button
           >
+          <el-button
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['monitor:operlog:export']"
+          >导出</el-button>
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入系统模块、操作人员"
             v-model="queryParams.title"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="rz_boxShow = !rz_boxShow"
             ></el-button>
           </el-input>
@@ -31,7 +38,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="操作类型" prop="businessType" style="width: 100%">
+        <el-form-item label="操作类型" prop="businessType">
           <el-select
             v-model="queryParams.businessType"
             placeholder="请选择操作类型"
@@ -46,7 +53,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="操作状态" prop="status" style="width: 100%">
+        <el-form-item label="操作状态" prop="status">
           <el-select
             v-model="queryParams.status"
             clearable
@@ -68,14 +75,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          <el-button
-            type="primary"
-            plain
-            size="small"
-            :loading="exportLoading"
-            @click="handleExport"
-            v-hasPermi="['monitor:operlog:export']"
-          >导出</el-button>
+          
         </el-form-item>
       </el-form>
     </div>
@@ -197,7 +197,7 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table ref="tables" v-loading="loading"
               max-height="610" :data="list" @selection-change="handleSelectionChange"
               :default-sort="defaultSort" @sort-change="handleSortChange"
@@ -433,43 +433,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
-

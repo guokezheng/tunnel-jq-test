@@ -1,49 +1,43 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
-            type="primary" plain size="mini"
+            size="small"
             @click="handleAdd"
             v-hasPermi="['system:flow:add']"
           >新增</el-button>
           <el-button
-            type="primary" plain size="mini"
+            size="small"
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['system:flow:remove']"
           >删除</el-button>
-          <el-button type="primary" plain size="mini" @click="resetQuery">刷新</el-button>
+          <el-button size="small" @click="resetQuery">刷新</el-button>
 
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12" >
         <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请选择事件类型，回车搜索"
             v-model="queryParams.planName"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="boxShow">
+    <div class="searchBox" v-show="boxShow" ref="cc">
 
       <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-        <el-form-item label="事件类型" prop="eventTypeId" style="width: 100%">
-  <!--        <el-input
-            v-model="queryParams.eventTypeId"
-            placeholder="请输入事件类型"
-            clearable
-            size="small"
-            @keyup.enter.native="handleQuery"
-          />-->
+        <el-form-item label="事件类型" prop="eventTypeId" >
           <el-select
             v-model="queryParams.eventTypeId"
             clearable
@@ -73,6 +67,7 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="flowList" height="59vh" 
     @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
@@ -265,7 +260,18 @@ export default {
     this.getEventType();
     this.getTableEventType();
   },
+  mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     /** 查询事件类型预案流程关联列表 */
     getList() {
       this.loading = true;
@@ -549,40 +555,5 @@ export default {
 <style  lang="scss" scoped>
 .treeList .transfer-main{
   height: calc(100% - 84px) !important;;
-}
-.searchBox {
-  position: absolute;
-  top: 7%;
-  right: 1.2%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
 }
 </style>

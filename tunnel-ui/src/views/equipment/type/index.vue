@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
         <el-button
             size="small"
@@ -44,14 +44,14 @@
         </div>
       </el-col>
     </el-row>
-    <div ref="cc" class="searchBox" v-show="boxShow">
+    <div ref="cc" class="searchBox searchBoxMini" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
         :model="queryParams"
         label-width="100px"
       >
-      <el-form-item label="设备类型名称" prop="typeName" style="width: 100%">
+      <el-form-item label="设备类型名称" prop="typeName">
        <el-input
          v-model="queryParams.typeName"
          placeholder="请输入设备类型名称"
@@ -60,7 +60,7 @@
          @keyup.enter.native="handleQuery"
        />
       </el-form-item>
-      <el-form-item label="设备类型代号" prop="typeAbbr" style="width: 100%">
+      <el-form-item label="设备类型代号" prop="typeAbbr">
         <el-input
           v-model="queryParams.typeAbbr"
           placeholder="请输入设备类型代号"
@@ -79,6 +79,7 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="typeList"
@@ -659,41 +660,4 @@ export default {
     }
   }
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 70%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

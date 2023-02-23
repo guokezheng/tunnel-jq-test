@@ -1,6 +1,103 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          size="small"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['monitor:job:remove']"
+        >删除</el-button>
+        <el-button
+          size="small"
+          @click="handleClean"
+          v-hasPermi="['monitor:job:remove']"
+        >清空</el-button>
+        <el-button
+          size="small"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['monitor:job:export']"
+        >导出</el-button>
+        <el-button
+          size="small"
+          @click="handleClose"
+        >关闭</el-button>
+        <el-button  size="small" @click="resetQuery" >刷新</el-button>
+
+      </el-col>
+      <el-col :span="6" :offset="12" >
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入任务名称，回车搜索"
+            v-model="queryParams.jobName"
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="boxShow" ref="cc">
+    <el-form :model="queryParams" ref="queryForm" label-width="68px">
+      <el-form-item label="任务组名" prop="jobGroup">
+        <el-select
+          v-model="queryParams.jobGroup"
+          placeholder="请任务组名"
+          clearable
+          size="small"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="dict in dict.type.sys_job_group"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="执行状态" prop="status">
+        <el-select
+          v-model="queryParams.status"
+          placeholder="请选择执行状态"
+          clearable
+          size="small"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="dict in dict.type.sys_common_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="执行时间">
+        <el-date-picker
+          v-model="dateRange"
+          size="small"
+          style="width: 100%"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item class="bottomBox">
+        <el-button size="mini" type="primary" @click="handleQuery">搜索</el-button>
+        <el-button  size="mini" type="primary" plain @click="resetQuery" >重置</el-button>
+      </el-form-item>
+    </el-form>
+    </div>
+
+    <!-- <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="任务名称" prop="jobName">
         <el-input
           v-model="queryParams.jobName"
@@ -58,37 +155,9 @@
       <el-form-item>
         <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
         <el-button  size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['monitor:job:remove']"
-        >删除</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleClean"
-          v-hasPermi="['monitor:job:remove']"
-        >清空</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['monitor:job:export']"
-        >导出</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleClose"
-        >关闭</el-button>
+        
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -134,8 +203,8 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-
-    <el-table v-loading="loading" :data="jobLogList" @selection-change="handleSelectionChange" class="allTable" height="59vh">
+    <div class="tableTopHr" ></div>
+    <el-table v-loading="loading" :data="jobLogList" @selection-change="handleSelectionChange" class="allTable" height="62vh">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="日志编号" width="80" align="center" prop="jobLogId" />
       <el-table-column label="任务名称" align="center" prop="jobName" :show-overflow-tooltip="true" />
@@ -222,6 +291,7 @@ export default {
   dicts: ['sys_common_status', 'sys_job_group'],
   data() {
     return {
+      boxShow:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -264,7 +334,18 @@ export default {
       this.getList();
     }
   },
+  mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     /** 查询调度日志列表 */
     getList() {
       this.loading = true;

@@ -22,43 +22,39 @@
 
     <el-row
       :gutter="20"
-      style="margin: 10px 0 25px"
+      class="tabTopFormRow"
       v-show="activeName == '1'"
     >
-      <el-col :span="4">
+      <el-col :span="6">
         <el-button
           v-hasPermi="['system:list:add']"
-          size="mini"
-          type="primary"
+          size="small"
           :loading="exportLoading"
-          plain
           @click="handleExport"
           >导出
         </el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery"
             >刷新</el-button
           >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
           <el-input
-              v-model="queryParam.ipaddr"
+            v-model="queryParam.ipaddr"
             placeholder="请输入登录地址、用户名称，回车搜索"
-            clearable
-            style="width: 456px"
             size="small"
             @keyup.enter.native="handleQuery"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="xt_boxShow = !xt_boxShow"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div class="xt_searchBox" v-show="xt_boxShow">
+    <div class="searchBoxTab" v-show="xt_boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -75,7 +71,7 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>-->
-        <el-form-item label="状态" prop="status" style="width: 100%">
+        <el-form-item label="状态" prop="status" >
           <el-select
             v-model="queryParam.status"
             placeholder="登录状态"
@@ -94,7 +90,7 @@
           <el-date-picker
             v-model="dateRange"
             size="small"
-            style="width: 335px"
+            style="width: 100%"
             value-format="yyyy-MM-dd HH-mm-ss"
             type="datetimerange"
             range-separator="-"
@@ -163,41 +159,39 @@
       </el-form-item>-->
     <el-row
       :gutter="20"
-      style="margin: 10px 0 25px"
+      class="tabTopFormRow"
       v-show="activeName == '2'"
     >
-      <el-col :span="4">
+      <el-col :span="6">
         <el-button
           v-hasPermi="['system:list:export']"
-          size="mini"
-          type="primary"
+          size="small"
           :loading="exportLoading"
-          plain
           @click="handleExport1"
           >导出
         </el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery" 
             >刷新</el-button
           >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple"  ref="main1">
           <el-input
             placeholder="请输入操作地址，回车搜索"
             v-model="queryParams.operIp"
-            style="width: 456px"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="cz_boxShow = !cz_boxShow"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div class="xt_searchBox" v-show="cz_boxShow">
+    <div class="searchBoxTab" v-show="cz_boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -286,7 +280,7 @@
       :default-sort="{ prop: 'loginTime', order: 'descending' }"
       @sort-change="handleSortChange"
       class="allTable"
-      height="59vh"
+      height="62vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
@@ -352,7 +346,7 @@
       class="allTable"
       :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="handleSelectionChange"
-      height="59vh"
+      height="62vh"
       v-show="activeName == '2'"
     >
       <el-table-column type="selection" width="55" align="center" />
@@ -704,16 +698,6 @@ export default {
 };
 </script>
 <style>
-.xt_searchBox {
-  position: absolute;
-  top: 15%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
 #cascader-menu-45-0 .el-radio {
   display: none !important;
 }
@@ -832,29 +816,14 @@ hr {
   font-weight: 400;
   color: #303133;
 }
-.xt_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
+
+::v-deep .el-tabs__header {
+  margin: 0 0 6px !important;
 }
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
+.searchBoxTab{
+  top: 11% !important;
+  right: 0.8% !important;
+  width: 23.8% !important;
 }
 </style>
 

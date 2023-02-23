@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
         <el-button
           v-hasPermi="['system:list:add']"
-          size="mini"
+          size="small"
           type="primary"
           plain
           @click="handleAdd"
           >新增任务
         </el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
         >
       </el-col>
@@ -21,10 +21,11 @@
             placeholder="请输入所属单位，回车搜索"
             v-model="queryParams.zzjgId"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="task_boxShow = !task_boxShow"
             ></el-button>
           </el-input>
@@ -70,7 +71,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item style="width: 100%" label="发布状态" prop="publishStatus">
+        <el-form-item label="发布状态" prop="publishStatus">
           <el-select
             v-model="queryParams.publishStatus"
             placeholder="请选择发布状态"
@@ -86,7 +87,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="任务状态" prop="taskStatus" style="width: 100%">
+        <el-form-item label="任务状态" prop="taskStatus">
           <el-select
             v-model="queryParams.taskStatus"
             placeholder="请选择任务状态"
@@ -179,7 +180,7 @@
 
       </el-form-item>
     </el-form>-->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="listList"
@@ -1881,15 +1882,6 @@ export default {
   background-color: transparent;
 }
 
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  padding: 20px;
-  box-sizing: border-box;
-}
 </style>
 <style lang="scss" scoped>
 .card {
@@ -2257,28 +2249,5 @@ h1 {
   }
 }
 
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
+
 </style>

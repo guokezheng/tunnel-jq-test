@@ -1,12 +1,10 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             @click="handleAdd"
             v-hasPermi="['system:configuration:add']"
             >新增</el-button
@@ -21,28 +19,24 @@
 <!--            >修改</el-button-->
 <!--          >-->
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['system:configuration:remove']"
             >删除</el-button
           >
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :loading="exportLoading"
             @click="handleExport"
             v-hasPermi="['system:configuration:export']"
             >导出</el-button
           >
-          <el-button size="mini" @click="resetQuery" type="primary" plain
+          <el-button size="small" @click="resetQuery" 
           >刷新</el-button
           >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
             <el-input
               v-model="queryParams.sdName"
@@ -53,7 +47,7 @@
             >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -67,7 +61,7 @@
         :model="queryParams"
         label-width="80px"
       >
-          <el-form-item label="环境类型" style="width: 100%" prop="environmentType">
+          <el-form-item label="环境类型" prop="environmentType">
             <el-select
               v-model="queryParams.environmentType"
               placeholder="请选择环境类型"
@@ -82,7 +76,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="方向" style="width: 100%" prop="direction">
+          <el-form-item label="方向" prop="direction">
             <el-select
               v-model="queryParams.direction"
               placeholder="请选择方向"
@@ -114,7 +108,7 @@
         </el-form-item>
       </el-form>
     </div>
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="configurationList"
@@ -688,41 +682,4 @@ export default {
   }
 
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

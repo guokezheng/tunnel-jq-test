@@ -1,15 +1,15 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row  :gutter="20" style="margin: 10px 0 25px">
+    <el-row  :gutter="20" class="topFormRow">
       <el-col :span="6">
         <el-button
           type="primary"
           plain
-          size="mini"
+          size="small"
           @click="handleExport"
           >导出</el-button>
-          <el-button size="mini" @click="resetQuery" type="primary" plain
+          <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
           >
       </el-col>
@@ -17,14 +17,14 @@
         <div  ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
-            placeholder="请输入发布设备、发布内容,回车搜索"
+            placeholder="请输入发布设备、发布内容，回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -39,7 +39,7 @@
         :model="queryParams"
         label-width="75px"
       >
-          <el-form-item label="发布时间" style="width: 100%" prop="releaseTime">
+          <el-form-item label="发布时间" prop="releaseTime">
             <el-date-picker
               clearable
               size="small"
@@ -51,7 +51,7 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="发布状态" style="width: 100%" prop="releaseStatus">
+          <el-form-item label="发布状态" prop="releaseStatus">
             <el-select
               v-model="queryParams.releaseStatus"
               placeholder="请选择发布状态"
@@ -147,14 +147,14 @@
 <!--        >-->
 <!--      </el-form-item>-->
 <!--    </el-form>-->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="recordList"
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'releaseTime', order: 'descending'}"
-      :row-class-name="tableRowClassName"
-      max-height="640"
+      class="allTable"
+      height="62vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -463,7 +463,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "greenYellow";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -545,14 +545,6 @@ export default {
           queryParams.ids = null;
         });
     },
-    // 表格行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
   },
 };
 </script>
@@ -562,41 +554,4 @@ export default {
     justify-content: center;
  } */
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

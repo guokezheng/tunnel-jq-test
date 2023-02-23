@@ -2,30 +2,29 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
         v-hasPermi="['business:SdEmergencyPer:add']"
-        size="mini"
-        type="primary"
-        plain
+        size="small"
         @click="handleAdd()"
       >新增人员
       </el-button>
-      <el-button size="mini" @click="resetQuery" type="primary" plain
+      <el-button size="small" @click="resetQuery" 
             >刷新</el-button
             >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
           <div ref="main" class="grid-content bg-purple">
             <el-input
               placeholder="请输入人员姓名，回车搜索"
               v-model="queryParams.userName"
               @keyup.enter.native="handleQuery"
+              size="small"
             >
               <el-button
                 slot="append"
-                icon="el-icon-s-fold"
+                icon="icon-gym-Gsearch"
                 @click="ry_boxShow = !ry_boxShow"
               ></el-button>
             </el-input>
@@ -52,7 +51,7 @@
           </div>
         </el-col>
       </el-row> -->
-      <div class="ry_searchBox" v-show="ry_boxShow">
+      <div class="searchBox" v-show="ry_boxShow">
         <el-form
           ref="queryForm"
           :inline="true"
@@ -236,6 +235,7 @@
         @queryTable="getList"
       ></right-toolbar>
     </el-row> -->
+    <div class="tableTopHr" ></div>
 
     <el-table
       v-loading="loading"
@@ -609,43 +609,3 @@ export default {
   }
 };
 </script>
-
-
-<style>
-.ry_searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.ry_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>

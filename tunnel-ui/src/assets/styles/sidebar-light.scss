@@ -175,13 +175,29 @@
       .el-dialog__body{
         color: #000 !important;
       }
+      .vue-treeselect__single-value{
+        color: #fff;
+      }
     }
     .addRoleDialog{
       .tree-border{
         border: solid 1px #05AFE3;
       }
     }
-  
+    .noticeDialog{
+      .ql-snow .ql-stroke{
+        stroke: #fff;
+      }
+      .ql-snow .ql-picker{
+        color: #fff;
+      }
+      .ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill{
+        fill:#fff;
+      }
+      .ql-editor.ql-blank::before{
+        color: #fff;
+      }
+    }
   .el-dialog{
     background-color: #00152B !important;
     border-bottom: solid 2px white;
@@ -203,6 +219,7 @@
         top: 8px;
       }
     }
+    
     ::-webkit-scrollbar-track {
       background-color: #022A54;
     }
@@ -589,11 +606,11 @@
       color: #fff;
     }
    }
-   .infoBoardButton .el-button{
-    border: solid 1px #65bfff;
-    background: #65bfff;
-    color: #fff;
-   }
+  //  .infoBoardButton .el-button{
+  //   border: solid 1px #65bfff;
+  //   background: #65bfff;
+  //   color: #fff;
+  //  }
    
     .bigTitle{
       color: #fff !important;
@@ -915,7 +932,8 @@
       box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
      
       .el-submenu__title:hover{
-        background-color: #2971CC ;
+        // background-color: #2971CC ;
+        color: #ffdb82 !important;
       }
       // 二级菜单左移
       // reset element-ui css

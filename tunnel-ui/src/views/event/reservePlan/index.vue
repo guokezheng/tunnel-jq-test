@@ -1,30 +1,29 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
         <el-button
           v-hasPermi="['business:plan:add']"
-          size="mini"
-          type="primary"
-          plain
+          size="small"
           @click="handleAdd()"
           >新增预案
         </el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery" 
             >刷新</el-button
           >
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请输入预案名称"
+            placeholder="请输入预案名称，回车搜索"
             v-model="queryParams.planName"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -40,7 +39,6 @@
         label-width="75px"
       >
         <el-form-item
-          style="width: 100%"
           label="所属隧道"
           prop="tunnelId"
           v-show="manageStatin == '0'"
@@ -60,7 +58,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预案类型" prop="category" style="width: 100%">
+        <el-form-item label="预案类型" prop="category" >
           <el-select
             v-model="queryParams.category"
             placeholder="请选择预案类型"
@@ -75,7 +73,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="事件类型" prop="planTypeId" style="width: 100%">
+        <el-form-item label="事件类型" prop="planTypeId" >
           <el-select
             v-model="queryParams.planTypeId"
             clearable
@@ -100,7 +98,7 @@
         </el-form-item>
       </el-form>
     </div>
-
+    <div class="tableTopHr" ></div>
     <el-table
       ref="planTable"
       v-loading="loading"
@@ -1794,16 +1792,6 @@ export default {
 };
 </script>
 <style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
 #cascader-menu-45-0 .el-radio {
   display: none !important;
 }
@@ -1909,30 +1897,6 @@ export default {
     pointer-events: none;
     cursor: auto !important;
     color: #ccc;
-  }
-}
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
   }
 }
 </style>

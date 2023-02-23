@@ -30,38 +30,30 @@
       <el-col :span="20" :xs="24">
         <el-row :gutter="20" class="mb8">
       <!-- 全局搜索 -->
-      <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-row :gutter="20"  class="topFormRow">
         <el-col :span="6">
 
           <el-button
             v-hasPermi="['system:user:add']"
-            size="mini"
-            type="primary"
-            plain
+            size="small"
             @click="handleAdd()"
           >新增用户
           </el-button>
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             @click="handleImport"
             v-hasPermi="['system:user:import']"
           >导入</el-button
           >
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :loading="exportLoading"
             @click="handleExport"
             v-hasPermi="['system:user:export']"
           >导出</el-button
           >
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             @click="resetQuery"
           >刷新</el-button
           >
@@ -75,21 +67,21 @@
             >
               <el-button
                 slot="append"
-                icon="el-icon-s-fold"
+                icon="icon-gym-Gsearch"
                 @click="user_boxShow = !user_boxShow"
               ></el-button>
             </el-input>
           </div>
         </el-col>
       </el-row>
-      <div class="searchBox" v-show="user_boxShow">
+      <div class="treeSearchBox searchBox" v-show="user_boxShow">
         <el-form
           ref="queryForm"
           :inline="true"
           :model="queryParams"
           label-width="75px"
         >
-          <el-form-item label="用户状态" prop="status" style="width: 100%">
+          <el-form-item label="用户状态" prop="status" >
             <el-select
               v-model="queryParams.status"
               placeholder="请选择用户状态"
@@ -104,11 +96,11 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="创建时间" style="width:100%">
+          <el-form-item label="创建时间" >
             <el-date-picker
               v-model="dateRange"
               size="small"
-              style="width: 325px"
+              style="width: 100%"
               value-format="yyyy-MM-dd"
               type="daterange"
               range-separator="-"
@@ -134,7 +126,7 @@
           </el-form-item>
         </el-form>
       </div>
-
+      <div class="tableTopHr" ></div>
       <el-table
         v-loading="loading"
         :data="userList"
@@ -1128,41 +1120,3 @@ export default {
   },
 };
 </script>
-<style>
-.searchBox {
-  position: absolute;
-  top: 60px;
-  right: 0.5%;
-  width: 28%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>

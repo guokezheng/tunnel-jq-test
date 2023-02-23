@@ -2,17 +2,23 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
         <el-button
           v-hasPermi="['system:post:add']"
-          size="mini"
-          type="primary"
-          plain
+          size="small"
           @click="handleAdd()"
         >新增岗位
         </el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button
+            type="primary"
+            plain
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:post:export']"
+          >导出</el-button>
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -25,7 +31,7 @@
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="post_boxShow = !post_boxShow"
             ></el-button>
           </el-input>
@@ -40,7 +46,7 @@
         label-width="75px"
       >
 
-        <el-form-item label="岗位状态" prop="status" style="width: 100%">
+        <el-form-item label="岗位状态" prop="status" >
           <el-select
             v-model="queryParams.status"
             clearable
@@ -62,14 +68,6 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          <el-button
-            type="primary"
-            plain
-            size="small"
-            :loading="exportLoading"
-            @click="handleExport"
-            v-hasPermi="['system:post:export']"
-          >导出</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -186,9 +184,9 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange"
-              :row-class-name="tableRowClassName" max-height="640">
+               height="62vh" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="岗位编号" align="center" prop="postId" />
       <el-table-column label="岗位编码" align="center" prop="postCode" />
@@ -435,53 +433,6 @@ export default {
         this.exportLoading = false;
       }).catch(() => {});
     },
-    // 表格样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
   }
 };
 </script>
-
-<style>
-.searchBox {
-  position: absolute;
-  top: 8.5%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>

@@ -77,7 +77,7 @@
       </el-form-item>
     </el-form>-->
     <div class="topBox" style="display: flex; justify-content: space-between">
-      <div class="butBox">
+      <!-- <div class="butBox">
         <div :class="searchValue == '1' ? 'xz' : ''" @click="qiehuan('1')">
           CO/VI
         </div>
@@ -90,7 +90,17 @@
         <div :class="searchValue == '4' ? 'xz' : ''" @click="qiehuan('4')">
           洞外光强
         </div>
-      </div>
+      </div> -->
+      <el-tabs v-model="activeName" @tab-click="handleClick" style="100%">
+      <el-tab-pane
+        :label="item.title"
+        :name="item.name"
+        v-for="item in tabList"
+        :key="item.name"
+      >
+
+      </el-tab-pane>
+    </el-tabs>
       <!--      <div @click="marketChang()">
         <i
           class="el-icon-s-marketing"
@@ -101,14 +111,14 @@
     <div >
       <el-row
         :gutter="20"
-        style="margin: 10px 0 25px"
+        class="tabTopFormRow"
       >
-        <el-col :span="4">
-          <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-col :span="6">
+          <el-button size="small" @click="resetQuery" 
               >刷新</el-button
             >
         </el-col>
-        <el-col :span="1" style="display: flex; justify-content: right" :offset="13">
+        <el-col :span="1" style="display: flex; justify-content: right" :offset="11">
           <div @click="marketChang()">
             <i
               class="el-icon-s-marketing"
@@ -123,7 +133,7 @@
             style="font-size: 36px; color: #39adff;float: left"
           ></i>
         </div> -->
-          <div style="width: 91%; float: left; display: none" id="pldiv">
+          <div style="width: 100%; float: left; display: none" id="pldiv">
             <el-form
               ref="querysForm"
               :inline="true"
@@ -138,6 +148,7 @@
                 @select="handleChange"
                 :disable-branch-nodes="true"
                 size="small"
+                style="font-size:14px"
               />
             </el-form>
           </div>
@@ -151,19 +162,19 @@
             <el-input
               placeholder="请输入桩号，回车搜索"
               v-model="queryParams.pile"
-              style="width: 456px"
               @keyup.enter.native="handleQuery"
+              size="small"
             >
               <el-button
                 slot="append"
-                icon="el-icon-s-fold"
+                icon="icon-gym-Gsearch"
                 @click="sj_boxShow = !sj_boxShow"
               ></el-button>
             </el-input>
           </div>
         </el-col>
       </el-row>
-      <div class="searchBox" v-show="sj_boxShow">
+      <div class="searchBoxTab" v-show="sj_boxShow">
         <el-form
           ref="queryForm"
           :inline="true"
@@ -266,7 +277,7 @@
         v-loading="loading"
         :data="list"
         @selection-change="handleSelectionChange"
-        v-show="searchValue == '1'"
+        v-show="activeName == '1'"
         class="allTable"
         height="58vh"
       >
@@ -289,7 +300,7 @@
         :data="list"
         class="allTable"
         @selection-change="handleSelectionChange"
-        v-show="searchValue == '2'"
+        v-show="activeName == '2'"
         height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
@@ -321,7 +332,7 @@
         v-loading="loading"
         :data="list"
         @selection-change="handleSelectionChange"
-        v-show="searchValue == '3'"
+        v-show="activeName == '3'"
         class="allTable"
         height="58vh"
       >
@@ -342,7 +353,7 @@
         v-loading="loading"
         :data="list"
         @selection-change="handleSelectionChange"
-        v-show="searchValue == '4'"
+        v-show="activeName == '4'"
         class="allTable"
         height="58vh"
       >
@@ -359,28 +370,28 @@
         <el-table-column label="采集时间" align="center" prop="createTime" />
       </el-table>
       <pagination
-        v-show="total > 0&&this.searchValue == '1'"
+        v-show="total > 0&&this.activeName == '1'"
         :total="total"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
         @pagination="getList"
       />
       <pagination
-        v-show="total > 0&&this.searchValue == '2'"
+        v-show="total > 0&&this.activeName == '2'"
         :total="total"
         :page.sync="queryParams1.pageNum"
         :limit.sync="queryParams1.pageSize"
         @pagination="getList"
       />
       <pagination
-        v-show="total > 0&&this.searchValue == '3'"
+        v-show="total > 0&&this.activeName == '3'"
         :total="total"
         :page.sync="queryParams2.pageNum"
         :limit.sync="queryParams2.pageSize"
         @pagination="getList"
       />
       <pagination
-        v-show="total > 0&&this.searchValue == '4'"
+        v-show="total > 0&&this.activeName == '4'"
         :total="total"
         :page.sync="queryParams3.pageNum"
         :limit.sync="queryParams3.pageSize"
@@ -423,9 +434,27 @@ export default {
 
   data() {
     return {
+      tabList: [
+        {
+          title: "CO/VI",
+          name: "1",
+        },
+        {
+          title: "风速风向",
+          name: "2",
+        },
+        {
+          title: "洞内光强",
+          name: "3",
+        },
+        {
+          title: "洞外光强",
+          name: "4",
+        },
+      ],
       manageStatin: this.$cache.local.get("manageStation"),
       sj_boxShow: false,
-      searchValue: "1",
+      activeName: "1",
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -463,7 +492,7 @@ export default {
         pageSize: 10,
         tunnelId: null,
         deptId: null,
-        searchValue: "1",
+        activeName: "1",
         pile: null,
         deviceId: null,
       },
@@ -474,7 +503,7 @@ export default {
         pageSize: 10,
         tunnelId: null,
         deptId: null,
-        searchValue: "1",
+        activeName: "1",
         pile: null,
         deviceId: null,
       },
@@ -484,7 +513,7 @@ export default {
         pageSize: 10,
         tunnelId: null,
         deptId: null,
-        searchValue: "1",
+        activeName: "1",
         pile: null,
         deviceId: null,
       },
@@ -580,14 +609,14 @@ export default {
     },
 
     getDeviceTreeselect() {
-      getDeviceTreeselect(this.searchValue).then((response) => {
+      getDeviceTreeselect(this.activeName).then((response) => {
         this.jgOptions = response.data;
         console.log(this.jgOptions + "==========设备树");
         //给select-tree默认选中第一个
         this.querysParams.id = this.jgOptions[0].children[0].id;
 
         //获取线条的方法
-        if (this.searchValue == null || this.searchValue == "1") {
+        if (this.activeName == null || this.activeName == "1") {
           this.queryParams.searchValue = "1";
           this.queryParams.deviceId = this.querysParams.id;
           let viTime = [];
@@ -608,7 +637,7 @@ export default {
             this.loading = false;
             this.initChart();
           });
-        } else if (this.searchValue != null && this.searchValue == "2") {
+        } else if (this.activeName != null && this.activeName == "2") {
           this.queryParams1.searchValue = "2";
           this.queryParams1.deviceId = this.querysParams.id;
           let fstime = [];
@@ -627,7 +656,7 @@ export default {
             this.loading = false;
             this.initChart();
           });
-        } else if (this.searchValue != null && this.searchValue == "3") {
+        } else if (this.activeName != null && this.activeName == "3") {
           this.queryParams2.searchValue = "3";
           this.queryParams2.deviceId = this.querysParams.id;
           let dntime = [];
@@ -646,7 +675,7 @@ export default {
             this.loading = false;
             this.initChart();
           });
-        } else if (this.searchValue != null && this.searchValue == "4") {
+        } else if (this.activeName != null && this.activeName == "4") {
           this.queryParams3.searchValue = "4";
           let dwtime = [];
           this.dwTime = [];
@@ -702,7 +731,7 @@ export default {
       this.querysParams.id = item.id;
       console.log("this.querysParams.id===" + item.id);
 
-      if (this.searchValue == null || this.searchValue == "1") {
+      if (this.activeName == null || this.activeName == "1") {
         this.queryParams.searchValue = "1";
         this.queryParams.deviceId = item.id;
         this.VITime = [];
@@ -722,7 +751,7 @@ export default {
           this.loading = false;
           this.initChart();
         });
-      } else if (this.searchValue != null && this.searchValue == "2") {
+      } else if (this.activeName != null && this.activeName == "2") {
         this.queryParams1.searchValue = "2";
         this.queryParams1.deviceId = this.querysParams.id;
         let fstime = [];
@@ -741,7 +770,7 @@ export default {
           this.loading = false;
           this.initChart();
         });
-      } else if (this.searchValue != null && this.searchValue == "3") {
+      } else if (this.activeName != null && this.activeName == "3") {
         this.queryParams3.searchValue = "3";
         this.queryParams3.deviceId = this.querysParams.id;
         let dntime = [];
@@ -760,7 +789,7 @@ export default {
           this.loading = false;
           this.initChart();
         });
-      } else if (this.searchValue != null && this.searchValue == "4") {
+      } else if (this.activeName != null && this.activeName == "4") {
         this.queryParams.searchValue = "4";
         this.queryParams.deviceId = this.querysParams.id;
         let dwtime = [];
@@ -805,7 +834,7 @@ export default {
       var myChart = echarts.init(chartDom);
       var option;
       let legends;
-      if (this.searchValue == 1) {
+      if (this.activeName == 1) {
         var series = [
           {
             name: "CO",
@@ -864,7 +893,7 @@ export default {
           left: "center",
           data: ["CO", "VI"],
         };
-      } else if (this.searchValue == 2) {
+      } else if (this.activeName == 2) {
         //   fsData: [],
         // dnData: [],
         // dwData: [],
@@ -906,7 +935,7 @@ export default {
             },
           },
         ];
-      } else if (this.searchValue == 3) {
+      } else if (this.activeName == 3) {
         var series = [
           {
             name: "洞内亮度",
@@ -945,7 +974,7 @@ export default {
             },
           },
         ];
-      } else if (this.searchValue == 4) {
+      } else if (this.activeName == 4) {
         //   fsData: [],
         // dnData: [],
         // dwData: [],
@@ -1000,12 +1029,21 @@ export default {
 
       option && myChart.setOption(option, true);
     },
-    // 切换按钮
-    qiehuan(inx) {
+    // // 切换按钮
+    // qiehuan(inx) {
+    //   this.dateRange = [];
+    //   this.resetForm("queryForms");
+    //   this.searchValue = inx;
+    //   this.getList(inx);
+    //   this.initChart();
+    //   this.resetQuery();
+    //   this.getDeviceTreeselect();
+    // },
+    handleClick(){
       this.dateRange = [];
       this.resetForm("queryForms");
-      this.searchValue = inx;
-      this.getList(inx);
+      // this.searchValue = inx;
+      this.getList(this.activeName);
       this.initChart();
       this.resetQuery();
       this.getDeviceTreeselect();
@@ -1052,7 +1090,7 @@ export default {
           "manageStationSelect"
         );
       }
-      if (inx == null || inx == "1" || this.searchValue == "1") {
+      if (inx == null || inx == "1" || this.activeName == "1") {
         this.queryParams.searchValue = "1";
         dataLogInfoList(
           this.addDateRange(this.queryParams, this.dateRange)
@@ -1064,7 +1102,7 @@ export default {
           this.loading = false;
           //this.initChart();
         });
-      } else if ((inx != null && inx == "2") || this.searchValue == "2") {
+      } else if ((inx != null && inx == "2") || this.activeName == "2") {
         this.queryParams1.searchValue = "2";
         dataLogInfoList(
           this.addDateRange(this.queryParams1, this.dateRange)
@@ -1075,7 +1113,7 @@ export default {
           this.loading = false;
           //this.initChart();
         });
-      } else if ((inx != null && inx == "3") || this.searchValue == "3") {
+      } else if ((inx != null && inx == "3") || this.activeName == "3") {
         this.queryParams2.searchValue = "3";
         dataLogInfoList(
           this.addDateRange(this.queryParams2, this.dateRange)
@@ -1086,7 +1124,7 @@ export default {
           this.loading = false;
           //this.initChart();
         });
-      } else if ((inx != null && inx == "4") || this.searchValue == "4") {
+      } else if ((inx != null && inx == "4") || this.activeName == "4") {
         this.queryParams3.searchValue = "4";
         dataLogInfoList(
           this.addDateRange(this.queryParams3, this.dateRange)
@@ -1187,7 +1225,7 @@ export default {
       this.queryParams1 = this.queryParams;
       this.queryParams2 = this.queryParams;
       this.queryParams3 = this.queryParams;
-      this.getList(this.searchValue);
+      this.getList(this.activeName);
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -1249,16 +1287,16 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       let queryParams = "";
-      if(this.searchValue=='1'){
+      if(this.activeName=='1'){
         queryParams = this.queryParams;
       }
-      if(this.searchValue=='2'){
+      if(this.activeName=='2'){
         queryParams = this.queryParams1;
       }
-      if(this.searchValue=='3'){
+      if(this.activeName=='3'){
         queryParams = this.queryParams2;
       }
-      if(this.searchValue=='4'){
+      if(this.activeName=='4'){
         queryParams = this.queryParams3;
       }
 
@@ -1282,16 +1320,7 @@ export default {
   width: 100vw;
   height: 60vh;
 }
-.searchBox {
-  position: absolute;
-  top: 14%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
+
 .butBox {
   width: 315px;
   display: flex;
@@ -1409,31 +1438,17 @@ hr {
   max-height: 59vh !important;
   overflow: auto;
 }
+.el-tabs{
+  width:100%;
+}
+::v-deep .el-tabs__header {
+  margin: 0 0 6px !important;
+}
+.searchBoxTab{
+  top: 11% !important;
+  right: 0.8% !important;
+  width: 23.8% !important;
+}
 </style>
 
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

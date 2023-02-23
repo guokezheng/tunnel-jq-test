@@ -1,20 +1,16 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row  :gutter="20" style="margin: 10px 0 25px">
+    <el-row  :gutter="20" class="topFormRow">
       <el-col :span="6">
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleAdd"
           v-hasPermi="['system:vocabulary:add']"
         >新增</el-button
         >
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:vocabulary:remove']"
@@ -28,7 +24,7 @@
           v-hasPermi="['system:vocabulary:export']"
         >导出</el-button
         > -->
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery" 
           >刷新</el-button
         >
 
@@ -41,6 +37,7 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
+            style="border-right:#00C8FF solid 1px !important;border-radius:3px"
           >
           <!-- <el-button
               slot="append"
@@ -130,15 +127,14 @@
         @queryTable="getList"
       ></right-toolbar>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="vocabularyList"
-      max-height="640"
+      max-height="62vh"
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'creatTime', order: 'descending'}"
-      :row-class-name="tableRowClassName"
-
+      class="allTable"
     >
       <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="序号" align="center"
@@ -382,14 +378,7 @@ export default {
           queryParams.ids = null;
         });
     },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
+    
   },
 };
 </script>

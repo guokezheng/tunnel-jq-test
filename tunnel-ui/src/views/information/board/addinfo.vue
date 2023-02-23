@@ -92,13 +92,13 @@
               <el-button type="info" plain @click="alignment(4)" size="mini"
                 >上对齐</el-button
               > -->
-              <el-button type="info" plain @click="alignment(1)" size="mini"
+              <el-button type="primary" @click="alignment(1)" size="mini"
                 >左对齐</el-button
               >
-              <el-button type="info" plain @click="alignment(2)" size="mini"
+              <el-button type="primary" @click="alignment(2)" size="mini"
                 >左右居中</el-button
               >
-              <el-button type="info" plain @click="alignment(3)" size="mini"
+              <el-button type="primary" @click="alignment(3)" size="mini"
                 >右对齐</el-button
               >
               <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
@@ -314,9 +314,9 @@
       </el-card>
 
       <template slot="footer">
-        <el-button size="small" @click="handleClose">取消</el-button>
+        <el-button size="mini" type="primary" plain @click="handleClose">取消</el-button>
         <el-button
-          size="small"
+          size="mini"
           @click="dataFormSubmitHandle()"
           type="primary"
           v-loading="loading"
@@ -660,7 +660,9 @@ export default {
           // this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
         }
       });
-      this.getFontSizeList()
+      if(this.dataForm.screenSize){
+        this.getFontSizeList()
+      }
       this.$forceUpdate();
     },
     getFontSizeList(){
@@ -680,6 +682,7 @@ export default {
       console.log(size, "00000000000000000000");
       this.boardWidth = size.split("*")[0];
       this.boardHeight = size.split("*")[1];
+      this.getFontSizeList()
       this.$forceUpdate();
     },
     changeFontSize(){
@@ -853,7 +856,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "GreenYellow";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       }else{

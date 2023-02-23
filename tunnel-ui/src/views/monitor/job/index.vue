@@ -1,12 +1,10 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="5">
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleAdd"
           v-hasPermi="['monitor:job:add']"
           >新增</el-button
@@ -21,32 +19,26 @@
         <!--            >修改</el-button-->
         <!--          >-->
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['monitor:job:remove']"
           >删除</el-button
         >
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['monitor:job:export']"
           >导出</el-button
         >
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleJobLog"
           v-hasPermi="['monitor:job:query']"
           >日志</el-button
         >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery" 
           >刷新</el-button
         >
       </el-col>
@@ -54,13 +46,13 @@
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.jobName"
-            placeholder="请输入任务名称,回车搜索"
+            placeholder="请输入任务名称，回车搜索"
             size="small"
             @keyup.enter.native="handleQuery"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -74,7 +66,7 @@
         :model="queryParams"
         label-width="80px"
       >
-        <el-form-item label="任务组名" style="width: 100%" prop="jobGroup">
+        <el-form-item label="任务组名" prop="jobGroup">
           <el-select
             v-model="queryParams.jobGroup"
             placeholder="请选择任务组名"
@@ -89,7 +81,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="任务状态" style="width: 100%" prop="status">
+        <el-form-item label="任务状态" prop="status">
           <el-select
             v-model="queryParams.status"
             placeholder="请选择任务状态"
@@ -114,13 +106,13 @@
         </el-form-item>
       </el-form>
     </div>
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="jobList"
       @selection-change="handleSelectionChange"
       class="allTable"
-      height="59vh"
+      height="62vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column
@@ -700,41 +692,4 @@ export default {
   width: 0px;
 }
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

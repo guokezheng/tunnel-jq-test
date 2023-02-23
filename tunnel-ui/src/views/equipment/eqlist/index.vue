@@ -1,51 +1,41 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleAdd"
           v-hasPermi="['system:devices:add']"
           >新增
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:devices:edit']"
           >修改
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:devices:remove']"
           >删除
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleExport"
           v-hasPermi="['system:devices:export']"
           >导出
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleImport"
           v-hasPermi="['system:devices:import']"
           >导入
         </el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery" 
           >刷新</el-button
         >
         <!--          <el-button-->
@@ -66,7 +56,7 @@
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -81,7 +71,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="设备方向" style="width: 100%">
+        <el-form-item label="设备方向" >
           <el-checkbox-group v-model="checkeBox" @change="handleCheckChange">
             <el-checkbox
               v-for="item in dict.type.sd_direction"
@@ -100,7 +90,6 @@
         </el-form-item>
         <el-form-item
           label="所属隧道"
-          style="width: 100%"
           prop="eqTunnelId"
           v-show="manageStatin == '0'"
         >
@@ -118,7 +107,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备类型" style="width: 100%" prop="eqType">
+        <el-form-item label="设备类型" prop="eqType">
           <el-select
             v-model="queryParams.eqType"
             placeholder="请选择设备类型"
@@ -143,6 +132,7 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="devicesList"
@@ -1646,41 +1636,4 @@ export default {
   }
 }
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

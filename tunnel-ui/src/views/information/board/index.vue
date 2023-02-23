@@ -75,6 +75,7 @@
                 :title="item.label"
                 :name="item.devicePixel"
               >
+              <div>
                 <el-checkbox
                   style="width: 100%"
                   :indeterminate="isIndeterminate"
@@ -104,6 +105,8 @@
                     
                   </el-checkbox>
                 </el-checkbox-group>
+              </div>
+                
               </el-collapse-item>
             </el-collapse>
           </el-form-item>
@@ -675,7 +678,7 @@ export default {
           throw err;
         }).then((res)=>{
           if(res.code == 200){
-            this.allVmsTemplate()
+            this.allVmsTemplate('no')
           }
         })
         // this.getActiveNames(item.category);
@@ -727,12 +730,12 @@ export default {
           return deleteTemplate(ids);
         })
         .then(() => {
-          this.allVmsTemplate();
+          this.allVmsTemplate('no');
           this.$modal.msgSuccess("删除成功");
         });
     },
     // 情报板管理右侧查询接口
-    allVmsTemplate() {
+    allVmsTemplate(type) {
       const param = {
         devicePixel: this.form.devicePixel,
       };
@@ -747,8 +750,9 @@ export default {
           arr.list = brr;
           jArr.push(j.toString())
         }
-        this.activeNames = jArr
-
+        if(type != 'no'){
+          this.activeNames = jArr
+        }
         this.$forceUpdate();
         console.log(this.iotTemplateCategoryList,"新模板")
       });
@@ -833,7 +837,7 @@ export default {
       this.$forceUpdate();
 
       console.log(this.contentList, "99999999999");
-      this.allVmsTemplate();
+      this.allVmsTemplate('no');
     },
 
     // 打开添加信息弹窗
@@ -908,7 +912,7 @@ export default {
     },
     getColorValue(color) {
       if (color == "蓝色" || color == 'blue') return "000000255000";
-      if (color == "绿色" || color == 'GreenYellow') return "000255000000";
+      if (color == "绿色" || color == '#00FF00') return "000255000000";
       if (color == "透明色" ) return "t";
       if (color == "红色" || color == 'red') return "255000000000";
       return "255255000000"; //黄色
@@ -1016,7 +1020,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "GreenYellow";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -1130,7 +1134,7 @@ export default {
       this.showEmit = false;
       this.arrowRightVisible = false
       setTimeout(() => {
-        this.allVmsTemplate();
+        this.allVmsTemplate('no');
       }, 500);
     },
   },

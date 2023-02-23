@@ -3,29 +3,30 @@
 
     <!-- 全局搜索 -->
     <div >
-      <el-row style="margin: 10px 0 25px">
-      <el-col :span="4">
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+      <el-row class="topFormRow" :gutter="20">
+      <el-col :span="6">
+        <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
           >
       </el-col>
-      <el-col :span="6"  :offset="14">
+      <el-col :span="6"  :offset="12">
         <div  ref="main" class="grid-content bg-purple">
           <el-input
             placeholder="请输入车牌，回车搜索"
             v-model="queryParams.plateNumber"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="cl_boxShow = !cl_boxShow"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-      <div class="cl_searchBox" v-show="cl_boxShow" >
+      <div class="searchBox" v-show="cl_boxShow" >
       <el-form
         ref="queryForm"
         :inline="true"
@@ -35,7 +36,7 @@
 
         <el-form-item label="机构" prop="orgName">
           <el-cascader
-            style="width: 335px"
+            style="width: 100%"
             popper-class="jigou"
             v-model="queryParams.orgName"
             :show-all-levels="false"
@@ -45,7 +46,7 @@
         </el-form-item>
 
 
-        <el-form-item label="车型"  prop="vType" style="width: 100%">
+        <el-form-item label="车型"  prop="vType" >
 
             <el-checkbox
               v-for="dict in vehicleTypeList"
@@ -234,7 +235,7 @@
           </el-tooltip>
         </div>
       </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="mechanismList"
@@ -659,45 +660,3 @@ export default {
 </style>
 
 
-<style>
-.cl_searchBox {
-  position: absolute;
-  top: 8.5%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.cl_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-
-::v-deep .checkboxFormDialog .el-checkbox{
-  width: 80px;
-}
-</style>

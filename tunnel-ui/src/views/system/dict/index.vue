@@ -1,47 +1,41 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
         <el-button
           v-hasPermi="['system:dict:add']"
-          size="mini"
-          type="primary"
-          plain
+          size="small"
           @click="handleAdd()"
           >新增字典
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleRefreshCache"
           v-hasPermi="['system:dict:remove']"
           >刷新缓存</el-button
         >
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['system:post:export']"
           >导出</el-button
         >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
         >
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请输入字典名称、类型"
+            placeholder="请输入字典名称、类型，回车搜索"
             v-model="queryParams.dictName"
             @keyup.enter.native="handleQuery"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="dict_boxShow = !dict_boxShow"
             ></el-button>
           </el-input>
@@ -55,9 +49,9 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="字典状态" prop="status" style="width: 100%">
+        <el-form-item label="字典状态" prop="status" >
           <el-select
-            style="width: 325px"
+            style="width: 100%"
             v-model="queryParams.status"
             clearable
             placeholder="请选择字典状态"
@@ -76,7 +70,7 @@
           <el-date-picker
             v-model="dateRange"
             size="small"
-            style="width: 325px"
+            style="width: 100%"
             value-format="yyyy-MM-dd"
             type="daterange"
             range-separator="-"
@@ -237,13 +231,13 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="typeList"
-      max-height="640"
+      height="62vh"
       @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName"
+      class="allTable"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="字典编号" align="center" prop="dictId" />
@@ -554,53 +548,6 @@ export default {
         this.$modal.msgSuccess("刷新成功");
       });
     },
-    // 表格样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
   },
 };
 </script>
-
-<style>
-.searchBox {
-  position: absolute;
-  top: 8.5%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>

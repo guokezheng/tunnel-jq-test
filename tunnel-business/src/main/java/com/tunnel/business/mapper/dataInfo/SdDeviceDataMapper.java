@@ -1,5 +1,6 @@
 package com.tunnel.business.mapper.dataInfo;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import org.apache.ibatis.annotations.Param;;
 
@@ -74,13 +75,13 @@ public interface SdDeviceDataMapper
 
     public List<Map<String, Object>> getTodayCOVIData(@Param("deviceId") String deviceId, @Param("itemId") Long itemId, @Param("today") String today);
 
-    public List<Map<String, String>> selectCOVIDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("pile") String pile);
+    public List<Map<String, String>> selectCOVIDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
-    public List<Map<String, String>> selectFSFXDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("pile") String pile);
+    public List<Map<String, String>> selectFSFXDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
-    public List<Map<String, String>> selectDWDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("pile") String pile);
+    public List<Map<String, String>> selectDWDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
-    public List<Map<String, String>> selectDNDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("pile") String pile);
+    public List<Map<String, String>> selectDNDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 
     /**
      * 修改设备实时数据（华为kafka）
@@ -90,19 +91,23 @@ public interface SdDeviceDataMapper
      */
     public int updateKafkaDeviceData(SdDeviceData sdDeviceData);
 
-    List<Map<String, String>> selectCOVIDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<Map<String, String>> selectCOVIDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
-    List<Map<String, String>> selectFSFXDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<Map<String, String>> selectFSFXDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
-    List<Map<String, String>> selectDNDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<Map<String, String>> selectDNDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
-    List<Map<String, String>> selectDWDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<Map<String, String>> selectDWDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
-    List<Map<String, String>> selectCOVIDevicesDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<Map<String, String>> selectCOVIDevicesDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
-    List<Map<String, String>> selectFSFXDevicesDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<Map<String, String>> selectFSFXDevicesDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
-    List<Map<String, String>> selectDNDevicesDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<Map<String, String>> selectDNDevicesDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
-    List<Map<String, String>> selectDWDevicesDataLineList(@Param("dept")String dept, @Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<Map<String, String>> selectDWDevicesDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<Map<String, String>> dataDevicesLogInfoList(SdDeviceData sdDeviceData);
+
+    List<Map<String, String>> selectDeviceTableDataList(@Param("deviceId")String deviceId,@Param("beginTime")String beginTime,@Param("endTime")String endTime);
 }

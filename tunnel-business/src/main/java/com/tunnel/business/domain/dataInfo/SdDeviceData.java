@@ -32,11 +32,31 @@ public class SdDeviceData extends BaseEntity
 
     private Long deptId;
 
+    private String dept;
+
     private String tunnelId;
 
     private String searchValue;
 
     private String pile;
+
+    private String eqType;
+
+    public String getEqType() {
+        return this.eqType;
+    }
+
+    public void setEqType(String eqType) {
+        this.eqType = eqType;
+    }
+
+    public String getDept() {
+        return this.dept;
+    }
+
+    public void setDept( String dept) {
+        this.dept = dept;
+    }
 
     public String getPile() {
         return pile;

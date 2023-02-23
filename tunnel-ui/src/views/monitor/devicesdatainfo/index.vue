@@ -1,194 +1,46 @@
 <template>
   <div class="app-container">
-    <!--    <el-form
-      :model="queryParams"
-      ref="queryForms"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-      style="margin-top: 10px"
-    >
-      <el-form-item label="管理机构" prop="deptId">
-        <treeselect
-          v-model="queryParams.deptId"
-          :options="deptOptions"
-          :show-count="true"
-          placeholder="请选择归属部门"
-          style="width: 360px;"
-        />
-        &lt;!&ndash;<el-select
-          v-model="queryParams.deptId"
-          placeholder="请选择管理机构"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="item in deptData"
-            :key="item.deptId"
-            :label="item.deptName"
-            :value="item.deptId"
-          />
-        </el-select>&ndash;&gt;
-      </el-form-item>
-      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
-        <el-select
-          v-model="queryParams.tunnelId"
-          placeholder="请选择隧道"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="item in eqTunnelData"
-            :key="item.tunnelId"
-            :label="item.tunnelName"
-            :value="item.tunnelId"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="桩号" prop="pile">
-        <el-input
-          v-model="queryParams.pile"
-          placeholder="请输入桩号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="采集时间">
-        <el-date-picker
-          v-model="dateRange"
-          size="small"
-          style="width: 360px"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          type="datetimerange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="['00:00:00', '23:59:59']"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
-      </el-form-item>
-    </el-form>-->
-    <div class="topBox" style="display: flex; justify-content: space-between">
-      <!-- <div class="butBox">
-        <div :class="searchValue == '1' ? 'xz' : ''" @click="qiehuan('1')">
-          CO/VI
-        </div>
-        <div :class="searchValue == '2' ? 'xz' : ''" @click="qiehuan('2')">
-          风速风向
-        </div>
-        <div :class="searchValue == '3' ? 'xz' : ''" @click="qiehuan('3')">
-          洞内光强
-        </div>
-        <div :class="searchValue == '4' ? 'xz' : ''" @click="qiehuan('4')">
-          洞外光强
-        </div>
-      </div> -->
-      <el-tabs v-model="activeName" @tab-click="handleClick" style="100%">
-      <el-tab-pane
-        :label="item.title"
-        :name="item.name"
-        v-for="item in tabList"
-        :key="item.name"
-      >
-
-      </el-tab-pane>
-    </el-tabs>
-      <!--      <div @click="marketChang()">
-        <i
-          class="el-icon-s-marketing"
-          style="font-size: 36px; color: #39adff"
-        ></i>
-      </div>-->
-    </div>
     <div >
       <el-row
         :gutter="20"
-        class="tabTopFormRow"
+        style="margin: 10px 0 25px"
       >
-        <el-col :span="6">
-          <el-button size="small" @click="resetQuery" 
-              >刷新</el-button
-            >
+        <el-col :span="4">
+          <el-button size="mini" @click="resetQueryTab" type="primary" plain
+          >刷新</el-button
+          >
         </el-col>
-        <el-col :span="1" style="display: flex; justify-content: right" :offset="11">
-          <div @click="marketChang()">
-            <i
-              class="el-icon-s-marketing"
-              style="font-size: 36px; color: #39adff; float: left"
-            ></i>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <!-- <div @click="marketChang()">
-          <i
-            class="el-icon-s-marketing"
-            style="font-size: 36px; color: #39adff;float: left"
-          ></i>
-        </div> -->
-          <div style="width: 100%; float: left; display: none" id="pldiv">
-            <el-form
-              ref="querysForm"
-              :inline="true"
-              :model="querysParams"
-              label-width="75px"
-            >
-              <treeselect
-                v-model="querysParams.id"
-                :options="jgOptions"
-                :show-count="true"
-                placeholder="请选择设备"
-                @select="handleChange"
-                :disable-branch-nodes="true"
-                size="small"
-                style="font-size:14px"
-              />
-            </el-form>
-          </div>
-          <!--        <div @click="marketChang()">
-          <i
-            class="el-icon-s-marketing"
-            style="font-size: 36px; color: #39adff;float: left"
-          ></i>
-        </div>-->
-          <div ref="main" class="grid-content bg-purple" id="pladiv">
+        <el-col :span="6" :offset="14">
+          <div ref="main" class="grid-content bg-purple" >
             <el-input
               placeholder="请输入桩号，回车搜索"
-              v-model="queryParams.pile"
-              @keyup.enter.native="handleQuery"
-              size="small"
+              v-model="querysParamsTab.pile"
+              style="width: 456px"
+              @keyup.enter.native="handleQueryTab"
             >
               <el-button
                 slot="append"
-                icon="icon-gym-Gsearch"
-                @click="sj_boxShow = !sj_boxShow"
+                icon="el-icon-s-fold"
+                @click="device_boxShow = !device_boxShow"
               ></el-button>
             </el-input>
           </div>
         </el-col>
       </el-row>
-      <div class="searchBoxTab" v-show="sj_boxShow">
+      <div class="searchBox" v-show="device_boxShow">
         <el-form
-          ref="queryForm"
+          ref="queryFormTab"
           :inline="true"
-          :model="queryParams"
+          :model="querysParamsTab"
           label-width="75px"
         >
           <el-form-item
             style="width: 100%"
             label="所属隧道"
             prop="tunnelId"
-            v-show="manageStatin == '0'"
           >
             <el-select
-              v-model="queryParams.tunnelId"
+              v-model="querysParamsTab.tunnelId"
               placeholder="请选择所属隧道"
               clearable
               size="small"
@@ -202,230 +54,272 @@
             </el-select>
           </el-form-item>
 
-          <!--        <el-form-item label="管理机构" prop="deptId">
-          <treeselect
-            v-model="queryParams.deptId"
-            :options="deptOptions"
-            :show-count="true"
-            placeholder="请选择归属部门"
-            style="width: 360px;"
-          />
-        </el-form-item>-->
-
-<!--          <el-form-item label="管理机构" prop="deptId" style="width: 100%">
-            <treeselect
-              v-model="queryParams.deptId"
-              :options="deptOptions"
-              :show-count="true"
-              placeholder="请选择归属部门"
+          <el-form-item
+            style="width: 100%"
+            label="设备类型"
+            prop="searchValue"
+          >
+            <el-select
+              v-model="querysParamsTab.searchValue"
+              placeholder="请选择设备类型"
               clearable
               size="small"
-            />
-          </el-form-item>-->
-
-          <el-form-item label="采集时间">
-            <el-date-picker
-              v-model="dateRange"
-              size="small"
-              style="width: 335px"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :default-time="['00:00:00', '23:59:59']"
-            ></el-date-picker>
+            >
+              <el-option label="CO/VI" value="1"> </el-option>
+              <el-option label="风速风向" value="2"> </el-option>
+              <el-option label="洞内光强" value="3"> </el-option>
+              <el-option label="洞外光强" value="4"> </el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item class="bottomBox">
-            <el-button size="small" type="primary" @click="handleQuery"
-              >搜索</el-button
+            <el-button size="small" type="primary" @click="handleQueryTab"
+            >搜索</el-button
             >
-            <el-button size="small" @click="resetQuery" type="primary" plain
-              >重置</el-button
+            <el-button size="small" @click="resetQueryTab" type="primary" plain
+            >重置</el-button
             >
           </el-form-item>
         </el-form>
       </div>
     </div>
 
-    <!--    <div class="topBox" style="display: flex; justify-content: space-between">
-      <div class="butBox">
-        <div :class="searchValue == '1' ? 'xz' : ''" @click="qiehuan('1')">
-          CO/VI
-        </div>
-        <div :class="searchValue == '2' ? 'xz' : ''" @click="qiehuan('2')">
-          风速风向
-        </div>
-        <div :class="searchValue == '3' ? 'xz' : ''" @click="qiehuan('3')">
-          洞内光强
-        </div>
-        <div :class="searchValue == '4' ? 'xz' : ''" @click="qiehuan('4')">
-          洞外光强
-        </div>
-      </div>
-      <div @click="marketChang()">
-        <i
-          class="el-icon-s-marketing"
-          style="font-size: 36px; color: #39adff"
-        ></i>
-      </div>
-    </div>-->
-    <div v-show="echartShow == false">
+    <div>
       <el-table
         ref="tables"
         v-loading="loading"
-        :data="list"
+        :data="listTab"
         @selection-change="handleSelectionChange"
-        v-show="activeName == '1'"
         class="allTable"
         height="58vh"
       >
         <el-table-column type="selection" width="55" align="center" />
-<!--        <el-table-column label="序号" align="center" prop="num" />-->
-        <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-        <!--        <el-table-column label="设备编码" align="center" prop="eqId" />-->
+        <el-table-column type="index" :index="indexMethodTab" label="序号" width="68" align="center"></el-table-column>
         <el-table-column label="设备名称" align="center" prop="eqName" />
         <el-table-column label="所属隧道" align="center" prop="tunnelName" />
         <el-table-column label="管理机构" align="center" prop="deptName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
-        <el-table-column label="CO(ppm)" align="center" prop="CO" />
-        <el-table-column label="VI(km)" align="center" prop="VI" />
-        <el-table-column label="采集时间" align="center" prop="createTime" />
-      </el-table>
-
-      <el-table
-        v-loading="loading"
-        :data="list"
-        class="allTable"
-        @selection-change="handleSelectionChange"
-        v-show="activeName == '2'"
-        height="58vh"
-      >
-        <el-table-column type="selection" width="55" align="center" />
-<!--        <el-table-column label="序号" align="center" prop="num" />-->
-        <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
-        <el-table-column label="设备编码" align="center" prop="eqId" />
-        <el-table-column label="设备名称" align="center" prop="eqName" />
-        <el-table-column label="所属隧道" align="center" prop="tunnelName" />
-        <el-table-column label="管理机构" align="center" prop="deptName" />
-        <el-table-column label="方向" align="center" prop="direction" />
-        <el-table-column label="桩号" align="center" prop="pile" />
-        <el-table-column label="风速(m/s)" align="center" prop="FS" />
-        <el-table-column label="风向" align="center" prop="FX" />
-        <!--      <el-table-column label="采集时间" align="center" prop="createTime" />-->
         <el-table-column
-          label="采集时间"
+          label="操作"
           align="center"
-          prop="createTime"
-          width="180"
-          sortable
+          class-name="small-padding fixed-width"
         >
           <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.createTime) }}</span>
+            <el-button
+              size="mini"
+              class="tableBlueButtton"
+              @click="handleRecordy(scope.row)"
+            >查看详情</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
-      <el-table
-        ref="tables"
-        v-loading="loading"
-        :data="list"
-        @selection-change="handleSelectionChange"
-        v-show="activeName == '3'"
-        class="allTable"
-        height="58vh"
-      >
-        <el-table-column type="selection" width="55" align="center" />
-<!--        <el-table-column label="序号" align="center" prop="num" />-->
-        <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
-        <el-table-column label="设备编码" align="center" prop="eqId" />
-        <el-table-column label="设备名称" align="center" prop="eqName" />
-        <el-table-column label="所属隧道" align="center" prop="tunnelName" />
-        <el-table-column label="管理机构" align="center" prop="deptName" />
-        <el-table-column label="方向" align="center" prop="direction" />
-        <el-table-column label="桩号" align="center" prop="pile" />
-        <el-table-column label="洞内亮度(lux)" align="center" prop="data" />
-        <el-table-column label="采集时间" align="center" prop="createTime" />
-      </el-table>
-      <el-table
-        ref="tables"
-        v-loading="loading"
-        :data="list"
-        @selection-change="handleSelectionChange"
-        v-show="activeName == '4'"
-        class="allTable"
-        height="58vh"
-      >
-        <el-table-column type="selection" width="55" align="center" />
-<!--        <el-table-column label="序号" align="center" prop="num" />-->
-        <el-table-column type="index" :index="indexMethod3" label="序号" width="68" align="center"></el-table-column>
-        <el-table-column label="设备编码" align="center" prop="eqId" />
-        <el-table-column label="设备名称" align="center" prop="eqName" />
-        <el-table-column label="所属隧道" align="center" prop="tunnelName" />
-        <el-table-column label="管理机构" align="center" prop="deptName" />
-        <el-table-column label="方向" align="center" prop="direction" />
-        <el-table-column label="桩号" align="center" prop="pile" />
-        <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
-        <el-table-column label="采集时间" align="center" prop="createTime" />
-      </el-table>
+
       <pagination
-        v-show="total > 0&&this.activeName == '1'"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList"
-      />
-      <pagination
-        v-show="total > 0&&this.activeName == '2'"
-        :total="total"
-        :page.sync="queryParams1.pageNum"
-        :limit.sync="queryParams1.pageSize"
-        @pagination="getList"
-      />
-      <pagination
-        v-show="total > 0&&this.activeName == '3'"
-        :total="total"
-        :page.sync="queryParams2.pageNum"
-        :limit.sync="queryParams2.pageSize"
-        @pagination="getList"
-      />
-      <pagination
-        v-show="total > 0&&this.activeName == '4'"
-        :total="total"
-        :page.sync="queryParams3.pageNum"
-        :limit.sync="queryParams3.pageSize"
-        @pagination="getList"
+        v-show="totalTab > 0"
+        :total="totalTab"
+        :page.sync="querysParamsTab.pageNum"
+        :limit.sync="querysParamsTab.pageSize"
+        @pagination="getListTab"
       />
     </div>
-    <div v-show="echartShow">
-      <div ref="echartsBox" id="echarts-Box" class="echarts-Box"></div>
-    </div>
+
+
+    <!--详情弹窗-->
+    <el-dialog :visible.sync="record" width="70%">
+
+      <div>
+        <el-row
+          :gutter="20"
+          style="margin: 10px 0 25px"
+        >
+          <el-col :span="4">
+            <el-button size="mini" @click="resetQuery" type="primary" plain
+            >刷新</el-button
+            >
+          </el-col>
+          <el-col :span="1" style="display: flex; justify-content: right" :offset="13">
+            <div @click="marketChang()">
+              <i
+                class="el-icon-s-marketing"
+                style="font-size: 36px; color: #39adff; float: left"
+              ></i>
+            </div>
+          </el-col>
+          <el-col :span="6" style ="padding-left: 0px;">
+
+            <div style="width: 91%; float: left;"  id="pldiv">
+              <el-form
+                ref="querysForm"
+                :inline="true"
+                :model="querysParams"
+                label-width="75px"
+              >
+                <el-date-picker
+                  v-model="dateRange"
+                  size="small"
+                  style="width: 335px"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  type="datetimerange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  @change="selectTime"
+                  :default-time="['00:00:00', '23:59:59']"
+                ></el-date-picker>
+              </el-form>
+            </div>
+
+          </el-col>
+        </el-row>
+
+      </div>
+      <div v-show="echartShow == false">
+        <el-table
+          ref="tables"
+          v-loading="loading"
+          :data="list"
+          @selection-change="handleSelectionChange"
+          v-show="searchValue == '1'"
+          class="allTable"
+          height="58vh"
+        >
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+          <el-table-column label="设备名称" align="center" prop="eqName" />
+          <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+          <el-table-column label="管理机构" align="center" prop="deptName" />
+          <el-table-column label="方向" align="center" prop="direction" />
+          <el-table-column label="桩号" align="center" prop="pile" />
+          <el-table-column label="CO(ppm)" align="center" prop="CO" />
+          <el-table-column label="VI(km)" align="center" prop="VI" />
+          <el-table-column label="采集时间" align="center" prop="createTime" />
+        </el-table>
+
+        <el-table
+          v-loading="loading"
+          :data="list1"
+          class="allTable"
+          @selection-change="handleSelectionChange"
+          v-show="searchValue == '2'"
+          height="58vh"
+        >
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
+          <el-table-column label="设备编码" align="center" prop="eqId" />
+          <el-table-column label="设备名称" align="center" prop="eqName" />
+          <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+          <el-table-column label="管理机构" align="center" prop="deptName" />
+          <el-table-column label="方向" align="center" prop="direction" />
+          <el-table-column label="桩号" align="center" prop="pile" />
+          <el-table-column label="风速(m/s)" align="center" prop="FS" />
+          <el-table-column label="风向" align="center" prop="FX" />
+          <el-table-column
+            label="采集时间"
+            align="center"
+            prop="createTime"
+            width="180"
+            sortable
+          >
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.createTime) }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-table
+          ref="tables"
+          v-loading="loading"
+          :data="list2"
+          @selection-change="handleSelectionChange"
+          v-show="searchValue == '3'"
+          class="allTable"
+          height="58vh"
+        >
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
+          <el-table-column label="设备编码" align="center" prop="eqId" />
+          <el-table-column label="设备名称" align="center" prop="eqName" />
+          <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+          <el-table-column label="管理机构" align="center" prop="deptName" />
+          <el-table-column label="方向" align="center" prop="direction" />
+          <el-table-column label="桩号" align="center" prop="pile" />
+          <el-table-column label="洞内亮度(lux)" align="center" prop="data" />
+          <el-table-column label="采集时间" align="center" prop="createTime" />
+        </el-table>
+        <el-table
+          ref="tables"
+          v-loading="loading"
+          :data="list3"
+          @selection-change="handleSelectionChange"
+          v-show="searchValue == '4'"
+          class="allTable"
+          height="58vh"
+        >
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column type="index" :index="indexMethod3" label="序号" width="68" align="center"></el-table-column>
+          <el-table-column label="设备编码" align="center" prop="eqId" />
+          <el-table-column label="设备名称" align="center" prop="eqName" />
+          <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+          <el-table-column label="管理机构" align="center" prop="deptName" />
+          <el-table-column label="方向" align="center" prop="direction" />
+          <el-table-column label="桩号" align="center" prop="pile" />
+          <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
+          <el-table-column label="采集时间" align="center" prop="createTime" />
+        </el-table>
+        <pagination
+          v-show="total > 0&&this.searchValue == '1'"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getList"
+        />
+        <pagination
+          v-show="total > 0&&this.searchValue == '2'"
+          :total="total"
+          :page.sync="queryParams1.pageNum"
+          :limit.sync="queryParams1.pageSize"
+          @pagination="getList"
+        />
+        <pagination
+          v-show="total > 0&&this.searchValue == '3'"
+          :total="total"
+          :page.sync="queryParams2.pageNum"
+          :limit.sync="queryParams2.pageSize"
+          @pagination="getList"
+        />
+        <pagination
+          v-show="total > 0&&this.searchValue == '4'"
+          :total="total"
+          :page.sync="queryParams3.pageNum"
+          :limit.sync="queryParams3.pageSize"
+          @pagination="getList"
+        />
+      </div>
+      <div v-show="echartShow">
+        <div ref="echartsBox" id="echarts-Box" class="echarts-Box" style ="width: 1220px !important;"></div>
+      </div>
+
+
+
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import * as echarts from "echarts";
 import elementResizeDetectorMaker from "element-resize-detector";
-import {
-  list,
-  delLogininfor,
-  cleanLogininfor,
-  exportLogininfor,
-  getDeviceTreeselect,
-} from "@/api/monitor/logininfor";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import { listType } from "@/api/equipment/type/api";
-import { listLog } from "@/api/system/log";
-import { listDept, treeselect, treeselectExcYG1 } from "@/api/system/dept";
+import { treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
 import {
+  dataDevicesLogInfoList,
   dataLogInfoLineList,
   dataLogInfoList,
 } from "@/api/equipment/eqTypeItem/item";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { getTunnelList } from "@/api/event/event";
 
 export default {
   name: "Logininfor",
@@ -434,27 +328,12 @@ export default {
 
   data() {
     return {
-      tabList: [
-        {
-          title: "CO/VI",
-          name: "1",
-        },
-        {
-          title: "风速风向",
-          name: "2",
-        },
-        {
-          title: "洞内光强",
-          name: "3",
-        },
-        {
-          title: "洞外光强",
-          name: "4",
-        },
-      ],
       manageStatin: this.$cache.local.get("manageStation"),
       sj_boxShow: false,
-      activeName: "1",
+      device_boxShow:false,
+      searchValue: null,
+      deviceId: null,
+      record: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -467,16 +346,24 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 表格数据
+      // 总条数
+      totalTab: 0,
+      // 表格数据  covi
       list: [],
+      // 表格数据  风速风向
+      list1: [],
+      // 表格数据  洞内
+      list2: [],
+      // 表格数据  洞外
+      list3: [],
+      // 设备表格数据
+      listTab: [],
       // 日期范围
       dateRange: [],
       // 默认排序
       defaultSort: {},
       //所属隧道
       eqTunnelData: {},
-      //管理机构
-      deptData: {},
       //设备类型
       eqTypeData: {},
       //操作状态 0：成功，1：失败
@@ -486,15 +373,21 @@ export default {
       userQueryParams: {
         userName: this.$store.state.user.name,
       },
+      //table查询参数
+      querysParamsTab:{
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId:null,
+        pile: null,
+        searchValue:null,
+      },
       // 查询参数  covi
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        tunnelId: null,
-        deptId: null,
-        activeName: "1",
-        pile: null,
         deviceId: null,
+        eqType:null,
+        searchValue:null,
       },
 
       // 查询参数  风速风向
@@ -503,7 +396,7 @@ export default {
         pageSize: 10,
         tunnelId: null,
         deptId: null,
-        activeName: "1",
+        searchValue: "1",
         pile: null,
         deviceId: null,
       },
@@ -513,7 +406,6 @@ export default {
         pageSize: 10,
         tunnelId: null,
         deptId: null,
-        activeName: "1",
         pile: null,
         deviceId: null,
       },
@@ -523,7 +415,6 @@ export default {
         pageSize: 10,
         tunnelId: null,
         deptId: null,
-        searchValue: "1",
         pile: null,
         deviceId: null,
       },
@@ -549,10 +440,8 @@ export default {
     };
   },
   created() {
-    this.getDeviceTreeselect();
-    this.getTreeselect();
-    this.getList("1");
-    this.getDepts();
+    this.getListTab();
+    //this.getTreeselect();
     this.getUserDept();
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
@@ -561,27 +450,33 @@ export default {
       this.operationStateOptions = response.data;
     });
 
-    this.currentData = "日期" + "(" + this.getCurrentTime() + ")";
+    this.currentData = "日期";
   },
 
   //点击空白区域关闭全局搜索弹窗
   mounted() {
-    this.watchSize();
     document.addEventListener("click", this.bodyCloseMenus);
+    this.watchSize();
+
   },
 
   methods: {
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.sj_boxShow == true) {
-          self.sj_boxShow = false;
+        if (self.device_boxShow == true) {
+          self.device_boxShow = false;
         }
       }
     },
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+
+    //翻页时不刷新序号
+    indexMethodTab(index){
+      return index+(this.querysParamsTab.pageNum-1)*this.querysParamsTab.pageSize+1
     },
 
     //翻页时不刷新序号
@@ -597,106 +492,29 @@ export default {
       return index+(this.queryParams3.pageNum-1)*this.queryParams3.pageSize+1
     },
 
-    /*获取当前时间*/
-    getCurrentTime() {
-      //获取当前时间并打印
-      var _this = this;
-      let yy = new Date().getFullYear();
-      let mm = new Date().getMonth() + 1;
-      let dd = new Date().getDate();
-      _this.gettime = yy + "-" + mm + "-" + dd;
-      return _this.gettime;
+
+    handleRecordy(row) {
+      this.device_boxShow = false;
+      this.echartShow = false;
+      this.record = true;
+      this.dateRange = [];
+      //this.resetForm("queryForms");
+      this.queryParams.pageNum = "1";
+      this.queryParams.pageSize = "10";
+      if(row.eqType=='19'){
+        this.searchValue="1";
+      }else if(row.eqType=='17'){
+        this.searchValue="2";
+      }else if(row.eqType=='18'){
+        this.searchValue="3";
+      }else{
+        this.searchValue="4";
+      }
+      this.deviceId = row.eqId;
+      this.getList(row.eqId,this.searchValue);
+
     },
 
-    getDeviceTreeselect() {
-      getDeviceTreeselect(this.activeName).then((response) => {
-        this.jgOptions = response.data;
-        console.log(this.jgOptions + "==========设备树");
-        //给select-tree默认选中第一个
-        this.querysParams.id = this.jgOptions[0].children[0].id;
-
-        //获取线条的方法
-        if (this.activeName == null || this.activeName == "1") {
-          this.queryParams.searchValue = "1";
-          this.queryParams.deviceId = this.querysParams.id;
-          let viTime = [];
-          this.VITime = [];
-          dataLogInfoLineList(
-            this.addDateRange(this.queryParams, this.dateRange)
-          ).then((response) => {
-            let list1 = response.rows;
-            this.CO = list1.map((item) => item.CO);
-            this.VI = list1.map((item) => item.VI);
-            viTime = list1.map((item) => item.createTime);
-            if (viTime.length > 0) {
-              for (let i = 0; i < viTime.length; i++) {
-                this.VITime.push(viTime[i].substring(11, 16));
-              }
-            }
-            console.log(this.VITime + "========+时间轴");
-            this.loading = false;
-            this.initChart();
-          });
-        } else if (this.activeName != null && this.activeName == "2") {
-          this.queryParams1.searchValue = "2";
-          this.queryParams1.deviceId = this.querysParams.id;
-          let fstime = [];
-          this.fsTime = [];
-          dataLogInfoLineList(
-            this.addDateRange(this.queryParams1, this.dateRange)
-          ).then((response) => {
-            let list1 = response.rows;
-            this.fsData = list1.map((item) => item.FS);
-            fstime = list1.map((item) => item.createTime);
-            if (fstime.length > 0) {
-              for (let i = 0; i < fstime.length; i++) {
-                this.fsTime.push(fstime[i].substring(11, 16));
-              }
-            }
-            this.loading = false;
-            this.initChart();
-          });
-        } else if (this.activeName != null && this.activeName == "3") {
-          this.queryParams2.searchValue = "3";
-          this.queryParams2.deviceId = this.querysParams.id;
-          let dntime = [];
-          this.dnTime = [];
-          dataLogInfoLineList(
-            this.addDateRange(this.queryParams2, this.dateRange)
-          ).then((response) => {
-            let list1 = response.rows;
-            this.dnData = list1.map((item) => item.data);
-            dntime = list1.map((item) => item.createTime);
-            if (dntime.length > 0) {
-              for (let i = 0; i < dntime.length; i++) {
-                this.dnTime.push(dntime[i].substring(11, 16));
-              }
-            }
-            this.loading = false;
-            this.initChart();
-          });
-        } else if (this.activeName != null && this.activeName == "4") {
-          this.queryParams3.searchValue = "4";
-          let dwtime = [];
-          this.dwTime = [];
-          this.queryParams3.deviceId = this.querysParams.id;
-          dataLogInfoLineList(
-            this.addDateRange(this.queryParams3, this.dateRange)
-          ).then((response) => {
-            let list1 = response.rows;
-            this.dwData = list1.map((item) => item.data);
-            dwtime = list1.map((item) => item.createTime);
-            if (dwtime.length > 0) {
-              for (let i = 0; i < dwtime.length; i++) {
-                this.dwTime.push(dwtime[i].substring(11, 16));
-              }
-            }
-            this.loading = false;
-            this.initChart();
-          });
-        }
-      });
-    },
 
     getTreeselect() {
       treeselectExcYG1().then((response) => {
@@ -706,117 +524,11 @@ export default {
     },
     marketChang() {
       this.echartShow = !this.echartShow;
-      //点击后判断当前元素的display
-      let divBox = document.getElementById("pladiv").style.display;
-      if (divBox == "none") {
-        document.getElementById("pladiv").style.display = "block";
-      } else {
-        document.getElementById("pladiv").style.display = "none";
-      }
-
-      let divbox = document.getElementById("pldiv").style.display;
-      if (divbox == "none") {
-        document.getElementById("pldiv").style.display = "block";
-      } else {
-        document.getElementById("pldiv").style.display = "none";
-      }
-
-      this.initChart();
-    },
-    handleChange(item) {
-      this.querysParams.id = null;
-      const param = {
-        id: item.id,
-      };
-      this.querysParams.id = item.id;
-      console.log("this.querysParams.id===" + item.id);
-
-      if (this.activeName == null || this.activeName == "1") {
-        this.queryParams.searchValue = "1";
-        this.queryParams.deviceId = item.id;
-        this.VITime = [];
-        let viTime = [];
-        dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
-        ).then((response) => {
-          let list1 = response.rows;
-          this.CO = list1.map((item) => item.CO);
-          this.VI = list1.map((item) => item.VI);
-          viTime = list1.map((item) => item.createTime);
-          if (viTime.length > 0) {
-            for (let i = 0; i < viTime.length; i++) {
-              this.VITime.push(viTime[i].substring(11, 16));
-            }
-          }
-          this.loading = false;
-          this.initChart();
-        });
-      } else if (this.activeName != null && this.activeName == "2") {
-        this.queryParams1.searchValue = "2";
-        this.queryParams1.deviceId = this.querysParams.id;
-        let fstime = [];
-        this.fsTime = [];
-        dataLogInfoLineList(
-          this.addDateRange(this.queryParams1, this.dateRange)
-        ).then((response) => {
-          let list1 = response.rows;
-          this.fsData = list1.map((item) => item.FS);
-          fstime = list1.map((item) => item.createTime);
-          if (fstime.length > 0) {
-            for (let i = 0; i < fstime.length; i++) {
-              this.fsTime.push(fstime[i].substring(11, 16));
-            }
-          }
-          this.loading = false;
-          this.initChart();
-        });
-      } else if (this.activeName != null && this.activeName == "3") {
-        this.queryParams3.searchValue = "3";
-        this.queryParams3.deviceId = this.querysParams.id;
-        let dntime = [];
-        this.dnTime = [];
-        dataLogInfoLineList(
-          this.addDateRange(this.queryParams3, this.dateRange)
-        ).then((response) => {
-          let list1 = response.rows;
-          this.dnData = list1.map((item) => item.data);
-          dntime = list1.map((item) => item.createTime);
-          if (dntime.length > 0) {
-            for (let i = 0; i < dntime.length; i++) {
-              this.dnTime.push(dntime[i].substring(11, 16));
-            }
-          }
-          this.loading = false;
-          this.initChart();
-        });
-      } else if (this.activeName != null && this.activeName == "4") {
-        this.queryParams.searchValue = "4";
-        this.queryParams.deviceId = this.querysParams.id;
-        let dwtime = [];
-        this.dwTime = [];
-        dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
-        ).then((response) => {
-          let list1 = response.rows;
-
-          this.dwData = list1.map((item) => item.data);
-          dwtime = list1.map((item) => item.createTime);
-          if (dwtime.length > 0) {
-            for (let i = 0; i < dwtime.length; i++) {
-              this.dwTime.push(dwtime[i].substring(11, 16));
-            }
-          }
-          this.loading = false;
-          this.initChart();
-        });
-      }
-
-      //下面传这个参数，然后重新生成线
-      /*getTunnelList(param).then((res) => {
-        console.log(res, "根据管理机构筛选所属隧道");
-        this.tunnelList = res.data;
-      });*/
-      //console.log("this.querysParams.id==="+value)
+      if(this.echartShow)//echart
+        this.getEchartsData();
+      else
+        this.getList();
+      //this.initChart();
     },
     watchSize() {
       let that = this;
@@ -830,11 +542,10 @@ export default {
     },
     initChart() {
       var chartDom = document.getElementById("echarts-Box");
-      console.log(chartDom, "666666666");
       var myChart = echarts.init(chartDom);
       var option;
       let legends;
-      if (this.activeName == 1) {
+      if (this.searchValue == 1) {
         var series = [
           {
             name: "CO",
@@ -893,7 +604,7 @@ export default {
           left: "center",
           data: ["CO", "VI"],
         };
-      } else if (this.activeName == 2) {
+      } else if (this.searchValue == 2) {
         //   fsData: [],
         // dnData: [],
         // dwData: [],
@@ -935,7 +646,7 @@ export default {
             },
           },
         ];
-      } else if (this.activeName == 3) {
+      } else if (this.searchValue == 3) {
         var series = [
           {
             name: "洞内亮度",
@@ -974,7 +685,7 @@ export default {
             },
           },
         ];
-      } else if (this.activeName == 4) {
+      } else if (this.searchValue == 4) {
         //   fsData: [],
         // dnData: [],
         // dwData: [],
@@ -1029,36 +740,14 @@ export default {
 
       option && myChart.setOption(option, true);
     },
-    // // 切换按钮
-    // qiehuan(inx) {
-    //   this.dateRange = [];
-    //   this.resetForm("queryForms");
-    //   this.searchValue = inx;
-    //   this.getList(inx);
-    //   this.initChart();
-    //   this.resetQuery();
-    //   this.getDeviceTreeselect();
-    // },
-    handleClick(){
-      this.dateRange = [];
-      this.resetForm("queryForms");
-      // this.searchValue = inx;
-      this.getList(this.activeName);
-      this.initChart();
-      this.resetQuery();
-      this.getDeviceTreeselect();
-    },
+
     /** 所属隧道 */
     getTunnel(userDeptId) {
       listTunnels(userDeptId).then((response) => {
         this.eqTunnelData = response.rows;
       });
     },
-    getDepts() {
-      listDept().then((response) => {
-        this.deptData = response.data;
-      });
-    },
+
     getUserDept() {
       getUserDeptId(this.userQueryParams).then((response) => {
         this.userDeptId = response.rows[0].deptId;
@@ -1073,244 +762,117 @@ export default {
     controlTypeFormat(row, column) {
       return this.selectDictLabel(this.controlTypeOptions, row.controlType);
     },
-    /** 查询列表 */
-    getList(inx) {
+    /** 查询设备列表 **/
+    getListTab(){
       this.loading = true;
       if (this.manageStatin == "1") {
-        this.queryParams.tunnelId = this.$cache.local.get(
-          "manageStationSelect"
-        );
-        this.queryParams1.tunnelId = this.$cache.local.get(
-          "manageStationSelect"
-        );
-        this.queryParams2.tunnelId = this.$cache.local.get(
-          "manageStationSelect"
-        );
-        this.queryParams3.tunnelId = this.$cache.local.get(
+        this.querysParamsTab.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
       }
-      if (inx == null || inx == "1" || this.activeName == "1") {
-        this.queryParams.searchValue = "1";
-        dataLogInfoList(
-          this.addDateRange(this.queryParams, this.dateRange)
-        ).then((response) => {
-          this.list = response.rows;
-          //this.CO = this.list.map((item) => item.CO);
-          //this.VI = this.list.map((item) => item.VI);
-          this.total = response.total;
-          this.loading = false;
-          //this.initChart();
-        });
-      } else if ((inx != null && inx == "2") || this.activeName == "2") {
-        this.queryParams1.searchValue = "2";
-        dataLogInfoList(
-          this.addDateRange(this.queryParams1, this.dateRange)
-        ).then((response) => {
-          this.list = response.rows;
-          //this.fsData = this.list.map((item) => item.FS);
-          this.total = response.total;
-          this.loading = false;
-          //this.initChart();
-        });
-      } else if ((inx != null && inx == "3") || this.activeName == "3") {
-        this.queryParams2.searchValue = "3";
-        dataLogInfoList(
-          this.addDateRange(this.queryParams2, this.dateRange)
-        ).then((response) => {
-          this.list = response.rows;
-          //this.dnData = this.list.map((item) => item.data);
-          this.total = response.total;
-          this.loading = false;
-          //this.initChart();
-        });
-      } else if ((inx != null && inx == "4") || this.activeName == "4") {
-        this.queryParams3.searchValue = "4";
-        dataLogInfoList(
-          this.addDateRange(this.queryParams3, this.dateRange)
-        ).then((response) => {
-          this.list = response.rows;
-          //this.dwData = this.list.map((item) => item.data);
-          this.total = response.total;
-          this.loading = false;
-          //this.initChart();
-        });
-      }
-      //查询折线图数据
-      /* if (inx == null || inx == "1" || this.searchValue == "1") {
-        this.queryParams.searchValue = "1";
-        this.VITime = [];
-        let viTime = [];
-        dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
-        ).then((response) => {
-          let list1 = response.rows;
-          this.CO = list1.map((item) => item.CO);
-          this.VI = list1.map((item) => item.VI);
-          viTime = list1.map((item) => item.createTime);
-          if(viTime.length>0){
-                this.VITime.push(viTime[i].substring(11,16));
-          }
-          this.VITime.sort();
-          console.log(this.VITime+"========+时间轴");
-          this.total = response.total;
-          this.loading = false;
-          this.initChart();
-        });
-      } else if ((inx != null && inx == "2") || this.searchValue == "2") {
-        this.queryParams.searchValue = "2";
-        this.fsTime = [];
-        let fstime  = [];
-        dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
-        ).then((response) => {
-          let list1 = response.rows;
-          this.fsData = list1.map((item) => item.FS);
-          fstime = list1.map((item) => item.createTime);
-          if(fstime.length>0){
-            for(let i = 0;i<fstime.length;i++){
-                this.fsTime.push(fstime[i].substring(11,16));
-            }
-          }
-          this.fsTime.sort();
-          this.total = response.total;
-          this.loading = false;
-          this.initChart();
-        });
-      } else if ((inx != null && inx == "3") || this.searchValue == "3") {
-        this.queryParams.searchValue = "3";
-        let dntime  = [];
-        this.dnTime = [];
-        dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
-        ).then((response) => {
-          let list1 = response.rows;
-          this.dnData = list1.map((item) => item.data);
-          dntime = list1.map((item) => item.createTime);
-          if(dntime.length>0){
-            for(let i = 0;i<dntime.length;i++){
-                this.dnTime.push(dntime[i].substring(11,16));
-            }
-          }
-          this.dnTime.sort();
-          this.total = response.total;
-          this.loading = false;
-          this.initChart();
-        });
-      } else if ((inx != null && inx == "4") || this.searchValue == "4") {
-        this.queryParams.searchValue = "4";
-        let dwtime = [];
-        this.dwTime =[];
-        dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
-        ).then((response) => {
-          let list1 = response.rows;
-          this.dwData = list1.map((item) => item.data);
-          dwtime = list1.map((item) => item.createTime);
-          if(dwtime.length>0){
-            for(let i = 0;i<dwtime.length;i++){
-                this.dwTime.push(dwtime[i].substring(11,16));
-            }
-          }
-          this.dwData.sort();
-          this.total = response.total;
-          this.loading = false;
-          this.initChart();
-        });
-      }*/
+      dataDevicesLogInfoList(
+        this.addDateRange(this.querysParamsTab)
+      ).then((response) => {
+        this.listTab = response.rows;
+        this.totalTab = response.total;
+        this.loading = false;
+      });
+
+
     },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
+
+    /** 查询列表 */
+    getList(deviceId,searchValue) {
+      this.loading = true;
+      if(typeof searchValue === 'undefined'){//翻页
+        deviceId = this.queryParams.deviceId;
+        searchValue = this.queryParams.searchValue;
+      }
+      this.queryParams.deviceId = deviceId;
+      this.queryParams.searchValue =searchValue;
       this.queryParams1 = this.queryParams;
       this.queryParams2 = this.queryParams;
       this.queryParams3 = this.queryParams;
-      this.getList(this.activeName);
+      if (deviceId!=null&&deviceId!="") {//COVI
+        dataLogInfoList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          if(searchValue=='1'){
+            this.list = response.rows;
+          }else if(searchValue=='2'){
+            this.list1 = response.rows;
+          }else if(searchValue=='3'){
+            this.list2 = response.rows;
+          }else{
+            this.list3 = response.rows;
+          }
+
+          this.total = response.total;
+          this.loading = false;
+        });
+      }
     },
+
+    getEchartsData(){
+      if (this.searchValue != null) {
+        dataLogInfoLineList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          let list1 = response.rows;
+          if(this.searchValue=="1"){
+            this.CO = list1.map((item) => item.CO);
+            this.VI = list1.map((item) => item.VI);
+            this.VITime = list1.map((item) => item.createTime);
+          }else if(this.searchValue=="2"){
+            this.fsData = list1.map((item) => item.FS);
+            this.fsTime = list1.map((item) => item.createTime);
+          }else if(this.searchValue=="3"){
+            this.dnData = list1.map((item) => item.data);
+            this.dnTime = list1.map((item) => item.createTime);
+          }else{
+            this.dwData = list1.map((item) => item.data);
+            this.dwTime = list1.map((item) => item.createTime);
+          }
+          this.loading = false;
+          this.initChart();
+        });
+      }
+
+    },
+    selectTime(){
+      //先判断当前弹窗展示的列表还是图表
+      if(this.echartShow)//echart
+        this.getEchartsData();
+      else
+        this.getList();
+    },
+    /*table搜索*/
+    handleQueryTab(){
+      this.querysParamsTab.pageNum = 1;
+      this.getListTab();
+    },
+
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForms");
-      this.queryParams.pile = "";
-      this.queryParams.deptId = null;
-      this.queryParams.tunnelId = null;
+      //待写
+      if(this.echartShow)//echart
+        this.getEchartsData();
+      else
+        this.getList();
+    },
+    //table重置按钮
+    resetQueryTab(){
+      this.resetForm("queryFormTab");
+      this.querysParamsTab.pile = "";
+      this.handleQueryTab();
 
-      this.handleQuery();
     },
     /** 多选框选中数据 */
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.infoId);
       this.multiple = !selection.length;
-    },
-    /** 排序触发事件 */
-    handleSortChange(column, prop, order) {
-      this.queryParams.orderByColumn = column.prop;
-      this.queryParams.isAsc = column.order;
-
-      this.queryParams1.orderByColumn = column.prop;
-      this.queryParams1.isAsc = column.order;
-
-      this.queryParams2.orderByColumn = column.prop;
-      this.queryParams2.isAsc = column.order;
-
-      this.queryParams3.orderByColumn = column.prop;
-      this.queryParams3.isAsc = column.order;
-      this.getList();
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const infoIds = row.infoId || this.ids;
-      this.$modal
-        .confirm("是否确认删除选中数据项？")
-        .then(function () {
-          return delLogininfor(infoIds);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
-    },
-    /** 清空按钮操作 */
-    handleClean() {
-      this.$modal
-        .confirm("是否确认清空所有登录日志数据项？")
-        .then(function () {
-          return cleanLogininfor();
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("清空成功");
-        })
-        .catch(() => {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      let queryParams = "";
-      if(this.activeName=='1'){
-        queryParams = this.queryParams;
-      }
-      if(this.activeName=='2'){
-        queryParams = this.queryParams1;
-      }
-      if(this.activeName=='3'){
-        queryParams = this.queryParams2;
-      }
-      if(this.activeName=='4'){
-        queryParams = this.queryParams3;
-      }
-
-      this.$modal
-        .confirm("是否确认导出所有操作日志数据项？")
-        .then(() => {
-          this.exportLoading = true;
-          return exportLogininfor(queryParams);
-        })
-        .then((response) => {
-          this.$download.name(response.msg);
-          this.exportLoading = false;
-        })
-        .catch(() => {});
     },
   },
 };
@@ -1320,7 +882,16 @@ export default {
   width: 100vw;
   height: 60vh;
 }
-
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
 .butBox {
   width: 315px;
   display: flex;
@@ -1438,17 +1009,31 @@ hr {
   max-height: 59vh !important;
   overflow: auto;
 }
-.el-tabs{
-  width:100%;
-}
-::v-deep .el-tabs__header {
-  margin: 0 0 6px !important;
-}
-.searchBoxTab{
-  top: 11% !important;
-  right: 0.8% !important;
-  width: 23.8% !important;
-}
 </style>
 
-
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

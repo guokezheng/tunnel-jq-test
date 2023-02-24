@@ -5,18 +5,19 @@ package com.tunnel.business.datacenter.domain.enumeration;
  */
 public enum TunnelStepEnum {
 
-    // COTE_STEP("7", "light0", "棚洞段",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
+     COTE_STEP("0", "light1", "棚洞段",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
 
-    ENTR_STEP1("0", "light1", "入口段1",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
-    ENTR_STEP2("1", "light2", "入口段2",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
+    ENTR_STEP1("1", "light2", "入口段1",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
+    ENTR_STEP2("2", "light3", "入口段2",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
 
-    TRAN_STEP1("2", "light3", "过渡段1",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
-    TRAN_STEP2("3", "light4", "过渡段2",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
+    TRAN_STEP1("3", "light4", "过渡段1",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
+    TRAN_STEP2("4", "light5", "过渡段2",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
 
-    BASE_STEP("4", "light5", "基本段",DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()),
+    BASE_STEP("5", "light6", "基本段",DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()),
 
-    EXIT_STEP1("5", "light6", "出口段1",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
-    EXIT_STEP2("6", "light7", "出口段2",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode());
+    EXIT_STEP1("6", "light7", "出口段1",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()),
+    //接口中拿不到出口段2的数据 todo
+    EXIT_STEP2("7", "light8", "出口段2",DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode());
 
     private String value;
     private String name;

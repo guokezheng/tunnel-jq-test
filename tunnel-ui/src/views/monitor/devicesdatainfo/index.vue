@@ -396,7 +396,6 @@ export default {
         pageSize: 10,
         tunnelId: null,
         deptId: null,
-        searchValue: "1",
         pile: null,
         deviceId: null,
       },
@@ -582,7 +581,8 @@ export default {
               fontsize: "29px",
             },
           },
-        ];
+
+      ];
         var yAxis = [
           {
             type: "value",
@@ -596,6 +596,7 @@ export default {
             },
           },
         ];
+
         legends = {
           textStyle: {
             fontSize: 13, //字体大小

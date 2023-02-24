@@ -621,6 +621,20 @@ public class workspaceController extends BaseController {
     }
 
     /**
+     * 统计当天24小时重点车辆
+     * @param map
+     * @return
+     */
+    @PostMapping("/specialVehicleMonitoringInRecent24Hours")
+    public AjaxResult specialVehicleMonitoringInRecent24Hours(@RequestBody Map<String, Object> map) {
+        if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
+            throw new RuntimeException("车辆监测查询条件中隧道不能为空");
+        }
+        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.specialVehicleMonitoringInRecent24Hours(map.get("tunnelId").toString());
+        return AjaxResult.success(vehicleMonitoringInRecent24Hours);
+    }
+
+    /**
      * 根据隧道id,方向,所属车道筛选车道指示器
      *
      * @return

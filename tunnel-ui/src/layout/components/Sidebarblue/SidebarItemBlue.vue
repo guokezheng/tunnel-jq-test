@@ -101,7 +101,7 @@ export default {
   .el-submenu .el-menu{flex-flow: column;}
   .theme-blue .el-submenu .el-submenu__title .el-icon-arrow-down:before{content:unset;}
   .theme-blue .el-scrollbar__view .el-menu div .el-submenu .el-submenu__title span{color:#fff;}
-  .theme-blue .el-scrollbar__view .el-menu div .el-submenu, .is-active .el-submenu__title span{color:#fff !important;}
+  /* .theme-blue .el-scrollbar__view .el-menu div .el-submenu, .is-active .el-submenu__title span{color:#fff !important;} */
 
   .theme-blue .el-scrollbar__view .el-menu div .el-submenu .is-active span{color:white;}
   .theme-blue .el-scrollbar__view .el-menu div .el-submenu .is-active .el-submenu__title span{color: #004a77;}

@@ -2,28 +2,33 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
           v-hasPermi="['system:type:add']"
           size="small"
-          type="primary"
-          plain
           @click="handleAdd()"
         >新增类型
         </el-button>
+        <el-button size="small" :loading="exportLoading"
+                     @click="handleExport"
+                     v-hasPermi="['system:type:export']"
+          >导出</el-button>
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+          >
       </el-col>
-      <el-col :span="6" :offset="14">
-
-        <div class="grid-content bg-purple">
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入类型编码、类型名称"
             v-model="queryParams.vehicleTypeCode"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="lx_boxShow = !lx_boxShow"
             ></el-button>
           </el-input>
@@ -37,7 +42,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="重点车辆" prop="iskeyVehicle" style="width: 100%">
+        <el-form-item label="重点车辆" prop="iskeyVehicle">
           <el-select
             v-model="queryParams.iskeyVehicle"
             placeholder="请选择重点车辆"
@@ -59,10 +64,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          <el-button type="primary" plain size="mini" :loading="exportLoading"
-                     @click="handleExport"
-                     v-hasPermi="['system:type:export']"
-          >导出</el-button>
+          
         </el-form-item>
       </el-form>
     </div>
@@ -126,7 +128,7 @@
         >导出</el-button>
       </el-form-item>
     </el-form>-->
-
+    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange"
               :row-class-name="tableRowClassName"
               max-height="640">
@@ -254,7 +256,22 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.lx_boxShow == true) {
+          self.lx_boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     /** 查询车辆类型配置列表 */
     getList() {
       this.loading = true;
@@ -375,42 +392,5 @@ export default {
   }
 };
 </script>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+
 

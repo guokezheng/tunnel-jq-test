@@ -1,12 +1,10 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
         <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             @click="handleAdd"
             v-hasPermi="['system:type:add']"
             >新增</el-button
@@ -21,27 +19,67 @@
 <!--            >修改</el-button-->
 <!--          >-->
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['system:type:remove']"
             >删除</el-button>
+          <el-button size="small" @click="resetQuery" >刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
             v-model="queryParams.typeName"
             placeholder="请输入设备类型名称、设备类型代号,回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
-          />
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
         </div>
       </el-col>
     </el-row>
-
+    <div ref="cc" class="searchBox searchBoxMini" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="100px"
+      >
+      <el-form-item label="设备类型名称" prop="typeName">
+       <el-input
+         v-model="queryParams.typeName"
+         placeholder="请输入设备类型名称"
+         clearable
+         size="small"
+         @keyup.enter.native="handleQuery"
+       />
+      </el-form-item>
+      <el-form-item label="设备类型代号" prop="typeAbbr">
+        <el-input
+          v-model="queryParams.typeAbbr"
+          placeholder="请输入设备类型代号"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" 
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="typeList"
@@ -350,7 +388,18 @@ export default {
         console.log(this.isControlOptions,'this.isControlOptions')
       });
   },
+  mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
@@ -611,41 +660,4 @@ export default {
     }
   }
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

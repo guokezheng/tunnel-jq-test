@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 车辆类型配置对象 sd_vehicle_type
- * 
+ *
  * @author ruoyi
  * @date 2022-12-01
  */
@@ -19,11 +19,11 @@ public class SdVehicleType extends BaseEntity
     private Long id;
 
     /** 车辆类型编码 */
-    @Excel(name = "车辆类型编码")
+    @Excel(name = "类型编码")
     private String vehicleTypeCode;
 
     /** 车辆类型名称 */
-    @Excel(name = "车辆类型名称")
+    @Excel(name = "类型名称")
     private String vehicleTypeName;
 
     /** 是否是重点车辆 0:否 1:是  默认为0 */
@@ -39,21 +39,21 @@ public class SdVehicleType extends BaseEntity
     {
         return id;
     }
-    public void setVehicleTypeCode(String vehicleTypeCode) 
+    public void setVehicleTypeCode(String vehicleTypeCode)
     {
         this.vehicleTypeCode = vehicleTypeCode;
     }
 
-    public String getVehicleTypeCode() 
+    public String getVehicleTypeCode()
     {
         return vehicleTypeCode;
     }
-    public void setVehicleTypeName(String vehicleTypeName) 
+    public void setVehicleTypeName(String vehicleTypeName)
     {
         this.vehicleTypeName = vehicleTypeName;
     }
 
-    public String getVehicleTypeName() 
+    public String getVehicleTypeName()
     {
         return vehicleTypeName;
     }

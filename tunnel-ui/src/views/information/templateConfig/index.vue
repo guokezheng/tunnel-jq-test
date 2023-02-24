@@ -18,13 +18,15 @@
           @click="handleDelete"
           v-hasPermi="['system:templateConfig:remove']"
           >删除</el-button>
+          <el-button size="mini" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="12">
         <div  ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
             placeholder="请输入模板内容,回车搜索"
-            clearable
             size="small"
             @keyup.enter.native="handleQuery"
           >
@@ -45,6 +47,15 @@
         :model="queryParams"
         label-width="75px"
       >
+          <!-- <el-form-item label="模板内容" style="width: 100%" prop="searchValue">
+            <el-input
+            v-model="queryParams.searchValue"
+            placeholder="请输入模板内容"
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+          </el-input>
+          </el-form-item> -->
           <el-form-item label="屏幕尺寸" style="width: 100%" prop="screenSize">
             <el-select
               @change="resolvingPowerType"
@@ -252,7 +263,7 @@ export default {
               content: '白色',
           },
           {
-              code: 'GreenYellow',
+              code: '#00FF00',
               content: '绿色',
           },
         ],
@@ -611,18 +622,7 @@ export default {
 </script>
 <style lang="scss">
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
+
 <style lang="scss" scoped>
 .searchBox {
   ::v-deep .el-form-item__content {

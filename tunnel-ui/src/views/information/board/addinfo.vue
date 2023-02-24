@@ -16,7 +16,7 @@
             width: boardWidth + 'px',
             height: boardHeight + 'px',
           }"
-          class="blackBoard1"
+          class="blackBoard2"
         >
           <span
             :style="{
@@ -27,7 +27,7 @@
               left: dataForm.COORDINATE?dataForm.COORDINATE.substring(0, 3) + 'px':'',
               top: dataForm.COORDINATE?dataForm.COORDINATE.substring(3, 6) + 'px':'',
             }"
-            class="textBoard1 boardTextStyle"
+            class="textBoard2 boardTextStyle"
             style="position: absolute;"
             v-html="dataForm.CONTENT?dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g,' &nbsp'):''"
           ></span>
@@ -92,13 +92,13 @@
               <el-button type="info" plain @click="alignment(4)" size="mini"
                 >上对齐</el-button
               > -->
-              <el-button type="info" plain @click="alignment(1)" size="mini"
+              <el-button type="primary" @click="alignment(1)" size="mini"
                 >左对齐</el-button
               >
-              <el-button type="info" plain @click="alignment(2)" size="mini"
+              <el-button type="primary" @click="alignment(2)" size="mini"
                 >左右居中</el-button
               >
-              <el-button type="info" plain @click="alignment(3)" size="mini"
+              <el-button type="primary" @click="alignment(3)" size="mini"
                 >右对齐</el-button
               >
               <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
@@ -314,9 +314,9 @@
       </el-card>
 
       <template slot="footer">
-        <el-button size="small" @click="handleClose">取消</el-button>
+        <el-button size="mini" type="primary" plain @click="handleClose">取消</el-button>
         <el-button
-          size="small"
+          size="mini"
           @click="dataFormSubmitHandle()"
           type="primary"
           v-loading="loading"
@@ -660,7 +660,9 @@ export default {
           // this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
         }
       });
-      this.getFontSizeList()
+      if(this.dataForm.screenSize){
+        this.getFontSizeList()
+      }
       this.$forceUpdate();
     },
     getFontSizeList(){
@@ -680,12 +682,13 @@ export default {
       console.log(size, "00000000000000000000");
       this.boardWidth = size.split("*")[0];
       this.boardHeight = size.split("*")[1];
+      this.getFontSizeList()
       this.$forceUpdate();
     },
     changeFontSize(){
       this.dataForm.COORDINATE = '000000'
-      var textBoard1 = document.getElementsByClassName("textBoard1");
-      textBoard1[0].style.position = 'absolute'
+      var textBoard2 = document.getElementsByClassName("textBoard2");
+      textBoard2[0].style.position = 'absolute'
     },
     keyDown(ev) {
       console.log(ev.keyCode, "ev.keyCode");
@@ -834,6 +837,8 @@ export default {
       this.dialogVisible = false;
       this.isAdd = false;
       this.$emit("refreshDataList", this.dataForm);
+      var textBoard2 = document.getElementsByClassName("textBoard2");
+      textBoard2[0].style.position = 'absolute'
     },
     /*********************************************业务代码***********************************************/
     getFontStyle(font) {
@@ -851,7 +856,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "GreenYellow";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       }else{
@@ -860,66 +865,66 @@ export default {
     },
     // 文字对齐方式
     alignment(alignmentNum) {
-      var divContent1 = document.getElementsByClassName("blackBoard1");
-      var textBoard1 = document.getElementsByClassName("textBoard1");
+      var divContent2 = document.getElementsByClassName("blackBoard2");
+      var textBoard2 = document.getElementsByClassName("textBoard2");
       // 获取文字长宽
-      // let textWidth = textBoard1[0].offsetWidth;
-      // let textHeight = textBoard1[0].offsetHeight;
+      // let textWidth = textBoard2[0].offsetWidth;
+      // let textHeight = textBoard2[0].offsetHeight;
       // // 获取黑盒子长宽
-      // let divWidth = divContent1[0].offsetWidth;
-      // let divHeight = divContent1[0].offsetHeight;
+      // let divWidth = divContent2[0].offsetWidth;
+      // let divHeight = divContent2[0].offsetHeight;
       // console.log(
-      //   document.getElementsByClassName("textBoard1"),
-      //   "document.getElementsByClassName('textBoard1')"
+      //   document.getElementsByClassName("textBoard2"),
+      //   "document.getElementsByClassName('textBoard2')"
       // );
-      // console.log(textBoard1[0].style, "textBoard1[0].style");
+      // console.log(textBoard2[0].style, "textBoard2[0].style");
       // console.log(textWidth, divWidth, "999999999999999");
       switch (alignmentNum) {
        // 左对齐
         case 1:
-          divContent1[0].style.justifyContent = 'left'
-          divContent1[0].style.alignItems = 'center'
-          textBoard1[0].style.textAlign = 'left'
-          textBoard1[0].style.position = 'static'
+          divContent2[0].style.justifyContent = 'left'
+          divContent2[0].style.alignItems = 'center'
+          textBoard2[0].style.textAlign = 'left'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 左右居中
         case 2:
-          divContent1[0].style.justifyContent = 'center'
-          divContent1[0].style.alignItems = 'center'
-          textBoard1[0].style.textAlign = 'center'
-          textBoard1[0].style.position = 'static'
+          divContent2[0].style.justifyContent = 'center'
+          divContent2[0].style.alignItems = 'center'
+          textBoard2[0].style.textAlign = 'center'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 右对齐
         case 3:
-          divContent1[0].style.justifyContent = 'right'
-          divContent1[0].style.alignItems = 'center'
-          textBoard1[0].style.textAlign = 'right'
-          textBoard1[0].style.position = 'static'
+          divContent2[0].style.justifyContent = 'right'
+          divContent2[0].style.alignItems = 'center'
+          textBoard2[0].style.textAlign = 'right'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 上对齐
         case 4:
-          divContent1[0].style.alignItems = 'flex-start'
-          textBoard1[0].style.position = 'static'
+          divContent2[0].style.alignItems = 'flex-start'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 上下对齐
         case 5:
-          divContent1[0].style.alignItems = 'center'
-          textBoard1[0].style.position = 'static'
+          divContent2[0].style.alignItems = 'center'
+          textBoard2[0].style.position = 'static'
 
           break;
           // 下对齐
         case 6:
-          divContent1[0].style.alignItems = 'flex-end'
-          textBoard1[0].style.position = 'static'
+          divContent2[0].style.alignItems = 'flex-end'
+          textBoard2[0].style.position = 'static'
 
           break;
       }
-      var textLeft = this.addZero(textBoard1[0].offsetLeft);
-      var textTop = this.addZero(textBoard1[0].offsetTop);
+      var textLeft = this.addZero(textBoard2[0].offsetLeft);
+      var textTop = this.addZero(textBoard2[0].offsetTop);
       this.dataForm.COORDINATE = textLeft + textTop;
       console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
     },
@@ -1000,8 +1005,8 @@ export default {
     },
     handleClose(done) {
       console.log(done,"done")
-      var textBoard1 = document.getElementsByClassName("textBoard1");
-      textBoard1[0].style.position = 'absolute'
+      var textBoard2 = document.getElementsByClassName("textBoard2");
+      textBoard2[0].style.position = 'absolute'
       this.dialogVisible = false
       // this.$confirm("确认关闭？")
       //   .then((_) => {
@@ -1037,7 +1042,7 @@ export default {
   user-select: none;
 
 }
-.blackBoard1{
+.blackBoard2{
   background: #000000;
   display: flex;
   margin: 0 auto;

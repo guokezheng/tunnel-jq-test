@@ -1,5 +1,13 @@
 <!--
  * @Author: Praise-Sun 18053314396@163.com
+ * @Date: 2023-02-24 08:36:42
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2023-02-24 08:41:34
+ * @FilePath: \tunnel-ui\README.md
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!--
+ * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-16 15:10:19
  * @LastEditors: Praise-Sun 18053314396@163.com
  * @LastEditTime: 2023-02-24 08:30:24
@@ -28,6 +36,8 @@ npm install gis-map-tunnel@0.1.3
 npm install swiper@^5.4.5
 #新增精确计算
 npm install mathjs
+
+# 新安装阿里云iconfont图标库，文件地址src\assets\icon\iconfont.css
 #新增树形穿梭框
 npm install --save el-tree-transfer
 

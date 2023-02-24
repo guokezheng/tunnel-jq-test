@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
           type="primary"
           plain
-          size="mini"
+          size="small"
           @click="handleAdd"
           v-hasPermi="['eqType:item:add']"
         >新增</el-button>
@@ -21,7 +21,7 @@
         <el-button
           type="primary"
           plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['eqType:item:remove']"
@@ -29,24 +29,27 @@
         <el-button
           type="primary"
           plain
-          size="mini"
+          size="small"
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['eqType:item:export']"
         >导出</el-button>
+        <el-button size="small" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
-            placeholder="请输入数据项编号、数据项名称,回车搜索"
+            placeholder="请输入数据项编号、数据项名称，回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -103,9 +106,9 @@
         </el-form-item>
       </el-form>
     </div>
-
+    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange"
-    :row-class-name="tableRowClassName" class="tableClass"
+    class="allTable" height="59vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -386,14 +389,6 @@ export default {
         this.exportLoading = false;
       }).catch(() => {});
     },
-    // 表格行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
   }
 };
 </script>
@@ -402,41 +397,4 @@ export default {
   width: 100%;
  }
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

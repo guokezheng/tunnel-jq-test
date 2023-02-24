@@ -386,10 +386,8 @@
                             item.click == true ? 'solid 2px #09C3FC' : '',
                           width:item.associated_device_id?getBoardStyle(item.associated_device_id,'width',item.eqType) + 'px':item.iconWidth + 'px',
                           height:item.associated_device_id?getBoardStyle(item.associated_device_id,'height',item.eqType) + 'px':item.iconHeight + 'px',
-                          color:item.associated_device_id?getBoardStyle(item.associated_device_id,'color') :'yellow',
                           fontSize:item.associated_device_id?getBoardStyle(item.associated_device_id,'fontSize',item.eqType) + 'px':'15px'
                           }"
-
                           :src= getTypePic(item)
                           :class="
                             item.eqName == screenEqName
@@ -397,12 +395,19 @@
                               : ''
                           "
                           >
-
-                          <span
+                          <div
                           :style="{
                               animation: 'boardBox1 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite'
-                          }"
-                          >{{getBoardStyle(item.associated_device_id,'content') }}</span>
+                          }">
+                            <span
+                            v-for="(item,index) in getBoardStyle(item.associated_device_id,'array')" :key="index"
+                            :style="{
+                              color:getColorStyle(item.COLOR)
+                              }"
+                            style="padding-top:10px"
+                          >{{item.CONTENT}}</span>
+                          </div>
+                          
                         </div>
                         <div v-show="item.eqType == 36"
                         class="boardBox2"
@@ -414,7 +419,6 @@
                               item.click == true ? 'solid 2px #09C3FC' : '',
                             width:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'width',item.eqType) + 'px':item.iconWidth + 'px',
                             height:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'height',item.eqType) + 'px':item.iconHeight + 'px',
-                            color:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'color') :'yellow',
                             fontSize:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'fontSize',item.eqType) + 'px':'15px'
                           }"
 
@@ -424,11 +428,21 @@
                               ? 'screenEqNameClass'
                               : ''
                           "
-                          ><span
+                          >
+                          <div 
                           :style="{
-                              animation: 'boardBox2 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite'
-                          }"
-                          >{{getBoardStyle(item.associated_device_id,'content')}}</span>
+                                animation: 'boardBox2 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite',
+                              
+                            }">
+                            <span
+                            v-for="(item,index) in getBoardStyle(item.associated_device_id,'array')" :key="index"
+                            :style="{
+                                color:getColorStyle(item.COLOR)
+                            }"
+                            style="padding-top:10px"
+                            >{{item.CONTENT}}</span>
+                          </div>
+                          
                         </div>
                         <!-- 调光数值 -->
                         <label
@@ -544,15 +558,16 @@
           "
           :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
-          <div class="indicatorLight" @click="isDrawerA()">
-            <i class="el-icon-caret-left"></i>一键控制模块
+          <div class="indicatorLight" @click="isDrawerA()"
+          >
+            <i :class="[drawerA ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>一键控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
-            <i class="el-icon-caret-left"></i>分时控制模块
+            <i :class="[drawerB ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>分时控制模块
           </div>
           <div class="triggerControl" @click="isDrawerC()">
-            <i class="el-icon-caret-left"></i>触发控制模块
+            <i :class="[drawerCVisible ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>触发控制模块
           </div>
         </div>
 
@@ -614,6 +629,7 @@
                 class="chezhiControlButton"
                 @click="chezhiControl(0)"
                 :disabled="chezhiDisabled"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -667,6 +683,7 @@
                 class="chezhiControlButton"
                 @click="chezhiControl(1)"
                 :disabled="chezhiDisabled"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -715,6 +732,7 @@
                 class="chezhiControlButton"
                 size="mini"
                 @click="phoneControl(directionList[0].dictValue)"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -761,6 +779,7 @@
                 class="chezhiControlButton"
                 size="mini"
                 @click="phoneControl(directionList[1].dictValue)"
+                v-hasPermi="['workbench:dialog:save']"
               >
                 控制
               </el-button>
@@ -815,6 +834,7 @@
                   size="mini"
                   class="handleLightClass"
                   @click="timingStrategy(item)"
+                  v-hasPermi="['workbench:dialog:save']"
                   >确定
                 </el-button>
             </div>
@@ -872,7 +892,7 @@
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
       <div class="footer" v-show="displayThumbnail == true">
-        <div class="footMiniBox" style="cursor: pointer">
+        <div class="footMiniBox" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -886,7 +906,7 @@
           </div>
           <div id="vehicle"></div>
         </div>
-        <div class="footMiniBox footerRight" style="cursor: pointer">
+        <div class="footMiniBox footerRight" >
           <div class="footTitle">
             <!-- <div class="footTriangle"></div> -->
             <div class="footTitleCont">
@@ -902,7 +922,7 @@
           <div id="energyConsumption"></div>
         </div>
 
-        <div class="footMiniBox footerRight" style="cursor: pointer">
+        <div class="footMiniBox footerRight" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -953,7 +973,7 @@
             </vue-seamless-scroll>
           </div> -->
         </div>
-        <div class="footerRight footMiniBox" style="cursor: pointer">
+        <div class="footerRight footMiniBox" >
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -982,38 +1002,54 @@
               class="listContent"
               :data="trafficList"
             >
-              <el-row
-                v-for="(item, index) in trafficList"
-                :key="index"
-                class="listRow"
-                style="margin-top:4px"
-                :data-index="JSON.stringify(item)"
-                :id="item.id"
-              >
-              <!-- @click.native="jumpYingJi(item.id)"  -->
-                <el-col style="text-align: center" :span="2">
-                  <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
-                </el-col>
-                <el-col style="text-align: center" :span="3"
-                :style="{color:item.eventType.prevControlType == '0'?'#E0281B':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
-                  {{item.eventType.simplifyName}}
-                </el-col>
-                <el-col :span="19" style="display: flex;">
-                  <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
-                    item.eventType.eventType
-                  }}事件 -->
-                  <div
-                    style="width:300px;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    z-index:10;
-                    ">
-                    {{item.eventTitle}}</div>
-                  <div style="font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
+              <ul style="padding-left:0">
+                <li
+                  v-for="(item, index) of trafficList"
+                  :key="index"
+                  style="cursor: pointer;list-style: none;"
+                >
+                  <el-row
+                    class="listRow"
+                    :data-index="JSON.stringify(item)"
+                    :id="item.id"
+                  >
+                  <!-- @click.native="jumpYingJi(item.id)"  -->
+                    <el-col  :span="2">
+                      <div style="width: 100%; height: 20px; display: flex;justify-content: right;align-items: center;transform:scale(0.7) translateY(8px)">
+                        <img :src="item.eventType.iconUrl"   />
+                      </div>
+                    </el-col>
+                    <el-col style="display:flex" :span="4">
+                    <div 
+                      style="width:100%" 
+                      :style="{color:item.eventType.prevControlType == '0'?'red':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
+                      {{item.eventType.simplifyName}}
+                    </div>
+                      
+                    </el-col>
+                    <el-col :span="18" style="display: flex;">
+                      <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
+                        item.eventType.eventType
+                      }}事件 -->
+                      <div
+                        style="width:300px;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        z-index:10;
+                        ">
+                        {{item.eventTitle}}</div>
+                      <div style="font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
 
-                </el-col>
-              </el-row>
+                    </el-col>
+                  </el-row>
+                  <div class="lineBT" >
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </li>
+              </ul>
             </vue-seamless-scroll>
           </div>
 
@@ -1309,16 +1345,17 @@
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>-->
-      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%">
+      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%" >
         <el-row :gutter="20" style="margin: 10px 0 25px">
 
-          <el-col :span="6"  >
+          <el-col :span="12"  >
             <div class="grid-content bg-purple">
               <el-input
                 placeholder="请输入操作地址，回车搜索"
                 v-model="operationParam.operIp"
                 @keyup.enter.native="handleQueryOperationParam"
                 v-show="operationActive == 'caozuo'"
+                class="zj"
               >
                 <el-button
                   slot="append"
@@ -2318,7 +2355,7 @@
     <com-light
       class="comClass"
       v-if="
-        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13].includes(this.eqInfo.clickEqType)
+        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 45].includes(this.eqInfo.clickEqType)
       "
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
@@ -2340,7 +2377,7 @@
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 35,40,39,48,45].includes(this.eqInfo.clickEqType)"
+      v-if="[14, 21, 32, 33, 15, 35,40,39,48].includes(this.eqInfo.clickEqType)"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>
@@ -4551,27 +4588,30 @@ export default {
               return devicePixel.split("*")[0] / 4;
             }
           }
+          let array = []
           let arr = "";
           let fontS = "";
-          let color = "";
           for (let i = 0; i < content.length; i++) {
             var itemId = "ITEM" + this.formatNum(i, 3);
             var con = content[i][itemId][0];
+            con.CONTENT = con.CONTENT.replace("<br>", " ").replace(" &nbsp", " ");
+            array.push(con)
             arr += con.CONTENT.replace("<br>", " ").replace(" &nbsp", " ");
             arr += " ";
-            color = this.getColorStyle(con.COLOR);
             fontS = Number(con.FONT_SIZE.substring(0, 2));
           }
+
           if (type == "content") {
             return arr;
-          } else if (type == "color") {
-            return color;
-          } else if (type == "fontSize") {
+          } 
+          else if (type == "fontSize") {
             if (eqType && eqType == 16) {
               return fontS / 2;
             } else if (eqType && eqType == 36) {
               return fontS / 4;
             }
+          }else if(type == 'array'){
+            return array
           }
         } else {
           let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
@@ -4589,10 +4629,11 @@ export default {
             }
           } else if (type == "content") {
             return "山东高速欢迎您";
-          } else if (type == "color") {
-            return "yellow";
-          } else if (type == "fontSize") {
+          }else if (type == "fontSize") {
             return 15;
+          }else if(type == 'array'){
+            let array = [{CONTENT:'山东高速欢迎您',COLOR:'黄色'}]
+            return array
           }
         }
       } else {
@@ -4615,7 +4656,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "GreenYellow";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -5001,7 +5042,7 @@ export default {
     },
     //抽屉
     isDrawerA() {
-      this.drawerA = true;
+      this.drawerA = !this.drawerA;
       this.drawerB = false;
       this.drawerCVisible = false;
       // Object.assign(this.$data.phoneForm1, this.$options.data().phoneForm1)
@@ -5011,9 +5052,10 @@ export default {
       this.phoneForm2 = {
         loopCount: "1",
       };
+      this.$forceUpdate()
     },
     isDrawerB() {
-      this.drawerB = true;
+      this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
       if (this.tunnelId) {
@@ -5028,7 +5070,7 @@ export default {
       }
     },
     isDrawerC() {
-      this.drawerCVisible = true;
+      this.drawerCVisible = !this.drawerCVisible;
       this.drawerA = false;
       this.drawerB = false;
 
@@ -8924,8 +8966,16 @@ export default {
     .listContent {
       height: 70%;
       font-size: 14px;
-      margin-top: 5px;
       overflow: hidden;
+      ul{
+        margin:0;
+      }
+      > li {
+        // margin-bottom: 6px;
+        list-style: none;
+        padding: 10px;
+        padding-bottom: 0px;
+      }
     }
   }
 }
@@ -10501,6 +10551,25 @@ input {
 }
 </style>
 <style lang="scss" scoped>
+.lineBT {
+  width: 100%;
+  margin: 2px 0px auto;
+  // border-bottom: solid 1px white;
+  // transform: translateY(-30px);
+  display: flex;
+  > div:nth-of-type(1) {
+    width: 5%;
+    border-bottom: #2dbaf5 solid 1px;
+  }
+  > div:nth-of-type(2) {
+    width: 90%;
+    border-bottom: 1px solid rgba($color: #00b0ff, $alpha: 0.2);
+  }
+  > div:nth-of-type(3) {
+    width: 5%;
+    border-bottom: #2dbaf5 solid 1px;
+  }
+}
 .syxt_searchBox {
   ::v-deep .el-form-item__content {
     width: 78%;

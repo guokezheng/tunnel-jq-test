@@ -73,53 +73,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div class="lineClass" v-if="eqInfo.clickEqType == 10" style="margin-bottom:10px"></div>
-        <el-row v-if="eqInfo.clickEqType == 10">
-          <el-col :span="13">
-            <el-form-item label="振动速度值:">
-              {{ stateForm2.shakeSpeed }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="11">
-            <el-form-item label="振动幅度值:" label-width="102px">
-              {{ stateForm2.amplitude }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="13">
-            <el-form-item label="沉降值:">
-              {{ stateForm2.subside }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="11">
-            <el-form-item label="倾斜值:" label-width="102px">
-              {{ stateForm2.slope }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="13">
-            <el-form-item label="振动告警:">
-              {{ stateForm2.shakeAlaram }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="11">
-            <el-form-item label="沉降倾斜告警:" label-width="102px">
-              {{ stateForm2.subsideSlopeAlaram }}
-            </el-form-item>
-          </el-col>
-        </el-row>
-
         <div class="lineClass"></div>
-        <el-row style="margin-top:10px">
-          <el-col :span="15">
-            <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
-          <el-slider
-            v-model="stateForm.brightness"
-            :max="100"
-            class="sliderClass"
-          ></el-slider>
-        </el-form-item>
-          </el-col>
-        </el-row>
-
         <div style="margin-top: 10px">
           <el-form-item label="配置状态:">
             <div class="wrap">
@@ -201,6 +155,22 @@
               </el-radio-group>
             </div>
           </el-form-item>
+          <el-row style="margin-top:10px" v-show="this.eqInfo.clickEqType == 7 || this.eqInfo.clickEqType == 45">
+            <el-col :span="15">
+              <el-form-item label="亮度调整" >
+                <el-slider
+                  v-model="stateForm.brightness"
+                  :max="100"
+                  class="sliderClass"
+                ></el-slider>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9" v-if="stateForm.brightness">
+              <span style="padding-left: 10px; line-height: 30px"
+                >{{ stateForm.brightness }} cd</span
+              >
+            </el-col>
+          </el-row>
           <div slot="footer" style="float: right; margin-bottom: 20px">
             <el-button
               type="primary"
@@ -230,7 +200,7 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
 import { getDevice, setBrightness } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
-import { controlDevice,getFanSafeData } from "@/api/workbench/config.js"; //提交控制信息
+import { controlDevice, controlWarningLightStripDevice } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
@@ -245,7 +215,7 @@ export default {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       iconWidth: "",
       iconHeight: "",
-      stateForm2:{}
+      // stateForm2:{}
     };
   },
   created() {
@@ -267,7 +237,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          this.stateForm.brightness = Number(res.data.brightness);
+          // this.stateForm.brightness = Number(res.data.brightness);
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
@@ -275,13 +245,6 @@ export default {
             this.getEqTypeStateIcon();
           });
         });
-        if(this.eqInfo.clickEqType == 10){
-          await getFanSafeData(this.eqInfo.equipmentId).then((res) => {
-            console.log(res,"风机")
-            this.stateForm2 = res.data
-          })
-        }
-
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -349,36 +312,51 @@ export default {
       }
     },
     handleOK() {
+      console.log(this.eqInfo.equipmentId,"this.eqInfo.equipmentId")
       console.log(this.stateForm.state, "单选框点击绑定");
-      const param = {
-        devId: this.stateForm.eqId, //设备id
-        state: this.stateForm.state,
-      };
+      if(this.eqInfo.clickEqType != 45){
+        const param = {
+          devId: this.stateForm.eqId, //设备id
+          state: this.stateForm.state,
+        };
 
-      controlDevice(param).then((response) => {
-        if (response.data == 0) {
-          this.$modal.msgError("控制失败");
-        } else if (response.data == 1) {
-          if(this.eqInfo.clickEqType == 7){
-            const params = {
-              bright: this.stateForm.brightness,
-              controlType: "0",
-              deviceId: this.eqInfo.equipmentId,
-            };
-            setBrightness(params).then((res) => {
-              console.log(res, "亮度");
+        controlDevice(param).then((response) => {
+          if (response.data == 0) {
+            this.$modal.msgError("控制失败");
+          } else if (response.data == 1) {
+            if(this.eqInfo.clickEqType == 7){
+              const params = {
+                bright: this.stateForm.brightness,
+                controlType: "0",
+                deviceId: this.eqInfo.equipmentId,
+              };
+              setBrightness(params).then((res) => {
+                console.log(res, "亮度");
+                this.$modal.msgSuccess("控制成功");
+
+              });
+            }else{
               this.$modal.msgSuccess("控制成功");
-
-            });
-          }else{
-            this.$modal.msgSuccess("控制成功");
+            }
           }
-
+        });
+      }else if(this.eqInfo.clickEqType == 45){
+        const param = {
+          devId:this.eqInfo.equipmentId,
+          state:this.stateForm.state,
+          brightness: this.stateForm.brightness,
         }
-
-        this.$emit("dialogClose");
-      });
-
+        controlWarningLightStripDevice(param).then((res)=>{
+          console.log("警示灯带控制成功",res)
+          if(res.data == 1){
+            this.$modal.msgSuccess('操作成功');
+          }else{
+            this.$modal.msgError("操作失败");
+          }
+        })
+      }
+      
+      this.$emit("dialogClose");
     },
     // 关闭弹窗
     handleClosee() {

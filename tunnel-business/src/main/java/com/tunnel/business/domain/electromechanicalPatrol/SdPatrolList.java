@@ -93,6 +93,10 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     @Excel(name = "图片id")
     private String imgFileId;
 
+    private String bzName;
+
+    private String userName;
+
     @ApiModelProperty("故障图片")
     private List<SdTrafficImage> iFileList;
 
@@ -124,6 +128,23 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     private String tunnel_id;
 
     private String tunnel_name;
+
+
+    public String getBzName() {
+        return this.bzName;
+    }
+
+    public void setBzName(final String bzName) {
+        this.bzName = bzName;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setUserName(final String userName) {
+        this.userName = userName;
+    }
 
     public String getTunnel_id() {
         return this.tunnel_id;

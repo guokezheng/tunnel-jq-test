@@ -2,29 +2,31 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
-
+    <div >
+      <el-row class="topFormRow" :gutter="20">
+      <el-col :span="6">
+        <el-button size="small" @click="resetQuery" type="primary" plain
+          >刷新</el-button
+          >
       </el-col>
-<!--      <el-col :span="6" :offset="14" >-->
-      <el-col :span="6"  style="width: 100%;">
-        <div class="grid-content bg-purple">
+      <el-col :span="6"  :offset="12">
+        <div  ref="main" class="grid-content bg-purple">
           <el-input
             placeholder="请输入车牌，回车搜索"
             v-model="queryParams.plateNumber"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="cl_boxShow = !cl_boxShow"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-      <div class="cl_searchBox" v-show="cl_boxShow" >
+      <div class="searchBox" v-show="cl_boxShow" >
       <el-form
         ref="queryForm"
         :inline="true"
@@ -34,7 +36,7 @@
 
         <el-form-item label="机构" prop="orgName">
           <el-cascader
-            style="width: 335px"
+            style="width: 100%"
             popper-class="jigou"
             v-model="queryParams.orgName"
             :show-all-levels="false"
@@ -44,7 +46,7 @@
         </el-form-item>
 
 
-        <el-form-item label="车型"  prop="vType" style="width: 100%">
+        <el-form-item label="车型"  prop="vType" >
 
             <el-checkbox
               v-for="dict in vehicleTypeList"
@@ -233,7 +235,7 @@
           </el-tooltip>
         </div>
       </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="mechanismList"
@@ -241,11 +243,12 @@
       class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号"  align="center">
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号"  align="center">
         <template slot-scope="scope">
           {{scope.$index+1}}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="机构" align="center" prop="orgName" />
       <el-table-column label="车牌" align="center" prop="plateNumber" />
       <el-table-column label="车型" align="center" prop="vType"/>
@@ -443,7 +446,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        vType: []
+        vType: [],
+        cx:"",
       },
       form: {},
       mechanismList: [],
@@ -483,6 +487,11 @@ export default {
         }
       }
     },
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);
     },
@@ -504,8 +513,8 @@ export default {
     handleQuery() {
       console.log(this.queryParams, "useStatususeStatus");
       // this.queryParams.pageNum = 1;
-      this.queryParams.vType = this.result
-      console.log(this.queryParams.vType)
+      this.queryParams.cx = this.result.toString()
+      console.log(this.queryParams.cx)
       this.getList();
     },
     /** 重置按钮操作 */
@@ -651,45 +660,3 @@ export default {
 </style>
 
 
-<style>
-.cl_searchBox {
-  position: absolute;
-  top: 8.5%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.cl_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-
-::v-deep .checkboxFormDialog .el-checkbox{
-  width: 80px;
-}
-</style>

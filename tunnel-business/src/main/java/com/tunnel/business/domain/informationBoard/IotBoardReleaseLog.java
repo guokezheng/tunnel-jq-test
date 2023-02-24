@@ -25,16 +25,19 @@ public class IotBoardReleaseLog extends BaseEntity
     @Excel(name = "发布设备")
     private String deviceId;
 
+    @Excel(name = "设备桩号")
+    private String pile;
+
     /** 设备名称 */
 //    @Excel(name = "设备名称")
     private String deviceName;
 
     /** 发布前的内容 */
-    @Excel(name = "发布前的内容")
+//    @Excel(name = "发布前的内容")
     private String releaseOldContent;
 
     /** 发布后的内容 */
-    @Excel(name = "发布后的内容")
+    @Excel(name = "发布内容")
     private String releaseNewContent;
 
     /** 发布人 */
@@ -42,15 +45,15 @@ public class IotBoardReleaseLog extends BaseEntity
     private String releaseBy;
 
     /** 发布时间 */
-    @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date releaseTime;
 
     /** 发布状态：0：正常，1：失败 */
-    @Excel(name = "发布状态", readConverterExp = "0=正常,1=失败")
+    @Excel(name = "发布状态", readConverterExp = "0=成功,1=失败")
     private String releaseStatus;
 
     /** 发布机构 */
-    @Excel(name = "发布机构")
+//    @Excel(name = "发布机构")
     private String releaseDeptName;
 
     /** 发布机构 */
@@ -67,7 +70,8 @@ public class IotBoardReleaseLog extends BaseEntity
 
     private List<String> paramsList;
 
-    private String pile;
+    //批量导出单选id导出数据
+    private Long[] ids;
 
     public String getPile() {
         return pile;
@@ -187,6 +191,14 @@ public class IotBoardReleaseLog extends BaseEntity
     public Date getReleaseTime()
     {
         return releaseTime;
+    }
+
+    public Long[] getIds() {
+        return ids;
+    }
+
+    public void setIds(Long[] ids) {
+        this.ids = ids;
     }
 
     @Override

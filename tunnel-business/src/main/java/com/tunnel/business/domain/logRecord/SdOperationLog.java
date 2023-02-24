@@ -1,5 +1,6 @@
 package com.tunnel.business.domain.logRecord;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
@@ -10,6 +11,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Date;
 
 /**
  * 操作日志对象 sd_operation_log
@@ -25,48 +28,59 @@ public class SdOperationLog extends BaseEntity
     private Long id;
 
     /** 设备类型 */
-    @Excel(name = "设备类型")
+    /*@Excel(name = "设备类型")*/
     private Long eqTypeId;
-    /** equipmentType对象 */
-    @Excels({
-        @Excel(name = "equipmentType", targetAttr = "typeName"),
-    })
-    private SdEquipmentType typeName;
     /** tunnel对象 */
     @Excels({
-        @Excel(name = "tunnel", targetAttr = "tunnelName"),
+            @Excel(name = "隧道名称", targetAttr = "tunnelName"),
     })
     private SdTunnels tunnelName;
+    /** equipmentType对象 */
+    @Excels({
+        @Excel(name = "设备类型", targetAttr = "typeName"),
+    })
+    private SdEquipmentType typeName;
+
     /** tunnel对象 */
     @Excels({
-        @Excel(name = "state", targetAttr = "stateName"),
+            @Excel(name = "设备名称", targetAttr = "eqName"),
+    })
+    private SdDevices eqName;
+
+    /** 操作状态 */
+    private String operationState;
+
+    /** tunnel对象 */
+    @Excels({
+        @Excel(name = "操作状态", targetAttr = "stateName"),
     })
     private SdEquipmentState stateName;
 
 	/** 隧道id */
-    @Excel(name = "隧道id")
+   /* @Excel(name = "隧道id")*/
     private String tunnelId;
 
     /** 用户名称 */
-    @Excel(name = "用户名称")
+   /* @Excel(name = "用户名称")*/
     private String userName;
 
     /** 所属设备 */
-    @Excel(name = "所属设备")
+   /* @Excel(name = "所属设备")*/
     private String eqId;
     /** 设备名称 */
     /*@Excel(name = "设备名称")
     private String eqName;*/
     
-    /** tunnel对象 */
-    @Excels({
-        @Excel(name = "设备名称", targetAttr = "eqName"),
-    })
-    private SdDevices eqName;
-    
     private String beginTime;
     
     private String endTime;
+    /** 控制方式   3：手动 1：时间控制 2：光强控制 */
+    @Excel(name = "控制方式")
+    private String controlType;
+
+    /** 操作是否成功 0 成功；1失败 */
+    @Excel(name = "操作结果")
+    private String state;
 
     /** 操作地址 */
     @Excel(name = "操作地址")
@@ -74,6 +88,20 @@ public class SdOperationLog extends BaseEntity
 
     //事件ID
     private String eventId;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    @Override
+    public Date getCreateTime() {
+        return this.createTime;
+    }
+
+    @Override
+    public void setCreateTime(final Date createTime) {
+        this.createTime = createTime;
+    }
 
     public String getOperIp() {
         return operIp;
@@ -120,27 +148,15 @@ public class SdOperationLog extends BaseEntity
 	}
 
 	/** 识别码 */
-    @Excel(name = "识别码")
+    /*@Excel(name = "识别码")*/
     private String code;
 
     /** 操作前状态 */
-    @Excel(name = "操作前状态")
+   /* @Excel(name = "操作前状态")*/
     private String beforeState;
 
-    /** 操作状态 */
-    @Excel(name = "操作状态")
-    private String operationState;
-
-    /** 控制方式   3：手动 1：时间控制 2：光强控制 */
-    @Excel(name = "控制方式   3：手动 1：时间控制 2：光强控制")
-    private String controlType;
-
-    /** 操作是否成功 0 成功；1失败 */
-    @Excel(name = "操作是否成功 0 成功；1失败")
-    private String state;
-
     /** 描述 */
-    @Excel(name = "描述")
+   /* @Excel(name = "描述")*/
     private String description;
 
     public void setId(Long id) 

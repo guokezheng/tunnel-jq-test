@@ -66,9 +66,9 @@
             <!-- <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
             <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
             <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button> -->
-            <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
-            <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
-            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
+            <el-button type="primary" @click="alignment(1)" size="mini">左对齐</el-button>
+            <el-button type="primary" @click="alignment(2)" size="mini">左右居中</el-button>
+            <el-button type="primary" @click="alignment(3)" size="mini">右对齐</el-button>
 
         
             <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
@@ -221,9 +221,9 @@
         </el-card>
   
         <template slot="footer">
-          <el-button size="small" @click="closeDialog()">取消</el-button>
+          <el-button size="mini" type="primary" plain @click="closeDialog()">取消</el-button>
           <el-button
-            size="small"
+            size="mini"
             @click="dataFormSubmitHandle()"
             type="primary"
             v-loading="loading"
@@ -538,14 +538,7 @@
         var textBoard1 = document.getElementsByClassName("textBoard1")
         console.log(textBoard1,"textBoard1");
         console.log(divContent1,"divContent1");
-       
-          // 获取文字长宽
-          // let textWidth = textBoard1[i].offsetWidth;
-          // let textHeight = textBoard1[i].offsetHeight;
-          // // 获取黑盒子长宽
-          // let divWidth = divContent1[i].offsetWidth;
-          // let divHeight = divContent1[i].offsetHeight;
-          // console.log(document.getElementsByClassName("textBoard1"),"document.getElementsByClassName('textBoard1')");
+      
           console.log(textBoard1[0].style,"textBoard1[i].style");
           // console.log(textWidth,divWidth,"999999999999999");
           switch (alignmentNum) {

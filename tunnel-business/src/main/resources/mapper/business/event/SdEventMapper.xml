@@ -47,6 +47,7 @@
         <result property="tunnelName" column="tunnel_name"/>
         <result property="simplifyName" column="simplify_name"/>
         <result property="frameEventTitle" column="frameEventTitle"/>
+        <result property="fuzzySearch" column="fuzzySearch"/>
         <association property="eventType" column="id" javaType="SdEventType" resultMap="eventTypeResult"/>
         <association property="tunnels" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
     </resultMap>
@@ -146,7 +147,7 @@
             fault.create_time DESC limit ${subIndex}
     </select>
 
-    <select id = "getEventUntreatedNum" resultType="int">
+    <select id = "getEventUntreatedNum" resultType="java.lang.Integer">
         SELECT
                 count( id )+(
                 SELECT
@@ -178,10 +179,12 @@
         on A.event_type_id = B.id
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
         LEFT JOIN sys_dict_data sdd ON a.direction = sdd.dict_value
+        left join sys_dict_data dict on A.event_source = dict.dict_value
         <where>
             1=1
             AND B.is_usable = '1'
             AND sdd.dict_type = 'sd_direction'
+            and dict.dict_type = 'sd_event_source'
             <if test="id != null  and id != ''">and A.id = #{id}</if>
             <!-- <if test="tunnelStationName != null  and tunnelStationName != ''">and C.id = #{id}</if>-->
             <if test="deptId != null  and deptId != ''">and C.dept_id = #{deptId}</if>
@@ -211,6 +214,11 @@
             </if>
             <if test="remark != null and remark != ''">
                 and A.event_state = '3'
+            </if>
+            <!--模糊查询-->
+            <if test="fuzzySearch != null and fuzzySearch != ''">
+              and  ( INSTR(concat(sdd.dict_label,A.stake_num),replace(#{fuzzySearch},' ','')) > 0
+                or  INSTR(dict.dict_label,replace(#{fuzzySearch},' ','')) > 0)
             </if>
         </where>
         order by A.start_time desc

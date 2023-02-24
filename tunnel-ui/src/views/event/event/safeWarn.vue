@@ -8,109 +8,327 @@
         v-for="item in tabList"
         :key="item.name"
       >
+      </el-tab-pane>
+    </el-tabs>
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '1'" class="tabTopFormRow">
+          <el-col :span="6" >
+            <el-button
+              size="small"
+              @click="resetQuery()"
+            >刷新
+            </el-button>
+          </el-col>
+          <el-col :span="6" :offset="12" >
+            <div class="grid-content bg-purple" ref="main1">
+              <el-input
+                @keyup.enter.native="handleQuery"
+                size="small"
+                placeholder="请输入事件位置、来源，回车搜索"
+                v-model="fuzzySearch1"
+              >
+                <el-button
+                  slot="append"
+                  icon="icon-gym-Gsearch"
+                  @click="zd_boxShow = !zd_boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '0'" class="tabTopFormRow">
+          <el-col :span="6" >
+            <el-button
+              size="small"
+              @click="resetQuery()"
+            >刷新
+            </el-button>
+          </el-col>
+          <el-col :span="6" :offset="12" >
+            <div class="grid-content bg-purple" ref="main0">
+              <el-input
+                @keyup.enter.native="handleQuery"
+                size="small"
+                placeholder="请输入事件位置、来源，回车搜索"
+                v-model="fuzzySearch1"
+
+              >
+                <el-button
+                  slot="append"
+                  icon="icon-gym-Gsearch"
+                  @click="boxShow = !boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" > 
+            <el-col :span="6" >
+              <el-button 
+                v-hasPermi="['system:list:add']"
+                size="small"
+                @click="handleAdd"
+              >新增故障
+              </el-button>
+              <el-button size="small" @click="resetQuery" 
+                >刷新</el-button
+                >
+            </el-col>
+            <el-col :span="6" :offset="12" >
+              <div class="grid-content bg-purple" ref="main2">
+                <el-input
+                    placeholder="请输入故障位置、故障描述，回车搜索"
+                    v-model="queryParams.faultDescription"
+                    @keyup.enter.native="handleQuery"
+                    size="small"
+                  >
+                    <el-button
+                      slot="append"
+                      icon="icon-gym-Gsearch"
+                      @click="fault_boxShow = !fault_boxShow"
+                    ></el-button>
+                  </el-input>
+              </div>
+            </el-col>
+          </el-row>
+          <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn" v-show="zd_boxShow" >
         <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-          v-if="activeName == '1' || activeName == '0'"
           label-width="68px"
           class="formStyle"
         >
-          <el-row>
-            <el-col>
-              <el-form-item label="事件类型" prop="eventTypeId">
-                <div style="display: flex">
-                  <el-button
-                    v-for="(item, index) in eventTypeDataList"
-                    class="eventTypeButton"
-                    :key="index"
-                    type="primary"
-                    plain
-                    @click="handleEvtButton(item.id)"
-                  >
-                    {{ item.simplifyName }}
-                  </el-button>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="管理机构" prop="deptId">
-                <treeselect
-                  v-model="queryParams.deptId"
-                  :options="deptOptions"
-                  :show-count="true"
-                  placeholder="请选择归属部门"
-                  @select="changeMechanism"
-                  style="width: 300px"
-                  size="small"
+            <el-form-item label="事件类型" prop="eventTypeId">
+              <el-select
+                v-model="queryParams.eventTypeId"
+                placeholder="请选择事件类型"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="(item, index) in eventTypeData"
+                  :key="index"
+                  :label="item.simplifyName"
+                  :value="item.id"
                 />
-              </el-form-item>
+              </el-select>
+            </el-form-item>
+            <!-- <el-form-item label="管理机构" prop="deptId">
+              <treeselect
+                v-model="queryParams.deptId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="请选择归属部门"
+                @select="changeMechanism"
+                style="width: 325px"
+                size="small"
+              />
+            </el-form-item> -->
+            <el-form-item
+              label="所属隧道"
+              prop="tunnelId"
+              v-show="manageStation == '0'"
+            >
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择所属隧道"
+                clearable
+                size="small"
+                style="width: 325px"
+                @change="$forceUpdate()"
+              >
+                <el-option
+                  v-for="item in tunnelList"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="事件状态" prop="eventState">
+              <el-select
+                v-model="queryParams.eventState"
+                placeholder="请选择事件状态"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="dict in eventStateOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发生时间" prop="eventTime">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 325px"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="-"
+                unlink-panels
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small"  @click="handleQuery"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" 
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+            <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn" v-show="boxShow" >
+        <el-form
+          :model="queryParams"
+          ref="queryForm"
+          :inline="true"
+          label-width="68px"
+          class="formStyle"
+        >
+            <el-form-item label="事件类型" prop="eventTypeId">
+              <el-select
+                v-model="queryParams.eventTypeId"
+                placeholder="请选择事件类型"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="(item, index) in eventTypeData"
+                  :key="index"
+                  :label="item.simplifyName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <!-- <el-form-item label="管理机构" prop="deptId">
+              <treeselect
+                v-model="queryParams.deptId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="请选择归属部门"
+                @select="changeMechanism"
+                style="width: 325px"
+                size="small"
+              />
+            </el-form-item> -->
+            <el-form-item
+              label="所属隧道"
+              prop="tunnelId"
+              v-show="manageStation == '0'"
+            >
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择所属隧道"
+                clearable
+                size="small"
+                style="width: 325px"
+                @change="$forceUpdate()"
+              >
+                <el-option
+                  v-for="item in tunnelList"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="事件状态" prop="eventState">
+              <el-select
+                v-model="queryParams.eventState"
+                placeholder="请选择事件状态"
+                clearable
+                size="small"
+                style="width: 325px"
+              >
+                <el-option
+                  v-for="dict in eventStateOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发生时间" prop="eventTime">
+              <el-date-picker
+                v-model="dateRange"
+                size="small"
+                style="width: 325px"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="-"
+                unlink-panels
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small"  @click="handleQuery"
+              >搜索</el-button
+              >
+              <el-button size="small" @click="resetQuery" 
+              >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
+          <!-- 右侧弹窗 -->
+        <div class="searchBox searchSafeWarn"  v-show="fault_boxShow" ref="cc">
+        <el-form
+              ref="queryForm"
+              :inline="true"
+          :model="queryParams1"
+              label-width="75px"
+              v-if="activeName == '2'"
+            >
               <el-form-item
-                label="所属隧道"
-                prop="tunnelId"
-                v-show="manageStation == '0'"
+                style="width: 100%"
+                label="故障类型"
+                prop="faultType"
               >
                 <el-select
-                  v-model="queryParams.tunnelId"
-                  placeholder="请选择所属隧道"
+                  v-model="queryParams1.faultType"
+                  placeholder="请选择故障类型"
                   clearable
                   size="small"
-                  style="width: 180px"
-                  @change="$forceUpdate()"
                 >
                   <el-option
-                    v-for="item in tunnelList"
-                    :key="item.tunnelId"
-                    :label="item.tunnelName"
-                    :value="item.tunnelId"
-                  />
+                    v-for="dict in dict.type.fault_type"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  ></el-option>
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="事件状态" prop="eventState">
-                <el-select
-                  v-model="queryParams.eventState"
-                  placeholder="请选择事件状态"
-                  clearable
-                  size="small"
-                  style="width: 180px"
+              <el-form-item class="bottomBox">
+                <el-button size="small"  @click="handleQuery"
+                >搜索</el-button
                 >
-                  <el-option
-                    v-for="dict in eventStateOptions"
-                    :key="dict.dictValue"
-                    :label="dict.dictLabel"
-                    :value="dict.dictValue"
-                  />
-                </el-select>
+                <el-button size="small" @click="resetQuery" 
+                >重置</el-button
+                >
               </el-form-item>
-              <el-form-item label="选择日期" prop="eventTime">
-                <el-date-picker
-                  v-model="dateRange"
-                  size="small"
-                  style="width: 240px"
-                  value-format="yyyy-MM-dd"
-                  type="daterange"
-                  range-separator="-"
-                  unlink-panels
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                ></el-date-picker>
-              </el-form-item>
+            </el-form>
+          </div>
 
-              <el-form-item>
-                <el-button type="primary" size="mini" @click="handleQuery"
-                  >搜索
-                </el-button>
-                <el-button size="mini" @click="resetQuery" type="primary" plain
-                  >重置
-                </el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <el-form
+
+
+
+<!--        <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
@@ -196,7 +414,7 @@
               >导出
             </el-button>
           </el-form-item>
-        </el-form>
+        </el-form>-->
         <div
           class="contentListBox"
           v-if="activeName == '1' || activeName == '0'"
@@ -205,6 +423,7 @@
             class="contentBox"
             v-for="(item, index) in eventList"
             :key="index"
+            :style="{width:topNav?'24.2%':'24%'}"
           >
             <div class="video">
               <img
@@ -224,7 +443,7 @@
               <div>
                 来源 <span>{{ getFrom(item.eventSource) }}</span>
               </div>
-              <div>
+              <div style="width: 100%;overflow: hidden;white-space: nowrap;">
                 位置 <span>{{ item.position }}</span>
               </div>
               <div>
@@ -257,16 +476,22 @@
             </div>
           </div>
         </div>
-
+        <div class="tableTopHr" v-if="activeName == '2'"></div>
         <el-table
           v-loading="loading"
-          :data="eventList"
+          :data="eventLists"
           @selection-change="handleSelectionChange"
-          :row-class-name="tableRowClassName"
-          max-height="600"
+          height="62vh"
+          class="allTable"
           v-if="activeName == '2'"
         >
           <el-table-column type="selection" width="55" align="center" />
+          <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--          <el-table-column label="序号" width="100px" align="center">
+            <template slot-scope="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>-->
           <el-table-column label="故障类型" align="center" prop="faultType">
             <template slot-scope="scope">
               <dict-tag
@@ -285,7 +510,10 @@
               <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
             </template> -->
           <!-- </el-table-column> -->
-          <el-table-column label="持续时间" align="center" prop="faultCxtime" />
+<!--          <el-table-column label="持续时间" align="center" prop="faultCxtime" />-->
+          <el-table-column label="故障位置" align="center" prop="faultLocation" />
+          <el-table-column label="故障描述" align="center" prop="faultDescription" width="180" 
+          :show-overflow-tooltip='true'/>
           <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">
             <template slot-scope="scope">
@@ -327,6 +555,7 @@
             label="操作"
             align="center"
             class-name="small-padding fixed-width"
+            width="200"
           >
             <template slot-scope="scope">
               <el-button
@@ -364,10 +593,10 @@
           </el-table-column>
         </el-table>
         <pagination
-          v-if="total > 0 && activeName == '2'"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
+            v-if="totals > 0 && activeName == '2'"
+            :total="totals"
+          :page.sync="queryParams1.pageNum"
+          :limit.sync="queryParams1.pageSize"
           @pagination="getList"
         />
         <el-pagination
@@ -382,8 +611,6 @@
           :total="total"
         >
         </el-pagination>
-      </el-tab-pane>
-    </el-tabs>
 
     <!-- 查看详情弹窗 -->
     <el-dialog
@@ -1304,15 +1531,17 @@
         <div class="card-col" style="font-size: 16px">
           <div>
             巡检时间:
-            <span>{{ item.xcTime }}</span>
+            <span>{{
+                parseTime(item.xcTime, "{y}-{m}-{d} {h}:{m}:{s}")
+            }}</span>
           </div>
           <div>
             检修班组:
-            <span>{{ item.bzId }}</span>
+            <span>{{ item.bzName }}</span>
           </div>
           <div>
             检修人:
-            <span>{{ item.walkerId }}</span>
+            <span>{{ item.userName }}</span>
           </div>
         </div>
         <div class="card-col" style="font-size: 16px">
@@ -1616,6 +1845,10 @@ export default {
       total: 0,
       // 事件管理表格数据
       eventList: [],
+      //设备故障表格数据
+      eventLists: [],
+      // 设备故障总条数
+      totals: 0,
       //
       searchValue: "1",
       // 弹出层标题
@@ -1641,6 +1874,14 @@ export default {
         startTime: null,
         endTime: null,
         deptId: null,
+      },
+
+      queryParams1: {
+        pageNum: 1,
+        pageSize: 10,
+        faultType:null,
+        faultDescription:"",
+
       },
       allmsg: "",
       process: "",
@@ -1789,15 +2030,25 @@ export default {
       },
       videoList: [],
       cameraVisible: true,
+      isState:false,
+      showElement:true,
+      showFaultElement:false,
     };
   },
-  watch: {
-    "queryParams.deptId": function (newVal, oldVal) {
-      if (!newVal) {
-        this.tunnelList = null;
-        this.queryParams.tunnelId = null;
-      }
+  computed:{
+    topNav: {
+      get() {
+        return this.$store.state.settings.topNav;
+      },
     },
+  },
+  watch: {
+    // "queryParams.deptId": function (newVal, oldVal) {
+    //   if (!newVal) {
+    //     this.tunnelList = null;
+    //     this.queryParams.tunnelId = null;
+    //   }
+    // },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       this.manageStationSelect = newVal;
       this.queryParams.tunnelId = newVal;
@@ -1812,12 +2063,13 @@ export default {
   async created() {
     // this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect");
     this.eventList = [];
+    this.eventLists = [];
     this.getTreeselect();
     this.getBz();
     await this.getList();
     await this.getEventMsg();
     this.getEventType();
-    // this.getTunnel();
+    this.getTunnel();
     this.getEqType();
     this.getDevices();
     this.getTunnelLane();
@@ -1874,7 +2126,51 @@ export default {
       this.mechanism = res.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus1);
+    document.addEventListener("click", this.bodyCloseMenus0);
+    document.addEventListener("click", this.bodyCloseMenus2);
+
+  },
   methods: {
+    changeInput(){
+      this.$forceUpdate()
+    },
+    bodyCloseMenus1(e) {
+      let self = this;
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+        if (self.zd_boxShow == true){
+          self.zd_boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus0(e) {
+      let self = this;
+      if (this.$refs.main0 && !this.$refs.main0.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus2(e) {
+      let self = this;
+      if (this.$refs.main2 && !this.$refs.main2.contains(e.target)) {
+        if (self.fault_boxShow == true){
+          self.fault_boxShow = false;
+        }
+      }
+    },
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams1.pageNum-1)*this.queryParams1.pageSize+1
+    },
+
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus1);
+      document.removeEventListener("click", this.bodyCloseMenus0);
+      document.removeEventListener("click", this.bodyCloseMenus2);
+    },
     getReservePlanData(){
       let data = {
         tunnelId:this.eventForm.tunnelId,
@@ -2389,9 +2685,17 @@ export default {
     handleExport() {},
     //切换tab页
     handleClick(e) {
+      this.isState = true;
+      this.currentMenu = e.index;
+      this.zd_boxShow = false;
+      this.boxShow = false;
+      this.fault_boxShow = false;
       this.resetQuery();
-      this.getList();
-      this.getEventType();
+      // this.getList();
+      if(this.currentMenu!="2"){
+        this.getEventType();
+      }else{
+      }
     },
     handleSelectionChange(val) {
       this.ids = val.map((item) => item.id);
@@ -2516,17 +2820,19 @@ export default {
       this.ReservePlanList = [];
       this.loading = true;
       this.eventList = [];
+      this.eventLists = [];
+      // console.log(this.manageStation, "this.manageStation");
       if (this.manageStation == "1") {
         this.queryParams.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
       }
-
-      if (this.activeName == "2") {
-        this.queryParams.pageSize = 10;
-        listList(this.queryParams).then((response) => {
-          this.eventList = response.rows;
-          this.eventList.forEach((item) => {
+      if (this.currentMenu == "2") {
+       // this.queryParams.pageSize = 10;
+        listList(this.queryParams1).then((response) => {
+          this.eventLists = response.rows;
+          console.log(response.rows, "response.rowsresponse.rowsresponse.rows列表内容");
+          this.eventLists.forEach((item) => {
             if (item.faultLocation == "null") {
               item.faultLocation = "";
             }
@@ -2537,16 +2843,26 @@ export default {
               item.faultCode = "";
             }
           });
-          this.total = response.total;
+          this.totals = response.total;
           this.loading = false;
         });
-      } else {
+      } else if(this.activeName == "0"||this.activeName == "1") {
         if (!this.dateRange) {
           this.dateRange = [];
         }
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.activeName;
+        if(this.fuzzySearch1){
+          this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
+        }
+    
+        // const params = {
+        //   fuzzySearch : this.queryParams.fuzzySearch
+        // }
+
+        // this.queryParams.params = params
+        // console.log(new Date());
 
         listEvent(this.queryParams).then((response) => {
 
@@ -2606,6 +2922,9 @@ export default {
     },
     /** 查询事件类型列表 */
     getEventType() {
+      if(this.currentMenu=="2"){
+        return
+      }
       let prevControlType = {
         prevControlType: this.activeName,
         isUsable: "1",
@@ -2677,9 +2996,19 @@ export default {
         if (this.form.faultDescription == "null") {
           this.form.faultDescription = "";
         }
-        /*console.log(
-          "that.form.iFileList====================" + that.form.iFileList.length
-        );*/
+        if (this.form.faultCxtime == "null") {
+          this.form.faultCxtime = "";
+        }
+        if (this.form.faultLevel == "null") {
+          this.form.faultLevel = "";
+        }
+        if (this.form.falltRemoveStatue == "null") {
+          this.form.falltRemoveStatue = "";
+        }
+        if (this.form.faultLocation == "null") {
+          this.form.faultLocation = "";
+        }
+
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
 
@@ -2720,44 +3049,50 @@ export default {
       let that = this;
       getRepairRecordList(this.faultId).then((response) => {
         that.news = response.data;
+        if(that.news.length>0){
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("impression")){
         that.impressionOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].impression = opt.dictLabel;
-          }
-          if (opt.dictValue == "1") {
-            that.news[0].impression = opt.dictLabel;
+                if (opt.dictValue == that.news[i].impression) {
+                  that.news[i].impression = opt.dictLabel;
           }
         });
-        that.networkOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].network = opt.dictLabel;
           }
-          if (opt.dictValue == "1") {
-            that.news[0].network = opt.dictLabel;
           }
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("network")){
+              that.networkOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].network) {
+                  that.news[i].network = opt.dictLabel;
+                }
         });
-        that.powerOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].power = opt.dictLabel;
           }
-          if (opt.dictValue == "1") {
-            that.news[0].power = opt.dictLabel;
           }
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("power")){
+              that.powerOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].power) {
+                  that.news[i].power = opt.dictLabel;
+                }
         });
+            }
+            }
+        }
 
-        this.news.forEach((taskitem) => {
-          this.bzData.forEach((opt) => {
-            if (taskitem.bzId == opt.deptId) {
-              taskitem.bzId = opt.deptName;
-            } else {
-              taskitem.bzId = "";
-            }
-            if (taskitem.bzId == null || taskitem.bzId == "null") {
-              taskitem.bzId = "";
-            }
+
+        //this.news.forEach((taskitem) => {
+          //this.bzData.forEach((opt) => {
+            //if (taskitem.bzId == opt.deptId) {
+             // taskitem.bzId = opt.deptName;
+           // } else {
+            //  taskitem.bzId = "";
+            //}
+            //if (taskitem.bzId == null || taskitem.bzId == "null") {
+             // taskitem.bzId = "";
+           // }
+         // });
+        //});
           });
-        });
-      });
     },
     // 关闭弹窗
     close() {
@@ -2890,9 +3225,13 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams = { pageNum: 1, pageSize: 16 };
+      this.queryParams1 = { pageNum: 1, pageSize: 10 };
       this.dateRange = [];
       this.tunnelList = [];
       this.queryParams.eventTypeId = "";
+      this.queryParams1.faultDescription = "";
+      this.fuzzySearch1 = ''
+
       // this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -2967,6 +3306,28 @@ export default {
                 console.log("================"+this.fileList)
                 return
               }*/
+
+
+      if (this.form.tunnelId == "" ||
+        this.form.tunnelId == -1 ||
+        this.form.tunnelId == null) {
+        return this.$modal.msgWarning("请选择所在路段隧道");
+      }
+
+      if (this.form.faultType == "" ||
+        this.form.faultType == -1 ||
+        this.form.faultType == null) {
+        return this.$modal.msgWarning("请选择故障类型");
+      }
+      if (this.form.eqId == "" ||
+        this.form.eqId == -1 ||
+        this.form.eqId == null) {
+        return this.$modal.msgWarning("请选择设备");
+      }
+      if (this.form.faultDescription == "") {
+        return this.$modal.msgWarning("请填写故障描述");
+      }
+
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
@@ -3014,6 +3375,26 @@ export default {
       this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 0);
+
+      if (this.form.tunnelId == "" ||
+        this.form.tunnelId == -1 ||
+        this.form.tunnelId == null) {
+        return this.$modal.msgWarning("请选择所在路段隧道");
+      }
+
+      if (this.form.faultType == "" ||
+        this.form.faultType == -1 ||
+        this.form.faultType == null) {
+        return this.$modal.msgWarning("请选择故障类型");
+      }
+      if (this.form.eqId == "" ||
+        this.form.eqId == -1 ||
+        this.form.eqId == null) {
+        return this.$modal.msgWarning("请选择设备");
+      }
+      if (this.form.faultDescription == "") {
+        return this.$modal.msgWarning("请填写故障描述");
+      }
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
@@ -3058,14 +3439,6 @@ export default {
       this.reset();
       if (this.detailsButtonType == 2) {
         this.getList();
-      }
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
       }
     },
   },
@@ -3164,36 +3537,37 @@ export default {
   }
 }
 ::v-deep .el-form-item--medium .el-form-item__label {
-  line-height: 3vh;
+  // line-height: 3vh;
   font-size: 0.7vw;
 }
 ::v-deep .el-form-item--medium .el-form-item__content {
-  line-height: 3vh;
+  // line-height: 3vh;
   font-size: 0.7vw;
 }
-::v-deep .el-input--medium .el-input__icon {
-  line-height: 3vh;
-}
-::v-deep .el-input--small .el-input__icon {
-  line-height: 3vh;
-}
-.el-tabs__header {
-  margin: 0 0 12px !important;
+// ::v-deep .el-input--medium .el-input__icon {
+//   line-height: 3vh;
+// // }
+// ::v-deep .el-input--small .el-input__icon {
+//   line-height: 3vh;
+// }
+::v-deep .el-tabs__header {
+  margin: 0 0 8px !important;
 }
 .contentListBox {
   width: 100%;
-  // height: 570px;
   word-wrap: break-word;
   word-break: normal;
+  overflow-y: auto;
+  overflow-x: hidden;
   //display: flex;
   .contentBox {
-    width: 24%;
     // height: 135px;
-    border: solid 1px #2aa6ff;
+    // border: solid 1px #2aa6ff;
     display: inline-flex;
     margin-right: 1vw;
     margin-bottom: 5px;
     position: relative;
+    border-radius: 2px;
     .video {
       width: 40%;
       height: 100%;
@@ -3221,14 +3595,14 @@ export default {
       margin-right: 20px;
       width: 60%;
       float: right;
-      margin-left: 10px;
+      margin-left: 2px;
       .stateTab {
         position: absolute;
         top: -34px;
         right: -21px;
       }
       div {
-        padding: 0.4vh 0;
+        padding: 0.6vh 0;
         span {
           padding-left: 6px;
         }
@@ -3465,23 +3839,23 @@ export default {
   padding: 0px 10px;
   font-size: 0.7vw;
 }
-::v-deep .vue-treeselect__control {
-  height: 3vh;
-}
-::v-deep .vue-treeselect__placeholder,
-.vue-treeselect__single-value {
-  line-height: 3vh;
-}
-::v-deep .el-input--small .el-input__inner {
-  line-height: 3vh;
-  height: 3vh;
-  font-size: 0.7vw;
-}
-::v-deep .el-input--medium .el-input__inner {
-  line-height: 3vh;
-  height: 3vh;
-  font-size: 0.7vw;
-}
+// ::v-deep .vue-treeselect__control {
+//   height: 4vh;
+// }
+// ::v-deep .vue-treeselect__placeholder,
+// .vue-treeselect__single-value {
+//   line-height: 4vh;
+// }
+// ::v-deep .el-input--small .el-input__inner {
+//   line-height: 3vh;
+//   height: 4vh;
+//   font-size: 0.7vw;
+// }
+// ::v-deep .el-input--medium .el-input__inner {
+//   line-height: 3vh;
+//   height: 4vh;
+//   font-size: 0.7vw;
+// }
 .butBox {
   width: 280px;
   display: flex;
@@ -3629,7 +4003,7 @@ hr {
 .video {
   height: 300px;
   border-radius: 0;
-  padding: 5px;
+  padding: 10px;
   margin-top: 0;
 }
 
@@ -3722,28 +4096,6 @@ hr {
   }
 }
 
-::v-deep .el-tabs {
-  height: 100%;
-  .el-tabs__item {
-    height: 4vh;
-    font-size: 0.7vw;
-  }
-  .el-tabs__content {
-    height: calc(100% - 5vh);
-    .el-tab-pane {
-      height: 100%;
-      .contentListBox {
-        height: 60vh;
-        overflow-x: hidden;
-        overflow-y: auto;
-        .contentBox {
-          height: 14vh;
-        }
-      }
-    }
-  }
-}
-
 .disabledButton {
   cursor: no-drop;
   pointer-events: none;
@@ -3775,6 +4127,11 @@ hr {
 .topTxt {
   margin-left: 15px;
   margin-top: 10px;
+}
+.searchSafeWarn{
+  top: 12% !important;
+  right: 0.8% !important;
+  width: 23.8% !important;
 }
 </style>
 

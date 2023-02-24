@@ -2,7 +2,36 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <div>
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
+        <el-button size="small" @click="resetQuery" type="primary" plain
+            >刷新</el-button
+            >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div ref="main" class="grid-content bg-purple">
+          <el-input
+              placeholder="请输入机构、负责人，回车搜索"
+              v-model="queryParams.deptName"
+              @keyup.enter.native="handleQuery"
+              size="small"
+            >
+              <el-button
+                slot="append"
+                icon="icon-gym-Gsearch"
+                @click="jg_boxShow = !jg_boxShow"
+              ></el-button>
+            </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <!-- <div>
       <el-col :span="4">
         <el-button style ="margin: 10px 0px 0px;height: 35px;"
           type="primary"
@@ -11,9 +40,9 @@
           @click="toggleExpandAll"
         >展开/折叠</el-button>
       </el-col>
-    </div>
-    <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 25px">
+    </div> -->
+    <!-- <div ref="main" style = "margin-left: 75%"> -->
+      <!-- <el-row :gutter="20" style="margin: 10px 0 25px">
 
         <el-col :span="6"  style ="width: 100%;">
           <div class="grid-content bg-purple">
@@ -30,8 +59,8 @@
             </el-input>
           </div>
         </el-col>
-      </el-row>
-      <div class="jg_searchBox" v-show="jg_boxShow">
+      </el-row> -->
+      <div class="searchBox" v-show="jg_boxShow">
         <el-form
           ref="queryForm"
           :inline="true"
@@ -39,9 +68,8 @@
           label-width="75px"
         >
 
-          <el-form-item label="机构状态" prop="status" style="width: 100%">
+          <el-form-item label="机构状态" prop="status">
             <el-select
-              style="width:335px"
               v-model="queryParams.status"
               clearable
               placeholder="请选择机构状态"
@@ -65,7 +93,7 @@
           </el-form-item>
         </el-form>
       </div>
-    </div>
+    <!-- </div> -->
 
 <!--    <el-form
       :model="queryParams"
@@ -117,6 +145,7 @@
         >展开/折叠</el-button>
       </el-form-item>
     </el-form>-->
+    <div class="tableTopHr" ></div>
 
       <el-table
         v-if="refreshTable"
@@ -292,43 +321,5 @@ export default {
 };
 </script>
 
-<style>
-.jg_searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.jg_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
 
 

@@ -38,7 +38,6 @@ public class SdDeviceData extends BaseEntity
 
     private String pile;
 
-
     public String getPile() {
         return pile;
     }

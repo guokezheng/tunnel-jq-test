@@ -2,40 +2,43 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-02-22 16:36:54
+ * @LastEditTime: 2023-02-24 08:42:42
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
         <el-button
           v-hasPermi="['business:plan:add']"
           size="small"
-          type="primary"
-          plain
           @click="handleAdd()"
           >新增预案
         </el-button>
+        <el-button size="small" @click="resetQuery" 
+            >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+        <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请输入预案名称"
+            placeholder="请输入预案名称，回车搜索"
             v-model="queryParams.planName"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
+
     <div class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
@@ -44,7 +47,6 @@
         label-width="75px"
       >
         <el-form-item
-          style="width: 100%"
           label="所属隧道"
           prop="tunnelId"
           v-show="manageStatin == '0'"
@@ -64,7 +66,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预案类型" prop="category" style="width: 100%">
+        <el-form-item label="预案类型" prop="category" >
           <el-select
             v-model="queryParams.category"
             placeholder="请选择预案类型"
@@ -79,7 +81,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="事件类型" prop="planTypeId" style="width: 100%">
+        <el-form-item label="事件类型" prop="planTypeId" >
           <el-select
             v-model="queryParams.planTypeId"
             clearable
@@ -104,7 +106,7 @@
         </el-form-item>
       </el-form>
     </div>
-
+    <div class="tableTopHr" ></div>
     <el-table
       ref="planTable"
       v-loading="loading"
@@ -1107,7 +1109,22 @@ export default {
     //   this.planTypeData = response.rows;
     // });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.boxShow == true) {
+          self.boxShow = false;
+        }
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+    },
     deleteInfo(index) {
       if (this.planTypeIdList.length == 1) {
         return this.$modal.msgWarning("至少保留一行");
@@ -2035,16 +2052,6 @@ export default {
 };
 </script>
 <style>
-.searchBox {
-  position: absolute;
-  top: 6%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
 #cascader-menu-45-0 .el-radio {
   display: none !important;
 }
@@ -2153,30 +2160,6 @@ export default {
     pointer-events: none;
     cursor: auto !important;
     color: #ccc;
-  }
-}
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
   }
 }
 .planBox {

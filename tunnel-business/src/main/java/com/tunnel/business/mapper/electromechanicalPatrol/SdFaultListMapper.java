@@ -121,4 +121,11 @@ public interface SdFaultListMapper
      * @return
      */
     List<SdFaultList> selectDeviceFault();
+
+    /**
+     * 巡查点故障检修记录
+     * @param faultId
+     * @return
+     */
+    List<SdPatrolList> getDevicesRepairInfo(String faultId);
 }

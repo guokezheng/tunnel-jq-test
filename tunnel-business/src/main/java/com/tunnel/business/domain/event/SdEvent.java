@@ -253,6 +253,11 @@ public class SdEvent extends BaseEntity {
      */
     private String frameEventTitle;
 
+    /**
+     * 模糊搜索
+     */
+    private String fuzzySearch;
+
     public String getFrameEventTitle() {
         return frameEventTitle;
     }
@@ -487,6 +492,14 @@ public class SdEvent extends BaseEntity {
 
     public int getSlightInjured() {
         return slightInjured;
+    }
+
+    public String getFuzzySearch() {
+        return fuzzySearch;
+    }
+
+    public void setFuzzySearch(String fuzzySearch) {
+        this.fuzzySearch = fuzzySearch;
     }
 
     @Override

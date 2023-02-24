@@ -140,7 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectCOVIDataList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
@@ -159,11 +159,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectFSFXDataList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
@@ -182,11 +182,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectDWDataList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
@@ -203,11 +203,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectDNDataList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
@@ -224,12 +224,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
 
     <select id="selectCOVIDataLineList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
@@ -246,12 +246,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY DATE( createTime ), HOUR( createTime ),eqId
-        ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectFSFXDataLineList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
@@ -268,12 +267,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY DATE( createTime ), HOUR( createTime ),eqId
-        ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectDNDataLineList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
@@ -288,12 +286,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY DATE( createTime ), HOUR( createTime ),eqId
-        ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectDWDataLineList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
@@ -308,13 +305,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY DATE( createTime ), HOUR( createTime ),eqId
-        ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
 
     <select id="selectCOVIDevicesDataLineList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
@@ -331,12 +327,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_tunnel_id  = #{deviceId}</if>
         GROUP BY DATE( createTime ), HOUR( createTime ),eqId
-        ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectFSFXDevicesDataLineList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
@@ -353,12 +348,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_tunnel_id  = #{deviceId}</if>
         GROUP BY DATE( createTime ), HOUR( createTime ),eqId
-        ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectDNDevicesDataLineList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
@@ -373,12 +367,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_tunnel_id  = #{deviceId}</if>
         GROUP BY DATE( createTime ), HOUR( createTime ),eqId
-        ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
     <select id="selectDWDevicesDataLineList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
+        SELECT  j.* from
         (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,round(AVG(a.data ),2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
@@ -393,8 +386,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="deviceId != null and deviceId != ''"> and b.eq_tunnel_id  = #{deviceId}</if>
         GROUP BY DATE( createTime ), HOUR( createTime ),eqId
-        ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
+        ) j
     </select>
 
 

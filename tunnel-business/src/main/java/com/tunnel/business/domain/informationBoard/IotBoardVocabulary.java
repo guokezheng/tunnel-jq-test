@@ -23,8 +23,10 @@ public class IotBoardVocabulary extends BaseEntity
     private String word;
 
     /** 创建时间 */
-    @Excel(name = "创建时间")
+    //@Excel(name = "创建时间")
     private String creatTime;
+
+    private long[] ids;
 
     public void setId(Long id) 
     {
@@ -52,6 +54,14 @@ public class IotBoardVocabulary extends BaseEntity
     public String getCreatTime() 
     {
         return creatTime;
+    }
+
+    public long[] getIds() {
+        return ids;
+    }
+
+    public void setIds(long[] ids) {
+        this.ids = ids;
     }
 
     @Override

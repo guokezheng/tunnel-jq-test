@@ -3,14 +3,13 @@ package com.tunnel.business.service.emeResource.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 import com.tunnel.business.domain.emeResource.SdEmergencyVehicle;
 import com.tunnel.business.mapper.emeResource.SdEmergencyVehicleMapper;
 import com.tunnel.business.service.emeResource.ISdEmergencyVehicleService;
+import com.tunnel.business.utils.sso.AuthUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,17 +40,15 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
     @Autowired
     private SdEmergencyVehicleMapper sdEmergencyVehicleMapper;
 
-    @Value("${url.edit}")
+    @Value("${sso.emergencyVehicle.edit}")
     private String updateUrl;
 
-    @Value("${url.syn}")
+    @Value("${sso.emergencyVehicle.syn}")
     private String synUrl;
 
-    @Value("${url.detail}")
+    @Value("${sso.emergencyVehicle.detail}")
     private String detailUrl;
 
-//    @Autowired
-//    private RestTemplate restTemplate;
 
     /**
      * 查询应急车辆
@@ -134,14 +130,17 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
         return sdEmergencyVehicleMapper.getOrg();
     }
 
+    @Override
     public String synVehicleData() {
         SysUser user = SecurityUtils.getLoginUser().getUser();
         String deptId = user.getDeptId();
+        //获取token
+        String token = AuthUtil.getGeneralToken();
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
         //设置JSON格式数据
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-        requestHeaders.add("Authorization", "Bearer fe446153-a911-40d4-ad3f-afe771e2318b");
+        requestHeaders.add("Authorization", "Bearer "+ token);
         HttpEntity<String> requestEntity = new HttpEntity<>(requestHeaders);
         try {
             HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -152,7 +151,7 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
             //调取第三方接口获取车辆数据
             ResponseEntity<String> exchange = restTemplate.exchange(synUrl.concat("?current=1&size=2000&deptId="+deptId), HttpMethod.GET, requestEntity, String.class);
             //解析车辆数据
-            synVehicleDataList(exchange.getBody());
+            synVehicleDataList(exchange.getBody(),deptId);
             log.info("返回值 --> {}", exchange.getBody());
             return JSONObject.toJSONString(exchange.getBody());
         } catch (Exception e) {
@@ -179,9 +178,11 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
      * @return
      */
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
-    public void synVehicleDataList(String vehicleData){
+    public void synVehicleDataList(String vehicleData, String deptId){
         //删除应急车辆旧数据
-        List<Long> collect = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(new SdEmergencyVehicle()).stream().map(SdEmergencyVehicle::getId).collect(Collectors.toList());
+        SdEmergencyVehicle sdEmergencyVehicle1 = new SdEmergencyVehicle();
+        sdEmergencyVehicle1.setOrgName(deptId);
+        List<Long> collect = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(sdEmergencyVehicle1).stream().map(SdEmergencyVehicle::getId).collect(Collectors.toList());
         if(collect.size() > 0){
             Long[] longs = collect.toArray(new Long[collect.size()]);
             sdEmergencyVehicleMapper.deleteSdEmergencyVehicleByIds(longs);
@@ -211,11 +212,14 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
      * 修改第三方车辆状态
      */
     public int updateVehicle(SdEmergencyVehicle sdEmergencyVehicle){
+        //获取token
+        String token = AuthUtil.getGeneralToken();
+
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
         //设置JSON格式数据
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-        requestHeaders.add("Authorization", "Bearer fe446153-a911-40d4-ad3f-afe771e2318b");
+        requestHeaders.add("Authorization", "Bearer " + token);
         HttpEntity<String> requestEntity = new HttpEntity<>(requestHeaders);
         try {
             HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -242,11 +246,15 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
      * 查询车辆详情
      */
     public SdEmergencyVehicle detailsVehicle(String plateNumber){
+
+        //获取token
+        String token = AuthUtil.getGeneralToken();
+
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
         //设置JSON格式数据
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-        requestHeaders.add("Authorization", "Bearer fe446153-a911-40d4-ad3f-afe771e2318b");
+        requestHeaders.add("Authorization", "Bearer " + token);
         HttpEntity<String> requestEntity = new HttpEntity<>(requestHeaders);
         SdEmergencyVehicle sdEmergencyVehicle = new SdEmergencyVehicle();
         try {
@@ -261,23 +269,24 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
             //调取第三方接口获取车辆数据
             ResponseEntity<String> exchange = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, String.class);
             String data = JSONObject.parseObject(exchange.getBody()).getString("data");
-            JSONObject object = JSONObject.parseObject(data);
-
-            sdEmergencyVehicle.setOrgId(object.getString("deptId"));
-            sdEmergencyVehicle.setOwnerName(object.getString("ownerName"));
-            sdEmergencyVehicle.setvPlace(object.getString("locationName"));
-            sdEmergencyVehicle.setPlateNumber(object.getString("carNum"));
-            sdEmergencyVehicle.setVehicleModel((object.getString("brandName") == null || object.getString("brandName") =="" ? "" : object.getString("brandName")).concat(object.getString("model")));
-            sdEmergencyVehicle.setEtcStateDesc(object.getString("etcStateDesc"));
-            sdEmergencyVehicle.setEtcTypeDesc(object.getString("etcTypeDesc"));
-            sdEmergencyVehicle.setCarAge(object.getString("carAge"));
-            sdEmergencyVehicle.setMileage(object.getString("mileage"));
-            sdEmergencyVehicle.setvType(object.getString("ptypeName"));
-            sdEmergencyVehicle.setUseStatus(object.getString("usageStateDesc"));
-            sdEmergencyVehicle.setAccState(object.getString("accState"));
+            if(data != null){
+                JSONObject object = JSONObject.parseObject(data);
+                sdEmergencyVehicle.setOrgId(object.getString("deptId"));
+                sdEmergencyVehicle.setOwnerName(object.getString("ownerName"));
+                sdEmergencyVehicle.setvPlace(object.getString("locationName"));
+                sdEmergencyVehicle.setPlateNumber(object.getString("carNum"));
+                sdEmergencyVehicle.setVehicleModel((object.getString("brandName") == null || "".equals(object.getString("brandName")) ? "" : object.getString("brandName")).concat(object.getString("model")));
+                sdEmergencyVehicle.setEtcStateDesc(object.getString("etcStateDesc"));
+                sdEmergencyVehicle.setEtcTypeDesc(object.getString("etcTypeDesc"));
+                sdEmergencyVehicle.setCarAge(object.getString("carAge"));
+                sdEmergencyVehicle.setMileage(object.getString("mileage"));
+                sdEmergencyVehicle.setvType(object.getString("ptypeName"));
+                sdEmergencyVehicle.setUseStatus(object.getString("usageStateDesc"));
+                sdEmergencyVehicle.setAccState(object.getString("accState"));
+            }
             log.info("返回值 --> {}", exchange.getBody());
         } catch (Exception e) {
-            log.error("应急车辆修改失败！{}", e.getMessage());
+            log.error("应急车辆获取详情报错！{}", e.getMessage());
         }
         return sdEmergencyVehicle;
     }

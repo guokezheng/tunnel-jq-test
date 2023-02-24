@@ -1,50 +1,43 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row  :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleAdd"
           v-hasPermi="['system:devices:add']"
-        >新增
+          >新增
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:devices:edit']"
-        >修改
+          >修改
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:devices:remove']"
-        >删除
+          >删除
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleExport"
           v-hasPermi="['system:devices:export']"
-        >导出
+          >导出
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleImport"
           v-hasPermi="['system:devices:import']"
-        >导入
+          >导入
         </el-button>
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+        >
         <!--          <el-button-->
         <!--            type="info"-->
         <!--            icon="el-icon-s-help"-->
@@ -53,7 +46,7 @@
         <!--            >校验指令</el-button>-->
       </el-col>
       <el-col :span="6" :offset="12">
-        <div  ref="main" class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
             placeholder="请输入设备名称、桩号,回车搜索"
@@ -63,7 +56,7 @@
           >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -78,27 +71,25 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="设备方向" style="width: 100%;">
+        <el-form-item label="设备方向" >
           <el-checkbox-group v-model="checkeBox" @change="handleCheckChange">
             <el-checkbox
               v-for="item in dict.type.sd_direction"
               :key="item.value"
               :label="item.value"
               name="check_direction"
-            >{{item.label}}
+              >{{ item.label }}
             </el-checkbox>
             <el-checkbox name="check_direction" key="3" label="3"
-            >双向
-  <!--            v-for="item in dict.type.sd_direction"-->
-  <!--            :key=""-->
-  <!--            :label=""-->
-
+              >双向
+              <!--            v-for="item in dict.type.sd_direction"-->
+              <!--            :key=""-->
+              <!--            :label=""-->
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item
           label="所属隧道"
-          style="width: 100%;"
           prop="eqTunnelId"
           v-show="manageStatin == '0'"
         >
@@ -116,7 +107,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备类型" style="width: 100%" prop="eqType">
+        <el-form-item label="设备类型" prop="eqType">
           <el-select
             v-model="queryParams.eqType"
             placeholder="请选择设备类型"
@@ -133,14 +124,15 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
         </el-form-item>
       </el-form>
     </div>
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="devicesList"
@@ -149,7 +141,13 @@
       height="70vh"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
 
       <el-table-column
         label="设备ID"
@@ -344,7 +342,12 @@
             </el-form-item>-->
 
             <el-form-item label="设备大类" prop="eqType">
-              <el-select v-model="form.fEqType" placeholder="请选择设备大类" clearable style="width: 100%">
+              <el-select
+                v-model="form.fEqType"
+                placeholder="请选择设备大类"
+                clearable
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in eqBigTypeList"
                   :key="item.id"
@@ -551,7 +554,6 @@
                 v-model="form.warrantyEndTime"
                 type="date"
                 placeholder="请选择维保截至时间"
-                :picker-options="optionsDisable"
                 value-format="yyyy-MM-dd"
                 style="width: 100%"
               >
@@ -866,7 +868,7 @@ import {
 } from "@/api/equipment/eqTypeState/api";
 import { getToken } from "@/utils/auth";
 import { listAllSystem } from "@/api/equipment/externalsystem/system";
-import {listCategory} from "@/api/equipment/bigType/category";
+import { listCategory } from "@/api/equipment/bigType/category";
 
 export default {
   name: "Devices",
@@ -877,7 +879,7 @@ export default {
     "sd_lane",
     "sd_use_status",
     "sd_is_monitor",
-    "inductionlamp_control_type"
+    "inductionlamp_control_type",
   ],
   data() {
     const validatePass = (rule, value, callback) => {
@@ -889,7 +891,7 @@ export default {
       }
     };
     return {
-      checkIndex:1,
+      checkIndex: 1,
       boxShow: false,
       //设备大类
       eqBigTypeList: {},
@@ -949,18 +951,19 @@ export default {
       instructionTypeOptions: [],
       // 设备方向字典
       eqDirections: [],
-      checkeBox:[],
+      checkeBox: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         fEqId: null,
         eqTunnelId: null,
-        remark: '',
+        remark: "",
         eqName: null,
         eqType: null,
         deviceState: null,
         searchValue: null,
+        exportIds: "",
       },
       queryCmdParams: {
         codeDeviceId: null,
@@ -1120,19 +1123,24 @@ export default {
   },
   methods: {
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.boxShow == true){
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
+        if (self.boxShow == true) {
           self.boxShow = false;
         }
       }
     },
     getEqBigType() {
-      listCategory().then(response => {
+      listCategory().then((response) => {
         this.eqBigTypeList = response.rows;
       });
     },
@@ -1330,7 +1338,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      if(this.queryParams.remark.indexOf('3')!=-1){
+      if (this.queryParams.remark.indexOf("3") != -1) {
         this.queryParams.remark = "1,2";
       }
       this.queryParams.pageNum = 1;
@@ -1339,15 +1347,18 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.checkeBox=[];
-      this.queryParams.remark='';
-      this.queryParams.searchValue = '';
+      this.checkeBox = [];
+      this.queryParams.remark = "";
+      this.queryParams.searchValue = "";
       this.resetForm("queryForm");
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.eqId);
+      if (this.ids.length > 0) {
+        this.queryParams.exportIds = this.ids.join();
+      }
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
@@ -1550,7 +1561,7 @@ export default {
       /*});*/
     },
     handleCheckChange(val) {
-        this.queryParams.remark = val.toString();
+      this.queryParams.remark = val.toString();
     },
     insertEqControlPointAddress() {
       this.$refs["instructionForm"].validate((valid) => {
@@ -1596,7 +1607,6 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit();
     },
-    
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
@@ -1626,41 +1636,4 @@ export default {
   }
 }
 </style>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+

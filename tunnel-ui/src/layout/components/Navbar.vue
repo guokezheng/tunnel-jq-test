@@ -165,7 +165,8 @@
         :value="nodealNum"
         :hidden="nodealNum > 0 ? false : true"
         class="item bell_icon"
-        style="cursor: pointer;padding: 0 16px; vertical-align: text-bottom;color: white !important;"
+        style="cursor: pointer;padding: 0 16px; vertical-align: text-bottom;
+              color: white !important;caret-color: rgba(0,0,0,0);user-select: none;"
       >
         <img src="../../assets/image/evtNum.png" style="width:30px;height:30px;transform: translateY(8px);" @click="bell()"></i>
       </el-badge>

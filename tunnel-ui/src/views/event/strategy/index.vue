@@ -1,9 +1,87 @@
 <template>
   <div class="app-container">
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane :label="strategyTypeGroup[0].dictLabel" name="one">
+      <el-tab-pane :label="strategyTypeGroup[0]?strategyTypeGroup[0].dictLabel:''" name="one">
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" class="tabTopFormRow">
+          <el-col :span="6">
+            <el-button
+              size="small"
+              @click="openInsertStrategy('richang')"
+              v-hasPermi="['system:strategy:add']"
+              >新增</el-button
+            >
+            <el-button size="small" @click="resetQuery" 
+              >刷新</el-button
+            >
+          </el-col>
+          <el-col :span="6" :offset="12">
+            <div class="grid-content bg-purple" ref="main">
+              <el-input
+                v-model="queryParams.strategyName"
+                placeholder="请输入策略名称，回车搜索"
+                clearable
+                size="small"
+                @keyup.enter.native="handleQuery"
+              >
+                <el-button
+                  slot="append"
+                  icon="icon-gym-Gsearch"
+                  @click="boxShow = !boxShow"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="searchBoxTab" v-show="boxShow" >
+          <el-form
+            ref="queryForm"
+            :inline="true"
+            :model="queryParams"
+            label-width="75px"
+          >
+          <el-form-item label="隧道名称" prop="tunnelId" >
+            <el-select
+              v-model="queryParams.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="策略类型" prop="strategyType" >
+            <el-select
+              v-model="queryParams.strategyType"
+              placeholder="请选择策略类型"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in strategyTypeOptions"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
         <!--开始-->
-        <el-form
+        <!-- <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
@@ -67,7 +145,7 @@
               >新增</el-button
             >
           </el-form-item>
-        </el-form>
+        </el-form> -->
         <el-table
           v-loading="loading"
           :data="strategyList"
@@ -171,8 +249,86 @@
         />
         <!--        结束-->
       </el-tab-pane>
-      <el-tab-pane :label="strategyTypeGroup[1].dictLabel" name="two">
-        <el-form
+      <el-tab-pane :label="strategyTypeGroup[1]?strategyTypeGroup[1].dictLabel:''" name="two">
+        <!-- 全局搜索 -->
+        <el-row :gutter="20" class="tabTopFormRow">
+          <el-col :span="6">
+            <el-button
+              size="small"
+              @click="openInsertStrategy('event')"
+              v-hasPermi="['system:strategy:add']"
+              >新增</el-button
+            >
+            <el-button size="small" @click="resetQuery" 
+              >刷新</el-button
+            >
+          </el-col>
+          <el-col :span="6" :offset="12">
+            <div class="grid-content bg-purple" ref="main1">
+              <el-input
+                v-model="queryParams.strategyName"
+                placeholder="请输入策略名称，回车搜索"
+                clearable
+                size="small"
+                @keyup.enter.native="handleQuery"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-s-fold"
+                  @click="boxShow1 = !boxShow1"
+                ></el-button>
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="searchBoxTab" v-show="boxShow1" >
+          <el-form
+            ref="queryForm"
+            :inline="true"
+            :model="queryParams"
+            label-width="75px"
+          >
+          <el-form-item label="隧道名称" prop="tunnelId" >
+            <el-select
+              v-model="queryParams.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="策略类型" prop="strategyType" >
+            <el-select
+              v-model="queryParams.strategyType"
+              placeholder="请选择策略类型"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in strategyTypeOptions"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+        <!-- <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
@@ -234,7 +390,7 @@
               >新增</el-button
             >
           </el-form-item>
-        </el-form>
+        </el-form> -->
         <el-table
           v-loading="loading"
           :data="strategyList"
@@ -476,6 +632,9 @@ export default {
   },
   data() {
     return {
+      boxShow:false,
+      boxShow1:false,
+
       activeName: "one",
       dialogVisible: false,
       dialogVisibleEvent: false,
@@ -653,7 +812,28 @@ export default {
       });
     });
   },
+     //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+    document.addEventListener("click", this.bodyCloseMenus1);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.boxShow == true) {
+          self.boxShow = false;
+        }
+      }
+    },
+    bodyCloseMenus1(e) {
+      let self = this;
+      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+        if (self.boxShow1 == true) {
+          self.boxShow1 = false;
+        }
+      }
+    },
     handleClick(tab, event) {
       this.dictCode = tab.index;
       console.log(this.dictCode,'0-0-0-0-0-0-0-0-0-0-0-');
@@ -932,6 +1112,7 @@ export default {
     /** 查询控制策略列表 */
     getList() {
       this.loading = true;
+      this.queryParams.strategyGroup = this.activeName == 'one'?'1':'2'
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         console.log(this.strategyList,'this.strategyListthis.strategyListthis.strategyListthis.strategyList')
@@ -1159,9 +1340,31 @@ export default {
   white-space: pre-line;
 }
 </style>
-<style scoped>
-.el-input--small .el-input__icon {
-  height: 34px;
+<style scoped lang="scss">
+
+::v-deep .el-tabs {
+  height: 100%;
+  .el-tabs__item {
+    height: 4vh;
+    font-size: 0.7vw;
+  }
+  .el-tabs__content {
+    height: calc(100% - 5vh);
+    .el-tab-pane {
+      height: 100%;
+      .contentListBox {
+        height: 60vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        .contentBox {
+          height: 14vh;
+        }
+      }
+    }
+  }
+}
+::v-deep .el-tabs__header {
+  margin: 0 0 8px !important;
 }
 </style>
 

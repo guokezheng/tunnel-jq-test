@@ -38,7 +38,7 @@ public class SdTaskOpt extends BaseEntity
 
     /** 操作时间 */
     @Excel(name = "操作时间")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date optTime;
 
     /** 操作说明 */

@@ -28,8 +28,8 @@ public class SdTaskList extends BaseEntity
     private String zzjgId;
 
     /** 计划完成时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endPlantime;
 
     /** 隧道id */
@@ -58,13 +58,15 @@ public class SdTaskList extends BaseEntity
     private String dispatcher;
 
     /** 派单时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "派单时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date dispatchTime;
 
     /** 指派巡查班组id */
     @Excel(name = "指派巡查班组id")
     private String bzId;
+
+    private String bzName;
 
     /** 任务描述 */
     @Excel(name = "任务描述")
@@ -83,7 +85,7 @@ public class SdTaskList extends BaseEntity
     private String walkerId;
 
     /** 任务完成时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "任务完成时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date taskEndtime;
 
@@ -116,6 +118,13 @@ public class SdTaskList extends BaseEntity
     /*巡检点数量*/
     private Integer totalNum;
 
+    public String getBzName() {
+        return this.bzName;
+    }
+
+    public void setBzName(final String bzName) {
+        this.bzName = bzName;
+    }
 
     public String getTunnelId() {
         return this.tunnelId;

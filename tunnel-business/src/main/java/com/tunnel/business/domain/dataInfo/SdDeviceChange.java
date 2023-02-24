@@ -47,7 +47,21 @@ public class SdDeviceChange extends BaseEntity
     @Excel(name = "方向")
     private String stakeMark;
 
-    public void setId(Long id) 
+    @ApiModelProperty("备注")
+    @Excel(name = "备注")
+    private String remark;
+
+    @Override
+    public String getRemark() {
+        return this.remark;
+    }
+
+    @Override
+    public void setRemark(final String remark) {
+        this.remark = remark;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

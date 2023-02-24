@@ -2,7 +2,7 @@ package com.tunnel.platform.task;
 
 import com.ruoyi.common.core.domain.entity.SysDeptSg;
 import com.ruoyi.system.mapper.SysDeptSgMapper;
-import com.tunnel.platform.util.AuthUtil;
+import com.tunnel.business.utils.sso.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 定时任务同步集团的部门、用户
+ * 此功能废弃
+ */
 @Component("userDeptTask")
 public class UserDeptTask {
 

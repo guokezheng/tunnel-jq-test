@@ -1,12 +1,10 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             @click="handleAdd"
             v-hasPermi="['system:warehouse:add']"
           >新增</el-button>
@@ -19,21 +17,20 @@
 <!--            v-hasPermi="['system:warehouse:edit']"-->
 <!--          >修改</el-button>-->
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['system:warehouse:remove']"
           >删除</el-button>
           <el-button
-            type="primary"
-            plain
-            size="mini"
+            size="small"
             :loading="exportLoading"
             @click="handleExport"
             v-hasPermi="['system:warehouse:export']"
           >导出</el-button>
+          <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="14">
         <div  ref="main" class="grid-content bg-purple">
@@ -46,7 +43,7 @@
             >
             <el-button
               slot="append"
-              icon="el-icon-s-fold"
+              icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -60,7 +57,7 @@
         :model="queryParams"
         label-width="80px"
       >
-          <el-form-item label="所属隧道" prop="tunnelId" style="width: 100%" v-show="manageStatin == '0'">
+          <el-form-item label="所属隧道" prop="tunnelId"  v-show="manageStatin == '0'">
             <el-select v-model="queryParams.tunnelId" placeholder="请选择所属隧道" clearable size="small">
               <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId" />
             </el-select>
@@ -103,7 +100,7 @@
         </el-form-item>
       </el-form>
     </div>
-
+    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange"
     :row-class-name="tableRowClassName" max-height="640"
     >
@@ -486,41 +483,3 @@ export default {
   }
 };
 </script>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>

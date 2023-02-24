@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
-        select t.id, d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time from sd_task_list t
+        select t.id, d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bz_name,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time from sd_task_list t
         left join sys_dept d on d.dept_id =  t.zzjg_id
         left join sys_user u on t.dispatcher = u.user_id
         left join sys_dept b on b.dept_id =  t.bz_id
@@ -139,9 +139,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
-        select e.tunnel_name,s.id,s.task_name,s.tunnel_id,s.end_plantime,s.bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
+        select e.tunnel_name,s.id,s.task_name,s.tunnel_id,s.end_plantime,y.dept_name bz_name,y.dept_id bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
         from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
         left join sys_dept d on s.zzjg_id = d.dept_id
+        left join sys_dept y on s.bz_id = y.dept_id
         left join sd_tunnels e on s.tunnel_id = e.tunnel_id
         left join sys_dict_data t on t.dict_value = s.task_status and t.dict_type = 'task_status'
         left join sys_dict_data p on p.dict_value = s.publish_status and p.dict_type = 'publish_status'

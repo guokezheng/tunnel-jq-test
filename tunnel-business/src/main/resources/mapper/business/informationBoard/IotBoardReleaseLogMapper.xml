@@ -46,6 +46,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.endReleaseTime != null and params.endReleaseTime != ''"><!-- 结束时间检索 -->
                 AND date_format(a.release_time,'%y%m%d%H%i%s') &lt;= date_format(#{params.endReleaseTime},'%y%m%d%H%i%s')
             </if>
+            <if test="ids != null "><!-- id 筛选 -->
+                AND a.id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
         </where>
         ORDER BY a.id DESC
     </select>

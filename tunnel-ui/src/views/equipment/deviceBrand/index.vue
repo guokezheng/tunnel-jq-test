@@ -1,56 +1,91 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
-      <el-col :span="4">
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleAdd"
           v-hasPermi="['device:brand:add']"
           >新增</el-button
         >
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['device:brand:edit']"
           >修改</el-button
         >
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['device:brand:remove']"
           >删除</el-button
         >
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['device:brand:export']"
           >导出</el-button>
+          <el-button size="small" @click="resetQuery"
+          >刷新</el-button
+        >
       </el-col>
-      <el-col :span="6" :offset="14">
-        <div class="grid-content bg-purple">
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main">
             <el-input
               v-model="queryParams.supplierName"
               placeholder="请输入设备厂商名称、简称,回车搜索"
               clearable
               size="small"
               @keyup.enter.native="handleQuery">
+              <el-button
+                slot="append"
+                icon="icon-gym-Gsearch"
+                @click="boxShow = !boxShow"
+              ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-
+    <div ref="cc" class="searchBox searchBoxMini" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="100px"
+      >
+      <el-form-item label="设备厂商名称" prop="supplierName">
+        <el-input
+          v-model="queryParams.supplierName"
+          placeholder="请输入设备厂商名称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="简称" prop="shortName" >
+        <el-input
+          v-model="queryParams.shortName"
+          placeholder="请输入简称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="brandList"
@@ -188,7 +223,18 @@ export default {
   created() {
     this.getList();
   },
+  mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
@@ -294,7 +340,7 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有物联设备厂商数据项？")
+        .confirm("是否确认导出所有设备厂商数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportBrand(queryParams);
@@ -308,42 +354,5 @@ export default {
   },
 };
 </script>
-<style>
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>
+
 

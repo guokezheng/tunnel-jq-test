@@ -55,26 +55,20 @@
     <el-row :gutter="20" style="margin: 10px 0 25px">
       <el-col :span="4">
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleAdd"
           v-hasPermi="['device:bigType:add']"
         >新增
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['device:bigType:edit']"
         >修改
         </el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['device:bigType:remove']"

@@ -13,7 +13,7 @@ import store from './store'
 import router from './router'
 import directive from './directive' //directive
 import plugins from './plugins' // plugins
-
+import './assets/icon/iconfont.css' // 阿里巴巴icon
 import './assets/icons' // icon
 import './permission' // permission control
 import { Socket } from './utils/socket'

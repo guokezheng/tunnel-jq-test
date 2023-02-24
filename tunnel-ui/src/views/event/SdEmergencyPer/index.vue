@@ -2,19 +2,37 @@
   <div class="app-container">
 
     <!-- 全局搜索 -->
-    <div>
-      <el-col :span="4">
-      <el-button style ="margin: 10px 0px 25px;height: 35px;"
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
         v-hasPermi="['business:SdEmergencyPer:add']"
         size="small"
-        type="primary"
-        plain
         @click="handleAdd()"
       >新增人员
       </el-button>
-    </el-col>
-    </div>
-    <div ref="main" style = "margin-left: 75%">
+      <el-button size="small" @click="resetQuery" 
+            >刷新</el-button
+            >
+      </el-col>
+      <el-col :span="6" :offset="12">
+          <div ref="main" class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入人员姓名，回车搜索"
+              v-model="queryParams.userName"
+              @keyup.enter.native="handleQuery"
+              size="small"
+            >
+              <el-button
+                slot="append"
+                icon="icon-gym-Gsearch"
+                @click="ry_boxShow = !ry_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+    </el-row>
+
+    <!-- <div ref="main" style = "margin-left: 75%">
       <el-row :gutter="20" style="margin: 10px 0 25px">
 
         <el-col :span="6" style ="width: 100%;">
@@ -32,8 +50,8 @@
             </el-input>
           </div>
         </el-col>
-      </el-row>
-      <div class="ry_searchBox" v-show="ry_boxShow">
+      </el-row> -->
+      <div class="searchBox" v-show="ry_boxShow">
         <el-form
           ref="queryForm"
           :inline="true"
@@ -81,7 +99,7 @@
           </el-form-item>
         </el-form>
       </div>
-    </div>
+    <!-- </div> -->
 
 <!--    <el-form
       :model="queryParams"
@@ -217,6 +235,7 @@
         @queryTable="getList"
       ></right-toolbar>
     </el-row> -->
+    <div class="tableTopHr" ></div>
 
     <el-table
       v-loading="loading"
@@ -228,11 +247,12 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号"  align="center">
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号"  align="center">
         <template slot-scope="scope">
           {{scope.$index+1}}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
       <!--      <el-table-column label="隧道ID" align="center" prop="tunnelId" />  -->
       <el-table-column label="隧道" align="center" prop="tunnelName" />
@@ -422,6 +442,11 @@ export default {
       }
     },
 
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+
     getTunnels() {
       if(this.$cache.local.get("manageStation") == "1"){
         this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
@@ -584,43 +609,3 @@ export default {
   }
 };
 </script>
-
-
-<style>
-.ry_searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.ry_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
-</style>

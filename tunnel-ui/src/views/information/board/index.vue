@@ -75,6 +75,7 @@
                 :title="item.label"
                 :name="item.devicePixel"
               >
+              <div>
                 <el-checkbox
                   style="width: 100%"
                   :indeterminate="isIndeterminate"
@@ -104,6 +105,8 @@
                     
                   </el-checkbox>
                 </el-checkbox-group>
+              </div>
+                
               </el-collapse-item>
             </el-collapse>
           </el-form-item>
@@ -119,16 +122,16 @@
           <div class="controlBox">
             <el-button
               @click.native="openDialogVisible(1, 2)"
-              :disabled="disabledButton"
+              :disabled="form.devicePixel?false:disabledButton"
               >添加信息</el-button
             >
-            <el-button type="primary" @click="publishInfo" :disabled="disabledCheckbox">发布信息</el-button>
+            <el-button type="primary" @click="publishInfo" 
+            :disabled="!form.devicePixel || contentList.length==0 || checkedCities.length==0">发布信息</el-button>
           </div>
         </div>
         <div class="contentBox">
-          
           <el-table :data="contentList" row-key="ID" v-loading="loading" max-height="700">
-            <el-table-column align="center"  width="650">
+            <el-table-column align="right"  width="560">
               <template slot-scope="scope">
                 <div class="con">
                   <div
@@ -161,21 +164,24 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column  align="center" style="width:20%;border:solid 1px red">
+            <el-table-column  align="left" style="width:20%;border:solid 1px red">
               <template slot-scope="scope">
                 <div class="menuBox">
                   <el-tooltip content="加入信息模板" placement="top">
-                    <i class="el-icon-d-arrow-right" @click="arrowRight(scope.row)"></i>
+                    <!-- <i class="el-icon-d-arrow-right" @click="arrowRight(scope.row)"></i> -->
+                    <div @click="arrowRight(scope.row)"></div>
                   </el-tooltip>
                   
                   <el-tooltip content="编辑" placement="top">
-                    <i
+                    <!-- <i
                       class="el-icon-edit-outline"
                       @click="openQbbDrawer(scope.row, scope.$index, 1)"
-                    ></i>
+                    ></i> -->
+                    <div @click="openQbbDrawer(scope.row, scope.$index, 1)"></div>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="top">
-                    <i class="el-icon-close" @click="delQbbDrawer(scope.$index)"></i>
+                    <!-- <i class="el-icon-close" @click="delQbbDrawer(scope.$index)"></i> -->
+                    <div @click="delQbbDrawer(scope.$index)"></div>
                   </el-tooltip>
                 </div>
               </template>
@@ -251,7 +257,7 @@
                 </div>
                 <div class="menuBox">
                   <el-tooltip content="加入待下发信息" placement="top">
-                    <i
+                    <!-- <i
                       class="el-icon-d-arrow-left"
                       @click="arrowLeft(itm)"
                       :class="
@@ -260,19 +266,29 @@
                           : ''
                       "
                       style="cursor: pointer"
-                    ></i>
+                    ></i> -->
+                    <div  
+                      @click="arrowLeft(itm)"
+                      :class="
+                        disabledButton && !form.devicePixel
+                          ? 'disabledClass'
+                          : ''
+                      "
+                      style="cursor: pointer"></div>
                   </el-tooltip>
                   <el-tooltip content="编辑" placement="top">
-                    <i
+                    <!-- <i
                       class="el-icon-edit-outline"
-                      @click="editOutline(itm, indx, 2)"
-                    ></i>
+                      
+                    ></i> -->
+                    <div @click="editOutline(itm, indx, 2)"></div>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="top">
-                    <i
+                    <!-- <i
                       class="el-icon-delete"
                       @click="handleDelete(itm)"
-                    ></i>
+                    ></i> -->
+                    <div @click="handleDelete(itm)"></div>
                   </el-tooltip>
                   
                   
@@ -365,7 +381,6 @@ export default {
     return {
       toRightCategory:'',
       arrowRightVisible:false,
-      disabledCheckbox:true,
       loading:false,
       submitButton:false,
       iotBoardActive: '',
@@ -563,7 +578,7 @@ export default {
       let width = num.split("*")[0];
       let height = num.split("*")[1];
       // 实际分辨率比页面板子小
-      if (width < 630 && height < 75) {
+      if (width < 540 && height < 75) {
         if (type == "width") {
           return width;
         } else if (type == "height") {
@@ -571,11 +586,11 @@ export default {
         }
       } else {
         // 实际分辨率比页面板子大
-        if (width / 630 > height / 75) {
+        if (width / 540 > height / 75) {
           if (type == "width") {
-            return 630;
+            return 540;
           } else if (type == "height") {
-            return height / (width / 630);
+            return height / (width / 540);
           }
         } else {
           if (type == "width") {
@@ -594,7 +609,7 @@ export default {
     },
     arrowLeft(item) {
       console.log(item, "item");
-      var contentList = {
+      var list = {
         FONT_SIZE: item.tcontents[0].fontSize + "px",
         COLOR: item.tcontents[0].fontColor,
         CONTENT: item.tcontents[0].content,
@@ -606,7 +621,7 @@ export default {
         category: item.category, //所属类别
         ID:this.contentList.length,
       };
-      this.contentList.push(contentList);
+      this.contentList.push(list);
       console.log(this.contentList, "this.contentList");
     },
     arrowRight(item) {
@@ -661,9 +676,12 @@ export default {
         };
         addTemplateContent(params2).catch((err) => {
           throw err;
-        });
+        }).then((res)=>{
+          if(res.code == 200){
+            this.allVmsTemplate('no')
+          }
+        })
         // this.getActiveNames(item.category);
-        this.allVmsTemplate()
       });
       this.arrowRightVisible = false
     },
@@ -712,12 +730,12 @@ export default {
           return deleteTemplate(ids);
         })
         .then(() => {
-          this.allVmsTemplate();
+          this.allVmsTemplate('no');
           this.$modal.msgSuccess("删除成功");
         });
     },
     // 情报板管理右侧查询接口
-    allVmsTemplate() {
+    allVmsTemplate(type) {
       const param = {
         devicePixel: this.form.devicePixel,
       };
@@ -732,8 +750,9 @@ export default {
           arr.list = brr;
           jArr.push(j.toString())
         }
-        this.activeNames = jArr
-
+        if(type != 'no'){
+          this.activeNames = jArr
+        }
         this.$forceUpdate();
         console.log(this.iotTemplateCategoryList,"新模板")
       });
@@ -746,48 +765,60 @@ export default {
     },
     // 发布信息
     publishInfo() {
-      console.log(this.contentList, "this.contentListthis.contentList");
-      var content = "";
-      var playList = "[Playlist]<r><n>";
-      var Item_Start = "ITEM_NO=";
-      var Item_Content = "ITEM";
-      content += playList;
-      var length = parseInt(this.contentList.length);
-      var Item_No = Item_Start + length + "<r><n>";
-      var value = "";
-      content += Item_No;
-      for (var i = 0; i < this.contentList.length; i++) {
-        value = ("000" + i).slice(-3);
-        content += Item_Content + value + "=";
-        content += this.contentList[i].STAY + ",";
-        content += this.contentList[i].ACTION + ",";
-        content += this.contentList[i].SPEED + "," + "\\";
-        content += "C" + this.contentList[i].COORDINATE.replace("-",'0') + "\\";
-        content += "S00\\";
-        content += "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
-        content += "f" + this.getFontValue(this.contentList[i].FONT);
-        content +=
-          this.contentList[i].FONT_SIZE.substring(0, 2) +
-          this.contentList[i].FONT_SIZE.substring(0, 2);
-        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, "<r><n>");
+      this.$confirm('是否确定发布情报板?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          console.log(this.contentList, "this.contentListthis.contentList");
+          var content = "";
+          var playList = "[Playlist]<r><n>";
+          var Item_Start = "ITEM_NO=";
+          var Item_Content = "ITEM";
+          content += playList;
+          var length = parseInt(this.contentList.length);
+          var Item_No = Item_Start + length + "<r><n>";
+          var value = "";
+          content += Item_No;
+          for (var i = 0; i < this.contentList.length; i++) {
+            value = ("000" + i).slice(-3);
+            content += Item_Content + value + "=";
+            content += this.contentList[i].STAY + ",";
+            content += this.contentList[i].ACTION + ",";
+            content += this.contentList[i].SPEED + "," + "\\";
+            content += "C" + this.contentList[i].COORDINATE.replace("-",'0') + "\\";
+            content += "S00\\";
+            content += "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
+            content += "f" + this.getFontValue(this.contentList[i].FONT);
+            content +=
+              this.contentList[i].FONT_SIZE.substring(0, 2) +
+              this.contentList[i].FONT_SIZE.substring(0, 2);
+            content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, "<r><n>");
 
-        if (i + 1 != this.contentList.length) {
-          content += "<r><n>";
-        }
-        console.log(content, "content");
-      }
-      let protocolType = "GUANGDIAN_V33";
-      let deviceld = this.checkedCities.toString();
-      console.log(deviceld, "deviceld");
-      uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
-        console.log(response, "返回结果");
-        this.$modal.msgSuccess("发布成功");
-        // setTimeout(() => {
-        //   getBoardContent(deviceld).then((res) => {
-        //     console.log(res, "情报板内容查询");
-        //   });
-        // }, 1000);
-      });
+            if (i + 1 != this.contentList.length) {
+              content += "<r><n>";
+            }
+            console.log(content, "content");
+          }
+          let protocolType = "GUANGDIAN_V33";
+          let deviceld = this.checkedCities.toString();
+          console.log(deviceld, "deviceld");
+          uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
+            console.log(response, "返回结果");
+            this.$modal.msgSuccess("发布成功");
+            // setTimeout(() => {
+            //   getBoardContent(deviceld).then((res) => {
+            //     console.log(res, "情报板内容查询");
+            //   });
+            // }, 1000);
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取发布情报板'
+          });          
+        });
+      
     },
 
     // 接收子组件新增待发模板
@@ -806,7 +837,7 @@ export default {
       this.$forceUpdate();
 
       console.log(this.contentList, "99999999999");
-      this.allVmsTemplate();
+      this.allVmsTemplate('no');
     },
 
     // 打开添加信息弹窗
@@ -821,23 +852,12 @@ export default {
     },
 
     handleCheckAllChange(val) {
-      if(val){
-        this.disabledCheckbox = false
-      }else{
-        this.disabledCheckbox = true
-      }
       this.checkedCities = val ? this.deviceList : [];
     },
     handleCheckedCitiesChange(value) {
       
       this.checkedCities = value;
       let val = JSON.parse(JSON.stringify(value));
-      if(val.length>0){
-        this.disabledCheckbox = false
-      }else{
-        this.disabledCheckbox = true
-      }
-      this.$forceUpdate()
       for (let itm of this.deviceList) {
         if (val.indexOf(itm) > -1) {
           this.checkAll = true;
@@ -845,6 +865,8 @@ export default {
           this.checkAll = false;
         }
       }
+      this.$forceUpdate()
+
     },
     handleChange(val) {
       console.log(val,"情报板列表手风琴")
@@ -853,7 +875,6 @@ export default {
       // this.checkboxList = [];
       // this.checkboxValue = []
       this.disabledButton = true;
-      this.disabledCheckbox = true
       this.checkedCities = []
       this.checkAll = false
       this.form.devicePixel = val;
@@ -891,7 +912,7 @@ export default {
     },
     getColorValue(color) {
       if (color == "蓝色" || color == 'blue') return "000000255000";
-      if (color == "绿色" || color == 'GreenYellow') return "000255000000";
+      if (color == "绿色" || color == '#00FF00') return "000255000000";
       if (color == "透明色" ) return "t";
       if (color == "红色" || color == 'red') return "255000000000";
       return "255255000000"; //黄色
@@ -999,7 +1020,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "GreenYellow";
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -1019,18 +1040,18 @@ export default {
         width = screenSize.split("*")[0];
         height = screenSize.split("*")[1];
       }
-      if (width < 630 && height < 75) {
+      if (width < 540 && height < 75) {
         if (font.toString().length == 2) {
           return font + "px";
         } else {
           return font.substring(0, 2) + "px";
         }
       } else {
-        if (width / 630 > height / 75) {
+        if (width / 540 > height / 75) {
           if (font.toString().length == 2) {
-            return font / (width / 630) - 4 + "px";
+            return font / (width / 540) - 4 + "px";
           } else {
-            return font.substring(0, 2) / (width / 630) - 4 + "px";
+            return font.substring(0, 2) / (width / 540) - 4 + "px";
           }
         } else {
           if (font.toString().length == 2) {
@@ -1051,14 +1072,14 @@ export default {
         width = screenSize.split("*")[0];
         height = screenSize.split("*")[1];
       }
-      if (width < 630 && height < 75) {
+      if (width < 540 && height < 75) {
         return coordinate + "px";
       } else {
-        if (width / 630 > height / 75) {
+        if (width / 540 > height / 75) {
           if (type == "left") {
-            return coordinate / (width / 630) + "px";
+            return coordinate / (width / 540) + "px";
           } else if (type == "top") {
-            return coordinate / (width / 630) + "px";
+            return coordinate / (width / 540) + "px";
           }
         } else {
           if (type == "left") {
@@ -1113,7 +1134,7 @@ export default {
       this.showEmit = false;
       this.arrowRightVisible = false
       setTimeout(() => {
-        this.allVmsTemplate();
+        this.allVmsTemplate('no');
       }, 500);
     },
   },
@@ -1129,6 +1150,7 @@ export default {
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
+      height: 60px;
     }
     .contentBox {
       width: 100%;
@@ -1166,7 +1188,7 @@ export default {
           // text-align: center;
           // background: black;
           position: relative;
-          width: 630px;
+          width: 540px;
           // margin-left: 10px;
           overflow: hidden;
           display: flex;
@@ -1177,7 +1199,36 @@ export default {
         .menuBox {
           display: flex;
           align-items: center;
-          margin-left: 10px;
+          // margin-left: 10px;
+          border: solid 1px #05afe3;
+          width: 165px;
+          height: 75px;
+          justify-content: space-around;
+          align-items: center;
+          div{
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            width: 40px;
+            height: 40px;
+          }
+          >div:first-of-type{
+            background-image: url(../../../assets/cloudControl/toLeft2.png);
+          }
+          >div:nth-of-type(2){
+            background-image: url(../../../assets/cloudControl/edit2.png);
+          }
+          >div:last-of-type{
+            background-image: url(../../../assets/cloudControl/edit4.png);
+          }
+          >div:first-of-type:hover{
+            background-image: url(../../../assets/cloudControl/toLeft1.png);
+          }
+          >div:nth-of-type(2):hover{
+            background-image: url(../../../assets/cloudControl/edit1.png);
+          }
+          >div:last-of-type:hover{
+            background-image: url(../../../assets/cloudControl/closeIcon1.png);
+          }
           i {
             font-size: 24px;
             color: #666;
@@ -1186,7 +1237,7 @@ export default {
             user-select: none;
           }
           i:hover{
-            color:#05afe3;
+            color:#05afe3 !important;
           }
         }
       // }
@@ -1217,7 +1268,7 @@ export default {
           border: 1px solid #05afe3;
           // background: black;
           position: relative;
-          width: 630px;
+          width: 540px;
           float: left;
           display: flex;
           justify-content: center;
@@ -1227,8 +1278,39 @@ export default {
         .menuBox {
           display: flex;
           // align-items: center;
-          margin: 28px 0;
+          // margin: 28px 0;
           float: right;
+          margin-left: 10px;
+          border: solid 1px #05afe3;
+          width: calc(100% - 550px);
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          
+          div{
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            width: 40px;
+            height: 40px;
+          }
+          >div:first-of-type{
+            background-image: url(../../../assets/cloudControl/toLeft2.png);
+          }
+          >div:nth-of-type(2){
+            background-image: url(../../../assets/cloudControl/edit2.png);
+          }
+          >div:last-of-type{
+            background-image: url(../../../assets/cloudControl/edit4.png);
+          }
+          >div:first-of-type:hover{
+            background-image: url(../../../assets/cloudControl/toLeft1.png);
+          }
+          >div:nth-of-type(2):hover{
+            background-image: url(../../../assets/cloudControl/edit1.png);
+          }
+          >div:last-of-type:hover{
+            background-image: url(../../../assets/cloudControl/closeIcon1.png);
+          }
           i {
             font-size: 24px;
             color: #666;
@@ -1343,5 +1425,11 @@ background-color: rgba(5,175,227,0.1) !important;
 ::v-deep .el-collapse-item__header,.el-collapse-item__content{
   caret-color: rgba(0,0,0,0);
   user-select: none;
+}
+::v-deep .el-collapse{
+  border-bottom: transparent;
+}
+::v-deep .el-table .cell{
+  padding-left: 20px;
 }
 </style>

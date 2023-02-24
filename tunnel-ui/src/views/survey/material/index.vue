@@ -1,68 +1,62 @@
 <template>
   <div class="app-container">
-
     <!-- 全局搜索 -->
-    <div>
-     <el-col :span="4">
-      <el-button style ="margin: 10px 0px 25px;height: 35px;"
-        v-hasPermi="['system:material:add']"
-        size="small"
-        type="primary"
-        plain
-        @click="handleAdd()"
-      >新增物资
-      </el-button>
-      <el-button style ="margin: 10px 0px 25px;height: 35px;margin-left: 4%"
-        type="primary"
-        plain
-        size="small"
-        @click="toggleExpandAll"
-      >展开/折叠</el-button>
-    </el-col>
-    </div>
-    <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 25px">
-
-        <el-col :span="6" style="width: 100%;">
-          <div class="grid-content bg-purple">
-            <el-input
-              placeholder="请输入物资名称、桩号，回车搜索"
-              v-model="queryParams.materialName"
-              @keyup.enter.native="handleQuery"
-            >
-              <el-button
-                slot="append"
-                icon="el-icon-s-fold"
-                @click="wz_boxShow = !wz_boxShow"
-              ></el-button>
-            </el-input>
-          </div>
-        </el-col>
-      </el-row>
-      <div class="wz_searchBox" v-show="wz_boxShow">
-        <el-form
-          ref="queryForm"
-          :inline="true"
-          :model="queryParams"
-          label-width="75px"
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          v-hasPermi="['system:material:add']"
+          size="small"
+          @click="handleAdd()"
+          >新增物资
+        </el-button>
+<!--        <el-button type="primary" plain size="mini" @click="toggleExpandAll"
+          >展开/折叠</el-button
+        >-->
+        <el-button size="small" @click="resetQuery"
+          >刷新</el-button
         >
-
-          <el-form-item label="物资类型" prop="materialType" style="width: 100%">
-            <el-select
-              v-model="queryParams.materialType"
-              clearable
-              placeholder="请选择物资类型"
-              size="small"
-            >
-              <el-option
-                v-for="dict in materialTypeOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-  <!--        <el-form-item label="开始桩号:">
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div  ref = "main" class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入物资名称、桩号，回车搜索"
+            v-model="queryParams.materialName"
+            @keyup.enter.native="handleQuery"
+            size="small"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="wz_boxShow = !wz_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="wz_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="物资类型" prop="materialType">
+          <el-select
+            v-model="queryParams.materialType"
+            clearable
+            placeholder="请选择物资类型"
+            size="small"
+          >
+            <el-option
+              v-for="dict in materialTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <!--        <el-form-item label="开始桩号:">
             <el-form-item prop="station">
               <el-input
                 style="width:335px"
@@ -114,18 +108,17 @@
               />
             </el-form-item>
           </el-form-item>-->
-          <el-form-item class="bottomBox">
-            <el-button size="small" type="primary" @click="handleQuery"
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
             >搜索</el-button
-            >
-            <el-button size="small" @click="resetQuery" type="primary" plain
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
             >重置</el-button
-            >
-          </el-form-item>
-        </el-form>
-      </div>
+          >
+        </el-form-item>
+      </el-form>
     </div>
-<!--    <el-form
+    <!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -272,7 +265,7 @@
         </el-tooltip>
       </div>
     </el-row> -->
-
+    <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
       :data="materialList"
@@ -281,11 +274,12 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号"  align="center">
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+<!--      <el-table-column label="序号" align="center">
         <template slot-scope="scope">
-          {{scope.$index+1}}
+          {{ scope.$index + 1 }}
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
       <el-table-column label="物资名称" align="center" prop="materialName" />
       <el-table-column
@@ -712,7 +706,7 @@ export default {
       },
       disabled: false,
       // 遮罩层
-      wz_boxShow:false,
+      wz_boxShow: false,
       loading: true,
       dloading: false,
       // 选中数组
@@ -917,14 +911,18 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.wz_boxShow == true){
+        if (self.wz_boxShow == true) {
           self.wz_boxShow = false;
         }
       }
+    },
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
     focus() {
       this.$nextTick(() => {
@@ -1401,44 +1399,5 @@ h3 {
   width: 100%;
   display: inline-table;
   vertical-align: middle;
-}
-</style>
-
-<style>
-.wz_searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
-<style lang="scss" scoped>
-.wz_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
 }
 </style>

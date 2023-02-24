@@ -13,6 +13,7 @@ import com.ruoyi.common.utils.WindDirectionUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
@@ -23,6 +24,7 @@ import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.digitalmodel.ISdSpecialVehicleService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
@@ -84,6 +86,9 @@ public class KafkaReadListenToHuaWeiTopic {
 
     @Autowired
     private ISdEventTypeService sdEventTypeService;
+
+    @Autowired
+    private ISdSpecialVehicleService specialVehicleService;
 
     @Autowired
     private RadarEventServiceImpl radarEventServiceImpl;
@@ -398,6 +403,8 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
             //新增路段车辆行驶记录数据
             analysisRidTravel(jsonObject);
+            //新增重点车辆记录
+            addSpecialVehicle(jsonObject);
         }
         consumer.commitSync();
     }
@@ -1491,6 +1498,37 @@ public class KafkaReadListenToHuaWeiTopic {
         sdVehicleDriving.setCreateTime(DateUtils.getNowDate());
         SdVehicleDrivingMapper drivingMapper = SpringUtils.getBean(SdVehicleDrivingMapper.class);
         drivingMapper.insertSdVehicleDriving(sdVehicleDriving);
+    }
+
+
+    /**
+     * 根据车辆类型筛选重点车辆记录
+     * @param jsonObject
+     */
+    public void addSpecialVehicle(JSONObject jsonObject){
+        //华为事件中车辆类型的4和23是重点车辆（两客一危）
+        String vehicleType = jsonObject.getString("vehicleType");
+        if("4".equals(vehicleType) || "23".equals(vehicleType)){
+            //根据trackID判断，记录存在，修改；不存在新增
+            String trackId = jsonObject.getString("trackID");
+            SdSpecialVehicles vehicle = specialVehicleService.selectSdSpecialVehicleById(trackId);
+            if(vehicle != null){
+                //存在记录，设置结束时间
+                vehicle.setEndTime(jsonObject.getString("startTime"));
+                specialVehicleService.updateSdSpecialVehicle(vehicle);
+            }else{
+                SdSpecialVehicles specialVehicles = new SdSpecialVehicles();
+                specialVehicles.setId(trackId);
+                specialVehicles.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+//            specialVehicles.setVehicleId();
+                specialVehicles.setVehicleType(getVehicleType(jsonObject.getString("vehicleType")));
+                specialVehicles.setVehicleColor(getVehicleColor(jsonObject.getString("vehicleColor")));
+                specialVehicles.setVehicleLicense(jsonObject.getString("plateNumber"));
+                specialVehicles.setLicenseColor(getPlateColor(jsonObject.getString("plateColor")));
+                specialVehicles.setStartTime(jsonObject.getString("startTime"));
+                specialVehicleService.insertSdSpecialVehicle(specialVehicles);
+            }
+        }
     }
 
     /**

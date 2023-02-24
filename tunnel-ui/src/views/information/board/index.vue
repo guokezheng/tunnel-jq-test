@@ -154,10 +154,10 @@
                       }"
                       class="boardTextStyle"
                       v-html="
-                        scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                        scope.row.CONTENT?scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                           / /g,
                           ' &nbsp'
-                        )
+                        ):''
                       "
                     ></span>
                   </div>
@@ -368,6 +368,32 @@ import {
   deleteTemplate
 } from "@/api/board/template";
 const cityOptions = ["上海", "北京", "广州", "深圳"];
+/**
+ * 对象深拷贝
+ */
+ export const deepClone = (data) => {
+  // 封装的判断数据类型的方法
+  var type = typeof data;
+  var obj;
+  if (type === "array") {
+    obj = [];
+  } else if (type === "object") {
+    obj = {};
+  } else {
+    // 不再具有下一层次
+    return data;
+  }
+  if (type === "array") {
+    for (var i = 0, len = data.length; i < len; i++) {
+      obj.push(deepClone(data[i]));
+    }
+  } else if (type === "object") {
+    for (var key in data) {
+      obj[key] = deepClone(data[key]);
+    }
+  }
+  return obj;
+};
 export default {
   name: "Device",
   components: {
@@ -434,6 +460,11 @@ export default {
       templateList: [],
       toRightItem:{},
     };
+  },
+  watch:{
+    'contentList': function (newVal, oldVal) {
+      console.log(newVal,"newValcontentList")
+    }
   },
   created() {
     this.getUserDept();
@@ -503,7 +534,6 @@ export default {
       });
     },
     checkData(obj) {
-      console.log(obj,"obj")
       if (obj.children && obj.children.length > 0) {
         this.checkData(obj.children[0]);
       } else {
@@ -521,7 +551,7 @@ export default {
     // 通过所属机构查隧道
     changeMechanism(val) {
       listTunnels(val).then((response) => {
-        console.log(response.rows, "所属隧道列表");
+        // console.log(response.rows, "所属隧道列表");
         this.form.tunnel = response.rows[0].tunnelId;
         this.tunnelData = response.rows;
         // this.getIotBoard();
@@ -537,7 +567,7 @@ export default {
         } else {
           this.form.eqDirection = res.data[0].dictValue;
         }
-        console.log(this.boardDirectionList, "板子方向");
+        // console.log(this.boardDirectionList, "板子方向");
         this.getIotBoard();
       });
     },
@@ -559,7 +589,7 @@ export default {
       };
       getIotBoardList(param).then((res) => {
         console.log(res, "查询情报板设备列表");
-        console.log(this.checkAll,"checkAllcheckAllcheckAllcheckAll")
+        // console.log(this.checkAll,"checkAllcheckAllcheckAllcheckAll")
         this.iotBoardList = res.data;
 
         if(res.data.length>0){
@@ -608,7 +638,7 @@ export default {
       this.allVmsTemplate();
     },
     arrowLeft(item) {
-      console.log(item, "item");
+      console.log(item, "向左新增待下发");
       var list = {
         FONT_SIZE: item.tcontents[0].fontSize + "px",
         COLOR: item.tcontents[0].fontColor,
@@ -632,13 +662,14 @@ export default {
       }else{
         this.arrowRightAllVmsTemplate()
       }
-      console.log(item, "item");
+      console.log(item, "向右添加模板");
       
     },
     // categoryButton(){
     //   this.arrowRightAllVmsTemplate()
     // },
     arrowRightAllVmsTemplate(){
+      console.log(this.contentList,"不选所属类别向右contentList")
       console.log(this.toRightItem,this.toRightCategory)
       let item = this.toRightItem
       let templateId = "";
@@ -660,7 +691,7 @@ export default {
       };
       // 新增
       addTemplate(params1, method).then((data) => {
-        console.log(data, "新增口");
+        console.log(data, "新增口返回data");
         const templateContent = [];
         templateContent.push({
           content: item.CONTENT,
@@ -687,10 +718,10 @@ export default {
     },
     // 修改弹窗
     editOutline(item, index, type) {
-      console.log(item, index, "item,index");
+      // console.log(item, index, "item,index");
       this.index = index;
       this.editType = type;
-      console.log(item);
+      console.log(item,"修改弹窗");
       this.boardEmitItem = {
         FONT_SIZE: item.tcontents[0].fontSize + "px",
         COLOR: item.tcontents[0].fontColor,
@@ -707,7 +738,7 @@ export default {
         tcontentsId: item.tcontents[0].id,
       };
 
-      console.log(this.showEmit, "this.showEmit");
+      // console.log(this.showEmit, "this.showEmit");
       this.showEmit = true;
     },
     /** 删除按钮操作 */
@@ -770,7 +801,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log(this.contentList, "this.contentListthis.contentList");
+          console.log(this.contentList, "发布信息");
           var content = "";
           var playList = "[Playlist]<r><n>";
           var Item_Start = "ITEM_NO=";
@@ -823,10 +854,12 @@ export default {
 
     // 接收子组件新增待发模板
     addInfo(form) {
+      console.log(this.contentList, "11111111111");
+
       console.log(form, "待发新增");
       form.ID = this.contentList.length
-      this.contentList.push(form);
-      console.log(this.contentList, "this.contentListthis.contentList");
+      this.contentList.push(deepClone(form));
+      console.log(this.contentList, "2222222222222222222t");
       this.$forceUpdate();
     },
 
@@ -1112,24 +1145,24 @@ export default {
         return font;
       }
     },
-    //  上移
-    moveTop(i, item) {
-      if (item && i) {
-        let obj = { ...this.contentList[i - 1] };
-        this.contentList.splice(i - 1, 1, item);
-        this.contentList.splice(i, 1, obj);
-        this.$forceUpdate();
-      }
-    },
-    // 下移
-    moveBottom(i, item) {
-      if (item && typeof i === "number") {
-        let obj = { ...this.contentList[i + 1] };
-        this.contentList.splice(i + 1, 1, item);
-        this.contentList.splice(i, 1, obj);
-        this.$forceUpdate();
-      }
-    },
+    // //  上移
+    // moveTop(i, item) {
+    //   if (item && i) {
+    //     let obj = { ...this.contentList[i - 1] };
+    //     this.contentList.splice(i - 1, 1, item);
+    //     this.contentList.splice(i, 1, obj);
+    //     this.$forceUpdate();
+    //   }
+    // },
+    // // 下移
+    // moveBottom(i, item) {
+    //   if (item && typeof i === "number") {
+    //     let obj = { ...this.contentList[i + 1] };
+    //     this.contentList.splice(i + 1, 1, item);
+    //     this.contentList.splice(i, 1, obj);
+    //     this.$forceUpdate();
+    //   }
+    // },
     dialogClose() {
       this.showEmit = false;
       this.arrowRightVisible = false
@@ -1212,7 +1245,7 @@ export default {
             height: 40px;
           }
           >div:first-of-type{
-            background-image: url(../../../assets/cloudControl/toLeft2.png);
+            background-image: url(../../../assets/cloudControl/toRight2.png);
           }
           >div:nth-of-type(2){
             background-image: url(../../../assets/cloudControl/edit2.png);
@@ -1221,7 +1254,7 @@ export default {
             background-image: url(../../../assets/cloudControl/edit4.png);
           }
           >div:first-of-type:hover{
-            background-image: url(../../../assets/cloudControl/toLeft1.png);
+            background-image: url(../../../assets/cloudControl/toRight1.png);
           }
           >div:nth-of-type(2):hover{
             background-image: url(../../../assets/cloudControl/edit1.png);

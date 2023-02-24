@@ -534,7 +534,7 @@
             style="width: 100%"
             border
             height="358px"
-            class="dialogTable allTable"
+            class="allTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
@@ -614,7 +614,7 @@
             style="width: 100%"
             border
             height="358px"
-            class="dialogTable allTable"
+            class="allTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>

@@ -407,7 +407,7 @@
                             style="padding-top:10px"
                           >{{item.CONTENT}}</span>
                           </div>
-
+                          
                         </div>
                         <div v-show="item.eqType == 36"
                         class="boardBox2"
@@ -429,10 +429,10 @@
                               : ''
                           "
                           >
-                          <div
+                          <div 
                           :style="{
                                 animation: 'boardBox2 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite',
-
+                              
                             }">
                             <span
                             v-for="(item,index) in getBoardStyle(item.associated_device_id,'array')" :key="index"
@@ -442,7 +442,7 @@
                             style="padding-top:10px"
                             >{{item.CONTENT}}</span>
                           </div>
-
+                          
                         </div>
                         <!-- 调光数值 -->
                         <label
@@ -1020,12 +1020,12 @@
                       </div>
                     </el-col>
                     <el-col style="display:flex" :span="4">
-                    <div
-                      style="width:100%"
+                    <div 
+                      style="width:100%" 
                       :style="{color:item.eventType.prevControlType == '0'?'red':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
                       {{item.eventType.simplifyName}}
                     </div>
-
+                      
                     </el-col>
                     <el-col :span="18" style="display: flex;">
                       <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
@@ -1239,22 +1239,24 @@
     </el-tabs>
 
 
-      <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;margin-top: 5%">
-        <el-row :gutter="20" style="margin: 10px 0 25px">
+      <!-- <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;"> -->
+        <el-row :gutter="20" style="margin: 0px 0 6px;" v-show="operationActive == 'xitong'">
 
-          <el-col :span="12"  >
-            <div class="grid-content bg-purple">
+          <el-col :span="10" :offset="14" >
+            <div class="grid-content bg-purple" ref="main">
               <el-input
                 placeholder="请输入登录地址、用户名称，回车搜索"
                 v-model="operationParam.ipaddr"
                 @keyup.enter.native="handleQueryOperationParam"
-                v-show="operationActive == 'xitong'"
-                class="zj"
+                style='padding-right:5px'
+                size="small"
               >
                 <el-button
                   slot="append"
-                  icon="el-icon-s-fold"
+                  size="small"
+                  icon="icon-gym-Gsearch"
                   @click="syxt_boxShow = !syxt_boxShow"
+                  style="transform:translateX(20px)"
                 ></el-button>
               </el-input>
             </div>
@@ -1265,15 +1267,16 @@
             ref="operationParam"
             :inline="true"
             :model="operationParam"
-            label-width="68px" style="margin-top: 10px"
+            label-width="68px" 
             v-show="operationActive == 'xitong'"
           >
-            <el-form-item label="登录状态" prop="status" style="width: 100%">
+            <el-form-item label="登录状态" prop="status" >
               <el-select
                 v-model="operationParam.status"
                 clearable
                 placeholder="请选择登录状态"
                 size="small"
+                style="width:100%"
               >
                 <el-option
                   v-for="dict in dict.type.sys_common_status"
@@ -1287,7 +1290,7 @@
               <el-date-picker
                 v-model="dateRange"
                 size="small"
-                style="width: 252px;"
+                style="width: 100%;"
                 value-format="yyyy-MM-dd HH-mm-ss"
                 type="datetimerange"
                 range-separator="-"
@@ -1306,7 +1309,7 @@
             </el-form-item>
           </el-form>
         </div>
-      </div>
+      <!-- </div> -->
 
 <!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'xitong'"
              label-width="68px" style="margin-top: 10px">
@@ -1345,22 +1348,22 @@
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>-->
-      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%" >
-        <el-row :gutter="20" style="margin: 10px 0 25px">
+        <el-row :gutter="20" style="margin: 0px 0 6px;" v-show="operationActive == 'caozuo'">
 
-          <el-col :span="12"  >
-            <div class="grid-content bg-purple">
+          <el-col :span="10"  :offset="14">
+            <div class="grid-content bg-purple" ref="main1">
               <el-input
                 placeholder="请输入操作地址，回车搜索"
                 v-model="operationParam.operIp"
                 @keyup.enter.native="handleQueryOperationParam"
-                v-show="operationActive == 'caozuo'"
-                class="zj"
+                size="small"
+                style="padding-right:5px"
               >
                 <el-button
                   slot="append"
-                  icon="el-icon-s-fold"
+                  icon="icon-gym-Gsearch"
                   @click="sycz_boxShow = !sycz_boxShow"
+                  style="transform:translateX(-20px)"
                 ></el-button>
               </el-input>
             </div>
@@ -1371,7 +1374,7 @@
             ref="operationParam"
             :inline="true"
             :model="operationParam"
-            label-width="68px" style="margin-top: 10px"
+            label-width="68px"
             v-show="operationActive == 'caozuo'"
           >
             <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
@@ -1445,7 +1448,6 @@
             </el-form-item>
           </el-form>
         </div>
-      </div>
 
 <!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'caozuo'"
                label-width="68px" style="margin-top: 10px">
@@ -2805,7 +2807,7 @@
     <!--查看控制策略对话框-->
     <el-dialog
       v-dialogDrag
-      class="workbench-dialog explain-table strategyClass eventDiglog"
+      class="workbench-dialog explain-table operationDiglog"
       :title="title"
       :visible.sync="strategyVisible"
       width="1000px"
@@ -2815,62 +2817,151 @@
           <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
           <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>
     </el-tabs>
-    <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-
-          label-width="68px"
-        >
-          <el-form-item label="隧道名称" prop="tunnelId">
-            <el-select
-              v-model="queryParams.tunnelId"
-              placeholder="请选择隧道"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="策略名称" prop="strategyName">
-            <el-input
+    <el-row :gutter="20" style="margin: 0px 0 6px;padding: 0px 5px;" v-show="strategyActive == 'richang'">
+      <el-col :span="4">
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="10" :offset="10" >
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
               v-model="queryParams.strategyName"
               placeholder="请输入策略名称"
-              clearable
+              @keyup.enter.native="handlestrategyQuery"
               size="small"
-              @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              size="small"
+              icon="icon-gym-Gsearch"
+              @click="syxt_boxShow = !syxt_boxShow"
+              style="transform:translateX(20px)"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="syxt_searchBox" v-show="syxt_boxShow" style="top:31%">
+      <el-form
+        ref="operationParam"
+        :inline="true"
+        :model="operationParam"
+        label-width="68px" 
+        v-show="operationActive == 'xitong'"
+      >
+      <el-form-item label="隧道名称" prop="tunnelId">
+        <el-select
+          v-model="queryParams.tunnelId"
+          placeholder="请选择隧道"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="item in tunnelData"
+            :key="item.tunnelId"
+            :label="item.tunnelName"
+            :value="item.tunnelId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="策略类型" prop="strategyType">
+        <el-select
+          v-model="queryParams.strategyType"
+          placeholder="请选择策略类型"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="dict in strategyTypeOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
+          />
+        </el-select>
+      </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" @click="handlestrategyQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" 
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+    <el-row :gutter="20" style="margin: 0px 0 6px;padding: 0px 5px;" v-show="strategyActive == 'yujing'">
+      <el-col :span="4">
+        <el-button size="small" @click="resetQuery" 
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="10"  :offset="10">
+        <div class="grid-content bg-purple" ref="main1">
+          <el-input
+            v-model="queryParams.strategyName"
+            placeholder="请输入策略名称"
+            @keyup.enter.native="handlestrategyQuery"
+            size="small"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+              @click="sycz_boxShow = !sycz_boxShow"
+              style="transform:translateX(-20px)"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+      <div class="syxt_searchBox" v-show="sycz_boxShow" style="top:40%">
+        <el-form
+          ref="operationParam"
+          :inline="true"
+          :model="operationParam"
+          label-width="68px" 
+          v-show="operationActive == 'xitong'"
+        >
+        <el-form-item label="隧道名称" prop="tunnelId">
+          <el-select
+            v-model="queryParams.tunnelId"
+            placeholder="请选择隧道"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in tunnelData"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
             />
-          </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType">
-            <el-select
-              v-model="queryParams.strategyType"
-              placeholder="请选择策略类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in strategyTypeOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handlestrategyQuery"
+          </el-select>
+        </el-form-item>
+        <el-form-item label="策略类型" prop="strategyType">
+          <el-select
+            v-model="queryParams.strategyType"
+            placeholder="请选择策略类型"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in strategyTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button size="small" @click="handlestrategyQuery"
             >搜索</el-button
             >
-            <el-button size="mini" @click="resetQuery" type="primary" plain
+            <el-button size="small" @click="resetQuery" 
             >重置</el-button
             >
           </el-form-item>
         </el-form>
+      </div>
       <el-table
         ref="multipleTable"
         :data="strategyList"
@@ -2966,9 +3057,9 @@
           @pagination="handlestrategyQuery"
           class="paginationWorkbench"
         />
-      <div slot="footer">
+      <!-- <div slot="footer">
         <el-button type="primary" @click="strategyCancel">关 闭</el-button>
-      </div>
+      </div> -->
     </el-dialog>
     <!-- 情报板编辑弹窗 -->
     <vms-content-update ref="vmsContentUpdate"></vms-content-update>
@@ -4603,7 +4694,7 @@ export default {
 
           if (type == "content") {
             return arr;
-          }
+          } 
           else if (type == "fontSize") {
             if (eqType && eqType == 16) {
               return fontS / 2;
@@ -4989,7 +5080,6 @@ export default {
         this.initeChartsEnd(vehicleXData, vehicleYData);
       });
     },
-
     // 重点车辆监测数据
     specialVehicleEcharts() {
       // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
@@ -5179,6 +5269,10 @@ export default {
       this.dateRange = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
+      this.queryParams.strategyName = '';
+      this.queryParams.tunnelId = '';
+      this.queryParams.strategyType = '';
+
       this.operationParam.ipaddr = "";
       this.operationParam.status = null;
       this.operationParam.operIp = "";
@@ -8855,10 +8949,12 @@ export default {
 //     padding-right: 10px;
 //     border: solid 1px #1088B9;
 // }
-::v-deep .el-input--medium .el-input__inner {
-  width: 5.4vw;
-}
-
+// ::v-deep .el-input--medium .el-input__inner {
+//   width: 5.4vw;
+// }
+// ::v-deep .operationDiglog .el-input--medium .el-input__inner {
+//   width: 100% !important;
+// }
 ::v-deep .el-button--medium {
   margin-left: 20px;
 }
@@ -9783,6 +9879,22 @@ input {
 }
 .eventDiglog,
 .operationDiglog {
+  ::v-deep .el-input-group__append{
+      padding: 0;
+      width: 60px;
+      .el-button{
+        height: 32px;
+        border-top-right-radius: 3px !important;
+        border-bottom-right-radius: 3px !important;
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
+        // transform: translateX(20px);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
   .el-dialog .el-form {
     padding: 15px !important;
     .el-form-item__content .el-button {
@@ -10557,18 +10669,6 @@ input {
 }
 </style>
 
-<style>
-.syxt_searchBox {
-  position: absolute;
-  top: 172px;
-
-  width: 39%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
 <style lang="scss" scoped>
 .lineBT {
   width: 100%;
@@ -10590,31 +10690,36 @@ input {
   }
 }
 .syxt_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 78%;
-    .el-select {
-      width: 100%;
+  position: absolute;
+  top: 17%;
+  right: 15px;
+  width: 39%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+  ::v-deep .el-form-item{
+    width:100%;
+    .el-form-item__content {
+      width: 78%;
+      .el-select {
+        width: 100%;
+      }
     }
   }
   .bottomBox {
-    .el-form-item__content {
+    width: 100%;
+    ::v-deep .el-form-item__content {
       display: flex;
       justify-content: center;
-      align-items: flex-end;
+      align-items: center;
+      width: 100% !important;
     }
   }
 }
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
+
 </style>
-<style lang="scss" scoped>
+<!-- <style lang="scss" scoped>
 .zj {
   ::v-deep input {
     width: 16.5vw !important;
@@ -10630,4 +10735,4 @@ input {
   }
 }
 
-</style>
+</style> -->

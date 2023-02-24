@@ -1,12 +1,11 @@
 <template>
   <div class="app-container">
-    <div >
       <el-row
         :gutter="20"
-        style="margin: 10px 0 25px"
+        class="topFormRow"
       >
         <el-col :span="4">
-          <el-button size="mini" @click="resetQueryTab" type="primary" plain
+          <el-button size="small" @click="resetQueryTab" 
           >刷新</el-button
           >
         </el-col>
@@ -15,12 +14,11 @@
             <el-input
               placeholder="请输入桩号，回车搜索"
               v-model="querysParamsTab.pile"
-              style="width: 456px"
               @keyup.enter.native="handleQueryTab"
             >
               <el-button
                 slot="append"
-                icon="el-icon-s-fold"
+                icon="icon-gym-Gsearch"
                 @click="device_boxShow = !device_boxShow"
               ></el-button>
             </el-input>
@@ -35,7 +33,6 @@
           label-width="75px"
         >
           <el-form-item
-            style="width: 100%"
             label="所属隧道"
             prop="tunnelId"
           >
@@ -55,7 +52,6 @@
           </el-form-item>
 
           <el-form-item
-            style="width: 100%"
             label="设备类型"
             prop="searchValue"
           >
@@ -82,9 +78,9 @@
           </el-form-item>
         </el-form>
       </div>
-    </div>
 
-    <div>
+    <div class="tableTopHr" ></div>
+
       <el-table
         ref="tables"
         v-loading="loading"
@@ -123,7 +119,6 @@
         :limit.sync="querysParamsTab.pageSize"
         @pagination="getListTab"
       />
-    </div>
 
 
     <!--详情弹窗-->
@@ -132,14 +127,14 @@
       <div>
         <el-row
           :gutter="20"
-          style="margin: 10px 0 25px"
+          class="topFormRow"
         >
           <el-col :span="4">
-            <el-button size="mini" @click="resetQuery" type="primary" plain
+            <el-button size="small" @click="resetQuery"
             >刷新</el-button
             >
           </el-col>
-          <el-col :span="1" style="display: flex; justify-content: right" :offset="13">
+          <el-col :span="1"  :offset="13">
             <div @click="marketChang()">
               <i
                 class="el-icon-s-marketing"
@@ -149,7 +144,7 @@
           </el-col>
           <el-col :span="6" style ="padding-left: 0px;">
 
-            <div style="width: 91%; float: left;"  id="pldiv">
+            <div style="width: 100%; float: left;"  id="pldiv">
               <el-form
                 ref="querysForm"
                 :inline="true"
@@ -159,7 +154,7 @@
                 <el-date-picker
                   v-model="dateRange"
                   size="small"
-                  style="width: 335px"
+                  style="width: 100%"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   type="datetimerange"
                   range-separator="-"
@@ -883,16 +878,7 @@ export default {
   width: 100vw;
   height: 60vh;
 }
-.searchBox {
-  position: absolute;
-  top: 8%;
-  right: 1%;
-  width: 24%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
+
 .butBox {
   width: 315px;
   display: flex;
@@ -1009,32 +995,5 @@ hr {
 .tableHeight {
   max-height: 59vh !important;
   overflow: auto;
-}
-</style>
-
-<style lang="scss" scoped>
-.searchBox {
-  ::v-deep .el-form-item__content {
-    width: 80%;
-    .el-select {
-      width: 100%;
-    }
-  }
-  .bottomBox {
-    .el-form-item__content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-    }
-  }
-}
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
 }
 </style>

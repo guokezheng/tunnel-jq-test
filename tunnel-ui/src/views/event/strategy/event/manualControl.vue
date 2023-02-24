@@ -53,7 +53,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="6">
           <el-form-item label="事件类型" prop="eventType">
             <el-select
               clearable
@@ -63,14 +63,14 @@
             >
               <el-option
                 v-for="dict in eventTypeList"
-                :key="dict.dictCode"
-                :label="dict.dictLabel"
-                :value="dict.dictCode"
+                :key="dict.id"
+                :label="dict.eventType"
+                :value="dict.id"
               />
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="8">
           <el-form-item label="有效时间" prop="effectiveTime">
             <el-input
               v-model="strategyForm.effectiveTime"
@@ -78,35 +78,59 @@
             />
           </el-form-item>
         </el-col>
+        <el-col :span="8">
+          <el-form-item label="事件触发" prop="isAutomatic">
+            <el-select
+              clearable
+              v-model="strategyForm.isAutomatic"
+              placeholder="请选择事件触发"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="dict in triggerList"
+                :key="dict.dictCode"
+                :label="dict.dictLabel"
+                :value="dict.dictCode"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-row :gutter="20" style="clear:both;">
         <el-col :span="22">
           <el-form-item label="执行操作">
             <div class="menu">
-              <span class="col4">处置名称</span>
-              <span class="col4">设备类型</span>
-              <span class="col6">指定设备</span>
-              <span class="col4">控制指令</span>
-              <span class="col4">操作</span>
+              <el-col :span="4">处置名称</el-col>
+              <el-col :span="6">设备类型</el-col>
+              <el-col :span="6">指定设备</el-col>
+              <el-col :span="4">控制指令</el-col>
+              <el-col :span="4">操作</el-col>
             </div>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="10">
-        <el-form-item v-for="(items, index) in strategyForm.manualControl">
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="22">
+        <el-form-item
+          v-for="(items, index) in strategyForm.manualControl"
+          :key="index"
+        >
           <el-col :span="4">
             <el-form-item prop="disposalName">
               <el-input
-                v-model="strategyForm.disposalName"
+                v-model="items.disposalName"
+                clearable
                 placeholder="处置名称"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-select
               v-model="items.equipmentTypeId"
               placeholder="请选择设备类型"
               clearable
-              title="手动控制"
               @change="changeEquipmentType(index)"
+              style="width: 100%"
             >
               <el-option
                 v-for="item in items.equipmentTypeData"
@@ -124,6 +148,7 @@
               collapse-tags
               placeholder="请选择设备"
               @change="qbgChange(index, items.value)"
+              style="width: 100%"
             >
               <el-option
                 v-for="item in items.equipmentData"
@@ -141,7 +166,7 @@
             <el-select
               style="width: 100%"
               v-model="items.state"
-              placeholder="请选择设备执行操作"
+              placeholder="请选择执行操作"
             >
               <el-option
                 v-for="item in items.manualControlStateList"
@@ -172,7 +197,6 @@
               icon="el-icon-delete"
               circle
               @click="removeItem(index)"
-              style="margin-left: 2%"
             ></el-button>
             <el-form-item
               label=""
@@ -184,11 +208,11 @@
                 icon="el-icon-plus"
                 circle
                 @click="addItem"
-                style="margin-left: 2%"
               ></el-button>
             </el-form-item>
           </el-col>
         </el-form-item>
+      </el-col>
       </el-row>
       <el-form-item class="dialog-footer">
         <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
@@ -211,6 +235,7 @@ import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import { listType } from "@/api/equipment/type/api";
 import { listRl, addRl } from "@/api/event/strategyRl";
+import{listEventType}from "@/api/event/eventType";
 import {
   listStrategy,
   getStrategy,
@@ -225,6 +250,10 @@ import {
 export default {
   data() {
     return {
+      triggerList: [
+        { dictCode: "0", dictLabel: "手动" },
+        { dictCode: "1", dictLabel: "自动" },
+      ],
       checkStrictly: {
         multiple: false,
         emitPath: false,
@@ -241,6 +270,7 @@ export default {
         direction: "", //方向
         eventType: "",
         effectiveTime: "",
+        isAutomatic: "", //触发
         manualControl: [
           {
             disposalName: "",
@@ -278,6 +308,9 @@ export default {
         effectiveTime: [
           { required: true, message: "请输入有效时间", trigger: "change" },
         ],
+        isAutomatic: [
+          { required: true, message: "请选择事件触发", trigger: "change" },
+        ],
       },
       eventTypeList: [],
     };
@@ -288,10 +321,11 @@ export default {
         this.resetForm();
       }
       // 事件类型
-      this.getDicts("incident_type").then((response) => {
-        this.eventTypeList = response.data;
-      });
-      console.log("init");
+      let data = {prevControlType:"1"};
+      listEventType(data).then(res=>{
+        console.log(res.rows,']]]]]]]]]]]]]]]]]]')
+        this.eventTypeList = res.rows;
+      })
       this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
@@ -303,9 +337,11 @@ export default {
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
+        this.strategyForm.isAutomatic = data.isAutomatic;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
-        this.$set(this.strategyForm, "eventType", data.eventType);
+        this.strategyForm.eventType = Number(data.eventType);
+        // this.$set(this.strategyForm, "eventType", data.eventType);
 
         listRl({ strategyId: this.id }).then((response) => {
           console.log(response, "设备数据");
@@ -315,7 +351,6 @@ export default {
             let manualControl = this.strategyForm.manualControl[i];
             this.strategyForm.manualControl[i].value =
               attr.equipments.split(",");
-            console.log(this.strategyForm.manualControl[i].value, "选择的设备");
             this.strategyForm.manualControl[i].state = attr.state;
             this.strategyForm.effectiveTime = attr.effectiveTime;
             this.strategyForm.manualControl[i].manualControlStateList =
@@ -338,6 +373,13 @@ export default {
                   res.data
                 );
               });
+            }
+            if (
+              this.strategyForm.manualControl[i].equipmentTypeId == 16 ||
+              this.strategyForm.manualControl[i].equipmentTypeId == 36
+            ) {
+              this.strategyForm.manualControl[i].state = +attr.state;
+              this.qbgChange(i,this.strategyForm.manualControl[i].value);
             }
             this.$set(
               manualControl,
@@ -364,6 +406,8 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.strategyForm.manualControl[index].state = null;
+      this.strategyForm.manualControl[index].value = null;
       let params = {
         eqType: this.strategyForm.manualControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -663,17 +707,8 @@ export default {
   color: white;
   background-color: #74c5ff;
   height: 40px;
-  .col4 {
-    width: 16.66%;
-    float: left;
+  .el-col{
     text-align: center;
-    margin: 0 5px;
-  }
-  .col6 {
-    width: 25%;
-    float: left;
-    text-align: center;
-    margin: 0 5px;
   }
 }
 .buttonBox {

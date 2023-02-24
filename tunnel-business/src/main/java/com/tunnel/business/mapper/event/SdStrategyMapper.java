@@ -124,4 +124,13 @@ public interface SdStrategyMapper
      * @return
      */
     List<SdStrategy> getSafetyHandle(SdStrategy strategy);
+
+    int checkStrategy(SdStrategy strategy);
+
+    /**
+     * 查询事件触发预警策略
+     * @param strategy
+     * @return
+     */
+    Map<String, Object> getEventStrategyData(SdStrategy strategy);
 }

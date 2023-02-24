@@ -111,7 +111,8 @@
               size="small"
               @keyup.enter.native="handleQuery"
             />
-          </el-form-item>
+          </el-form-item> -->
+          <!-- 日常 -->
           <el-form-item label="策略类型" prop="strategyType">
             <el-select
               v-model="queryParams.strategyType"
@@ -143,7 +144,7 @@
               >新增</el-button
             >
           </el-form-item>
-        </el-form> -->
+        </el-form>
         <el-table
           v-loading="loading"
           :data="strategyList"
@@ -152,6 +153,12 @@
           max-height="640"
           :row-class-name="tableRowClassName"
         >
+          <el-table-column
+            type="index"
+            width="70"
+            align="center"
+            label="序号">
+          </el-table-column>
           <el-table-column
             label="隧道名称"
             align="center"
@@ -303,7 +310,7 @@
               size="small"
             >
               <el-option
-                v-for="dict in strategyTypeOptions"
+                v-for="dict in strategyTypeEvent"
                 :key="dict.dictValue"
                 :label="dict.dictLabel"
                 :value="dict.dictValue"
@@ -359,7 +366,7 @@
               size="small"
             >
               <el-option
-                v-for="dict in strategyTypeOptions"
+                v-for="dict in strategyTypeEvent"
                 :key="dict.dictValue"
                 :label="dict.dictLabel"
                 :value="dict.dictValue"
@@ -392,6 +399,12 @@
           :row-class-name="tableRowClassName"
         >
           <el-table-column
+            type="index"
+            width="70"
+            align="center"
+            label="序号">
+          </el-table-column>
+          <el-table-column
             label="隧道名称"
             align="center"
             prop="tunnels.tunnelName"
@@ -399,7 +412,8 @@
           <el-table-column
             label="事件类型"
             align="center"
-            prop="tunnels.tunnelName"
+            prop="eventType"
+            :formatter="eventTypeFormatEvent"
           />
           <el-table-column
             label="策略名称"
@@ -416,7 +430,7 @@
             label="策略类型"
             align="center"
             prop="strategyType"
-            :formatter="strategyTypeFormat"
+            :formatter="strategyTypeFormatEvent"
           />
           <el-table-column
             label="策略信息"
@@ -484,6 +498,7 @@
       :visible.sync="dialogVisible"
       :before-close="handleClose"
       :append-to-body="true"
+      width="65%"
     >
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">
@@ -511,12 +526,6 @@
         @dialogVisibleClose="closeDialog"
         ref="timingControl"
       ></timingControl>
-      <!-- 自动触发 -->
-      <!--      <autoControl-->
-      <!--        v-show="strategyForm.strategyType == '2'"-->
-      <!--        @dialogVisibleClose="closeDialog"-->
-      <!--        ref="autoControl"-->
-      <!--      ></autoControl>-->
       <timeControl
         v-show="strategyForm.strategyType == '3'"
         @dialogVisibleClose="closeDialog"
@@ -530,6 +539,7 @@
       :visible.sync="dialogVisibleEvent"
       :before-close="handleClose"
       :append-to-body="true"
+      width="75%"
     >
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">
@@ -574,6 +584,7 @@ import {
   getGuid,
   handleStrategy,
 } from "@/api/event/strategy";
+import{listEventType}from "@/api/event/eventType";
 import { listRl, addRl } from "@/api/event/strategyRl";
 import {
   listType,
@@ -759,12 +770,17 @@ export default {
       strategyTypeGroup: [],
       strategyTypeEvent: [],
       dictCode: "0",
+      eventTypeList:[],//主动安全列表
       // automaticEqType:[] //自动触发设备类型数组
     };
   },
   created() {
     this.getList(); //查询控制策略
     this.getTunnels(); //获取隧道
+    let data = {prevControlType:"1"};
+    listEventType(data).then(res=>{
+      this.eventTypeList = res.rows;
+    })
     // 预警策略
     this.getDicts("sys_common_event").then((response) => {
       this.strategyTypeEvent = response.data;
@@ -775,6 +791,7 @@ export default {
       this.strategyTypeGroup = response.data;
       console.log(this.strategyTypeGroup, "this.strategyTypeGroup");
     });
+    // 日常策略
     this.getDicts("sd_strategy_type").then((response) => {
       this.strategyTypeOptions = response.data;
       this.insertStrategyTypeOptions = response.data;
@@ -812,6 +829,7 @@ export default {
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;
+      console.log(this.dictCode,'0-0-0-0-0-0-0-0-0-0-0-');
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.getList();
     },
@@ -852,7 +870,7 @@ export default {
       this.$set(this.strategyForm, "strategyType", "0");
       if (type == "richang") {
         this.dialogVisible = true;
-        this.strategyTypeEventClose();
+        this.strategyTypeClose();
       } else if (type == "event") {
         this.dialogVisibleEvent = true;
         this.strategyTypeEventClose();
@@ -1090,14 +1108,27 @@ export default {
       this.queryParams.strategyGroup = this.activeName == 'one'?'1':'2'
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
+        console.log(this.strategyList,'this.strategyListthis.strategyListthis.strategyListthis.strategyList')
         this.total = response.total;
         this.loading = false;
       });
     },
     //模式中转换
-    // 策略类型字典翻译
+    eventTypeFormatEvent(row, column){
+      console.log(row)
+      for(let i = 0;i< this.eventTypeList.length;i++){
+        if(row.eventType == this.eventTypeList[i].id){
+          return this.eventTypeList[i].eventType;
+        }
+      }
+    },
+    //日常预警字典值翻译
     strategyTypeFormat(row, column) {
       return this.selectDictLabel(this.strategyTypeOptions, row.strategyType);
+    },
+    // 预警字典值翻译
+    strategyTypeFormatEvent(row, column){
+      return this.selectDictLabel(this.strategyTypeEvent, row.strategyType);
     },
     // 设备方向字典翻译
     directionFormat(row, column) {
@@ -1154,6 +1185,7 @@ export default {
         strategyInfo: null,
         schedulerTime: null,
         jobTime: null,
+        strategyGroup:this.queryParams.strategyGroup
       };
       this.handleQuery();
       this.getList();

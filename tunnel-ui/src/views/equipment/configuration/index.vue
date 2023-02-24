@@ -113,8 +113,8 @@
       v-loading="loading"
       :data="configurationList"
       @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName"
-      max-height="640"
+      height="62vh"
+      class="allTable"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -658,14 +658,6 @@ export default {
     openImg(url) {
       this.img = url;
       this.yn = !this.yn;
-    },
-     // 表格的行样式
-     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   },
 };

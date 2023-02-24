@@ -2,6 +2,7 @@ package com.tunnel.platform.controller.event;
 
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
@@ -196,4 +197,13 @@ public class SdStrategyController extends BaseController
     	sdStrategyService.handleStrategy(id);
     }
 
+    /**
+     * 查询预警事件触发策略
+     * @param strategy
+     * @return
+     */
+    @GetMapping("/getStrategyData")
+    public AjaxResult getStrategyData(SdStrategy strategy){
+        return sdStrategyService.getStrategyData(strategy);
+    }
 }

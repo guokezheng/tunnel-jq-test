@@ -129,6 +129,17 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("事件类型")
     private String eventType;
 
+    @ApiModelProperty("手动自动")
+    private String isAutomatic;
+
+    public String getIsAutomatic() {
+        return isAutomatic;
+    }
+
+    public void setIsAutomatic(String isAutomatic) {
+        this.isAutomatic = isAutomatic;
+    }
+
     public String getEventType() {
         return eventType;
     }

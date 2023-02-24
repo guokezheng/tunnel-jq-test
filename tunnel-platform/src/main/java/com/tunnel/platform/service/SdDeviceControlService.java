@@ -3,6 +3,7 @@ package com.tunnel.platform.service;
 import cn.hutool.json.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesHongTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -15,6 +16,8 @@ import com.tunnel.business.domain.event.SdDeviceNowState;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -103,8 +106,24 @@ public class SdDeviceControlService {
         String deviceState = map.get("state").toString();
         SdDevices devicesHong = sdDevicesService.selectSdDevicesById(deviceId);
         if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType()) && "AGREE".equals(platformControl)){
-            Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
+            /*Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
             Integer code = Integer.valueOf(hongMap.get("code"));
+            if(code == 200){
+                return 1;
+            }else {
+                return 0;
+            }*/
+            SdDeviceTypeItemMapper itemMapper = SpringUtils.getBean(SdDeviceTypeItemMapper.class);
+            SdDeviceDataMapper dataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
+            SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+            sdDeviceTypeItem.setDeviceTypeId(devicesHong.getEqType());
+            List<SdDeviceTypeItem> sdDeviceTypeItems = itemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+            SdDeviceData sdDeviceData = new SdDeviceData();
+            int code = 200;
+            sdDeviceData.setDeviceId(deviceId);
+            sdDeviceData.setData(deviceState);
+            sdDeviceData.setItemId(sdDeviceTypeItems.get(0).getId());
+            dataMapper.updateKafkaDeviceData(sdDeviceData);
             if(code == 200){
                 return 1;
             }else {

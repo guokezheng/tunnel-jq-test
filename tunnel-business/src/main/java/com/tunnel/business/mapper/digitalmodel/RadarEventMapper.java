@@ -37,7 +37,7 @@ public interface RadarEventMapper {
      * @param eventId
      * @return
      */
-    List<WjConfidence> selectConfidence(@Param("eventId") Long eventId);
+    String selectConfidence(@Param("eventId") Long eventId);
 
     /**
      * 修改事件置信度

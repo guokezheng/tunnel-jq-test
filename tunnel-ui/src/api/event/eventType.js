@@ -48,3 +48,30 @@ export function getTodayEventCount() {
     method: 'get'
   })
 }
+
+// 获取事件详情
+export function getEventDetail(query) {
+  return request({
+    url: '/event/getEventDetail/',
+    method: 'get',
+    params: query
+  })
+}
+
+//获取事件处置记录
+export function getDisposalRecord(query) {
+  return request({
+    url: '/eventFlow/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 获取预案设备列表
+export function getManagementDevice(query) {
+  return request({
+    url: '/event/getManagementDevice',
+    method: 'get',
+    params: query
+  })
+}

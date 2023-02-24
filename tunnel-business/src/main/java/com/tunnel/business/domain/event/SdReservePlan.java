@@ -102,6 +102,30 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("环节Id")
     private Long processId;
 
+    @ApiModelProperty("事件等级")
+    private String eventGrade;
+
+    /**
+     * 删除的id
+     */
+    private Long[] removeIds;
+
+    public Long[] getRemoveIds() {
+        return removeIds;
+    }
+
+    public void setRemoveIds(Long[] removeIds) {
+        this.removeIds = removeIds;
+    }
+
+    public String getEventGrade() {
+        return eventGrade;
+    }
+
+    public void setEventGrade(String eventGrade) {
+        this.eventGrade = eventGrade;
+    }
+
     public Long getProcessId() {
         return processId;
     }

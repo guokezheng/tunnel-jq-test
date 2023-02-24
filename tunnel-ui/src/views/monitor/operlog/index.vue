@@ -199,9 +199,9 @@
     </el-row> -->
     <div class="tableTopHr" ></div>
     <el-table ref="tables" v-loading="loading"
-              max-height="610" :data="list" @selection-change="handleSelectionChange"
-              :default-sort="defaultSort" @sort-change="handleSortChange"
-              :row-class-name="tableRowClassName">
+              height="62vh" :data="list" @selection-change="handleSelectionChange"
+              :default-sort="defaultSort" @sort-change="handleSortChange" class="allTable"
+              >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="日志编号" align="center" prop="operId" />
       <el-table-column label="系统模块" align="center" prop="title" />
@@ -421,14 +421,6 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
-    },
-    // 表格样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   }
 };

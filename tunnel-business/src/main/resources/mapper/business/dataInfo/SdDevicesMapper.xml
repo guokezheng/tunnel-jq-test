@@ -966,5 +966,87 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         )
     </select>
 
+    <select id="getTunnelDirection" resultType="java.lang.String" parameterType="sdDevices">
+        SELECT
+            d.eq_direction
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND d.eq_tunnel_id = #{eqTunnelId}
+          AND d.eq_type = #{eqType}
+        GROUP BY
+            d.eq_direction
+    </select>
 
+    <select id="getTreeDevicesData" parameterType="sdDevices" resultType="hashmap">
+        SELECT
+            d.eq_direction AS eqDirection,
+            d.eq_id AS value,
+            d.eq_name AS label
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND d.eq_tunnel_id = #{eqTunnelId}
+          AND d.eq_type = #{eqType}
+    </select>
+
+    <select id="getRlDevice" resultType="java.lang.String">
+        SELECT
+            d.eq_id
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+        <if test="eqType != null and eqType != ''">
+            AND d.eq_type = #{eqType}
+        </if>
+        <if test="direction != null and direction != ''">
+            AND d.eq_direction = #{direction}
+        </if>
+        <if test="frontStakeNum != null and frontStakeNum != 0">
+            AND d.pile_num <![CDATA[ >= ]]> #{frontStakeNum}
+        </if>
+        <if test="afterStakeNum != null and afterStakeNum != 0">
+            AND d.pile_num <![CDATA[ <= ]]> #{afterStakeNum}
+        </if>
+        <if test="tunnelId != null and tunnelId != ''">
+            AND d.eq_tunnel_id = #{tunnelId}
+        </if>
+    </select>
+
+    <select id="getFrontLatelyFive" resultType="java.lang.String">
+        SELECT
+            GROUP_CONCAT( d.eq_id ) AS eq_id
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND d.eq_type = #{eqType}
+          AND d.eq_direction = #{direction}
+          AND d.pile_num <![CDATA[ <= ]]> #{stakeNum}
+          AND d.eq_tunnel_id = #{tunnelId}
+        GROUP BY
+            d.pile_num
+        ORDER BY
+            d.pile_num DESC
+            LIMIT 5
+    </select>
+
+    <select id="getAfterLatelyFive" resultType="java.lang.String">
+        SELECT
+            GROUP_CONCAT( d.eq_id ) AS eq_id
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND d.eq_type = #{eqType}
+          AND d.eq_direction = #{direction}
+          AND d.pile_num <![CDATA[ > ]]> #{stakeNum}
+          AND d.eq_tunnel_id = #{tunnelId}
+        GROUP BY
+            d.pile_num
+            LIMIT 5
+    </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.tunnel.business.service.dataInfo;
 
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
 
@@ -247,4 +248,11 @@ public interface ISdDevicesService {
     SdDevices getDeviceByAssociationDeviceId(Long deviceId);
 
     List<SdDevices> selectDevicesLineList(String deptId,String eqtype);
+
+    /**
+     * 查询级联选择设备列表
+     * @param sdDevices
+     * @return
+     */
+    AjaxResult getTreeDeviceList(SdDevices sdDevices);
 }

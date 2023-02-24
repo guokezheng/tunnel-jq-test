@@ -2,10 +2,13 @@ package com.tunnel.business.service.event;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdReservePlan;
+import com.tunnel.business.domain.event.SdReserveProcess;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -165,4 +168,46 @@ public interface ISdEventService {
      * @return
      */
     AjaxResult getEntranceExitVideo(SdEvent sdEvent);
+
+    /**
+     * 查看事件详情
+     *
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getEventDetail(SdEvent sdEvent);
+
+    /**
+     * 华为修改事件接口
+     * @param sdEvent
+     * @return
+     */
+    int updateSdEventHw(SdEvent sdEvent);
+
+    /**
+     * 事件详情导出
+     * @param sdEvent
+     */
+    void detailExport(HttpServletResponse response, SdEvent sdEvent);
+
+    /**
+     * 警情升级返现
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getSituationUpgrade(SdEvent sdEvent);
+
+    /**
+     * 应急调度-处置设备详情
+     * @param sdReserveProcess
+     * @return
+     */
+    AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess);
+
+    /**
+     * 修改警情升级
+     * @param sdEvent
+     * @return
+     */
+    int updateSituationUpgrade(SdEvent sdEvent);
 }

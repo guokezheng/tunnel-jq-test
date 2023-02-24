@@ -294,4 +294,43 @@ public interface SdDevicesMapper
 
     List<SdDevices> selectDevicesLineList(@Param("deptId")String deptId,@Param("eqtype")String eqtype);
 
+	/**
+	 * 查询设备方向
+	 * @param sdDevices
+	 * @return
+	 */
+	List<String> getTunnelDirection(SdDevices sdDevices);
+
+	/**
+	 * 查询级联选择双向设备
+	 * @param sdDevices
+	 * @return
+	 */
+	List<Map<String, Object>> getTreeDevicesData(SdDevices sdDevices);
+
+	/**
+	 * 查询最近3km设备
+	 * @param eqType
+	 * @param direction
+	 * @param frontStakeNum
+	 * @param afterStakeNum
+	 * @return
+	 */
+	List<String> getRlDevice(@Param("eqType") int eqType,
+							 @Param("direction") String direction,
+							 @Param("frontStakeNum") int frontStakeNum,
+							 @Param("afterStakeNum") int afterStakeNum,
+							 @Param("tunnelId") String tunnelId);
+
+	//前5个
+	List<String> getFrontLatelyFive(@Param("eqType") int eqType,
+									@Param("direction") String direction,
+									@Param("stakeNum") int stakeNum,
+									@Param("tunnelId") String tunnelId);
+
+	//后5个
+	List<String> getAfterLatelyFive(@Param("eqType") int eqType,
+									@Param("direction") String direction,
+									@Param("stakeNum") int stakeNum,
+									@Param("tunnelId") String tunnelId);
 }

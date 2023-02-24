@@ -1,5 +1,6 @@
 package com.tunnel.business.service.event;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.event.SdStrategy;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,4 +93,12 @@ public interface ISdReservePlanService {
      * @return
      */
     List<Map> selectSdReservePlanByTunnelId(String tunnelId);
+
+    /**
+     * 查询事件相关预案
+     *
+     * @param sdReservePlan
+     * @return
+     */
+    AjaxResult getReservePlanData(SdReservePlan sdReservePlan);
 }

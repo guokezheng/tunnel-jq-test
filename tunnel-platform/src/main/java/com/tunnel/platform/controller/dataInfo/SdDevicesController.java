@@ -485,5 +485,14 @@ public class SdDevicesController extends BaseController {
         return AjaxResult.success(list);
     }
 
-
+    /**
+     * 查询级联选择设备列表
+     *
+     * @param sdDevices
+     * @return
+     */
+    @GetMapping("/getTreeDeviceList")
+    public AjaxResult getTreeDeviceList(SdDevices sdDevices){
+        return sdDevicesService.getTreeDeviceList(sdDevices);
+    }
 }

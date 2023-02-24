@@ -112,7 +112,7 @@
               size="small"
               @keyup.enter.native="handleQuery"
             />
-          </el-form-item>
+          </el-form-item> -->
           <!-- 日常 -->
           <el-form-item label="策略类型" prop="strategyType">
             <el-select
@@ -145,7 +145,7 @@
               >新增</el-button
             >
           </el-form-item>
-        </el-form> -->
+        </el-form>
         <el-table
           v-loading="loading"
           :data="strategyList"
@@ -527,12 +527,6 @@
         @dialogVisibleClose="closeDialog"
         ref="timingControl"
       ></timingControl>
-      <!-- 自动触发 -->
-      <!--      <autoControl-->
-      <!--        v-show="strategyForm.strategyType == '2'"-->
-      <!--        @dialogVisibleClose="closeDialog"-->
-      <!--        ref="autoControl"-->
-      <!--      ></autoControl>-->
       <timeControl
         v-show="strategyForm.strategyType == '3'"
         @dialogVisibleClose="closeDialog"
@@ -546,7 +540,7 @@
       :visible.sync="dialogVisibleEvent"
       :before-close="handleClose"
       :append-to-body="true"
-      width="65%"
+      width="75%"
     >
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">

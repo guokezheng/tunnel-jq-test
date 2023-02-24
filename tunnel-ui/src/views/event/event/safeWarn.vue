@@ -879,6 +879,7 @@
                   clearable
                   size="small"
                   style="width: 100%;"
+                  @change="getReservePlanData"
                 >
                 <el-option
                   v-for="(item, index) in eventTypeData"
@@ -2172,6 +2173,8 @@ export default {
       document.removeEventListener("click", this.bodyCloseMenus2);
     },
     getReservePlanData(){
+      this.ReservePlanList = [];
+      this.eventForm.currencyId = '';
       let data = {
         tunnelId:this.eventForm.tunnelId,
         planTypeId:this.eventForm.eventTypeId,

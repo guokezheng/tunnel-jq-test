@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-02-24 08:42:42
+ * @LastEditTime: 2023-02-24 10:51:28
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -147,19 +147,12 @@
         :formatter="eventGradeFormat"
       >
       </el-table-column>
-      <!-- <el-table-column
-        align="center"
-        label="管控方向"
-        prop="eventType.controlDirection"
-        :formatter="controlDirectionFormat"
-      >
-      </el-table-column>
       <el-table-column
         align="center"
-        label="预案类型"
-        prop="category"
-        :formatter="categoryFormat"
-      /> -->
+        label="预案名称"
+        prop="planName"
+      >
+      </el-table-column>
       <el-table-column
         align="center"
         label="预案描述"
@@ -1428,11 +1421,17 @@ export default {
       // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
     },
+    everyForeach(value){
+      return value != '';
+    },
     // 编辑策略保存方法
     submitstrategy() {
       console.log(this.planTypeIdList, "000000000000000000");
       for (let i = 0; i < this.planTypeIdList.length; i++) {
         let item = this.planTypeIdList[i].processesList;
+        if(this.planTypeIdList[i].processStageName == ''){
+          return this.$modal.msgWarning("请填写完整");
+        }
         for (let j = 0; j < item.length; j++) {
           console.log(item[j]);
           // 如果指定设备则判断是否填写完整
@@ -1445,16 +1444,13 @@ export default {
             ) {
               return this.$modal.msgWarning("请填写完整");
             }
+          }else if(item[j].retrievalRule == ''){
+            return this.$modal.msgWarning("请填写完整");
           }
         }
       }
       this.planTypeIdList.forEach((item, index) => {
         item.processSort = index;
-        // item.eqStateList = "";
-        // item.equipmentData = "";
-        // item.equipmentTypeData = "";
-        // item.templatesList = "";
-        // item.state = item.state.toString();
       });
       let data = {
         reserveId: this.reserveId,
@@ -1800,17 +1796,14 @@ export default {
     },
     /** 新增按钮操作 **/
     handleAdd() {
+      this.$nextTick(() => {
+        this.$refs["addform1"].resetFields();
+      });
       this.resetReservePlanDrawForm();
       this.title = "新增预案";
       this.planChangeSink = "add";
       this.dialogFormVisible = true;
-
       this.visibleAdd = true;
-      // this.addForm=true
-      this.$nextTick(() => {
-        this.$refs["form1"].clearValidate();
-      });
-      //this.$refs["form1"].clearValidate();
     },
     changePartitionSelection(e) {
       this.$forceUpdate();

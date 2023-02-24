@@ -1669,6 +1669,9 @@ export default {
   // },
   data() {
     return {
+      fault_boxShow:false,
+      zd_boxShow:false,
+      boxShow:false,
       swiperOptionTop: {
         loop: true,
         loopedSlides: 5, // looped slides should be the same

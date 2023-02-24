@@ -82,5 +82,12 @@ public interface SdReserveProcessMapper
      */
     public List<SdReserveProcess> selectSdReserveProcessByRid(Long reserveId);
 
-    public List<Map> getReservePlanProcess(Long reserveId);
+    public List<Map> getReservePlanProcess(@Param("reserveId") Long reserveId);
+
+    /**
+     * 根据预案id查询流程节点
+     * @param reserveId
+     * @return
+     */
+    List<SdReserveProcess> getProcessList(@Param("reserveId") Long reserveId);
 }

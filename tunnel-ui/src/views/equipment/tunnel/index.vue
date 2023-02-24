@@ -155,15 +155,15 @@
       :data="tunnelsList"
       ref="tableRef"
       @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName"
-      max-height="640"
+      class="allTable"
+      height="62vh"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column prop="id" label="序号" align="center"></el-table-column>
+      <el-table-column type="index" :index="indexMethod" label="序号" align="center" width="60"></el-table-column>
       <!-- <el-table-column label="隧道ID" align="center" prop="tunnelId" /> -->
-      <el-table-column label="隧道ID" align="center" prop="tunnelId" />
-      <el-table-column label="隧道名称" align="center" prop="tunnelName" />
-      <el-table-column label="隧道地址" align="center" prop="tunnelAddress" />
+      <el-table-column label="隧道ID" align="center" prop="tunnelId" width="210"/>
+      <el-table-column label="隧道名称" align="center" prop="tunnelName" width="100"/>
+      <el-table-column label="隧道地址" align="center" prop="tunnelAddress" width="160"/>
       <el-table-column label="经度" align="center" prop="longitude" />
       <el-table-column label="纬度" align="center" prop="latitude" />
       <!-- <el-table-column label="路段ID" align="center" prop="roadId" /> -->
@@ -176,13 +176,13 @@
         label="隧道长度(米)"
         align="center"
         prop="tunnelLength"
-        width="200"
+        width="180"
       />
       <el-table-column
         label="隧道开始桩号"
         align="center"
         prop="startPile"
-        width="180"
+        width="160"
       />
       <el-table-column
         label="隧道结束桩号"
@@ -395,7 +395,7 @@
     <!-- 添加或修改隧道对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1000" append-to-body class="addUserDialog"
       :before-close="cancel">
-      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="隧道ID" prop="tunnelId">
@@ -837,6 +837,10 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     tunnelInfo(item){
       console.log(item,"item")
       this.open = true
@@ -1169,15 +1173,6 @@ export default {
         },
         `system_tunnels.xlsx`
       );
-    },
-    // 表格行样式
-    tableRowClassName({ row, rowIndex }) {
-      row.id = rowIndex+1;
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
     },
   },
   watch: {

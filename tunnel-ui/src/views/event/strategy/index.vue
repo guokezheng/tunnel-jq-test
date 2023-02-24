@@ -88,7 +88,6 @@
           v-show="showSearch"
           label-width="68px"
         >
-        
           <el-form-item label="隧道名称" prop="tunnelId">
             <el-select
               v-model="queryParams.tunnelId"
@@ -113,7 +112,7 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <!-- 日常 -->
+          
           <el-form-item label="策略类型" prop="strategyType">
             <el-select
               v-model="queryParams.strategyType"
@@ -311,7 +310,7 @@
               size="small"
             >
               <el-option
-                v-for="dict in strategyTypeOptions"
+                v-for="dict in strategyTypeEvent"
                 :key="dict.dictValue"
                 :label="dict.dictLabel"
                 :value="dict.dictValue"

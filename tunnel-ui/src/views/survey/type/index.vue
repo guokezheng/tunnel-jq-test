@@ -130,8 +130,7 @@
     </el-form>-->
     <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange"
-              :row-class-name="tableRowClassName"
-              max-height="640">
+              height="62vh" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="类型编码" align="center" prop="vehicleTypeCode" />
       <el-table-column label="类型名称" align="center" prop="vehicleTypeName" />
@@ -369,14 +368,6 @@ export default {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
     },
     /** 导出按钮操作 */
     handleExport() {

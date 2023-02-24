@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
-      <el-col :span="6">
+      <el-col :span="8">
         <el-button
           size="small"
           @click="handleAdd"
@@ -45,7 +45,7 @@
         <!--            @click="checkInstruction"-->
         <!--            >校验指令</el-button>-->
       </el-col>
-      <el-col :span="6" :offset="12">
+      <el-col :span="6" :offset="10">
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
@@ -138,7 +138,7 @@
       :data="devicesList"
       @selection-change="handleSelectionChange"
       class="allTable"
-      height="70vh"
+      height="62vh"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column
@@ -167,14 +167,14 @@
         label="设备名称"
         align="center"
         prop="eqName"
-        min-width="200"
+        width="120"
         show-overflow-tooltip
       />
       <el-table-column
         label="设备类型"
         align="center"
         prop="typeName.typeName"
-        min-width="150"
+        width="120"
         show-overflow-tooltip
       />
       <el-table-column
@@ -193,14 +193,12 @@
         label="设备型号"
         align="center"
         prop="eqModel"
-        min-width="100"
         show-overflow-tooltip
       />
       <el-table-column
         label="设备方向"
         align="center"
         prop="eqDirection"
-        min-width="100"
         show-overflow-tooltip
       >
         <template slot-scope="scope">
@@ -216,7 +214,7 @@
         label="桩号"
         align="center"
         prop="pile"
-        min-width="150"
+        width="100"
         show-overflow-tooltip
       />
       <el-table-column label="备注" align="center" prop="remark" />

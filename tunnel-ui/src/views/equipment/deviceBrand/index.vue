@@ -91,7 +91,7 @@
       :data="brandList"
       @selection-change="handleSelectionChange"
       class="allTable"
-      height="70vh"
+      height="62vh"
     >
       <el-table-column type="selection" width="55" align="center" />
 

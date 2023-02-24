@@ -84,8 +84,8 @@
       v-loading="loading"
       :data="typeList"
       @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName"
-      height="70vh"
+      height="62vh"
+      class="allTable"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -616,14 +616,6 @@ export default {
         },
         `system_type.xlsx`
       );
-    },
-     // 表格的行样式
-     tableRowClassName({ row, rowIndex }) {
-       if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   },
 };

@@ -46,6 +46,7 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -438,6 +439,15 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int addStrategysInfo(SdStrategyModel model) {
         // 判断是否符合规范并返回策略
         SdStrategy sty = conditionalJudgement(model);
+        /*SdStrategy strategy = new SdStrategy();
+        strategy.setTunnelId(sty.getTunnelId());
+        strategy.setDirection(sty.getDirection());
+        strategy.setStrategyType(sty.getStrategyType());
+        strategy.setEventType(sty.getEventType());
+        int checkCount = sdStrategyMapper.checkStrategy(strategy);
+        if(checkCount > 0){
+            throw new RuntimeException("已存在策略信息，请勿重复添加！");
+        }*/
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
 //        if(insetStrResult < 1){
 //            throw new RuntimeException("数据保存异常");
@@ -472,6 +482,16 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int updateSdStrategyInfo(SdStrategyModel model) {
         //判断输入的值是否符合规范并返回策略信息
         SdStrategy sty = conditionalJudgement(model);
+        /*SdStrategy strategy = new SdStrategy();
+        strategy.setTunnelId(sty.getTunnelId());
+        strategy.setDirection(sty.getDirection());
+        strategy.setStrategyType(sty.getStrategyType());
+        strategy.setEventType(sty.getEventType());
+        strategy.setId(model.getId());
+        int checkCount = sdStrategyMapper.checkStrategy(strategy);
+        if(checkCount > 0){
+            throw new RuntimeException("已存在策略信息，请勿重复添加！");
+        }*/
         String strategyType = model.getStrategyType();
         //更新策略 主表
         int updatePrimary = sdStrategyMapper.updateSdStrategyById(sty);
@@ -633,6 +653,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
         sty.setWarningId(model.getWarningId());
+        sty.setIsAutomatic(model.getIsAutomatic());
         if(model.getEventType()!=null){
             sty.setEventType(model.getEventType());
         }
@@ -1078,7 +1099,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
     @Override
     public int implementPlan(Long planId,Long eventId){
-        List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(planId);
+        /*List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(planId);
         Map flowParam = new HashMap();
         flowParam.put("eventId",eventId);
         int issueResult = 0;
@@ -1090,6 +1111,23 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 sdEventFlowService.savePlanProcessFlow(flowParam);
                 //更新事件处置记录表状态
                 updateHandleState(process.getId(),eventId);
+            }
+        }
+        return issueResult;*/
+        List<SdReserveProcess> processList = sdReserveProcessMapper.getProcessList(planId);
+        Map flowParam = new HashMap();
+        flowParam.put("eventId",eventId);
+        int issueResult = 0;
+        for(SdReserveProcess process:processList){
+            for(SdReserveProcess item : process.getProcessesList()){
+                SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(item.getStrategyId());
+                flowParam.put("content",item.getProcessName());
+                issueResult = issuedDevice(rl,eventId,"4");
+                if(issueResult>0){
+                    sdEventFlowService.savePlanProcessFlow(flowParam);
+                    //更新事件处置记录表状态
+                    updateHandleState(process.getId(),eventId);
+                }
             }
         }
         return issueResult;
@@ -1130,6 +1168,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         //更新事件处置记录表状态
         updateHandleState(rl.getId(),eventId);
         return count;
+    }
+
+    @Override
+    public AjaxResult getStrategyData(SdStrategy strategy) {
+        List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(strategy);
+        return AjaxResult.success(sdStrategies);
     }
 
     /**

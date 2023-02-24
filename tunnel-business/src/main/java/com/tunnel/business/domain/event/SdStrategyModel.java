@@ -87,6 +87,17 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("分时控制-结束时间")
     private String endTime;
 
+    @ApiModelProperty("手动自动")
+    private String isAutomatic;
+
+    public String getIsAutomatic() {
+        return isAutomatic;
+    }
+
+    public void setIsAutomatic(String isAutomatic) {
+        this.isAutomatic = isAutomatic;
+    }
+
     public String getStartTime() {
         return startTime;
     }

@@ -709,10 +709,12 @@ public class SdEventServiceImpl implements ISdEventService {
         if(!"3".equals(sdEventData.getEventState())){
             //查询事件详情-人工复核
             SdEvent manualReview = sdEventMapper.getManualReview(sdEvent);
-            //查询事件详情-人工复核-当事目标
-            String confidence = radarEventMapper.selectConfidence(sdEvent.getId());
-            manualReview.setConfidenceList(confidence == null ? "" : confidence);
-            map.put("manualReview",manualReview);
+            if(manualReview != null){
+                //查询事件详情-人工复核-当事目标
+                String confidence = radarEventMapper.selectConfidence(sdEvent.getId());
+                manualReview.setConfidenceList(confidence == null ? "" : confidence);
+                map.put("manualReview",manualReview);
+            }
         }
         if("0".equals(sdEventData.getEventState()) || "1".equals(sdEventData.getEventState())){
             //查询事件详情-预案处置
@@ -792,6 +794,9 @@ public class SdEventServiceImpl implements ISdEventService {
         int count = sdEventHandleMapper.selectSdEventHandle(sdEvent.getId());
         if(count == 0){
             SdEvent sdEvent1 = sdEventMapper.selectSdEventById(sdEvent.getId());
+            //查询事件类型
+            SdEventTypeMapper typeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
+            SdEventType sdEventType = typeMapper.selectSdEventTypeById(sdEvent1.getEventTypeId());
             //查询预案流程树
             List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
             List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
@@ -825,18 +830,36 @@ public class SdEventServiceImpl implements ISdEventService {
                             sdEventHandle1.setEventState("1");
                             //如第一次添加处置流程时新增事件流程记录
                             if("add".equals(model)){
+                                SdEventFlowMapper flowMapper = SpringUtils.getBean(SdEventFlowMapper.class);
                                 SdEventFlow flow = new SdEventFlow();
                                 flow.setEventId(sdEvent.getId().toString());
                                 flow.setFlowTime(DateUtils.getNowDate());
                                 flow.setFlowHandler(SecurityUtils.getUsername());
                                 flow.setFlowDescription(item.getFlowName().concat(name));
-                                SpringUtils.getBean(SdEventFlowMapper.class).insertSdEventFlow(flow);
+                                flowMapper.insertSdEventFlow(flow);
+                                SdEventFlow eventFlow = new SdEventFlow();
+                                eventFlow.setEventId(sdEvent.getId().toString());
+                                eventFlow.setFlowTime(DateUtils.getNowDate());
+                                eventFlow.setFlowHandler(SecurityUtils.getUsername());
+                                eventFlow.setFlowDescription(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()).concat(" ")
+                                        .concat("复核事件为【").concat(sdEventType.getEventType()).concat("】、【")
+                                        .concat(EventGradeEnum.getValue(sdEvent1.getEventGrade())).concat("】，复核状态为突发事件处置"));
+                                flowMapper.insertSdEventFlow(eventFlow);
                             }
+
                         }else {
                             sdEventHandle1.setFlowContent(temp.getFlowName());
                         }
                         sdEventHandle1.setFlowSort(number+"");
                         sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
+                        if("2".equals(temp.getFlowId().toString())){
+                            sdEventHandle1.setFlowContent(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()).concat(" ")
+                                    .concat("复核事件为【").concat(sdEventType.getEventType()).concat("】、【")
+                                    .concat(EventGradeEnum.getValue(sdEvent.getEventGrade())).concat("】，复核状态为突发事件处置"));
+                            number = number + 1;
+                            sdEventHandle1.setFlowSort(number+"");
+                            sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
+                        }
                     }
                 }
             }

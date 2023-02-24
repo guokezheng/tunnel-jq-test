@@ -1,5 +1,7 @@
 package com.tunnel.platform.controller.event;
 
+import cn.afterturn.easypoi.entity.ImageEntity;
+import cn.afterturn.easypoi.word.WordExportUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -10,12 +12,10 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.domain.event.SdEvent;
-import com.tunnel.business.domain.event.SdEventFlow;
-import com.tunnel.business.domain.event.SdEventHandle;
-import com.tunnel.business.domain.event.SdReservePlan;
+import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventHandleMapper;
@@ -29,9 +29,13 @@ import com.zc.common.core.websocket.WebSocketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -89,6 +93,14 @@ public class SdEventController extends BaseController
         ExcelUtil<SdEvent> util = new ExcelUtil<SdEvent>(SdEvent.class);
         util.exportExcel(response, list, "event");
     }*/
+
+    /**
+     * 导出事件详情
+     */
+    @PostMapping("/detailExport")
+    public void detailExport(HttpServletResponse response,@RequestBody SdEvent sdEvent) throws IOException {
+        sdEventService.detailExport(response,sdEvent);
+    }
 
     /**
      * 获取事件管理详细信息
@@ -362,5 +374,47 @@ public class SdEventController extends BaseController
     @GetMapping("/getEntranceExitVideo")
     public AjaxResult getEntranceExitVideo(SdEvent sdEvent){
         return sdEventService.getEntranceExitVideo(sdEvent);
+    }
+
+    /**
+     * 查看事件详情
+     *
+     * @param sdEvent
+     * @return
+     */
+    @ApiOperation("查看事件详情")
+    @GetMapping("/getEventDetail")
+    public AjaxResult getEventDetail(SdEvent sdEvent){
+        return sdEventService.getEventDetail(sdEvent);
+    }
+
+    /**
+     * 警情升级返现
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getSituationUpgrade")
+    public AjaxResult getSituationUpgrade(SdEvent sdEvent){
+        return sdEventService.getSituationUpgrade(sdEvent);
+    }
+
+    /**
+     * 应急调度-处置设备详情
+     * @param sdReserveProcess
+     * @return
+     */
+    @GetMapping("/getManagementDevice")
+    public AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess){
+        return sdEventService.getManagementDevice(sdReserveProcess);
+    }
+
+    /**
+     * 修改警情升级
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/updateSituationUpgrade")
+    public Result updateSituationUpgrade(SdEvent sdEvent){
+        return  Result.toResult(sdEventService.updateSituationUpgrade(sdEvent));
     }
 }

@@ -39,9 +39,21 @@ public class SdEventFlow extends BaseEntity
     private String flowHandler;
     
     private String nickName;
-    
 
-    public void setId(Long id) 
+    /**
+     * 时间
+     */
+    private String flowDate;
+
+    public String getFlowDate() {
+        return flowDate;
+    }
+
+    public void setFlowDate(String flowDate) {
+        this.flowDate = flowDate;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

@@ -563,15 +563,19 @@
       }
       .el-collapse{
         border-top:transparent;
+        border-bottom:solid 1px #05afe3;
+      }
+      .el-collapse-item{
+        border-bottom:solid 1px #05afe3;
       }
       .el-collapse-item__wrap{
-        border-bottom:solid 1px #05afe3;
+        border-bottom:transparent;
         background: #004375;
       }
       .el-collapse-item__header{
         background: #004375;
         color: #fff;
-        border-bottom: solid 1px #05afe3;
+        border-bottom: transparent;
       }
       .el-collapse-item__header.is-active{
         border-bottom: transparent;

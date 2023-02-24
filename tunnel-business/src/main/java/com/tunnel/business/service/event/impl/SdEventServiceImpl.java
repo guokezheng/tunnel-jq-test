@@ -1,5 +1,7 @@
 package com.tunnel.business.service.event.impl;
 
+import cn.afterturn.easypoi.entity.ImageEntity;
+import cn.afterturn.easypoi.word.WordExportUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
@@ -7,13 +9,9 @@ import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.EventDescEnum;
-import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
-import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
@@ -26,14 +24,20 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -118,7 +122,7 @@ public class SdEventServiceImpl implements ISdEventService {
             int startLength = eventTitle.indexOf(item.getTunnelName()) + item.getTunnelName().length();
             int endLength = eventTitle.indexOf(item.getStakeNum()) + item.getStakeNum().length();
             if(eventTitle.length() > endLength){
-                item.setPosition(eventTitle.substring(startLength,endLength));
+                item.setPosition(item.getTunnelName() + eventTitle.substring(startLength,endLength).replaceAll("桩号",""));
             }
             if(item.getVideoUrl()!=null){
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
@@ -179,15 +183,22 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEvent(SdEvent sdEvent) {
-        /*if ("1".equals(sdEvent.getEventState())) {
+        if ("1".equals(sdEvent.getEventState())) {
             SdEventFlow eventFlow = new SdEventFlow();
-            eventFlow.setEventId(sdEvent.getFlowId());
-            eventFlow.setFlowTime(sdEvent.getEventTime());
-            eventFlow.setFlowDescription("问题解决");
+            eventFlow.setEventId(sdEvent.getId().toString());
+            eventFlow.setFlowTime(DateUtils.getNowDate());
+            eventFlow.setFlowDescription("事件已完结");
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
-        }*/
-        if ("2".equals(sdEvent.getEventState())) {
+            sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+        }else {
+            sdEvent.setUpdateTime(DateUtils.getNowDate());
+        }
+        if("0".equals(sdEvent.getEventState())){
+            //更新预案设备
+            setStrategyRlEquipment(sdEvent);
+        }
+        /*if ("2".equals(sdEvent.getEventState())) {
             SdEventFlow eventFlow = new SdEventFlow();
             eventFlow.setEventId(sdEvent.getFlowId());
             eventFlow.setFlowTime(sdEvent.getEventTime());
@@ -196,15 +207,158 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
             //主动安全-状态更新为已忽略时推送值高速云
             radarEventServiceImpl.sendDataToOtherSystem(null,sdEventMapper.selectSdEventById(sdEvent.getId()));
-        }
+        }*/
         //更新事件置信度
-        if(sdEvent.getConfidenceList() != null){
+        /*if(sdEvent.getConfidenceList() != null){
             List<WjConfidence> confidenceList = sdEvent.getConfidenceList();
             for(WjConfidence item : confidenceList){
                 radarEventMapper.updateEventConfidence(item);
             }
+        }*/
+        sdEvent.setUpdateBy(SecurityUtils.getUsername());
+        return sdEventMapper.updateSdEvent(sdEvent);
+    }
+
+    /**
+     * 华为Kafka更新事件操作
+     * @param sdEvent
+     * @return
+     */
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
+    public int updateSdEventHw(SdEvent sdEvent) {
+        return sdEventMapper.updateSdEvent(sdEvent);
+    }
+
+    @Override
+    public void detailExport(HttpServletResponse response, SdEvent sdEvent) {
+        Map<String, Object> data = (Map<String, Object>) getEventDetail(sdEvent).get("data");
+        String eventState = data.get("eventState").toString();
+        //word模板list
+        List<Map<String, Object>> wordList = new ArrayList<>();
+
+        //事件发现
+        SdEvent eventDiscovery = (SdEvent) data.get("eventDiscovery");
+        //人工复核
+        SdEvent manualReview = (SdEvent)data.get("manualReview");
+        //事件处置-预案流程
+        Map<String, Object> planDisposal = (Map<String, Object>)data.get("planDisposal");
+        //事件处置-处置记录
+        List<SdEventFlow> disposalRecord = (List<SdEventFlow>) data.get("disposalRecord");
+        //事件处置-完结报告
+        SdEvent endReport = (SdEvent) data.get("endReport");
+
+        try {
+            XWPFDocument doc = null;
+            //3:待确认
+            if("3".equals(eventState)){
+                wordList.add(setDiscoveryMap(eventDiscovery));
+                doc = WordExportUtil.exportWord07(
+                        "exporttemplate/事件详情-待确认.docx", wordList);
+            }
+            //2:已挂起 4:已确认 5:误报
+            if("2".equals(eventState) || "4".equals(eventState) || "5".equals(eventState)){
+                Map<String, Object> disMap = setDiscoveryMap(eventDiscovery);
+                Map<String, Object> revMap = setReviewMap(manualReview);
+                disMap.putAll(revMap);
+                wordList.add(disMap);
+                doc = WordExportUtil.exportWord07(
+                        "exporttemplate/事件详情-确认挂起误报.docx", wordList);
+            }
+            //0:处理中
+            if("0".equals(eventState)){
+                Map<String, Object> disMap = setDiscoveryMap(eventDiscovery);
+                Map<String, Object> revMap = setReviewMap(manualReview);
+                Map<String, Object> planMap = setPlanMap(planDisposal, disposalRecord);
+                disMap.putAll(revMap);
+                disMap.putAll(planMap);
+                wordList.add(disMap);
+                doc = WordExportUtil.exportWord07(
+                        "exporttemplate/事件详情-处理中.docx", wordList);
+
+            }
+            //1:已处理
+            if("1".equals(eventState)){
+                Map<String, Object> disMap = setDiscoveryMap(eventDiscovery);
+                Map<String, Object> revMap = setReviewMap(manualReview);
+                Map<String, Object> planMap = setPlanMap(planDisposal, disposalRecord);
+                Map<String, Object> repMap = setReportMap(endReport);
+                disMap.putAll(revMap);
+                disMap.putAll(planMap);
+                disMap.putAll(repMap);
+                wordList.add(disMap);
+                doc = WordExportUtil.exportWord07(
+                        "exporttemplate/事件详情-已处理.docx", wordList);
+            }
+            /*XWPFDocument doc = WordExportUtil.exportWord07(
+                    "D:/谷歌下载/事件详情-待确认.docx", setDiscoveryMap(eventDiscovery));*/
+            /*XWPFDocument doc = WordExportUtil.exportWord07(
+                    "exporttemplate/事件详情-已处理.docx", setDiscoveryMap(eventDiscovery));*/
+            //response.setHeader("Content-disposition","attachment;filename=事件详情.docx");
+            /*response.setContentType("application/octet-stream");
+            response.setHeader("Access-Control-Expose-Headers","Content-Disposition");
+            response.setHeader("Content-Disposition","attachment;fileName=" + URLEncoder.encode("事件详情.docx","UTF-8"));*/
+            /*response.setStatus(200);*/
+            //response.reset();
+            //response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            //response.setContentType("application/octet-stream;charset=UTF-8");
+            /*response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode("事件详情"+".docx", "UTF-8"));
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("application/msword");
+            response.setContentType("application/x-download");
+            ServletOutputStream outputStream = response.getOutputStream();
+            doc.write(outputStream);
+            outputStream.close();
+            doc.close();*/
+
+            response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(sdEvent.getId()+".docx", "UTF-8"));
+            response.setContentType("application/octet-stream");
+            ServletOutputStream outputStream = response.getOutputStream();
+            doc.write(outputStream);
+            outputStream.close();
+            doc.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public AjaxResult getSituationUpgrade(SdEvent sdEvent) {
+        return AjaxResult.success(sdEventMapper.getSituationUpgrade(sdEvent));
+    }
+
+    @Override
+    public AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess) {
+        Map<String, Object> map = new HashMap<>();
+        //查询设备列表
+        map.put("deviceList",sdEventMapper.getManagementDevice(sdReserveProcess));
+        //查询状态
+        map.put("deviceState",sdEventMapper.getManagementDeviceState(sdReserveProcess));
+        return AjaxResult.success(map);
+    }
+
+    @Override
+    public int updateSituationUpgrade(SdEvent sdEvent) {
+        //保存事件流程记录
+        SdEventFlow eventFlow = new SdEventFlow();
+        eventFlow.setEventId(sdEvent.getId().toString());
+        eventFlow.setFlowTime(DateUtils.getNowDate());
+        eventFlow.setFlowDescription("事件等级修改为：" + EventGradeEnum.getValue(sdEvent.getEventGrade()) +",  "+
+                "应急预案修改为：" + sdReservePlanMapper.selectSdReservePlanById(Long.valueOf(sdEvent.getCurrencyId())).getPlanName() +",  "+
+                "升级原因为：" + sdEvent.getRemark());
+        eventFlow.setFlowHandler(SecurityUtils.getUsername());
+        sdEventFlowMapper.insertSdEventFlow(eventFlow);
         sdEvent.setUpdateTime(DateUtils.getNowDate());
+        //删除事件处置
+        SdEventHandle sdEventHandle = new SdEventHandle();
+        sdEventHandle.setEventId(sdEvent.getId());
+        sdEventHandleMapper.deleteRelation(sdEventHandle);
+        //更新预案设备
+        setStrategyRlEquipment(sdEvent);
+        //交通事件-添加流程树
+        updateHandle(sdEvent,"update");
+        //更新事件信息
+        sdEvent.setUpdateTime(DateUtils.getNowDate());
+        sdEvent.setUpdateBy(SecurityUtils.getUsername());
         return sdEventMapper.updateSdEvent(sdEvent);
     }
 
@@ -439,7 +593,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Override
     public AjaxResult getHandle(SdEvent sdEvent) {
-        updateHandle(sdEvent);
+        sdEvent.setCurrencyId(sdEventMapper.selectSdEventById(sdEvent.getId()).getCurrencyId());
+        //交通事件-添加流程树
+        updateHandle(sdEvent,"add");
         SdEventHandle sdEventHandle = new SdEventHandle();
         sdEventHandle.setEventId(sdEvent.getId());
         List<SdEventHandle> sdEventHandles = sdEventHandleMapper.selectSdEventHandleList(sdEventHandle);
@@ -534,6 +690,74 @@ public class SdEventServiceImpl implements ISdEventService {
     }
 
     @Override
+    public AjaxResult getEventDetail(SdEvent sdEvent) {
+        Map<String, Object> map = new HashMap<>();
+        SdEvent sdEventData = sdEventMapper.selectSdEventById(sdEvent.getId());
+        //查询事件详情-事件发现
+        SdEvent eventDiscovery = sdEventMapper.getEventDiscovery(sdEvent);
+        //查询事件详情-事件发现-图片
+        eventDiscovery.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString()));
+        //计算持续时间
+        String datePoor = "";
+        if("3".equals(sdEventData.getEventState())){
+            datePoor = DateUtils.getDatePoor(DateUtils.getNowDate(), DateUtils.parseDate(eventDiscovery.getContinuedTime()));
+        }else {
+            datePoor = DateUtils.getDatePoor(eventDiscovery.getUpdateTime(), DateUtils.parseDate(eventDiscovery.getContinuedTime()));
+        }
+        eventDiscovery.setContinuedTime(datePoor);
+        map.put("eventDiscovery",eventDiscovery);
+        if(!"3".equals(sdEventData.getEventState())){
+            //查询事件详情-人工复核
+            SdEvent manualReview = sdEventMapper.getManualReview(sdEvent);
+            //查询事件详情-人工复核-当事目标
+            String confidence = radarEventMapper.selectConfidence(sdEvent.getId());
+            manualReview.setConfidenceList(confidence == null ? "" : confidence);
+            map.put("manualReview",manualReview);
+        }
+        if("0".equals(sdEventData.getEventState()) || "1".equals(sdEventData.getEventState())){
+            //查询事件详情-预案处置
+            List<SdEventHandle> planDisposal = (List<SdEventHandle>) getHandle(sdEventData).get("data");
+            Map<String, Object> planMap = new HashMap<>();
+            if(sdEventData.getCurrencyId() != null && sdEventData.getCurrencyId() != ""){
+                planMap.put("planName",sdReservePlanMapper.selectSdReservePlanById(Long.valueOf(sdEventData.getCurrencyId())).getPlanName());
+            }else {
+                planMap.put("planName",null);
+            }
+            //将数据转为tree数据
+            List<SdEventHandle> collectPid = planDisposal.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
+            List<SdEventHandle> collectId = planDisposal.stream().filter(item -> item.getFlowPid() != null).collect(Collectors.toList());
+            collectPid.stream().forEach(item -> {
+                List<SdEventHandle> list = new ArrayList<>();
+                collectId.stream().forEach(temp -> {
+                    if(item.getFlowId() == temp.getFlowPid()){
+                        list.add(temp);
+                    }
+                });
+                item.setChildren(list);
+            });
+            planMap.put("planList",collectPid);
+            //查询事件详情-处置记录
+            SdEventFlow sdEventFlow = new SdEventFlow();
+            sdEventFlow.setEventId(sdEvent.getId().toString());
+            List<SdEventFlow> disposalRecord = sdEventFlowMapper.selectSdEventFlowList(sdEventFlow);
+            map.put("planDisposal",planMap);
+            map.put("disposalRecord",disposalRecord);
+        }
+        if("1".equals(sdEventData.getEventState())){
+            //查询事件详情-完结报告
+            SdEvent endReport = sdEventMapper.getEndReport(sdEvent);
+            //计算累计时间
+            if("1".equals(endReport.getEventState())){
+                String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(endReport.getEndTime()), DateUtils.parseDate(endReport.getStartTime()));
+                endReport.setContinuedTime(endDatePoor);
+            }
+            map.put("endReport",endReport);
+        }
+        map.put("eventState",sdEventData.getEventState());
+        return AjaxResult.success(map);
+    }
+
+    @Override
     public AjaxResult getAccidentPoint(SdEvent sdEvent) {
         SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(sdEvent.getTunnelId());
         //隧道终点桩号
@@ -564,7 +788,7 @@ public class SdEventServiceImpl implements ISdEventService {
      * 交通事件-添加流程树
      * @param sdEvent
      */
-    public void updateHandle(SdEvent sdEvent){
+    public void updateHandle(SdEvent sdEvent, String model){
         int count = sdEventHandleMapper.selectSdEventHandle(sdEvent.getId());
         if(count == 0){
             SdEvent sdEvent1 = sdEventMapper.selectSdEventById(sdEvent.getId());
@@ -575,6 +799,11 @@ public class SdEventServiceImpl implements ISdEventService {
             int sort = 0;
             for(SdJoinTypeFlow item : flowsPidData){
                 sort = sort + 1;
+                if(item.getFlowId() == 7){
+                    //插入预案流程
+                    sort = setEventHandleData(sort,item,sdEvent);
+                    continue;
+                }
                 SdEventHandle sdEventHandle = new SdEventHandle();
                 sdEventHandle.setEventId(sdEvent.getId());
                 sdEventHandle.setFlowId(item.getFlowId());
@@ -594,12 +823,15 @@ public class SdEventServiceImpl implements ISdEventService {
                             String name = EventDescEnum.getName(sdEvent1.getEventSource());
                             sdEventHandle1.setFlowContent(temp.getFlowName().concat(name));
                             sdEventHandle1.setEventState("1");
-                            SdEventFlow flow = new SdEventFlow();
-                            flow.setEventId(sdEvent.getId().toString());
-                            flow.setFlowTime(DateUtils.getNowDate());
-                            flow.setFlowHandler(SecurityUtils.getUsername());
-                            flow.setFlowDescription(item.getFlowName().concat(name));
-                            SpringUtils.getBean(SdEventFlowMapper.class).insertSdEventFlow(flow);
+                            //如第一次添加处置流程时新增事件流程记录
+                            if("add".equals(model)){
+                                SdEventFlow flow = new SdEventFlow();
+                                flow.setEventId(sdEvent.getId().toString());
+                                flow.setFlowTime(DateUtils.getNowDate());
+                                flow.setFlowHandler(SecurityUtils.getUsername());
+                                flow.setFlowDescription(item.getFlowName().concat(name));
+                                SpringUtils.getBean(SdEventFlowMapper.class).insertSdEventFlow(flow);
+                            }
                         }else {
                             sdEventHandle1.setFlowContent(temp.getFlowName());
                         }
@@ -705,4 +937,312 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         return 1;
     }*/
+
+    /**
+     * 插入预案流程
+     *
+     * @param sort
+     * @param sdJoinTypeFlow
+     * @param sdEvent
+     * @return
+     */
+    public int setEventHandleData(int sort, SdJoinTypeFlow sdJoinTypeFlow, SdEvent sdEvent){
+        List<SdReserveProcess> processList = SpringUtils.getBean(SdReserveProcessMapper.class).getProcessList(Long.valueOf(sdEvent.getCurrencyId()));
+        String pid = sdJoinTypeFlow.getFlowId().toString();
+        for(SdReserveProcess item : processList){
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventId(sdEvent.getId());
+            sdEventHandle.setFlowId(Long.valueOf(pid));
+            sdEventHandle.setFlowPid(sdJoinTypeFlow.getFlowPid());
+            sdEventHandle.setFlowContent(item.getProcessStageName());
+            sdEventHandle.setReserveId(item.getReserveId());
+            sdEventHandle.setFlowSort(sort+"");
+            sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
+            sort = sort + 1;
+            int number = 0;
+            for(SdReserveProcess temp : item.getProcessesList()){
+                String flowId = pid.concat("0");
+                number = number + 1;
+                SdEventHandle sdEventHandle1 = new SdEventHandle();
+                sdEventHandle1.setEventId(sdEvent.getId());
+                sdEventHandle1.setFlowId(Long.valueOf(flowId + 1));
+                sdEventHandle1.setFlowPid(Long.valueOf(pid));
+                sdEventHandle1.setFlowContent(temp.getProcessName());
+                sdEventHandle1.setProcessId(temp.getId());
+                sdEventHandle1.setFlowSort(number+"");
+                sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
+            }
+            pid = pid + "7";
+        }
+        return sort;
+    }
+
+    /**
+     * 事件详情-事件发现
+     * @param eventDiscovery
+     * @return
+     */
+    public Map<String, Object> setDiscoveryMap(SdEvent eventDiscovery){
+        Map<String, Object> map = new HashMap<>();
+        map.put("eventSource", eventDiscovery.getEventSource());
+        map.put("eventTime",DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,eventDiscovery.getEventTime()));
+        map.put("continuedTime",eventDiscovery.getContinuedTime());
+        map.put("tunnelName",eventDiscovery.getTunnelName());
+        map.put("stakeNum",eventDiscovery.getStakeNum());
+        map.put("direction",eventDiscovery.getDirection());
+        //图片集合
+        List<SdTrafficImage> iconUrlList = eventDiscovery.getIconUrlList();
+        List<ImageEntity> imageList = new ArrayList<>();
+        if(iconUrlList.size() >= 3){
+            for(int i = 0; i < 3; i++){
+                ImageEntity image = new ImageEntity();
+                image.setHeight(200);
+                image.setWidth(500);
+                image.setUrl(iconUrlList.get(i).getImgUrl());
+                image.setType(ImageEntity.URL);
+                imageList.add(image);
+            }
+        }else {
+            for(int i = 0; i < iconUrlList.size(); i++){
+                ImageEntity image = new ImageEntity();
+                image.setHeight(200);
+                image.setWidth(500);
+                image.setUrl(iconUrlList.get(i).getImgUrl());
+                image.setType(ImageEntity.URL);
+                imageList.add(image);
+            }
+        }
+        map.put("image", imageList);
+        return map;
+    }
+
+    /**
+     * 事件详情-人工复核
+     * @param manualReview
+     * @return
+     */
+    public Map<String, Object> setReviewMap(SdEvent manualReview){
+        Map<String, Object> map = new HashMap<>();
+        map.put("confidenceList",manualReview.getConfidenceList());
+        map.put("eventDescription",manualReview.getEventDescription());
+        map.put("eventTypeName",manualReview.getEventTypeName());
+        map.put("eventGrade",manualReview.getEventGrade());
+        map.put("eventState",manualReview.getEventState());
+        map.put("updateBy",manualReview.getUpdateBy());
+        map.put("updateTime",DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,manualReview.getUpdateTime()));
+        map.put("reviewRemark",manualReview.getReviewRemark());
+        return map;
+    }
+
+    /**
+     * 事件详情-事件处置
+     * @param planDisposal
+     * @param disposalRecord
+     * @return
+     */
+    public Map<String, Object> setPlanMap(Map<String, Object> planDisposal, List<SdEventFlow> disposalRecord){
+        Map<String, Object> map = new HashMap<>();
+        List<SdEventHandle> planList = (List<SdEventHandle>) planDisposal.get("planList");
+        List<SdEventHandle> list = new ArrayList<>();
+        int count = 0;
+        for(SdEventHandle item : planList){
+            count = 0;
+            for(SdEventHandle temp : item.getChildren()){
+                SdEventHandle sdEventHandle = new SdEventHandle();
+                sdEventHandle.setFlowName(item.getFlowContent());
+                if(count == 1){
+                    sdEventHandle.setFlowName("");
+                }
+                sdEventHandle.setFlowContent(temp.getFlowContent());
+                list.add(sdEventHandle);
+                count = 1;
+            }
+        }
+        map.put("planName",planDisposal.get("planName"));
+        map.put("planList",list);
+
+        disposalRecord.stream().forEach(item -> {
+            item.setFlowDate(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,item.getFlowTime()));
+        });
+        map.put("handleList",disposalRecord);
+        return map;
+    }
+
+    /**
+     * 事件详情-完结报告
+     * @param endReport
+     * @return
+     */
+    public Map<String, Object> setReportMap(SdEvent endReport){
+        Map<String, Object> map = new HashMap<>();
+        map.put("endTime",endReport.getEndTime());
+        map.put("endUpdateBy",endReport.getUpdateBy());
+        map.put("endContinuedTime",endReport.getContinuedTime());
+        map.put("remark",endReport.getRemark());
+        return map;
+    }
+
+    /**
+     * 更新预案设备(除了指定设备)
+     * @param sdEvent
+     */
+    public void setStrategyRlEquipment(SdEvent sdEvent){
+        //查询预案
+        SdReservePlanMapper planMapper = SpringUtils.getBean(SdReservePlanMapper.class);
+        SdReservePlan sdReservePlan = planMapper.selectSdReservePlanById(Long.valueOf(sdEvent.getCurrencyId()));
+        //查询流程
+        SdReserveProcessMapper processMapper = SpringUtils.getBean(SdReserveProcessMapper.class);
+        SdReserveProcess sdReserveProcess = new SdReserveProcess();
+        sdReserveProcess.setReserveId(sdReservePlan.getId());
+        List<SdReserveProcess> sdReserveProcesses = processMapper.selectSdReserveProcessList(sdReserveProcess);
+        SdStrategyRlMapper rlMapper = SpringUtils.getBean(SdStrategyRlMapper.class);
+        for(SdReserveProcess item : sdReserveProcesses){
+            SdStrategyRl sdStrategyRl = rlMapper.selectSdStrategyRlById(item.getStrategyId());
+            if(!"1".equals(sdStrategyRl.getRetrievalRule())){
+                sdStrategyRl.setEquipments(getRlDevice(sdEvent.getId(),sdStrategyRl));
+                rlMapper.updateSdStrategyRl(sdStrategyRl);
+            }
+        }
+    }
+
+    /**
+     * 根据设备检索规则查询设备
+     * @param eventId
+     * @param sdStrategyRl
+     * @return
+     */
+    public String getRlDevice(Long eventId, SdStrategyRl sdStrategyRl){
+        SdEventMapper sdEventMapper = SpringUtils.getBean(SdEventMapper.class);
+        SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
+        //查询事件信息
+        SdEvent sdEvent = sdEventMapper.selectSdEventById(eventId);
+        //整形桩号
+        Integer stakeNum = Integer.valueOf(sdEvent.getStakeNum().replaceAll("K", "").replaceAll(Pattern.quote("+"), "").replaceAll(" ", ""));
+        List<String> rlDeviceList = new ArrayList<>();
+        //检索规则条件
+        String retrievalRule = sdStrategyRl.getRetrievalRule();
+        //最近3公里
+        if("2".equals(retrievalRule)){
+            //前3公里
+            Integer frontStakeNum = stakeNum - 3000;
+            //后3公里
+            Integer afterStakeNum = stakeNum + 3000;
+            //查询区间设备
+            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), frontStakeNum, afterStakeNum,sdEvent.getTunnelId());
+        }
+        //附近5个
+        if("3".equals(retrievalRule)){
+            List<String> frontLatelyFive = sdDevicesMapper.getFrontLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId());
+            List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId());
+            rlDeviceList = setLatelyFive(frontLatelyFive,afterLatelyFive);
+        }
+        //事发上游所有
+        if("4".equals(retrievalRule)){
+            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId());
+        }
+        //事发下游所有
+        if("5".equals(retrievalRule)){
+            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, 0,sdEvent.getTunnelId());
+        }
+        return org.apache.commons.lang3.StringUtils.join(rlDeviceList,",");
+    }
+
+    //最近5条
+    public List<String> setLatelyFive(List<String> frontLatelyFive, List<String> afterLatelyFive){
+        int listSize = frontLatelyFive.size() + afterLatelyFive.size();
+        if(listSize == 5 || listSize > 0 && listSize < 5){
+            for(String item : afterLatelyFive){
+                frontLatelyFive.add(item);
+            }
+            return frontLatelyFive;
+        }
+        if(listSize > 5){
+            if(frontLatelyFive.size() > afterLatelyFive.size() && afterLatelyFive.size() >= 2){
+                List<String> list = new ArrayList<>();
+                for(String item : frontLatelyFive){
+                    list.add(item);
+                    if(list.size() == 3){
+                        break;
+                    }
+                }
+                for(String item : afterLatelyFive){
+                    list.add(item);
+                    if(list.size() == 5){
+                        break;
+                    }
+                }
+                return list;
+            }
+            if(frontLatelyFive.size() > afterLatelyFive.size() && afterLatelyFive.size() == 1){
+                List<String> list = new ArrayList<>();
+                for(String item : frontLatelyFive){
+                    list.add(item);
+                    if(list.size() == 4){
+                        break;
+                    }
+                }
+                for(String item : afterLatelyFive){
+                    list.add(item);
+                    if(list.size() == 5){
+                        break;
+                    }
+                }
+                return list;
+            }
+            if(frontLatelyFive.size() > afterLatelyFive.size() && afterLatelyFive.size() == 0){
+                List<String> list = new ArrayList<>();
+                for(String item : frontLatelyFive){
+                    list.add(item);
+                    if(list.size() == 5){
+                        break;
+                    }
+                }
+                return list;
+            }
+
+            if(frontLatelyFive.size() < afterLatelyFive.size() && frontLatelyFive.size() >= 2){
+                List<String> list = new ArrayList<>();
+                for(String item : frontLatelyFive){
+                    list.add(item);
+                    if(list.size() == 2){
+                        break;
+                    }
+                }
+                for(String item : afterLatelyFive){
+                    list.add(item);
+                    if(list.size() == 5){
+                        break;
+                    }
+                }
+                return list;
+            }
+            if(frontLatelyFive.size() < afterLatelyFive.size() && frontLatelyFive.size() == 1){
+                List<String> list = new ArrayList<>();
+                for(String item : frontLatelyFive){
+                    list.add(item);
+                    if(list.size() == 1){
+                        break;
+                    }
+                }
+                for(String item : afterLatelyFive){
+                    list.add(item);
+                    if(list.size() == 5){
+                        break;
+                    }
+                }
+                return list;
+            }
+            if(frontLatelyFive.size() < afterLatelyFive.size() && frontLatelyFive.size() == 0){
+                List<String> list = new ArrayList<>();
+                for(String item : afterLatelyFive){
+                    list.add(item);
+                    if(list.size() == 5){
+                        break;
+                    }
+                }
+                return list;
+            }
+        }
+        return new ArrayList<>();
+    }
 }

@@ -1,6 +1,7 @@
 package com.tunnel.business.service.event.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.ServletUtils;
@@ -124,54 +125,13 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         sdReservePlan.getParams().put("deptId", deptId);
         List<SdReservePlan> list = sdReservePlanMapper.selectSdReservePlanList(sdReservePlan);
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < list.size(); i++) {
-            List<String> strategyNames = new ArrayList<>();
-//            Long subareaId = list.get(i).getSubareaId();
-//            SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
-//            if (sdTunnelSubarea == null) {
-//                continue;
-//            }
-            //list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
-            //list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
-            String strategyNamesStr = list.get(i).getStrategy().getStrategyName();
+        for(SdReservePlan item : list){
+            //查询预案流程列表
+            List<SdReserveProcess> processList = sdReserveProcessMapper.getProcessList(item.getId());
+            //List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(item.getId());
+            List<String> processStr = processList.stream().map(s->s.getProcessStageName()).collect(Collectors.toList());
+            item.setStrategyNames(processStr);
 
-            List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(list.get(i).getId());
-            List<String> processStr = processList.stream().map(s->s.getProcessName()).collect(Collectors.toList());
-            //.joining(","));
-
-//            if (StrUtil.isNotBlank(strategyNamesStr)) {
-//                strategyNames = Arrays.asList(strategyNamesStr.split(","));
-//                for (int j = 0; j < strategyNames.size(); j++) {
-//                    int num = j + 1;
-//                    strategyNames.set(j, buffer.append(num).append("、").append(strategyNames.get(j)).toString());
-//                    buffer.setLength(0);
-//                }
-//            }
-            list.get(i).setStrategyNames(processStr);
-//            if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
-//                String[] strategys = list.get(i).getStrategyId().split(",");
-//                int index = 0;
-//                for (String strategy : strategys) {
-//                    String things = "";
-//                    if (strategy != null && !"".equals(strategy)) {
-//                        if (!"-1".equals(strategy)) {
-//                            if (strategy == null || strategy.equals("")) {
-//                                continue;
-//                            }
-//                            index++;
-//                            SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(strategy));
-//                            if (sds == null) {
-//                                logger.error("策略未找到！");
-//                                continue;
-//                            }
-//                            //things = things + sds.getStrategyName();
-//                            things = things + index + "、" + sds.getStrategyName();
-//                            strategyNames.add(things);
-//                        }
-//                    }
-//                }
-//                list.get(i).setStrategyNames(strategyNames);
-//            }
         }
         return list;
     }
@@ -186,12 +146,9 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
     public int insertSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
         SdReservePlan searchObj = new SdReservePlan();
         searchObj.setTunnelId(sdReservePlan.getTunnelId());
-        if(sdReservePlan.getControlDirection().equals("1")){
-            searchObj.setDirection(sdReservePlan.getDirection());
-            searchObj.setControlDirection(sdReservePlan.getControlDirection());
-        }
         searchObj.setPlanTypeId(sdReservePlan.getPlanTypeId());
-        searchObj.setCategory(sdReservePlan.getCategory());
+        searchObj.setDirection(sdReservePlan.getDirection());
+        searchObj.setEventGrade(sdReservePlan.getEventGrade());
         List<SdReservePlan> planList = sdReservePlanMapper.selectSdReservePlanList(searchObj);
 
         if (planList.size() > 0) {
@@ -232,15 +189,6 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
                 planFile.setCreateBy(SecurityUtils.getUsername());
                 planFile.setCreateTime(DateUtils.getNowDate());
                 list.add(planFile);
-
-                // 加路径全名
-                    /*File dir = new File(fileServerPath + "/" + fileName);
-                    File filepath = new File(fileServerPath);
-                    if (!filepath.exists()) {
-                        filepath.mkdirs();
-                    } else {
-                    }
-                    file[i].transferTo(dir);*/
             }
             result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
             if (result > -1) {
@@ -250,12 +198,6 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             sdReservePlan.setPlanFileId(null);//文件关联ID
             result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
         }
-
-
-        /*int result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
-        if(result>-1){
-        	result = sdReservePlanFileMapper.brachInsertSdReservePlanFile(list);
-        }*/
         return result;
     }
 
@@ -270,14 +212,10 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
     public int updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids) {
         SdReservePlan searchObj = new SdReservePlan();
         searchObj.setTunnelId(sdReservePlan.getTunnelId());
-        if(sdReservePlan.getControlDirection().equals("1")){
-            searchObj.setDirection(sdReservePlan.getDirection());
-            searchObj.setControlDirection(sdReservePlan.getControlDirection());
-        }
         searchObj.setPlanTypeId(sdReservePlan.getPlanTypeId());
-        searchObj.setCategory(sdReservePlan.getCategory());
+        searchObj.setDirection(sdReservePlan.getDirection());
+        searchObj.setEventGrade(sdReservePlan.getEventGrade());
 
-        sdReservePlan.setPlanFileId(UUIDUtil.getRandom32BeginTimePK());
         List<SdReservePlan> planList = sdReservePlanMapper.checkIfSingleReservePlan(sdReservePlan);
         if (planList.size() > 0 && ids == null) {
             throw new RuntimeException("当前预案修改内容已经存在，请勿重复添加！");
@@ -295,8 +233,8 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         }
         sdReservePlan.setUpdateTime(DateUtils.getNowDate());//创建时间
         sdReservePlan.setUpdateBy(SecurityUtils.getUsername());//设置当前创建人
-        String guid = sdReservePlan.getPlanFileId();//关联ID--guid
-        sdReservePlan.setPlanFileId(guid);//文件关联ID
+        sdReservePlan.setPlanFileId("null".equals(sdReservePlan.getPlanFileId()) ? null : sdReservePlan.getPlanFileId());
+        String guid = UUIDUtil.getRandom32BeginTimePK();//关联ID--guid
 
         if (file != null && file.length > 0) {
             for (int i = 0; i < file.length; i++) {
@@ -311,7 +249,8 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
                 String fileName = extendName;
 
                 SdReservePlanFile planFile = new SdReservePlanFile();
-                planFile.setPlanFileId(guid);
+                planFile.setPlanFileId(sdReservePlan.getPlanFileId() == null ? guid : sdReservePlan.getPlanFileId());
+                sdReservePlan.setPlanFileId(planFile.getPlanFileId());//文件关联ID
                 //planFile.setUrl(fileServerPath + "/" + fileName);
                 planFile.setUrl(savePath);
                 planFile.setFileName(fileName);
@@ -334,6 +273,15 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         }
         if (ids.length > 0) {
             result = sdReservePlanFileMapper.deleteSdReservePlanFileByIds(ids);//ids 为要删除的sd_reserve_plan_file id数组
+            //判断此预案是否存在文件，不存在的话文件id设为空
+            if(file == null && sdReservePlan.getPlanFileId() != null && sdReservePlan.getPlanFileId() != ""){
+                SdReservePlanFile sdReservePlanFile = new SdReservePlanFile();
+                sdReservePlanFile.setPlanFileId(sdReservePlan.getPlanFileId());
+                List<SdReservePlanFile> sdReservePlanFiles = sdReservePlanFileMapper.selectSdReservePlanFileList(sdReservePlanFile);
+                if(sdReservePlanFiles.size() == 0){
+                    sdReservePlan.setPlanFileId(null);
+                }
+            }
         }
         if (result >= 0) {
             result = sdReservePlanMapper.updateSdReservePlan(sdReservePlan);
@@ -462,5 +410,21 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             mapList.add(map);
         }
         return mapList;
+    }
+
+    @Override
+    public AjaxResult getReservePlanData(SdReservePlan sdReservePlan) {
+        List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanList(sdReservePlan);
+        List<SdReservePlan> list = new ArrayList<>();
+        //查询是否存在策略
+        for(SdReservePlan item : sdReservePlans){
+            SdReserveProcess sdReserveProcess = new SdReserveProcess();
+            sdReserveProcess.setReserveId(item.getId());
+            List<SdReserveProcess> sdReserveProcesses = sdReserveProcessMapper.selectSdReserveProcessList(sdReserveProcess);
+            if(sdReserveProcesses.size() > 0){
+                list.add(item);
+            }
+        }
+        return AjaxResult.success(list);
     }
 }

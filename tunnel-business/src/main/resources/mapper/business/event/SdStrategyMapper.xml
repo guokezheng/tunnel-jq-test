@@ -23,6 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="timerClose"    column="timer_close"    />
         <result property="strategyGroup"    column="strategy_group"    />
         <result property="eventType"    column="event_type"    />
+        <result property="isAutomatic"    column="is_automatic"    />
         <association property="tunnels"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
     </resultMap>
 
@@ -33,13 +34,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectSdStrategyVo">
-        select id, tunnel_id, strategy_name, strategy_type, strategy_state, strategy_info, warning_id, scheduler_time, job_relation_id,direction, create_by, create_time, update_by, update_time from sd_strategy
+        select id, tunnel_id, strategy_name, strategy_type, strategy_state, strategy_info, warning_id, scheduler_time, job_relation_id,direction, create_by, create_time, update_by, update_time, is_automatic from sd_strategy
     </sql>
 
     <select id="selectSdStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
         		A.scheduler_time, A.job_relation_id, A.direction,A.create_by,
-        		A.create_time, A.update_by, A.update_time, B.tunnel_name
+        		A.create_time, A.update_by, A.update_time, B.tunnel_name, A.is_automatic, A.event_type
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
         <where>
@@ -51,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="schedulerTime != null  and schedulerTime != ''"> and A.scheduler_time = #{schedulerTime}</if>
             <if test="direction != null  and direction != ''"> and A.direction = #{direction}</if>
             <if test="strategyGroup != null  and strategyGroup != ''"> and A.strategy_group = #{strategyGroup}</if>
+            <if test="eventType != null  and eventType != ''"> and A.event_type = #{eventType}</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (B.dept_id = #{params.deptId} OR B.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
@@ -61,7 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdStrategyById" parameterType="Long" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
         		A.scheduler_time, A.job_relation_id, A.create_by, A.direction,A.event_type,A.strategy_group,
-        		A.create_time, A.update_by, A.update_time, B.tunnel_name, C.s_id, C.s_name,A.timer_open,A.timer_close
+        		A.create_time, A.update_by, A.update_time, B.tunnel_name, C.s_id, C.s_name,A.timer_open,A.timer_close, A.is_automatic
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
         left join sd_tunnel_subarea C on B.tunnel_id = C.tunnel_id
@@ -70,7 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdStrategyAndSdTriggerById" parameterType="Long" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
-               A.scheduler_time, A.job_relation_id, A.create_by, A.direction,
+               A.scheduler_time, A.job_relation_id, A.create_by, A.direction, A.is_automatic
                A.create_time, A.update_by, A.update_time, B.tunnel_name,
                d.id, relate_id, d.device_type_id, d.trigger_type, d.element_id, d.compare_pattern, d.compare_value, d.element_id, d.compare_pattern, d.compare_value
         from sd_strategy a
@@ -102,6 +104,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null">create_by,</if>
             <if test="timerOpen != null">timer_open,</if>
             <if test="timerClose != null">timer_close,</if>
+            <if test="isAutomatic != null">is_automatic,</if>
         create_time
  		)values(
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -118,6 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null">#{createBy},</if>
             <if test="timerOpen != null">#{timerOpen},</if>
             <if test="timerClose != null">#{timerClose},</if>
+            <if test="isAutomatic != null">#{isAutomatic},</if>
         sysdate()
           )
     </insert>
@@ -142,6 +146,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eventType != null">event_type = #{eventType},</if>
             <if test="timerOpen != null">timer_open = #{timerOpen},</if>
             <if test="timerClose != null">timer_close = #{timerClose},</if>
+            <if test="isAutomatic != null">is_automatic = #{isAutomatic},</if>
         </trim>
         where id = #{id}
     </update>
@@ -254,5 +259,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         inner join sd_trigger tri on tri.relate_id = strategy.id
         left join sd_device_type_item item on (item.id = tri.element_id
         and tri.device_type_id = item.device_type_id) where strategy.tunnel_id = #{tunnelId}
+    </select>
+
+    <select id="checkStrategy" parameterType="SdStrategy" resultType="int">
+        select
+            count(*)
+        from sd_strategy A
+        left join sd_tunnels B on A.tunnel_id = B.tunnel_id
+        <where>
+            <if test="id != null">and A.id <![CDATA[ <> ]]> #{id}</if>
+            <if test="tunnelId != null and tunnelId != ''"> and A.tunnel_id = #{tunnelId}</if>
+            <if test="strategyType != null  and strategyType != ''"> and A.strategy_type = #{strategyType}</if>
+            <if test="direction != null  and direction != ''"> and A.direction = #{direction}</if>
+            <if test="eventType != null  and eventType != ''"> and A.event_type = #{eventType}</if>
+        </where>
+        order by A.id desc
+    </select>
+
+    <select id="getEventStrategyData" parameterType="sdStrategy" resultType="hashmap">
+        SELECT
+            s.strategy_type AS strategyType,
+            sr.equipments,
+            sr.state,
+            sr.id,
+            sr.effective_time AS effectiveFime,
+            sr.eq_type_id AS eqTypeId
+        FROM
+            sd_strategy s
+                LEFT JOIN sd_strategy_rl sr ON s.id = sr.strategy_id
+        WHERE
+            1 = 1
+          AND s.strategy_type = '0'
+          AND s.tunnel_id = #{tunnelId}
+          AND s.direction = #{direction}
+          AND s.event_type = #{eventType}
+          AND s.is_automatic = '1'
     </select>
 </mapper>

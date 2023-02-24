@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.event;
 
 
 import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.event.SdReserveProcess;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Select;
 
@@ -116,4 +117,45 @@ public interface SdEventMapper
             "fault_status = '0' and TO_DAYS(create_time) = TO_DAYS(NOW())")
     int eventPopFaultCount();
 
+    /**
+     * 事件详情-事件发现
+     * @param sdEvent
+     * @return
+     */
+    SdEvent getEventDiscovery(SdEvent sdEvent);
+
+    /**
+     * 事件详情-人工复核
+     * @param sdEvent
+     * @return
+     */
+    SdEvent getManualReview(SdEvent sdEvent);
+
+    /**
+     * 事件详情-完结报告
+     * @param sdEvent
+     * @return
+     */
+    SdEvent getEndReport(SdEvent sdEvent);
+
+    /**
+     * 警情升级返现
+     * @param sdEvent
+     * @return
+     */
+    Map<String, Object> getSituationUpgrade(SdEvent sdEvent);
+
+    /**
+     * 应急调度-处置设备详情
+     * @param sdReserveProcess
+     * @return
+     */
+    List<Map<String, Object>> getManagementDevice(SdReserveProcess sdReserveProcess);
+
+    /**
+     * 查询设备状态
+     * @param sdReserveProcess
+     * @return
+     */
+    String getManagementDeviceState(SdReserveProcess sdReserveProcess);
 }

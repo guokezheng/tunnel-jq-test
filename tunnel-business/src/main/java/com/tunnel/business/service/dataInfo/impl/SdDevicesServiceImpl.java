@@ -1,10 +1,13 @@
 package com.tunnel.business.service.dataInfo.impl;
 
 import com.github.pagehelper.util.StringUtil;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DeviceDirectionEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
@@ -12,6 +15,7 @@ import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.service.dataInfo.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -871,5 +875,38 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public List<SdDevices> selectDevicesLineList(String deptId,String eqtype) {
         return sdDevicesMapper.selectDevicesLineList(deptId,eqtype);
+    }
+
+    @Override
+    public AjaxResult getTreeDeviceList(SdDevices sdDevices) {
+        SdTunnelsMapper sdTunnelsMapper = SpringUtils.getBean(SdTunnelsMapper.class);
+        SdDevices sdDevicesParam = new SdDevices();
+        sdDevicesParam.setEqTunnelId(sdDevices.getEqTunnelId());
+        sdDevicesParam.setEqType(sdDevices.getEqType());
+        //隧道中双向设备
+        List<Map<String, Object>> sdDevicesList = sdDevicesMapper.getTreeDevicesData(sdDevicesParam);
+        //隧道中设备方向
+        List<String> tunnelDirection = sdDevicesMapper.getTunnelDirection(sdDevicesParam);
+        //隧道信息
+        SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(sdDevices.getEqTunnelId());
+        //如果没有设备则返回空
+        if(sdDevicesList.size() == 0){
+            return AjaxResult.success(new ArrayList<>());
+        }
+        //处理相关数据组合成级联相关数据结构
+        List<Map<String, Object>> list = new ArrayList<>();
+        List<Map<String, Object>> directionList = new ArrayList<>();
+        for(String direction : tunnelDirection){
+            Map<String, Object> map1 = new HashMap<>();
+            List<Map<String, Object>> collect = sdDevicesList.stream().filter(item -> direction.equals(item.get("eqDirection").toString())).collect(Collectors.toList());
+            map1.put("label", DeviceDirectionEnum.getValue(direction));
+            map1.put("children",collect);
+            directionList.add(map1);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("label",sdTunnels.getTunnelName());
+        map.put("children",directionList);
+        list.add(map);
+        return AjaxResult.success(list);
     }
 }

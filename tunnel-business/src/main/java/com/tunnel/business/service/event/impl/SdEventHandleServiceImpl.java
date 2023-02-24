@@ -94,14 +94,6 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
             sdEventHandle.setUpdateTime(DateUtils.getNowDate());
             count = sdEventHandleMapper.updateSdEventHandle(sdEventHandle);
             SdEventHandle sdEventHandle1 = sdEventHandleMapper.selectSdEventHandleById(Long.valueOf(id));
-            if("18".equals(sdEventHandle1.getFlowId().toString())){
-                SdEvent sdEvent1 = new SdEvent();
-                sdEvent1.setId(sdEvent.getId());
-                sdEvent1.setEventState("1");
-                sdEventMapper.updateSdEvent(sdEvent1);
-                //交通事件、主动安全 事件状态更新为已处理时推送至高速云
-                radarEventServiceImpl.sendDataToOtherSystem(null,sdEventMapper.selectSdEventById(sdEvent.getId()));
-            }
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();
             flow.setFlowDescription(sdEventHandle1.getFlowContent().concat(sdEvent.getRemark() == null ? "" : sdEvent.getRemark()));

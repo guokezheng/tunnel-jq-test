@@ -62,9 +62,9 @@
             >
               <el-option
                 v-for="dict in eventTypeList"
-                :key="dict.dictCode"
-                :label="dict.dictLabel"
-                :value="dict.dictCode"
+                :key="dict.id"
+                :label="dict.eventType"
+                :value="dict.id"
               />
             </el-select>
           </el-form-item>
@@ -173,107 +173,112 @@
             </el-form-item>
           </div>
         </el-col>
-        <el-col :span="22">
-          <el-form-item label="执行操作">
-            <div class="menu">
-              <span>设备类型</span>
-              <span>指定设备</span>
-              <span>控制指令</span>
-              <span>操作</span>
-            </div>
-          </el-form-item>
-        </el-col>
+        <el-row :gutter="20" style="clear:both;">
+          <el-col :span="22">
+            <el-form-item label="执行操作">
+              <div class="menu">
+                <el-col :span="6">设备类型</el-col>
+                <el-col :span="8">指定设备</el-col>
+                <el-col :span="6">控制指令</el-col>
+                <el-col :span="4">操作</el-col>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-row>
       <div v-show="strategyForm.triggers.warningType == 1">
-        <el-row>
-          <el-form-item
-            v-for="(dain, index) in strategyForm.autoControl"
-            :key="index"
-          >
-            <el-col :span="6">
-              <el-select
-                v-model="dain.equipmentTypeId"
-                placeholder="请选择设备类型"
-                clearable
-                title="手动控制"
-                @change="changeEquipmentType(index)"
-              >
-                <el-option
-                  v-for="item in dain.equipmentTypeData"
-                  :key="item.typeId"
-                  :label="item.typeName"
-                  :value="item.typeId"
-                />
-              </el-select>
-            </el-col>
-            <el-col :span="6">
-              <el-select
-                v-model="dain.equipments"
-                multiple
-                collapse-tags
-                placeholder="请选择设备"
-                @change="qbgChange(index, dain.equipments)"
-              >
-                <el-option
-                  v-for="item in dain.equipmentData"
-                  :key="item.eqId"
-                  :label="item.eqName"
-                  :value="item.eqId"
-                  :disabled="item.disabled"
-                />
-              </el-select>
-            </el-col>
-            <el-col
-              :span="6"
-              v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
+        <el-row :gutter="20">
+          <el-col :span="22">
+            <el-form-item
+              v-for="(dain, index) in strategyForm.autoControl"
+              :key="index"
             >
-              <el-select v-model="dain.state" placeholder="请选择设备执行操作">
-                <el-option
-                  v-for="(item, indx) in dain.eqStateList"
-                  :key="item.deviceState"
-                  :label="item.stateName"
-                  :value="item.deviceState"
+              <el-col :span="6">
+                <el-select
+                  v-model="dain.equipmentTypeId"
+                  placeholder="请选择设备类型"
+                  clearable
+                  title="手动控制"
+                  @change="changeEquipmentType(index)"
+                  style="width:100%;"
                 >
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col
-              :span="6"
-              v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
-            >
-              <el-cascader
-                :props="checkStrictly"
-                v-model="dain.state"
-                :options="dain.templatesList"
-                :show-all-levels="false"
-                clearable
-                collapse-tags
-                @change="handleChange"
-              ></el-cascader>
-            </el-col>
-            <el-col :span="4" class="buttonBox">
-              <el-button
-                type=""
-                icon="el-icon-delete"
-                circle
-                @click="removeItem(index)"
-                style="margin-left: 2%"
-              ></el-button>
-              <el-form-item
-                label=""
-                style=""
-                v-show="strategyForm.equipmentTypeId != 30"
+                  <el-option
+                    v-for="item in dain.equipmentTypeData"
+                    :key="item.typeId"
+                    :label="item.typeName"
+                    :value="item.typeId"
+                  />
+                </el-select>
+              </el-col>
+              <el-col :span="8">
+                <el-select
+                  v-model="dain.equipments"
+                  multiple
+                  collapse-tags
+                  placeholder="请选择设备"
+                  @change="qbgChange(index, dain.equipments)"
+                  style="width:100%;"
+                >
+                  <el-option
+                    v-for="item in dain.equipmentData"
+                    :key="item.eqId"
+                    :label="item.eqName"
+                    :value="item.eqId"
+                    :disabled="item.disabled"
+                  />
+                </el-select>
+              </el-col>
+              <el-col
+                :span="6"
+                v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
               >
+                <el-select v-model="dain.state" placeholder="请选择设备执行操作" style="width:100%;">
+                  <el-option
+                    v-for="(item, indx) in dain.eqStateList"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col
+                :span="6"
+                v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
+              >
+                <el-cascader
+                  :props="checkStrictly"
+                  v-model="dain.state"
+                  :options="dain.templatesList"
+                  :show-all-levels="false"
+                  clearable
+                  collapse-tags
+                  @change="handleChange"
+                  style="width:100%;"
+                ></el-cascader>
+              </el-col>
+              <el-col :span="4" class="buttonBox">
                 <el-button
                   type=""
-                  icon="el-icon-plus"
+                  icon="el-icon-delete"
                   circle
-                  @click="addItem"
-                  style="margin-left: 2%"
+                  @click="removeItem(index)"
                 ></el-button>
-              </el-form-item>
-            </el-col>
-          </el-form-item>
+                <el-form-item
+                  label=""
+                  style=""
+                  v-show="strategyForm.equipmentTypeId != 30"
+                >
+                  <el-button
+                    type=""
+                    icon="el-icon-plus"
+                    circle
+                    @click="addItem"
+                  ></el-button>
+                </el-form-item>
+              </el-col>
+            </el-form-item>
+          </el-col>
         </el-row>
       </div>
       <el-form-item class="dialog-footer">
@@ -329,6 +334,7 @@ import {
   handleStrategy,
 } from "@/api/event/strategy";
 import Crontab from "@/components/Crontab";
+import{listEventType}from "@/api/event/eventType";
 export default {
   components: {
     Crontab,
@@ -426,22 +432,22 @@ export default {
         ],
         triggers: {
           deviceTypeId: [
-            { required: true, message: "请选择设备类型", trigger: "change" },
+            { required: true, message: "请选择设备类型", trigger: "blur" },
           ],
           deviceId: [
             { required: true, message: "请选择设备名称", trigger: "blur" },
           ],
           elementId: [
-            { required: true, message: "请选择数据项", trigger: "change" },
+            { required: true, message: "请选择数据项", trigger: "blur" },
           ],
           comparePattern: [
-            { required: true, message: "请选择运算符", trigger: "change" },
+            { required: true, message: "请选择运算符", trigger: "blur" },
           ],
           compareValue: [
-            { required: true, message: "请输入阈值", trigger: "change" },
+            { required: true, message: "请输入阈值", trigger: "blur" },
           ],
           eventType: [
-            { required: true, message: "请选择事件类型", trigger: "change" },
+            { required: true, message: "请选择事件类型", trigger: "blur" },
           ],
         },
       },
@@ -453,10 +459,10 @@ export default {
         this.resetForm();
       }
       // 事件类型
-      this.getDicts("incident_type").then((response) => {
-        this.eventTypeList = response.data;
-        console.log(this.eventTypeList, "事件类型");
-      });
+      let data = {prevControlType:"1"};
+      listEventType(data).then(res=>{
+        this.eventTypeList = res.rows;
+      })
       this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
@@ -529,6 +535,13 @@ export default {
               this.strategyForm.autoControl[i].equipmentTypeId = Number(
                 attr.eqTypeId
               );
+              if (
+                this.strategyForm.autoControl[i].equipmentTypeId == 16 ||
+                this.strategyForm.autoControl[i].equipmentTypeId == 36
+              ) {
+                this.strategyForm.autoControl[i].state = +attr.state;
+                this.qbgChange(i,this.strategyForm.autoControl[i].equipments);
+              }
               this.$set(
                 autoControl,
                 "equipmentTypeData",
@@ -549,6 +562,8 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.$set(this.strategyForm.autoControl[index],"state",null);
+      this.$set(this.strategyForm.autoControl[index],"equipments",null);
       let params = {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -565,7 +580,6 @@ export default {
       this.listEqTypeStateIsControl(index);
     },
     qbgChange(index, value) {
-      console.log(value);
       let data = value;
       if (
         this.strategyForm.autoControl[index].equipmentTypeId == 16 ||
@@ -944,7 +958,7 @@ export default {
     },
     //表单重置方法
     resetForm() {
-      // this.$refs["autoControl"].resetFields();
+      this.$refs["autoControl"].resetFields();
       this.strategyForm.triggers = {
         deviceTypeId: "", //设备类型
         deviceId: "",
@@ -997,6 +1011,9 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  .el-col{
+    text-align: center;
+  }
 }
 .buttonBox {
   display: flex;

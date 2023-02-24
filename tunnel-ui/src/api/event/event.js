@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-09-07 22:06:50
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-02-14 14:48:01
+ * @LastEditTime: 2023-02-20 14:49:15
  * @FilePath: \tunnel-ui\src\api\event\event.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -275,3 +275,31 @@ export function getReservePlanData(query) {
     params: query
   })
 }
+
+// 事件详情导出
+export function detailExport(data) {
+  return request({
+    responseType: 'blob',
+    url: '/event/detailExport',
+    method: 'post',
+    data: data
+  })
+}
+// 应急调度警情升级
+export function getSituationUpgrade(query) {
+  return request({
+    url: '/event/getSituationUpgrade',
+    method: 'get',
+    params: query
+  })
+}
+//警情升级修改
+export function updateSituationUpgrade(query) {
+  return request({
+    url: '/event//updateSituationUpgrade',
+    method: 'get',
+    params: query
+  })
+}
+
+

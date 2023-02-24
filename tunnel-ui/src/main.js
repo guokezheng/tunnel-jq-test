@@ -38,6 +38,8 @@ import VueMeta from 'vue-meta'
 import DictData from '@/components/DictData'
 // 无缝滚动组件
 import VueSeamlessScroll from 'vue-seamless-scroll'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+import 'swiper/css/swiper.css'
 // 事件弹窗组件
 import eventDialog from '@/components/eventDialogTable/eventDialog.vue'
 import eventDialogTable from '@/components/eventDialogTable'
@@ -83,6 +85,7 @@ Vue.prototype.socket = Socket
 // gis 
 Vue.prototype.$GlobalConfig = config.GlobalConfig
 Vue.use(preventClick)
+Vue.use(VueAwesomeSwiper)
 // 全局组件挂载
 
 Vue.component('DictTag', DictTag)

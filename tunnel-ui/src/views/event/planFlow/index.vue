@@ -50,6 +50,12 @@
 
     <el-table v-loading="loading" :data="flowList" @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column
+        type="index"
+        width="70"
+        align="center"
+        label="序号">
+      </el-table-column>
       <el-table-column label="事件分类" align="center" prop="dictLabel" />
       <el-table-column label="事件类型" align="center" prop="eventTypeId" >
         <template slot-scope="scope">

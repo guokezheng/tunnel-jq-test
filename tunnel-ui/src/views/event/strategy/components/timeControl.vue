@@ -78,19 +78,20 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row :gutter="20" style="clear:both;">
         <el-col :span="22">
           <el-form-item label="执行操作">
             <div class="menu">
-              <span>设备类型</span>
-              <span>指定设备</span>
-              <span>控制指令</span>
-              <span>操作</span>
+              <el-col :span="6">设备类型</el-col>
+              <el-col :span="6">指定设备</el-col>
+              <el-col :span="8">控制指令</el-col>
+              <el-col :span="4">操作</el-col>
             </div>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row :gutter="20">
+        <el-col :span="22">
         <el-form-item
           v-for="(dain, index) in strategyForm.autoControl"
           :key="index"
@@ -101,6 +102,7 @@
               placeholder="请选择设备类型"
               clearable
               @change="changeEquipmentType(index)"
+              style="width:100%;"
             >
               <el-option
                 v-for="item in dain.equipmentTypeData"
@@ -117,6 +119,7 @@
               collapse-tags
               placeholder="请选择设备"
               @change="qbgChange(index, dain.equipments)"
+              style="width:100%;"
             >
               <el-option
                 v-for="item in dain.equipmentData"
@@ -134,7 +137,7 @@
               <el-select
                 v-model="dain.openState"
                 placeholder="启动指令"
-                style="width: 90%"
+                style="width: 100%"
               >
                 <el-option
                   v-for="(item, indx) in dain.eqStateList"
@@ -149,7 +152,7 @@
               <el-select
                 v-model="dain.closeState"
                 placeholder="关闭指令"
-                style="width: 90%"
+                style="width: 100%"
               >
                 <el-option
                   v-for="(item, indx) in dain.eqStateListFan"
@@ -166,7 +169,7 @@
             v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
           >
             <el-cascader
-              style="width: 90%"
+              style="width: 100%"
               :props="checkStrictly"
               v-model="dain.state"
               :options="dain.templatesList"
@@ -176,23 +179,22 @@
               @change="handleChange"
             ></el-cascader>
           </el-col>
-          <el-col :span="2" class="buttonBox">
+          <el-col :span="4" class="buttonBox">
             <el-button
               type=""
               icon="el-icon-delete"
               circle
               @click="removeItem(index)"
-              style="margin-left: 2%"
             ></el-button>
             <el-button
               type=""
               icon="el-icon-plus"
               circle
               @click="addItem"
-              style="margin-left: 2%"
             ></el-button>
           </el-col>
         </el-form-item>
+      </el-col>
       </el-row>
       <el-form-item class="dialog-footer">
         <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
@@ -754,6 +756,9 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  .el-col{
+    text-align: center;
+  }
 }
 .buttonBox {
   display: flex;

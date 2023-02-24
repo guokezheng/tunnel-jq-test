@@ -72,19 +72,20 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row :gutter="20" style="clear:both;">
         <el-col :span="22">
           <el-form-item label="执行操作">
             <div class="menu">
-              <span>设备类型</span>
-              <span>指定设备</span>
-              <span>控制指令</span>
-              <span>操作</span>
+              <el-col :span="6">设备类型</el-col>
+              <el-col :span="8">指定设备</el-col>
+              <el-col :span="6">控制指令</el-col>
+              <el-col :span="4">操作</el-col>
             </div>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row :gutter="20">
+        <el-col :span="22">
         <el-form-item
           v-for="(items, index) in strategyForm.autoControl"
           :key="index"
@@ -94,8 +95,8 @@
               v-model="items.equipmentTypeId"
               placeholder="请选择设备类型"
               clearable
-              title="手动控制"
               @change="changeEquipmentType(index)"
+              style="width:100%"
             >
               <el-option
                 v-for="item in items.equipmentTypeData"
@@ -105,13 +106,14 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-select
               v-model="items.equipments"
               multiple
               collapse-tags
               placeholder="请选择设备"
               @change="qbgChange(index, items.equipments)"
+              style="width:100%"
             >
               <el-option
                 v-for="item in items.equipmentData"
@@ -126,7 +128,7 @@
             :span="6"
             v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36"
           >
-            <el-select v-model="items.state" placeholder="请选择设备执行操作">
+            <el-select v-model="items.state" placeholder="请选择设备执行操作" style="width:100%">
               <el-option
                 v-for="(item, indx) in items.eqStateList"
                 :key="item.deviceState"
@@ -156,17 +158,16 @@
               icon="el-icon-delete"
               circle
               @click="removeItem(index)"
-              style="margin-left: 2%"
             ></el-button>
             <el-button
               type=""
               icon="el-icon-plus"
               circle
               @click="addItem"
-              style="margin-left: 2%"
             ></el-button>
           </el-col>
         </el-form-item>
+      </el-col>
       </el-row>
       <el-form-item class="dialog-footer">
         <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
@@ -309,7 +310,7 @@ export default {
         this.resetForm();
         this.$nextTick(() => {
           this.showCronBox = false;
-          this.$refs.cron.checkClear();
+          // this.$refs.cron.checkClear();
         });
       }
       this.getEquipmentType();
@@ -352,6 +353,13 @@ export default {
             this.strategyForm.autoControl[i].equipmentTypeId = Number(
               attr.eqTypeId
             );
+            if (
+              this.strategyForm.autoControl[i].equipmentTypeId == 16 ||
+              this.strategyForm.autoControl[i].equipmentTypeId == 36
+            ) {
+              this.strategyForm.autoControl[i].state = +attr.state;
+              this.qbgChange(i,this.strategyForm.autoControl[i].equipments);
+            }
             this.$set(autoControl, "equipmentTypeData", this.equipmentTypeData);
             listDevices({
               eqType: attr.eqTypeId,
@@ -367,6 +375,8 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.$set(this.strategyForm.autoControl[index], "state", "");
+      this.$set(this.strategyForm.autoControl[index], "equipments", null);
       let params = {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -507,31 +517,6 @@ export default {
         this.resetForm();
         this.$emit("dialogVisibleClose");
         this.$modal.msgSuccess("新增策略成功");
-      });
-    },
-    //二次弹窗选择设备提交按钮
-    submitChooseEqForm() {
-      // 1.赋值 2.比对之前的是否重复   3.根据设备类型查询控制状态  66666
-      let index = this.strategyForm.autoControl.length - 1; //求最后一位
-      this.strategyForm.autoControl[index].value = this.eqForm.equipments;
-      this.strategyForm.autoControl[index].type = this.eqForm.equipment_type;
-      this.equipmentTypeData.forEach((item) => {
-        if (item.typeId == this.eqForm.equipment_type) {
-          this.strategyForm.autoControl[index].typeName = item.typeName;
-        }
-      });
-      this.chooseEq = false; //关闭弹窗
-      this.index = 0;
-      // 如果设备操作状态已选择,则重置状态值
-      if (this.strategyForm.autoControl[index].state) {
-        this.strategyForm.autoControl[index].state = "";
-      }
-      listEqTypeStateIsControl({
-        stateTypeId: this.eqForm.equipment_type,
-        isControl: 1,
-      }).then((response) => {
-        this.strategyForm.autoControl[index].eqStateList = response.rows;
-        this.$forceUpdate();
       });
     },
     // 改变设备类型或者方向
@@ -739,6 +724,9 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  .el-col{
+    text-align: center;
+  }
 }
 .buttonBox {
   display: flex;

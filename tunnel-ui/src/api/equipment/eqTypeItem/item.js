@@ -68,4 +68,22 @@ export function dataLogInfoLineList(query) {
   })
 }
 
+//查询设备列表
+export function dataDevicesLogInfoList(query) {
+  return request({
+    url: '/system/data/dataDevicesLogInfoList',
+    method: 'get',
+    params: query
+  })
+}
+
+
+//查询设备列表
+export function getType() {
+  return request({
+    url: '/system/data/getType',
+    method: 'get',
+  })
+}
+
 

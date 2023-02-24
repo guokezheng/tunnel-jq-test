@@ -177,6 +177,11 @@ public class SdDeviceDataController extends BaseController
         return Result.success(todayLDData);
     }
 
+    /**
+     * 查询设备详情---列表数据
+     * @param sdDeviceData
+     * @return
+     */
     @GetMapping("/dataLogInfoList")
     public TableDataInfo dataLogInfoList(SdDeviceData sdDeviceData)
     {
@@ -184,7 +189,6 @@ public class SdDeviceDataController extends BaseController
         List<Map<String, String>> list = sdDeviceDataService.dataLogInfoList(sdDeviceData);
         return getDataTable(list);
     }
-
     @GetMapping("/dataLogInfoLineList")
     public TableDataInfo dataLogInfoLineList(SdDeviceData sdDeviceData)
     {
@@ -206,5 +210,29 @@ public class SdDeviceDataController extends BaseController
     @GetMapping(value = "/getFanSafeData/{deviceId}")
     public AjaxResult getFanSafeData(@PathVariable("deviceId") String deviceId){
         return sdDeviceDataService.getFanSafeData(deviceId);
+    }
+
+
+    /**
+     * 查询设备列表
+     * @param sdDeviceData
+     * @return
+     */
+    @GetMapping("/dataDevicesLogInfoList")
+    public TableDataInfo dataDevicesLogInfoList(SdDeviceData sdDeviceData)
+    {
+        startPage();
+        List<Map<String, String>> list = sdDeviceDataService.dataDevicesLogInfoList(sdDeviceData);
+        return getDataTable(list);
+    }
+
+    /**
+     * 获取设备类型
+     * @return
+     */
+    @GetMapping("/getType")
+    public AjaxResult getType()
+    {
+        return sdDeviceDataService.getType();
     }
 }

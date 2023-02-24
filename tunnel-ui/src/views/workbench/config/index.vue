@@ -407,7 +407,7 @@
                             style="padding-top:10px"
                           >{{item.CONTENT}}</span>
                           </div>
-                          
+
                         </div>
                         <div v-show="item.eqType == 36"
                         class="boardBox2"
@@ -429,10 +429,10 @@
                               : ''
                           "
                           >
-                          <div 
+                          <div
                           :style="{
                                 animation: 'boardBox2 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite',
-                              
+
                             }">
                             <span
                             v-for="(item,index) in getBoardStyle(item.associated_device_id,'array')" :key="index"
@@ -442,7 +442,7 @@
                             style="padding-top:10px"
                             >{{item.CONTENT}}</span>
                           </div>
-                          
+
                         </div>
                         <!-- 调光数值 -->
                         <label
@@ -1020,12 +1020,12 @@
                       </div>
                     </el-col>
                     <el-col style="display:flex" :span="4">
-                    <div 
-                      style="width:100%" 
+                    <div
+                      style="width:100%"
                       :style="{color:item.eventType.prevControlType == '0'?'red':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
                       {{item.eventType.simplifyName}}
                     </div>
-                      
+
                     </el-col>
                     <el-col :span="18" style="display: flex;">
                       <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
@@ -3329,7 +3329,7 @@ import {
   batchControlCarFinger,
   timeSharing,
   updateControlTime,
-  timeStrategySwitch,
+  timeStrategySwitch, specialVehicleMonitoringInRecent24Hours,
 } from "@/api/workbench/config.js";
 import {
   getDeviceBase,
@@ -4603,7 +4603,7 @@ export default {
 
           if (type == "content") {
             return arr;
-          } 
+          }
           else if (type == "fontSize") {
             if (eqType && eqType == 16) {
               return fontS / 2;
@@ -4987,6 +4987,24 @@ export default {
           vehicleYData.push(item.count);
         }
         this.initeChartsEnd(vehicleXData, vehicleYData);
+      });
+    },
+
+    // 重点车辆监测数据
+    specialVehicleEcharts() {
+      // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
+      const param = {
+        tunnelId: this.tunnelId,
+      };
+      specialVehicleMonitoringInRecent24Hours(param).then((res) => {
+        console.log(res, "重点车辆监测数据");
+        var specialVehicleXData = [];
+        var specialVehicleYData = [];
+        for (var item of res.data) {
+          specialVehicleXData.push(item.hour);
+          specialVehicleYData.push(item.count);
+        }
+        this.loadFocusCar(specialVehicleXData, specialVehicleYData);
       });
     },
     // 重点车辆监测数据
@@ -5516,7 +5534,7 @@ export default {
         // that.initechartsB(res.data)
       });
       // that.initeChartsEnd()
-      that.loadFocusCar();
+      //that.loadFocusCar();
     },
     // 获取最近七天数组
     dateFormat(dateData) {
@@ -5967,7 +5985,7 @@ export default {
         });
       });
     },
-    loadFocusCar() {
+    loadFocusCar(specialVehicleXData, specialVehicleYData) {
       let newPromise = new Promise((resolve) => {
         resolve();
       });
@@ -5994,8 +6012,8 @@ export default {
             type: "category",
             boundaryGap: false,
             // data: this.keyVehiclesXData,
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-
+            data: specialVehicleXData,
+            name: "小时",
             axisLabel: {
               textStyle: {
                 color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
@@ -6011,7 +6029,7 @@ export default {
           },
           yAxis: {
             type: "value",
-            name: "辆",
+            name: "总车辆",
             nameTextStyle: {
               color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
               fontSize: 10,
@@ -6076,7 +6094,7 @@ export default {
                 },
               },
               // data: this.keyVehiclesYData,
-              data: [65, 43, 23, 65, 34, 45, 23, 87, 45],
+              data: specialVehicleYData,
             },
           ],
         };
@@ -6551,6 +6569,7 @@ export default {
         this.tunnelLane = response.rows[0].lane;
         // this.specialEcharts(this.tunnelId)
         this.vehicleEcharts();
+        this.specialVehicleEcharts();
         this.getDeviceDataAndStateData();
         var newDict = this.dict.type.sd_sys_name;
         if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {

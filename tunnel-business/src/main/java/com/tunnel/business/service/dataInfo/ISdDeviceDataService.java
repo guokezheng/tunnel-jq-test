@@ -91,4 +91,17 @@ public interface ISdDeviceDataService {
     AjaxResult getFanSafeData(String deviceId);
 
     List<Map<String, String>> dataLogInfoLineList(SdDeviceData sdDeviceData);
+
+    /**
+     * 查询设备列表
+     * @param sdDeviceData
+     * @return
+     */
+    List<Map<String, String>> dataDevicesLogInfoList(SdDeviceData sdDeviceData);
+
+    /**
+     * 获取设备类型
+     * @return
+     */
+    AjaxResult getType();
 }

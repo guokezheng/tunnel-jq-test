@@ -121,4 +121,10 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
         List<Map<String, Object>> maps = sdRadarDetectDataMapper.vehicleMonitoringInRecent24Hours(tunnelId);
         return maps;
     }
+
+    @Override
+    public List<Map<String, Object>> specialVehicleMonitoringInRecent24Hours(String tunnelId) {
+        List<Map<String, Object>> maps = sdRadarDetectDataMapper.specialVehicleMonitoringInRecent24Hours(tunnelId);
+        return maps;
+    }
 }

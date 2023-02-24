@@ -72,4 +72,11 @@ public interface SdRadarDetectDataMapper
     public List<Map<String, Object>> vehicleMonitoringInRecent24Hours(@Param("tunnelId") String tunnelId);
 
     public List<SdRadarDetectData> selectList(SdRadarDetectData sdRadarDetectData);
+
+    /**
+     * 统计当天24小时的重点车辆
+     * @param tunnelId
+     * @return
+     */
+    List<Map<String, Object>> specialVehicleMonitoringInRecent24Hours(@Param("tunnelId") String tunnelId);
 }

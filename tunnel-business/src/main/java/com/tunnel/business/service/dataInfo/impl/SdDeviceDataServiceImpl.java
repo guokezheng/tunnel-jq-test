@@ -247,18 +247,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
 
     @Override
     public List<Map<String, String>> dataLogInfoLineList(SdDeviceData sdDeviceData) {
-        String dept = "";
-        if (sdDeviceData.getDeptId() == null) {
-            String deptId = SecurityUtils.getDeptId();
-            dept = deptId;
-        } else if (sdDeviceData.getDeptId() != null) {
-            dept = sdDeviceData.getDeptId().toString();
-        }
-        /*String tunnelId = "";
-        if (sdDeviceData.getTunnelId() != null && !sdDeviceData.getTunnelId().equals("")) {
-            tunnelId = sdDeviceData.getTunnelId();
-        }*/
-        String searchValue = "1";
+        List<Map<String, String>> maps = new ArrayList<>();
+        String searchValue = null;
         if (sdDeviceData.getSearchValue() != null && !sdDeviceData.getSearchValue().equals("")) {
             searchValue = sdDeviceData.getSearchValue();
         }
@@ -270,45 +260,62 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         String beginTime = now + " 00:00:00";
         String endTime = now + " 23:59:59";
         if (!sdDeviceData.getParams().isEmpty()) {
-//            Map<String, String> params = (Map<String, String>)map.get("params");
             beginTime = sdDeviceData.getParams().get("beginTime").toString();
             endTime = sdDeviceData.getParams().get("endTime").toString();
         }
-        String flag = sdTunnelsMapper.isTunnel(deviceId);
-        if(flag!=null&&!"".equals(flag)){//选中的隧道
-            if (searchValue.equals("1")) {
-                List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDevicesDataLineList(dept, beginTime, endTime, deviceId);
-                return maps;
-            } else if (searchValue.equals("2")) {
-                List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDevicesDataLineList(dept,  beginTime, endTime, deviceId);
-                return maps;
-            } else if (searchValue.equals("3")) {
-                List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDevicesDataLineList(dept,  beginTime, endTime, deviceId);
-                return maps;
-            } else if (searchValue.equals("4")) {
-                List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDevicesDataLineList(dept,  beginTime, endTime, deviceId);
-                return maps;
-            } else {
-                return null;
-            }
-        }else{
-            if (searchValue.equals("1")) {
-                List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataLineList(dept, beginTime, endTime, deviceId);
-                return maps;
-            } else if (searchValue.equals("2")) {
-                List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataLineList(dept,  beginTime, endTime, deviceId);
-                return maps;
-            } else if (searchValue.equals("3")) {
-                List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataLineList(dept,  beginTime, endTime, deviceId);
-                return maps;
-            } else if (searchValue.equals("4")) {
-                List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataLineList(dept,  beginTime, endTime, deviceId);
-                return maps;
-            } else {
-                return null;
-            }
+        if (searchValue.equals("1")) {
+            maps = sdDeviceDataMapper.selectCOVIDataLineList(beginTime, endTime, deviceId);
+            return maps;
+        } else if (searchValue.equals("2")) {
+            maps = sdDeviceDataMapper.selectFSFXDataLineList(beginTime, endTime, deviceId);
+            return maps;
+        } else if (searchValue.equals("3")) {
+            maps = sdDeviceDataMapper.selectDNDataLineList(beginTime, endTime, deviceId);
+            return maps;
+        } else if (searchValue.equals("4")) {
+            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
+            return maps;
+        } else {
+            return null;
         }
 
+    }
+
+    /**
+     * 查询设备列表
+     * @param sdDeviceData
+     * @return
+     */
+    @Override
+    public List<Map<String, String>> dataDevicesLogInfoList(SdDeviceData sdDeviceData) {
+        String eqtype = null;
+        if(sdDeviceData!=null&&!"".equals(sdDeviceData)){
+            if ("1".equals(sdDeviceData.getSearchValue())) {
+                sdDeviceData.setSearchValue("19");
+            }else if ("2".equals(sdDeviceData.getSearchValue())) {
+                sdDeviceData.setSearchValue("17");
+            }else if ("3".equals(sdDeviceData.getSearchValue())) {
+                sdDeviceData.setSearchValue("18");
+            }else if ("4".equals(sdDeviceData.getSearchValue())) {
+                sdDeviceData.setSearchValue("5");
+            }
+        }
+        if (sdDeviceData.getDeptId() == null) {
+            sdDeviceData.setDept(SecurityUtils.getDeptId());
+        }
+        List<Map<String, String>> maps = sdDeviceDataMapper.dataDevicesLogInfoList(sdDeviceData);
+        return maps;
+    }
+
+    @Override
+    public AjaxResult getType() {
+        Map<String, String> map =  new HashMap<>();
+
+        map.put("5","洞外亮度");
+        map.put("17","风速风向");
+        map.put("18","洞内亮度");
+        map.put("19","CO/VI");
+        return AjaxResult.success(map);
     }
 
     @Override
@@ -433,48 +440,37 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
 
     @Override
     public List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData) {
-        String dept = "";
-        if (sdDeviceData.getDeptId() == null) {
-            String deptId = SecurityUtils.getDeptId();
-            dept = deptId;
-        } else if (sdDeviceData.getDeptId() != null) {
-            dept = sdDeviceData.getDeptId().toString();
-        }
-        String tunnelId = "";
-        if (sdDeviceData.getTunnelId() != null && !sdDeviceData.getTunnelId().equals("")) {
-            tunnelId = sdDeviceData.getTunnelId();
-        }
-        String searchValue = "1";
-        if (sdDeviceData.getSearchValue() != null && !sdDeviceData.getSearchValue().equals("")) {
-            searchValue = sdDeviceData.getSearchValue();
-        }
-        String pile = "";
-        if (sdDeviceData.getPile() != null && !sdDeviceData.getPile().equals("")) {
-            pile = sdDeviceData.getPile();
-        }
+        String deviceId = sdDeviceData.getDeviceId();
         String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String beginTime = now + " 00:00:00";
         String endTime = now + " 23:59:59";
         if (!sdDeviceData.getParams().isEmpty()) {
-//            Map<String, String> params = (Map<String, String>)map.get("params");
             beginTime = sdDeviceData.getParams().get("beginTime").toString();
             endTime = sdDeviceData.getParams().get("endTime").toString();
         }
-        if (searchValue.equals("1")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(dept, tunnelId, beginTime, endTime, pile);
+
+        if (sdDeviceData.getSearchValue().equals("1")) {
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("2")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(dept, tunnelId, beginTime, endTime, pile);
+        } else if (sdDeviceData.getSearchValue().equals("2")) {
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("3")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(dept, tunnelId, beginTime, endTime, pile);
+        } else if (sdDeviceData.getSearchValue().equals("3")) {
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("4")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(dept, tunnelId, beginTime, endTime, pile);
+        } else if (sdDeviceData.getSearchValue().equals("4")) {
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
             return maps;
         } else {
             return null;
         }
+
+
+
+
+        //List<Map<String, String>> maps = sdDeviceDataMapper.selectDeviceTableDataList(deviceId,beginTime,endTime);
+        //return maps;
+
     }
 
     /**
@@ -489,5 +485,6 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         sdDeviceData.setDeviceId(deviceId);
         return sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
     }
+
 
 }

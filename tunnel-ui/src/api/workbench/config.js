@@ -31,6 +31,16 @@ export function vehicleMonitoringInRecent24Hours(data) {
     data: data
   })
 }
+
+
+// 重点车辆监测数据
+export function specialVehicleMonitoringInRecent24Hours(data) {
+  return request({
+    url: '/workspace/specialVehicleMonitoringInRecent24Hours',
+    method: 'post',
+    data: data
+  })
+}
 // 重点车辆监测数据
 export function special(query) {
   return request({

@@ -17,6 +17,7 @@ import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
+import com.tunnel.business.domain.vehicle.SdVehicleData;
 import com.tunnel.business.mapper.dataInfo.*;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
@@ -29,6 +30,7 @@ import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
+import com.tunnel.business.service.vehicle.ISdVehicleDataService;
 import com.tunnel.platform.service.event.impl.SdStrategyServiceImpl;
 import com.zc.common.core.websocket.WebSocketService;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -89,6 +91,9 @@ public class KafkaReadListenToHuaWeiTopic {
 
     @Autowired
     private ISdSpecialVehicleService specialVehicleService;
+
+    @Autowired
+    private ISdVehicleDataService vehicleDataService;
 
     @Autowired
     private RadarEventServiceImpl radarEventServiceImpl;
@@ -405,6 +410,8 @@ public class KafkaReadListenToHuaWeiTopic {
             analysisRidTravel(jsonObject);
             //新增重点车辆记录
             addSpecialVehicle(jsonObject);
+            //保存单车数据
+            addVehicleData(jsonObject);
         }
         consumer.commitSync();
     }
@@ -1528,6 +1535,31 @@ public class KafkaReadListenToHuaWeiTopic {
                 specialVehicles.setStartTime(jsonObject.getString("startTime"));
                 specialVehicleService.insertSdSpecialVehicle(specialVehicles);
             }
+        }
+    }
+
+
+    /**
+     * 根据trackId存储单车数据
+     * @param jsonObject
+     */
+    public void addVehicleData(JSONObject jsonObject){
+        String trackId = jsonObject.getString("trackID");
+        SdVehicleData vehicleData = new SdVehicleData();
+        vehicleData.setTrackId(Long.valueOf(trackId));
+        List<SdVehicleData> list = vehicleDataService.selectSdVehicleDataList(vehicleData);
+        if(list == null || list.size() == 0){
+            //根据trackID判断，没有数据，新增
+            vehicleData.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+            vehicleData.setPlateColor(getPlateColor(jsonObject.getString("plateColor")));
+            vehicleData.setPlateNumber(jsonObject.getString("plateNumber"));
+            vehicleData.setObjectType(jsonObject.getString("objectType"));
+            vehicleData.setVehicleType(getVehicleType(jsonObject.getString("vehicleType")));
+            vehicleData.setVehicleColor(getVehicleColor(jsonObject.getString("vehicleColor")));
+            vehicleData.setSpeed(jsonObject.getString("speed"));
+            vehicleData.setDirection(jsonObject.getString("roadDir"));
+            vehicleData.setCreateTime(DateUtils.getNowDate());
+            vehicleDataService.insertSdVehicleData(vehicleData);
         }
     }
 

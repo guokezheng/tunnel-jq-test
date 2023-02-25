@@ -217,20 +217,34 @@
 
 
     <select id="specialVehicleMonitoringInRecent24Hours" parameterType="String" resultType="hashmap">
-        SELECT HOUR(t.time) hour, ifnull(sa.num,0) AS count FROM
-                (SELECT   DATE_FORMAT( DATE_SUB( NOW(),INTERVAL ( -(@i:=@i-1) ) HOUR ) ,'%Y-%m-%d %H') AS 'time'
-                FROM (
-                SELECT a  FROM
-                (SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4'   ) AS a
-                JOIN ( SELECT  '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b
-                ON 1
-                ) AS b  ,(SELECT @i:=+1)  AS i) AS t
-                LEFT JOIN
-                (SELECT DATE_FORMAT(DATE_SUB( b.start_time,INTERVAL MINUTE(NOW())-60 MINUTE ) ,'%Y-%m-%d %H') AS date, count(b.vehicle_id) AS num
-                FROM (SELECT a.vehicle_id,a.start_time	from sd_special_vehicle a WHERE a.start_time &gt;= (NOW() - interval 25 hour)
-                and tunnel_id = #{tunnelId}
-                GROUP BY a.vehicle_id) b GROUP BY date )
-                AS sa
-        ON sa.date = DATE_FORMAT( t.time,'%Y-%m-%d %H')  GROUP BY t.time
+        select hour(t.start_time) hour,ifnull(d.num,0) count
+        <!--生成近24小时时间-->
+        from (
+        SELECT
+        DATE_FORMAT( DATE_SUB( NOW(), INTERVAL ( -( @i := @i - 1 ) ) HOUR ), '%Y-%m-%d %H' ) AS start_time
+        FROM
+        (
+        SELECT
+        a
+        FROM
+        ( SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' ) AS a
+        JOIN ( SELECT '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b ON 1
+        ) AS b,(
+        SELECT
+        @i :=+ 1
+        ) AS i
+        ) AS t
+        left join
+        (	SELECT count(*) num,DATE_FORMAT( start_time,'%Y-%m-%d %H') start_time  FROM `sd_special_vehicle`
+        where start_time > DATE_SUB(now(), INTERVAL 1 DAY)
+        AND tunnel_id = #{tunnelId}
+        GROUP BY DATE_FORMAT( start_time,'%Y-%m-%d %H')
+        ) d on t.start_time = d.start_time
+        order by t.start_time
+
+
+
+
+
     </select>
 </mapper>

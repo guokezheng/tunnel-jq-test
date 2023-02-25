@@ -1600,7 +1600,9 @@ public class KafkaReadListenToHuaWeiTopic {
         sdRadarDetectData.setLongitude(jsonObject.getString("lng"));
         sdRadarDetectData.setCourseAngle(jsonObject.getString("rriveAngle"));
         sdRadarDetectData.setSpeed(jsonObject.getString("speed"));
-        sdRadarDetectData.setDistance((950-jsonObject.getInteger("ridOffset"))+"");
+        //计算距离入口距离如果小于0则为0
+        int numDistance = 950-jsonObject.getInteger("ridOffset");
+        sdRadarDetectData.setDistance(numDistance < 0 ? "0" : numDistance +"");
         String matchLane = jsonObject.getString("matchLane");
         String laneNo = matchLane.substring(matchLane.length() - 1, matchLane.length());
         sdRadarDetectData.setLaneNum(laneNo);
@@ -1630,7 +1632,9 @@ public class KafkaReadListenToHuaWeiTopic {
         sdRadarDetectData.setLongitude(jsonObject.getString("lng"));
         sdRadarDetectData.setCourseAngle(jsonObject.getString("rriveAngle"));
         sdRadarDetectData.setSpeed(jsonObject.getString("speed"));
-        sdRadarDetectData.setDistance((950-jsonObject.getInteger("ridOffset"))+"");
+        //计算距离入口距离如果小于0则为0
+        int numDistance = 950-jsonObject.getInteger("ridOffset");
+        sdRadarDetectData.setDistance(numDistance < 0 ? "0" : numDistance +"");
         String matchLane = jsonObject.getString("matchLane");
         String laneNo = matchLane.substring(matchLane.length() - 1, matchLane.length());
         sdRadarDetectData.setLaneNum(laneNo);
@@ -1684,38 +1688,11 @@ public class KafkaReadListenToHuaWeiTopic {
      * @return
      */
     public String getVehicleType(String vehicleType){
-        String type = "";
-        switch (vehicleType){
-            case "1":{type = "24"; break;}
-            case "2":{type = "17"; break;}
-            case "3":{type = "13"; break;}
-            case "4":{type = "16"; break;}
-            case "5":{type = "14"; break;}
-            case "6":{type = "4"; break;}
-            case "7":{type = "25"; break;}
-            case "9":{type = "4"; break;}
-            case "10":{type = "12"; break;}
-            case "11":{type = "19"; break;}
-            case "12":{type = "7"; break;}
-            case "13":{type = "18"; break;}
-            case "14":{type = "27"; break;}
-            case "15":{type = "4"; break;}
-            case "16":{type = "28"; break;}
-            case "17":{type = "4"; break;}
-            case "18":{type = "4"; break;}
-            case "19":{type = "4"; break;}
-            case "20":{type = "4"; break;}
-            case "21":{type = "4"; break;}
-            case "22":{type = "4"; break;}
-            case "23":{type = "40"; break;}
-            case "24":{type = "4"; break;}
-            case "25":{type = "28"; break;}
-            default:type = vehicleType;
-        }
-        /*type = VehicleTypeEnum.getValue(vehicleType);
+        String type = null;
+        type = HwVehicleTypeEnum.getValue(vehicleType);
         if(type == null){
             type = vehicleType;
-        }*/
+        }
         return type;
     }
 
@@ -1726,23 +1703,10 @@ public class KafkaReadListenToHuaWeiTopic {
      * @return
      */
     public String getVehicleColor(String vehicleColor){
-        String color = "";
-        switch (vehicleColor){
-            case "0":{color = "2"; break;}
-            case "1":{color = "3"; break;}
-            case "2":{color = "6"; break;}
-            case "3":{color = "12"; break;}
-            case "5":{color = "9"; break;}
-            case "6":{color = "5"; break;}
-            case "7":{color = "8"; break;}
-            case "8":{color = "1"; break;}
-            case "9":{color = "99"; break;}
-            case "11":{color = "7"; break;}
-            case "12":{color = "99"; break;}
-            case "13":{color = "11"; break;}
-            case "14":{color = "99"; break;}
-            case "15":{color = "13"; break;}
-            default:color = vehicleColor;
+        String color = null;
+        color = HwVehicleColorEnum.getValue(vehicleColor);
+        if(color == null){
+            color = vehicleColor;
         }
         return color;
     }
@@ -1754,27 +1718,10 @@ public class KafkaReadListenToHuaWeiTopic {
      * @return
      */
     public String getPlateColor(String plateColor){
-        String color = "";
-        switch (plateColor){
-            case "0":{color = "3"; break;}
-            case "1":{color = "9"; break;}
-            case "2":{color = "1"; break;}
-            case "3":{color = "9"; break;}
-            case "4":{color = "12"; break;}
-            case "5":{color = "11"; break;}
-            case "6":{color = "0"; break;}
-            case "7":{color = "9"; break;}
-            case "8":{color = "2"; break;}
-            case "10":{color = "9"; break;}
-            case "11":{color = "9"; break;}
-            case "12":{color = "9"; break;}
-            case "13":{color = "9"; break;}
-            case "14":{color = "9"; break;}
-            case "15":{color = "9"; break;}
-            case "20":{color = "4"; break;}
-            case "21":{color = "5"; break;}
-            case "99":{color = "9"; break;}
-            default:color = plateColor;
+        String color = null;
+        color = HwPlateColorEnum.getValue(plateColor);
+        if(color == null){
+            color = plateColor;
         }
         return color;
     }

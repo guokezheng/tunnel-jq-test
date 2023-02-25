@@ -106,24 +106,8 @@ public class SdDeviceControlService {
         String deviceState = map.get("state").toString();
         SdDevices devicesHong = sdDevicesService.selectSdDevicesById(deviceId);
         if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType()) && "AGREE".equals(platformControl)){
-            /*Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
+            Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
             Integer code = Integer.valueOf(hongMap.get("code"));
-            if(code == 200){
-                return 1;
-            }else {
-                return 0;
-            }*/
-            SdDeviceTypeItemMapper itemMapper = SpringUtils.getBean(SdDeviceTypeItemMapper.class);
-            SdDeviceDataMapper dataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
-            SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
-            sdDeviceTypeItem.setDeviceTypeId(devicesHong.getEqType());
-            List<SdDeviceTypeItem> sdDeviceTypeItems = itemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem);
-            SdDeviceData sdDeviceData = new SdDeviceData();
-            int code = 200;
-            sdDeviceData.setDeviceId(deviceId);
-            sdDeviceData.setData(deviceState);
-            sdDeviceData.setItemId(sdDeviceTypeItems.get(0).getId());
-            dataMapper.updateKafkaDeviceData(sdDeviceData);
             if(code == 200){
                 return 1;
             }else {

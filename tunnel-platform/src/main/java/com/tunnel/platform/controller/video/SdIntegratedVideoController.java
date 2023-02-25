@@ -19,7 +19,7 @@ public class SdIntegratedVideoController {
     @ApiOperation("打开相机实时流")
     public Result videoStreaming(@PathVariable("camId") String camId)
     {
-        return Result.success(sdIntegratedVideoService.getVideoStreaming(camId));
+        return sdIntegratedVideoService.getVideoStreaming(camId);
     }
 
     @GetMapping("/PTZControl")

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 隧道车辆数据（单车数据）Service业务层处理
@@ -93,5 +94,17 @@ public class SdVehicleDataServiceImpl implements ISdVehicleDataService
     public int deleteSdVehicleDataById(Long id)
     {
         return sdVehicleDataMapper.deleteSdVehicleDataById(id);
+    }
+
+    /**
+     * 按小时统计当天的车辆数据
+     *
+     * @param sdVehicleData 隧道ID
+     * @return
+     */
+    @Override
+    public List<Map> getDayVehicleData(SdVehicleData sdVehicleData) {
+
+        return sdVehicleDataMapper.getDayVehicleData(sdVehicleData);
     }
 }

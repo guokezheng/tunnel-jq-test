@@ -3,6 +3,7 @@ package com.tunnel.business.mapper.vehicle;
 import com.tunnel.business.domain.vehicle.SdVehicleData;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 隧道车辆数据（单车数据）Mapper接口
@@ -59,4 +60,12 @@ public interface SdVehicleDataMapper
      * @return 结果
      */
     public int deleteSdVehicleDataByIds(Long[] ids);
+
+
+    /**
+     * 按小时统计当天的车辆数据
+     * @param sdVehicleData 隧道ID
+     * @return
+     */
+    List<Map> getDayVehicleData(SdVehicleData sdVehicleData);
 }

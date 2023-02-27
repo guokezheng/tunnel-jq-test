@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 情报板敏感字管理Controller
- * 
+ *
  * @author 刘方堃
  * @date 2021-11-29
  */
@@ -98,5 +99,10 @@ public class IotBoardVocabularyController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(iotBoardVocabularyService.deleteIotBoardVocabularyByIds(ids));
+    }
+
+    @PostMapping("/checkIotBoardContent")
+    public AjaxResult checkIotBoardContent(@RequestBody Map<String, Object> map) {
+        return AjaxResult.success(iotBoardVocabularyService.checkIotBoardContent(map));
     }
 }

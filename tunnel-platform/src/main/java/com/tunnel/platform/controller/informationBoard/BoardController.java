@@ -234,7 +234,7 @@ public class BoardController extends BaseController {
                 parameters = parameters.replaceAll("<r><n>","\r\n");
                 parameters = parameters.replaceAll("<br>","\\\\n");
                 for (int g = 0;g < iotBoardVocabularies.size();g++) {
-                    String word = iotBoardVocabularies.get(i).getWord();
+                    String word = iotBoardVocabularies.get(g).getWord();
                     if (parameters.contains(word)) {
                         flag = true;
                         break;

@@ -17,6 +17,7 @@ import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.domain.vehicle.SdVehicleData;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
@@ -24,6 +25,7 @@ import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.service.vehicle.ISdVehicleDataService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
@@ -82,6 +84,9 @@ public class workspaceController extends BaseController {
     @Autowired
     private LightService lightService;
 
+    @Autowired
+    private ISdVehicleDataService vehicleDataService;
+
     @Value("${authorize.name}")
     private String deploymentType;
 
@@ -124,29 +129,13 @@ public class workspaceController extends BaseController {
         String state = map.get("state").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
         if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
-            /*Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
+            Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
             Integer code = Integer.valueOf(hongMap.get("code"));
             String msg = hongMap.get("msg").toString();
             if(code == 200){
                 return AjaxResult.success(1);
             }else {
                 return AjaxResult.success(msg,0);
-            }*/
-            SdDeviceTypeItemMapper itemMapper = SpringUtils.getBean(SdDeviceTypeItemMapper.class);
-            SdDeviceDataMapper dataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
-            SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
-            sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
-            List<SdDeviceTypeItem> sdDeviceTypeItems = itemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem);
-            SdDeviceData sdDeviceData = new SdDeviceData();
-            int code = 200;
-            sdDeviceData.setDeviceId(devId);
-            sdDeviceData.setData(state);
-            sdDeviceData.setItemId(sdDeviceTypeItems.get(0).getId());
-            dataMapper.updateKafkaDeviceData(sdDeviceData);
-            if(code == 200){
-                return AjaxResult.success(1);
-            }else {
-                return AjaxResult.success("",0);
             }
         }
         if ("GSY".equals(deploymentType)) {
@@ -616,8 +605,13 @@ public class workspaceController extends BaseController {
         if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
         }
-        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(map.get("tunnelId").toString());
-        return AjaxResult.success(vehicleMonitoringInRecent24Hours);
+        String tunnelId = String.valueOf(map.get("tunnelId"));
+        //避免数据量大时查询过慢超时，改为从单车数据中查询
+        SdVehicleData vehicleData = new SdVehicleData();
+        vehicleData.setTunnelId(tunnelId);
+        List<Map> list = vehicleDataService.getDayVehicleData(vehicleData);
+//        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(map.get("tunnelId").toString());
+        return AjaxResult.success(list);
     }
 
     /**

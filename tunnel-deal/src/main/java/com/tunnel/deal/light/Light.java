@@ -1,5 +1,7 @@
 package com.tunnel.deal.light;
 
+import java.util.List;
+
 public interface Light {
 
     /**
@@ -18,4 +20,6 @@ public interface Light {
     int lineControl(String deviceId, Integer openClose);
 
 
+
+    boolean setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp);
 }

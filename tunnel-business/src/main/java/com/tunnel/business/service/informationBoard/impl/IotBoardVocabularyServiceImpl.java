@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 情报板敏感字管理Service业务层处理
@@ -83,5 +84,27 @@ public class IotBoardVocabularyServiceImpl implements IIotBoardVocabularyService
     @Override
     public int deleteIotBoardVocabularyById(Long id) {
         return iotBoardVocabularyMapper.deleteIotBoardVocabularyById(id);
+    }
+
+    @Override
+    public int checkIotBoardContent(Map<String, Object> map) {
+        if (map.get("content") == null || map.get("content").toString().equals("")) {
+            return 0;
+        } else {
+            String content = map.get("content").toString();
+            Boolean flag = false;
+            List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyMapper.selectIotBoardVocabularyList(null);
+            for (int g = 0;g < iotBoardVocabularies.size();g++) {
+                String word = iotBoardVocabularies.get(g).getWord();
+                if (content.contains(word)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                throw new RuntimeException("发送的内容包含不恰当的关键字，请修改后重试！");
+            }
+        }
+        return 1;
     }
 }

@@ -3,12 +3,14 @@ package com.tunnel.platform.service;
 import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -111,11 +113,11 @@ public class SdIntegratedVideoService {
      * camId 相机编号
      * @return
      */
-    public Map getVideoStreaming(String eqId){
+    public Result getVideoStreaming(String eqId){
         SdDevices devices = SpringUtil.getBean(SdDevicesMapper.class).selectSdDevicesById(eqId);
         JSONObject result = new JSONObject();
         if(devices.getExternalDeviceId() == null){
-            return result;
+            return Result.success();
         }
         String url = address+"/videoInfo/api/videoStreaming";
         HttpHeaders headers = new HttpHeaders();
@@ -129,13 +131,18 @@ public class SdIntegratedVideoService {
                 .queryParam("camId",devices.getExternalDeviceId());
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         try{
-            ResponseEntity<String> exchange = template.exchange(builder.build().toUri(), HttpMethod.POST, requestEntity, String.class);
+            HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+            httpRequestFactory.setConnectionRequestTimeout(3 * 1000);
+            httpRequestFactory.setConnectTimeout(3 * 1000);
+            httpRequestFactory.setReadTimeout(3 * 1000);
+            RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
+            ResponseEntity<String> exchange = restTemplate.exchange(builder.build().toUri(), HttpMethod.POST, requestEntity, String.class);
             JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
-            return Optional.ofNullable(object).orElseGet(()->result);
+            return Result.success(Optional.ofNullable(object).orElseGet(()->result));
         }catch(Exception ex){
             log.info("打开相机实时流发生异常：{}",ex.getMessage());
+            return Result.error("实时视频暂未连接");
         }
-        return null;
     }
 
     /**

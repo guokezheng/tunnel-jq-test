@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.vehicle.SdVehicleDataMapper">
+
+    <resultMap type="SdVehicleData" id="SdVehicleDataResult">
+        <result property="id"    column="id"    />
+        <result property="trackId"    column="track_id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="plateColor"    column="plate_color"    />
+        <result property="plateNumber"    column="plate_number"    />
+        <result property="objectType"    column="object_type"    />
+        <result property="vehicleType"    column="vehicle_type"    />
+        <result property="vehicleColor"    column="vehicle_color"    />
+        <result property="speed"    column="speed"    />
+        <result property="direction"    column="direction"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdVehicleDataVo">
+        select id, track_id, tunnel_id, plate_color, plate_number, object_type, vehicle_type, vehicle_color, speed, direction, create_by, create_time, update_by, update_time from sd_vehicle_data
+    </sql>
+
+    <select id="selectSdVehicleDataList" parameterType="SdVehicleData" resultMap="SdVehicleDataResult">
+        <include refid="selectSdVehicleDataVo"/>
+        <where>
+            <if test="trackId != null "> and track_id = #{trackId}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="plateColor != null  and plateColor != ''"> and plate_color = #{plateColor}</if>
+            <if test="plateNumber != null  and plateNumber != ''"> and plate_number = #{plateNumber}</if>
+            <if test="objectType != null  and objectType != ''"> and object_type = #{objectType}</if>
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="vehicleColor != null  and vehicleColor != ''"> and vehicle_color = #{vehicleColor}</if>
+            <if test="speed != null  and speed != ''"> and speed = #{speed}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+        </where>
+    </select>
+
+    <select id="selectSdVehicleDataById" parameterType="Long" resultMap="SdVehicleDataResult">
+        <include refid="selectSdVehicleDataVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdVehicleData" parameterType="SdVehicleData" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_vehicle_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="trackId != null">track_id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="plateColor != null">plate_color,</if>
+            <if test="plateNumber != null">plate_number,</if>
+            <if test="objectType != null">object_type,</if>
+            <if test="vehicleType != null">vehicle_type,</if>
+            <if test="vehicleColor != null">vehicle_color,</if>
+            <if test="speed != null">speed,</if>
+            <if test="direction != null">direction,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="trackId != null">#{trackId},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="plateColor != null">#{plateColor},</if>
+            <if test="plateNumber != null">#{plateNumber},</if>
+            <if test="objectType != null">#{objectType},</if>
+            <if test="vehicleType != null">#{vehicleType},</if>
+            <if test="vehicleColor != null">#{vehicleColor},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdVehicleData" parameterType="SdVehicleData">
+        update sd_vehicle_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="trackId != null">track_id = #{trackId},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="plateColor != null">plate_color = #{plateColor},</if>
+            <if test="plateNumber != null">plate_number = #{plateNumber},</if>
+            <if test="objectType != null">object_type = #{objectType},</if>
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="vehicleColor != null">vehicle_color = #{vehicleColor},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdVehicleDataById" parameterType="Long">
+        delete from sd_vehicle_data where id = #{id}
+    </delete>
+
+    <delete id="deleteSdVehicleDataByIds" parameterType="String">
+        delete from sd_vehicle_data where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--按小时统计当天的车辆数据-->
+    <select id="getDayVehicleData" resultType="java.util.Map">
+        select hour(t.create_time) hour,ifnull(d.num,0) count
+        <!--生成近24小时时间-->
+        from (
+	SELECT
+		DATE_FORMAT( DATE_SUB( NOW(), INTERVAL ( -( @i := @i - 1 ) ) HOUR ), '%Y-%m-%d %H' ) AS create_time
+	FROM
+		(
+		SELECT
+			a
+		FROM
+			( SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' ) AS a
+			JOIN ( SELECT '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b ON 1
+			) AS b,(
+		SELECT
+			@i :=+ 1
+		) AS i
+	) AS t
+	left join
+    (SELECT count(*) num,DATE_FORMAT( create_time,'%Y-%m-%d %H') create_time  FROM `sd_vehicle_data`
+    where create_time > DATE_SUB(now(), INTERVAL 1 DAY)
+    AND tunnel_id = #{tunnelId}
+    GROUP BY DATE_FORMAT( create_time,'%Y-%m-%d %H')
+    ) d on t.create_time = d.create_time
+        order by t.create_time
+    </select>
+</mapper>

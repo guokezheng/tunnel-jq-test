@@ -13,15 +13,21 @@ import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.light.Light;
 import com.tunnel.platform.service.SdDeviceControlService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LightService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LightService.class);
+
     @Autowired
     private ISdOperationLogService sdOperationLogService;
     @Autowired
@@ -181,4 +187,24 @@ public class LightService {
     }
 
 
+    /**
+     * 批量控制车灯
+     * @param devices
+     * @param controlType
+     * @param operIp
+     * @return
+     */
+    public int setBrightnessList(List<Map<String,Object>> devices, String controlType, String operIp)  {
+        int flag = 1;
+        for (Map<String,Object> device: devices) {
+            String deviceId = device.get("deviceId").toString();
+            Integer openClose = Integer.parseInt(device.get("openClose").toString());
+            int result = setBrightness(deviceId,openClose,controlType,operIp);
+            if(result==0){
+                flag = 0;
+                logger.error("【{}】调整亮度请求响应失败。请联系管理员",deviceId);
+            }
+        }
+        return flag;
+    }
 }

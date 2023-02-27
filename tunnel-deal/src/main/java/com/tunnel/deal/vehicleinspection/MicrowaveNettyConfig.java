@@ -62,17 +62,27 @@ public class MicrowaveNettyConfig {
                     List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
 //                    List<DeviceEntity> list = deviceRepository.getIps();
                     for(SdDevices it : devicesList) {
-                        NettyConnectInfo info = new NettyConnectInfo();
-                        info.setPort(Integer.parseInt(it.getPort()));
-                        info.setChannel(null);
-                        info.setConnected(false);
-                        info.setSdDevices(it);
+//                        NettyConnectInfo info = new NettyConnectInfo();
+//                        info.setPort(Integer.parseInt(it.getPort()));
+//                        info.setChannel(null);
+//                        info.setConnected(false);
+//                        info.setSdDevices(it);
+//
+//                        mapParam.put(it.getIp()+":"+(it.getPort()), info);
+                        //临时测试用
+                        if("10.7.187.145".equals(it.getIp())){
+                            NettyConnectInfo info = new NettyConnectInfo();
+                            info.setPort(Integer.parseInt(it.getPort()));
+                            info.setChannel(null);
+                            info.setConnected(false);
+                            info.setSdDevices(it);
 
-                        mapParam.put(it.getIp()+":"+(it.getPort()), info);
+                            mapParam.put(it.getIp()+":"+(it.getPort()), info);
+                        }
                     }
 
                     // connect
-//                    MicrowaveNettyClient.getChannel(mapParam);
+                    MicrowaveNettyClient.getChannel(mapParam);
                 }
                 catch (Exception e) {
                     log.error("Netty client start fail : {}", e.getMessage());

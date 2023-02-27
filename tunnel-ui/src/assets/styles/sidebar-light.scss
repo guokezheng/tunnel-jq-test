@@ -169,7 +169,7 @@
     }
   
     ::-webkit-scrollbar-thumb {
-      background-color: #05AFE3;
+      background-color: #0090D8;
     }
     .addUserDialog{
       .el-dialog__body{
@@ -230,7 +230,7 @@
     }
   
     ::-webkit-scrollbar-thumb {
-      background-color: #05AFE3;
+      background-color: #0090D8;
     }
     .el-dialog__body{
       background: #012E51;
@@ -428,14 +428,14 @@
           color: #fff !important;
         }
         .el-input__inner {
-          background: #fff !important;
-          color: #606266 !important;
+          background: transparent !important;
+          color: #fff;
         }
         .el-pagination.is-background .btn-prev,
         .el-pagination.is-background .btn-next,
         .el-pagination.is-background .el-pager li {
-          background: #fff !important;
-          color: #606266 !important;
+          background: transparent;
+          color: #fff;
         }
       }
     }
@@ -444,14 +444,14 @@
   .specialPagination{
    
     .el-pager li{
-      background: #326CA9;
+      background: transparent;
       border: solid 1px #25678D;
       color: #fff;
     }
     .el-pager li.active{
-      background-color: #00afe0 !important;
+      background-color: #39ADFF !important;
       color: white !important;
-      border: solid 1px #00afe0;
+      border: solid 1px #39ADFF;
     }
     .btn-next,.btn-prev{
       background-color: #004375;
@@ -493,7 +493,7 @@
   }
 
   .el-scrollbar__wrap::-webkit-scrollbar-thumb {
-    background-color: #00598f;
+    background-color: #0090D8;
   }
   .el-input-group__append, .el-input-group__prepend{
     background: #004F8B !important;
@@ -512,6 +512,12 @@
   // 时间选择器箭头
   .el-picker-panel__icon-btn{
     color:#bbb;
+  }
+  .el-date-range-picker__time-header{
+    .el-input__inner{
+      background: transparent;
+      color: #FFF;
+    }
   }
   #app {
     // 表格上方虚线
@@ -862,13 +868,13 @@
     }
     // 表格隔行变色
     .tableEvenRow{
-      background: #004375;
+      background: #00467B !important;
     }
     .tableOddRow{
-      background: #00487F;
+      background: #004F8B !important;
     }
     .hover-row{
-      background: #326CA9;
+      background: #0064B0 !important;
     }
     // 系统监控-服务监控页面 不规则表格
     .othertableRowClass{
@@ -1206,15 +1212,15 @@
   
     /* table滚动条的滑块*/
     .el-table__body-wrapper::-webkit-scrollbar-thumb {
-      background-color: #00c2ff;
+      background-color: #0090D8;
     }
-    /* 鼠标悬浮*/
-    .el-table--enable-row-hover .el-table__body tr:hover>td {
-      background-color: #0064B0 !important;
-      color: white;
-      /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
+    // /* 鼠标悬浮*/
+    // .el-table--enable-row-hover .el-table__body tr:hover>td {
+    //   background-color: #0064B0 !important;
+    //   color: white;
+    //   /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
     
-    }
+    // }
   }
   .my-back{
     background-color: #010913;
@@ -1300,7 +1306,7 @@
 
   /* table滚动条的滑块*/
   .el-table__body-wrapper::-webkit-scrollbar-thumb {
-    background-color: #00c2ff;
+    background-color: #0090D8;
   }
   /* 鼠标悬浮*/
   .el-table--enable-row-hover .el-table__body tr:hover>td {
@@ -1611,7 +1617,7 @@
 
     /* table滚动条的滑块*/
     .el-table__body-wrapper::-webkit-scrollbar-thumb {
-      background-color: #00c2ff;
+      background-color: #0090D8;
     }
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover > td {
@@ -1631,6 +1637,22 @@
   }
   // 操作日志
   .operationDiglog{
+    // 表格隔行变色
+    .tableEvenRow{
+      background: #00467B !important;
+    }
+    .tableOddRow{
+      background: #004F8B !important;
+    }
+    .hover-row{
+      background: #0064B0 !important;
+    }
+    .el-input-group__append{
+      background: #004F8B !important;
+      color: #00C8FF;
+      border: solid 1px #00C8FF;
+      border-left: transparent;
+    }
     .el-loading-mask{
       background: transparent;
     }
@@ -1643,9 +1665,9 @@
       .el-table__body{
         width: calc(100% - 30px);
       }
-      tr{
-        color: white;
-      }
+      // tr{
+      //   color: white;
+      // }
       .el-table__header-wrapper th{
         background-color: #00ADFF !important;
         color:#fff !important;
@@ -1662,18 +1684,18 @@
 
     /* table滚动条的滑块*/
     .el-table__body-wrapper::-webkit-scrollbar-thumb {
-      background-color: #00c2ff;
+      background-color: #0090D8;
     }
     /* 鼠标悬浮*/
-    .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #0064B0;
-    }
+    // .el-table--enable-row-hover .el-table__body tr:hover > td {
+    //   background-color: #0064B0;
+    // }
     .el-pagination.is-background .el-pager li:not(.disabled).active{
-      background-color: #00afe0 !important;
+      background-color: #39ADFF !important;
       color: white !important;
     }
     .el-button{
-      border-radius: 0 !important;
+      border-radius: 3px !important;
     }
   }
   .menuAdministration{
@@ -1696,7 +1718,7 @@
       border-radius: 5px;
   }
   .content::-webkit-scrollbar-thumb {
-      background-color: rgba($color: #00c2ff, $alpha: 0.6);
+      background-color: rgba($color: #00487F, $alpha: 0.6);
       background-clip: padding-box;
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
@@ -1705,7 +1727,7 @@
   }
   .content::-webkit-scrollbar-thumb:hover {
     
-      background-color: #00c2ff;
+      background-color: #0090D8;
       -webkit-border-radius: 5px;
       -moz-border-radius: 5px;
       border-radius: 5px;
@@ -1719,7 +1741,7 @@
         color: #fff !important;
       }
       tr:nth-of-type(even){
-        background: rgba(0,100,176,0.3);
+        background: rgba(0,100,176,0.3) !important;
         color: #fff !important;
       }
       
@@ -1763,7 +1785,7 @@
 
     /* table滚动条的滑块*/
     .el-table__body-wrapper::-webkit-scrollbar-thumb {
-      background-color: #00c2ff;
+      background-color: #0090D8;
     }
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover > td {

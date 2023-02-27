@@ -54,7 +54,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBoxTab" v-show="xt_boxShow">
+    <div class="searchBoxTab" v-show="xt_boxShow" ref="cc">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -191,7 +191,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBoxTab" v-show="cz_boxShow">
+    <div class="searchBoxTab" v-show="cz_boxShow" ref="cc1">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -514,8 +514,13 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.xt_boxShow == true) {
+      // if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      //   if (self.xt_boxShow == true) {
+      //     self.xt_boxShow = false;
+      //   }
+      // }
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.xt_boxShow == true){
           self.xt_boxShow = false;
         }
       }
@@ -531,8 +536,13 @@ export default {
     },
     bodyCloseMenus1(e) {
       let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
-        if (self.cz_boxShow == true) {
+      // if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      //   if (self.cz_boxShow == true) {
+      //     self.cz_boxShow = false;
+      //   }
+      // }
+      if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
+        if (self.cz_boxShow == true){
           self.cz_boxShow = false;
         }
       }
@@ -824,6 +834,9 @@ hr {
   top: 11% !important;
   right: 0.8% !important;
   width: 23.8% !important;
+}
+::v-deep .el-picker-panel{
+  transform:translateX(-25px)
 }
 </style>
 

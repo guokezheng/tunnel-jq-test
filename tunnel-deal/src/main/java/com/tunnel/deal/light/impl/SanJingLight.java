@@ -1,10 +1,15 @@
 package com.tunnel.deal.light.impl;
 
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
+import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.light.Light;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -26,6 +32,11 @@ public class SanJingLight implements Light {
     @Autowired
     private IExternalSystemService externalSystemService;
 
+    @Autowired
+    private ISdOperationLogService sdOperationLogService;
+
+    @Autowired
+    private ISdDeviceDataService sdDeviceDataService;
 
     /**
      * 登录获取会话ID
@@ -149,5 +160,62 @@ public class SanJingLight implements Light {
             return 0;
         }
         return responseBody.contains("发送成功") ? 1 : 0;
+    }
+
+    @Override
+    public boolean setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp) {
+        boolean falg = true;
+        for (String deviceId:deviceIds ) {
+            SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
+            int resultStatus = setBrightness(deviceId,bright);
+            // 如果控制成功
+            if (resultStatus == 1) {
+                // 更新设备在线状态
+                device.setEqStatus("1");
+                device.setEqStatusTime(new Date());
+                sdDevicesService.updateSdDevices(device);
+                //更新设备实时数据
+                updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+            }else{
+                falg = false;
+            }
+            //添加操作日志
+            SdOperationLog sdOperationLog = new SdOperationLog();
+            sdOperationLog.setEqTypeId(device.getEqType());
+            sdOperationLog.setTunnelId(device.getEqTunnelId());
+            sdOperationLog.setEqId(device.getEqId());
+            sdOperationLog.setOperationState(String.valueOf(bright));
+            sdOperationLog.setControlType(controlType);
+            sdOperationLog.setCreateTime(new Date());
+            sdOperationLog.setOperIp(operIp);
+            sdOperationLog.setState(String.valueOf(resultStatus));
+            // 确定设备之前亮度值
+            SdDeviceData sdDeviceData = new SdDeviceData();
+            sdDeviceData.setDeviceId(deviceId);
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
+            List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+            if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+                sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+            }
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        }
+        return falg;
+    }
+
+    public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            sdDeviceDataService.updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            sdDeviceDataService.insertSdDeviceData(sdDeviceData);
+        }
     }
 }

@@ -1,9 +1,11 @@
 package com.tunnel.deal.vehicleinspection;
 
 
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelStepEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
 import com.tunnel.business.domain.dataInfo.SdMicrowaveRealData;
@@ -11,6 +13,8 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowaveRealDataMapper;
 import com.tunnel.business.utils.util.RadixUtil;
+import com.tunnel.deal.light.impl.SanJingLight;
+import com.zc.common.core.ThreadPool.ThreadPool;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,13 +22,18 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @ChannelHandler.Sharable
@@ -34,6 +43,20 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(MicrowaveNettyClientHandler.class);
 
     private static SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
+
+    private SanJingLight sanJingLight =  SpringUtils.getBean(SanJingLight.class);
+
+    private static Thread[] threadArrs = new Thread[1];
+
+    private static Integer bright;
+
+    private int tallLuminance = 70;
+    private int lowLuminance = 20;
+
+//    /**
+//     * Redis缓存工具类
+//     * */
+//    private RedisCache redisCache = SpringUtils.getBean(RedisCache.class);
 
     /**
      * 建立连接时
@@ -100,27 +123,71 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         byteBuf.readBytes(buffers);
         String receiveStr = ConvertCode.receiveHexToString(buffers);
         byteBuf.release();
+        log.info("读取到的信息："+receiveStr);
 
         //log.info("接收到 " + host + ":" + port + "的数据");
-        SdDevices sdDevices = new SdDevices();
-        sdDevices.setEqType(DevicesTypeEnum.WEI_BO_CHE_JIAN.getCode());
-        sdDevices.setIp(host);
-        sdDevices.setPort(String.valueOf(port));
-        List<SdDevices> devices = sdDevicesMapper.selectSdDevicesList(sdDevices);
-        SdDevices dev = devices.get(0);
-        dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
-        dev.setEqStatusTime(new Date());
-        sdDevicesMapper.updateSdDevices(dev);
-        //周期统计数据
-        if(receiveStr.startsWith("FFF9") || receiveStr.startsWith("fff9")){
-            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
-        }
-        //单车数据
-        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
-            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
-        }
+//        SdDevices sdDevices = new SdDevices();
+//        sdDevices.setEqType(DevicesTypeEnum.WEI_BO_CHE_JIAN.getCode());
+//        sdDevices.setIp(host);
+//        sdDevices.setPort(String.valueOf(port));
+//        List<SdDevices> devices = sdDevicesMapper.selectSdDevicesList(sdDevices);
+//        SdDevices dev = devices.get(0);
+//        dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+//        dev.setEqStatusTime(new Date());
+//        sdDevicesMapper.updateSdDevices(dev);
+//        //周期统计数据
+//        if(receiveStr.startsWith("FFF9") || receiveStr.startsWith("fff9")){
+//            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+//        }
+//        //单车数据
+//        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
+//            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+//        }
 
-        MicrowaveNettyClient.channels.get(host + ":" + port).setActiveTime(new Timestamp(System.currentTimeMillis()));
+        //单车数据      测试使用
+        if(receiveStr.length()>=34&&(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8"))){
+            //开启线程  推送加强照明灯指令。并  30秒后执行降低光照强度指令。
+            ThreadPool.executor.execute(() -> {
+                try {
+                    //测试数据
+                    List<String> deviceIds = new ArrayList<>();
+                    deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-001");
+                    deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-002");
+                    deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-003");
+                    String operIp = "";
+                    try {
+                        operIp = InetAddress.getLocalHost().getHostAddress();
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                    //推送调光 指令。
+                    //当前为测试数据
+                    //控制  TunnelStepEnum  棚洞段 COTE_STEP 入口段1 ENTR_STEP1 入口段2 ENTR_STEP2
+                    //     * @param deviceId    设备ID
+
+                    //     * @param bright      亮度
+                    //     * @param controlType 控制类型
+                    //     * @param operIp      操作者IP地址
+                    if(threadArrs[0]==null&&(bright == null||bright == lowLuminance)){
+                        System.out.println("线程开始推送加强照明指令。。");
+                        sanJingLight.setBrightnessByList(deviceIds,tallLuminance,"2",operIp);
+                    }
+                    //替换线程
+                    replaceThread(Thread.currentThread());
+                    //等待30秒后 执行 降低 光照强度功能
+                    Thread.sleep(30000);
+                    System.out.println("开始执行降低光照强度。。。");
+                    sanJingLight.setBrightnessByList(deviceIds,lowLuminance,"2",operIp);
+                    //清除当前记录线程
+                    threadArrs[0] =  null;
+                    //记录当前亮度值
+                    bright = lowLuminance;
+                } catch (InterruptedException e) {
+                    log.error("异常被catch到");
+                }
+            });
+        }
+        //MicrowaveNettyClient.channels.get(host + ":" + port).setActiveTime(new Timestamp(System.currentTimeMillis()));
     }
 
     private static void dataAnalySis(String firstContent, String id, String tunnelId) {
@@ -223,4 +290,19 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
+
+    /**
+     *
+     * @param thread
+     */
+    public static synchronized void replaceThread(Thread thread){
+        if(threadArrs[0]!=null){
+            System.out.println((thread.getName()+"线程替换原有线程"+threadArrs[0].getName()+"将其杀死。"));
+            Thread oldThread = threadArrs[0];
+            //删除旧线程
+            oldThread.interrupt();
+        }
+        //存入新线程
+        threadArrs[0] = thread;
+    }
 }

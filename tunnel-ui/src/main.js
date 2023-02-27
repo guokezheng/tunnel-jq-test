@@ -59,6 +59,8 @@ import config from '../public/config'
 
 import request from '../public/config'
 import moment from 'moment'
+import dayjs from "dayjs"
+
 //定义全局过滤器
 Vue.filter('dateformat', function (dataStr, pattern = 'YYY-MM-DD HH:mm:ss') {
   if (dataStr === null || dataStr === "") {
@@ -71,6 +73,7 @@ Vue.filter('dateformat', function (dataStr, pattern = 'YYY-MM-DD HH:mm:ss') {
 
 
 // 全局方法挂载
+Vue.prototype.dayjs = dayjs;
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime

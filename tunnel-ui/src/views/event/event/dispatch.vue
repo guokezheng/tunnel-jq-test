@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-02-24 08:58:45
+ * @LastEditTime: 2023-02-27 15:48:14
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -50,7 +50,7 @@
     <div class="disRightBox">
       <div class="dispatchLeft">
           <div class="video">
-            <div class="title">实时视频</div>
+            <div class="title"><i class="el-icon-video-camera" style="margin-right:15px;"></i>实时视频</div>
             <div class="videoBox1">
               <div class="videoContent">
                 <videoPlayer
@@ -104,7 +104,7 @@
             </div>
           </div>
           <div class="evtMessage">
-            <div class="title"><i class="el-icon-phone-outline"></i>事件信息</div>
+            <div class="title"><i class="el-icon-notebook-2" style="margin-right:15px;"></i>事件信息</div>
             <div class="evtMessBox">
               <div class="evtMessLeft">
                 <div>
@@ -159,7 +159,7 @@
             </div>
           </div>
           <div class="plan">
-            <div class="title">调度联络</div>
+            <div class="title"><i class="el-icon-phone-outline" style="margin-right:15px;"></i>调度联络</div>
             <el-table
               :data="implementList"
               stripe
@@ -185,9 +185,20 @@
     <div class="disLeftBox">
       <div style="height:100%;">
       <div class="IncHand">
-        <div class="title">事件处置</div>
+        <div class="title"><i class="el-icon-document" style="margin-right:15px;"></i>事件处置</div>
+
         <div class="incHandBox">
-          <div class="heightBox" style="height:85%;">
+          <div class="GTop">
+            <div class="GT_one one_box">
+              <p>行人非机动车</p>
+              <span>一般</span>
+            </div>
+            <div class="GT_one two_box">
+              <i class="el-icon-time"></i>
+              <p>{{deadline4}}</p>
+            </div>
+          </div>
+          <div class="heightBox" style="height:75%;">
           <div
             v-for="(item, index) of incHandList"
             :key="index"
@@ -207,12 +218,12 @@
                       ? (item.children.length * 40 +
                           4 * (item.children.length - 1)) /
                           2 -
-                        35 +
+                        50 +
                         'px'
                       : (item.children.length * 40 +
                           4 * (item.children.length - 1)) /
                           2 -
-                        25 +
+                        30 +
                         'px'
                     : '',
                 }"
@@ -220,9 +231,9 @@
               >
                 {{ item.flowContent }}
               </div>
-              <!-- <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
+              <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
               :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">
-              一键</div> -->
+              一键</div>
             </div>
 
             <div
@@ -271,13 +282,17 @@
                   v-show="itm.eventState != '0'"
                 />
                 <!-- 下发 -->
-                <img
-                  :src="incHand1"
-                  style="float: right; "
-                  v-show="itm.eventState == '0'"
-                  @click="getManagementDevice(itm)"
-                  :style="iconDisabled?'cursor: not-allowed;pointer-events: none;':'cursor: pointer'"
-                />
+                <div class="sendMsg" v-show="itm.eventState == '0'" @click="getManagementDevice(itm)">
+                  <el-button type="small"  icon="el-icon-pie-chart">处置</el-button>
+                  <!-- <img
+                    :src="incHand1"
+                    style="float: right; "
+                    v-show="itm.eventState == '0'"
+                    
+                    :style="iconDisabled?'cursor: not-allowed;pointer-events: none;':'cursor: pointer'"
+                  />
+                  <p >处置</p> -->
+                </div>
               </div>
             </div>
           </div>
@@ -714,7 +729,7 @@
   </div>
 </template>
 <script>
-
+import {intervalTime} from "../../../utils/index.js"
 import { mapState } from "vuex";
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { laneImage } from "../../../utils/configData.js";
@@ -781,6 +796,9 @@ export default {
   },
   data() {
     return {
+      nowData:Date.now(),
+      timeData:"",
+      deadline4: "",
       processId:'',
       GDeviceData:{},
       rules:{
@@ -885,8 +903,6 @@ export default {
     },
   },
   async created() {
-    console.log(this.$route.query.id, "this.$route.query.id");
-
     await this.getEqTypeStateIcon();
     // await this.getTunnelData();
     await this.getDispatchExecuted();
@@ -931,6 +947,9 @@ export default {
       // setTimeout(this.getLiPowerDevice, 0)
     }, 1000 * 5);
   },
+  // beforeDestroy(){
+  //   clearInterval(this.deadline4);
+  // },
   methods: {
     getManagementDevice(item){
       this.processId = item.processId;
@@ -1304,9 +1323,12 @@ export default {
           id: this.$route.query.id,
         };
         await listEvent(param).then((response) => {
-          console.log(response, "事件详情");
           this.eventForm = response.rows[0];
-          this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(0,4)
+          this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(0,4);
+          setInterval(()=>{
+            this.deadline4 = intervalTime(this.eventForm.updateTime);
+            console.log(this.deadline4,"this.deadline4this.deadline4this.deadline4this.deadline4")
+          },1000)
           this.getVideoList();
           this.getpersonnelList();
           this.evtHandle();
@@ -1641,6 +1663,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .el-statistic .number{
+  color:white;
+}
+.sendMsg{
+  width: 60px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #007aff;
+}
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper{overflow-x: hidden;}
 ::v-deep .el-table--scrollable-y .el-table__body-wrapper{
   overflow-y: unset;
@@ -1752,7 +1784,7 @@ export default {
             width: 50%;
             height: 100%;
             .evtMessVideo {
-              height: 54%;
+              height: 50%;
               width: auto;
               display: flex;
               justify-content: center;
@@ -1938,6 +1970,44 @@ export default {
         height: calc(100% - 40px);
         overflow: auto;
         padding:15px;
+        .GTop{
+          display:flex;
+          justify-content: space-around;
+          align-items: center;
+          margin-bottom:20px;
+          .GT_one{
+            border-top: 4px solid #0175a9;
+            border-bottom: 1px solid #0175a9;
+            background-color: #013143;
+            color:white;
+            width: 45%;
+            height: 65px;
+          }
+          .one_box{
+            display:flex;
+            justify-content: space-around;
+            align-items: center;
+            p{
+              text-align:center;
+              font-size: 15px;
+            }
+            span{
+              display:block;
+              width:30%;
+              font-size:12px;
+              text-align:center;
+              background-color:#063f39;
+              color:#01c30b;
+              padding:4px 0;
+              box-sizing:border-box;
+            }
+          }
+          .two_box{
+            display:flex;
+            justify-content: space-evenly;
+            align-items: center;
+          }
+        }
         .incHandContent {
           display: flex;
           // color: white;
@@ -1950,7 +2020,7 @@ export default {
               width: 50px;
               height: 50px;
               // background: rgba($color: #084e84, $alpha: 0.6);
-              // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
+              border: 1px solid rgba($color: #39adff, $alpha: 0.6);
               text-align: center;
             }
             .yijian {

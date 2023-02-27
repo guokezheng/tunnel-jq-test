@@ -2037,6 +2037,7 @@ export default {
       isState:false,
       showElement:true,
       showFaultElement:false,
+      fuzzySearch1:''
     };
   },
   computed:{

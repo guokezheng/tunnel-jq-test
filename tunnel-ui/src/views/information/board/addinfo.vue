@@ -62,10 +62,11 @@
           ref="dataForm"
           size="mini"
         >
-          <el-row :gutter="24">
+          <el-row :gutter="24" style="height:45px">
             <el-col :span="8">
               <el-form-item prop="category" label="所属类别" 
-              :rules="[{ required: categoryRules?true:false,message: '请选择所属类别',trigger: 'blur',}]">
+              :rules="[{ required: categoryRules ?true:false,message: '请选择所属类别',trigger: 'blur',}]"
+              v-show="infoType == 2">
                 <el-select
                   v-model="dataForm.category"
                   placeholder="请选择所属类别"
@@ -624,7 +625,7 @@ export default {
         (this.boardWidth = "400"), (this.boardHeight = "40");
       }
       this.infoType = type;
-      if(mode == 1){
+      if(mode == 1 || type == 1){
         this.categoryRules = false
       }else{
         this.categoryRules = true

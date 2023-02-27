@@ -8,6 +8,8 @@
       append-to-body
       :visible="cameraVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
       <div
         style="
@@ -185,6 +187,8 @@
       append-to-body
       :visible="historyVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
       <el-form
         ref="historyForm"
@@ -285,6 +289,8 @@
       append-to-body
       :visible="yunTaiVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
       <el-row class="yuntaiBox">
         <el-col :span="18">
@@ -515,20 +521,38 @@ export default {
       },
       picPage:1,
       player: null,
+      // brandList:[],
+      // eqInfo:{},
+      // eqTypeDialogList:[],
+      // directionList:[],
     };
   },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getmessage();
-    if(this.videoList.length > 4){
-      this.picList = this.videoList.slice(0,4)
-    }
+
+    // if(this.videoList.length > 4){
+    //   this.picList = this.videoList.slice(0,4)
+    // }
     // getLocalIP().then((response) => {
     //   console.log(response,"responseresponse");
     //   this.hostIP = response;
     // });
   },
   methods: {
+    // init(eqInfo,eqTypeDialogList,brandList,directionList){
+    //   let that = this
+    //   console.log(eqInfo,eqTypeDialogList,brandList,directionList,"------------------")
+    //   console.log(this.cameraVisible,"this.cameraVisible")
+
+    //   that.eqInfo = eqInfo;
+    //   that.eqTypeDialogList = eqTypeDialogList;
+    //   that.brandList = brandList;
+    //   that.directionList = directionList
+    //   that.getmessage();
+
+    //   that.cameraVisible = true
+    // },
     // 点击云台方向
     changeYunTai(cmdType,type){
       if(type && cmdType == false){
@@ -596,12 +620,12 @@ export default {
     },
     // 录像查看
     videoViewing() {
-      this.cameraVisible = false;
+      // this.cameraVisible = false;
       this.historyVisible = true;
     },
     // 云台控制
     videoYunTai() {
-      this.cameraVisible = false;
+      // this.cameraVisible = false;
       this.yunTaiVisible = true;
     },
     // 历史记录表单查询
@@ -917,4 +941,11 @@ export default {
   bottom: 350px !important;
   height: 60px;
 }
+
+::v-deep .el-dialog__wrapper {
+    pointer-events: none !important;
+  }
+  ::v-deep .el-dialog {
+    pointer-events: auto !important;
+  }
 </style>

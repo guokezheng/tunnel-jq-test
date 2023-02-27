@@ -69,6 +69,7 @@
                 }
             },
             playVideo () {
+                console.log(this.rtsp,"this.rtspthis.rtspthis.rtsp");
               this.loading = true
                 const time1 = new Date().getTime();
                 if (flvjs.isSupported()) {
@@ -79,8 +80,21 @@
                             type: 'flv',
                             isLive: true,
                             url: this.rtsp,
-                            enableStashBuffer: false
-                        });
+                            // enableStashBuffer: false,
+                            cors: true, // 是否跨域
+                            enableWorker: true, // 是否多线程工作
+                            enableStashBuffer: false, // 是否启用缓存
+                            stashInitialSize: 128, // 缓存大小(kb)  默认384kb
+                            autoCleanupSourceBuffer: true // 是否自动清理缓存
+                        }
+                        // ,{
+                        //     cors: true, // 是否跨域
+                        //     enableWorker: true, // 是否多线程工作
+                        //     enableStashBuffer: false, // 是否启用缓存
+                        //     stashInitialSize: 128, // 缓存大小(kb)  默认384kb
+                        //     autoCleanupSourceBuffer: true // 是否自动清理缓存
+                        // }
+                        );
                         this.player.attachMediaElement(video);
                         try {
                             this.player.load();

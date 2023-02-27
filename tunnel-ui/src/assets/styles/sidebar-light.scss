@@ -281,7 +281,7 @@
 
       }
       .el-input-group__append, .el-input-group__prepend{
-        background: #326CA9 !important;
+        background: #326CA9;
         color: white;
         border: 1px solid #05AFE3;
       }
@@ -520,6 +520,15 @@
     }
   }
   #app {
+    // 工作台底部切换视频 图表按钮
+    .footer{
+      .footChangeButton{
+        .el-radio-button__inner{
+          color:#fff;
+          border:solid 1px #39ADFF;
+        }
+      }
+    }
     // 表格上方虚线
     .tableTopHr{
       height: 1px;
@@ -1648,9 +1657,9 @@
       background: #0064B0 !important;
     }
     .el-input-group__append{
-      background: #004F8B !important;
+      background: transparent !important;
       color: #00C8FF;
-      border: solid 1px #00C8FF;
+      border: transparent;
       border-left: transparent;
     }
     .el-loading-mask{

@@ -7,8 +7,8 @@ import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.ruoyi.system.domain.SysLogininfor;
+import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,4 +235,41 @@ public class SdDeviceDataController extends BaseController
     {
         return sdDeviceDataService.getType();
     }
+
+    @Log(title = "数据报表", businessType = BusinessType.EXPORT)
+    @GetMapping("/exportDatainforTab")
+    public AjaxResult exportDatainforTab(SdDeviceData sdDeviceData)
+    {
+        List<SdDeviceData> list = sdDeviceDataService.exportDatainforTab(sdDeviceData);
+        ExcelUtil<SdDeviceData> util = new ExcelUtil<SdDeviceData>(SdDeviceData.class);
+        return util.exportExcel(list, "数据报表");
+    }
+
+
+    @Log(title = "数据报表", businessType = BusinessType.EXPORT)
+    @GetMapping("/handleExportRecord")
+    public AjaxResult handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData)
+    {
+        if("1".equals(sdDeviceCOVIData.getSearchValue())){//covi
+            List<SdDeviceCOVIData> list = sdDeviceDataService.handleExportRecord(sdDeviceCOVIData);
+            ExcelUtil<SdDeviceCOVIData> util = new ExcelUtil<SdDeviceCOVIData>(SdDeviceCOVIData.class);
+            return util.exportExcel(list, "COVI数据报表");
+        }else if("2".equals(sdDeviceCOVIData.getSearchValue())){//风速风向
+            List<SdDeviceFSFXData> list = sdDeviceDataService.handleFSFXExportRecord(sdDeviceCOVIData);
+            ExcelUtil<SdDeviceFSFXData> util = new ExcelUtil<SdDeviceFSFXData>(SdDeviceFSFXData.class);
+            return util.exportExcel(list, "风速风向数据报表");
+        }else if("3".equals(sdDeviceCOVIData.getSearchValue())){//洞内亮度
+            List<SdDeviceDNData> list = sdDeviceDataService.handleDNExportRecord(sdDeviceCOVIData);
+            ExcelUtil<SdDeviceDNData> util = new ExcelUtil<SdDeviceDNData>(SdDeviceDNData.class);
+            return util.exportExcel(list, "洞内亮度数据报表");
+        }else if("4".equals(sdDeviceCOVIData.getSearchValue())){//洞外亮度
+            List<SdDeviceDWData> list = sdDeviceDataService.handleDWExportRecord(sdDeviceCOVIData);
+            ExcelUtil<SdDeviceDWData> util = new ExcelUtil<SdDeviceDWData>(SdDeviceDWData.class);
+            return util.exportExcel(list, "洞外亮度数据报表");
+        }else{
+            return null;
+        }
+
+    }
+
 }

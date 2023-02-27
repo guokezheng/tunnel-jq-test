@@ -9,7 +9,13 @@
           type="primary"
           plain
           @click="handleAdd"
-          >新增任务
+          >新增
+        </el-button>
+        <el-button
+          size="small"
+          :loading="exportLoading"
+          @click="handleExport"
+        >导出
         </el-button>
         <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
@@ -195,7 +201,12 @@
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>-->
-      <el-table-column label="所属单位" align="center" prop="zzjgId" />
+<!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
+      <el-table-column
+        label="隧道名称"
+        align="center"
+        prop="tunnelName.tunnelName"
+      />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
         label="派单时间"
@@ -657,10 +668,7 @@
             任务编号：
             <span>{{ item.id }}</span>
           </div>
-          <div>
-            所属单位：
-            <span>{{ item.zzjgId }}</span>
-          </div>
+
           <div>
             指派巡查班组：
             <span>{{ item.bzName }}</span>
@@ -1343,7 +1351,6 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger;
         this.taskNews = response.data.task;
         if (response.data.task[0].ifchaosgu == "已超时") {
           //this.active = true;
@@ -1434,6 +1441,7 @@ export default {
     getList() {
       this.loading = true;
       listList(this.queryParams).then((response) => {
+        debugger
         this.listList = response.rows;
         this.total = response.total;
         /*this.listList.forEach((item) =>{

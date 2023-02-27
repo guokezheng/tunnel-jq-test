@@ -1,9 +1,13 @@
 package com.tunnel.business.domain.dataInfo;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Date;
 
 /**
  * 设备实时数据（存储模拟量）对象 sd_device_data
@@ -11,7 +15,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author ruoyi
  * @date 2022-09-13
  */
-public class SdDeviceData extends BaseEntity
+public class SdDeviceDNData
 {
     private static final long serialVersionUID = 1L;
 
@@ -21,11 +25,22 @@ public class SdDeviceData extends BaseEntity
     /** 设备id */
     private String deviceId;
 
+
+    @Excel(name = "设备编码")
+    private String eqId;
+
+    public String getEqId() {
+        return this.eqId;
+    }
+
+    public void setEqId(String eqId) {
+        this.eqId = eqId;
+    }
+
     /** 设备数据项id */
     private Long itemId;
 
-    /** 设备数据 */
-    private String data;
+
 
     /** 设备名称 */
     @Excel(name = "设备名称")
@@ -47,7 +62,23 @@ public class SdDeviceData extends BaseEntity
     @Excel(name = "桩号")
     private String pile;
 
+    /** 设备数据 */
+    @Excel(name = "洞内亮度(lux)")
+    private String data;
 
+    /** 创建时间 */
+
+    @Excel(name = "采集时间", width = 30)
+    private String createTime;
+
+
+    public String getCreateTime() {
+        return this.createTime;
+    }
+
+    public void setCreateTime(final String createTime) {
+        this.createTime = createTime;
+    }
 
     private Long deptId;
 
@@ -131,12 +162,10 @@ public class SdDeviceData extends BaseEntity
         this.tunnelId = tunnelId;
     }
 
-    @Override
     public String getSearchValue() {
         return searchValue;
     }
 
-    @Override
     public void setSearchValue(String searchValue) {
         this.searchValue = searchValue;
     }
@@ -185,10 +214,7 @@ public class SdDeviceData extends BaseEntity
             .append("deviceId", getDeviceId())
             .append("itemId", getItemId())
             .append("data", getData())
-            .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
             .toString();
     }
 }

@@ -84,7 +84,7 @@ public class SdFaultListController extends BaseController {
     public AjaxResult export(SdFaultList sdFaultList) {
         List<SdFaultList> list = sdFaultListService.selectSdFaultListList(sdFaultList);
         ExcelUtil<SdFaultList> util = new ExcelUtil<SdFaultList>(SdFaultList.class);
-        return util.exportExcel(list, "故障清单数据");
+        return util.exportExcel(list, "设备故障");
     }
 
     /**

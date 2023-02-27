@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ruoyi.common.annotation.Excels;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -16,6 +19,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author ruoyi
  * @date 2022-11-04
  */
+
 public class SdTaskList extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -24,22 +28,40 @@ public class SdTaskList extends BaseEntity
     private String id;
 
     /** 所属单位id(新增时保存当前登录人的单位id) */
-    @Excel(name = "所属单位id(新增时保存当前登录人的单位id)")
     private String zzjgId;
 
-    /** 计划完成时间 */
-    @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date endPlantime;
+
 
     /** 隧道id */
-    @Excel(name = "隧道id")
+    /*@Excel(name = "隧道id")*/
     private String tunnelId;
 
 
     /** 任务名称 */
-    @Excel(name = "任务名称")
+   /* @Excel(name = "任务名称")*/
     private String taskName;
+
+    /** tunnel对象 */
+    @Excels({
+            @Excel(name = "隧道名称", targetAttr = "tunnelName"),
+    })
+    private SdTunnels tunnelName;
+
+    /**
+     * 隧道对象
+     * @return
+     */
+    public SdTunnels getTunnelName() {
+        if (tunnelName == null)
+        {
+            tunnelName = new SdTunnels();
+        }
+        return tunnelName;
+    }
+
+    public void setTunnelName(SdTunnels tunnelName) {
+        this.tunnelName = tunnelName;
+    }
 
 
 
@@ -63,38 +85,50 @@ public class SdTaskList extends BaseEntity
     private Date dispatchTime;
 
     /** 指派巡查班组id */
-    @Excel(name = "指派巡查班组id")
+   /* @Excel(name = "指派巡查班组id")*/
     private String bzId;
-
+    @Excel(name = "承巡班组")
     private String bzName;
 
+    /** 计划完成时间 */
+    @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endPlantime;
+
+
     /** 任务描述 */
-    @Excel(name = "任务描述")
+   /* @Excel(name = "任务描述")*/
     private String taskDescription;
 
     /** 发布状态(0:未发布状态;1:已废止状态;2:发布状态) */
-    @Excel(name = "发布状态(0:未发布状态;1:已废止状态;2:发布状态)")
+    /*@Excel(name = "发布状态")*/
     private String publishStatus;
 
     /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时） */
-    @Excel(name = "任务状态", readConverterExp = "0=::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时")
+    /*@Excel(name = "任务状态")*/
     private String taskStatus;
 
+    @Excel(name = "发布状态")
+    private String publish;
+
+    @Excel(name = "任务状态")
+    private String task;
+
     /** 巡查人员id */
-    @Excel(name = "巡查人员id")
+   /* @Excel(name = "巡查人员id")*/
     private String walkerId;
 
     /** 任务完成时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "任务完成时间", width = 30, dateFormat = "yyyy-MM-dd")
+   /* @Excel(name = "任务完成时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private Date taskEndtime;
 
     /** 任务持续时间 */
-    @Excel(name = "任务持续时间", width = 30, dateFormat = "yyyy-MM-dd")
+   /* @Excel(name = "任务持续时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private String  taskCxtime;
 
     /** 现场情况描述 */
-    @Excel(name = "现场情况描述")
+  /*  @Excel(name = "现场情况描述")*/
     private String siteDescription;
 
     private String dictLabel;
@@ -102,7 +136,21 @@ public class SdTaskList extends BaseEntity
 
     private String dictValue;
 
+    public String getPublish() {
+        return this.publish;
+    }
 
+    public void setPublish( String publish) {
+        this.publish = publish;
+    }
+
+    public String getTask() {
+        return this.task;
+    }
+
+    public void setTask( String task) {
+        this.task = task;
+    }
 
     /*是否超时*/
     private String ifchaosgu;

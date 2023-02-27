@@ -10,9 +10,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.domain.dataInfo.ExternalSystem;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
@@ -317,6 +315,88 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         map.put("19","CO/VI");
         return AjaxResult.success(map);
     }
+
+    @Override
+    public List<SdDeviceData> exportDatainforTab(SdDeviceData sdDeviceData) {
+        String eqtype = null;
+        if(sdDeviceData!=null&&!"".equals(sdDeviceData)){
+            if ("1".equals(sdDeviceData.getSearchValue())) {
+                sdDeviceData.setSearchValue("19");
+            }else if ("2".equals(sdDeviceData.getSearchValue())) {
+                sdDeviceData.setSearchValue("17");
+            }else if ("3".equals(sdDeviceData.getSearchValue())) {
+                sdDeviceData.setSearchValue("18");
+            }else if ("4".equals(sdDeviceData.getSearchValue())) {
+                sdDeviceData.setSearchValue("5");
+            }
+        }
+        if (sdDeviceData.getDeptId() == null) {
+            sdDeviceData.setDept(SecurityUtils.getDeptId());
+        }
+        List<SdDeviceData> list = sdDeviceDataMapper.exportDatainforTab(sdDeviceData);
+        return list;
+    }
+
+    @Override
+    public List<SdDeviceCOVIData> handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        String deviceId = sdDeviceCOVIData.getDeviceId();
+        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String beginTime = now + " 00:00:00";
+        String endTime = now + " 23:59:59";
+        if (!sdDeviceCOVIData.getParams().isEmpty()) {
+            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
+            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
+        }
+
+        List<SdDeviceCOVIData> list = sdDeviceDataMapper.selectCOVIExportDataList(beginTime, endTime, deviceId);
+        return list;
+    }
+
+    @Override
+    public List<SdDeviceFSFXData> handleFSFXExportRecord( SdDeviceCOVIData sdDeviceCOVIData) {
+        String deviceId = sdDeviceCOVIData.getDeviceId();
+        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String beginTime = now + " 00:00:00";
+        String endTime = now + " 23:59:59";
+        if (!sdDeviceCOVIData.getParams().isEmpty()) {
+            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
+            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
+        }
+
+        List<SdDeviceFSFXData> list = sdDeviceDataMapper.selectFSFXExportDataList(beginTime, endTime, deviceId);
+        return list;
+    }
+
+    @Override
+    public List<SdDeviceDNData> handleDNExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        String deviceId = sdDeviceCOVIData.getDeviceId();
+        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String beginTime = now + " 00:00:00";
+        String endTime = now + " 23:59:59";
+        if (!sdDeviceCOVIData.getParams().isEmpty()) {
+            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
+            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
+        }
+
+        List<SdDeviceDNData> list = sdDeviceDataMapper.selectDNExportDataList(beginTime, endTime, deviceId);
+        return list;
+    }
+
+    @Override
+    public List<SdDeviceDWData> handleDWExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        String deviceId = sdDeviceCOVIData.getDeviceId();
+        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String beginTime = now + " 00:00:00";
+        String endTime = now + " 23:59:59";
+        if (!sdDeviceCOVIData.getParams().isEmpty()) {
+            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
+            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
+        }
+
+        List<SdDeviceDWData> list = sdDeviceDataMapper.selectDWExportDataList(beginTime, endTime, deviceId);
+        return list;
+    }
+
 
     @Override
     public Map<String, Object> energyConsumptionDetection(String tunnelId) {

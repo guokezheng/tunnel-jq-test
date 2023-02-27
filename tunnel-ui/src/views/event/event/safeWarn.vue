@@ -64,15 +64,21 @@
           </el-col>
         </el-row>
         <!-- 全局搜索 -->
-        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" > 
+        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" >
             <el-col :span="6" >
-              <el-button 
+              <el-button
                 v-hasPermi="['system:list:add']"
                 size="small"
                 @click="handleAdd"
-              >新增故障
+              >新增
               </el-button>
-              <el-button size="small" @click="resetQuery" 
+              <el-button
+                size="small"
+                :loading="exportLoading"
+                @click="handleExport"
+              >导出
+              </el-button>
+              <el-button size="small" @click="resetQuery"
                 >刷新</el-button
                 >
             </el-col>
@@ -183,7 +189,7 @@
               <el-button size="small"  @click="handleQuery"
               >搜索</el-button
               >
-              <el-button size="small" @click="resetQuery" 
+              <el-button size="small" @click="resetQuery"
               >重置</el-button
               >
             </el-form-item>
@@ -279,7 +285,7 @@
               <el-button size="small"  @click="handleQuery"
               >搜索</el-button
               >
-              <el-button size="small" @click="resetQuery" 
+              <el-button size="small" @click="resetQuery"
               >重置</el-button
               >
             </el-form-item>
@@ -318,7 +324,7 @@
                 <el-button size="small"  @click="handleQuery"
                 >搜索</el-button
                 >
-                <el-button size="small" @click="resetQuery" 
+                <el-button size="small" @click="resetQuery"
                 >重置</el-button
                 >
               </el-form-item>
@@ -492,6 +498,7 @@
               {{scope.$index+1}}
             </template>
           </el-table-column>-->
+          <el-table-column label="故障设备" align="center" prop="eqName" />
           <el-table-column label="故障类型" align="center" prop="faultType">
             <template slot-scope="scope">
               <dict-tag
@@ -512,7 +519,7 @@
           <!-- </el-table-column> -->
 <!--          <el-table-column label="持续时间" align="center" prop="faultCxtime" />-->
           <el-table-column label="故障位置" align="center" prop="faultLocation" />
-          <el-table-column label="故障描述" align="center" prop="faultDescription" width="180" 
+          <el-table-column label="故障描述" align="center" prop="faultDescription" width="180"
           :show-overflow-tooltip='true'/>
           <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">
@@ -543,14 +550,14 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="状态" align="center" prop="faultStatus">
+<!--          <el-table-column label="状态" align="center" prop="faultStatus">
             <template slot-scope="scope">
               <dict-tag
                 :options="dict.type.fault_status"
                 :value="scope.row.faultStatus"
               />
             </template>
-          </el-table-column>
+          </el-table-column>-->
           <el-table-column
             label="操作"
             align="center"
@@ -754,7 +761,7 @@
                     <el-input
                       v-model="eventForm.stakeNum1"
                       placeholder="Km"
-                      
+
                       width="100%"
                     />
                   </el-col>
@@ -763,7 +770,7 @@
                     <el-input
                       v-model="eventForm.stakeNum2"
                       placeholder="m"
-                      
+
                       width="100%"
                     />
                   </el-col>
@@ -777,7 +784,7 @@
                     <el-input
                       v-model="eventForm.stakeEndNum1"
                       placeholder="Km"
-                      
+
                       width="100%"
                     />
                   </el-col>
@@ -786,7 +793,7 @@
                     <el-input
                       v-model="eventForm.stakeEndNum2"
                       placeholder="m"
-                      
+
                       width="100%"
                     />
                   </el-col>
@@ -957,8 +964,8 @@
               <el-col :span="24" v-show="eventForm.eventState == 0">
                 <el-form-item prop="currencyId">
                   <el-select v-model="eventForm.currencyId" placeholder="请选择预案" @change="this.$forceUpdate()">
-                    <el-option 
-                      v-for="item in ReservePlanList" 
+                    <el-option
+                      v-for="item in ReservePlanList"
                       :key="item.id"
                       :label="item.planName"
                       :value="item.id"
@@ -996,7 +1003,7 @@
     </el-dialog>
     <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%">
       <el-timeline>
-        
+
           <el-timeline-item timestamp="事件发现" placement="top">
             <el-card>
             <el-form ref="eventDiscovery" :model="eventDiscovery" label-width="100px">
@@ -1043,7 +1050,7 @@
           <el-timeline-item timestamp="人工复核" placement="top" v-if="eventStateCurrent != '3'">
             <el-form ref="manualReview" :model="manualReview" label-width="100px">
             <el-card>
-              
+
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="当事目标">
@@ -1624,7 +1631,7 @@ import {
 } from "@/api/event/event";
 import {
   addList,
-  delList,
+  delList, exportFaultList,
   getEquipmentInfo,
   getList,
   getRepairRecordList,
@@ -1640,7 +1647,7 @@ import { treeselect, treeselectExcYG1 } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { listType, loadPicture } from "@/api/equipment/type/api";
-import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
+import {exportList, listBz} from "@/api/electromechanicalPatrol/taskManage/task";
 import { listDevices, videoStreaming } from "@/api/equipment/eqlist/api";
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 export default {
@@ -2689,7 +2696,21 @@ export default {
       this.getList();
     },
     //导出
-    handleExport() {},
+    handleExport() {
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm("是否确认导出所有设备故障数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportFaultList(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
+
+    },
     //切换tab页
     handleClick(e) {
       this.isState = true;
@@ -2849,6 +2870,10 @@ export default {
             if (item.faultCode == "null") {
               item.faultCode = "";
             }
+            if (item.faultDescription == "null") {
+              item.faultDescription = "";
+            }
+
           });
           this.totals = response.total;
           this.loading = false;
@@ -2863,7 +2888,7 @@ export default {
         if(this.fuzzySearch1){
           this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
         }
-    
+
         // const params = {
         //   fuzzySearch : this.queryParams.fuzzySearch
         // }
@@ -3334,7 +3359,27 @@ export default {
       if (this.form.faultDescription == "") {
         return this.$modal.msgWarning("请填写故障描述");
       }
+      if (this.form.faultFxtime == "" ||
+        this.form.faultFxtime == -1 ||
+        this.form.faultFxtime == null) {
+        return this.$modal.msgWarning("请选择发现时间");
+      }
 
+      if (this.form.eqStatus == "" ||
+        this.form.eqStatus == -1 ||
+        this.form.eqStatus == null) {
+        return this.$modal.msgWarning("请选择设备状态");
+      }
+      if (this.form.falltRemoveStatue == "" ||
+        this.form.falltRemoveStatue == -1 ||
+        this.form.falltRemoveStatue == null) {
+        return this.$modal.msgWarning("请选择消除状态");
+      }
+      if (this.form.faultLevel == "" ||
+        this.form.faultLevel == -1 ||
+        this.form.faultLevel == null) {
+        return this.$modal.msgWarning("请选择故障等级");
+      }
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
@@ -3401,6 +3446,27 @@ export default {
       }
       if (this.form.faultDescription == "") {
         return this.$modal.msgWarning("请填写故障描述");
+      }
+      if (this.form.faultFxtime == "" ||
+        this.form.faultFxtime == -1 ||
+        this.form.faultFxtime == null) {
+        return this.$modal.msgWarning("请选择发现时间");
+      }
+
+      if (this.form.eqStatus == "" ||
+        this.form.eqStatus == -1 ||
+        this.form.eqStatus == null) {
+        return this.$modal.msgWarning("请选择设备状态");
+      }
+      if (this.form.falltRemoveStatue == "" ||
+        this.form.falltRemoveStatue == -1 ||
+        this.form.falltRemoveStatue == null) {
+        return this.$modal.msgWarning("请选择消除状态");
+      }
+      if (this.form.faultLevel == "" ||
+        this.form.faultLevel == -1 ||
+        this.form.faultLevel == null) {
+        return this.$modal.msgWarning("请选择故障等级");
       }
       this.$refs["form"].validate((valid) => {
         if (valid) {

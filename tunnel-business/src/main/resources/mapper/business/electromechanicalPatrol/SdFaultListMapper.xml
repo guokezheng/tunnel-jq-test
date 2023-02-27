@@ -15,6 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="faultTbr"    column="fault_tbr"    />
         <result property="faultTbtime"    column="fault_tbtime"    />
         <result property="eqId"    column="eq_id"    />
+        <result property="eqName"    column="eq_name"    />
         <result property="eqStatus"    column="eq_status"    />
         <result property="eqRunStatus"    column="eq_run_status"    />
         <result property="faultCode"    column="fault_code"    />
@@ -27,6 +28,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="imgFileId"    column="img_file_id"    />
+        <result property="ftype"    column="ftype"    />
+        <result property="fremove"    column="fremove"    />
+        <result property="flevel"    column="flevel"    />
         <result property="faultEscalationType"    column="fault_escalation_type"    />
     </resultMap>
 
@@ -35,8 +39,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">
-        select s.id, s.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, s.fault_description, fault_status
-        from sd_fault_list s left join sd_devices a on a.eq_id = s.eq_id
+        select s.id, s.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, IFNULL(s.fault_description,"") fault_description, fault_status,t.dict_label ftype,
+        r.dict_label fremove,
+        l.dict_label flevel,
+        u.dict_label fstatus
+        from sd_fault_list s
+        left join sd_devices a on a.eq_id = s.eq_id
+        left join sys_dict_data t on t.dict_value = s.fault_type and t.dict_type ='fault_type'
+        left join sys_dict_data r on r.dict_value = s.fallt_remove_statue and r.dict_type ='fault_remove_statue'
+        left join sys_dict_data l on l.dict_value = s.fault_level and l.dict_type ='fault_level'
+        left join sys_dict_data u on u.dict_value = s.eq_status and u.dict_type ='sd_monitor_state'
         <where>
             <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
             <if test="faultLocation != null  and faultLocation != ''"> and s.fault_location = #{faultLocation}</if>

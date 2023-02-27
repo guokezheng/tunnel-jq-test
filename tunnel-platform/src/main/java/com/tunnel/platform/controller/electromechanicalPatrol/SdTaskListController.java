@@ -105,7 +105,7 @@ public class SdTaskListController extends BaseController
     {
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         ExcelUtil<SdTaskList> util = new ExcelUtil<SdTaskList>(SdTaskList.class);
-        return util.exportExcel(list, "巡查任务数据");
+        return util.exportExcel(list, "巡查任务");
     }
 
     /**

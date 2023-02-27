@@ -11,6 +11,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="dispatcher"    column="dispatcher"    />
         <result property="dispatchTime"    column="dispatch_time"    />
         <result property="bzId"    column="bz_id"    />
+        <result property="bzName"    column="bzName"    />
+        <result property="bzName"    column="bzName"    />
+        <result property="task"    column="task"    />
+        <result property="publish"    column="publish"    />
         <result property="taskDescription"    column="task_description"    />
         <result property="publishStatus"    column="publish_status"    />
         <result property="taskStatus"    column="task_status"    />
@@ -24,6 +28,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="tunnelId"    column="tunnel_id"    />
         <result property="taskName"    column="task_name"    />
+        <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
+    </resultMap>
+
+    <resultMap id="tunnelResult" type="SdTunnels">
+        <id  property="tunnelId" column="tunnel_id" />
+        <result property="tunnelName" column="tunnel_name"   />
     </resultMap>
 
     <sql id="selectSdTaskListVo">
@@ -31,11 +41,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
-        select t.id, d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bz_name,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time from sd_task_list t
+        select t.id, s.tunnel_name,d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
         left join sys_dept d on d.dept_id =  t.zzjg_id
         left join sys_user u on t.dispatcher = u.user_id
         left join sys_dept b on b.dept_id =  t.bz_id
         left join sys_user w on t.walker_id = w.user_id
+        left join sd_tunnels s on s.tunnel_id = t.tunnel_id
+        left join sys_dict_data p on p.dict_value= t.publish_status and p.dict_type = 'publish_status'
+        left join sys_dict_data a on a.dict_value= t.publish_status and a.dict_type = 'task_status'
         <where>
           1=1
             <if test="zzjgId != null  and zzjgId != ''"> and d.dept_name like concat('%', #{zzjgId}, '%')</if>

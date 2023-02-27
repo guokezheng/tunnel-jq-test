@@ -605,7 +605,7 @@ export default {
             name: "CO",
             type: "line",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.CO,
@@ -613,12 +613,13 @@ export default {
           {
             name: "VI",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.VI,
             type: "line",
           },
+
         ];
         var xAxis = [
           {
@@ -669,7 +670,7 @@ export default {
             name: "风速风向",
             stack: "Total",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.fsData,
@@ -709,7 +710,7 @@ export default {
             name: "洞内亮度",
             stack: "Total",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.dnData,
@@ -751,7 +752,7 @@ export default {
             name: "洞外亮度",
             stack: "Total",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.dwData,
@@ -787,7 +788,7 @@ export default {
       }
       option = {
         tooltip: {
-          show: true,
+          trigger: 'axis'
         },
         legend: legends,
         xAxis,

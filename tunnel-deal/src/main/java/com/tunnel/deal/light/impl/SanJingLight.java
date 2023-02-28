@@ -11,6 +11,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.light.Light;
+import com.zc.common.core.ThreadPool.ThreadPool;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -163,43 +164,41 @@ public class SanJingLight implements Light {
     }
 
     @Override
-    public boolean setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp) {
-        boolean falg = true;
+    public void setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp) {
         for (String deviceId:deviceIds ) {
-            SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
-            int resultStatus = setBrightness(deviceId,bright);
-            // 如果控制成功
-            if (resultStatus == 1) {
-                // 更新设备在线状态
-                device.setEqStatus("1");
-                device.setEqStatusTime(new Date());
-                sdDevicesService.updateSdDevices(device);
-                //更新设备实时数据
-                updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
-            }else{
-                falg = false;
-            }
-            //添加操作日志
-            SdOperationLog sdOperationLog = new SdOperationLog();
-            sdOperationLog.setEqTypeId(device.getEqType());
-            sdOperationLog.setTunnelId(device.getEqTunnelId());
-            sdOperationLog.setEqId(device.getEqId());
-            sdOperationLog.setOperationState(String.valueOf(bright));
-            sdOperationLog.setControlType(controlType);
-            sdOperationLog.setCreateTime(new Date());
-            sdOperationLog.setOperIp(operIp);
-            sdOperationLog.setState(String.valueOf(resultStatus));
-            // 确定设备之前亮度值
-            SdDeviceData sdDeviceData = new SdDeviceData();
-            sdDeviceData.setDeviceId(deviceId);
-            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
-            List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-            if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
-                sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
-            }
-            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+            ThreadPool.executor.execute(()->{
+                SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
+                int resultStatus = setBrightness(deviceId,bright);
+                // 如果控制成功
+                if (resultStatus == 1) {
+                    // 更新设备在线状态
+                    device.setEqStatus("1");
+                    device.setEqStatusTime(new Date());
+                    sdDevicesService.updateSdDevices(device);
+                    //更新设备实时数据
+                    updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+                }
+                //添加操作日志
+                SdOperationLog sdOperationLog = new SdOperationLog();
+                sdOperationLog.setEqTypeId(device.getEqType());
+                sdOperationLog.setTunnelId(device.getEqTunnelId());
+                sdOperationLog.setEqId(device.getEqId());
+                sdOperationLog.setOperationState(String.valueOf(bright));
+                sdOperationLog.setControlType(controlType);
+                sdOperationLog.setCreateTime(new Date());
+                sdOperationLog.setOperIp(operIp);
+                sdOperationLog.setState(String.valueOf(resultStatus));
+                // 确定设备之前亮度值
+                SdDeviceData sdDeviceData = new SdDeviceData();
+                sdDeviceData.setDeviceId(deviceId);
+                sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
+                List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+                if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+                    sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+                }
+                sdOperationLogService.insertSdOperationLog(sdOperationLog);
+            });
         }
-        return falg;
     }
 
     public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {

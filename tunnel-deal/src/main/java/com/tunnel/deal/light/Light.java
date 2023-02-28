@@ -21,5 +21,5 @@ public interface Light {
 
 
 
-    boolean setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp);
+    void setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp);
 }

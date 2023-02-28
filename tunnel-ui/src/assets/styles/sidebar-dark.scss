@@ -1139,6 +1139,43 @@
   }
    // 操作日志
   .operationDiglog{
+    // 表格隔行变色
+    .tableEvenRow{
+      background: #00467B !important;
+    }
+    .tableOddRow{
+      background: #004F8B !important;
+    }
+    .hover-row{
+      background: #0064B0 !important;
+    }
+    .el-date-editor .el-range-input{
+      background-color: transparent !important;
+    }
+    .grid-content .el-input__inner{
+      background: #012E51 !important;
+      border: solid 1px #65BFFF !important;
+      border-right: none !important;
+    }
+    .el-input__inner{
+      background: #012E51 !important;
+      border:solid 1px #5FA6F5
+    }
+    
+    .el-input-group__append{
+      background: transparent !important;
+      color: #00C8FF;
+      border: transparent;
+      border-left: transparent !important;
+      .el-button{
+        border-left:none !important;
+        background:#012E51 !important;
+        color: #00ADFF !important;
+      }
+    }
+    .el-input--small .el-input__inner{
+      border-right:none !important;
+    }
     .el-loading-mask{
       background: transparent;
     }
@@ -1151,9 +1188,9 @@
       .el-table__body{
         width: calc(100% - 30px);
       }
-      tr{
-        color: white;
-      }
+      // tr{
+      //   color: white;
+      // }
       .el-table__header-wrapper th{
         background-color: #00ADFF !important;
         color:#fff !important;
@@ -1170,15 +1207,18 @@
 
     /* table滚动条的滑块*/
     .el-table__body-wrapper::-webkit-scrollbar-thumb {
-      background-color: #00c2ff;
+      background-color: #0090D8;
     }
     /* 鼠标悬浮*/
-    .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #0e2c53;
-    }
+    // .el-table--enable-row-hover .el-table__body tr:hover > td {
+    //   background-color: #0064B0;
+    // }
     .el-pagination.is-background .el-pager li:not(.disabled).active{
-      background-color: #00afe0 !important;
+      background-color: #39ADFF !important;
       color: white !important;
+    }
+    .el-button{
+      border-radius: 3px !important;
     }
   }
   .eventDiglog {

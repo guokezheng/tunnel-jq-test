@@ -68,8 +68,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectSdTaskListById" parameterType="String" resultMap="SdTaskListResult">
-        <include refid="selectSdTaskListVo"/>
-        where id = #{id}
+       select t.id, s.tunnel_name,d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,b.dept_name  bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+        left join sys_dept d on d.dept_id =  t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        left join sys_dept b on b.dept_id =  t.bz_id
+        left join sys_user w on t.walker_id = w.user_id
+        left join sd_tunnels s on s.tunnel_id = t.tunnel_id
+        left join sys_dict_data p on p.dict_value= t.publish_status and p.dict_type = 'publish_status'
+        left join sys_dict_data a on a.dict_value= t.publish_status and a.dict_type = 'task_status'
+        where t.id = #{id}
     </select>
         
     <insert id="insertSdTaskList" parameterType="SdTaskList">

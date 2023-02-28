@@ -50,7 +50,7 @@
         </div>
       </el-col>
     </el-row>
-    <div ref="cc" class="searchBox searchBoxMini" v-show="boxShow">
+<!--    <div ref="cc" class="searchBox searchBoxMini" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -84,7 +84,7 @@
           >
         </el-form-item>
       </el-form>
-    </div>
+    </div>-->
     <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"

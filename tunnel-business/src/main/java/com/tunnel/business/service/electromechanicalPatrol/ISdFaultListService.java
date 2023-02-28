@@ -77,4 +77,11 @@ public interface ISdFaultListService
      * @return
      */
     List<SdFaultList> getFaultList(String tunnelId, String faultLevel);
+
+    /**
+     * 根据故障id查设备
+     * @param eqFaultId
+     * @return
+     */
+    String selectSdFaultEqById(String eqFaultId);
 }

@@ -662,7 +662,7 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" height="calc(100% - 14px)">
+          <el-carousel trigger="click" height="calc(100% - 14px)" :autoplay="false">
             <el-carousel-item v-for="(item, index) in videoList" :key="index">
               <videoPlayer
                 v-if="item.liveUrl"
@@ -718,7 +718,6 @@
                 <el-date-picker
                   clearable
                   size="small"
-                  :disabled="detailsDisabled"
                   v-model="eventForm.endTime"
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
@@ -754,9 +753,10 @@
                     <el-input
                       v-model="eventForm.stakeNum1"
                       placeholder="Km"
-                      
                       width="100%"
-                    />
+                    >
+                      <template slot="prepend">K</template>
+                    </el-input>
                   </el-col>
                   <el-col :span="1">+</el-col>
                   <el-col :span="11">
@@ -779,7 +779,9 @@
                       placeholder="Km"
                       
                       width="100%"
-                    />
+                    >
+                      <template slot="prepend">K</template>
+                    </el-input>
                   </el-col>
                   <el-col :span="1">+</el-col>
                   <el-col :span="11">
@@ -802,7 +804,6 @@
                       placeholder="方向"
                       clearable
                       size="small"
-                      :disabled="detailsDisabled"
                       style="width: 100%"
                     >
                       <el-option
@@ -819,7 +820,6 @@
                       placeholder="车道"
                       clearable
                       size="small"
-                      :disabled="detailsDisabled"
                       style="width: 100%; margin-left: 8px"
                     >
                       <el-option

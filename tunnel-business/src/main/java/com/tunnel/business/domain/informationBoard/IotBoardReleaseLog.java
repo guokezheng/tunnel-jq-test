@@ -22,7 +22,7 @@ public class IotBoardReleaseLog extends BaseEntity
     private Long id;
 
     /** 设备编号 */
-    @Excel(name = "发布设备")
+//    @Excel(name = "发布设备")
     private String deviceId;
 
     @Excel(name = "设备桩号")
@@ -72,6 +72,42 @@ public class IotBoardReleaseLog extends BaseEntity
 
     //批量导出单选id导出数据
     private Long[] ids;
+
+    /** 尺寸 **/
+    @Excel(name = "尺寸")
+    private String devicePixel;
+
+    /** 隧道 **/
+    @Excel(name = "隧道名称")
+    private String tunnelName;
+
+    /** 方向 **/
+    @Excel(name = "方向")
+    private String direction;
+
+    public String getDevicePixel() {
+        return devicePixel;
+    }
+
+    public void setDevicePixel(String devicePixel) {
+        this.devicePixel = devicePixel;
+    }
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
     public String getPile() {
         return pile;

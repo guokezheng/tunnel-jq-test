@@ -5,11 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.text.Convert;
 import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
 import com.tunnel.business.domain.informationBoard.IotDeviceAccess;
-import com.tunnel.business.domain.informationBoard.SdIotDevice;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.informationBoard.IotBoardReleaseLogMapper;
 import com.tunnel.business.mapper.informationBoard.IotDeviceAccessMapper;
+import com.tunnel.business.mapper.informationBoard.SdIotDeviceMapper;
 import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
-import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +65,7 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
             if (items.length == 0) {
                 continue;
             }
+            Long deviceId = Long.valueOf(releaseLog.getDeviceId());
             JSONObject jsonObject = new JSONObject();
             JSONArray array = new JSONArray();
             for (int j = 0;j < items.length;j++) {
@@ -105,10 +106,10 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
                 object.put("STATE", "true");
                 for (int m = 0;m < iotDeviceAccesses.size();m++) {
                     IotDeviceAccess iotDeviceAccess = iotDeviceAccesses.get(m);
-                    Long deviceId = Long.valueOf(releaseLog.getDeviceId());
                     if (iotDeviceAccess.getDeviceId().longValue() == deviceId.longValue()
                             && iotDeviceAccess.getDevicePixel() != null && !iotDeviceAccess.getDevicePixel().equals("")) {
                         object.put("DEVICEPIXEL", iotDeviceAccess.getDevicePixel());
+                        releaseLog.setDevicePixel(iotDeviceAccess.getDevicePixel());
                     }
                 }
                 itemArray.add(object);

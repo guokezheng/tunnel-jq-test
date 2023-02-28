@@ -28,13 +28,10 @@
       </div>
       <div style="width: 100%; height: 200px;padding:0 15px">
 
-        <videoPlayer
-            v-if="videoForm.liveUrl "
-            :rtsp="videoForm.liveUrl"
-            :open="cameraPlayer"
-          ></videoPlayer>
+        
        
-        <!-- <video
+        <video 
+        v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
           class="h5video_"
           controls
@@ -43,7 +40,13 @@
           disablePictureInPicture="true"
           controlslist="nodownload noplaybackrate noremoteplayback"
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
-        ></video> -->
+        ></video>
+        <videoPlayer
+            v-if="videoForm.liveUrl && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
+            :rtsp="videoForm.liveUrl"
+            :open="cameraPlayer"
+            
+          ></videoPlayer>
       </div>
       <el-form
         ref="form"
@@ -521,6 +524,7 @@ export default {
       },
       picPage:1,
       player: null,
+      tunnelId:''
       // brandList:[],
       // eqInfo:{},
       // eqTypeDialogList:[],
@@ -568,20 +572,26 @@ export default {
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
-        videoStreaming(this.eqInfo.equipmentId).then((response) =>{
-          console.log(response,"视频流");
-          if(response.code == 200){
-            this.videoForm = response.data
-            this.cameraPlayer = true
-          }
-        }).catch((e)=>{
-          this.$modal.msgWarning("获取视频失败");
-        })
+
+        
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          // displayH5sVideoAll(res.data.secureKey);
+          this.tunnelId = res.data.tunnelId
+          if(res.data.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS"){
+            displayH5sVideoAll(res.data.secureKey);
+          }else{
+            videoStreaming(this.eqInfo.equipmentId).then((response) =>{
+              console.log(response,"视频流");
+              if(response.code == 200){
+                this.videoForm = response.data
+                this.cameraPlayer = true
+              }
+            }).catch((e)=>{
+              this.$modal.msgWarning("获取视频失败");
+            })
+          }
         });
         
         // await getInfo(this.eqInfo.clickEqType).then((response) => {

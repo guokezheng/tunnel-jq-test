@@ -996,14 +996,14 @@
                         item.eventType.eventType
                       }}事件 -->
                       <div
-                        style="width:300px;
+                        style="width:210px;
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
                         z-index:10;
                         ">
-                        {{item.eventTitle}}</div>
-                      <div style="font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
+                        {{item.frameEventTitle}}</div>
+                      <div style="font-size:12px;float:right;margin-right:10px">{{item.startTime}}</div>
 
                     </el-col>
                   </el-row>
@@ -1307,7 +1307,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="syxt_searchBox" v-show="syxt_boxShow">
+        <div class="syxt_searchBox" v-show="syxt_boxShow" ref="cc">
           <el-form
             ref="operationParam"
             :inline="true"
@@ -1414,7 +1414,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="syxt_searchBox" v-show="sycz_boxShow">
+        <div class="syxt_searchBox" v-show="sycz_boxShow" ref="cc1">
           <el-form
             ref="operationParam"
             :inline="true"
@@ -4681,7 +4681,12 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      // if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      //   if (self.syxt_boxShow == true){
+      //     self.syxt_boxShow = false;
+      //   }
+      // }
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.syxt_boxShow == true){
           self.syxt_boxShow = false;
         }
@@ -4689,7 +4694,12 @@ export default {
     },
     bodyCloseMenus1(e) {
       let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      // if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      //   if (self.sycz_boxShow == true){
+      //     self.sycz_boxShow = false;
+      //   }
+      // }
+      if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
         if (self.sycz_boxShow == true){
           self.sycz_boxShow = false;
         }
@@ -10013,6 +10023,7 @@ input {
   ::v-deep .el-input-group__append{
       padding: 0;
       width: 60px;
+      border-left:none !important;
       .el-button{
         height: 32px;
         border-top-right-radius: 3px !important;
@@ -10024,6 +10035,7 @@ input {
         display: flex;
         align-items: center;
         justify-content: center;
+       
       }
     }
   .el-dialog .el-form {

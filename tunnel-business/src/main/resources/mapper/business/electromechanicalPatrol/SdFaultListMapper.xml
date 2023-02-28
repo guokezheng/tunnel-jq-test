@@ -371,4 +371,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND fl.fault_escalation_type = '1'
           AND fl.tunnel_id = "JQ-WeiFang-JiuLongYu-HSD"
     </select>
+
+
+
+
+    <select id="selectSdFaultEqById" resultType="java.lang.String">
+        select eq_id from sd_fault_list where id = #{eqFaultId}
+    </select>
 </mapper>

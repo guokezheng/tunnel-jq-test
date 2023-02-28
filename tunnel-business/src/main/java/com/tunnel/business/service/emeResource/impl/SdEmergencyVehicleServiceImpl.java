@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.page.PageDomain;
+import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.emeResource.SdEmergencyVehicle;
@@ -132,6 +134,7 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
 
     @Override
     public String synVehicleData() {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
         SysUser user = SecurityUtils.getLoginUser().getUser();
         String deptId = user.getDeptId();
         //获取token
@@ -149,19 +152,13 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
             httpRequestFactory.setReadTimeout(5 * 1000);
             RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
             //调取第三方接口获取车辆数据
-            ResponseEntity<String> exchange = restTemplate.exchange(synUrl.concat("?current=1&size=2000&deptId="+deptId), HttpMethod.GET, requestEntity, String.class);
+            ResponseEntity<String> exchange = restTemplate.exchange(synUrl.concat("?current="+pageDomain.getPageNum()+"&size="+pageDomain.getPageSize()+"&deptId="+deptId), HttpMethod.GET, requestEntity, String.class);
             //解析车辆数据
             synVehicleDataList(exchange.getBody(),deptId);
             log.info("返回值 --> {}", exchange.getBody());
             return JSONObject.toJSONString(exchange.getBody());
         } catch (Exception e) {
             log.error("应急车辆同步失败！{}", e.getMessage());
-            //删除应急车辆旧数据
-            List<Long> collect = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(new SdEmergencyVehicle()).stream().map(SdEmergencyVehicle::getId).collect(Collectors.toList());
-            if(collect.size() > 0){
-                Long[] longs = collect.toArray(new Long[collect.size()]);
-                sdEmergencyVehicleMapper.deleteSdEmergencyVehicleByIds(longs);
-            }
             return "";
         }
     }

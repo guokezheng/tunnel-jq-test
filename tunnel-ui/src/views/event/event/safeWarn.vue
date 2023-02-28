@@ -64,9 +64,9 @@
           </el-col>
         </el-row>
         <!-- 全局搜索 -->
-        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" >
+        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" > 
             <el-col :span="6" >
-              <el-button
+              <el-button 
                 v-hasPermi="['system:list:add']"
                 size="small"
                 @click="handleAdd"
@@ -100,14 +100,25 @@
             </el-col>
           </el-row>
           <!-- 右侧弹窗 -->
-        <div class="searchBox searchSafeWarn" v-show="zd_boxShow" >
+        <div class="searchBox searchSafeWarn" v-show="zd_boxShow" ref="cc1">
         <el-form
           :model="queryParams"
           ref="queryForm"
           :inline="true"
           label-width="68px"
           class="formStyle"
-        >
+        >   
+            <el-form-item label="事件状态" >
+              <el-checkbox-group v-model="checkBoxEventState">
+                <el-checkbox 
+                  v-for="item in eventStateOptions" 
+                  :key="item.dictValue"
+                  :label="item.dictValue"
+                  @change.native="changeCheckBox($event)">
+                {{item.dictLabel}}
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
             <el-form-item label="事件类型" prop="eventTypeId">
               <el-select
                 v-model="queryParams.eventTypeId"
@@ -156,7 +167,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="事件状态" prop="eventState">
+            <!-- <el-form-item label="事件状态" prop="eventState">
               <el-select
                 v-model="queryParams.eventState"
                 placeholder="请选择事件状态"
@@ -171,7 +182,7 @@
                   :value="dict.dictValue"
                 />
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="发生时间" prop="eventTime">
               <el-date-picker
                 v-model="dateRange"
@@ -189,14 +200,14 @@
               <el-button size="small"  @click="handleQuery"
               >搜索</el-button
               >
-              <el-button size="small" @click="resetQuery"
+              <el-button size="small" @click="resetQuery" 
               >重置</el-button
               >
             </el-form-item>
           </el-form>
         </div>
             <!-- 右侧弹窗 -->
-        <div class="searchBox searchSafeWarn" v-show="boxShow" >
+        <div class="searchBox searchSafeWarn" v-show="boxShow"   ref="cc0">
         <el-form
           :model="queryParams"
           ref="queryForm"
@@ -204,6 +215,17 @@
           label-width="68px"
           class="formStyle"
         >
+            <el-form-item label="事件状态" >
+              <el-checkbox-group v-model="checkBoxEventState">
+                <el-checkbox 
+                  v-for="item in eventStateOptions" 
+                  :key="item.dictValue"
+                  :label="item.dictValue"
+                  @change.native="changeCheckBox($event)">
+                {{item.dictLabel}}
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
             <el-form-item label="事件类型" prop="eventTypeId">
               <el-select
                 v-model="queryParams.eventTypeId"
@@ -252,7 +274,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="事件状态" prop="eventState">
+            <!-- <el-form-item label="事件状态" prop="eventState">
               <el-select
                 v-model="queryParams.eventState"
                 placeholder="请选择事件状态"
@@ -267,7 +289,7 @@
                   :value="dict.dictValue"
                 />
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="发生时间" prop="eventTime">
               <el-date-picker
                 v-model="dateRange"
@@ -285,14 +307,14 @@
               <el-button size="small"  @click="handleQuery"
               >搜索</el-button
               >
-              <el-button size="small" @click="resetQuery"
+              <el-button size="small" @click="resetQuery" 
               >重置</el-button
               >
             </el-form-item>
           </el-form>
         </div>
           <!-- 右侧弹窗 -->
-        <div class="searchBox searchSafeWarn"  v-show="fault_boxShow" ref="cc">
+        <div class="searchBox searchSafeWarn"  v-show="fault_boxShow" ref="cc2">
         <el-form
               ref="queryForm"
               :inline="true"
@@ -324,7 +346,7 @@
                 <el-button size="small"  @click="handleQuery"
                 >搜索</el-button
                 >
-                <el-button size="small" @click="resetQuery"
+                <el-button size="small" @click="resetQuery" 
                 >重置</el-button
                 >
               </el-form-item>
@@ -784,7 +806,7 @@
                     <el-input
                       v-model="eventForm.stakeEndNum1"
                       placeholder="Km"
-
+                      
                       width="100%"
                     />
                   </el-col>
@@ -793,7 +815,7 @@
                     <el-input
                       v-model="eventForm.stakeEndNum2"
                       placeholder="m"
-
+                      
                       width="100%"
                     />
                   </el-col>
@@ -964,8 +986,8 @@
               <el-col :span="24" v-show="eventForm.eventState == 0">
                 <el-form-item prop="currencyId">
                   <el-select v-model="eventForm.currencyId" placeholder="请选择预案" @change="this.$forceUpdate()">
-                    <el-option
-                      v-for="item in ReservePlanList"
+                    <el-option 
+                      v-for="item in ReservePlanList" 
                       :key="item.id"
                       :label="item.planName"
                       :value="item.id"
@@ -1003,7 +1025,7 @@
     </el-dialog>
     <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%">
       <el-timeline>
-
+        
           <el-timeline-item timestamp="事件发现" placement="top">
             <el-card>
             <el-form ref="eventDiscovery" :model="eventDiscovery" label-width="100px">
@@ -1050,7 +1072,7 @@
           <el-timeline-item timestamp="人工复核" placement="top" v-if="eventStateCurrent != '3'">
             <el-form ref="manualReview" :model="manualReview" label-width="100px">
             <el-card>
-
+              
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="当事目标">
@@ -1275,250 +1297,260 @@
       :visible.sync="open"
       width="1000px"
       append-to-body
+      class="hitchDialog"
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-row style="padding: 10px;display:flex;flex-wrap: wrap;">
-          <el-col :span="24">
-            <div class="topTxt">故障基本信息</div>
-          </el-col>
-          <el-col :span="8" :style="{ display: 'none' }">
-            <el-form-item label="故障id" prop="id" :style="{ display: 'none' }">
-              <el-input
-                v-model="form.id"
-                placeholder="请输入发现源"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="所在路段隧道" prop="tunnelId">
-              <el-select
-                v-model="form.tunnelId"
-                :disabled="disstate"
-                placeholder="请选择所属隧道"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in tunnelList"
-                  :key="item.tunnelId"
-                  :label="item.tunnelName"
-                  :value="item.tunnelId"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障类型" prop="faultType">
-              <el-select
-                v-model="form.faultType"
-                :disabled="disstate"
-                placeholder="请选择故障类型"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in faultTypeOptions"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
+          <el-card>
+            <el-col :span="24">
+              <div class="topTxt">故障基本信息</div>
+              <div class="tableTopHr"></div>
+            </el-col>
+            <el-col :span="8" :style="{ display: 'none' }">
+              <el-form-item label="故障id" prop="id" :style="{ display: 'none' }">
+                <el-input
+                  v-model="form.id"
+                  placeholder="请输入发现源"
+                  style="width: 100%"
                 />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障发现源" prop="faultSource">
-              <el-input
-                :disabled="disstate"
-                v-model="form.faultSource"
-                placeholder="请输入发现源"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障发现时间" prop="faultFxtime">
-              <el-date-picker
-                clearable
-                size="small"
-                :disabled="disstate"
-                v-model="form.faultFxtime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择故障发现时间"
-                style="width: 100%"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障持续时间" prop="faultCxtime">
-              <el-input
-                :disabled="disstate"
-                v-model="form.faultCxtime"
-                style="width: 100%"
-                placeholder="请按照天/小时/分格式填写"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障填报时间" prop="faultTbtime">
-              <el-date-picker
-                clearable
-                size="small"
-                :disabled="disstate"
-                v-model="form.faultTbtime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择故障填报时间"
-                style="width: 100%"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="24">
-            <div class="topTxt">故障设备情况</div>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="设备名称" prop="eqId">
-              <el-select
-                v-model="form.eqId"
-                :disabled="disstate"
-                placeholder="请选择设备名称"
-                @change="eqStatusGet"
-              >
-                <el-option
-                  v-for="item in eqListData"
-                  :key="item.eqId"
-                  :label="item.eqName"
-                  :value="item.eqId"
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="所在路段隧道" prop="tunnelId">
+                <el-select
+                  v-model="form.tunnelId"
+                  :disabled="disstate"
+                  placeholder="请选择所属隧道"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in tunnelList"
+                    :key="item.tunnelId"
+                    :label="item.tunnelName"
+                    :value="item.tunnelId"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障类型" prop="faultType">
+                <el-select
+                  v-model="form.faultType"
+                  :disabled="disstate"
+                  placeholder="请选择故障类型"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in faultTypeOptions"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障发现源" prop="faultSource">
+                <el-input
+                  :disabled="disstate"
+                  v-model="form.faultSource"
+                  placeholder="请输入发现源"
+                  style="width: 100%"
                 />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="设备填报状态" prop="eqStatus">
-              <el-select
-                v-model="form.eqStatus"
-                :disabled="disstate"
-                placeholder="请选择设备填报状态"
-              >
-                <el-option
-                  v-for="item in eqStatusList"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障发现时间" prop="faultFxtime">
+                <el-date-picker
+                  clearable
+                  size="small"
+                  :disabled="disstate"
+                  v-model="form.faultFxtime"
+                  type="datetime"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="选择故障发现时间"
+                  style="width: 100%"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障持续时间" prop="faultCxtime">
+                <el-input
+                  :disabled="disstate"
+                  v-model="form.faultCxtime"
+                  style="width: 100%"
+                  placeholder="请按照天/小时/分格式填写"
                 />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障位置" prop="faultLocation">
-              <el-input
-                ref="faultLocation"
-                :disabled="disstate"
-                v-model="form.faultLocation"
-                placeholder="请输入故障位置"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="设备运行状态" prop="eqRunStatus">
-              <el-input
-                v-model="form.eqRunStatus"
-                :disabled="disstate"
-                @input="changeEqRunStatus($event)"
-                placeholder="请输入设备运行状态"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <div class="topTxt">故障描述</div>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障代码" prop="faultCode">
-              <el-input
-                v-model="form.faultCode"
-                :disabled="disstate"
-                placeholder="请输入故障代码"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障等级" prop="faultLevel">
-              <el-select
-                v-model="form.faultLevel"
-                :disabled="disstate"
-                placeholder="请选择故障等级"
-              >
-                <el-option
-                  v-for="dict in dict.type.fault_level"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障填报时间" prop="faultTbtime">
+                <el-date-picker
+                  clearable
+                  size="small"
+                  :disabled="disstate"
+                  v-model="form.faultTbtime"
+                  type="datetime"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="选择故障填报时间"
+                  style="width: 100%"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-card>
+          <el-card>
+            <el-col :span="24">
+              <div class="topTxt">故障设备情况</div>
+              <div class="tableTopHr"></div>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="设备名称" prop="eqId">
+                <el-select
+                  v-model="form.eqId"
+                  :disabled="disstate"
+                  placeholder="请选择设备名称"
+                  @change="eqStatusGet"
+                >
+                  <el-option
+                    v-for="item in eqListData"
+                    :key="item.eqId"
+                    :label="item.eqName"
+                    :value="item.eqId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="设备填报状态" prop="eqStatus">
+                <el-select
+                  v-model="form.eqStatus"
+                  :disabled="disstate"
+                  placeholder="请选择设备填报状态"
+                >
+                  <el-option
+                    v-for="item in eqStatusList"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障位置" prop="faultLocation">
+                <el-input
+                  ref="faultLocation"
+                  :disabled="disstate"
+                  v-model="form.faultLocation"
+                  placeholder="请输入故障位置"
                 />
-                <!--                <el-option
-                                  v-for="item in faultLevelOptions"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                />-->
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障消除状态" prop="falltRemoveStatue">
-              <el-select
-                v-model="form.falltRemoveStatue"
-                :disabled="disstate"
-                placeholder="请选择消除状态"
-              >
-                <el-option
-                  v-for="item in faultRemoveStateOptions"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="设备运行状态" prop="eqRunStatus">
+                <el-input
+                  v-model="form.eqRunStatus"
+                  :disabled="disstate"
+                  @input="changeEqRunStatus($event)"
+                  placeholder="请输入设备运行状态"
                 />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="故障描述" prop="faultDescription">
-              <el-input
-                v-model="form.faultDescription"
-                maxlength="250"
-                :disabled="disstate"
-                placeholder="请输入故障描述"
-                style="width: 100%"
-                type="textarea"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="现场图片" label-width="110px">
-              <el-upload
-                ref="upload"
-                action="http://xxx.xxx.xxx/personality/uploadExcel"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-                :http-request="uploadFile"
-                :file-list="fileList"
-                :disabled="disstate"
-                :on-exceed="handleExceed"
-                :on-change="handleChange"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog
-                :visible.sync="dialogVisible"
-                class="modifyEqTypeDialog"
-                :append-to-body="true"
-                style="width: 600px !important; margin: 0 auto"
-              >
-                <img width="100%" :src="dialogImageUrl" alt="" />
-              </el-dialog>
-            </el-form-item>
-          </el-col>
+              </el-form-item>
+            </el-col>
+          </el-card>
+          <el-card>
+            <el-col :span="24">
+              <div class="topTxt">故障描述</div>
+              <div class="tableTopHr"></div>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障代码" prop="faultCode">
+                <el-input
+                  v-model="form.faultCode"
+                  :disabled="disstate"
+                  placeholder="请输入故障代码"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障等级" prop="faultLevel">
+                <el-select
+                  v-model="form.faultLevel"
+                  :disabled="disstate"
+                  placeholder="请选择故障等级"
+                >
+                  <el-option
+                    v-for="dict in dict.type.fault_level"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                  <!--                <el-option
+                                    v-for="item in faultLevelOptions"
+                                    :key="item.dictValue"
+                                    :label="item.dictLabel"
+                                    :value="item.dictValue"
+                                  />-->
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="故障消除状态" prop="falltRemoveStatue">
+                <el-select
+                  v-model="form.falltRemoveStatue"
+                  :disabled="disstate"
+                  placeholder="请选择消除状态"
+                >
+                  <el-option
+                    v-for="item in faultRemoveStateOptions"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="故障描述" prop="faultDescription">
+                <el-input
+                  v-model="form.faultDescription"
+                  maxlength="250"
+                  :disabled="disstate"
+                  placeholder="请输入故障描述"
+                  style="width: 100%"
+                  type="textarea"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="现场图片" label-width="110px">
+                <el-upload
+                  ref="upload"
+                  action="http://xxx.xxx.xxx/personality/uploadExcel"
+                  list-type="picture-card"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :http-request="uploadFile"
+                  :file-list="fileList"
+                  :disabled="disstate"
+                  :on-exceed="handleExceed"
+                  :on-change="handleChange"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog
+                  :visible.sync="dialogVisible"
+                  class="modifyEqTypeDialog"
+                  :append-to-body="true"
+                  style="width: 600px !important; margin: 0 auto"
+                >
+                  <img width="100%" :src="dialogImageUrl" alt="" />
+                </el-dialog>
+              </el-form-item>
+            </el-col>
+          </el-card>
+          
         </el-row>
       </el-form>
       <div class="dialogFooterButton">
@@ -1676,6 +1708,8 @@ export default {
   // },
   data() {
     return {
+      checkBoxEventState:[],
+      exportLoading:false,
       fault_boxShow:false,
       zd_boxShow:false,
       boxShow:false,
@@ -1876,7 +1910,7 @@ export default {
         eventTypeId: null,
         eventTitle: null,
         eventTime: null,
-        eventState: null,
+        eventState: [],
         eventGrade: null,
         eventLocation: null,
         eventDeath: null,
@@ -1885,6 +1919,7 @@ export default {
         startTime: null,
         endTime: null,
         deptId: null,
+        
       },
 
       queryParams1: {
@@ -2119,6 +2154,7 @@ export default {
       this.powerOptions = response.data;
     });
     this.getDicts("sd_event_state").then((response) => {
+      console.log(response.data,"事件状态")
       this.eventStateOptions = response.data;
     });
     this.getDicts("sd_incident_level").then((response) => {
@@ -2146,12 +2182,21 @@ export default {
 
   },
   methods: {
+    changeCheckBox(e){
+      // console.log(e,"==============")
+      console.log(this.checkBoxEventState,"queryParams.eventState")
+    },
     changeInput(){
       this.$forceUpdate()
     },
     bodyCloseMenus1(e) {
       let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      // console.log(this.$refs.main1,"---------------------")
+      // console.log(this.$refs.main1.contains(e.target),"+++++++++++++")
+      // console.log(this.$refs.cc1,"---------------------")
+      // console.log(this.$refs.cc1.contains(e.target),"+++++++++++++")
+
+      if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
         if (self.zd_boxShow == true){
           self.zd_boxShow = false;
         }
@@ -2159,7 +2204,7 @@ export default {
     },
     bodyCloseMenus0(e) {
       let self = this;
-      if (this.$refs.main0 && !this.$refs.main0.contains(e.target)) {
+      if (!this.$refs.main0.contains(e.target) && !this.$refs.cc0.contains(e.target)) {
         if (self.boxShow == true){
           self.boxShow = false;
         }
@@ -2167,7 +2212,7 @@ export default {
     },
     bodyCloseMenus2(e) {
       let self = this;
-      if (this.$refs.main2 && !this.$refs.main2.contains(e.target)) {
+      if (!this.$refs.main2.contains(e.target) && !this.$refs.cc2.contains(e.target)) {
         if (self.fault_boxShow == true){
           self.fault_boxShow = false;
         }
@@ -2718,6 +2763,7 @@ export default {
       this.zd_boxShow = false;
       this.boxShow = false;
       this.fault_boxShow = false;
+      this.checkBoxEventState = []
       this.resetQuery();
       // this.getList();
       if(this.currentMenu!="2"){
@@ -2885,6 +2931,7 @@ export default {
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.activeName;
+        this.queryParams.eventState = this.checkBoxEventState.toString()
         if(this.fuzzySearch1){
           this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
         }
@@ -2948,6 +2995,7 @@ export default {
     getTunnel() {
       if (!this.queryParams.deptId) {
         listTunnels().then((response) => {
+          console.log(response.rows,"所属隧道")
           this.tunnelList = response.rows;
         });
       }
@@ -3259,7 +3307,7 @@ export default {
       this.queryParams = { pageNum: 1, pageSize: 16 };
       this.queryParams1 = { pageNum: 1, pageSize: 10 };
       this.dateRange = [];
-      this.tunnelList = [];
+      // this.tunnelList = [];
       this.queryParams.eventTypeId = "";
       this.queryParams1.faultDescription = "";
       this.fuzzySearch1 = ''
@@ -4198,13 +4246,28 @@ hr {
   display: none;
 }
 .topTxt {
-  margin-left: 15px;
+  margin-left: 7px;
   margin-top: 10px;
+  font-size: 16px;
+  background-image: url(../../../assets/cloudControl/cardTitle.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  text-align: center;
+  width:139px;
 }
 .searchSafeWarn{
   top: 12% !important;
   right: 0.8% !important;
   width: 23.8% !important;
+}
+.hitchDialog{
+  ::v-deep .el-dialog__body{
+    height:70vh !important;
+    overflow:auto !important;
+  }
+  ::v-deep .el-card{
+    margin-bottom: 10px !important;
+  }
 }
 </style>
 

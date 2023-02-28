@@ -892,14 +892,8 @@
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
       <div class="footer" v-show="displayThumbnail == true">
-        <div class="footChangeButton">
-          <el-radio-group v-model="footChangeRadio" @change="videoRadioChange">
-            <el-radio-button label="图表"></el-radio-button>
-            <el-radio-button label="视频"></el-radio-button>
-          </el-radio-group>
-
-        </div>
-        <div class="footMiniBox" v-show="footChangeRadio == '图表'">
+        <div class="fourBox">
+          <div class="footMiniBox" v-show="footChangeRadio == '图表'">
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -1096,7 +1090,15 @@
             :open="cameraPlayer4"
           ></videoPlayer>
         </div>
+        </div>
+        
+        <div class="footChangeButton">
+          <el-radio-group v-model="footChangeRadio" @change="videoRadioChange">
+            <el-radio-button label="图表"></el-radio-button>
+            <el-radio-button label="视频"></el-radio-button>
+          </el-radio-group>
 
+        </div>
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
     </div>
@@ -3422,6 +3424,7 @@ import {
   workTriggerInfo,
   updateState,
 } from "@/api/event/strategy";
+import { getEntranceExitVideo} from "@/api/eventDialog/api.js";
 import { selectByEqDeno } from "@/api/business/roadState.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
@@ -3923,7 +3926,7 @@ export default {
       userDeptId: null,
       tunnelQueryParams: {
         deptId: "",
-        deptName: "",
+        // deptName: "",
       },
       userQueryParams: {
         userName: this.$store.state.user.name,
@@ -4638,7 +4641,7 @@ export default {
 
   methods: {
     videoRadioChange(){
-      if(this.footChangeRadio == '视频'){
+      if(this.footChangeRadio == '视频' && this.tunnelId){
         this.getFooterVideo()
       }else{
         this.cameraPlayer1 = false
@@ -4649,21 +4652,27 @@ export default {
       }
     },
     getFooterVideo(){
-      videoStreaming("JQ-WeiFang-JiuLongYu-HSD-CAMBOX-036").then((res)=>{
-        this.liveUrl1 = res.data.liveUrl
-        this.cameraPlayer1 = true
+      // 潍坊方向
+      getEntranceExitVideo( this.tunnelId,'2').then((res)=>{
+        videoStreaming(res.data[0].inlet).then((res)=>{
+          this.liveUrl1 = res.data.liveUrl
+          this.cameraPlayer1 = true
+        })
+        videoStreaming(res.data[0].outlet).then((res)=>{
+          this.liveUrl2 = res.data.liveUrl
+          this.cameraPlayer2 = true
+        })
       })
-      videoStreaming("JQ-WeiFang-JiuLongYu-HSD-CAMBOX-020").then((res)=>{
-        this.liveUrl2 = res.data.liveUrl
-        this.cameraPlayer2 = true
-      })
-      videoStreaming("JQ-WeiFang-JiuLongYu-HSD-CAMBOX-038").then((res)=>{
-        this.liveUrl3 = res.data.liveUrl
-        this.cameraPlayer3 = true
-      })
-      videoStreaming("JQ-WeiFang-JiuLongYu-HSD-CAMBOX-017").then((res)=>{
-        this.liveUrl4 = res.data.liveUrl
-        this.cameraPlayer4 = true
+      // 济南方向
+      getEntranceExitVideo( this.tunnelId,'1').then((res)=>{
+        videoStreaming(res.data[0].inlet).then((res)=>{
+          this.liveUrl3 = res.data.liveUrl
+          this.cameraPlayer3 = true
+        })
+        videoStreaming(res.data[0].outlet).then((res)=>{
+          this.liveUrl4 = res.data.liveUrl
+          this.cameraPlayer4 = true
+        })
       })
     },
     filterNode(value, data) {
@@ -9108,12 +9117,18 @@ export default {
 .footer {
   width: 100%;
   height: 25%;
-  padding: 0px 16px;
+  padding: 0px 0px 0px 16px;
   // margin-top: 10px;
   display: flex;
   padding-bottom: 5px;
   justify-content: space-between;
   margin-top: 8px;
+  .fourBox{
+    display:flex;
+    justify-content: space-between;
+    width: calc(100% - 30px);
+    margin-right: 20px;
+  }
   .footChangeButton{
     width:30px;
     height:100%;
@@ -9132,13 +9147,13 @@ export default {
           height: 100%;
           line-height: 26px;
           letter-spacing: 16px;
-          border-radius:3px ;
+          border-radius:0;
         }
       }
     }
     .el-radio-button{
-      border:solid 1px #39ADFF !important;
-      border-radius:3px !important;
+      border:solid 0.1px #0067B2 !important;
+      border-radius:0px !important;
     }
   }
   .footTitle {
@@ -9181,7 +9196,7 @@ export default {
   }
 
   .footMiniBox {
-    width: 24%;
+    width: 24.5%;
     height: 100%;
     overflow: hidden;
     // background-image: url(../../../assets/cloudControl/footer_bg.png);

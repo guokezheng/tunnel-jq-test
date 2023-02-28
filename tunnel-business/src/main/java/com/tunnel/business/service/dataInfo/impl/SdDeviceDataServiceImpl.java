@@ -412,6 +412,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         SdDevices sdDevices = new SdDevices();
         sdDevices.setExternalSystemId(system.getId());
         List<SdDevices> sdDevicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
+        if (sdDevicesList.isEmpty()) {
+            return allDataList;
+        }
         SdDevices devices = sdDevicesList.get(0);
         String eqId = devices.getExternalDeviceId();
         String url = system.getSystemUrl() + "login";

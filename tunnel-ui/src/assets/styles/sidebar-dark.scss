@@ -101,7 +101,26 @@
     //   background: #fff;
 
     // }
-    
+    // 工作台底部切换视频 图表按钮
+    .footer{
+      .footChangeButton{
+        .el-radio-button__inner{
+          color:#fff;
+          border:solid 0.1px #0067B2;
+        }
+        .is-active .el-radio-button__inner{
+          border:none !important;
+          background: linear-gradient(90deg, rgba(0, 172, 237, 0.8), rgba(0, 121, 219, 0.8)) !important;
+        }
+        .is-active{
+          border:none !important;
+        }
+        .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+          box-shadow:none !important;
+          border:none;
+        }
+      }
+    }
     .searchBox,.searchBoxTab{
       background-color: #fff;
       border: solid 1px #DCDFE6;
@@ -873,6 +892,24 @@
         background: #012e51;
       }
     }
+    .pagination-container {
+      position: static !important;
+      margin-top: 0px !important;
+      .el-pagination__total,
+      .el-pagination__jump {
+        color: #fff !important;
+      }
+      .el-input__inner {
+        background: transparent !important;
+        color: #fff;
+      }
+      .el-pagination.is-background .btn-prev,
+      .el-pagination.is-background .btn-next,
+      .el-pagination.is-background .el-pager li {
+        background: transparent;
+        color: #fff;
+      }
+    }
     .lineClass{
       width: 100%;
       height: 1px;
@@ -1139,6 +1176,81 @@
   }
    // 操作日志
   .operationDiglog{
+    //  时间日期选择器
+    .el-picker-panel{
+      background: #012E51 !important;
+      color: #C0C4CC;
+      border: .0625rem solid #004375 !important;
+      border-radius: 0.1875rem !important;
+      // 时间选择器箭头
+      .el-picker-panel__icon-btn{
+        color:#bbb;
+      }
+      .el-date-table td.disabled div{
+        background: transparent;
+      }
+      .el-date-range-picker__content.is-left{
+        border-right: .0625rem solid #004375 !important;
+      }
+      .el-date-range-picker__time-header,.el-date-picker__time-header{
+        border-bottom: .0625rem solid #004375 !important;
+        .el-input__inner{
+          background: transparent;
+          color: #FFF;
+        }
+      }
+      .el-date-table td.in-range div:hover{
+        background-color:rgba($color: #0292BA, $alpha: 0.5)!important;
+      }
+      .el-date-table td.in-range div{
+        background-color:rgba($color: #0292BA, $alpha: 0.5)!important;
+      }
+      .el-date-table th{
+        color: #C0C4CC;
+        border-bottom:none !important;
+      }
+      .el-date-picker__header-label{
+        color: #C0C4CC;
+      }
+      .el-input__inner{
+        border:solid 1px #00518D;
+      }
+      .start-date div span,.end-date div span,.current div span{
+        color: #fff !important;
+      }
+      .available{
+        div span{
+          box-shadow: inset 0 0 0.1875rem 0 #6ff;
+          border: 0.0625rem solid #0292ac;
+          color: #00fff4;
+          border-radius: 50%;
+        }
+      }
+      .prev-month,.next-month,.disabled{
+        div span{
+          color: #999 !important;
+          box-shadow: inset 0 0 .1875rem 0 #999 !important;
+          border: 0.0625rem solid #666 !important;
+          border-radius: 50%;
+        }
+      }
+      .el-picker-panel__footer{
+        background: #012E51 !important;
+        border-top:.0625rem solid #004375 !important;
+      }
+      .el-button{
+        background: linear-gradient(172deg, #00ACED, #0079DB);
+        color: #fff;
+        border: solid 1px #00ACED;
+      }
+      .el-button--mini{
+        padding: 7px 15px !important;
+      }
+    }
+        // tab页下方横线
+    .el-tabs__nav-wrap::after{
+      background-color: #054D83;
+    }
     // 表格隔行变色
     .tableEvenRow{
       background: #00467B !important;
@@ -1173,7 +1285,7 @@
         color: #00ADFF !important;
       }
     }
-    .el-input--small .el-input__inner{
+    .grid-content .el-input--small .el-input__inner{
       border-right:none !important;
     }
     .el-loading-mask{

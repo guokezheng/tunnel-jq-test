@@ -265,7 +265,7 @@ export default {
 .listContent {
   max-height: 290px;
   overflow: auto;
-  background: rgba($color: #6c8097, $alpha: 0.3);
+  background: rgba(108, 128, 151, 0.3);
   margin: 10px;
   > div {
     // margin-bottom: 6px;

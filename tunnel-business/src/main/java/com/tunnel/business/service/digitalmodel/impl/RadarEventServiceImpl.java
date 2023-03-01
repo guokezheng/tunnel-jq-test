@@ -9,11 +9,8 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.datacenter.domain.enumeration.EventSourceEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.datacenter.domain.enumeration.EventStateEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.*;
 import com.tunnel.business.domain.event.SdEvent;
@@ -121,6 +118,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
+                sdEvent.setEventTime(DateUtils.parseDate(f.getEventTimeStampStart()));
                 sdEvent.setId(f.getEventId());
                 sdEvent.setUpdateTime(DateUtils.getNowDate());
                 //方向
@@ -129,7 +127,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 }
                 wjMapper.updateEvent(sdEvent);
                 //推送事件数据到物联中台kafka
-                sendDataToOtherSystem(null, sdEvent);
+                //sendDataToOtherSystem(null, sdEvent);
             } else {
                 sdEvent.setId(f.getEventId());
                 String eventType = WJEnum.getValue(f.getEventType());
@@ -142,15 +140,18 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
+                sdEvent.setEventTime(DateUtils.parseDate(f.getEventTimeStampStart()));
+                //事件等级默认为一般
+                sdEvent.setEventGrade("1");
                 //接收到的事件状态设置为未处理
                 sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
                 //事件来源：雷达
-                sdEvent.setEventSource(EventSourceEnum.radar.getCode());
+                sdEvent.setEventSource(EventDescEnum.event_source_radar_video.getCode());
                 //事件方向--将万集定义的隧道方向映射为平台的隧道方向
                 if(!StringUtils.isEmpty(f.getDirection())){
-//                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
-//                    sdEvent.setDirection(direction);
-                    sdEvent.setDirection(String.valueOf(f.getDirection()));
+                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
+                    sdEvent.setDirection(direction);
+                    //sdEvent.setDirection(String.valueOf(f.getDirection()));
                 }
                 //拼接获取默认的事件标题
                 String eventTitle = sdEventService.getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
@@ -166,7 +167,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         if (CollectionUtils.isNotEmpty(eventList)) {
             wjMapper.insertWjEvent(eventList);
             //推送新添加的事件数据到物联中台
-            sendDataToOtherSystem(eventList, null);
+            //sendDataToOtherSystem(eventList, null);
             log.info("---插入数据list---{}", eventList);
             List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
             JSONObject object = new JSONObject();
@@ -212,7 +213,6 @@ public class RadarEventServiceImpl implements RadarEventService {
         String videoImage = (String) map.get("videoImage");
         String secondVideoImage = (String) map.get("secondVideoImage");
         String thirdVideoImage = (String) map.get("thirdVideoImage");
-        String username = SecurityUtils.getUsername();
         if (StringUtils.isNotBlank(eventId)) {
             // 从缓存中获取文件存储路径
 //            String fileServerPath = RuoYiConfig.getUploadPath();
@@ -222,19 +222,19 @@ public class RadarEventServiceImpl implements RadarEventService {
                 String e1 = "事件前";
 //                String imgUrl = ImageUtil.generateImage(videoImage, url,e1);
 //                String s1 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + videoImage,"0", e1, username);
+                wjMapper.insertPic(eventId, prefix + videoImage,"0", e1);
             }
             if (StringUtils.isNotEmpty(secondVideoImage)) {
                 String e2 = "事件中";
 //                String imgUrl = ImageUtil.generateImage(secondVideoImage, url,e2);
 //                String s2 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + secondVideoImage, "0", e2, username);
+                wjMapper.insertPic(eventId, prefix + secondVideoImage, "0", e2);
             }
             if (StringUtils.isNotEmpty(thirdVideoImage)) {
                 String e3 = "事件后";
 //                String imgUrl = ImageUtil.generateImage(thirdVideoImage, url,e3);
 //                String s3 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + thirdVideoImage, "0", e3 , username);
+                wjMapper.insertPic(eventId, prefix + thirdVideoImage, "0", e3 );
             }
         }
         return AjaxResult.success();
@@ -243,12 +243,11 @@ public class RadarEventServiceImpl implements RadarEventService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult eventVideo(Map<String, Object> map) {
-        String username = SecurityUtils.getUsername();
         String eventId = map.get("eventId") + "";
         String eventVideoUrl = (String) map.get("eventVideoUrl");
         if (StringUtils.isNotBlank(eventVideoUrl)) {
             //wjMapper.updateVideoById(Long.parseLong(eventId), prefix + eventVideoUrl);
-            wjMapper.insertPic(eventId, prefix + eventVideoUrl, "1", "事件短视频" , username);
+            wjMapper.insertPic(eventId, prefix + eventVideoUrl, "1", "事件短视频" );
             return AjaxResult.success();
         }
         return AjaxResult.error();

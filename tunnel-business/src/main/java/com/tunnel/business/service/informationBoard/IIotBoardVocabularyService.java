@@ -61,5 +61,5 @@ public interface IIotBoardVocabularyService {
      */
     int deleteIotBoardVocabularyById(Long id);
 
-    int checkIotBoardContent(Map<String, Object> map);
+    int checkIotBoardContent(String content);
 }

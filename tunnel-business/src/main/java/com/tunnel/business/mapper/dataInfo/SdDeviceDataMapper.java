@@ -1,7 +1,7 @@
 package com.tunnel.business.mapper.dataInfo;
 
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.dataInfo.*;
 import org.apache.ibatis.annotations.Param;;
 
 import java.util.List;
@@ -99,15 +99,18 @@ public interface SdDeviceDataMapper
 
     List<Map<String, String>> selectDWDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
-    List<Map<String, String>> selectCOVIDevicesDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
-
-    List<Map<String, String>> selectFSFXDevicesDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
-
-    List<Map<String, String>> selectDNDevicesDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
-
-    List<Map<String, String>> selectDWDevicesDataLineList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 
     List<Map<String, String>> dataDevicesLogInfoList(SdDeviceData sdDeviceData);
 
     List<Map<String, String>> selectDeviceTableDataList(@Param("deviceId")String deviceId,@Param("beginTime")String beginTime,@Param("endTime")String endTime);
+
+    List<SdDeviceData> exportDatainforTab(SdDeviceData sdDeviceData);
+
+    List<SdDeviceCOVIData> selectCOVIExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<SdDeviceFSFXData> selectFSFXExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<SdDeviceDNData> selectDNExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+
+    List<SdDeviceDWData> selectDWExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
 }

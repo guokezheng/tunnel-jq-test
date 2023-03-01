@@ -87,3 +87,24 @@ export function getType() {
 }
 
 
+// 导出数据报表Tab
+export function exportDatainforTab(query) {
+  return request({
+    url: '/system/data/exportDatainforTab',
+    method: 'get',
+    params: query
+  })
+}
+
+
+
+// 导出详情数据报表
+export function handleExportRecord(query) {
+  return request({
+    url: '/system/data/handleExportRecord',
+    method: 'get',
+    params: query
+  })
+}
+
+

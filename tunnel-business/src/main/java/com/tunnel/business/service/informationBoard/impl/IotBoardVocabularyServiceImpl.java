@@ -6,6 +6,7 @@ import com.tunnel.business.service.informationBoard.IIotBoardVocabularyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -87,13 +88,18 @@ public class IotBoardVocabularyServiceImpl implements IIotBoardVocabularyService
     }
 
     @Override
-    public int checkIotBoardContent(Map<String, Object> map) {
-        if (map.get("content") == null || map.get("content").toString().equals("")) {
+    public int checkIotBoardContent(String content) {
+        if (content == null || content.equals("")) {
             return 0;
         } else {
-            String content = map.get("content").toString();
             Boolean flag = false;
             List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyMapper.selectIotBoardVocabularyList(null);
+            try {
+                content = URLDecoder.decode(content, "UTF-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0;
+            }
             for (int g = 0;g < iotBoardVocabularies.size();g++) {
                 String word = iotBoardVocabularies.get(g).getWord();
                 if (content.contains(word)) {
@@ -102,7 +108,7 @@ public class IotBoardVocabularyServiceImpl implements IIotBoardVocabularyService
                 }
             }
             if (flag) {
-                throw new RuntimeException("发送的内容包含不恰当的关键字，请修改后重试！");
+                return 0;
             }
         }
         return 1;

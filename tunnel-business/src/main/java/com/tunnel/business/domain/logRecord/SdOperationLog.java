@@ -70,6 +70,13 @@ public class SdOperationLog extends BaseEntity
     /** 设备名称 */
     /*@Excel(name = "设备名称")
     private String eqName;*/
+
+    /** 桩号 */
+    @Excel(name = "桩号")
+    private String pile;
+    /** 方向 */
+    @Excel(name = "方向")
+    private String direction;
     
     private String beginTime;
     
@@ -93,13 +100,29 @@ public class SdOperationLog extends BaseEntity
     @Excel(name = "创建时间", dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+    public String getPile() {
+        return this.pile;
+    }
+
+    public void setPile(String pile) {
+        this.pile = pile;
+    }
+
+    public String getDirection() {
+        return this.direction;
+    }
+
+    public void setDirection( String direction) {
+        this.direction = direction;
+    }
+
     @Override
     public Date getCreateTime() {
         return this.createTime;
     }
 
     @Override
-    public void setCreateTime(final Date createTime) {
+    public void setCreateTime( Date createTime) {
         this.createTime = createTime;
     }
 

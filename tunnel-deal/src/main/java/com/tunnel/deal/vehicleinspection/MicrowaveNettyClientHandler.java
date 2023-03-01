@@ -168,7 +168,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                     //     * @param bright      亮度
                     //     * @param controlType 控制类型
                     //     * @param operIp      操作者IP地址
-                    if(threadArrs[0]==null&&(bright == null||bright == lowLuminance)){
+                    if(threadArrs[0]==null||bright == null||bright == lowLuminance){
                         System.out.println("线程开始推送加强照明指令。。");
                         sanJingLight.setBrightnessByList(deviceIds,tallLuminance,"2",operIp);
                     }
@@ -176,8 +176,8 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                     replaceThread(Thread.currentThread());
                     //等待30秒后 执行 降低 光照强度功能
                     Thread.sleep(30000);
-                    System.out.println("开始执行降低光照强度。。。");
                     sanJingLight.setBrightnessByList(deviceIds,lowLuminance,"2",operIp);
+                    System.out.println("降低光照强度执行完毕。。。");
                     //清除当前记录线程
                     threadArrs[0] =  null;
                     //记录当前亮度值

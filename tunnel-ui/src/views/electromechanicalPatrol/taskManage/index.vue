@@ -9,7 +9,13 @@
           type="primary"
           plain
           @click="handleAdd"
-          >新增任务
+          >新增
+        </el-button>
+        <el-button
+          size="small"
+          :loading="exportLoading"
+          @click="handleExport"
+        >导出
         </el-button>
         <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
@@ -195,7 +201,12 @@
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>-->
-      <el-table-column label="所属单位" align="center" prop="zzjgId" />
+<!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
+      <el-table-column
+        label="隧道名称"
+        align="center"
+        prop="tunnelName.tunnelName"
+      />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
         label="派单时间"
@@ -711,15 +722,15 @@
             <div style="display: flex; margin-top: 10px">
               <div class="test" style="width: 30%">
                 外观情况：
-                <span>{{ pat.impression }}</span>
+                <span style ="color:#ffffff">{{ pat.impression }}</span>
               </div>
               <div class="test" style="width: 30%">
                 网络情况：
-                <span>{{ pat.network }}</span>
+                <span style ="color:#ffffff">{{ pat.network }}</span>
               </div>
               <div class="test" style="width: 30%">
                 配电情况：
-                <span>{{ pat.power }}</span>
+                <span style ="color:#ffffff">{{ pat.power }}</span>
               </div>
             </div>
             <div class="card-cols">
@@ -763,7 +774,7 @@
           </div>
           <div class="test">
             执行巡查班组：
-            <!--            <span>{{ tas.bzId }}</span>-->
+                        <span>{{ tas.bzName }}</span>
           </div>
           <div class="test">
             执行巡查人：
@@ -1343,13 +1354,10 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger;
         this.taskNews = response.data.task;
         if (response.data.task[0].ifchaosgu == "已超时") {
-          //this.active = true;
           this.isActive = true;
         } else {
-          //this.active = false;
           this.isActive = false;
         }
         this.taskNews1 = response.data.task;

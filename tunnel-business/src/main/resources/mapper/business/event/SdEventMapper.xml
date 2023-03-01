@@ -198,7 +198,7 @@
             <if test="eventTypeId != null">and A.event_type_id = #{eventTypeId}</if>
             <if test="eventTitle != null  and eventTitle != ''">and A.event_title = #{eventTitle}</if>
             <if test="eventTime != null ">and A.event_time = #{eventTime}</if>
-            <if test="eventState != null  and eventState != ''">and A.event_state = #{eventState}</if>
+            <if test="eventState != null  and eventState != ''">and FIND_IN_SET(A.event_state, #{eventState}) > 0</if>
             <if test="eventGrade != null  and eventGrade != ''">and A.event_grade = #{eventGrade}</if>
             <if test="eventLocation != null  and eventLocation != ''">and A.event_location = #{eventLocation}</if>
             <if test="eventDeath != null ">and A.event_death = #{eventDeath}</if>

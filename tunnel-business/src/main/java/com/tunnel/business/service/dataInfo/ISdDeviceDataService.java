@@ -2,7 +2,7 @@ package com.tunnel.business.service.dataInfo;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.dataInfo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -104,4 +104,19 @@ public interface ISdDeviceDataService {
      * @return
      */
     AjaxResult getType();
+
+    /**
+     * 导出Tab
+     * @param sdDeviceData
+     * @return
+     */
+    List<SdDeviceData> exportDatainforTab(SdDeviceData sdDeviceData);
+
+    List<SdDeviceCOVIData> handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<SdDeviceFSFXData> handleFSFXExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<SdDeviceDNData> handleDNExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<SdDeviceDWData> handleDWExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
 }

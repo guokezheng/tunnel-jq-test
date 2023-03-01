@@ -4,15 +4,21 @@
         :gutter="20"
         class="topFormRow"
       >
-        <el-col :span="4">
-          <el-button size="small" @click="resetQueryTab" 
+        <el-col :span="6">
+          <el-button
+            size="small"
+            :loading="exportLoading"
+            @click="handleExportTab"
+          >导出
+          </el-button>
+          <el-button size="small" @click="resetQueryTab"
           >刷新</el-button
           >
         </el-col>
-        <el-col :span="6" :offset="14">
+        <el-col :span="6" :offset="12">
           <div ref="main" class="grid-content bg-purple" >
             <el-input
-              placeholder="请输入桩号，回车搜索"
+              placeholder="请输入设备名称、桩号，回车搜索"
               v-model="querysParamsTab.pile"
               @keyup.enter.native="handleQueryTab"
             >
@@ -129,12 +135,18 @@
           :gutter="20"
           class="topFormRow"
         >
-          <el-col :span="4">
+          <el-col :span="6">
+            <el-button
+              size="small"
+              :loading="exportLoading"
+              @click="handleExportRecord"
+            >导出
+            </el-button>
             <el-button size="small" @click="resetQuery"
             >刷新</el-button
             >
           </el-col>
-          <el-col :span="1"  :offset="13">
+          <el-col :span="1"  :offset="13" style="margin-left: 45.166667%;">
             <div @click="marketChang()">
               <i
                 class="el-icon-s-marketing"
@@ -188,7 +200,7 @@
           <el-table-column label="方向" align="center" prop="direction" />
           <el-table-column label="桩号" align="center" prop="pile" />
           <el-table-column label="CO(ppm)" align="center" prop="CO" />
-          <el-table-column label="VI(km)" align="center" prop="VI" />
+          <el-table-column label="VI(m)" align="center" prop="VI" />
           <el-table-column label="采集时间" align="center" prop="createTime" />
         </el-table>
 
@@ -311,10 +323,11 @@ import { getUserDeptId } from "@/api/system/user";
 import {
   dataDevicesLogInfoList,
   dataLogInfoLineList,
-  dataLogInfoList,
+  dataLogInfoList, exportDatainforTab, handleExportRecord,
 } from "@/api/equipment/eqTypeItem/item";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {exportLogininfor1} from "@/api/system/log";
 
 export default {
   name: "Logininfor",
@@ -486,6 +499,53 @@ export default {
       return index+(this.queryParams3.pageNum-1)*this.queryParams3.pageSize+1
     },
 
+    /** 数据报表Tab导出按钮操作 */
+    handleExportTab() {
+      const queryParams = this.querysParamsTab;
+      console.log("queryParams=========" + queryParams);
+      this.$modal
+        .confirm("是否确认导出所有数据报表数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportDatainforTab(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
+    },
+
+
+
+    /** 数据报表详情导出按钮 */
+    handleExportRecord() {
+      this.querysParams.searchValue = this.searchValue;
+      this.querysParams.deviceId = this.deviceId;
+      const queryParams = this.querysParams;
+      let confirmInfo;
+      if(this.searchValue=="1"){//covi
+        confirmInfo = "是否确认导出所有COVI数据项？";
+      }else if(this.searchValue=="2"){//风速风向
+        confirmInfo = "是否确认导出所有风速风向数据项？";
+      }else if(this.searchValue=="3"){//洞内光强
+        confirmInfo = "是否确认导出所有洞内光强数据项？";
+      }else{//洞外光强
+        confirmInfo = "是否确认导出所有洞外光强数据项？";
+      }
+
+      this.$modal
+        .confirm(confirmInfo)
+        .then(() => {
+          this.exportLoading = true;
+          return handleExportRecord(this.addDateRange(queryParams, this.dateRange))
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
+    },
 
     handleRecordy(row) {
       this.device_boxShow = false;
@@ -545,7 +605,7 @@ export default {
             name: "CO",
             type: "line",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.CO,
@@ -553,12 +613,13 @@ export default {
           {
             name: "VI",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.VI,
             type: "line",
           },
+
         ];
         var xAxis = [
           {
@@ -609,11 +670,12 @@ export default {
             name: "风速风向",
             stack: "Total",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.fsData,
             type: "line",
+
           },
         ];
         var xAxis = [
@@ -648,7 +710,7 @@ export default {
             name: "洞内亮度",
             stack: "Total",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.dnData,
@@ -690,7 +752,7 @@ export default {
             name: "洞外亮度",
             stack: "Total",
             label: {
-              show: true,
+              show: false,
               position: "top",
             },
             data: this.dwData,
@@ -726,7 +788,7 @@ export default {
       }
       option = {
         tooltip: {
-          show: true,
+          trigger: 'axis'
         },
         legend: legends,
         xAxis,

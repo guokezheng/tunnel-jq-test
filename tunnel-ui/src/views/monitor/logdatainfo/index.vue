@@ -164,20 +164,19 @@
     >
       <el-col :span="6">
         <el-button
-          v-hasPermi="['system:list:export']"
           size="small"
           :loading="exportLoading"
           @click="handleExport1"
           >导出
         </el-button>
-        <el-button size="small" @click="resetQuery" 
+        <el-button size="small" @click="resetQuery"
             >刷新</el-button
           >
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple"  ref="main1">
           <el-input
-            placeholder="请输入操作地址，回车搜索"
+            placeholder="请输入设备名称、桩号、操作地址，回车搜索"
             v-model="queryParams.operIp"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -339,7 +338,7 @@
         </template>
       </el-table-column>
     </el-table>
-  
+
     <el-table
       v-loading="loading"
       :data="logList"
@@ -350,12 +349,6 @@
       v-show="activeName == '2'"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <!--      <el-table-column label="序号" align="center" prop="id" display="none"/>-->
-<!--      <el-table-column label="序号" align="center">
-        <template slot-scope="scope">
-          {{ scope.$index + 1 }}
-        </template>
-      </el-table-column>-->
       <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
       <el-table-column
         label="隧道名称"
@@ -368,6 +361,8 @@
         prop="typeName.typeName"
       />
       <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
+      <el-table-column label="方向" align="center" prop="direction" />
+      <el-table-column label="桩号" align="center" prop="pile" />
       <el-table-column
         label="操作状态"
         align="center"
@@ -487,6 +482,8 @@ export default {
         controlType: null,
         state: null,
         description: null,
+        pile:null,
+        direction:null,
         // searchValue: null,
         operIp: "",
       },
@@ -703,7 +700,7 @@ export default {
         })
         .catch(() => {});
     },
-  
+
   },
 };
 </script>

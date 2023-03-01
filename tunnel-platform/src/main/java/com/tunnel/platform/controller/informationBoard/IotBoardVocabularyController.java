@@ -101,8 +101,8 @@ public class IotBoardVocabularyController extends BaseController
         return toAjax(iotBoardVocabularyService.deleteIotBoardVocabularyByIds(ids));
     }
 
-    @PostMapping("/checkIotBoardContent")
-    public AjaxResult checkIotBoardContent(@RequestBody Map<String, Object> map) {
-        return AjaxResult.success(iotBoardVocabularyService.checkIotBoardContent(map));
+    @GetMapping("/checkIotBoardContent")
+    public AjaxResult checkIotBoardContent(String content) {
+        return AjaxResult.success(iotBoardVocabularyService.checkIotBoardContent(content));
     }
 }

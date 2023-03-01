@@ -105,7 +105,7 @@ public class SdTaskListController extends BaseController
     {
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         ExcelUtil<SdTaskList> util = new ExcelUtil<SdTaskList>(SdTaskList.class);
-        return util.exportExcel(list, "巡查任务数据");
+        return util.exportExcel(list, "巡查任务");
     }
 
     /**
@@ -460,7 +460,16 @@ public class SdTaskListController extends BaseController
                     //处理图片需将原对象类型转为Map
                     Map<String,Object> map = BeanUtils.describe(obj);
                     if(map.get("eqFaultId") != null){
-                        SdDevices devices = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesById(map.get("eqFaultId").toString());
+                        String eqId = null;
+                        if(map.get("patrolType") != null){
+                            if("1".equals(map.get("patrolType"))){//故障点
+                               eqId = sdFaultListService.selectSdFaultEqById(map.get("eqFaultId").toString());
+                            }else if("0".equals(map.get("patrolType"))){//设备
+                               eqId = map.get("eqFaultId").toString();
+                            }
+                        }
+
+                        SdDevices devices = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesById(eqId);
                         map.put("tunnelName",SpringUtils.getBean(SdTunnelsMapper.class).selectSdTunnelsById(devices.getEqTunnelId()).getTunnelName());
                         map.put("typeName",SpringUtils.getBean(SdEquipmentTypeMapper.class).selectSdEquipmentTypeById(devices.getEqType()).getTypeName());
                     }

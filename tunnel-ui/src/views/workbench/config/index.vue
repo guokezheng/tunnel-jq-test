@@ -892,7 +892,8 @@
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
       <div class="footer" v-show="displayThumbnail == true">
-        <div class="footMiniBox" >
+        <div class="fourBox">
+          <div class="footMiniBox" v-show="footChangeRadio == '图表'">
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -906,7 +907,7 @@
           </div>
           <div id="vehicle"></div>
         </div>
-        <div class="footMiniBox footerRight" >
+        <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
           <div class="footTitle">
             <!-- <div class="footTriangle"></div> -->
             <div class="footTitleCont">
@@ -922,7 +923,7 @@
           <div id="energyConsumption"></div>
         </div>
 
-        <div class="footMiniBox footerRight" >
+        <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -935,45 +936,8 @@
             </div>
           </div>
           <div id="focusCar"></div>
-          <!-- <div class="realTimeTable">
-            <ul>
-              <li>
-                <div>车牌号</div>
-                <div>速度</div>
-                <div>车道</div>
-              </li>
-            </ul>
-            <vue-seamless-scroll
-              :class-option="defaultOption"
-              class="listContent"
-              :data="realTimeList"
-            >
-              <div
-                v-for="(item, index) in realTimeList"
-                :key="index"
-                class="listRow"
-                style="display: flex"
-              >
-                <div style="text-align: center; width: 15px; margin-left: 25px">
-                  {{ index + 1 }}
-                </div>
-                <div style="width: 95px; text-align: center; margin-left: 10px">
-                  {{ item.vehicleLicense }}
-                </div>
-                <div
-                  style="width: 112px; text-align: center; margin-left: 30px"
-                >
-                  {{ item.speed }}km/h
-                </div>
-                <div style="width: 86px; text-align: center; margin-left: 35px">
-                  {{ item.laneNum }}车道
-                </div>
-
-              </div>
-            </vue-seamless-scroll>
-          </div> -->
         </div>
-        <div class="footerRight footMiniBox" >
+        <div class="footerRight footMiniBox" v-show="footChangeRadio == '图表'">
           <div class="footTitle">
             <div class="footTitleCont">
               <img
@@ -1032,14 +996,14 @@
                         item.eventType.eventType
                       }}事件 -->
                       <div
-                        style="width:300px;
+                        style="width:210px;
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
                         z-index:10;
                         ">
-                        {{item.eventTitle}}</div>
-                      <div style="font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
+                        {{item.frameEventTitle}}</div>
+                      <div style="font-size:12px;float:right;margin-right:10px">{{item.startTime}}</div>
 
                     </el-col>
                   </el-row>
@@ -1052,6 +1016,87 @@
               </ul>
             </vue-seamless-scroll>
           </div>
+
+        </div>
+        <div class="footMiniBox" v-show="footChangeRadio == '视频'">
+          <div class="footTitle">
+            <div class="footTitleCont">
+              <img
+                :src="warningIcon"
+                style="width: 16px; margin-right: 5px"
+                v-show="sideTheme != 'theme-blue'"
+              />
+              <p>济南方向入口视频</p>
+              <p>real-time video</p>
+            </div>
+          </div>
+          <videoPlayer
+            v-if="liveUrl1"
+            :rtsp="liveUrl1"
+            :open="cameraPlayer1"
+          ></videoPlayer>
+        </div>
+        <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'">
+          <div class="footTitle">
+            <div class="footTitleCont">
+              <img
+                :src="warningIcon"
+                style="width: 16px; margin-right: 5px"
+                v-show="sideTheme != 'theme-blue'"
+              />
+              <p>济南方向出口视频</p>
+              <p>real-time video</p>
+            </div>
+          </div>
+          <videoPlayer
+            v-if="liveUrl2"
+            :rtsp="liveUrl2"
+            :open="cameraPlayer2"
+          ></videoPlayer>
+        </div>
+        <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'">
+          <div class="footTitle">
+            <div class="footTitleCont">
+              <img
+                :src="warningIcon"
+                style="width: 16px; margin-right: 5px"
+                v-show="sideTheme != 'theme-blue'"
+              />
+              <p>潍坊方向入口视频</p>
+              <p>real-time video</p>
+            </div>
+          </div>
+          <videoPlayer
+            v-if="liveUrl3"
+            :rtsp="liveUrl3"
+            :open="cameraPlayer3"
+          ></videoPlayer>
+        </div>
+        <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'">
+          <div class="footTitle">
+            <div class="footTitleCont">
+              <img
+                :src="warningIcon"
+                style="width: 16px; margin-right: 5px"
+                v-show="sideTheme != 'theme-blue'"
+              />
+              <p>济南方向出口视频</p>
+              <p>real-time video</p>
+            </div>
+          </div>
+          <videoPlayer
+            v-if="liveUrl4"
+            :rtsp="liveUrl4"
+            :open="cameraPlayer4"
+          ></videoPlayer>
+        </div>
+        </div>
+        
+        <div class="footChangeButton">
+          <el-radio-group v-model="footChangeRadio" @change="videoRadioChange">
+            <el-radio-button label="图表"></el-radio-button>
+            <el-radio-button label="视频"></el-radio-button>
+          </el-radio-group>
 
         </div>
       </div>
@@ -1262,7 +1307,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="syxt_searchBox" v-show="syxt_boxShow">
+        <div class="syxt_searchBox" v-show="syxt_boxShow" ref="cc">
           <el-form
             ref="operationParam"
             :inline="true"
@@ -1369,7 +1414,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="syxt_searchBox" v-show="sycz_boxShow">
+        <div class="syxt_searchBox" v-show="sycz_boxShow" ref="cc1">
           <el-form
             ref="operationParam"
             :inline="true"
@@ -2347,12 +2392,14 @@
     </el-dialog>
     <com-video
       class="comClass"
-      v-if="[23, 24, 25].includes(this.eqInfo.clickEqType)"
-      @dialogClose="dialogClose"
-      :eqInfo="this.eqInfo"
-      :eqTypeDialogList="this.eqTypeDialogList"
+      v-if="
+        [23,24,25].includes(this.eqInfo.clickEqType)
+      "
       :brandList="this.brandList"
       :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
     ></com-video>
     <com-light
       class="comClass"
@@ -3330,6 +3377,7 @@ import {
   updateDevices,
   getAudioFileList,
   playVoiceGroup,
+  videoStreaming
 } from "@/api/equipment/eqlist/api";
 import {
   listType,
@@ -3376,6 +3424,7 @@ import {
   workTriggerInfo,
   updateState,
 } from "@/api/event/strategy";
+import { getEntranceExitVideo} from "@/api/eventDialog/api.js";
 import { selectByEqDeno } from "@/api/business/roadState.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
@@ -3467,7 +3516,7 @@ export default {
 
   data() {
     return {
-
+      footChangeRadio:'图表',
       syxt_boxShow:false,
       sycz_boxShow:false,
       treeShow: false,
@@ -3877,7 +3926,7 @@ export default {
       userDeptId: null,
       tunnelQueryParams: {
         deptId: "",
-        deptName: "",
+        // deptName: "",
       },
       userQueryParams: {
         userName: this.$store.state.user.name,
@@ -4123,6 +4172,15 @@ export default {
       clickEqType: "", //点击设备的eqType
       equipmentId: "",
       // eqInfo: {},
+      liveUrl1:"",
+      liveUrl2:"",
+      liveUrl3:"",
+      liveUrl4:"",
+      cameraPlayer1:false,
+      cameraPlayer2:false,
+      cameraPlayer3:false,
+      cameraPlayer4:false,
+
     };
   },
 
@@ -4199,7 +4257,6 @@ export default {
   },
   created: function () {
     this.getUserDept();
-
     this.getDicts("sd_direction").then((data) => {
       console.log(data, "方向");
       this.directionList = data.data;
@@ -4583,13 +4640,53 @@ export default {
   },
 
   methods: {
+    videoRadioChange(){
+      if(this.footChangeRadio == '视频' && this.tunnelId){
+        this.getFooterVideo()
+      }else{
+        this.cameraPlayer1 = false
+        this.cameraPlayer2 = false
+        this.cameraPlayer3 = false
+        this.cameraPlayer4 = false
+
+      }
+    },
+    getFooterVideo(){
+      // 潍坊方向
+      getEntranceExitVideo( this.tunnelId,'2').then((res)=>{
+        videoStreaming(res.data[0].inlet).then((res)=>{
+          this.liveUrl1 = res.data.liveUrl
+          this.cameraPlayer1 = true
+        })
+        videoStreaming(res.data[0].outlet).then((res)=>{
+          this.liveUrl2 = res.data.liveUrl
+          this.cameraPlayer2 = true
+        })
+      })
+      // 济南方向
+      getEntranceExitVideo( this.tunnelId,'1').then((res)=>{
+        videoStreaming(res.data[0].inlet).then((res)=>{
+          this.liveUrl3 = res.data.liveUrl
+          this.cameraPlayer3 = true
+        })
+        videoStreaming(res.data[0].outlet).then((res)=>{
+          this.liveUrl4 = res.data.liveUrl
+          this.cameraPlayer4 = true
+        })
+      })
+    },
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      // if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      //   if (self.syxt_boxShow == true){
+      //     self.syxt_boxShow = false;
+      //   }
+      // }
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.syxt_boxShow == true){
           self.syxt_boxShow = false;
         }
@@ -4597,7 +4694,12 @@ export default {
     },
     bodyCloseMenus1(e) {
       let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      // if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      //   if (self.sycz_boxShow == true){
+      //     self.sycz_boxShow = false;
+      //   }
+      // }
+      if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
         if (self.sycz_boxShow == true){
           self.sycz_boxShow = false;
         }
@@ -7472,6 +7574,10 @@ export default {
           clickEqType: item.eqType,
           equipmentId: item.eqId,
         };
+        // if(item.eqType == 23 || item.eqType == 24 || item.eqType == 25){
+        //   this.$refs.dialogVideo.init(this.eqInfo,this.eqTypeDialogList,this.brandList,this.directionList)
+        // }
+        
 
         let StateTypeId = {
           StateTypeId: item.eqType,
@@ -9021,12 +9127,45 @@ export default {
 .footer {
   width: 100%;
   height: 25%;
-  padding: 0px 16px;
+  padding: 0px 0px 0px 16px;
   // margin-top: 10px;
   display: flex;
   padding-bottom: 5px;
   justify-content: space-between;
   margin-top: 8px;
+  .fourBox{
+    display:flex;
+    justify-content: space-between;
+    width: calc(100% - 30px);
+    margin-right: 20px;
+  }
+  .footChangeButton{
+    width:30px;
+    height:100%;
+    ::v-deep .el-radio-group{
+      width: 100%;
+      height: 100%;
+      .el-radio-button{
+        width:100%;
+        height:50%;
+        .el-radio-button__inner{
+          padding:0 !important;
+          writing-mode: tb-rl;
+          white-space: nowrap;
+          text-align: center;
+          width: 100%;
+          height: 100%;
+          line-height: 26px;
+          letter-spacing: 16px;
+          border-radius:0;
+        }
+      }
+    }
+    .el-radio-button{
+      border:solid 0.1px #0067B2 !important;
+      border-radius:0px !important;
+    }
+  }
   .footTitle {
     padding: 5px 20px;
     // line-height: 25px;
@@ -9077,7 +9216,9 @@ export default {
     // background-color: rgba($color: #0b1329, $alpha: 0.4);
     // border: solid 1px #183b57;
     // color: white;
-
+    video{
+      height:186px;
+    }
     .listContent {
       height: 70%;
       font-size: 14px;
@@ -9882,6 +10023,7 @@ input {
   ::v-deep .el-input-group__append{
       padding: 0;
       width: 60px;
+      border-left:none !important;
       .el-button{
         height: 32px;
         border-top-right-radius: 3px !important;
@@ -9893,6 +10035,7 @@ input {
         display: flex;
         align-items: center;
         justify-content: center;
+       
       }
     }
   .el-dialog .el-form {

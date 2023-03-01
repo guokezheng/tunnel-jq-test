@@ -76,20 +76,21 @@
         background-color: #ffffff;
       }
     }
+    // 表格上方虚线
+    .tableTopHr{
+      height: 1px;
+      margin: 14px 0;
+      background-image: linear-gradient(
+        to right,
+        #CFD5E0 0%,
+        #CFD5E0 50%,
+        transparent 50%
+      );
+      background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
+      background-repeat: repeat-x;
+    }
     #app {
-      // 表格上方虚线
-      .tableTopHr{
-        height: 1px;
-        margin: 14px 0;
-        background-image: linear-gradient(
-          to right,
-          #CFD5E0 0%,
-          #CFD5E0 50%,
-          transparent 50%
-        );
-        background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
-        background-repeat: repeat-x;
-      }
+      
       .searchBox,.searchBoxTab{
         background-color: #fff;
         border: solid 1px #DCDFE6;

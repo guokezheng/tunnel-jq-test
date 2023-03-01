@@ -198,23 +198,6 @@ public class SdEventServiceImpl implements ISdEventService {
             //更新预案设备
             setStrategyRlEquipment(sdEvent);
         }
-        /*if ("2".equals(sdEvent.getEventState())) {
-            SdEventFlow eventFlow = new SdEventFlow();
-            eventFlow.setEventId(sdEvent.getFlowId());
-            eventFlow.setFlowTime(sdEvent.getEventTime());
-            eventFlow.setFlowDescription("问题忽略");
-            eventFlow.setFlowHandler(SecurityUtils.getUsername());
-            sdEventFlowMapper.insertSdEventFlow(eventFlow);
-            //主动安全-状态更新为已忽略时推送值高速云
-            radarEventServiceImpl.sendDataToOtherSystem(null,sdEventMapper.selectSdEventById(sdEvent.getId()));
-        }*/
-        //更新事件置信度
-        /*if(sdEvent.getConfidenceList() != null){
-            List<WjConfidence> confidenceList = sdEvent.getConfidenceList();
-            for(WjConfidence item : confidenceList){
-                radarEventMapper.updateEventConfidence(item);
-            }
-        }*/
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         return sdEventMapper.updateSdEvent(sdEvent);
     }
@@ -289,27 +272,6 @@ public class SdEventServiceImpl implements ISdEventService {
                 doc = WordExportUtil.exportWord07(
                         "exporttemplate/事件详情-已处理.docx", wordList);
             }
-            /*XWPFDocument doc = WordExportUtil.exportWord07(
-                    "D:/谷歌下载/事件详情-待确认.docx", setDiscoveryMap(eventDiscovery));*/
-            /*XWPFDocument doc = WordExportUtil.exportWord07(
-                    "exporttemplate/事件详情-已处理.docx", setDiscoveryMap(eventDiscovery));*/
-            //response.setHeader("Content-disposition","attachment;filename=事件详情.docx");
-            /*response.setContentType("application/octet-stream");
-            response.setHeader("Access-Control-Expose-Headers","Content-Disposition");
-            response.setHeader("Content-Disposition","attachment;fileName=" + URLEncoder.encode("事件详情.docx","UTF-8"));*/
-            /*response.setStatus(200);*/
-            //response.reset();
-            //response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            //response.setContentType("application/octet-stream;charset=UTF-8");
-            /*response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode("事件详情"+".docx", "UTF-8"));
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("application/msword");
-            response.setContentType("application/x-download");
-            ServletOutputStream outputStream = response.getOutputStream();
-            doc.write(outputStream);
-            outputStream.close();
-            doc.close();*/
-
             response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(sdEvent.getId()+".docx", "UTF-8"));
             response.setContentType("application/octet-stream");
             ServletOutputStream outputStream = response.getOutputStream();
@@ -480,10 +442,7 @@ public class SdEventServiceImpl implements ISdEventService {
         //2.根据桩号遍历匹配
         try{
             Integer compareValue = Integer.parseInt(stakeNum.replace("K","").replace("+","").replace(" ",""));
-//            boolean isDown = TunnelDirectionEnum.getTunnelDirection(direction).equals("下行");
             for(SdTunnelSubarea data:subareaData){
-//                Integer upLimit = isDown?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
-//                Integer downLimit = isDown?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
                 Integer min = Integer.parseInt(data.getPileMin());
                 Integer max = Integer.parseInt(data.getPileMax());
 
@@ -492,8 +451,6 @@ public class SdEventServiceImpl implements ISdEventService {
                     max = min;
                     min = temp;
                 }
-//                Integer upLimit = Integer.parseInt(data.getPileMax());
-//                Integer downLimit = Integer.parseInt(data.getPileMin());
                 if(max >= compareValue && compareValue >= min){
                     subareaId = data.getsId();
                     return subareaId;
@@ -520,35 +477,7 @@ public class SdEventServiceImpl implements ISdEventService {
             }
 
 
-            //如果没有取到 取最近的分区ID
-            //所有分区桩号
-//            String s = subareaData.stream().map(p->p.getPileMin()+","+p.getPileMax()).collect(Collectors.joining(","));
-//            String[] pileStr = s.split(",");
-//            int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
-//            //下行取反
-//            if(isDown){
-//                ArrayUtils.reverse(allPile);
-//            }
-//            int index = Math.abs(compareValue-allPile[0]);
-//            int result = allPile[0];
-//            int mark = 0;
-//            for (int i=0;i<allPile.length;i++) {
-//                int abs = Math.abs(compareValue-allPile[i]);
-//                if(abs <= index){
-//                    index = abs;
-//                    result = allPile[i];
-//                    mark = i+1;
-//                }
-//            }
-//            String pile = String.valueOf(result);
-//            List<SdTunnelSubarea> only = new ArrayList<>();
-//            if(mark %2 !=0){
-//                //最接近的值为桩号下限
-//                only = subareaData.stream().filter(area->area.getPileMin().equals(pile)).collect(Collectors.toList());
-//            }else{
-//                only = subareaData.stream().filter(area->area.getPileMax().equals(pile)).collect(Collectors.toList());
-//            }
-//            subareaId = only.get(0).getsId();
+
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -562,8 +491,6 @@ public class SdEventServiceImpl implements ISdEventService {
         devices.setEqDirection(direction);
         devices.setEqType(DevicesTypeEnum.CAMERA_BOX.getCode());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(devices);
-//        devices.setEqType(DevicesTypeEnum.CAMERA_DOME.getCode());
-//        list.addAll(sdDevicesService.selectSdDevicesList(devices));
         try {
             int param = Integer.valueOf(stakeNum.replaceAll("[a-zA-Z]", "").replace("+","").replace(" ",""));
             List<Integer> pileNum = list.stream().map(p->(p.getPileNum().intValue())).distinct().collect(Collectors.toList());
@@ -855,7 +782,7 @@ public class SdEventServiceImpl implements ISdEventService {
                         if("2".equals(temp.getFlowId().toString())){
                             sdEventHandle1.setFlowContent(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()).concat(" ")
                                     .concat("复核事件为【").concat(sdEventType.getEventType()).concat("】、【")
-                                    .concat(EventGradeEnum.getValue(sdEvent.getEventGrade())).concat("】，复核状态为突发事件处置"));
+                                    .concat(EventGradeEnum.getValue(sdEvent1.getEventGrade())).concat("】，复核状态为突发事件处置"));
                             number = number + 1;
                             sdEventHandle1.setFlowSort(number+"");
                             sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);

@@ -97,32 +97,32 @@
           <el-row v-if="eqInfo.clickEqType == 48">
             <el-col :span="13">
               <el-form-item label="振动速度值:" label-width="90px">
-                {{ stateForm2.shakeSpeed }}
+                {{ stateForm2.shakeSpeed }} <span v-show="stateForm2.shakeSpeed">mm/s</span>
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="振动幅度值:" label-width="90px">
-                {{ stateForm2.amplitude }}
+                {{ stateForm2.amplitude }} <span v-show="stateForm2.amplitude">μm</span>
               </el-form-item>
             </el-col>
             <el-col :span="13">
               <el-form-item label="沉降值:" label-width="90px">
-                {{ stateForm2.subside }}
+                {{ stateForm2.subside }} <span v-show="stateForm2.subside">mm</span>
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="倾斜值:" label-width="90px">
-                {{ stateForm2.slope }}
+                {{ stateForm2.slope }} <span v-show="stateForm2.slope">°</span>
               </el-form-item>
             </el-col>
             <el-col :span="13">
               <el-form-item label="振动告警:" label-width="90px">
-                {{ stateForm2.shakeAlaram }}
+                {{ getshakeAlaram(stateForm2.shakeAlaram) }}
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="沉降倾斜告警:" label-width="100px">
-                {{ stateForm2.subsideSlopeAlaram }}
+                {{ getsubsideSlopeAlaram(stateForm2.subsideSlopeAlaram) }}
               </el-form-item>
             </el-col>
           </el-row>
@@ -186,7 +186,7 @@
             // this.stateForm2.lampType = res.data.eqStatus
             console.log(this.stateForm, "stateForm");
           });
-          if(this.eqInfo.clickEqType == 10){
+          if(this.eqInfo.clickEqType ==48){
             await getFanSafeData(this.eqInfo.equipmentId).then((res) => {
               console.log(res,"风机")
               this.stateForm2 = res.data
@@ -194,6 +194,24 @@
           }
         } else {
           this.$modal.msgWarning("没有设备Id");
+        }
+      },
+      getshakeAlaram(type){
+        if(type == 0){
+          return '正常'
+        }else if(type == 1){
+          return '报警'
+        }else if(type == 2){
+          return '危险'
+        }
+      },
+      getsubsideSlopeAlaram(type){
+        if(type == 0){
+          return '正常'
+        }else if(type == 1){
+          return '低限位报警'
+        }else if(type == 2){
+          return '高限位报警'
         }
       },
       getDataType(){

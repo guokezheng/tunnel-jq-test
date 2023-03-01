@@ -68,4 +68,11 @@ public interface IotBoardTemplateMapper
     public List<IotBoardTemplate> selectTemplateList(@Param("category") String category, @Param("devicePixel") String devicePixel);
 
     public List<Map<String, Object>> getAllSdVmsTemplateList();
+
+    /**
+     * 应急调度下查询情报板模板内容
+     * @param id
+     * @return
+     */
+    List<Map<String, Object>> getSdVmsTemplateContent(@Param("id") Long id);
 }

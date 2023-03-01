@@ -158,4 +158,11 @@ public interface SdEventMapper
      * @return
      */
     String getManagementDeviceState(SdReserveProcess sdReserveProcess);
+
+    /**
+     * 查询情报板以及广播
+     * @param sdReserveProcess
+     * @return
+     */
+    String getManagementVmsLs(SdReserveProcess sdReserveProcess);
 }

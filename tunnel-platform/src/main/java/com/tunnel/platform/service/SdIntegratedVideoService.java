@@ -141,7 +141,7 @@ public class SdIntegratedVideoService {
             return Result.success(Optional.ofNullable(object).orElseGet(()->result));
         }catch(Exception ex){
             log.info("打开相机实时流发生异常：{}",ex.getMessage());
-            return Result.error("实时视频暂未连接");
+            return Result.success();
         }
     }
 

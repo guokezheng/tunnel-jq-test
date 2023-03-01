@@ -283,6 +283,19 @@ public class SdEvent extends BaseEntity {
      */
     private String fuzzySearch;
 
+    /**
+     * 防控类型
+     */
+    private String prevControlType;
+
+    public String getPrevControlType() {
+        return prevControlType;
+    }
+
+    public void setPrevControlType(String prevControlType) {
+        this.prevControlType = prevControlType;
+    }
+
     public String getEventTypeName() {
         return eventTypeName;
     }

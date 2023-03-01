@@ -134,7 +134,15 @@ public class SdEventServiceImpl implements ISdEventService {
             if(item.getVideoUrl()!=null){
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
-            item.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString()));
+            SdTrafficImage image = new SdTrafficImage();
+            image.setBusinessId(item.getId().toString());
+            image.setImgType("1");
+            //查询视频
+            List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
+            item.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl() : "");
+            //查询图片
+            image.setImgType("0");
+            item.setIconUrlList(sdTrafficImageMapper.selectSdTrafficImageList(image));
             item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
         });
         return sdEvents;

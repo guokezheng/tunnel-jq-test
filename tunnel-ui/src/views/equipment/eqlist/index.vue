@@ -35,7 +35,7 @@
           v-hasPermi="['system:devices:import']"
           >导入
         </el-button>
-        <el-button size="small" @click="resetQuery" 
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
         >
         <!--          <el-button-->
@@ -1227,6 +1227,7 @@ export default {
         );
       }
       this.loading = true;
+      this.queryParams.exportIds = "";
       listDevices(this.queryParams).then((response) => {
         this.devicesList = response.rows;
         this.total = response.total;
@@ -1503,7 +1504,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有设备管理数据项?", "警告", {
+      this.$confirm("是否确认导出设备管理数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

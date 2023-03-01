@@ -2990,7 +2990,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除故障清单编号为"' + ids + '"的数据项？')
+        .confirm('是否确认删除选中的数据项？')
         .then(function () {
           return delList(ids);
         })
@@ -3402,31 +3402,37 @@ export default {
       if (this.form.tunnelId == "" ||
         this.form.tunnelId == -1 ||
         this.form.tunnelId == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择所在路段隧道");
       }
 
       if (this.form.faultType == "" ||
         this.form.faultType == -1 ||
         this.form.faultType == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择故障类型");
       }
       if (this.form.eqId == "" ||
         this.form.eqId == -1 ||
         this.form.eqId == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择设备");
       }
       if (this.form.faultDescription == "") {
+        this.isClick = true;
         return this.$modal.msgWarning("请填写故障描述");
       }
       if (this.form.faultFxtime == "" ||
         this.form.faultFxtime == -1 ||
         this.form.faultFxtime == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择发现时间");
       }
 
       if (this.form.eqStatus == "" ||
         this.form.eqStatus == -1 ||
         this.form.eqStatus == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择设备状态");
       }
       /*if (this.form.falltRemoveStatue == "" ||
@@ -3437,6 +3443,7 @@ export default {
       if (this.form.faultLevel == "" ||
         this.form.faultLevel == -1 ||
         this.form.faultLevel == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择故障等级");
       }
       this.$refs["form"].validate((valid) => {
@@ -3490,31 +3497,37 @@ export default {
       if (this.form.tunnelId == "" ||
         this.form.tunnelId == -1 ||
         this.form.tunnelId == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择所在路段隧道");
       }
 
       if (this.form.faultType == "" ||
         this.form.faultType == -1 ||
         this.form.faultType == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择故障类型");
       }
       if (this.form.eqId == "" ||
         this.form.eqId == -1 ||
         this.form.eqId == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择设备");
       }
       if (this.form.faultDescription == "") {
+        this.isClick = true;
         return this.$modal.msgWarning("请填写故障描述");
       }
       if (this.form.faultFxtime == "" ||
         this.form.faultFxtime == -1 ||
         this.form.faultFxtime == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择发现时间");
       }
 
       if (this.form.eqStatus == "" ||
         this.form.eqStatus == -1 ||
         this.form.eqStatus == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择设备状态");
       }
       /*if (this.form.falltRemoveStatue == "" ||
@@ -3525,6 +3538,7 @@ export default {
       if (this.form.faultLevel == "" ||
         this.form.faultLevel == -1 ||
         this.form.faultLevel == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择故障等级");
       }
       this.$refs["form"].validate((valid) => {

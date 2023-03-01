@@ -306,7 +306,7 @@ public class SdEventServiceImpl implements ISdEventService {
         if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
             //查询情报板
             String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            List<Map<String, Object>> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
             map.put("vmsData",sdVmsContent);
         }else if(eqType == DevicesTypeEnum.LS.getCode()){
             //截取广播文件名称
@@ -622,11 +622,17 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public AjaxResult getEntranceExitVideo(SdEvent sdEvent) {
         SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
+        //查询设备列表
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqDirection(sdEvent.getDirection());
         sdDevices.setEqTunnelId(sdEvent.getTunnelId());
         sdDevices.setEqType(DevicesTypeEnum.CAMERA_BOX.getCode());
         List<SdDevices> sdDevicesList = sdDevicesMapper.getEntranceExitVideo(sdDevices);
+        //如果为空则返回
+        if(sdDevicesList.size() == 0){
+            return AjaxResult.success(new ArrayList<>());
+        }
+        //根据整形桩号查询出入口设备id
         SdDevices minEqId = sdDevicesList.stream().min(Comparator.comparing(SdDevices::getPileNum)).get();
         SdDevices maxEqId = sdDevicesList.stream().max(Comparator.comparing(SdDevices::getPileNum)).get();
         List<Map<String, Object>> list = new ArrayList<>();

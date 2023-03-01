@@ -643,7 +643,7 @@
             事发时抓图或录像
           </div>
           <!-- <video :src="eventForm.videoUrl" controls muted loop fluid></video> -->
-          <div class="picBox">
+          <div class="picBox" v-if="eventForm.iconUrlList.length >= 1">
             <swiper class="swiper gallery-top" :options="swiperOptionTop" ref="swiperTop">
               <!-- slides -->
               <swiper-slide  v-for="(item,index) in eventForm.iconUrlList" :key="index" :class="'slide-'+index">
@@ -659,11 +659,18 @@
               </swiper-slide>
             </swiper>
           </div>
+          <div v-if="eventForm.iconUrlList.length < 1">
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="noPic"
+              :fit="contain">
+            </el-image>
+          </div>
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" height="calc(100% - 14px)" :autoplay="false">
-            <el-carousel-item v-for="(item, index) in videoList" :key="index">
+          <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
+            <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
                 v-if="item.liveUrl"
                 :rtsp="item.liveUrl"
@@ -671,6 +678,11 @@
               ></videoPlayer>
             </el-carousel-item>
           </el-carousel>
+          <el-image 
+            v-show="videoList.length < 1"
+            :src="noDataUrl"
+            :fit="contain">
+          </el-image>
         </div>
       </div>
       <div class="dialogForm">
@@ -823,8 +835,8 @@
                       style="width: 100%; margin-left: 8px"
                     >
                       <el-option
-                        v-for="item in chezhiLaneList"
-                        :key="item.laneId"
+                        v-for="(item,index) in chezhiLaneList"
+                        :key="index"
                         :label="item.laneName"
                         :value="item.laneId"
                       />
@@ -841,7 +853,6 @@
                   placeholder=""
                   :disabled="detailsDisabled"
                   style="width: calc(100% - 10px)"
-                  disabled
                 />
               </el-form-item>
             </el-col>
@@ -911,7 +922,7 @@
             <el-col :span="24" v-show="activeName == '0'">
               <el-form-item label="复核结果" prop="eventState">
                 <el-radio-group v-model="eventForm.eventState" @input="eventStateChange">
-                  <el-radio v-for="(item, index) in radioList"
+                  <el-radio v-for="item in radioList"
                   :key="item.value"
                   :label="item.value"
                   :value="item.value">
@@ -1525,7 +1536,7 @@
       <div style="text-align: center; font-size: 18px">故障检修记录</div>
       <div
         class="card"
-        v-if="news.length > 0"
+        v-if="news.length >= 1"
         v-for="(item, index) in news"
         :key="index"
       >
@@ -1669,6 +1680,7 @@ export default {
   // },
   data() {
     return {
+      contain:"contain",
       fault_boxShow:false,
       zd_boxShow:false,
       boxShow:false,
@@ -1713,15 +1725,14 @@ export default {
       miniDialog: true,
       eventTypeId: "",
       evtId: "",
+      noPic:require("@/assets/image/noPic.png"),
+      noDataUrl:require("@/assets/image/noVideo.png"),
       incHand1: require("@/assets/cloudControl/incHand1.png"),
       incHand2: require("@/assets/cloudControl/incHand2.png"),
       incHandList: [],
       setDisabled: {
         disabledDate(time) {
           return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
-          // return time.getTime() > Date.now() - 8.64e7;  // 可选历史天、不可选当前天、不可选未来天
-          // return time.getTime() < Date.now() - 8.64e7;  // 不可选历史天、可选当前天、可选未来天
-          // return time.getTime() < Date.now(); // 不可选历史天、不可选当前天、可选未来天
         },
       },
       detailsButtonType: 1,
@@ -2047,12 +2058,6 @@ export default {
     },
   },
   watch: {
-    // "queryParams.deptId": function (newVal, oldVal) {
-    //   if (!newVal) {
-    //     this.tunnelList = null;
-    //     this.queryParams.tunnelId = null;
-    //   }
-    // },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       this.manageStationSelect = newVal;
       this.queryParams.tunnelId = newVal;
@@ -2552,19 +2557,6 @@ export default {
         swiperTop.controller.control = swiperThumbs;
         swiperThumbs.controller.control = swiperTop;
       })
-      // 图片分组翻页
-      // if (this.eventForm.iconUrlList.length > 4) {
-      //   this.arrowRight = true;
-      //   for (let i = 0; i < this.eventForm.iconUrlList.length; ) {
-      //     this.iconUrlListAll.push(this.eventForm.iconUrlList.splice(0, 4));
-      //   }
-      //   this.imgUrlList = this.iconUrlListAll[0];
-      //   this.imgPage = 0;
-      // } else {
-      //   this.arrowRight = false;
-      //   this.imgUrlList = this.eventForm.iconUrlList;
-      // }
-
       this.getEventList();
       if (item.stakeNum) {
         this.$set(
@@ -2587,13 +2579,14 @@ export default {
         );
       }
       this.title = item.eventTitle;
+      console.log(item,"itemitemitemitem");
       // 获取实时视频
       this.getVideoUrl(item);
       // 获取实时视频截图
       // this.getImgUrl(item);
       this.getImgUrls(item);
     },
-    getImgUrls(){
+    getImgUrls(item){
       this.urlsList = [];
       this.urlsAll = [];
       const param = {
@@ -3452,6 +3445,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .el-carousel__arrow{background-color: rgba(31, 45, 61, 0.8);}
+::v-deep .el-carousel__arrow:hover{background-color: rgba(31, 45, 61, 0.8);}
 .gallery-thumbs {
   height: 20% !important;
   box-sizing: border-box;
@@ -3643,9 +3638,10 @@ export default {
 
 .videoDialogBox {
   width: 100%;
-  height: 56%;
+  height: 400px;
   display: flex;
   justify-content: space-between;
+  align-item:center;
   position: relative;
   .processButton {
     position: absolute;
@@ -3665,9 +3661,17 @@ export default {
   }
   .dialogBg2 {
     width: 55% !important;
-    padding: 20px 20px 10px 10px !important;
-    .video-box {
-      height: calc(90%) !important;
+    padding: 0px 20px 10px 10px !important;
+    // .video-box {
+    //   height: calc(90%) !important;
+    // }
+    ::v-deep .el-carousel__container{
+      height:315px;
+    }
+    ::v-deep .el-image{
+      height: 80%;
+      width: 100%;
+      image{width:100%;height:100%;}
     }
   }
   .dialogBg {
@@ -3675,7 +3679,7 @@ export default {
     // height: 100%;
     width: 45%;
     color: #0087e7;
-    padding: 20px 10px 10px 20px;
+    padding: 0px 10px 10px 20px;
     span {
       color: #767676 !important;
       padding-left: 10px;
@@ -4105,9 +4109,6 @@ hr {
 .disabledButton {
   cursor: no-drop;
   pointer-events: none;
-}
-.video-box {
-  height: 70%;
 }
 ::-webkit-scrollbar {
   width: 6px;

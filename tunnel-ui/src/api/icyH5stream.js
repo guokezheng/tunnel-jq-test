@@ -85,7 +85,7 @@ var pbconf = {
     autoplay: 'true', // 'true' or 'false' for playback autoplay
     showposter: 'false', //'true' or 'false' show poster
 };
-export function displayH5sVideoAll(token,startTime,endTime) {
+export function displayH5sVideoAll(token,id,startTime,endTime) {
     console.log(token,'============================================================')
     $.ajax({
     type: "POST", //提交方式 
@@ -93,14 +93,14 @@ export function displayH5sVideoAll(token,startTime,endTime) {
     success: function (result) {
         conf.session=result.strSession;
         if (H5siOS() === true || H5sSafariBrowser() === true) {
-            $("#" + vedioBox).prop("controls", true)
+            $("#" + id).prop("controls", true)
         }
     
         if (v1 != null) {
             v1.disconnect()
             v1 = null
         }
-        conf.videoid = vedioBox
+        conf.videoid = id
         conf.token = token
         v1 = H5sPlayerCreate(conf)
         v1.connect()

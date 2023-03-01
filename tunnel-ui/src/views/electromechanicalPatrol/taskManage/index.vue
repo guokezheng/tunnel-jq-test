@@ -668,7 +668,10 @@
             任务编号：
             <span>{{ item.id }}</span>
           </div>
-
+          <div>
+            所属单位：
+            <span>{{ item.zzjgId }}</span>
+          </div>
           <div>
             指派巡查班组：
             <span>{{ item.bzName }}</span>
@@ -719,15 +722,15 @@
             <div style="display: flex; margin-top: 10px">
               <div class="test" style="width: 30%">
                 外观情况：
-                <span>{{ pat.impression }}</span>
+                <span style ="color:#ffffff">{{ pat.impression }}</span>
               </div>
               <div class="test" style="width: 30%">
                 网络情况：
-                <span>{{ pat.network }}</span>
+                <span style ="color:#ffffff">{{ pat.network }}</span>
               </div>
               <div class="test" style="width: 30%">
                 配电情况：
-                <span>{{ pat.power }}</span>
+                <span style ="color:#ffffff">{{ pat.power }}</span>
               </div>
             </div>
             <div class="card-cols">
@@ -771,7 +774,7 @@
           </div>
           <div class="test">
             执行巡查班组：
-            <!--            <span>{{ tas.bzId }}</span>-->
+                        <span>{{ tas.bzName }}</span>
           </div>
           <div class="test">
             执行巡查人：
@@ -1353,10 +1356,8 @@ export default {
       getTaskInfoList(this.taskId).then((response) => {
         this.taskNews = response.data.task;
         if (response.data.task[0].ifchaosgu == "已超时") {
-          //this.active = true;
           this.isActive = true;
         } else {
-          //this.active = false;
           this.isActive = false;
         }
         this.taskNews1 = response.data.task;
@@ -1441,7 +1442,6 @@ export default {
     getList() {
       this.loading = true;
       listList(this.queryParams).then((response) => {
-        debugger
         this.listList = response.rows;
         this.total = response.total;
         /*this.listList.forEach((item) =>{

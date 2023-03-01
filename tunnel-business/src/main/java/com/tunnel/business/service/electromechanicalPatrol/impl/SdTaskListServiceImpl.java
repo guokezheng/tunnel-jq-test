@@ -62,7 +62,34 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public SdTaskList selectSdTaskListById(String id)
     {
-        return sdTaskListMapper.selectSdTaskListById(id);
+        SdTaskList sdTaskList = sdTaskListMapper.selectSdTaskListById(id);
+
+        if(sdTaskList.getTaskCxtime()==null||"".equals(sdTaskList.getTaskCxtime())){//没有持续时间
+            //任务持续时间为 当前时间-发布时间
+            if(sdTaskList.getEndPlantime()!=null&&!"".equals(sdTaskList.getEndPlantime())){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String  fbtime = sdf.format(sdTaskList.getDispatchTime());
+                long time = sdf.parse(fbtime, new ParsePosition(0)).getTime();
+                long nd = 1000 * 24 * 60 * 60;
+                long nh = 1000 * 60 * 60;
+                long nm = 1000 * 60;
+                long ns = 1000;
+                // 获得两个时间的毫秒时间差异
+                long diff = System.currentTimeMillis() - time + 1000;
+                // 计算差多少天
+                long day = diff / nd;
+                // 计算差多少小时
+                long hour = diff % nd / nh;
+                // 计算差多少分钟
+                long min = diff % nd % nh / nm;
+                // 计算差多少秒//输出结果
+                long sec = diff % nd % nh % nm / ns;
+                System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
+                sdTaskList.setTaskCxtime(day + "天" + hour + "小时");
+            }
+        }
+
+        return sdTaskList;
     }
 
     /**
@@ -426,8 +453,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 
     /**
      * 查询巡查列表
-     * @param sdTaskList
-     * @param sdTaskList
+     * @param
+     * @param
      * @return
      */
     @Override

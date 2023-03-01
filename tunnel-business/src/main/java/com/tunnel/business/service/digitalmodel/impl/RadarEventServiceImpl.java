@@ -169,13 +169,18 @@ public class RadarEventServiceImpl implements RadarEventService {
             //推送新添加的事件数据到物联中台
             //sendDataToOtherSystem(eventList, null);
             log.info("---插入数据list---{}", eventList);
-            List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
-            JSONObject object = new JSONObject();
-            object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("sdEventList",object.toString());
+            for(SdEvent sdEvent : eventList){
+                SdEvent sdEvent1 = new SdEvent();
+                sdEvent1.setId(sdEvent.getId());
+                List<SdEvent> sdEvents = sdEventService.querySdEventList(sdEvent1);
+                JSONObject object = new JSONObject();
+                object.put("sdEventList", sdEvents);
+                WebSocketService.broadcast("sdEventList",object.toString());
+                // 添加事件流程记录
+                eventFlowService.addEventFlowBatch(sdEvents);
+            }
+            //List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
 
-            // 添加事件流程记录
-            eventFlowService.addEventFlowBatch(sdEventList);
 //            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();

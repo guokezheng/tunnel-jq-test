@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-01 17:52:10
+ * @LastEditTime: 2023-03-01 18:12:44
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -564,8 +564,9 @@
             </el-card>
           </el-col>
           <el-col :span="24">
+            <p style="padding:15px 0;">{{boxName}}:</p>
             <el-card v-show="GDeviceData && !GDeviceData.vmsData">
-              {{boxName}}:{{ GDeviceData.deviceState }}
+              {{ GDeviceData.deviceState }}
             </el-card>
           </el-col>
         </el-row>
@@ -1007,21 +1008,8 @@ export default {
           let align = data.vmsData['coordinate'];
           this.GDeviceData.vmsData['left'] = align.substr(0,3);
           this.GDeviceData.vmsData['top'] = align.substr(3,6);
-          // swich(){
-          //   case '0':
-          //   this.fontAlign = 'text-align:center;'
-          //   break;
-          //   case '1':
-          //   this.fontAlign = 'text-align:left;'
-          //   break;
-          //   case '2':
-          //   this.fontAlign = 'text-align:right;'
-          //   break;
-          //   // case '3':
-          //   // this.fontAlign = 'text-align:center;'
-          //   // break;
-          // }
         }else{
+          this.boxName = "执行状态";
           this.GDeviceData = data;
         }
         

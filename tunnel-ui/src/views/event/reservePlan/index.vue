@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-02-24 10:51:28
+ * @LastEditTime: 2023-03-01 09:49:31
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -677,6 +677,18 @@
                   @change="qbgChange(number,index, itemed.equipments)"
                   style="width: 100%"
                 ></el-cascader>
+                <!-- <el-form-item label="活动名称">
+                  <el-input v-model="itemed.equipments"></el-input>
+                </el-form-item>
+                <el-tree
+                  :data="itemed.equipmentData"
+                  show-checkbox
+                  default-expand-all
+                  node-key="id"
+                  ref="tree"
+                  highlight-current
+                  :props="defaultProps">
+                </el-tree> -->
                 <!-- <el-select
                   v-model="itemed.equipments"
                   :disabled="itemed.disabled"
@@ -734,10 +746,10 @@
                 <el-form-item prop="itemed.state">
                   <el-select v-model="itemed.state" placeholder="播放文件">
                     <el-option
-                      v-for="(itemv, figure) in fileList"
+                      v-for="(itemPl, figure) in itemed.eqStateList"
                       :key="figure"
-                      :label="itemv.name"
-                      :value="itemv.fileName"
+                      :label="itemPl.name"
+                      :value="itemPl.fileName"
                     >
                     </el-option>
                   </el-select>
@@ -1357,6 +1369,13 @@ export default {
         );
         console.log(res, "设备列表");
       });
+      console.log(eqTypeId,"eqTypeIdeqTypeIdeqTypeId");
+      if (eqTypeId != 22) {
+        this.listEqTypeStateIsControl(eqTypeId, number, index);
+      } else {
+        //广播
+        this.getAudioFileListData('',number,index);
+      }
       // listDevices(params).then((res) => {
       //   if (res.rows.length == 0) {
       //     return this.$modal.msgWarning("暂无设备");
@@ -1368,14 +1387,9 @@ export default {
       //   );
       //   console.log(res, "设备列表");
       // });
-      if (eqTypeId != 22) {
-        this.listEqTypeStateIsControl(eqTypeId, number, index);
-      } else {
-        //广播
-        this.getAudioFileListData();
-      }
+      
     },
-    getAudioFileListData() {
+    getAudioFileListData(value,number,index) {
       let params = {
         tunnelId: this.currentClickData.tunnelId,
         direction: this.currentClickData.direction,
@@ -1383,7 +1397,7 @@ export default {
       getAudioFileList(params).then((res) => {
         console.log(res.data, "广播");
         this.fileList = res.data;
-        this.$set(this.planTypeIdList[index], "eqStateList", response.rows);
+        this.$set(this.planTypeIdList[number].processesList[index], "eqStateList", res.data);
       });
     },
     // 查询设备可控状态
@@ -1429,16 +1443,19 @@ export default {
       console.log(this.planTypeIdList, "000000000000000000");
       for (let i = 0; i < this.planTypeIdList.length; i++) {
         let item = this.planTypeIdList[i].processesList;
+        console.log(item);
+        // return false;
         if(this.planTypeIdList[i].processStageName == ''){
           return this.$modal.msgWarning("请填写完整");
         }
         for (let j = 0; j < item.length; j++) {
-          console.log(item[j]);
+          console.log(item[j].processName,"processNameprocessNameprocessName");
           // 如果指定设备则判断是否填写完整
           if (item[j].retrievalRule == 1) {
             if (
               item[j].equipments == "" ||
               item[j].processName == "" ||
+              item[j].processName == undefined ||
               item[j].state == "" ||
               item[j].retrievalRule == ""
             ) {
@@ -1555,9 +1572,12 @@ export default {
                 brr.state = +brr.state;
                 this.qbgChange(i,j, brr.equipments);
               }
+              console.log('zxczxczxczxczx')
               //请求广播音频列表数据
-              if (data[i].eq_type_id == 22) {
-                this.getAudioFileListData();
+              if (brr.eqTypeId == 22) {
+                brr.state = brr.state;
+                console.log(brr.state,'asdadasdasdas');
+                this.getAudioFileListData(brr.equipments,i,j);
               }
             }
           }

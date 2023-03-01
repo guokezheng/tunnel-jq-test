@@ -678,7 +678,8 @@
             <swiper class="swiper gallery-top" :options="swiperOptionTop" ref="swiperTop">
               <!-- slides -->
               <swiper-slide  v-for="(item,index) in eventForm.iconUrlList" :key="index" :class="'slide-'+index">
-                <img :src="item.imgUrl" style="width:100%;height:100%;">
+                <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop></video>
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
               <div class="swiper-button-prev" slot="button-prev"></div>
               <div class="swiper-button-next" slot="button-next"></div>
@@ -686,7 +687,8 @@
             </swiper>
             <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs" ref="swiperThumbs">
               <swiper-slide v-for="(item,index) in eventForm.iconUrlList" :key="index" :class="'slide-'+index">
-                <img :src="item.imgUrl" style="width:100%;height:100%;">
+                <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop></video>
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
             </swiper>
           </div>
@@ -2327,6 +2329,7 @@ export default {
     },
     //打开详情弹窗
     detailsOpen(item){
+      console.log(item,"itemitemitem");
       // this.eventFind = item;
       let data = {id:item.id};
       getEventDetail(data).then(res=>{
@@ -2349,7 +2352,8 @@ export default {
       }
     },
     isShow(item){
-      if(this.activeName == '0' || this.activeName == '1'){
+      // || this.activeName == '1'
+      if(this.activeName == '0' ){
         if(item.eventState == '3'){
           return true
         }
@@ -2374,8 +2378,12 @@ export default {
     },
     // 打开图片变视频弹窗
     openPicDialog(item) {
-      this.videoUrl = item.videoUrl;
-      this.picUrlDialog = true;
+      if(!item.videoUrl){
+        this.$message.warning('暂无视频');
+      }else{
+        this.videoUrl = item.videoUrl;
+        this.picUrlDialog = true;
+      }
     },
     // 忽略
     hulue() {
@@ -2952,11 +2960,12 @@ export default {
           for (let item of response.rows) {
             if (item.iconUrlList) {
               for (let i = 0; i < item.iconUrlList.length; i++) {
-                item.picUrl = item.iconUrlList[0].imgUrl;
+                item.picUrl = item.iconUrlList[1].imgUrl;
               }
             }
           }
           this.eventList = response.rows;
+          
           console.log(this.eventList,'this.eventListthis.eventListthis.eventListthis.eventList');
           this.total = response.total;
           this.loading = false;

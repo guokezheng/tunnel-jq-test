@@ -74,5 +74,5 @@ public interface IotBoardTemplateMapper
      * @param id
      * @return
      */
-    List<Map<String, Object>> getSdVmsTemplateContent(@Param("id") Long id);
+    Map<String, Object> getSdVmsTemplateContent(@Param("id") Long id);
 }

@@ -500,6 +500,8 @@
                 <img :src="safeWarn1" v-show="item.eventState == '1'" />
                 <img :src="safeWarn2" v-show="item.eventState == '2'" />
                 <img :src="safeWarn3" v-show="item.eventState == '3'" />
+                <img :src="safeWarn4" v-show="item.eventState == '4'" />
+                <img :src="safeWarn5" v-show="item.eventState == '5'" />
               </div>
             </div>
           </div>
@@ -1805,10 +1807,18 @@ export default {
         },
       ],
       videoUrl: "",
+      // 处理中:0
+      // 已处理:1
+      // 已挂起:2
+      // 待确认:3
+      // 已确认:4
+      // 误报:5
       safeWarn0: require("@/assets/cloudControl/safeWarn0.png"),
       safeWarn1: require("@/assets/cloudControl/safeWarn1.png"),
       safeWarn2: require("@/assets/cloudControl/safeWarn2.png"),
       safeWarn3: require("@/assets/cloudControl/safeWarn3.png"),
+      safeWarn4: require("@/assets/cloudControl/safeWarn4.png"),
+      safeWarn5: require("@/assets/cloudControl/safeWarn5.png"),
       // 一键车道指示器 车道下拉框
       chezhiLaneList: [],
       chezhiLaneList1: [
@@ -1939,7 +1949,6 @@ export default {
         pageSize: 10,
         faultType:null,
         faultDescription:"",
-
       },
       allmsg: "",
       process: "",
@@ -2505,6 +2514,12 @@ export default {
         this.details = false;
         this.$modal.msgSuccess("修改成功");
         this.getList();
+        if(this.eventForm.eventState == '0' && this.eventForm.currencyId){
+          this.$router.push({
+            path: "/emergency/administration/dispatch",
+            query: { id: this.eventForm.id },
+          });
+        }
       });
     },
     // 获取车道数
@@ -2871,17 +2886,6 @@ export default {
         }
       }
     },
-
-    // 根据管理机构筛选所属隧道
-    changeMechanism(item) {
-      this.queryParams.tunnelId = null;
-      const param = {
-        deptId: item.id,
-      };
-      getTunnelList(param).then((res) => {
-        this.tunnelList = res.data;
-      });
-    },
     /** 查询事件管理列表 */
     getList() {
       this.eventForm.currencyId = '';
@@ -2929,16 +2933,7 @@ export default {
         if(this.fuzzySearch1){
           this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
         }
-
-        // const params = {
-        //   fuzzySearch : this.queryParams.fuzzySearch
-        // }
-
-        // this.queryParams.params = params
-        // console.log(new Date());
-
         listEvent(this.queryParams).then((response) => {
-
           for (let item of response.rows) {
             if (item.iconUrlList) {
               for (let i = 0; i < item.iconUrlList.length; i++) {
@@ -2953,24 +2948,6 @@ export default {
         });
       }
     },
-    // getList() {
-    //   this.loading = true;
-    //   if(!this.dateRange){
-    //     this.dateRange = []
-    //   }
-    //   this.queryParams.startTime = this.dateRange[0];
-    //   this.queryParams.endTime = this.dateRange[1];
-    //   listEvent(this.addDateRange(this.queryParams)).then((response) => {
-    //     console.log(response.rows, "查询事件管理列表");
-    //     this.eventList = response.rows;
-    //     this.$nextTick(() => {
-    //       this.$refs.tableRef.doLayout();
-    //     });
-    //     this.total = response.total;
-    //     this.loading = false;
-    //   });
-    // },
-
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
@@ -3715,8 +3692,8 @@ export default {
       margin-left: 2px;
       .stateTab {
         position: absolute;
-        top: -34px;
-        right: -21px;
+        top: -27px;
+        right: -17px;
       }
       div {
         padding: 0.6vh 0;

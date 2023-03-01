@@ -1465,7 +1465,7 @@
                 <el-input
                   v-model="form.eqRunStatus"
                   :disabled="disstate"
-                  @input="changeEqRunStatus($event)"
+
                   placeholder="请输入设备运行状态"
                 />
               </el-form-item>

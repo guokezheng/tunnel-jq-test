@@ -210,8 +210,8 @@ public class PhoneSpkService {
         } else {
             String tunnelId = (String) map.get("tunnelId");
             String direction = (String) map.get("direction");
-            Assert.hasText(tunnelId, "隧道ID参数必传");
-            Assert.hasText(direction, "隧道方向参数必传");
+            Assert.hasText(tunnelId, "未指定隧道信息");
+            Assert.hasText(direction, "未指定隧道方向");
 
             SdDevices device = new SdDevices();
             device.setEqTunnelId(tunnelId);
@@ -274,11 +274,11 @@ public class PhoneSpkService {
         //参数校验
         Assert.notEmpty(fileList, "未选择音频文件！");
         Assert.notEmpty(spkDeviceIds, "未选择广播设备！");
-        Assert.hasText(controlType, "控制类型参数必传！");
-        Assert.hasText(tunnelId, "隧道ID参数必传");
+        Assert.hasText(controlType, "未指定控制类型参数！");
+        Assert.hasText(tunnelId, "未指定隧道信息");
 
         if ("GSY".equals(deploymentType)) {
-            Assert.hasText(operIp, "操作方IP地址参数{operIp}必传！");
+            Assert.hasText(operIp, "未提供操作方IP地址参数！");
             SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(tunnelId);
             //设备所属管理站host
             String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
@@ -383,13 +383,17 @@ public class PhoneSpkService {
         String controlType = (String) map.get("controlType");
         String operIp = (String) map.get("operIp");
 
-        Assert.notEmpty(fileList, "未选择音频文件！");
-        Assert.hasText(tunnelId, "隧道ID参数必传");
-        Assert.hasText(direction, "隧道方向参数必传");
-        Assert.hasText(controlType, "控制类型参数必传！");
+        if (fileList.size()>0 && fileList.get(0) != null){
+        }else{
+            throw new RuntimeException("未选择音频文件！");
+            //Assert.notEmpty(fileList, "未选择音频文件！");
+        }
+        Assert.hasText(tunnelId, "未指定隧道信息");
+        Assert.hasText(direction, "未指定隧道方向");
+        Assert.hasText(controlType, "未指定控制类型！");
 
         if ("GSY".equals(deploymentType)) {
-            Assert.hasText(operIp, "操作方IP地址参数必传！");
+            Assert.hasText(operIp, "未提供操作方IP地址！");
 
             SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(tunnelId);
             //设备所属管理站host

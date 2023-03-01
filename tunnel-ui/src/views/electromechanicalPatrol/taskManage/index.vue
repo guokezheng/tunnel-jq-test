@@ -988,6 +988,7 @@ export default {
         taskEndtime: null,
         taskCxtime: null,
         siteDescription: null,
+        ids:"",
       },
       // 任务详情参数
       taskNews: {
@@ -1707,6 +1708,8 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let  ids = this.ids.join();
+      this.queryParams.ids = ids;
       const queryParams = this.queryParams;
       this.$modal
         .confirm("是否确认导出所有巡查任务数据项？")

@@ -41,6 +41,19 @@ public class SdTrafficImage extends BaseEntity
     @Excel(name = "关联业务id")
     private String businessId;
 
+    /**
+     * 图片类型0图片 1视频
+     */
+    private String imgType;
+
+    public String getImgType() {
+        return imgType;
+    }
+
+    public void setImgType(String imgType) {
+        this.imgType = imgType;
+    }
+
     public void setImgId(Long imgId)
     {
         this.imgId = imgId;

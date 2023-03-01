@@ -76,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_user w on t.walker_id = w.user_id
         left join sd_tunnels s on s.tunnel_id = t.tunnel_id
         left join sys_dict_data p on p.dict_value= t.publish_status and p.dict_type = 'publish_status'
-        left join sys_dict_data a on a.dict_value= t.publish_status and a.dict_type = 'task_status'
+        left join sys_dict_data a on a.dict_value= t.task_status and a.dict_type = 'task_status'
         where t.id = #{id}
     </select>
         

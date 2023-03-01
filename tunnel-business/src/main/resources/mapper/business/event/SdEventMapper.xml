@@ -50,6 +50,7 @@
         <result property="reviewRemark" column="review_remark"/>
         <result property="currencyId" column="currency_id"/>
         <result property="fuzzySearch" column="fuzzySearch"/>
+        <result property="prevControlType" column="prev_control_type"/>
         <association property="eventType" column="id" javaType="SdEventType" resultMap="eventTypeResult"/>
         <association property="tunnels" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
     </resultMap>
@@ -70,6 +71,10 @@
     <sql id="selectSdEventVo">
         select id, tunnel_id, event_type_id, event_title, event_source, event_time, event_state, event_grade, event_location, event_death, event_injured, slight_injured, event_description, reserve_plan_id, flow_id, warning_id, station_id, lane_no, longitude, latitude, stake_num, start_time, end_time, video_url, create_by, create_time, update_by, update_time, direction, small_car_num, truck_num, passenger_car_num, tanker_num, car_owner_phone, wrecker_phone, police_phone, remark, review_remark, currency_id
         from sd_event
+    </sql>
+
+    <sql id="selectSdEvent">
+        select e.id, e.tunnel_id, e.event_type_id, e.event_title, e.event_source, e.event_time, e.event_state, e.event_grade, e.event_location, e.event_death, e.event_injured, e.slight_injured, e.event_description, e.reserve_plan_id, e.flow_id, e.warning_id, e.station_id, e.lane_no, e.longitude, e.latitude, e.stake_num, e.start_time, e.end_time, e.video_url, e.create_by, e.create_time, e.update_by, e.update_time, e.direction, e.small_car_num, e.truck_num, e.passenger_car_num, e.tanker_num, e.car_owner_phone, e.wrecker_phone, e.police_phone, e.remark, e.review_remark, e.currency_id
     </sql>
 
     <select id ="eventPopAll" resultType="Map" parameterType="string">
@@ -235,8 +240,13 @@
     </select>
 
     <select id="selectSdEventById" parameterType="Long" resultMap="SdEventResult">
-        <include refid="selectSdEventVo"/>
-        where id = #{id}
+        <include refid="selectSdEvent"/>,
+        et.prev_control_type,
+        t.tunnel_name
+        from sd_event e
+        left join sd_event_type et on e.event_type_id = et.id
+        left join sd_tunnels t on e.tunnel_id = t.tunnel_id
+        where e.id = #{id}
     </select>
 
     <!-- 查询事件状态为（已处理、处理中）的数量 -->
@@ -414,14 +424,17 @@
         B.icon_url,B.prev_control_type,B.simplify_name,A.event_location, A.event_death, A.event_injured, A.event_description, A.reserve_plan_id,
         A.flow_id, A.warning_id, A.create_by, A.create_time, A.update_by, A.update_time, B.event_type,
         C.tunnel_name, A.remark, A.police_phone, A.wrecker_phone, A.car_owner_phone, A.tanker_num, A.passenger_car_num,
-        A.small_car_num, A.direction, A.slight_injured, A.truck_num,  DATE_FORMAT( A.start_time, '%Y-%m-%d %H:%i:%s' ) as start_time, A.end_time,A.stake_num,C.tunnel_station_name,A.review_remark,A.currency_id
+        A.small_car_num, A.direction, A.slight_injured, A.truck_num,  DATE_FORMAT( A.start_time, '%Y-%m-%d %H:%i:%s' ) as start_time, A.end_time,A.stake_num,C.tunnel_station_name,A.review_remark,A.currency_id,
+        CONCAT( c.tunnel_name, ' ', sdd.dict_label, ',', B.simplify_name ) AS frameEventTitle
         from sd_event A
         left join sd_event_type B
         on A.event_type_id = B.id
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
+        LEFT JOIN sys_dict_data sdd ON a.direction = sdd.dict_value
         where
-        TO_DAYS(A.start_time) = TO_DAYS(NOW())
+        TO_DAYS(A.event_time) = TO_DAYS(NOW())
         AND B.is_usable = '1'
+        AND sdd.dict_type = 'sd_direction'
         <if test="eventState != null  and eventState != ''">and A.event_state = #{eventState}</if>
         <if test="params.deptId != null and params.deptId != ''">
             AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
@@ -538,7 +551,8 @@
     <select id="getManagementDevice" parameterType="sdReserveProcess" resultType="hashmap">
         SELECT
             d.eq_name AS eqName,
-            d.pile AS eqPile
+            d.pile AS eqPile,
+            d.eq_type AS eqType
         FROM
             sd_devices d
         WHERE
@@ -568,5 +582,16 @@
             1 = 1
           AND rp.id = #{id}
           AND sr.state = es.device_state
+    </select>
+
+    <select id="getManagementVmsLs" parameterType="sdReserveProcess" resultType="java.lang.String">
+        SELECT
+            sr.state
+        FROM
+            sd_reserve_process rp
+                LEFT JOIN sd_strategy_rl sr ON rp.strategy_id = sr.id
+        WHERE
+            1 = 1
+          AND rp.id = #{id}
     </select>
 </mapper>

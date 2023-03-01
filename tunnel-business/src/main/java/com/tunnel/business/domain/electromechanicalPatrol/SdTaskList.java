@@ -81,7 +81,7 @@ public class SdTaskList extends BaseEntity
 
     /** 派单时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "派单时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "派单时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date dispatchTime;
 
     /** 指派巡查班组id */
@@ -91,7 +91,7 @@ public class SdTaskList extends BaseEntity
     private String bzName;
 
     /** 计划完成时间 */
-    @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endPlantime;
 
@@ -123,6 +123,9 @@ public class SdTaskList extends BaseEntity
    /* @Excel(name = "任务完成时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private Date taskEndtime;
 
+    private String ids;
+
+
     /** 任务持续时间 */
    /* @Excel(name = "任务持续时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private String  taskCxtime;
@@ -135,6 +138,14 @@ public class SdTaskList extends BaseEntity
 
 
     private String dictValue;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds(final String ids) {
+        this.ids = ids;
+    }
 
     public String getPublish() {
         return this.publish;

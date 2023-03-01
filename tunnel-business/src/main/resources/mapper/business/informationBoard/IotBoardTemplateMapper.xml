@@ -135,4 +135,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  left join iot_board_template_content b on a.id = b.template_id
         GROUP BY b.template_id
     </select>
+
+    <select id="getSdVmsTemplateContent" parameterType="java.lang.Long" resultType="hashmap">
+        SELECT
+            bt.id,
+            bt.screen_size,
+            bt.in_screen_mode,
+            bt.category,
+            btc.content,
+            btc.font_color,
+            btc.font_size,
+            btc.font_type,
+            btc.font_spacing,
+            btc.coordinate
+        FROM
+            iot_board_template bt
+                LEFT JOIN iot_board_template_content btc ON bt.id = btc.template_id
+        WHERE
+            1 =1
+            AND bt.id = #{id}
+    </select>
 </mapper>

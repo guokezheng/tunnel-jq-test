@@ -52,9 +52,15 @@ public class SdFaultList extends BaseEntity
 
     /** 故障发现时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "发现时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "发现时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date faultFxtime;
 
+
+
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+   /* @Excel(name = "故障消除时间", width = 30, dateFormat = "yyyy-MM-dd")*/
+    private Date faultRemoveTime;
     /** 故障持续时间（根据当前时间与故障发现时间计算时间差，单位：天、小时；计算时间差，不保存只展示；记录变为“已消除”状态时，保存持续时间） */
 /*
     @Excel(name = "故障持续时间", readConverterExp = "根=据当前时间与故障发现时间计算时间差，单位：天、小时；计算时间差，不保存只展示；记录变为“已消除”状态时，保存持续时间")
@@ -107,6 +113,13 @@ public class SdFaultList extends BaseEntity
     @Excel(name = "故障类型")
     private String ftype;
 
+    public Date getFaultRemoveTime() {
+        return this.faultRemoveTime;
+    }
+
+    public void setFaultRemoveTime( Date faultRemoveTime) {
+        this.faultRemoveTime = faultRemoveTime;
+    }
 
     public String getFremove() {
         return this.fremove;

@@ -18,6 +18,7 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.event.*;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -98,7 +99,13 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public SdEvent selectSdEventById(Long id) {
-        return sdEventMapper.selectSdEventById(id);
+        SdEvent sdEvent = sdEventMapper.selectSdEventById(id);
+        if(sdEvent.getVideoUrl()!=null){
+            sdEvent.setVideoUrl(sdEvent.getVideoUrl().split(";")[0]);
+        }
+        sdEvent.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString()));
+        sdEvent.setConfidenceList(radarEventMapper.selectConfidence(sdEvent.getId()));
+        return sdEvent;
     }
 
     /**
@@ -292,9 +299,28 @@ public class SdEventServiceImpl implements ISdEventService {
     public AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess) {
         Map<String, Object> map = new HashMap<>();
         //查询设备列表
-        map.put("deviceList",sdEventMapper.getManagementDevice(sdReserveProcess));
-        //查询状态
-        map.put("deviceState",sdEventMapper.getManagementDeviceState(sdReserveProcess));
+        List<Map<String, Object>> deviceList = sdEventMapper.getManagementDevice(sdReserveProcess);
+        //获取设备类型
+        Long eqType = Long.valueOf(deviceList.get(0).get("eqType").toString());
+        //根据状态类型查询不通类型得设备明细
+        if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
+            //查询情报板
+            String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
+            map.put("vmsData",sdVmsContent);
+        }else if(eqType == DevicesTypeEnum.LS.getCode()){
+            //截取广播文件名称
+            String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            List<String> list = Arrays.asList(lsData.split("\\\\"));
+            String lsContent = list.get(list.size() - 1);
+            map.put("lsData",lsContent);
+        }else {
+            //查询普通设备状态
+            String deviceState = sdEventMapper.getManagementDeviceState(sdReserveProcess);
+            map.put("deviceState",deviceState);
+        }
+        map.put("deviceList",deviceList);
+        map.put("deviceType",eqType);
         return AjaxResult.success(map);
     }
 
@@ -596,21 +622,31 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public AjaxResult getEntranceExitVideo(SdEvent sdEvent) {
         SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
+        //查询设备列表
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqDirection(sdEvent.getDirection());
         sdDevices.setEqTunnelId(sdEvent.getTunnelId());
         sdDevices.setEqType(DevicesTypeEnum.CAMERA_BOX.getCode());
-        List<SdDevices> sdDevicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
-        String minEqId = sdDevicesList.stream().min(Comparator.comparing(SdDevices::getPileNum)).get().getEqId();
-        String maxEqId = sdDevicesList.stream().max(Comparator.comparing(SdDevices::getPileNum)).get().getEqId();
+        List<SdDevices> sdDevicesList = sdDevicesMapper.getEntranceExitVideo(sdDevices);
+        //如果为空则返回
+        if(sdDevicesList.size() == 0){
+            return AjaxResult.success(new ArrayList<>());
+        }
+        //根据整形桩号查询出入口设备id
+        SdDevices minEqId = sdDevicesList.stream().min(Comparator.comparing(SdDevices::getPileNum)).get();
+        SdDevices maxEqId = sdDevicesList.stream().max(Comparator.comparing(SdDevices::getPileNum)).get();
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
         if("1".equals(sdEvent.getDirection())){
-            map.put("outlet",maxEqId);
-            map.put("inlet",minEqId);
+            map.put("outlet",maxEqId.getEqId());
+            map.put("inlet",minEqId.getEqId());
+            map.put("outletName",maxEqId.getEqDirection().concat("出口"));
+            map.put("inletName",minEqId.getEqDirection().concat("入口"));
         }else {
-            map.put("outlet",minEqId);
-            map.put("inlet",maxEqId);
+            map.put("outlet",minEqId.getEqId());
+            map.put("inlet",maxEqId.getEqId());
+            map.put("outletName",minEqId.getEqDirection().concat("出口"));
+            map.put("inletName",maxEqId.getEqDirection().concat("入口"));
         }
         list.add(map);
         return AjaxResult.success(list);

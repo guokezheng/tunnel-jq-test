@@ -333,4 +333,11 @@ public interface SdDevicesMapper
 									@Param("direction") String direction,
 									@Param("stakeNum") int stakeNum,
 									@Param("tunnelId") String tunnelId);
+
+	/**
+	 * 查询出入口视频
+	 * @param sdDevices
+	 * @return
+	 */
+	List<SdDevices> getEntranceExitVideo(SdDevices sdDevices);
 }

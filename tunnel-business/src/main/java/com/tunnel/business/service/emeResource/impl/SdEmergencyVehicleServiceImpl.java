@@ -134,11 +134,13 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
 
     @Override
     public String synVehicleData() {
-        PageDomain pageDomain = TableSupport.buildPageRequest();
         SysUser user = SecurityUtils.getLoginUser().getUser();
         String deptId = user.getDeptId();
         //获取token
         String token = AuthUtil.getGeneralToken();
+        if(token == ""){
+            return "";
+        }
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
         //设置JSON格式数据
@@ -152,7 +154,7 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
             httpRequestFactory.setReadTimeout(5 * 1000);
             RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
             //调取第三方接口获取车辆数据
-            ResponseEntity<String> exchange = restTemplate.exchange(synUrl.concat("?current="+pageDomain.getPageNum()+"&size="+pageDomain.getPageSize()+"&deptId="+deptId), HttpMethod.GET, requestEntity, String.class);
+            ResponseEntity<String> exchange = restTemplate.exchange(synUrl.concat("?current=1&size=2000&deptId="+deptId), HttpMethod.GET, requestEntity, String.class);
             //解析车辆数据
             synVehicleDataList(exchange.getBody(),deptId);
             log.info("返回值 --> {}", exchange.getBody());

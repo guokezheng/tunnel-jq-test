@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="faultCode"    column="fault_code"    />
         <result property="faultLevel"    column="fault_level"    />
         <result property="falltRemoveStatue"    column="fallt_remove_statue"    />
+        <result property="faultRemoveTime"    column="fault_remove_time"    />
         <result property="faultDescription"    column="fault_description"    />
         <result property="faultStatus"    column="fault_status"    />
         <result property="createBy"    column="create_by"    />
@@ -35,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdFaultListVo">
-        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, eq_run_status, fault_code, fault_level, fallt_remove_statue, fault_description, fault_status,img_file_id, fault_escalation_type from sd_fault_list
+        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, eq_run_status, fault_code, fault_level, fallt_remove_statue,fault_remove_time, fault_description, fault_status,img_file_id, fault_escalation_type from sd_fault_list
     </sql>
 
     <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">

@@ -31,7 +31,7 @@ public class SdDeviceCOVIData
     /** 设备id */
 
     private String deviceId;
-    @Excel(name = "设备编码")
+   /* @Excel(name = "设备编码")*/
     private String eqId;
 
     public String getEqId() {

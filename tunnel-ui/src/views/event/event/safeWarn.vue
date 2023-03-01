@@ -64,9 +64,9 @@
           </el-col>
         </el-row>
         <!-- 全局搜索 -->
-        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" > 
+        <el-row :gutter="20" v-show="activeName == '2'" class="tabTopFormRow" >
             <el-col :span="6" >
-              <el-button 
+              <el-button
                 v-hasPermi="['system:list:add']"
                 size="small"
                 @click="handleAdd"
@@ -107,11 +107,11 @@
           :inline="true"
           label-width="68px"
           class="formStyle"
-        >   
+        >
             <el-form-item label="事件状态" >
               <el-checkbox-group v-model="checkBoxEventState">
-                <el-checkbox 
-                  v-for="item in eventStateOptions" 
+                <el-checkbox
+                  v-for="item in eventStateOptions"
                   :key="item.dictValue"
                   :label="item.dictValue"
                   @change.native="changeCheckBox($event)">
@@ -200,7 +200,7 @@
               <el-button size="small"  @click="handleQuery"
               >搜索</el-button
               >
-              <el-button size="small" @click="resetQuery" 
+              <el-button size="small" @click="resetQuery"
               >重置</el-button
               >
             </el-form-item>
@@ -217,8 +217,8 @@
         >
             <el-form-item label="事件状态" >
               <el-checkbox-group v-model="checkBoxEventState">
-                <el-checkbox 
-                  v-for="item in eventStateOptions" 
+                <el-checkbox
+                  v-for="item in eventStateOptions"
                   :key="item.dictValue"
                   :label="item.dictValue"
                   @change.native="changeCheckBox($event)">
@@ -307,7 +307,7 @@
               <el-button size="small"  @click="handleQuery"
               >搜索</el-button
               >
-              <el-button size="small" @click="resetQuery" 
+              <el-button size="small" @click="resetQuery"
               >重置</el-button
               >
             </el-form-item>
@@ -346,7 +346,7 @@
                 <el-button size="small"  @click="handleQuery"
                 >搜索</el-button
                 >
-                <el-button size="small" @click="resetQuery" 
+                <el-button size="small" @click="resetQuery"
                 >重置</el-button
                 >
               </el-form-item>
@@ -709,7 +709,7 @@
               ></videoPlayer>
             </el-carousel-item>
           </el-carousel>
-          <el-image 
+          <el-image
             v-show="videoList.length < 1"
             :src="noDataUrl"
             :fit="contain">
@@ -821,7 +821,7 @@
                     <el-input
                       v-model="eventForm.stakeEndNum1"
                       placeholder="Km"
-                      
+
                       width="100%"
                     >
                       <template slot="prepend">K</template>
@@ -832,7 +832,7 @@
                     <el-input
                       v-model="eventForm.stakeEndNum2"
                       placeholder="m"
-                      
+
                       width="100%"
                     />
                   </el-col>
@@ -1000,8 +1000,8 @@
               <el-col :span="24" v-show="eventForm.eventState == 0">
                 <el-form-item prop="currencyId">
                   <el-select v-model="eventForm.currencyId" placeholder="请选择预案" @change="this.$forceUpdate()">
-                    <el-option 
-                      v-for="item in ReservePlanList" 
+                    <el-option
+                      v-for="item in ReservePlanList"
                       :key="item.id"
                       :label="item.planName"
                       :value="item.id"
@@ -1039,7 +1039,7 @@
     </el-dialog>
     <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%">
       <el-timeline>
-        
+
           <el-timeline-item timestamp="事件发现" placement="top">
             <el-card>
             <el-form ref="eventDiscovery" :model="eventDiscovery" label-width="100px">
@@ -1086,7 +1086,7 @@
           <el-timeline-item timestamp="人工复核" placement="top" v-if="eventStateCurrent != '3'">
             <el-form ref="manualReview" :model="manualReview" label-width="100px">
             <el-card>
-              
+
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="当事目标">
@@ -1467,7 +1467,7 @@
                 <el-input
                   v-model="form.eqRunStatus"
                   :disabled="disstate"
-                  @input="changeEqRunStatus($event)"
+
                   placeholder="请输入设备运行状态"
                 />
               </el-form-item>
@@ -1509,7 +1509,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" v-show="removeStata">
               <el-form-item label="故障消除状态" prop="falltRemoveStatue">
                 <el-select
                   v-model="form.falltRemoveStatue"
@@ -1523,6 +1523,21 @@
                     :value="item.dictValue"
                   />
                 </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8" v-show="removeStata">
+              <el-form-item label="故障消除时间" prop="faultRemoveTime">
+                <el-date-picker
+                  clearable
+                  size="small"
+                  :disabled="disstate"
+                  v-model="form.faultRemoveTime"
+                  type="datetime"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="暂无消除时间"
+                  style="width: 100%"
+                >
+                </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -1564,7 +1579,7 @@
               </el-form-item>
             </el-col>
           </el-card>
-          
+
         </el-row>
       </el-form>
       <div class="dialogFooterButton">
@@ -1884,7 +1899,7 @@ export default {
         process: 0,
         bl: 0,
       },
-
+      removeStata:false,
       // 管理机构
       mechanism: [],
       // 所属隧道
@@ -1941,7 +1956,7 @@ export default {
         startTime: null,
         endTime: null,
         deptId: null,
-        
+
       },
 
       queryParams1: {
@@ -2028,20 +2043,20 @@ export default {
             trigger: "eqStatus",
           },
         ],
-        falltRemoveStatue: [
+       /* falltRemoveStatue: [
           {
             required: true,
             message: "请选中消除状态",
             trigger: "falltRemoveStatue",
           },
-        ],
-        falltRemoveStatu: [
+        ],*/
+        /*falltRemoveStatu: [
           {
             required: true,
             message: "请选中消除状态",
             trigger: "falltRemoveStatue",
           },
-        ],
+        ],*/
         tunnelId: [
           {
             required: true,
@@ -2952,7 +2967,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除故障清单编号为"' + ids + '"的数据项？')
+        .confirm('是否确认删除选中的数据项？')
         .then(function () {
           return delList(ids);
         })
@@ -3069,6 +3084,7 @@ export default {
     },
     handleCheckDetail(row) {
       let that = this;
+      this.removeStata = true;
       this.isWritable = false;
       this.getTunnel();
       that.reset();
@@ -3290,6 +3306,7 @@ export default {
     handleAdd() {
       this.reset();
       this.getTunnel();
+      this.removeStata = false;
       this.isWritable = true;
       this.disstate = false;
       this.open = true;
@@ -3348,7 +3365,7 @@ export default {
       this.fileData.append("eqRunStatus", this.form.eqRunStatus);
       this.fileData.append("faultCode", this.form.faultCode);
       this.fileData.append("faultLevel", this.form.faultLevel);
-      this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
+      this.fileData.append("falltRemoveStatue", "1");
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 1);
       /*      if(this.fileList.length <= 0) {
@@ -3362,41 +3379,48 @@ export default {
       if (this.form.tunnelId == "" ||
         this.form.tunnelId == -1 ||
         this.form.tunnelId == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择所在路段隧道");
       }
 
       if (this.form.faultType == "" ||
         this.form.faultType == -1 ||
         this.form.faultType == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择故障类型");
       }
       if (this.form.eqId == "" ||
         this.form.eqId == -1 ||
         this.form.eqId == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择设备");
       }
       if (this.form.faultDescription == "") {
+        this.isClick = true;
         return this.$modal.msgWarning("请填写故障描述");
       }
       if (this.form.faultFxtime == "" ||
         this.form.faultFxtime == -1 ||
         this.form.faultFxtime == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择发现时间");
       }
 
       if (this.form.eqStatus == "" ||
         this.form.eqStatus == -1 ||
         this.form.eqStatus == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择设备状态");
       }
-      if (this.form.falltRemoveStatue == "" ||
+      /*if (this.form.falltRemoveStatue == "" ||
         this.form.falltRemoveStatue == -1 ||
         this.form.falltRemoveStatue == null) {
         return this.$modal.msgWarning("请选择消除状态");
-      }
+      }*/
       if (this.form.faultLevel == "" ||
         this.form.faultLevel == -1 ||
         this.form.faultLevel == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择故障等级");
       }
       this.$refs["form"].validate((valid) => {
@@ -3443,48 +3467,55 @@ export default {
       this.fileData.append("eqRunStatus", this.form.eqRunStatus);
       this.fileData.append("faultCode", this.form.faultCode);
       this.fileData.append("faultLevel", this.form.faultLevel);
-      this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
+      this.fileData.append("falltRemoveStatue", "1");
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 0);
 
       if (this.form.tunnelId == "" ||
         this.form.tunnelId == -1 ||
         this.form.tunnelId == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择所在路段隧道");
       }
 
       if (this.form.faultType == "" ||
         this.form.faultType == -1 ||
         this.form.faultType == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择故障类型");
       }
       if (this.form.eqId == "" ||
         this.form.eqId == -1 ||
         this.form.eqId == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择设备");
       }
       if (this.form.faultDescription == "") {
+        this.isClick = true;
         return this.$modal.msgWarning("请填写故障描述");
       }
       if (this.form.faultFxtime == "" ||
         this.form.faultFxtime == -1 ||
         this.form.faultFxtime == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择发现时间");
       }
 
       if (this.form.eqStatus == "" ||
         this.form.eqStatus == -1 ||
         this.form.eqStatus == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择设备状态");
       }
-      if (this.form.falltRemoveStatue == "" ||
+      /*if (this.form.falltRemoveStatue == "" ||
         this.form.falltRemoveStatue == -1 ||
         this.form.falltRemoveStatue == null) {
         return this.$modal.msgWarning("请选择消除状态");
-      }
+      }*/
       if (this.form.faultLevel == "" ||
         this.form.faultLevel == -1 ||
         this.form.faultLevel == null) {
+        this.isClick = true;
         return this.$modal.msgWarning("请选择故障等级");
       }
       this.$refs["form"].validate((valid) => {

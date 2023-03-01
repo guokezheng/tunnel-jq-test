@@ -28,9 +28,9 @@
       </div>
       <div style="width: 100%; height: 200px;padding:0 15px">
 
-        
-       
-        <video 
+
+
+        <video
         v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
           class="h5video_"
@@ -45,7 +45,7 @@
             v-if="videoForm.liveUrl && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
             :rtsp="videoForm.liveUrl"
             :open="cameraPlayer"
-            
+
           ></videoPlayer>
       </div>
       <el-form
@@ -484,7 +484,7 @@ export default {
           event: "事件: 道路拥堵",
           status: "正在进行",
         },
-        
+
         {
           pic: require("@/assets/images/warningPhoto.png"),
           time: "2022-03-11 14:47:13",
@@ -573,14 +573,14 @@ export default {
     async getmessage() {
       if (this.eqInfo.equipmentId) {
 
-        
+
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
           this.tunnelId = res.data.tunnelId
           if(res.data.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS"){
-            displayH5sVideoAll(res.data.secureKey);
+            displayH5sVideoAll(res.data.secureKey,"h5sVideo1");
           }else{
             videoStreaming(this.eqInfo.equipmentId).then((response) =>{
               console.log(response,"视频流");
@@ -593,7 +593,7 @@ export default {
             })
           }
         });
-        
+
         // await getInfo(this.eqInfo.clickEqType).then((response) => {
         //     console.log(response, "查询设备当前状态");
         //     this.stateForm.state = response.data.state;
@@ -728,7 +728,7 @@ export default {
     .yunTaiVideo{
       width: 100%;
       height: 100%;
-      object-fit: cover; 
+      object-fit: cover;
       z-index: -100
     }
   }
@@ -892,7 +892,7 @@ export default {
       border-radius: 15px;
       text-align: center;
       font-size: 18px;
-      cursor: pointer;  
+      cursor: pointer;
       caret-color: rgba(0,0,0,0);
     }
     > div:nth-of-type(1):hover,
@@ -914,7 +914,7 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 15px;
-    
+
     > .el-slider {
       width: 50%;
     }

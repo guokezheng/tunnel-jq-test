@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-02-27 15:48:14
+ * @LastEditTime: 2023-03-01 18:12:44
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -163,7 +163,6 @@
             <el-table
               :data="implementList"
               stripe
-              max-height="110"
               class="phoneTable"
               :fit="true"
             >
@@ -231,9 +230,9 @@
               >
                 {{ item.flowContent }}
               </div>
-              <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
+              <!-- <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
               :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">
-              一键</div>
+              一键</div> -->
             </div>
 
             <div
@@ -521,24 +520,57 @@
       append-to-body
       >
       <div class="GDeviceBox">
-        <p>设备控制</p>
-        <el-card>
-        <el-row v-for="(item,index) in GDeviceData.deviceList" :key="index" type="flex">
-          <el-col :span="8" style="text-align:center;">
-            {{ item.eqName }}
+        
+        <el-row>
+          <el-col :span="24">
+            <p style="padding:15px 0;">设备控制</p>
+            <el-card>
+              <el-row v-for="(item,index) in GDeviceData.deviceList" :key="index" type="flex">
+                <el-col :span="8" style="text-align:center;">
+                  {{ item.eqName }}
+                </el-col>
+                <el-col :span="8" style="text-align:center;">
+                  {{item.eqPile}}
+                </el-col>
+                <el-col :span="8" style="text-align:center;">
+                  待执行
+                </el-col>
+              </el-row>
+            </el-card>
           </el-col>
-          <el-col :span="8" style="text-align:center;">
-            {{item.eqPile}}
+          <el-col :span="24" v-if="GDeviceData.vmsData">
+            <p style="padding:15px 0;">{{boxName}}:</p>
+            <el-card>
+              <div style="display: flex;justify-content: center;align-items: center;">
+                <div :style="{
+                  'width':GDeviceData.vmsData['width'] + 'px',
+                  'height':GDeviceData.vmsData['height'] + 'px',
+                  'color':GDeviceData.vmsData['font_color'],
+                  'font-size':GDeviceData.vmsData['font_size'] + 'px',
+                  'font-family':GDeviceData.vmsData['font_type'],
+                  'letter-spacing':GDeviceData.vmsData['font_spacing'] + 'px',
+                  'background-color':'#000',
+                  'position':'relative',
+                  }">
+                  <span :style="{
+                    'position':'absolute',
+                    'top':GDeviceData.vmsData['top'] + 'px',
+                    'left':GDeviceData.vmsData['left'] + 'px',
+                  }">
+                    {{GDeviceData.vmsData['content']}}
+                  </span>
+                </div>
+              </div>
+            </el-card>
           </el-col>
-          <el-col :span="8" style="text-align:center;">
-            待执行
+          <el-col :span="24">
+            <p style="padding:15px 0;">{{boxName}}:</p>
+            <el-card v-show="GDeviceData && !GDeviceData.vmsData">
+              {{ GDeviceData.deviceState }}
+            </el-card>
           </el-col>
         </el-row>
-      </el-card>
       </div>
-      <el-card>
-        执行状态：{{ GDeviceData.deviceState }}
-      </el-card>
       <div style="display:flex;justify-content:right">
         <div class="IssuedButton1" @click="cancelIssuedDialog">取 消</div>
         <div class="IssuedButton2" @click="changeIncHand">确 认</div>
@@ -796,6 +828,8 @@ export default {
   },
   data() {
     return {
+      fontAlign:'',//情报板对齐方式
+      boxName:'',
       nowData:Date.now(),
       timeData:"",
       deadline4: "",
@@ -952,12 +986,33 @@ export default {
   // },
   methods: {
     getManagementDevice(item){
+      console.log(item,"itemitemitemitem");
       this.processId = item.processId;
       this.IssuedItem.id = item.id;
       let params = {id:item.processId};
       getManagementDevice(params).then(res=>{
         console.log(res);
-        this.GDeviceData = res.data;
+        let data = res.data;
+        // 广播
+        if(data.deviceType == 22){
+          this.boxName = "执行文件";
+          this.GDeviceData.deviceList = data.deviceList;
+          this.GDeviceData.deviceState = data.lsData;
+        }else if(data.deviceType == 16 || data.deviceType == 36){//情报板
+          this.boxName = "执行模板";
+          this.GDeviceData.deviceList = data.deviceList;
+          this.GDeviceData.vmsData = data.vmsData;
+          let zxc = data.vmsData['screen_size'].split('*');
+          this.GDeviceData.vmsData['width'] = zxc[0];
+          this.GDeviceData.vmsData['height'] = zxc[1];
+          let align = data.vmsData['coordinate'];
+          this.GDeviceData.vmsData['left'] = align.substr(0,3);
+          this.GDeviceData.vmsData['top'] = align.substr(3,6);
+        }else{
+          this.boxName = "执行状态";
+          this.GDeviceData = data;
+        }
+        
         this.IssuedDialog = true;
       })
     },
@@ -1327,7 +1382,6 @@ export default {
           this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(0,4);
           setInterval(()=>{
             this.deadline4 = intervalTime(this.eventForm.updateTime);
-            console.log(this.deadline4,"this.deadline4this.deadline4this.deadline4this.deadline4")
           },1000)
           this.getVideoList();
           this.getpersonnelList();
@@ -1402,6 +1456,7 @@ export default {
       };
       await listSdEmergencyPer(params).then((response) => {
         this.implementList = response.rows;
+        console.log(this.implementList,"this.implementListthis.implementList");
       });
     },
     // 切换工作台和3D隧道
@@ -2338,7 +2393,7 @@ export default {
   }
 }
 .GDeviceBox{
-  p{padding:0 15px 15px;}
+  // p{padding:0 15px 15px;}
   .el-row{padding:10px 0px;}
 }
 </style>

@@ -134,7 +134,15 @@ public class SdEventServiceImpl implements ISdEventService {
             if(item.getVideoUrl()!=null){
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
-            item.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString()));
+            SdTrafficImage image = new SdTrafficImage();
+            image.setBusinessId(item.getId().toString());
+            image.setImgType("1");
+            //查询视频
+            List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
+            item.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl() : "");
+            //查询图片
+            image.setImgType("0");
+            item.setIconUrlList(sdTrafficImageMapper.selectSdTrafficImageList(image));
             item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
         });
         return sdEvents;
@@ -637,16 +645,23 @@ public class SdEventServiceImpl implements ISdEventService {
         SdDevices maxEqId = sdDevicesList.stream().max(Comparator.comparing(SdDevices::getPileNum)).get();
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        if("1".equals(sdEvent.getDirection())){
+        if(sdEvent.getTunnelId().equals(TunnelEnum.FENG_HUANG_SHAN.getCode())){
             map.put("outlet",maxEqId.getEqId());
             map.put("inlet",minEqId.getEqId());
             map.put("outletName",maxEqId.getEqDirection().concat("出口"));
             map.put("inletName",minEqId.getEqDirection().concat("入口"));
         }else {
-            map.put("outlet",minEqId.getEqId());
-            map.put("inlet",maxEqId.getEqId());
-            map.put("outletName",minEqId.getEqDirection().concat("出口"));
-            map.put("inletName",maxEqId.getEqDirection().concat("入口"));
+            if("1".equals(sdEvent.getDirection())){
+                map.put("outlet",maxEqId.getEqId());
+                map.put("inlet",minEqId.getEqId());
+                map.put("outletName",maxEqId.getEqDirection().concat("出口"));
+                map.put("inletName",minEqId.getEqDirection().concat("入口"));
+            }else {
+                map.put("outlet",minEqId.getEqId());
+                map.put("inlet",maxEqId.getEqId());
+                map.put("outletName",minEqId.getEqDirection().concat("出口"));
+                map.put("inletName",maxEqId.getEqDirection().concat("入口"));
+            }
         }
         list.add(map);
         return AjaxResult.success(list);

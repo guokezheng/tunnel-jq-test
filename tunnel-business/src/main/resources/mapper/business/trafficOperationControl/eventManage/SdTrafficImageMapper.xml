@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="imgWidth != null  and imgWidth != ''"> and img_width = #{imgWidth}</if>
             <if test="imgHeight != null  and imgHeight != ''"> and img_height = #{imgHeight}</if>
             <if test="businessId != null  and businessId != ''"> and business_id = #{businessId}</if>
+            <if test="imgType != null  and imgType != ''"> and img_type = #{imgType}</if>
         </where>
     </select>
 
@@ -138,12 +139,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="brachInsertFaultIconFile" parameterType="java.util.List">
         insert into sd_traffic_image
         (
-        img_name, img_url, business_id, create_time, create_by
+        img_name, img_url, business_id, img_type, create_time, create_by
         )
         values
         <foreach collection="list" index="index" item="item" separator=",">
             (
-             #{item.imgName}, #{item.imgUrl},#{item.businessId},  #{item.createTime},#{item.createBy}
+             #{item.imgName}, #{item.imgUrl},#{item.businessId},#{item.imgType},  #{item.createTime},#{item.createBy}
             )
         </foreach>
     </insert>

@@ -1715,10 +1715,11 @@
       border: transparent !important;
       border-left: transparent !important;
       .el-button{
-        border-left:none !important;
         background:#012E51 !important;
         color: #00C8FF !important;
         border: solid 1px #05AFE3 !important;
+        border-left:none !important;
+
       }
     }
     .grid-content .el-input--small .el-input__inner{

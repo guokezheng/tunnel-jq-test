@@ -9,7 +9,7 @@
         align="center"
         allowfullscreen="true"
         allow="autoplay"
-        src="http://106.120.201.126:14712/trackPlayback"
+        src="http://10.3.16.4:81/trackPlayback"
       ></iframe>
     </div>
   </template>

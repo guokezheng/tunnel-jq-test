@@ -167,7 +167,7 @@
             </el-col>
             <el-col :span="9" v-if="stateForm.brightness">
               <span style="padding-left: 10px; line-height: 30px"
-                >{{ stateForm.brightness }} cd</span
+                >{{ stateForm.brightness }} %</span
               >
             </el-col>
           </el-row>
@@ -237,7 +237,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          // this.stateForm.brightness = Number(res.data.brightness);
+          this.stateForm.brightness = Number(res.data.brightness);
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
@@ -355,7 +355,7 @@ export default {
           }
         })
       }
-      
+
       this.$emit("dialogClose");
     },
     // 关闭弹窗

@@ -626,7 +626,7 @@ public class SdEventServiceImpl implements ISdEventService {
         sdDevices.setEqDirection(sdEvent.getDirection());
         sdDevices.setEqTunnelId(sdEvent.getTunnelId());
         sdDevices.setEqType(DevicesTypeEnum.CAMERA_BOX.getCode());
-        List<SdDevices> sdDevicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
+        List<SdDevices> sdDevicesList = sdDevicesMapper.getEntranceExitVideo(sdDevices);
         SdDevices minEqId = sdDevicesList.stream().min(Comparator.comparing(SdDevices::getPileNum)).get();
         SdDevices maxEqId = sdDevicesList.stream().max(Comparator.comparing(SdDevices::getPileNum)).get();
         List<Map<String, Object>> list = new ArrayList<>();
@@ -637,10 +637,10 @@ public class SdEventServiceImpl implements ISdEventService {
             map.put("outletName",maxEqId.getEqDirection().concat("出口"));
             map.put("inletName",minEqId.getEqDirection().concat("入口"));
         }else {
-            map.put("outlet",minEqId);
-            map.put("inlet",maxEqId);
-            map.put("outletName",maxEqId.getEqDirection().concat("出口"));
-            map.put("inletName",minEqId.getEqDirection().concat("入口"));
+            map.put("outlet",minEqId.getEqId());
+            map.put("inlet",maxEqId.getEqId());
+            map.put("outletName",minEqId.getEqDirection().concat("出口"));
+            map.put("inletName",maxEqId.getEqDirection().concat("入口"));
         }
         list.add(map);
         return AjaxResult.success(list);

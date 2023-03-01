@@ -241,9 +241,11 @@
 
     <select id="selectSdEventById" parameterType="Long" resultMap="SdEventResult">
         <include refid="selectSdEvent"/>,
-        et.prev_control_type
+        et.prev_control_type,
+        t.tunnel_name
         from sd_event e
         left join sd_event_type et on e.event_type_id = et.id
+        left join sd_tunnels t on e.tunnel_id = t.tunnel_id
         where e.id = #{id}
     </select>
 

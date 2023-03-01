@@ -717,7 +717,7 @@
           </div>
           <div style="padding: 10px">
             <div class="test">
-              设备描述：<span>{{ pat.eqFaultDescription }}</span>
+              设备描述：<span style ="color:#ffffff">{{ pat.eqFaultDescription }}</span>
             </div>
             <div style="display: flex; margin-top: 10px">
               <div class="test" style="width: 30%">

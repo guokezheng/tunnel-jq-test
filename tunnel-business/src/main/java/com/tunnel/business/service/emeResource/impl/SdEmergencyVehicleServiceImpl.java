@@ -138,6 +138,9 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
         String deptId = user.getDeptId();
         //获取token
         String token = AuthUtil.getGeneralToken();
+        if(token == ""){
+            return "";
+        }
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
         //设置JSON格式数据

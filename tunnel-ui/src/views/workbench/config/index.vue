@@ -1153,6 +1153,7 @@
               v-if="liveUrl1 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
               :rtsp="liveUrl1"
               :open="cameraPlayer1"
+              autoplay webkit-playsinline playsinline
             ></videoPlayer>
             <video
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic1"
@@ -1189,6 +1190,7 @@
               v-if="liveUrl2 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
               :rtsp="liveUrl2"
               :open="cameraPlayer2"
+              autoplay webkit-playsinline playsinline
             ></videoPlayer>
             <video
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic1"
@@ -1225,8 +1227,9 @@
               v-if="liveUrl3 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
               :rtsp="liveUrl3"
               :open="cameraPlayer3"
+              autoplay webkit-playsinline playsinline
             ></videoPlayer>
-            <video
+            <video 
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
                 id="h5sVideo4"
                 class="h5video_"
@@ -1261,6 +1264,7 @@
               v-if="liveUrl4 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS' "
               :rtsp="liveUrl4"
               :open="cameraPlayer4"
+              autoplay webkit-playsinline playsinline
             ></videoPlayer>
             <video
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
@@ -3144,10 +3148,9 @@
             >
               <el-button
                 slot="append"
-                size="small"
                 icon="icon-gym-Gsearch"
                 @click="syxt_boxShow = !syxt_boxShow"
-                style="transform: translateX(20px)"
+                style="transform: translateX(-20px)"
               ></el-button>
             </el-input>
           </div>
@@ -4932,27 +4935,27 @@ export default {
           if(res.data.length == 0){
             this.videoNoPic2 = true
           }else{
-            this.videoTitle3 = res.data[0].inletName;
-            this.videoTitle4 = res.data[0].outletName;
-            console.log(res,"济南方向")
-            if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
-              getDeviceById(res.data[0].inlet).then((response)=>{
-                console.log(response,"0000000000")
+          this.videoTitle3 = res.data[0].inletName;
+          this.videoTitle4 = res.data[0].outletName;
+          console.log(res,"济南方向")
+          if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+            getDeviceById(res.data[0].inlet).then((response)=>{
+              console.log(response,"0000000000")
                 displayH5sVideoAll(response.data.secureKey,'h5sVideo4');
-              })
-              getDeviceById(res.data[0].outlet).then((response)=>{
+            })
+            getDeviceById(res.data[0].outlet).then((response)=>{
                 displayH5sVideoAll(response.data.secureKey,'h5sVideo5');
-              })
-            }else{
-              videoStreaming(res.data[0].inlet).then((res) => {
-                this.liveUrl1 = res.data.liveUrl;
-                this.cameraPlayer1 = true;
-              });
-              videoStreaming(res.data[0].outlet).then((res) => {
-                this.liveUrl2 = res.data.liveUrl;
-                this.cameraPlayer2 = true;
-              });
-            }
+            })
+          }else{
+            videoStreaming(res.data[0].inlet).then((res) => {
+            this.liveUrl1 = res.data.liveUrl;
+            this.cameraPlayer1 = true;
+          });
+          videoStreaming(res.data[0].outlet).then((res) => {
+            this.liveUrl2 = res.data.liveUrl;
+            this.cameraPlayer2 = true;
+          });
+          }
           }
 
 
@@ -4963,25 +4966,25 @@ export default {
           if(res.data.length == 0){
             this.videoNoPic1 = true
           }else{
-            this.videoTitle1 = res.data[0].inletName;
-            this.videoTitle2 = res.data[0].outletName;
-            if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
-              getDeviceById(res.data[0].inlet).then((response)=>{
+          this.videoTitle1 = res.data[0].inletName;
+          this.videoTitle2 = res.data[0].outletName;
+          if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+            getDeviceById(res.data[0].inlet).then((response)=>{
                 displayH5sVideoAll(response.data.secureKey,'h5sVideo2');
-              })
-              getDeviceById(res.data[0].outlet).then((response)=>{
+            })
+            getDeviceById(res.data[0].outlet).then((response)=>{
                 displayH5sVideoAll(response.data.secureKey,'h5sVideo3');
-              })
-            }else{
-              videoStreaming(res.data[0].inlet).then((res) => {
-                this.liveUrl3 = res.data.liveUrl;
-                this.cameraPlayer3 = true;
-              });
-              videoStreaming(res.data[0].outlet).then((res) => {
-                this.liveUrl4 = res.data.liveUrl;
-                this.cameraPlayer4 = true;
-              });
-            }
+            })
+          }else{
+            videoStreaming(res.data[0].inlet).then((res) => {
+              this.liveUrl3 = res.data.liveUrl;
+              this.cameraPlayer3 = true;
+            });
+            videoStreaming(res.data[0].outlet).then((res) => {
+              this.liveUrl4 = res.data.liveUrl;
+              this.cameraPlayer4 = true;
+            });
+          }
           }
         });
 
@@ -9479,6 +9482,7 @@ export default {
           line-height: 26px;
           letter-spacing: 16px;
           border-radius: 0;
+          font-size: 16px;
         }
       }
     }

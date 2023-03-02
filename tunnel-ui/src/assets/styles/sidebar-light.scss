@@ -551,6 +551,9 @@
           box-shadow:none !important;
           border:none;
         }
+        .el-radio-button {
+          border: solid 0.1px #0067b2 !important;
+        }
       }
     }
     
@@ -1896,6 +1899,10 @@
       color: #e1feff;
       background: linear-gradient(2deg, #00070D, #005AA8) !important;
       border: 1px solid #00c8ff;
+    }
+    .el-button--primary:hover{
+      color: #fff;
+      background: linear-gradient(2deg, #013663, #447bab) !important;
     }
   }
   .zoomClass{

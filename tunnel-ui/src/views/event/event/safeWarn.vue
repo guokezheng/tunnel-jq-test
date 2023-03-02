@@ -2222,12 +2222,13 @@ export default {
     },
     bodyCloseMenus1(e) {
       let self = this;
-
-      if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
-        if (self.zd_boxShow == true){
-          self.zd_boxShow = false;
+      self.$nextTick(()=>{
+        if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
+          if (self.zd_boxShow == true){
+            self.zd_boxShow = false;
+          }
         }
-      }
+      })
     },
     bodyCloseMenus0(e) {
       let self = this;

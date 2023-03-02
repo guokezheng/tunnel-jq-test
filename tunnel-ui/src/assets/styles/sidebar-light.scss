@@ -1738,6 +1738,9 @@
     .el-table{
       background: transparent;
       padding: 0 15px;
+      .el-loading-mask{
+        background: #00152B !important;
+      }
       .el-table__body{
         width: calc(100% - 30px);
       }

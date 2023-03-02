@@ -2236,19 +2236,23 @@ export default {
     },
     bodyCloseMenus0(e) {
       let self = this;
-      if (!this.$refs.main0.contains(e.target) && !this.$refs.cc0.contains(e.target)) {
-        if (self.boxShow == true){
-          self.boxShow = false;
+      self.$nextTick(()=>{
+        if (!this.$refs.main0.contains(e.target) && !this.$refs.cc0.contains(e.target)) {
+          if (self.boxShow == true){
+            self.boxShow = false;
+          }
         }
-      }
+      })
     },
     bodyCloseMenus2(e) {
       let self = this;
+      self.$nextTick(()=>{
       if (!this.$refs.main2.contains(e.target) && !this.$refs.cc2.contains(e.target)) {
         if (self.fault_boxShow == true){
           self.fault_boxShow = false;
         }
       }
+    })
     },
     //翻页时不刷新序号
     indexMethod(index){

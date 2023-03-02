@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="imgUrl"    column="img_url"    />
         <result property="imgWidth"    column="img_width"    />
         <result property="imgHeight"    column="img_height"    />
+        <result property="imgType"    column="img_type"    />
         <result property="remark"    column="remark"    />
         <result property="businessId"    column="business_id"    />
         <result property="createTime"    column="create_time"    />
@@ -130,7 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectImageByBusinessId" resultMap="SdTrafficImageResult">
-        select img_id, img_name, img_url, img_width, img_height, remark, business_id, create_time, create_by, update_time, update_by from sd_traffic_image
+        select img_id, img_name, img_url, img_width, img_height, remark, business_id, img_type, create_time, create_by, update_time, update_by from sd_traffic_image
         where business_id = #{businessId}
         ORDER BY
             img_type DESC

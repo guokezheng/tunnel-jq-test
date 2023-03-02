@@ -69,6 +69,15 @@ export function delTunnels(tunnelId) {
     method: 'delete'
   })
 }
+
+// 导出隧道信息
+export function exportTunnels(query) {
+  return request({
+    url: '/tunnels/exportTunnels',
+    method: 'get',
+    params: query
+  })
+}
 //查询配置数据（测试）
 export function getConfigData(tunnelId) {
   return request({

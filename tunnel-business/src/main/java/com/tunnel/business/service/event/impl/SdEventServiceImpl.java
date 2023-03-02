@@ -151,6 +151,12 @@ public class SdEventServiceImpl implements ISdEventService {
             List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString());
             item.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
             item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
+            for(SdTrafficImage temp : image1){
+                if("0".equals(temp.getImgType())){
+                    item.setEventImgUrl(temp.getImgUrl());
+                    break;
+                }
+            }
         });
         return sdEvents;
     }
@@ -682,7 +688,8 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEvent eventDiscovery = sdEventMapper.getEventDiscovery(sdEvent);
         //查询事件详情-事件发现-图片
         List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
-        sdEvent.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
+        List<SdTrafficImage> images = image1.stream().filter(item -> "0".equals(item.getImgType())).collect(Collectors.toList());
+        sdEvent.setIconUrlList(image1.subList(0,images.size() > 10 ? 10 : images.size()));
         //计算持续时间
         String datePoor = "";
         if("3".equals(sdEventData.getEventState())){

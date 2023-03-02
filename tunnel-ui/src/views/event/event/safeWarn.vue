@@ -455,14 +455,14 @@
           >
             <div class="video">
               <img
-                :src="item.picUrl"
-                v-show="item.picUrl"
+                :src="item.eventImgUrl"
+                v-show="item.eventImgUrl"
                 style="width: 100%"
                 @click="openPicDialog(item)"
               />
               <img
                 src="../../../assets/cloudControl/nullImg.png"
-                v-show="!item.picUrl"
+                v-show="!item.eventImgUrl || item.eventImgUrl == null"
               />
 
               <div>{{ item.simplifyName }}</div>
@@ -692,9 +692,9 @@
               </swiper-slide>
             </swiper>
           </div>
-          <div v-if="eventForm.iconUrlList.length < 1">
+          <div v-if="eventForm.iconUrlList.length < 1" style="width: 100%; height: 87%">
             <el-image
-              style="width: 100px; height: 100px"
+              style="width: 100%; height: 100%"
               :src="noPic"
               :fit="contain">
             </el-image>
@@ -702,7 +702,7 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
+          <!-- <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
             <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
                 v-if="item.liveUrl"
@@ -710,12 +710,25 @@
                 :open="cameraPlayer"
               ></videoPlayer>
             </el-carousel-item>
-          </el-carousel>
-          <el-image
+          </el-carousel> -->
+          <video 
+                id="h5sVideo1"
+                class="h5video_"
+                controls
+                muted
+                loop
+                autoplay
+                webkit-playsinline 
+                playsinline
+                disablePictureInPicture="true"
+                controlslist="nodownload noplaybackrate noremoteplayback"
+                style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
+              ></video>
+          <!-- <el-image
             v-show="videoList.length < 1"
             :src="noDataUrl"
             :fit="contain">
-          </el-image>
+          </el-image> -->
         </div>
       </div>
       <div class="dialogForm">
@@ -1672,6 +1685,8 @@
 <script>
 // import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import $ from "jquery";
+import { displayH5sVideoAll } from "@/api/icyH5stream";
+
 import {
   listEvent,
   getEvent,
@@ -1711,7 +1726,7 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { listType, loadPicture } from "@/api/equipment/type/api";
 import {exportList, listBz} from "@/api/electromechanicalPatrol/taskManage/task";
-import { listDevices, videoStreaming } from "@/api/equipment/eqlist/api";
+import { listDevices, videoStreaming ,getDeviceById} from "@/api/equipment/eqlist/api";
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 export default {
   name: "Event",
@@ -2215,7 +2230,6 @@ export default {
   },
   methods: {
     changeCheckBox(e){
-      // console.log(e,"==============")
       console.log(this.checkBoxEventState,"queryParams.eventState")
     },
     changeInput(){
@@ -2223,32 +2237,33 @@ export default {
     },
     bodyCloseMenus1(e) {
       let self = this;
-      // console.log(this.$refs.main1,"---------------------")
-      // console.log(this.$refs.main1.contains(e.target),"+++++++++++++")
-      // console.log(this.$refs.cc1,"---------------------")
-      // console.log(this.$refs.cc1.contains(e.target),"+++++++++++++")
-
-      if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
-        if (self.zd_boxShow == true){
-          self.zd_boxShow = false;
+      self.$nextTick(()=>{
+        if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
+          if (self.zd_boxShow == true){
+            self.zd_boxShow = false;
+          }
         }
-      }
+      })
     },
     bodyCloseMenus0(e) {
       let self = this;
-      if (!this.$refs.main0.contains(e.target) && !this.$refs.cc0.contains(e.target)) {
-        if (self.boxShow == true){
-          self.boxShow = false;
+      self.$nextTick(()=>{
+        if (!this.$refs.main0.contains(e.target) && !this.$refs.cc0.contains(e.target)) {
+          if (self.boxShow == true){
+            self.boxShow = false;
+          }
         }
-      }
+      })
     },
     bodyCloseMenus2(e) {
       let self = this;
+      self.$nextTick(()=>{
       if (!this.$refs.main2.contains(e.target) && !this.$refs.cc2.contains(e.target)) {
         if (self.fault_boxShow == true){
           self.fault_boxShow = false;
         }
       }
+    })
     },
     //翻页时不刷新序号
     indexMethod(index){
@@ -2271,7 +2286,6 @@ export default {
       }
       getReservePlanData(data).then(res=>{
         this.ReservePlanList = res.data;
-        console.log(this.ReservePlanList);
         if(this.ReservePlanList.length > 0){
           this.eventForm.currencyId = this.ReservePlanList[0].id
         }
@@ -2280,9 +2294,7 @@ export default {
     downFile(){
       const data = { id : this.eventDiscovery.id};
       detailExport(data).then(res=>{
-        console.log(res);
         let blob = new Blob([res], {type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
-        console.log(blob);
         const createFile = document.createElement("a");
         createFile.href = URL.createObjectURL(blob);
         createFile.download = `事件详情报告.docx`
@@ -2329,7 +2341,6 @@ export default {
     },
     //打开详情弹窗
     detailsOpen(item){
-      console.log(item,"itemitemitem");
       // this.eventFind = item;
       let data = {id:item.id};
       getEventDetail(data).then(res=>{
@@ -2376,7 +2387,6 @@ export default {
       let data = { prevControlType: 0 };
       listEventType(data).then((response) => {
         this.planTypeData = response.rows;
-        console.log(this.planTypeData,'事件类型事件类型事件类型事件类型事件类型');
       });
     },
     // 打开图片变视频弹窗
@@ -2542,9 +2552,7 @@ export default {
         this.details = false;
         this.$modal.msgSuccess("修改成功");
         this.getList();
-        console.log(currencyId,"this.eventForm.eventStatethis.eventForm.eventState");
         if(currencyId){
-          console.log('asdasdasdasdasdas');
           this.$router.push({
             path: "/emergency/administration/dispatch",
             query: { id: this.eventForm.id },
@@ -2579,7 +2587,6 @@ export default {
       this.processType = false;
     },
     openProcess(type, id) {
-      console.log(type,id, "00000000000000");
       if (type && id) {
         this.processType = true;
         this.processDialog = true;
@@ -2588,7 +2595,6 @@ export default {
           eventState: 0,
         };
         updateEvent(param).then((res) => {
-          console.log(res, "处理中");
           this.$modal.msgSuccess("正在处理");
           this.evtHandle();
         });
@@ -2616,7 +2622,6 @@ export default {
       };
       getSafetyHandle(param).then((res) => {
         let list = this.handleTree(res.data, "flowId", "flowPid");
-        console.log(list, "999999999999999999");
         //  for(let item of list){
         //   console.log(item.flowContent.toString().length,"555555555555555")
         //  }
@@ -2649,9 +2654,7 @@ export default {
       this.details = true;
       this.eventForm = item;
       this.getReservePlanData();
-      console.log(this.eventForm.iconUrlList, "iconUrlList");
       this.$nextTick(() => {
-        console.log(this.$refs.swiperTop,'this.$refs.swiperTopthis.$refs.swiperTopthis.$refs.swiperTop');
         const swiperTop = this.$refs.swiperTop.$el.swiper;
         const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
         swiperTop.controller.control = swiperThumbs;
@@ -2679,7 +2682,6 @@ export default {
         );
       }
       this.title = item.eventTitle;
-      console.log(item,"itemitemitemitem");
       // 获取实时视频
       this.getVideoUrl(item);
       // 获取实时视频截图
@@ -2696,7 +2698,6 @@ export default {
         this.urls = response.data;
         this.arrowRight2 = false;
         this.urlsList = this.urls;
-        console.log(response.data,this.urlsList);
       });
     },
     getImgUrl(item) {
@@ -2722,28 +2723,36 @@ export default {
     },
     getVideoUrl(item) {
       this.cameraPlayer = false;
-      this.videoList = [];
-      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
-        (res) => {
-          if (res.data) {
-            // let videoId = res.data[0].eqId
-            let videoId = "";
-            for (let item of res.data) {
-              videoId = item.eqId;
-              videoStreaming(videoId).then((response) => {
-                if (response.code == 200) {
-                  console.log(response.data,"视频视频视频视频视频");
-                  // return false;
-                  this.videoList.push(response.data);
-                  this.cameraPlayer = true;
-                }
-              });
-            }
-            console.log(this.videoList, " this.videoList");
-          }
-          console.log(this.videoList, "this.videoList");
-        }
-      );
+      console.log(item,"itemitem")
+      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
+        getDeviceById(res.data[0].eqId).then((response)=>{
+          console.log(response,"00000000000000000")
+          displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
+        })
+    })
+      
+      // this.videoList = [];
+      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
+      //   (res) => {
+      //     if (res.data) {
+      //       // let videoId = res.data[0].eqId
+      //       let videoId = "";
+      //       for (let item of res.data) {
+      //         videoId = item.eqId;
+      //         videoStreaming(videoId).then((response) => {
+      //           if (response.code == 200) {
+      //             console.log(response.data,"视频视频视频视频视频");
+      //             // return false;
+      //             this.videoList.push(response.data);
+      //             this.cameraPlayer = true;
+      //           }
+      //         });
+      //       }
+      //       console.log(this.videoList, " this.videoList");
+      //     }
+      //     console.log(this.videoList, "this.videoList");
+      //   }
+      // );
     },
     turnLeft() {
       this.arrowRight = true;
@@ -2825,7 +2834,6 @@ export default {
     },
     eqStatusGet(e) {
       getEquipmentInfo({ eqId: e }).then((response) => {
-        console.log(response,"修改设备名称")
         this.form.faultLocation = "";
         this.form.eqRunStatus = "";
         this.form.eqStatus = "";
@@ -2936,7 +2944,6 @@ export default {
        // this.queryParams.pageSize = 10;
         listList(this.queryParams1).then((response) => {
           this.eventLists = response.rows;
-          console.log(response.rows, "response.rowsresponse.rowsresponse.rows列表内容");
           this.eventLists.forEach((item) => {
             if (item.faultLocation == "null") {
               item.faultLocation = "";
@@ -2969,7 +2976,6 @@ export default {
         listEvent(this.queryParams).then((response) => {
           for (let item of response.rows) {
             if (item.iconUrlList) {
-              console.log(item.iconUrlList.length,'asdasdasdasdas')
               for (let i = 0; i < item.iconUrlList.length; i++) {
                 // console.log(item.iconUrlList[1].imgUrl,"item.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrl")
                 if(item.iconUrlList.length == 1){
@@ -2981,8 +2987,6 @@ export default {
             }
           }
           this.eventList = response.rows;
-          
-          console.log(this.eventList,'this.eventListthis.eventListthis.eventListthis.eventList');
           this.total = response.total;
           this.loading = false;
         });
@@ -3006,7 +3010,6 @@ export default {
     getTunnel() {
       if (!this.queryParams.deptId) {
         listTunnels().then((response) => {
-          console.log(response.rows,"所属隧道")
           this.tunnelList = response.rows;
         });
       }
@@ -3021,7 +3024,6 @@ export default {
         isUsable: "1",
       };
       listEventType(prevControlType).then((response) => {
-        // console.log(response.rows,'事件类型事件类型事件类型事件类型事件类型')
         this.eventTypeData = [...response.rows];
         this.eventTypeDataList = response.rows;
         this.eventTypeDataList.unshift({ simplifyName: "全部" });
@@ -3144,12 +3146,12 @@ export default {
         if(that.news.length>0){
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("impression")){
-        that.impressionOptions.forEach((opt) => {
-                if (opt.dictValue == that.news[i].impression) {
-                  that.news[i].impression = opt.dictLabel;
-          }
-        });
-          }
+              that.impressionOptions.forEach((opt) => {
+                      if (opt.dictValue == that.news[i].impression) {
+                        that.news[i].impression = opt.dictLabel;
+                }
+              });
+            }
           }
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("network")){
@@ -3157,8 +3159,8 @@ export default {
                 if (opt.dictValue == that.news[i].network) {
                   that.news[i].network = opt.dictLabel;
                 }
-        });
-          }
+              });
+            }
           }
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("power")){
@@ -3166,25 +3168,11 @@ export default {
                 if (opt.dictValue == that.news[i].power) {
                   that.news[i].power = opt.dictLabel;
                 }
-        });
+              });
             }
-            }
+          }
         }
-
-
-        //this.news.forEach((taskitem) => {
-          //this.bzData.forEach((opt) => {
-            //if (taskitem.bzId == opt.deptId) {
-             // taskitem.bzId = opt.deptName;
-           // } else {
-            //  taskitem.bzId = "";
-            //}
-            //if (taskitem.bzId == null || taskitem.bzId == "null") {
-             // taskitem.bzId = "";
-           // }
-         // });
-        //});
-          });
+      });
     },
     // 关闭弹窗
     close() {
@@ -3393,14 +3381,6 @@ export default {
       this.fileData.append("falltRemoveStatue", "1");
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 1);
-      /*      if(this.fileList.length <= 0) {
-                this.fileData.append("file", -1);
-              }else{
-                console.log("================"+this.fileList)
-                return
-              }*/
-
-
       if (this.form.tunnelId == "" ||
         this.form.tunnelId == -1 ||
         this.form.tunnelId == null) {
@@ -3787,7 +3767,7 @@ export default {
 
 .videoDialogBox {
   width: 100%;
-  height: 400px;
+  height: 370px;
   display: flex;
   justify-content: space-between;
   align-item:center;

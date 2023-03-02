@@ -70,6 +70,15 @@ public class SdDeviceDWData
     private String createTime;
 
 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getCreateTime() {
         return this.createTime;

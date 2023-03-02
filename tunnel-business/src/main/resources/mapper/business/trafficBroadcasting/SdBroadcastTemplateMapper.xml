@@ -38,6 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remake != null  and remake != ''"> and remake = #{remake}</if>
             <if test="remake1 != null  and remake1 != ''"> and remake1 = #{remake1}</if>
             <if test="remake2 != null  and remake2 != ''"> and remake2 = #{remake2}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(id,#{ids}) > 0</if>
         </where>
     </select>
     

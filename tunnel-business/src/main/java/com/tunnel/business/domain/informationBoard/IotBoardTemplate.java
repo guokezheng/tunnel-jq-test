@@ -1,7 +1,9 @@
 package com.tunnel.business.domain.informationBoard;
 
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -25,15 +27,16 @@ public class IotBoardTemplate extends BaseEntity
     private String screenSize;
 
     /** 入屏方式 */
-    @Excel(name = "入屏方式")
     private String inScreenMode;
+    @Excel(name = "入屏方式")
+    private String screenMode;
 
     /** 滚动速度/毫秒 */
-    @Excel(name = "滚动速度/毫秒")
+   /* @Excel(name = "滚动速度/毫秒")*/
     private Long rollSpeed;
 
     /** 停留时间/秒 */
-    @Excel(name = "停留时间/秒")
+    @Excel(name = "停留时间/毫秒")
     private Long stopTime;
 
     /** 适用类型 */
@@ -41,22 +44,57 @@ public class IotBoardTemplate extends BaseEntity
     private String applyType;
 
     /** 是否为通用模板 */
-    @Excel(name = "是否为通用模板")
+   /* @Excel(name = "是否为通用模板")*/
     private Integer isCurrency;
 
     /** 模板类型 */
-    @Excel(name = "模板类型")
+    /*@Excel(name = "模板类型")*/
     private Integer templateType;
 
     /** 情报板类型 */
-    @Excel(name = "情报板类型")
+    /*@Excel(name = "情报板类型")*/
     private String vmsType;
 
     private String category;
 
     private String dictLable;
+    @Excel(name = "备注")
+    private String remark;
 
+
+    private String ids;
+
+    @Excels({
+            @Excel(name = "模板内容", targetAttr = "content", type = Excel.Type.EXPORT),
+    })
+    @ApiModelProperty("tunnel对象")
     private IotBoardTemplateContent tcontent;
+
+    public String getScreenMode() {
+        return this.screenMode;
+    }
+
+    public void setScreenMode( String screenMode) {
+        this.screenMode = screenMode;
+    }
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
+    @Override
+    public String getRemark() {
+        return this.remark;
+    }
+
+    @Override
+    public void setRemark( String remark) {
+        this.remark = remark;
+    }
 
     private List<IotBoardTemplateContent> tcontents;
 

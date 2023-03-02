@@ -90,7 +90,33 @@
       background-repeat: repeat-x;
     }
     #app {
-      
+      // 工作台底部切换视频 图表按钮
+    .footer{
+      .footChangeButton{
+        .el-radio-button__inner{
+          color:#0a88bd ;
+          border:solid 0.1px rgba(0, 172, 237, 0.8) !important;
+        }
+        .is-active .el-radio-button__inner{
+          border:none !important;
+          background: linear-gradient(90deg, rgba(0, 172, 237, 0.8), rgba(0, 121, 219, 0.8)) !important;
+        }
+        .is-active{
+          border:none !important;
+          .el-radio-button__inner{
+            color:#fff !important;
+
+          }
+        }
+        .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+          box-shadow:none !important;
+          border:none;
+        }
+        .el-radio-button {
+          border: solid 0.1px rgba(0, 172, 237, 0.8) !important;
+        }
+      }
+    }
       .searchBox,.searchBoxTab{
         background-color: #fff;
         border: solid 1px #DCDFE6;
@@ -635,15 +661,23 @@
         border: 1px solid #0a88bd;
       }
     }
+    .flex-row{
+      .el-button:hover{
+        background: #0a88bd !important;
+        color: #fff;
+      }
+    }
     .zoomClass{
       .input-with-select{
         .el-input__inner{
           padding: 15px;
           width: 150px;
+          border-right: none !important;
+
         }
         .el-input-group__append{
-          background-color: #0a88bd;
-          border: 1px solid #0a88bd;
+          background-color: #0a88bd !important;
+          border: 1px solid #0a88bd !important;
           padding: 0;
           width: 30px;
           .el-button{
@@ -886,7 +920,7 @@
       }
       /* 按钮*/
       .el-button {
-        background-color: #00c8ff;
+        background-color: #00c8ff !important;
         border: solid 1px #00afe0;
         border-radius: 20px !important;
   
@@ -1022,6 +1056,16 @@
           border-bottom: solid 1px  #0a88bd !important;
   
         }
+      }
+      .syxt_searchBox{
+        background: #fff !important;
+        border:solid 1px #acdeff;
+        .el-button{
+          padding:0 !important;
+        }
+      }
+      .el-button{
+        border: none !important;
       }
      }
     .eventDiglog {

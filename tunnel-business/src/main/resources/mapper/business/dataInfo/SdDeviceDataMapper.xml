@@ -354,6 +354,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="searchValue != null and searchValue != ''">and b.eq_type=#{searchValue}</if>
         <if test="tunnelId != null and tunnelId != ''">and b.eq_tunnel_id=#{tunnelId}</if>
         <if test="pile != null and pile != ''">AND CONCAT(b.pile, b.eq_name) LIKE CONCAT('%',#{pile},'%')</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(b.eq_id,#{ids}) > 0</if>
         <if test="dept != null and dept != ''">
             AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
         </if>
@@ -376,6 +377,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             left join sd_device_type_item g on g.id = a.item_id
             where b.eq_type = 19 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
             <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time, '%Y-%m-%d %H:%i' ),#{ids}) > 0</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
 
@@ -396,6 +398,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_device_type_item g on g.id = a.item_id
         where b.eq_type = 17 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i'),#{ids}) > 0</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
     </select>
@@ -412,6 +415,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_device_type_item g on g.id = a.item_id
         where b.eq_type = 18 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i'),#{ids}) > 0</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
     </select>
@@ -427,6 +431,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_device_type_item g on g.id = a.item_id
         where b.eq_type = 5 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
         <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i'),#{ids}) > 0</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
     </select>

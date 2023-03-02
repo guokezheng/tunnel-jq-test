@@ -1160,9 +1160,8 @@
                 class="h5video_"
                 controls
                 muted
-                autoplay
+                loop
                 disablePictureInPicture="true"
-                controlslist="nodownload noplaybackrate noremoteplayback"
                 style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
               ></video>
               <div class="noPicBox" v-show="videoNoPic1">
@@ -1196,7 +1195,10 @@
                 class="h5video_"
                 controls
                 muted
+                loop
                 autoplay
+                webkit-playsinline 
+                playsinline
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
                 style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
@@ -1226,13 +1228,16 @@
               :rtsp="liveUrl3"
               :open="cameraPlayer3"
             ></videoPlayer>
-            <video
+            <video 
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
                 id="h5sVideo4"
                 class="h5video_"
                 controls
                 muted
+                loop
                 autoplay
+                webkit-playsinline 
+                playsinline
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
                 style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
@@ -1266,9 +1271,12 @@
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
                 id="h5sVideo5"
                 class="h5video_"
+                loop
                 controls
                 muted
                 autoplay
+                webkit-playsinline 
+                playsinline
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
                 style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
@@ -3135,7 +3143,7 @@
           <el-button size="small" @click="resetQuery">刷新</el-button>
         </el-col>
         <el-col :span="10" :offset="10">
-          <div class="grid-content bg-purple" ref="main">
+          <div class="grid-content bg-purple" ref="main2">
             <el-input
               v-model="queryParams.strategyName"
               placeholder="请输入策略名称"
@@ -3144,16 +3152,15 @@
             >
               <el-button
                 slot="append"
-                size="small"
                 icon="icon-gym-Gsearch"
                 @click="syxt_boxShow = !syxt_boxShow"
-                style="transform: translateX(20px)"
+                style="transform: translateX(-20px)"
               ></el-button>
             </el-input>
           </div>
         </el-col>
       </el-row>
-      <div class="syxt_searchBox" v-show="syxt_boxShow" style="top: 40%">
+      <div class="syxt_searchBox" v-show="syxt_boxShow" style="top: 40%" ref="cc2">
         <el-form
           ref="operationParam"
           :inline="true"
@@ -3208,7 +3215,7 @@
           <el-button size="small" @click="resetQuery">刷新</el-button>
         </el-col>
         <el-col :span="10" :offset="10">
-          <div class="grid-content bg-purple" ref="main1">
+          <div class="grid-content bg-purple" ref="main3">
             <el-input
               v-model="queryParams.strategyName"
               placeholder="请输入策略名称"
@@ -3225,7 +3232,7 @@
           </div>
         </el-col>
       </el-row>
-      <div class="syxt_searchBox" v-show="sycz_boxShow" style="top: 35%">
+      <div class="syxt_searchBox" v-show="sycz_boxShow" style="top: 35%" ref="cc3">
         <el-form
           ref="operationParam"
           :inline="true"
@@ -4913,6 +4920,9 @@ export default {
     // this.srollAuto()
     document.addEventListener("click", this.bodyCloseMenus);
     document.addEventListener("click", this.bodyCloseMenus1);
+    document.addEventListener("click", this.bodyCloseMenus2);
+    document.addEventListener("click", this.bodyCloseMenus3);
+
   },
 
   methods: {
@@ -4932,27 +4942,26 @@ export default {
           if(res.data.length == 0){
             this.videoNoPic2 = true
           }else{
-            this.videoTitle3 = res.data[0].inletName;
-            this.videoTitle4 = res.data[0].outletName;
-            console.log(res,"济南方向")
-            if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
-              getDeviceById(res.data[0].inlet).then((response)=>{
-                console.log(response,"0000000000")
-                displayH5sVideoAll(response.data.secureKey,'h5sVideo4');
-              })
-              getDeviceById(res.data[0].outlet).then((response)=>{
-                displayH5sVideoAll(response.data.secureKey,'h5sVideo5');
-              })
-            }else{
-              videoStreaming(res.data[0].inlet).then((res) => {
-                this.liveUrl1 = res.data.liveUrl;
-                this.cameraPlayer1 = true;
-              });
-              videoStreaming(res.data[0].outlet).then((res) => {
-                this.liveUrl2 = res.data.liveUrl;
-                this.cameraPlayer2 = true;
-              });
-            }
+          this.videoTitle3 = res.data[0].inletName;
+          this.videoTitle4 = res.data[0].outletName;
+          console.log(res,"济南方向")
+          if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+            getDeviceById(res.data[0].inlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo4',3);
+            })
+            getDeviceById(res.data[0].outlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo5',4);
+            })
+          }else{
+            videoStreaming(res.data[0].inlet).then((res) => {
+            this.liveUrl1 = res.data.liveUrl;
+            this.cameraPlayer1 = true;
+          });
+          videoStreaming(res.data[0].outlet).then((res) => {
+            this.liveUrl2 = res.data.liveUrl;
+            this.cameraPlayer2 = true;
+          });
+          }
           }
 
 
@@ -4963,25 +4972,26 @@ export default {
           if(res.data.length == 0){
             this.videoNoPic1 = true
           }else{
-            this.videoTitle1 = res.data[0].inletName;
-            this.videoTitle2 = res.data[0].outletName;
-            if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
-              getDeviceById(res.data[0].inlet).then((response)=>{
-                displayH5sVideoAll(response.data.secureKey,'h5sVideo2');
-              })
-              getDeviceById(res.data[0].outlet).then((response)=>{
-                displayH5sVideoAll(response.data.secureKey,'h5sVideo3');
-              })
-            }else{
-              videoStreaming(res.data[0].inlet).then((res) => {
-                this.liveUrl3 = res.data.liveUrl;
-                this.cameraPlayer3 = true;
-              });
-              videoStreaming(res.data[0].outlet).then((res) => {
-                this.liveUrl4 = res.data.liveUrl;
-                this.cameraPlayer4 = true;
-              });
-            }
+          this.videoTitle1 = res.data[0].inletName;
+          this.videoTitle2 = res.data[0].outletName;
+          if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+            getDeviceById(res.data[0].inlet).then((response)=>{
+              console.log(response,"0000000000000")
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo2',1);
+            })
+            getDeviceById(res.data[0].outlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo3',2);
+            })
+          }else{
+            videoStreaming(res.data[0].inlet).then((res) => {
+              this.liveUrl3 = res.data.liveUrl;
+              this.cameraPlayer3 = true;
+            });
+            videoStreaming(res.data[0].outlet).then((res) => {
+              this.liveUrl4 = res.data.liveUrl;
+              this.cameraPlayer4 = true;
+            });
+          }
           }
         });
 
@@ -4990,37 +5000,68 @@ export default {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+      document.removeEventListener("click", this.bodyCloseMenus1);
+      document.removeEventListener("click", this.bodyCloseMenus2);
+      document.removeEventListener("click", this.bodyCloseMenus3);
+
+    },
     bodyCloseMenus(e) {
       let self = this;
-      // if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-      //   if (self.syxt_boxShow == true){
-      //     self.syxt_boxShow = false;
-      //   }
-      // }
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.syxt_boxShow == true) {
-          self.syxt_boxShow = false;
+      self.$nextTick(()=>{
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.syxt_boxShow == true) {
+            self.syxt_boxShow = false;
+          }
         }
-      }
+      })
+      
     },
     bodyCloseMenus1(e) {
       let self = this;
-      // if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
-      //   if (self.sycz_boxShow == true){
-      //     self.sycz_boxShow = false;
-      //   }
-      // }
-      if (
-        !this.$refs.main1.contains(e.target) &&
-        !this.$refs.cc1.contains(e.target)
-      ) {
-        if (self.sycz_boxShow == true) {
-          self.sycz_boxShow = false;
+      self.$nextTick(()=>{
+        if (
+          !this.$refs.main1.contains(e.target) &&
+          !this.$refs.cc1.contains(e.target)
+        ) {
+          if (self.sycz_boxShow == true) {
+            self.sycz_boxShow = false;
+          }
         }
-      }
+      })
+      
+    },
+    bodyCloseMenus2(e) {
+      let self = this;
+      self.$nextTick(()=>{
+        if (
+          !this.$refs.main2.contains(e.target) &&
+          !this.$refs.cc2.contains(e.target)
+        ) {
+          if (self.syxt_boxShow == true) {
+            self.syxt_boxShow = false;
+          }
+        }
+      })
+      
+    },
+    bodyCloseMenus3(e) {
+      let self = this;
+      self.$nextTick(()=>{
+        if (
+          !this.$refs.main3.contains(e.target) &&
+          !this.$refs.cc3.contains(e.target)
+        ) {
+          if (self.sycz_boxShow == true) {
+            self.sycz_boxShow = false;
+          }
+        }
+      })
+      
     },
     otherClose(e) {
       if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
@@ -5279,7 +5320,6 @@ export default {
         state: this.batchManageForm.state,
       };
       batchControlDevice(param).then((res) => {
-        console.log(res, "000000000000000");
         this.$modal.msgSuccess("控制成功");
         this.batchManageDialog = false;
         this.closeBatchManageDialog();
@@ -9479,6 +9519,7 @@ export default {
           line-height: 26px;
           letter-spacing: 16px;
           border-radius: 0;
+          font-size: 16px;
         }
       }
     }

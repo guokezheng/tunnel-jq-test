@@ -91,7 +91,7 @@
         ref="tables"
         v-loading="loading"
         :data="listTab"
-        @selection-change="handleSelectionChange"
+        @selection-change="handleSelectionChangeTab"
         class="allTable"
         height="58vh"
       >
@@ -187,7 +187,7 @@
           ref="tables"
           v-loading="loading"
           :data="list"
-          @selection-change="handleSelectionChange"
+          @selection-change="handleSelectionChange1"
           v-show="searchValue == '1'"
           class="allTable"
           height="58vh"
@@ -208,7 +208,7 @@
           v-loading="loading"
           :data="list1"
           class="allTable"
-          @selection-change="handleSelectionChange"
+          @selection-change="handleSelectionChange2"
           v-show="searchValue == '2'"
           height="58vh"
         >
@@ -238,7 +238,7 @@
           ref="tables"
           v-loading="loading"
           :data="list2"
-          @selection-change="handleSelectionChange"
+          @selection-change="handleSelectionChange3"
           v-show="searchValue == '3'"
           class="allTable"
           height="58vh"
@@ -258,7 +258,7 @@
           ref="tables"
           v-loading="loading"
           :data="list3"
-          @selection-change="handleSelectionChange"
+          @selection-change="handleSelectionChange4"
           v-show="searchValue == '4'"
           class="allTable"
           height="58vh"
@@ -388,6 +388,7 @@ export default {
         tunnelId:null,
         pile: null,
         searchValue:null,
+        ids:"",
       },
       // 查询参数  covi
       queryParams: {
@@ -396,6 +397,7 @@ export default {
         deviceId: null,
         eqType:null,
         searchValue:null,
+        ids:"",
       },
 
       // 查询参数  风速风向
@@ -406,6 +408,7 @@ export default {
         deptId: null,
         pile: null,
         deviceId: null,
+        ids:"",
       },
       // 查询参数  洞内
       queryParams2: {
@@ -415,6 +418,7 @@ export default {
         deptId: null,
         pile: null,
         deviceId: null,
+        ids:"",
       },
       // 查询参数 洞外
       queryParams3: {
@@ -424,9 +428,11 @@ export default {
         deptId: null,
         pile: null,
         deviceId: null,
+        ids:"",
       },
       querysParams: {
         id: null,
+        ids:"",
       },
       selectedValue: [],
       echartShow: false,
@@ -501,6 +507,7 @@ export default {
 
     /** 数据报表Tab导出按钮操作 */
     handleExportTab() {
+      this.querysParamsTab.ids = this.ids.join();
       const queryParams = this.querysParamsTab;
       console.log("queryParams=========" + queryParams);
       this.$modal
@@ -522,6 +529,7 @@ export default {
     handleExportRecord() {
       this.querysParams.searchValue = this.searchValue;
       this.querysParams.deviceId = this.deviceId;
+      this.querysParams.ids = this.ids.join();
       const queryParams = this.querysParams;
       let confirmInfo;
       if(this.searchValue=="1"){//covi
@@ -928,8 +936,31 @@ export default {
 
     },
     /** 多选框选中数据 */
-    handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.infoId);
+    handleSelectionChangeTab(selection) {
+      this.ids = selection.map((item) => item.eqId);
+      this.multiple = !selection.length;
+    },
+
+    /** 多选框选中数据 */
+    handleSelectionChange1(selection) {
+      this.ids = selection.map((item) => item.createTime);
+      this.multiple = !selection.length;
+    },
+
+    /** 多选框选中数据 */
+    handleSelectionChange2(selection) {
+      this.ids = selection.map((item) => item.createTime);
+      this.multiple = !selection.length;
+    },
+
+    /** 多选框选中数据 */
+    handleSelectionChange3(selection) {
+      this.ids = selection.map((item) => item.createTime);
+      this.multiple = !selection.length;
+    },
+    /** 多选框选中数据 */
+    handleSelectionChange4(selection) {
+      this.ids = selection.map((item) => item.createTime);
       this.multiple = !selection.length;
     },
   },

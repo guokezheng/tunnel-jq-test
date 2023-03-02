@@ -5,7 +5,7 @@
     <div >
       <el-row class="topFormRow" :gutter="20">
       <el-col :span="6">
-        <el-button size="small" @click="resetQuery" type="primary" plain
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -26,7 +26,7 @@
         </div>
       </el-col>
     </el-row>
-      <div class="searchBox" v-show="cl_boxShow" >
+      <div class="searchBox" v-show="cl_boxShow"  >
       <el-form
         ref="queryForm"
         :inline="true"

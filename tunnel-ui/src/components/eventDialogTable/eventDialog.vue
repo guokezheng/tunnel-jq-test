@@ -55,7 +55,7 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1 && videoList[0] != null">
+          <!-- <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1 && videoList[0] != null">
             <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
                 v-if="item.liveUrl != null && item.liveUrl != ''"
@@ -68,7 +68,20 @@
             v-if="videoList.length < 1 || videoList[0] == null"
             :src="noDataUrl"
             :fit="contain">
-          </el-image>
+          </el-image> -->
+          <video 
+            id="h5sVideo2"
+            class="h5video_"
+            controls
+            muted
+            loop
+            autoplay
+            webkit-playsinline 
+            playsinline
+            disablePictureInPicture="true"
+            controlslist="nodownload noplaybackrate noremoteplayback"
+            style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
+          ></video>
         </div>
       </div>
       <div class="dialogForm">
@@ -393,6 +406,8 @@
 <script>
 import $ from "jquery";
 // import { mapState } from 'vuex';
+import { displayH5sVideoAll } from "@/api/icyH5stream";
+
 import bus from "@/utils/bus";
 import { loadPicture } from "@/api/equipment/type/api.js";
 import {
@@ -411,7 +426,7 @@ import {
   getEvent,
   getReservePlanData, } from "@/api/event/event";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import { listDevices, videoStreaming } from "@/api/equipment/eqlist/api";
+import { listDevices, videoStreaming,getDeviceById } from "@/api/equipment/eqlist/api";
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 export default {
   name: "eventDialog",
@@ -626,14 +641,12 @@ export default {
     // 事件来源
     this.getDicts("sd_event_source").then((data) => {
       this.fromList = data.data;
-      console.log(this.fromList,"this.fromListthis.fromListthis.fromList");
     });
     this.getDicts("sd_direction").then((response) => {
       this.directionList = response.data;
     });
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
-      console.log(this.eventGradeList,"this.eventGradeListthis.eventGradeListthis.eventGradeList");
     });
   },
   beforeCreate() {
@@ -649,7 +662,6 @@ export default {
           id: id,
         };
         getEvent(id).then(res=>{
-          console.log(res,"事件详情事件详情事件详情事件详情");
           // 获取事件类型
           // 交通事件 0
           // 主动安全 1
@@ -678,7 +690,6 @@ export default {
     getTunnel() {
       // if (!this.queryParams.deptId) {
         listTunnels().then((response) => {
-          console.log(response.rows,"所属隧道")
           this.tunnelList = response.rows;
         });
       // }
@@ -741,7 +752,6 @@ export default {
       });
     },
     openProcess(type, id) {
-      console.log(type,id, "00000000000000");
       if (type && id) {
         this.processType = true;
         this.processDialog = true;
@@ -750,7 +760,6 @@ export default {
           eventState: 0,
         };
         updateEvent(param).then((res) => {
-          console.log(res, "处理中");
           this.$modal.msgSuccess("正在处理");
           this.evtHandle();
         });
@@ -806,11 +815,9 @@ export default {
       this.tunnelId = item.tunnelId;
       this.direction = item.direction;
       this.details = true;
-      this.eventForm = item;
-      console.log(this.eventForm,"this.eventFormthis.eventFormthis.eventForm");
+      this.eventForm = item;      console.log(this.eventForm,"this.eventFormthis.eventFormthis.eventForm");
       this.getReservePlanData();
       this.$nextTick(() => {
-        console.log(this.$refs.swiperTop,'this.$refs.swiperTopthis.$refs.swiperTopthis.$refs.swiperTop');
         const swiperTop = this.$refs.swiperTop.$el.swiper;
         const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
         swiperTop.controller.control = swiperThumbs;
@@ -869,7 +876,6 @@ export default {
       })
     },
     getImgUrls(item){
-       console.log(item,'itemitemitemitemitem');
       this.urlsList = [];
       this.urlsAll = [];
       const param = {
@@ -884,26 +890,36 @@ export default {
     },
     getVideoUrl(item) {
       this.cameraPlayer = false;
-      this.videoList = [];
-      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
-        (res) => {
-          if (res.data) {
-            // let videoId = res.data[0].eqId
-            let videoId = "";
-            for (let item of res.data) {
-              videoId = item.eqId;
-              videoStreaming(videoId).then((response) => {
-                if (response.code == 200) {
-                  this.videoList.push(response.data);
-                  this.cameraPlayer = true;
-                }
-              });
-            }
-            console.log(this.videoList, " this.videoList");
-          }
-          console.log(this.videoList, "this.videoList");
-        }
-      );
+      console.log(item,"itemitem")
+      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
+        getDeviceById(res.data[0].eqId).then((response)=>{
+          console.log(response,"00000000000000000")
+          displayH5sVideoAll(response.data.secureKey,'h5sVideo2',2);
+        })
+    })
+      
+      // this.videoList = [];
+      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
+      //   (res) => {
+      //     if (res.data) {
+      //       // let videoId = res.data[0].eqId
+      //       let videoId = "";
+      //       for (let item of res.data) {
+      //         videoId = item.eqId;
+      //         videoStreaming(videoId).then((response) => {
+      //           if (response.code == 200) {
+      //             console.log(response.data,"视频视频视频视频视频");
+      //             // return false;
+      //             this.videoList.push(response.data);
+      //             this.cameraPlayer = true;
+      //           }
+      //         });
+      //       }
+      //       console.log(this.videoList, " this.videoList");
+      //     }
+      //     console.log(this.videoList, "this.videoList");
+      //   }
+      // );
     },
     getUrl(id) {
       const param3 = {
@@ -913,11 +929,9 @@ export default {
         id: id,
       };
       image(param3).then((response) => {
-        console.log(response.data, "获取图片");
         this.urls = response.data;
       });
       video(param4).then((response) => {
-        console.log(response.data, "获取视频");
         if(response.data.videoUrl){
           this.videoUrl = response.data.videoUrl;
         }

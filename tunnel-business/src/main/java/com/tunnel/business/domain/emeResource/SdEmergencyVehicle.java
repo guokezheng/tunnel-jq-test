@@ -23,6 +23,7 @@ public class SdEmergencyVehicle extends BaseEntity
     private String orgId;
 
     //机构名
+    @Excel(name = "机构")
     private String orgName;
 
     public static long getSerialVersionUID() {
@@ -61,7 +62,7 @@ public class SdEmergencyVehicle extends BaseEntity
     private String vPlace;
 
     /** 使用状态(取字典值) */
-    @Excel(name = "使用状态(取字典值)")
+    @Excel(name = "使用状态")
     private String useStatus;
 
     /** 车载终端安装 */
@@ -75,7 +76,18 @@ public class SdEmergencyVehicle extends BaseEntity
     /**
      * 车辆运行状态
      */
+    @Excel(name = "运行状态")
     private String accState;
+    @Excel(name = "运行状态")
+    private String yxzt;
+
+    public String getYxzt() {
+        return this.yxzt;
+    }
+
+    public void setYxzt(final String yxzt) {
+        this.yxzt = yxzt;
+    }
 
     /**
      * 资产归属
@@ -106,6 +118,16 @@ public class SdEmergencyVehicle extends BaseEntity
      * 公里数
      */
     private String mileage;
+
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getVehicleModel() {
         return vehicleModel;

@@ -2,10 +2,14 @@ package com.tunnel.platform.controller.emeResource;
 
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.quartz.domain.SysJobLog;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.emeResource.SdMaterial;
 import com.tunnel.business.domain.emeResource.SdMaterialRecord;
 import com.tunnel.business.service.emeResource.ISdMaterialService;
@@ -13,8 +17,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -58,15 +65,15 @@ public class SdMaterialController extends BaseController
 	/**
      * 导出应急资源列表
      */
-    /*@PreAuthorize(hasPermi = "system:material:export")
     @Log(title = "应急资源", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, SdMaterial sdMaterial) throws IOException
+    @GetMapping("/export")
+    public AjaxResult export(SdMaterial sdMaterial)
     {
         List<SdMaterial> list = sdMaterialService.selectSdMaterialList(sdMaterial);
         ExcelUtil<SdMaterial> util = new ExcelUtil<SdMaterial>(SdMaterial.class);
-        util.exportExcel(response, list, "material");
-    }*/
+        return util.exportExcel(list, "应急资源");
+    }
+
 
     /**
      * 获取应急资源详细信息

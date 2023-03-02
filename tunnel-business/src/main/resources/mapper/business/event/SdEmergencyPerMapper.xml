@@ -29,6 +29,7 @@
             <if test="tunnelId != null  and tunnelId != ''">and a.tunnel_id = #{tunnelId}</if>
             <if test="userName != null  and userName != ''">and a.user_name like concat('%', #{userName},'%')</if>
             <if test="groupName != null  and groupName != ''">and a.group_name like concat('%', #{groupName},'%')</if>
+            <if test="ids != null  and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET
                 (#{params.deptId},d.ancestors) ))

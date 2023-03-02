@@ -356,93 +356,7 @@
 
 
 
-<!--        <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-          label-width="68px"
-          v-if="activeName == '2'"
-        >
-          <el-form-item label="故障位置" prop="faultLocation">
-            <el-input
-              v-model="queryParams.faultLocation"
-              placeholder="请输入故障位置"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="故障类型" prop="faultType">
-            <el-select
-              v-model="queryParams.faultType"
-              placeholder="请选择故障类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in dict.type.fault_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
 
-          <el-form-item label="故障描述" prop="faultDescription">
-            <el-input
-              v-model="queryParams.faultDescription"
-              placeholder="请输入故障描述"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleQuery"
-              >搜索
-            </el-button>
-            <el-button type="primary" plain size="mini" @click="resetQuery"
-              >重置
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="handleAdd"
-              v-hasPermi="['system:list:add']"
-              >新增
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :disabled="single"
-              @click="handleUpdate"
-              v-hasPermi="['system:list:edit']"
-              :style="{ display: 'none' }"
-              >修改
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :disabled="multiple"
-              @click="handleDelete"
-              v-hasPermi="['system:list:remove']"
-              :style="{ display: 'none' }"
-              >删除
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="handleExport"
-              v-hasPermi="['system:list:export']"
-              :style="{ display: 'none' }"
-              >导出
-            </el-button>
-          </el-form-item>
-        </el-form>-->
         <div
           class="contentListBox"
           v-if="activeName == '1' || activeName == '0'"
@@ -711,14 +625,14 @@
               ></videoPlayer>
             </el-carousel-item>
           </el-carousel> -->
-          <video 
+          <video
                 id="h5sVideo1"
                 class="h5video_"
                 controls
                 muted
                 loop
                 autoplay
-                webkit-playsinline 
+                webkit-playsinline
                 playsinline
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
@@ -2730,7 +2644,7 @@ export default {
           displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
         })
     })
-      
+
       // this.videoList = [];
       // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
       //   (res) => {
@@ -2793,6 +2707,7 @@ export default {
     },
     //导出
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
         .confirm("是否确认导出所有设备故障数据项？")

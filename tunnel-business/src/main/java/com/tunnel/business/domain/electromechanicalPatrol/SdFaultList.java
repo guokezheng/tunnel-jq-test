@@ -113,6 +113,16 @@ public class SdFaultList extends BaseEntity
     @Excel(name = "故障类型")
     private String ftype;
 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
     public Date getFaultRemoveTime() {
         return this.faultRemoveTime;
     }

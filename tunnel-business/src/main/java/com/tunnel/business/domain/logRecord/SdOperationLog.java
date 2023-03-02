@@ -96,9 +96,19 @@ public class SdOperationLog extends BaseEntity
     //事件ID
     private String eventId;
 
+    private String ids;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "创建时间", dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getPile() {
         return this.pile;

@@ -75,10 +75,21 @@ public class SdDeviceFSFXData
     @Excel(name = "风向")
     private String Fx;
 
+    private String ids;
+
     /** 创建时间 */
 
     @Excel(name = "采集时间", width = 30)
     private String createTime;
+
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getFS() {
         return this.FS;

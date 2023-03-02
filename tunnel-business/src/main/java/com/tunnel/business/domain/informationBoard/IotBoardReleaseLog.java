@@ -74,15 +74,15 @@ public class IotBoardReleaseLog extends BaseEntity
     private Long[] ids;
 
     /** 尺寸 **/
-    @Excel(name = "尺寸")
+    @Excel(name = "屏幕尺寸")
     private String devicePixel;
 
     /** 隧道 **/
-    @Excel(name = "隧道名称")
+    @Excel(name = "所属隧道")
     private String tunnelName;
 
     /** 方向 **/
-    @Excel(name = "方向")
+    @Excel(name = "设备方向")
     private String direction;
 
     public String getDevicePixel() {

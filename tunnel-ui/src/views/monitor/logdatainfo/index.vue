@@ -274,7 +274,7 @@
       ref="tables"
       v-loading="loading"
       :data="list"
-      @selection-change="handleSelectionChange"
+      @selection-change="handleSelectionChange1"
       v-show="activeName == '1'"
       :default-sort="{ prop: 'loginTime', order: 'descending' }"
       @sort-change="handleSortChange"
@@ -344,7 +344,7 @@
       :data="logList"
       class="allTable"
       :default-sort="{ prop: 'createTime', order: 'descending' }"
-      @selection-change="handleSelectionChange"
+      @selection-change="handleSelectionChange2"
       height="62vh"
       v-show="activeName == '2'"
     >
@@ -467,6 +467,7 @@ export default {
         ipaddr: null,
         userName: null,
         status: null,
+        ids:"",
       },
       queryParams: {
         pageNum: 1,
@@ -486,6 +487,7 @@ export default {
         direction:null,
         // searchValue: null,
         operIp: "",
+        ids:"",
       },
     };
   },
@@ -630,8 +632,14 @@ export default {
       this.handleQuery();
     },
     /** 多选框选中数据 */
-    handleSelectionChange(selection) {
+    handleSelectionChange1(selection) {
       this.ids = selection.map((item) => item.infoId);
+      this.multiple = !selection.length;
+    },
+
+    /** 多选框选中数据 */
+    handleSelectionChange2(selection) {
+      this.ids = selection.map((item) => item.id);
       this.multiple = !selection.length;
     },
     /** 排序触发事件 */
@@ -669,6 +677,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      debugger
+      let  ids = this.ids.join();
+      this.queryParam.ids = ids;
       const queryParams = this.queryParam;
       console.log("queryParams=========" + queryParams);
       this.$modal
@@ -686,6 +697,8 @@ export default {
 
     /** 操作日志导出按钮操作 */
     handleExport1() {
+      let  ids = this.ids.join();
+      this.queryParams.ids = ids;
       const queryParams = this.queryParams;
       console.log("queryParams=========" + queryParams);
       this.$modal

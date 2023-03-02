@@ -23,7 +23,14 @@
             v-hasPermi="['system:tunnels:remove']"
             >删除
           </el-button>
-          <el-button size="small" @click="resetQuery" 
+        <el-button
+          size="small"
+          @click="handleExport"
+          :loading="exportLoading"
+          v-hasPermi="['system:tunnels:export']"
+        >导出
+        </el-button>
+          <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -418,7 +425,7 @@
               />
             </el-form-item>
           </el-col>
-       
+
           <el-col :span="12">
             <el-form-item label="隧道地址" prop="tunnelAddress">
               <el-input
@@ -430,86 +437,86 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="路段ID" prop="roadId">
-              <el-input v-model="form.roadId" placeholder="请输入路段ID" 
+              <el-input v-model="form.roadId" placeholder="请输入路段ID"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="道路编码" prop="roadCode">
-              <el-input v-model="form.roadCode" placeholder="请输入道路编码" 
+              <el-input v-model="form.roadCode" placeholder="请输入道路编码"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="道路名称" prop="roadCode">
-              <el-input v-model="form.roadCode" placeholder="请输入道路名称" 
+              <el-input v-model="form.roadCode" placeholder="请输入道路名称"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="等级编码" prop="levelCode">
-              <el-input v-model="form.levelCode" placeholder="请输入等级编码" 
+              <el-input v-model="form.levelCode" placeholder="请输入等级编码"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="等级名称" prop="levelName">
-              <el-input v-model="form.levelName" placeholder="请输入等级名称" 
+              <el-input v-model="form.levelName" placeholder="请输入等级名称"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="长度编码" prop="lengthCode">
-              <el-input v-model="form.lengthCode" placeholder="请输入长度编码" 
+              <el-input v-model="form.lengthCode" placeholder="请输入长度编码"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="长度名称" prop="lengthName">
-              <el-input v-model="form.lengthName" placeholder="请输入长度名称" 
+              <el-input v-model="form.lengthName" placeholder="请输入长度名称"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="修建年度" prop="constructYear">
-              <el-input v-model="form.constructYear" placeholder="请输入修建年度" 
+              <el-input v-model="form.constructYear" placeholder="请输入修建年度"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="建成通车日期" prop="activateTime">
-              <el-input v-model="form.activateTime" placeholder="请输入建成通车日期" 
+              <el-input v-model="form.activateTime" placeholder="请输入建成通车日期"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="管养单位ID" prop="managerId">
-              <el-input v-model="form.managerId" placeholder="请输入管养单位ID" 
+              <el-input v-model="form.managerId" placeholder="请输入管养单位ID"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="区划编码" prop="orgCode">
-              <el-input v-model="form.orgCode" placeholder="请输入区划编码" 
+              <el-input v-model="form.orgCode" placeholder="请输入区划编码"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="区划名称" prop="orgName">
-              <el-input v-model="form.orgName" placeholder="请输入区划名称" 
+              <el-input v-model="form.orgName" placeholder="请输入区划名称"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="经度" prop="longitude">
-              <el-input v-model="form.longitude" placeholder="请输入经度" 
+              <el-input v-model="form.longitude" placeholder="请输入经度"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
-      
+
           <el-col :span="12">
             <el-form-item label="纬度" prop="latitude">
-              <el-input v-model="form.latitude" placeholder="请输入纬度" 
+              <el-input v-model="form.latitude" placeholder="请输入纬度"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
@@ -527,7 +534,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-       
+
           <el-col :span="12">
             <el-form-item label="隧道长度" prop="tunnelLength">
               <el-col :span="24">
@@ -551,7 +558,7 @@
               />
             </el-form-item>
           </el-col>
-       
+
           <el-col :span="12">
             <el-form-item label="开始桩号" prop="startPile">
               <el-col :span="24">
@@ -572,7 +579,7 @@
               <el-input v-model="form.startPileNum" disabled="disabled"  />
             </el-form-item>
           </el-col>
-       
+
           <el-col :span="12">
             <el-form-item label="结束桩号" prop="endPile">
               <el-col :span="24">
@@ -592,7 +599,7 @@
               <el-input v-model="form.endPileNum" disabled="disabled"/>
             </el-form-item>
           </el-col>
-      
+
           <el-col :span="12">
             <el-form-item label="所属部门" prop="deptId">
               <treeselect
@@ -628,12 +635,12 @@
                   :key="dict.dictValue"
                   :label="dict.dictLabel"
                   :value="parseInt(dict.dictValue)"
-                  
+
                 ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-       
+
           <el-col :span="24">
             <el-form-item label="备注" prop="remake">
               <el-input v-model="form.remake" placeholder="请输入备注" :disabled="disabledInfo"/>
@@ -657,7 +664,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    
+
   </div>
 </template>
 
@@ -667,7 +674,7 @@ import {
   getTunnels,
   delTunnels,
   addTunnels,
-  updateTunnels,
+  updateTunnels, exportTunnels,
 } from "@/api/equipment/tunnel/api.js";
 import { listDept,treeselect,treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
@@ -683,6 +690,8 @@ import {
 } from "@/api/equipment/deviceassociation/association";
 import { listSystem } from "@/api/equipment/externalsystem/system";
 import {listAllTunnels} from "@/api/equipment/tunnel/api.js";
+import {exportDevices} from "@/api/equipment/eqlist/api";
+import {exportList} from "@/api/electromechanicalPatrol/taskManage/task";
 
 
 export default {
@@ -715,6 +724,9 @@ export default {
       }
     };
     return {
+
+      // 导出遮罩层
+      exportLoading: false,
       disabledInfo:false,
       tunnelInfoForm:{},
       openTunnelInfo:false,
@@ -753,6 +765,7 @@ export default {
         tunnelName: null,
         poll: null,
         deptId: this.userDeptId,
+        ids:"",
         /* storeConfigure: null, */
       },
       userQueryParams: {
@@ -1164,15 +1177,22 @@ export default {
           that.getList()
         });
     },
-    /** 导出按钮操作 */
+
+/*导出*/
     handleExport() {
-      this.download(
-        "system/tunnels/export",
-        {
-          ...this.queryParams,
-        },
-        `system_tunnels.xlsx`
-      );
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm("是否确认导出所有隧道管理数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportTunnels(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
   },
   watch: {

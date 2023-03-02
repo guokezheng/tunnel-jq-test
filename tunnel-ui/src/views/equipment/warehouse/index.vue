@@ -28,7 +28,7 @@
             @click="handleExport"
             v-hasPermi="['system:warehouse:export']"
           >导出</el-button>
-          <el-button size="small" @click="resetQuery" 
+          <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -456,6 +456,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal.confirm('是否确认导出所有备品备件库数据项？').then(() => {
         this.exportLoading = true;

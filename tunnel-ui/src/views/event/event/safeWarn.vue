@@ -692,9 +692,9 @@
               </swiper-slide>
             </swiper>
           </div>
-          <div v-if="eventForm.iconUrlList.length < 1">
+          <div v-if="eventForm.iconUrlList.length < 1" style="width: 100%; height: 87%">
             <el-image
-              style="width: 100px; height: 100px"
+              style="width: 100%; height: 100%"
               :src="noPic"
               :fit="contain">
             </el-image>

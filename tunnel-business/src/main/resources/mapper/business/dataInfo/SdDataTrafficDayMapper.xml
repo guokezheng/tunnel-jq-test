@@ -347,4 +347,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           tunnel_id,tunnel_name,direction
         from sd_data_traffic_day WHERE year = #{year} and month = #{month} GROUP BY tunnel_id,direction
     </select>
+
+
+    <!-- 每日定时流量统计 -->
+    <select id="getVehicleDayListsByParam" parameterType="map" resultType="hashmap">
+        select
+        sum(dth.flow_sveh) as flowSveh,
+        sum(dth.flow_bveh) as flowBveh,
+        sum(dth.flow_mveh) as flowMveh,
+        avg(dth.avg_speed) as avgSpeed,
+        sum(dth.total_flow) as totalFlow
+        from sd_data_traffic_hour dth
+        where 1=1
+        <if test="endDate != null ">
+            and dth.stat_time &lt;= #{endDate}
+        </if>
+        <if test="startDate != null ">
+            and dth.stat_time > #{startDate}
+        </if>
+        <if test="direction != null ">
+            and dth.direction = #{direction}
+        </if>
+        <if test="tunnelId != null ">
+            and dth.tunnel_id = #{tunnelId}
+        </if>
+    </select>
 </mapper>

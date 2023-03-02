@@ -2,6 +2,7 @@ package com.tunnel.business.service.vehicle.impl;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.vehicle.SdVehicleData;
+import com.tunnel.business.mapper.dataInfo.SdDataTrafficDayMapper;
 import com.tunnel.business.mapper.vehicle.SdVehicleDataMapper;
 import com.tunnel.business.service.vehicle.ISdVehicleDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class SdVehicleDataServiceImpl implements ISdVehicleDataService
 {
     @Autowired
     private SdVehicleDataMapper sdVehicleDataMapper;
+
+    @Autowired
+    private SdDataTrafficDayMapper sdDataTrafficDayMapper;
 
     /**
      * 查询隧道车辆数据（单车数据）
@@ -107,4 +111,21 @@ public class SdVehicleDataServiceImpl implements ISdVehicleDataService
 
         return sdVehicleDataMapper.getDayVehicleData(sdVehicleData);
     }
+
+    @Override
+    public Map<String, Object> getVehicleListsByDay(Map param) {
+
+        return sdDataTrafficDayMapper.getVehicleDayListsByParam(param);
+    }
+
+    @Override
+    public Map<String, Object> getVehicleListsByMonth(Map param) {
+        return sdDataTrafficDayMapper.getVehicleMonthListsByParam(param);
+    }
+
+    @Override
+    public List<Map<String, Object>> getVehicleListsByHour(Map param) {
+        return sdVehicleDataMapper.getVehicleListsByDate(param);
+    }
+
 }

@@ -217,217 +217,422 @@ LEFT JOIN sd_devices c ON a.device_id = c.eq_id
 
     <!-- 不区分时间 -->
     <select id="getAnalysisData" parameterType="String" resultMap="SdTrafficStatisticsResult">
-		SELECT
-		<if test="type == 'day'">
-			DATE_FORMAT(x.create_time,'%Y-%m-%d') AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		<if test="type == 'month'">
-			DATE_FORMAT(x.create_time,'%Y-%m') AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		<if test="type == 'year'">
-			DATE_FORMAT(x.create_time,'%Y') AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		<if test="type == 'quarter'">
-			QUARTER(x.create_time) AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		<if test="type == 'hour'">
-			x.create_time AS date,
-			by_vehicel_num
-		</if>
-		from sd_traffic_statistics x
-		left join sd_devices a on x.device_id = a.eq_id
-	    where 1=1
-	    <if test="type == 'day'">
-        	and DATE_FORMAT(x.create_time,'%Y%m') = DATE_FORMAT(now(),'%Y%m')
-        </if>
-        <if test="type == 'month'">
-        	and DATE_FORMAT(x.create_time,'%Y') = DATE_FORMAT(now(),'%Y')
-        </if>
-        <if test="type == 'hour'">
-        	and DATE_FORMAT(x.create_time,'%Y%m%d') = DATE_FORMAT(now(),'%Y%m%d')
-        </if>
-        <if test="type == 'quarter'">
-        	and DATE_FORMAT(x.create_time,'%Y') = DATE_FORMAT(now(),'%Y')
-        </if>
-        <if test="holes != null and holes != ''">
-        	and a.stake_mark like concat('%', #{holes}, '%')
-        </if>
-	    	and a.eq_tunnel_id = #{tunnelId}
+<!--		SELECT-->
+<!--		<if test="type == 'day'">-->
+<!--			DATE_FORMAT(x.create_time,'%Y-%m-%d') AS date,-->
+<!--			sum(by_vehicel_num) as by_vehicel_num-->
+<!--		</if>-->
+<!--		<if test="type == 'month'">-->
+<!--			DATE_FORMAT(x.create_time,'%Y-%m') AS date,-->
+<!--			sum(by_vehicel_num) as by_vehicel_num-->
+<!--		</if>-->
+<!--		<if test="type == 'year'">-->
+<!--			DATE_FORMAT(x.create_time,'%Y') AS date,-->
+<!--			sum(by_vehicel_num) as by_vehicel_num-->
+<!--		</if>-->
+<!--		<if test="type == 'quarter'">-->
+<!--			QUARTER(x.create_time) AS date,-->
+<!--			sum(by_vehicel_num) as by_vehicel_num-->
+<!--		</if>-->
+<!--		<if test="type == 'hour'">-->
+<!--			x.create_time AS date,-->
+<!--			by_vehicel_num-->
+<!--		</if>-->
+<!--		from sd_traffic_statistics x-->
+<!--		left join sd_devices a on x.device_id = a.eq_id-->
+<!--	    where 1=1-->
+<!--	    <if test="type == 'day'">-->
+<!--        	and DATE_FORMAT(x.create_time,'%Y%m') = DATE_FORMAT(now(),'%Y%m')-->
+<!--        </if>-->
+<!--        <if test="type == 'month'">-->
+<!--        	and DATE_FORMAT(x.create_time,'%Y') = DATE_FORMAT(now(),'%Y')-->
+<!--        </if>-->
+<!--        <if test="type == 'hour'">-->
+<!--        	and DATE_FORMAT(x.create_time,'%Y%m%d') = DATE_FORMAT(now(),'%Y%m%d')-->
+<!--        </if>-->
+<!--        <if test="type == 'quarter'">-->
+<!--        	and DATE_FORMAT(x.create_time,'%Y') = DATE_FORMAT(now(),'%Y')-->
+<!--        </if>-->
+<!--        <if test="holes != null and holes != ''">-->
+<!--        	and a.stake_mark like concat('%', #{holes}, '%')-->
+<!--        </if>-->
+<!--	    	and a.eq_tunnel_id = #{tunnelId}-->
+<!--        <if test="type == 'day'">-->
+<!--        	GROUP BY DATE_FORMAT(x.create_time,'%Y%m%d')-->
+<!--        </if>-->
+<!--        <if test="type == 'month'">-->
+<!--        	GROUP BY DATE_FORMAT(x.create_time,'%Y%m')-->
+<!--        </if>-->
+<!--        <if test="type == 'year'">-->
+<!--        	GROUP BY DATE_FORMAT(x.create_time,'%Y')-->
+<!--        </if>-->
+<!--        <if test="type == 'quarter'">-->
+<!--        	GROUP BY QUARTER(x.create_time)-->
+<!--        </if>-->
+        SELECT
         <if test="type == 'day'">
-        	GROUP BY DATE_FORMAT(x.create_time,'%Y%m%d')
+            DATE_FORMAT(x.stat_time,'%Y-%m-%d') AS date,
+            sum(x.total_flow) as by_vehicel_num
         </if>
         <if test="type == 'month'">
-        	GROUP BY DATE_FORMAT(x.create_time,'%Y%m')
+            DATE_FORMAT(x.stat_time,'%Y-%m') AS date,
+            sum(x.total_flow) as by_vehicel_num
         </if>
         <if test="type == 'year'">
-        	GROUP BY DATE_FORMAT(x.create_time,'%Y')
+            DATE_FORMAT(x.stat_time,'%Y') AS date,
+            sum(x.total_flow) as by_vehicel_num
         </if>
         <if test="type == 'quarter'">
-        	GROUP BY QUARTER(x.create_time)
+            QUARTER(x.stat_time) AS date,
+            sum(x.total_flow) as by_vehicel_num
+        </if>
+        <if test="type == 'hour'">
+            x.stat_time AS date,
+            x.total_flow as by_vehicel_num
+        </if>
+        from sd_data_traffic_hour x
+        where 1=1
+        <if test="tunnelId != null ">
+            and x.tunnel_id = #{tunnelId}
+        </if>
+        <if test="type == 'day'">
+            and DATE_FORMAT(x.stat_time,'%Y%m') = DATE_FORMAT(now(),'%Y%m')
+        </if>
+        <if test="type == 'month'">
+            and DATE_FORMAT(x.stat_time,'%Y') = DATE_FORMAT(now(),'%Y')
+        </if>
+        <if test="type == 'hour'">
+            and DATE_FORMAT(x.stat_time,'%Y%m%d') = DATE_FORMAT(now(),'%Y%m%d')
+        </if>
+        <if test="type == 'quarter'">
+            and DATE_FORMAT(x.stat_time,'%Y') = DATE_FORMAT(now(),'%Y')
+        </if>
+        <if test="holes != null and holes != ''">
+            and x.direction like concat('%', #{holes}, '%')
+        </if>
+        <if test="type == 'day'">
+            GROUP BY DATE_FORMAT(x.stat_time,'%Y%m%d')
+        </if>
+        <if test="type == 'month'">
+            GROUP BY DATE_FORMAT(x.stat_time,'%Y%m')
+        </if>
+        <if test="type == 'year'">
+            GROUP BY DATE_FORMAT(x.stat_time,'%Y')
+        </if>
+        <if test="type == 'quarter'">
+            GROUP BY QUARTER(x.stat_time)
         </if>
     </select>
 
     <!-- 区分时间 -->
     <select id="analysisDataByTime" parameterType="String" resultMap="SdTrafficStatisticsResult">
-		SELECT
-		<if test="eqDirection == 'day'">
-			DATE_FORMAT(x.create_time,'%Y-%m-%d') AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		<if test="eqDirection == 'month'">
-			DATE_FORMAT(x.create_time,'%Y-%m') AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		<if test="eqDirection == 'year'">
-			DATE_FORMAT(x.create_time,'%Y') AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		<if test="eqDirection == 'quarter'">
-			QUARTER(x.create_time) AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		<if test="eqDirection == 'hour'">
-			x.create_time AS date,
-			sum(by_vehicel_num) as by_vehicel_num
-		</if>
-		from sd_traffic_statistics x
-		left join sd_devices a on x.device_id = a.eq_id
-	    where 1=1
-	    <if test="eqDirection == 'day'">
-        	and DATE_FORMAT(x.create_time,'%Y%m') = DATE_FORMAT(#{params.beginTime},'%Y%m')
-        </if>
-        <if test="eqDirection == 'month'">
-        	and DATE_FORMAT(x.create_time,'%Y') = DATE_FORMAT(#{params.beginTime},'%Y')
-        </if>
-        <if test="eqDirection == 'quarter'">
-        	and DATE_FORMAT(x.create_time,'%Y') = DATE_FORMAT(#{params.beginTime},'%Y')
-        </if>
-        <if test="eqDirection == 'hour'">
-        	and DATE_FORMAT(x.create_time,'%Y%m%d') = DATE_FORMAT(#{params.beginTime},'%Y%m%d')
-        </if>
-	    and a.eq_tunnel_id = #{tunnelId}
-	    <if test="holes != null and holes != ''">
-        	and a.stake_mark like concat('%', #{holes}, '%')
-        </if>
+        <!--        SELECT-->
+        <!--        <if test="eqDirection == 'day'">-->
+        <!--            DATE_FORMAT(x.create_time,'%Y-%m-%d') AS date,-->
+        <!--            sum(by_vehicel_num) as by_vehicel_num-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'month'">-->
+        <!--            DATE_FORMAT(x.create_time,'%Y-%m') AS date,-->
+        <!--            sum(by_vehicel_num) as by_vehicel_num-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'year'">-->
+        <!--            DATE_FORMAT(x.create_time,'%Y') AS date,-->
+        <!--            sum(by_vehicel_num) as by_vehicel_num-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'quarter'">-->
+        <!--            QUARTER(x.create_time) AS date,-->
+        <!--            sum(by_vehicel_num) as by_vehicel_num-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'hour'">-->
+        <!--            x.create_time AS date,-->
+        <!--            sum(by_vehicel_num) as by_vehicel_num-->
+        <!--        </if>-->
+        <!--        from sd_traffic_statistics x-->
+        <!--        left join sd_devices a on x.device_id = a.eq_id-->
+        <!--        where 1=1-->
+        <!--        <if test="eqDirection == 'day'">-->
+        <!--            and DATE_FORMAT(x.create_time,'%Y%m') = DATE_FORMAT(#{params.beginTime},'%Y%m')-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'month'">-->
+        <!--            and DATE_FORMAT(x.create_time,'%Y') = DATE_FORMAT(#{params.beginTime},'%Y')-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'quarter'">-->
+        <!--            and DATE_FORMAT(x.create_time,'%Y') = DATE_FORMAT(#{params.beginTime},'%Y')-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'hour'">-->
+        <!--            and DATE_FORMAT(x.create_time,'%Y%m%d') = DATE_FORMAT(#{params.beginTime},'%Y%m%d')-->
+        <!--        </if>-->
+        <!--        and a.eq_tunnel_id = #{tunnelId}-->
+        <!--        <if test="holes != null and holes != ''">-->
+        <!--            and a.stake_mark like concat('%', #{holes}, '%')-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'day'">-->
+        <!--            GROUP BY DATE_FORMAT(x.create_time,'%Y%m%d')-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'month'">-->
+        <!--            GROUP BY DATE_FORMAT(x.create_time,'%Y%m')-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'year'">-->
+        <!--            GROUP BY DATE_FORMAT(x.create_time,'%Y')-->
+        <!--        </if>-->
+        <!--        <if test="eqDirection == 'quarter'">-->
+        <!--            GROUP BY QUARTER(x.create_time)-->
+        <!--        </if>-->
+        SELECT
         <if test="eqDirection == 'day'">
-        	GROUP BY DATE_FORMAT(x.create_time,'%Y%m%d')
+            DATE_FORMAT(x.stat_time,'%Y-%m-%d') AS date,
+            sum(x.total_flow) as by_vehicel_num
         </if>
         <if test="eqDirection == 'month'">
-        	GROUP BY DATE_FORMAT(x.create_time,'%Y%m')
+            DATE_FORMAT(x.stat_time,'%Y-%m') AS date,
+            sum(x.total_flow) as by_vehicel_num
         </if>
         <if test="eqDirection == 'year'">
-        	GROUP BY DATE_FORMAT(x.create_time,'%Y')
+            DATE_FORMAT(x.stat_time,'%Y') AS date,
+            sum(x.total_flow) as by_vehicel_num
         </if>
         <if test="eqDirection == 'quarter'">
-        	GROUP BY QUARTER(x.create_time)
+            QUARTER(x.stat_time) AS date,
+            sum(x.total_flow) as by_vehicel_num
+        </if>
+        <if test="eqDirection == 'hour'">
+            x.stat_time AS date,
+            sum(x.total_flow) as by_vehicel_num
+        </if>
+        from sd_data_traffic_hour x
+        where 1=1
+        <if test="tunnelId != null ">
+            and x.tunnel_id = #{tunnelId}
+        </if>
+        <if test="eqDirection == 'day'">
+            and DATE_FORMAT(x.stat_time,'%Y%m') = DATE_FORMAT(#{params.beginTime},'%Y%m')
+        </if>
+        <if test="eqDirection == 'month'">
+            and DATE_FORMAT(x.stat_time,'%Y') = DATE_FORMAT(#{params.beginTime},'%Y')
+        </if>
+        <if test="eqDirection == 'quarter'">
+            and DATE_FORMAT(x.stat_time,'%Y') = DATE_FORMAT(#{params.beginTime},'%Y')
+        </if>
+        <if test="eqDirection == 'hour'">
+            and DATE_FORMAT(x.stat_time,'%Y%m%d') = DATE_FORMAT(#{params.beginTime},'%Y%m%d')
+        </if>
+        <if test="holes != null and holes != ''">
+            and x.direction like concat('%', #{holes}, '%')
+        </if>
+        <if test="eqDirection == 'day'">
+            GROUP BY DATE_FORMAT(x.stat_time,'%Y%m%d')
+        </if>
+        <if test="eqDirection == 'month'">
+            GROUP BY DATE_FORMAT(x.stat_time,'%Y%m')
+        </if>
+        <if test="eqDirection == 'year'">
+            GROUP BY DATE_FORMAT(x.stat_time,'%Y')
+        </if>
+        <if test="eqDirection == 'quarter'">
+            GROUP BY QUARTER(x.stat_time)
         </if>
     </select>
 
     <!-- 时间段 -->
-    <select id="analysisDataByHourTime" parameterType="String" resultMap="SdTrafficStatisticsResult">
-	SELECT
-	a.HOUR date,
-	ifnull(b.count, 0) by_vehicel_num
-	FROM
-	(
-		SELECT
-			0 HOUR
-		UNION ALL
-			SELECT
-				1 HOUR
-			UNION ALL
-				SELECT
-					2 HOUR
-				UNION ALL
-					SELECT
-						3 HOUR
-					UNION ALL
-						SELECT
-							4 HOUR
-						UNION ALL
-							SELECT
-								5 HOUR
-							UNION ALL
-								SELECT
-									6 HOUR
-								UNION ALL
-									SELECT
-										7 HOUR
-									UNION ALL
-										SELECT
-											8 HOUR
-										UNION ALL
-											SELECT
-												9 HOUR
-											UNION ALL
-												SELECT
-													10 HOUR
-												UNION ALL
-													SELECT
-														11 HOUR
-													UNION ALL
-														SELECT
-															12 HOUR
-														UNION ALL
-															SELECT
-																13 HOUR
-															UNION ALL
-																SELECT
-																	14 HOUR
-																UNION ALL
-																	SELECT
-																		15 HOUR
-																	UNION ALL
-																		SELECT
-																			16 HOUR
-																		UNION ALL
-																			SELECT
-																				17 HOUR
-																			UNION ALL
-																				SELECT
-																					18 HOUR
-																				UNION ALL
-																					SELECT
-																						19 HOUR
-																					UNION ALL
-																						SELECT
-																							20 HOUR
-																						UNION ALL
-																							SELECT
-																								21 HOUR
-																							UNION ALL
-																								SELECT
-																									22 HOUR
-																								UNION ALL
-																									SELECT
-																										23 HOUR
-	) a
-LEFT JOIN (
-	SELECT
-		HOUR (a.create_time) HOUR,
-		sum(a.by_vehicel_num) count
-	FROM
-		sd_traffic_statistics a
-		LEFT JOIN sd_devices c on a.device_id = c.eq_id
-	WHERE
-	1 = 1
-	<if test="params.beginTime != null and params.beginTime != '' and params.endTime != null and params.endTime != '' ">
-	and a.create_time between  #{params.beginTime} and #{params.endTime}
-	</if>
-	and c.eq_tunnel_id = #{tunnelId}
-	<if test="holes != null and holes != ''">
-    and c.stake_mark like concat('%', #{holes}, '%')
-    </if>
-	GROUP BY
-		date_format(a.create_time, '%Y%m%d-%H'),
-		HOUR
-	) b ON a. HOUR = b. HOUR
-	ORDER BY
-		date
+   <select id="analysisDataByHourTime" parameterType="String" resultMap="SdTrafficStatisticsResult">
+<!--	SELECT-->
+<!--	a.HOUR date,-->
+<!--	ifnull(b.count, 0) by_vehicel_num-->
+<!--	FROM-->
+<!--	(-->
+<!--		SELECT-->
+<!--			0 HOUR-->
+<!--		UNION ALL-->
+<!--			SELECT-->
+<!--				1 HOUR-->
+<!--			UNION ALL-->
+<!--				SELECT-->
+<!--					2 HOUR-->
+<!--				UNION ALL-->
+<!--					SELECT-->
+<!--						3 HOUR-->
+<!--					UNION ALL-->
+<!--						SELECT-->
+<!--							4 HOUR-->
+<!--						UNION ALL-->
+<!--							SELECT-->
+<!--								5 HOUR-->
+<!--							UNION ALL-->
+<!--								SELECT-->
+<!--									6 HOUR-->
+<!--								UNION ALL-->
+<!--									SELECT-->
+<!--										7 HOUR-->
+<!--									UNION ALL-->
+<!--										SELECT-->
+<!--											8 HOUR-->
+<!--										UNION ALL-->
+<!--											SELECT-->
+<!--												9 HOUR-->
+<!--											UNION ALL-->
+<!--												SELECT-->
+<!--													10 HOUR-->
+<!--												UNION ALL-->
+<!--													SELECT-->
+<!--														11 HOUR-->
+<!--													UNION ALL-->
+<!--														SELECT-->
+<!--															12 HOUR-->
+<!--														UNION ALL-->
+<!--															SELECT-->
+<!--																13 HOUR-->
+<!--															UNION ALL-->
+<!--																SELECT-->
+<!--																	14 HOUR-->
+<!--																UNION ALL-->
+<!--																	SELECT-->
+<!--																		15 HOUR-->
+<!--																	UNION ALL-->
+<!--																		SELECT-->
+<!--																			16 HOUR-->
+<!--																		UNION ALL-->
+<!--																			SELECT-->
+<!--																				17 HOUR-->
+<!--																			UNION ALL-->
+<!--																				SELECT-->
+<!--																					18 HOUR-->
+<!--																				UNION ALL-->
+<!--																					SELECT-->
+<!--																						19 HOUR-->
+<!--																					UNION ALL-->
+<!--																						SELECT-->
+<!--																							20 HOUR-->
+<!--																						UNION ALL-->
+<!--																							SELECT-->
+<!--																								21 HOUR-->
+<!--																							UNION ALL-->
+<!--																								SELECT-->
+<!--																									22 HOUR-->
+<!--																								UNION ALL-->
+<!--																									SELECT-->
+<!--																										23 HOUR-->
+<!--	) a-->
+<!--LEFT JOIN (-->
+<!--	SELECT-->
+<!--		HOUR (a.create_time) HOUR,-->
+<!--		sum(a.by_vehicel_num) count-->
+<!--	FROM-->
+<!--		sd_traffic_statistics a-->
+<!--		LEFT JOIN sd_devices c on a.device_id = c.eq_id-->
+<!--	WHERE-->
+<!--	1 = 1-->
+<!--	<if test="params.beginTime != null and params.beginTime != '' and params.endTime != null and params.endTime != '' ">-->
+<!--	and a.create_time between  #{params.beginTime} and #{params.endTime}-->
+<!--	</if>-->
+<!--	and c.eq_tunnel_id = #{tunnelId}-->
+<!--	<if test="holes != null and holes != ''">-->
+<!--    and c.stake_mark like concat('%', #{holes}, '%')-->
+<!--    </if>-->
+<!--	GROUP BY-->
+<!--		date_format(a.create_time, '%Y%m%d-%H'),-->
+<!--		HOUR-->
+<!--	) b ON a. HOUR = b. HOUR-->
+<!--	ORDER BY-->
+<!--		date-->
+
+       SELECT
+       a.HOUR date,
+       ifnull(b.count, 0) by_vehicel_num
+       FROM
+       (
+       SELECT
+       0 HOUR
+       UNION ALL
+       SELECT
+       1 HOUR
+       UNION ALL
+       SELECT
+       2 HOUR
+       UNION ALL
+       SELECT
+       3 HOUR
+       UNION ALL
+       SELECT
+       4 HOUR
+       UNION ALL
+       SELECT
+       5 HOUR
+       UNION ALL
+       SELECT
+       6 HOUR
+       UNION ALL
+       SELECT
+       7 HOUR
+       UNION ALL
+       SELECT
+       8 HOUR
+       UNION ALL
+       SELECT
+       9 HOUR
+       UNION ALL
+       SELECT
+       10 HOUR
+       UNION ALL
+       SELECT
+       11 HOUR
+       UNION ALL
+       SELECT
+       12 HOUR
+       UNION ALL
+       SELECT
+       13 HOUR
+       UNION ALL
+       SELECT
+       14 HOUR
+       UNION ALL
+       SELECT
+       15 HOUR
+       UNION ALL
+       SELECT
+       16 HOUR
+       UNION ALL
+       SELECT
+       17 HOUR
+       UNION ALL
+       SELECT
+       18 HOUR
+       UNION ALL
+       SELECT
+       19 HOUR
+       UNION ALL
+       SELECT
+       20 HOUR
+       UNION ALL
+       SELECT
+       21 HOUR
+       UNION ALL
+       SELECT
+       22 HOUR
+       UNION ALL
+       SELECT
+       23 HOUR
+       ) a
+       LEFT JOIN (
+       SELECT
+       HOUR (a.stat_time) HOUR,
+       sum(a.total_flow) count
+       FROM
+       sd_data_traffic_hour a
+       WHERE
+       1 = 1
+       and a.tunnel_id = #{tunnelId}
+       <if test="params.beginTime != null and params.beginTime != '' and params.endTime != null and params.endTime != '' ">
+           and a.stat_time between  #{params.beginTime} and #{params.endTime}
+       </if>
+       <if test="holes != null and holes != ''">
+           and a.direction like concat('%', #{holes}, '%')
+       </if>
+       GROUP BY
+       date_format(a.stat_time, '%Y%m%d-%H'),
+       HOUR
+       ) b ON a. HOUR = b. HOUR
+       ORDER BY
+       date
     </select>
 
     <select id="selectSumTrafficFlow" resultType="hashmap">
@@ -485,4 +690,118 @@ LEFT JOIN (
             where a.tunnel_id = #{tunnelId}
         )
     </select>
+
+
+
+
+    <select id="analysisDataByHourTimeData" parameterType="String" resultMap="SdTrafficStatisticsResult">
+        select
+        concat(s.month,'-',s.DAY,' ',s.date) date,
+        s.by_vehicel_num
+        from (
+        SELECT
+        a.HOUR date,
+        b.DAY as day,
+        b.MONTH as month,
+        ifnull(b.count, 0) by_vehicel_num
+        FROM
+        (
+        SELECT
+        0 HOUR
+        UNION ALL
+        SELECT
+        1 HOUR
+        UNION ALL
+        SELECT
+        2 HOUR
+        UNION ALL
+        SELECT
+        3 HOUR
+        UNION ALL
+        SELECT
+        4 HOUR
+        UNION ALL
+        SELECT
+        5 HOUR
+        UNION ALL
+        SELECT
+        6 HOUR
+        UNION ALL
+        SELECT
+        7 HOUR
+        UNION ALL
+        SELECT
+        8 HOUR
+        UNION ALL
+        SELECT
+        9 HOUR
+        UNION ALL
+        SELECT
+        10 HOUR
+        UNION ALL
+        SELECT
+        11 HOUR
+        UNION ALL
+        SELECT
+        12 HOUR
+        UNION ALL
+        SELECT
+        13 HOUR
+        UNION ALL
+        SELECT
+        14 HOUR
+        UNION ALL
+        SELECT
+        15 HOUR
+        UNION ALL
+        SELECT
+        16 HOUR
+        UNION ALL
+        SELECT
+        17 HOUR
+        UNION ALL
+        SELECT
+        18 HOUR
+        UNION ALL
+        SELECT
+        19 HOUR
+        UNION ALL
+        SELECT
+        20 HOUR
+        UNION ALL
+        SELECT
+        21 HOUR
+        UNION ALL
+        SELECT
+        22 HOUR
+        UNION ALL
+        SELECT
+        23 HOUR
+        ) a
+        LEFT JOIN (
+        SELECT
+        HOUR (a.stat_time) HOUR,
+        DAY (a.stat_time) DAY,
+        MONTH (a.stat_time) MONTH,
+        sum(a.total_flow) count
+        FROM
+        sd_data_traffic_hour a
+        WHERE
+        1 = 1
+        and a.tunnel_id = #{tunnelId}
+        <if test="params.beginTime != null and params.beginTime != '' and params.endTime != null and params.endTime != '' ">
+            and a.stat_time between  #{params.beginTime} and #{params.endTime}
+        </if>
+        <if test="holes != null and holes != ''">
+            and a.direction like concat('%', #{holes}, '%')
+        </if>
+        GROUP BY
+        date_format(a.stat_time, '%Y%m%d-%H'),
+        HOUR
+        ) b ON a. HOUR = b. HOUR
+        ORDER BY
+        MONTH , DAY,date
+        ) s
+    </select>
+
 </mapper>

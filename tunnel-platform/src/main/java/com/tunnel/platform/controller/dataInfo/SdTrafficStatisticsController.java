@@ -57,7 +57,7 @@ public class SdTrafficStatisticsController extends BaseController
     @GetMapping("/analysisData")
     public AjaxResult analysisData(String tunnelId,String holes)
     {
-    	Map<String,List<SdTrafficStatistics>> data 
+    	Map<String,List<SdTrafficStatistics>> data
     		= sdTrafficStatisticsService.getAnalysisData(tunnelId,holes);
         return AjaxResult.success("成功", data);
     }

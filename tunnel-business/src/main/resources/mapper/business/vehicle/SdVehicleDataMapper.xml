@@ -137,4 +137,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ) d on t.create_time = d.create_time
         order by t.create_time
     </select>
+
+
+    <!-- 车流量计算 后期增加分组-->
+    <select id="getVehicleListsByDate" parameterType="Map" resultType="hashmap">
+        select
+        count(svm.id) as num,
+        AVG(svm.speed) as vehicleSpeed
+        from sd_vehicle_data svm
+        where 1=1
+        <if test="endDate != null ">
+            and svm.create_time &lt;= #{endDate}
+        </if>
+        <if test="startDate != null ">
+            and svm.create_time > #{startDate}
+        </if>
+        <if test="direction != null ">
+            and svm.direction = #{direction}
+        </if>
+        <if test="tunnelId != null ">
+            and svm.tunnel_id = #{tunnelId}
+        </if>
+    </select>
 </mapper>

@@ -67,4 +67,28 @@ public interface ISdVehicleDataService
      * @return
      */
     List<Map> getDayVehicleData(SdVehicleData sdVehicleData);
+
+
+    /**
+     * 查询当前日车流量信息
+     *
+     * @return 车辆管理集合
+     */
+    Map<String, Object> getVehicleListsByDay(Map param);
+
+
+    /**
+     * 查询当前月车流量信息
+     *
+     * @return 车辆管理集合
+     */
+    Map<String, Object> getVehicleListsByMonth(Map param);
+
+
+    /**
+     * 查询当前小时车流量信息
+     *
+     * @return 车辆管理集合
+     */
+    List<Map<String, Object>> getVehicleListsByHour(Map param);
 }

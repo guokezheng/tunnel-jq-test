@@ -977,7 +977,7 @@
       <!--配置区域-->
       <div class="footer" v-show="displayThumbnail == true">
         <div class="fourBox">
-          <div class="footMiniBox" v-show="footChangeRadio == '图表'">
+          <div class="footMiniBox"  @click="jumpLink('/21/trafficFlowAnalysis')" v-show="footChangeRadio == '图表'">
             <div class="footTitle">
               <div class="footTitleCont">
                 <img

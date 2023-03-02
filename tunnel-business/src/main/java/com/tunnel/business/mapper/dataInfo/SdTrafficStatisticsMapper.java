@@ -101,4 +101,6 @@ public interface SdTrafficStatisticsMapper
 	 * @return
 	 */
 	List<SdTrafficStatistics> selectLatestTrafficFlowList(String tunnelId);
+
+	public List<SdTrafficStatistics> analysisDataByHourTimeData(@Param("params") Map<String, Object> params,@Param("tunnelId") String tunnelId,@Param("holes") String holes);
 }

@@ -125,14 +125,21 @@ public class SdTrafficStatisticsServiceImpl implements ISdTrafficStatisticsServi
         List<SdTrafficStatistics> monthData = sdTrafficStatisticsMapper.getAnalysisData("month", tunnelId, holes);
         List<SdTrafficStatistics> quarterData = sdTrafficStatisticsMapper.getAnalysisData("quarter", tunnelId, holes);
         List<SdTrafficStatistics> dayData = sdTrafficStatisticsMapper.getAnalysisData("day", tunnelId, holes);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
         Map<String, Object> params = new HashMap<String, Object>();
-        List<SdTrafficStatistics> timeData = sdTrafficStatisticsMapper.analysisDataByHourTime(params, tunnelId, holes);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        params.put("beginTime", sdf.format(getStartTime(new Date())));
-        params.put("endTime", sdf.format(getEndTime(new Date())));
-        List<SdTrafficStatistics> hourData = sdTrafficStatisticsMapper.analysisDataByHourTime(params, tunnelId, holes);
-        Map<String, List<SdTrafficStatistics>> map
-                = new HashMap<String, List<SdTrafficStatistics>>();
+        params.put("beginTime", sdf.format(date)+" 00:00:00");
+        params.put("endTime", sdf.format(date)+" 23:59:59");
+        List<SdTrafficStatistics> hourData = sdTrafficStatisticsMapper.analysisDataByHourTime(params,tunnelId,holes);
+        //获取当前时间前两天
+        params.put("endTime", sdf.format(date)+" 23:59:59");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH,-2);
+        params.put("beginTime", sdf.format(calendar.getTime())+" 00:00:00");
+        List<SdTrafficStatistics> timeData = sdTrafficStatisticsMapper.analysisDataByHourTimeData(params,tunnelId,holes);
+        Map<String,List<SdTrafficStatistics>> map
+                = new HashMap<String,List<SdTrafficStatistics>>();
 
         // 加0
         emptyToZero("quarter", quarterData);
@@ -273,22 +280,23 @@ public class SdTrafficStatisticsServiceImpl implements ISdTrafficStatisticsServi
      */
     @Override
     public List<SdTrafficStatistics> analysisDataByTime(SdTrafficStatistics sdTrafficStatistics) {
-        try {
-            if ("time".equals(sdTrafficStatistics.getEqDirection())) {
+        try{
+            if("time".equals(sdTrafficStatistics.getEqDirection())){
                 List<SdTrafficStatistics> yearData
-                        = sdTrafficStatisticsMapper.analysisDataByHourTime(
-                        sdTrafficStatistics.getParams(), sdTrafficStatistics.getTunnelId(), sdTrafficStatistics.getHoles());
+                        = sdTrafficStatisticsMapper.analysisDataByHourTimeData(
+                        sdTrafficStatistics.getParams(),sdTrafficStatistics.getTunnelId(),sdTrafficStatistics.getHoles());
                 return yearData;
-            } else if ("hour".equals(sdTrafficStatistics.getEqDirection())) {
+            }
+            else if("hour".equals(sdTrafficStatistics.getEqDirection())){
                 Map<String, Object> map = sdTrafficStatistics.getParams();
-                if (map.get("beginTime") != null) {
+                if(map.get("beginTime") != null){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String time = map.get("beginTime").toString();
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("endTime", sdf.format(getEndTime(sdf.parse(time))));
                     params.put("beginTime", sdf.format(getStartTime(sdf.parse(time))));
                     sdTrafficStatistics.setParams(params);
-                } else {
+                }else{
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("beginTime", sdf.format(getStartTime(new Date())));
@@ -297,14 +305,15 @@ public class SdTrafficStatisticsServiceImpl implements ISdTrafficStatisticsServi
                 }
                 List<SdTrafficStatistics> yearData
                         = sdTrafficStatisticsMapper.analysisDataByHourTime(
-                        sdTrafficStatistics.getParams(), sdTrafficStatistics.getTunnelId(), sdTrafficStatistics.getHoles());
-                return yearData;
-            } else {
-                List<SdTrafficStatistics> yearData = sdTrafficStatisticsMapper.analysisDataByTime(sdTrafficStatistics);
-                emptyToZero(sdTrafficStatistics.getEqDirection(), yearData);
+                        sdTrafficStatistics.getParams(),sdTrafficStatistics.getTunnelId(),sdTrafficStatistics.getHoles());
                 return yearData;
             }
-        } catch (Exception e) {
+            else{
+                List<SdTrafficStatistics> yearData = sdTrafficStatisticsMapper.analysisDataByTime(sdTrafficStatistics);
+                emptyToZero(sdTrafficStatistics.getEqDirection(),yearData);
+                return yearData;
+            }
+        }catch(Exception e){
             return new ArrayList<SdTrafficStatistics>();
         }
 

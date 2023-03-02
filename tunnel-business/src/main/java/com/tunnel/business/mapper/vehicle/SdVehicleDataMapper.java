@@ -59,7 +59,7 @@ public interface SdVehicleDataMapper
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteSdVehicleDataByIds(Long[] ids);
+    int deleteSdVehicleDataByIds(Long[] ids);
 
 
     /**
@@ -68,4 +68,11 @@ public interface SdVehicleDataMapper
      * @return
      */
     List<Map> getDayVehicleData(SdVehicleData sdVehicleData);
+
+
+    /**
+     * 查询车流量信息 ,根据时间获取
+     * @return 车辆管理集合
+     */
+    List<Map<String, Object>> getVehicleListsByDate(Map param);
 }

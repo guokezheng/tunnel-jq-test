@@ -3122,12 +3122,12 @@ export default {
         if(that.news.length>0){
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("impression")){
-        that.impressionOptions.forEach((opt) => {
-                if (opt.dictValue == that.news[i].impression) {
-                  that.news[i].impression = opt.dictLabel;
-          }
-        });
-          }
+              that.impressionOptions.forEach((opt) => {
+                      if (opt.dictValue == that.news[i].impression) {
+                        that.news[i].impression = opt.dictLabel;
+                }
+              });
+            }
           }
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("network")){
@@ -3135,8 +3135,8 @@ export default {
                 if (opt.dictValue == that.news[i].network) {
                   that.news[i].network = opt.dictLabel;
                 }
-        });
-          }
+              });
+            }
           }
           for(let i=0;i<that.news.length;i++){
             if(that.news[i].hasOwnProperty("power")){
@@ -3144,25 +3144,11 @@ export default {
                 if (opt.dictValue == that.news[i].power) {
                   that.news[i].power = opt.dictLabel;
                 }
-        });
+              });
             }
-            }
+          }
         }
-
-
-        //this.news.forEach((taskitem) => {
-          //this.bzData.forEach((opt) => {
-            //if (taskitem.bzId == opt.deptId) {
-             // taskitem.bzId = opt.deptName;
-           // } else {
-            //  taskitem.bzId = "";
-            //}
-            //if (taskitem.bzId == null || taskitem.bzId == "null") {
-             // taskitem.bzId = "";
-           // }
-         // });
-        //});
-          });
+      });
     },
     // 关闭弹窗
     close() {
@@ -3371,14 +3357,6 @@ export default {
       this.fileData.append("falltRemoveStatue", "1");
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 1);
-      /*      if(this.fileList.length <= 0) {
-                this.fileData.append("file", -1);
-              }else{
-                console.log("================"+this.fileList)
-                return
-              }*/
-
-
       if (this.form.tunnelId == "" ||
         this.form.tunnelId == -1 ||
         this.form.tunnelId == null) {

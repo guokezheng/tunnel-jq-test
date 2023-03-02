@@ -7,9 +7,11 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.business.datacenter.domain.enumeration.DeviceDirectionEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
@@ -899,7 +901,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         for(String direction : tunnelDirection){
             Map<String, Object> map1 = new HashMap<>();
             List<Map<String, Object>> collect = sdDevicesList.stream().filter(item -> direction.equals(item.get("eqDirection").toString())).collect(Collectors.toList());
-            map1.put("label", DeviceDirectionEnum.getValue(direction));
+            //查询方向字典值
+            String directionLabel = SpringUtils.getBean(SysDictDataMapper.class).selectDictLabel(DictTypeEnum.sd_direction.getCode(), direction);
+            map1.put("label", directionLabel);
             map1.put("children",collect);
             directionList.add(map1);
         }

@@ -702,7 +702,7 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
+          <!-- <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
             <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
                 v-if="item.liveUrl"
@@ -710,12 +710,25 @@
                 :open="cameraPlayer"
               ></videoPlayer>
             </el-carousel-item>
-          </el-carousel>
-          <el-image
+          </el-carousel> -->
+          <video 
+                id="h5sVideo2"
+                class="h5video_"
+                controls
+                muted
+                loop
+                autoplay
+                webkit-playsinline 
+                playsinline
+                disablePictureInPicture="true"
+                controlslist="nodownload noplaybackrate noremoteplayback"
+                style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
+              ></video>
+          <!-- <el-image
             v-show="videoList.length < 1"
             :src="noDataUrl"
             :fit="contain">
-          </el-image>
+          </el-image> -->
         </div>
       </div>
       <div class="dialogForm">
@@ -1672,6 +1685,8 @@
 <script>
 // import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
 import $ from "jquery";
+import { displayH5sVideoAll } from "@/api/icyH5stream";
+
 import {
   listEvent,
   getEvent,
@@ -1711,7 +1726,7 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { listType, loadPicture } from "@/api/equipment/type/api";
 import {exportList, listBz} from "@/api/electromechanicalPatrol/taskManage/task";
-import { listDevices, videoStreaming } from "@/api/equipment/eqlist/api";
+import { listDevices, videoStreaming ,getDeviceById} from "@/api/equipment/eqlist/api";
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 export default {
   name: "Event",
@@ -2708,28 +2723,35 @@ export default {
     },
     getVideoUrl(item) {
       this.cameraPlayer = false;
-      this.videoList = [];
-      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
-        (res) => {
-          if (res.data) {
-            // let videoId = res.data[0].eqId
-            let videoId = "";
-            for (let item of res.data) {
-              videoId = item.eqId;
-              videoStreaming(videoId).then((response) => {
-                if (response.code == 200) {
-                  console.log(response.data,"视频视频视频视频视频");
-                  // return false;
-                  this.videoList.push(response.data);
-                  this.cameraPlayer = true;
-                }
-              });
-            }
-            console.log(this.videoList, " this.videoList");
-          }
-          console.log(this.videoList, "this.videoList");
-        }
-      );
+      console.log(item,"itemitem")
+      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
+        getDeviceById(res.data[0].eqId).then((response)=>{
+          displayH5sVideoAll(response.data.secureKey,'h5sVideo2',2);
+        })
+    })
+      
+      // this.videoList = [];
+      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
+      //   (res) => {
+      //     if (res.data) {
+      //       // let videoId = res.data[0].eqId
+      //       let videoId = "";
+      //       for (let item of res.data) {
+      //         videoId = item.eqId;
+      //         videoStreaming(videoId).then((response) => {
+      //           if (response.code == 200) {
+      //             console.log(response.data,"视频视频视频视频视频");
+      //             // return false;
+      //             this.videoList.push(response.data);
+      //             this.cameraPlayer = true;
+      //           }
+      //         });
+      //       }
+      //       console.log(this.videoList, " this.videoList");
+      //     }
+      //     console.log(this.videoList, "this.videoList");
+      //   }
+      // );
     },
     turnLeft() {
       this.arrowRight = true;
@@ -3744,7 +3766,7 @@ export default {
 
 .videoDialogBox {
   width: 100%;
-  height: 400px;
+  height: 370px;
   display: flex;
   justify-content: space-between;
   align-item:center;

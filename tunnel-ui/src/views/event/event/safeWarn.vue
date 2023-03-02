@@ -2215,7 +2215,6 @@ export default {
   },
   methods: {
     changeCheckBox(e){
-      // console.log(e,"==============")
       console.log(this.checkBoxEventState,"queryParams.eventState")
     },
     changeInput(){
@@ -2223,10 +2222,6 @@ export default {
     },
     bodyCloseMenus1(e) {
       let self = this;
-      // console.log(this.$refs.main1,"---------------------")
-      // console.log(this.$refs.main1.contains(e.target),"+++++++++++++")
-      // console.log(this.$refs.cc1,"---------------------")
-      // console.log(this.$refs.cc1.contains(e.target),"+++++++++++++")
 
       if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
         if (self.zd_boxShow == true){
@@ -2275,7 +2270,6 @@ export default {
       }
       getReservePlanData(data).then(res=>{
         this.ReservePlanList = res.data;
-        console.log(this.ReservePlanList);
         if(this.ReservePlanList.length > 0){
           this.eventForm.currencyId = this.ReservePlanList[0].id
         }
@@ -2284,9 +2278,7 @@ export default {
     downFile(){
       const data = { id : this.eventDiscovery.id};
       detailExport(data).then(res=>{
-        console.log(res);
         let blob = new Blob([res], {type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
-        console.log(blob);
         const createFile = document.createElement("a");
         createFile.href = URL.createObjectURL(blob);
         createFile.download = `事件详情报告.docx`
@@ -2333,7 +2325,6 @@ export default {
     },
     //打开详情弹窗
     detailsOpen(item){
-      console.log(item,"itemitemitem");
       // this.eventFind = item;
       let data = {id:item.id};
       getEventDetail(data).then(res=>{
@@ -2380,7 +2371,6 @@ export default {
       let data = { prevControlType: 0 };
       listEventType(data).then((response) => {
         this.planTypeData = response.rows;
-        console.log(this.planTypeData,'事件类型事件类型事件类型事件类型事件类型');
       });
     },
     // 打开图片变视频弹窗
@@ -2546,9 +2536,7 @@ export default {
         this.details = false;
         this.$modal.msgSuccess("修改成功");
         this.getList();
-        console.log(currencyId,"this.eventForm.eventStatethis.eventForm.eventState");
         if(currencyId){
-          console.log('asdasdasdasdasdas');
           this.$router.push({
             path: "/emergency/administration/dispatch",
             query: { id: this.eventForm.id },
@@ -2583,7 +2571,6 @@ export default {
       this.processType = false;
     },
     openProcess(type, id) {
-      console.log(type,id, "00000000000000");
       if (type && id) {
         this.processType = true;
         this.processDialog = true;
@@ -2592,7 +2579,6 @@ export default {
           eventState: 0,
         };
         updateEvent(param).then((res) => {
-          console.log(res, "处理中");
           this.$modal.msgSuccess("正在处理");
           this.evtHandle();
         });
@@ -2620,7 +2606,6 @@ export default {
       };
       getSafetyHandle(param).then((res) => {
         let list = this.handleTree(res.data, "flowId", "flowPid");
-        console.log(list, "999999999999999999");
         //  for(let item of list){
         //   console.log(item.flowContent.toString().length,"555555555555555")
         //  }
@@ -2653,9 +2638,7 @@ export default {
       this.details = true;
       this.eventForm = item;
       this.getReservePlanData();
-      console.log(this.eventForm.iconUrlList, "iconUrlList");
       this.$nextTick(() => {
-        console.log(this.$refs.swiperTop,'this.$refs.swiperTopthis.$refs.swiperTopthis.$refs.swiperTop');
         const swiperTop = this.$refs.swiperTop.$el.swiper;
         const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
         swiperTop.controller.control = swiperThumbs;
@@ -2683,7 +2666,6 @@ export default {
         );
       }
       this.title = item.eventTitle;
-      console.log(item,"itemitemitemitem");
       // 获取实时视频
       this.getVideoUrl(item);
       // 获取实时视频截图
@@ -2700,7 +2682,6 @@ export default {
         this.urls = response.data;
         this.arrowRight2 = false;
         this.urlsList = this.urls;
-        console.log(response.data,this.urlsList);
       });
     },
     getImgUrl(item) {
@@ -2829,7 +2810,6 @@ export default {
     },
     eqStatusGet(e) {
       getEquipmentInfo({ eqId: e }).then((response) => {
-        console.log(response,"修改设备名称")
         this.form.faultLocation = "";
         this.form.eqRunStatus = "";
         this.form.eqStatus = "";
@@ -2940,7 +2920,6 @@ export default {
        // this.queryParams.pageSize = 10;
         listList(this.queryParams1).then((response) => {
           this.eventLists = response.rows;
-          console.log(response.rows, "response.rowsresponse.rowsresponse.rows列表内容");
           this.eventLists.forEach((item) => {
             if (item.faultLocation == "null") {
               item.faultLocation = "";
@@ -2973,7 +2952,6 @@ export default {
         listEvent(this.queryParams).then((response) => {
           for (let item of response.rows) {
             if (item.iconUrlList) {
-              console.log(item.iconUrlList.length,'asdasdasdasdas')
               for (let i = 0; i < item.iconUrlList.length; i++) {
                 // console.log(item.iconUrlList[1].imgUrl,"item.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrl")
                 if(item.iconUrlList.length == 1){
@@ -2985,8 +2963,6 @@ export default {
             }
           }
           this.eventList = response.rows;
-          
-          console.log(this.eventList,'this.eventListthis.eventListthis.eventListthis.eventList');
           this.total = response.total;
           this.loading = false;
         });
@@ -3010,7 +2986,6 @@ export default {
     getTunnel() {
       if (!this.queryParams.deptId) {
         listTunnels().then((response) => {
-          console.log(response.rows,"所属隧道")
           this.tunnelList = response.rows;
         });
       }
@@ -3025,7 +3000,6 @@ export default {
         isUsable: "1",
       };
       listEventType(prevControlType).then((response) => {
-        // console.log(response.rows,'事件类型事件类型事件类型事件类型事件类型')
         this.eventTypeData = [...response.rows];
         this.eventTypeDataList = response.rows;
         this.eventTypeDataList.unshift({ simplifyName: "全部" });

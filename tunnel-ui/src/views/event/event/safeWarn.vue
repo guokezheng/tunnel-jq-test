@@ -678,7 +678,8 @@
             <swiper class="swiper gallery-top" :options="swiperOptionTop" ref="swiperTop">
               <!-- slides -->
               <swiper-slide  v-for="(item,index) in eventForm.iconUrlList" :key="index" :class="'slide-'+index">
-                <img :src="item.imgUrl" style="width:100%;height:100%;">
+                <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop></video>
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
               <div class="swiper-button-prev" slot="button-prev"></div>
               <div class="swiper-button-next" slot="button-next"></div>
@@ -686,7 +687,8 @@
             </swiper>
             <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs" ref="swiperThumbs">
               <swiper-slide v-for="(item,index) in eventForm.iconUrlList" :key="index" :class="'slide-'+index">
-                <img :src="item.imgUrl" style="width:100%;height:100%;">
+                <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop></video>
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
             </swiper>
           </div>
@@ -2327,6 +2329,7 @@ export default {
     },
     //打开详情弹窗
     detailsOpen(item){
+      console.log(item,"itemitemitem");
       // this.eventFind = item;
       let data = {id:item.id};
       getEventDetail(data).then(res=>{
@@ -2349,7 +2352,8 @@ export default {
       }
     },
     isShow(item){
-      if(this.activeName == '0' || this.activeName == '1'){
+      // || this.activeName == '1'
+      if(this.activeName == '0' ){
         if(item.eventState == '3'){
           return true
         }
@@ -2360,6 +2364,9 @@ export default {
     },
     // 复核弹窗内单选改变事件
     eventStateChange(){
+      if(this.eventForm.eventState != 0){
+        this.eventForm.currencyId = '';
+      }
       this.eventForm.reviewRemark = [];
       // if(this.eventForm.eventState == '0'){
       //   this.getReservePlanData();
@@ -2374,8 +2381,12 @@ export default {
     },
     // 打开图片变视频弹窗
     openPicDialog(item) {
-      this.videoUrl = item.videoUrl;
-      this.picUrlDialog = true;
+      if(!item.videoUrl){
+        this.$message.warning('暂无视频');
+      }else{
+        this.videoUrl = item.videoUrl;
+        this.picUrlDialog = true;
+      }
     },
     // 忽略
     hulue() {
@@ -2493,6 +2504,7 @@ export default {
     },
     // 复核提交
     submitDialog() {
+      this.$cache.local.set('currencyId',this.eventForm.currencyId);
       // for (let item of this.eventForm.confidenceList) {
       //   if (
       //     !/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/.test(
@@ -2522,6 +2534,7 @@ export default {
         return this.$modal.msgWarning("请选择事件处置预案");
       }
       // return false;
+      const currencyId = this.eventForm.currencyId;
       updateEvent(this.eventForm).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;
@@ -2529,12 +2542,15 @@ export default {
         this.details = false;
         this.$modal.msgSuccess("修改成功");
         this.getList();
-        if(this.eventForm.eventState == '0' && this.eventForm.currencyId){
+        console.log(currencyId,"this.eventForm.eventStatethis.eventForm.eventState");
+        if(currencyId){
+          console.log('asdasdasdasdasdas');
           this.$router.push({
             path: "/emergency/administration/dispatch",
             query: { id: this.eventForm.id },
           });
         }
+        this.$cache.local.remove("currencyId")
       });
     },
     // 获取车道数
@@ -2667,8 +2683,8 @@ export default {
       // 获取实时视频
       this.getVideoUrl(item);
       // 获取实时视频截图
-      // this.getImgUrl(item);
-      this.getImgUrls(item);
+      this.getImgUrl(item);
+      // this.getImgUrls(item);
     },
     getImgUrls(item){
       this.urlsList = [];
@@ -2716,6 +2732,8 @@ export default {
               videoId = item.eqId;
               videoStreaming(videoId).then((response) => {
                 if (response.code == 200) {
+                  console.log(response.data,"视频视频视频视频视频");
+                  // return false;
                   this.videoList.push(response.data);
                   this.cameraPlayer = true;
                 }
@@ -2951,12 +2969,19 @@ export default {
         listEvent(this.queryParams).then((response) => {
           for (let item of response.rows) {
             if (item.iconUrlList) {
+              console.log(item.iconUrlList.length,'asdasdasdasdas')
               for (let i = 0; i < item.iconUrlList.length; i++) {
-                item.picUrl = item.iconUrlList[0].imgUrl;
+                // console.log(item.iconUrlList[1].imgUrl,"item.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrl")
+                if(item.iconUrlList.length == 1){
+                  item.picUrl = item.iconUrlList[0].imgUrl;
+                }else{
+                  item.picUrl = item.iconUrlList[1].imgUrl;
+                }
               }
             }
           }
           this.eventList = response.rows;
+          
           console.log(this.eventList,'this.eventListthis.eventListthis.eventListthis.eventList');
           this.total = response.total;
           this.loading = false;

@@ -1154,9 +1154,9 @@
               :rtsp="liveUrl1"
               :open="cameraPlayer1"
             ></videoPlayer>
-            <video 
+            <video
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic1"
-                id="h5sVideo1"
+                id="h5sVideo2"
                 class="h5video_"
                 controls
                 muted
@@ -1190,9 +1190,9 @@
               :rtsp="liveUrl2"
               :open="cameraPlayer2"
             ></videoPlayer>
-            <video 
+            <video
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic1"
-                id="h5sVideo2"
+                id="h5sVideo3"
                 class="h5video_"
                 controls
                 muted
@@ -1226,9 +1226,9 @@
               :rtsp="liveUrl3"
               :open="cameraPlayer3"
             ></videoPlayer>
-            <video 
+            <video
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
-                id="h5sVideo3"
+                id="h5sVideo4"
                 class="h5video_"
                 controls
                 muted
@@ -1258,13 +1258,13 @@
               </div>
             </div>
             <videoPlayer
-              v-if="liveUrl4 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
+              v-if="liveUrl4 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS' "
               :rtsp="liveUrl4"
               :open="cameraPlayer4"
             ></videoPlayer>
-            <video 
-              v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
-                id="h5sVideo4"
+            <video
+              v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
+                id="h5sVideo5"
                 class="h5video_"
                 controls
                 muted
@@ -4928,61 +4928,63 @@ export default {
     },
     getFooterVideo() {
         // 潍坊方向
-        getEntranceExitVideo(this.tunnelId, "2").then((res) => {
+        getEntranceExitVideo(this.tunnelId, this.directionList[0].dictValue).then((res) => {
           if(res.data.length == 0){
             this.videoNoPic2 = true
-          }
-          this.videoTitle3 = res.data[0].inletName;
-          this.videoTitle4 = res.data[0].outletName;
-          console.log(res,"济南方向")
-          if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
-            getDeviceById(res.data[0].inlet).then((response)=>{
-              console.log(response,"0000000000")
-              displayH5sVideoAll(response.data.secureKey,'h5sVideo3');
-            })
-            getDeviceById(res.data[0].outlet).then((response)=>{
-              displayH5sVideoAll(response.data.secureKey,'h5sVideo4');
-            })
           }else{
-            videoStreaming(res.data[0].inlet).then((res) => {
-            this.liveUrl1 = res.data.liveUrl;
-            this.cameraPlayer1 = true;
-          });
-          videoStreaming(res.data[0].outlet).then((res) => {
-            this.liveUrl2 = res.data.liveUrl;
-            this.cameraPlayer2 = true;
-          });
+            this.videoTitle3 = res.data[0].inletName;
+            this.videoTitle4 = res.data[0].outletName;
+            console.log(res,"济南方向")
+            if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+              getDeviceById(res.data[0].inlet).then((response)=>{
+                console.log(response,"0000000000")
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo4');
+              })
+              getDeviceById(res.data[0].outlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo5');
+              })
+            }else{
+              videoStreaming(res.data[0].inlet).then((res) => {
+                this.liveUrl1 = res.data.liveUrl;
+                this.cameraPlayer1 = true;
+              });
+              videoStreaming(res.data[0].outlet).then((res) => {
+                this.liveUrl2 = res.data.liveUrl;
+                this.cameraPlayer2 = true;
+              });
+            }
           }
-          
+
+
         });
         // 济南方向
-        getEntranceExitVideo(this.tunnelId, "1").then((res) => {
+        getEntranceExitVideo(this.tunnelId, this.directionList[1].dictValue).then((res) => {
           console.log(res,"潍坊方向")
           if(res.data.length == 0){
             this.videoNoPic1 = true
-          }
-          this.videoTitle1 = res.data[0].inletName;
-          this.videoTitle2 = res.data[0].outletName;
-          if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
-            getDeviceById(res.data[0].inlet).then((response)=>{
-              displayH5sVideoAll(response.data.secureKey,'h5sVideo1');
-            })
-            getDeviceById(res.data[0].outlet).then((response)=>{
-              displayH5sVideoAll(response.data.secureKey,'h5sVideo2');
-            })
           }else{
-            videoStreaming(res.data[0].inlet).then((res) => {
-              this.liveUrl3 = res.data.liveUrl;
-              this.cameraPlayer3 = true;
-            });
-            videoStreaming(res.data[0].outlet).then((res) => {
-              this.liveUrl4 = res.data.liveUrl;
-              this.cameraPlayer4 = true;
-            });
+            this.videoTitle1 = res.data[0].inletName;
+            this.videoTitle2 = res.data[0].outletName;
+            if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+              getDeviceById(res.data[0].inlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo2');
+              })
+              getDeviceById(res.data[0].outlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo3');
+              })
+            }else{
+              videoStreaming(res.data[0].inlet).then((res) => {
+                this.liveUrl3 = res.data.liveUrl;
+                this.cameraPlayer3 = true;
+              });
+              videoStreaming(res.data[0].outlet).then((res) => {
+                this.liveUrl4 = res.data.liveUrl;
+                this.cameraPlayer4 = true;
+              });
+            }
           }
-         
         });
-      
+
     },
     filterNode(value, data) {
       if (!value) return true;

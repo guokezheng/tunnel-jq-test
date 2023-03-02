@@ -100,11 +100,18 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public SdEvent selectSdEventById(Long id) {
         SdEvent sdEvent = sdEventMapper.selectSdEventById(id);
-        if(sdEvent.getVideoUrl()!=null){
-            sdEvent.setVideoUrl(sdEvent.getVideoUrl().split(";")[0]);
+        if(sdEvent != null){
+            SdTrafficImage image = new SdTrafficImage();
+            image.setBusinessId(id.toString());
+            image.setImgType("1");
+            //查询视频
+            List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
+            sdEvent.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl() : "");
+            //查询视频图片
+            List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
+            sdEvent.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
+            sdEvent.setConfidenceList(radarEventMapper.selectConfidence(sdEvent.getId()));
         }
-        sdEvent.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString()));
-        sdEvent.setConfidenceList(radarEventMapper.selectConfidence(sdEvent.getId()));
         return sdEvent;
     }
 
@@ -140,9 +147,9 @@ public class SdEventServiceImpl implements ISdEventService {
             //查询视频
             List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
             item.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl() : "");
-            //查询图片
-            image.setImgType("0");
-            item.setIconUrlList(sdTrafficImageMapper.selectSdTrafficImageList(image));
+            //查询视频图片
+            List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString());
+            item.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
             item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
         });
         return sdEvents;
@@ -674,7 +681,8 @@ public class SdEventServiceImpl implements ISdEventService {
         //查询事件详情-事件发现
         SdEvent eventDiscovery = sdEventMapper.getEventDiscovery(sdEvent);
         //查询事件详情-事件发现-图片
-        eventDiscovery.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString()));
+        List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
+        sdEvent.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
         //计算持续时间
         String datePoor = "";
         if("3".equals(sdEventData.getEventState())){

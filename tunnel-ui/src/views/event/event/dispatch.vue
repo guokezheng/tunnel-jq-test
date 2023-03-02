@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-01 18:12:44
+ * @LastEditTime: 2023-03-01 23:08:49
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -563,7 +563,7 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="24" v-if="boxName == '执行状态' || boxName == '执行文件'">
             <p style="padding:15px 0;">{{boxName}}:</p>
             <el-card v-show="GDeviceData && !GDeviceData.vmsData">
               {{ GDeviceData.deviceState }}

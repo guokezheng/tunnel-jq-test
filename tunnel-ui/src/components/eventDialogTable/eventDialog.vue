@@ -31,7 +31,8 @@
             <swiper class="swiper gallery-top" :options="swiperOptionTop" ref="swiperTop">
               <!-- slides -->
               <swiper-slide  v-for="(item,index) in eventForm.iconUrlList" :key="index" :class="'slide-'+index">
-                <img :src="item.imgUrl" style="width:100%;height:100%;">
+                <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop></video>
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
               <div class="swiper-button-prev" slot="button-prev"></div>
               <div class="swiper-button-next" slot="button-next"></div>
@@ -39,13 +40,14 @@
             </swiper>
             <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs" ref="swiperThumbs">
               <swiper-slide v-for="(item,index) in eventForm.iconUrlList" :key="index" :class="'slide-'+index">
-                <img :src="item.imgUrl" style="width:100%;height:100%;">
+                <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop></video>
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
             </swiper>
           </div>
-          <div v-if="eventForm.iconUrlList.length < 1">
+          <div v-if="eventForm.iconUrlList.length < 1" style="height: 89%;">
             <el-image
-              style="width: 100px; height: 100px"
+              style="width: 100%; height: 100%"
               :src="noPic"
               :fit="contain">
             </el-image>
@@ -53,17 +55,17 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
+          <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1 && videoList[0] != null">
             <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
-                v-if="item.liveUrl"
+                v-if="item.liveUrl != null && item.liveUrl != ''"
                 :rtsp="item.liveUrl"
                 :open="cameraPlayer"
               ></videoPlayer>
             </el-carousel-item>
           </el-carousel>
           <el-image 
-            v-show="videoList.length < 1"
+            v-if="videoList.length < 1 || videoList[0] == null"
             :src="noDataUrl"
             :fit="contain">
           </el-image>
@@ -631,6 +633,7 @@ export default {
     });
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
+      console.log(this.eventGradeList,"this.eventGradeListthis.eventGradeListthis.eventGradeList");
     });
   },
   beforeCreate() {
@@ -848,6 +851,7 @@ export default {
       });
     },
     getReservePlanData(){
+      console.log('触发了');
       this.ReservePlanList = [];
       this.eventForm.currencyId = '';
       let data = {

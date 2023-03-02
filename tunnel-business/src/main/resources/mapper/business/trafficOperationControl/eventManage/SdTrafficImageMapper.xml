@@ -132,6 +132,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectImageByBusinessId" resultMap="SdTrafficImageResult">
         select img_id, img_name, img_url, img_width, img_height, remark, business_id, create_time, create_by, update_time, update_by from sd_traffic_image
         where business_id = #{businessId}
+        ORDER BY
+            img_type DESC
     </select>
 
 

@@ -455,14 +455,14 @@
           >
             <div class="video">
               <img
-                :src="item.picUrl"
-                v-show="item.picUrl"
+                :src="item.eventImgUrl"
+                v-show="item.eventImgUrl"
                 style="width: 100%"
                 @click="openPicDialog(item)"
               />
               <img
                 src="../../../assets/cloudControl/nullImg.png"
-                v-show="!item.picUrl"
+                v-show="!item.eventImgUrl || item.eventImgUrl == null"
               />
 
               <div>{{ item.simplifyName }}</div>

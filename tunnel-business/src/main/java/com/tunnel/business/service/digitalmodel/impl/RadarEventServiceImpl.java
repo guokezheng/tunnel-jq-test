@@ -452,15 +452,15 @@ public class RadarEventServiceImpl implements RadarEventService {
                     wjDevicelidar.setEqId(wjDeviceCameraList.get(wjDeviceCameraList.size() - 1).getEqId());
                     //存储后将雷达数据从相机数据剔除
                     wjDeviceCameraList.remove(wjDeviceCameraList.size() - 1);
-                    //雷达数据存redis
-                    redisCache.setCacheMapValue(RadarEventConstants.WJ_LIDAR_INFO_KEY, RadarEventConstants.WJ_LIDAR_INFO_KEY + wjDevicelidar.getEqId(), parse);
-                    //相机数据存redis
-                    wjDeviceCameraList.forEach(
-                            v -> {
-                                JSON parse1 = JSONUtil.parse(v);
-                                redisCache.setCacheMapValue(RadarEventConstants.WJ_CAMERA_INFO_KEY, RadarEventConstants.WJ_CAMERA_INFO_KEY + v.getEqId(), parse1);
-                            }
-                    );
+//                    //雷达数据存redis
+//                    redisCache.setCacheMapValue(RadarEventConstants.WJ_LIDAR_INFO_KEY, RadarEventConstants.WJ_LIDAR_INFO_KEY + wjDevicelidar.getEqId(), parse);
+//                    //相机数据存redis
+//                    wjDeviceCameraList.forEach(
+//                            v -> {
+//                                JSON parse1 = JSONUtil.parse(v);
+//                                redisCache.setCacheMapValue(RadarEventConstants.WJ_CAMERA_INFO_KEY, RadarEventConstants.WJ_CAMERA_INFO_KEY + v.getEqId(), parse1);
+//                            }
+//                    );
                 });
     }
 

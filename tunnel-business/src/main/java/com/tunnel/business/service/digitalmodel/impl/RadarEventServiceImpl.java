@@ -35,6 +35,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -118,12 +120,22 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
-                sdEvent.setEventTime(DateUtils.parseDate(f.getEventTimeStampStart()));
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                //转换
+                Date time = null;
+                try {
+                    time = sdf.parse(f.getEventTimeStampStart());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                sdEvent.setEventTime(time);
                 sdEvent.setId(f.getEventId());
                 sdEvent.setUpdateTime(DateUtils.getNowDate());
                 //方向
                 if(!StringUtils.isEmpty(f.getDirection())){
-                    sdEvent.setDirection(f.getDirection() + "");
+//                    sdEvent.setDirection(f.getDirection() + "");
+                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
+                    sdEvent.setDirection(direction);
                 }
                 wjMapper.updateEvent(sdEvent);
                 //推送事件数据到物联中台kafka
@@ -140,7 +152,16 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
-                sdEvent.setEventTime(DateUtils.parseDate(f.getEventTimeStampStart()));
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                //转换
+                Date time = null;
+                try {
+                    time = sdf.parse(f.getEventTimeStampStart());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                sdEvent.setEventTime(time);
                 //事件等级默认为一般
                 sdEvent.setEventGrade("1");
                 //接收到的事件状态设置为未处理

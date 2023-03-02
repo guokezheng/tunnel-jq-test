@@ -712,7 +712,7 @@
             </el-carousel-item>
           </el-carousel> -->
           <video 
-                id="h5sVideo2"
+                id="h5sVideo1"
                 class="h5video_"
                 controls
                 muted
@@ -2726,7 +2726,8 @@ export default {
       console.log(item,"itemitem")
       getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
         getDeviceById(res.data[0].eqId).then((response)=>{
-          displayH5sVideoAll(response.data.secureKey,'h5sVideo2',2);
+          console.log(response,"00000000000000000")
+          displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
         })
     })
       

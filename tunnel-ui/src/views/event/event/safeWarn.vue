@@ -591,7 +591,7 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1 && videoList[0] != null">
+          <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
             <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
                 v-if="item.liveUrl != null && item.liveUrl != ''"
@@ -601,7 +601,7 @@
             </el-carousel-item>
           </el-carousel>
           <el-image 
-            v-if="videoList.length < 1 || videoList[0] == null"
+            v-if="videoList.length < 1"
             :src="noDataUrl"
             :fit="contain">
           </el-image>
@@ -2628,7 +2628,9 @@ export default {
               videoStreaming(videoId).then((response) => {
                 if (response.code == 200) {
                   console.log(response.data,"视频视频视频视频视频");
-                  this.videoList.push(response.data);
+                  if(response.data != null){
+                    this.videoList.push(response.data);
+                  }
                   this.cameraPlayer = true;
                 }
               });

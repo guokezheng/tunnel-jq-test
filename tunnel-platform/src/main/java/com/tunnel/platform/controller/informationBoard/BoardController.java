@@ -216,6 +216,11 @@ public class BoardController extends BaseController {
         String username = SecurityUtils.getUsername();
         for (int i = 0;i < devices.length;i++) {
             String deviceId = devices[i];
+            SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(Long.parseLong(deviceId));
+            if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+                flag = true;
+                continue;
+            }
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(Long.parseLong(deviceId));
             protocolType = sdIotDevice.getProtocolName();
             List<String> paramsList = new ArrayList<String>();
@@ -283,6 +288,9 @@ public class BoardController extends BaseController {
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
                 }
             }
+        }
+        if (flag) {
+            ajaxResult = new AjaxResult(HttpStatus.ERROR, "部分设备发布失败，请检查后重试！");
         }
         return ajaxResult;
     }

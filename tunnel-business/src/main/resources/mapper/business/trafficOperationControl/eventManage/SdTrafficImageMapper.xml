@@ -46,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="imgUrl != null">img_url,</if>
             <if test="imgWidth != null">img_width,</if>
             <if test="imgHeight != null">img_height,</if>
+            <if test="imgType != null">img_type,</if>
             <if test="remark != null">remark,</if>
             <if test="businessId != null">business_id,</if>
             <if test="createTime != null">create_time,</if>
@@ -58,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="imgUrl != null">#{imgUrl},</if>
             <if test="imgWidth != null">#{imgWidth},</if>
             <if test="imgHeight != null">#{imgHeight},</if>
+            <if test="imgType != null">#{imgType},</if>
             <if test="remark != null">#{remark},</if>
             <if test="businessId != null">#{businessId},</if>
             <if test="createTime != null">#{createTime},</if>

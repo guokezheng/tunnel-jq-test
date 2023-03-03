@@ -42,6 +42,15 @@ export function delPlan(id) {
     method: 'delete'
   })
 }
+
+// 导出预案信息
+export function exportPlan(query) {
+  return request({
+    url: '/plan/export',
+    method: 'get',
+    params: query
+  })
+}
 // 新增预案信息
 export function addPlanFile(data) {
   return request({

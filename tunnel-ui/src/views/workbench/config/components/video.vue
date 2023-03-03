@@ -42,7 +42,7 @@
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
         ></video>
         <videoPlayer
-            v-if="videoForm.liveUrl && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
+            v-if="videoForm.liveUrl "
             :rtsp="videoForm.liveUrl"
             :open="cameraPlayer"
 

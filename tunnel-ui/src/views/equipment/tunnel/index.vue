@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
-      <el-col :span="4">
+      <el-col :span="6">
           <el-button
             size="small"
             @click="handleAdd"
@@ -34,7 +34,7 @@
           >刷新</el-button
           >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
@@ -1183,7 +1183,7 @@ export default {
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有隧道管理数据项？")
+        .confirm("是否确认导出隧道管理数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportTunnels(queryParams);

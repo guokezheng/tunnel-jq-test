@@ -1,10 +1,14 @@
 package com.tunnel.business.domain.event;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,31 +25,66 @@ public class SdJoinTypeFlow extends BaseEntity
     private Long id;
 
     /** 事件类型id */
-    @Excel(name = "事件类型id")
+    /*@Excel(name = "事件类型id")*/
     private Long eventTypeId;
 
     /** 环节id */
-    @Excel(name = "环节id")
+   /* @Excel(name = "环节id")*/
     private Long flowId;
 
     /** 环节pid */
-    @Excel(name = "环节pid")
+   /* @Excel(name = "环节pid")*/
     private Long flowPid;
 
     /** 环节名称 */
-    @Excel(name = "环节名称")
+   /* @Excel(name = "环节名称")*/
     private String flowName;
 
     /** 环节排序 */
-    @Excel(name = "环节排序")
+   /* @Excel(name = "环节排序")*/
     private String flowSort;
 
     /**
      * 流程list
      */
     List<SdPlanFlow> planFlowList;
-
+    @Excel(name = "事件分类")
     private String dictLabel;
+    @Excel(name = "事件类型")
+    private String eventType;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return this.createTime;
+    }
+
+    @Override
+    public void setCreateTime( Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getEventType() {
+        return this.eventType;
+    }
+
+    public void setEventType(final String eventType) {
+        this.eventType = eventType;
+    }
 
     private List<SdJoinTypeFlow> children;
 

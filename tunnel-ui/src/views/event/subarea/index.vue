@@ -480,7 +480,7 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有隧道分区数据项？")
+        .confirm("是否确认导出隧道分区数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportSubarea(queryParams);

@@ -21,6 +21,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="controlDirection"    column="control_direction"    />
         <result property="direction"    column="direction"    />
         <result property="eventGrade"    column="event_grade"    />
+        <result property="dj"    column="dj"    />
+        <result property="fx"    column="fx"    />
         <association property="eventType"  column="id" javaType="SdEventType" resultMap="eventTypeResult" />
         <association property="strategy"  column="id" javaType="SdStrategy" resultMap="strategyResult" />
         <association property="sdTunnelSubarea" column="subarea_id" javaType="sdTunnelSubarea" resultMap="subareaResult" />
@@ -62,11 +64,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select A.id, F.tunnel_id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id, A.category,
 #             --group_concat(DISTINCT E.strategy_id) strategy_id,
         B.event_type,
-        F.tunnel_name,A.control_direction,A.direction,A.event_grade
+        F.tunnel_name,A.control_direction,A.direction,A.event_grade,d.dict_label fx,g.dict_label dj
         from sd_reserve_plan A
         left join sd_event_type B on A.plan_type_id = B.id
         left join sd_reserve_process E on A.id = E.reserve_id
         left join sd_tunnels F on A.tunnel_id = F.tunnel_id
+        left join sys_dict_data d on d.dict_value = A.direction and d.dict_type = 'sd_direction'
+        left join sys_dict_data g on g.dict_value = A.event_grade and g.dict_type = 'sd_event_grade'
         <where>
             1 = 1
             AND B.is_usable = '1'
@@ -78,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
             <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>
             <if test="eventGrade != null  and eventGrade != ''"> and A.event_grade = #{eventGrade}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(A.id,#{ids}) > 0</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (F.dept_id = #{params.deptId} OR F.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>

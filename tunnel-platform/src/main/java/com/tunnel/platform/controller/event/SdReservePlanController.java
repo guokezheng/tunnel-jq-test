@@ -6,7 +6,10 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.oss.OssUtil;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.tunnel.business.domain.event.SdJoinTypeFlow;
 import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.event.SdReservePlanFile;
 import com.tunnel.business.service.dataInfo.ISdEquipmentFileService;
@@ -17,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -140,6 +144,19 @@ public class SdReservePlanController extends BaseController {
     @ApiImplicitParam(name = "id", value = "预案信息ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
     public Result remove(@PathVariable Long id) {
         return Result.toResult(sdReservePlanService.deleteSdReservePlanById(id));
+    }
+
+
+    /**
+     * 导出事件类型预案流程关联列表
+     */
+    @Log(title = "预案信息", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public AjaxResult export(SdReservePlan sdReservePlan)
+    {
+        List<SdReservePlan> list = sdReservePlanService.selectSdReservePlanList(sdReservePlan);
+        ExcelUtil<SdReservePlan> util = new ExcelUtil<SdReservePlan>(SdReservePlan.class);
+        return util.exportExcel(list, "应急预案");
     }
 
 //    /**

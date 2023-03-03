@@ -32,7 +32,7 @@
             v-hasPermi="['system:configuration:export']"
             >导出</el-button
           >
-          <el-button size="small" @click="resetQuery" 
+          <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -583,7 +583,7 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有环境配置数据项？")
+        .confirm("是否确认导出环境配置数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportConfiguration(queryParams);

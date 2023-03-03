@@ -73,7 +73,8 @@ public class IotBoardReleaseLogController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(IotBoardReleaseLog iotBoardReleaseLog)
     {
-        List<IotBoardReleaseLog> list = iotBoardReleaseLogService.selectIotBoardReleaseLogList(iotBoardReleaseLog);
+//        List<IotBoardReleaseLog> list = iotBoardReleaseLogService.selectIotBoardReleaseLogList(iotBoardReleaseLog);
+        List<IotBoardReleaseLog> list = iotBoardReleaseLogService.selectIotBoardReleaseLogListToExport(iotBoardReleaseLog);
         ExcelUtil<IotBoardReleaseLog> util = new ExcelUtil<IotBoardReleaseLog>(IotBoardReleaseLog.class);
         return util.exportExcel(list, "发布记录列表");
     }

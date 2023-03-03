@@ -126,6 +126,7 @@
                 clearable
                 size="small"
                 style="width: 325px"
+                @change="$forceUpdate()"
               >
                 <el-option
                   v-for="(item, index) in eventTypeData"
@@ -233,6 +234,7 @@
                 clearable
                 size="small"
                 style="width: 325px"
+                @change="$forceUpdate()"
               >
                 <el-option
                   v-for="(item, index) in eventTypeData"
@@ -386,63 +388,8 @@
                 :value="dict.value"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item>-->
 
-          <el-form-item label="故障描述" prop="faultDescription">
-            <el-input
-              v-model="queryParams.faultDescription"
-              placeholder="请输入故障描述"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleQuery"
-              >搜索
-            </el-button>
-            <el-button type="primary" plain size="mini" @click="resetQuery"
-              >重置
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="handleAdd"
-              v-hasPermi="['system:list:add']"
-              >新增
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :disabled="single"
-              @click="handleUpdate"
-              v-hasPermi="['system:list:edit']"
-              :style="{ display: 'none' }"
-              >修改
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :disabled="multiple"
-              @click="handleDelete"
-              v-hasPermi="['system:list:remove']"
-              :style="{ display: 'none' }"
-              >删除
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="handleExport"
-              v-hasPermi="['system:list:export']"
-              :style="{ display: 'none' }"
-              >导出
-            </el-button>
-          </el-form-item>
-        </el-form>-->
         <div
           class="contentListBox"
           v-if="activeName == '1' || activeName == '0'"
@@ -483,14 +430,8 @@
                   v-show="isShow(item)"
                   @click="detailsButton(item, 2)"
                 >
-                <!-- :class="
-                    item.eventState == '3'
-                      ? 'disabledButton'
-                      : ''
-                  " -->
                   复核
                 </div>
-                <!-- @click="openProcess(1, eventForm.id)" -->
                 <div v-if="item.eventState == '0' && activeName == '0'" class="chuzhi" @click="management(item.id)">
                   处置
                 </div>
@@ -517,11 +458,6 @@
         >
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-<!--          <el-table-column label="序号" width="100px" align="center">
-            <template slot-scope="scope">
-              {{scope.$index+1}}
-            </template>
-          </el-table-column>-->
           <el-table-column label="故障设备" align="center" prop="eqName" />
           <el-table-column label="故障类型" align="center" prop="faultType">
             <template slot-scope="scope">
@@ -537,15 +473,9 @@
             prop="faultFxtime"
             width="180"
           />
-            <!-- <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
-            </template> -->
-          <!-- </el-table-column> -->
-<!--          <el-table-column label="持续时间" align="center" prop="faultCxtime" />-->
           <el-table-column label="故障位置" align="center" prop="faultLocation" />
           <el-table-column label="故障描述" align="center" prop="faultDescription" width="180"
           :show-overflow-tooltip='true'/>
-          <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">
             <template slot-scope="scope">
               <dict-tag
@@ -574,14 +504,6 @@
               />
             </template>
           </el-table-column>
-<!--          <el-table-column label="状态" align="center" prop="faultStatus">
-            <template slot-scope="scope">
-              <dict-tag
-                :options="dict.type.fault_status"
-                :value="scope.row.faultStatus"
-              />
-            </template>
-          </el-table-column>-->
           <el-table-column
             label="操作"
             align="center"
@@ -702,33 +624,34 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <!-- <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
+          <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
             <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
-                v-if="item.liveUrl"
+                v-if="item.liveUrl != null && item.liveUrl != ''"
                 :rtsp="item.liveUrl"
                 :open="cameraPlayer"
               ></videoPlayer>
             </el-carousel-item>
-          </el-carousel> -->
-          <video 
+          </el-carousel>
+          <el-image
+            v-if="videoList.length < 1"
+            :src="noDataUrl"
+            :fit="contain">
+          </el-image>
+          <!-- 现场用这个 -->
+          <!-- <video
                 id="h5sVideo1"
                 class="h5video_"
                 controls
                 muted
                 loop
                 autoplay
-                webkit-playsinline 
+            webkit-playsinline
                 playsinline
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
                 style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
-              ></video>
-          <!-- <el-image
-            v-show="videoList.length < 1"
-            :src="noDataUrl"
-            :fit="contain">
-          </el-image> -->
+          ></video> -->
         </div>
       </div>
       <div class="dialogForm">
@@ -1744,16 +1667,10 @@ export default {
   components: {
     Treeselect,
     videoPlayer,
-    // Swiper,
-    // SwiperSlide,
   },
-  // computed:{
-  //   swiper() {
-  //     return this.$refs.mySwiper.swiper;
-  //   },
-  // },
   data() {
     return {
+      videoShow:false,
       checkBoxEventState:[],
       exportLoading:false,
       contain:"contain",
@@ -2650,6 +2567,7 @@ export default {
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
       this.tunnelId = item.tunnelId;
+      // 凤凰山隧道
       this.direction = item.direction;
       this.details = true;
       this.eventForm = item;
@@ -2723,36 +2641,38 @@ export default {
     },
     getVideoUrl(item) {
       this.cameraPlayer = false;
-      console.log(item,"itemitem")
-      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
-        getDeviceById(res.data[0].eqId).then((response)=>{
-          console.log(response,"00000000000000000")
-          displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
-        })
-    })
-      
-      // this.videoList = [];
-      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
-      //   (res) => {
-      //     if (res.data) {
-      //       // let videoId = res.data[0].eqId
-      //       let videoId = "";
-      //       for (let item of res.data) {
-      //         videoId = item.eqId;
-      //         videoStreaming(videoId).then((response) => {
-      //           if (response.code == 200) {
-      //             console.log(response.data,"视频视频视频视频视频");
-      //             // return false;
-      //             this.videoList.push(response.data);
-      //             this.cameraPlayer = true;
-      //           }
-      //         });
-      //       }
-      //       console.log(this.videoList, " this.videoList");
-      //     }
-      //     console.log(this.videoList, "this.videoList");
-      //   }
-      // );
+      console.log(item,"itemitem");
+      //现场
+      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
+      //   getDeviceById(res.data[0].eqId).then((response)=>{
+      //     console.log(response,"00000000000000000")
+      //     displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
+      //   })
+      // })
+      // 公司
+      this.videoList = [];
+      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
+        (res) => {
+          if (res.data) {
+            // let videoId = res.data[0].eqId
+            let videoId = "";
+            for (let item of res.data) {
+              videoId = item.eqId;
+              videoStreaming(videoId).then((response) => {
+                if (response.code == 200) {
+                  console.log(response.data,"视频视频视频视频视频");
+                  if(response.data != null){
+                    this.videoList.push(response.data);
+                  }
+                  this.cameraPlayer = true;
+                }
+              });
+            }
+            console.log(this.videoList, " this.videoList");
+          }
+          console.log(this.videoList, "this.videoList");
+        }
+      );
     },
     turnLeft() {
       this.arrowRight = true;
@@ -2793,9 +2713,10 @@ export default {
     },
     //导出
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有设备故障数据项？")
+        .confirm("是否确认导出设备故障数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportFaultList(queryParams);
@@ -3311,6 +3232,7 @@ export default {
       this.queryParams.eventTypeId = "";
       this.queryParams1.faultDescription = "";
       this.fuzzySearch1 = ''
+      this.checkBoxEventState = []
 
       // this.resetForm("queryForm");
       this.handleQuery();

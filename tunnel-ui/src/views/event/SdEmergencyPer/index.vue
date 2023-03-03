@@ -8,9 +8,14 @@
         v-hasPermi="['business:SdEmergencyPer:add']"
         size="small"
         @click="handleAdd()"
-      >新增人员
+      >新增
       </el-button>
-      <el-button size="small" @click="resetQuery" 
+      <el-button
+        size="small"
+        @click="handleExport"
+      >导出</el-button
+      >
+      <el-button size="small" @click="resetQuery"
             >刷新</el-button
             >
       </el-col>
@@ -578,8 +583,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有应急人员信息数据项?", "警告", {
+      this.$confirm("是否确认导出应急人员信息数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

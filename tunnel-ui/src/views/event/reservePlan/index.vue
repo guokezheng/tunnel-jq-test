@@ -15,9 +15,15 @@
           v-hasPermi="['business:plan:add']"
           size="small"
           @click="handleAdd()"
-          >新增预案
+          >新增
         </el-button>
-        <el-button size="small" @click="resetQuery" 
+        <el-button
+          size="small"
+          :loading="exportLoading"
+          @click="handleExport"
+        >导出
+        </el-button>
+        <el-button size="small" @click="resetQuery"
             >刷新</el-button
           >
       </el-col>
@@ -116,6 +122,7 @@
       max-height="640"
       :row-class-name="tableRowClassName"
     >
+      <el-table-column type="selection" width="55" align="center" />
       <el-table-column
         type="index"
         width="70"
@@ -634,7 +641,7 @@
                   @change="changeEquipmentType(itemed.eqTypeId, number, index)"
                   style="width: 100%"
                 ></el-cascader>
-              
+
                 <!-- <el-select
                   v-model="itemed.eqTypeId"
                   placeholder="设备类型"
@@ -650,7 +657,7 @@
                 </el-select> -->
               </el-col>
               <el-col :span="4">
-                
+
                 <el-select
                   v-model="itemed.retrievalRule"
                   placeholder="规则条件"
@@ -664,7 +671,7 @@
                     :value="itemz.dictValue"
                   />
                 </el-select>
-              
+
               </el-col>
               <el-col :span="5">
                 <el-cascader
@@ -815,7 +822,7 @@ import {
   partitionTunnel,
   tunnelNames,
   getPlanType,
-  getTreeDeviceList,
+  getTreeDeviceList, exportPlan,
 } from "@/api/event/reservePlan";
 import { listEventType } from "@/api/event/eventType";
 import {
@@ -839,6 +846,7 @@ import {
   getListByRId,
   previewDisplay,
 } from "@/api/event/reserveProcess";
+import {exportFlow} from "@/api/event/planFlow";
 
 export default {
   name: "Plan",
@@ -934,6 +942,8 @@ export default {
       total: 0,
       // 预案信息表格数据
       planList: [],
+      // 导出遮罩层
+      exportLoading: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -1135,6 +1145,19 @@ export default {
         return this.$modal.msgWarning("至少保留一行");
       }
       this.planTypeIdList.splice(index, 1);
+    },
+
+    /** 导出按钮操作 */
+    handleExport() {
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal.confirm('是否确认导出应急预案数据项？').then(() => {
+        this.exportLoading = true;
+        return exportPlan(queryParams);
+      }).then(response => {
+        this.$download.name(response.msg);
+        this.exportLoading = false;
+      }).catch(() => {});
     },
     addInfo(index) {
       let data = {
@@ -1387,7 +1410,7 @@ export default {
       //   );
       //   console.log(res, "设备列表");
       // });
-      
+
     },
     getAudioFileListData(value,number,index) {
       let params = {

@@ -1712,7 +1712,7 @@ export default {
       this.queryParams.ids = ids;
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有巡查任务数据项？")
+        .confirm("是否确认导出巡查任务数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportList(queryParams);

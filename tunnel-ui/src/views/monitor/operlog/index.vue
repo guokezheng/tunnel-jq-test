@@ -4,7 +4,7 @@
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
-        <el-button size="small" @click="resetQuery" 
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
           <el-button
@@ -75,7 +75,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          
+
         </el-form-item>
       </el-form>
     </div>
@@ -414,7 +414,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有操作日志数据项？').then(() => {
+      this.$modal.confirm('是否确认导出操作日志数据项？').then(() => {
         this.exportLoading = true;
         return exportOperlog(queryParams);
       }).then(response => {

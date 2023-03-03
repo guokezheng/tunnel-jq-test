@@ -32,7 +32,7 @@
         </div>
       </el-col>
     </el-row>
-      <div class="searchBox" v-show="cl_boxShow"  >
+      <div class="searchBox" v-show="cl_boxShow"  ref="cc">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -487,12 +487,18 @@ export default {
 
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.cl_boxShow == true){
-          self.cl_boxShow = false;
+      self.$nextTick(()=>{
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.cl_boxShow == true) {
+            self.cl_boxShow = false;
+          }
         }
-      }
+      })
     },
+
 
     //翻页时不刷新序号
     indexMethod(index){
@@ -507,7 +513,7 @@ export default {
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有应急车辆数据项？")
+        .confirm("是否确认导出应急车辆数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportData(queryParams);

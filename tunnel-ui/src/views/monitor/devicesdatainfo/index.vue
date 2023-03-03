@@ -511,7 +511,7 @@ export default {
       const queryParams = this.querysParamsTab;
       console.log("queryParams=========" + queryParams);
       this.$modal
-        .confirm("是否确认导出所有数据报表数据项？")
+        .confirm("是否确认导出数据报表数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportDatainforTab(queryParams);
@@ -533,13 +533,13 @@ export default {
       const queryParams = this.querysParams;
       let confirmInfo;
       if(this.searchValue=="1"){//covi
-        confirmInfo = "是否确认导出所有COVI数据项？";
+        confirmInfo = "是否确认导出COVI数据项？";
       }else if(this.searchValue=="2"){//风速风向
-        confirmInfo = "是否确认导出所有风速风向数据项？";
+        confirmInfo = "是否确认导出风速风向数据项？";
       }else if(this.searchValue=="3"){//洞内光强
-        confirmInfo = "是否确认导出所有洞内光强数据项？";
+        confirmInfo = "是否确认导出洞内光强数据项？";
       }else{//洞外光强
-        confirmInfo = "是否确认导出所有洞外光强数据项？";
+        confirmInfo = "是否确认导出洞外光强数据项？";
       }
 
       this.$modal

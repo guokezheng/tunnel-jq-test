@@ -14,6 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="dictLabel"    column="dict_label"    />
+        <result property="eventType"    column="event_type"    />
     </resultMap>
 
     <sql id="selectSdJoinTypeFlowVo">
@@ -25,7 +26,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             jtf.id,
             jtf.event_type_id,
             jtf.create_time,
-            sdd.dict_label
+            sdd.dict_label,
+            et.event_type
         FROM
             sd_join_type_flow jtf
         LEFT JOIN sd_event_type et ON jtf.event_type_id = et.id
@@ -37,6 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="eventTypeId != null and eventTypeId != ''">
             AND jtf.event_type_id = #{eventTypeId}
         </if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(jtf.id,#{ids}) > 0</if>
         GROUP BY
             jtf.event_type_id
     </select>

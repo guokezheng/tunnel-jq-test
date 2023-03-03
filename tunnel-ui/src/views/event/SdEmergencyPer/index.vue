@@ -585,7 +585,7 @@ export default {
     handleExport() {
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有应急人员信息数据项?", "警告", {
+      this.$confirm("是否确认导出应急人员信息数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

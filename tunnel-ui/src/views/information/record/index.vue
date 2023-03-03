@@ -535,7 +535,7 @@ export default {
       const queryParams = this.queryParams;
       //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
       queryParams.ids = this.ids;
-      this.$confirm("是否确认导出所有发布记录数据项?", "警告", {
+      this.$confirm("是否确认导出发布记录数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

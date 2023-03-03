@@ -1183,7 +1183,7 @@ export default {
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有隧道管理数据项？")
+        .confirm("是否确认导出隧道管理数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportTunnels(queryParams);

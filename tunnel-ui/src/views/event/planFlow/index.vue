@@ -14,6 +14,12 @@
             @click="handleDelete"
             v-hasPermi="['system:flow:remove']"
           >删除</el-button>
+          <el-button
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+          >导出
+          </el-button>
           <el-button size="small" @click="resetQuery">刷新</el-button>
 
       </el-col>
@@ -63,12 +69,12 @@
         <el-form-item class="bottomBox">
           <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
           <el-button type="primary" plain size="mini" @click="resetQuery">重置</el-button>
-          
+
         </el-form-item>
       </el-form>
     </div>
     <div class="tableTopHr" ></div>
-    <el-table v-loading="loading" :data="flowList" height="59vh" 
+    <el-table v-loading="loading" :data="flowList" height="59vh"
     @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column
@@ -454,8 +460,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有事件类型预案流程关联数据项？').then(() => {
+      this.$modal.confirm('是否确认导出预案流程数据项？').then(() => {
         this.exportLoading = true;
         return exportFlow(queryParams);
       }).then(response => {

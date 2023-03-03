@@ -100,7 +100,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
 
-    <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange" 
+    <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName"
             :default-sort="defaultSort" @sort-change="handleSortChange" max-height="640" >
       <el-table-column type="selection" width="55" align="center" />
@@ -228,7 +228,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有操作日志数据项？').then(() => {
+      this.$modal.confirm('是否确认导出操作日志数据项？').then(() => {
         this.exportLoading = true;
         return exportLogininfor(queryParams);
       }).then(response => {

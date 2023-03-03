@@ -633,7 +633,7 @@
               ></videoPlayer>
             </el-carousel-item>
           </el-carousel>
-          <el-image 
+          <el-image
             v-if="videoList.length < 1"
             :src="noDataUrl"
             :fit="contain">
@@ -2716,7 +2716,7 @@ export default {
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有设备故障数据项？")
+        .confirm("是否确认导出设备故障数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportFaultList(queryParams);

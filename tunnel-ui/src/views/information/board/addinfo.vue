@@ -838,6 +838,8 @@ export default {
                     console.log("-----------------------");
                     if (res.code == 200) {
                       this.$emit("getActiveNames");
+                      this.$message.success("添加成功");
+
                     }
                   })
                   .catch((err) => {

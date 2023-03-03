@@ -388,7 +388,7 @@
                 :value="dict.value"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item>-->
 
         <div
           class="contentListBox"

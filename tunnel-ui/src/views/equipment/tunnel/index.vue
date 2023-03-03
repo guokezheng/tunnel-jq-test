@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
-      <el-col :span="4">
+      <el-col :span="6">
           <el-button
             size="small"
             @click="handleAdd"
@@ -34,7 +34,7 @@
           >刷新</el-button
           >
       </el-col>
-      <el-col :span="6" :offset="14">
+      <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"

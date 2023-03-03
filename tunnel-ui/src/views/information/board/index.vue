@@ -792,6 +792,8 @@ export default {
     delQbbDrawer(index) {
       if (index > -1) {
         this.contentList.splice(index, 1);
+        this.$message.success("删除成功");
+
       }
     },
     // 发布信息
@@ -859,6 +861,7 @@ export default {
       console.log(form, "待发新增");
       form.ID = this.contentList.length
       this.contentList.push(deepClone(form));
+      this.$message.success("添加成功");
       console.log(this.contentList, "2222222222222222222t");
       this.$forceUpdate();
     },

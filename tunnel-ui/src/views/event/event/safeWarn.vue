@@ -352,97 +352,6 @@
               </el-form-item>
             </el-form>
           </div>
-
-
-
-
-<!--        <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-          label-width="68px"
-          v-if="activeName == '2'"
-        >
-          <el-form-item label="故障位置" prop="faultLocation">
-            <el-input
-              v-model="queryParams.faultLocation"
-              placeholder="请输入故障位置"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="故障类型" prop="faultType">
-            <el-select
-              v-model="queryParams.faultType"
-              placeholder="请选择故障类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in dict.type.fault_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="故障描述" prop="faultDescription">
-            <el-input
-              v-model="queryParams.faultDescription"
-              placeholder="请输入故障描述"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleQuery"
-              >搜索
-            </el-button>
-            <el-button type="primary" plain size="mini" @click="resetQuery"
-              >重置
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="handleAdd"
-              v-hasPermi="['system:list:add']"
-              >新增
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :disabled="single"
-              @click="handleUpdate"
-              v-hasPermi="['system:list:edit']"
-              :style="{ display: 'none' }"
-              >修改
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :disabled="multiple"
-              @click="handleDelete"
-              v-hasPermi="['system:list:remove']"
-              :style="{ display: 'none' }"
-              >删除
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="handleExport"
-              v-hasPermi="['system:list:export']"
-              :style="{ display: 'none' }"
-              >导出
-            </el-button>
-          </el-form-item>
-        </el-form>-->
         <div
           class="contentListBox"
           v-if="activeName == '1' || activeName == '0'"
@@ -483,14 +392,8 @@
                   v-show="isShow(item)"
                   @click="detailsButton(item, 2)"
                 >
-                <!-- :class="
-                    item.eventState == '3'
-                      ? 'disabledButton'
-                      : ''
-                  " -->
                   复核
                 </div>
-                <!-- @click="openProcess(1, eventForm.id)" -->
                 <div v-if="item.eventState == '0' && activeName == '0'" class="chuzhi" @click="management(item.id)">
                   处置
                 </div>
@@ -517,11 +420,6 @@
         >
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-<!--          <el-table-column label="序号" width="100px" align="center">
-            <template slot-scope="scope">
-              {{scope.$index+1}}
-            </template>
-          </el-table-column>-->
           <el-table-column label="故障设备" align="center" prop="eqName" />
           <el-table-column label="故障类型" align="center" prop="faultType">
             <template slot-scope="scope">
@@ -537,15 +435,9 @@
             prop="faultFxtime"
             width="180"
           />
-            <!-- <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
-            </template> -->
-          <!-- </el-table-column> -->
-<!--          <el-table-column label="持续时间" align="center" prop="faultCxtime" />-->
           <el-table-column label="故障位置" align="center" prop="faultLocation" />
           <el-table-column label="故障描述" align="center" prop="faultDescription" width="180"
           :show-overflow-tooltip='true'/>
-          <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">
             <template slot-scope="scope">
               <dict-tag
@@ -574,14 +466,6 @@
               />
             </template>
           </el-table-column>
-<!--          <el-table-column label="状态" align="center" prop="faultStatus">
-            <template slot-scope="scope">
-              <dict-tag
-                :options="dict.type.fault_status"
-                :value="scope.row.faultStatus"
-              />
-            </template>
-          </el-table-column>-->
           <el-table-column
             label="操作"
             align="center"
@@ -1754,6 +1638,7 @@ export default {
   // },
   data() {
     return {
+      videoShow:false,
       checkBoxEventState:[],
       exportLoading:false,
       contain:"contain",
@@ -2650,6 +2535,7 @@ export default {
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
       this.tunnelId = item.tunnelId;
+      // 凤凰山隧道
       this.direction = item.direction;
       this.details = true;
       this.eventForm = item;

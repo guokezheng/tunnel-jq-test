@@ -118,17 +118,19 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setLaneNo(f.getLaneNo() + "");
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
-                sdEvent.setStartTime(f.getEventTimeStampStart());
-                sdEvent.setEndTime(f.getEventTimeStampEnd());
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 //转换
-                Date time = null;
+                Date startTime = null;
+                Date endTime = null;
                 try {
-                    time = sdf.parse(f.getEventTimeStampStart());
+                    startTime = sdf.parse(f.getEventTimeStampStart());
+                    endTime = sdf.parse(f.getEventTimeStampEnd());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                sdEvent.setEventTime(time);
+                sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,startTime));
+                sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,endTime));
+                sdEvent.setEventTime(startTime);
                 sdEvent.setId(f.getEventId());
                 sdEvent.setUpdateTime(DateUtils.getNowDate());
                 //方向
@@ -150,18 +152,20 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setLaneNo(f.getLaneNo() + "");
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
-                sdEvent.setStartTime(f.getEventTimeStampStart());
-                sdEvent.setEndTime(f.getEventTimeStampEnd());
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 //转换
-                Date time = null;
+                Date startTime = null;
+                Date endTime = null;
                 try {
-                    time = sdf.parse(f.getEventTimeStampStart());
+                    startTime = sdf.parse(f.getEventTimeStampStart());
+                    endTime = sdf.parse(f.getEventTimeStampEnd());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                sdEvent.setEventTime(time);
+                sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,startTime));
+                sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,endTime));
+                sdEvent.setEventTime(startTime);
                 //事件等级默认为一般
                 sdEvent.setEventGrade("1");
                 //接收到的事件状态设置为未处理

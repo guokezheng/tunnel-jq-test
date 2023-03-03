@@ -106,7 +106,7 @@ public class SdEventServiceImpl implements ISdEventService {
             image.setImgType("1");
             //查询视频
             List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
-            sdEvent.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl() : "");
+            sdEvent.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl().split(";")[0] : "");
             //查询视频图片
             List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
             sdEvent.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
@@ -146,7 +146,7 @@ public class SdEventServiceImpl implements ISdEventService {
             image.setImgType("1");
             //查询视频
             List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
-            item.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl() : "");
+            item.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl().split(";")[0] : "");
             //查询视频图片
             List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString());
             item.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
@@ -403,9 +403,11 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public SdEvent getById(Long id) {
         SdEvent event = sdEventMapper.selectSdEventById(id);
-        if(event.getVideoUrl()!=null){
-            event.setVideoUrl(event.getVideoUrl().split(";")[0]);
-        }
+        SdTrafficImage image = new SdTrafficImage();
+        image.setBusinessId(id.toString());
+        image.setImgType("1");
+        List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
+        event.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl().split(";")[0] : "");
         return event;
     }
 

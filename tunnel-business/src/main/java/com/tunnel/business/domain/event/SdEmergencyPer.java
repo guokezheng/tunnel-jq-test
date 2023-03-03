@@ -20,13 +20,14 @@ public class SdEmergencyPer extends BaseEntity
     private Long id;
 
     /** 隧道ID */
-    @Excel(name = "隧道ID")
+
     @ApiModelProperty("隧道ID")
     private String tunnelId;
+    @Excel(name = "隧道")
     private String tunnelName;
 
     /** 应急人员 */
-    @Excel(name = "应急人员")
+    @Excel(name = "姓名")
     @ApiModelProperty("应急人员")
     private String userName;
 
@@ -39,6 +40,8 @@ public class SdEmergencyPer extends BaseEntity
     @ApiModelProperty("电话")
     private String phone;
 
+    private String ids;
+
     @Override
     public String toString() {
         return "SdEmergencyPer{" +
@@ -49,6 +52,14 @@ public class SdEmergencyPer extends BaseEntity
                 ", groupName='" + groupName + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';
+    }
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
     }
 
     public void setId(Long id)

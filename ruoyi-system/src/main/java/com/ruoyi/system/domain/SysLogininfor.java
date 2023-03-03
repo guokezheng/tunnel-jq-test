@@ -18,6 +18,8 @@ public class SysLogininfor extends BaseEntity
    /* @Excel(name = "序号", cellType = ColumnType.NUMERIC)*/
     private Long infoId;
 
+    private String ids;
+
     /** 用户账号 */
     @Excel(name = "用户名称")
     private String userName;
@@ -55,6 +57,14 @@ public class SysLogininfor extends BaseEntity
      * 登录名称
      */
     private String loginName;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public Long getInfoId()
     {

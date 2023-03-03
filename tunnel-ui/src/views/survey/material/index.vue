@@ -8,7 +8,13 @@
           v-hasPermi="['system:material:add']"
           size="small"
           @click="handleAdd()"
-          >新增物资
+          >新增
+        </el-button>
+        <el-button
+          size="small"
+          :loading="exportLoading"
+          @click="handleExport"
+        >导出
         </el-button>
 <!--        <el-button type="primary" plain size="mini" @click="toggleExpandAll"
           >展开/折叠</el-button
@@ -646,11 +652,10 @@ import {
   addMaterial,
   updateMaterial,
   getCrkDetailById,
-  updateMaterialCrk,
+  updateMaterialCrk, exportList,
 } from "@/api/system/material";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import { number } from "echarts";
-import { tunnelNames } from "@/api/event/reservePlan";
+
 var type = "";
 var varid = "";
 export default {
@@ -696,6 +701,9 @@ export default {
           return time.getTime() > Date.now() - 8.64e6;
         },
       },
+
+      // 导出遮罩层
+      exportLoading: false,
       paramsData: {
         tunnelId: "",
       },
@@ -1235,13 +1243,19 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download(
-        "system/material/export",
-        {
-          ...this.queryParams,
-        },
-        `system_material.xlsx`
-      );
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm("是否确认导出所有应急物资数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportList(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
     //关闭drawer
     materialFormClose() {

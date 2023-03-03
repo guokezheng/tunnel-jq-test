@@ -109,6 +109,15 @@ public class SdSparePartsWarehouse extends BaseEntity
     @ApiModelProperty("备注1")
     private String remake1;
 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getTunnelId() {
         return tunnelId;

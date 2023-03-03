@@ -352,6 +352,11 @@
               </el-form-item>
             </el-form>
           </div>
+
+
+
+
+
         <div
           class="contentListBox"
           v-if="activeName == '1' || activeName == '0'"
@@ -586,7 +591,7 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding-bottom:15px;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <!-- <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
+          <el-carousel trigger="click" :autoplay="false" v-show="videoList.length >= 1">
             <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
                 v-if="item.liveUrl"
@@ -594,25 +599,26 @@
                 :open="cameraPlayer"
               ></videoPlayer>
             </el-carousel-item>
-          </el-carousel> -->
-          <video 
-                id="h5sVideo2"
-                class="h5video_"
-                controls
-                muted
-                loop
-                autoplay
-                webkit-playsinline 
-                playsinline
-                disablePictureInPicture="true"
-                controlslist="nodownload noplaybackrate noremoteplayback"
-                style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
-              ></video>
-          <!-- <el-image
+          </el-carousel>
+          <el-image
             v-show="videoList.length < 1"
             :src="noDataUrl"
             :fit="contain">
-          </el-image> -->
+          </el-image>
+          <!-- 现场用这个 -->
+          <!-- <video
+            id="h5sVideo1"
+            class="h5video_"
+            controls
+            muted
+            loop
+            autoplay
+            webkit-playsinline
+            playsinline
+            disablePictureInPicture="true"
+            controlslist="nodownload noplaybackrate noremoteplayback"
+            style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
+          ></video> -->
         </div>
       </div>
       <div class="dialogForm">
@@ -1628,14 +1634,7 @@ export default {
   components: {
     Treeselect,
     videoPlayer,
-    // Swiper,
-    // SwiperSlide,
   },
-  // computed:{
-  //   swiper() {
-  //     return this.$refs.mySwiper.swiper;
-  //   },
-  // },
   data() {
     return {
       videoShow:false,
@@ -2609,35 +2608,36 @@ export default {
     },
     getVideoUrl(item) {
       this.cameraPlayer = false;
-      console.log(item,"itemitem")
-      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
-        getDeviceById(res.data[0].eqId).then((response)=>{
-          displayH5sVideoAll(response.data.secureKey,'h5sVideo2',2);
-        })
-    })
-      
-      // this.videoList = [];
-      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
-      //   (res) => {
-      //     if (res.data) {
-      //       // let videoId = res.data[0].eqId
-      //       let videoId = "";
-      //       for (let item of res.data) {
-      //         videoId = item.eqId;
-      //         videoStreaming(videoId).then((response) => {
-      //           if (response.code == 200) {
-      //             console.log(response.data,"视频视频视频视频视频");
-      //             // return false;
-      //             this.videoList.push(response.data);
-      //             this.cameraPlayer = true;
-      //           }
-      //         });
-      //       }
-      //       console.log(this.videoList, " this.videoList");
-      //     }
-      //     console.log(this.videoList, "this.videoList");
-      //   }
-      // );
+      console.log(item,"itemitem");
+      //现场
+      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
+      //   getDeviceById(res.data[0].eqId).then((response)=>{
+      //     console.log(response,"00000000000000000")
+      //     displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
+      //   })
+      // })
+      // 公司
+      this.videoList = [];
+      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
+        (res) => {
+          if (res.data) {
+            // let videoId = res.data[0].eqId
+            let videoId = "";
+            for (let item of res.data) {
+              videoId = item.eqId;
+              videoStreaming(videoId).then((response) => {
+                if (response.code == 200) {
+                  console.log(response.data,"视频视频视频视频视频");
+                  this.videoList.push(response.data);
+                  this.cameraPlayer = true;
+                }
+              });
+            }
+            console.log(this.videoList, " this.videoList");
+          }
+          console.log(this.videoList, "this.videoList");
+        }
+      );
     },
     turnLeft() {
       this.arrowRight = true;
@@ -2678,6 +2678,7 @@ export default {
     },
     //导出
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
         .confirm("是否确认导出所有设备故障数据项？")

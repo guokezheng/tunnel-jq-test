@@ -5,7 +5,13 @@
     <div >
       <el-row class="topFormRow" :gutter="20">
       <el-col :span="6">
-        <el-button size="small" @click="resetQuery" type="primary" plain
+
+        <el-button
+          size="small"
+          :loading="exportLoading"
+          @click="handleExport"
+        >导出</el-button>
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -26,7 +32,7 @@
         </div>
       </el-col>
     </el-row>
-      <div class="searchBox" v-show="cl_boxShow" >
+      <div class="searchBox" v-show="cl_boxShow"  >
       <el-form
         ref="queryForm"
         :inline="true"
@@ -494,6 +500,23 @@ export default {
     },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);
+    },
+
+    /** 导出按钮操作 */
+    handleExport() {
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm("是否确认导出所有应急车辆数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportData(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
     /** 查询应急机构列表 */
     getList() {

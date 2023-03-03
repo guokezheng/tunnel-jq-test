@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 设备类型对象 sd_equipment_category
- * 
+ *
  * @author ruoyi
  * @date 2023-02-06
  */
@@ -26,21 +26,21 @@ public class SdEquipmentCategory extends BaseEntity
     @Excel(name = "是否可控：1：是 0：否")
     private String isControl;
 
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setName(String name) 
+    public void setName(String name)
     {
         this.name = name;
     }
 
-    public String getName() 
+    public String getName()
     {
         return name;
     }
@@ -49,7 +49,7 @@ public class SdEquipmentCategory extends BaseEntity
         this.isControl = isControl;
     }
 
-    public String getIsControl() 
+    public String getIsControl()
     {
         return isControl;
     }
@@ -57,13 +57,13 @@ public class SdEquipmentCategory extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("name", getName())
-            .append("isControl", getIsControl())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .toString();
+                .append("id", getId())
+                .append("name", getName())
+                .append("isControl", getIsControl())
+                .append("createBy", getCreateBy())
+                .append("createTime", getCreateTime())
+                .append("updateBy", getUpdateBy())
+                .append("updateTime", getUpdateTime())
+                .toString();
     }
 }

@@ -109,7 +109,7 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
   var data = {
     deviceIds:devicelds,
     protocolType:protocolType,
-    // parameters:parameters                                
+    // parameters:parameters
     parameters:encodeURI(parameters)
 
   }
@@ -148,5 +148,15 @@ export function getFontSizeByDevicePixel(screenSize) {
     url: '/parser/board/getFontSizeByDevicePixel/' + screenSize,
     method: 'get',
 
+  })
+}
+
+
+// 导出情报板模板
+export function exportTemplate(query) {
+  return request({
+    url: '/system/template/export',
+    method: 'get',
+    params: query
   })
 }

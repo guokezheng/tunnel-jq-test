@@ -17,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="category"    column="category"    />
         <result property="dictLable"    column="dict_lable"    />
+        <result property="screenMode"    column="screenMode"    />
         <association property="tcontent" column="template_id" javaType="IotBoardTemplateContent" resultMap="contentResult"/>
     </resultMap>
 
@@ -32,15 +33,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="imageUrl"    column="image_url"    />
         <result property="height"    column="height"    />
         <result property="width"    column="width"    />
+
     </resultMap>
 
     <sql id="selectIotBoardTemplateVo">
         select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
                a.template_type, a.vms_type, a.remark, b.id, b.template_id, b.content, b.font_color, b.font_size,
-               b.font_type, b.font_spacing, b.coordinate, b.image_url, b.height, b.width, a.category, c.dict_label
+               b.font_type, b.font_spacing, b.coordinate, b.image_url, b.height, b.width, a.category, c.dict_label,d.dict_label screenMode
         from iot_board_template a
         left join iot_board_template_content b on a.id = b.template_id
         left join sys_dict_data c on c.dict_type = "iot_template_category" and a.category = c.dict_value
+        left join sys_dict_data d on d.dict_type = "iot_device_font_inScreen_mode" and a.in_screen_mode = d.dict_value
     </sql>
 
     <select id="selectSdVmsTemplateList" parameterType="IotBoardTemplate" resultMap="IotBoardTemplateResult">
@@ -53,6 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vmsType != null  and vmsType != ''"> and a.vms_type = #{vmsType}</if>
             <if test="category != null  and category != ''"> and a.category = #{category}</if>
             <if test="searchValue != null  and searchValue != ''"> and b.content LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="ids != null  and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
         </where>
     </select>
 

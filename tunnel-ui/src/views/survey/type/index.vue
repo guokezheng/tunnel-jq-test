@@ -8,13 +8,13 @@
           v-hasPermi="['system:type:add']"
           size="small"
           @click="handleAdd()"
-        >新增类型
+        >新增
         </el-button>
         <el-button size="small" :loading="exportLoading"
                      @click="handleExport"
                      v-hasPermi="['system:type:export']"
           >导出</el-button>
-        <el-button size="small" @click="resetQuery" 
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -64,7 +64,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          
+
         </el-form-item>
       </el-form>
     </div>

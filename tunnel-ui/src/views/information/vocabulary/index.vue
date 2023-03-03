@@ -16,15 +16,12 @@
           v-hasPermi="['system:vocabulary:remove']"
         >删除</el-button
         >
-        <!-- <el-button
-          type="primary"
-          plain
-          size="mini"
+         <el-button
+          size="small"
           @click="handleExport"
-          v-hasPermi="['system:vocabulary:export']"
         >导出</el-button
-        > -->
-        <el-button size="small" @click="resetQuery" 
+        >
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
         >
 
@@ -64,7 +61,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-          
+
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
           >搜索</el-button
@@ -362,6 +359,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
       queryParams.ids = this.ids;
@@ -378,7 +376,7 @@ export default {
           queryParams.ids = null;
         });
     },
-    
+
   },
 };
 </script>

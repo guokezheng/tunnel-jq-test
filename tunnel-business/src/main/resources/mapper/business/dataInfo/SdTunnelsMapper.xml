@@ -103,6 +103,7 @@
             <if test="deptId != null and deptId != ''">
                 AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(t.tunnel_id,#{ids}) > 0</if>
             ${params.dataScope}
         </where>
     </select>

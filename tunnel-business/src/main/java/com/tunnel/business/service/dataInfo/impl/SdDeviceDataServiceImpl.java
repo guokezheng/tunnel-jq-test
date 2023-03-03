@@ -347,8 +347,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
             endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
         }
-
-        List<SdDeviceCOVIData> list = sdDeviceDataMapper.selectCOVIExportDataList(beginTime, endTime, deviceId);
+        String ids = sdDeviceCOVIData.getIds();
+        List<SdDeviceCOVIData> list = sdDeviceDataMapper.selectCOVIExportDataList(beginTime, endTime, deviceId,ids);
         return list;
     }
 
@@ -362,8 +362,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
             endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
         }
-
-        List<SdDeviceFSFXData> list = sdDeviceDataMapper.selectFSFXExportDataList(beginTime, endTime, deviceId);
+        String ids = sdDeviceCOVIData.getIds();
+        List<SdDeviceFSFXData> list = sdDeviceDataMapper.selectFSFXExportDataList(beginTime, endTime, deviceId,ids);
         return list;
     }
 
@@ -377,8 +377,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
             endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
         }
-
-        List<SdDeviceDNData> list = sdDeviceDataMapper.selectDNExportDataList(beginTime, endTime, deviceId);
+        String ids = sdDeviceCOVIData.getIds();
+        List<SdDeviceDNData> list = sdDeviceDataMapper.selectDNExportDataList(beginTime, endTime, deviceId,ids);
         return list;
     }
 
@@ -392,8 +392,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
             endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
         }
-
-        List<SdDeviceDWData> list = sdDeviceDataMapper.selectDWExportDataList(beginTime, endTime, deviceId);
+        String ids = sdDeviceCOVIData.getIds();
+        List<SdDeviceDWData> list = sdDeviceDataMapper.selectDWExportDataList(beginTime, endTime, deviceId,ids);
         return list;
     }
 

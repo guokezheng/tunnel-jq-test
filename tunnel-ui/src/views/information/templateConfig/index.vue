@@ -18,6 +18,13 @@
           @click="handleDelete"
           v-hasPermi="['system:templateConfig:remove']"
           >删除</el-button>
+          <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['system:templateConfig:export']"
+          >导出</el-button>
           <el-button size="mini" @click="resetQuery" type="primary" plain
           >刷新</el-button
           >
@@ -233,7 +240,7 @@
 </template>
 <script>
 import addOrUpdate from './edit'
-import {getTemplates} from "@/api/board/template";
+import {exportTemplate, getTemplates} from "@/api/board/template";
 import {deleteTemplate} from "@/api/board/template";
 export default {
   name: 'vms-tiss-content-template',
@@ -533,6 +540,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$confirm("是否确认导出所有情报板模板数据项?", "警告", {
         confirmButtonText: "确定",

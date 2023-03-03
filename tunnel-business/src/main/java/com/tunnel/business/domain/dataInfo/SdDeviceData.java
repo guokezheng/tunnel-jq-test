@@ -59,6 +59,16 @@ public class SdDeviceData extends BaseEntity
 
     private String eqType;
 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
     public String getEqName() {
         return this.eqName;
     }

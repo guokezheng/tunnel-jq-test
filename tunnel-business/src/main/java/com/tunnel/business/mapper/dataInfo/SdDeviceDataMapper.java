@@ -106,11 +106,11 @@ public interface SdDeviceDataMapper
 
     List<SdDeviceData> exportDatainforTab(SdDeviceData sdDeviceData);
 
-    List<SdDeviceCOVIData> selectCOVIExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<SdDeviceCOVIData> selectCOVIExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
 
-    List<SdDeviceFSFXData> selectFSFXExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<SdDeviceFSFXData> selectFSFXExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
 
-    List<SdDeviceDNData> selectDNExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<SdDeviceDNData> selectDNExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
 
-    List<SdDeviceDWData> selectDWExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId);
+    List<SdDeviceDWData> selectDWExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
 }

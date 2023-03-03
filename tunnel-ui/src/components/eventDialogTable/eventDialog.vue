@@ -69,6 +69,19 @@
             :src="noDataUrl"
             :fit="contain">
           </el-image>
+          <!-- <video 
+            id="h5sVideo2"
+            class="h5video_"
+            controls
+            muted
+            loop
+            autoplay
+            webkit-playsinline 
+            playsinline
+            disablePictureInPicture="true"
+            controlslist="nodownload noplaybackrate noremoteplayback"
+            style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
+          ></video> -->
         </div>
       </div>
       <div class="dialogForm">
@@ -392,7 +405,9 @@
 
 <script>
 import $ from "jquery";
-// import { mapState } from 'vuex';
+import { mapState } from 'vuex';
+import { displayH5sVideoAll } from "@/api/icyH5stream";
+
 import bus from "@/utils/bus";
 import { loadPicture } from "@/api/equipment/type/api.js";
 import {
@@ -411,7 +426,7 @@ import {
   getEvent,
   getReservePlanData, } from "@/api/event/event";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import { listDevices, videoStreaming } from "@/api/equipment/eqlist/api";
+import { listDevices, videoStreaming,getDeviceById } from "@/api/equipment/eqlist/api";
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 export default {
   name: "eventDialog",
@@ -875,6 +890,14 @@ export default {
     },
     getVideoUrl(item) {
       this.cameraPlayer = false;
+      console.log(item,"itemitem")
+      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
+      //   getDeviceById(res.data[0].eqId).then((response)=>{
+      //     console.log(response,"00000000000000000")
+      //     displayH5sVideoAll(response.data.secureKey,'h5sVideo2',2);
+      //   })
+      // })
+      
       this.videoList = [];
       getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
         (res) => {
@@ -885,6 +908,8 @@ export default {
               videoId = item.eqId;
               videoStreaming(videoId).then((response) => {
                 if (response.code == 200) {
+                  console.log(response.data,"视频视频视频视频视频");
+                  // return false;
                   this.videoList.push(response.data);
                   this.cameraPlayer = true;
                 }

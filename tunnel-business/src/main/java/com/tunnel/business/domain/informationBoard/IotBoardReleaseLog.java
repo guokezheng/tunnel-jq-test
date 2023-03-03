@@ -21,6 +21,18 @@ public class IotBoardReleaseLog extends BaseEntity
     /** id */
     private Long id;
 
+    /** 尺寸 **/
+    @Excel(name = "屏幕尺寸")
+    private String devicePixel;
+
+    /** 隧道 **/
+    @Excel(name = "所属隧道")
+    private String tunnelName;
+
+    /** 方向 **/
+    @Excel(name = "设备方向")
+    private String direction;
+
     /** 设备编号 */
 //    @Excel(name = "发布设备")
     private String deviceId;
@@ -72,18 +84,6 @@ public class IotBoardReleaseLog extends BaseEntity
 
     //批量导出单选id导出数据
     private Long[] ids;
-
-    /** 尺寸 **/
-    @Excel(name = "屏幕尺寸")
-    private String devicePixel;
-
-    /** 隧道 **/
-    @Excel(name = "所属隧道")
-    private String tunnelName;
-
-    /** 方向 **/
-    @Excel(name = "设备方向")
-    private String direction;
 
     public String getDevicePixel() {
         return devicePixel;

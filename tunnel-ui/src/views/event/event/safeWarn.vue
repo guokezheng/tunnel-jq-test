@@ -126,6 +126,7 @@
                 clearable
                 size="small"
                 style="width: 325px"
+                @change="$forceUpdate()"
               >
                 <el-option
                   v-for="(item, index) in eventTypeData"
@@ -233,6 +234,7 @@
                 clearable
                 size="small"
                 style="width: 325px"
+                @change="$forceUpdate()"
               >
                 <el-option
                   v-for="(item, index) in eventTypeData"
@@ -356,6 +358,37 @@
 
 
 
+<!--        <el-form
+          :model="queryParams"
+          ref="queryForm"
+          :inline="true"
+          label-width="68px"
+          v-if="activeName == '2'"
+        >
+          <el-form-item label="故障位置" prop="faultLocation">
+            <el-input
+              v-model="queryParams.faultLocation"
+              placeholder="请输入故障位置"
+              clearable
+              size="small"
+              @keyup.enter.native="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="故障类型" prop="faultType">
+            <el-select
+              v-model="queryParams.faultType"
+              placeholder="请选择故障类型"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.fault_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
 
         <div
           class="contentListBox"
@@ -607,17 +640,17 @@
           </el-image>
           <!-- 现场用这个 -->
           <!-- <video
-            id="h5sVideo1"
-            class="h5video_"
-            controls
-            muted
-            loop
-            autoplay
+                id="h5sVideo1"
+                class="h5video_"
+                controls
+                muted
+                loop
+                autoplay
             webkit-playsinline
-            playsinline
-            disablePictureInPicture="true"
-            controlslist="nodownload noplaybackrate noremoteplayback"
-            style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
+                playsinline
+                disablePictureInPicture="true"
+                controlslist="nodownload noplaybackrate noremoteplayback"
+                style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
           ></video> -->
         </div>
       </div>
@@ -3199,6 +3232,7 @@ export default {
       this.queryParams.eventTypeId = "";
       this.queryParams1.faultDescription = "";
       this.fuzzySearch1 = ''
+      this.checkBoxEventState = []
 
       // this.resetForm("queryForm");
       this.handleQuery();

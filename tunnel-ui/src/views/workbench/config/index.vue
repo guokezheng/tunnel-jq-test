@@ -3160,7 +3160,7 @@
           </div>
         </el-col>
       </el-row>
-      <div class="syxt_searchBox" v-show="syxt_boxShow" style="top: 40%" ref="cc2">
+      <div class="syxt_searchBox" v-show="syxt_boxShow"  ref="cc2">
         <el-form
           ref="operationParam"
           :inline="true"
@@ -3232,7 +3232,7 @@
           </div>
         </el-col>
       </el-row>
-      <div class="syxt_searchBox" v-show="sycz_boxShow" style="top: 35%" ref="cc3">
+      <div class="syxt_searchBox" v-show="sycz_boxShow"  ref="cc3">
         <el-form
           ref="operationParam"
           :inline="true"
@@ -3803,6 +3803,8 @@ export default {
       footChangeRadio: "图表",
       syxt_boxShow: false,
       sycz_boxShow: false,
+      rccl_boxShow: false,
+      yjcl_boxShow: false,
       treeShow: false,
       //搜索树状数据
       treeData: [],
@@ -4944,7 +4946,7 @@ export default {
           }else{
           this.videoTitle3 = res.data[0].inletName;
           this.videoTitle4 = res.data[0].outletName;
-          console.log(res,"济南方向")
+          console.log(res,"后两个视频")
           if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
             getDeviceById(res.data[0].inlet).then((response)=>{
                 displayH5sVideoAll(response.data.secureKey,'h5sVideo4',3);
@@ -4954,6 +4956,7 @@ export default {
             })
           }else{
             videoStreaming(res.data[0].inlet).then((res) => {
+              console.log(res,'入口视频')
             this.liveUrl1 = res.data.liveUrl;
             this.cameraPlayer1 = true;
           });
@@ -4968,7 +4971,7 @@ export default {
         });
         // 济南方向
         getEntranceExitVideo(this.tunnelId, this.directionList[1].dictValue).then((res) => {
-          console.log(res,"潍坊方向")
+          console.log(res,"前两个视频")
           if(res.data.length == 0){
             this.videoNoPic1 = true
           }else{
@@ -4984,6 +4987,8 @@ export default {
             })
           }else{
             videoStreaming(res.data[0].inlet).then((res) => {
+              console.log(res,'入口视频')
+
               this.liveUrl3 = res.data.liveUrl;
               this.cameraPlayer3 = true;
             });
@@ -11204,7 +11209,7 @@ input {
 }
 .syxt_searchBox {
   position: absolute;
-  top: 17%;
+  top: 118px;
   right: 15px;
   width: 39%;
   z-index: 1996;

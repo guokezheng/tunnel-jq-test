@@ -23,164 +23,229 @@
           @click="handleClosee"
         />
       </div>
-      <div v-show="infoType == 'info'">
-        <div class="infoBox">
-          <el-table :data="contentList" row-key="ID"  max-height="550" v-loading="loading">
-            <el-table-column align="center"  width="645">
-              <template slot-scope="scope">
-                <div class="contentBox">
+      <div v-show="infoType == 'info'" style="display:flex">
+        <div style="float:left">
+          <div class="infoBox">
+            <el-table :data="contentList" row-key="ID"  max-height="550" v-loading="loading">
+              <el-table-column align="center"  width="645">
+                <template slot-scope="scope">
+                  <div class="contentBox">
+                    <div
+                      class="content"
+                      :style="{
+                        color: getColorStyle(scope.row.COLOR),
+                        fontSize: addForm.devicePixel?getFontSize(scope.row.FONT_SIZE, addForm.devicePixel):'',
+                        fontFamily: scope.row.FONT,
+                        width: addForm.devicePixel?getDevicePixel(addForm.devicePixel, 0) + 'px':'',
+                        height: addForm.devicePixel?getDevicePixel(addForm.devicePixel, 1) + 'px':'',
+                      }"
+                    >
+                      <span
+                        :style="{
+                          left: getCoordinate(scope.row.COORDINATE.substring(0, 3),'left'),
+                          top: getCoordinate(scope.row.COORDINATE.substring(3, 6),'top'),
+                        }"
+                        class="boardTextStyle"
+                        v-html="
+                          scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                            / /g,
+                            ' &nbsp'
+                          )
+                        "
+                      ></span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column  align="center" >
+                <template slot-scope="scope">
+                  <div class="infoButton">
+                      <div  @click="openQbbDrawer(scope.row, scope.$index, 1)"></div>
+                      <!-- <img
+                        src="../../../../assets/cloudControl/edit2.png"
+                        @click="openQbbDrawer(scope.row, scope.$index, 1)"
+                      /> -->
+                      <div @click="delQbbDrawer(scope.$index)"></div>
+                    </div>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div
+            class="openMIniDialogStyle"
+            :class="msgModeShow ? 'el-icon-d-arrow-left' : 'el-icon-d-arrow-right'"
+            @click="openMesMode"
+          >
+            信息模板
+          </div>
+          <el-form
+            ref="form"
+            :model="stateForm"
+            label-width="75px"
+            label-position="left"
+            size="mini"
+            style="padding: 0 15px 15px 15px;width:833px"
+          >
+            <el-tabs class="videoTabs" v-model="videoActive">
+              <el-tab-pane label="详细信息" name="information">
+                <el-row>
+                  <el-col :span="9">
+                    <el-form-item label="设备名称:">
+                      {{ stateForm.typeName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="隧道名称:">
+                      {{ stateForm.tunnelName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="7">
+                    <el-form-item label="设备厂商:">
+                      {{ stateForm.supplierName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="9">
+                    <el-form-item label="所属机构:">
+                      {{ stateForm.deptName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="设备桩号:">
+                      {{ stateForm.pile }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="7">
+                    <el-form-item label="设备状态:" 
+                    :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
+                      {{ geteqType(stateForm.eqStatus) }}
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-tab-pane>
+              <el-tab-pane label="设备参数" name="videoParams">
+                <el-row>
+                  <el-col :span="8">
+                    <el-form-item label="IP:">
+                      {{ stateForm.ip }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="端口:">
+                      {{ stateForm.port }}
+                    </el-form-item>
+                  </el-col>
+                  <!-- <el-col :span="8">
+                    <el-form-item label="设备厂商:">
+                      {{ stateForm.supplierName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="型号:">
+                      {{ stateForm.eqModel }}
+                    </el-form-item>
+                  </el-col> -->
+                  <el-col :span="8">
+                    <el-form-item label="分辨率:">
+                      {{ addForm.devicePixel }}
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-tab-pane>
+            </el-tabs>
+          </el-form>
+          <div
+            slot="footer"
+            style="
+              display: flex;
+              justify-content: right;
+              margin-bottom: 20px;
+              width:813px;
+            "
+          >
+            <el-button
+              type="primary"
+              size="mini"
+              @click="openDialogVisible(1,1)"
+              style="width: 80px"
+              class="submitButton"
+              v-hasPermi="['workbench:dialog:save']"
+              >添加信息</el-button
+            >
+            <el-button
+              type="primary"
+              size="mini"
+              @click="releaseInfo()"
+              style="width: 80px"
+              v-hasPermi="['workbench:dialog:save']"
+              >信息发布</el-button
+            >
+          </div>
+        </div>
+        <div class="boardRightBox" v-show="msgModeShow">
+          <div class="mesModeBg">
+            <div class="mesModeBox">
+              <el-collapse v-model="activeNames" @change="handleChange" >
+                <el-collapse-item
+                  v-for="(item, index) in iotTemplateCategoryList"
+                  :key="index"
+                  :title="item.dictLabel"
+                  :name="item.dictValue"
+                >
                   <div
-                    class="content"
+                    v-for="(itm, indx) in item.list"
+                    :key="indx"
+                    class="con"
                     :style="{
-                      color: getColorStyle(scope.row.COLOR),
-                      fontSize: addForm.devicePixel?getFontSize(scope.row.FONT_SIZE, addForm.devicePixel):'',
-                      fontFamily: scope.row.FONT,
-                      width: addForm.devicePixel?getDevicePixel(addForm.devicePixel, 0) + 'px':'',
-                      height: addForm.devicePixel?getDevicePixel(addForm.devicePixel, 1) + 'px':'',
+                      'font-size': getFontSize(
+                        itm.tcontents[0].fontSize,
+                        itm.screenSize
+                      ),
+                      color: itm.tcontents[0].fontColor,
+                      fontFamily: itm.tcontents[0].fontType,
                     }"
                   >
-                    <span
-                      :style="{
-                        left: getCoordinate(scope.row.COORDINATE.substring(0, 3),'left'),
-                        top: getCoordinate(scope.row.COORDINATE.substring(3, 6),'top'),
-                      }"
-                      class="boardTextStyle"
-                      v-html="
-                        scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                          / /g,
-                          ' &nbsp'
-                        )
-                      "
-                    ></span>
+                    <div class="templateTitle">
+                      <div
+                        :style="{
+                          width: getDevicePixel(itm.screenSize, 0) + 'px',
+                          height: getDevicePixel(itm.screenSize, 1) + 'px',
+                        }"
+                        style="background: black; position: relative"
+                      >
+                      <span
+                        :style="{
+                          left: getCoordinate(
+                            itm.tcontents[0].coordinate.substring(0, 3),'left',
+                            itm.screenSize
+                          ),
+                          top: getCoordinate(
+                            itm.tcontents[0].coordinate.substring(3, 6),'top',
+                            itm.screenSize
+                          ),
+                        }"
+                        class="boardTextStyle"
+                        v-html="
+                          itm.tcontents[0].content
+                            .replace(/\n|\r\n/g, '<br>')
+                            .replace(/ /g, ' &nbsp')
+                        "
+                      ></span>
+                    </div>
+                      
+                    </div>
+                    <div class="downIcon">
+                      <div
+                        class="el-icon-d-arrow-left"
+                        @click="arrowLeft(itm)"
+                      ></div>
+                    </div>
                   </div>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column  align="center" >
-              <template slot-scope="scope">
-                <div class="infoButton">
-                    <div  @click="openQbbDrawer(scope.row, scope.$index, 1)"></div>
-                    <!-- <img
-                      src="../../../../assets/cloudControl/edit2.png"
-                      @click="openQbbDrawer(scope.row, scope.$index, 1)"
-                    /> -->
-                    <div @click="delQbbDrawer(scope.$index)"></div>
-                  </div>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-        <div
-          class="openMIniDialogStyle"
-          :class="openDialog ? 'el-icon-d-arrow-left' : 'el-icon-d-arrow-right'"
-          @click="openMesMode"
-        >
-          信息模板
-        </div>
-        <el-form
-          ref="form"
-          :model="stateForm"
-          label-width="75px"
-          label-position="left"
-          size="mini"
-          style="padding: 0 15px 15px 15px"
-        >
-          <el-tabs class="videoTabs" v-model="videoActive">
-            <el-tab-pane label="详细信息" name="information">
-              <el-row>
-                <el-col :span="9">
-                  <el-form-item label="设备名称:">
-                    {{ stateForm.typeName }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="隧道名称:">
-                    {{ stateForm.tunnelName }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="7">
-                  <el-form-item label="设备厂商:">
-                    {{ stateForm.supplierName }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="9">
-                  <el-form-item label="所属机构:">
-                    {{ stateForm.deptName }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="设备桩号:">
-                    {{ stateForm.pile }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="7">
-                  <el-form-item label="设备状态:" 
-                  :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
-                    {{ geteqType(stateForm.eqStatus) }}
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-tab-pane>
-            <el-tab-pane label="设备参数" name="videoParams">
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item label="IP:">
-                    {{ stateForm.ip }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="端口:">
-                    {{ stateForm.port }}
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :span="8">
-                  <el-form-item label="设备厂商:">
-                    {{ stateForm.supplierName }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="型号:">
-                    {{ stateForm.eqModel }}
-                  </el-form-item>
-                </el-col> -->
-                <el-col :span="8">
-                  <el-form-item label="分辨率:">
-                    {{ addForm.devicePixel }}
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-tab-pane>
-          </el-tabs>
-        </el-form>
-        <div
-          slot="footer"
-          style="
-            display: flex;
-            justify-content: right;
-            margin-right: 20px;
-            margin-bottom: 20px;
-          "
-        >
-          <el-button
-            type="primary"
-            size="mini"
-            @click="openDialogVisible(1,1)"
-            style="width: 80px"
-            class="submitButton"
-            v-hasPermi="['workbench:dialog:save']"
-            >添加信息</el-button
-          >
-          <el-button
-            type="primary"
-            size="mini"
-            @click="releaseInfo()"
-            style="width: 80px"
-            v-hasPermi="['workbench:dialog:save']"
-            >信息发布</el-button
-          >
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+          </div>
         </div>
       </div>
-      
     </el-dialog>
     <el-dialog
       class="workbench-dialog mesModeDialog"
@@ -264,6 +329,7 @@
 </template>
 
   <script>
+import $ from "jquery";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
@@ -287,7 +353,7 @@ export default {
   data() {
     return {
       loading:false,
-      openDialog: false,
+      msgModeShow: false,
       associatedDeviceId: "",
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
@@ -645,6 +711,9 @@ export default {
         console.log(this.contentList, "this.contentList11");
         this.loading = false
         this.rowDrop()
+      }).catch((e)=>{
+        this.loading = false
+
       });
     },
     formatNum(num, length) {
@@ -852,10 +921,16 @@ export default {
     },
     // 打开信息模板
     openMesMode() {
-      if (this.openDialog == false) {
-        this.mesModeVisible = true;
+      let dialog = $('.boardDialog .el-dialog')[0]
+      console.log(dialog,"dialogdialogdialog")
+      if (this.msgModeShow == false) {
+        this.msgModeShow = true;
+        dialog.style.width = '1600px'
+
       } else {
-        this.mesModeVisible = false;
+        this.msgModeShow = false;
+        dialog.style.width = '835px'
+
       }
     },
     // 关闭信息模板
@@ -939,7 +1014,7 @@ export default {
 }
 .openMIniDialogStyle {
   position: absolute;
-  right: 0;
+  left: 813px;
   width: 20px;
   height: 85px;
   background: #d8d8d8 linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
@@ -965,22 +1040,28 @@ export default {
   background: white;
 }
 .boardDialog {
-  left: 6%;
-  margin: unset;
-  width: 840px;
-  z-index: 2017;
+  // left: 6%;
+  // margin: unset;
+  // width: 840px;
+  // z-index: 2017;
 }
-.mesModeDialog {
-  left: 50%;
-  margin: unset;
-  width: 800px;
-  z-index: 2017;
+.boardRightBox{
+  float: right;
+  width: 760px;
+  margin: 0 14px 10px;
+  .el-collapse{
+    border-top:transparent !important;
+  }
+}
+// .mesModeDialog {
+//   left: 50%;
+//   margin: unset;
+//   width: 800px;
+//   z-index: 2017;
   .mesModeBg {
-    padding: 10px;
     // background: #012e51;
     width: calc(100% - 30px);
     height: 753px;
-    margin: 10px auto;
     overflow: auto;
     // .el-collapse-item__header {
     //   background: #012e51;
@@ -1084,14 +1165,15 @@ export default {
       }
     }
   }
-}
+// }
 .infoBox {
-  width: 94%;
+  width: 783px;
   height: 550px;
   // background: #fff;
   margin: 0 18px 0 15px;
   overflow: hidden;
   border: solid 1px #01aafd;
+  
   .infoContent {
     width: 97%;
     height: 75px;
@@ -1177,6 +1259,9 @@ export default {
   // color: #fff;
   border-bottom: solid 1px #01aafd;
   padding-left: 10px;
+}
+::v-deep .el-collapse-item__header.is-active{
+  border-bottom: transparent;
 }
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;

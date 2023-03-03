@@ -247,7 +247,7 @@
           </el-row>
         </template>
         <template v-else>
-          <div class="dialogButton addFormButton" @click="addFrom()">添加</div>
+          <el-button class=" addFormButton" @click="addFrom()" size="small">添加</el-button>
           <el-row v-for="(item, index) in equipmentStates" :key="index">
             <el-col :span="3">
               <el-form-item label="设备状态" prop="deviceState">
@@ -1124,7 +1124,7 @@ export default {
 }
 .addFormButton {
   position: absolute;
-  top: 55px;
+  top: 69px;
   left: 25%;
 }
 </style>

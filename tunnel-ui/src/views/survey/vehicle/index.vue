@@ -1,68 +1,63 @@
 <template>
   <div class="app-container">
-
     <!-- 全局搜索 -->
-    <div >
+    <div>
       <el-row class="topFormRow" :gutter="20">
-      <el-col :span="6">
-
-        <el-button
-          size="small"
-          :loading="exportLoading"
-          @click="handleExport"
-        >导出</el-button>
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
+        <el-col :span="6">
+          <el-button size="small" :loading="exportLoading" @click="handleExport"
+            >导出</el-button
           >
-      </el-col>
-      <el-col :span="6"  :offset="12">
-        <div  ref="main" class="grid-content bg-purple">
-          <el-input
-            placeholder="请输入车牌，回车搜索"
-            v-model="queryParams.plateNumber"
-            @keyup.enter.native="handleQuery"
-            size="small"
+          <el-button size="small" @click="resetQuery" :disabled="resetDisabled"
+            >刷新</el-button
           >
-            <el-button
-              slot="append"
-              icon="icon-gym-Gsearch"
-              @click="cl_boxShow = !cl_boxShow"
-            ></el-button>
-          </el-input>
-        </div>
-      </el-col>
-    </el-row>
-      <div class="searchBox" v-show="cl_boxShow"  ref="cc">
-      <el-form
-        ref="queryForm"
-        :inline="true"
-        :model="queryParams"
-        label-width="75px"
-      >
+        </el-col>
+        <el-col :span="6" :offset="12">
+          <div ref="main" class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入车牌，回车搜索"
+              v-model="queryParams.plateNumber"
+              @keyup.enter.native="handleQuery"
+              size="small"
+            >
+              <el-button
+                slot="append"
+                icon="icon-gym-Gsearch"
+                @click="cl_boxShow = !cl_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="searchBox" v-show="cl_boxShow" ref="cc">
+        <el-form
+          ref="queryForm"
+          :inline="true"
+          :model="queryParams"
+          label-width="75px"
+        >
+          <el-form-item label="机构" prop="orgName">
+            <el-cascader
+              style="width: 100%"
+              popper-class="jigou"
+              v-model="queryParams.orgName"
+              :show-all-levels="false"
+              :options="orgData"
+              :props="{ checkStrictly: true }"
+              clearable
+            ></el-cascader>
+          </el-form-item>
 
-        <el-form-item label="机构" prop="orgName">
-          <el-cascader
-            style="width: 100%"
-            popper-class="jigou"
-            v-model="queryParams.orgName"
-            :show-all-levels="false"
-            :options="orgData"
-            :props="{ checkStrictly: true }"
-            clearable></el-cascader>
-        </el-form-item>
-
-
-        <el-form-item label="车型"  prop="vType" >
-
+          <el-form-item label="车型" prop="vType">
             <el-checkbox
               v-for="dict in vehicleTypeList"
               :key="dict.dictValue"
               :label="dict.dictValue"
               v-model="result"
-            >{{dict.dictLabel}}</el-checkbox>
-        </el-form-item>
+              >{{ dict.dictLabel }}</el-checkbox
+            >
+          </el-form-item>
 
-<!--        <el-form-item label="车型" prop="vType" style="width: 100%">
+          <!--        <el-form-item label="车型" prop="vType" style="width: 100%">
           <el-select
             v-model="queryParams.vType"
             clearable
@@ -77,34 +72,34 @@
             />
           </el-select>
         </el-form-item>-->
-        <el-form-item label="运行状态" prop="accState" style="width: 100%">
-          <el-select
-            v-model="queryParams.accState"
-            clearable
-            placeholder="请选择运行状态"
-            size="small"
-          >
-            <el-option
-              v-for="dict in dict.type.sd_vehicle_run_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item class="bottomBox">
-          <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
-          >
-          <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
-          >
-        </el-form-item>
-      </el-form>
-    </div>
+          <el-form-item label="运行状态" prop="accState" style="width: 100%">
+            <el-select
+              v-model="queryParams.accState"
+              clearable
+              placeholder="请选择运行状态"
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.sd_vehicle_run_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button size="small" type="primary" @click="handleQuery"
+              >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
 
-<!--    <el-form
+    <!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -241,7 +236,7 @@
           </el-tooltip>
         </div>
       </el-row> -->
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="mechanismList"
@@ -249,15 +244,21 @@
       height="62vh"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-<!--      <el-table-column label="序号"  align="center">
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
+      <!--      <el-table-column label="序号"  align="center">
         <template slot-scope="scope">
           {{scope.$index+1}}
         </template>
       </el-table-column>-->
       <el-table-column label="机构" align="center" prop="orgName" />
       <el-table-column label="车牌" align="center" prop="plateNumber" />
-      <el-table-column label="车型" align="center" prop="vType"/>
+      <el-table-column label="车型" align="center" prop="vType" />
       <el-table-column label="存放地点" align="center" prop="vPlace" />
       <el-table-column label="使用状态" align="center" prop="useStatus" />
       <el-table-column label="运行状态" align="center" prop="accState">
@@ -291,7 +292,7 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleDetailsMaterial(scope.row)"
-          >详情</el-button
+            >详情</el-button
           >
         </template>
       </el-table-column>
@@ -313,10 +314,18 @@
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="106px">
         <el-form-item label="机构" prop="orgName" v-show="model">
-          <el-input v-model="form.orgName" placeholder="请输入机构名称" :disabled="disabled"/>
+          <el-input
+            v-model="form.orgName"
+            placeholder="请输入机构名称"
+            :disabled="disabled"
+          />
         </el-form-item>
         <el-form-item label="车牌" prop="plateNumber" v-show="updateModel">
-          <el-input v-model="form.plateNumber" placeholder="请输入车牌" :disabled="disabled"/>
+          <el-input
+            v-model="form.plateNumber"
+            placeholder="请输入车牌"
+            :disabled="disabled"
+          />
         </el-form-item>
         <el-form-item label="车型" prop="vType" v-show="model">
           <el-select
@@ -375,22 +384,22 @@
           </el-select>
         </el-form-item>
         <el-form-item label="资产归属" prop="ownerName" v-show="model">
-          <el-input v-model="form.ownerName" :disabled="disabled"/>
+          <el-input v-model="form.ownerName" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="车辆型号" prop="vehicleModel" v-show="model">
-          <el-input v-model="form.vehicleModel" :disabled="disabled"/>
+          <el-input v-model="form.vehicleModel" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="ETC卡类型" prop="etcTypeDesc" v-show="model">
-          <el-input v-model="form.etcTypeDesc" :disabled="disabled"/>
+          <el-input v-model="form.etcTypeDesc" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="ETC使用情况" prop="etcStateDesc" v-show="model">
-          <el-input v-model="form.etcStateDesc" :disabled="disabled"/>
+          <el-input v-model="form.etcStateDesc" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="车龄" prop="carAge" v-show="model">
-          <el-input v-model="form.carAge" :disabled="disabled"/>
+          <el-input v-model="form.carAge" :disabled="disabled" />
         </el-form-item>
         <el-form-item label="公里数" prop="mileage" v-show="model">
-          <el-input v-model="form.mileage" :disabled="disabled"/>
+          <el-input v-model="form.mileage" :disabled="disabled" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -417,10 +426,10 @@ import {
 import { batchDelete } from "@/api/surveyVehicle/api.js";
 
 export default {
-  dicts: ["sd_use_status", "sd_emergency_vehicle_type","sd_vehicle_run_type"],
+  dicts: ["sd_use_status", "sd_emergency_vehicle_type", "sd_vehicle_run_type"],
   data() {
     const validateLongitude = (rule, value, callback) => {
-      if (value == "" || value == null && this.upDisabled == false) {
+      if (value == "" || (value == null && this.upDisabled == false)) {
         callback(new Error("请选择运行状态！"));
       } else {
         callback();
@@ -428,11 +437,12 @@ export default {
     };
 
     return {
+      resetDisabled: false,
       testModel: [],
       tunnelData: [{ tunnelName: 1, tunnelId: 2 }],
       exportLoading: false,
-      vehicleTypeList:[],
-      cl_boxShow:false,
+      vehicleTypeList: [],
+      cl_boxShow: false,
       // 遮罩层
       loading: false,
       // 选中数组
@@ -444,23 +454,23 @@ export default {
       multiple: true,
       // 弹出层标题
       title: "",
-      model:false,
-      updateModel:true,
-      disabled:true,
-      result:[],//获取选中后的checkbox的数组值
-      upDisabled:false,
+      model: false,
+      updateModel: true,
+      disabled: true,
+      result: [], //获取选中后的checkbox的数组值
+      upDisabled: false,
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         vType: [],
-        cx:"",
+        cx: "",
       },
       form: {},
       mechanismList: [],
       // 表单校验
       rules: {
         accState: [
-          { validator: validateLongitude,required: false, trigger: "change" },
+          { validator: validateLongitude, required: false, trigger: "change" },
         ],
       },
       open: false,
@@ -471,7 +481,7 @@ export default {
   created() {
     this.getList();
     veicleOrgId().then((res) => {
-      this.orgData = this.handleTree(res,"value");
+      this.orgData = this.handleTree(res, "value");
       console.log(this.orgData, "机构名称");
     });
     this.getDicts("sd_emergency_vehicle_type").then((data) => {
@@ -484,10 +494,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-
     bodyCloseMenus(e) {
       let self = this;
-      self.$nextTick(()=>{
+      self.$nextTick(() => {
         if (
           !this.$refs.main.contains(e.target) &&
           !this.$refs.cc.contains(e.target)
@@ -496,13 +505,14 @@ export default {
             self.cl_boxShow = false;
           }
         }
-      })
+      });
     },
 
-
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);
@@ -527,13 +537,20 @@ export default {
     /** 查询应急机构列表 */
     getList() {
       // console.log(this.queryParams)
-      if(this.queryParams.orgName){
-        this.queryParams.orgName = this.queryParams.orgName[2]?this.queryParams.orgName[2]:this.queryParams.orgName[1]?this.queryParams.orgName[1]:this.queryParams.orgName[0]?this.queryParams.orgName[0]:''
+      if (this.queryParams.orgName) {
+        this.queryParams.orgName = this.queryParams.orgName[2]
+          ? this.queryParams.orgName[2]
+          : this.queryParams.orgName[1]
+          ? this.queryParams.orgName[1]
+          : this.queryParams.orgName[0]
+          ? this.queryParams.orgName[0]
+          : "";
       }
       handleQueryList(this.queryParams).then((res) => {
         if (res.code == 200) {
           this.mechanismList = res.rows;
           this.total = res.total;
+          this.resetDisabled = false;
         }
       });
       this.loading = false;
@@ -542,17 +559,18 @@ export default {
     handleQuery() {
       console.log(this.queryParams, "useStatususeStatus");
       // this.queryParams.pageNum = 1;
-      this.queryParams.cx = this.result.toString()
-      console.log(this.queryParams.cx)
+      this.queryParams.cx = this.result.toString();
+      console.log(this.queryParams.cx);
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.resetDisabled = true;
       this.resetForm("queryForm");
       this.$refs.queryForm.resetFields();
-      this.queryParams.vType=[];
-      this.result=[];
-      console.log("ssss"+this.queryParams.vType)
+      this.queryParams.vType = [];
+      this.result = [];
+      console.log("ssss" + this.queryParams.vType);
       this.queryParams = {
         pageNum: 1,
         pageSize: 10,
@@ -599,16 +617,18 @@ export default {
         if (valid) {
           if (this.title == "修改应急车辆") {
             console.log(this.form, "formfffffff");
-            await updateForm(this.form).then((response) => {
-              console.log(response.code,"response.code")
-              if (response.code === 200) {
-                this.$modal.msgSuccess("修改成功");
+            await updateForm(this.form)
+              .then((response) => {
+                console.log(response.code, "response.code");
+                if (response.code === 200) {
+                  this.$modal.msgSuccess("修改成功");
+                  this.open = false;
+                  this.getList();
+                }
+              })
+              .catch((e) => {
                 this.open = false;
-                this.getList();
-              }
-            }).catch((e)=>{
-              this.open = false;
-            })
+              });
             console.log("修改应急资源");
           } else {
             console.log(this.form, "22222222222222");
@@ -658,7 +678,7 @@ export default {
       this.open = true;
       this.title = "应急车辆详情";
       // console.log(scope,'row.idrow.id');
-      detailForm({plateNumber : row.plateNumber}).then((res) => {
+      detailForm({ plateNumber: row.plateNumber }).then((res) => {
         if (res.code == 200) {
           this.form = res.data;
         }
@@ -672,10 +692,10 @@ export default {
 </script>
 
 <style lang="scss">
-.jigou .el-scrollbar{
+.jigou .el-scrollbar {
   width: 215px !important;
 }
-.jigou .el-icon-arrow-right{
+.jigou .el-icon-arrow-right {
   right: 15px;
 }
 </style>

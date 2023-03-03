@@ -324,6 +324,7 @@
           placeholder="请选择岗位"
           clearable
           size="small"
+          style="width:100%"
         >
           <el-option
             v-for="item in emergencyPostList"

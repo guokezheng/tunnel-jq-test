@@ -8,11 +8,10 @@
 -->
 <template>
   <div class="container infoBoardBox" style="height: 100%">
-    <el-row
-      :gutter="20"
-      style="height: 100%; margin-left: 0px; margin-right: 0px"
+    <div
+      style="height: 100%; margin-left: 0px; margin-right: 0px;display: flex;justify-content: space-between;"
     >
-      <el-col :span="4">
+      <div style="width:20%" class="verticalBox">
         <p class="bigTitle">情报板列表</p>
         <el-form ref="form" :model="form">
           <el-form-item prop="deptId">
@@ -111,8 +110,8 @@
             </el-collapse>
           </el-form-item>
         </el-form>
-      </el-col>
-      <el-col :span="10" style="border-left: 1px solid #05afe3">
+      </div>
+      <div style="border-left: 1px solid #05afe3;width:37.8%" class="verticalBox">
         <div class="bigTitle">
           <div>
             <span>待下发信息</span>
@@ -166,21 +165,15 @@
             </el-table-column>
             <el-table-column  align="left" style="width:20%;border:solid 1px red">
               <template slot-scope="scope">
-                <div class="menuBox">
-                  <el-tooltip content="加入信息模板" placement="top">
-                    <!-- <i class="el-icon-d-arrow-right" @click="arrowRight(scope.row)"></i> -->
+                <div class="menuBox" >
+                  <!-- <el-tooltip content="加入信息模板" placement="top">
                     <div @click="arrowRight(scope.row)"></div>
-                  </el-tooltip>
+                  </el-tooltip> -->
                   
                   <el-tooltip content="编辑" placement="top">
-                    <!-- <i
-                      class="el-icon-edit-outline"
-                      @click="openQbbDrawer(scope.row, scope.$index, 1)"
-                    ></i> -->
                     <div @click="openQbbDrawer(scope.row, scope.$index, 1)"></div>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="top">
-                    <!-- <i class="el-icon-close" @click="delQbbDrawer(scope.$index)"></i> -->
                     <div @click="delQbbDrawer(scope.$index)"></div>
                   </el-tooltip>
                 </div>
@@ -188,8 +181,8 @@
             </el-table-column>
           </el-table>
         </div>
-      </el-col>
-      <el-col :span="10" style="border-left: 1px solid #05afe3">
+      </div>
+      <div style="border-left: 1px solid #05afe3;width: 42.2%;" class="verticalBox">
         <div class="bigTitle">
           <div>
             <span>信息模板</span>
@@ -257,16 +250,6 @@
                 </div>
                 <div class="menuBox">
                   <el-tooltip content="加入待下发信息" placement="top">
-                    <!-- <i
-                      class="el-icon-d-arrow-left"
-                      @click="arrowLeft(itm)"
-                      :class="
-                        disabledButton && !form.devicePixel
-                          ? 'disabledClass'
-                          : ''
-                      "
-                      style="cursor: pointer"
-                    ></i> -->
                     <div  
                       @click="arrowLeft(itm)"
                       :class="
@@ -277,28 +260,18 @@
                       style="cursor: pointer"></div>
                   </el-tooltip>
                   <el-tooltip content="编辑" placement="top">
-                    <!-- <i
-                      class="el-icon-edit-outline"
-                      
-                    ></i> -->
                     <div @click="editOutline(itm, indx, 2)"></div>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="top">
-                    <!-- <i
-                      class="el-icon-delete"
-                      @click="handleDelete(itm)"
-                    ></i> -->
                     <div @click="handleDelete(itm)"></div>
                   </el-tooltip>
-                  
-                  
                 </div>
               </div>
             </el-collapse-item>
           </el-collapse>
         </div>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
     <el-dialog
       title="提示"
       :visible.sync="arrowRightVisible"
@@ -1178,8 +1151,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .container {
-  .el-col {
+  .verticalBox {
     height: 100%;
+    padding:10px;
     .bigTitle {
       padding: 15px 0;
       border-bottom: 1px solid #05afe3;
@@ -1237,7 +1211,6 @@ export default {
           align-items: center;
           // margin-left: 10px;
           border: solid 1px #05afe3;
-          width: 165px;
           height: 75px;
           justify-content: space-around;
           align-items: center;
@@ -1248,23 +1221,23 @@ export default {
             height: 40px;
           }
           >div:first-of-type{
-            background-image: url(../../../assets/cloudControl/toRight2.png);
-          }
-          >div:nth-of-type(2){
             background-image: url(../../../assets/cloudControl/edit2.png);
           }
-          >div:last-of-type{
+          >div:nth-of-type(2){
             background-image: url(../../../assets/cloudControl/edit4.png);
           }
+          // >div:last-of-type{
+          //   background-image: url(../../../assets/cloudControl/edit4.png);
+          // }
           >div:first-of-type:hover{
-            background-image: url(../../../assets/cloudControl/toRight1.png);
-          }
-          >div:nth-of-type(2):hover{
             background-image: url(../../../assets/cloudControl/edit1.png);
           }
-          >div:last-of-type:hover{
+          >div:nth-of-type(2):hover{
             background-image: url(../../../assets/cloudControl/closeIcon1.png);
           }
+          // >div:last-of-type:hover{
+          //   background-image: url(../../../assets/cloudControl/closeIcon1.png);
+          // }
           i {
             font-size: 24px;
             color: #666;

@@ -1425,13 +1425,13 @@
 
   .workbench-dialog{
     .mesModeBg{
-      background: #012e51;
+      // background: #012e51;
       .el-collapse-item__header {
-        background: #012e51;
+        background: transparent;
         color: #fff;
       }
       .el-collapse-item__wrap{
-        background: #012e51;
+        background: transparent;
       }
     }
     .lineClass{

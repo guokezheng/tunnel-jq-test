@@ -440,17 +440,17 @@ export default {
   border-radius: 20px !important;
 }
 ::v-deep .el-table {
-  width: 90%;
-  margin-left: 5%;
+  width: 94%;
+  margin-left: 3%;
 
   .el-table__header-wrapper {
     line-height: 28px;
     .cell {
       line-height: 14px;
     }
-    th {
-      background: #00adff !important;
-    }
+    // th {
+    //   background: #00adff !important;
+    // }
   }
   .el-table__body {
     width: 100% !important;

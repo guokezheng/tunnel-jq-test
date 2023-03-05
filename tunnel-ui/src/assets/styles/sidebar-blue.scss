@@ -90,6 +90,14 @@
       background-repeat: repeat-x;
     }
     #app {
+      // 巡检
+    .patrol{
+      .box-father{
+        .number,.text{
+          border:1px solid rgba(215, 215, 215, 1);
+        }
+      }
+    }
       // 工作台底部切换视频 图表按钮
     .footer{
       .footChangeButton{

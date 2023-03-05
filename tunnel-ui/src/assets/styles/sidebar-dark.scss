@@ -94,6 +94,7 @@
     background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
     background-repeat: repeat-x;
   }
+  
   #app {
     // .eventTypeButton{
     //   border: solid 1px #65bfff;
@@ -101,6 +102,14 @@
     //   background: #fff;
 
     // }
+    // 巡检
+    .patrol{
+      .box-father{
+        .number,.text{
+          border:1px solid rgba(215, 215, 215, 1);
+        }
+      }
+    }
     // 工作台底部切换视频 图表按钮
     .footer{
       .footChangeButton{

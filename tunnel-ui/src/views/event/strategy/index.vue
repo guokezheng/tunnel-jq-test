@@ -499,6 +499,7 @@
       :before-close="handleClose"
       :append-to-body="true"
       width="65%"
+      class="celueDialog"
     >
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">

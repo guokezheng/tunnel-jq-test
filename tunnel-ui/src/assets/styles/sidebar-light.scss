@@ -1,4 +1,17 @@
 .theme-light {
+  // 下拉框
+  .el-select-dropdown{
+    background-color: #003D6C;
+    border: solid 1px #093566;
+    .el-select-dropdown__list{
+      .el-select-dropdown__item{
+        color:#fff;
+      }
+      .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
+        background-color: #004F8B;
+      }
+    }
+  }
   
   .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
     background-color: #165BA2;
@@ -232,11 +245,12 @@
     ::-webkit-scrollbar-thumb {
       background-color: #0090D8;
     }
+    
     .el-dialog__body{
-      background: #012E51;
-      width: calc(100% - 30px);
-      margin: 15px auto;
-      padding: 15px 20px ;
+      // background: #012E51;
+      // width: calc(100% - 30px);
+      // margin: 20px auto;
+      padding: 30px 20px;
       color: #fff;
       .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
         background-color: #0064B0 !important;
@@ -253,24 +267,24 @@
         }
       }
       .el-input--medium .el-input__inner{
-        background: #012E51 !important;
-        border: solid 1px #05AFE3;
+        background: #1A3D62 !important;
+        border: none !important;
         color: #fff;
       }
       .el-input--small .el-input__inner{
-        background: #012E51 !important;
-        border: solid 1px #05AFE3 !important;
+        background: #1A3D62 !important;
+        border: none !important;
         color: #fff;
       }
       .el-textarea__inner{
-        background: #012E51 !important;
-        border: solid 1px #05AFE3;
+        background: #1A3D62 !important;
+        border: none !important;
         color: #fff;
       }
       .el-upload--picture-card{
-        background: #012E51 !important;
+        background: #1A3D62 !important;
         color: white;
-        border: 1px solid #05AFE3;
+        border: none !important;
       }
       .wl-transfer .transfer-left, .wl-transfer .transfer-right{
         border: solid 1px #05AFE3;
@@ -286,9 +300,9 @@
         border: 1px solid #05AFE3;
       }
       .vue-treeselect__control{
-        background: #012E51 !important;
+        background: #1A3D62 !important;
         color: white !important;
-        border: 1px solid #05AFE3 !important;
+        border: none !important;
       }
       .el-input-number__increase, .el-input-number__decrease{
         background: #012E51 !important;
@@ -348,7 +362,15 @@
 
       }
       .card{
-        background: #084E84 !important;
+        background: #0D203C !important;
+        .cardName{
+          color: #05AAFD;
+        }
+        .el-col{
+          >div{
+            color: #05AAFD;
+          }
+        }
         .test{
           color: #fff;
 
@@ -379,7 +401,7 @@
       }
       
       .el-form-item__label{
-        color: #fff;
+        color: #05AAFD;
       }
       .el-radio{
         color: #fff;
@@ -512,10 +534,9 @@
   
   .hitchDialog{
     .el-dialog__body{
-      background: #00152B !important;
-      padding:0 !important;
+      // background: #00152B !important;
       .el-card{
-        background: #012E51 !important;
+        background: #0D203C  !important;
       }
     }
   }
@@ -532,7 +553,22 @@
   background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
   background-repeat: repeat-x;
   }
+  // 联控策略
+  .celueDialog{
+    .menu{
+      background-color: #0090D8 !important;
+    }
+  }
   #app {
+    
+    // 巡检
+    .patrol{
+      .box-father{
+        .number,.text{
+          border:solid 1px #05AFE3;
+        }
+      }
+    }
     // 工作台底部切换视频 图表按钮
     .footer{
       .footChangeButton{
@@ -578,7 +614,7 @@
       background: #004375;
     }
     .el-textarea__inner{
-      border: solid 1px #65bfff !important;
+      border: solid 1px #65bfff;
     }
     // .eventTypeButton{
     //   border: solid 1px #65bfff;
@@ -838,11 +874,11 @@
   }
     // 表单label
     .el-form-item__label{
-      color: #fff;
+      color: #05AAFD;
     }
     // 弹窗表单label
     .el-dialog .el-form-item__label{
-      color: #fff;
+      color: #05AAFD;
     }
     // 设备预警、事件预警表单
     .warningStatistics{
@@ -1218,7 +1254,7 @@
       color: #3CD3FE !important;
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-      border: 1px solid #00ADFF;
+      border: 1px solid #0090D8;
     }
     // .el-table__body-wrapper .el-table__cell{
     //   border: 1px solid rgba(1,152,255,0.6);
@@ -1315,7 +1351,7 @@
   //   border: solid 1px #00ADFF;
   // }
   .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-    border: 1px solid #00ADFF;
+    border: 1px solid #0090D8;
   }
   .el-table__body-wrapper .el-table__cell{
     border: 1px solid rgba(1,152,255,0.6);
@@ -1459,7 +1495,7 @@
       
     }
     .el-form-item__label {
-      color: #01AAFD !important;
+      color: #05AAFD !important;
     }
     .el-dialog__header {
       padding: 0;
@@ -1601,7 +1637,7 @@
       color: white;
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-      background-color: #00152B;
+      background-color: #0090D8;
       color: white;
     }
     .el-slider__runway {
@@ -1726,7 +1762,9 @@
       }
     }
     .grid-content .el-input--small .el-input__inner{
+      border: solid 1px #00C8FF !important;
       border-right:none !important;
+      background: #012E51 !important;
     }
     .el-input-group__append
     .el-loading-mask{
@@ -1748,7 +1786,7 @@
       //   color: white;
       // }
       .el-table__header-wrapper th{
-        background-color: #00ADFF !important;
+        background-color: #0090D8 !important;
         color:#fff !important;
       }
       td.el-table__cell{
@@ -1848,7 +1886,7 @@
       background: transparent;
     }
     .el-table .el-table__header-wrapper th{
-      background-color: #00ADFF !important;
+      background-color: #0090D8 !important;
       color:#fff !important;
     }
     .el-table__body{
@@ -2087,7 +2125,7 @@
       color: #9DB5CC !important;
     }
     .el-form-item__label{
-      color: #fff;
+      color: #05AAFD;
     }
     .el-radio{
       color: #9DB5CC;

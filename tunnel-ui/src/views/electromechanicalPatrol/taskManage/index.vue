@@ -305,134 +305,117 @@
       @pagination="getList"
     />
 
-    <el-dialog :title="title" :visible.sync="open" width="70%">
+    <el-dialog :title="title" :visible.sync="open" width="70%" class="xjDialog">
       <!--      <h1>新增巡检任务</h1>-->
       <div class="task">
-        <div>巡查任务基本信息</div>
-        <hr />
+        <div class="topTxt">巡查任务基本信息</div>
+        <div class="tableTopHr"></div>
+        <el-form 
+          :inline="true"
+          :model="form"
+          label-width="110px">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="派单人员" prop="dispatcher">
+                 <el-input
+                    ref="dispatcher"
+                    disabled="disabled"
+                    v-model="form.dispatcher"
+                    placeholder="（默认当前登录人）"
+                  ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="派单时间" prop="dispatchTime">
+                <el-date-picker
+                    clearable
+                    size="small"
+                    disabled="disabled"
+                    v-model="form.dispatchTime"
+                    type="datetime"
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    placeholder="选择派单时间"
+                  >
+                  </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="所属隧道" prop="tunnelId">
+                <el-select
+                  v-model="form.tunnelId"
+                  placeholder="请选择所属隧道"
+                  @change="tunnelSelectGet"
 
-        <div class="form-one">
-          <div>
-            <span prop="dispatcher">派单人员</span>
-            <div>
-              <el-input
-                ref="dispatcher"
-                disabled="disabled"
-                v-model="form.dispatcher"
-                placeholder="（默认当前登录人）"
-              ></el-input>
-            </div>
-          </div>
-
-          <div>
-            <span>派单时间</span>
-            <div>
-              <el-date-picker
-                clearable
-                size="small"
-                disabled="disabled"
-                v-model="form.dispatchTime"
-                type="datetime"
-                style="width: 89%"
-                value-format="yyyy-MM-dd hh:mm:ss"
-                placeholder="选择派单时间"
-              >
-              </el-date-picker>
-            </div>
-          </div>
-          <div>
-            <span>所属隧道</span>
-            <el-select
-              v-model="form.tunnelId"
-              placeholder="请选择所属隧道"
-              @change="tunnelSelectGet"
-            >
-              <el-option
-                v-for="item in eqTunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              ></el-option>
-            </el-select>
-          </div>
-
-          <!--            <div>
-              <el-select v-model="form.bzId" placeholder="请选择班组">
-                <el-option
-                  v-for="item in bzData"
-                  :key="item.deptId"
-                  :label="item.deptName"
-                  :value="item.deptId"
-                ></el-option>
-              </el-select>
-            </div>-->
-        </div>
-        <div class="form-two">
-          <div>
-            <span prop="bzId">指派巡查班组</span>
-            <div>
-              <el-select
-                v-model="form.bzId"
-                placeholder=""
-                id="bzSel"
-                :disabled="true"
-                @click.native="selChange"
-              >
-                <el-option
-                  v-for="item in bzData"
-                  :key="item.deptId"
-                  :label="item.deptName"
-                  :value="item.deptId"
-                ></el-option>
-              </el-select>
-              <!--              <el-input
-                ref="bzId"
-                disabled = "disabled"
-                v-model="form.bzId"
-              ></el-input>-->
-            </div>
-          </div>
-          <div>
-            <span>需完成日期</span>
-            <el-date-picker
-              clearable
-              :picker-options="forbiddenTime"
-              size="small"
-              v-model="form.endPlantime"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              style="width: 63%"
-              placeholder="选择完成时间"
-            >
-            </el-date-picker>
-          </div>
-
-          <div>
-            <span>任务名称</span>
-            <el-input
-              type="text"
-              placeholder="请输入内容"
-              v-model="form.taskName"
-              style="width: 92%; margin-left: 8%"
-            >
-            </el-input>
-          </div>
-        </div>
-        <div class="describe">
-          <span>任务描述</span>
-          <el-input
-            type="textarea"
-            :rows="2"
-            placeholder="请输入内容"
-            v-model="form.taskDescription"
-          >
-          </el-input>
-        </div>
+                >
+                  <el-option
+                    v-for="item in eqTunnelData"
+                    :key="item.tunnelId"
+                    :label="item.tunnelName"
+                    :value="item.tunnelId"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="指派巡查班组" prop="bzId">
+                <el-select
+                  v-model="form.bzId"
+                  placeholder=""
+                  id="bzSel"
+                  :disabled="true"
+                  @click.native="selChange"
+                >
+                  <el-option
+                    v-for="item in bzData"
+                    :key="item.deptId"
+                    :label="item.deptName"
+                    :value="item.deptId"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="需完成日期" prop="endPlantime">
+                <el-date-picker
+                  clearable
+                  :picker-options="forbiddenTime"
+                  size="small"
+                  v-model="form.endPlantime"
+                  type="datetime"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="选择完成时间"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="任务名称" prop="taskName">
+                <el-input
+                  type="text"
+                  placeholder="请输入内容"
+                  v-model="form.taskName"
+                >
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="任务描述" prop="taskDescription">
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入内容"
+                  v-model="form.taskDescription"
+                >
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
       </div>
 
       <div class="patrol">
-        <div>巡查点信息</div>
-        <hr />
+        <div class="topTxt">巡查点信息</div>
+        <div class="tableTopHr"></div>
         <div class="button-father">
           <el-button type="primary" style="height: 15%" @click="show1"
             >选择巡检点</el-button
@@ -650,10 +633,7 @@
     </el-dialog>
 
     <!--巡查任务及执行记录单-->
-    <el-dialog :visible.sync="record" width="70%">
-      <div style="text-align: center; font-size: 20px">
-        巡检任务及执行记录单
-      </div>
+    <el-dialog :visible.sync="record" width="70%" title="巡检任务及执行记录单" class="xjDialog">
       <div class="col-1" v-for="(ite, index) in taskNews2" :key="index">
         发布状态/执行状态：
         <div class="col-card" v-show="ite.publishStatus">
@@ -663,163 +643,142 @@
         <div v-show="!ite.publishStatus && !ite.taskStatus">暂无状态</div>
       </div>
       <div class="card" v-for="(item, index) in taskNews1" :key="index">
-        <div class="card-col" style="font-size: 16px">
-          <div>
-            任务编号：
-            <span>{{ item.id }}</span>
-          </div>
-          <div>
-            所属单位：
+        <el-row>
+          <el-col :span="8">
+              <div>任务编号：</div>
+              <span>{{ item.id }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>所属单位：</div>
             <span>{{ item.zzjgId }}</span>
-          </div>
-          <div>
-            指派巡查班组：
+          </el-col>
+          <el-col :span="8">
+            <div>指派巡查班组：</div>
             <span>{{ item.bzName }}</span>
-          </div>
-        </div>
-        <div class="card-col">
-          <div>
-            计划完成时间：
+          </el-col >
+          <el-col :span="8">
+            <div>计划完成时间：</div>
             <span>{{ item.endPlantime }}</span>
-          </div>
-          <div>
-            派单人员：
+          </el-col>
+          <el-col :span="8">
+            <div>派单人员：</div>
             <span>{{ item.dispatcher }}</span>
-          </div>
-          <div>
-            派单时间：
-            <!--            <span>{{ item.dispatchTime }}</span>-->
+          </el-col>
+          <el-col :span="8">
+            <div>派单时间：</div>
             <span>{{
               parseTime(item.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
             }}</span>
-          </div>
-        </div>
-        <div class="card-cols">
-          <div>
-            任务描述：
+          </el-col>
+          <el-col :span="8">
+            <div>任务描述：</div>
             <span>{{
               item.taskDescription == "null" ? "" : item.taskDescription
             }}</span>
-          </div>
-        </div>
+          </el-col>
+        </el-row>
       </div>
-      <div class="card">
-        <div class="card-col1" v-for="(pat, index) in patrolNews" :key="index">
-          <div class="row">
-            <div class="row-card1">设备巡检点</div>
-            <div class="row-card2" style="margin-left: 10px">
+      <div class="card" v-for="(pat, index) in patrolNews" :key="index">
+        <!-- <div class="card-col1" v-for="(pat, index) in patrolNews" :key="index"> -->
+          <el-row>
+            <el-col :span="2" class="cardName">
+              设备巡检点:
+            </el-col>
+            <el-col :span="2">
               {{ pat.tunnelName }}
-            </div>
-            <div class="row-card2">{{ pat.eqName }}</div>
-            <div class="row-card2" style="text-align: right">
+            </el-col>
+            <el-col :span="2">
+              {{ pat.eqName }}
+            </el-col>
+            <el-col :span="2" >
               {{ pat.xcTime }}
-            </div>
-          </div>
-          <div style="padding: 10px">
-            <div class="test">
-              设备描述：<span style ="color:#ffffff">{{ pat.eqFaultDescription }}</span>
-            </div>
-            <div style="display: flex; margin-top: 10px">
-              <div class="test" style="width: 30%">
-                外观情况：
-                <span style ="color:#ffffff">{{ pat.impression }}</span>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <div>设备描述：</div>
+              <span >{{ pat.eqFaultDescription }}</span>
+            </el-col>
+            <el-col :span="8">
+              <div>外观情况：</div>
+              <span >{{ pat.impression }}</span>
+            </el-col>
+            <el-col :span="8">
+              <div>网络情况：</div>
+              <span >{{ pat.network }}</span>
+            </el-col>
+            <el-col :span="8">
+              <div>配电情况：</div>
+              <span >{{ pat.power }}</span>
+            </el-col>
+            <el-col :span="8">
+              <div>现场故障情况：</div>
+              <span >{{ pat.eqFaultCode }}</span>
+            </el-col>
+            <el-col :span="8">
+              <div>设备运行状态：</div>
+              <span >{{ pat.runStatus }}</span>
+            </el-col>
+            <el-col :span="8">
+              <div>现场照片：</div>
+              <div v-for="(pic, index) in pat.iFileList" :key="index">
+                <img :src="pic.imgUrl" :title="pic.imgName" />
               </div>
-              <div class="test" style="width: 30%">
-                网络情况：
-                <span style ="color:#ffffff">{{ pat.network }}</span>
-              </div>
-              <div class="test" style="width: 30%">
-                配电情况：
-                <span style ="color:#ffffff">{{ pat.power }}</span>
-              </div>
-            </div>
-            <div class="card-cols">
-              <div style="width: 80%">
-                设备运行状态:
-                <span
-                  >设备状态:{{
-                    pat.eqStatus
-                  }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备运行状态:{{
-                    pat.runStatus
-                  }}</span
-                >
-              </div>
-              <div class="col-test">(检修时检测情况)</div>
-            </div>
-            <div class="card-cols">
-              <div style="width: 80%">
-                现场故障情况:
-                <span>
-                  {{ pat.eqFaultCode }}
-                </span>
-              </div>
-              <div class="col-test">(检修时检测情况)</div>
-            </div>
-            <div class="card-cols">
-              现场照片：
-              <div>
-                <div v-for="(pic, index) in pat.iFileList" :key="index">
-                  <img :src="pic.imgUrl" :title="pic.imgName" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+            </el-col>
+          </el-row>
+        <!-- </div> -->
       </div>
       <div class="card" v-for="(tas, index) in taskNews" :key="index">
-        <div class="card-col">
-          <div class="test">
-            任务执行状态：
+        <el-row style="width: 100%;">
+          <el-col :span="8">
+            <div>任务执行状态：</div>
             <span>{{ tas.taskStatus }}</span>
-          </div>
-          <div class="test">
-            执行巡查班组：
-                        <span>{{ tas.bzName }}</span>
-          </div>
-          <div class="test">
-            执行巡查人：
+          </el-col>
+          <el-col :span="8">
+            <div>执行巡查班组：</div>
+            <span>{{ tas.bzName }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>执行巡查人：</div>
             <span>{{ tas.walkerId }}</span>
-          </div>
-        </div>
-        <div class="card-col">
-          <div class="test">
-            任务完成时间：
+          </el-col>
+          <el-col :span="8">
+            <div>任务完成时间：</div>
             <span>{{
-              parseTime(tas.taskEndtime, "{y}-{m}-{d} {h}:{m}:{s}")
-            }}</span>
-          </div>
-          <div class="test">
-            任务持续时长：
+            parseTime(tas.taskEndtime, "{y}-{m}-{d} {h}:{m}:{s}")
+          }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>任务持续时长：</div>
             <span>{{ tas.taskCxtime }}</span>
-            <!-- <div class="chaoshi">{{ tas.ifchaosgu }}</div> -->
-            <div :class="{ active: isActive }">{{ tas.ifchaosgu }}</div>
-          </div>
-        </div>
-        <div class="card-cols">
-          <div class="test">
-            任务描述：
+            <span :class="{ active: isActive }">{{ tas.ifchaosgu }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>任务描述：</div>
             <span>{{
               tas.taskDescription == "null" ? "" : tas.taskDescription
             }}</span>
-          </div>
-        </div>
+          </el-col>
+        </el-row>
       </div>
       <div class="card">
-        <div
-          class="table-row"
-          v-show="taskOpt.length > 0"
-          v-for="(item, index) in taskOpt"
-          :key="index"
-        >
-          <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">{{ item.optType }}</div>
-          <div style="width: 20%">
-            {{ item.tunnelName }} / {{ item.optPersonId }}
-          </div>
-          <div style="width: 30%">
-            {{ parseTime(item.optTime, "{y}-{m}-{d} {h}:{m}:{s}") }}
-          </div>
-        </div>
+        <el-row  
+            v-show="taskOpt.length > 0" 
+            v-for="(item, index) in taskOpt"
+            :key="index">
+          <el-col :span="4">
+            <span>操作记录</span>
+          </el-col>
+          <el-col :span="4">
+            <span>{{ item.optType }}</span>
+          </el-col>
+          <el-col :span="8">
+            <span> {{ item.tunnelName }} / {{ item.optPersonId }}</span>
+          </el-col>
+          <el-col :span="8">
+            <span> {{ parseTime(item.optTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+          </el-col>
+        </el-row>
         <div v-show="taskOpt.length == 0">
           <div
             style="text-align: center; margin-top: 20px; margin-bottom: 20px"
@@ -1903,10 +1862,16 @@ export default {
   margin-top: 20px;
   border-radius: 10px;
   background-color: #f0f0f0;
+  .el-col{
+    line-height: 40px;
+    display: flex;
+    >div{
+      width:110px;
+    }
+  }
   .card-col {
     margin-top: 10px;
     display: flex;
-    color: #79949c;
     .active {
       padding: 5px;
       color: #ffd69a;
@@ -1914,13 +1879,13 @@ export default {
       margin-left: 10px;
       border: 1px solid #ffd69a;
     }
-    div {
-      width: 33%;
-      span {
-        color: black;
-        margin-left: 10px;
-      }
-    }
+    // div {
+    //   width: 33%;
+    //   span {
+    //     color: black;
+    //     margin-left: 10px;
+    //   }
+    // }
   }
   .card-cols {
     margin-top: 10px;
@@ -1938,7 +1903,7 @@ export default {
     }
   }
   .card-col1 {
-    font-size: 17px;
+    font-size: 14px;
     .row {
       margin-top: 5px;
       display: flex;
@@ -1958,16 +1923,26 @@ export default {
   }
 }
 .col-1 {
-  font-size: 20px;
+  font-size: 14px;
   display: flex;
   justify-content: right;
   align-items: center;
   text-align: right;
   .col-card {
-    padding: 10px;
+    width:80px;
+    height:28px;
+    text-align: center;
+    line-height: 28px;
+    font-size: 14px;
     margin-left: 5px;
-    color: #3e9e70;
-    background-color: rgba(230, 243, 235, 1);
+    color: #fff;
+    border-radius: 3px;
+  }
+  .col-card:first-of-type{
+    background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
+  }
+  .col-card:nth-of-type(2){
+    background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
   }
 }
 .card-cols {
@@ -2008,12 +1983,25 @@ h1 {
 }
 ::v-deep .el-dialog {
   margin-top: 7vh !important;
-  .el-dialog__body {
-    padding: 15px 20px;
-  }
+  // .el-dialog__body {
+  //   padding: 15px 20px;
+  // }
 }
 .task {
   margin-bottom: 30px;
+  .el-row{
+    display:flex;
+    flex-wrap: wrap;
+  }
+  ::v-deep .el-form-item{
+    width: 100%;
+    .el-form-item__content{
+      width:calc(100% - 110px);
+      .el-select,.el-date-editor{
+        width:100%;
+      }
+    }
+  }
   .form-one,
   .form-two {
     display: flex;
@@ -2022,7 +2010,6 @@ h1 {
     div {
       display: flex;
       align-items: center;
-      width: 33%;
       &:nth-child(3) {
         ::v-deep .el-input {
           width: 100%;
@@ -2103,23 +2090,23 @@ h1 {
         display: flex;
         align-items: center;
         > div:nth-of-type(1) {
-          width: 120px;
+          width: 180px;
         }
         > div:nth-of-type(2) {
-          width: 100px;
+          width: 200px;
           margin-left: 20px;
         }
         > div:nth-of-type(3) {
           margin-left: 20px;
-          width: 150px;
+          width: 200px;
         }
         > div:nth-of-type(4) {
           margin-left: 20px;
-          width: 150px;
+          width: 200px;
         }
         > div:nth-of-type(5) {
           margin-left: 20px;
-          width: 150px;
+          width: 200px;
         }
       }
       .top,
@@ -2163,6 +2150,18 @@ h1 {
       align-items: center;
     }
   }
+}
+.topTxt {
+  margin-left: 7px;
+  margin-top: 10px;
+  font-size: 16px;
+  background-image: url(../../../assets/cloudControl/cardTitle.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  text-align: center;
+  width:139px;
+  height: 30px;
+  line-height: 30px;
 }
 .show {
   ::v-deep .el-dialog__body {
@@ -2243,6 +2242,12 @@ h1 {
         // }
       }
     }
+  }
+}
+::v-deep .xjDialog{
+  .el-dialog__body{
+    max-height: 70vh;
+    overflow:auto;
   }
 }
 ::v-deep .tree {

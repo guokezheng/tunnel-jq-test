@@ -975,7 +975,7 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%">
+    <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%" class="evtInfo">
       <el-timeline>
 
           <el-timeline-item timestamp="事件发现" placement="top">
@@ -1247,12 +1247,12 @@
     <el-dialog
       :title="title"
       :visible.sync="open"
-      width="1000px"
+      width="70%"
       append-to-body
       class="hitchDialog"
     >
       <el-form ref="form" :model="form" label-width="100px">
-        <el-row style="padding: 10px;display:flex;flex-wrap: wrap;">
+        <el-row style="display:flex;flex-wrap: wrap;">
           <el-card>
             <el-col :span="24">
               <div class="topTxt">故障基本信息</div>
@@ -1364,6 +1364,7 @@
                   :disabled="disstate"
                   placeholder="请选择设备名称"
                   @change="eqStatusGet"
+                  style="width:100%"
                 >
                   <el-option
                     v-for="item in eqListData"
@@ -1380,6 +1381,7 @@
                   v-model="form.eqStatus"
                   :disabled="disstate"
                   placeholder="请选择设备填报状态"
+                  style="width:100%"
                 >
                   <el-option
                     v-for="item in eqStatusList"
@@ -1431,6 +1433,7 @@
                   v-model="form.faultLevel"
                   :disabled="disstate"
                   placeholder="请选择故障等级"
+                  style="width:100%"
                 >
                   <el-option
                     v-for="dict in dict.type.fault_level"
@@ -1453,6 +1456,7 @@
                   v-model="form.falltRemoveStatue"
                   :disabled="disstate"
                   placeholder="请选择消除状态"
+                  style="width:100%"
                 >
                   <el-option
                     v-for="item in faultRemoveStateOptions"
@@ -1491,7 +1495,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="现场图片" label-width="110px">
+              <el-form-item label="现场图片" >
                 <el-upload
                   ref="upload"
                   action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -3834,7 +3838,6 @@ export default {
 .dialogFooterButton {
   width: 100%;
   height: 30px;
-  margin-top: 10px;
   display: flex;
   justify-content: right;
   div {
@@ -4191,6 +4194,8 @@ hr {
   background-size: 100% 100%;
   text-align: center;
   width:139px;
+  height: 30px;
+  line-height: 30px;
 }
 .searchSafeWarn{
   top: 12% !important;
@@ -4204,6 +4209,12 @@ hr {
   }
   ::v-deep .el-card{
     margin-bottom: 10px !important;
+  }
+}
+.evtInfo{
+  .el-dialog__body{
+    max-height: 62vh;
+    overflow: auto;
   }
 }
 </style>

@@ -439,7 +439,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int addStrategysInfo(SdStrategyModel model) {
         // 判断是否符合规范并返回策略
         SdStrategy sty = conditionalJudgement(model);
-        /*SdStrategy strategy = new SdStrategy();
+        SdStrategy strategy = new SdStrategy();
         strategy.setTunnelId(sty.getTunnelId());
         strategy.setDirection(sty.getDirection());
         strategy.setStrategyType(sty.getStrategyType());
@@ -447,7 +447,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         int checkCount = sdStrategyMapper.checkStrategy(strategy);
         if(checkCount > 0){
             throw new RuntimeException("已存在策略信息，请勿重复添加！");
-        }*/
+        }
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
 //        if(insetStrResult < 1){
 //            throw new RuntimeException("数据保存异常");

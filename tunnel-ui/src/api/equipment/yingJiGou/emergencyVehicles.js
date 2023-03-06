@@ -67,3 +67,11 @@ export function veicleOrgId() {
         method: 'get',
     })
 }
+
+// 应急车辆同步
+export function syncVehicle() {
+  return request({
+    url: '/system/vehicle/syncVehicle',
+    method: 'get',
+  })
+}

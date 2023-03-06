@@ -71,6 +71,9 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
      */
     @Override
     public List<SdEmergencyVehicle> selectSdEmergencyVehicleList(SdEmergencyVehicle sdEmergencyVehicle) {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        String deptId = user.getDeptId();
+        sdEmergencyVehicle.setOrgName(deptId);
         List<SdEmergencyVehicle> emergencyVehicles = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(sdEmergencyVehicle);
         return emergencyVehicles;
     }
@@ -167,7 +170,17 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
 
     @Override
     public SdEmergencyVehicle getVehicleDetails(String plateNumber) {
+        //调用第三方接口查询详情
         SdEmergencyVehicle sdEmergencyVehicle = detailsVehicle(plateNumber);
+        //如果查询不到则查询数据库
+        List<SdEmergencyVehicle> list = new ArrayList<>();
+        if(sdEmergencyVehicle == null){
+            sdEmergencyVehicle.setPlateNumber(plateNumber);
+            list = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(sdEmergencyVehicle);
+            if(list.size() > 0){
+                sdEmergencyVehicle = list.get(0);
+            }
+        }
         return sdEmergencyVehicle;
     }
 
@@ -179,19 +192,22 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public void synVehicleDataList(String vehicleData, String deptId){
         //删除应急车辆旧数据
-        SdEmergencyVehicle sdEmergencyVehicle1 = new SdEmergencyVehicle();
+        /*SdEmergencyVehicle sdEmergencyVehicle1 = new SdEmergencyVehicle();
         sdEmergencyVehicle1.setOrgName(deptId);
         List<Long> collect = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(sdEmergencyVehicle1).stream().map(SdEmergencyVehicle::getId).collect(Collectors.toList());
         if(collect.size() > 0){
             Long[] longs = collect.toArray(new Long[collect.size()]);
             sdEmergencyVehicleMapper.deleteSdEmergencyVehicleByIds(longs);
-        }
+        }*/
         //解析数据
         String data = JSONObject.parseObject(vehicleData).getString("data");
         String records = JSONObject.parseObject(data).getString("records");
         JSONArray objects = JSONObject.parseArray(records);
-        //车辆数据集合
-        List<SdEmergencyVehicle> list = new ArrayList<>();
+        //查询数据库所有车辆数据
+        List<SdEmergencyVehicle> emergencyVehicles = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(new SdEmergencyVehicle());
+        //车辆数据集合(新增)
+        List<SdEmergencyVehicle> addList = new ArrayList<>();
+        List<SdEmergencyVehicle> editList = new ArrayList<>();
         for(int i = 0; i < objects.size(); i++){
             SdEmergencyVehicle sdEmergencyVehicle = new SdEmergencyVehicle();
             JSONObject object = JSONObject.parseObject(objects.get(i).toString());
@@ -202,9 +218,37 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
             sdEmergencyVehicle.setUseStatus(object.getString("usageStateDesc"));
             sdEmergencyVehicle.setId(Long.valueOf(object.getString("id")));
             sdEmergencyVehicle.setAccState(object.getString("accState"));
-            list.add(sdEmergencyVehicle);
+            sdEmergencyVehicle.setOwnerName(object.getString("ownerName") == null ? null : object.getString("ownerName"));
+            sdEmergencyVehicle.setVehicleModel(object.getString("brandName") == null ? null : object.getString("brandName"));
+            sdEmergencyVehicle.setEtcStateDesc(object.getString("etcStateDesc") == null ? null : object.getString("etcStateDesc"));
+            sdEmergencyVehicle.setEtcTypeDesc(object.getString("etcTypeDesc") == null ? null : object.getString("etcTypeDesc"));
+            sdEmergencyVehicle.setCarAge(object.getString("carAge") == null ? null : object.getString("carAge"));
+            sdEmergencyVehicle.setMileage(object.getString("mileage") == null ? null : object.getString("mileage"));
+            //判断是否存在于数据库
+            int number = 0;
+            for(SdEmergencyVehicle item : emergencyVehicles){
+                if(item.getId().toString().equals(sdEmergencyVehicle.getId().toString())){
+                    number = 1;
+                    break;
+                }
+            }
+            if(number == 0){
+                addList.add(sdEmergencyVehicle);
+            }else {
+                editList.add(sdEmergencyVehicle);
+            }
+            if(sdEmergencyVehicle.getOrgId() == null || sdEmergencyVehicle.getOrgId() == ""){
+                System.out.println("");
+            }
         }
-        sdEmergencyVehicleMapper.insertSdEmergencyVehicles(list);
+        //新增
+        if(addList.size() > 0){
+            sdEmergencyVehicleMapper.insertSdEmergencyVehicles(addList);
+        }
+        //修改
+        if(editList.size() > 0){
+            sdEmergencyVehicleMapper.updateSdEmergencyVehicles(editList);
+        }
     }
 
     /**
@@ -282,10 +326,13 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
                 sdEmergencyVehicle.setvType(object.getString("ptypeName"));
                 sdEmergencyVehicle.setUseStatus(object.getString("usageStateDesc"));
                 sdEmergencyVehicle.setAccState(object.getString("accState"));
+            }else {
+                return null;
             }
             log.info("返回值 --> {}", exchange.getBody());
         } catch (Exception e) {
             log.error("应急车辆获取详情报错！{}", e.getMessage());
+            return null;
         }
         return sdEmergencyVehicle;
     }

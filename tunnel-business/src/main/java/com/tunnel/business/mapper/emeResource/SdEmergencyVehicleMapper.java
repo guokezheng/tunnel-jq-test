@@ -57,6 +57,13 @@ public interface SdEmergencyVehicleMapper
     public int updateSdEmergencyVehicle(SdEmergencyVehicle sdEmergencyVehicle);
 
     /**
+     * 批量修改应急车辆
+     * @param list
+     * @return
+     */
+    public int updateSdEmergencyVehicles(@Param("list") List<SdEmergencyVehicle> list);
+
+    /**
      * 删除应急车辆
      * 
      * @param id 应急车辆主键

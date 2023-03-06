@@ -1290,11 +1290,6 @@ public class KafkaReadListenToHuaWeiTopic {
                 event.setEventState(EventStateEnum.processing.getCode());
             }
             radarEventServiceImpl.sendDataToOtherSystem(null,event);
-//                jsonObject.clear();
-//                jsonObject.put("event", event);
-//                jsonObject.put("devNo", "S00063700001980001");
-//                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-            //kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
         }
         //查询主动安全事件类型
         SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
@@ -1553,7 +1548,6 @@ public class KafkaReadListenToHuaWeiTopic {
                 SdSpecialVehicles specialVehicles = new SdSpecialVehicles();
                 specialVehicles.setId(trackId);
                 specialVehicles.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
-//            specialVehicles.setVehicleId();
                 specialVehicles.setVehicleType(getVehicleType(jsonObject.getString("vehicleType")));
                 specialVehicles.setVehicleColor(getVehicleColor(jsonObject.getString("vehicleColor")));
                 specialVehicles.setVehicleLicense(jsonObject.getString("plateNumber"));
@@ -1763,16 +1757,18 @@ public class KafkaReadListenToHuaWeiTopic {
         strategy.setEventType(sdEvent.getEventTypeId().toString());
         strategy.setTunnelId(sdEvent.getTunnelId());
         strategy.setDirection(sdEvent.getDirection());
-        Map<String, Object> map = sdStrategyMapper.getEventStrategyData(strategy);
+        List<Map<String, Object>> map = sdStrategyMapper.getEventStrategyData(strategy);
         //如果事件触发策略为自动则执行
-        SdStrategyRl sdStrategyRl = new SdStrategyRl();
-        sdStrategyRl.setId(Long.valueOf(map.get("id").toString()));
-        sdStrategyRl.setEquipments(map.get("equipments").toString());
-        sdStrategyRl.setState(map.get("state").toString());
-        sdStrategyRl.setEffectiveTime(map.get("effectiveFime").toString());
-        sdStrategyRl.setEqTypeId(map.get("eqTypeId").toString());
-        SdStrategyServiceImpl sdStrategyService = SpringUtils.getBean(SdStrategyServiceImpl.class);
-        sdStrategyService.issuedDevice(sdStrategyRl,sdEvent.getId(),map.get("strategyType").toString());
+        for(Map<String, Object> item : map){
+            SdStrategyRl sdStrategyRl = new SdStrategyRl();
+            sdStrategyRl.setId(Long.valueOf(item.get("id").toString()));
+            sdStrategyRl.setEquipments(item.get("equipments").toString());
+            sdStrategyRl.setState(item.get("state").toString());
+            sdStrategyRl.setEffectiveTime(item.get("effectiveFime").toString());
+            sdStrategyRl.setEqTypeId(item.get("eqTypeId").toString());
+            SdStrategyServiceImpl sdStrategyService = SpringUtils.getBean(SdStrategyServiceImpl.class);
+            sdStrategyService.issuedDevice(sdStrategyRl,sdEvent.getId(),item.get("strategyType").toString());
+        }
         /*list.stream().forEach(item -> {
             SdStrategyRl sdStrategyRl = new SdStrategyRl();
             sdStrategyRl.setId();

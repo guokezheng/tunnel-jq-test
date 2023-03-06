@@ -132,5 +132,5 @@ public interface SdStrategyMapper
      * @param strategy
      * @return
      */
-    Map<String, Object> getEventStrategyData(SdStrategy strategy);
+    List<Map<String, Object>> getEventStrategyData(SdStrategy strategy);
 }

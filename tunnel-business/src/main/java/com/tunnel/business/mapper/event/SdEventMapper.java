@@ -157,7 +157,7 @@ public interface SdEventMapper
      * @param sdReserveProcess
      * @return
      */
-    String getManagementDeviceState(SdReserveProcess sdReserveProcess);
+    List<Map<String, Object>> getManagementDeviceState(SdReserveProcess sdReserveProcess);
 
     /**
      * 查询情报板以及广播

@@ -227,6 +227,7 @@ public class SdEventServiceImpl implements ISdEventService {
             setStrategyRlEquipment(sdEvent);
         }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
+        //判断如果是主动安全事件
         return sdEventMapper.updateSdEvent(sdEvent);
     }
 
@@ -1291,8 +1292,13 @@ public class SdEventServiceImpl implements ISdEventService {
             map.put("lsData",lsContent);
         }else {
             //查询普通设备状态
-            String deviceState = sdEventMapper.getManagementDeviceState(sdReserveProcess);
-            map.put("deviceState",deviceState);
+            List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(sdReserveProcess);
+            List<String> deviceIconUrl = new ArrayList<>();
+            maps.stream().forEach(item -> {
+                deviceIconUrl.add(item.get("url").toString());
+            });
+            map.put("deviceState",maps.get(0).get("stateName"));
+            map.put("deviceIconUrl",deviceIconUrl);
         }
         map.put("deviceList",deviceList);
         map.put("deviceType",eqType);

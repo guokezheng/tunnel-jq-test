@@ -570,14 +570,16 @@
                 ))
     </select>
 
-    <select id="getManagementDeviceState" parameterType="sdReserveProcess" resultType="java.lang.String">
+    <select id="getManagementDeviceState" parameterType="sdReserveProcess" resultType="hashmap">
         SELECT
-            es.state_name
+            es.state_name AS stateName,
+            esif.url AS url
         FROM
             sd_reserve_process rp
                 LEFT JOIN sd_strategy_rl sr ON rp.strategy_id = sr.id
                 LEFT JOIN sd_equipment_state es ON sr.eq_type_id = es.state_type_id
                 AND es.state_type = '2'
+                LEFT JOIN sd_equipment_state_icon_file esif ON es.icon_file_id = esif.state_icon_id
         WHERE
             1 = 1
           AND rp.id = #{id}

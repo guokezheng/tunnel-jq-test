@@ -198,11 +198,18 @@ public interface ISdEventService {
     AjaxResult getSituationUpgrade(SdEvent sdEvent);
 
     /**
-     * 应急调度-处置设备详情
+     * 应急调度-处置设备详情（单条）
      * @param sdReserveProcess
      * @return
      */
     AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess);
+
+    /**
+     * 应急调度-处置设备详情（阶段）
+     * @param sdReservePlan
+     * @return
+     */
+    AjaxResult getAllManagementDevices(SdReservePlan sdReservePlan);
 
     /**
      * 修改警情升级
@@ -210,4 +217,11 @@ public interface ISdEventService {
      * @return
      */
     int updateSituationUpgrade(SdEvent sdEvent);
+
+    /**
+     * 查询事件等级以及预案名称
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getEventInif(SdEvent sdEvent);
 }

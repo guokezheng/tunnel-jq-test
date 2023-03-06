@@ -594,4 +594,18 @@
             1 = 1
           AND rp.id = #{id}
     </select>
+
+    <select id="getEventInif" parameterType="sdEvent" resultType="hashmap">
+        SELECT
+            rp.plan_name AS planName,
+            sdd.dict_label AS eventGrade
+        FROM
+            sd_event e
+                LEFT JOIN sd_reserve_plan rp ON e.currency_id = rp.id
+                LEFT JOIN sys_dict_data sdd ON e.event_grade = sdd.dict_value
+                AND sdd.dict_type = 'sd_event_grade'
+        WHERE
+            1 =1
+        AND e.id = #{id}
+    </select>
 </mapper>

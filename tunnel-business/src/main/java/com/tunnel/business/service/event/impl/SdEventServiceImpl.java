@@ -318,31 +318,26 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Override
     public AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess) {
-        Map<String, Object> map = new HashMap<>();
-        //查询设备列表
-        List<Map<String, Object>> deviceList = sdEventMapper.getManagementDevice(sdReserveProcess);
-        //获取设备类型
-        Long eqType = Long.valueOf(deviceList.get(0).get("eqType").toString());
-        //根据状态类型查询不通类型得设备明细
-        if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
-            //查询情报板
-            String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
-            map.put("vmsData",sdVmsContent);
-        }else if(eqType == DevicesTypeEnum.LS.getCode()){
-            //截取广播文件名称
-            String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            List<String> list = Arrays.asList(lsData.split("\\\\"));
-            String lsContent = list.get(list.size() - 1);
-            map.put("lsData",lsContent);
-        }else {
-            //查询普通设备状态
-            String deviceState = sdEventMapper.getManagementDeviceState(sdReserveProcess);
-            map.put("deviceState",deviceState);
-        }
-        map.put("deviceList",deviceList);
-        map.put("deviceType",eqType);
+        //获取应急处置单条设备详情
+        Map<String, Object> map = deviceDateiled(sdReserveProcess.getId());
         return AjaxResult.success(map);
+    }
+
+    @Override
+    public AjaxResult getAllManagementDevices(SdReservePlan sdReservePlan) {
+        //查询预案流程节点
+        SdReserveProcessMapper processMapper = SpringUtils.getBean(SdReserveProcessMapper.class);
+        SdReserveProcess sdReserveProcess = new SdReserveProcess();
+        sdReserveProcess.setReserveId(sdReservePlan.getId());
+        List<SdReserveProcess> sdReserveProcesses = processMapper.selectSdReserveProcessList(sdReserveProcess);
+        //分别查询设备详情
+        List<Map<String, Object>> list = new ArrayList<>();
+        for(SdReserveProcess item : sdReserveProcesses){
+            Map<String, Object> mapData = deviceDateiled(item.getId());
+            //将设备详情整合
+            list.add(mapData);
+        }
+        return AjaxResult.success(list);
     }
 
     @Override
@@ -369,6 +364,11 @@ public class SdEventServiceImpl implements ISdEventService {
         sdEvent.setUpdateTime(DateUtils.getNowDate());
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         return sdEventMapper.updateSdEvent(sdEvent);
+    }
+
+    @Override
+    public AjaxResult getEventInif(SdEvent sdEvent) {
+        return AjaxResult.success(sdEventMapper.getEventInif(sdEvent));
     }
 
     /**
@@ -1263,4 +1263,41 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         return new ArrayList<>();
     }
+
+    /**
+     * 获取应急处置设备详情
+     * @param rpId
+     * @return
+     */
+    public Map<String, Object> deviceDateiled(Long rpId){
+        Map<String, Object> map = new HashMap<>();
+        SdReserveProcess sdReserveProcess = new SdReserveProcess();
+        sdReserveProcess.setId(rpId);
+        //查询设备列表
+        List<Map<String, Object>> deviceList = sdEventMapper.getManagementDevice(sdReserveProcess);
+        //获取设备类型
+        Long eqType = Long.valueOf(deviceList.get(0).get("eqType").toString());
+        //根据状态类型查询不通类型得设备明细
+        if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
+            //查询情报板
+            String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
+            map.put("vmsData",sdVmsContent);
+        }else if(eqType == DevicesTypeEnum.LS.getCode()){
+            //截取广播文件名称
+            String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            List<String> list = Arrays.asList(lsData.split("\\\\"));
+            String lsContent = list.get(list.size() - 1);
+            map.put("lsData",lsContent);
+        }else {
+            //查询普通设备状态
+            String deviceState = sdEventMapper.getManagementDeviceState(sdReserveProcess);
+            map.put("deviceState",deviceState);
+        }
+        map.put("deviceList",deviceList);
+        map.put("deviceType",eqType);
+        return map;
+    }
+
+
 }

@@ -399,13 +399,23 @@ public class SdEventController extends BaseController
     }
 
     /**
-     * 应急调度-处置设备详情
+     * 应急调度-处置设备详情（单条）
      * @param sdReserveProcess
      * @return
      */
     @GetMapping("/getManagementDevice")
     public AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess){
         return sdEventService.getManagementDevice(sdReserveProcess);
+    }
+
+    /**
+     * 应急调度-处置设备详情（阶段）
+     * @param sdReservePlan
+     * @return
+     */
+    @GetMapping("/getAllManagementDevices")
+    public AjaxResult getAllManagementDevices(SdReservePlan sdReservePlan){
+        return sdEventService.getAllManagementDevices(sdReservePlan);
     }
 
     /**
@@ -416,5 +426,15 @@ public class SdEventController extends BaseController
     @GetMapping("/updateSituationUpgrade")
     public Result updateSituationUpgrade(SdEvent sdEvent){
         return  Result.toResult(sdEventService.updateSituationUpgrade(sdEvent));
+    }
+
+    /**
+     * 查询事件等级以及预案名称
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getEventInif")
+    public AjaxResult getEventInif(SdEvent sdEvent){
+        return sdEventService.getEventInif(sdEvent);
     }
 }

@@ -165,4 +165,11 @@ public interface SdEventMapper
      * @return
      */
     String getManagementVmsLs(SdReserveProcess sdReserveProcess);
+
+    /**
+     * 查询事件等级以及预案名称
+     * @param sdEvent
+     * @return
+     */
+    Map<String, Object> getEventInif(SdEvent sdEvent);
 }

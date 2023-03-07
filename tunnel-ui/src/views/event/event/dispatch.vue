@@ -226,6 +226,7 @@
                       : '',
                   }"
                   v-if="item.flowContent"
+                  :title="item.flowContent"
                 >
                   {{ item.flowContent }}
                 </div>
@@ -2243,6 +2244,7 @@ export default {
             .type {
               width: 50px;
               height: 50px;
+              overflow: hidden;
               // background: rgba($color: #084e84, $alpha: 0.6);
               // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
               text-align: center;

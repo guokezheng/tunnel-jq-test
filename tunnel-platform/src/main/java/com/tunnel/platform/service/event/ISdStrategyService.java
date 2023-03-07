@@ -159,4 +159,5 @@ public interface ISdStrategyService {
      * @return
      */
     AjaxResult getStrategyData(SdStrategy strategy);
+
 }

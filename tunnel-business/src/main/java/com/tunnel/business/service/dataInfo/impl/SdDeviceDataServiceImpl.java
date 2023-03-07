@@ -305,16 +305,6 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         return maps;
     }
 
-    @Override
-    public AjaxResult getType() {
-        Map<String, String> map =  new HashMap<>();
-
-        map.put("5","洞外亮度");
-        map.put("17","风速风向");
-        map.put("18","洞内亮度");
-        map.put("19","CO/VI");
-        return AjaxResult.success(map);
-    }
 
     @Override
     public List<SdDeviceData> exportDatainforTab(SdDeviceData sdDeviceData) {

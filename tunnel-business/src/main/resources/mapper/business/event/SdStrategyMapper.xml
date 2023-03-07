@@ -23,6 +23,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="timerClose"    column="timer_close"    />
         <result property="strategyGroup"    column="strategy_group"    />
         <result property="eventType"    column="event_type"    />
+        <result property="lx"    column="lx"    />
+        <result property="fx"    column="fx"    />
         <result property="isAutomatic"    column="is_automatic"    />
         <association property="tunnels"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
     </resultMap>
@@ -40,9 +42,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
         		A.scheduler_time, A.job_relation_id, A.direction,A.create_by,
-        		A.create_time, A.update_by, A.update_time, B.tunnel_name, A.is_automatic, A.event_type
+        		A.create_time, A.update_by, A.update_time, B.tunnel_name, A.is_automatic, A.event_type,c.dict_label lx,f.dict_label fx
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
+        left join sys_dict_data c on c.dict_value = A.strategy_type and c.dict_type = 'sd_strategy_type'
+        left join sys_dict_data f on f.dict_value = A.direction and f.dict_type = 'sd_direction'
+
         <where>
             <if test="id != null">and A.id = #{id}</if>
             <if test="tunnelId != null and tunnelId != ''"> and A.tunnel_id = #{tunnelId}</if>

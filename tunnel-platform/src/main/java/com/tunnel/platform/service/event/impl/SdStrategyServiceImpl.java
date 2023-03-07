@@ -293,6 +293,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
                     continue;
                 }
+
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
                 List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
                 if(stateObject.size()<1){

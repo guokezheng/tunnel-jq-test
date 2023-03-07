@@ -99,11 +99,6 @@ public interface ISdDeviceDataService {
      */
     List<Map<String, String>> dataDevicesLogInfoList(SdDeviceData sdDeviceData);
 
-    /**
-     * 获取设备类型
-     * @return
-     */
-    AjaxResult getType();
 
     /**
      * 导出Tab

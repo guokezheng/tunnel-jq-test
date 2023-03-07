@@ -226,15 +226,7 @@ public class SdDeviceDataController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * 获取设备类型
-     * @return
-     */
-    @GetMapping("/getType")
-    public AjaxResult getType()
-    {
-        return sdDeviceDataService.getType();
-    }
+
 
     @Log(title = "数据报表", businessType = BusinessType.EXPORT)
     @GetMapping("/exportDatainforTab")

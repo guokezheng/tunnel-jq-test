@@ -11,7 +11,12 @@
               v-hasPermi="['system:strategy:add']"
               >新增</el-button
             >
-            <el-button size="small" @click="resetQuery" 
+            <el-button
+              size="small"
+              @click="handleExport('1')"
+            >导出</el-button
+            >
+            <el-button size="small" @click="resetQuery"
               >刷新</el-button
             >
           </el-col>
@@ -153,6 +158,7 @@
           max-height="640"
           :row-class-name="tableRowClassName"
         >
+          <el-table-column type="selection" width="55" align="center" />
           <el-table-column
             type="index"
             width="70"
@@ -258,7 +264,12 @@
               v-hasPermi="['system:strategy:add']"
               >新增</el-button
             >
-            <el-button size="small" @click="resetQuery" 
+            <el-button
+              size="small"
+              @click="handleExport('2')"
+            >导出</el-button
+            >
+            <el-button size="small" @click="resetQuery"
               >刷新</el-button
             >
           </el-col>
@@ -398,6 +409,7 @@
           max-height="640"
           :row-class-name="tableRowClassName"
         >
+          <el-table-column type="selection" width="55" align="center" />
           <el-table-column
             type="index"
             width="70"
@@ -574,17 +586,17 @@
   <script src="../../../cronStrue/dist/cronstrue.min.js" type="text/javascript"></script>
   <script src="../../../cronStrue/dist/cronstrue-i18n.min.js" type="text/javascript"></script>
   <script>
-import {
-  listStrategy,
-  getStrategy,
-  delStrategy,
-  updateState,
-  addStrategy,
-  addStrategyInfo,
-  updateStrategyInfo,
-  getGuid,
-  handleStrategy,
-} from "@/api/event/strategy";
+  import {
+    listStrategy,
+    getStrategy,
+    delStrategy,
+    updateState,
+    addStrategy,
+    addStrategyInfo,
+    updateStrategyInfo,
+    getGuid,
+    handleStrategy, export1,
+  } from "@/api/event/strategy";
 import{listEventType}from "@/api/event/eventType";
 import { listRl, addRl } from "@/api/event/strategyRl";
 import {
@@ -613,7 +625,7 @@ import timeControl from "./components/timeControl"; //分时控制
 import cron from "@/components/cron/cron.vue";
 
 import manualControlEvent from "./event/manualControl"; //手动控制
-import autoControlEvent from "./event/autoControl"; //自动触发
+import autoControlEvent from "./event/autoControl";
 export default {
   components: {
     manualControl,
@@ -676,6 +688,8 @@ export default {
       insertStrategyTypeOptions: [],
       // 编辑策略选中rlId
       currentId: null,
+      // 导出遮罩层
+      exportLoading: false,
       // 添加/编辑标志 add添加，edit 编辑
       sink: "",
       checked: false,
@@ -1281,14 +1295,22 @@ export default {
       this.model = "1";
     },
     /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "system/strategy/export",
-        {
-          ...this.queryParams,
-        },
-        `system_strategy.xlsx`
-      );
+    handleExport(flag) {
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      let confirmInfo = "";
+      if(flag ==1){
+        confirmInfo = "是否确认导出日常策略数据项？";
+      }if(flag ==2){
+        confirmInfo = "是否确认导出预警策略数据项？";
+      }
+      this.$modal.confirm(confirmInfo).then(() => {
+        this.exportLoading = true;
+        return export1(queryParams);
+      }).then(response => {
+        this.$download.name(response.msg);
+        this.exportLoading = false;
+      }).catch(() => {});
     },
     /** 添加定时任务 */
     addJobData(guid, str) {

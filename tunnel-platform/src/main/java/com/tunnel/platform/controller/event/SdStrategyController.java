@@ -6,6 +6,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyModel;
 import com.tunnel.platform.service.event.ISdStrategyService;
@@ -45,18 +46,25 @@ public class SdStrategyController extends BaseController
         return getDataTable(list);
     }
 
+
     /**
-     * 导出控制策略列表
+     * 导出策略列表
      */
-   /* @PreAuthorize(hasPermi = "system:strategy:export")
-    @Log(title = "控制策略", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, SdStrategy sdStrategy) throws IOException
+    @Log(title = "策略", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public AjaxResult export(SdStrategy sdStrategy)
     {
-        List<SdStrategy> list = sdStrategyService.selectSdStrategyList(sdStrategy);
-        ExcelUtil<SdStrategy> util = new ExcelUtil<SdStrategy>(SdStrategy.class);
-        util.exportExcel(response, list, "strategy");
-    }*/
+        if("1".equals(sdStrategy.getStrategyGroup())){//日常策略
+            List<SdStrategy> list = sdStrategyService.selectSdStrategyList(sdStrategy);
+            ExcelUtil<SdStrategy> util = new ExcelUtil<SdStrategy>(SdStrategy.class);
+            return util.exportExcel(list, "日常策略");
+        }else{//控制策略
+            List<SdStrategy> list = sdStrategyService.selectSdStrategyList(sdStrategy);
+            ExcelUtil<SdStrategy> util = new ExcelUtil<SdStrategy>(SdStrategy.class);
+            return util.exportExcel(list, "预警策略");
+        }
+
+    }
 
     /**
      * 获取控制策略详细信息

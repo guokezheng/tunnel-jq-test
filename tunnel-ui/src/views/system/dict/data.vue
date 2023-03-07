@@ -26,7 +26,7 @@
           @click="handleExport"
           v-hasPermi="['system:dict:export']"
         >导出</el-button>
-          <el-button size="small" @click="resetQuery" 
+          <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -479,7 +479,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有数据项？').then(() => {
+      this.$modal.confirm('是否确认导出数据项？').then(() => {
         this.exportLoading = true;
         return exportData(queryParams);
       }).then(response => {

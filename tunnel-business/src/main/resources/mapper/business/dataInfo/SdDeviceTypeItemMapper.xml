@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
             <if test="searchValue != null  and searchValue != ''"> and CONCAT(item_code,item_name) LIKE CONCAT('%',#{searchValue},'%')</if>
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectSdDeviceTypeItemLists" parameterType="SdDeviceTypeItem" resultMap="SdDeviceTypeItemResult">

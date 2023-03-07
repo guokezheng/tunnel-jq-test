@@ -155,7 +155,7 @@
       <el-form-item>
         <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
         <el-button  size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
-        
+
       </el-form-item>
     </el-form> -->
 
@@ -404,7 +404,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有调度日志数据项？').then(() => {
+      this.$modal.confirm('是否确认导出调度日志数据项？').then(() => {
         this.exportLoading = true;
         return exportJobLog(queryParams);
       }).then(response => {

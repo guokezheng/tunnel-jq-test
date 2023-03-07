@@ -22,7 +22,7 @@
             v-hasPermi="['system:config:remove']"
           >刷新缓存</el-button
           >
-        <el-button size="small" @click="resetQuery" 
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -506,7 +506,7 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有参数数据项？")
+        .confirm("是否确认导出参数数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportConfig(queryParams);

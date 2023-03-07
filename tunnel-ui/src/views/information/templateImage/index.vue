@@ -30,7 +30,7 @@
           >导出</el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain>刷新</el-button>
-       
+
       </el-col>
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
@@ -628,7 +628,7 @@ export default {
       const queryParams = this.queryParams;
       //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
       queryParams.ids = this.ids;
-      this.$confirm("是否确认导出所有情报板模板图片数据项?", "警告", {
+      this.$confirm("是否确认导出情报板模板图片数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

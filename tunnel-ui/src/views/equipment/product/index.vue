@@ -284,7 +284,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有产品数据项？').then(() => {
+      this.$modal.confirm('是否确认导出产品数据项？').then(() => {
         this.exportLoading = true;
         return exportProduct(queryParams);
       }).then(response => {

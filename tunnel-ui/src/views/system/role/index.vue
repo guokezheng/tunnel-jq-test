@@ -219,7 +219,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
     <div class="tableTopHr" ></div>
-    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange" 
+    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange"
     class="allTable" height="62vh">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="角色编号" prop="roleId" sortable />
@@ -753,7 +753,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有用户数据项？').then(() => {
+      this.$modal.confirm('是否确认导出用户数据项？').then(() => {
         this.exportLoading = true;
         return exportRole(queryParams);
       }).then(response => {

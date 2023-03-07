@@ -892,6 +892,7 @@ export default {
         this.strategyTypeEventClose(row);
       }
     },
+    //0:手动 1：自动
     strategyTypeEventClose(row) {
       this.$nextTick(() => {
         switch (this.strategyForm.strategyType) {
@@ -916,7 +917,9 @@ export default {
         }
       });
     },
-    // 策略改变触发方法
+    // 策略改变触发方法 
+    // this.strategyForm.strategyType 对应字典表组件索引
+    //0:手动 1：定时 2：分时
     strategyTypeClose(row) {
       console.log(this.$refs.manualControl, "获取组件");
       this.$nextTick(() => {

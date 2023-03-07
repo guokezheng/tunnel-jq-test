@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-06 17:23:56
+ * @LastEditTime: 2023-03-07 17:06:42
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -166,6 +166,7 @@
               stripe
               class="phoneTable"
               :fit="true"
+              height="84%"
             >
               <el-table-column
                 label="姓名"
@@ -230,7 +231,7 @@
                 </div>
                 <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
                 :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">
-                一键
+                {{ yjName }}
                 </div>
               </div>
               <div class="dashed" 
@@ -264,13 +265,23 @@
                 style="width:100%;"
               >
                 <div style="float: left;padding-right: 20px;line-height: 20px;">{{ itm.flowContent }}</div>
-                <!-- 绿对号 -->
+                <!-- 预警完成按钮 -->
                 <el-button type="success"
                   plain
                   size="mini"
                   style="float: right; "
                   icon="el-icon-check"
-                  v-show="itm.eventState != '0'">
+                  v-show="itm.eventState != '0' && !itm.processId">
+                  完成
+                </el-button>
+                <!-- 预案完成按钮 -->
+                <el-button type="success"
+                  plain
+                  size="mini"
+                  style="float: right; "
+                  icon="el-icon-check"
+                  v-show="itm.eventState != '0' && itm.processId" 
+                  @click="getManagementDevice(itm)">
                   完成
                 </el-button>
                 <!-- <img
@@ -509,86 +520,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="设备控制"
-      :visible.sync="IssuedDialog"
-      width="50%"
-      text-align="center"
-      class="IssuedDialog"
-      >
-      <div class="GDeviceBox">
-        
-        <el-row>
-          <el-col :span="24">
-            <p style="padding:15px 0;">设备控制</p>
-            <!-- <el-card shadow="always"> -->
-              <el-table
-                :data="GDeviceData.deviceList"
-                stripe
-                class="phoneTable"
-                :fit="true"
-              >
-                <el-table-column
-                  label="设备名称"
-                  align="center"
-                  prop="eqName"
-                />
-                <el-table-column
-                  label="桩号"
-                  align="center"
-                  prop="eqPile"
-                />
-                <el-table-column label="执行状态" align="center">
-                  <template>
-                    <span>待执行</span>
-                  </template>
-                </el-table-column>
-              </el-table>
-            <!-- </el-card> -->
-          </el-col>
-          <el-col :span="24" v-if="GDeviceData.vmsData">
-            <p style="padding:15px 0;">{{boxName}}:</p>
-            <el-card shadow="always">
-              <div style="display: flex;justify-content: center;align-items: center;">
-                <div :style="{
-                  'width':GDeviceData.vmsData['width'] + 'px',
-                  'height':GDeviceData.vmsData['height'] + 'px',
-                  'color':GDeviceData.vmsData['font_color'],
-                  'font-size':GDeviceData.vmsData['font_size'] + 'px',
-                  'font-family':GDeviceData.vmsData['font_type'],
-                  'letter-spacing':GDeviceData.vmsData['font_spacing'] + 'px',
-                  'background-color':'#000',
-                  'position':'relative',
-                  }">
-                  <span :style="{
-                    'position':'absolute',
-                    'top':GDeviceData.vmsData['top'] + 'px',
-                    'left':GDeviceData.vmsData['left'] + 'px',
-                  }">
-                    {{GDeviceData.vmsData['content']}}
-                  </span>
-                </div>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="24" v-if="boxName == '下发指令' || boxName == '执行文件'">
-            <p style="padding:15px 0;">{{boxName}}:</p>
-            <el-card v-show="GDeviceData && !GDeviceData.vmsData" shadow="always">
-              <div style="display: flex;align-items: center;">
-                <img v-for="(items,index) in GDeviceData.deviceIconUrl" :key="index" 
-                  :src="items"
-                />
-                <p style="padding-left: 15px;">{{ GDeviceData.deviceState }}</p>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
-      <div style="display:flex;justify-content:right">
-        <el-button type="info" @click="cancelIssuedDialog">取 消</el-button>
-        <el-button type="primary" @click="changeIncHand">执 行</el-button>
-      </div>
-    </el-dialog>
+
     <com-video
       class="comClass"
       v-if="[23, 24, 25].includes(this.eqInfo.clickEqType)"
@@ -761,7 +693,7 @@
               :rows="5"
               placeholder="请输入升级原因"
               v-model="levelForm.remark">
-              </el-input>
+              </el-input> 
             </el-form-item>
           </el-col>
         </el-row>
@@ -769,6 +701,158 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="primary" @click="changeLevel">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 执行弹窗 -->
+    <el-dialog
+      title="设备控制"
+      :visible.sync="IssuedDialog"
+      width="50%"
+      text-align="center"
+      class="IssuedDialog"
+      >
+      <div class="GDeviceBox">
+        <el-row>
+          <el-col :span="24">
+            <p style="padding:15px 0;">设备控制</p>
+            <!-- <el-card shadow="always"> -->
+              <el-table
+                :data="GDeviceData.deviceList"
+                stripe
+                class="phoneTable"
+                :fit="true"
+              >
+                <el-table-column
+                  label="设备名称"
+                  align="center"
+                  prop="eqName"
+                />
+                <el-table-column
+                  label="桩号"
+                  align="center"
+                  prop="eqPile"
+                />
+                <el-table-column label="执行状态" align="center">
+                  <template>
+                    <span>{{ deviceStateName }}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+            <!-- </el-card> -->
+          </el-col>
+          <el-col :span="24" v-if="GDeviceData.vmsData">
+            <p style="padding:15px 0;">{{boxName}}:</p>
+            <el-card shadow="always">
+              <div style="display: flex;justify-content: center;align-items: center;">
+                <div :style="{
+                  'width':GDeviceData.vmsData['width'] + 'px',
+                  'height':GDeviceData.vmsData['height'] + 'px',
+                  'color':GDeviceData.vmsData['font_color'],
+                  'font-size':GDeviceData.vmsData['font_size'] + 'px',
+                  'font-family':GDeviceData.vmsData['font_type'],
+                  'letter-spacing':GDeviceData.vmsData['font_spacing'] + 'px',
+                  'background-color':'#000',
+                  'position':'relative',
+                  }">
+                  <span :style="{
+                    'position':'absolute',
+                    'top':GDeviceData.vmsData['top'] + 'px',
+                    'left':GDeviceData.vmsData['left'] + 'px',
+                  }">
+                    {{GDeviceData.vmsData['content']}}
+                  </span>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+          <el-col :span="24" v-if="boxName == '下发指令' || boxName == '执行文件'">
+            <p style="padding:15px 0;">{{boxName}}:</p>
+            <el-card v-show="GDeviceData && !GDeviceData.vmsData" shadow="always">
+              <div style="display: flex;align-items: center;">
+                <img v-for="(items,index) in GDeviceData.deviceIconUrl" :key="index" 
+                  :src="items"
+                />
+                <p style="padding-left: 15px;">{{ GDeviceData.deviceState }}</p>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+      </div>
+      <div style="display:flex;justify-content:right">
+        <el-button type="info" @click="cancelIssuedDialog">取 消</el-button>
+        <el-button type="primary" @click="changeIncHand">执 行</el-button>
+      </div>
+    </el-dialog>
+    <!-- 一键详情弹窗 -->
+    <el-dialog
+      title="设备控制详情"
+      :visible.sync="oneKeyDialogVisible"
+      width="60%"
+      :before-close="oneKeyHandleClose">
+      <div class="GDeviceBox" style="overflow: scroll;overflow-x: hidden;">
+        <div v-for="(item,index) in oneKeyList" :key="index">
+          <el-card>
+            <el-table
+              :data="item.deviceList"
+              style="width: 100%">
+              <el-table-column
+                prop="eqName"
+                label="设备名称"
+                align="center"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="eqPile"
+                label="设备桩号"
+                align="center"
+                >
+              </el-table-column>
+              <el-table-column label="模板内容" align="center" v-if="item.deviceType == '16' || item.deviceType == '36'">
+                {{item.vmsData['content']}}
+              </el-table-column>
+              <el-table-column label="下发指令" align="center" v-if="item.deviceType != '22' && item.deviceType != '16' && item.deviceType != '36'">
+                {{item.deviceState}}
+              </el-table-column>
+              <el-table-column label="执行文件" align="center" v-if="item.deviceType == '22'">
+                {{item.lsData}}
+              </el-table-column>
+              <el-table-column label="执行状态" align="center">
+                {{item.handleState == '0' ? '未执行':'已执行'}}
+              </el-table-column>
+            </el-table>
+          </el-card>
+          <el-card>
+            <div v-if="item.deviceType == '16' || item.deviceType == '36'">
+              <!-- <p>情报板执行模板</p> -->
+              <el-card shadow="always">
+                <div style="display: flex;justify-content: center;align-items: center;">
+                  <div :style="{
+                    'width':item.vmsData['width'] + 'px',
+                    'height':item.vmsData['height'] + 'px',
+                    'color':item.vmsData['font_color'],
+                    'font-size':item.vmsData['font_size'] + 'px',
+                    'font-family':item.vmsData['font_type'],
+                    'letter-spacing':item.vmsData['font_spacing'] + 'px',
+                    'background-color':'#000',
+                    'position':'relative',
+                    }">
+                    <span :style="{
+                      'position':'absolute',
+                      'top':item.vmsData['top'] + 'px',
+                      'left':item.vmsData['left'] + 'px',
+                    }">
+                      {{item.vmsData['content']}}
+                    </span>
+                  </div>
+                </div>
+              </el-card>
+            </div>
+          </el-card>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="oneKeyDialogVisible = false">取 消</el-button>
+        <el-button type="primary" v-show="yjName == '一键'" @click="oneKeyExecute()">执 行</el-button>
       </span>
     </el-dialog>
   </div>
@@ -843,6 +927,10 @@ export default {
   },
   data() {
     return {
+      deviceStateName:'',
+      yjName:'一键',
+      oneKeyList:[],
+      oneKeyDialogVisible:false,
       eventInfo:{},
       fontAlign:'',//情报板对齐方式
       boxName:'',
@@ -930,6 +1018,7 @@ export default {
       curX: 0,
       curY: 0,
       ReservePlanList:null,//预案列表
+      reserveId:'',
     };
   },
   computed: {
@@ -1002,6 +1091,46 @@ export default {
   //   clearInterval(this.deadline4);
   // },
   methods: {
+    oneKeyExecute(){
+      let planId = this.reserveId;
+      let eventId = that.$route.query.id;
+      implementPlan(planId,eventId).then(res=>{
+        this.$modal.msgSuccess("执行成功");
+        this.yjName = '详情';
+        this.oneKeyDialogVisible = false;
+      })
+    },
+    // 事件处置 一键
+    getYiJian(item) {
+      console.log(item, "一键");
+      var that = this;
+      let arr = [];
+      for (let itm of item.children) {
+        arr.push(itm.id);
+      }
+      this.reserveId = item.reserveId;
+      let data = {id:item.reserveId,eventId:that.$route.query.id};
+      getAllManagementDevices(data).then(res=>{
+        this.oneKeyList = res.data;
+        console.log(this.oneKeyList);
+        for(let i = 0;i < this.oneKeyList.length;i++){
+          let item = this.oneKeyList[i];
+          if(item.deviceType == 16 || item.deviceType == 36){//情报板
+            let zxc = item.vmsData['screen_size'].split('*');
+            item.vmsData['width'] = zxc[0];
+            item.vmsData['height'] = zxc[1];
+            let align = item.vmsData['coordinate'];
+            item.vmsData['left'] = align.substr(0,3);
+            item.vmsData['top'] = align.substr(3,6);
+          }
+        }
+        console.log(this.oneKeyList,"this.oneKeyListthis.oneKeyList");
+        this.oneKeyDialogVisible = true;
+      })
+    },
+    oneKeyHandleClose(){
+      this.oneKeyDialogVisible = false
+    },
     getEventInfo(){
       let data = {id:this.$route.query.id};
       getEventInif(data).then(res=>{
@@ -1014,6 +1143,8 @@ export default {
       this.processId = item.processId;
       this.IssuedItem.id = item.id;
       let params = {id:item.processId};
+      item.eventState == '0'?this.deviceStateName = '未执行':this.deviceStateName = '已执行';
+      //请求详情
       getManagementDevice(params).then(res=>{
         console.log(res);
         let data = res.data;
@@ -1208,44 +1339,7 @@ export default {
         this.getAccIcon();
       });
     },
-    // 事件处置 一键
-    getYiJian(item) {
-      console.log(item, "一键");
-      var that = this;
-      // let str = ''
-      let arr = [];
-      for (let itm of item.children) {
-        arr.push(itm.id);
-      }
 
-      this.$confirm("是否确认执行?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(function () {
-        // let planId = item.reserveId;
-        // let eventId = that.$route.query.id;
-        let data = {id:item.reserveId};
-        getAllManagementDevices(data).then(res=>{
-          console.log(res, "一键下发成功");
-        })
-        // implementPlan(planId, eventId).then((response) => {
-        //   console.log(response, "一键下发成功");
-        //   for (let item of that.incHandList) {
-        //     for (let itm of item.children) {
-        //       for (let it_m of arr) {
-        //         if (itm.id == it_m) {
-        //           itm.eventState = "1";
-        //           that.$modal.msgSuccess("一键下发成功");
-        //         }
-        //       }
-        //     }
-        //   }
-        //   this.evtHandle();
-        //   this.getEventList();
-        // });
-      });
-    },
     // 返回安全预警
     backSafeWarn() {
       this.$router.push({

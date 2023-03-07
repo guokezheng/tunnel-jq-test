@@ -260,66 +260,54 @@ export default {
       this.getTunnels();
       this.getDirection();
     },
+    // 组件调用方法;回显数据;
     getStrategyData(row) {
       getStrategy(this.id).then((response) => {
         let data = response.data;
+        // this.strategyForm = data;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
-        listRl({ strategyId: this.id }).then((response) => {
-          console.log(response, "设备数据");
-          // this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
-          // if (this.strategyForm.strategyType == "0") {
-          //   this.eqTypeChange();
-          // }
 
+        listRl({ strategyId: this.id }).then((response) => {
+          // console.log(response, "设备数据");
           this.strategyForm.manualControl = response.rows;
-          // this.strategyForm.manualControl.forEach((item) => {
-          //   item.value = "";
-          // });
           for (let i = 0; i < response.rows.length; i++) {
             let attr = response.rows[i];
             let manualControl = this.strategyForm.manualControl[i];
             this.strategyForm.manualControl[i].value =
               attr.equipments.split(",");
-            console.log(this.strategyForm.manualControl[i].value, "选择的设备");
 
-            // this.strategyForm.manualControl[i].equipmentData = attr.equipmentData;
+            console.log(this.strategyForm.manualControl[i].value, "选择的设备");
             this.strategyForm.manualControl[i].state = attr.state;
+
             this.strategyForm.manualControl[i].manualControlStateList =
               attr.eqStateList;
+
             this.strategyForm.manualControl[i].equipmentTypeId = Number(
               attr.eqTypeId
             );
+            // 情报板设备
             if (
               this.strategyForm.manualControl[i].equipmentTypeId == 16 ||
               this.strategyForm.manualControl[i].equipmentTypeId == 36
             ) {
+              // 改变数据类型
               this.strategyForm.manualControl[i].state = +attr.state;
               this.qbgChange(i,this.strategyForm.manualControl[i].value);
             }
-            this.$set(
-              manualControl,
-              "equipmentTypeData",
-              this.equipmentTypeData
-            );
+            this.$set(manualControl,"equipmentTypeData",this.equipmentTypeData);
             listDevices({
-              eqType: attr.eqTypeId,
-              eqTunnelId: this.strategyForm.tunnelId,
+              eqType: attr.eqTypeId,//设备类型
+              eqTunnelId: this.strategyForm.tunnelId,//隧道
               eqDirection: this.strategyForm.direction, //方向
             }).then((res) => {
               this.$set(manualControl, "equipmentData", res.rows);
-              // this.strategyForm.manualControl[i].equipmentData = res.rows;
               console.log(manualControl.equipmentData, "设备列表数据1");
             });
-            // listType(this.queryEqTypeParams).then((data) => {
-            //   console.log(data.rows,"设备类型")
-            //   this.$set(manualControl,"equipmentTypeData",data.rows)
-            //   // this.strategyForm.manualControl[i].equipmentTypeData = data.rows;
-            // });
           }
         });
       });
@@ -349,6 +337,7 @@ export default {
       ) {
       }
     },
+    //情报板设备改变事件
     qbgChange(index, value) {
       console.log(value);
       let data = value;
@@ -568,6 +557,9 @@ export default {
           }
           newData = newData.split(",");
           console.log(newData);
+
+
+          
           for (let i = 0; i < data.length; i++) {
             for (let z = 0; z < newData.length; z++) {
               if (data[i].eqId == newData[z]) {

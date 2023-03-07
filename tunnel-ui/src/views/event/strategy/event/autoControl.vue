@@ -458,17 +458,22 @@ export default {
       if (this.sink == "add") {
         this.resetForm();
       }
-      // 事件类型
-      let data = {prevControlType:"1"};
-      listEventType(data).then(res=>{
-        this.eventTypeList = res.rows;
-      })
+      // 获取事件类型
+      this.getListEventType();
       this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
+    getListEventType(){
+      let data = {prevControlType:"1"};
+      listEventType(data).then(res=>{
+        this.eventTypeList = res.rows;
+        console.log(this.eventTypeList,"事件类型");
+      })
+    },
     /** 获取当前策略数据 */
     async getStrategyData(row) {
+      this.getListEventType();
       //获取设备
       autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
@@ -506,7 +511,7 @@ export default {
             "warningType",
             res.data.warningType
           );
-          this.$set(this.strategyForm, "eventType", data.eventType);
+          this.$set(this.strategyForm, "eventType", +data.eventType);
           listDevices({
             eqType: this.strategyForm.triggers.deviceTypeId,
             eqTunnelId: this.strategyForm.tunnelId,

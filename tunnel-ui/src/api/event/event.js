@@ -301,5 +301,20 @@ export function updateSituationUpgrade(query) {
     params: query
   })
 }
+//查询事件等级和预案
+export function getEventInif(query) {
+  return request({
+    url: '/event/getEventInif/',
+    method: 'get',
+    params: query
+  })
+}
+//一键控制设备
 
-
+export function getAllManagementDevices(query) {
+  return request({
+    url: '/event/getAllManagementDevices',
+    method: 'get',
+    params: query
+  })
+}

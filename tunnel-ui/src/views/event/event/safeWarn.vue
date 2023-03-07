@@ -595,6 +595,7 @@
           <div style="padding-bottom:15px;">
             事发时抓图或录像
           </div>
+          {{ eventForm.iconUrlList.length }}
           <!-- <video :src="eventForm.videoUrl" controls muted loop fluid></video> -->
           <div class="picBox" v-if="eventForm.iconUrlList.length >= 1">
             <swiper class="swiper gallery-top" :options="swiperOptionTop" ref="swiperTop">
@@ -609,8 +610,11 @@
             </swiper>
             <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs" ref="swiperThumbs">
               <swiper-slide v-for="(item,index) in eventForm.iconUrlList" :key="index" :class="'slide-'+index">
-                <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop></video>
-                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
+                <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop
+                @click="openPicDialog(eventForm)">
+                </video>
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0" 
+                @click="clickImg(item.imgUrl)">
               </swiper-slide>
             </swiper>
           </div>
@@ -1607,6 +1611,17 @@
         <video :src="videoUrl" controls muted loop fluid autoplay></video>
       </div>
     </el-dialog>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisibleImg"
+      width="60%"
+      :before-close="handleCloseImg">
+      <img :src="alongImgUrl" style="width:100%;"/>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleImg = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisibleImg = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -1674,6 +1689,8 @@ export default {
   },
   data() {
     return {
+      alongImgUrl:'',
+      dialogVisibleImg:false,//图片和视频容器
       videoShow:false,
       checkBoxEventState:[],
       exportLoading:false,
@@ -1682,7 +1699,7 @@ export default {
       zd_boxShow:false,
       boxShow:false,
       swiperOptionTop: {
-        loop: true,
+        loop: false,
         loopedSlides: 5, // looped slides should be the same
         spaceBetween: 10,
         navigation: {
@@ -1691,7 +1708,7 @@ export default {
         }
       },
       swiperOptionThumbs: {
-        loop: true,
+        loop: false,
         loopedSlides: 5, // looped slides should be the same
         spaceBetween: 10,
         centeredSlides: true,
@@ -2150,6 +2167,19 @@ export default {
 
   },
   methods: {
+    // 点击缩略图
+    clickImg(gImgUrl){
+      let imgurl = gImgUrl.substr( -3,3);
+      if(imgurl == 'jpg'){
+        this.alongImgUrl =  gImgUrl;
+        this.dialogVisibleImg = true;
+      }
+      console.log(imgurl);
+    },
+    // 复核内图片展示弹窗关闭事件
+    handleCloseImg(done) {
+      done();
+    },
     changeCheckBox(e){
       console.log(this.checkBoxEventState,"queryParams.eventState")
     },

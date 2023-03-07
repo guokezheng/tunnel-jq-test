@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-03 10:12:05
+ * @LastEditTime: 2023-03-06 17:23:56
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -25,9 +25,10 @@
       处置记录
     </div>
     <el-drawer
+      class="drawerLog"
       title="处置记录"
       :visible.sync="drawer"
-      direction="rtl"
+      direction="ltr"
       :before-close="drawerHandleClose">
       <el-col :span="24">
         <el-timeline :reverse="reverse">
@@ -189,8 +190,8 @@
         <div class="incHandBox">
           <div class="GTop">
             <div class="GT_one one_box">
-              <p>行人非机动车</p>
-              <span>一般</span>
+              <p>{{eventInfo.planName}}</p>
+              <span>{{eventInfo.eventGrade}}</span>
             </div>
             <div class="GT_one two_box">
               <i class="el-icon-time"></i>
@@ -204,85 +205,82 @@
             class="incHandContent"
           >
             <div class="classification">
-              <div
-                class="type"
-                :style="{
-                  padding: item.flowContent
-                    ? item.flowContent.toString().length > 2
-                      ? '8px'
-                      : '15px 12px'
-                    : '',
-                  marginTop: item.children
-                    ? item.flowContent == '设备联控'
-                      ? (item.children.length * 40 +
-                          4 * (item.children.length - 1)) /
-                          2 -
-                        50 +
-                        'px'
-                      : (item.children.length * 40 +
-                          4 * (item.children.length - 1)) /
-                          2 -
-                        30 +
-                        'px'
-                    : '',
-                }"
-                v-if="item.flowContent"
-              >
-                {{ item.flowContent }}
+              <div class="topDashed" v-show="index != 0">
+                <p></p>
+                <span class="topCircle"></span>
               </div>
-              <!-- <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
-              :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">
-              一键</div> -->
+              <div style="
+                border: 1px solid rgba(57, 173, 255, 0.6);
+                display: flex;
+                flex-flow: column;
+                justify-content: center;
+                align-items: center;">
+                <div
+                  class="type"
+                  :style="{
+                    padding: item.flowContent
+                      ? item.flowContent.toString().length > 2
+                        ? '8px'
+                        : '15px 12px'
+                      : '',
+                  }"
+                  v-if="item.flowContent"
+                >
+                  {{ item.flowContent }}
+                </div>
+                <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
+                :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">
+                一键
+                </div>
+              </div>
+              <div class="dashed" 
+                :style="{top:index == 0?'55px':'80px'}" 
+                v-show="index != incHandList.length - 1">
+                <span class="circle"></span>
+                <p :style="{height:index == 0?'58px':'30px'}"></p>
+              </div>
             </div>
 
-            <div
-              class="heng1"
-              v-if="item.children"
-              :style="{
-                marginTop: item.children
-                  ? item.children.length == 1
-                    ? '20px'
-                    : (item.children.length * 40 +
-                        4 * (item.children.length - 1)) /
-                        2 +
-                      'px'
-                  : '',
-              }"
-            ></div>
+            <div class="heng1" v-if="item.children"></div>
             <div
               class="shu"
               v-if="item.children"
               :style="{
                 height: item.children
                   ? item.children.length > 1
-                    ? item.children.length * 40 +
+                    ? item.children.length * 50 +
                       4 * item.children.length -
-                      40 +
+                      50 +
                       'px'
                     : '0px'
                   : '',
-                borderTop:
-                  item.children && item.children.length > 1
-                    ? 'solid 1px #39adff'
-                    : '',
               }"
             ></div>
-            <div>
+            <div style="width:100%;">
               <div
                 v-for="(itm, inx) of item.children"
                 :key="inx"
                 class="contentList"
+                style="width:100%;"
               >
-                <div style="float: left">{{ itm.flowContent }}</div>
+                <div style="float: left;padding-right: 20px;line-height: 20px;">{{ itm.flowContent }}</div>
                 <!-- 绿对号 -->
-                <img
+                <el-button type="success"
+                  plain
+                  size="mini"
+                  style="float: right; "
+                  icon="el-icon-check"
+                  v-show="itm.eventState != '0'">
+                  完成
+                </el-button>
+                <!-- <img
                   :src="incHand2"
                   style="float: right; "
                   v-show="itm.eventState != '0'"
-                />
+                /> -->
                 <!-- 下发 -->
                 <div class="sendMsg" v-show="itm.eventState == '0'" @click="getManagementDevice(itm)">
-                  <el-button type="small"  icon="el-icon-pie-chart">处置</el-button>
+                  <el-button type="primary" size="mini" icon="el-icon-pie-chart">处置</el-button>
                   <!-- <img
                     :src="incHand1"
                     style="float: right; "
@@ -515,32 +513,42 @@
       title="设备控制"
       :visible.sync="IssuedDialog"
       width="50%"
-      text-align="left"
+      text-align="center"
       class="IssuedDialog"
-      append-to-body
       >
       <div class="GDeviceBox">
         
         <el-row>
           <el-col :span="24">
             <p style="padding:15px 0;">设备控制</p>
-            <el-card>
-              <el-row v-for="(item,index) in GDeviceData.deviceList" :key="index" type="flex">
-                <el-col :span="8" style="text-align:center;">
-                  {{ item.eqName }}
-                </el-col>
-                <el-col :span="8" style="text-align:center;">
-                  {{item.eqPile}}
-                </el-col>
-                <el-col :span="8" style="text-align:center;">
-                  待执行
-                </el-col>
-              </el-row>
-            </el-card>
+            <!-- <el-card shadow="always"> -->
+              <el-table
+                :data="GDeviceData.deviceList"
+                stripe
+                class="phoneTable"
+                :fit="true"
+              >
+                <el-table-column
+                  label="设备名称"
+                  align="center"
+                  prop="eqName"
+                />
+                <el-table-column
+                  label="桩号"
+                  align="center"
+                  prop="eqPile"
+                />
+                <el-table-column label="执行状态" align="center">
+                  <template>
+                    <span>待执行</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+            <!-- </el-card> -->
           </el-col>
           <el-col :span="24" v-if="GDeviceData.vmsData">
             <p style="padding:15px 0;">{{boxName}}:</p>
-            <el-card>
+            <el-card shadow="always">
               <div style="display: flex;justify-content: center;align-items: center;">
                 <div :style="{
                   'width':GDeviceData.vmsData['width'] + 'px',
@@ -563,17 +571,22 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="24" v-if="boxName == '执行状态' || boxName == '执行文件'">
+          <el-col :span="24" v-if="boxName == '下发指令' || boxName == '执行文件'">
             <p style="padding:15px 0;">{{boxName}}:</p>
-            <el-card v-show="GDeviceData && !GDeviceData.vmsData">
-              {{ GDeviceData.deviceState }}
+            <el-card v-show="GDeviceData && !GDeviceData.vmsData" shadow="always">
+              <div style="display: flex;align-items: center;">
+                <img v-for="(items,index) in GDeviceData.deviceIconUrl" :key="index" 
+                  :src="items"
+                />
+                <p style="padding-left: 15px;">{{ GDeviceData.deviceState }}</p>
+              </div>
             </el-card>
           </el-col>
         </el-row>
       </div>
       <div style="display:flex;justify-content:right">
-        <div class="IssuedButton1" @click="cancelIssuedDialog">取 消</div>
-        <div class="IssuedButton2" @click="changeIncHand">确 认</div>
+        <el-button type="info" @click="cancelIssuedDialog">取 消</el-button>
+        <el-button type="primary" @click="changeIncHand">执 行</el-button>
       </div>
     </el-dialog>
     <com-video
@@ -806,6 +819,8 @@ import {
   getReservePlanData,
   updateEvent,
   updateSituationUpgrade,
+  getEventInif,
+  getAllManagementDevices
 } from "@/api/event/event";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
@@ -828,6 +843,7 @@ export default {
   },
   data() {
     return {
+      eventInfo:{},
       fontAlign:'',//情报板对齐方式
       boxName:'',
       nowData:Date.now(),
@@ -943,6 +959,7 @@ export default {
     this.getListEvent();
     this.stateByData();
     this.getEventList();
+    this.getEventInfo();
     // this.evtHandle()
     // this.getpersonnelList()
     //当前等级
@@ -985,7 +1002,14 @@ export default {
   //   clearInterval(this.deadline4);
   // },
   methods: {
+    getEventInfo(){
+      let data = {id:this.$route.query.id};
+      getEventInif(data).then(res=>{
+        this.eventInfo = res.data;
+      })
+    },
     getManagementDevice(item){
+      this.GDeviceData.deviceIconUrl = null;
       console.log(item,"itemitemitemitem");
       this.processId = item.processId;
       this.IssuedItem.id = item.id;
@@ -1009,7 +1033,7 @@ export default {
           this.GDeviceData.vmsData['left'] = align.substr(0,3);
           this.GDeviceData.vmsData['top'] = align.substr(3,6);
         }else{
-          this.boxName = "执行状态";
+          this.boxName = "下发指令";
           this.GDeviceData = data;
         }
         this.IssuedDialog = true;
@@ -1062,6 +1086,7 @@ export default {
             this.$refs['levelForm'].resetFields();
             this.dialogVisible  = false;
             this.$modal.msgSuccess("修改成功");
+            this.getListEvent();
           });
         }
       })
@@ -1198,24 +1223,27 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
-        let planId = item.reserveId;
-        let eventId = that.$route.query.id;
-
-        implementPlan(planId, eventId).then((response) => {
-          console.log(response, "一键下发成功");
-          for (let item of that.incHandList) {
-            for (let itm of item.children) {
-              for (let it_m of arr) {
-                if (itm.id == it_m) {
-                  itm.eventState = "1";
-                  that.$modal.msgSuccess("一键下发成功");
-                }
-              }
-            }
-          }
-          this.evtHandle();
-          this.getEventList();
-        });
+        // let planId = item.reserveId;
+        // let eventId = that.$route.query.id;
+        let data = {id:item.reserveId};
+        getAllManagementDevices(data).then(res=>{
+          console.log(res, "一键下发成功");
+        })
+        // implementPlan(planId, eventId).then((response) => {
+        //   console.log(response, "一键下发成功");
+        //   for (let item of that.incHandList) {
+        //     for (let itm of item.children) {
+        //       for (let it_m of arr) {
+        //         if (itm.id == it_m) {
+        //           itm.eventState = "1";
+        //           that.$modal.msgSuccess("一键下发成功");
+        //         }
+        //       }
+        //     }
+        //   }
+        //   this.evtHandle();
+        //   this.getEventList();
+        // });
       });
     },
     // 返回安全预警
@@ -1265,6 +1293,8 @@ export default {
     // 关闭下发事件弹窗
     cancelIssuedDialog() {
       this.IssuedDialog = false;
+      this.boxName = '';
+      this.GDeviceData.deviceIconUrl = null;
     },
     changeIncHand() {
       var that = this;
@@ -1717,15 +1747,24 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .el-dialog__title{padding-left:20px;}
+::v-deep .contentList .el-button--success.is-plain{
+  background: transparent;
+}
+::v-deep .drawerLog .el-drawer.ltr{
+  height: 65%;
+  left: 25%;
+  top: 9%;
+}
 ::v-deep .el-statistic .number{
   color:white;
 }
 .sendMsg{
-  width: 60px;
+  // width: 60px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background-color: #007aff;
+  // background-color: #007aff;
 }
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper{overflow-x: hidden;}
 ::v-deep .el-table--scrollable-y .el-table__body-wrapper{
@@ -2013,7 +2052,7 @@ export default {
     position: fixed;
     top:9vh;
     left:1vh;
-    width: 400px;
+    width: 450px;
     height: 87%;
     .IncHand{
       background-color: rgba(1, 46, 81,0.7);
@@ -2066,24 +2105,64 @@ export default {
           display: flex;
           // color: white;
           font-size: 12px;
-          padding: 10px;
+          padding: 0 10px;
           color: white;
-
+          align-items: center;
+          margin-bottom:35px;
           .classification {
+            position: relative;
+            
+            .dashed{
+              position: absolute;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-flow: column;
+              width: 50px;
+              top:80px;
+              p{height: 30px; border-left: 1px dashed #39adff;}
+              .circle{
+                display: block;
+                width: 10px;
+                height: 10px;
+                border: 1px solid #39adff;
+                border-radius: 6px;
+              }
+            }
+            .topDashed{
+              position: absolute;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-flow: column;
+              width: 50px;
+              top: -40px;
+              p{height: 30px; border-left: 1px dashed #39adff;}
+              .topCircle{
+                display: block;
+                width: 10px;
+                height: 10px;
+                border: 1px solid #39adff;
+                border-radius: 6px;
+              }
+            }
             .type {
               width: 50px;
               height: 50px;
               // background: rgba($color: #084e84, $alpha: 0.6);
-              border: 1px solid rgba($color: #39adff, $alpha: 0.6);
+              // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
               text-align: center;
             }
             .yijian {
               color: white;
-              width: 50px;
-              background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
-              border: 1px solid #39adff;
+              width: 40px;
+              background-color: #df8600;
+              border-radius:3px;
+              // background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+              // border: 1px solid #39adff;
               // padding: 10px;
               text-align: center;
+              margin-bottom:5px;
             }
           }
 
@@ -2093,19 +2172,21 @@ export default {
             border-top: solid 1px #39adff;
           }
           .shu {
-            width: 20px;
-            border-left: solid 1px #39adff;
-            border-bottom: solid 1px #39adff;
-            margin-top: 20px;
+            width: 7px;
+            position: relative;
+            border: 1px solid #39adff;
+            border-right: 0px;
+            border-top-left-radius: 37px;
+            border-bottom-left-radius: 37px;
           }
           .contentList {
             display: block;
             margin-top: 4px;
             line-height: 40px;
-            padding: 0 20px;
+            padding: 10px;
             // background: rgba($color: #084e84, $alpha: 0.6);
             border-radius: 3px;
-            width: 265px;
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -2394,6 +2475,9 @@ export default {
 .GDeviceBox{
   // p{padding:0 15px 15px;}
   .el-row{padding:10px 0px;}
+  ::v-deep .el-table__row td{
+    padding:10px 0!important;
+  }
 }
 </style>
 <style lang="scss">

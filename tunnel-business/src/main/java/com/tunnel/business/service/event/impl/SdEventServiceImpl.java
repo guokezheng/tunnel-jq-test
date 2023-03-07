@@ -227,7 +227,6 @@ public class SdEventServiceImpl implements ISdEventService {
             setStrategyRlEquipment(sdEvent);
         }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
-        //判断如果是主动安全事件
         return sdEventMapper.updateSdEvent(sdEvent);
     }
 
@@ -495,7 +494,6 @@ public class SdEventServiceImpl implements ISdEventService {
             for(SdTunnelSubarea data:subareaData){
                 Integer min = Integer.parseInt(data.getPileMin());
                 Integer max = Integer.parseInt(data.getPileMax());
-
                 if(min > max){
                     Integer temp = max;
                     max = min;
@@ -506,8 +504,6 @@ public class SdEventServiceImpl implements ISdEventService {
                     return subareaId;
                 }
             }
-
-
             Integer minAbs = compareValue;
             for(SdTunnelSubarea data:subareaData){
                 Integer start = Integer.parseInt(data.getPileMin());
@@ -525,9 +521,6 @@ public class SdEventServiceImpl implements ISdEventService {
                 }
 
             }
-
-
-
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -595,14 +588,13 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEventHandle eventHandle = new SdEventHandle();
         eventHandle.setEventId(Long.valueOf(sdReservePlan.getEventId()));
         eventHandle.setFlowId(Long.valueOf(7));
-        //eventHandle.setFlowPid(Long.valueOf(7));
-        //sdEventHandleMapper.deleteRelation(eventHandle);
         List<SdEventHandle> sdEventHandle1 = sdEventHandleMapper.selectSdEventHandleList(eventHandle);
         if(sdEventHandle1.size() > 0){
             if(sdEventHandle1.get(0).getReserveId() != null){
                 return AjaxResult.error("已存在预案联控流程");
             }
         }
+        //查询预案是否存在
         List<SdReservePlan> relation = sdReservePlanMapper.getRelation(sdReservePlan);
         String concat = sdReservePlan.getEventId().toString().concat("700");
         Long relationId = Long.valueOf(concat);
@@ -842,12 +834,12 @@ public class SdEventServiceImpl implements ISdEventService {
                                         .concat(EventGradeEnum.getValue(sdEvent1.getEventGrade())).concat("】，复核状态为突发事件处置"));
                                 flowMapper.insertSdEventFlow(eventFlow);
                             }
-
                         }else {
                             sdEventHandle1.setFlowContent(temp.getFlowName());
                         }
                         sdEventHandle1.setFlowSort(number+"");
                         sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
+                        //添加事件复核节点
                         if("2".equals(temp.getFlowId().toString())){
                             sdEventHandle1.setFlowContent(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()).concat(" ")
                                     .concat("复核事件为【").concat(sdEventType.getEventType()).concat("】、【")
@@ -939,23 +931,6 @@ public class SdEventServiceImpl implements ISdEventService {
             }
         }
     }
-
-    /*public int judgeData(SdEvent sdEvent){
-        SdEventHandle sdEventHandle2 = new SdEventHandle();
-        sdEventHandle2.setEventId(sdEvent.getId());
-        //查询现在预案流程是否已存在
-        List<SdEventHandle> sdEventHandles = sdEventHandleMapper.selectSdEventHandleList(sdEventHandle2);
-        List<SdEventHandle> collectPid = sdEventHandles.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
-        List<Long> collect = collectPid.stream().map(SdEventHandle::getFlowId).collect(Collectors.toList());
-        //查询最新的预案流程
-        List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
-        List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
-        List<Long> collect1 = flowsPidData.stream().map(SdJoinTypeFlow::getFlowId).collect(Collectors.toList());
-        if(collect1.containsAll(collect)){
-            return 0;
-        }
-        return 1;
-    }*/
 
     /**
      * 插入预案流程

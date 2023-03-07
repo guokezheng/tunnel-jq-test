@@ -34,6 +34,10 @@ public class SdDeviceCOVIData
    /* @Excel(name = "设备编码")*/
     private String eqId;
 
+    private String beginTime;
+
+    private String endTime;
+
     public String getEqId() {
         return this.eqId;
     }
@@ -78,6 +82,22 @@ public class SdDeviceCOVIData
 
 
     private String ids;
+
+    public String getBeginTime() {
+        return this.beginTime;
+    }
+
+    public void setBeginTime( String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return this.endTime;
+    }
+
+    public void setEndTime( String endTime) {
+        this.endTime = endTime;
+    }
 
     public Map<String, Object> getParams()
     {

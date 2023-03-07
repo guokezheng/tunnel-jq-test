@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
+import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
@@ -254,23 +255,22 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         if (sdDeviceData.getDeviceId() != null && !sdDeviceData.getDeviceId().equals("")) {
             deviceId = sdDeviceData.getDeviceId();
         }
-        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String beginTime = now + " 00:00:00";
-        String endTime = now + " 23:59:59";
+        String beginTime = getCurrentDayTime().get(0);
+        String endTime = getCurrentDayTime().get(1);
         if (!sdDeviceData.getParams().isEmpty()) {
             beginTime = sdDeviceData.getParams().get("beginTime").toString();
             endTime = sdDeviceData.getParams().get("endTime").toString();
         }
-        if (searchValue.equals("1")) {
+        if (searchValue.equals(DeviceType.COVIITEM.getCode())) {//covi
             maps = sdDeviceDataMapper.selectCOVIDataLineList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("2")) {
+        } else if (searchValue.equals(DeviceType.FENGSHUFENGXIANGITEM.getCode())) {//风速风向
             maps = sdDeviceDataMapper.selectFSFXDataLineList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("3")) {
+        } else if (searchValue.equals(DeviceType.DONGNEILIANGDUITEM.getCode())) {//洞内亮度
             maps = sdDeviceDataMapper.selectDNDataLineList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("4")) {
+        } else if (searchValue.equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度
             maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
             return maps;
         } else {
@@ -286,21 +286,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
      */
     @Override
     public List<Map<String, String>> dataDevicesLogInfoList(SdDeviceData sdDeviceData) {
-        String eqtype = null;
-        if(sdDeviceData!=null&&!"".equals(sdDeviceData)){
-            if ("1".equals(sdDeviceData.getSearchValue())) {
-                sdDeviceData.setSearchValue("19");
-            }else if ("2".equals(sdDeviceData.getSearchValue())) {
-                sdDeviceData.setSearchValue("17");
-            }else if ("3".equals(sdDeviceData.getSearchValue())) {
-                sdDeviceData.setSearchValue("18");
-            }else if ("4".equals(sdDeviceData.getSearchValue())) {
-                sdDeviceData.setSearchValue("5");
-            }
-        }
-        if (sdDeviceData.getDeptId() == null) {
-            sdDeviceData.setDept(SecurityUtils.getDeptId());
-        }
+        deviceDataTab(sdDeviceData);
         List<Map<String, String>> maps = sdDeviceDataMapper.dataDevicesLogInfoList(sdDeviceData);
         return maps;
     }
@@ -308,82 +294,59 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
 
     @Override
     public List<SdDeviceData> exportDatainforTab(SdDeviceData sdDeviceData) {
-        String eqtype = null;
+        deviceDataTab(sdDeviceData);
+        List<SdDeviceData> list = sdDeviceDataMapper.exportDatainforTab(sdDeviceData);
+        return list;
+    }
+
+
+    private SdDeviceData deviceDataTab(SdDeviceData sdDeviceData){
         if(sdDeviceData!=null&&!"".equals(sdDeviceData)){
-            if ("1".equals(sdDeviceData.getSearchValue())) {
-                sdDeviceData.setSearchValue("19");
-            }else if ("2".equals(sdDeviceData.getSearchValue())) {
-                sdDeviceData.setSearchValue("17");
-            }else if ("3".equals(sdDeviceData.getSearchValue())) {
-                sdDeviceData.setSearchValue("18");
-            }else if ("4".equals(sdDeviceData.getSearchValue())) {
-                sdDeviceData.setSearchValue("5");
+            if (DeviceType.COVIITEM.getCode().equals(sdDeviceData.getSearchValue())) {//covi
+                sdDeviceData.setSearchValue(DeviceType.COVI.getCode());
+            }else if (DeviceType.FENGSHUFENGXIANGITEM.getCode().equals(sdDeviceData.getSearchValue())) {//风速风向
+                sdDeviceData.setSearchValue(DeviceType.FENGSHUFENGXIANG.getCode());
+            }else if (DeviceType.DONGNEILIANGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//洞内亮度
+                sdDeviceData.setSearchValue(DeviceType.DONGNEILIANGDU.getCode());
+            }else if (DeviceType.DONGWAILIANGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//洞外亮度
+                sdDeviceData.setSearchValue(DeviceType.DONGWAILIANGDU.getCode());
             }
         }
         if (sdDeviceData.getDeptId() == null) {
             sdDeviceData.setDept(SecurityUtils.getDeptId());
         }
-        List<SdDeviceData> list = sdDeviceDataMapper.exportDatainforTab(sdDeviceData);
-        return list;
-    }
+        return sdDeviceData;
+
+    };
+
+
+
 
     @Override
     public List<SdDeviceCOVIData> handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
-        String deviceId = sdDeviceCOVIData.getDeviceId();
-        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String beginTime = now + " 00:00:00";
-        String endTime = now + " 23:59:59";
-        if (!sdDeviceCOVIData.getParams().isEmpty()) {
-            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
-            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
-        }
-        String ids = sdDeviceCOVIData.getIds();
-        List<SdDeviceCOVIData> list = sdDeviceDataMapper.selectCOVIExportDataList(beginTime, endTime, deviceId,ids);
+        getSelectExportParams(sdDeviceCOVIData);
+        List<SdDeviceCOVIData> list = sdDeviceDataMapper.selectCOVIExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
         return list;
     }
 
     @Override
     public List<SdDeviceFSFXData> handleFSFXExportRecord( SdDeviceCOVIData sdDeviceCOVIData) {
-        String deviceId = sdDeviceCOVIData.getDeviceId();
-        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String beginTime = now + " 00:00:00";
-        String endTime = now + " 23:59:59";
-        if (!sdDeviceCOVIData.getParams().isEmpty()) {
-            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
-            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
-        }
-        String ids = sdDeviceCOVIData.getIds();
-        List<SdDeviceFSFXData> list = sdDeviceDataMapper.selectFSFXExportDataList(beginTime, endTime, deviceId,ids);
+        getSelectExportParams(sdDeviceCOVIData);
+        List<SdDeviceFSFXData> list = sdDeviceDataMapper.selectFSFXExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
         return list;
     }
 
     @Override
     public List<SdDeviceDNData> handleDNExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
-        String deviceId = sdDeviceCOVIData.getDeviceId();
-        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String beginTime = now + " 00:00:00";
-        String endTime = now + " 23:59:59";
-        if (!sdDeviceCOVIData.getParams().isEmpty()) {
-            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
-            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
-        }
-        String ids = sdDeviceCOVIData.getIds();
-        List<SdDeviceDNData> list = sdDeviceDataMapper.selectDNExportDataList(beginTime, endTime, deviceId,ids);
+        getSelectExportParams(sdDeviceCOVIData);
+        List<SdDeviceDNData> list = sdDeviceDataMapper.selectDNExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
         return list;
     }
 
     @Override
     public List<SdDeviceDWData> handleDWExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
-        String deviceId = sdDeviceCOVIData.getDeviceId();
-        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String beginTime = now + " 00:00:00";
-        String endTime = now + " 23:59:59";
-        if (!sdDeviceCOVIData.getParams().isEmpty()) {
-            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
-            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
-        }
-        String ids = sdDeviceCOVIData.getIds();
-        List<SdDeviceDWData> list = sdDeviceDataMapper.selectDWExportDataList(beginTime, endTime, deviceId,ids);
+        getSelectExportParams(sdDeviceCOVIData);
+        List<SdDeviceDWData> list = sdDeviceDataMapper.selectDWExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
         return list;
     }
 
@@ -454,7 +417,6 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             allDataList.put(type, list);
         }
 
-//        List<Long> list = Arrays.asList(1450L, 1650L, 1500L, 1430L, 1580L, 1530L, 1580L, 1460L, 1400L, 1540L);
         return allDataList;
     }
 
@@ -514,35 +476,30 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     @Override
     public List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData) {
         String deviceId = sdDeviceData.getDeviceId();
-        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String beginTime = now + " 00:00:00";
-        String endTime = now + " 23:59:59";
+
+        String beginTime = getCurrentDayTime().get(0);
+        String endTime = getCurrentDayTime().get(1);
         if (!sdDeviceData.getParams().isEmpty()) {
             beginTime = sdDeviceData.getParams().get("beginTime").toString();
             endTime = sdDeviceData.getParams().get("endTime").toString();
         }
 
-        if (sdDeviceData.getSearchValue().equals("1")) {
+        if (sdDeviceData.getSearchValue().equals(DeviceType.COVIITEM.getCode())) {//covi
             List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(beginTime, endTime, deviceId);
             return maps;
-        } else if (sdDeviceData.getSearchValue().equals("2")) {
+        } else if (sdDeviceData.getSearchValue().equals(DeviceType.FENGSHUFENGXIANGITEM.getCode())) {//风速风向
             List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(beginTime, endTime, deviceId);
             return maps;
-        } else if (sdDeviceData.getSearchValue().equals("3")) {
+        } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGNEILIANGDUITEM.getCode())) {//洞内亮度
             List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(beginTime, endTime, deviceId);
             return maps;
-        } else if (sdDeviceData.getSearchValue().equals("4")) {
+        } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度
             List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
             return maps;
         } else {
             return null;
         }
 
-
-
-
-        //List<Map<String, String>> maps = sdDeviceDataMapper.selectDeviceTableDataList(deviceId,beginTime,endTime);
-        //return maps;
 
     }
 
@@ -559,5 +516,35 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         return sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
     }
 
+    /**
+     * 默认获取当天时间
+     * @return
+     */
+    private List<String> getCurrentDayTime(){
+        List<String> intraday = new ArrayList<>();
+        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String beginTime = now + " 00:00:00";
+        String endTime = now + " 23:59:59";
+        intraday.add(beginTime);
+        intraday.add(endTime);
+        return intraday;
+    }
+
+
+    private SdDeviceCOVIData getSelectExportParams(SdDeviceCOVIData sdDeviceCOVIData){
+        String beginTime = getCurrentDayTime().get(0);
+        String endTime = getCurrentDayTime().get(1);
+        if (!sdDeviceCOVIData.getParams().isEmpty()) {
+            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
+            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
+        }
+        String ids = sdDeviceCOVIData.getIds();
+        sdDeviceCOVIData.setBeginTime(beginTime);
+        sdDeviceCOVIData.setEndTime(endTime);
+        return sdDeviceCOVIData;
+    }
+
+
 
 }
+

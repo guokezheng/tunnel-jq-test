@@ -8,6 +8,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.SysLogininfor;
+import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -242,22 +243,22 @@ public class SdDeviceDataController extends BaseController
     @GetMapping("/handleExportRecord")
     public AjaxResult handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData)
     {
-        if("1".equals(sdDeviceCOVIData.getSearchValue())){//covi
+        if(DeviceType.COVIITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//covi
             List<SdDeviceCOVIData> list = sdDeviceDataService.handleExportRecord(sdDeviceCOVIData);
             ExcelUtil<SdDeviceCOVIData> util = new ExcelUtil<SdDeviceCOVIData>(SdDeviceCOVIData.class);
-            return util.exportExcel(list, "COVI数据报表");
-        }else if("2".equals(sdDeviceCOVIData.getSearchValue())){//风速风向
+            return util.exportExcel(list, DeviceType.COVIITEM.getName());
+        }else if(DeviceType.FENGSHUFENGXIANGITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//风速风向
             List<SdDeviceFSFXData> list = sdDeviceDataService.handleFSFXExportRecord(sdDeviceCOVIData);
             ExcelUtil<SdDeviceFSFXData> util = new ExcelUtil<SdDeviceFSFXData>(SdDeviceFSFXData.class);
-            return util.exportExcel(list, "风速风向数据报表");
-        }else if("3".equals(sdDeviceCOVIData.getSearchValue())){//洞内亮度
+            return util.exportExcel(list, DeviceType.FENGSHUFENGXIANGITEM.getName());
+        }else if(DeviceType.DONGNEILIANGDUITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//洞内亮度
             List<SdDeviceDNData> list = sdDeviceDataService.handleDNExportRecord(sdDeviceCOVIData);
             ExcelUtil<SdDeviceDNData> util = new ExcelUtil<SdDeviceDNData>(SdDeviceDNData.class);
-            return util.exportExcel(list, "洞内亮度数据报表");
-        }else if("4".equals(sdDeviceCOVIData.getSearchValue())){//洞外亮度
+            return util.exportExcel(list, DeviceType.DONGNEILIANGDUITEM.getName());
+        }else if(DeviceType.DONGWAILIANGDUITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//洞外亮度
             List<SdDeviceDWData> list = sdDeviceDataService.handleDWExportRecord(sdDeviceCOVIData);
             ExcelUtil<SdDeviceDWData> util = new ExcelUtil<SdDeviceDWData>(SdDeviceDWData.class);
-            return util.exportExcel(list, "洞外亮度数据报表");
+            return util.exportExcel(list, DeviceType.DONGWAILIANGDUITEM.getName());
         }else{
             return null;
         }

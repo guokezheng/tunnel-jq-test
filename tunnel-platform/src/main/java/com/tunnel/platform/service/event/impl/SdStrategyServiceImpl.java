@@ -302,7 +302,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 String stateName = stateObject.get(0).getStateName();//设备状态名称
                 sList.add(typeName + "控制执行：" + stateName + "；");
             }
-
+            list.get(i).setStrategyInfo(StringUtils.join(sList,""));
             list.get(i).setSlist(sList);
         }
         return list;

@@ -210,8 +210,14 @@ public class PhoneSpkService {
         } else {
             String tunnelId = (String) map.get("tunnelId");
             String direction = (String) map.get("direction");
-            Assert.hasText(tunnelId, "未指定隧道信息");
-            Assert.hasText(direction, "未指定隧道方向");
+            if(tunnelId==null||"".equals(tunnelId)){
+                throw new RuntimeException("未指定隧道信息！");
+            }
+            if(direction==null||"".equals(direction)){
+                throw new RuntimeException("未指定隧道方向！");
+            }
+            //Assert.hasText(tunnelId, "未指定隧道信息");
+            //Assert.hasText(direction, "未指定隧道方向");
 
             SdDevices device = new SdDevices();
             device.setEqTunnelId(tunnelId);

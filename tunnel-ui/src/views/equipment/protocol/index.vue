@@ -385,7 +385,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有设备点位状态详情数据项？').then(() => {
+      this.$modal.confirm('是否确认导出设备点位状态详情数据项？').then(() => {
         this.exportLoading = true;
         return exportPoint(queryParams);
       }).then(response => {

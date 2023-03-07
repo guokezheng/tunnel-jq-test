@@ -251,7 +251,7 @@
                   </el-col>
                   <el-col :span="3" style="margin-left: 0px;padding:0">
 
-                    <el-select 
+                    <el-select
                       v-model="causeItem.roadCondition"
                       placeholder="请选择路面情况"
                       size="small"
@@ -829,7 +829,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有管控等级配置数据项？').then(() => {
+      this.$modal.confirm('是否确认导出管控等级配置数据项？').then(() => {
         this.exportLoading = true;
         return exportConfig(queryParams);
       }).then(response => {

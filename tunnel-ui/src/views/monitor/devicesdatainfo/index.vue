@@ -368,12 +368,8 @@ export default {
       listTab: [],
       // 日期范围
       dateRange: [],
-      // 默认排序
-      defaultSort: {},
       //所属隧道
       eqTunnelData: {},
-      //设备类型
-      eqTypeData: {},
       //操作状态 0：成功，1：失败
       operationStateOptions: [],
       //控制方式

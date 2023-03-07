@@ -109,7 +109,7 @@
          </template>
        </el-table-column>
      </el-table>
-     
+
      <pagination
        v-show="total>0"
        :total="total"
@@ -197,7 +197,7 @@
            </el-form-item>
            <el-form-item label="发生位置" prop="evtAddress" >
              <el-input v-model="configForm.evtAddress"  />
-             
+
            </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -216,7 +216,7 @@ export default {
   dicts: ['sd_control_level', 'sd_control_type','sd_control_level_status'],
   data() {
     return {
-        
+
         // 隧道名称
         tunnelData:[],
         // 事件类型
@@ -300,12 +300,12 @@ export default {
         // 弹出层标题
         title: "",
         // 是否显示弹出层
-       
-      
+
+
       // 表单校验
       rules: {
       },
-      
+
     };
   },
   created() {
@@ -342,7 +342,7 @@ export default {
           this.openConfig = true
           this.title = '配置'
         // });
-        
+
     },
     // 取消按钮
     cancel() {
@@ -398,7 +398,7 @@ export default {
         this.title = "修改管控等级配置";
       });
     },
-    
+
     /** 提交按钮 */
     submitForm(type) {
         if(type == 'board'){
@@ -413,7 +413,7 @@ export default {
             });
         }
     },
-      
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
@@ -427,7 +427,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有管控等级配置数据项？').then(() => {
+      this.$modal.confirm('是否确认导出管控等级配置数据项？').then(() => {
         this.exportLoading = true;
         return exportConfig(queryParams);
       }).then(response => {
@@ -441,6 +441,6 @@ export default {
 
 <style scoped lang="scss">
     .inputAddress{
-        
+
     }
 </style>

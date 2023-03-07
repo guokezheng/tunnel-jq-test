@@ -440,7 +440,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有重点车辆数据项？').then(() => {
+      this.$modal.confirm('是否确认导出重点车辆数据项？').then(() => {
         this.exportLoading = true;
         return exportVehicle(queryParams);
       }).then(response => {

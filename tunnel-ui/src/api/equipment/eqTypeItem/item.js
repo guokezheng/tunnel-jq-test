@@ -78,13 +78,6 @@ export function dataDevicesLogInfoList(query) {
 }
 
 
-//查询设备列表
-export function getType() {
-  return request({
-    url: '/system/data/getType',
-    method: 'get',
-  })
-}
 
 
 // 导出数据报表Tab

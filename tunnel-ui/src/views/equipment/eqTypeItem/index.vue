@@ -223,6 +223,7 @@ export default {
               message: "数据项编号不能为空",
               trigger: "blur"
             },
+            { validator: this.checkData, trigger: 'blur' }
             // {
             //   pattern: /^[0-9]*$/,
             //   message: "数据项编号需为数字",
@@ -253,6 +254,17 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+//数据项编号校验不能输入中文
+    checkData(rule, value, callback) {
+      if (value) {
+        if (/[\一-\龥]/g.test(value)) {
+          callback(new Error('不能为中文!'))
+        } else {
+          callback()
+        }
+      }
+      callback()
+    },
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
@@ -370,7 +382,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除设备类型数据项编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除所选的设备类型数据项？').then(function() {
         return delItem(ids);
       }).then(() => {
         this.getList();

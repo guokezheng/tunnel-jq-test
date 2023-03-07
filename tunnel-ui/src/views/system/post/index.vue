@@ -425,7 +425,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有岗位数据项？').then(() => {
+      this.$modal.confirm('是否确认导出岗位数据项？').then(() => {
         this.exportLoading = true;
         return exportPost(queryParams);
       }).then(response => {

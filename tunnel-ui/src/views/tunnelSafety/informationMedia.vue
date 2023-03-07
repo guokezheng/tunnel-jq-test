@@ -177,8 +177,8 @@ export default {
           label: '开放应急车道',
           value: 'emergencyLine'
         },],
-      
-      
+
+
       // 表单参数
       form: {},
       // 表单校验
@@ -226,10 +226,10 @@ export default {
       if (controlCause == 2) {
         f.controlCauseName = '路面情况' //路面情况
         f.controlCause = 2
-        
+
         this.dataForm.causeList.push(f)
       }
-      
+
       setTimeout(() => { //设置延迟执行
         controlCause = null
       }, 200)
@@ -252,7 +252,7 @@ export default {
         m.controlActionName = '道路管制' //道路管制
         m.controlRangeMin = null //管控范围最小值
         m.controlRangeMax = null //管控范围最大值
-    
+
         this.dataForm.actionList.push(m)
       }
       setTimeout(() => { //设置延迟执行
@@ -325,7 +325,7 @@ export default {
           this.openMeasures = true;
           this.title = "配置措施";
         // });
-       
+
     },
     /** 提交按钮 */
     submitForm(type) {
@@ -341,7 +341,7 @@ export default {
             });
         }
     },
-      
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
@@ -355,7 +355,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有管控等级配置数据项？').then(() => {
+      this.$modal.confirm('是否确认导出管控等级配置数据项？').then(() => {
         this.exportLoading = true;
         return exportConfig(queryParams);
       }).then(response => {
@@ -370,7 +370,7 @@ export default {
     .boardDialog{
         img{
             width: 20px;
-            
+
         }
     }
     .detailsPicS{
@@ -399,7 +399,7 @@ export default {
             .contBox{
                 width: 44%;
                 font-size: 14px;
-                
+
                 >div{
                    height: 20%;
                    width: 100%;
@@ -408,7 +408,7 @@ export default {
                    line-height: 40px;
                 }
             }
-            
+
         }
     }
 </style>

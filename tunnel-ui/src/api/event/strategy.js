@@ -43,6 +43,15 @@ export function updateStrategy(data) {
   })
 }
 
+// 导出策略
+export function export1(query) {
+  return request({
+    url: '/strategy/export',
+    method: 'get',
+    params: query
+  })
+}
+
 // 删除控制策略
 export function delStrategy(id) {
   return request({

@@ -293,6 +293,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
                     continue;
                 }
+
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
                 List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
                 if(stateObject.size()<1){
@@ -301,7 +302,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 String stateName = stateObject.get(0).getStateName();//设备状态名称
                 sList.add(typeName + "控制执行：" + stateName + "；");
             }
-
+            list.get(i).setStrategyInfo(StringUtils.join(sList,""));
             list.get(i).setSlist(sList);
         }
         return list;

@@ -116,7 +116,7 @@
             >重置</el-button
             >
 <!--            <el-col :span="1.5">-->
-              
+
 <!--            </el-col>-->
             <!-- <right-toolbar
               :showSearch.sync="showSearch"
@@ -1071,7 +1071,7 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有用户数据项？")
+        .confirm("是否确认导出用户数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportUser(queryParams);

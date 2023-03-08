@@ -319,7 +319,7 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess) {
         //获取应急处置单条设备详情
-        Map<String, Object> map = deviceDateiled(sdReserveProcess.getId());
+        Map<String, Object> map = deviceDateiled(sdReserveProcess.getId(),0L);
         return AjaxResult.success(map);
     }
 
@@ -333,7 +333,7 @@ public class SdEventServiceImpl implements ISdEventService {
         //分别查询设备详情
         List<Map<String, Object>> list = new ArrayList<>();
         for(SdReserveProcess item : sdReserveProcesses){
-            Map<String, Object> mapData = deviceDateiled(item.getId());
+            Map<String, Object> mapData = deviceDateiled(item.getId(),Long.valueOf(sdReservePlan.getEventId()));
             //将设备详情整合
             list.add(mapData);
         }
@@ -1245,11 +1245,19 @@ public class SdEventServiceImpl implements ISdEventService {
      * @param rpId
      * @return
      */
-    public Map<String, Object> deviceDateiled(Long rpId){
+    public Map<String, Object> deviceDateiled(Long rpId, Long eventId){
         Map<String, Object> map = new HashMap<>();
+        if(eventId != 0){
+            //查询事件流程状态
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventId(eventId);
+            sdEventHandle.setProcessId(rpId);
+            String handleState = sdEventHandleMapper.selectSdEventHandleList(sdEventHandle).get(0).getEventState();
+            map.put("handleState",handleState);
+        }
+        //查询设备列表
         SdReserveProcess sdReserveProcess = new SdReserveProcess();
         sdReserveProcess.setId(rpId);
-        //查询设备列表
         List<Map<String, Object>> deviceList = sdEventMapper.getManagementDevice(sdReserveProcess);
         //获取设备类型
         Long eqType = Long.valueOf(deviceList.get(0).get("eqType").toString());

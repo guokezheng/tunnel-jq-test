@@ -25,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eventId != null "> and event_id = #{eventId}</if>
             <if test="flowId != null "> and flow_id = #{flowId}</if>
             <if test="flowPid != null "> and flow_pid = #{flowPid}</if>
+            <if test="processId != null "> and process_id = #{processId}</if>
             <if test="flowContent != null  and flowContent != ''"> and flow_content = #{flowContent}</if>
         </where>
         ORDER BY create_time ASC

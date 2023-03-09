@@ -8,10 +8,10 @@
       label-width="100px"
     >
       <el-row>
-        <el-col>
+        <el-col :span="24">
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
-              style="width: 90%"
+              style="width: 100%"
               v-model="strategyForm.strategyName"
               placeholder="请输入策略名称"
             />
@@ -35,14 +35,14 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="12">
           <el-form-item label="隧道方向" prop="direction">
             <el-select
               clearable
               v-model="strategyForm.direction"
               placeholder="请选择隧道方向"
               @change="changeEvent"
-              style="width: 95%"
+              style="width: 100%"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -54,23 +54,23 @@
           </el-form-item>
         </el-col>
         <el-row :gutter="20" style="clear:both;">
-          <el-col :span="22">
+          <el-col :span="24">
             <el-form-item label="执行操作">
               <div class="menu">
-                <el-col :span="4">处置名称</el-col>
+                <el-col :span="6">处置名称</el-col>
                 <el-col :span="6">设备类型</el-col>
                 <el-col :span="6">指定设备</el-col>
                 <el-col :span="4">控制指令</el-col>
-                <el-col :span="4">操作</el-col>
+                <el-col :span="2">操作</el-col>
               </div>
             </el-form-item>
           </el-col>
         </el-row>
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="22">
+        <el-col :span="24">
         <el-form-item v-for="(items, index) in strategyForm.manualControl" :key="index">
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item prop="disposalName">
               <el-input v-model="items.disposalName" placeholder="处置名称" style="width:100%;"/>
             </el-form-item>
@@ -142,7 +142,7 @@
               @change="handleChange"
             ></el-cascader>
           </el-col>
-          <el-col :span="4" class="buttonBox">
+          <el-col :span="2" class="buttonBox">
             <el-button
               type=""
               icon="el-icon-delete"

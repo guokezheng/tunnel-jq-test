@@ -10,7 +10,7 @@
         <el-col>
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
-              style="width: 90%"
+              style="width: 100%"
               v-model="strategyForm.strategyName"
               placeholder="请输入策略名称"
             />
@@ -34,14 +34,14 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="12">
           <el-form-item label="隧道方向" prop="direction">
             <el-select
               clearable
               v-model="strategyForm.direction"
               placeholder="请选择方向"
               @change="changeEvent()"
-              style="width: 95%"
+              style="width: 100%"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -52,7 +52,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="22">
+        <el-col :span="24">
           <el-form-item label="事件类型" prop="eventType">
             <el-select
               clearable
@@ -74,7 +74,7 @@
             <el-form-item
               label="定时频率"
               prop="schedulerTime"
-              style="width: 92%"
+              style="width: 100%"
             >
               <el-input
                 v-model="strategyForm.schedulerTime"
@@ -91,7 +91,7 @@
           </el-col>
         </el-col>
         <el-col class="triggers">
-          <div class="box" style="width: 91%">
+          <div class="box" style="width: 100%">
             <el-form-item
               label="触发器"
               prop="triggers.deviceTypeId"
@@ -100,7 +100,7 @@
               <el-select
                 v-model="strategyForm.triggers.deviceTypeId"
                 placeholder="请选择设备类型"
-                style="width: 18%"
+                style="width: 20%"
                 @change="selectEqName()"
               >
                 <el-option
@@ -111,7 +111,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-form-item prop="triggers.deviceId" style="width: 18%">
+              <el-form-item prop="triggers.deviceId" style="width: 20%">
                 <el-select
                   v-model="strategyForm.triggers.deviceId"
                   placeholder="请选择设备名称"
@@ -127,7 +127,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.elementId" style="width: 17%">
+              <el-form-item prop="triggers.elementId" style="width: 15%">
                 <el-select
                   v-model="strategyForm.triggers.elementId"
                   placeholder="请选择数据项"
@@ -142,7 +142,7 @@
                 </el-select>
               </el-form-item>
               <!-- 计算符 -->
-              <el-form-item prop="triggers.comparePattern" style="width: 12%">
+              <el-form-item prop="triggers.comparePattern" style="width: 15%">
                 <el-select v-model="strategyForm.triggers.comparePattern">
                   <el-option
                     v-for="item in symbol"
@@ -153,7 +153,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.compareValue" style="width: 12%">
+              <el-form-item prop="triggers.compareValue" style="width: 15%">
                 <el-input
                   v-model="strategyForm.triggers.compareValue"
                   placeholder="请输入阈值"
@@ -174,7 +174,7 @@
           </div>
         </el-col>
         <el-row :gutter="20" style="clear:both;">
-          <el-col :span="22">
+          <el-col :span="24">
             <el-form-item label="执行操作">
               <div class="menu">
                 <el-col :span="6">设备类型</el-col>

@@ -13,6 +13,7 @@ import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.dataReport.TaskStatus;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.electromechanicalPatrol.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
@@ -27,6 +28,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.xml.crypto.Data;
 
 
 /**
@@ -67,25 +70,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         if(sdTaskList.getTaskCxtime()==null||"".equals(sdTaskList.getTaskCxtime())){//没有持续时间
             //任务持续时间为 当前时间-发布时间
             if(sdTaskList.getEndPlantime()!=null&&!"".equals(sdTaskList.getEndPlantime())){
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String  fbtime = sdf.format(sdTaskList.getDispatchTime());
-                long time = sdf.parse(fbtime, new ParsePosition(0)).getTime();
-                long nd = 1000 * 24 * 60 * 60;
-                long nh = 1000 * 60 * 60;
-                long nm = 1000 * 60;
-                long ns = 1000;
-                // 获得两个时间的毫秒时间差异
-                long diff = System.currentTimeMillis() - time + 1000;
-                // 计算差多少天
-                long day = diff / nd;
-                // 计算差多少小时
-                long hour = diff % nd / nh;
-                // 计算差多少分钟
-                long min = diff % nd % nh / nm;
-                // 计算差多少秒//输出结果
-                long sec = diff % nd % nh % nm / ns;
-                System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
-                sdTaskList.setTaskCxtime(day + "天" + hour + "小时");
+                sdTaskList.setTaskCxtime(lengthTime(sdTaskList.getDispatchTime()));
             }
         }
 
@@ -101,11 +86,55 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public List<SdTaskList> selectSdTaskListList(SdTaskList sdTaskList)
     {
-        return sdTaskListMapper.selectSdTaskListList(sdTaskList);
+        List <SdTaskList> taskLists = sdTaskListMapper.selectSdTaskListList(sdTaskList);
+        if(taskLists!=null&&taskLists.size()>0){
+            for(int i = 0;i<taskLists.size();i++){
+                if(taskLists.get(0).getTaskStatus()!=null&&!"".equals(taskLists.get(0).getTaskStatus())){
+                    taskListStatus(taskLists.get(i));
+                }
+            }
+        }
+
+        return taskLists;
+    }
+
+
+
+    /**
+     * 判断任务状态
+     * @param taskList
+     * @return
+     */
+    private SdTaskList taskListStatus(SdTaskList taskList){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if(taskList.getTask().equals(TaskStatus.DAIXUNCHA.getName())&&taskList.getEndPlantime()!=null){
+            String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
+            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+            long diff = System.currentTimeMillis() - time + 1000;
+            if(diff>0){//当前时间与计划完成时间的差值
+                taskList.setTask(TaskStatus.DAIXUNCHA.getName()+","+TaskStatus.YICHAOSHI.getName());
+            }else{
+                taskList.setTask(TaskStatus.DAIXUNCHA.getName());
+            }
+
+        }
+        if(taskList.getTask().equals(TaskStatus.XUNCHAZHONG.getName())&&taskList.getEndPlantime()!=null){
+            String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
+            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+            long diff = System.currentTimeMillis() - time;
+            if(diff>0){//当前时间与计划完成时间的差值
+                taskList.setTask(TaskStatus.XUNCHAZHONG.getName()+","+TaskStatus.YICHAOSHI.getName());
+            }else{
+                taskList.setTask(TaskStatus.XUNCHAZHONG.getName());
+            }
+
+        }
+        return taskList;
     }
 
     /**
      * 新增巡查任务
+     *
      *
      * @param sdTaskList 巡查任务
      * @return 结果
@@ -295,72 +324,87 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         taskList = sdTaskListMapper.getTaskInfoList(task_id);
         //任务持续时间逻辑判断   task_status=2  已完结
         if(taskList!=null){
-            String  st0 = "待";//待巡查
-            String  st1 = "中";//巡查中
-            /*String st2 = "4";//已超时*/
             //判断任务状态，已完结时保存任务持续时间
             if(taskList.get(0).getTaskStatus()!=null&&!"".equals(taskList.get(0).getTaskStatus())){
-                //if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0||taskList.get(0).getTaskStatus().indexOf(st1) >= 0){// 待巡查/巡查中 直接取持续时间即可无需计算
-                    //if(taskList.get(0).getTaskStatus().indexOf("4") >= 0){//已超时
-                        if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0&&taskList.get(0).getEndPlantime()!=null){
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            String  plantime = sdf.format(taskList.get(0).getEndPlantime());//计划完成时间
-                            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
-                            long diff = System.currentTimeMillis() - time + 1000;
-                            if(diff>0){//当前时间与计划完成时间的差值
-                                taskList.get(0).setTaskStatus("待巡查");
-                                taskList.get(0).setIfchaosgu("已超时");
-                            }else{
-                                taskList.get(0).setTaskStatus("待巡查");
-                                taskList.get(0).setIfchaosgu("");//未超时
-                            }
 
-                        }
-                        if(taskList.get(0).getTaskStatus().indexOf(st1) >= 0&&taskList.get(0).getEndPlantime()!=null){
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            String  plantime = sdf.format(taskList.get(0).getEndPlantime());//计划完成时间
-                            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
-                            long diff = System.currentTimeMillis() - time;
-                            if(diff>0){//当前时间与计划完成时间的差值
-                                taskList.get(0).setTaskStatus("巡查中");
-                                taskList.get(0).setIfchaosgu("已超时");
-                            }else{
-                                taskList.get(0).setTaskStatus("巡查中");
-                                taskList.get(0).setIfchaosgu("");//未超时
-                            }
+                taskStatus(taskList.get(0));
 
-                        }
-               // }
                 if(taskList.get(0).getTaskCxtime()==null||"".equals(taskList.get(0).getTaskCxtime())){//没有持续时间
                     //任务持续时间为 当前时间-发布时间
                     if(taskList.get(0).getEndPlantime()!=null&&!"".equals(taskList.get(0).getEndPlantime())){
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String  fbtime = sdf.format(taskList.get(0).getDispatchTime());
-                        long time = sdf.parse(fbtime, new ParsePosition(0)).getTime();
-                        long nd = 1000 * 24 * 60 * 60;
-                        long nh = 1000 * 60 * 60;
-                        long nm = 1000 * 60;
-                        long ns = 1000;
-                        // 获得两个时间的毫秒时间差异
-                        long diff = System.currentTimeMillis() - time + 1000;
-                        // 计算差多少天
-                        long day = diff / nd;
-                        // 计算差多少小时
-                        long hour = diff % nd / nh;
-                        // 计算差多少分钟
-                        long min = diff % nd % nh / nm;
-                        // 计算差多少秒//输出结果
-                        long sec = diff % nd % nh % nm / ns;
-                        System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
-                        taskList.get(0).setTaskCxtime(day + "天" + hour + "小时");
+                        taskList.get(0).setTaskCxtime(lengthTime(taskList.get(0).getDispatchTime()));
                     }
                 }
 
             }
-
         }
 
         return taskList;
+    }
+
+    /**
+     * 判断任务状态
+     * @param taskList
+     * @return
+     */
+    private SdTaskList taskStatus(SdTaskList taskList){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if(taskList.getTaskStatus().equals(TaskStatus.DAIXUNCHA.getName()) &&(taskList.getEndPlantime()!=null)){
+            String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
+            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+            long diff = System.currentTimeMillis() - time + 1000;
+            if(diff>0){//当前时间与计划完成时间的差值
+                taskList.setTaskStatus(TaskStatus.DAIXUNCHA.getName());
+                taskList.setIfchaosgu(TaskStatus.YICHAOSHI.getName());
+            }else{
+                taskList.setTaskStatus(TaskStatus.DAIXUNCHA.getName());
+                taskList.setIfchaosgu("");//未超时
+            }
+
+        }
+        if(taskList.getTaskStatus().equals(TaskStatus.XUNCHAZHONG.getName())&&(taskList.getEndPlantime()!=null)){
+            String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
+            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+            long diff = System.currentTimeMillis() - time;
+            if(diff>0){//当前时间与计划完成时间的差值
+                taskList.setTaskStatus(TaskStatus.XUNCHAZHONG.getName());
+                taskList.setIfchaosgu(TaskStatus.YICHAOSHI.getName());
+            }else{
+                taskList.setTaskStatus(TaskStatus.XUNCHAZHONG.getName());
+                taskList.setIfchaosgu("");//未超时
+            }
+
+        }
+        return taskList;
+    }
+
+
+    /**
+     * 计算持续时间
+     * @param dispatchTime
+     * @return
+     */
+    private String lengthTime(Date dispatchTime){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String  fbtime = sdf.format(dispatchTime);
+        long time = sdf.parse(fbtime, new ParsePosition(0)).getTime();
+        long nd = 1000 * 24 * 60 * 60;
+        long nh = 1000 * 60 * 60;
+        long nm = 1000 * 60;
+        long ns = 1000;
+        // 获得两个时间的毫秒时间差异
+        long diff = System.currentTimeMillis() - time + 1000;
+        // 计算差多少天
+        long day = diff / nd;
+        // 计算差多少小时
+        long hour = diff % nd / nh;
+        // 计算差多少分钟
+        long min = diff % nd % nh / nm;
+        // 计算差多少秒//输出结果
+        long sec = diff % nd % nh % nm / ns;
+        System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
+        return day + "天" + hour + "小时";
+
     }
 
     /**

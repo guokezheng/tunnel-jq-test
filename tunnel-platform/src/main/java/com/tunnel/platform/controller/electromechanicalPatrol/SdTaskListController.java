@@ -108,15 +108,7 @@ public class SdTaskListController extends BaseController
         return util.exportExcel(list, "巡查任务");
     }
 
-    /**
-     * 获取巡查任务详细信息
-     */
-   /* @PreAuthorize("@ss.hasPermi('system:list:query')")*/
-    /*@GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") String id)
-    {
-        return AjaxResult.success(sdTaskListService.selectSdTaskListById(id));
-    }*/
+
 
     /**
      * 获取修改任务信息

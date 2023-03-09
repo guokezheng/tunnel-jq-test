@@ -17,14 +17,14 @@ spring:
     listener:
       ack-mode: manual
       concurrency: 3
-iot:
-  #中台测试
-  url: http://10.166.157.192:30959/iotGateway/inner/report/data
-  #物联
-  host: http://10.200.1.93:31006
-  #获取token
-  token: http://10.200.1.93:31006/auth/client/token?appId=jq_master_data&clientSecret=qz_opm
-  #获取设备列表
-  deviceList: /masterdata/devbasicri/list
-  #获取用户列表
-  roleList: /sys/user/page
+#iot:
+#  #中台测试
+#  url: http://10.166.157.192:30959/iotGateway/inner/report/data
+#  #物联
+#  host: http://10.200.1.93:31006
+#  #获取token
+#  token: http://10.200.1.93:31006/auth/client/token?appId=jq_master_data&clientSecret=qz_opm
+#  #获取设备列表
+#  deviceList: /masterdata/devbasicri/list
+#  #获取用户列表
+#  roleList: /sys/user/page

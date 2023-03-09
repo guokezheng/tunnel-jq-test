@@ -38,37 +38,7 @@
         </div>
       </el-col>
     </el-row>
-    <!-- <div>
-      <el-col :span="4">
-        <el-button style ="margin: 10px 0px 25px;height: 35px;"
-          v-hasPermi="['system:list:add']"
-          size="mini"
-          type="primary"
-          plain
-          @click="handleAdd"
-        >新增任务
-        </el-button>
-      </el-col>
-    </div> -->
-    <!-- <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 0px">
 
-        <el-col :span="6" style="width: 100%;">
-          <div class="grid-content bg-purple">
-            <el-input
-              placeholder="请输入所属单位，回车搜索"
-              v-model="queryParams.zzjgId"
-              @keyup.enter.native="handleQuery"
-            >
-              <el-button
-                slot="append"
-                icon="el-icon-s-fold"
-                @click="task_boxShow = !task_boxShow"
-              ></el-button>
-            </el-input>
-          </div>
-        </el-col>
-      </el-row> -->
 
     <div class="searchBox" v-show="task_boxShow">
       <el-form
@@ -118,74 +88,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <!-- </div> -->
 
-    <!--    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="所属单位" prop="zzjgId">
-        <el-input
-          v-model="queryParams.zzjgId"
-          placeholder="请输入所属单位"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-
-      <el-form-item label="发布状态" prop="publishStatus">
-        <el-select
-          v-model="queryParams.publishStatus"
-          placeholder="请选择发布状态"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="dict in dict.type.publish_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="任务状态" prop="taskStatus">
-        <el-select
-          v-model="queryParams.taskStatus"
-          placeholder="请选择任务状态"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="dict in dict.type.task_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" type="primary" plain @click="resetQuery"
-          >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:list:add']"
-          >新增</el-button
-        >
-
-      </el-form-item>
-    </el-form>-->
     <div class="tableTopHr" ></div>
     <el-table
       v-loading="loading"
@@ -196,12 +99,7 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-<!--      <el-table-column label="序号" width="100px" align="center">
-        <template slot-scope="scope">
-          {{ scope.$index + 1 }}
-        </template>
-      </el-table-column>-->
-<!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
+
       <el-table-column
         label="隧道名称"
         align="center"
@@ -243,13 +141,13 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="任务状态" align="center" prop="taskStatus">
-        <template slot-scope="scope">
+      <el-table-column label="任务状态" align="center" prop="task">
+<!--        <template slot-scope="scope">
           <dict-tag
             :options="dict.type.task_status"
             :value="scope.row.taskStatus"
           />
-        </template>
+        </template>-->
       </el-table-column>
       <el-table-column
         label="操作"
@@ -310,7 +208,7 @@
       <div class="task">
         <div class="topTxt">巡查任务基本信息</div>
         <div class="tableTopHr"></div>
-        <el-form 
+        <el-form
           :inline="true"
           :model="form"
           label-width="110px">
@@ -687,7 +585,7 @@
             <el-col :span="2">
               {{ pat.tunnelName }}
             </el-col>
-            <el-col :span="2">
+            <el-col :span="2" style="width: auto;">
               {{ pat.eqName }}
             </el-col>
             <el-col :span="2" >
@@ -762,8 +660,8 @@
         </el-row>
       </div>
       <div class="card">
-        <el-row  
-            v-show="taskOpt.length > 0" 
+        <el-row
+            v-show="taskOpt.length > 0"
             v-for="(item, index) in taskOpt"
             :key="index">
           <el-col :span="4">
@@ -1314,6 +1212,7 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
+        debugger
         this.taskNews = response.data.task;
         if (response.data.task[0].ifchaosgu == "已超时") {
           this.isActive = true;
@@ -1332,18 +1231,7 @@ export default {
           });
         });
 
-        /*   this.networkOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.network = opt.dictLabel;
-            });
-          }
-          if (opt.dictValue == "1") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.network = opt.dictLabel;
-            });
-          }
-        });*/
+
 
         this.networkOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
@@ -1353,18 +1241,7 @@ export default {
           });
         });
 
-        /*  this.powerOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.power = opt.dictLabel;
-            });
-          }
-          if (opt.dictValue == "1") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.power = opt.dictLabel;
-            });
-          }
-        });*/
+
 
         this.powerOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
@@ -1382,20 +1259,6 @@ export default {
           });
         });
 
-        /* this.taskNews.forEach((taskitem) => {
-            if(this.bzData!=""){
-              this.bzData.forEach((opt) => {
-                if (taskitem.bzId == opt.deptId) {
-                  taskitem.bzId = opt.deptName;
-                }else{
-                  taskitem.bzId = "";
-                }
-              });
-            }else {
-              taskitem.bzId = "";
-            }
-
-        });*/
       });
     },
     /** 查询巡查任务列表 */
@@ -1404,22 +1267,6 @@ export default {
       listList(this.queryParams).then((response) => {
         this.listList = response.rows;
         this.total = response.total;
-        /*this.listList.forEach((item) =>{
-          if(item.bzId=="null"||item.bzId==NaN){
-            item.bzId = "";
-          }else{
-            if(this.bzData!=""){
-              this.bzData.forEach((sitem) =>{
-                if(sitem.deptId == parseInt(item.bzId)){
-                  item.bzId = sitem.deptName
-                }
-              })
-            }else{
-              item.bzId = ""
-            }
-
-          }
-        })*/
         this.loading = false;
       });
     },
@@ -1869,16 +1716,17 @@ export default {
       width:110px;
     }
   }
-  .card-col {
-    margin-top: 10px;
-    display: flex;
+  //.card-col {
+    //margin-top: 10px;
+    //display: flex;
     .active {
-      padding: 5px;
+      height: 36px;
+      padding: 0px 5px;
       color: #ffd69a;
       display: inline;
       margin-left: 10px;
       border: 1px solid #ffd69a;
-    }
+   // }
     // div {
     //   width: 33%;
     //   span {

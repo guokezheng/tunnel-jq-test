@@ -1,0 +1,70 @@
+#------高速云生产环境配置-----
+ruoyi:
+  # 文件上传 本地: local  阿里云： alioss
+  uploadType: alioss
+  # 阿里云oss存储配置
+  oss:
+    bucketName: bucket-wisdom-oss
+    # 这个需要在高速云网络环境下才可以访问，如果部署在高速云环境则需要打开此注释，目前先用IP
+    endPoint: oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud
+    #    endPoint: 10.166.26.35
+    accessKeyId: h1HEeliVnMImdxRH
+    accessKeySecret: LpPPK7a9ZBRmRQyHIZJ5CmVxe7kLe8
+    outAccessDomainName: https://${ruoyi.oss.bucketName}.${ruoyi.oss.endPoint}/
+    upFolder: upload
+
+# 数据源配置
+spring:
+  datasource:
+    druid:
+      # 主库数据源
+      master:
+        url: jdbc:mysql://10.166.157.185:3306/jt_tunnel_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+        username: tunnel
+        password: tunnelSdhs123!@#
+
+  # redis 配置
+  redis:
+    # 地址
+    host: 10.166.157.190
+    # 端口，默认为6379
+    port: 8081
+    # 数据库索引
+    database: 2
+    # 密码
+    password: sdj@&868qDn
+
+  kafka:
+    wulian:
+      #正式环境部署地址
+      bootstrap-servers: 10.166.139.204:9092,10.166.139.205:9092,10.166.139.206:9092
+      consumer:
+        group-id: jt_formal_group
+    huawei:
+      bootstrap-servers: 10.7.187.29:9092
+      # 消费者
+      consumer:
+        # 消费者组
+        group-id: HuaWeiGroup_GSY
+
+sso:
+  url: http://10.166.157.192:31315
+
+#两级平台权限控制：管理站、高速云
+authorize:
+  #  name: GLZ
+  name: GSY
+  gsy:
+    host: http://10.166.157.192:31028
+  dept_id:
+    #文祖北隧道管理站，太河隧道管理站，庙子隧道管理站，仰天山隧道管理站，九龙峪隧道管理站
+    wzb_glz_dept_id: 10101
+    th_glz_dept_id: 10301
+    mz_glz_dept_id: 10701
+    yts_glz_dept_id: 10702
+    jly_glz_dept_id: 555503
+
+device:
+  hongmeng:
+    #正式环境部署地址
+    url: http://10.7.187.28:60400/qxsd-iot

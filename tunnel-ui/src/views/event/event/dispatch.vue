@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-07 17:06:42
+ * @LastEditTime: 2023-03-08 11:14:14
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -199,113 +199,115 @@
               <p>{{deadline4}}</p>
             </div>
           </div>
-          <div class="heightBox" style="height:75%;">
-          <div
-            v-for="(item, index) of incHandList"
-            :key="index"
-            class="incHandContent"
-          >
-            <div class="classification">
-              <div class="topDashed" v-show="index != 0">
-                <p></p>
-                <span class="topCircle"></span>
-              </div>
-              <div style="
-                border: 1px solid rgba(57, 173, 255, 0.6);
-                display: flex;
-                flex-flow: column;
-                justify-content: center;
-                align-items: center;">
+          <div style="height: 75%;overflow-y: scroll;">
+            <div class="heightBox" style="height:100%;">
+              <div
+                v-for="(item, index) of incHandList"
+                :key="index"
+                class="incHandContent"
+              >
+                <div class="classification">
+                  <div class="topDashed" v-show="index != 0">
+                    <p></p>
+                    <span class="topCircle"></span>
+                  </div>
+                  <div style="
+                    border: 1px solid rgba(57, 173, 255, 0.6);
+                    display: flex;
+                    flex-flow: column;
+                    justify-content: center;
+                    align-items: center;">
+                    <div
+                      class="type"
+                      :style="{
+                        padding: item.flowContent
+                          ? item.flowContent.toString().length > 2
+                            ? '8px'
+                            : '15px 12px'
+                          : '',
+                      }"
+                      v-if="item.flowContent"
+                      :title="item.flowContent"
+                    >
+                      {{ item.flowContent }}
+                    </div>
+                    <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
+                    :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">
+                    {{ yjName }}
+                    </div>
+                  </div>
+                  <div class="dashed" 
+                    :style="{top:index == 0?'55px':'80px'}" 
+                    v-show="index != incHandList.length - 1">
+                    <span class="circle"></span>
+                    <p :style="{height:index == 0?'58px':'30px'}"></p>
+                  </div>
+                </div>
+
+                <div class="heng1" v-if="item.children"></div>
                 <div
-                  class="type"
+                  class="shu"
+                  v-if="item.children"
                   :style="{
-                    padding: item.flowContent
-                      ? item.flowContent.toString().length > 2
-                        ? '8px'
-                        : '15px 12px'
+                    height: item.children
+                      ? item.children.length > 1
+                        ? item.children.length * 50 +
+                          4 * item.children.length -
+                          50 +
+                          'px'
+                        : '0px'
                       : '',
                   }"
-                  v-if="item.flowContent"
-                  :title="item.flowContent"
-                >
-                  {{ item.flowContent }}
-                </div>
-                <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
-                :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">
-                {{ yjName }}
-                </div>
-              </div>
-              <div class="dashed" 
-                :style="{top:index == 0?'55px':'80px'}" 
-                v-show="index != incHandList.length - 1">
-                <span class="circle"></span>
-                <p :style="{height:index == 0?'58px':'30px'}"></p>
-              </div>
-            </div>
-
-            <div class="heng1" v-if="item.children"></div>
-            <div
-              class="shu"
-              v-if="item.children"
-              :style="{
-                height: item.children
-                  ? item.children.length > 1
-                    ? item.children.length * 50 +
-                      4 * item.children.length -
-                      50 +
-                      'px'
-                    : '0px'
-                  : '',
-              }"
-            ></div>
-            <div style="width:100%;">
-              <div
-                v-for="(itm, inx) of item.children"
-                :key="inx"
-                class="contentList"
-                style="width:100%;"
-              >
-                <div style="float: left;padding-right: 20px;line-height: 20px;">{{ itm.flowContent }}</div>
-                <!-- 预警完成按钮 -->
-                <el-button type="success"
-                  plain
-                  size="mini"
-                  style="float: right; "
-                  icon="el-icon-check"
-                  v-show="itm.eventState != '0' && !itm.processId">
-                  完成
-                </el-button>
-                <!-- 预案完成按钮 -->
-                <el-button type="success"
-                  plain
-                  size="mini"
-                  style="float: right; "
-                  icon="el-icon-check"
-                  v-show="itm.eventState != '0' && itm.processId" 
-                  @click="getManagementDevice(itm)">
-                  完成
-                </el-button>
-                <!-- <img
-                  :src="incHand2"
-                  style="float: right; "
-                  v-show="itm.eventState != '0'"
-                /> -->
-                <!-- 下发 -->
-                <div class="sendMsg" v-show="itm.eventState == '0'" @click="getManagementDevice(itm)">
-                  <el-button type="primary" size="mini" icon="el-icon-pie-chart">处置</el-button>
-                  <!-- <img
-                    :src="incHand1"
-                    style="float: right; "
-                    v-show="itm.eventState == '0'"
-                    
-                    :style="iconDisabled?'cursor: not-allowed;pointer-events: none;':'cursor: pointer'"
-                  />
-                  <p >处置</p> -->
+                ></div>
+                <div style="width:100%;">
+                  <div
+                    v-for="(itm, inx) of item.children"
+                    :key="inx"
+                    class="contentList"
+                    style="width:100%;"
+                  >
+                    <div style="float: left;padding-right: 20px;line-height: 20px;">{{ itm.flowContent }}</div>
+                    <!-- 预警完成按钮 -->
+                    <el-button type="success"
+                      plain
+                      size="mini"
+                      style="float: right; "
+                      icon="el-icon-check"
+                      v-show="itm.eventState != '0' && !itm.processId">
+                      完成
+                    </el-button>
+                    <!-- 预案完成按钮 -->
+                    <el-button type="success"
+                      plain
+                      size="mini"
+                      style="float: right; "
+                      icon="el-icon-check"
+                      v-show="itm.eventState != '0' && itm.processId" 
+                      @click="getManagementDevice(itm)">
+                      完成
+                    </el-button>
+                    <!-- <img
+                      :src="incHand2"
+                      style="float: right; "
+                      v-show="itm.eventState != '0'"
+                    /> -->
+                    <!-- 下发 -->
+                    <div class="sendMsg" v-show="itm.eventState == '0'" @click="getManagementDevice(itm)">
+                      <el-button type="primary" size="mini" icon="el-icon-pie-chart">处置</el-button>
+                      <!-- <img
+                        :src="incHand1"
+                        style="float: right; "
+                        v-show="itm.eventState == '0'"
+                        
+                        :style="iconDisabled?'cursor: not-allowed;pointer-events: none;':'cursor: pointer'"
+                      />
+                      <p >处置</p> -->
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
           <el-divider></el-divider>
           <div class="rightButton">
             <el-button type="primary" @click="over">立即完结</el-button>
@@ -2156,7 +2158,7 @@ export default {
       border: 1px solid #0661ae;
       .incHandBox {
         height: calc(100% - 40px);
-        overflow: auto;
+        // overflow: hidden;
         padding:15px;
         .GTop{
           display:flex;

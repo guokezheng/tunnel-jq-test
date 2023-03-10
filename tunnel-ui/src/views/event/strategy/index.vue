@@ -510,7 +510,7 @@
       :visible.sync="dialogVisible"
       :before-close="handleClose"
       :append-to-body="true"
-      width="65%"
+      width="75%"
       class="celueDialog"
     >
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">

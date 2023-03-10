@@ -52,8 +52,8 @@ public class SendMsgServiceImpl implements SendMsgService {
      */
     private static final String sdf_pattern = "yyyy-MM-dd HH:mm:ss.SSS";
 
-    @Value("${iot.url}")
-    private String url;
+//    @Value("${iot.url}")
+//    private String url;
 
 
     @Autowired
@@ -86,135 +86,135 @@ public class SendMsgServiceImpl implements SendMsgService {
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
 
 
-    /**
-     * 发送指令数据
-     */
-    @Override
-    public String sendDirect(String devNo,String devType) {
-        return null;
-    }
+//    /**
+//     * 发送指令数据
+//     */
+//    @Override
+//    public String sendDirect(String devNo,String devType) {
+//        return null;
+//    }
 
-    @Override
-    public AjaxResult sendEvent() {
-        JSONObject jsonObject = new JSONObject();
-        SdEvent sdEvent = sdEventMapper.selectSdEventById(845674434130L);
-        sdEvent.setUpdateTime(new Date());
-        jsonObject.put("event", sdEvent);
-        jsonObject.put("devNo", "S00063700001980001");
-        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-        kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
-        return AjaxResult.success("1");
-    }
+//    @Override
+//    public AjaxResult sendEvent() {
+//        JSONObject jsonObject = new JSONObject();
+//        SdEvent sdEvent = sdEventMapper.selectSdEventById(845674434130L);
+//        sdEvent.setUpdateTime(new Date());
+//        jsonObject.put("event", sdEvent);
+//        jsonObject.put("devNo", "S00063700001980001");
+//        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+//        kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
+//        return AjaxResult.success("1");
+//    }
 
-    @Override
-    public AjaxResult devicestatus(String devId) {
-        SdDevices sdDevices = devicesMapper.selectSdDevicesById(devId);
-        sdDevices.setEqStatus("1");
-        sdDevices.setEqStatusTime(new Date());
-        sdDevices.setUpdateTime(new Date());
-        JSONObject jsonObject = devStatus(sdDevices);
-        kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
-        return AjaxResult.success("1");
-    }
+//    @Override
+//    public AjaxResult devicestatus(String devId) {
+//        SdDevices sdDevices = devicesMapper.selectSdDevicesById(devId);
+//        sdDevices.setEqStatus("1");
+//        sdDevices.setEqStatusTime(new Date());
+//        sdDevices.setUpdateTime(new Date());
+//        JSONObject jsonObject = devStatus(sdDevices);
+//        kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
+//        return AjaxResult.success("1");
+//    }
 
-    @Override
-    public AjaxResult devicesdata(String devId,String state) {
-        SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(devId);
-        List<SdDeviceData> data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-        if (data.size() > 0) {
-            for (int i = 0;i < data.size();i++) {
-                SdDeviceData deviceData = data.get(i);
-                deviceData.setUpdateTime(new Date());
-                deviceData.setData(state);
-                JSONObject jsonObject = definitionParam(deviceData.getDeviceId(), deviceData.getData(), deviceData.getItemId());
-                JSONObject object = devReaStatus(sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(deviceData.getItemId()).getDeviceTypeId(), jsonObject);
-                kafkaTemplate.send("wq_devStatusTopic", object.toString());
-            }
-        }
-        return AjaxResult.success("1");
-    }
+//    @Override
+//    public AjaxResult devicesdata(String devId,String state) {
+//        SdDeviceData sdDeviceData = new SdDeviceData();
+//        sdDeviceData.setDeviceId(devId);
+//        List<SdDeviceData> data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+//        if (data.size() > 0) {
+//            for (int i = 0;i < data.size();i++) {
+//                SdDeviceData deviceData = data.get(i);
+//                deviceData.setUpdateTime(new Date());
+//                deviceData.setData(state);
+//                JSONObject jsonObject = definitionParam(deviceData.getDeviceId(), deviceData.getData(), deviceData.getItemId());
+//                JSONObject object = devReaStatus(sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(deviceData.getItemId()).getDeviceTypeId(), jsonObject);
+//                kafkaTemplate.send("wq_devStatusTopic", object.toString());
+//            }
+//        }
+//        return AjaxResult.success("1");
+//    }
 
-    @Override
-    public String sendDevStatus(RadarMsgTopicVo vo) {
-        //设备编号
-        String devNo = vo.getDevNo();
-        //设备类型
-        String devType = vo.getDevType();
-        //时间戳
-        String format = DateUtil.format(DateUtil.date(), sdf_pattern);
-        //雷达消息数据
-        Map<String, Object> map = new HashMap<>();
-        map.put("devNo",devNo);
-        map.put("devType",devType);
-        map.put("directType","RadarMsgTopic");
-        map.put("directTypeDesc","雷达消息数据"+RandomUtil.randomString(4));
-        map.put("random", RandomUtil.randomString(20)); //随机写入
-        map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
-        //自定义字段
-        RadarMsgTopic radarMsgTopic =new RadarMsgTopic();
-        radarMsgTopic.setFuseId("这是融合ID");
-        radarMsgTopic.setId(MsgType.msg31.getCode()+devNo+DateUtil.date()+"车道号"+RandomUtil.randomString(4));
-        radarMsgTopic.setPtcType(1);
-        radarMsgTopic.setLane(2);
-        radarMsgTopic.setDirect(Integer.parseInt(MsgType.direct1.getCode()));
-        radarMsgTopic.setVehL(3.45);
-        radarMsgTopic.setVehW(1.62);
-        radarMsgTopic.setVehH(1.25);
-        radarMsgTopic.setVehPlate("鲁A88888");
-        radarMsgTopic.setVehPlateColor("03");
-        radarMsgTopic.setVehColor("6");
-        radarMsgTopic.setVehBrand("五菱宏光");
-        radarMsgTopic.setPtcLon(116.75199);
-        radarMsgTopic.setPtcLat(36.55358);
-        radarMsgTopic.setPtcEle(8848.88);
-        radarMsgTopic.setAmapLon(116.75199);
-        radarMsgTopic.setAmapLat(36.55358);
-        radarMsgTopic.setPtcSpeed(120.5);
-        radarMsgTopic.setPtcHeading(20.15);
-        radarMsgTopic.setVehType(4);
-        radarMsgTopic.setCreateTime(format);
-        radarMsgTopic.setSpare(null);
-        map.put("expands",radarMsgTopic);
-        map.put("user",SecurityUtils.getUsername());
+//    @Override
+//    public String sendDevStatus(RadarMsgTopicVo vo) {
+//        //设备编号
+//        String devNo = vo.getDevNo();
+//        //设备类型
+//        String devType = vo.getDevType();
+//        //时间戳
+//        String format = DateUtil.format(DateUtil.date(), sdf_pattern);
+//        //雷达消息数据
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("devNo",devNo);
+//        map.put("devType",devType);
+//        map.put("directType","RadarMsgTopic");
+//        map.put("directTypeDesc","雷达消息数据"+RandomUtil.randomString(4));
+//        map.put("random", RandomUtil.randomString(20)); //随机写入
+//        map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
+//        //自定义字段
+//        RadarMsgTopic radarMsgTopic =new RadarMsgTopic();
+//        radarMsgTopic.setFuseId("这是融合ID");
+//        radarMsgTopic.setId(MsgType.msg31.getCode()+devNo+DateUtil.date()+"车道号"+RandomUtil.randomString(4));
+//        radarMsgTopic.setPtcType(1);
+//        radarMsgTopic.setLane(2);
+//        radarMsgTopic.setDirect(Integer.parseInt(MsgType.direct1.getCode()));
+//        radarMsgTopic.setVehL(3.45);
+//        radarMsgTopic.setVehW(1.62);
+//        radarMsgTopic.setVehH(1.25);
+//        radarMsgTopic.setVehPlate("鲁A88888");
+//        radarMsgTopic.setVehPlateColor("03");
+//        radarMsgTopic.setVehColor("6");
+//        radarMsgTopic.setVehBrand("五菱宏光");
+//        radarMsgTopic.setPtcLon(116.75199);
+//        radarMsgTopic.setPtcLat(36.55358);
+//        radarMsgTopic.setPtcEle(8848.88);
+//        radarMsgTopic.setAmapLon(116.75199);
+//        radarMsgTopic.setAmapLat(36.55358);
+//        radarMsgTopic.setPtcSpeed(120.5);
+//        radarMsgTopic.setPtcHeading(20.15);
+//        radarMsgTopic.setVehType(4);
+//        radarMsgTopic.setCreateTime(format);
+//        radarMsgTopic.setSpare(null);
+//        map.put("expands",radarMsgTopic);
+//        map.put("user",SecurityUtils.getUsername());
+//
+//        List<String> devNos = CollUtil.newArrayList(devNo);
+//        List<Map<String, Object>> devList = CollUtil.newArrayList(map);
+//        Map<String, Object> content = new HashMap<>();
+//        content.put("devList", devList);
+//        String s = this.sendData(MsgType.msg31.getCode(), MsgType.msgId01.getCode(), devType, devNos, MsgType.msgUp.getCode(), content);
+//        return s;
+//    }
 
-        List<String> devNos = CollUtil.newArrayList(devNo);
-        List<Map<String, Object>> devList = CollUtil.newArrayList(map);
-        Map<String, Object> content = new HashMap<>();
-        content.put("devList", devList);
-        String s = this.sendData(MsgType.msg31.getCode(), MsgType.msgId01.getCode(), devType, devNos, MsgType.msgUp.getCode(), content);
-        return s;
-    }
-
-    @Override
-    public AjaxResult storages(SdStateStorage sdStateStorage) {
-        String devNo="S00063700001980001";
-        String devType="198";
-        //时间戳
-        String format = DateUtil.format(DateUtil.date(), sdf_pattern);
-        //消息数据
-        Map<String, Object> map = new HashMap<>();
-        map.put("devNo",devNo);
-        map.put("devType",devType);
-        map.put("directType","车道指示器topic");
-        map.put("directTypeDesc","车道指示器消息");
-        map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
-        //自定义数据
-        SdStateStorage storage=new SdStateStorage();
-        //状态
-        storage.setState(sdStateStorage.getState());
-        storage.setDeviceId(sdStateStorage.getDeviceId());
-        storage.setTunnelId(sdStateStorage.getTunnelId());
-        map.put("expands",storage);
-        map.put("user",SecurityUtils.getUsername());
-        //设备编号
-        List<String> devNos = CollUtil.newArrayList(devNo);
-        List<Map<String, Object>> devList = CollUtil.newArrayList(map);
-        Map<String, Object> content = new HashMap<>();
-        content.put("devList", devList);
-        String s = this.sendData(MsgType.msg31.getCode(), MsgType.msgId02.getCode(), devType, devNos, MsgType.msgUp.getCode(), content);
-        return AjaxResult.success(s);
-    }
+//    @Override
+//    public AjaxResult storages(SdStateStorage sdStateStorage) {
+//        String devNo="S00063700001980001";
+//        String devType="198";
+//        //时间戳
+//        String format = DateUtil.format(DateUtil.date(), sdf_pattern);
+//        //消息数据
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("devNo",devNo);
+//        map.put("devType",devType);
+//        map.put("directType","车道指示器topic");
+//        map.put("directTypeDesc","车道指示器消息");
+//        map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
+//        //自定义数据
+//        SdStateStorage storage=new SdStateStorage();
+//        //状态
+//        storage.setState(sdStateStorage.getState());
+//        storage.setDeviceId(sdStateStorage.getDeviceId());
+//        storage.setTunnelId(sdStateStorage.getTunnelId());
+//        map.put("expands",storage);
+//        map.put("user",SecurityUtils.getUsername());
+//        //设备编号
+//        List<String> devNos = CollUtil.newArrayList(devNo);
+//        List<Map<String, Object>> devList = CollUtil.newArrayList(map);
+//        Map<String, Object> content = new HashMap<>();
+//        content.put("devList", devList);
+//        String s = this.sendData(MsgType.msg31.getCode(), MsgType.msgId02.getCode(), devType, devNos, MsgType.msgUp.getCode(), content);
+//        return AjaxResult.success(s);
+//    }
 
     @Override
     public int pushDevicesStatusToOtherSystem(SdDevices sdDevices, String role, String status) {
@@ -243,36 +243,36 @@ public class SendMsgServiceImpl implements SendMsgService {
         return 0;
     }
 
-    /**
-     * 发送数据
-     *
-     * @param msgType 消息类型
-     * @param msgId 消息编码
-     * @param devType 设备类型
-     * @param devNos 设备编号
-     * @param direct 数据传输
-     * @param content 内容
-     * @return
-     */
-    private String sendData(String msgType, String msgId, String devType, List<String> devNos, String direct, Map<String, Object> content) {
-        JSONObject requestData = this.getBaseRequestData(msgType, msgId, devType, devNos, direct);
-        requestData.put("content", content);
-        //请求头
-        HttpHeaders requestHeaders = new HttpHeaders();
-        //设置JSON格式数据
-        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestData.toString(), requestHeaders);
-        //执行请求
-        log.info("参数 --> {}", requestData);
-        try {
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, requestEntity, String.class);
-            log.info("返回值 --> {}", responseEntity.getBody());
-            return "发送成功--时间:"+DateUtil.format(DateUtil.date(), sdf_pattern);
-        } catch (Exception e) {
-            log.error("物联网关数据发送失败！{}", e.getMessage());
-            return "发送失败--时间:"+DateUtil.format(DateUtil.date(), sdf_pattern);
-        }
-    }
+//    /**
+//     * 发送数据
+//     *
+//     * @param msgType 消息类型
+//     * @param msgId 消息编码
+//     * @param devType 设备类型
+//     * @param devNos 设备编号
+//     * @param direct 数据传输
+//     * @param content 内容
+//     * @return
+//     */
+//    private String sendData(String msgType, String msgId, String devType, List<String> devNos, String direct, Map<String, Object> content) {
+//        JSONObject requestData = this.getBaseRequestData(msgType, msgId, devType, devNos, direct);
+//        requestData.put("content", content);
+//        //请求头
+//        HttpHeaders requestHeaders = new HttpHeaders();
+//        //设置JSON格式数据
+//        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<String> requestEntity = new HttpEntity<>(requestData.toString(), requestHeaders);
+//        //执行请求
+//        log.info("参数 --> {}", requestData);
+//        try {
+//            ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, requestEntity, String.class);
+//            log.info("返回值 --> {}", responseEntity.getBody());
+//            return "发送成功--时间:"+DateUtil.format(DateUtil.date(), sdf_pattern);
+//        } catch (Exception e) {
+//            log.error("物联网关数据发送失败！{}", e.getMessage());
+//            return "发送失败--时间:"+DateUtil.format(DateUtil.date(), sdf_pattern);
+//        }
+//    }
     /**
      * 获取上报外层数据
      *

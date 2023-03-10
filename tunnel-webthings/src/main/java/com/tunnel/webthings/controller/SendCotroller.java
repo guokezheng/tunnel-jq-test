@@ -16,22 +16,22 @@ public class SendCotroller {
     @Autowired
     private SendService sendService;
 
-    @PostMapping("/status")
-    public String status() {
-        sendService.sendStatus();
-        return "OK";
-    }
-
-    @PostMapping("/event")
-    public String event() {
-        sendService.sendEvent();
-        return "OK";
-    }
-
-    @PostMapping("/direct")
-    public String direct() {
-        sendService.sendDirect();
-        return "OK";
-    }
+//    @PostMapping("/status")
+//    public String status() {
+//        sendService.sendStatus();
+//        return "OK";
+//    }
+//
+//    @PostMapping("/event")
+//    public String event() {
+//        sendService.sendEvent();
+//        return "OK";
+//    }
+//
+//    @PostMapping("/direct")
+//    public String direct() {
+//        sendService.sendDirect();
+//        return "OK";
+//    }
 
 }

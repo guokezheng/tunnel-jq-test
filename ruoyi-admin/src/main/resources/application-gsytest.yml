@@ -1,0 +1,54 @@
+#------高速云测试环境配置-----
+ruoyi:
+  profile: /opt/platform/its_tunnel/file/uploadPath
+
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 31000
+  servlet:
+    # 应用的访问路径
+    context-path: /prod-api
+# 数据源配置
+spring:
+  datasource:
+    druid:
+      # 主库数据源
+      master:
+        url: jdbc:mysql://10.166.154.211:8280/jt_tunnel_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+        username: tunnel
+        password: tunnelSdhs123!@#
+
+  # redis 配置
+  redis:
+    # 地址
+    host: 10.166.154.211
+    # 端口，默认为6379
+    port: 8279
+    # 数据库索引
+    database: 2
+    # 密码
+    password: sdj@&868qDn
+
+  kafka:
+    #spring:
+    #  kafka:
+    wulian:
+      #非正式环境使用地址，修改端口号避免推送测试数据
+      bootstrap-servers: 10.166.139.204:9093,10.166.139.205:9093,10.166.139.206:9093
+    huawei:
+      #非正式环境使用地址，避免接收推送数据
+      bootstrap-servers: 100.7.187.29:9092
+
+zc:
+  # websocket 配置项
+  websocket:
+    # 端口
+    port: 31001
+    # 路径
+    path: "/ws"
+    # 客户端认证密码
+    password: "Sdsocket123!@#"
+
+sso:
+  url: http://10.166.154.213:30001

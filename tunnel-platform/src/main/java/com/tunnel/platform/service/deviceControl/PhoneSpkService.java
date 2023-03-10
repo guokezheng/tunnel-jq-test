@@ -206,7 +206,10 @@ public class PhoneSpkService {
         if (StringUtils.isNotBlank(deviceId)) {
             SdDevices devices = sdDevicesMapper.selectSdDevicesById(deviceId);
             externalSystemId = devices.getExternalSystemId();
-            Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
+            if(externalSystemId==null||"".equals(externalSystemId)){
+                throw new RuntimeException("未配置所选设备关联的外部系统！");
+            }
+            //Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
         } else {
             String tunnelId = (String) map.get("tunnelId");
             String direction = (String) map.get("direction");
@@ -224,7 +227,10 @@ public class PhoneSpkService {
             device.setEqDirection(direction);
             device.setEqType(DevicesTypeEnum.LS.getCode());
             List<SdDevices> spkList = sdDevicesMapper.getSpkList(device);
-            Assert.notEmpty(spkList, "该方向隧道未查询到广播设备");
+            if(spkList==null||spkList.get(0)==null){
+                throw new RuntimeException("该方向隧道未查询到广播设备！");
+            }
+            //Assert.notEmpty(spkList, "该方向隧道未查询到广播设备");
 
             for (SdDevices devices : spkList) {
                 externalSystemId = devices.getExternalSystemId();
@@ -232,11 +238,17 @@ public class PhoneSpkService {
                     break;
                 }
             }
-            Assert.notNull(externalSystemId, "该方向隧道的广播设备未配置 关联的外部系统");
+            if(externalSystemId==null||"".equals(externalSystemId)){
+                throw new RuntimeException("该方向隧道的广播设备未配置 关联的外部系统！");
+            }
+            //Assert.notNull(externalSystemId, "该方向隧道的广播设备未配置 关联的外部系统");
         }
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String systemUrl = externalSystem.getSystemUrl();
-        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
+        if(systemUrl==null||"".equals(systemUrl)){
+            throw new RuntimeException("未配置该设备所属的外部系统地址！");
+        }
+        //Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)

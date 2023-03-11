@@ -613,7 +613,7 @@
                 <video :src="item.imgUrl" :poster="item.imgUrl" v-if="index == 0" autoplay muted loop
                 @click="openPicDialog(eventForm)">
                 </video>
-                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0" 
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0"
                 @click="clickImg(item.imgUrl)">
               </swiper-slide>
             </swiper>
@@ -1518,7 +1518,7 @@
                   :visible.sync="dialogVisible"
                   class="modifyEqTypeDialog"
                   :append-to-body="true"
-                  style="width: 600px !important; margin: 0 auto"
+                  style="width: 600px !important; padding-top: 100px; margin: 0 auto"
                 >
                   <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>

@@ -143,6 +143,16 @@
             <el-switch v-model="displayThumbnail" @change="changeThumbnail"></el-switch>
           </div> -->
           <el-button
+              v-if="resetCanvasFlag"
+              class="flex-row"
+              type="primary"
+              size="mini"
+              icon="el-icon-position"
+              @click="resetCanvas"
+          >
+            地图复位
+          </el-button>
+          <el-button
             class="flex-row"
             type="primary"
             size="mini"
@@ -3806,6 +3816,8 @@ export default {
       rccl_boxShow: false,
       yjcl_boxShow: false,
       treeShow: false,
+      //地图复位按钮
+      resetCanvasFlag : false,
       //搜索树状数据
       treeData: [],
       defaultProps: {
@@ -6855,6 +6867,12 @@ export default {
         this.getDeptList();
       });
     },
+    //地图复位
+    resetCanvas(){
+      this.resetCanvasFlag = false;
+      this.$refs.dragImgDom.style.left = "0px";
+      this.$refs.dragImgDom.style.top = "0px";
+    },
     //右键拖动
     dragImg(e) {
       console.log(e, "e");
@@ -6866,6 +6884,7 @@ export default {
       this.mouseTop = e.clientY - parseInt(this.$refs.dragImgDom.offsetTop);
       document.onmousemove = (e) => {
         if (this.dragFlag) {
+          this.resetCanvasFlag = true;
           this.curX = e.clientX - this.mouseLeft;
           this.curY = e.clientY - this.mouseTop;
           this.$refs.dragImgDom.style.left = this.curX + "px";

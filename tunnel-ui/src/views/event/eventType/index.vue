@@ -10,9 +10,9 @@
           @click="handleAdd()"
         >新增类型
         </el-button>
-        <el-button size="small" @click="resetQuery" 
-          >刷新</el-button
-          >
+        <el-button size="small" @click="resetQuery"
+        >刷新</el-button
+        >
       </el-col>
       <el-col :span="6" :offset="12">
 
@@ -76,111 +76,111 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-<!--          <el-button type="primary" plain size="mini" :loading="exportLoading"
-                     @click="handleExport"
-                     v-hasPermi="['system:type:export']"
-          >导出</el-button>-->
+          <!--          <el-button type="primary" plain size="mini" :loading="exportLoading"
+                               @click="handleExport"
+                               v-hasPermi="['system:type:export']"
+                    >导出</el-button>-->
         </el-form-item>
       </el-form>
     </div>
 
-<!--    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="事件类型" prop="eventType">
-        <el-input
-          v-model="queryParams.eventType"
-          placeholder="请输入事件类型"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-        &lt;!&ndash;        <el-select&ndash;&gt;
-        &lt;!&ndash;          v-model="queryParams.eventType"&ndash;&gt;
-        &lt;!&ndash;          placeholder="请选择事件类型"&ndash;&gt;
-        &lt;!&ndash;          clearable&ndash;&gt;
-        &lt;!&ndash;          size="small"&ndash;&gt;
-        &lt;!&ndash;          style="width: 180px"&ndash;&gt;
-        &lt;!&ndash;        >&ndash;&gt;
-        &lt;!&ndash;          <el-option&ndash;&gt;
-        &lt;!&ndash;            v-for="item in eventTypeData"&ndash;&gt;
-        &lt;!&ndash;            :key="item.id"&ndash;&gt;
-        &lt;!&ndash;            :label="item.eventType"&ndash;&gt;
-        &lt;!&ndash;            :value="item.eventType"&ndash;&gt;
-        &lt;!&ndash;          />&ndash;&gt;
-        &lt;!&ndash;        </el-select>&ndash;&gt;
-      </el-form-item>
-      <el-form-item label="防控类型" prop="prevControlType">
-        <el-select
-          v-model="queryParams.prevControlType"
-          placeholder="请选择防控类型"
-          clearable
-          size="small"
-          style="width: 180px"
+    <!--    <el-form
+          :model="queryParams"
+          ref="queryForm"
+          :inline="true"
+          v-show="showSearch"
+          label-width="68px"
         >
-          <el-option
-            v-for="item in prevControlType"
-            :key="item.dictValue"
-            :label="item.dictLabel"
-            :value="item.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="是否可用" prop="isUsable">
-        <el-select
-          v-model="queryParams.isUsable"
-          placeholder="请选择是否可用"
-          clearable
-          size="small"
-          style="width: 180px"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery"
-        >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-        >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:eventType:add']"
-        >新增</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:eventType:edit']"
-        >修改</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:eventType:remove']"
-        >删除</el-button
-        >
-      </el-form-item>
-    </el-form>-->
+          <el-form-item label="事件类型" prop="eventType">
+            <el-input
+              v-model="queryParams.eventType"
+              placeholder="请输入事件类型"
+              clearable
+              size="small"
+              @keyup.enter.native="handleQuery"
+            />
+            &lt;!&ndash;        <el-select&ndash;&gt;
+            &lt;!&ndash;          v-model="queryParams.eventType"&ndash;&gt;
+            &lt;!&ndash;          placeholder="请选择事件类型"&ndash;&gt;
+            &lt;!&ndash;          clearable&ndash;&gt;
+            &lt;!&ndash;          size="small"&ndash;&gt;
+            &lt;!&ndash;          style="width: 180px"&ndash;&gt;
+            &lt;!&ndash;        >&ndash;&gt;
+            &lt;!&ndash;          <el-option&ndash;&gt;
+            &lt;!&ndash;            v-for="item in eventTypeData"&ndash;&gt;
+            &lt;!&ndash;            :key="item.id"&ndash;&gt;
+            &lt;!&ndash;            :label="item.eventType"&ndash;&gt;
+            &lt;!&ndash;            :value="item.eventType"&ndash;&gt;
+            &lt;!&ndash;          />&ndash;&gt;
+            &lt;!&ndash;        </el-select>&ndash;&gt;
+          </el-form-item>
+          <el-form-item label="防控类型" prop="prevControlType">
+            <el-select
+              v-model="queryParams.prevControlType"
+              placeholder="请选择防控类型"
+              clearable
+              size="small"
+              style="width: 180px"
+            >
+              <el-option
+                v-for="item in prevControlType"
+                :key="item.dictValue"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="是否可用" prop="isUsable">
+            <el-select
+              v-model="queryParams.isUsable"
+              placeholder="请选择是否可用"
+              clearable
+              size="small"
+              style="width: 180px"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="mini" @click="handleQuery"
+            >搜索</el-button
+            >
+            <el-button size="mini" @click="resetQuery" type="primary" plain
+            >重置</el-button
+            >
+            <el-button
+              type="primary"
+              plain
+              size="mini"
+              @click="handleAdd"
+              v-hasPermi="['system:eventType:add']"
+            >新增</el-button
+            >
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-edit"
+              size="mini"
+              :disabled="single"
+              @click="handleUpdate"
+              v-hasPermi="['system:eventType:edit']"
+            >修改</el-button>
+            <el-button
+              type="primary"
+              plain
+              size="mini"
+              :disabled="multiple"
+              @click="handleDelete"
+              v-hasPermi="['system:eventType:remove']"
+            >删除</el-button
+            >
+          </el-form-item>
+        </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -263,6 +263,11 @@
           　　
         </template>
       </el-table-column>
+      <el-table-column label="优先级" align="center" prop="priority">
+        <template slot-scope="scope">
+          <span>{{getPriority(scope.row.priority)}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="是否可用" align="center" prop="isUsable">
         <template slot-scope="scope">
           <span>{{scope.row.isUsable == "0" ? "否" : "是"}}</span>
@@ -321,6 +326,22 @@
               :key="item.dictValue"
               :label="item.dictLabel"
               :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="优先级" prop="priority">
+          <el-select
+            v-model="form.priority"
+            placeholder="优先级"
+            clearable
+            size="small"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in yxjOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
           </el-select>
         </el-form-item>
@@ -384,6 +405,19 @@ export default {
   name: "EventType",
   data() {
     return {
+      yxjOptions: [{
+        value: '0',
+        label: '低'
+      },{
+        value: '1',
+        label: '中'
+      },{
+        value: '2',
+        label: '高'
+      },{
+        value: '3',
+        label: '紧急'
+      }],
       sj_boxShow:false,
       dialogOkDisabled:false,
       from:{},
@@ -454,6 +488,15 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+
+    //优先级
+    getPriority(num) {
+      for (var item of this.yxjOptions) {
+        if (item.value == num) {
+          return item.label;
+        }
+      }
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -526,6 +569,7 @@ export default {
         updateTime: null,
         iconUrl: null,
         isUsable: null,
+        priority: null
       };
       this.resetForm("form");
       this.removeIds = [];
@@ -605,6 +649,7 @@ export default {
       this.fileData.append("simplifyName", this.form.simplifyName); //类型名称
       this.fileData.append("prevControlType", this.form.prevControlType); //类型名称
       this.fileData.append("isUsable", this.form.isUsable)//是否可用
+      this.fileData.append("priority", this.form.priority)//是否可用
       // this.fileData.append("uid", this.form.uid); //类型名称
 
       this.$refs["form"].validate((valid) => {

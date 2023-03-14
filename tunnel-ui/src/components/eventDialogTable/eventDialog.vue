@@ -735,7 +735,6 @@ export default {
       if(this.eventForm.eventState == '0' && this.eventForm.currencyId == ''  || this.eventForm.currencyId == null){
         return this.$modal.msgWarning("请选择事件处置预案");
       }
-      // return false;
       updateEvent(this.eventForm).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;
@@ -748,6 +747,7 @@ export default {
             path: "/emergency/administration/dispatch",
             query: { id: this.eventForm.id },
           });
+          this.details = true;
         }
       });
     },
@@ -1211,7 +1211,7 @@ export default {
 .detailsDialog {
   // height: 84%;
   // z-index: 2008 !important;
-  width: 53%;
+  width: 60%;
   position: absolute;
   left: 24%;
   top:5%;

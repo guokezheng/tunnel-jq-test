@@ -73,6 +73,7 @@
               placeholder="请选择时间"
               value-format="HH:mm:ss"
               style="width: 100%"
+              @change="changeEndTime()"
             >
             </el-time-picker>
           </el-form-item>
@@ -315,6 +316,25 @@ export default {
       this.getTunnels();
       this.getDirection();
     },
+    changeEndTime(){
+      let startTime = this.strategyForm.startTime;
+      let endTime = this.strategyForm.endTime;
+      if(startTime)
+      console.log(startTime,endTime)
+      let d1 = startTime.split(':');
+      let d2 = endTime.split(':');
+      console.log(d1,d2)
+      if(d1.length == 3 && d2.length){
+        for(let i = 0;i < d1.length;i++){
+          for(let i = 0;i < d2.length;i++){
+            if(d1[0] > d2[0] || d1[1] > d2[1] || d1[2] > d2[2]){
+              this.strategyForm.endTime = "";
+              return this.$modal.msgWarning("开始时间不能大于结束时间");
+            }
+          }
+        }
+      }
+    },
     /** 修改按钮操作 */
     async getStrategyData(row) {
       //获取设备
@@ -408,13 +428,15 @@ export default {
     async submitStrategyForm() {
       this.$refs["timeControl"].validate((valid) => {
         if (valid) {
-          var autoControl = this.strategyForm.autoControl;
-          console.log(autoControl, "时间");
-          // if (autoControl[0].state == "" || autoControl[0].equipments.length == 0) {
-          //   return this.$modal.msgError("请选择设备并添加执行操作");
+          let autoControl = this.strategyForm.autoControl;
+          // for(let i = 0;i < autoControl.length;i++){
+          //   if (
+          //     autoControl[i].equipments.length == 0 ||
+          //     autoControl[i].closeState == "" || autoControl[0].openState == ""
+          //   ) {
+          //     return this.$modal.msgError("请选择设备并添加执行操作");
+          //   }
           // }
-          // console.log();
-          // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();
           } else {

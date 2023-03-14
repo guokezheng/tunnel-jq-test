@@ -1227,7 +1227,6 @@ public class KafkaReadListenToHuaWeiTopic {
         event.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
         event.setEventDescription(jsonObject.getString("eventDescribe"));
         event.setEventTime(DateUtils.parseDate(jsonObject.getString("foundTime")));
-        //event.setVideoUrl(jsonObject.getString("eventVideoUrl"));
         event.setEndTime(jsonObject.getString("completeTime"));
         event.setLaneNo(jsonObject.getString("carLane"));
         //rhy 事件状态,1:待复核; 2:处置中; 3:已处置; 4:已确认; 5:已挂起; 6:误报; 7:关联
@@ -1250,28 +1249,12 @@ public class KafkaReadListenToHuaWeiTopic {
         event.setEventTitle(sdEventService.getDefaultEventTitle(event,tunnelMap,eventTypeMap));
         event.setEventImgUrl(jsonObject.getString("eventImgUrl"));
         event.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.parseDate(jsonObject.getString("foundTime"))));
-
-        String[] imgList = jsonObject.getString("eventImgUrl").split(";");
-        List<SdTrafficImage> imageList = new ArrayList<>();
-        for(String img:imgList){
-            SdTrafficImage image = new SdTrafficImage();
-            image.setImgUrl(img);
-            image.setBusinessId(eventId.toString());
-            image.setImgType("0");
-            imageList.add(image);
-        }
         SdTrafficImageMapper imageMapper = SpringUtil.getBean(SdTrafficImageMapper.class);
-        //将图片存入
-        imageMapper.brachInsertFaultIconFile(imageList);
-        //将视频存入
-        SdTrafficImage image = new SdTrafficImage();
-        image.setImgUrl(jsonObject.getString("eventVideoUrl"));
-        image.setBusinessId(eventId.toString());
-        image.setImgType("1");
-        imageMapper.insertSdTrafficImage(image);
         int effectiveRows = 0;
         if(sdEventService.selectSdEventById(eventId) != null){
             effectiveRows = sdEventService.updateSdEventHw(event);
+            //删除历史图片与视频
+            imageMapper.delImageByBusinessIds(new Long[]{eventId});
         }else{
             effectiveRows = sdEventService.insertSdEvent(event);
             //新增后再查询数据库，返回给前端事件图标等字段
@@ -1283,6 +1266,24 @@ public class KafkaReadListenToHuaWeiTopic {
             object.put("sdEventList", sdEventList);
             WebSocketService.broadcast("sdEventList",object.toString());
         }
+        //事件图片-视频
+        String[] imgList = jsonObject.getString("eventImgUrl").split(";");
+        List<SdTrafficImage> imageList = new ArrayList<>();
+        for(String img:imgList){
+            SdTrafficImage image = new SdTrafficImage();
+            image.setImgUrl(img);
+            image.setBusinessId(eventId.toString());
+            image.setImgType("0");
+            imageList.add(image);
+        }
+        //将图片存入
+        imageMapper.brachInsertFaultIconFile(imageList);
+        //将视频存入
+        SdTrafficImage image = new SdTrafficImage();
+        image.setImgUrl(jsonObject.getString("eventVideoUrl"));
+        image.setBusinessId(eventId.toString());
+        image.setImgType("1");
+        imageMapper.insertSdTrafficImage(image);
         //推送物联中台，事件类型过滤
         if(effectiveRows > 0 && mergeRhyEventTypeEnum.getPushOrNot() == 1){
             //如果是未处理状态改为处理中
@@ -1296,9 +1297,24 @@ public class KafkaReadListenToHuaWeiTopic {
         SdEventType sdEventType = new SdEventType();
         sdEventType.setPrevControlType("1");
         List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
-        //判断此事件是否是主动安全事件
-        /*List<SdEventType> collect = sdEventTypes.stream().filter(item -> item.getId().equals(eventId)).collect(Collectors.toList());
-        if(collect.size() > 0){
+        /*//判断此事件是否是主动安全事件
+        List<SdEventType> collect = sdEventTypes.stream().filter(item -> item.getId() == eventTypeId).collect(Collectors.toList());
+        //优先级 0低，1中，2高，3紧急
+        int priorityNow = Integer.valueOf(sdEventTypeMapper.selectSdEventTypeById(eventTypeId).getPriority());
+        //查询是否有处置中的普通事件
+        SdEvent sdEvent = new SdEvent();
+        sdEvent.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        //处理中状态
+        sdEvent.setEventState("0");
+        //普通事件
+        sdEvent.setSearchValue("0");
+        List<Map<String, Object>> sdEventPt = sdEventMapper.selectAllEvent(sdEvent);
+
+        //查询是否有处置中的安全预警
+        sdEvent.setSearchValue("1");
+        List<Map<String, Object>> sdeventAq = sdEventMapper.selectAllEvent(sdEvent);
+        int priority = sdeventAq.stream().mapToInt(item -> new Integer(item.get("priority").toString())).max().orElse(0);
+        if(sdEventPt.size() == 0 && collect.size() > 0 && priorityNow >= priority){
             control(event);
         }*/
     }
@@ -1769,26 +1785,5 @@ public class KafkaReadListenToHuaWeiTopic {
             SdStrategyServiceImpl sdStrategyService = SpringUtils.getBean(SdStrategyServiceImpl.class);
             sdStrategyService.issuedDevice(sdStrategyRl,sdEvent.getId(),item.get("strategyType").toString());
         }
-        /*list.stream().forEach(item -> {
-            SdStrategyRl sdStrategyRl = new SdStrategyRl();
-            sdStrategyRl.setId();
-            SdStrategyServiceImpl sdStrategyService = SpringUtils.getBean(SdStrategyServiceImpl.class);
-            sdStrategyService.issuedDevice()
-            List<String> list1 = Arrays.asList(item.get("equipments").toString().split(","));
-            list1.stream().forEach(temp -> {
-
-                issuedDevice
-                try {
-                    Map<String,Object> map = new HashMap<>();
-                    map.put("devId",temp);
-                    map.put("state",item.get("state"));
-                    map.put("controlType",item.get("trategyType"));
-                    map.put("operIp", InetAddress.getLocalHost().getHostAddress());
-                    SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
-                } catch (UnknownHostException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        });*/
     }
 }

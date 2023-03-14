@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-08 11:14:14
+ * @LastEditTime: 2023-03-10 15:59:03
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -29,7 +29,8 @@
       title="处置记录"
       :visible.sync="drawer"
       direction="ltr"
-      :before-close="drawerHandleClose">
+      :before-close="drawerHandleClose"
+      style="left:25%;">
       <el-col :span="24">
         <el-timeline :reverse="reverse">
           <el-timeline-item
@@ -472,7 +473,6 @@
           </div>
           <div class="rightBottom">
             <div class="evtManagement">
-
               <div class="DisRecords">
                 <div class="title">处置记录</div>
                 <el-timeline style="height: calc(100% - 40px); overflow: auto">
@@ -1844,13 +1844,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+// ::v-deep .drawerLog .el-drawer.ltr{left: 25%!important;}
 ::v-deep .el-dialog__title{padding-left:20px;}
 ::v-deep .contentList .el-button--success.is-plain{
   background: transparent;
 }
+::v-deep .drawerLog .el-drawer__container{left:10%!important;}
 ::v-deep .drawerLog .el-drawer.ltr{
   height: 65%;
-  left: 25%;
+  left: 10%;
   top: 9%;
 }
 ::v-deep .el-statistic .number{

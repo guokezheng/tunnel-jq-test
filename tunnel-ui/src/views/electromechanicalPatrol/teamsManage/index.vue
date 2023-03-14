@@ -289,8 +289,6 @@ export default {
         this.deptOptions = response.data;
       });
       getTeams(deptId).then(response => {
-        alert(deptId);
-        console.log(response.data);
         this.form = response.data;
         this.open = true;
         this.title = "修改班组";

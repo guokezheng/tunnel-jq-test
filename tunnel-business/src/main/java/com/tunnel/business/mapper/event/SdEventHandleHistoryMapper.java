@@ -1,6 +1,7 @@
 package com.tunnel.business.mapper.event;
 
 import com.tunnel.business.domain.event.SdEventHandle;
+import com.tunnel.business.domain.event.SdEventHandleHistory;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * @author ruoyi
  * @date 2022-12-15
  */
-public interface SdEventHandleMapper 
+public interface SdEventHandleHistoryMapper
 {
     /**
      * 查询事件处置信息
@@ -26,40 +27,33 @@ public interface SdEventHandleMapper
     /**
      * 查询事件处置信息列表
      * 
-     * @param sdEventHandle 事件处置信息
+     * @param sdEventHandleHistory 事件处置信息
      * @return 事件处置信息集合
      */
-    public List<SdEventHandle> selectSdEventHandleList(SdEventHandle sdEventHandle);
-
-    /**
-     * 查询事件处置信息留存为历史记录
-     * @param sdEventHandle
-     * @return
-     */
-    public List<SdEventHandle> selectHistoryHandleList(SdEventHandle sdEventHandle);
+    public List<SdEventHandle> selectSdEventHandleList(SdEventHandle sdEventHandleHistory);
 
     /**
      * 新增事件处置信息
      * 
-     * @param sdEventHandle 事件处置信息
+     * @param sdEventHandleHistory 事件处置信息
      * @return 结果
      */
-    public int insertSdEventHandle(SdEventHandle sdEventHandle);
+    public int insertSdEventHandle(SdEventHandle sdEventHandleHistory);
 
     /**
      * 修改事件处置信息
      * 
-     * @param sdEventHandle 事件处置信息
+     * @param sdEventHandleHistory 事件处置信息
      * @return 结果
      */
-    public int updateSdEventHandle(SdEventHandle sdEventHandle);
+    public int updateSdEventHandle(SdEventHandle sdEventHandleHistory);
 
     /**
      * 设备管控下发设备成功时修改状态
-     * @param sdEventHandle
+     * @param sdEventHandleHistory
      * @return
      */
-    public int updateHandleState(SdEventHandle sdEventHandle);
+    public int updateHandleState(SdEventHandle sdEventHandleHistory);
 
     /**
      * 删除事件处置信息
@@ -78,16 +72,9 @@ public interface SdEventHandleMapper
     public int deleteSdEventHandleByIds(Long[] ids);
 
     /**
-     * 更新应急调度关联
-     * @param sdEventHandle
+     * 查询历史流程数量
+     * @param eventId
      * @return
      */
-    int updateSdEventHandleRelation(SdEventHandle sdEventHandle);
-
-    /**
-     * 删除应急调度关联
-     * @param sdEventHandle
-     * @return
-     */
-    int deleteRelation(SdEventHandle sdEventHandle);
+    String selectNum(@Param("eventId") Long eventId);
 }

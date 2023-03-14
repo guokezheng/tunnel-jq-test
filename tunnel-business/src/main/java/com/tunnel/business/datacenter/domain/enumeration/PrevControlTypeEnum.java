@@ -8,9 +8,9 @@ package com.tunnel.business.datacenter.domain.enumeration;
  */
 public enum PrevControlTypeEnum {
 
-    TRAFFIC_NCIDENT("0","交通事件"),
+    TRAFFIC_NCIDENT("0","普通事件"),
 
-    ACTIVE_SAFETY("1","主动安全"),
+    ACTIVE_SAFETY("1","安全预警"),
 
     EQUIPMENT_FAILURE("2","设备故障");
 

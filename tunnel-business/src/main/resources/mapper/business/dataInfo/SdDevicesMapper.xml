@@ -1074,4 +1074,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND d.eq_type = #{eqType}
         </if>
     </select>
+
+    <select id="selectDevices" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            d.eq_name,
+            d.pile,
+            es.state_name
+        FROM
+            sd_devices d
+                LEFT JOIN sd_equipment_state es ON d.eq_type = es.state_type_id
+                AND es.state_type = '1'
+        WHERE
+            1 = 1
+          AND es.device_state = '2'
+    </select>
 </mapper>

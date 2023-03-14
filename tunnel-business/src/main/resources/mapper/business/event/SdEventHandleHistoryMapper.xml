@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tunnel.business.mapper.event.SdEventHandleMapper">
+<mapper namespace="com.tunnel.business.mapper.event.SdEventHandleHistoryMapper">
     
     <resultMap type="SdEventHandle" id="SdEventHandleResult">
         <result property="id"    column="id"    />
@@ -16,11 +16,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdEventHandleVo">
-        select id, event_id, flow_id, flow_pid, flow_content, event_state, reserve_id, process_id, flow_sort, create_time, update_time from sd_event_handle
+        select id, event_id, flow_id, flow_pid, flow_content, event_state, reserve_id, process_id, flow_sort, flow_num, create_time, update_time from sd_event_handle_history
     </sql>
 
     <select id="selectSdEventHandleList" parameterType="SdEventHandle" resultMap="SdEventHandleResult">
-        <include refid="selectSdEventHandleVo"/>
+        select
+            id,
+            event_id,
+            flow_id,
+            flow_pid,
+            flow_content,
+            event_state,
+            reserve_id,
+            process_id,
+            flow_sort,
+            flow_num,
+            create_time,
+            update_time
+        from
+            sd_event_handle_history
         <where>  
             <if test="eventId != null "> and event_id = #{eventId}</if>
             <if test="flowId != null "> and flow_id = #{flowId}</if>
@@ -30,25 +44,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         ORDER BY create_time ASC
     </select>
-
-    <select id="selectHistoryHandleList" parameterType="SdEventHandle" resultMap="SdEventHandleResult">
-        select
-            event_id,
-            flow_id,
-            flow_pid,
-            flow_content,
-            event_state,
-            reserve_id,
-            process_id,
-            flow_sort,
-            create_time,
-            update_time from sd_event_handle
-        where 1=1
-        and event_id = #{eventId}
-        ORDER BY create_time ASC
-    </select>
-
-
     
     <select id="selectSdEventHandleById" parameterType="Long" resultMap="SdEventHandleResult">
         <include refid="selectSdEventHandleVo"/>
@@ -58,12 +53,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdEventHandle" parameterType="Long" resultType="int">
         select
             count(*)
-        from sd_event_handle
+        from sd_event_handle_history
         where event_id = #{eventId}
     </select>
         
     <insert id="insertSdEventHandle" parameterType="SdEventHandle">
-        insert into sd_event_handle
+        insert into sd_event_handle_history
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="eventId != null">event_id,</if>
@@ -74,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="reserveId != null">reserve_id,</if>
             <if test="processId != null">process_id,</if>
             <if test="flowSort != null">flow_sort,</if>
+            <if test="flowNum != null">flow_num,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
@@ -87,13 +83,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="reserveId != null">#{reserveId},</if>
             <if test="processId != null">#{processId},</if>
             <if test="flowSort != null">#{flowSort},</if>
+            <if test="flowNum != null">#{flowNum},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
     </insert>
 
     <update id="updateSdEventHandle" parameterType="SdEventHandle">
-        update sd_event_handle
+        update sd_event_handle_history
         <trim prefix="SET" suffixOverrides=",">
             <if test="eventId != null">event_id = #{eventId},</if>
             <if test="flowId != null">flow_id = #{flowId},</if>
@@ -110,7 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="updateHandleState" parameterType="SdEventHandle">
-        update sd_event_handle
+        update sd_event_handle_history
         <trim prefix="SET" suffixOverrides=",">
             <if test="flowId != null">flow_id = #{flowId},</if>
             <if test="flowPid != null">flow_pid = #{flowPid},</if>
@@ -125,38 +122,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteSdEventHandleById" parameterType="Long">
-        delete from sd_event_handle where id = #{id}
+        delete from sd_event_handle_history where id = #{id}
     </delete>
 
     <delete id="deleteSdEventHandleByIds" parameterType="String">
-        delete from sd_event_handle where id in 
+        delete from sd_event_handle_history where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
-    <update id="updateSdEventHandleRelation" parameterType="SdEventHandle">
-        update sd_event_handle
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="flowPid != null">flow_pid = #{flowPid},</if>
-            <if test="flowContent != null">flow_content = #{flowContent},</if>
-            <if test="eventState != null">event_state = #{eventState},</if>
-            <if test="reserveId != null">reserve_id = #{reserveId},</if>
-            <if test="processId != null">process_id = #{processId},</if>
-            <if test="flowSort != null">flow_sort = #{flowSort},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-        </trim>
-        where event_id = #{eventId} AND flow_id = #{flowId}
-    </update>
-
-    <delete id="deleteRelation" parameterType="SdEventHandle">
-        delete from sd_event_handle where 1 = 1
-        <if test="eventId != null and eventId != ''">
-            AND event_id = #{eventId}
-        </if>
-        <if test="flowPid != null and flowPid != ''">
-            AND flow_pid = #{flowPid}
-        </if>
-    </delete>
+    <select id="selectNum" resultType="java.lang.String" parameterType="java.lang.Long">
+        SELECT
+            IFNULL( MAX( flow_num ), '0' ) AS aaa
+        FROM
+            sd_event_handle_history
+        WHERE
+            1 = 1
+          AND event_id = #{eventId}
+    </select>
 </mapper>

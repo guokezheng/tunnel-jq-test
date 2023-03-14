@@ -184,7 +184,8 @@
         A.create_by, A.create_time, A.update_by, A.update_time,A.direction,A.small_car_num,A.truck_num,A.passenger_car_num,A.tanker_num,
         A.car_owner_phone, A.wrecker_phone,A.police_phone,A.remark,A.currency_id,
         B.event_type,C.tunnel_name, C.tunnel_station_name,B.icon_url,B.simplify_name,A.review_remark,
-        CONCAT( c.tunnel_name, ' ', sdd.dict_label, ',', B.simplify_name ) AS frameEventTitle
+        CONCAT( c.tunnel_name, ' ', sdd.dict_label, ',', B.simplify_name ) AS frameEventTitle,
+        B.prev_control_type
         from sd_event A
         left join sd_event_type B
         on A.event_type_id = B.id
@@ -609,5 +610,20 @@
         WHERE
             1 =1
         AND e.id = #{id}
+    </select>
+
+    <select id="selectAllEvent" parameterType="sdEvent" resultType="hashmap">
+        SELECT
+            e.id,
+            et.prev_control_type,
+            et.priority
+        FROM
+            sd_event e
+                LEFT JOIN sd_event_type et ON e.event_type_id = et.id
+        WHERE
+            1 = 1
+          AND e.tunnel_id = #{tunnelId}
+          AND e.event_state = #{eventState}
+          AND et.prev_control_type = #{searchValue}
     </select>
 </mapper>

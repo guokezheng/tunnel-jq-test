@@ -172,4 +172,11 @@ public interface SdEventMapper
      * @return
      */
     Map<String, Object> getEventInif(SdEvent sdEvent);
+
+    /**
+     * 查询事件以及优先级
+     * @param sdEvent
+     * @return
+     */
+    List<Map<String, Object>> selectAllEvent(SdEvent sdEvent);
 }

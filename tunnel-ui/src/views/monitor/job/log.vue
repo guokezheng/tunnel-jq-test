@@ -266,7 +266,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="执行状态：">
-              <div v-if="form.status == 0">正常</div>
+              <div v-if="form.status == 0">成功</div>
               <div v-else-if="form.status == 1">失败</div>
             </el-form-item>
           </el-col>
@@ -359,7 +359,7 @@ export default {
     // 返回按钮
     handleClose() {
       this.$store.dispatch("tagsView/delView", this.$route);
-      this.$router.push({ path: "/monitor/job" });
+      this.$router.push({ path: "/config/job" });
     },
     /** 搜索按钮操作 */
     handleQuery() {

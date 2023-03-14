@@ -143,6 +143,16 @@
             <el-switch v-model="displayThumbnail" @change="changeThumbnail"></el-switch>
           </div> -->
           <el-button
+              v-if="resetCanvasFlag"
+              class="flex-row"
+              type="primary"
+              size="mini"
+              icon="el-icon-position"
+              @click="resetCanvas"
+          >
+            地图复位
+          </el-button>
+          <el-button
             class="flex-row"
             type="primary"
             size="mini"
@@ -1197,7 +1207,7 @@
                 muted
                 loop
                 autoplay
-                webkit-playsinline 
+                webkit-playsinline
                 playsinline
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
@@ -1228,7 +1238,7 @@
               :rtsp="liveUrl3"
               :open="cameraPlayer3"
             ></videoPlayer>
-            <video 
+            <video
               v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
                 id="h5sVideo4"
                 class="h5video_"
@@ -1236,7 +1246,7 @@
                 muted
                 loop
                 autoplay
-                webkit-playsinline 
+                webkit-playsinline
                 playsinline
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
@@ -1275,7 +1285,7 @@
                 controls
                 muted
                 autoplay
-                webkit-playsinline 
+                webkit-playsinline
                 playsinline
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
@@ -3081,12 +3091,12 @@
       class="workbench-dialog explain-table icon-dialog"
       :title="title"
       :visible.sync="explainVisible"
-      width="1000px"
+      width="1240px"
       append-to-body
     >
       <img
         src="@/assets/logo/equipment_log/all.png"
-        style="width: 1000px; height: auto; padding: 20px"
+        style="width: 1240px; height: auto; padding: 20px"
       />
       <!-- <el-table
         ref="multipleTable"
@@ -3806,6 +3816,8 @@ export default {
       rccl_boxShow: false,
       yjcl_boxShow: false,
       treeShow: false,
+      //地图复位按钮
+      resetCanvasFlag : false,
       //搜索树状数据
       treeData: [],
       defaultProps: {
@@ -5024,7 +5036,7 @@ export default {
           }
         }
       })
-      
+
     },
     bodyCloseMenus1(e) {
       let self = this;
@@ -5038,7 +5050,7 @@ export default {
           }
         }
       })
-      
+
     },
     bodyCloseMenus2(e) {
       let self = this;
@@ -5052,7 +5064,7 @@ export default {
           }
         }
       })
-      
+
     },
     bodyCloseMenus3(e) {
       let self = this;
@@ -5066,7 +5078,7 @@ export default {
           }
         }
       })
-      
+
     },
     otherClose(e) {
       if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
@@ -6855,6 +6867,12 @@ export default {
         this.getDeptList();
       });
     },
+    //地图复位
+    resetCanvas(){
+      this.resetCanvasFlag = false;
+      this.$refs.dragImgDom.style.left = "0px";
+      this.$refs.dragImgDom.style.top = "0px";
+    },
     //右键拖动
     dragImg(e) {
       console.log(e, "e");
@@ -6866,6 +6884,7 @@ export default {
       this.mouseTop = e.clientY - parseInt(this.$refs.dragImgDom.offsetTop);
       document.onmousemove = (e) => {
         if (this.dragFlag) {
+          this.resetCanvasFlag = true;
           this.curX = e.clientX - this.mouseLeft;
           this.curY = e.clientY - this.mouseTop;
           this.$refs.dragImgDom.style.left = this.curX + "px";

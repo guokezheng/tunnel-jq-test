@@ -245,9 +245,9 @@
                 >
                   <el-option
                     v-for="item in fontTypeOptions"
-                    :key="item.cssClass"
+                    :key="item.dictLabel"
                     :label="item.dictLabel"
-                    :value="item.cssClass"
+                    :value="item.dictLabel"
                   >
                   </el-option>
                 </el-select>
@@ -799,6 +799,7 @@ export default {
             console.log(this.devicePixelBoolean, "this.devicePixelBoolean");
             if (this.infoType != 2) {
               // 不走接口 存到待下发信息里
+              this.dataForm.STAY = Number(this.dataForm.STAY) * 100;
               this.$emit("addInfo", this.dataForm);
             } else {
               // 走接口 存到信息模板里

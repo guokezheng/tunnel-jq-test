@@ -201,7 +201,7 @@
           <el-select
             v-model="queryParams.eqTypeId"
             placeholder="请选择设备类型"
-            clearable
+            filterable
             size="small"
           >
             <el-option
@@ -568,7 +568,10 @@ export default {
     },
     /** 设备类型 */
     getEqType() {
-      listType().then((response) => {
+      const params = {
+        isControl: 1, //是否显示/是否可控：1：是 0：否
+      };
+      listType(params).then((response) => {
         this.eqTypeData = response.rows;
       });
     },

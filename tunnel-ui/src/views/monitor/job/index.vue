@@ -97,10 +97,10 @@
           </el-select>
         </el-form-item>
         <el-form-item class="bottomBox">
-          <el-button size="small" type="primary" @click="handleQuery"
+          <el-button size="small"  @click="handleQuery"
             >搜索</el-button
           >
-          <el-button size="small" @click="resetQuery" type="primary" plain
+          <el-button size="small" @click="resetQuery" 
             >重置</el-button
           >
         </el-form-item>

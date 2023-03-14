@@ -63,7 +63,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.eq_id,
         c.eq_name,
         c.pile,
-        f.dict_label direction,
+       <!-- f.dict_label direction, -->
+        c.eq_direction direction,
         a.code,
         a.create_by,
         a.create_time,
@@ -79,7 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_operation_log a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
         left join sd_devices c on a.eq_id = c.eq_id
-        left join sys_dict_data f on f.dict_value = c.eq_direction and f.dict_type = "sd_direction"
+        <!-- left join sys_dict_data f on f.dict_value = c.eq_direction and f.dict_type = "sd_direction" -->
         left join sd_equipment_type d on a.eq_type_id = d.type_id
         left join sd_equipment_state e on a.operation_state = e.device_state AND  e.state_type_id=a.eq_type_id and state_type = 2
         where 1=1

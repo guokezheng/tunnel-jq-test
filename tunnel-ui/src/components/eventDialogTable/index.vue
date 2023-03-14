@@ -61,7 +61,7 @@
                     v-else
                   />
                 </div>
-                
+
               </el-col>
               <el-col :span="4" style="display:flex">
                 <div v-if="searchValue == 2 || searchValue == 3"
@@ -69,7 +69,7 @@
                 style="width:100%">
                   {{ item.simplifyName }}
                 </div>
-                <div 
+                <div
                 v-else
                 style="width:100%"
                 :style="{color:searchValue == 0?'red':'blue'}"
@@ -249,7 +249,7 @@ export default {
         }, 200);
         bus.$emit("openPicDialog");
       }
-
+      this.eventTableDialog = !this.eventTableDialog;
     },
 
     // 忽略事件

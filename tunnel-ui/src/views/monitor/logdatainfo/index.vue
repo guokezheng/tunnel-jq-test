@@ -361,12 +361,20 @@
         prop="typeName.typeName"
       />
       <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
-      <el-table-column label="方向" align="center" prop="direction" />
+      <el-table-column label="方向" align="center" prop="direction" >
+        <template slot-scope="scope">
+          <dict-tag
+            :options="dict.type.sd_direction"
+            :value="scope.row.direction"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="桩号" align="center" prop="pile" />
       <el-table-column
         label="操作状态"
         align="center"
         prop="stateName.stateName"
+        :formatter="operationStateFormat"
       />
       <el-table-column label="控制方式" align="center" prop="controlType" />
       <el-table-column label="操作结果" align="center" prop="state" />
@@ -413,7 +421,7 @@ import { exportLogininfor1, listLog } from "@/api/system/log";
 
 export default {
   name: "Logininfor",
-  dicts: ["sys_common_status, sd_control_type"],
+  dicts: ["sys_common_status, sd_control_type","sd_direction"],
   data() {
     return {
       activeName: "1",
@@ -584,6 +592,10 @@ export default {
     },
     loginStateFormat(row, column) {
       return this.selectDictLabel(this.loginStatusOptions, row.status);
+    },
+    operationStateFormat(row,column){
+      //没有状态名称的默认展示原有数据
+      return row.stateName.stateName != null ? row.stateName.stateName : row.operationState;
     },
     /** 查询登录日志列表 */
     getList(inx) {

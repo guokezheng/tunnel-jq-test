@@ -74,7 +74,7 @@
           </div>
         </el-col>
       </el-row>
-      <div class="treeSearchBox searchBox" v-show="user_boxShow">
+      <div class="treeSearchBox searchBox" v-show="user_boxShow" ref="cc">
         <el-form
           ref="queryForm"
           :inline="true"
@@ -642,7 +642,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="角色">
+            <el-form-item label="角色" prop="roleIds">
               <el-select v-model="form.roleIds" multiple placeholder="请选择">
                 <el-option
                   v-for="item in roleOptions"
@@ -837,6 +837,8 @@ export default {
             trigger: "blur",
           },
         ],
+        roleIds:[{ required: true, message: "角色不能为空", trigger: "blur" },
+        ],
         email: [
           {
             type: "email",
@@ -878,7 +880,8 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)) {
         if (self.user_boxShow == true) {
           self.user_boxShow = false;
         }

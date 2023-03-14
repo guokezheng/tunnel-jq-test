@@ -352,7 +352,7 @@
             :on-change="handleChange"
             :onSuccess="uploadSuccess"
             :limit="1"
-            :class="fileList.length >=1 ? 'showUpload':''"
+            :class="fileList.length ==1 ? 'showUpload':''"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -670,3 +670,10 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+::v-deep .showUpload {
+    .el-upload {
+      display: none !important;
+    }
+  }
+</style>

@@ -10,9 +10,14 @@
       .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
         background-color: #004F8B;
       }
+      .el-select-dropdown.is-multiple .el-select-dropdown__item.selected{
+        background: #004F8B !important;
+      }
     }
   }
-  
+  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected{
+    background: #004F8B !important;
+  }
   .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
     background-color: #165BA2;
     height: 52px !important;
@@ -252,6 +257,7 @@
       // margin: 20px auto;
       padding: 30px 20px;
       color: #fff;
+      
       .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
         background-color: #0064B0 !important;
       }
@@ -559,6 +565,7 @@
       background-color: #0090D8 !important;
     }
   }
+  
   #app {
     
     // 巡检
@@ -1814,6 +1821,9 @@
     .el-button{
       border-radius: 3px !important;
     }
+    .bottomBox .el-button--small{
+      padding:0 15px !important;
+    }
   }
   .menuAdministration{
     .el-table__expand-icon{
@@ -2370,4 +2380,5 @@
   .el-tabs__nav-wrap::after{
     background-color: #054D83;
   }
+  
 }

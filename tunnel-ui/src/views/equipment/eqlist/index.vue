@@ -993,7 +993,7 @@ export default {
           {
             required: true,
             message: "请选择设备类型",
-            trigger: "blur",
+            trigger: "change",
           },
         ],
         eqName: [

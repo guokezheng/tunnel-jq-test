@@ -3322,12 +3322,22 @@
           align="center"
           prop="strategyType"
           :formatter="strategyTypeFormat"
+          v-if="strategyActive=='richang'"
         />
+        <el-table-column
+          label="策略类型"
+          align="center"
+          prop="strategyType"
+          :formatter="strategyTypeFormatEvent"
+          v-if="strategyActive=='yujing'"
+        />
+        
         <el-table-column
           label="策略信息"
           align="center"
           prop="strategyInfo"
           :show-overflow-tooltip="true"
+          
         >
           <template slot-scope="scope" v-if="scope.row.slist != []">
             <div v-for="(item, index) in scope.row.slist" :key="index">
@@ -4579,7 +4589,12 @@ export default {
     });
     // 策略类型
     this.getDicts("sd_strategy_type").then((response) => {
+      console.log("策略类型",response)
       this.strategyTypeOptions = response.data;
+    });
+    this.getDicts("sys_common_event").then((response) => {
+      this.strategyTypeEvent = response.data;
+      console.log(this.strategyTypeEvent, "this.strategyTypeEvent");
     });
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
@@ -5125,6 +5140,10 @@ export default {
     // 策略类型字典翻译
     strategyTypeFormat(row, column) {
       return this.selectDictLabel(this.strategyTypeOptions, row.strategyType);
+    },
+    // 预警字典值翻译
+    strategyTypeFormatEvent(row, column){
+      return this.selectDictLabel(this.strategyTypeEvent, row.strategyType);
     },
     // 点击侧边栏文件列表下拉框
     clickFileNames(direction) {

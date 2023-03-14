@@ -91,8 +91,8 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item class="bottomBox">
-        <el-button size="mini" type="primary" @click="handleQuery">搜索</el-button>
-        <el-button  size="mini" type="primary" plain @click="resetQuery" >重置</el-button>
+        <el-button size="small"  @click="handleQuery">搜索</el-button>
+        <el-button  size="small"  @click="resetQuery" >重置</el-button>
       </el-form-item>
     </el-form>
     </div>

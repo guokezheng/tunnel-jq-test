@@ -2,6 +2,8 @@ package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.ruoyi.system.service.ISysDeptService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,9 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Autowired
     private ISysConfigService configService;
+
+    @Autowired
+    private ISysDeptService deptService;
 
     /**
      * 根据条件分页查询用户列表
@@ -563,5 +568,30 @@ public class SysUserServiceImpl implements ISysUserService
     @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysUser> getUserDeptId(SysUser user) {
         return userMapper.getUserDeptId(user);
+    }
+
+    @Override
+    public List<SysUser> teamsUserList(SysUser user) {
+        return userMapper.teamsUserList(user);
+    }
+
+    @Override
+    public List<SysUser> unTeamsUserList(SysUser user) {
+        return userMapper.unTeamsUserList(user);
+    }
+
+    @Override
+    public int deleteTeamsUserCancel(SysUser user) {
+        String deptId = deptService.getParentDept(user.getDeptId());
+        user.setDeptId(deptId);
+
+        return userMapper.updateUserDept(user);
+    }
+
+    @Override
+    public int deleteTeamsUserCancelAll(String deptId, Long[] userIds) {
+       deptId = deptService.getParentDept(deptId);
+
+        return userMapper.updateUserDeptAll(deptId,userIds);
     }
 }

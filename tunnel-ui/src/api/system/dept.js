@@ -51,6 +51,14 @@ export function treeselectExcYG1() {
   })
 }
 
+// 应急人员查询部门下拉树结构
+export function treeSelectYG1() {
+  return request({
+    url: '/system/dept/treeSelectYG1',
+    method: 'get'
+  })
+}
+
 // 查询部门下拉树结构(deptId=YG1及其自诉案)
 export function treeselectYG1() {
   return request({

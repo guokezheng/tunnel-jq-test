@@ -10,6 +10,12 @@
           @click="handleAdd()"
         >新增角色
         </el-button>
+        <el-button
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:role:export']"
+          >导出</el-button>
         <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
@@ -30,7 +36,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="role_boxShow">
+    <div class="searchBox" v-show="role_boxShow" ref="cc">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -63,6 +69,7 @@
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            :picker-options="setDisabled"
           ></el-date-picker>
         </el-form-item>
         <el-form-item class="bottomBox">
@@ -72,14 +79,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          <el-button
-            type="primary"
-            plain
-            size="small"
-            :loading="exportLoading"
-            @click="handleExport"
-            v-hasPermi="['system:role:export']"
-          >导出</el-button>
+          
         </el-form-item>
       </el-form>
     </div>
@@ -390,6 +390,11 @@ export default {
   dicts: ['sys_normal_disable'],
   data() {
     return {
+      setDisabled: {
+        disabledDate(time) {
+          return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
+        },
+      },
       role_boxShow:false,
       // 遮罩层
       loading: true,
@@ -484,7 +489,8 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)) {
         if (self.role_boxShow == true) {
           self.role_boxShow = false;
         }

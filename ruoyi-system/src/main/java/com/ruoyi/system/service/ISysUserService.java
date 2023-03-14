@@ -204,4 +204,12 @@ public interface ISysUserService
     public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
 
     public List<SysUser> getUserDeptId(SysUser user);
+
+    List<SysUser> teamsUserList(SysUser user);
+
+    List<SysUser> unTeamsUserList(SysUser user);
+
+    int deleteTeamsUserCancel(SysUser user);
+
+    int deleteTeamsUserCancelAll(String deptId, Long[] userIds);
 }

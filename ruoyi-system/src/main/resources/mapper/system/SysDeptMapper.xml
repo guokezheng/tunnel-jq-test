@@ -267,4 +267,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from sys_dept t where (t.dept_id = #{ssdw} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{ssdw},d.ancestors) ))
 	</select>
 
+
+	<select id="getParentDept" parameterType = "String" resultType="String">
+		select parent_id from sys_dept where dept_id = #{deptId}
+	</select>
+
+
+	<select id="selectChildByPid" parameterType="String" resultType="String">
+        select dept_id from sys_dept
+        where parent_id = #{parentId}
+		order by dept_id desc limit 1
+    </select>
+
+
 </mapper>

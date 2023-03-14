@@ -16,6 +16,8 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
@@ -191,8 +193,11 @@ public class SdTaskListController extends BaseController
         String ssdw = tunnelsService.selectTunnelDept(tunnelId);
         List<SysDeptTunnel>deptTunnels = new ArrayList<>();
         List<SysDept> depts = new ArrayList<>();
-        if("1".equals(deptId))
-            depts = deptService.selectTunnelDeptListBydw(deptId,ssdw);
+        // 获取当前的用户
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        SysUser user = loginUser.getUser();
+        if(user.isAdmin())
+            depts = deptService.selectTunnelDeptListBydw(ssdw);
         else{
             depts = deptService.selectTunnelDeptList(deptId);
         }

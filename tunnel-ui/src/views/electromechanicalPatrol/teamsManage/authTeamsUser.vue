@@ -1,89 +1,49 @@
 <template>
-  <div class="app-container">
-     <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
-      <el-form-item label="用户名称" prop="userName">
-        <el-input
-          v-model="queryParams.userName"
-          placeholder="请输入用户名称"
-          clearable
-          size="small"
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="手机号码" prop="phonenumber">
-        <el-input
-          v-model="queryParams.phonenumber"
-          placeholder="请输入手机号码"
-          clearable
-          size="small"
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
-        <el-button  size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="openSelectUser"
-          v-hasPermi="['system:role:add']"
-        >添加用户</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="cancelAuthUserAll"
-          v-hasPermi="['system:role:remove']"
-        >批量取消授权</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleClose"
-        >关闭</el-button>
-      </el-form-item>
-    </el-form>
+  <div class="app-container" style="height: 649px!important;">
 
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="openSelectUser"
+          size="small"
+          @click="openSelectTeamsUser"
           v-hasPermi="['system:role:add']"
-        >添加用户</el-button>
-      </el-col>
-      <el-col :span="1.5">
+        >添加用户
+        </el-button>
         <el-button
-          type="danger"
-          plain
-          icon="el-icon-circle-close"
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="cancelAuthUserAll"
           v-hasPermi="['system:role:remove']"
-        >批量取消授权</el-button>
-      </el-col>
-      <el-col :span="1.5">
+        >批量取消</el-button>
+        <el-button size="small" @click="resetQuery"
+        >刷新</el-button
+        >
         <el-button
-          type="warning"
-          plain
-          icon="el-icon-close"
-          size="mini"
+          size="small"
           @click="handleClose"
         >关闭</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row> -->
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入用户昵称、手机号码"
+            v-model="queryParams.userName"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="icon-gym-Gsearch"
+
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
       <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
       <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
@@ -105,7 +65,7 @@
             class="tableDelButtton"
             @click="cancelAuthUser(scope.row)"
             v-hasPermi="['system:role:remove']"
-          >取消授权</el-button>
+          >取消</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -117,12 +77,16 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-    <select-user ref="select" :roleId="queryParams.roleId" @ok="handleQuery" />
+    <select-user ref="select" :deptId="queryParams.deptId" @ok="handleQuery" />
   </div>
 </template>
 
 <script>
-import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/system/role";
+import {
+  deleteTeamsUserCancel,
+  deleteTeamsUserCancelAll,
+  teamsUserList
+} from "@/api/electromechanicalPatrol/teamsManage/teams";
 import selectUser from "./selectUser";
 
 export default {
@@ -147,24 +111,29 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        roleId: undefined,
+        deptId: undefined,
         userName: undefined,
         phonenumber: undefined
       }
     };
   },
   created() {
-    const roleId = this.$route.params && this.$route.params.roleId;
-    if (roleId) {
-      this.queryParams.roleId = roleId;
+    const deptId = this.$route.params&& this.$route.params.deptId;;
+    if (deptId) {
+      this.queryParams.deptId = deptId;
       this.getList();
     }
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+
     /** 查询授权用户列表 */
     getList() {
       this.loading = true;
-      allocatedUserList(this.queryParams).then(response => {
+      teamsUserList(this.queryParams).then(response => {
           this.userList = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -173,8 +142,7 @@ export default {
     },
     // 返回按钮
     handleClose() {
-      this.$store.dispatch("tagsView/delView", this.$route);
-      this.$router.push({ path: "/system/role" });
+      this.$router.push({ path: "/empatrol/teams" });
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -184,6 +152,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.userName ="";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -191,29 +160,29 @@ export default {
       this.userIds = selection.map(item => item.userId)
       this.multiple = !selection.length
     },
-    /** 打开授权用户表弹窗 */
-    openSelectUser() {
+    /** 打开添加用户表弹窗 */
+    openSelectTeamsUser() {
       this.$refs.select.show();
     },
     /** 取消授权按钮操作 */
     cancelAuthUser(row) {
-      const roleId = this.queryParams.roleId;
-      this.$modal.confirm('确认要取消该用户"' + row.userName + '"角色吗？').then(function() {
-        return authUserCancel({ userId: row.userId, roleId: roleId });
+      const deptId = this.queryParams.deptId;
+      this.$modal.confirm('确认要取消班组中"' + row.userName + '"用户吗？').then(function() {
+        return deleteTeamsUserCancel({ userId: row.userId, deptId: deptId });
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess("取消授权成功");
+        this.$modal.msgSuccess("取消成功");
       }).catch(() => {});
     },
     /** 批量取消授权按钮操作 */
     cancelAuthUserAll(row) {
-      const roleId = this.queryParams.roleId;
+      const deptId = this.queryParams.deptId;
       const userIds = this.userIds.join(",");
-      this.$modal.confirm('是否取消选中用户授权数据项？').then(function() {
-        return authUserCancelAll({ roleId: roleId, userIds: userIds });
+      this.$modal.confirm('是否取消班组中选中用户吗？').then(function() {
+        return deleteTeamsUserCancelAll({ deptId: deptId, userIds: userIds });
       }).then(() => {
         this.getList();
-        this.$modal.msgSuccess("取消授权成功");
+        this.$modal.msgSuccess("取消成功");
       }).catch(() => {});
     }
   }

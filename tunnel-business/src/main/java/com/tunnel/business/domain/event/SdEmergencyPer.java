@@ -23,8 +23,15 @@ public class SdEmergencyPer extends BaseEntity
 
     @ApiModelProperty("隧道ID")
     private String tunnelId;
-    @Excel(name = "隧道")
+
     private String tunnelName;
+
+    @Excel(name = "所属部门")
+    private String deptName;
+
+    private String deptId;
+
+
 
     /** 应急人员 */
     @Excel(name = "姓名")
@@ -52,6 +59,22 @@ public class SdEmergencyPer extends BaseEntity
                 ", groupName='" + groupName + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';
+    }
+
+    public String getDeptName() {
+        return this.deptName;
+    }
+
+    public void setDeptName( String deptName) {
+        this.deptName = deptName;
+    }
+
+    public String getDeptId() {
+        return this.deptId;
+    }
+
+    public void setDeptId( String deptId) {
+        this.deptId = deptId;
     }
 
     public String getIds() {

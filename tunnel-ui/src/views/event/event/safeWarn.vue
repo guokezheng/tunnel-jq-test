@@ -2896,7 +2896,7 @@ export default {
         );
       }
       if (this.currentMenu == "2") {
-       // this.queryParams.pageSize = 10;
+        this.queryParams1.faultDescription = this.queryParams.faultDescription
         listList(this.queryParams1).then((response) => {
           this.eventLists = response.rows;
           this.eventLists.forEach((item) => {

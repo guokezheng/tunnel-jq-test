@@ -186,6 +186,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/electromechanicalPatrol/teamsManage',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'teamsUser/:deptId',
+        component: (resolve) => require(['@/views/electromechanicalPatrol/teamsManage/authTeamsUser'], resolve),
+        name: 'AuthUser',
+        meta: { title: '包含用户', activeMenu: '/electromechanicalPatrol/teamsManage'}
+      }
+    ]
+  },
+  {
     path: '/system/dict-data',
     component: Layout,
     hidden: true,

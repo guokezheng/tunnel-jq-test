@@ -242,8 +242,6 @@
                 <el-select
                   v-model="form.tunnelId"
                   placeholder="请选择所属隧道"
-                  @change="tunnelSelectGet"
-
                 >
                   <el-option
                     v-for="item in eqTunnelData"
@@ -260,8 +258,6 @@
                   v-model="form.bzId"
                   placeholder=""
                   id="bzSel"
-                  :disabled="true"
-                  @click.native="selChange"
                 >
                   <el-option
                     v-for="item in bzData"
@@ -962,14 +958,14 @@ export default {
     },
 
     //班组点击时间
-    selChange() {
+    /*selChange() {
       if (typeof this.form.tunnelId == "undefined") {
         this.$modal.msgWarning("请先选择隧道");
         return;
       } else {
         $("#bzSel").attr("pointer-events", "none");
       }
-    },
+    },*/
     /*获取当前时间*/
     getCurrentTime() {
       //获取当前时间并打印
@@ -990,7 +986,7 @@ export default {
       return _this.gettime;
     },
 
-    tunnelSelectGet(e) {
+    /*tunnelSelectGet(e) {
       this.tunnelId = e;
       selectBzByTunnel(this.tunnelId).then((response) => {
         this.form.bzId = response.data;
@@ -1000,7 +996,7 @@ export default {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
       });
-    },
+    },*/
 
     //  上移
     clickUP(i, item) {

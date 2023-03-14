@@ -163,9 +163,13 @@ public interface SysDeptMapper
 
     /**
      * 查询单位
-     * @param deptId
+     * @param
      * @param ssdw
      * @return
      */
-    List<SysDept> selectTunnelDeptListBydw(@Param("deptId") String deptId,@Param("ssdw") String ssdw);
+    List<SysDept> selectTunnelDeptListBydw(@Param("ssdw") String ssdw);
+
+    String getParentDept(@Param("deptId")String deptId);
+
+    String selectChildByPid(@Param("parentId")String parentId);
 }

@@ -1,17 +1,15 @@
-<!--
- * @Author: Praise-Sun 18053314396@163.com
- * @Date: 2022-10-27 09:52:13
- * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-08 10:04:52
- * @FilePath: \tunnel-ui\src\views\information\board\index.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 <template>
   <div class="container infoBoardBox" style="height: 100%">
     <div
-      style="height: 100%; margin-left: 0px; margin-right: 0px;display: flex;justify-content: space-between;"
+      style="
+        height: 100%;
+        margin-left: 0px;
+        margin-right: 0px;
+        display: flex;
+        justify-content: space-between;
+      "
     >
-      <div style="width:20%" class="verticalBox">
+      <div style="width: 20%" class="verticalBox">
         <p class="bigTitle">情报板列表</p>
         <el-form ref="form" :model="form">
           <el-form-item prop="deptId">
@@ -74,63 +72,77 @@
                 :title="item.label"
                 :name="item.devicePixel"
               >
-              <div>
-                <el-checkbox
-                  style="width: 100%"
-                  :indeterminate="isIndeterminate"
-                  v-model="checkAll"
-                  @change="handleCheckAllChange"
-                  >全选
-                </el-checkbox>
-                <div style="margin: 5px 0"></div>
-                <el-checkbox-group
-                  class="checkbox"
-                  v-model="checkedCities"
-                  @change="handleCheckedCitiesChange"
-                >
+                <div>
                   <el-checkbox
-                    v-for="(itm, index) in item.list"
-                    :label="itm.deviceId"
-                    :key="index"
-                  >
-                    <div>{{ itm.deviceName }}</div>
-                    <el-tooltip content="回读当前信息" placement="top">
-                      <el-button
-                        class="el-icon-tickets huiduButton"
-                        @click.stop.prevent="onSubmit(itm.deviceId)"
-                        :disabled="submitButton"
-                      ></el-button>
-                    </el-tooltip>
-                    
+                    style="width: 100%"
+                    :indeterminate="isIndeterminate"
+                    v-model="checkAll"
+                    @change="handleCheckAllChange"
+                    >全选
                   </el-checkbox>
-                </el-checkbox-group>
-              </div>
-                
+                  <div style="margin: 5px 0"></div>
+                  <el-checkbox-group
+                    class="checkbox"
+                    v-model="checkedCities"
+                    @change="handleCheckedCitiesChange"
+                  >
+                    <el-checkbox
+                      v-for="(itm, index) in item.list"
+                      :label="itm.deviceId"
+                      :key="index"
+                    >
+                      <div>{{ itm.deviceName }}</div>
+                      <el-tooltip content="回读当前信息" placement="top">
+                        <el-button
+                          class="el-icon-tickets huiduButton"
+                          @click.stop.prevent="onSubmit(itm.deviceId)"
+                          :disabled="submitButton"
+                        ></el-button>
+                      </el-tooltip>
+                    </el-checkbox>
+                  </el-checkbox-group>
+                </div>
               </el-collapse-item>
             </el-collapse>
           </el-form-item>
         </el-form>
       </div>
-      <div style="border-left: 1px solid #05afe3;width:37.8%" class="verticalBox">
+      <div
+        style="border-left: 1px solid #05afe3; width: 37.8%"
+        class="verticalBox"
+      >
         <div class="bigTitle">
           <div>
             <span>待下发信息</span>
             <span v-if="form.devicePixel">【 {{ form.devicePixel }}】</span>
           </div>
-          
+
           <div class="controlBox">
             <el-button
               @click.native="openDialogVisible(1, 2)"
-              :disabled="form.devicePixel?false:disabledButton"
+              :disabled="form.devicePixel ? false : disabledButton"
               >添加信息</el-button
             >
-            <el-button type="primary" @click="publishInfo" 
-            :disabled="!form.devicePixel || contentList.length==0 || checkedCities.length==0">发布信息</el-button>
+            <el-button
+              type="primary"
+              @click="publishInfo"
+              :disabled="
+                !form.devicePixel ||
+                contentList.length == 0 ||
+                checkedCities.length == 0
+              "
+              >发布信息</el-button
+            >
           </div>
         </div>
         <div class="contentBox">
-          <el-table :data="contentList" row-key="ID" v-loading="loading" max-height="700">
-            <el-table-column align="right"  width="560">
+          <el-table
+            :data="contentList"
+            row-key="ID"
+            v-loading="loading"
+            max-height="700"
+          >
+            <el-table-column align="right" width="560">
               <template slot-scope="scope">
                 <div class="con">
                   <div
@@ -149,29 +161,39 @@
                           scope.row.COORDINATE.substring(0, 3),
                           'left'
                         ),
-                        top: getCoordinate(scope.row.COORDINATE.substring(3, 6), 'top'),
+                        top: getCoordinate(
+                          scope.row.COORDINATE.substring(3, 6),
+                          'top'
+                        ),
                       }"
                       class="boardTextStyle"
                       v-html="
-                        scope.row.CONTENT?scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                          / /g,
-                          ' &nbsp'
-                        ):''
+                        scope.row.CONTENT
+                          ? scope.row.CONTENT.replace(
+                              /\n|\r\n/g,
+                              '<br>'
+                            ).replace(/ /g, ' &nbsp')
+                          : ''
                       "
                     ></span>
                   </div>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column  align="left" style="width:20%;border:solid 1px red">
+            <el-table-column
+              align="left"
+              style="width: 20%; border: solid 1px red"
+            >
               <template slot-scope="scope">
-                <div class="menuBox" >
+                <div class="menuBox">
                   <!-- <el-tooltip content="加入信息模板" placement="top">
                     <div @click="arrowRight(scope.row)"></div>
                   </el-tooltip> -->
-                  
+
                   <el-tooltip content="编辑" placement="top">
-                    <div @click="openQbbDrawer(scope.row, scope.$index, 1)"></div>
+                    <div
+                      @click="openQbbDrawer(scope.row, scope.$index, 1)"
+                    ></div>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="top">
                     <div @click="delQbbDrawer(scope.$index)"></div>
@@ -182,7 +204,10 @@
           </el-table>
         </div>
       </div>
-      <div style="border-left: 1px solid #05afe3;width: 42.2%;" class="verticalBox">
+      <div
+        style="border-left: 1px solid #05afe3; width: 42.2%"
+        class="verticalBox"
+      >
         <div class="bigTitle">
           <div>
             <span>信息模板</span>
@@ -196,9 +221,7 @@
         </div>
 
         <div class="templateBox">
-          
-          <el-collapse v-model="activeNames"
-          >
+          <el-collapse v-model="activeNames">
             <el-collapse-item
               v-for="(item, index) in iotTemplateCategoryList"
               :key="index"
@@ -250,14 +273,15 @@
                 </div>
                 <div class="menuBox">
                   <el-tooltip content="加入待下发信息" placement="top">
-                    <div  
+                    <div
                       @click="arrowLeft(itm)"
                       :class="
                         disabledButton && !form.devicePixel
                           ? 'disabledClass'
                           : ''
                       "
-                      style="cursor: pointer"></div>
+                      style="cursor: pointer"
+                    ></div>
                   </el-tooltip>
                   <el-tooltip content="编辑" placement="top">
                     <div @click="editOutline(itm, indx, 2)"></div>
@@ -276,13 +300,11 @@
       title="提示"
       :visible.sync="arrowRightVisible"
       width="20%"
-      :before-close="dialogClose">
+      :before-close="dialogClose"
+    >
       <el-row>
         <el-col :span="18">
-          <el-select
-            v-model="toRightCategory"
-            placeholder="请选择所属类别"
-          >
+          <el-select v-model="toRightCategory" placeholder="请选择所属类别">
             <el-option
               v-for="item in iotTemplateCategoryList"
               :key="item.dictValue"
@@ -298,7 +320,6 @@
           </el-button>
         </el-col>
       </el-row>
-      
     </el-dialog>
     <addinfo
       ref="addinfo"
@@ -311,14 +332,12 @@
       v-if="this.showEmit"
       @dialogClose="dialogClose"
     ></editInfo>
-    <!-- <editInfo @boardEmitItem = 'boardEmitItem' v-if="boardEmitItem"></editInfo> -->
   </div>
 </template>
 <script>
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-
-import Sortable from 'sortablejs';
+import Sortable from "sortablejs";
 import addinfo from "./addinfo";
 import editInfo from "./editInfo";
 import boardData from "./boardData";
@@ -338,13 +357,11 @@ import {
   addTemplate,
   addTemplateContent,
   getBoardContent,
-  deleteTemplate
+  deleteTemplate,
 } from "@/api/board/template";
-const cityOptions = ["上海", "北京", "广州", "深圳"];
-/**
- * 对象深拷贝
- */
- export const deepClone = (data) => {
+
+// 对象深拷贝
+export const deepClone = (data) => {
   // 封装的判断数据类型的方法
   var type = typeof data;
   var obj;
@@ -367,52 +384,50 @@ const cityOptions = ["上海", "北京", "广州", "深圳"];
   }
   return obj;
 };
+
 export default {
   name: "Device",
   components: {
     addinfo,
     editInfo,
-    Treeselect
+    Treeselect,
   },
   dicts: ["iot_board_direction"],
 
   data() {
     return {
-      toRightCategory:'',
-      arrowRightVisible:false,
-      loading:false,
-      submitButton:false,
-      iotBoardActive: '',
-      iotBoardList: [],
-      boardDirectionList: [],
-      siteList: [],
+      toRightCategory: "", //向右类别绑定
+      arrowRightVisible: false, //向右类别弹窗
+      loading: false,
+      submitButton: false, //回读禁用
+      iotBoardActive: "", //情报板设备 绑定
+      iotBoardList: [], //情报板设备列表
+      boardDirectionList: [], //方向
+      siteList: [], //站点
       userQueryParams: {
         userName: this.$store.state.user.name,
-      },
+      }, //用户
       siteProps: {
         value: "id",
         label: "label",
         children: "children",
-      },
-      devicePixelMode: null,
+      }, //站点
+      devicePixelMode: null, //分辨率
       editType: 0,
-      disabledButton: true,
-      showEmit: false,
-      index_: 0,
-      index: 0,
-      deviceId: "",
-      boardEmitItem: null,
-      userDeptId: "",
+      disabledButton: true, //禁用按钮
+      showEmit: false, //修改组件
+      index_: 0, //待下发 编辑项index
+      index: 0, //模板 编辑项 index
+      deviceId: "", //情报板id
+      boardEmitItem: null, //修改彈窗的數據
+      userDeptId: "", //管理站id
       deptList: [], //分中心下拉框
       mechanismList: [], //管理机构下拉框
       tunnelData: [], //所属隧道下拉框
       positionList: [], //位置信息下拉框
       devicessizeList: [], //分辨率下拉框
-      // checkboxList: [], //多选框数组
-      deviceList: [],
-      checkbox: false,
-      // checkboxValue: [],
-      checkedCities: [],
+      deviceList: [], //分辨率
+      checkedCities: [], //多选 选中项
       form: {
         company: null,
         mechanism: null,
@@ -420,57 +435,56 @@ export default {
         localInfo: null,
         devicePixel: null,
         deptId: this.userDeptId,
-      },
-      boardStyle: {},
-      itemStr: "",
-      supplier: null,
-      dialogVisible: false,
-      activeNames: [],
-      iotTemplateCategoryList: [],
+      }, //情报板列表表单
+      supplier: null, //报文类型
+      activeNames: [], //模板 展开项
+      iotTemplateCategoryList: [], //模板
       checkAll: false,
       isIndeterminate: false,
-      contentList: [],
-      templateList: [],
-      toRightItem:{},
+      contentList: [], //待下发数据
+      toRightItem: {}, //向右添加到模板的数据
     };
   },
-  watch:{
-    'contentList': function (newVal, oldVal) {
-      console.log(newVal,"newValcontentList")
-    }
+  watch: {
+    contentList: function (newVal, oldVal) {
+      console.log(newVal, "newValcontentList");
+    },
   },
   created() {
     this.getUserDept();
-    this.getInfoMode()
-    
+    this.getInfoMode();
   },
   mounted() {
-    this.rowDrop()
+    this.rowDrop();
   },
- 
+
   methods: {
-    
     // 获取信息模板字典表
-    getInfoMode(){
+    getInfoMode() {
       this.getDicts("iot_template_category").then((res) => {
         this.iotTemplateCategoryList = res.data;
-        console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
+        console.log(
+          this.iotTemplateCategoryList,
+          "this.iotTemplateCategoryList"
+        );
       });
     },
+
     // 行拖拽
     rowDrop() {
       // 要侦听拖拽响应的DOM对象
-      const tbody = document.querySelector('.el-table__body-wrapper tbody');
-      console.log(tbody,"tbodytbodytbody")
+      const tbody = document.querySelector(".el-table__body-wrapper tbody");
+      console.log(tbody, "tbodytbodytbody");
       const _this = this;
       Sortable.create(tbody, {
         // 结束拖拽后的回调函数
-        onEnd({newIndex, oldIndex}) {
+        onEnd({ newIndex, oldIndex }) {
           const currentRow = _this.contentList.splice(oldIndex, 1)[0];
           _this.contentList.splice(newIndex, 0, currentRow);
-        }
-      })
+        },
+      });
     },
+
     // 级联 管理站
     getUserDept() {
       let that = this;
@@ -484,7 +498,7 @@ export default {
       var userDeptId = this.userDeptId;
       const params = { status: 0 };
       getTreeByDeptId(params).then((response) => {
-        console.log(response,"级联")
+        console.log(response, "级联");
         const options = response.data;
         let childs = [];
         function a(list) {
@@ -497,11 +511,11 @@ export default {
           });
         }
         a(options);
-        console.log(childs,"childschilds")
+        console.log(childs, "childschilds");
         if (childs.length == 0) {
           this.siteList = options[0].children;
         } else {
-            this.siteList = childs;
+          this.siteList = childs;
         }
         this.checkData(this.siteList[0]);
       });
@@ -511,16 +525,18 @@ export default {
         this.checkData(obj.children[0]);
       } else {
         this.changeSite(obj);
-        this.form.deptId = obj.id
+        this.form.deptId = obj.id;
       }
     },
+
     // 改变站点
     changeSite(index) {
-      this.changeMechanism(index.id)
-      this.form.tunnel = ''
+      this.changeMechanism(index.id);
+      this.form.tunnel = "";
       this.positionList = [];
       this.boardDirectionList = [];
     },
+
     // 通过所属机构查隧道
     changeMechanism(val) {
       listTunnels(val).then((response) => {
@@ -531,6 +547,8 @@ export default {
         this.changeDirection();
       });
     },
+
+    //改变方向
     changeDirection(val) {
       // console.log(val,"val")
       this.getDicts("iot_board_direction").then((res) => {
@@ -544,14 +562,15 @@ export default {
         this.getIotBoard();
       });
     },
+
     // 改变隧道
     changeTunnel(value) {
       this.checkedCities = [];
-      // this.checkboxList = [];
       this.contentList = [];
       this.form.tunnel = value;
       this.getIotBoard();
     },
+
     // 情报板设备 折叠面板
     getIotBoard() {
       this.checkAll = false;
@@ -562,20 +581,18 @@ export default {
       };
       getIotBoardList(param).then((res) => {
         console.log(res, "查询情报板设备列表");
-        // console.log(this.checkAll,"checkAllcheckAllcheckAllcheckAll")
         this.iotBoardList = res.data;
-
-        if(res.data.length>0){
-          this.iotBoardActive = res.data[0].devicePixel
-          this.handleChange(res.data[0].devicePixel)
-        }else{
-          this.getInfoMode()
+        if (res.data.length > 0) {
+          this.iotBoardActive = res.data[0].devicePixel;
+          this.handleChange(res.data[0].devicePixel);
+        } else {
+          this.getInfoMode();
         }
-
         this.$forceUpdate();
       });
     },
 
+    // 板子分辨率换算
     getScreenSize(num, type) {
       // console.log(num)
       let width = num.split("*")[0];
@@ -605,13 +622,13 @@ export default {
       }
     },
 
+    // 接收子组件 新增模板
     getActiveNames() {
-      // console.log(active);
-      // this.activeNames = active;
       this.allVmsTemplate();
     },
+
+    // 向左新增待下发
     arrowLeft(item) {
-      console.log(item, "向左新增待下发");
       var list = {
         FONT_SIZE: item.tcontents[0].fontSize + "px",
         COLOR: item.tcontents[0].fontColor,
@@ -622,36 +639,34 @@ export default {
         ACTION: item.inScreenMode, //出屏方式
         STAY: item.stopTime, //停留时间
         category: item.category, //所属类别
-        ID:this.contentList.length,
+        ID: this.contentList.length,
       };
       this.contentList.push(list);
       console.log(this.contentList, "this.contentList");
     },
-    arrowRight(item) {
-      this.toRightItem = item
 
-      if(!item.category){
-        this.arrowRightVisible = true
-      }else{
-        this.arrowRightAllVmsTemplate()
+    // 向右添加模板
+    arrowRight(item) {
+      this.toRightItem = item;
+      if (!item.category) {
+        this.arrowRightVisible = true;
+      } else {
+        this.arrowRightAllVmsTemplate();
       }
-      console.log(item, "向右添加模板");
-      
     },
-    // categoryButton(){
-    //   this.arrowRightAllVmsTemplate()
-    // },
-    arrowRightAllVmsTemplate(){
-      console.log(this.contentList,"不选所属类别向右contentList")
-      console.log(this.toRightItem,this.toRightCategory)
-      let item = this.toRightItem
+
+    // 向右添加模板
+    arrowRightAllVmsTemplate() {
+      console.log(this.contentList, "不选所属类别向右contentList");
+      console.log(this.toRightItem, this.toRightCategory);
+      let item = this.toRightItem;
       let templateId = "";
       let method = "put";
       const params1 = {
         inScreenMode: item.ACTION,
         screenSize: this.form.devicePixel,
         applyType: "",
-        category: item.category?item.category:this.toRightCategory,
+        category: item.category ? item.category : this.toRightCategory,
         coordinate: "",
         height: "",
         id: "",
@@ -662,6 +677,7 @@ export default {
         vmsType: "",
         width: "",
       };
+
       // 新增
       addTemplate(params1, method).then((data) => {
         console.log(data, "新增口返回data");
@@ -678,23 +694,25 @@ export default {
           templateContent: templateContent,
           templateId: data,
         };
-        addTemplateContent(params2).catch((err) => {
-          throw err;
-        }).then((res)=>{
-          if(res.code == 200){
-            this.allVmsTemplate('no')
-          }
-        })
+        addTemplateContent(params2)
+          .catch((err) => {
+            throw err;
+          })
+          .then((res) => {
+            if (res.code == 200) {
+              this.allVmsTemplate("no");
+            }
+          });
         // this.getActiveNames(item.category);
       });
-      this.arrowRightVisible = false
+      this.arrowRightVisible = false;
     },
+
     // 修改弹窗
     editOutline(item, index, type) {
-      // console.log(item, index, "item,index");
       this.index = index;
       this.editType = type;
-      console.log(item,"修改弹窗");
+      console.log(item, "修改弹窗");
       this.boardEmitItem = {
         FONT_SIZE: item.tcontents[0].fontSize + "px",
         COLOR: item.tcontents[0].fontColor,
@@ -710,34 +728,30 @@ export default {
         id: item.id,
         tcontentsId: item.tcontents[0].id,
       };
-
-      // console.log(this.showEmit, "this.showEmit");
       this.showEmit = true;
     },
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      let content = '是否确认删除选中数据项?'
-      if(ids == null || ids == undefined || ids == [] || ids == '') {
-        content = '是否确认删除当前情报板模板?'
+      let content = "是否确认删除选中数据项?";
+      if (ids == null || ids == undefined || ids == [] || ids == "") {
+        content = "是否确认删除当前情报板模板?";
       }
-      this.$confirm(
-        content,
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
+      this.$confirm(content, "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(function () {
           return deleteTemplate(ids);
         })
         .then(() => {
-          this.allVmsTemplate('no');
+          this.allVmsTemplate("no");
           this.$modal.msgSuccess("删除成功");
         });
     },
+
     // 情报板管理右侧查询接口
     allVmsTemplate(type) {
       const param = {
@@ -746,36 +760,38 @@ export default {
       getAllVmsTemplate(param).then((res) => {
         let data = res.data;
         console.log(res, "情报板管理右侧查询接口");
-        let jArr = []
+        let jArr = [];
 
         for (let j = 0; j < this.iotTemplateCategoryList.length; j++) {
           let arr = this.iotTemplateCategoryList[j];
           let brr = data[j];
           arr.list = brr;
-          jArr.push(j.toString())
+          jArr.push(j.toString());
         }
-        if(type != 'no'){
-          this.activeNames = jArr
+        if (type != "no") {
+          this.activeNames = jArr;
         }
         this.$forceUpdate();
-        console.log(this.iotTemplateCategoryList,"新模板")
+        console.log(this.iotTemplateCategoryList, "新模板");
       });
     },
+
     // 删除中间模板
     delQbbDrawer(index) {
       if (index > -1) {
         this.contentList.splice(index, 1);
         this.$message.success("删除成功");
-
       }
     },
+
     // 发布信息
     publishInfo() {
-      this.$confirm('是否确定发布情报板?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+      this.$confirm("是否确定发布情报板?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
           console.log(this.contentList, "发布信息");
           var content = "";
           var playList = "[Playlist]<r><n>";
@@ -792,14 +808,19 @@ export default {
             content += this.contentList[i].STAY + ",";
             content += this.contentList[i].ACTION + ",";
             content += this.contentList[i].SPEED + "," + "\\";
-            content += "C" + this.contentList[i].COORDINATE.replace("-",'0') + "\\";
+            content +=
+              "C" + this.contentList[i].COORDINATE.replace("-", "0") + "\\";
             content += "S00\\";
-            content += "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
+            content +=
+              "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
             content += "f" + this.getFontValue(this.contentList[i].FONT);
             content +=
               this.contentList[i].FONT_SIZE.substring(0, 2) +
               this.contentList[i].FONT_SIZE.substring(0, 2);
-            content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, "<r><n>");
+            content += this.contentList[i].CONTENT.replace(
+              /\n|\r\n/g,
+              "<r><n>"
+            );
 
             if (i + 1 != this.contentList.length) {
               content += "<r><n>";
@@ -808,63 +829,50 @@ export default {
           }
           let protocolType = "GUANGDIAN_V33";
           let deviceld = this.checkedCities.toString();
-          console.log(deviceld, "deviceld");
-          uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
-            console.log(response, "返回结果");
-            this.$modal.msgSuccess("发布成功");
-            // setTimeout(() => {
-            //   getBoardContent(deviceld).then((res) => {
-            //     console.log(res, "情报板内容查询");
-            //   });
-            // }, 1000);
-          });
-        }).catch(() => {
+          uploadBoardEditInfo(deviceld, protocolType, content).then(
+            (response) => {
+              console.log(response, "返回结果");
+              this.$modal.msgSuccess("发布成功");
+            }
+          );
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取发布情报板'
-          });          
+            type: "info",
+            message: "已取发布情报板",
+          });
         });
-      
     },
 
     // 接收子组件新增待发模板
     addInfo(form) {
-      console.log(this.contentList, "11111111111");
-
       console.log(form, "待发新增");
-      form.ID = this.contentList.length
+      form.ID = this.contentList.length;
       this.contentList.push(deepClone(form));
       this.$message.success("添加成功");
-      console.log(this.contentList, "2222222222222222222t");
       this.$forceUpdate();
     },
 
     // 接收子组件form表单 修改
     receiveForm(form) {
       console.log(form, "接收子组件form表单 修改");
-      this.contentList.splice(this.index_,1,form);
+      this.contentList.splice(this.index_, 1, form);
       this.$forceUpdate();
-
-      console.log(this.contentList, "99999999999");
-      this.allVmsTemplate('no');
+      this.allVmsTemplate("no");
     },
 
     // 打开添加信息弹窗
     openDialogVisible(type, mode) {
-      // this.devicePixel = this.form.devicePixel
-      // if (type == 1) {
-        this.$refs.addinfo.init(this.form.devicePixel, type, mode);
-      // } else {
-        // this.$refs.addinfo.init(this.devicePixelMode, type, mode);
-      // }
-      console.log(this.form.devicePixel, "this.devicePixelthis.devicePixel");
+      this.$refs.addinfo.init(this.form.devicePixel, type, mode);
     },
 
+    // 全选
     handleCheckAllChange(val) {
       this.checkedCities = val ? this.deviceList : [];
     },
+
+    // 多选
     handleCheckedCitiesChange(value) {
-      
       this.checkedCities = value;
       let val = JSON.parse(JSON.stringify(value));
       for (let itm of this.deviceList) {
@@ -874,18 +882,15 @@ export default {
           this.checkAll = false;
         }
       }
-      this.$forceUpdate()
-
+      this.$forceUpdate();
     },
+    // 情报板列表手风琴
     handleChange(val) {
-      console.log(val,"情报板列表手风琴")
       this.contentList = [];
       this.deviceList = [];
-      // this.checkboxList = [];
-      // this.checkboxValue = []
       this.disabledButton = true;
-      this.checkedCities = []
-      this.checkAll = false
+      this.checkedCities = [];
+      this.checkAll = false;
       this.form.devicePixel = val;
       this.allVmsTemplate();
       for (let item of this.iotBoardList) {
@@ -896,22 +901,14 @@ export default {
           }
         }
       }
-      console.log(this.deviceList,"this.deviceList")
-      // let val2 = JSON.parse(JSON.stringify(this.checkboxValue));
-      // if (val2.length>0) {
-      //   for (let itm of this.deviceList) {
-      //     if (val2.indexOf(itm) > -1) {
-      //       this.checkAll = true;
-      //     } else {
-      //       this.checkAll = false
-      //     }
-      //   }
-      // }
     },
+
+    // 转报文 ITEM001
     formatNum(num, length) {
       return (Array(length).join("0") + parseInt(num)).slice(-length);
     },
 
+    // 转报文 字体
     getFontValue(font) {
       if (font == "黑体") return "h";
       if (font == "楷体") return "k";
@@ -919,20 +916,16 @@ export default {
       if (font == "隶书") return "l";
       return "s";
     },
+
+    // 转报文 色号
     getColorValue(color) {
-      if (color == "蓝色" || color == 'blue') return "000000255000";
-      if (color == "绿色" || color == '#00FF00') return "000255000000";
-      if (color == "透明色" ) return "t";
-      if (color == "红色" || color == 'red') return "255000000000";
+      if (color == "蓝色" || color == "blue") return "000000255000";
+      if (color == "绿色" || color == "#00FF00") return "000255000000";
+      if (color == "透明色") return "t";
+      if (color == "红色" || color == "red") return "255000000000";
       return "255255000000"; //黄色
     },
 
-    addPropertyMap(itemIdStr, map, addFlg, propertyStr) {
-      var array = map.get(itemIdStr);
-      if (array == null || addFlg) array = new Array();
-      array.push(propertyStr);
-      map.put(itemIdStr, array);
-    },
     // 向内容显示区域添加一条信息
     addContentDisplayInfos(addId, no, disContent) {
       var jsonArr = {};
@@ -941,18 +934,18 @@ export default {
       this.disContentList.push(jsonArr);
     },
 
+    // 回读
     async onSubmit(deviceId) {
-      this.submitButton = true
-      this.loading = true
+      this.submitButton = true;
+      this.loading = true;
       this.contentList = [];
       // 获取情报板修改页面信息
       await getBoardEditInfo(deviceId).then((response) => {
         console.log(response, "response");
         if (response.code != 200) {
           this.$message.error(`设备网络连接异常，请稍后重试`);
-          this.loading = false
-          this.submitButton = false
-
+          this.loading = false;
+          this.submitButton = false;
           return;
         }
         if (response.data[0] == undefined) {
@@ -970,12 +963,10 @@ export default {
         ) {
           this.$message(response.msg);
           this.$forceUpdate();
-          this.loading = false
+          this.loading = false;
           return;
         }
         this.supplier = protocolType;
-        var currRowId = "";
-        var reg = /,/g;
         console.log(contents, "contents");
         for (var i = 0; i < contents.length; i++) {
           var content = contents[i];
@@ -986,19 +977,17 @@ export default {
           var con = content[itemId][0];
           con.COLOR = this.getColorStyle(con.COLOR);
           con.FONT_SIZE = Number(con.FONT_SIZE.substring(0, 2)) + "px";
-          con.ID = i
-          // con.CONTENT = con.CONTENT
+          con.ID = i;
 
           this.contentList.push(con);
         }
-        // this.allVmsTemplate();
         console.log(this.contentList, "this.contentList");
-        // this.rowDrop()
-        this.submitButton = false
-        this.loading = false
-
+        this.submitButton = false;
+        this.loading = false;
         this.$forceUpdate();
-      })
+      });
+
+      // 根据情报板id获取分辨率
       getBoardInfo(deviceId).then((res) => {
         console.log(res, "getBoardInfo");
         this.deviceId = res.data.deviceId;
@@ -1008,21 +997,22 @@ export default {
         } else {
           this.disabledButton = true;
         }
-        
       });
-      
     },
+
+    // 待下发 编辑
     openQbbDrawer(item, index, type) {
       this.index_ = index;
       console.log(item);
       this.boardEmitItem = item;
-      // console.log(this.form.devicePixel,"this.form.devicePixel");
       this.boardEmitItem.screenSize = this.form.devicePixel;
       this.boardEmitItem.deviceId = this.deviceId;
       this.boardEmitItem.type = type;
 
       this.showEmit = true;
     },
+
+    // 转颜色
     getColorStyle(font) {
       if (font == "黄色") {
         return "yellow";
@@ -1036,6 +1026,8 @@ export default {
         return font;
       }
     },
+
+    // 换算字号
     getFontSize(font, screenSize) {
       if (!font) {
         return;
@@ -1071,6 +1063,8 @@ export default {
         }
       }
     },
+
+    // 换算文字在模板的位置
     getCoordinate(coordinate, type, screenSize) {
       let width = "";
       let height = "";
@@ -1092,9 +1086,9 @@ export default {
           }
         } else {
           if (type == "left") {
-              return coordinate / (height / 75) + 5 + "px";
+            return coordinate / (height / 75) + 5 + "px";
           } else if (type == "top") {
-              return coordinate / (height / 75) + 4 + "px";
+            return coordinate / (height / 75) + 4 + "px";
           }
         }
       }
@@ -1141,9 +1135,9 @@ export default {
     // },
     dialogClose() {
       this.showEmit = false;
-      this.arrowRightVisible = false
+      this.arrowRightVisible = false;
       setTimeout(() => {
-        this.allVmsTemplate('no');
+        this.allVmsTemplate("no");
       }, 500);
     },
   },
@@ -1153,7 +1147,7 @@ export default {
 .container {
   .verticalBox {
     height: 100%;
-    padding:10px;
+    padding: 10px;
     .bigTitle {
       padding: 15px 0;
       border-bottom: 1px solid #05afe3;
@@ -1166,89 +1160,60 @@ export default {
       width: 100%;
       height: calc(100% - 67px);
       overflow: auto;
-      // .listBox {
-      //   height: 75px;
-      //   display: flex;
-      //   // grid-template-columns: 3% auto 10%;
-      //   // align-content: center;
-      //   // column-gap: 20px; //左右
-      //   // row-gap: 40px; //上下
-      //   margin-bottom: 25px;
 
-        // .indexBox {
-        //   display: flex;
-        //   flex-flow: column;
-        //   align-items: center;
-        //   justify-content: space-evenly;
-        //   cursor: pointer;
-        //   i {
-        //     font-size: 20px;
-        //   }
-        //   .disabledClass {
-        //     pointer-events: none;
-        //     cursor: auto !important;
-        //     color: #ccc;
-        //   }
+      .con {
+        border: 1px solid #05afe3;
+        height: 75px;
+        position: relative;
+        width: 540px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .menuBox {
+        display: flex;
+        align-items: center;
+        // margin-left: 10px;
+        border: solid 1px #05afe3;
+        height: 75px;
+        justify-content: space-around;
+        align-items: center;
+        div {
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+          width: 40px;
+          height: 40px;
+        }
+        > div:first-of-type {
+          background-image: url(../../../assets/cloudControl/edit2.png);
+        }
+        > div:nth-of-type(2) {
+          background-image: url(../../../assets/cloudControl/edit4.png);
+        }
+        // >div:last-of-type{
+        //   background-image: url(../../../assets/cloudControl/edit4.png);
         // }
-
-        .con {
-          border: 1px solid #05afe3;
-          height: 75px;
-          // line-height: 75px;
-          // text-align: center;
-          // background: black;
-          position: relative;
-          width: 540px;
-          // margin-left: 10px;
-          overflow: hidden;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          // position: absolute;
+        > div:first-of-type:hover {
+          background-image: url(../../../assets/cloudControl/edit1.png);
         }
-        .menuBox {
-          display: flex;
-          align-items: center;
-          // margin-left: 10px;
-          border: solid 1px #05afe3;
-          height: 75px;
-          justify-content: space-around;
-          align-items: center;
-          div{
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
-            width: 40px;
-            height: 40px;
-          }
-          >div:first-of-type{
-            background-image: url(../../../assets/cloudControl/edit2.png);
-          }
-          >div:nth-of-type(2){
-            background-image: url(../../../assets/cloudControl/edit4.png);
-          }
-          // >div:last-of-type{
-          //   background-image: url(../../../assets/cloudControl/edit4.png);
-          // }
-          >div:first-of-type:hover{
-            background-image: url(../../../assets/cloudControl/edit1.png);
-          }
-          >div:nth-of-type(2):hover{
-            background-image: url(../../../assets/cloudControl/closeIcon1.png);
-          }
-          // >div:last-of-type:hover{
-          //   background-image: url(../../../assets/cloudControl/closeIcon1.png);
-          // }
-          i {
-            font-size: 24px;
-            color: #666;
-            cursor: pointer;
-            caret-color: rgba(0,0,0,0);
-            user-select: none;
-          }
-          i:hover{
-            color:#05afe3 !important;
-          }
+        > div:nth-of-type(2):hover {
+          background-image: url(../../../assets/cloudControl/closeIcon1.png);
         }
+        // >div:last-of-type:hover{
+        //   background-image: url(../../../assets/cloudControl/closeIcon1.png);
+        // }
+        i {
+          font-size: 24px;
+          color: #666;
+          cursor: pointer;
+          caret-color: rgba(0, 0, 0, 0);
+          user-select: none;
+        }
+        i:hover {
+          color: #05afe3 !important;
+        }
+      }
       // }
       .controlBox {
         display: flex;
@@ -1260,11 +1225,6 @@ export default {
       width: 100%;
       .con {
         height: 75px;
-        // display: grid;
-        // grid-template-columns: auto 10%;
-        // align-content: center;
-        // column-gap: 20px; //左右
-        // row-gap: 40px; //上下
         margin: 10px 0;
         padding: 0 20px;
         overflow: hidden;
@@ -1272,10 +1232,7 @@ export default {
 
         .templateTitle {
           height: 75px;
-          // line-height: 75px;
-          // text-align: center;
           border: 1px solid #05afe3;
-          // background: black;
           position: relative;
           width: 540px;
           float: left;
@@ -1286,8 +1243,6 @@ export default {
         }
         .menuBox {
           display: flex;
-          // align-items: center;
-          // margin: 28px 0;
           float: right;
           margin-left: 10px;
           border: solid 1px #05afe3;
@@ -1295,29 +1250,29 @@ export default {
           display: flex;
           justify-content: space-around;
           align-items: center;
-          
-          div{
+
+          div {
             background-repeat: no-repeat;
             background-size: 100% 100%;
             width: 40px;
             height: 40px;
           }
-          >div:first-of-type{
+          > div:first-of-type {
             background-image: url(../../../assets/cloudControl/toLeft2.png);
           }
-          >div:nth-of-type(2){
+          > div:nth-of-type(2) {
             background-image: url(../../../assets/cloudControl/edit2.png);
           }
-          >div:last-of-type{
+          > div:last-of-type {
             background-image: url(../../../assets/cloudControl/edit4.png);
           }
-          >div:first-of-type:hover{
+          > div:first-of-type:hover {
             background-image: url(../../../assets/cloudControl/toLeft1.png);
           }
-          >div:nth-of-type(2):hover{
+          > div:nth-of-type(2):hover {
             background-image: url(../../../assets/cloudControl/edit1.png);
           }
-          >div:last-of-type:hover{
+          > div:last-of-type:hover {
             background-image: url(../../../assets/cloudControl/closeIcon1.png);
           }
           i {
@@ -1325,11 +1280,11 @@ export default {
             color: #666;
             padding-left: 4px;
             cursor: pointer;
-            caret-color: rgba(0,0,0,0);
+            caret-color: rgba(0, 0, 0, 0);
             user-select: none;
           }
-          i:hover{
-            color:#05afe3;
+          i:hover {
+            color: #05afe3;
           }
           .disabledClass {
             pointer-events: none;
@@ -1370,15 +1325,14 @@ export default {
   justify-content: space-between;
   width: 100%;
 }
-.el-checkbox{
+.el-checkbox {
   display: flex !important;
   padding-top: 10px;
 }
 ::v-deep .el-table {
-  thead{
+  thead {
     display: none;
   }
- 
 }
 ::v-deep .vue-treeselect__control {
   height: 3vh;
@@ -1387,7 +1341,7 @@ export default {
 .vue-treeselect__single-value {
   line-height: 3vh;
 }
-.huiduButton{
+.huiduButton {
   background: transparent;
   border: none;
   height: 19px;
@@ -1396,49 +1350,32 @@ export default {
   // color: #fff;
   font-size: 16px;
 }
-.huiduButton:hover{
-  color:#05afe3 !important;
+.huiduButton:hover {
+  color: #05afe3 !important;
 }
-.boardTextStyle{
+.boardTextStyle {
   position: absolute;
   line-height: 1;
-  caret-color: rgba(0,0,0,0);
+  caret-color: rgba(0, 0, 0, 0);
   user-select: none;
 }
 ::v-deep .sortable-chosen:not(th) {
-
-background-color: rgba(5,175,227,0.1) !important;
+  background-color: rgba(5, 175, 227, 0.1) !important;
 }
 
-// .el-table:before {
-
-// height: 0;
-
-// }
-
-// .el-table td {
-
-// border: none;
-
-// }
-
-// .el-table__body tr:hover > td {
-
-// background-color: transparent !important;
-
-// }
-::v-deep .el-select .el-input .el-input__inner{
-  caret-color: rgba(0,0,0,0);
+::v-deep .el-select .el-input .el-input__inner {
+  caret-color: rgba(0, 0, 0, 0);
   user-select: none;
 }
-::v-deep .el-collapse-item__header,.el-collapse-item__content{
-  caret-color: rgba(0,0,0,0);
+::v-deep .el-collapse-item__header,
+.el-collapse-item__content {
+  caret-color: rgba(0, 0, 0, 0);
   user-select: none;
 }
-::v-deep .el-collapse{
+::v-deep .el-collapse {
   border-bottom: transparent;
 }
-::v-deep .el-table .cell{
+::v-deep .el-table .cell {
   padding-left: 20px;
 }
 </style>

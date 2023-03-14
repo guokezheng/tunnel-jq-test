@@ -309,7 +309,9 @@ export default {
           required: true,
           message: "请输入管理员联系方式",
           trigger: "blur"
-        }],
+        },
+        { pattern: /^((0\d{2,3}-\d{7,8})|(1[34578]\d{9}))$/, message: '请输入正确联系方式', trigger: 'blur' },
+      ],
         location: [{
           required: true,
           message: "请输入备品所在位置",

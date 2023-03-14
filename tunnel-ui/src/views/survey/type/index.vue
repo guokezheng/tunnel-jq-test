@@ -238,6 +238,7 @@ export default {
       rules: {
         vehicleTypeCode: [
           { required: true, message: "类型编码不能为空", trigger: "change" },
+          { pattern: /^[a-zA-Z0-9]+$/, message: '类型编码为数字加字母', trigger: 'blur' },
         ],
         vehicleTypeName: [
           { required: true, message: "类型名称不能为空", trigger: "change" },

@@ -286,7 +286,11 @@ public class SdEventServiceImpl implements ISdEventService {
         List<SdTrafficImage> imgList = eventDiscovery.getIconUrlList();
         int listLength = imgList.size() >= 3 ? 3 : imgList.size();
         for(int i = 0; i < listLength; i++){
-            data.put("${picture"+(i+1)+"}",setImgMap(imgList.get(i).getImgUrl()));
+            Map<String, Object> map = setImgMap(imgList.get(i).getImgUrl());
+            if(map == null){
+                continue;
+            }
+            data.put("${picture"+(i+1)+"}",map);
         }
         list.add(list1);
         if(!"3".equals(eventState)){
@@ -1249,10 +1253,14 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     public Map<String, Object> setImgMap(String imgUrl){
         Map <String,Object> map = new HashMap <String, Object>();
+        byte[] fileStream = WorderToNewWordUtils.getFileStream(imgUrl);
+        if(fileStream == null){
+            return null;
+        }
         map.put("width", 550);
         map.put("height", 300);
         map.put("type", "jpg");
-        map.put("content", WorderToNewWordUtils.getFileStream(imgUrl));
+        map.put("content", fileStream);
         return map;
     }
 }

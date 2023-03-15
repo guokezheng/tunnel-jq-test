@@ -468,13 +468,13 @@ export default {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
 
-          if (
-            autoControl.length < 1 ||
-            autoControl[0].equipments.length == 0 ||
-            autoControl[0].state == ""
-          ) {
-            return this.$modal.msgError("请选择设备并添加执行操作");
-          }
+          // if (
+          //   autoControl.length < 1 ||
+          //   autoControl[0].equipments.length == 0 ||
+          //   autoControl[0].state == ""
+          // ) {
+          //   return this.$modal.msgError("请选择设备并添加执行操作");
+          // }
           // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();

@@ -1,20 +1,20 @@
 package com.tunnel.business.domain.event;
 
+import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.util.List;
 
 /**
- * 事件处置信息对象 sd_event_handle
+ * 事件处置信息对象历史记录 sd_event_handle_history
  * 
- * @author ruoyi
+ * @author zhai
  * @date 2022-12-15
  */
-public class SdEventHandle extends BaseEntity
+public class SdEventHandleHistory extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -46,7 +46,7 @@ public class SdEventHandle extends BaseEntity
     /**
      * 子节点
      */
-    private List<SdEventHandle> children;
+    private List<SdEventHandleHistory> children;
 
     @ApiModelProperty("预案Id")
     private String reserveId;
@@ -60,7 +60,7 @@ public class SdEventHandle extends BaseEntity
     @ApiModelProperty("流程名称")
     private String flowName;
 
-    @ApiModelProperty("历史条数")
+    @ApiModelProperty("历史次数")
     private String flowNum;
 
     public String getFlowNum() {
@@ -103,11 +103,11 @@ public class SdEventHandle extends BaseEntity
         this.processId = processId;
     }
 
-    public List<SdEventHandle> getChildren() {
+    public List<SdEventHandleHistory> getChildren() {
         return children;
     }
 
-    public void setChildren(List<SdEventHandle> children) {
+    public void setChildren(List<SdEventHandleHistory> children) {
         this.children = children;
     }
 

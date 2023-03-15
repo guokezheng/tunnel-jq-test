@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.event.SdEventHandle;
 import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.event.SdReserveProcess;
 
@@ -135,13 +136,6 @@ public interface ISdEventService {
     AjaxResult getHandle(SdEvent sdEvent);
 
     /**
-     * 主动安全-复核-处置获取预案流程
-     * @param sdEvent
-     * @return
-     */
-    AjaxResult getSafetyHandle(SdEvent sdEvent);
-
-    /**
      * 应急调度关联策略
      * @param sdReservePlan
      * @return
@@ -206,10 +200,10 @@ public interface ISdEventService {
 
     /**
      * 应急调度-处置设备详情（阶段）
-     * @param sdReservePlan
+     * @param sdEventHandle
      * @return
      */
-    AjaxResult getAllManagementDevices(SdReservePlan sdReservePlan);
+    AjaxResult getAllManagementDevices(SdEventHandle sdEventHandle);
 
     /**
      * 修改警情升级
@@ -224,4 +218,11 @@ public interface ISdEventService {
      * @return
      */
     AjaxResult getEventInif(SdEvent sdEvent);
+
+    /**
+     * 查看所选预案或策略的设备详情
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult examineDeviceDetail(SdEvent sdEvent);
 }

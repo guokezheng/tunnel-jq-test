@@ -145,7 +145,7 @@ public interface ISdStrategyService {
      */
     void handleStrategyRollBack(Long warId);
 
-    int implementPlan(Long planId,Long eventId);
+    int implementPlan(String planId,Long eventId);
 
     int implementProcess(Long processId,Long eventId);
 

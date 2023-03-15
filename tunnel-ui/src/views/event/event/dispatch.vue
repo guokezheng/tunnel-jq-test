@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-10 15:59:03
+ * @LastEditTime: 2023-03-14 16:38:14
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -20,7 +20,7 @@
         src="http://106.120.201.126:14712/dashboard"
       ></iframe> -->
     </div>
-    <div class="drawerBox" @click="drawerHandleOpen()">
+    <div class="drawerBox" @click="drawerHandleOpen()" v-show="drawer == false">
       <i class="el-icon-d-arrow-right"></i>
       处置记录
     </div>
@@ -30,7 +30,7 @@
       :visible.sync="drawer"
       direction="ltr"
       :before-close="drawerHandleClose"
-      style="left:25%;">
+      style="left:26%;">
       <el-col :span="24">
         <el-timeline :reverse="reverse">
           <el-timeline-item
@@ -1112,7 +1112,7 @@ export default {
         arr.push(itm.id);
       }
       this.reserveId = item.reserveId;
-      let data = {id:item.reserveId,eventId:that.$route.query.id};
+      let data = {reserveId:item.reserveId,eventId:that.$route.query.id};
       getAllManagementDevices(data).then(res=>{
         this.oneKeyList = res.data;
         console.log(this.oneKeyList);
@@ -1849,7 +1849,7 @@ export default {
 ::v-deep .contentList .el-button--success.is-plain{
   background: transparent;
 }
-::v-deep .drawerLog .el-drawer__container{left:10%!important;}
+::v-deep .drawerLog .el-drawer__container{left:-10%!important;}
 ::v-deep .drawerLog .el-drawer.ltr{
   height: 65%;
   left: 10%;
@@ -1894,7 +1894,7 @@ export default {
   .drawerBox{
     position: fixed;
     top: 9.1%;
-    left: 21.5%;
+    left: 24%;
     z-index: 619;
     color:white;
     height: 120px;

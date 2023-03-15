@@ -340,4 +340,11 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<SdDevices> getEntranceExitVideo(SdDevices sdDevices);
+
+	/**
+	 * 批量查询设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectDevices(String ids);
 }

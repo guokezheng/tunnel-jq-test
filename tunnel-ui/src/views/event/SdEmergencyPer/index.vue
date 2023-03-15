@@ -169,20 +169,19 @@
 
     <!-- 添加或修改应急人员信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px" style = "">
 
         <el-form-item label="应急人员" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入应急人员" />
         </el-form-item>
-        <el-form-item label="归属部门" prop="deptId">
+        <el-form-item label="归属部门" prop="deptId" >
           <treeselect
             v-model="form.deptId"
             :options="deptOptions"
-            :show-count="true"
             placeholder="请选择归属部门"
+            style="color: #000000"
           />
         </el-form-item>
-
         <el-form-item label="岗位" prop="groupName">
           <el-select
           v-model="form.groupName"
@@ -531,3 +530,8 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss">
+
+</style>
+

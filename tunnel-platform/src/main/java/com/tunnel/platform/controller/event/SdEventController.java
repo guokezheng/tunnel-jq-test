@@ -317,16 +317,6 @@ public class SdEventController extends BaseController
     }
 
     /**
-     * 主动安全-复核-处置获取预案流程
-     * @param sdEvent
-     * @return
-     */
-    @GetMapping("/getSafetyHandle")
-    public AjaxResult getSafetyHandle(SdEvent sdEvent){
-        return sdEventService.getSafetyHandle(sdEvent);
-    }
-
-    /**
      * 更新事件处置
      * @param sdEvent
      * @return
@@ -410,12 +400,12 @@ public class SdEventController extends BaseController
 
     /**
      * 应急调度-处置设备详情（阶段）
-     * @param sdReservePlan
+     * @param sdEventHandle
      * @return
      */
     @GetMapping("/getAllManagementDevices")
-    public AjaxResult getAllManagementDevices(SdReservePlan sdReservePlan){
-        return sdEventService.getAllManagementDevices(sdReservePlan);
+    public AjaxResult getAllManagementDevices(SdEventHandle sdEventHandle){
+        return sdEventService.getAllManagementDevices(sdEventHandle);
     }
 
     /**
@@ -436,5 +426,10 @@ public class SdEventController extends BaseController
     @GetMapping("/getEventInif")
     public AjaxResult getEventInif(SdEvent sdEvent){
         return sdEventService.getEventInif(sdEvent);
+    }
+
+    @GetMapping("/examineDeviceDetail")
+    public AjaxResult examineDeviceDetail(SdEvent sdEvent){
+        return sdEventService.examineDeviceDetail(sdEvent);
     }
 }

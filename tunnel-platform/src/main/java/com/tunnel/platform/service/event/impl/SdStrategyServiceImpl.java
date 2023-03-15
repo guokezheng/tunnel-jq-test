@@ -1099,38 +1099,25 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     }
 
     @Override
-    public int implementPlan(Long planId,Long eventId){
-        /*List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(planId);
+    public int implementPlan(String planId,Long eventId){
+        //将id拆分
+        List<String> list = Arrays.asList(planId.split(","));
         Map flowParam = new HashMap();
         flowParam.put("eventId",eventId);
         int issueResult = 0;
-        for(SdReserveProcess process:processList){
-            SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
-            flowParam.put("content",process.getProcessName());
+        for(String processId : list){
+            //查询预案流程节点
+            SdReserveProcess sdReserveProcess = sdReserveProcessMapper.selectSdReserveProcessById(Long.valueOf(processId));
+            SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(sdReserveProcess.getStrategyId());
+            flowParam.put("content",sdReserveProcess.getProcessName());
             issueResult = issuedDevice(rl,eventId,"4");
             if(issueResult>0){
                 sdEventFlowService.savePlanProcessFlow(flowParam);
                 //更新事件处置记录表状态
-                updateHandleState(process.getId(),eventId);
+                updateHandleState(sdReserveProcess.getId(),eventId);
             }
         }
-        return issueResult;*/
-        List<SdReserveProcess> processList = sdReserveProcessMapper.getProcessList(planId);
-        Map flowParam = new HashMap();
-        flowParam.put("eventId",eventId);
-        int issueResult = 0;
-        for(SdReserveProcess process:processList){
-            for(SdReserveProcess item : process.getProcessesList()){
-                SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(item.getStrategyId());
-                flowParam.put("content",item.getProcessName());
-                issueResult = issuedDevice(rl,eventId,"4");
-                if(issueResult>0){
-                    sdEventFlowService.savePlanProcessFlow(flowParam);
-                    //更新事件处置记录表状态
-                    updateHandleState(process.getId(),eventId);
-                }
-            }
-        }
+
         return issueResult;
     }
 

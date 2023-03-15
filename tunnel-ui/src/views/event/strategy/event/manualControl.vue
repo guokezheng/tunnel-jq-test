@@ -102,8 +102,8 @@
               <el-col :span="4">处置名称</el-col>
               <el-col :span="6">设备类型</el-col>
               <el-col :span="6">指定设备</el-col>
-              <el-col :span="4">控制指令</el-col>
-              <el-col :span="4">操作</el-col>
+              <el-col :span="6">控制指令</el-col>
+              <el-col :span="2">操作</el-col>
             </div>
           </el-form-item>
         </el-col>
@@ -115,7 +115,7 @@
           v-for="(items, index) in strategyForm.manualControl"
           :key="index"
         >
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item prop="disposalName">
               <el-input
                 v-model="items.disposalName"
@@ -161,7 +161,7 @@
             </el-select>
           </el-col>
           <el-col
-            :span="4"
+            :span="6"
             v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36"
           >
             <el-select
@@ -179,7 +179,7 @@
             </el-select>
           </el-col>
           <el-col
-            :span="4"
+            :span="6"
             v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36"
           >
             <el-cascader

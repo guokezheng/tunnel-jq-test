@@ -301,6 +301,9 @@ export default {
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
         ],
+        schedulerTime:[
+          { required: true, message: "请输入定时频率", trigger: "change" }
+        ]
       },
     };
   },

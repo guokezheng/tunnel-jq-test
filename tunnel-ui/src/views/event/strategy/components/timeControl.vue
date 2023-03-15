@@ -85,14 +85,14 @@
             <div class="menu">
               <el-col :span="6">设备类型</el-col>
               <el-col :span="6">指定设备</el-col>
-              <el-col :span="8">控制指令</el-col>
-              <el-col :span="4">操作</el-col>
+              <el-col :span="10">控制指令</el-col>
+              <el-col :span="2">操作</el-col>
             </div>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="22">
+        <el-col :span="24">
         <el-form-item
           v-for="(dain, index) in strategyForm.autoControl"
           :key="index"
@@ -131,10 +131,11 @@
               />
             </el-select>
           </el-col>
-          <div
+          <el-col
+            :span="10"
             v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
           >
-            <el-col :span="4">
+            <el-col :span="12">
               <el-select
                 v-model="dain.openState"
                 placeholder="启动指令"
@@ -149,7 +150,7 @@
                 </el-option>
               </el-select>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="12">
               <el-select
                 v-model="dain.closeState"
                 placeholder="关闭指令"
@@ -164,9 +165,9 @@
                 </el-option>
               </el-select>
             </el-col>
-          </div>
+          </el-col>
           <el-col
-            :span="6"
+            :span="10"
             v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
           >
             <el-cascader
@@ -180,7 +181,7 @@
               @change="handleChange"
             ></el-cascader>
           </el-col>
-          <el-col :span="4" class="buttonBox">
+          <el-col :span="2" class="buttonBox">
             <el-button
               type=""
               icon="el-icon-delete"

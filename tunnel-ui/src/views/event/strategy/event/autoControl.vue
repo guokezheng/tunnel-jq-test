@@ -177,10 +177,10 @@
           <el-col :span="24">
             <el-form-item label="执行操作">
               <div class="menu">
-                <el-col :span="6">设备类型</el-col>
+                <el-col :span="8">设备类型</el-col>
                 <el-col :span="8">指定设备</el-col>
                 <el-col :span="6">控制指令</el-col>
-                <el-col :span="4">操作</el-col>
+                <el-col :span="2">操作</el-col>
               </div>
             </el-form-item>
           </el-col>
@@ -188,12 +188,12 @@
       </el-row>
       <div v-show="strategyForm.triggers.warningType == 1">
         <el-row :gutter="20">
-          <el-col :span="22">
+          <el-col :span="24">
             <el-form-item
               v-for="(dain, index) in strategyForm.autoControl"
               :key="index"
             >
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-select
                   v-model="dain.equipmentTypeId"
                   placeholder="请选择设备类型"
@@ -257,7 +257,7 @@
                   style="width:100%;"
                 ></el-cascader>
               </el-col>
-              <el-col :span="4" class="buttonBox">
+              <el-col :span="2" class="buttonBox">
                 <el-button
                   type=""
                   icon="el-icon-delete"
@@ -430,6 +430,9 @@ export default {
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
         ],
+        eventType: [
+          { required: true, message: "请选择事件类型", trigger: "blur" },
+        ],
         triggers: {
           deviceTypeId: [
             { required: true, message: "请选择设备类型", trigger: "blur" },
@@ -445,9 +448,6 @@ export default {
           ],
           compareValue: [
             { required: true, message: "请输入阈值", trigger: "blur" },
-          ],
-          eventType: [
-            { required: true, message: "请选择事件类型", trigger: "blur" },
           ],
         },
       },

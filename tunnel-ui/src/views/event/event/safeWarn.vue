@@ -220,10 +220,8 @@
                   @click="openPicDialog(eventFormDetail)" 
                   autoplay muted loop>
                 </video>
-                <el-image :src="item.imgUrl" style="width:100%;height:100%;"
-                  v-if="index != 0" @click="clickImg(item.imgUrl)">
-                </el-image>
-                <img >
+                <img :src="item.imgUrl" style="width:100%;height:100%;"
+                  v-if="index != 0" @click="clickImg(item.imgUrl)" />
               </swiper-slide>
               <div class="swiper-button-prev" slot="button-prev"></div>
               <div class="swiper-button-next" slot="button-next"></div>
@@ -1983,32 +1981,57 @@ export default {
           "manageStationSelect"
         );
       }
-      if (!this.dateRange) {
-        this.dateRange = [];
-      }
-      this.queryParams.startTime = this.dateRange[0];
-      this.queryParams.endTime = this.dateRange[1];
-      this.queryParams.eventState = this.checkBoxEventState.toString()
-      if(this.fuzzySearch1){
-        this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
-      }
-      listEvent(this.queryParams).then((response) => {
-        for (let item of response.rows) {
-          if (item.iconUrlList) {
-            for (let i = 0; i < item.iconUrlList.length; i++) {
-              if(item.iconUrlList.length == 1){
-                item.picUrl = item.iconUrlList[0].imgUrl;
-              }else{
-                item.picUrl = item.iconUrlList[1].imgUrl;
+      if (this.currentMenu == "2") {
+       // this.queryParams.pageSize = 10;
+        listList(this.queryParams1).then((response) => {
+          this.eventLists = response.rows;
+          this.eventLists.forEach((item) => {
+            if (item.faultLocation == "null") {
+              item.faultLocation = "";
+            }
+            if (item.faultCxtime == "null") {
+              item.faultCxtime = "";
+            }
+            if (item.faultCode == "null") {
+              item.faultCode = "";
+            }
+            if (item.faultDescription == "null") {
+              item.faultDescription = "";
+            }
+
+          });
+          this.totals = response.total;
+          this.loading = false;
+        });
+      } else if(this.activeName == "0"||this.activeName == "1") {
+        if (!this.dateRange) {
+          this.dateRange = [];
+        }
+        this.queryParams.startTime = this.dateRange[0];
+        this.queryParams.endTime = this.dateRange[1];
+        this.queryParams.searchValue = this.activeName;
+        this.queryParams.eventState = this.checkBoxEventState.toString()
+        if(this.fuzzySearch1){
+          this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
+        }
+        listEvent(this.queryParams).then((response) => {
+          for (let item of response.rows) {
+            if (item.iconUrlList) {
+              for (let i = 0; i < item.iconUrlList.length; i++) {
+                // console.log(item.iconUrlList[1].imgUrl,"item.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrl")
+                if(item.iconUrlList.length == 1){
+                  item.picUrl = item.iconUrlList[0].imgUrl;
+                }else{
+                  item.picUrl = item.iconUrlList[1].imgUrl;
+                }
               }
             }
           }
-        }
-        this.eventList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
-      
+          this.eventList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        });
+      }
     },
     /** 删除按钮操作 */
     handleDelete(row) {

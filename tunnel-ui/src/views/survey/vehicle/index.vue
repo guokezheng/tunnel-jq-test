@@ -575,6 +575,7 @@ export default {
     /** 查询应急机构列表 */
     getList() {
       // console.log(this.queryParams)
+      this.cl_boxShow = false;
       if (this.queryParams.orgName) {
         this.queryParams.orgName = this.queryParams.orgName[2]
           ? this.queryParams.orgName[2]

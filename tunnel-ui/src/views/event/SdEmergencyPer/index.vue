@@ -426,11 +426,13 @@ export default {
       this.reset();
       this.getTreeselect();
       this.open = true;
+      this.submitBtnLoading = false
       this.title = "添加应急人员信息";
 
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.submitBtnLoading = false
       this.reset();
       this.getTreeselect();
       const id = row.id || this.ids;

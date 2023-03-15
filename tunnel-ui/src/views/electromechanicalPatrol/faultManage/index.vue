@@ -328,6 +328,7 @@
                 <el-select
                   v-model="form.eqId"
                   :disabled="disstate"
+                  filterable
                   placeholder="请选择设备名称"
                   @change="eqStatusGet"
                   style="width: 100%"

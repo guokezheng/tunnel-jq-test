@@ -3331,13 +3331,13 @@
           :formatter="strategyTypeFormatEvent"
           v-if="strategyActive=='yujing'"
         />
-        
+
         <el-table-column
           label="策略信息"
           align="center"
           prop="strategyInfo"
           :show-overflow-tooltip="true"
-          
+
         >
           <template slot-scope="scope" v-if="scope.row.slist != []">
             <div v-for="(item, index) in scope.row.slist" :key="index">
@@ -5894,7 +5894,7 @@ export default {
       const params = { status: 0 };
       getTreeByDeptId(params)
         .then((response) => {
-          console.log(response, "级联");
+          console.log(response.data, "级联");
           const options = response.data;
           let childs = [];
           function a(list) {
@@ -5911,6 +5911,7 @@ export default {
             this.siteList = options[0].children;
           } else {
             this.siteList = childs;
+            console.log(this.siteList, "位置list");
           }
           let arr = [];
           this.checkData(this.siteList[0], arr);
@@ -5918,7 +5919,8 @@ export default {
         .then(() => {
           this.getTunnelList();
           if (this.manageStation == "1") {
-            let arr = ["6266", "5555", "555503"];
+            //let arr = ["6266", "5555", "555503"];
+            let arr = ["YG118", "YG11801", "YG1180103"];
             this.changeSite(arr);
           }
         });

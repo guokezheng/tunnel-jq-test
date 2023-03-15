@@ -705,9 +705,9 @@ export default {
         faultFxtime: [
           { required: true, message: "请选择发现时间", trigger: "blur" },
         ],
-        faultCxtime: [
+       /* faultCxtime: [
           { required: true, message: "请填写持续时间", trigger: "blur" },
-        ],
+        ],*/
         faultDescription: [
           { required: true, message: "请填写故障描述", trigger: "blur" },
         ],
@@ -1254,9 +1254,6 @@ export default {
       this.fileData.append("faultStatus", 0);
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (this.fileList.length <= 0) {
-            return this.$modal.msgWarning("请选择要上传的图片");
-          }
           if (this.form.id != null) {
             this.fileData.append("removeIds", this.removeIds);
             updateList(this.fileData).then((response) => {

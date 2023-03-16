@@ -5,7 +5,9 @@ import com.tunnel.deal.plc.omron.OmronConnectProperties;
 import com.tunnel.deal.plc.omron.exception.PlcException;
 import com.tunnel.deal.plc.omron.util.ByteUtil;
 import com.tunnel.deal.plc.omron.util.OmronUtils;
+import com.zc.common.core.ThreadPool.ThreadPool;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -14,6 +16,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -88,7 +93,6 @@ public class OmronTcpClient{
      */
     public void getOmronListen() throws InterruptedException {
         channelFuture.channel().closeFuture().sync();
-        System.out.println("服务器链接关闭.................");
         //退出，释放线程池资源
         eventExecutors.shutdownGracefully();
     }
@@ -130,22 +134,15 @@ public class OmronTcpClient{
      * 返回结果校验解析
      * @param responseMessage
      */
-    public boolean doBuildResponseMessage(byte[] responseMessage) {
+    public boolean doBuildResponseMessage(byte[] responseMessage) throws PlcException {
         byte[] message = responseMessage;
-        try {
-            // 读
-            if(responseMessage[27] == 0x01) {
-                this.data = OmronUtils.responseValidAnalysis(message, true);
-                System.out.println("读取成功");
-                return true;
-            } else { // 写
-                OmronUtils.responseValidAnalysis(message, false);
-                System.out.println("写入成功");
-                return true;
-            }
-        } catch (PlcException e) {
-            System.out.println(e.getMessage());
-            return false;
+        // 读
+        if(responseMessage[27] == 0x01) {
+            this.data = OmronUtils.responseValidAnalysis(message, true);
+            return true;
+        } else { // 写
+            OmronUtils.responseValidAnalysis(message, false);
+            return true;
         }
     }
 
@@ -155,9 +152,10 @@ public class OmronTcpClient{
      * 握手信号报文
      * @param future
      */
-    public void successCallback(ChannelFuture future) {
+    public ByteBuf successCallback(ChannelFuture future) {
         // 发送PLC的握手报文
-        future.channel().writeAndFlush(Unpooled.wrappedBuffer(handSingleMessage));
+//        future.channel().writeAndFlush(Unpooled.wrappedBuffer(handSingleMessage));
+        return Unpooled.wrappedBuffer(handSingleMessage);
     }
 
 
@@ -232,6 +230,88 @@ public class OmronTcpClient{
         }
         System.arraycopy(writeData, 0, message, 8, length);
         return message;
+    }
+
+
+
+    //欧姆龙测试
+    public static void main(String[] args) throws InterruptedException, PlcException {
+        OmronConnectProperties conf = new OmronConnectProperties();
+        //DA1地址： 服务器 ip
+        conf.setHost("10.7.187.87");
+        //SA1地址：电脑 ip
+        conf.setLocalHost("127.0.0.1");
+        //服务器port
+        conf.setPort(9600);
+        //创建 client
+        OmronTcpClient omronTcpClient = new OmronTcpClient(conf);
+        //初始化链接     服务器地址
+        omronTcpClient.init("10.7.187.87",9600);
+
+        ChannelFuture channelFuture = omronTcpClient.channelFuture;
+        //推送握手协议
+        omronTcpClient.send(omronTcpClient.successCallback(channelFuture).array());
+
+        //写入数据
+//        byte[] writeData = ByteUtil.getBytes(1);
+        boolean isBit = false;
+//        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"W101.01",true);
+////        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"D2000",isBit);
+//        OmronMessageHeader  omronMessageHeaderw = new OmronMessageHeader();
+//        byte[] dataBodyw = omronTcpClient.getMessageBody(omronMessageHeaderw,dataInfow.length);
+//        System.out.println("写入数据："+ByteUtil.bytesToHex(byteMerger(dataBodyw,dataInfow)));
+//        byte[] data = omronTcpClient.send(byteMerger(dataBodyw,dataInfow));
+//        System.out.println(ByteUtil.bytesToHex(data));
+//        System.out.println(omronTcpClient.doBuildResponseMessage(data));
+
+        //读取数据
+        OmronMessageHeader  omronMessageHeader = new OmronMessageHeader();
+        byte[] dataInfo = omronTcpClient.buildReadRequestBody("D522",isBit);
+//        byte[] dataInfo = omronTcpClient.buildReadRequestBody("D2000",isBit);
+        byte[] dataBody = omronTcpClient.getMessageBody(omronMessageHeader,dataInfo.length);
+        byte[] dataR = omronTcpClient.send(ByteUtil.byteMerger(dataBody,dataInfo));
+        System.out.println("读取数据："+ByteUtil.bytesToHex(dataR));
+        String num;
+        if(omronTcpClient.doBuildResponseMessage(dataR)){
+            //解析当前数据  根据设备点位信息解析
+            if(isBit){
+                //获取结尾2字节  结果集
+                num = ByteUtil.bytesToIntOfReverse2Byte(dataR,dataR.length-2)+"";
+                System.out.println("解析数据为:"+num);
+            }else{
+                //获取结尾4字节  结果集
+//                num =  ByteUtil.bytesToFloatOfReverseToChar(dataR,dataR.length-4)+"";
+//                System.out.println("解析数据为:"+num);
+                num =  ByteUtil.bytesToIntByChar(dataR,dataR.length-4)+"";
+                System.out.println("解析数据为:"+num);
+            }
+        }
+    }
+
+
+
+
+    /**
+     * 根据数据类型解析数据
+     * @param bytes
+     * @param type
+     * @return
+     */
+    public String getCodeByDataType(byte[] bytes, String type){
+        String number = "";
+        if(type!=null){
+            switch (type){
+                case "int":
+                    //int
+                    number = ByteUtil.bytesToIntByChar(bytes,bytes.length-4)+"";
+                    break;
+                case "float":
+                    //float
+                    number =  ByteUtil.bytesToFloatOfReverseToChar(bytes,bytes.length-4)+"";
+                    break;
+            }
+        }
+        return number;
     }
 
 

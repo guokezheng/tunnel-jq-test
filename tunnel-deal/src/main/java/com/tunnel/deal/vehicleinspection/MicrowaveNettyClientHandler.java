@@ -48,7 +48,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 
     private static Thread[] threadArrs = new Thread[1];
 
-    private static Integer bright;
+    private static Integer bright = 20;
 
     private int tallLuminance = 70;
     private int lowLuminance = 20;
@@ -149,7 +149,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
             //开启线程  推送加强照明灯指令。并  30秒后执行降低光照强度指令。
             ThreadPool.executor.execute(() -> {
                 try {
-                    //测试数据
+                    //测试数据  后去需要根据隧道id  以及方向  获取 所有加强照明信息
                     List<String> deviceIds = new ArrayList<>();
                     deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-001");
                     deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-002");
@@ -168,16 +168,16 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                     //     * @param bright      亮度
                     //     * @param controlType 控制类型
                     //     * @param operIp      操作者IP地址
-                    if(threadArrs[0]==null||bright == null||bright == lowLuminance){
-                        System.out.println("线程开始推送加强照明指令。。");
+                    if(threadArrs[0]==null||bright != lowLuminance){
+                        //线程开始推送加强照明指令
                         sanJingLight.setBrightnessByList(deviceIds,tallLuminance,"2",operIp);
                     }
                     //替换线程
                     replaceThread(Thread.currentThread());
                     //等待30秒后 执行 降低 光照强度功能
                     Thread.sleep(30000);
+                    //降低光照强度执行完毕
                     sanJingLight.setBrightnessByList(deviceIds,lowLuminance,"2",operIp);
-                    System.out.println("降低光照强度执行完毕。。。");
                     //清除当前记录线程
                     threadArrs[0] =  null;
                     //记录当前亮度值

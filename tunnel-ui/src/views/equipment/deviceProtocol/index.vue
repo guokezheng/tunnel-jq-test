@@ -335,6 +335,7 @@
       /** 查询设备协议列表 */
       getList() {
         this.loading = true;
+        this.boxShow = false;
         listProtocol(this.queryParams).then(response => {
           this.protocolList = response.rows;
           this.total = response.total;

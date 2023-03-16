@@ -349,6 +349,7 @@ export default {
     /** 查询调度日志列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       listJobLog(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.jobLogList = response.rows;
           this.total = response.total;

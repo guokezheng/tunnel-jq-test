@@ -100,7 +100,7 @@
           <el-button size="small"  @click="handleQuery"
             >搜索</el-button
           >
-          <el-button size="small" @click="resetQuery" 
+          <el-button size="small" @click="resetQuery"
             >重置</el-button
           >
         </el-form-item>
@@ -506,6 +506,7 @@ export default {
     /** 查询定时任务列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       listJob(this.queryParams).then((response) => {
         this.jobList = response.rows;
         this.total = response.total;

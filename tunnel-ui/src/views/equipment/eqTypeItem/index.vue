@@ -295,6 +295,7 @@ export default {
     /** 查询设备类型数据项列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       listItem(this.queryParams).then(response => {
         // console.log(response,'responseresponse')
         this.itemList = response.rows;

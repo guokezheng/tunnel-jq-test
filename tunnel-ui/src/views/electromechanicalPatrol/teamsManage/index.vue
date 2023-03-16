@@ -27,13 +27,16 @@
           <el-input
             placeholder="请输入班组名称"
             v-model="queryParams.deptName"
+            clearable
+            size="small"
             @keyup.enter.native="handleQuery"
+            style="border-right:#00C8FF solid 1px !important;border-radius:3px"
           >
-            <el-button
+<!--            <el-button
               slot="append"
               icon="icon-gym-Gsearch"
 
-            ></el-button>
+            ></el-button>-->
           </el-input>
         </div>
       </el-col>
@@ -94,8 +97,8 @@
     />
 
     <!-- 添加或修改角色配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body class="addUserDialog">
-      <el-form ref="form" :model="form"  label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="600px"  append-to-body class="addUserDialog">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
             <el-form-item label="上级部门" prop="parentId">
@@ -201,6 +204,33 @@ export default {
       },
       // 表单参数
       form: {},
+      // 表单校验
+      rules: {
+        parentId: [
+          { required: true, message: "上级部门不能为空", trigger: "blur" }
+        ],
+        deptName: [
+          { required: true, message: "班组名称不能为空", trigger: "blur" }
+        ],
+        orderNum: [
+          { required: true, message: "显示排序不能为空", trigger: "blur" }
+        ],
+        email: [
+          {
+            type: "email",
+            message: "'请输入正确的邮箱地址",
+            trigger: ["blur", "change"]
+          }
+        ],
+        phone: [
+          {
+            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+            message: "请输入正确的手机号码",
+            trigger: "blur"
+          }
+        ]
+      }
+
     };
   },
   created() {

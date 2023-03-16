@@ -53,19 +53,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
             <if test="faultLocation != null  and faultLocation != ''"> and s.fault_location = #{faultLocation}</if>
-            <if test="faultType != null "> and s.fault_type = #{faultType}</if>
+            <if test="faultType != null and faultType != ''"> and s.fault_type = #{faultType}</if>
             <if test="faultSource != null  and faultSource != ''"> and s.fault_source = #{faultSource}</if>
-            <if test="faultFxtime != null "> and s.fault_fxtime = #{faultFxtime}</if>
+            <if test="faultFxtime != null and faultFxtime != '' "> and s.fault_fxtime = #{faultFxtime}</if>
             <if test="faultCxtime != null  and faultCxtime != ''"> and s.fault_cxtime = #{faultCxtime}</if>
             <if test="faultTbr != null  and faultTbr != ''"> and s.fault_tbr = #{faultTbr}</if>
-            <if test="faultTbtime != null "> and s.fault_tbtime = #{faultTbtime}</if>
+            <if test="faultTbtime != null and faultTbtime != ''"> and s.fault_tbtime = #{faultTbtime}</if>
             <if test="eqId != null  and eqId != ''"> and s.eq_id = #{eqId}</if>
             <if test="eqStatus != null  and eqStatus != ''"> and s.eq_status = #{eqStatus}</if>
             <if test="faultCode != null  and faultCode != ''"> and s.fault_code = #{faultCode}</if>
-            <if test="faultLevel != null "> and s.fault_level = #{faultLevel}</if>
-            <if test="falltRemoveStatue != null "> and s.fallt_remove_statue = #{falltRemoveStatue}</if>
+            <if test="faultLevel != null and faultLevel != ''"> and s.fault_level = #{faultLevel}</if>
+            <if test="falltRemoveStatue != null and falltRemoveStatue != ''"> and s.fallt_remove_statue = #{falltRemoveStatue}</if>
             <if test="faultDescription != null  and faultDescription != ''"> and concat(s.fault_description,s.fault_location) like concat('%', #{faultDescription}, '%')</if>
-            <if test="faultStatus != null "> and s.fault_status = #{faultStatus}</if>
+            <if test="faultStatus != null and faultStatus != ''"> and s.fault_status = #{faultStatus}</if>
             <if test="ids != null  and ids != ''"> and FIND_IN_SET(s.id,#{ids}) > 0</if>
         </where>
         order by s.create_time desc

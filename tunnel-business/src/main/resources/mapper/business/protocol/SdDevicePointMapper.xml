@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="eqId"    column="eq_id"    />
         <result property="eqType"    column="eq_type"    />
+        <result property="itemId"    column="item_id"    />
         <result property="address"    column="address"    />
         <result property="addressIndex"    column="address_index"    />
         <result property="functionName"    column="function_name"    />
@@ -20,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdDevicePointVo">
-        select id, eq_id, eq_type, address, address_index, function_name, data_type, signal_name, state_id, data_status, function_description, is_reserved from sd_device_point
+        select id, eq_id, eq_type, item_id, address, address_index, function_name, data_type, signal_name, state_id, data_status, function_description, is_reserved from sd_device_point
     </sql>
 
     <select id="selectSdDevicePointList" parameterType="SdDevicePoint" resultMap="SdDevicePointResult">
@@ -28,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="eqId != null  and eqId != ''"> and eq_id = #{eqId}</if>
             <if test="eqType != null "> and eq_type = #{eqType}</if>
+            <if test="itemId != null "> and item_id = #{itemId}</if>
             <if test="address != null  and address != ''"> and address = #{address}</if>
             <if test="addressIndex != null "> and address_index = #{addressIndex}</if>
             <if test="functionName != null  and functionName != ''"> and function_name like concat('%', #{functionName}, '%')</if>
@@ -50,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="eqId != null">eq_id,</if>
             <if test="eqType != null">eq_type,</if>
+            <if test="itemId != null "> item_id,</if>
             <if test="address != null">address,</if>
             <if test="addressIndex != null">address_index,</if>
             <if test="functionName != null">function_name,</if>
@@ -63,6 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqId != null">#{eqId},</if>
             <if test="eqType != null">#{eqType},</if>
+            <if test="itemId != null ">#{itemId},</if>
             <if test="address != null">#{address},</if>
             <if test="addressIndex != null">#{addressIndex},</if>
             <if test="functionName != null">#{functionName},</if>
@@ -80,6 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="eqId != null">eq_id = #{eqId},</if>
             <if test="eqType != null">eq_type = #{eqType},</if>
+            <if test="itemId != null">item_id = #{itemId},</if>
             <if test="address != null">address = #{address},</if>
             <if test="addressIndex != null">address_index = #{addressIndex},</if>
             <if test="functionName != null">function_name = #{functionName},</if>

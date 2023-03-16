@@ -43,7 +43,7 @@
               :key="item.dictValue"
               :label="item.dictValue"
               @change.native="changeCheckBox($event)">
-            {{ item.dictLabel }}
+              {{ item.dictLabel }}
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
@@ -154,8 +154,8 @@
             >
               复核
             </div>
-            <div v-if="item.eventState == '0'" class="chuzhi" 
-              @click="management(item.id)">
+            <div v-if="item.eventState == '0'" class="chuzhi"
+                 @click="management(item.id)">
               处置
             </div>
           </div>
@@ -215,27 +215,27 @@
             <swiper class="swiper gallery-top" :options="swiperOptionTop" ref="swiperTop">
               <!-- slides -->
               <swiper-slide  v-for="(item, index) in eventFormDetail.iconUrlList" :key="index" :class="'slide-' + index">
-                <video :src="item.imgUrl" 
-                  :poster="item.imgUrl" v-if="index == 0" 
-                  @click="openPicDialog(eventFormDetail)" 
-                  autoplay muted loop>
+                <video :src="item.imgUrl"
+                       :poster="item.imgUrl" v-if="index == 0"
+                       @click="openPicDialog(eventFormDetail)"
+                       autoplay muted loop>
                 </video>
                 <img :src="item.imgUrl" style="width:100%;height:100%;"
-                  v-if="index != 0" @click="clickImg(item.imgUrl)" />
+                     v-if="index != 0" @click="clickImg(item.imgUrl)" />
               </swiper-slide>
               <div class="swiper-button-prev" slot="button-prev"></div>
               <div class="swiper-button-next" slot="button-next"></div>
               <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
             </swiper>
-            <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs" 
-              ref="swiperThumbs">
-              <swiper-slide v-for="(item, index) in eventFormDetail.iconUrlList" 
-                :key="index" :class="'slide-' + index">
-                <video :src="item.imgUrl" :poster="item.imgUrl" 
-                  v-if="index == 0" autoplay muted loop>
+            <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs"
+                    ref="swiperThumbs">
+              <swiper-slide v-for="(item, index) in eventFormDetail.iconUrlList"
+                            :key="index" :class="'slide-' + index">
+                <video :src="item.imgUrl" :poster="item.imgUrl"
+                       v-if="index == 0" autoplay muted loop>
                 </video>
                 <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0"
-                @click="clickImg(item.imgUrl)">
+                     @click="clickImg(item.imgUrl)">
               </swiper-slide>
             </swiper>
           </div>
@@ -470,12 +470,12 @@
                   style="width: 100%;"
                   @change="getReservePlanData"
                 >
-                <el-option
-                  v-for="(item, index) in eventTypeData"
-                  :key="index"
-                  :label="item.simplifyName"
-                  :value="item.id"
-                />
+                  <el-option
+                    v-for="(item, index) in eventTypeData"
+                    :key="index"
+                    :label="item.simplifyName"
+                    :value="item.id"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -499,9 +499,9 @@
             </el-col>
             <el-col :span="24">
               <el-form-item label="复核结果" prop="eventState">
-                <el-radio-group v-model="eventFormDetail.eventState" 
-                  @input="eventStateChange"
-                  >
+                <el-radio-group v-model="eventFormDetail.eventState"
+                                @input="eventStateChange"
+                >
                   <el-radio :label="4"> 确认(已确认) </el-radio>
                   <el-radio :label="2"> 挂起(稍后处理) </el-radio>
                   <el-radio :label="5"> 误报 </el-radio>
@@ -603,7 +603,7 @@
                     <el-input v-model="eventDiscovery.eventSource" readonly></el-input>
                   </el-form-item>
                 </el-col>
-                  <el-col :span="8">
+                <el-col :span="8">
                   <el-form-item label="告警时间">
                     <el-input v-model="eventDiscovery.eventTime" readonly></el-input>
                   </el-form-item>
@@ -635,7 +635,7 @@
                       <el-image
                         v-for="(item,index) in eventDiscovery.iconUrlList" :key="index"
                         :src="item.imgUrl"
-                        style="width:145px;margin-right:15px;display:inline-block;white-space: nowrap;" 
+                        style="width:145px;margin-right:15px;display:inline-block;white-space: nowrap;"
                         @click="clickImg(item.imgUrl)">
                       </el-image>
                     </el-scrollbar>
@@ -721,9 +721,9 @@
                 <div class="incHandBox">
                   <el-tabs v-model="historyIndex" @tab-click="handleClick">
                     <el-tab-pane v-for="(item, index) of planDisposal"
-                      :label="item.planName"
-                      :name="'first' + index"
-                      :key="index">
+                                 :label="item.planName"
+                                 :name="'first' + index"
+                                 :key="index">
                       <!-- {{ item.planName }} -->
                     </el-tab-pane>
                   </el-tabs>
@@ -759,15 +759,15 @@
                           v-if="items.flowContent"
                         >
                           {{ items.flowContent }}
+                        </div>
+                        <!-- <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)"
+                        :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">一键</div> -->
                       </div>
-                      <!-- <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)"
-                      :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">一键</div> -->
-                    </div>
 
-                    <div
-                      class="heng1"
-                      v-if="items.children"
-                      :style="{
+                      <div
+                        class="heng1"
+                        v-if="items.children"
+                        :style="{
                         marginTop: items.children
                           ? items.children.length == 1
                             ? '20px'
@@ -777,11 +777,11 @@
                             'px'
                           : '',
                       }"
-                    ></div>
-                    <div
-                      class="shu"
-                      v-if="items.children"
-                      :style="{
+                      ></div>
+                      <div
+                        class="shu"
+                        v-if="items.children"
+                        :style="{
                         height: items.children
                           ? items.children.length > 1
                             ? items.children.length * 40 +
@@ -795,22 +795,22 @@
                             ? 'solid 1px #39adff'
                             : '',
                       }">
-                    </div>
-                    <div class="gxp">
-                      <div
-                        v-for="(itm, inx) of items.children"
-                        :key="inx"
-                        class="contentList"
-                      >
-                        <div style="float: left">{{ itm.flowContent }}</div>
-                        <div class="yzx" v-show="itm.eventState != '0'">已执行</div>
-                        <div class="wzx" v-show="itm.eventState == '0'" type="info">未执行</div>
+                      </div>
+                      <div class="gxp">
+                        <div
+                          v-for="(itm, inx) of items.children"
+                          :key="inx"
+                          class="contentList"
+                        >
+                          <div style="float: left">{{ itm.flowContent }}</div>
+                          <div class="yzx" v-show="itm.eventState != '0'">已执行</div>
+                          <div class="wzx" v-show="itm.eventState == '0'" type="info">未执行</div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
             </el-col>
             <el-col :span="12" v-if="prevControlType == 1">
               <el-timeline :reverse="reverse" style="overflow: scroll;height:350px;padding: 0;">
@@ -846,7 +846,7 @@
                   :timestamp="activity.flowTime"
                   style="color: #fff;"
                   placement="top"
-                  >
+                >
                   <el-card>
                     <h4> {{ activity.flowDescription }}</h4>
                     <p>用户:{{ activity.nickName }}</p>
@@ -955,8 +955,8 @@
   </div>
 </template>
 <script>
-import $ from "jquery";
-import { displayH5sVideoAll } from "@/api/icyH5stream";
+  import $ from "jquery";
+  import { displayH5sVideoAll } from "@/api/icyH5stream";
 
 import {
   listEvent,
@@ -1159,238 +1159,238 @@ export default {
         },
       ],
 
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      sClick: true,
-      manageStation: this.$cache.local.get("manageStation"),
-      manageStationSelect: this.$cache.local.get("manageStationSelect"),
-      //检修记录弹出窗
-      record: false,
-      dialogEventList: [],
-      eventMsg: {
-        allnum: 0,
-        process: 0,
-        bl: 0,
-      },
-      removeStata:false,
-      // 管理机构
-      mechanism: [],
-      // 所属隧道
-      tunnelList: [],
-      dialogImageUrl: "",
-      dialogVisible: false,
-      fileList: [],
-      removeIds: [],
-      // 遮罩层
-      loading: true,
-      //巡查班组
-      fileData: "", // 文件上传数据（多文件合一）
-      bzData: {},
-      // 弹出层是否可写
-      isWritable: true,
-      // 是否不可点击
-      disstate: false,
-      // 显示搜索条件
-      showSearch: true,
-      //事件类型
-      eventTypeData: [],
+        // 选中数组
+        ids: [],
+        // 非单个禁用
+        single: true,
+        // 非多个禁用
+        multiple: true,
+        sClick: true,
+        manageStation: this.$cache.local.get("manageStation"),
+        manageStationSelect: this.$cache.local.get("manageStationSelect"),
+        //检修记录弹出窗
+        record: false,
+        dialogEventList: [],
+        eventMsg: {
+          allnum: 0,
+          process: 0,
+          bl: 0,
+        },
+        removeStata:false,
+        // 管理机构
+        mechanism: [],
+        // 所属隧道
+        tunnelList: [],
+        dialogImageUrl: "",
+        dialogVisible: false,
+        fileList: [],
+        removeIds: [],
+        // 遮罩层
+        loading: true,
+        //巡查班组
+        fileData: "", // 文件上传数据（多文件合一）
+        bzData: {},
+        // 弹出层是否可写
+        isWritable: true,
+        // 是否不可点击
+        disstate: false,
+        // 显示搜索条件
+        showSearch: true,
+        //事件类型
+        eventTypeData: [],
       // 全部事件类型
       eventTypeDataList:[],
-      // 总条数
-      total: 0,
-      // 事件管理表格数据
-      eventList: [],
-      //
-      searchValue: "1",
-      // 弹出层标题
-      title: "",
-      // 状态字典
-      eventStateOptions: [],
-      // 级别 字典
-      eventGradeOptions: [],
-      // 事件查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 16,
-        tunnelId: null,
-        eventTypeId: null,
-        eventTitle: null,
-        eventTime: null,
-        eventState: [],
-        eventGrade: null,
-        eventLocation: null,
-        eventDeath: null,
-        eventInjured: null,
-        eventDescription: null,
-        startTime: null,
-        endTime: null,
-        deptId: null,
-      },
-      queryParams1: {
-        pageNum: 1,
-        pageSize: 10,
-        faultType:null,
-        faultDescription:"",
-      },
-      allmsg: "",
-      process: "",
-      proportion: "",
-      // 表单参数
-      form: {},
-      //所属隧道
-      eqTunnelData: {},
-      //设备类型
-      eqTypeData: {},
-      //设备
-      eqListData: {},
-      // 查询参数
-      news: {
-        xcTime: "",
-        bzId: "",
-        walkerId: "",
-        impression: "",
-        network: "",
-        power: "",
-        eqStatus: "",
-        runStatus: "",
-        eqFaultDescription: "",
-      },
-      pics: {
-        imgUrl: "",
-        imgName: "",
-      },
-      // 日期范围
-      dateRange: [],
-      open: false,
-      details: false,
-      submitEventFormLoading: false,
-      direction: "rtl",
-      eventForm: {
-        stakeNum1: "",
-        stakeNum2: "",
-        stakeEndNum1: "",
-        stakeEndNum2: "",
-        iconUrlList: [],
-        reviewRemark:[],
-        eventState:"1",
-      },
-      // 详情弹窗内
-      eventFormDetail:{
-        stakeNum1: "",
-        stakeNum2: "",
-        stakeEndNum1: "",
-        stakeEndNum2: "",
-        iconUrlList: [],
-        reviewRemark:[],
-        eventState:"4",
-      },
-      iconUrlListAll: [],
-      imgUrlList: [],
-      urls: [],
-      urlsList: [],
-      urlsAll: [],
-      // 翻页
-      arrowRight: false,
-      arrowLeft: false,
-      arrowRight2: false,
-      arrowLeft2: false,
-      imgPage: 1,
-      imgPage2: 1,
-      eventStateCurrent:'',
-      // 遮罩层
-      dloading: false,
-      // 部门树选项
-      deptOptions: [],
-      // 实时视频
-      videoForm: {
-        liveUrl: "",
-      },
-      videoList: [],
-      cameraVisible: true,
-      isState:false,
-      showElement:true,
-      showFaultElement:false,
-      fuzzySearch1:'',
-      // 表单校验
-      rules: {
-        /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
-        eventTitle: [
-          { required: true, message: "请输入事件标题", trigger: "blur" },
-        ],
-        eventTypeId: [
-          { required: true, message: "请选择事件类型", trigger: "change" },
-        ],
-        eventGrade: [
-          { required: true, message: "请选择事件级别", trigger: "change" },
-        ],
-        eventLocation: [
-          { required: true, message: "请输入位置", trigger: "blur" },
-        ],
-        eventDescription: [
-          { required: true, message: "请输入内容", trigger: "blur" },
-        ],
-        faultLevel: [
-          { required: true, message: "请选择故障等级", trigger: "faultLevel" },
-        ],
-        faultLocation: [
-          {
-            required: true,
-            message: "请填写故障位置",
-            trigger: "faultLocation",
-          },
-        ],
-        faultType: [
-          {
-            required: true,
-            message: "请选中故障类型",
-            trigger: "faultType",
-          },
-        ],
-        faultFxtime: [
-          { required: true, message: "请填写发现时间", trigger: "faultFxtime" },
-        ],
-        faultCxtime: [
-          { required: true, message: "请填写持续时间", trigger: "faultCxtime" },
-        ],
-        eqId: [{ required: true, message: "请填写设备名称", trigger: "eqId" }],
-        eqStatus: [
-          {
-            required: true,
-            message: "请选中设备填报状态",
-            trigger: "eqStatus",
-          },
-        ],
-        tunnelId: [
-          {
-            required: true,
-            message: "请选中所在路段隧道",
-            trigger: "tunnelId",
-          },
-        ],
-      },
-    };
-  },
-  computed:{
-    topNav: {
-      get() {
-        return this.$store.state.settings.topNav;
+        // 总条数
+        total: 0,
+        // 事件管理表格数据
+        eventList: [],
+        //
+        searchValue: "1",
+        // 弹出层标题
+        title: "",
+        // 状态字典
+        eventStateOptions: [],
+        // 级别 字典
+        eventGradeOptions: [],
+        // 事件查询参数
+        queryParams: {
+          pageNum: 1,
+          pageSize: 16,
+          tunnelId: null,
+          eventTypeId: null,
+          eventTitle: null,
+          eventTime: null,
+          eventState: [],
+          eventGrade: null,
+          eventLocation: null,
+          eventDeath: null,
+          eventInjured: null,
+          eventDescription: null,
+          startTime: null,
+          endTime: null,
+          deptId: null,
+        },
+        queryParams1: {
+          pageNum: 1,
+          pageSize: 10,
+          faultType:null,
+          faultDescription:"",
+        },
+        allmsg: "",
+        process: "",
+        proportion: "",
+        // 表单参数
+        form: {},
+        //所属隧道
+        eqTunnelData: {},
+        //设备类型
+        eqTypeData: {},
+        //设备
+        eqListData: {},
+        // 查询参数
+        news: {
+          xcTime: "",
+          bzId: "",
+          walkerId: "",
+          impression: "",
+          network: "",
+          power: "",
+          eqStatus: "",
+          runStatus: "",
+          eqFaultDescription: "",
+        },
+        pics: {
+          imgUrl: "",
+          imgName: "",
+        },
+        // 日期范围
+        dateRange: [],
+        open: false,
+        details: false,
+        submitEventFormLoading: false,
+        direction: "rtl",
+        eventForm: {
+          stakeNum1: "",
+          stakeNum2: "",
+          stakeEndNum1: "",
+          stakeEndNum2: "",
+          iconUrlList: [],
+          reviewRemark:[],
+          eventState:"1",
+        },
+        // 详情弹窗内
+        eventFormDetail:{
+          stakeNum1: "",
+          stakeNum2: "",
+          stakeEndNum1: "",
+          stakeEndNum2: "",
+          iconUrlList: [],
+          reviewRemark:[],
+          eventState:"4",
+        },
+        iconUrlListAll: [],
+        imgUrlList: [],
+        urls: [],
+        urlsList: [],
+        urlsAll: [],
+        // 翻页
+        arrowRight: false,
+        arrowLeft: false,
+        arrowRight2: false,
+        arrowLeft2: false,
+        imgPage: 1,
+        imgPage2: 1,
+        eventStateCurrent:'',
+        // 遮罩层
+        dloading: false,
+        // 部门树选项
+        deptOptions: [],
+        // 实时视频
+        videoForm: {
+          liveUrl: "",
+        },
+        videoList: [],
+        cameraVisible: true,
+        isState:false,
+        showElement:true,
+        showFaultElement:false,
+        fuzzySearch1:'',
+        // 表单校验
+        rules: {
+          /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
+          eventTitle: [
+            { required: true, message: "请输入事件标题", trigger: "blur" },
+          ],
+          eventTypeId: [
+            { required: true, message: "请选择事件类型", trigger: "change" },
+          ],
+          eventGrade: [
+            { required: true, message: "请选择事件级别", trigger: "change" },
+          ],
+          eventLocation: [
+            { required: true, message: "请输入位置", trigger: "blur" },
+          ],
+          eventDescription: [
+            { required: true, message: "请输入内容", trigger: "blur" },
+          ],
+          faultLevel: [
+            { required: true, message: "请选择故障等级", trigger: "faultLevel" },
+          ],
+          faultLocation: [
+            {
+              required: true,
+              message: "请填写故障位置",
+              trigger: "faultLocation",
+            },
+          ],
+          faultType: [
+            {
+              required: true,
+              message: "请选中故障类型",
+              trigger: "faultType",
+            },
+          ],
+          faultFxtime: [
+            { required: true, message: "请填写发现时间", trigger: "faultFxtime" },
+          ],
+          faultCxtime: [
+            { required: true, message: "请填写持续时间", trigger: "faultCxtime" },
+          ],
+          eqId: [{ required: true, message: "请填写设备名称", trigger: "eqId" }],
+          eqStatus: [
+            {
+              required: true,
+              message: "请选中设备填报状态",
+              trigger: "eqStatus",
+            },
+          ],
+          tunnelId: [
+            {
+              required: true,
+              message: "请选中所在路段隧道",
+              trigger: "tunnelId",
+            },
+          ],
+        },
+      };
+    },
+    computed:{
+      topNav: {
+        get() {
+          return this.$store.state.settings.topNav;
+        },
       },
     },
-  },
-  watch: {
-    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      this.manageStationSelect = newVal;
-      this.queryParams.tunnelId = newVal;
-      this.queryParams.eventTypeId = "";
-      this.getList();
-      this.getTunnelLane();
+    watch: {
+      "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+        this.manageStationSelect = newVal;
+        this.queryParams.tunnelId = newVal;
+        this.queryParams.eventTypeId = "";
+        this.getList();
+        this.getTunnelLane();
+      },
     },
-  },
-  mounted(){
+    mounted(){
 
   },
   async created() {
@@ -1565,13 +1565,13 @@ export default {
         arr.push(itm.id);
       }
 
-      this.$confirm("是否确认执行?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(function () {
-        let planId = item.reserveId;
-        let eventId = that.$route.query.id;
+        this.$confirm("是否确认执行?", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(function () {
+          let planId = item.reserveId;
+          let eventId = that.$route.query.id;
 
         implementPlan(planId, eventId).then((response) => {
           console.log(response, "一键下发成功");
@@ -1671,13 +1671,13 @@ export default {
       }
       // str = arr.join(',')
 
-      this.$confirm("是否确认执行?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(function () {
-        let strategyId = item.reserveId;
-        let eventId = that.eventForm.id;
+        this.$confirm("是否确认执行?", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(function () {
+          let strategyId = item.reserveId;
+          let eventId = that.eventForm.id;
 
         implementDisposalStrategy(eventId, strategyId).then((response) => {
           for (let item of that.incHandList) {
@@ -2328,88 +2328,88 @@ export default {
       this.fuzzySearch1 = ''
       this.checkBoxEventState = []
 
-      // this.resetForm("queryForm");
-      this.handleQuery();
+        // this.resetForm("queryForm");
+        this.handleQuery();
+      },
+      //关闭drawer
+      handleClose(done) {
+        this.$confirm("确认关闭？")
+          .then((_) => {
+            done();
+          })
+          .catch((_) => {});
+      },
+      /** 提交按钮 */
+      submitEventForm() {
+        this.dloading = true;
+        if (this.submitEventFormLoading) return;
+        this.submitEventFormLoading = true;
+        this.$refs["form1"].validate(async (valid) => {
+          if (valid) {
+            await addEvent(this.eventForm).then((response) => {
+              if (response.code === 200) {
+                this.$modal.msgSuccess("新增成功");
+                setTimeout(() => {
+                  this.resetEvent();
+                  this.dloading = false;
+                  this.open = false;
+                }, 400);
+                this.getList();
+              }
+            });
+          }
+          this.submitEventFormLoading = false;
+        });
+      },
+      //关闭弹窗
+      eventFormClose() {
+        this.resetEvent();
+        this.open = false;
+      },
+      // 表单重置
+      resetEvent() {
+        this.$refs.form1.resetFields();
+        this.eventForm.eventTypeId = null;
+        this.eventForm.eventInjured = null;
+      },
+      // 取消按钮
+      cancel() {
+        this.open = false;
+        this.details = false;
+        this.processDialog = false;
+        this.processType = false;
+        this.reset();
+        this.getList();
+      },
     },
-    //关闭drawer
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
-    /** 提交按钮 */
-    submitEventForm() {
-      this.dloading = true;
-      if (this.submitEventFormLoading) return;
-      this.submitEventFormLoading = true;
-      this.$refs["form1"].validate(async (valid) => {
-        if (valid) {
-          await addEvent(this.eventForm).then((response) => {
-            if (response.code === 200) {
-              this.$modal.msgSuccess("新增成功");
-              setTimeout(() => {
-                this.resetEvent();
-                this.dloading = false;
-                this.open = false;
-              }, 400);
-              this.getList();
-            }
-          });
-        }
-        this.submitEventFormLoading = false;
-      });
-    },
-    //关闭弹窗
-    eventFormClose() {
-      this.resetEvent();
-      this.open = false;
-    },
-    // 表单重置
-    resetEvent() {
-      this.$refs.form1.resetFields();
-      this.eventForm.eventTypeId = null;
-      this.eventForm.eventInjured = null;
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.details = false;
-      this.processDialog = false;
-      this.processType = false;
-      this.reset();
-      this.getList();
-    },
-  },
-};
+  };
 </script>
 
 <style scoped lang="scss">
-::v-deep .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell,::v-deep .el-table tr{
-  background: unset!important;;
-}
-::v-deep .el-scrollbar__wrap {
-  overflow-x: hidden;
-}
-::v-deep .el-scrollbar .el-scrollbar__wrap .el-scrollbar__view{
-   white-space: nowrap;
-}
-::v-deep .el-carousel__arrow{background-color: rgba(31, 45, 61, 0.8);}
-::v-deep .el-carousel__arrow:hover{background-color: rgba(31, 45, 61, 0.8);}
-.gallery-thumbs {
-  height: 20% !important;
-  box-sizing: border-box;
-  padding: 10px 0;
-}
-.gallery-thumbs .swiper-slide {
-  width: 25%;
-  height: 100%;
-  opacity: 0.4;
-}
-.gallery-thumbs .swiper-slide-active {
-  opacity: 1;
-}
+  ::v-deep .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell,::v-deep .el-table tr{
+    background: unset!important;;
+  }
+  ::v-deep .el-scrollbar__wrap {
+    overflow-x: hidden;
+  }
+  ::v-deep .el-scrollbar .el-scrollbar__wrap .el-scrollbar__view{
+    white-space: nowrap;
+  }
+  ::v-deep .el-carousel__arrow{background-color: rgba(31, 45, 61, 0.8);}
+  ::v-deep .el-carousel__arrow:hover{background-color: rgba(31, 45, 61, 0.8);}
+  .gallery-thumbs {
+    height: 20% !important;
+    box-sizing: border-box;
+    padding: 10px 0;
+  }
+  .gallery-thumbs .swiper-slide {
+    width: 25%;
+    height: 100%;
+    opacity: 0.4;
+  }
+  .gallery-thumbs .swiper-slide-active {
+    opacity: 1;
+  }
 
   .chuzhi{
     background:#05afe3;
@@ -2420,715 +2420,715 @@ export default {
   .wzx{
     color: #666666;
   }
-        .incHandBox {
-          height: calc(100% - 40px);
-          overflow: auto;
-          .incHandContent {
+  .incHandBox {
+    height: calc(100% - 40px);
+    overflow: auto;
+    .incHandContent {
+      display: flex;
+      // color: white;
+      font-size: 12px;
+      padding: 10px;
+      .classification {
+        .type {
+          width: 50px;
+          height: 50px;
+          // background: rgba($color: #084e84, $alpha: 0.6);
+          // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
+          text-align: center;
+        }
+        .yijian {
+          color: white;
+          width: 50px;
+          background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+          border: 1px solid #39adff;
+          // padding: 10px;
+          text-align: center;
+        }
+      }
+
+      .heng1 {
+        width: 20px;
+        height: 1px;
+        border-top: solid 1px #39adff;
+      }
+      .shu {
+        width: 20px;
+        border-left: solid 1px #39adff;
+        border-bottom: solid 1px #39adff;
+        margin-top: 20px;
+      }
+      .gxp{
+        // margin-left: 20px;
+        width:77%;
+        .contentList {
+          display: block;
+          margin-top: 4px;
+          line-height: 40px;
+          padding: 0 20px;
+          border-radius: 3px;
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          img {
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+
+      .contentList:nth-of-type(1) {
+        margin-top: 0;
+      }
+    }
+  }
+  .formStyle {
+    .el-form-item {
+      margin-bottom: 1vh;
+    }
+  }
+  ::v-deep .el-form-item--medium .el-form-item__label {
+    font-size: 0.7vw;
+  }
+  ::v-deep .el-form-item--medium .el-form-item__content {
+    font-size: 0.7vw;
+  }
+  ::v-deep .el-tabs__header {
+    margin: 0 0 8px !important;
+  }
+  .contentListBox {
+    width: 100%;
+    word-wrap: break-word;
+    word-break: normal;
+    overflow-y: auto;
+    overflow-x: hidden;
+    //display: flex;
+    .contentBox {
+      // height: 135px;
+      // border: solid 1px #2aa6ff;
+      display: inline-flex;
+      margin-right: 1vw;
+      margin-bottom: 5px;
+      position: relative;
+      border-radius: 2px;
+      .video {
+        width: 40%;
+        height: 100%;
+        float: left;
+        text-align: center;
+        font-size: 0.7vw;
+        // color: #2aa6ff;
+        .eventBox{
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .eventType{
+            background: rgba(228, 14, 14, 0.4);
+            font-size: .675rem;
+            font-weight: 600;
+            color: #fff;
+            padding:5px 10px;
+            width: 60%;
+          }
+          div{
+            background: rgba(228, 14, 14, 0.2);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: .675rem;
+            font-weight: 400;
+            color: #fff;
+            padding: 2px 10px;
+            width: 40%;
+          }
+        }
+
+        video {
+          width: 100%;
+          height: 100px;
+          margin-top: 2px;
+          float: left;
+        }
+        img {
+          // width: 100%;
+          height: 10vh;
+          margin-top: 2px;
+        }
+      }
+
+      .contentText {
+        margin-top: 10px;
+        font-size: 0.7vw;
+        // color: #0087e7;
+        margin-right: 20px;
+        width: 60%;
+        float: right;
+        margin-left: 2px;
+        .stateTab {
+          position: absolute;
+          top: -27px;
+          right: -17px;
+        }
+        div {
+          padding: 0.6vh 0;
+          span {
+            padding-left: 6px;
+          }
+        }
+        .contentButton {
+          display: flex;
+          justify-content: space-between;
+          width: 150px;
+          div {
+            width: 65px;
+            height: 2vh;
+            border-radius: 14px;
+            color: white;
             display: flex;
-            // color: white;
-            font-size: 12px;
-            padding: 10px;
-            .classification {
-              .type {
-                width: 50px;
-                height: 50px;
-                // background: rgba($color: #084e84, $alpha: 0.6);
-                // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
-                text-align: center;
-              }
-              .yijian {
-                color: white;
-                width: 50px;
-                background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
-                border: 1px solid #39adff;
-                // padding: 10px;
-                text-align: center;
-              }
-            }
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+          }
+          div:nth-of-type(1) {
+            background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);
+          }
+          div:nth-of-type(2) {
+            background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+          }
+        }
+      }
+    }
+    .contentBox:nth-of-type(4n) {
+      margin-right: 0px;
+    }
+  }
 
-            .heng1 {
-              width: 20px;
-              height: 1px;
-              border-top: solid 1px #39adff;
-            }
-            .shu {
-              width: 20px;
-              border-left: solid 1px #39adff;
-              border-bottom: solid 1px #39adff;
-              margin-top: 20px;
-            }
-            .gxp{
-              // margin-left: 20px;
-              width:77%;
-              .contentList {
-                display: block;
-                margin-top: 4px;
-                line-height: 40px;
-                padding: 0 20px;
-                border-radius: 3px;
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                img {
-                  width: 18px;
-                  height: 18px;
-                }
-              }
-            }
-
-            .contentList:nth-of-type(1) {
-              margin-top: 0;
+  .videoDialogBox {
+    width: 100%;
+    height: 450px;
+    display: flex;
+    justify-content: space-between;
+    align-items:center;
+    position: relative;
+    .processButton {
+      position: absolute;
+      top: 20px;
+      right: -15px;
+      width: 25px;
+      height: 100px;
+      cursor: pointer;
+      background: #39adff;
+      text-align: center;
+      line-height: 18px;
+      color: #fff;
+    }
+    .processButton::before {
+      font-size: 14px;
+      color: #fff;
+    }
+    .dialogBg2 {
+      width: 55% !important;
+      padding: 0px 20px 10px 10px !important;
+      // .video-box {
+      //   height: calc(90%) !important;
+      // }
+      ::v-deep .el-carousel__container{
+        height:315px;
+      }
+      ::v-deep .el-image{
+        height: 80%;
+        width: 100%;
+        image{width:100%;height:100%;}
+      }
+    }
+    .dialogBg {
+      background: #f7f7f7;
+      height: 100%;
+      width: 45%;
+      color: #0087e7;
+      padding: 0px 10px 10px 20px;
+      span {
+        color: #767676 !important;
+        padding-left: 10px;
+      }
+      video {
+        width: 100%;
+        height: 73%;
+      }
+      .picBox {
+        width: 100%;
+        // height: calc(24% - 25px);
+        margin-top: 5px;
+        // border: solid 1px red;
+        // display: flex;
+        // justify-content: center;
+        // align-items: center;
+        .picList {
+          width: 100%;
+          height: 100%;
+          // display: flex;
+          // justify-content: left;
+          > div {
+            overflow: hidden;
+            margin-left: 10px;
+            width: 21%;
+            height: 100%;
+            display: inline-block;
+            > .el-image {
+              width: auto;
+              height: 100%;
+              overflow: hidden;
+              // border: solid 1px blue;
+              margin: 0 auto;
             }
           }
         }
-.formStyle {
-  .el-form-item {
-    margin-bottom: 1vh;
-  }
-}
-::v-deep .el-form-item--medium .el-form-item__label {
-  font-size: 0.7vw;
-}
-::v-deep .el-form-item--medium .el-form-item__content {
-  font-size: 0.7vw;
-}
-::v-deep .el-tabs__header {
-  margin: 0 0 8px !important;
-}
-.contentListBox {
-  width: 100%;
-  word-wrap: break-word;
-  word-break: normal;
-  overflow-y: auto;
-  overflow-x: hidden;
-  //display: flex;
-  .contentBox {
-    // height: 135px;
-    // border: solid 1px #2aa6ff;
-    display: inline-flex;
-    margin-right: 1vw;
-    margin-bottom: 5px;
-    position: relative;
-    border-radius: 2px;
-    .video {
-      width: 40%;
-      height: 100%;
-      float: left;
-      text-align: center;
-      font-size: 0.7vw;
-      // color: #2aa6ff;
-      .eventBox{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .eventType{
-          background: rgba(228, 14, 14, 0.4);
-          font-size: .675rem;
-          font-weight: 600;
+        .turnPages {
+          width: 20px !important;
+          height: 20px !important;
+          border: solid 1px #0087e7;
+          border-radius: 10px;
+          text-align: center;
+          cursor: pointer;
+          caret-color: rgba(0, 0, 0, 0);
+        }
+        .turnPages:hover {
+          background: #0087e7;
           color: #fff;
-          padding:5px 10px;
-          width: 60%;
         }
-        div{
-          background: rgba(228, 14, 14, 0.2);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          font-size: .675rem;
-          font-weight: 400;
-          color: #fff;
-          padding: 2px 10px;
-          width: 40%;
-        }
-      }
-
-      video {
-        width: 100%;
-        height: 100px;
-        margin-top: 2px;
-        float: left;
-      }
-      img {
-        // width: 100%;
-        height: 10vh;
-        margin-top: 2px;
-      }
-    }
-
-    .contentText {
-      margin-top: 10px;
-      font-size: 0.7vw;
-      // color: #0087e7;
-      margin-right: 20px;
-      width: 60%;
-      float: right;
-      margin-left: 2px;
-      .stateTab {
-        position: absolute;
-        top: -27px;
-        right: -17px;
-      }
-      div {
-        padding: 0.6vh 0;
-        span {
-          padding-left: 6px;
-        }
-      }
-      .contentButton {
-        display: flex;
-        justify-content: space-between;
-        width: 150px;
-        div {
-          width: 65px;
-          height: 2vh;
-          border-radius: 14px;
-          color: white;
+        .noPic {
+          border: solid 1px #0087e7;
           display: flex;
           justify-content: center;
           align-items: center;
-          cursor: pointer;
-        }
-        div:nth-of-type(1) {
-          background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);
-        }
-        div:nth-of-type(2) {
-          background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
-        }
-      }
-    }
-  }
-  .contentBox:nth-of-type(4n) {
-    margin-right: 0px;
-  }
-}
-
-.videoDialogBox {
-  width: 100%;
-  height: 450px;
-  display: flex;
-  justify-content: space-between;
-  align-items:center;
-  position: relative;
-  .processButton {
-    position: absolute;
-    top: 20px;
-    right: -15px;
-    width: 25px;
-    height: 100px;
-    cursor: pointer;
-    background: #39adff;
-    text-align: center;
-    line-height: 18px;
-    color: #fff;
-  }
-  .processButton::before {
-    font-size: 14px;
-    color: #fff;
-  }
-  .dialogBg2 {
-    width: 55% !important;
-    padding: 0px 20px 10px 10px !important;
-    // .video-box {
-    //   height: calc(90%) !important;
-    // }
-    ::v-deep .el-carousel__container{
-      height:315px;
-    }
-    ::v-deep .el-image{
-      height: 80%;
-      width: 100%;
-      image{width:100%;height:100%;}
-    }
-  }
-  .dialogBg {
-    background: #f7f7f7;
-    height: 100%;
-    width: 45%;
-    color: #0087e7;
-    padding: 0px 10px 10px 20px;
-    span {
-      color: #767676 !important;
-      padding-left: 10px;
-    }
-    video {
-      width: 100%;
-      height: 73%;
-    }
-    .picBox {
-      width: 100%;
-      // height: calc(24% - 25px);
-      margin-top: 5px;
-      // border: solid 1px red;
-      // display: flex;
-      // justify-content: center;
-      // align-items: center;
-      .picList {
-        width: 100%;
-        height: 100%;
-        // display: flex;
-        // justify-content: left;
-        > div {
-          overflow: hidden;
-          margin-left: 10px;
-          width: 21%;
-          height: 100%;
-          display: inline-block;
-          > .el-image {
-            width: auto;
-            height: 100%;
-            overflow: hidden;
-            // border: solid 1px blue;
-            margin: 0 auto;
+          img {
+            width: 50%;
           }
         }
       }
-      .turnPages {
-        width: 20px !important;
-        height: 20px !important;
-        border: solid 1px #0087e7;
-        border-radius: 10px;
-        text-align: center;
-        cursor: pointer;
-        caret-color: rgba(0, 0, 0, 0);
+    }
+  }
+  .dialogForm {
+    width: 100%;
+    height: calc(44% - 50px);
+    background: #f7f7f7;
+    padding: 0px 10px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    .el-input {
+      width: 100%;
+      .el-input--medium .el-input__inner {
+        width: 93px;
       }
-      .turnPages:hover {
-        background: #0087e7;
-        color: #fff;
-      }
-      .noPic {
-        border: solid 1px #0087e7;
+    }
+    .el-form-item {
+      margin-bottom: 10px !important;
+    }
+    .evtCarStyle {
+      width: calc(100% - 10px);
+      height: 40px;
+      padding: 10px;
+      overflow-y: auto;
+      padding-bottom: 0;
+      border-radius: 4px;
+      > div {
         display: flex;
-        justify-content: center;
-        align-items: center;
-        img {
-          width: 50%;
+        margin-bottom: 5px;
+        .evtNum {
+          width: 35px;
+          height: 35px;
+          // border: solid 1px #ccc;
+          text-align: center;
+          line-height: 35px;
+        }
+        div {
+          margin-left: 5px;
         }
       }
     }
   }
-}
-.dialogForm {
-  width: 100%;
-  height: calc(44% - 50px);
-  background: #f7f7f7;
-  padding: 0px 10px 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  .el-input {
+  .dialogFooterButton {
     width: 100%;
-    .el-input--medium .el-input__inner {
-      width: 93px;
-    }
-  }
-  .el-form-item {
-    margin-bottom: 10px !important;
-  }
-  .evtCarStyle {
-    width: calc(100% - 10px);
-    height: 40px;
-    padding: 10px;
-    overflow-y: auto;
-    padding-bottom: 0;
-    border-radius: 4px;
-    > div {
-      display: flex;
-      margin-bottom: 5px;
-      .evtNum {
-        width: 35px;
-        height: 35px;
-        // border: solid 1px #ccc;
-        text-align: center;
-        line-height: 35px;
-      }
-      div {
-        margin-left: 5px;
-      }
-    }
-  }
-}
-.dialogFooterButton {
-  width: 100%;
-  height: 30px;
-  display: flex;
-  justify-content: right;
-  margin-bottom: 15px;
-  div {
-    margin-right: 20px;
-    width: 80px;
-    height: 28px;
-    border-radius: 14px;
-    text-align: center;
-    line-height: 28px;
-    color: white;
-    cursor: pointer;
-  }
-  div:nth-of-type(1) {
-    background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);
-  }
-  div:nth-of-type(2) {
-    background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
-  }
-  div:nth-of-type(3) {
-    background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
-  }
-}
-::v-deep .detailsDialog {
-  width: 60%;
-  position: absolute;
-  left: 20%;
-  .el-dialog:not{
-    margin-top:0px!important;
-  }
-}
-::v-deep .detailsDialog .el-dialog {
-  height: calc(100% - 8vh) !important;
-  .el-dialog__body {
-    height: calc(100% - 4vh - 30px);
-    padding: 0 !important;
-  }
-}
-
-.animationDialog {
-  z-index: 2008 !important;
-  height: 92%;
-  width: 480px;
-  // transform: translateX(1330px);
-  animation: mymove 0.3s linear;
-  position: absolute;
-  left: 66%;
-}
-@keyframes mymove {
-  0% {
-    left: 60%;
-  }
-  100% {
-    left: 69%;
-  }
-}
-.el-select-dropdown {
-  z-index: 2010 !important;
-}
-.eventTypeButton {
-  height: 2.6vh;
-  line-height: 2.6vh;
-  border-radius: 2px;
-  cursor: pointer;
-  padding: 0px 10px;
-  font-size: 0.7vw;
-}
-// ::v-deep .vue-treeselect__control {
-//   height: 4vh;
-// }
-// ::v-deep .vue-treeselect__placeholder,
-// .vue-treeselect__single-value {
-//   line-height: 4vh;
-// }
-// ::v-deep .el-input--small .el-input__inner {
-//   line-height: 3vh;
-//   height: 4vh;
-//   font-size: 0.7vw;
-// }
-// ::v-deep .el-input--medium .el-input__inner {
-//   line-height: 3vh;
-//   height: 4vh;
-//   font-size: 0.7vw;
-// }
-.butBox {
-  width: 280px;
-  display: flex;
-  padding: 4px 4px;
-  background: #9ecced;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  // justify-content: space-between;
-  div {
-    padding: 6px 10px;
-    color: #fff;
-    letter-spacing: 1px;
-    cursor: pointer;
-  }
-
-  .xz {
-    background: #285b8d;
-    border-radius: 10px;
-  }
-}
-.incHandContent {
-  display: flex;
-  color: #333333;
-  font-size: 12px;
-  padding: 10px;
-  .classification {
-    .type {
-      width: 50px;
-      height: 50px;
-      // background: #f2f8ff;
-      border: 1px solid #39adff;
-      text-align: center;
-      color:#fff;
-    }
-    .yijian {
-      width: 50px;
-      background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
-      border: 1px solid #39adff;
-      color: #fff;
-      text-align: center;
-      transform: translateY(-2px);
-      cursor: pointer;
-    }
-    .hulue {
-      width: 50px;
-      background: linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
-      border: 1px solid #ebab3a;
-      color: #fff;
-      text-align: center;
-      transform: translateY(-2px);
-      cursor: pointer;
-    }
-  }
-
-  .heng1 {
-    width: 20px;
-    height: 1px;
-    border-top: solid 1px #39adff;
-  }
-  .shu {
-    width: 20px;
-    border-left: solid 1px #39adff;
-    border-bottom: solid 1px #39adff;
-    margin-top: 20px;
-  }
-  .contentList {
-    display: block;
-    margin-top: 4px;
-    line-height: 40px;
-    padding: 0 20px;
-    // background: #f2f8ff;
-    color: #fff;
-    border: solid 1px #39adff;
-    border-radius: 3px;
-    width: 300px;
+    height: 30px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    img {
-      width: 18px;
-      height: 18px;
+    justify-content: right;
+    margin-bottom: 15px;
+    div {
+      margin-right: 20px;
+      width: 80px;
+      height: 28px;
+      border-radius: 14px;
+      text-align: center;
+      line-height: 28px;
+      color: white;
+      cursor: pointer;
+    }
+    div:nth-of-type(1) {
+      background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);
+    }
+    div:nth-of-type(2) {
+      background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+    }
+    div:nth-of-type(3) {
+      background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
     }
   }
-  .contentList:nth-of-type(1) {
+  ::v-deep .detailsDialog {
+    width: 60%;
+    position: absolute;
+    left: 20%;
+    .el-dialog:not{
+      margin-top:0px!important;
+    }
+  }
+  ::v-deep .detailsDialog .el-dialog {
+    height: calc(100% - 8vh) !important;
+    .el-dialog__body {
+      height: calc(100% - 4vh - 30px);
+      padding: 0 !important;
+    }
+  }
+
+  .animationDialog {
+    z-index: 2008 !important;
+    height: 92%;
+    width: 480px;
+    // transform: translateX(1330px);
+    animation: mymove 0.3s linear;
+    position: absolute;
+    left: 66%;
+  }
+  @keyframes mymove {
+    0% {
+      left: 60%;
+    }
+    100% {
+      left: 69%;
+    }
+  }
+  .el-select-dropdown {
+    z-index: 2010 !important;
+  }
+  .eventTypeButton {
+    height: 2.6vh;
+    line-height: 2.6vh;
+    border-radius: 2px;
+    cursor: pointer;
+    padding: 0px 10px;
+    font-size: 0.7vw;
+  }
+  // ::v-deep .vue-treeselect__control {
+  //   height: 4vh;
+  // }
+  // ::v-deep .vue-treeselect__placeholder,
+  // .vue-treeselect__single-value {
+  //   line-height: 4vh;
+  // }
+  // ::v-deep .el-input--small .el-input__inner {
+  //   line-height: 3vh;
+  //   height: 4vh;
+  //   font-size: 0.7vw;
+  // }
+  // ::v-deep .el-input--medium .el-input__inner {
+  //   line-height: 3vh;
+  //   height: 4vh;
+  //   font-size: 0.7vw;
+  // }
+  .butBox {
+    width: 280px;
+    display: flex;
+    padding: 4px 4px;
+    background: #9ecced;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    // justify-content: space-between;
+    div {
+      padding: 6px 10px;
+      color: #fff;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    .xz {
+      background: #285b8d;
+      border-radius: 10px;
+    }
+  }
+  .incHandContent {
+    display: flex;
+    color: #333333;
+    font-size: 12px;
+    padding: 10px;
+    .classification {
+      .type {
+        width: 50px;
+        height: 50px;
+        // background: #f2f8ff;
+        border: 1px solid #39adff;
+        text-align: center;
+        color:#fff;
+      }
+      .yijian {
+        width: 50px;
+        background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+        border: 1px solid #39adff;
+        color: #fff;
+        text-align: center;
+        transform: translateY(-2px);
+        cursor: pointer;
+      }
+      .hulue {
+        width: 50px;
+        background: linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
+        border: 1px solid #ebab3a;
+        color: #fff;
+        text-align: center;
+        transform: translateY(-2px);
+        cursor: pointer;
+      }
+    }
+
+    .heng1 {
+      width: 20px;
+      height: 1px;
+      border-top: solid 1px #39adff;
+    }
+    .shu {
+      width: 20px;
+      border-left: solid 1px #39adff;
+      border-bottom: solid 1px #39adff;
+      margin-top: 20px;
+    }
+    .contentList {
+      display: block;
+      margin-top: 4px;
+      line-height: 40px;
+      padding: 0 20px;
+      // background: #f2f8ff;
+      color: #fff;
+      border: solid 1px #39adff;
+      border-radius: 3px;
+      width: 300px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      img {
+        width: 18px;
+        height: 18px;
+      }
+    }
+    .contentList:nth-of-type(1) {
+      margin-top: 0;
+    }
+  }
+  .addClass {
+    .el-select {
+      width: 250px;
+    }
+
+    .el-input {
+      width: 250px !important;
+    }
+
+    .el-date-editor.el-input,
+    .el-date-editor.el-input__inner {
+      width: 250px !important;
+    }
+  }
+
+  .circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    display: inline-block;
+  }
+
+  .detailsText {
+    display: inline-block;
+    margin-left: 20px;
+    line-height: 40px;
+    width: 100px;
+  }
+
+  hr {
+    border: solid 1px #ddd;
+  }
+
+  .rowClass {
+    border-top: solid 1px #ddd;
+    border-bottom: solid 1px #ddd;
+    height: 40px;
+    margin-top: 10px;
+  }
+
+  .eventClass {
+    height: 30px;
+    border-right: solid 1px #ddd;
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    line-height: 30px;
+  }
+
+  .eventTitleClass {
+    height: 40px;
+    background-color: #eeeeee;
+    line-height: 40px;
+    text-align: center;
+  }
+
+  .video {
+    height: 300px;
+    border-radius: 0;
+    padding: 10px;
     margin-top: 0;
   }
-}
-.addClass {
-  .el-select {
-    width: 250px;
+
+  .image3 {
+    padding: 5px;
+    height: 49%;
+    // border: solid 1px green;
+    width: 100%;
   }
 
-  .el-input {
-    width: 250px !important;
+  .card-box {
+    width: 30%;
+    text-align: center;
+    font-weight: bold;
   }
 
-  .el-date-editor.el-input,
-  .el-date-editor.el-input__inner {
-    width: 250px !important;
+  .EquipStatistics {
+    width: 200px;
+    height: 40px;
+    background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-weight: 400;
+    font-size: 16px;
+    margin-left: 14px;
+
+    > span {
+      font-size: 24px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
   }
-}
 
-.circle {
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  display: inline-block;
-}
-
-.detailsText {
-  display: inline-block;
-  margin-left: 20px;
-  line-height: 40px;
-  width: 100px;
-}
-
-hr {
-  border: solid 1px #ddd;
-}
-
-.rowClass {
-  border-top: solid 1px #ddd;
-  border-bottom: solid 1px #ddd;
-  height: 40px;
-  margin-top: 10px;
-}
-
-.eventClass {
-  height: 30px;
-  border-right: solid 1px #ddd;
-  width: 100%;
-  text-align: center;
-  margin-top: 5px;
-  line-height: 30px;
-}
-
-.eventTitleClass {
-  height: 40px;
-  background-color: #eeeeee;
-  line-height: 40px;
-  text-align: center;
-}
-
-.video {
-  height: 300px;
-  border-radius: 0;
-  padding: 10px;
-  margin-top: 0;
-}
-
-.image3 {
-  padding: 5px;
-  height: 49%;
-  // border: solid 1px green;
-  width: 100%;
-}
-
-.card-box {
-  width: 30%;
-  text-align: center;
-  font-weight: bold;
-}
-
-.EquipStatistics {
-  width: 200px;
-  height: 40px;
-  background-image: url(../../../assets/cloudControl/shebeiWarning.png);
-  color: white;
-  text-align: center;
-  line-height: 40px;
-  font-weight: 400;
-  font-size: 16px;
-  margin-left: 14px;
-
-  > span {
-    font-size: 24px;
-    font-weight: 600;
-    vertical-align: middle;
+  .warningStatistics {
+    line-height: 60px;
+    font-size: 14px;
+    // color: #606266;
+    font-weight: 700;
   }
-}
 
-.warningStatistics {
-  line-height: 60px;
-  font-size: 14px;
-  // color: #606266;
-  font-weight: 700;
-}
+  .eventTitle {
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 400;
+    color: #303133;
+  }
 
-.eventTitle {
-  padding: 15px 0;
-  font-size: 18px;
-  font-weight: 400;
-  color: #303133;
-}
-
-.card {
-  position: relative;
-  width: 100%;
-  padding: 20px;
-  margin-top: 20px;
-  border-radius: 10px;
-  background-color: #f0f0f0;
-  .card-col {
-    margin-top: 10px;
-    display: flex;
-    color: #79949c;
-    div {
-      width: 33%;
-      span {
-        color: black;
-        margin-left: 10px;
+  .card {
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    .card-col {
+      margin-top: 10px;
+      display: flex;
+      color: #79949c;
+      div {
+        width: 33%;
+        span {
+          color: black;
+          margin-left: 10px;
+        }
       }
     }
-  }
-  .card-cols {
-    margin-top: 10px;
-    display: flex;
-    div {
-      width: 50%;
+    .card-cols {
+      margin-top: 10px;
+      display: flex;
+      div {
+        width: 50%;
+      }
+      .col-test {
+        text-align: right;
+        color: #79949c;
+      }
+      img {
+        width: 100px;
+        margin-left: 20px;
+      }
     }
-    .col-test {
-      text-align: right;
-      color: #79949c;
-    }
-    img {
-      width: 100px;
-      margin-left: 20px;
+
+    .icon {
+      position: absolute;
+      top: 0;
+      right: 30px;
+      background-image: url(../../../assets/icons/svg/u954.svg);
+      background-size: 100%;
     }
   }
 
-  .icon {
-    position: absolute;
-    top: 0;
-    right: 30px;
-    background-image: url(../../../assets/icons/svg/u954.svg);
-    background-size: 100%;
+  .disabledButton {
+    cursor: no-drop;
+    pointer-events: none;
   }
-}
-
-.disabledButton {
-  cursor: no-drop;
-  pointer-events: none;
-}
-::-webkit-scrollbar {
-  width: 6px;
-}
-.videoDialog {
-  height: 92%;
-}
-.videoDialogClass {
-  width: 100%;
-  height: 100%;
-
-  video {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  .videoDialog {
+    height: 92%;
+  }
+  .videoDialogClass {
     width: 100%;
-    height: auto;
+    height: 100%;
+
+    video {
+      width: 100%;
+      height: auto;
+    }
   }
-}
-.el-carousel {
-  height: 100%;
-}
-::v-deep .el-carousel__indicators {
-  display: none;
-}
-.topTxt {
-  margin-left: 7px;
-  margin-top: 10px;
-  font-size: 16px;
-  background-image: url(../../../assets/cloudControl/cardTitle.png);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  text-align: center;
-  width:139px;
-  height: 30px;
-  line-height: 30px;
-}
-.searchSafeWarn{
-  top: 6% !important;
-  right: 0.8% !important;
-  width: 23.8% !important;
-}
-.hitchDialog{
-  ::v-deep .el-dialog__body{
-    height:70vh !important;
-    overflow:auto !important;
+  .el-carousel {
+    height: 100%;
   }
-  ::v-deep .el-card{
-    margin-bottom: 10px !important;
+  ::v-deep .el-carousel__indicators {
+    display: none;
   }
-}
-.evtInfo{
-  .el-dialog__body{
-    max-height: 62vh;
-    overflow: auto;
+  .topTxt {
+    margin-left: 7px;
+    margin-top: 10px;
+    font-size: 16px;
+    background-image: url(../../../assets/cloudControl/cardTitle.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    text-align: center;
+    width:139px;
+    height: 30px;
+    line-height: 30px;
   }
-}
+  .searchSafeWarn{
+    top: 6% !important;
+    right: 0.8% !important;
+    width: 23.8% !important;
+  }
+  .hitchDialog{
+    ::v-deep .el-dialog__body{
+      height:70vh !important;
+      overflow:auto !important;
+    }
+    ::v-deep .el-card{
+      margin-bottom: 10px !important;
+    }
+  }
+  .evtInfo{
+    .el-dialog__body{
+      max-height: 62vh;
+      overflow: auto;
+    }
+  }
 </style>

@@ -286,6 +286,7 @@ export default {
     /** 查询设备变更列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       this.queryParams.params = {};
       if (null != this.daterangeChangeTime && "" != this.daterangeChangeTime) {
         this.queryParams.params["beginChangeTime"] =

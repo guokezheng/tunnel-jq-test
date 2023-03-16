@@ -126,10 +126,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <delete id="deleteTeamsById" parameterType="String">
-		update sd_teams set del_flag = '2' where dept_id = #{deptId}
+		delete from sd_teams  where dept_id = #{deptId}
 	</delete>
-
-
 
 
 

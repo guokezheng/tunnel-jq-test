@@ -128,4 +128,9 @@ public class SdVehicleDataServiceImpl implements ISdVehicleDataService
         return sdVehicleDataMapper.getVehicleListsByDate(param);
     }
 
+    @Override
+    public List<Map> getDayVehicleDataByVehicleType(SdVehicleData vehicleData) {
+        return sdVehicleDataMapper.getDayVehicleDataByVehicleType(vehicleData);
+    }
+
 }

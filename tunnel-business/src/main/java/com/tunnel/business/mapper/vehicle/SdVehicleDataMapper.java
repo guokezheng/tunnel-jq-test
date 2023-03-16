@@ -75,4 +75,11 @@ public interface SdVehicleDataMapper
      * @return 车辆管理集合
      */
     List<Map<String, Object>> getVehicleListsByDate(Map param);
+
+    /**
+     * 查询24小时客车、货车、重点车辆客流量
+     * @param vehicleData
+     * @return
+     */
+    List<Map> getDayVehicleDataByVehicleType(SdVehicleData vehicleData);
 }

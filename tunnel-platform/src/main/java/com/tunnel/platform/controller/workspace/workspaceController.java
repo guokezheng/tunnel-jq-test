@@ -615,6 +615,24 @@ public class workspaceController extends BaseController {
     }
 
     /**
+     * 查询24小时客车、货车、重点车辆客流量
+     * @param map
+     * @return
+     */
+    @PostMapping("/vehicleMonitoringInRecent24HoursByVehicleType")
+    public AjaxResult vehicleMonitoringInRecent24HoursByVehicleType(@RequestBody Map<String, Object> map) {
+        if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
+            throw new RuntimeException("车辆监测查询条件中隧道不能为空");
+        }
+        String tunnelId = String.valueOf(map.get("tunnelId"));
+        //避免数据量大时查询过慢超时，改为从单车数据中查询
+        SdVehicleData vehicleData = new SdVehicleData();
+        vehicleData.setTunnelId(tunnelId);
+        List<Map> list = vehicleDataService.getDayVehicleDataByVehicleType(vehicleData);
+        return AjaxResult.success(list);
+    }
+
+    /**
      * 统计当天24小时重点车辆
      * @param map
      * @return

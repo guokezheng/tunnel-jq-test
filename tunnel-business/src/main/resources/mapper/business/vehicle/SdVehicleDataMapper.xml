@@ -139,6 +139,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+    <!--按小时统计当天的车辆数据(客车、货车、重点车辆)-->
+    <select id="getDayVehicleDataByVehicleType" resultType="java.util.Map">
+        SELECT HOUR
+            ( t.create_time ) HOUR,
+            ifnull( d.kcnum, 0 ) kcCount,
+            ifnull( d.hcnum, 0 ) hcCount,
+            ifnull( d.zdcnum, 0 ) zdcCount
+        FROM
+            (
+            SELECT
+                DATE_FORMAT( DATE_SUB( NOW( ), INTERVAL ( - ( @i := @i - 1 ) ) HOUR ), '%Y-%m-%d %H' ) AS create_time
+            FROM
+                (
+                SELECT
+                    a
+                FROM
+                    ( SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' ) AS a
+                    JOIN ( SELECT '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b ON 1
+                ) AS b,
+                ( SELECT @i :=+ 1 ) AS i
+            ) AS t
+            LEFT JOIN (
+            SELECT
+                count( vehicle_type in('15','16','25') or null ) kcnum,
+                count( vehicle_type in('14','17','26') or null  ) hcnum,
+                count( vehicle_type in('16','40') or null  ) zdcnum,
+                DATE_FORMAT( create_time, '%Y-%m-%d %H' ) create_time
+            FROM
+                `sd_vehicle_data`
+            WHERE
+                create_time > DATE_SUB( now( ), INTERVAL 1 DAY )
+                AND tunnel_id = #{tunnelId}
+            GROUP BY
+                DATE_FORMAT( create_time, '%Y-%m-%d %H' )
+            ) d ON t.create_time = d.create_time
+        ORDER BY
+            t.create_time
+    </select>
+
     <!-- 车流量计算 后期增加分组-->
     <select id="getVehicleListsByDate" parameterType="Map" resultType="hashmap">
         select

@@ -26,6 +26,8 @@ public class SdDevicePoint extends BaseEntity
     @Excel(name = "设备类型")
     private Long eqType;
 
+    private Long itemId;
+
     /** 寄存器点位 */
     @Excel(name = "寄存器点位")
     private String address;
@@ -169,6 +171,14 @@ public class SdDevicePoint extends BaseEntity
     public Long getIsReserved() 
     {
         return isReserved;
+    }
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
     @Override

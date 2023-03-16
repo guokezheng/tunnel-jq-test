@@ -251,7 +251,9 @@ public class ByteUtil {
 		String sTemp;
 		for (int i = 0; i < bArray.length; i++) {
 			sTemp = Integer.toHexString(0xFF & bArray[i]);
-			if (sTemp.length() < 2) sb.append(0);
+			if (sTemp.length() < 2) {
+				sb.append(0);
+			}
 			sb.append(sTemp.toUpperCase());
 		}
 		return sb.toString();
@@ -267,7 +269,9 @@ public class ByteUtil {
 		String sTemp;
 		for (int i = 0; i < bArray.length; i++) {
 			sTemp = Integer.toHexString(0xFF & bArray[i]);
-			if (sTemp.length() < 2) sb.append(0);
+			if (sTemp.length() < 2) {
+				sb.append(0);
+			}
 			sb.append(sTemp.toUpperCase()).append(' ');
 		}
 		return sb.toString();
@@ -285,7 +289,9 @@ public class ByteUtil {
 
 	public static final String byteToHex(byte value) {
 		String s = Integer.toHexString(0xff & value);
-		if(s.length() == 1) return "0"+s;
+		if(s.length() == 1) {
+			return "0"+s;
+		}
 		return s;
 	}
 
@@ -301,8 +307,11 @@ public class ByteUtil {
 
 	public static final String intToHex(int value) {
 		String s = Integer.toHexString(value);
-		if(s.length() == 1) return "0"+s;
-		else return s;
+		if(s.length() == 1) {
+			return "0"+s;
+		} else {
+			return s;
+		}
 	}
 
 	/**
@@ -431,6 +440,8 @@ public class ByteUtil {
 		return ByteUtil.bytesToInt(src, 0);
 	}
 
+
+
 	/**
 	 * 将字节数组转换成int数据，采用倒序的方式
 	 * @param bytes 字节数组
@@ -443,6 +454,34 @@ public class ByteUtil {
 				(0xff0000 &   (bytes[1 + offset] << 16)) |
 				(0xff000000 & (bytes[0 + offset] << 24));
 	}
+
+
+	/**
+	 * 将字节数组转换成int数据，采用 字符  倒序的方式
+	 * @param bytes
+	 * @param offset
+	 * @return
+	 */
+	public static int bytesToIntOfReverseToChar(byte[] bytes, int offset) {
+		return (0xff &         bytes[1 + offset]) |
+				(0xff00 &     (bytes[0 + offset] << 8)) |
+				(0xff0000 &   (bytes[3 + offset] << 16)) |
+				(0xff000000 & (bytes[2 + offset] << 24));
+	}
+
+
+
+	/**
+	 * 将字节数组转换成int数据，采用倒序的方式
+	 * @param bytes 字节数组
+	 * @param offset 起始位置
+	 * @return int值
+	 */
+	public static int bytesToIntOfReverse2Byte(byte[] bytes, int offset) {
+		return (0xff &         bytes[0 + offset]) |
+				(0xff00 &     (bytes[1 + offset] << 8));
+	}
+
 
 	/**
 	 * 将字节数组转换成int数据，采用倒序的方式
@@ -461,7 +500,9 @@ public class ByteUtil {
 	 */
 	public static long bytesToUInt(byte[] bytes, int offset) {
 		int value = bytesToInt(bytes, offset);
-		if (value >= 0) return value;
+		if (value >= 0) {
+			return value;
+		}
 		return 65536L * 65536L + value;
 	}
 
@@ -482,7 +523,9 @@ public class ByteUtil {
 	 */
 	public static long bytesToUIntOfReverse(byte[] bytes, int offset) {
 		int value = bytesToIntOfReverse(bytes, offset);
-		if (value >= 0) return value;
+		if (value >= 0) {
+			return value;
+		}
 		return 65536L * 65536L + value;
 	}
 
@@ -531,6 +574,17 @@ public class ByteUtil {
 	 */
 	public static float bytesToFloatOfReverse(byte[] bytes, int offset) {
 		return Float.intBitsToFloat(bytesToIntOfReverse(bytes, offset));
+	}
+
+
+	/**
+	 * 将字节数组转换成float数据  根据字符 高低位转换
+	 * @param bytes 字节数组
+	 * @param offset 偏移量
+	 * @return float值
+	 */
+	public static float bytesToFloatOfReverseToChar(byte[] bytes, int offset) {
+		return Float.intBitsToFloat(bytesToIntOfReverseToChar(bytes, offset));
 	}
 
 
@@ -695,6 +749,10 @@ public class ByteUtil {
 				(0xff00000000000000L & ((long) bytes[0 + offset] << 56));
 	}
 
+
+
+
+
 	/**
 	 * 字符数组 切割
 	 * @param bytes 字节数组
@@ -815,7 +873,9 @@ public class ByteUtil {
 	 * @return 字节数组
 	 */
 	public static byte[] boolArrayToByte(boolean[] array) {
-		if (array == null) return null;
+		if (array == null) {
+			return null;
+		}
 
 		int length = array.length % 8 == 0 ? array.length / 8 : array.length / 8 + 1;
 		byte[] buffer = new byte[length];
@@ -829,4 +889,40 @@ public class ByteUtil {
 		return buffer;
 	}
 
+
+
+	public static int byteArrayToIntLittleEndian(byte[] bytes) {
+		int x = 0;
+		for (int i = 0; i < 4; i++) {
+			int b = (bytes[i] & 0xFF) << (i * 8);
+			x |= b;
+		}
+		return x;
+	}
+
+
+
+	public static int bytesToIntRel(byte[] src, int offset) {
+		return ((src[offset + 1] & 0xFF) | ((src[offset] & 0xFF) << 8));
+	}
+
+	/**
+	 *
+	 * @param src
+	 * @param offset
+	 * @return
+	 */
+	public static int bytesToIntByChar(byte[] src, int offset) {
+		return ByteUtil.bytesToIntRel(src, offset);
+	}
+
+
+
+
+	public static byte[] byteMerger(byte[] bt1, byte[] bt2){
+		byte[] bt3 = new byte[bt1.length+bt2.length];
+		System.arraycopy(bt1, 0, bt3, 0, bt1.length);
+		System.arraycopy(bt2, 0, bt3, bt1.length, bt2.length);
+		return bt3;
+	}
 }

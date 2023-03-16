@@ -34,6 +34,5 @@ public class OmronClientHandler extends ChannelInboundHandlerAdapter {
         if(omronConnectProperties.getCountDownLatch()!=null){
             omronConnectProperties.getCountDownLatch().countDown();
         }
-        System.out.println(channel.id()+":"+ByteUtil.bytesToHexByFormat(message));
     }
 }

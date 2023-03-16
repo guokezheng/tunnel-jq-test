@@ -203,14 +203,16 @@
       @pagination="getList"
     />
 
-    <el-dialog :title="title" :visible.sync="open" width="70%" class="xjDialog">
+    <el-dialog :title="title" :visible.sync="open"  width="70%" class="xjDialog">
       <!--      <h1>新增巡检任务</h1>-->
       <div class="task">
         <div class="topTxt">巡查任务基本信息</div>
         <div class="tableTopHr"></div>
         <el-form
           :inline="true"
+          ref="form"
           :model="form"
+          :rules="rules"
           label-width="110px">
           <el-row>
             <el-col :span="8">
@@ -899,12 +901,21 @@ export default {
       form: {},
       // 表单校验指派巡查班组
       rules: {
-        bzId: [{ required: true, message: "请选择", trigger: "bzId" }],
-        taskDescription: [
+        bzId: [
+          { required: true, message: "请选择巡查班组", trigger: "blur" },
+        ],
+        taskName: [
           {
             required: true,
-            message: "请填写任务描述",
-            trigger: "taskDescription",
+            message: "请填写任务名称",
+            trigger: "blur",
+          },
+        ],
+        tunnelId: [
+          {
+            required: true,
+            message: "请选择所属隧道",
+            trigger: "blur",
           },
         ],
       },
@@ -1536,26 +1547,6 @@ export default {
       this.fileData.append("taskStatus", "0");
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
-      //判断是否选择点
-      if (
-        this.form.bzId == -1 ||
-        this.form.bzId == "" ||
-        this.form.bzId == null
-      ) {
-        this.$modal.msgWarning("请指派巡查班组");
-        return;
-      }
-      //判断两个字段是否填写
-      if (
-        this.form.tunnelId == "" ||
-        this.form.tunnelId == -1 ||
-        this.form.tunnelId == null
-      ) {
-        return this.$modal.msgWarning("请选择所属隧道");
-      }
-      if (this.form.taskName == "") {
-        return this.$modal.msgWarning("请填写任务名称");
-      }
       if (this.boxList == [] || this.boxList == "") {
         this.$modal.msgWarning("请选择巡检点或故障点");
         return;
@@ -1566,25 +1557,31 @@ export default {
         this.boxIds = this.boxIds + (item.eq_id + ",");
       });
       this.fileData.append("devicesList", this.boxIds);
-      if (this.form.id != null) {
-        if (this.isClick) {
-          updateTask(this.fileData).then((response) => {
-            this.isClick = false;
-            this.$modal.msgSuccess("发布成功");
-            this.open = false;
-            this.getList();
-          });
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if (this.form.id != null) {
+            if (this.isClick) {
+              updateTask(this.fileData).then((response) => {
+                this.isClick = false;
+                this.$modal.msgSuccess("发布成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          } else {
+            if (this.isClick) {
+              addTask(this.fileData).then((response) => {
+                this.isClick = false;
+                this.$modal.msgSuccess("发布成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          }
         }
-      } else {
-        if (this.isClick) {
-          addTask(this.fileData).then((response) => {
-            this.isClick = false;
-            this.$modal.msgSuccess("发布成功");
-            this.open = false;
-            this.getList();
-          });
-        }
-      }
+      });
+
+
       setTimeout(() => {
         this.isClick = true;
       }, 500);
@@ -1639,50 +1636,36 @@ export default {
         this.$modal.msgWarning("请选择巡检点或故障点");
         return;
       }
-      if (
-        this.form.bzId == -1 ||
-        this.form.bzId == "" ||
-        this.form.bzId == null
-      ) {
-        this.$modal.msgWarning("请指派巡查班组");
-        return;
-      }
-      //判断两个字段是否填写
-      if (
-        this.form.tunnelId == "" ||
-        this.form.tunnelId == -1 ||
-        this.form.tunnelId == null
-      ) {
-        return this.$modal.msgWarning("请选择所属隧道");
-      }
-      if (this.form.taskName == "") {
-        return this.$modal.msgWarning("请填写任务名称");
-      }
+
       this.boxIds = "";
       this.boxList.forEach((item) => {
         this.boxIds = this.boxIds + (item.eq_id + ",");
       });
       this.fileData.append("devicesList", this.boxIds);
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if (this.form.id != null) {
+            if (this.isClick) {
+              updateTask(this.fileData).then((response) => {
+                this.isClick = false;
+                this.$modal.msgSuccess("暂存成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          } else {
+            if (this.isClick) {
+              addTask(this.fileData).then((response) => {
+                this.isClick = false;
+                this.$modal.msgSuccess("暂存成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          }
+        }
+      });
 
-      if (this.form.id != null) {
-        if (this.isClick) {
-          updateTask(this.fileData).then((response) => {
-            this.isClick = false;
-            this.$modal.msgSuccess("暂存成功");
-            this.open = false;
-            this.getList();
-          });
-        }
-      } else {
-        if (this.isClick) {
-          addTask(this.fileData).then((response) => {
-            this.isClick = false;
-            this.$modal.msgSuccess("暂存成功");
-            this.open = false;
-            this.getList();
-          });
-        }
-      }
       setTimeout(() => {
         this.isClick = true;
       }, 500);

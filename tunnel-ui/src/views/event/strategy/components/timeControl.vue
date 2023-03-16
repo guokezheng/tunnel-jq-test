@@ -302,6 +302,12 @@ export default {
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
         ],
+        startTime: [
+          { required: true, message: "请输入开始时间", trigger: "change" },
+        ],
+        endTime: [
+          { required: true, message: "请输入结束时间", trigger: "change" },
+        ],
       },
     };
   },
@@ -429,14 +435,23 @@ export default {
       this.$refs["timeControl"].validate((valid) => {
         if (valid) {
           let autoControl = this.strategyForm.autoControl;
-          // for(let i = 0;i < autoControl.length;i++){
+          let response = JSON.parse(JSON.stringify(autoControl))
+          let result = response.every(function (item) {
+              return item.equipmentTypeId != "" || item.closeState != "" || item.openState != ""
+          });
+          if(!result){
+            return this.$modal.msgError("请填写完整");
+          }
+          // response.map((item,index)=>{
+          //   console.log(item);
           //   if (
-          //     autoControl[i].equipments.length == 0 ||
-          //     autoControl[i].closeState == "" || autoControl[0].openState == ""
+          //     item.equipmentTypeId == '' ||
+          //     item.equipments == '' ||
+          //     item.closeState == "" || item.openState == ""
           //   ) {
-          //     return this.$modal.msgError("请选择设备并添加执行操作");
+              
           //   }
-          // }
+          // })
           if (this.sink == "edit") {
             this.updateStrategyInfoData();
           } else {
@@ -449,7 +464,8 @@ export default {
     updateStrategyInfoData() {
       let data = this.strategyForm.autoControl;
       data.forEach((item) => {
-        item.state = item.state.toString();
+        item.closeState = item.closeState.toString();
+        item.openState = item.openState.toString();
       });
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
@@ -467,7 +483,8 @@ export default {
       // }
       let data = this.strategyForm.autoControl;
       data.forEach((item) => {
-        item.state = item.state.toString();
+        item.closeState = item.closeState.toString();
+        item.openState = item.openState.toString();
       });
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
@@ -519,10 +536,6 @@ export default {
       listEqTypeStateIsControl(params).then((response) => {
         this.strategyForm.autoControl[index].eqStateList = response.rows;
         this.strategyForm.autoControl[index].eqStateListFan = response.rows;
-        console.log(
-          this.strategyForm.autoControl[index].eqStateList,
-          "00000000000"
-        );
       });
     },
     //二次弹窗选择设备提交按钮
@@ -631,10 +644,14 @@ export default {
         return this.$modal.msgError("最多添加2条数据");
       }
       this.strategyForm.autoControl.push({
-        controlTime: "",
-        value: "",
-        state: "",
-        type: "",
+        value: "", //设备
+        openState: "", //状态
+        closeState: "",
+        type: "", //设备分类
+        equipmentTypeId: "", //设备类型
+        equipment: [], //设备列表
+        eqStateList: [], //执行开启操作
+        eqStateListFan: [], //关闭
       });
       this.getEquipmentType();
     },
@@ -746,10 +763,14 @@ export default {
       this.$refs["timeControl"].resetFields();
       this.strategyForm.autoControl = [
         {
-          value: "",
-          state: "",
-          type: "",
-          controlTime: "",
+          value: "", //设备
+          openState: "", //状态
+          closeState: "",
+          type: "", //设备分类
+          equipmentTypeId: "", //设备类型
+          equipment: [], //设备列表
+          eqStateList: [], //执行开启操作
+          eqStateListFan: [], //关闭
         },
       ];
     },

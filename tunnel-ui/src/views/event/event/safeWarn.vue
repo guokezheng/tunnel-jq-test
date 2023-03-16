@@ -2333,11 +2333,7 @@ export default {
       },
       //关闭drawer
       handleClose(done) {
-        this.$confirm("确认关闭？")
-          .then((_) => {
-            done();
-          })
-          .catch((_) => {});
+        done();
       },
       /** 提交按钮 */
       submitEventForm() {

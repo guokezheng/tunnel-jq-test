@@ -279,7 +279,7 @@ export default {
             state: "", //状态
             type: "", //设备分类
             equipmentTypeId: "", //设备类型
-            equipment: [], //设备列表
+            equipments: [], //设备列表
             equipmentTypeData: [],
             equipmentData: [],
           },
@@ -470,14 +470,15 @@ export default {
       this.$refs["timingControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-
-          // if (
-          //   autoControl.length < 1 ||
-          //   autoControl[0].equipments.length == 0 ||
-          //   autoControl[0].state == ""
-          // ) {
-          //   return this.$modal.msgError("请选择设备并添加执行操作");
-          // }
+          let response = JSON.parse(JSON.stringify(autoControl))
+          console.log(response,"response")
+          let result = response.every(function (item) {
+              return item.equipmentTypeId != "" && item.state != "" && item.equipments != ""
+          });
+          console.log(result);
+          if(!result){
+            return this.$modal.msgError("请填写完整");
+          }
           // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();
@@ -563,9 +564,11 @@ export default {
       // }
       this.addCf();
       this.strategyForm.autoControl.push({
-        value: "",
-        state: "",
-        equipmentTypeId: "",
+        value: "", //设备
+        state: "", //状态
+        type: "", //设备分类
+        equipmentTypeId: "", //设备类型
+        equipments: [], //设备列表
         equipmentTypeData: [],
         equipmentData: [],
       });
@@ -702,7 +705,15 @@ export default {
     resetForm() {
       this.$refs["timingControl"].resetFields();
       this.strategyForm.schedulerTime = "";
-      this.strategyForm.autoControl = [{ value: "", state: "", type: "" }];
+      this.strategyForm.autoControl = [{
+        value: "", //设备
+        state: "", //状态
+        type: "", //设备分类
+        equipmentTypeId: "", //设备类型
+        equipments: [], //设备列表
+        equipmentTypeData: [],
+        equipmentData: [], 
+      }];
     },
     strategyFormClose() {
       this.$emit("dialogVisibleClose");

@@ -320,7 +320,6 @@ export default {
     changeEndTime(){
       let startTime = this.strategyForm.startTime;
       let endTime = this.strategyForm.endTime;
-      if(startTime)
       console.log(startTime,endTime)
       let d1 = startTime.split(':');
       let d2 = endTime.split(':');

@@ -1111,14 +1111,10 @@ export default {
     },
     //关闭drawer
     handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          this.strategyForm.strategyType = "";
-          this.dialogVisible = false;
-          // this.$refs.cron.checkClear();
-          done();
-        })
-        .catch((_) => {});
+      this.strategyForm.strategyType = "";
+      this.dialogVisible = false;
+      // this.$refs.cron.checkClear();
+      done();
     },
     /** 查询控制策略列表 */
     getList() {

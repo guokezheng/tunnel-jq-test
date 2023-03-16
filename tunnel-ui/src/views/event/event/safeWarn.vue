@@ -57,7 +57,7 @@
             @change="$forceUpdate()"
           >
             <el-option
-              v-for="(item, index) in eventTypeData"
+              v-for="(item, index) in eventTypeDataList"
               :key="index"
               :label="item.simplifyName"
               :value="item.id"
@@ -129,7 +129,7 @@
             v-show="!item.eventImgUrl || item.eventImgUrl == null"
           />
           <div class="eventBox">
-            <span class="eventType">{{ item.prevControlType == '0' ? '主动安全' : '普通事件' }}</span>
+            <span class="eventType">{{ item.prevControlType == '1' ? '主动安全' : '普通事件' }}</span>
 
             <div>{{ item.simplifyName }}</div>
           </div>
@@ -322,6 +322,7 @@
                 label-width="100px"
               >
                 <el-date-picker
+                  @change="changeEndTime"
                   clearable
                   size="small"
                   v-model="eventFormDetail.endTime"
@@ -509,7 +510,7 @@
                 <span style="color:#c59105;">(请根据复核判定结果选择)</span>
               </el-form-item>
             </el-col>
-            <div>
+            <div style="width:100%;">
               <el-col :span="24" v-show="eventFormDetail.eventState == 4">
                 <el-form-item prop="reviewRemark">
                   <el-checkbox-group v-model="eventFormDetail.reviewRemark">
@@ -542,13 +543,27 @@
                   </el-checkbox-group>
                 </el-form-item>
               </el-col>
-              <el-col :span="24" v-show="eventFormDetail.eventState == 0">
+              <el-col :span="24" v-if="eventFormDetail.eventState == 0 && eventFormDetail.prevControlType == 0">
                 <el-form-item prop="currencyId">
-                  <el-select v-model="eventFormDetail.currencyId" placeholder="请选择预案">
+                  <el-select v-model="eventFormDetail.currencyId" placeholder="请选择预案" style="width:30%;">
                     <el-option
                       v-for="item in ReservePlanList"
                       :key="item.id"
                       :label="item.planName"
+                      :value="item.id"
+                    ></el-option>
+                  </el-select>
+                  <el-button @click="openDoor(eventFormDetail)">查看</el-button>
+                  <span style="color:#c59105;">(事件处置预案根据事件类型、事件等级智能推荐,处置过程中允许升级及更改预案)</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" v-if="eventFormDetail.eventState == 0 && eventFormDetail.prevControlType == 1">
+                <el-form-item prop="currencyId">
+                  <el-select v-model="eventFormDetail.currencyId" placeholder="请选择策略">
+                    <el-option
+                      v-for="item in strategyList"
+                      :key="item.id"
+                      :label="item.strategyName"
                       :value="item.id"
                     ></el-option>
                   </el-select>
@@ -701,7 +716,7 @@
         </el-timeline-item>
         <el-timeline-item timestamp="事件处置" placement="top" v-if="eventStateCurrent == '1' || eventStateCurrent == '0'">
           <el-card>
-            <el-col :span="12" v-if="prevControlType == 1">
+            <el-col :span="12" v-if="prevControlType == 0">
               <div class="IncHand">
                 <div class="incHandBox">
                   <el-tabs v-model="historyIndex" @tab-click="handleClick">
@@ -797,27 +812,28 @@
               </div>
             </div>
             </el-col>
-            <el-col :span="12" v-if="prevControlType == 0">
-              <el-timeline :reverse="reverse" style="overflow: scroll;height:350px;">
+            <el-col :span="12" v-if="prevControlType == 1">
+              <el-timeline :reverse="reverse" style="overflow: scroll;height:350px;padding: 0;">
                 <el-table
                   stripe
                   class="phoneTable"
-                  :data="tableData"
+                  :data="tacticsList"
                   :fit="true"
+                  height="250"
                   style="width: 100%">
                   <el-table-column
-                    prop="date"
-                    label="日期"
-                    width="180">
+                    prop="eqName"
+                    label="设备名称"
+                    >
                   </el-table-column>
                   <el-table-column
-                    prop="name"
-                    label="姓名"
-                    width="180">
+                    prop="pile"
+                    label="桩号"
+                    >
                   </el-table-column>
                   <el-table-column
-                    prop="address"
-                    label="地址">
+                    prop="stateName"
+                    label="状态">
                   </el-table-column>
                 </el-table>
               </el-timeline>
@@ -872,6 +888,7 @@
         <el-button type="success" @click="downFile()">下载报告</el-button>
       </el-timeline>
     </el-dialog>
+    <!-- 视频展示 -->
     <el-dialog
       :visible.sync="picUrlDialog"
       width="70%"
@@ -882,6 +899,7 @@
         <video :src="videoUrl" controls muted loop fluid autoplay></video>
       </div>
     </el-dialog>
+    <!-- 图片展示 -->
     <el-dialog
       title="提示"
       :visible.sync="dialogVisibleImg"
@@ -891,6 +909,47 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleImg = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisibleImg = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 复核详情展示 -->
+    <el-dialog
+      title="设备详情"
+      :visible.sync="dialogVisibleDevice"
+      width="50%"
+      :before-close="handleClose">
+      <div>
+        <el-tabs v-model="activeName" @tab-click="handleClickDevice">
+          <el-tab-pane 
+          v-for="(item,index) in DeviceDetail" 
+          :key="index"
+          :label="item.tableName" :name="index"></el-tab-pane>
+        </el-tabs>
+      </div>
+      <div v-for="(item,index) in DeviceDetail" 
+        :key="index" 
+        v-show="deviceIndexShow == index">
+        <el-table
+          :data="item.devicesList"
+          style="width: 100%">
+          <el-table-column
+            prop="eqName"
+            label="设备名称"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="pile"
+            label="桩号"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="stateName"
+            label="修改后状态">
+          </el-table-column>
+        </el-table>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleDevice = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisibleDevice = false">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -929,7 +988,7 @@ import {
   updateList,
 } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listEventType, getTodayEventCount,getEventDetail } from "@/api/event/eventType";
-import { listPlan } from "@/api/event/reservePlan";
+import { examineDeviceDetail,getStrategyData } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { image, video, getEventCamera } from "@/api/eventDialog/api.js";
 import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
@@ -959,6 +1018,11 @@ export default {
   },
   data() {
     return {
+      strategyList:[],//策略列表
+      deviceIndexShow:0,
+      activeName:'0',
+      dialogVisibleDevice:false,
+      DeviceDetail:[],//复核弹窗详情
       tableData: [],
       // 区分事件类型
       prevControlType:"",
@@ -997,6 +1061,7 @@ export default {
       planDisposal:[],//历史预案
       manualReview:{},//人工复核
       eventDiscovery:{},//发现数据
+      tacticsList:{},//表单数据
       dialogTableVisible:false,
       radioList:
       [
@@ -1133,6 +1198,8 @@ export default {
       showSearch: true,
       //事件类型
       eventTypeData: [],
+      // 全部事件类型
+      eventTypeDataList:[],
       // 总条数
       total: 0,
       // 事件管理表格数据
@@ -1333,7 +1400,7 @@ export default {
     this.getBz();
     await this.getList();
     await this.getEventMsg();
-    // this.getEventType();
+    this.getEventTypeAll();
     this.getTunnel();
     this.getEqType();
     this.getDevices();
@@ -1371,6 +1438,35 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus2);
   },
   methods: {
+    getStrategyData(item){
+      console.log(item);
+      let param = {
+        "tunnelId":item.tunnelId,
+        "direction":item.direction,
+        "eventType":item.eventTypeId,
+      }
+      getStrategyData(param).then(res=>{
+        console.log(res.data,"策略列表");
+        this.strategyList = res.data
+        this.eventFormDetail.currencyId =  res.data[0].id
+      })
+    },
+    handleClickDevice(tab, event) {
+      console.log(tab.index);
+      this.deviceIndexShow = tab.index;
+    },
+    // 打开复核内详情
+    openDoor(item){
+      let query = {
+        prevControlType:item.prevControlType,
+        currencyId:item.currencyId,
+      }
+      examineDeviceDetail(query).then(res=>{
+        console.log(res);
+        this.DeviceDetail = res.data;
+        this.dialogVisibleDevice = true;
+      })
+    },
     handleClick(tab, event){
       console.log(tab, event);
     },
@@ -1506,6 +1602,7 @@ export default {
         this.disposalRecord = res.data.disposalRecord;
         this.eventStateCurrent = res.data.eventState;
         this.endReport = res.data.endReport;
+        this.tacticsList = res.data.tacticsList;
       })
       this.dialogTableVisible = true;
     },
@@ -1614,7 +1711,8 @@ export default {
     },
     // 复核提交
     submitDialog() {
-      this.$cache.local.set('currencyId',this.eventForm.currencyId);
+      console.log(this.eventFormDetail,'1123123')
+      this.$cache.local.set('currencyId',this.eventFormDetail.currencyId);
       if (this.eventFormDetail.stakeNum1 && this.eventFormDetail.stakeNum2) {
         this.eventFormDetail.stakeNum =
           "K" + this.eventFormDetail.stakeNum1 + "+" + this.eventFormDetail.stakeNum2;
@@ -1631,7 +1729,6 @@ export default {
       if(this.eventFormDetail.eventState == '0' && this.eventFormDetail.currencyId == ''  || this.eventFormDetail.currencyId == null){
         return this.$modal.msgWarning("请选择事件处置预案");
       }
-      // return false;
       const currencyId = this.eventFormDetail.currencyId;
       updateEvent(this.eventFormDetail).then((response) => {
         this.processDialog = false;
@@ -1642,14 +1739,24 @@ export default {
         this.getList();
         // 1.预案不为空 
         // 2.当前状态为0
-        if(currencyId && this.eventFormDetail.eventState == 0){
+        // 3.普通事件
+        if(this.eventFormDetail.prevControlType == 0 && currencyId && this.eventFormDetail.eventState == 0){
           this.$router.push({
             path: "/emergency/administration/dispatch",
-            query: { id: this.eventForm.id },
+            query: { id: this.eventFormDetail.id },
           });
         }
         this.$cache.local.remove("currencyId")
       });
+    },
+    changeEndTime(){
+      let startTime = new Date(this.eventFormDetail.eventTime).getTime();
+      let endTime = new Date(this.eventFormDetail.endTime).getTime();
+      console.log(startTime,endTime);
+      if(endTime < startTime){
+        this.$modal.msgWarning("结束时间必须大于开始时间");
+        this.eventFormDetail.endTime = "";
+      }
     },
     // 获取车道数
     getTunnelLane() {
@@ -1726,8 +1833,6 @@ export default {
       this.miniDialog = true;
       this.detailsDisabled = true;
       item.reviewRemark = [];
-
-      
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
       this.tunnelId = item.tunnelId;
@@ -1735,7 +1840,12 @@ export default {
       this.details = true;
       this.eventFormDetail = {...item};
       this.eventFormDetail.eventState = 4;
-      this.getReservePlanData();
+      if(item.prevControlType == 1){
+        this.getStrategyData(item);
+      }else{
+        this.getReservePlanData();
+      }
+      
       this.$nextTick(() => {
         const swiperTop = this.$refs.swiperTop.$el.swiper;
         const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
@@ -1986,7 +2096,7 @@ export default {
       }
       this.queryParams.startTime = this.dateRange[0];
       this.queryParams.endTime = this.dateRange[1];
-      this.queryParams.searchValue = this.activeName;
+      // this.queryParams.searchValue = this.activeName;
       this.queryParams.eventState = this.checkBoxEventState.toString()
       if(this.fuzzySearch1){
         this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
@@ -2030,6 +2140,14 @@ export default {
           this.tunnelList = response.rows;
         });
       }
+    },
+    getEventTypeAll(){
+      let prevControlType = {
+        isUsable: "1",
+      };
+      listEventType(prevControlType).then((response) => {
+        this.eventTypeDataList = [...response.rows];
+      });
     },
     /** 查询事件类型列表 */
     getEventType(item) {

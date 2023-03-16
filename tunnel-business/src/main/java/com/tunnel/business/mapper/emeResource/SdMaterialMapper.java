@@ -76,4 +76,10 @@ public interface SdMaterialMapper
      */
 	public int updateMaterialMessage(SdMaterial sdMaterial);
 
+    /**
+     * 检查当前隧道中添加的物资是否存在
+     * @param sdMaterial
+     * @return
+     */
+    List<SdMaterial> selectMaterialList(SdMaterial sdMaterial);
 }

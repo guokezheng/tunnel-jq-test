@@ -354,6 +354,7 @@ export default {
     /** 查询备品备件库列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       if(this.manageStatin == '1'){
         this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
       }

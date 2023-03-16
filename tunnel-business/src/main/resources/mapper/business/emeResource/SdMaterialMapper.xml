@@ -188,4 +188,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+
+
+    <select id="selectMaterialList" parameterType="SdMaterial" resultMap="SdMaterialResult">
+        <include refid="selectSdMaterialVo"/>
+        <where>
+            <if test="materialName != null  and materialName != ''"> AND material_name = #{materialName}</if>
+            <if test="materialType != null  and materialType != ''"> and material_type = #{materialType}</if>
+            <if test="position != null  and position != ''"> and position = #{position}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="direction != null and direction != ''">and direction = #{direction}</if>
+            <if test="qualityGuaranteePeriod != null and qualityGuaranteePeriod != '' ">and quality_guarantee_period = #{qualityGuaranteePeriod}</if>
+        </where>
+    </select>
+
 </mapper>

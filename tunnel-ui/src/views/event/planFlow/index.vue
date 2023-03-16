@@ -276,7 +276,7 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) && !this.$refs.main.contains(e.target)) {
         if (self.boxShow == true){
           self.boxShow = false;
         }

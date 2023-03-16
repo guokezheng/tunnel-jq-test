@@ -80,7 +80,7 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
+              >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
             >重置</el-button

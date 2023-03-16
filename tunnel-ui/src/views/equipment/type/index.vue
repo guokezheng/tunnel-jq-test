@@ -73,7 +73,7 @@
           <el-button size="small" @click="handleQuery"
           >搜索</el-button
           >
-          <el-button size="small" @click="resetQuery" 
+          <el-button size="small" @click="resetQuery"
           >重置</el-button
           >
         </el-form-item>
@@ -481,6 +481,7 @@ export default {
     /** 查询设备类型列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       listType(this.queryParams).then((response) => {
         console.log(response,'getListgetListgetListgetListgetList')
         this.typeList = response.rows;

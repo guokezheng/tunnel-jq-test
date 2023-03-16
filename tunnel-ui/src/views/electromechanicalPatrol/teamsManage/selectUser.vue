@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 授权用户 -->
-    <el-dialog title="选择用户" :visible.sync="visible" width="800px" top="5vh" append-to-body>
+    <el-dialog title="选择用户" :visible.sync="visible" width="1000px" append-to-body class="operationDiglog">
         <el-row
           :gutter="20"
           style="margin: 0px 0 6px"
@@ -15,20 +15,26 @@
                 style="padding-right: 5px"
                 size="small"
               >
-                <el-button
+<!--                <el-button
                   slot="append"
                   size="small"
                   icon="icon-gym-Gsearch"
                   style="transform: translateX(20px)"
-                ></el-button>
+                ></el-button>-->
               </el-input>
             </div>
           </el-col>
         </el-row>
 
       <el-row>
-        <el-table @row-click="clickRow" ref="table" :data="userList" @selection-change="handleSelectionChange"
-            height="260px" class="allTable">
+<!--        <el-table @row-click="clickRow" ref="table" :data="userList" @selection-change="handleSelectionChange"
+            height="260px"  :row-class-name="tableRowClassName">-->
+          <el-table
+          ref="tables"
+          :data="userList"
+          @selection-change="handleSelectionChange"
+          :row-class-name="tableRowClassName"
+          style="color: #ffffff;height:260px; ">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
           <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
@@ -123,6 +129,13 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
+      } else {
+        return "tableOddRow";
+      }
+    },
     /** 选择授权用户操作 */
     handleSelectUser() {
       const deptId = this.queryParams.deptId;
@@ -138,3 +151,44 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+
+.operationDiglog {
+::v-deep .el-input-group__append {
+  padding: 0;
+  width: 60px;
+  border-left: none !important;
+.el-button {
+  height: 32px;
+  border-top-right-radius: 3px !important;
+  border-bottom-right-radius: 3px !important;
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+// transform: translateX(20px);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+}
+.el-dialog .el-form {
+  padding: 15px !important;
+.el-form-item__content .el-button {
+  width: 88px;
+  height: 22px;
+  border: none;
+}
+.el-form-item__content .el-button--mini {
+  padding: 2px 15px !important;
+}
+}
+.el-table {
+  padding: 0 15px;
+  margin-bottom: 60px;
+}
+.el-tabs {
+  padding: 0 15px;
+}
+}
+</style>

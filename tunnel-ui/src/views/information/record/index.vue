@@ -351,6 +351,7 @@ export default {
     /** 查询发布记录列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       let contents = [];
 
       listRecord(this.queryParams).then((response) => {

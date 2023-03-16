@@ -79,7 +79,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          
+
         </el-form-item>
       </el-form>
     </div>
@@ -502,6 +502,7 @@ export default {
     /** 查询角色列表 */
     getList() {
       this.loading = true;
+      this.role_boxShow = false;
       listRole(this.addDateRange(this.queryParams, this.dateRange)).then(
         response => {
           this.roleList = response.rows;

@@ -1120,6 +1120,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.disabled = false;
       this.open = true;
       this.title = "添加应急资源";
     },

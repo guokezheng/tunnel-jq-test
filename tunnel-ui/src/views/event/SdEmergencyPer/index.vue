@@ -64,7 +64,7 @@
     </el-row>
 
 
-      <div class="treeSearchBox  searchBox" v-show="ry_boxShow">
+      <div class="treeSearchBox  searchBox" v-show="ry_boxShow" style ="top:50px!important;">
         <el-form
           ref="queryForm"
           :inline="true"
@@ -168,8 +168,8 @@
 
 
     <!-- 添加或修改应急人员信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px" style = "">
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body >
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px" >
 
         <el-form-item label="应急人员" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入应急人员" />
@@ -179,7 +179,7 @@
             v-model="form.deptId"
             :options="deptOptions"
             placeholder="请选择归属部门"
-            style="color: #000000"
+            style="color: #000000!important;"
           />
         </el-form-item>
         <el-form-item label="岗位" prop="groupName">
@@ -426,11 +426,13 @@ export default {
       this.reset();
       this.getTreeselect();
       this.open = true;
+      this.submitBtnLoading = false
       this.title = "添加应急人员信息";
 
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.submitBtnLoading = false
       this.reset();
       this.getTreeselect();
       const id = row.id || this.ids;
@@ -532,6 +534,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.vue-treeselect__single-value{
+  color:#ffffff!important;
+}
 </style>
 

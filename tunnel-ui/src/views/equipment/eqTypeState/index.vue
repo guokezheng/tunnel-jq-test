@@ -25,7 +25,7 @@
         </div>
       </el-col>
     </el-row>
-    
+
     <div ref="cc" class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
@@ -587,6 +587,7 @@ export default {
     /** 查询设备类型状态关系列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       listEqTypeStates(this.queryParams).then((response) => {
         console.log(response, "responseresponseresponse");
         response.rows.forEach((item) => {

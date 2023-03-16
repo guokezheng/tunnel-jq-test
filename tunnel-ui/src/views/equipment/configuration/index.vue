@@ -407,6 +407,7 @@ export default {
     /** 查询隧道环境配置列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       listConfiguration(this.queryParams).then((response) => {
         this.configurationList = response.rows;
        /* this.configurationList.forEach((e) => {

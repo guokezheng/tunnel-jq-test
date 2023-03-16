@@ -1227,6 +1227,7 @@ export default {
         );
       }
       this.loading = true;
+      this.boxShow = false;
       this.queryParams.exportIds = "";
       listDevices(this.queryParams).then((response) => {
         this.devicesList = response.rows;

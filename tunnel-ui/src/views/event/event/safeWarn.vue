@@ -96,6 +96,7 @@
             unlink-panels
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            :picker-options="pickerOptionsStart"
           ></el-date-picker>
         </el-form-item>
         <el-form-item class="bottomBox">
@@ -1019,6 +1020,12 @@ export default {
   data() {
     return {
       strategyList:[],//策略列表
+      pickerOptionsStart: {
+        // 时间不能大于当前时间
+        disabledDate: (time) => {
+          return time.getTime() > Date.now()
+        }
+      },
       deviceIndexShow:0,
       activeName:'0',
       dialogVisibleDevice:false,

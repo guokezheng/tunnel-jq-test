@@ -338,69 +338,6 @@
         </el-form-item>
       </el-form>
     </div>
-        <!-- <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-          v-show="showSearch"
-          label-width="68px"
-        >
-          <el-form-item label="隧道名称" prop="tunnelId">
-            <el-select
-              v-model="queryParams.tunnelId"
-              placeholder="请选择隧道"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="策略名称" prop="strategyName">
-            <el-input
-              v-model="queryParams.strategyName"
-              placeholder="请输入策略名称"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType">
-            <el-select
-              v-model="queryParams.strategyType"
-              placeholder="请选择策略类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in strategyTypeEvent"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleQuery"
-              >搜索</el-button
-            >
-            <el-button size="mini" @click="resetQuery" type="primary" plain
-              >重置</el-button
-            >
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="openInsertStrategy('event')"
-              v-hasPermi="['system:strategy:add']"
-              >新增</el-button
-            >
-          </el-form-item>
-        </el-form> -->
         <el-table
           v-loading="loading"
           :data="strategyList"
@@ -550,7 +487,7 @@
     <el-dialog
       :title="title"
       :visible.sync="dialogVisibleEvent"
-      :before-close="handleClose"
+      :before-close="handleCloseEvent"
       :append-to-body="true"
       width="75%"
     >
@@ -844,17 +781,40 @@ export default {
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;
-      console.log(this.dictCode,'0-0-0-0-0-0-0-0-0-0-0-');
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.getList();
     },
     closeDialogEvent() {
+      let index = this.strategyForm.strategyType;
+      switch(index){
+        case '0':
+          this.$refs.manualControlEvent.resetForm();
+        break;
+        case '2':
+          this.$refs.autoControlEvent.resetForm();
+        break;
+      }
+      console.log(this.strategyForm.strategyType);
       this.strategyForm.strategyType = "";
       this.dialogVisibleEvent = false;
       this.getList();
     },
     // 每次点击取消按钮，策略类型赋空
     closeDialog() {
+      let index = this.strategyForm.strategyType;
+      switch(index){
+        case '0':
+          console.log(this.strategyForm.strategyType);
+          this.$refs.manualControl.resetForm();
+        break;
+        case '1':
+          this.$refs.timingControl.resetForm();
+        break;
+        case '3':
+          this.$refs.timeControl.resetForm();
+        break;
+      }
+      console.log(this.strategyForm.strategyType);
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
       this.getList();
@@ -883,13 +843,15 @@ export default {
       // 日常策略
       // this.strategyForm.strategyType = 0;
       this.$set(this.strategyForm, "strategyType", "0");
-      if (type == "richang") {
-        this.dialogVisible = true;
-        this.strategyTypeClose();
-      } else if (type == "event") {
-        this.dialogVisibleEvent = true;
-        this.strategyTypeEventClose();
-      }
+      this.$nextTick(()=>{
+        if (type == "richang") {
+          this.dialogVisible = true;
+          this.strategyTypeClose();
+        } else if (type == "event") {
+          this.dialogVisibleEvent = true;
+          this.strategyTypeEventClose();
+        }
+      })
     },
     /** 编辑修改按钮操作 */
     handleUpdate(row) {
@@ -1111,6 +1073,34 @@ export default {
     },
     //关闭drawer
     handleClose(done) {
+      let index = this.strategyForm.strategyType;
+      switch(index){
+        case '0':
+          this.$refs.manualControl.resetForm();
+        break;
+        case '1':
+          this.$refs.timingControl.resetForm();
+        break;
+        case '3':
+          this.$refs.timeControl.resetForm();
+        break;
+      }
+      console.log(this.strategyForm.strategyType);
+      this.strategyForm.strategyType = "";
+      this.dialogVisible = false;
+      // this.$refs.cron.checkClear();
+      done();
+    },
+    handleCloseEvent(done) {
+      let index = this.strategyForm.strategyType;
+      switch(index){
+        case '0':
+          this.$refs.manualControlEvent.resetForm();
+        break;
+        case '2':
+          this.$refs.autoControlEvent.resetForm();
+        break;
+      }
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
       // this.$refs.cron.checkClear();

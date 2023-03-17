@@ -658,17 +658,15 @@ export default {
       this.$refs["autoControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-          console.log(autoControl.length);
-          if (this.strategyForm.warningType == 1) {
-            // if (
-            //   !autoControl.length ||
-            //   autoControl[0].value.length == 0 ||
-            //   autoControl[0].state == ""
-            // ) {
-            //   return this.$modal.msgError("请选择设备并添加执行操作");
-            // }
+          let response = JSON.parse(JSON.stringify(autoControl))
+          console.log(response,"response")
+          let result = response.every(function (item) {
+              return item.equipmentTypeId != "" && item.state != "" && item.equipments != ""
+          });
+          console.log(result);
+          if(!result){
+            return this.$modal.msgError("请填写完整");
           }
-
           // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();

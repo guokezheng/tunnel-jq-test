@@ -53,6 +53,8 @@
             </el-select>
           </el-form-item>
         </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="8">
           <el-form-item label="事件类型" prop="eventType">
             <el-select
@@ -75,6 +77,7 @@
             <el-input
               v-model="strategyForm.effectiveTime"
               placeholder="请输入有效时间(单位：分钟)"
+              style="width: 100%"
             />
           </el-form-item>
         </el-col>
@@ -95,7 +98,8 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-row :gutter="20" style="clear:both;">
+      </el-row>
+      <el-row :gutter="20" style="clear:both;">
         <el-col :span="24">
           <el-form-item label="执行操作">
             <div class="menu">
@@ -107,7 +111,6 @@
             </div>
           </el-form-item>
         </el-col>
-      </el-row>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="24">
@@ -350,8 +353,8 @@ export default {
           for (let i = 0; i < response.rows.length; i++) {
             let attr = response.rows[i];
             let manualControl = this.strategyForm.manualControl[i];
-            this.strategyForm.manualControl[i].value =
-              attr.equipments.split(",");
+            let value = attr.equipments.split(",");
+            this.$set(this.strategyForm.manualControl[i],"value",value);
             this.strategyForm.manualControl[i].state = attr.state;
             this.strategyForm.effectiveTime = attr.effectiveTime;
             this.strategyForm.manualControl[i].manualControlStateList =
@@ -522,6 +525,13 @@ export default {
           console.log(this.strategyForm, "要提交数据");
           var manualControl = this.strategyForm.manualControl;
           //如果不是疏散标志则判断是否填写
+          let result = manualControl.every(function (item) {
+              return item.equipmentTypeId != "" && item.state != "" && item.value != "" && item.disposalName
+          });
+          console.log(result);
+          if(!result){
+            return this.$modal.msgError("请填写完整");
+          }
           if (this.strategyForm.equipmentTypeId != 30) {
             if (
               manualControl[0].value.length == 0 ||

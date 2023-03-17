@@ -66,7 +66,7 @@
             </el-time-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="12">
           <el-form-item label="结束时间" prop="endTime">
             <el-time-picker
               v-model="strategyForm.endTime"

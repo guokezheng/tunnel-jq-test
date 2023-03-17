@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-16 15:19:07
+ * @LastEditTime: 2023-03-17 16:11:41
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -20,8 +20,9 @@
         src="http://106.120.201.126:14712/dashboard"
       ></iframe> -->
     </div>
-    <div class="drawerBox" @click="drawerHandleOpen()" v-show="drawer == false">
-      <i class="el-icon-d-arrow-right"></i>
+    <div class="drawerBox" @click="drawerHandleOpen()" >
+      <i class="el-icon-d-arrow-left" v-show="drawer"></i>
+      <i class="el-icon-d-arrow-right" v-show="drawer == false"></i>
       处置记录
     </div>
     <el-drawer
@@ -52,7 +53,13 @@
     <div class="disRightBox">
       <div class="dispatchLeft">
           <div class="video">
-            <div class="title"><i class="el-icon-video-camera" style="margin-right:15px;"></i>实时视频</div>
+            <div class="title">
+              <i class="el-icon-video-camera" style="margin-right:15px;"></i>
+              实时视频
+              <span>Video monitoring</span>
+              
+              
+            </div>
             <div class="videoBox1">
               <div class="videoContent">
                 <videoPlayer
@@ -88,7 +95,7 @@
                   :open="videoForm4.cameraPlayer"
                   class="video"
                 ></videoPlayer>
-                <div class="videoListTitle">{{ videoForm4.title }}</div>
+                <div class="videoListTitle">{{ videoForm4.title }}摄像机</div>
               </div>
               <!-- <div
                 v-for="(item, index) of videoList"
@@ -106,7 +113,11 @@
             </div>
           </div>
           <div class="evtMessage">
-            <div class="title"><i class="el-icon-notebook-2" style="margin-right:15px;"></i>事件信息</div>
+            <div class="title">
+              <i class="el-icon-notebook-2" style="margin-right:15px;"></i>
+              事件信息
+              <span>Event information</span>
+            </div>
             <div class="evtMessBox">
               <div class="evtMessLeft">
                 <div>
@@ -152,16 +163,15 @@
                     :preview-src-list="Array(item.imgUrl)"
                   ></el-image>
                 </div>
-                <img
-                  src="../../../assets/cloudControl/nullImg.png"
-                  v-else
-                  style="width: 46px; margin: 0 auto; display: flex"
-                />
               </div>
             </div>
           </div>
           <div class="plan">
-            <div class="title"><i class="el-icon-phone-outline" style="margin-right:15px;"></i>调度联络</div>
+            <div class="title">
+              <i class="el-icon-phone-outline" style="margin-right:15px;"></i>
+              调度联络
+              <span>Dispatching liaison</span>
+            </div>
             <el-table
               :data="implementList"
               stripe
@@ -187,8 +197,11 @@
     <div class="disLeftBox">
       <div style="height:100%;">
       <div class="IncHand">
-        <div class="title"><i class="el-icon-document" style="margin-right:15px;"></i>事件处置</div>
-
+        <div class="title">
+          <i class="el-icon-document" style="margin-right:15px;"></i>
+          事件处置
+          <span class="small">Event handling</span>
+        </div>
         <div class="incHandBox">
           <div class="GTop">
             <div class="GT_one one_box">
@@ -1507,7 +1520,7 @@ export default {
           this.eventForm = response.rows[0];
           this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(0,4);
           setInterval(()=>{
-            this.deadline4 = intervalTime(this.eventForm.updateTime);
+            this.deadline4 = intervalTime(this.eventForm.eventTime);
           },1000)
           this.getVideoList();
           this.getpersonnelList();
@@ -1925,6 +1938,9 @@ export default {
           grid-template-columns: repeat(2,48%);
           grid-column-gap: 4%;
           .videoContent {
+            background-image: url(../../../assets/image/videoBg.png);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
             width: 100%;
             // height: 48%;
             text-align: center;
@@ -1941,26 +1957,16 @@ export default {
               margin:0 auto;
             }
             .videoListTitle {
-              width: 75px;
+              background-color: rgba(107, 115, 123, 0.4);
+              width: 100%;
               height: 18px;
               border-radius: 4px;
               font-size: 13px;
               color: #fff;
               position: absolute;
-              top: 0px;
+              top: 15px;
+              left: 0px;
             }
-          }
-          .videoContent:nth-of-type(1) .videoListTitle {
-            background: #00c8ff;
-          }
-          .videoContent:nth-of-type(2) .videoListTitle {
-            background: #59b94e;
-          }
-          .videoContent:nth-of-type(3) .videoListTitle {
-            background: #c4a23c;
-          }
-          .videoContent:nth-of-type(4) .videoListTitle {
-            background: #c4a23c;
           }
         }
       }
@@ -1972,15 +1978,18 @@ export default {
           width: 100%;
           height: calc(100% - 40px);
           .evtMessRight {
-            border-left: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
             width: 50%;
             height: 100%;
             .evtMessVideo {
-              height: 50%;
+              background-image: url(../../../assets/image/videoBg.png);
+              background-repeat: no-repeat;
+              background-size: 100% 100%;
+              // height: 50%;
               width: auto;
               display: flex;
               justify-content: center;
               margin-top: 10px;
+              padding: 10px 0;
               > video {
                 height: 100%;
                 width: 90%;
@@ -1993,9 +2002,17 @@ export default {
               height: 38px;
               display: flex;
               justify-content: space-between;
-              margin: 5px auto;
+              margin: 10px auto;
               > .el-image {
-                width: 24%;
+                width: 35%;
+                padding: 10px;
+                height: 55px;
+                background-image: url(../../../assets/image/videoBg.png);
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                ::v-deep .el-image__error{
+                  font-size:12px;
+                }
               }
             }
             .evtMessTarget {
@@ -2158,6 +2175,10 @@ export default {
       height: 100%;
       box-sizing: border-box;
       border: 1px solid #0661ae;
+      .title{
+        font-size:16px;
+        span{font-size:13px;color:#FFFFFF;}
+      }
       .incHandBox {
         height: calc(100% - 40px);
         // overflow: hidden;
@@ -2168,12 +2189,15 @@ export default {
           align-items: center;
           margin-bottom:20px;
           .GT_one{
-            border-top: 4px solid #0175a9;
-            border-bottom: 1px solid #0175a9;
+            background-image: url(../../../assets/image/leftBg.png);
+            // border-top: 4px solid #0175a9;
+            // border-bottom: 1px solid #0175a9;
             background-color: #013143;
             color:white;
-            width: 45%;
-            height: 65px;
+            width: 41%;
+            height: 40px;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
           }
           .one_box{
             display:flex;
@@ -2181,7 +2205,7 @@ export default {
             align-items: center;
             p{
               text-align:center;
-              font-size: 15px;
+              font-size: 12px;
             }
             span{
               display:block;
@@ -2609,6 +2633,12 @@ export default {
     color: #fff;
     margin: 10px;
     cursor: pointer;
+  }
+}
+.disRightBox{
+  .title span{
+    font-size:13px;
+    color:#ffffff;
   }
 }
 

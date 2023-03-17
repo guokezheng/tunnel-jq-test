@@ -149,18 +149,12 @@
               circle
               @click="removeItem(index)"
             ></el-button>
-            <el-form-item
-              label=""
-              style=""
+            <el-button
               v-show="strategyForm.equipmentTypeId != 30"
-            >
-              <el-button
-                type=""
-                icon="el-icon-plus"
-                circle
-                @click="addItem"
-              ></el-button>
-            </el-form-item>
+              icon="el-icon-plus"
+              circle
+              @click="addItem"
+            ></el-button>
           </el-col>
         </el-form-item>
       </el-col>
@@ -434,24 +428,15 @@ export default {
       this.$refs["manualControl"].validate((valid) => {
         if (valid) {
           console.log(this.strategyForm, "要提交数据");
-          var manualControl = this.strategyForm.manualControl;
+          var manualControl = JSON.parse(JSON.stringify(this.strategyForm.manualControl));
+          let result = manualControl.every(function (item) {
+              return item.equipmentTypeId != "" && item.state != "" && item.value != ""
+          });
+          console.log(result);
+          if(!result){
+            return this.$modal.msgError("请填写完整");
+          }
           //如果不是疏散标志则判断是否填写
-          // if (this.strategyForm.equipmentTypeId != 30) {
-          //   if (
-          //     manualControl[0].value.length == 0 ||
-          //     manualControl[0].state == ""
-          //   ) {
-          //     return this.$modal.msgError("请选择设备并添加执行操作");
-          //   }
-          // } else {
-          // if(this.strategyForm.equipmentTypeId == 16 || this.strategyForm.equipmentTypeId == 36){
-          //
-          // }else{
-          //   if (manualControl[0].state == "") {
-          //     return this.$modal.msgError("请选择疏散标志执行操作");
-          //   }
-          // }
-          // }
           // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();

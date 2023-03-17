@@ -496,15 +496,17 @@
         <div class="card-col" style="font-size: 16px">
           <div>
             巡检时间:
-            <span>{{ item.xcTime }}</span>
+            <span>{{
+                parseTime(item.xcTime, "{y}-{m}-{d} {h}:{m}:{s}")
+              }}</span>
           </div>
           <div>
             检修班组:
-            <span>{{ item.bzId }}</span>
+            <span>{{ item.bzName}}</span>
           </div>
           <div>
             检修人:
-            <span>{{ item.walkerId }}</span>
+            <span>{{ item.userName }}</span>
           </div>
         </div>
         <div class="card-col" style="font-size: 16px">
@@ -1134,49 +1136,36 @@ export default {
       this.record = true;
       this.faultId = row.id;
       let that = this;
-      // const response = getRepairRecordList()
       getRepairRecordList(this.faultId).then((response) => {
         that.news = response.data;
-        if (response.data.length > 0) {
-          that.impressionOptions.forEach((opt) => {
-            if (opt.dictValue == "0") {
-              that.news[0].impression = opt.dictLabel;
+        if(that.news.length>0){
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("impression")){
+              that.impressionOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].impression) {
+                  that.news[i].impression = opt.dictLabel;
+                }
+              });
             }
-            if (opt.dictValue == "1") {
-              that.news[0].impression = opt.dictLabel;
+          }
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("network")){
+              that.networkOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].network) {
+                  that.news[i].network = opt.dictLabel;
+                }
+              });
             }
-          });
-          that.networkOptions.forEach((opt) => {
-            if (opt.dictValue == "0") {
-              that.news[0].network = opt.dictLabel;
+          }
+          for(let i=0;i<that.news.length;i++){
+            if(that.news[i].hasOwnProperty("power")){
+              that.powerOptions.forEach((opt) => {
+                if (opt.dictValue == that.news[i].power) {
+                  that.news[i].power = opt.dictLabel;
+                }
+              });
             }
-            if (opt.dictValue == "1") {
-              that.news[0].network = opt.dictLabel;
-            }
-          });
-          that.powerOptions.forEach((opt) => {
-            if (opt.dictValue == "0") {
-              that.news[0].power = opt.dictLabel;
-            }
-            if (opt.dictValue == "1") {
-              that.news[0].power = opt.dictLabel;
-            }
-          });
-        }
-
-        if (this.news.length > 0 && this.bzData.length > 0) {
-          this.news.forEach((taskitem) => {
-            this.bzData.forEach((opt) => {
-              if (taskitem.bzId == opt.deptId) {
-                taskitem.bzId = opt.deptName;
-              } else {
-                taskitem.bzId = "";
-              }
-              if (taskitem.bzId == null || taskitem.bzId == "null") {
-                taskitem.bzId = "";
-              }
-            });
-          });
+          }
         }
       });
     },

@@ -238,6 +238,7 @@ public class SdEventServiceImpl implements ISdEventService {
                 sdEventMapper.updateSdEvent(item);
                 instreEventFlowData(item.getId(),"事件因处理普通事件执行中断！");
             }
+            sdEvent.setUpdateTime(DateUtils.getNowDate());
         }else {
             sdEvent.setUpdateTime(DateUtils.getNowDate());
         }
@@ -780,7 +781,7 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         if("0".equals(sdEventData.getEventState()) || "1".equals(sdEventData.getEventState())){
             //查询事件详情-预案处置
-            if(prevControlType.equals(PrevControlTypeEnum.TRAFFIC_NCIDENT)){
+            if(prevControlType.equals(PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode())){
                 //最新的预案
                 Map<String, Object> planMap = setPlanDataMap(sdEventData);
                 //查询历史预案

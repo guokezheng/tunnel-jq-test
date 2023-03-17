@@ -626,4 +626,12 @@
           AND e.event_state = #{eventState}
           AND et.prev_control_type = #{searchValue}
     </select>
+
+    <update id="updateSdEventStateIds">
+        <foreach collection="list" index="index" item="item">
+            update sd_event
+            set event_state=#{eventState}
+            where id = #{item}
+        </foreach>
+    </update>
 </mapper>

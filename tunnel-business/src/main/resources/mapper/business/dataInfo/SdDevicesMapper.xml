@@ -1077,15 +1077,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectDevices" parameterType="java.lang.String" resultType="hashmap">
         SELECT
-            d.eq_name,
+            d.eq_name AS eqName,
             d.pile,
-            es.state_name
+            es.state_name AS stateName
         FROM
             sd_devices d
                 LEFT JOIN sd_equipment_state es ON d.eq_type = es.state_type_id
-                AND es.state_type = '1'
+                AND es.state_type = '2'
         WHERE
             1 = 1
-          AND es.device_state = '2'
+          AND es.device_state = #{state}
+          AND FIND_IN_SET(d.eq_id,#{ids})
+    </select>
+
+    <select id="selectVmsDevices" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            d.eq_name AS eqName,
+            d.pile,
+            btc.content AS stateName
+        FROM
+            sd_devices d,
+            iot_board_template_content btc
+        WHERE
+            1 = 1
+          AND btc.template_id = #{state}
+          AND FIND_IN_SET(d.eq_id,#{ids})
+    </select>
+
+    <select id="selectLsDevices" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            d.eq_name AS eqName,
+            d.pile
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND FIND_IN_SET(d.eq_id,#{ids})
     </select>
 </mapper>

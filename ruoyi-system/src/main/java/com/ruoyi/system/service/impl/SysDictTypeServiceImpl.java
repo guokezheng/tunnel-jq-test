@@ -191,6 +191,10 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService
         SysDictType oldDict = dictTypeMapper.selectDictTypeById(dict.getDictId());
         dictDataMapper.updateDictDataType(oldDict.getDictType(), dict.getDictType());
         int row = dictTypeMapper.updateDictType(dict);
+        //同步状态
+        if(!oldDict.getStatus().equals(dict.getStatus())){
+            dictDataMapper.updateDataType(dict.getStatus(), dict.getDictType());
+        }
         if (row > 0)
         {
             List<SysDictData> dictDatas = dictDataMapper.selectDictDataByType(dict.getDictType());

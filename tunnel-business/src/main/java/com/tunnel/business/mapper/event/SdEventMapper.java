@@ -4,6 +4,7 @@ package com.tunnel.business.mapper.event;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdReserveProcess;
 import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.HashMap;
@@ -179,4 +180,13 @@ public interface SdEventMapper
      * @return
      */
     List<Map<String, Object>> selectAllEvent(SdEvent sdEvent);
+
+    /**
+     * 批量更新事件状态
+     * @param list
+     * @param eventState
+     * @return
+     */
+    public int updateSdEventStateIds(@Param("list") List<Long> list,
+                                     @Param("eventState") String eventState);
 }

@@ -346,5 +346,21 @@ public interface SdDevicesMapper
 	 * @param ids
 	 * @return
 	 */
-	List<Map<String, Object>> selectDevices(String ids);
+	List<Map<String, Object>> selectDevices(@Param("ids") String ids,
+											@Param("state") String state);
+
+	/**
+	 * 批量查询情报板设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectVmsDevices(@Param("ids") String ids,
+											@Param("state") String state);
+
+	/**
+	 * 批量查询扬声器设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectLsDevices(@Param("ids") String ids);
 }

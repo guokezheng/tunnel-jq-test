@@ -97,7 +97,7 @@ public class SysJobController extends BaseController
             return error("新增任务'" + job.getJobName() + "'失败，目标字符串存在违规");
         }
         job.setCreateBy(getUsername());
-        return toAjax(jobService.insertJob(job));
+        return jobService.insertJob(job);
     }
 
     /**
@@ -129,7 +129,7 @@ public class SysJobController extends BaseController
             return error("修改任务'" + job.getJobName() + "'失败，目标字符串存在违规");
         }
         job.setUpdateBy(getUsername());
-        return toAjax(jobService.updateJob(job));
+        return jobService.updateJob(job);
     }
 
     /**

@@ -428,6 +428,11 @@ public class SdEventController extends BaseController
         return sdEventService.getEventInif(sdEvent);
     }
 
+    /**
+     * 查看所选预案或策略的设备详情
+     * @param sdEvent
+     * @return
+     */
     @GetMapping("/examineDeviceDetail")
     public AjaxResult examineDeviceDetail(SdEvent sdEvent){
         return sdEventService.examineDeviceDetail(sdEvent);

@@ -66,7 +66,7 @@ public class SdEventTypeController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestParam("file") MultipartFile[] file,SdEventType sdEventType)
     {
-        return toAjax(sdEventTypeService.insertSdEventType(file,sdEventType));
+        return sdEventTypeService.insertSdEventType(file,sdEventType);
     }
 
     /**
@@ -76,7 +76,7 @@ public class SdEventTypeController extends BaseController
     @PutMapping
     public AjaxResult edit(MultipartFile[] file,SdEventType sdEventType)
     {
-        return toAjax(sdEventTypeService.updateSdEventType(file,sdEventType));
+        return sdEventTypeService.updateSdEventType(file,sdEventType);
     }
 
     /**

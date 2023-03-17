@@ -60,4 +60,11 @@ public interface SdEventTypeMapper
      * @return 结果
      */
     public int deleteSdEventTypeByIds(Long[] ids);
+
+    /**
+     * 校验查询是否数据重复
+     * @param sdEventType
+     * @return
+     */
+    int checkData(SdEventType sdEventType);
 }

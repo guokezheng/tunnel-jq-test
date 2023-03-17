@@ -15,7 +15,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://10.166.154.211:8280/jt_tunnel_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+        url: jdbc:mysql://10.166.154.211:8280/jt_tunnel_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B88&allowMultiQueries=true
         username: tunnel
         password: tunnelSdhs123!@#
 

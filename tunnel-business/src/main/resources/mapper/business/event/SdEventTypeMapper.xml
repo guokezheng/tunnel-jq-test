@@ -87,4 +87,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <select id="checkData" resultType="int" parameterType="sdEventType">
+        select
+            count(*)
+        from
+            sd_event_type
+        where
+            1=1
+        <if test="id != null and id != 0">
+            AND id <![CDATA[ <> ]]> #{id}
+        </if>
+        <if test="eventType != null and eventType != ''">
+            AND event_type = #{eventType}
+        </if>
+        <if test="simplifyName != null and simplifyName != ''">
+            AND simplify_name = #{simplifyName}
+        </if>
+        <if test="prevControlType != null and prevControlType != ''">
+            AND prev_control_type = #{prevControlType}
+        </if>
+    </select>
 </mapper>

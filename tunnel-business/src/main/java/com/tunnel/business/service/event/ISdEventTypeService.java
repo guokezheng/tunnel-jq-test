@@ -1,6 +1,7 @@
 package com.tunnel.business.service.event;
 
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.event.SdEventType;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,7 +37,7 @@ public interface ISdEventTypeService {
      * @param sdEventType 事件类型
      * @return 结果
      */
-    int insertSdEventType(MultipartFile[] file, SdEventType sdEventType);
+    AjaxResult insertSdEventType(MultipartFile[] file, SdEventType sdEventType);
 
     /**
      * 修改事件类型
@@ -44,7 +45,7 @@ public interface ISdEventTypeService {
      * @param sdEventType 事件类型
      * @return 结果
      */
-    int updateSdEventType(MultipartFile[] file,SdEventType sdEventType);
+    AjaxResult updateSdEventType(MultipartFile[] file,SdEventType sdEventType);
 
     /**
      * 批量删除事件类型

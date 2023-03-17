@@ -72,4 +72,11 @@ public interface SysJobMapper
      * @return
      */
     public int batchScheduledJob(@Param("jobs") List<SysJob> jobs);
+
+    /**
+     * 校验是否存在
+     * @param job
+     * @return
+     */
+    int checkJob(SysJob job);
 }

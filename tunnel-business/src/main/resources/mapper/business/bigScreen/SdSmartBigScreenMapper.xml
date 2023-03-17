@@ -537,7 +537,7 @@
                   AND vd.travel_type = '1'
                   AND vd.plate_number != ''
                   AND vd.plate_number IS NOT NULL
-                  AND DATE_FORMAT( vd.start_time, '%Y-%m-%d' ) = DATE_FORMAT( '2023-02-15', '%Y-%m-%d' )
+                  AND DATE_FORMAT( vd.start_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
                   <if test="tunnelId != null and tunnelId != ''">
                       AND vd.tunnel_id = #{tunnelId}
                   </if>

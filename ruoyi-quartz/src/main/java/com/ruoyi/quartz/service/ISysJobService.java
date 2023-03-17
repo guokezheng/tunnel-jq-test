@@ -1,5 +1,6 @@
 package com.ruoyi.quartz.service;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.quartz.domain.SysJob;
 import com.tunnel.business.domain.event.SdStrategyModel;
@@ -85,7 +86,7 @@ public interface ISysJobService
      * @param job 调度信息
      * @return 结果
      */
-    public int insertJob(SysJob job) throws SchedulerException, TaskException;
+    public AjaxResult insertJob(SysJob job) throws SchedulerException, TaskException;
 
     /**
      * 更新任务
@@ -93,7 +94,7 @@ public interface ISysJobService
      * @param job 调度信息
      * @return 结果
      */
-    public int updateJob(SysJob job) throws SchedulerException, TaskException;
+    public AjaxResult updateJob(SysJob job) throws SchedulerException, TaskException;
 
     /**
      * 校验cron表达式是否有效

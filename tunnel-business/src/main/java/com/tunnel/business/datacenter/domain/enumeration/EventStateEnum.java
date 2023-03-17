@@ -10,8 +10,10 @@ public enum EventStateEnum {
 
     processing("0","处理中"),
     processed("1","已处理"),
-    ignore("2","忽略"),
-    unprocessed("3","未处理");
+    ignore("2","已挂起"),
+    unprocessed("3","待确认"),
+    YI_QUE_REN("4","已确认"),
+    WU_BAO("5","误报");
 
     EventStateEnum(String code,String name){
         this.code = code;

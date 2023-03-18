@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-18 09:10:58
+ * @LastEditTime: 2023-03-18 14:07:29
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -56,9 +56,7 @@
             <div class="title">
               <i class="el-icon-video-camera" style="margin-right:15px;"></i>
               实时视频
-              <span>Video monitoring</span>
-              
-              
+              <span>VIDEO MONITORING</span>
             </div>
             <div class="videoBox1">
               <div class="videoContent">
@@ -116,7 +114,7 @@
             <div class="title">
               <i class="el-icon-notebook-2" style="margin-right:15px;"></i>
               事件信息
-              <span>Event information</span>
+              <span>EVENT INFORMATION</span>
             </div>
             <div class="evtMessBox">
               <div class="evtMessLeft">
@@ -170,7 +168,7 @@
             <div class="title">
               <i class="el-icon-phone-outline" style="margin-right:15px;"></i>
               调度联络
-              <span>Dispatching liaison</span>
+              <span>DISPATCHING LIAISON</span>
             </div>
             <el-table
               :data="implementList"
@@ -200,7 +198,7 @@
         <div class="title">
           <i class="el-icon-document" style="margin-right:15px;"></i>
           事件处置
-          <span class="small">Event handling</span>
+          <span class="small">EVENT HANDLING</span>
         </div>
         <div class="incHandBox">
           <div class="GTop">

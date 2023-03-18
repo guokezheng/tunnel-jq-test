@@ -489,6 +489,8 @@ export default {
         this.form = response.data;
         if(that.form.iFileList.length > 0){
           that.planRoadmapUrl(that.form.iFileList);
+        }else{
+          this.eqObj.uploadDisabled = false;
         }
         this.open = true;
         this.title = "修改隧道环境配置";

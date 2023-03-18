@@ -235,8 +235,7 @@
                 <video :src="item.imgUrl" :poster="item.imgUrl"
                        v-if="index == 0" autoplay muted loop>
                 </video>
-                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0"
-                     @click="clickImg(item.imgUrl)">
+                <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
             </swiper>
           </div>

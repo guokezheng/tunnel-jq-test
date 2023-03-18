@@ -250,7 +250,7 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding:15px 0;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
+          <!-- <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
             <el-carousel-item v-for="(item, index) in videoList" :key="index" >
               <videoPlayer
                 v-if="item.liveUrl != null && item.liveUrl != ''"
@@ -263,9 +263,9 @@
             v-if="videoList.length < 1"
             :src="noDataUrl"
             :fit="contain">
-          </el-image>
+          </el-image> -->
           <!-- 现场用这个 -->
-          <!-- <video
+          <video
                 id="h5sVideo1"
                 class="h5video_"
                 controls
@@ -277,7 +277,7 @@
                 disablePictureInPicture="true"
                 controlslist="nodownload noplaybackrate noremoteplayback"
                 style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
-              ></video> -->
+              ></video>
         </div>
       </div>
       <div class="dialogForm">
@@ -1924,33 +1924,33 @@ export default {
       this.cameraPlayer = false;
       console.log(item,"itemitem");
       //现场
-      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
-      //   getDeviceById(res.data[0].eqId).then((response)=>{
-      //     console.log(response,"00000000000000000")
-      //     displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
-      //   })
-      // })
+      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
+        getDeviceById(res.data[0].eqId).then((response)=>{
+          console.log(response,"00000000000000000")
+          displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
+        })
+      })
       // 公司
-      this.videoList = [];
-      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
-        (res) => {
-          if (res.data) {
-            // let videoId = res.data[0].eqId
-            let videoId = "";
-            for (let item of res.data) {
-              videoId = item.eqId;
-              videoStreaming(videoId).then((response) => {
-                if (response.code == 200) {
-                  if(response.data != null){
-                    this.videoList.push(response.data);
-                  }
-                  this.cameraPlayer = true;
-                }
-              });
-            }
-          }
-        }
-      );
+      // this.videoList = [];
+      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
+      //   (res) => {
+      //     if (res.data) {
+      //       // let videoId = res.data[0].eqId
+      //       let videoId = "";
+      //       for (let item of res.data) {
+      //         videoId = item.eqId;
+      //         videoStreaming(videoId).then((response) => {
+      //           if (response.code == 200) {
+      //             if(response.data != null){
+      //               this.videoList.push(response.data);
+      //             }
+      //             this.cameraPlayer = true;
+      //           }
+      //         });
+      //       }
+      //     }
+      //   }
+      // );
     },
     turnLeft() {
       this.arrowRight = true;

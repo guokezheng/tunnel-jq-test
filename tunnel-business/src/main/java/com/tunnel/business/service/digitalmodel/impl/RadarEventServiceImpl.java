@@ -337,13 +337,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                     sdRadarDetectData.setLicenseColor(f.getVehicleColor() + "");
                     sdRadarDetectData.setStakeNum(f.getStakeNum());
                     sdRadarDetectData.setDistance(f.getDistanceEntry());
-                    System.out.println("ID："+sdRadarDetectData.getVehicleId()+",车牌："+sdRadarDetectData.getVehicleLicense()+",速度："+sdRadarDetectData.getSpeed()+",距离："+f.getDistanceEntry());
+//                    System.out.println("ID："+sdRadarDetectData.getVehicleId()+",车牌："+sdRadarDetectData.getVehicleLicense()+",速度："+sdRadarDetectData.getSpeed()+",距离："+f.getDistanceEntry());
                     dataList.add(sdRadarDetectData);
                 });
         wjMapper.insertRadarDetect(dataList);
         JSONObject object = new JSONObject();
         object.put("radarDataList", dataList);
-        redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
+        //redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
         WebSocketService.broadcast("radarDataList",object.toString());
     }
 

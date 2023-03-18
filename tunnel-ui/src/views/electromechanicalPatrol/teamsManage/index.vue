@@ -65,15 +65,15 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:teams:edit']"
+
           >修改</el-button>
           <el-button
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:teams:remove']"
+
           >删除</el-button>
-          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:teams:edit']">
+          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" >
             <el-button
             size="mini"
             style="margin-left:10px"
@@ -81,7 +81,7 @@
           >更多</el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="handleAuthUser" icon="el-icon-user"
-                v-hasPermi="['system:teams:edit']">包含用户</el-dropdown-item>
+                >包含用户</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>

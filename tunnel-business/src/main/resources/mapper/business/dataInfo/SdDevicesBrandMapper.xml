@@ -39,7 +39,9 @@
             <if test="shortName != null  and shortName != ''">
                 and short_name like concat('%', #{shortName}, '%')
             </if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(supplier_id,#{ids}) > 0</if>
         </where>
+        order by create_time desc, update_time desc
     </select>
 
     <select id="selectSdDevicesBrandBySupplierId" parameterType="String" resultMap="SdDevicesBrandResult">

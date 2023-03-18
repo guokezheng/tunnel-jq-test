@@ -7,14 +7,12 @@
         <el-button
           size="small"
           @click="openSelectTeamsUser"
-          v-hasPermi="['system:role:add']"
         >添加用户
         </el-button>
         <el-button
           size="small"
           :disabled="multiple"
           @click="cancelAuthUserAll"
-          v-hasPermi="['system:role:remove']"
         >批量取消</el-button>
         <el-button size="small" @click="resetQuery"
         >刷新</el-button
@@ -64,7 +62,6 @@
             size="mini"
             class="tableDelButtton"
             @click="cancelAuthUser(scope.row)"
-            v-hasPermi="['system:role:remove']"
           >取消</el-button>
         </template>
       </el-table-column>

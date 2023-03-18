@@ -2093,6 +2093,11 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+  ::v-deep .el-dialog .el-dialog__header{
+      background-image: url(../../../assets/cloudControl/dialogHeader.png);
+      background-repeat: no-repeat;
+      background-position-x: right;
+  }
 ::v-deep .el-form-item--medium .el-form-item__label {
   line-height: 3vh;
 }
@@ -2103,12 +2108,6 @@ export default {
 ::v-deep .in-checked-path .el-radio {
   display: none;
 }
-
-// .in-checked-path{
-//   ::v-deep .el-radio__original{
-//     display: none;
-//   }
-// }
 .colflex {
   display: flex;
 }

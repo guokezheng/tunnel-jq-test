@@ -2776,6 +2776,11 @@ export default {
       background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
     }
   }
+  ::v-deep .el-dialog .el-dialog__header{
+      background-image: url(../../../assets/cloudControl/dialogHeader.png);
+      background-repeat: no-repeat;
+      background-position-x: right;
+  }
   ::v-deep .detailsDialog {
     width: 60%;
     position: absolute;

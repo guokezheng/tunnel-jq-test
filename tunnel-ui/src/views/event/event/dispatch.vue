@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-17 16:11:41
+ * @LastEditTime: 2023-03-18 09:10:58
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -650,6 +650,7 @@
     <work-bench ref="workBench"></work-bench>
     <el-dialog
       title="警情升级"
+      class="jingqing"
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose">
@@ -1862,6 +1863,12 @@ export default {
 ::v-deep .contentList .el-button--success.is-plain{
   background: transparent;
 }
+::v-deep .drawerLog .el-drawer__header{
+  background-color: #012039!important;
+  background-image: url(../../../assets/cloudControl/dialogHeader.png);
+  background-repeat: no-repeat;
+  background-position-x: right;
+}
 ::v-deep .drawerLog .el-drawer__container{left:-10%!important;}
 ::v-deep .drawerLog .el-drawer.ltr{
   height: 65%;
@@ -1926,6 +1933,11 @@ export default {
         height: 33.3%;
         margin-top: 0px !important;
         border-radius: 0px !important;
+        .title{
+          background-image: url(../../../assets/cloudControl/dialogHeader.png);
+          background-repeat: no-repeat;
+          background-position-x: right;
+        }
         .videoBox1 {
           width: 100%;
           height: calc(100% - 40px);
@@ -1973,6 +1985,11 @@ export default {
       .evtMessage {
         height: 33.3%;
         margin-top: 10px;
+        .title{
+          background-image: url(../../../assets/cloudControl/dialogHeader.png);
+          background-repeat: no-repeat;
+          background-position-x: right;
+        }
         .evtMessBox {
           display: flex;
           width: 100%;
@@ -2053,6 +2070,11 @@ export default {
       .plan {
         height: 33.3%;
         margin-top: 10px;
+        .title{
+          background-image: url(../../../assets/cloudControl/dialogHeader.png);
+          background-repeat: no-repeat;
+          background-position-x: right;
+        }
         .planBox1 {
           width: 100%;
           height: calc(100% - 40px);
@@ -2164,12 +2186,22 @@ export default {
       }
     }
   }
+  ::v-deep .jingqing{
+    .el-dialog__header{
+      background-image: url(../../../assets/cloudControl/dialogHeader.png);
+      background-repeat: no-repeat;
+      background-position-x: right;
+    }
+  }
   .disLeftBox{
     position: fixed;
     top:9vh;
     left:1vh;
     width: 450px;
     height: 87%;
+    
+    background-repeat: no-repeat;
+    background-size:100% 100%;
     .IncHand{
       background-color: rgba(1, 46, 81,0.7);
       height: 100%;
@@ -2177,6 +2209,9 @@ export default {
       border: 1px solid #0661ae;
       .title{
         font-size:16px;
+        background-image: url(../../../assets/cloudControl/dialogHeader.png);
+        background-repeat: no-repeat;
+        background-position-x: right;
         span{font-size:13px;color:#FFFFFF;}
       }
       .incHandBox {

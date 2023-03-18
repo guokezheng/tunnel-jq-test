@@ -64,19 +64,19 @@
               ></videoPlayer>
             </el-carousel-item>
           </el-carousel>
-          <el-image 
+          <el-image
             v-if="videoList.length < 1 || videoList[0] == null"
             :src="noDataUrl"
             :fit="contain">
           </el-image>
-          <!-- <video 
+          <!-- <video
             id="h5sVideo2"
             class="h5video_"
             controls
             muted
             loop
             autoplay
-            webkit-playsinline 
+            webkit-playsinline
             playsinline
             disablePictureInPicture="true"
             controlslist="nodownload noplaybackrate noremoteplayback"
@@ -363,8 +363,8 @@
               <el-col :span="24" v-show="eventForm.eventState == 0">
                 <el-form-item prop="currencyId">
                   <el-select v-model="eventForm.currencyId" placeholder="请选择预案" @change="this.$forceUpdate()">
-                    <el-option 
-                      v-for="item in ReservePlanList" 
+                    <el-option
+                      v-for="item in ReservePlanList"
                       :key="item.id"
                       :label="item.planName"
                       :value="item.id"
@@ -417,7 +417,7 @@ import {
   getEventCamera,
 } from "@/api/eventDialog/api.js";
 import { listEventType } from "@/api/event/eventType";
-import {  
+import {
   getTunnelList,
   getTunnelLane,
   updateEvent,
@@ -628,7 +628,7 @@ export default {
   },
   async created() {
     console.log('createdcreatedcreatedcreated');
-    
+
   },
   mounted() {
     bus.$on("getPicId", (e) => {
@@ -735,20 +735,20 @@ export default {
       if(this.eventForm.eventState == '0' && this.eventForm.currencyId == ''  || this.eventForm.currencyId == null){
         return this.$modal.msgWarning("请选择事件处置预案");
       }
+
+      if(this.eventForm.eventState == '0' && this.eventForm.currencyId){
+        this.$router.push({
+          path: "/emergency/administration/dispatch",
+          query: { id: this.eventForm.id },
+        });
+      }
+      this.details = false;
       updateEvent(this.eventForm).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;
         this.processType = false;
-        this.details = false;
+        // this.details = false;
         this.$modal.msgSuccess("修改成功");
-        // this.getList();
-        if(this.eventForm.eventState == '0' && this.eventForm.currencyId){
-          this.$router.push({
-            path: "/emergency/administration/dispatch",
-            query: { id: this.eventForm.id },
-          });
-          this.details = true;
-        }
       });
     },
     openProcess(type, id) {
@@ -897,7 +897,7 @@ export default {
       //     displayH5sVideoAll(response.data.secureKey,'h5sVideo2',2);
       //   })
       // })
-      
+
       this.videoList = [];
       getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
         (res) => {

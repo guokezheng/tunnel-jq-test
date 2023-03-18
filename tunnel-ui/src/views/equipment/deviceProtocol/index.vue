@@ -9,13 +9,13 @@
           v-hasPermi="['device:protocol:add']"
         >新增
         </el-button>
-        <el-button
+<!--        <el-button
           size="small"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['device:protocol:edit']"
         >修改
-        </el-button>
+        </el-button>-->
         <el-button
           size="small"
           :disabled="multiple"
@@ -123,16 +123,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['device:protocol:edit']"
           >修改
           </el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableBlueButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['device:protocol:remove']"
           >删除

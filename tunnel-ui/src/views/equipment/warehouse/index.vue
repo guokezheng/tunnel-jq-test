@@ -180,6 +180,7 @@
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择上次采购时间"
+            :picker-options="setoptions"
             style="width: 100%">
           </el-date-picker>
         </el-form-item>
@@ -245,6 +246,13 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      setoptions: {
+        // 时间不能大于当前时间
+        disabledDate: time => {
+          return time.getTime() > Date.now()
+        },
+        selectableRange: '00:00:00 - 23:59:59'
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,

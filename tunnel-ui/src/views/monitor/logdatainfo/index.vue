@@ -96,6 +96,7 @@
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            :picker-options="setoptions"
             :default-time="['00:00:00', '23:59:59']"
           ></el-date-picker>
         </el-form-item>
@@ -257,6 +258,7 @@
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            :picker-options="setoptions"
             :default-time="['00:00:00', '23:59:59']"
           ></el-date-picker>
         </el-form-item>
@@ -435,6 +437,13 @@ export default {
           name: "2",
         },
       ],
+      setoptions: {
+        // 时间不能大于当前时间
+        disabledDate: time => {
+          return time.getTime() > Date.now()
+        },
+        selectableRange: '00:00:00 - 23:59:59'
+      },
       manageStatin: this.$cache.local.get("manageStation"),
       xt_boxShow: false,
       cz_boxShow: false,
@@ -521,16 +530,16 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+       /*if (this.$refs.main && !this.$refs.main.contains(e.target)) {
          if (self.xt_boxShow == true) {
            self.xt_boxShow = false;
          }
-       }
-      /*if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+       }*/
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.xt_boxShow == true){
           self.xt_boxShow = false;
         }
-      }*/
+      }
     },
 
     //翻页时不刷新序号
@@ -543,16 +552,16 @@ export default {
     },
     bodyCloseMenus1(e) {
       let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
-        if (self.cz_boxShow == true) {
-          self.cz_boxShow = false;
-        }
-      }
-      /*if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
+      // if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
+      //   if (self.cz_boxShow == true) {
+      //     self.cz_boxShow = false;
+      //   }
+      // }
+      if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
         if (self.cz_boxShow == true){
           self.cz_boxShow = false;
         }
-      }*/
+      }
     },
     handleClick(e){
       this.dateRange = [];
@@ -600,6 +609,8 @@ export default {
     /** 查询登录日志列表 */
     getList(inx) {
       this.loading = true;
+      this.xt_boxShow = false;
+      this.cz_boxShow = false;
       if (inx == null || inx == "1" || this.activeName == "1") {
         console.log(this.activeName, "this.activeName");
         console.log(this.queryParams, "this.queryParams");

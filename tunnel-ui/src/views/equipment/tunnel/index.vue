@@ -9,13 +9,7 @@
             v-hasPermi="['system:tunnels:add']"
             >新增
           </el-button>
-          <el-button
-            size="small"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['system:tunnels:edit']"
-            >修改
-          </el-button>
+
           <el-button
             size="small"
             :disabled="multiple"
@@ -232,6 +226,13 @@
         width="200"
       >
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
+            @click="handleUpdate"
+            v-hasPermi="['system:tunnels:edit']"
+          >修改
+          </el-button>
           <el-button
             size="mini"
             class="tableBlueButtton"

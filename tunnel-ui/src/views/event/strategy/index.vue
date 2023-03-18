@@ -1346,7 +1346,11 @@ export default {
 }
 </style>
 <style scoped lang="scss">
-
+  ::v-deep .el-dialog .el-dialog__header{
+      background-image: url(../../../assets/cloudControl/dialogHeader.png);
+      background-repeat: no-repeat;
+      background-position-x: right;
+  }
 ::v-deep .el-tabs {
   height: 100%;
   .el-tabs__item {

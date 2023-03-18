@@ -369,6 +369,9 @@ export default {
         environmentType: [
           { required: true, message: '请选择环境类型', trigger: 'change'},
         ],
+        url: [
+          { required: true, message: '请上传图片', trigger: 'change'},
+        ],
         width: [
           { required: true, message: '请输入图片宽度', trigger: ['blur', 'change']},
           // { validator: this.checkWidth, trigger: 'blur'},
@@ -465,6 +468,8 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
+      this.form.url = 1;
+      this.eqObj.uploadDisabled = false;
       // this.fileList = [];
       // 每次点击新增重置上传图片数组
       this.title = "添加隧道环境配置";
@@ -478,10 +483,15 @@ export default {
       this.reset();
       const id = row.id || this.ids;
       var that = this;
+      this.eqObj.uploadDisabled = true;
       getConfiguration(id).then((response) => {
         console.log(response.data,"row")
         this.form = response.data;
-        that.planRoadmapUrl(that.form.iFileList);
+        if(that.form.iFileList.length > 0){
+          that.planRoadmapUrl(that.form.iFileList);
+        }else{
+          this.eqObj.uploadDisabled = false;
+        }
         this.open = true;
         this.title = "修改隧道环境配置";
       });
@@ -597,12 +607,15 @@ export default {
     },
     //监控上传文件列表
     handleChange(file, fileList) {
+
       this.fileList = fileList;
       if (fileList.length >= 1) {
-        this.eqObj.uploadDisabled = true;
+        this.eqObj.uploadDisabled = false;
+        //this.eqObj.uploadDisabled = true;
         this.$set(this.eqObj, 'uploadDisabled', true);
       } else {
-          this.eqObj.uploadDisabled = false;
+        this.eqObj.uploadDisabled = true;
+       //   this.eqObj.uploadDisabled = false;
           this.$set(this.eqObj, 'uploadDisabled', false);
       }
       this.$forceUpdate();

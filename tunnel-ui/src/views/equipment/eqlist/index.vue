@@ -9,13 +9,7 @@
           v-hasPermi="['system:devices:add']"
           >新增
         </el-button>
-        <el-button
-          size="small"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:devices:edit']"
-          >修改
-        </el-button>
+
         <el-button
           size="small"
           :disabled="multiple"
@@ -234,11 +228,19 @@
           </el-button>
           <el-button
             size="mini"
+            class="tableBlueButtton"
+            @click="handleUpdate"
+            v-hasPermi="['system:devices:edit']"
+          >修改
+          </el-button>
+          <el-button
+            size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:devices:remove']"
             >删除
           </el-button>
+
         </template>
       </el-table-column>
     </el-table>

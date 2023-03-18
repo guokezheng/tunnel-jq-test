@@ -9,13 +9,13 @@
           v-hasPermi="['device:brand:add']"
           >新增</el-button
         >
-        <el-button
+<!--        <el-button
           size="small"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['device:brand:edit']"
           >修改</el-button
-        >
+        >-->
         <el-button
           size="small"
           :disabled="multiple"
@@ -40,12 +40,13 @@
               placeholder="请输入设备厂商名称、简称,回车搜索"
               clearable
               size="small"
+              style="border-right:#00C8FF solid 1px !important;border-radius:3px"
               @keyup.enter.native="handleQuery">
-              <el-button
+<!--              <el-button
                 slot="append"
                 icon="icon-gym-Gsearch"
                 @click="boxShow = !boxShow"
-              ></el-button>
+              ></el-button>-->
           </el-input>
         </div>
       </el-col>
@@ -338,9 +339,10 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有设备厂商数据项？")
+        .confirm("是否确认导出设备厂商数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportBrand(queryParams);

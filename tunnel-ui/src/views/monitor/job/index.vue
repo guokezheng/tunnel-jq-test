@@ -349,9 +349,11 @@
             <el-form-item label="任务名称：">{{ form.jobName }}</el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="任务分组：">{{
-              jobGroupFormat(form)
-            }}</el-form-item>
+            <el-form-item label="任务分组：">
+              <div v-if="form.jobGroup == 'SYSTEM'">系统</div>
+              <div v-else-if="form.jobGroup != 'SYSTEM'">其他</div>
+<!--              jobGroupFormat(form)-->
+            </el-form-item>
             <el-form-item label="创建时间：">{{
               form.createTime
             }}</el-form-item>
@@ -373,8 +375,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="任务状态：">
-              <div v-if="form.status == 0">正常</div>
-              <div v-else-if="form.status == 1">失败</div>
+              <div v-if="form.status == 0">开启</div>
+              <div v-else-if="form.status == 1">关闭</div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -514,9 +516,9 @@ export default {
       });
     },
     // 任务组名字典翻译
-    jobGroupFormat(row, column) {
+  /*  jobGroupFormat(row, column) {
       return this.selectDictLabel(this.dict.type.sys_job_group, row.jobGroup);
-    },
+    },*/
     // 取消按钮
     cancel() {
       this.open = false;
@@ -600,6 +602,7 @@ export default {
     handleView(row) {
       getJob(row.jobId).then((response) => {
         this.form = response.data;
+        console.log(this.form)
         this.openView = true;
       });
     },

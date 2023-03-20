@@ -137,6 +137,44 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode())) {
                         devices.put("state", data.getData());
                     }
+                //巡检机器人
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.ROBOT.getCode()))) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_IS_ONLINE.getCode())) {
+                        devices.put("isOnline", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CURRENT_DURATION.getCode())) {
+                        devices.put("currentDuration", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CURRENT_MILEAGE.getCode())) {
+                        devices.put("currentMileage", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_ELECTRICITY.getCode())) {
+                        devices.put("electricity", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CHARGE.getCode())) {
+                        devices.put("charge", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_VOLTAGE.getCode())) {
+                        devices.put("voltage", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CURRENT.getCode())) {
+                        devices.put("current", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_BATTERYTEMP.getCode())) {
+                        devices.put("batteryTemp", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_POSITION.getCode())) {
+                        devices.put("position", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_OXYGENDENSITY.getCode())) {
+                        devices.put("oxygenDensity", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CARBON_MONOXIDE_DENSITY.getCode())) {
+                        devices.put("carbonMonoxideDensity", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_WORK_MODEL_TEXT.getCode())) {
+                        devices.put("workModelText", data.getData());
+                    }
                 } else if (data != null) {
                     devices.put("state", data.getData());
                 }

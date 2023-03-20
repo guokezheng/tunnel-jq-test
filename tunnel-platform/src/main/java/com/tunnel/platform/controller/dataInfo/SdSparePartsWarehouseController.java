@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * 备品备件库Controller
- * 
+ *
  * @author ruoyi
  * @date 2022-01-21
  */
@@ -90,6 +90,12 @@ public class SdSparePartsWarehouseController extends BaseController
     @ApiOperation("新增备品备件库")
     public Result add(@RequestBody SdSparePartsWarehouse sdSparePartsWarehouse)
     {
+
+        List<SdSparePartsWarehouse> sdspw = sdSparePartsWarehouseService.verifyPartNameOnly(sdSparePartsWarehouse.getPartName());
+        if (sdspw.size() > 0) {
+            throw new RuntimeException("当前备件名称已经存在，请核对后重试！");
+        }
+
         return Result.toResult(sdSparePartsWarehouseService.insertSdSparePartsWarehouse(sdSparePartsWarehouse));
     }
 

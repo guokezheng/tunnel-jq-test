@@ -102,4 +102,14 @@ public class SdSparePartsWarehouseServiceImpl implements ISdSparePartsWarehouseS
     public int deleteSdSparePartsWarehouseById(Long id) {
         return sdSparePartsWarehouseMapper.deleteSdSparePartsWarehouseById(id);
     }
+
+    /**
+     * 查询备件名称是否重复
+     * @param partName 备件名称
+     * @return
+     */
+    @Override
+    public List<SdSparePartsWarehouse> verifyPartNameOnly(String partName) {
+        return sdSparePartsWarehouseMapper.verifyPartNameOnly(partName);
+    }
 }

@@ -34,6 +34,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, tunnel_id,part_name, brand, model, unit, manufacturer, last_purchase_time, last_purchase_quantity, last_purchase_unit_price, current_inventory, keeper, phone, location, create_time, create_by, update_time, update_by, remake, remake1 from sd_spare_parts_warehouse
     </sql>
 
+
+    <select id="verifyPartNameOnly" resultMap="SdSparePartsWarehouseResult">
+        <include refid="selectSdSparePartsWarehouseVo"/>
+        <where>
+            <if test="partName != null  and partName != ''"> and part_name = #{partName}</if>
+        </where>
+    </select>
+
     <select id="selectSdSparePartsWarehouseList" parameterType="SdSparePartsWarehouse" resultMap="SdSparePartsWarehouseResult">
         select
         w.id,

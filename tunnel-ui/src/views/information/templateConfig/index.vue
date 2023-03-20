@@ -1,31 +1,25 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row  :gutter="20" style="margin: 10px 0 25px">
+    <el-row  :gutter="20" class="topFormRow" style="margin: 10px 0 25px">
       <el-col :span="6">
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="addOrUpdateHandle"
           v-hasPermi="['system:templateConfig:add']"
           >新增</el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:templateConfig:remove']"
           >删除</el-button>
           <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="handleExport"
           v-hasPermi="['system:templateConfig:export']"
           >导出</el-button>
-          <el-button size="mini" @click="resetQuery" type="primary" plain
+          <el-button size="small" @click="resetQuery"  plain
           >刷新</el-button
           >
       </el-col>

@@ -370,6 +370,7 @@ import { checkIotBoardContent } from "@/api/board/vocabulary";
 export default {
   data() {
     return {
+      alignmentNum:1,
       content: "",
       boardWidth: "",
       boardHeight: "",
@@ -717,6 +718,10 @@ export default {
       this.dataForm.COORDINATE = "000000";
       var textBoard2 = document.getElementsByClassName("textBoard2");
       textBoard2[0].style.position = "absolute";
+      this.alignment(this.alignmentNum)
+      setTimeout(() => {
+        this.alignment(this.alignmentNum)
+      },100);
     },
     keyDown(ev) {
       let arr = [];
@@ -725,6 +730,7 @@ export default {
       // console.log(input.selectionStart);
       arr = this.dataForm.CONTENT.split("");
       // console.log(arr, "arr");
+
       content += "<div>";
       for (var i = 0; i < arr.length; i++) {
         content += arr[i];
@@ -901,6 +907,7 @@ export default {
     },
     // 文字对齐方式
     alignment(alignmentNum) {
+      this.alignmentNum = alignmentNum;
       var divContent2 = document.getElementsByClassName("blackBoard2");
       var textBoard2 = document.getElementsByClassName("textBoard2");
       // 获取文字长宽

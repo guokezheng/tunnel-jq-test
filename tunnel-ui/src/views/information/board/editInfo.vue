@@ -406,6 +406,7 @@ export default {
   computed: {
     dataRule() {
       return {
+        alignmentNum:1,
         itemPropertyMap: null,
         CONTENT: [
           {
@@ -545,9 +546,13 @@ export default {
       this.dataForm.COORDINATE = "000000";
       var textBoard1 = document.getElementsByClassName("textBoard1");
       textBoard1[0].style.position = "absolute";
+      this.alignment(this.alignmentNum)
+      setTimeout(() => {
+        this.alignment(this.alignmentNum)
+      },100);
     },
     alignment(alignmentNum) {
-      // console.log(alignmentNum,"alignmentNum");
+      this.alignmentNum = alignmentNum;
       var divContent1 = document.getElementsByClassName("blackBoard1");
       var textBoard1 = document.getElementsByClassName("textBoard1");
       console.log(textBoard1, "textBoard1");

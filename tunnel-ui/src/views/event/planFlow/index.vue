@@ -145,7 +145,7 @@
           :from_data='fromData'
           :to_data='toData'
           :defaultProps="{label:'label'}"
-          height='540px'
+          height='580px'
           @add-btn='add'
           @remove-btn='remove'
           :mode='mode'

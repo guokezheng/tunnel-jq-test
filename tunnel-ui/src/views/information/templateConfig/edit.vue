@@ -188,6 +188,8 @@
                 clearable
                 placeholder="内容"
                 v-model="res.content"
+                @input="changeStyle"
+                @compositionend="inputEnd"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -349,6 +351,7 @@ import {
 export default {
   data() {
     return {
+      alignmentNum:1,
       checkList: [], //复选框一组
       obj: "",
       imgUrl: [],
@@ -661,6 +664,7 @@ export default {
       };
     },
   },
+
   // watch: {
   //   templateContent: {
   //     deep: true,
@@ -683,7 +687,7 @@ export default {
   //     },
   //   },
   // },
-  
+
   created() {
     // 屏幕尺寸字典数据
     this.getDicts("screenSize").then((res) => {
@@ -742,7 +746,7 @@ export default {
     },
     // 文字对齐方式
     alignment(alignmentNum) {
-      console.log(alignmentNum, "alignmentNum");
+      this.alignmentNum = alignmentNum;
       var divContent = document.getElementsByClassName("blackBoard");
       var textBoard = document.getElementsByClassName("textBoard");
       console.log(textBoard, "textBoard");
@@ -797,7 +801,7 @@ export default {
       }
       var textLeft = this.addZero(textBoard[0].offsetLeft);
       var textTop = this.addZero(textBoard[0].offsetTop);
-      this.templateContent = textLeft + textTop;
+      this.templateContent.coordinate = textLeft + textTop;
       // console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
     },
     addZero(num) {
@@ -834,6 +838,15 @@ export default {
     close() {
       this.checkList = [];
       this.dialogVisible = false;
+    },
+    // 中文拼音：输入完毕
+    inputEnd(e) {
+      setTimeout(() => {
+        this.alignment(this.alignmentNum)
+      },300);
+    },
+    changeStyle(){
+      this.alignment(this.alignmentNum);
     },
     // 图片双击事件
     dblEvent(item) {

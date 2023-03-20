@@ -59,7 +59,7 @@
     </div>
   </div>
 </template>
-  
+
   <script>
 import { mapState } from "vuex";
 import bus from "@/utils/bus";
@@ -209,9 +209,9 @@ export default {
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
-  
+
 .eventClass {
   position: absolute;
   top: 0;
@@ -319,4 +319,3 @@ export default {
   }
 }
 </style>
-  

@@ -93,7 +93,7 @@
                   :open="videoForm4.cameraPlayer"
                   class="video"
                 ></videoPlayer>
-                <div class="videoListTitle">{{ videoForm4.title }}摄像机</div>
+                <div class="videoListTitle">{{ videoForm4.title }}</div>
               </div>
               <!-- <div
                 v-for="(item, index) of videoList"
@@ -248,8 +248,8 @@
                     {{ yjName }}
                     </div>
                   </div>
-                  <div class="dashed" 
-                    :style="{top:index == 0?'55px':'80px'}" 
+                  <div class="dashed"
+                    :style="{top:index == 0?'55px':'80px'}"
                     v-show="index != incHandList.length - 1">
                     <span class="circle"></span>
                     <p :style="{height:index == 0?'58px':'30px'}"></p>
@@ -294,7 +294,7 @@
                       size="mini"
                       style="float: right; "
                       icon="el-icon-check"
-                      v-show="itm.eventState != '0' && itm.processId" 
+                      v-show="itm.eventState != '0' && itm.processId"
                       @click="getManagementDevice(itm)">
                       完成
                     </el-button>
@@ -310,7 +310,7 @@
                         :src="incHand1"
                         style="float: right; "
                         v-show="itm.eventState == '0'"
-                        
+
                         :style="iconDisabled?'cursor: not-allowed;pointer-events: none;':'cursor: pointer'"
                       />
                       <p >处置</p> -->
@@ -681,7 +681,7 @@
           <el-col :span="12">
             <el-form-item label="更改等级" prop="eventGrade">
               <el-select v-model="levelForm.eventGrade" placeholder="请选择等级" @change="levelChange(levelForm.eventGrade)">
-                <el-option v-for="dict in eventGradeList" 
+                <el-option v-for="dict in eventGradeList"
                   :key="dict.dictValue"
                   :label="dict.dictLabel"
                   :value="dict.dictValue">
@@ -708,7 +708,7 @@
               :rows="5"
               placeholder="请输入升级原因"
               v-model="levelForm.remark">
-              </el-input> 
+              </el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -784,7 +784,7 @@
             <p style="padding:15px 0;">{{boxName}}:</p>
             <el-card v-show="GDeviceData && !GDeviceData.vmsData" shadow="always">
               <div style="display: flex;align-items: center;">
-                <img v-for="(items,index) in GDeviceData.deviceIconUrl" :key="index" 
+                <img v-for="(items,index) in GDeviceData.deviceIconUrl" :key="index"
                   :src="items"
                 />
                 <p style="padding-left: 15px;">{{ GDeviceData.deviceState }}</p>
@@ -1260,7 +1260,7 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消操作'
-        });          
+        });
       });
     },
     // 警情升级
@@ -1395,7 +1395,7 @@ export default {
     },
     // 打开下发事件弹窗
     // openIssuedDialog(item) {
-      
+
     //   this.title = "警告";
     //   // this.IssuedItem = item;
     // },
@@ -2197,7 +2197,7 @@ export default {
     left:1vh;
     width: 450px;
     height: 87%;
-    
+
     background-repeat: no-repeat;
     background-size:100% 100%;
     .IncHand{
@@ -2267,7 +2267,7 @@ export default {
           margin-bottom:35px;
           .classification {
             position: relative;
-            
+
             .dashed{
               position: absolute;
               display: flex;

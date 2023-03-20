@@ -569,7 +569,7 @@ export default {
         updateTime: null,
         iconUrl: null,
         isUsable: null,
-        priority: null
+        priority: ''
       };
       this.resetForm("form");
       this.removeIds = [];

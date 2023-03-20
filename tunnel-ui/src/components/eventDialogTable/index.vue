@@ -63,16 +63,17 @@
                 </div>
 
               </el-col>
+              <!--:style="{color: item.prevControlType == 0?'red':'#F6AC10'}"-->
               <el-col :span="4" style="display:flex">
                 <div v-if="searchValue == 2 || searchValue == 3"
-                :style="{color: item.prevControlType == 0?'red':'#F6AC10'}"
-                style="width:100%">
+                     :style="{color: item.prevControlType == 0?'red':(item.prevControlType == 2?'#F6AC10':'rgb(11,146,254)')}"
+                      style="width:100%">
                   {{ item.simplifyName }}
                 </div>
                 <div
                 v-else
                 style="width:100%"
-                :style="{color:searchValue == 0?'red':'blue'}"
+                :style="{color:searchValue == 0?'red':'rgb(11,146,254)'}"
                 >
                   {{ item.eventType.simplifyName }}
                 </div>

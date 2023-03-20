@@ -951,4 +951,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         list.add(map);
         return AjaxResult.success(list);
     }
+
+    @Override
+    public List<SdDevices> verifyEqNameOnly(String eqName) {
+        return sdDevicesMapper.verifyEqNameOnly(eqName);
+    }
 }

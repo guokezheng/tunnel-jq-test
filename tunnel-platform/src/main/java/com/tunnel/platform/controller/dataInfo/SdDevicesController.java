@@ -229,19 +229,24 @@ public class SdDevicesController extends BaseController {
         if (list.size() > 0) {
             // return Result.error(1,"当前设备ID重复，请重新输入");
             return Result.error("当前设备ID重复，请重新输入");
-        } else {
-            int i = sdDevicesService.insertSdDevices(sdDevices);
-            if (sdDevices.getEqType() != 31L) {
-                sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
-            }
-            //管理站平台下推送
-            if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
-                List<SdDevices> sdDevicesList = new ArrayList<>();
-                sdDevicesList.add(sdDevices);
-                sdPlatformApiController.devicesPush(sdDevicesList, "add", null);
-            }
-            return Result.toResult(i);
         }
+
+        List<SdDevices> list1 = sdDevicesService.verifyEqNameOnly(sdDevices.getEqName());
+        if (list1.size() > 0) {
+            return Result.error("当前设备名称已经存在，请核对后重试！");
+        }
+
+        int i = sdDevicesService.insertSdDevices(sdDevices);
+        if (sdDevices.getEqType() != 31L) {
+            sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+        }
+        //管理站平台下推送
+        if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
+            List<SdDevices> sdDevicesList = new ArrayList<>();
+            sdDevicesList.add(sdDevices);
+            sdPlatformApiController.devicesPush(sdDevicesList, "add", null);
+        }
+        return Result.toResult(i);
     }
 
     @PostMapping("/autoId")
@@ -269,6 +274,12 @@ public class SdDevicesController extends BaseController {
                 && sdDevices.getDeliveryTime().getTime() > sdDevices.getInstallTime().getTime()) {
             throw new RuntimeException("出厂时间不能晚于设备安装时间");
         }
+
+        List<SdDevices> list1 = sdDevicesService.verifyEqNameOnly(sdDevices.getEqName());
+        if (list1.size() > 0) {
+            return Result.error("当前设备名称已经存在，请核对后重试！");
+        }
+
         int i = sdDevicesService.updateSdDevices(sdDevices);
         if (sdDevices.getEqType() != 31L) {
             sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);

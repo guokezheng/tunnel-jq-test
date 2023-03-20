@@ -363,4 +363,11 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<Map<String, Object>> selectLsDevices(@Param("ids") String ids);
+
+	/**
+	 * 查询设备名称是否重复
+	 * @param eqName 设备名称
+	 * @return
+	 */
+	List<SdDevices> verifyEqNameOnly(@Param("eqName") String eqName);
 }

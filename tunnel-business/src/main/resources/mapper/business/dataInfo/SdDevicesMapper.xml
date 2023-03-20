@@ -82,6 +82,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_devices
     </sql>
 
+    <select id="verifyEqNameOnly" resultMap="SdDevicesResult">
+       <include refid="selectSdDevicesVo"></include>
+        <where>
+         <if test="eqName != null  and eqName != ''">and eq_name = #{eqName}</if>
+        </where>
+    </select>
 
 
     <select id="selectSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">

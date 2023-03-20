@@ -231,7 +231,7 @@ public class SdDevicesController extends BaseController {
             return Result.error("当前设备ID重复，请重新输入");
         }
 
-        List<SdDevices> list1 = sdDevicesService.verifyEqNameOnly(sdDevices.getEqName());
+        List<SdDevices> list1 = sdDevicesService.verifyEqNameOnly(null,sdDevices.getEqName());
         if (list1.size() > 0) {
             return Result.error("当前设备名称已经存在，请核对后重试！");
         }
@@ -275,7 +275,7 @@ public class SdDevicesController extends BaseController {
             throw new RuntimeException("出厂时间不能晚于设备安装时间");
         }
 
-        List<SdDevices> list1 = sdDevicesService.verifyEqNameOnly(sdDevices.getEqName());
+        List<SdDevices> list1 = sdDevicesService.verifyEqNameOnly(sdDevices.getEqId(),sdDevices.getEqName());
         if (list1.size() > 0) {
             return Result.error("当前设备名称已经存在，请核对后重试！");
         }

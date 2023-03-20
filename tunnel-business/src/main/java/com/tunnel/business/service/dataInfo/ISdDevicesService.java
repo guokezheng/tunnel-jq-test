@@ -255,4 +255,11 @@ public interface ISdDevicesService {
      * @return
      */
     AjaxResult getTreeDeviceList(SdDevices sdDevices);
+
+    /**
+     *  查询指定设备名称是否重复
+     * @param eqName
+     * @return
+     */
+    List<SdDevices> verifyEqNameOnly(String eqId,String eqName);
 }

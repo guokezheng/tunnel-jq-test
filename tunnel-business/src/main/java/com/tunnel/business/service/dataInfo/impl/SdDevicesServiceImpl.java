@@ -953,7 +953,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     @Override
-    public List<SdDevices> verifyEqNameOnly(String eqName) {
-        return sdDevicesMapper.verifyEqNameOnly(eqName);
+    public List<SdDevices> verifyEqNameOnly(String eqId,String eqName) {
+        return sdDevicesMapper.verifyEqNameOnly(eqId,eqName);
     }
 }

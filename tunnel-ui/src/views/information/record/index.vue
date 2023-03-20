@@ -159,7 +159,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <!--      <el-table-column label="发布用户" align="center" prop="id" />-->
-      <!-- <el-table-column label="发布设备" align="center" prop="deviceId" /> -->
+       <el-table-column label="发布设备" align="center" prop="deviceName" />
       <el-table-column label="屏幕尺寸" align="center" prop="devicePixel" />
       <el-table-column label="所属隧道" align="center" prop="tunnelName" />
       <el-table-column label="设备方向" align="center" prop="direction" />

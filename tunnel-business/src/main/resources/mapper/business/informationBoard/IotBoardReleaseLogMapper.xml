@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectIotBoardReleaseLogList" parameterType="IotBoardReleaseLog" resultMap="IotBoardReleaseLogResult">
-        select a.id, a.device_id, a.device_name, a.release_old_content, a.release_new_content, a.release_by, a.release_time,
+        select a.id, a.device_id, IFNULL(a.device_name,b.eq_name) as device_name, a.release_old_content, a.release_new_content, a.release_by, a.release_time,
         if(a.release_status is null, "1",a.release_status) release_status, a.release_dept_name, a.release_dept_id,
         a.release_user_name, a.release_user_id, b.pile, c.tunnel_name, d.dict_label direction from iot_board_release_log a
         left join sd_devices b on a.device_id = b.associated_device_id
@@ -35,12 +35,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data d on d.dict_value = b.eq_direction and d.dict_type = "sd_direction"
         <where>
             <if test="deviceId != null  and deviceId != ''"> and a.device_id = #{deviceId}</if>
-            <if test="deviceName != null  and deviceName != ''"> and a.device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="deviceName != null  and deviceName != ''"> and (a.device_name like concat('%', #{deviceName}, '%') or b.eq_name like concat('%', #{deviceName}, '%'))</if>
             <if test="releaseOldContent != null  and releaseOldContent != ''"> and a.release_old_content = #{releaseOldContent}</if>
             <if test="releaseNewContent != null  and releaseNewContent != ''"> and a.release_new_content = #{releaseNewContent}</if>
             <if test="releaseBy != null  and releaseBy != ''"> and a.release_by = #{releaseBy}</if>
             <if test="releaseTime != null ">and date_format(release_time,'%Y-%m-%d')  = date_format(#{releaseTime},'%Y-%m-%d')</if>
-            <if test="searchValue != null  and searchValue != ''"> and CONCAT(a.device_id,a.release_new_content) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="searchValue != null  and searchValue != ''"> and CONCAT(a.device_id,a.release_new_content,b.eq_name) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="releaseStatus != null  and releaseStatus != ''"> and a.release_status = #{releaseStatus}</if>
             <if test="releaseDeptName != null  and releaseDeptName != ''"> and a.release_dept_name like concat('%', #{releaseDeptName}, '%')</if>
             <if test="releaseUserName != null  and releaseUserName != ''"> and a.release_user_name like concat('%', #{releaseUserName}, '%')</if>

@@ -602,7 +602,6 @@ export default {
     handleView(row) {
       getJob(row.jobId).then((response) => {
         this.form = response.data;
-        console.log(this.form)
         this.openView = true;
       });
     },

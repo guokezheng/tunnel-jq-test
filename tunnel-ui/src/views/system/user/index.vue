@@ -179,7 +179,7 @@
           key="status"
           v-if="columns[5].visible"
         >
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if="scope.row.userId !== 1">
             <el-switch
               v-model="scope.row.status"
               active-value="0"

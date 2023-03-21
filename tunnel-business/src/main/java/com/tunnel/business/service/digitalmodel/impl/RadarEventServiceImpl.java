@@ -118,19 +118,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setLaneNo(f.getLaneNo() + "");
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //转换
-                Date startTime = null;
-                Date endTime = null;
-                try {
-                    startTime = sdf.parse(f.getEventTimeStampStart());
-                    endTime = sdf.parse(f.getEventTimeStampEnd());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,startTime));
-                sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,endTime));
-                sdEvent.setEventTime(startTime);
+                sdEvent.setStartTime(dateZh(f.getEventTimeStampStart()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampStart())));
+                sdEvent.setEndTime(dateZh(f.getEventTimeStampEnd()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampEnd())));
+                sdEvent.setEventTime(dateZh(f.getEventTimeStampStart()));
                 sdEvent.setId(f.getEventId());
                 sdEvent.setUpdateTime(DateUtils.getNowDate());
                 //方向
@@ -152,20 +142,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setLaneNo(f.getLaneNo() + "");
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //转换
-                Date startTime = null;
-                Date endTime = null;
-                try {
-                    startTime = sdf.parse(f.getEventTimeStampStart());
-                    endTime = sdf.parse(f.getEventTimeStampEnd());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,startTime));
-                sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,endTime));
-                sdEvent.setEventTime(startTime);
+                sdEvent.setStartTime(dateZh(f.getEventTimeStampStart()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampStart())));
+                sdEvent.setEndTime(dateZh(f.getEventTimeStampEnd()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampEnd())));
+                sdEvent.setEventTime(dateZh(f.getEventTimeStampStart()));
                 //事件等级默认为一般
                 sdEvent.setEventGrade("1");
                 //接收到的事件状态设置为未处理
@@ -794,5 +773,20 @@ public class RadarEventServiceImpl implements RadarEventService {
         String[] split = urlName.split("/");
         String s = split[split.length - 1];
         return s;
+    }
+
+    public Date dateZh(String timeData){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = null;
+        try {
+            if(timeData != null && !"".equals(timeData)){
+                time = sdf.parse(timeData);
+                return time;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
     }
 }

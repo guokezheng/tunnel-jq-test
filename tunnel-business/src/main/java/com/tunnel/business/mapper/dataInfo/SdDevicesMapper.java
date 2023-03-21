@@ -369,5 +369,5 @@ public interface SdDevicesMapper
 	 * @param eqName 设备名称
 	 * @return
 	 */
-	List<SdDevices> verifyEqNameOnly(@Param("eqName") String eqName);
+	List<SdDevices> verifyEqNameOnly(@Param("eqId") String eqId,@Param("eqName") String eqName);
 }

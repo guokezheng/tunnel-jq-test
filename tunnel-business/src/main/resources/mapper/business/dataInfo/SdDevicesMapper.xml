@@ -86,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
        <include refid="selectSdDevicesVo"></include>
         <where>
          <if test="eqName != null  and eqName != ''">and eq_name = #{eqName}</if>
+         <if test="eqId != null  and eqId != ''">and eq_id != #{eqId}</if>
         </where>
     </select>
 

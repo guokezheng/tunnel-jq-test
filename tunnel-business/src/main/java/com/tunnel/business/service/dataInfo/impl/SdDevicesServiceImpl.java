@@ -138,7 +138,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         devices.put("state", data.getData());
                     }
                 //巡检机器人
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.ROBOT.getCode()))) {
+               /* } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.ROBOT.getCode()))) {
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_IS_ONLINE.getCode())) {
                         devices.put("isOnline", data.getData());
                     }
@@ -174,7 +174,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     }
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_WORK_MODEL_TEXT.getCode())) {
                         devices.put("workModelText", data.getData());
-                    }
+                    }*/
                 } else if (data != null) {
                     devices.put("state", data.getData());
                 }

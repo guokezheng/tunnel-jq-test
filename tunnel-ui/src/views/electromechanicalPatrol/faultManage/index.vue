@@ -300,12 +300,12 @@
                 />
               </el-form-item>
             </el-col>
-<!--            <el-col :span="8">
+            <el-col :span="8" v-show="removeStata">
               <el-form-item label="故障填报时间" prop="faultTbtime">
                 <el-date-picker
                   clearable
                   size="small"
-                  :disabled="disstate"
+                  :disabled= "true"
                   v-model="form.faultTbtime"
                   :picker-options="setDateRangeTb"
                   @change="handleTb"
@@ -316,7 +316,7 @@
                 >
                 </el-date-picker>
               </el-form-item>
-            </el-col>-->
+            </el-col>
           </el-card>
           <el-card>
             <el-col :span="24">
@@ -971,6 +971,10 @@ export default {
           if (item.faultCode == "null") {
             item.faultCode = "";
           }
+          if (item.faultDescription == "null") {
+            item.faultDescription = "";
+          }
+
         });
         this.total = response.total;
         this.loading = false;

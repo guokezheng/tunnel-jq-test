@@ -1184,7 +1184,6 @@ export default {
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
       this.fileData.append("faultCxtime", this.form.faultCxtime);
-      this.fileData.append("faultTbtime", this.form.faultTbtime);
       this.fileData.append("eqId", this.form.eqId);
       this.fileData.append("eqStatus", this.form.eqStatus);
       this.fileData.append("faultLocation", this.form.faultLocation);
@@ -1232,7 +1231,6 @@ export default {
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
       this.fileData.append("faultCxtime", this.form.faultCxtime);
-      this.fileData.append("faultTbtime", this.form.faultTbtime);
       this.fileData.append("eqId", this.form.eqId);
       this.fileData.append("eqStatus", this.form.eqStatus);
       this.fileData.append("faultLocation", this.form.faultLocation);

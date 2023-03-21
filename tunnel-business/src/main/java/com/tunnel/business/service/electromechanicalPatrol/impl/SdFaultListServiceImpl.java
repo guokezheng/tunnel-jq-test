@@ -131,6 +131,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         int result = -1;
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
         try {
+            sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
             sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
             if (sdFaultList.getEqId() != null && !sdFaultList.getEqId().equals("")

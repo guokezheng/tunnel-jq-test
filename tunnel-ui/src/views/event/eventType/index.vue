@@ -464,6 +464,9 @@ export default {
         simplifyName: [
           { required: true, message: "请输入简称", trigger: "blur" },
         ],
+        iconUrl: [
+          { required: true, message: "请上传默认图标", trigger: "blur" },
+        ],
       },
       //是否可用
       options: [{
@@ -651,6 +654,10 @@ export default {
       this.fileData.append("isUsable", this.form.isUsable)//是否可用
       this.fileData.append("priority", this.form.priority)//是否可用
       // this.fileData.append("uid", this.form.uid); //类型名称
+
+      if (this.form.id == null) {
+        this.form.iconUrl = -1;
+      }
 
       this.$refs["form"].validate((valid) => {
         if (valid) {

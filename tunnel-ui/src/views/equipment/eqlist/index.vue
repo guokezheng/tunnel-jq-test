@@ -869,6 +869,8 @@ import {
 import { getToken } from "@/utils/auth";
 import { listAllSystem } from "@/api/equipment/externalsystem/system";
 import { listCategory } from "@/api/equipment/bigType/category";
+import {treeSelectYG1} from "@/api/system/dept";
+import {getTeams} from "@/api/electromechanicalPatrol/teamsManage/teams";
 
 export default {
   name: "Devices",
@@ -1468,6 +1470,7 @@ export default {
         this.title = "修改设备";
       });
     },
+
     /** 提交按钮 */
     submitForm() {
       if (this.submitFormLoading) return;

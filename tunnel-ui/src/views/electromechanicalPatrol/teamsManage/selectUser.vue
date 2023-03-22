@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style = "height:0px!important;">
     <!-- 授权用户 -->
     <el-dialog title="选择用户" :visible.sync="visible" width="1000px" append-to-body class="operationDiglog">
         <el-row
@@ -12,9 +12,11 @@
                 placeholder="请输入用户昵称、手机号码，回车搜索"
                 v-model="queryParams.userName"
                 @keyup.enter.native="handleQuery"
-                style="padding-right: 5px"
                 size="small"
+                clearable
+                style="border-right:#00C8FF solid 1px !important;border-radius:3px"
               >
+
 <!--                <el-button
                   slot="append"
                   size="small"
@@ -34,7 +36,7 @@
           :data="userList"
           @selection-change="handleSelectionChange"
           :row-class-name="tableRowClassName"
-          style="color: #ffffff;height:260px; ">
+          style="color: #ffffff;height:62vh">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
           <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />

@@ -41,7 +41,7 @@ public class IotBoardReleaseLog extends BaseEntity
     private String pile;
 
     /** 设备名称 */
-//    @Excel(name = "设备名称")
+    @Excel(name = "发布设备")
     private String deviceName;
 
     /** 发布前的内容 */

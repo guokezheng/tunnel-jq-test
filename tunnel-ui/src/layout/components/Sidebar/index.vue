@@ -49,7 +49,7 @@
       <el-tooltip
         class="item"
         effect="dark"
-        content="点击展示更多导航"
+<!--        content="点击展示更多导航"-->
         placement="left"
       >
         <i
@@ -93,12 +93,12 @@
           />
         </el-menu>
       </el-scrollbar>
-    
+
     <template v-if="topNav">
       <el-tooltip
         class="item"
         effect="dark"
-        content="点击展示更多导航"
+<!--        content="点击展示更多导航"-->
         placement="right"
       >
         <i
@@ -248,7 +248,7 @@ export default {
       let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
       this.rightIcon = rollWidth - 148 < wrap.offsetWidth ? false : true;
       this.leftIcon = wrap.scrollLeft == 0 ? false : true;
-    
+
     },
     changeScroll(e) {
       let wrap = this.$refs.scroll.$refs.wrap;

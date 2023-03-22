@@ -116,7 +116,7 @@
         class="contentBox"
         v-for="(item, index) in eventList"
         :key="index"
-        :style="{ width: topNav ? '24.2%' : '24%' }"
+        :style="{ width: topNav ? '24.2%' : '26.3%' }"
       >
         <div class="video">
           <img
@@ -155,7 +155,7 @@
             >
               复核
             </div>
-            <div v-if="item.eventState == '0'" class="chuzhi"
+            <div v-if="item.eventState == '0' && item.prevControlType == '0'" class="chuzhi"
                  @click="management(item.id)">
               处置
             </div>
@@ -229,11 +229,11 @@
               <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
             </swiper>
             <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs"
-                    ref="swiperThumbs">
+              ref="swiperThumbs">
               <swiper-slide v-for="(item, index) in eventFormDetail.iconUrlList"
-                            :key="index" :class="'slide-' + index">
+                :key="index" :class="'slide-' + index">
                 <video :src="item.imgUrl" :poster="item.imgUrl"
-                       v-if="index == 0" autoplay muted loop>
+                  v-if="index == 0" autoplay muted loop>
                 </video>
                 <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
@@ -360,7 +360,7 @@
                     <el-input
                       v-model="eventFormDetail.stakeNum1"
                       placeholder="Km"
-
+                      oninput="value=value.replace(/[^\d]/g,'')"
                       width="100%"
                     >
                       <template slot="prepend">K</template>
@@ -371,6 +371,7 @@
                     <el-input
                       v-model="eventFormDetail.stakeNum2"
                       placeholder="m"
+                      oninput="value=value.replace(/[^\d]/g,'')"
                       width="100%"
                     />
                   </el-col>
@@ -384,7 +385,7 @@
                     <el-input
                       v-model="eventFormDetail.stakeEndNum1"
                       placeholder="Km"
-
+                      oninput="value=value.replace(/[^\d]/g,'')"
                       width="100%"
                     >
                       <template slot="prepend">K</template>
@@ -395,7 +396,7 @@
                     <el-input
                       v-model="eventFormDetail.stakeEndNum2"
                       placeholder="m"
-
+                      oninput="value=value.replace(/[^\d]/g,'')"
                       width="100%"
                     />
                   </el-col>
@@ -567,7 +568,7 @@
                       :value="item.id"
                     ></el-option>
                   </el-select>
-                  <el-button @click="openDoor(eventFormDetail)">查看</el-button>
+                  <el-button v-show="eventFormDetail.currencyId" @click="openDoor(eventFormDetail)">查看</el-button>
                   <span style="color:#c59105;">(事件处置预案根据事件类型、事件等级智能推荐,处置过程中允许升级及更改预案)</span>
                 </el-form-item>
               </el-col>
@@ -590,7 +591,6 @@
           </div> -->
         </div>
       </div>
-
     </el-dialog>
     <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%" class="evtInfo">
       <el-timeline>
@@ -632,12 +632,18 @@
                   <el-form-item label="抓图录像" prop="iconUrlList">
                     <!-- class="detailImg" -->
                     <el-scrollbar wrap-class="scrollbar-wrapper">
-                      <el-image
-                        v-for="(item,index) in eventDiscovery.iconUrlList" :key="index"
-                        :src="item.imgUrl"
-                        style="width:145px;margin-right:15px;display:inline-block;white-space: nowrap;"
-                        @click="clickImg(item.imgUrl)">
-                      </el-image>
+                      <div class="scrollbar_li" v-for="(item,index) in eventDiscovery.iconUrlList" :key="index">
+                        <video v-if="index == 0" :src="item.imgUrl"
+                          muted loop fluid autoplay
+                          @click="openPicDialog(item)"
+                        >
+                        </video>
+                        <el-image
+                          v-if="index != 0"
+                          :src="item.imgUrl"
+                          @click="clickImg(item.imgUrl)">
+                        </el-image>
+                      </div>
                     </el-scrollbar>
                   </el-form-item>
                 </el-col>
@@ -901,7 +907,7 @@
     </el-dialog>
     <!-- 图片展示 -->
     <el-dialog
-      title="提示"
+      title="抓图详情"
       :visible.sync="dialogVisibleImg"
       width="60%"
       :before-close="handleCloseImg">
@@ -955,8 +961,8 @@
   </div>
 </template>
 <script>
-  import $ from "jquery";
-  import { displayH5sVideoAll } from "@/api/icyH5stream";
+import $ from "jquery";
+import { displayH5sVideoAll } from "@/api/icyH5stream";
 
 import {
   listEvent,
@@ -987,7 +993,12 @@ import {
   listList,
   updateList,
 } from "@/api/electromechanicalPatrol/faultManage/fault";
-import { listEventType, getTodayEventCount,getEventDetail } from "@/api/event/eventType";
+import {
+  listEventType,
+  getTodayEventCount,
+  getEventDetail,
+  handleStrategy 
+} from "@/api/event/eventType";
 import { examineDeviceDetail,getStrategyData } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { image, video, getEventCamera } from "@/api/eventDialog/api.js";
@@ -1440,8 +1451,6 @@ export default {
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus1);
-    document.addEventListener("click", this.bodyCloseMenus0);
-    document.addEventListener("click", this.bodyCloseMenus2);
   },
   methods: {
     getStrategyData(item){
@@ -1505,30 +1514,8 @@ export default {
         }
       })
     },
-    bodyCloseMenus0(e) {
-      let self = this;
-      self.$nextTick(()=>{
-        if (!this.$refs.main0.contains(e.target) && !this.$refs.cc0.contains(e.target)) {
-          if (self.boxShow == true){
-            self.boxShow = false;
-          }
-        }
-      })
-    },
-    bodyCloseMenus2(e) {
-      let self = this;
-      self.$nextTick(()=>{
-      if (!this.$refs.main2.contains(e.target) && !this.$refs.cc2.contains(e.target)) {
-        if (self.fault_boxShow == true){
-          self.fault_boxShow = false;
-        }
-      }
-    })
-    },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus1);
-      document.removeEventListener("click", this.bodyCloseMenus0);
-      document.removeEventListener("click", this.bodyCloseMenus2);
     },
     getReservePlanData(){
       this.ReservePlanList = [];
@@ -1644,10 +1631,12 @@ export default {
     },
     // 打开图片变视频弹窗
     openPicDialog(item) {
-      if(!item.videoUrl){
+      console.log(item);
+      if(!item.videoUrl && !item.imgUrl){
         this.$message.warning('暂无视频');
       }else{
-        this.videoUrl = item.videoUrl;
+        this.videoUrl = item.videoUrl == undefined ? item.imgUrl : item.videoUrl;
+        // this.videoUrl = item.videoUrl;
         this.picUrlDialog = true;
       }
     },
@@ -1743,6 +1732,15 @@ export default {
         this.details = false;
         this.$modal.msgSuccess("修改成功");
         this.getList();
+        //主动安全
+        //策略不为空
+        if(this.eventFormDetail.prevControlType == 1 && currencyId && this.eventFormDetail.eventState == 0){
+          let id = currencyId;
+          handleStrategy(id).then(res=>{
+            console.log(res);
+            this.$modal.msgSuccess("下发指令成功");
+          })
+        }
         // 1.预案不为空 
         // 2.当前状态为0
         // 3.普通事件
@@ -2388,6 +2386,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  .scrollbar_li{
+    width:145px;margin-right:15px;display:inline-block;white-space: nowrap;
+    video{width: 100%;}
+  }
   ::v-deep .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell,::v-deep .el-table tr{
     background: unset!important;;
   }
@@ -2509,7 +2511,7 @@ export default {
       // height: 135px;
       // border: solid 1px #2aa6ff;
       display: inline-flex;
-      margin-right: 1vw;
+      margin-right: 0.3vw;
       margin-bottom: 5px;
       position: relative;
       border-radius: 2px;

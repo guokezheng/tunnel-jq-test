@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-08 14:02:22
+ * @LastEditTime: 2023-03-22 15:45:27
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -792,7 +792,7 @@
           style="width: 10%"
           type="primary"
           v-hasPermi="['plan:process:add']"
-          @click="submitstrategy"
+          @click="submitStrategy"
           >保存</el-button
         >
         <el-button style="width: 10%" @click="closeStrategy">取 消</el-button>
@@ -1462,33 +1462,32 @@ export default {
       return value != '';
     },
     // 编辑策略保存方法
-    submitstrategy() {
+    submitStrategy() {
       console.log(this.planTypeIdList, "000000000000000000");
+
       for (let i = 0; i < this.planTypeIdList.length; i++) {
-        let item = this.planTypeIdList[i].processesList;
-        console.log(item);
-        // return false;
         if(this.planTypeIdList[i].processStageName == ''){
-          return this.$modal.msgWarning("请填写完整");
+          return this.$modal.msgWarning("请填写阶段名称");
         }
-        for (let j = 0; j < item.length; j++) {
-          console.log(item[j].processName,"processNameprocessNameprocessName");
-          // 如果指定设备则判断是否填写完整
-          if (item[j].retrievalRule == 1) {
-            if (
-              item[j].equipments == "" ||
-              item[j].processName == "" ||
-              item[j].processName == undefined ||
-              item[j].state == "" ||
-              item[j].retrievalRule == ""
-            ) {
-              return this.$modal.msgWarning("请填写完整");
-            }
-          }else if(item[j].retrievalRule == ''){
-            return this.$modal.msgWarning("请填写完整");
+        let item = this.planTypeIdList[i].processesList;
+        let result = item.every(items=>{
+          if(items.retrievalRule == 1){
+            return items.equipments &&
+            items.processName &&
+            items.state && 
+            items.equipments
+          }else{//非指定由后端判断具体设备
+            return items.processName &&
+            items.state &&
+            items.retrievalRule &&
+            items.state
           }
+        })
+        if(!result){
+          return this.$modal.msgError("请填写完整");
         }
       }
+
       this.planTypeIdList.forEach((item, index) => {
         item.processSort = index;
       });

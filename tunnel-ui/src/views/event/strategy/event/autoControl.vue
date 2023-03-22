@@ -116,6 +116,7 @@
                   v-model="strategyForm.triggers.deviceId"
                   placeholder="请选择设备名称"
                   multiple
+                  style="width:100%;"
                 >
                   <!-- @change="selectDataItem()" -->
                   <el-option
@@ -433,6 +434,9 @@ export default {
         eventType: [
           { required: true, message: "请选择事件类型", trigger: "blur" },
         ],
+        schedulerTime:[
+          { required: true, message: "请选择定时频率", trigger: "blur" },
+        ],
         triggers: {
           deviceTypeId: [
             { required: true, message: "请选择设备类型", trigger: "blur" },
@@ -661,7 +665,7 @@ export default {
           let response = JSON.parse(JSON.stringify(autoControl))
           console.log(response,"response")
           let result = response.every(function (item) {
-              return item.equipmentTypeId != "" && item.state != "" && item.equipments != ""
+              return item.equipmentTypeId && item.state && item.equipments
           });
           console.log(result);
           if(!result){

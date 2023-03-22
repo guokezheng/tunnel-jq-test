@@ -523,27 +523,31 @@ export default {
       this.$refs["manualControl"].validate((valid) => {
         if (valid) {
           console.log(this.strategyForm, "要提交数据");
-          var manualControl = this.strategyForm.manualControl;
+          var manualControl = JSON.parse(JSON.stringify(this.strategyForm.manualControl));
           //如果不是疏散标志则判断是否填写
           let result = manualControl.every(function (item) {
-              return item.equipmentTypeId != "" && item.state != "" && item.value != "" && item.disposalName
+            console.log(item.state,item.value);
+            return item.equipmentTypeId && item.state && item.value && item.disposalName
           });
           console.log(result);
           if(!result){
             return this.$modal.msgError("请填写完整");
           }
-          if (this.strategyForm.equipmentTypeId != 30) {
-            if (
-              manualControl[0].value.length == 0 ||
-              manualControl[0].state == ""
-            ) {
-              return this.$modal.msgError("请选择设备并添加执行操作");
-            }
-          } else {
-            if (manualControl[0].state == "") {
-              return this.$modal.msgError("请选择疏散标志执行操作");
-            }
-          }
+          // manualControl.map(item=>{
+          //   if (item.equipmentTypeId != 30) {
+          //     if (
+          //       item.value.length == 0 ||
+          //       item.state == ""
+          //     ) {
+          //       return this.$modal.msgError("请选择设备并添加执行操作");
+          //     }
+          //   } else {
+          //     if (item.state == "") {
+          //       return this.$modal.msgError("请选择疏散标志执行操作");
+          //     }
+          //   }
+          // })
+
 
           // 判断是修改还是删除
           if (this.sink == "edit") {

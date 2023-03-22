@@ -78,8 +78,13 @@ public enum DevicesTypeItemEnum {
     CHEN_JIANG_ZHI(78, "沉降值"),
     QING_XIE_ZHI(79, "倾斜值"),
     ZHEN_DONG_GAO_JING(80, "振动告警"),
-    CHEN_JIANG_QING_XIE_GAO_JING(81, "沉降倾斜告警");
-
+    CHEN_JIANG_QING_XIE_GAO_JING(81, "沉降倾斜告警"),
+    XIAO_FANG_DIAN_LIU_IA(92, "电流Ia"),    //电流Ia
+    XIAO_FANG_DIAN_LIU_IB(93, "电流Ib"),   //电流Ib
+    XIAO_FANG_DIAN_LIU_IC(94, "电流IC"),   //电流Ic
+    XIAO_FANG_DIAN_YA_IA(95, "电压A"),   //电压Uab
+    XIAO_FANG_DIAN_YA_IB(96, "电压B"),   //电压Ubc
+    XIAO_FANG_DIAN_YA_IC(97, "电压C");    //电压Uac
 
     private int code;
     private String name;

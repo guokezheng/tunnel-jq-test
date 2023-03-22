@@ -2678,7 +2678,7 @@
     <com-light
       class="comClass"
       v-if="
-        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 45].includes(
+        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 45].includes(
           this.eqInfo.clickEqType
         )
       "
@@ -2697,6 +2697,24 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-covi>
+    <com-xfsb
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 13"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-xfsb>
+    <com-sjb
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 49"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-sjb>
     <com-data
       class="comClass"
       :brandList="this.brandList"
@@ -3738,6 +3756,10 @@ import comData from "@/views/workbench/config/components/data"; //只有数据�
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
 import comBoard from "@/views/workbench/config/components/board"; //情报板弹窗
 import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
+import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵弹窗
+import comSjb from "@/views/workbench/config/components/sjb"; //消防水泵弹窗
+
+
 
 import { getLocalIP } from "@/api/event/vedioRecord";
 import { getHosts } from "@/api/equipment/plc/api";
@@ -3809,6 +3831,8 @@ export default {
     comYoudao,
     comBoard,
     comRadio,
+    comXfsb,
+    comSjb,
   },
 
   data() {

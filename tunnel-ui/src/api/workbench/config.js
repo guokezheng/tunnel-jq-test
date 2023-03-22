@@ -260,3 +260,11 @@ export function getCategoryTree(tunnelId) {
 
 
 
+//欧姆龙控制状态（测试接口  后期变为设备控制 实际接口）
+export function setControlDeviceByParam(data) {
+  return request({
+    url: '/workspace/controlDeviceByParam',
+    method: 'post',
+    data: data
+  })
+}

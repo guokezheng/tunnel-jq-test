@@ -1120,6 +1120,8 @@ export default {
                 this.getList();
               }
             });
+          }else{
+            this.opens = false;
           }
         }
       });

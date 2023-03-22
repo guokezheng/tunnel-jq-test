@@ -306,7 +306,8 @@ export default {
           { required: true, message: "岗位名称不能为空", trigger: "blur" }
         ],
         postCode: [
-          { required: true, message: "岗位编码不能为空", trigger: "blur" }
+          { required: true, message: "岗位编码不能为空", trigger: "blur" },
+          { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, message: '仅限输入数字/字母', trigger: 'blur' },
         ],
         postSort: [
           { required: true, message: "岗位顺序不能为空", trigger: "blur" }

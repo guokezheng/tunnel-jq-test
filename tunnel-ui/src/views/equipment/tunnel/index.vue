@@ -374,13 +374,13 @@
               </el-form-item>
             </el-col>
 
-            <el-col :span="5">
+            <el-col :span="5.5">
               <el-form-item label="外部系统隧道方向" prop="externalSystemTunnelDirection" label-width="130px" >
                 <el-input v-model="item.externalSystemTunnelDirection" placeholder="请输入外部系统隧道方向" />
               </el-form-item>
             </el-col>
 
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item label="备注" prop="remark">
                 <el-input v-model="item.remark" placeholder="请输入备注" />
               </el-form-item>

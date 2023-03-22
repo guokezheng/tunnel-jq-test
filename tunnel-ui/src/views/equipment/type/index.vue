@@ -413,6 +413,7 @@ export default {
     },
     getEqBigType() {
       listCategory().then(response => {
+        console.log(response,"response")
         this.eqCategoryData = response.rows;
       });
     },
@@ -588,9 +589,9 @@ export default {
 	    this.fileData.append("eqCategory", this.form.eqCategory);
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if(this.fileList.length <= 0) {
-            return this.$modal.msgWarning('请选择要上传的图标')
-          }
+          // if(this.fileList.length <= 0) {
+          //   return this.$modal.msgWarning('请选择要上传的图标')
+          // }
           if (this.form.typeId != null) {
             this.fileData.append("typeId", this.form.typeId); //类型id
             this.fileData.append("iconFileId", this.form.iconFileId); //关联文件id

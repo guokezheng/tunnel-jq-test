@@ -1509,7 +1509,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除巡查任务编号为"' + ids + '"的数据项？')
+        .confirm('是否确认删除？')
         .then(function () {
           return delList(ids);
         })

@@ -341,7 +341,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$confirm(
-        '是否确认删除该条情报板敏感字管理的数据项?',
+        '是否确认删除?',
         "警告",
         {
           confirmButtonText: "确定",

@@ -356,7 +356,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const deptIds = row.deptId || this.ids;
-      this.$modal.confirm('是否确认删除所选数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delTeams(deptIds);
       }).then(() => {
         this.getList();

@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
@@ -8,14 +7,11 @@
           v-hasPermi="['system:type:add']"
           size="small"
           @click="handleAdd()"
-        >新增类型
+          >新增类型
         </el-button>
-        <el-button size="small" @click="resetQuery"
-        >刷新</el-button
-        >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="12">
-
         <div class="grid-content bg-purple" ref="main">
           <el-input
             placeholder="请输入事件类型，回车搜索"
@@ -39,7 +35,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="防控类型" prop="prevControlType" >
+        <el-form-item label="防控类型" prop="prevControlType">
           <el-select
             v-model="queryParams.prevControlType"
             placeholder="请选择防控类型"
@@ -54,7 +50,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="是否可用" prop="isUsable" >
+        <el-form-item label="是否可用" prop="isUsable">
           <el-select
             v-model="queryParams.isUsable"
             placeholder="请选择是否可用"
@@ -71,10 +67,10 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
           <!--          <el-button type="primary" plain size="mini" :loading="exportLoading"
                                @click="handleExport"
@@ -233,7 +229,7 @@
         </el-tooltip>
       </div>
     </el-row> -->
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="eventTypeList"
@@ -243,11 +239,10 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="事件类型ID" align="center" prop="id" />
-      <el-table-column label="防控类型" align="center"  >
+      <el-table-column label="防控类型" align="center">
         <template slot-scope="scope">
           <span>{{ getPrevControlType(scope.row.prevControlType) }}</span>
         </template>
-
       </el-table-column>
       <el-table-column label="简称" align="center" prop="simplifyName" />
       <el-table-column label="事件类型" align="center" prop="eventType" />
@@ -265,12 +260,12 @@
       </el-table-column>
       <el-table-column label="优先级" align="center" prop="priority">
         <template slot-scope="scope">
-          <span>{{getPriority(scope.row.priority)}}</span>
+          <span>{{ getPriority(scope.row.priority) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否可用" align="center" prop="isUsable">
         <template slot-scope="scope">
-          <span>{{scope.row.isUsable == "0" ? "否" : "是"}}</span>
+          <span>{{ scope.row.isUsable == "0" ? "否" : "是" }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -284,13 +279,14 @@
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:eventType:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:eventType:remove']"
-          >删除</el-button
+            >删除</el-button
           >
         </template>
       </el-table-column>
@@ -351,16 +347,18 @@
             clearable
             placeholder="请选择是否可用"
             size="small"
-            style="width: 100%">
+            style="width: 100%"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
+              :value="item.value"
+            >
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="默认图标"  prop="iconUrl">
+        <el-form-item label="默认图标" prop="iconUrl">
           <el-upload
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -373,19 +371,27 @@
             :on-change="handleChange"
             :onSuccess="uploadSuccess"
             :limit="1"
-            :class="fileList.length ==1 ? 'showUpload':''"
+            :class="fileList.length == 1 ? 'showUpload' : ''"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible"  class="modifyEqTypeDialog"
-                     :append-to-body="true" style="width:600px !important;margin: 0 auto;"
+          <el-dialog
+            :visible.sync="dialogVisible"
+            class="modifyEqTypeDialog"
+            :append-to-body="true"
+            style="width: 600px !important; margin: 0 auto"
           >
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm" :disabled="dialogOkDisabled">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="submitForm"
+          :disabled="dialogOkDisabled"
+          >确 定</el-button
+        >
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -405,24 +411,29 @@ export default {
   name: "EventType",
   data() {
     return {
-      yxjOptions: [{
-        value: '0',
-        label: '低'
-      },{
-        value: '1',
-        label: '中'
-      },{
-        value: '2',
-        label: '高'
-      },{
-        value: '3',
-        label: '紧急'
-      }],
-      sj_boxShow:false,
-      dialogOkDisabled:false,
-      from:{},
+      yxjOptions: [
+        {
+          value: "0",
+          label: "低",
+        },
+        {
+          value: "1",
+          label: "中",
+        },
+        {
+          value: "2",
+          label: "高",
+        },
+        {
+          value: "3",
+          label: "紧急",
+        },
+      ],
+      sj_boxShow: false,
+      dialogOkDisabled: false,
+      from: {},
       dialogImageUrl: "",
-      dialogVisible:false,
+      dialogVisible: false,
       prevControlType: [],
       // 遮罩层
       loading: true,
@@ -450,12 +461,12 @@ export default {
         pageSize: 10,
         eventType: null,
         prevControlType: null,
-        isUsable: null
+        isUsable: null,
       },
       //事件类型
       eventTypeData: {},
       // 表单参数
-      form: {simplifyName:"",prevControlType:"",isUsable:""},
+      form: { simplifyName: "", prevControlType: "", isUsable: "" },
       // 表单校验
       rules: {
         eventType: [
@@ -475,17 +486,20 @@ export default {
         ],
       },
       //是否可用
-      options: [{
-        value: '0',
-        label: '否'
-      }, {
-        value: '1',
-        label: '是'
-      }],
+      options: [
+        {
+          value: "0",
+          label: "否",
+        },
+        {
+          value: "1",
+          label: "是",
+        },
+      ],
     };
   },
   created() {
-    this.getDicts("prev_control_type").then(response => {
+    this.getDicts("prev_control_type").then((response) => {
       this.prevControlType = response.data;
     });
     this.getList();
@@ -497,7 +511,6 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-
     //优先级
     getPriority(num) {
       for (var item of this.yxjOptions) {
@@ -522,7 +535,7 @@ export default {
       this.loading = true;
       console.log(this.queryParams);
       listEventType(this.queryParams).then((response) => {
-        console.log(response.rows,"查询事件类型列表 ")
+        console.log(response.rows, "查询事件类型列表 ");
         this.eventTypeList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -541,7 +554,7 @@ export default {
     },
     //删除文件
     handleRemove(file, fileList) {
-      console.log(file,"file")
+      console.log(file, "file");
       if (file.hasOwnProperty("uid")) {
         this.removeIds.push(file.uid);
       }
@@ -552,7 +565,7 @@ export default {
       console.log(file);
       this.fileData.append("file", file.file); // append增加数据
 
-      console.log(this.fileData,"this.fileData");
+      console.log(this.fileData, "this.fileData");
     },
     //监控上传文件列表
     handleChange(file, fileList) {
@@ -578,11 +591,10 @@ export default {
         updateTime: null,
         iconUrl: null,
         isUsable: null,
-        priority: ''
+        priority: "",
       };
       this.resetForm("form");
       this.removeIds = [];
-
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -657,8 +669,8 @@ export default {
       this.fileData.append("eventType", this.form.eventType); //类型名称
       this.fileData.append("simplifyName", this.form.simplifyName); //类型名称
       this.fileData.append("prevControlType", this.form.prevControlType); //类型名称
-      this.fileData.append("isUsable", this.form.isUsable)//是否可用
-      this.fileData.append("priority", this.form.priority)//是否可用
+      this.fileData.append("isUsable", this.form.isUsable); //是否可用
+      this.fileData.append("priority", this.form.priority); //是否可用
       // this.fileData.append("uid", this.form.uid); //类型名称
 
       if (this.form.id == null) {
@@ -667,8 +679,8 @@ export default {
 
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if(this.fileList.length <= 0) {
-            return this.$modal.msgWarning('请选择要上传的图标')
+          if (this.fileList.length <= 0) {
+            return this.$modal.msgWarning("请选择要上传的图标");
           }
           if (this.form.id != null) {
             this.fileData.append("id", this.form.id);
@@ -680,18 +692,17 @@ export default {
                 this.open = false;
                 this.$refs.upload.clearFiles();
                 this.getList();
-                this.dialogOkDisabled = false
+                this.dialogOkDisabled = false;
               }
             });
           } else {
-            console.log(this.fileData,"this.fileDatathis.fileData");
+            console.log(this.fileData, "this.fileDatathis.fileData");
             addEventType(this.fileData).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
                 this.getList();
-                this.dialogOkDisabled = false
-
+                this.dialogOkDisabled = false;
               }
             });
           }
@@ -701,7 +712,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm("是否确认删除选中数据项?", "警告", {
+      this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -730,8 +741,12 @@ export default {
 </script>
 <style scoped lang="scss">
 ::v-deep .showUpload {
-    .el-upload {
-      display: none !important;
-    }
+  .el-upload {
+    display: none !important;
+    
   }
+}
+::v-deep .el-upload-list__item {
+      transition: none !important;
+    }
 </style>

@@ -750,7 +750,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const roleIds = row.roleId || this.ids;
-      this.$modal.confirm('是否确认删除所选数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delRole(roleIds);
       }).then(() => {
         this.getList();

@@ -66,7 +66,7 @@
         :model="queryParams"
         label-width="80px"
       >
-        <el-form-item label="任务组名" prop="jobGroup">
+        <el-form-item label="任务分组" prop="jobGroup">
           <el-select
             v-model="queryParams.jobGroup"
             placeholder="请选择任务组名"
@@ -128,7 +128,7 @@
         prop="jobName"
         :show-overflow-tooltip="true"
       />
-      <el-table-column label="任务组名" align="center" prop="jobGroup">
+      <el-table-column label="任务分组" align="center" prop="jobGroup">
         <template slot-scope="scope">
           <dict-tag
             :options="dict.type.sys_job_group"
@@ -662,7 +662,7 @@ export default {
     handleDelete(row) {
       const jobIds = row.jobId || this.ids;
       this.$modal
-        .confirm("是否确认删除选中数据项？")
+        .confirm("是否确认删除？")
         .then(function () {
           return delJob(jobIds);
         })

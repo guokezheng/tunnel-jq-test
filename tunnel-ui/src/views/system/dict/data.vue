@@ -194,15 +194,13 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:dict:edit']"
           >修改</el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:dict:remove']"
           >删除</el-button>
@@ -224,10 +222,10 @@
         <el-form-item label="字典类型">
           <el-input v-model="form.dictType" :disabled="true" />
         </el-form-item>
-        <el-form-item label="数据标签" prop="dictLabel">
+        <el-form-item label="字典标签" prop="dictLabel">
           <el-input v-model="form.dictLabel" placeholder="请输入数据标签" />
         </el-form-item>
-        <el-form-item label="数据键值" prop="dictValue">
+        <el-form-item label="字典键值" prop="dictValue">
           <el-input v-model="form.dictValue" placeholder="请输入数据键值" />
         </el-form-item>
         <el-form-item label="样式属性" prop="cssClass">
@@ -469,7 +467,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictCodes = row.dictCode || this.ids;
-      this.$modal.confirm('是否确认删除选中数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delData(dictCodes);
       }).then(() => {
         this.getList();

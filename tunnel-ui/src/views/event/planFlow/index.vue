@@ -451,7 +451,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.eventTypeId || this.ids;
-      this.$modal.confirm('是否确认删除事件类型预案流程').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delFlow(ids);
       }).then(() => {
         this.getList();

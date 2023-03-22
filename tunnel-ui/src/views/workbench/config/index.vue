@@ -327,9 +327,9 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-
+                     
                       <div
-                        v-show="
+                      v-show="
                           (item.eqType != 7 &&
                             item.eqType != 15 &&
                             item.eqType != 8 &&
@@ -340,8 +340,7 @@
                             item.eqType == 9 ||
                             item.eqType == 21) &&
                             item.display == true &&
-                            lightSwitch == 1)
-                        "
+                            lightSwitch == 1)"
                         :class="{ focus: item.focus }"
                       >
                         <img
@@ -1084,15 +1083,15 @@
                       <el-col :span="2">
                         <div
                           style="
-                            width: 100%;
-                            height: 20px;
+                            width: 30px;
+                            height: 30px;
                             display: flex;
                             justify-content: right;
                             align-items: center;
                             transform: scale(0.7) translateY(8px);
                           "
                         >
-                          <img :src="item.eventType.iconUrl" />
+                          <img :src="item.eventType.iconUrl" style="width:100%"/>
                         </div>
                       </el-col>
                       <el-col style="display: flex" :span="4">
@@ -3758,8 +3757,6 @@ import comBoard from "@/views/workbench/config/components/board"; //情报板弹
 import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
 import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵弹窗
 import comSjb from "@/views/workbench/config/components/sjb"; //消防水泵弹窗
-
-
 
 import { getLocalIP } from "@/api/event/vedioRecord";
 import { getHosts } from "@/api/equipment/plc/api";

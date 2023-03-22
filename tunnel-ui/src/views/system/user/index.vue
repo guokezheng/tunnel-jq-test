@@ -1061,7 +1061,7 @@ export default {
     handleDelete(row) {
       const userIds = row.userId || this.ids;
       this.$modal
-        .confirm("是否确认删除所选数据项？")
+        .confirm("是否确认删除？")
         .then(function () {
           return delUser(userIds);
         })

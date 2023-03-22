@@ -461,6 +461,12 @@ export default {
         eventType: [
           { required: true, message: "请输入事件类型", trigger: "blur" },
         ],
+        prevControlType: [
+          { required: true, message: "请选择防控类型", trigger: "change" },
+        ],
+        isUsable: [
+          { required: true, message: "请配置是否可用", trigger: "change" },
+        ],
         simplifyName: [
           { required: true, message: "请输入简称", trigger: "blur" },
         ],

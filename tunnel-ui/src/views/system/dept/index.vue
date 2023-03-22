@@ -14,7 +14,7 @@
             size="small"
             @click="toggleExpandAll"
           >展开/折叠</el-button>
-        <el-button size="small" @click="resetQuery" 
+        <el-button size="small" @click="resetQuery"
           >刷新</el-button
           >
       </el-col>
@@ -64,7 +64,7 @@
           <el-button size="small" @click="resetQuery" type="primary" plain
           >重置</el-button
           >
-          
+
         </el-form-item>
       </el-form>
     </div>
@@ -164,7 +164,12 @@
         <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
             <el-form-item label="上级部门" prop="parentId">
-              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
+              <treeselect v-model="form.parentId"
+                          :options="deptOptions"
+                          :disabled="disstate"
+                          :normalizer="normalizer"
+                          placeholder="选择上级部门"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -224,6 +229,7 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      disstate:false,
       dept_boxShow:false,
       // 遮罩层
       loading: true,
@@ -307,14 +313,22 @@ export default {
     },
     /** 转换部门数据结构 */
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if("无"==node.id){
+        return {
+          id: "无",
+          label: "无",
+          children: "无"
+        };
+      }else{
+        if (node.children && !node.children.length) {
+          delete node.children;
+        }
+        return {
+          id: node.deptId,
+          label: node.deptName,
+          children: node.children
+        };
       }
-      return {
-        id: node.deptId,
-        label: node.deptName,
-        children: node.children
-      };
     },
     // 取消按钮
     cancel() {
@@ -370,6 +384,13 @@ export default {
       this.reset();
       getDept(row.deptId).then(response => {
         this.form = response.data;
+        if(response.data.ancestors=='0'){
+          this.form.parentId = '无';
+          this.disstate = true;
+        }else{
+          this.disstate = false;
+        }
+
         this.open = true;
         this.title = "修改部门";
       });

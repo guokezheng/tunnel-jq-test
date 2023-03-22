@@ -10,9 +10,6 @@
           @click="handleAdd()"
         >新增
         </el-button>
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
-          >
         <el-button
           type="primary"
           plain
@@ -21,6 +18,9 @@
           @click="handleExport"
           v-hasPermi="['system:teams:export']"
         >导出</el-button>
+        <el-button size="small" @click="resetQuery"
+          >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">

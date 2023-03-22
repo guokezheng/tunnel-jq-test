@@ -33,6 +33,7 @@ import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
 import com.tunnel.platform.service.deviceControl.LightService;
+import com.tunnel.platform.service.deviceFunctions.DeviceFunctionsService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,8 @@ public class workspaceController extends BaseController {
     private ISdDeviceTypeItemService sdDeviceTypeItemService;
     @Autowired
     private LightService lightService;
+    @Autowired
+    private DeviceFunctionsService deviceFunctionsService;
 
     @Autowired
     private ISdVehicleDataService vehicleDataService;
@@ -718,5 +721,30 @@ public class workspaceController extends BaseController {
         Assert.hasText(operIp, "操作方IP地址参数{operIp}必传");
         Integer controlState = sdDeviceControlService.controlDevices(params);
         return controlState;
+    }
+
+
+    /**
+     * Omron 消防水泵控制  (后期优化。所有控制走当前一个接口)
+     * @param params
+     * @return
+     */
+    @PostMapping("/controlDeviceByParam")
+    public AjaxResult controlDeviceByParam(@RequestBody Map<String, Object> params){
+        //参数校验
+        Assert.notEmpty(params, "控制设备参数为空");
+        //获取当前传输数据协议类型
+        if ( params.get("comType") == null ||  params.get("comType").toString().equals("")) {
+            throw new RuntimeException("未指定设备通讯类型");
+        } else if ( params.get("data") == null || params.get("data").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的状态信息");
+        } else if (params.get("eqId") == null || params.get("eqId").toString().equals("")) {
+            throw new RuntimeException("未指定设备id");
+        }
+        boolean  b = deviceFunctionsService.deviceControlByParam( params.get("comType").toString(), params.get("eqId").toString(), params.get("data").toString());
+        if(b){
+            return AjaxResult.success("控制成功");
+        }
+        return AjaxResult.error("控制失败");
     }
 }

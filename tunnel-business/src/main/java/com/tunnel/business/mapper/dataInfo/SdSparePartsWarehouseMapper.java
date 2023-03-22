@@ -66,8 +66,8 @@ public interface SdSparePartsWarehouseMapper
 
     /**
      * 查询备件名称是否重复
-     * @param partName
+     * @param param
      * @return
      */
-    List<SdSparePartsWarehouse> verifyPartNameOnly(@Param("partName") String partName);
+    List<SdSparePartsWarehouse> verifySparePartsWarehouseOnly(@Param("param") SdSparePartsWarehouse sdSparePartsWarehouse);
 }

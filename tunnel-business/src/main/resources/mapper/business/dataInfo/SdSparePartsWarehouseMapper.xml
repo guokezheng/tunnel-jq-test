@@ -35,10 +35,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
 
-    <select id="verifyPartNameOnly" resultMap="SdSparePartsWarehouseResult">
+    <select id="verifySparePartsWarehouseOnly" resultMap="SdSparePartsWarehouseResult">
         <include refid="selectSdSparePartsWarehouseVo"/>
         <where>
-            <if test="partName != null  and partName != ''"> and part_name = #{partName}</if>
+            <if test="param.id != null  and param.id != ''"> and id != #{param.id}</if>
+            <if test="param.tunnelId != null  and param.tunnelId != ''"> and tunnel_id = #{param.tunnelId}</if>
+            <if test="param.partName != null  and param.partName != ''"> and part_name = #{param.partName}</if>
+            <if test="param.model != null  and param.model != ''"> and model = #{param.model}</if>
+            <if test="param.manufacturer != null  and param.manufacturer != ''"> and manufacturer = #{param.manufacturer}</if>
         </where>
     </select>
 

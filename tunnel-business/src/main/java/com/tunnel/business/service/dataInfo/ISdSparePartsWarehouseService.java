@@ -68,5 +68,5 @@ public interface ISdSparePartsWarehouseService {
      * @param partName 备件名称
      * @return
      */
-    List<SdSparePartsWarehouse> verifyPartNameOnly(String partName);
+    List<SdSparePartsWarehouse> verifySparePartsWarehouseOnly(SdSparePartsWarehouse sdSparePartsWarehouse);
 }

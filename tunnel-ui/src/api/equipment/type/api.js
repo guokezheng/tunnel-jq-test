@@ -126,3 +126,14 @@ export function getTypeAndStrategy(data) {
     params: data
   })
 }
+
+
+
+// 导出设备图标
+export function exportDeviceIcon(query) {
+  return request({
+    url: '/type/export',
+    method: 'get',
+    params: query
+  })
+}

@@ -709,7 +709,7 @@ export default {
       const queryParams = this.queryParam;
       console.log("queryParams=========" + queryParams);
       this.$modal
-        .confirm("是否确认导出所有系统日志数据项？")
+        .confirm("是否确认导出系统日志数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportLogininfor(queryParams);
@@ -728,7 +728,7 @@ export default {
       const queryParams = this.queryParams;
       console.log("queryParams=========" + queryParams);
       this.$modal
-        .confirm("是否确认导出所有操作日志数据项？")
+        .confirm("是否确认导出操作日志数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportLogininfor1(queryParams);

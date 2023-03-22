@@ -24,6 +24,11 @@
             @click="handleDelete"
             v-hasPermi="['system:type:remove']"
             >删除</el-button>
+            <el-button
+              size="small"
+              :loading="exportLoading"
+              @click="handleExport"
+            >导出</el-button>
           <el-button size="small" @click="resetQuery" >刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
@@ -96,14 +101,14 @@
           <span>{{ scope.row.isControl==1?'是':'否' }} </span>
         </template>
        </el-table-column>
-      <el-table-column label="图标宽度" align="center" prop="iconWidth">
+      <el-table-column label="图标宽度(px)" align="center" prop="iconWidth">
         <template slot-scope="scope">
-          <span>{{ scope.row.iconWidth }} px</span>
+          <span>{{ scope.row.iconWidth }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="图标高度" align="center" prop="iconHeight">
+      <el-table-column label="图标高度(px)" align="center" prop="iconHeight">
         <template slot-scope="scope">
-          <span>{{ scope.row.iconHeight }} px</span>
+          <span>{{ scope.row.iconHeight }}</span>
         </template>
       </el-table-column>
 
@@ -273,7 +278,7 @@ import {
   updateType,
   groupByBigType,
   eqTypeList,
-  loadPicture,
+  loadPicture, exportDeviceIcon,
 } from "@/api/equipment/type/api.js";
 import {listCategory} from "@/api/equipment/bigType/category";
 
@@ -282,6 +287,8 @@ export default {
   data() {
     return {
       boxShow: false,
+      // 导出遮罩层
+      exportLoading: false,
       eqSystemData: {},
       // 设备大类
       eqCategoryData: {},
@@ -527,6 +534,19 @@ export default {
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
+
+    /** 导出按钮操作 */
+    handleExport() {
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal.confirm('是否确认导出设备图标数据项？').then(() => {
+        this.exportLoading = true;
+        return exportDeviceIcon(queryParams);
+      }).then(response => {
+        this.$download.name(response.msg);
+        this.exportLoading = false;
+      }).catch(() => {});
+    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
@@ -607,16 +627,6 @@ export default {
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function () {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "system/type/export",
-        {
-          ...this.queryParams,
-        },
-        `system_type.xlsx`
-      );
     },
   },
 };

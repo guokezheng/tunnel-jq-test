@@ -1,6 +1,6 @@
 <template>
   <!-- 授权用户 -->
-  <el-dialog title="选择用户" :visible.sync="visible" width="800px" top="5vh" append-to-body>
+  <el-dialog title="选择1用户" :visible.sync="visible" width="800px" top="5vh" append-to-body>
     <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-form-item label="用户名称" prop="userName">
         <el-input
@@ -26,7 +26,7 @@
       </el-form-item>
     </el-form>
     <el-row>
-      <el-table @row-click="clickRow" ref="table" :data="userList" @selection-change="handleSelectionChange" 
+      <el-table @row-click="clickRow" ref="table" :data="userList" @selection-change="handleSelectionChange"
           height="260px" class="allTable">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
@@ -107,6 +107,7 @@ export default {
     getList() {
       unallocatedUserList(this.queryParams).then(res => {
         this.userList = res.rows;
+        this.userList = this.userList.filter(item => item.userName != 'admin');
         this.total = res.total;
       });
     },

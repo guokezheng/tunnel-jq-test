@@ -75,3 +75,9 @@ export function getManagementDevice(query) {
     params: query
   })
 }
+export function handleStrategy(id) {
+  return request({
+    url: '/strategy/handleStrategy/' + id,
+    method: 'get'
+  })
+}

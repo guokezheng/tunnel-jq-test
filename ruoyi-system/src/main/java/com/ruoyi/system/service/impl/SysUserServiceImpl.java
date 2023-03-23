@@ -587,15 +587,14 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Override
     public int deleteTeamsUserCancel(SysUser user) {
-        String deptId = deptService.getParentDept(user.getDeptId());
-        user.setDeptId(deptId);
+        user.setDeptId(user.getDeptId().substring(0,user.getDeptId().length()-2));
 
         return userMapper.updateUserDept(user);
     }
 
     @Override
     public int deleteTeamsUserCancelAll(String deptId, Long[] userIds) {
-       deptId = deptService.getParentDept(deptId);
+       deptId = deptId.substring(0,deptId.length()-2);
 
         return userMapper.updateUserDeptAll(deptId,userIds);
     }

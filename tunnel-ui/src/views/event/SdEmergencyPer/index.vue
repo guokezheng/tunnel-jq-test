@@ -180,6 +180,7 @@
             v-model="form.deptId"
             :options="deptOptions"
             placeholder="请选择归属部门"
+            @input="changeParentDept"
           />
         </el-form-item>
         <el-form-item label="岗位" prop="groupName">
@@ -287,9 +288,9 @@ export default {
       },
       // 表单校验
       rules: {
-       /* tunnelId: {
-          required: true, message: '请选择隧道', trigger: 'change'
-        },*/
+        deptId: {
+          required: true, message: '请选择归属部门', trigger: 'blur'
+        },
         userName: [{
           required: true, message: '请输入应急人员', trigger: 'blur'
         },
@@ -332,6 +333,9 @@ export default {
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
 
+    changeParentDept(){
+      this.$refs.form.validateField('deptId');
+    },
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true;
@@ -445,12 +449,12 @@ export default {
     submitForm() {
       if(this.submitBtnLoading) return
       this.submitBtnLoading = true
-      if(this.form.deptId==""||this.form.deptId==null){
+     /* if(this.form.deptId==""||this.form.deptId==null){
         this.$message("请选择部门节点");
         this.submitBtnLoading = false
         return;
 
-      }
+      }*/
       this.$refs["form"].validate(async (valid) => {
         if (valid) {
           if (this.form.id != null) {

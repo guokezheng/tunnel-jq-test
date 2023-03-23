@@ -291,7 +291,8 @@ export default {
     resetQuery() {
       this.resetForm("queryParams");
       this.queryParams.ids=[];
-      this.queryParams.word = null
+      this.queryParams.word = null;
+      this.queryParams.ids = [];
       this.handleQuery();
     },
     // 多选框选中数据

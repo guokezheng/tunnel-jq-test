@@ -705,6 +705,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      debugger
       let  ids = this.ids.join();
       this.queryParam.ids = ids;
       const queryParams = this.queryParam;

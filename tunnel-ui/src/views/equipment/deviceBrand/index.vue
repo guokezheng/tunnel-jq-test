@@ -277,6 +277,7 @@ export default {
     resetQuery() {
       this.queryParams.ids=[];
       this.queryParams.supplierName = '';
+      this.queryParams.ids = '';
       this.resetForm("queryForm");
       this.handleQuery();
     },

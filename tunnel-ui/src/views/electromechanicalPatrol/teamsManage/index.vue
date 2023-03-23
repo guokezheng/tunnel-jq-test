@@ -272,6 +272,7 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.queryParams.deptName ="";
+      this.queryParams.ids = "";
       this.handleQuery();
     },
     // 多选框选中数据

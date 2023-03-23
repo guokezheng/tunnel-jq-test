@@ -42,7 +42,7 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="dict_boxShow">
+    <div class="searchBox" v-show="dict_boxShow" ref="cc">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -76,6 +76,7 @@
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            :picker-options="setDisabled"
           ></el-date-picker>
         </el-form-item>
         <el-form-item class="bottomBox">
@@ -299,13 +300,12 @@
             v-hasPermi="['system:dict:edit']"
             >修改</el-button
           >
-          <!-- <el-button
+          <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:dict:remove']"
-          >删除</el-button> -->
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -411,6 +411,11 @@ export default {
           { required: true, message: "字典类型不能为空", trigger: "blur" },
         ],
       },
+      setDisabled: {
+        disabledDate(time) {
+          return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
+        },
+      },
     };
   },
   created() {
@@ -423,7 +428,8 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)) {
         if (self.dict_boxShow == true) {
           self.dict_boxShow = false;
         }
@@ -517,7 +523,7 @@ export default {
     handleDelete(row) {
       const dictIds = row.dictId || this.ids;
       this.$modal
-        .confirm("是否确认删除选中数据项？")
+        .confirm("是否确认删除？")
         .then(function () {
           return delType(dictIds);
         })

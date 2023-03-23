@@ -465,7 +465,7 @@ export default {
     handleDelete(row) {
       const sIds = row.sId || this.ids;
       this.$modal
-        .confirm('是否确认删除隧道分区信息？')
+        .confirm('是否确认删除？')
         .then(function () {
           return delSubarea(sIds);
         })

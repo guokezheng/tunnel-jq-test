@@ -1270,7 +1270,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除选中的数据项？')
+        .confirm('是否确认删除？')
         .then(function () {
           return delList(ids);
         })

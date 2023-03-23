@@ -284,7 +284,7 @@
               >
                 <el-button
                   slot="append"
-                  icon="el-icon-s-fold"
+                  icon="icon-gym-Gsearch"
                   @click="boxShow1 = !boxShow1"
                 ></el-button>
               </el-input>

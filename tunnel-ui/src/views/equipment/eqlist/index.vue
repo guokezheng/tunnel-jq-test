@@ -229,7 +229,7 @@
           <el-button
             size="mini"
             class="tableBlueButtton"
-            @click="handleUpdate"
+            @click="handleUpdate(scope.row)"
             v-hasPermi="['system:devices:edit']"
           >修改
           </el-button>
@@ -341,7 +341,7 @@
               </el-select>
             </el-form-item>-->
 
-            <el-form-item label="设备大类" prop="eqType">
+            <el-form-item label="设备大类" prop="fEqType">
               <el-select
                 v-model="form.fEqType"
                 placeholder="请选择设备大类"
@@ -869,6 +869,8 @@ import {
 import { getToken } from "@/utils/auth";
 import { listAllSystem } from "@/api/equipment/externalsystem/system";
 import { listCategory } from "@/api/equipment/bigType/category";
+import {treeSelectYG1} from "@/api/system/dept";
+import {getTeams} from "@/api/electromechanicalPatrol/teamsManage/teams";
 
 export default {
   name: "Devices",
@@ -988,14 +990,21 @@ export default {
           {
             required: true,
             message: "请选择所属隧道",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         eqType: [
           {
             required: true,
             message: "请选择设备类型",
-            trigger: "change",
+            trigger: "blur",
+          },
+        ],
+        fEqType: [
+          {
+            required: true,
+            message: "请选择设备大类",
+            trigger: "blur",
           },
         ],
         eqName: [
@@ -1451,6 +1460,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      console.log(row,"row")
       this.reset();
       const eqId = row.eqId || this.ids;
       getDevices(eqId).then((response) => {
@@ -1460,6 +1470,7 @@ export default {
         this.title = "修改设备";
       });
     },
+
     /** 提交按钮 */
     submitForm() {
       if (this.submitFormLoading) return;

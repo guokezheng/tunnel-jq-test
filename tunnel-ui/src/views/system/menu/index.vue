@@ -541,7 +541,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除选中数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delMenu(row.menuId);
       }).then(() => {
         this.getList();

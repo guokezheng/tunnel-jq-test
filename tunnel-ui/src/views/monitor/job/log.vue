@@ -46,7 +46,7 @@
     </el-row>
     <div class="searchBox" v-show="boxShow" ref="cc">
     <el-form :model="queryParams" ref="queryForm" label-width="68px">
-      <el-form-item label="任务组名" prop="jobGroup">
+      <el-form-item label="任务分组" prop="jobGroup">
         <el-select
           v-model="queryParams.jobGroup"
           placeholder="请任务组名"
@@ -208,7 +208,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="日志编号" width="80" align="center" prop="jobLogId" />
       <el-table-column label="任务名称" align="center" prop="jobName" :show-overflow-tooltip="true" />
-      <el-table-column label="任务组名" align="center" prop="jobGroup" :show-overflow-tooltip="true">
+      <el-table-column label="任务分组" align="center" prop="jobGroup" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_job_group" :value="scope.row.jobGroup"/>
         </template>

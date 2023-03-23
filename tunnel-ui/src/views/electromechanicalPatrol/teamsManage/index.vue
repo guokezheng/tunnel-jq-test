@@ -10,9 +10,6 @@
           @click="handleAdd()"
         >新增
         </el-button>
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
-          >
         <el-button
           type="primary"
           plain
@@ -21,6 +18,9 @@
           @click="handleExport"
           v-hasPermi="['system:teams:export']"
         >导出</el-button>
+        <el-button size="small" @click="resetQuery"
+          >刷新</el-button
+          >
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
@@ -356,7 +356,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const deptIds = row.deptId || this.ids;
-      this.$modal.confirm('是否确认删除所选数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delTeams(deptIds);
       }).then(() => {
         this.getList();

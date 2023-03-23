@@ -458,7 +458,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除备品备件信息？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delWarehouse(ids);
       }).then(() => {
         this.getList();
@@ -469,7 +469,7 @@ export default {
     handleExport() {
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出备品备件库数据项？').then(() => {
+      this.$modal.confirm('是否确认导出备品备件数据项？').then(() => {
         this.exportLoading = true;
         return exportWarehouse(queryParams);
       }).then(response => {

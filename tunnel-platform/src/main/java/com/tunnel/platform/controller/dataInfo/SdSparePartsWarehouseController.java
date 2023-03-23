@@ -91,9 +91,9 @@ public class SdSparePartsWarehouseController extends BaseController
     public Result add(@RequestBody SdSparePartsWarehouse sdSparePartsWarehouse)
     {
 
-        List<SdSparePartsWarehouse> sdspw = sdSparePartsWarehouseService.verifyPartNameOnly(sdSparePartsWarehouse.getPartName());
+        List<SdSparePartsWarehouse> sdspw = sdSparePartsWarehouseService.verifySparePartsWarehouseOnly(sdSparePartsWarehouse);
         if (sdspw.size() > 0) {
-            throw new RuntimeException("当前备件名称已经存在，请核对后重试！");
+            throw new RuntimeException("相同的隧道-备件名称-品牌-型号已经存在，请核对后重试！");
         }
 
         return Result.toResult(sdSparePartsWarehouseService.insertSdSparePartsWarehouse(sdSparePartsWarehouse));
@@ -108,6 +108,12 @@ public class SdSparePartsWarehouseController extends BaseController
     @ApiOperation("修改备品备件库")
     public Result edit(@RequestBody SdSparePartsWarehouse sdSparePartsWarehouse)
     {
+
+        List<SdSparePartsWarehouse> sdspw = sdSparePartsWarehouseService.verifySparePartsWarehouseOnly(sdSparePartsWarehouse);
+        if (sdspw.size() > 0) {
+            throw new RuntimeException("该备品备件信息已存在，请核对后重试！");
+        }
+
         return Result.toResult(sdSparePartsWarehouseService.updateSdSparePartsWarehouse(sdSparePartsWarehouse));
     }
 

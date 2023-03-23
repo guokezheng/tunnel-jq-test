@@ -477,7 +477,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$confirm(
-        '是否确认删除应急人员信息?',
+        '是否确认删除?',
         "警告",
         {
           confirmButtonText: "确定",

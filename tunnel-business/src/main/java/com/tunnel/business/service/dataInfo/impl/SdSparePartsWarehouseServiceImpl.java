@@ -109,7 +109,7 @@ public class SdSparePartsWarehouseServiceImpl implements ISdSparePartsWarehouseS
      * @return
      */
     @Override
-    public List<SdSparePartsWarehouse> verifyPartNameOnly(String partName) {
-        return sdSparePartsWarehouseMapper.verifyPartNameOnly(partName);
+    public List<SdSparePartsWarehouse> verifySparePartsWarehouseOnly(SdSparePartsWarehouse sdSparePartsWarehouse) {
+        return sdSparePartsWarehouseMapper.verifySparePartsWarehouseOnly(sdSparePartsWarehouse);
     }
 }

@@ -471,7 +471,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      let content = '是否确认删除选中数据项?'
+      let content = '是否确认删除?'
       if(ids == null || ids == undefined || ids == [] || ids == '') {
         content = '是否确认删除当前情报板模板?'
       }

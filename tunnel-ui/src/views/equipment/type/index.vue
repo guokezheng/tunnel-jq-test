@@ -24,6 +24,11 @@
             @click="handleDelete"
             v-hasPermi="['system:type:remove']"
             >删除</el-button>
+            <el-button
+              size="small"
+              :loading="exportLoading"
+              @click="handleExport"
+            >导出</el-button>
           <el-button size="small" @click="resetQuery" >刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
@@ -96,14 +101,14 @@
           <span>{{ scope.row.isControl==1?'是':'否' }} </span>
         </template>
        </el-table-column>
-      <el-table-column label="图标宽度" align="center" prop="iconWidth">
+      <el-table-column label="图标宽度(px)" align="center" prop="iconWidth">
         <template slot-scope="scope">
-          <span>{{ scope.row.iconWidth }} px</span>
+          <span>{{ scope.row.iconWidth }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="图标高度" align="center" prop="iconHeight">
+      <el-table-column label="图标高度(px)" align="center" prop="iconHeight">
         <template slot-scope="scope">
-          <span>{{ scope.row.iconHeight }} px</span>
+          <span>{{ scope.row.iconHeight }}</span>
         </template>
       </el-table-column>
 
@@ -252,7 +257,11 @@
         </el-form-item>
         <el-form-item label="所属模块" class="checkboxFormDialog" prop="bigType">
           <el-checkbox-group v-model="form.bigType">
-              <el-checkbox v-for="dict in bigTypeOptions" :label="dict.dictValue">{{dict.dictLabel}}</el-checkbox>
+              <el-checkbox   v-for="dict in bigTypeOptions"
+              :key="dict.dictSort"
+              :label="dict.dictSort">
+               {{dict.dictLabel}}
+              </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
       </el-form>
@@ -273,7 +282,7 @@ import {
   updateType,
   groupByBigType,
   eqTypeList,
-  loadPicture,
+  loadPicture, exportDeviceIcon,
 } from "@/api/equipment/type/api.js";
 import {listCategory} from "@/api/equipment/bigType/category";
 
@@ -282,6 +291,8 @@ export default {
   data() {
     return {
       boxShow: false,
+      // 导出遮罩层
+      exportLoading: false,
       eqSystemData: {},
       // 设备大类
       eqCategoryData: {},
@@ -406,6 +417,7 @@ export default {
     },
     getEqBigType() {
       listCategory().then(response => {
+        console.log(response,"response")
         this.eqCategoryData = response.rows;
       });
     },
@@ -527,6 +539,19 @@ export default {
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
+
+    /** 导出按钮操作 */
+    handleExport() {
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal.confirm('是否确认导出设备图标数据项？').then(() => {
+        this.exportLoading = true;
+        return exportDeviceIcon(queryParams);
+      }).then(response => {
+        this.$download.name(response.msg);
+        this.exportLoading = false;
+      }).catch(() => {});
+    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
@@ -538,17 +563,19 @@ export default {
     handleUpdate(row) {
       var that = this;
       that.reset();
-	  this.form = {
-		  bigType:[]
-	  }
+      this.form = {
+        bigType:[]
+      }
       const typeId = row.typeId || that.ids;
       getType(typeId).then((response) => {
         console.log(response,'xiugai')
-		var resultData = response.data
-		if(resultData.bigType){
-			resultData.bigType = resultData.bigType.split(',')
-		}
-		this.form = resultData
+        var resultData = response.data
+        if(resultData.bigType!=null){
+          resultData.bigType = resultData.bigType.split(',');
+        }else{
+          resultData.bigType = [];
+        }
+        this.form = resultData
         that.planRoadmapUrl(that.form.iFileList);
         this.open = true;
         this.title = "修改设备类型";
@@ -568,9 +595,9 @@ export default {
 	    this.fileData.append("eqCategory", this.form.eqCategory);
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if(this.fileList.length <= 0) {
-            return this.$modal.msgWarning('请选择要上传的图标')
-          }
+          // if(this.fileList.length <= 0) {
+          //   return this.$modal.msgWarning('请选择要上传的图标')
+          // }
           if (this.form.typeId != null) {
             this.fileData.append("typeId", this.form.typeId); //类型id
             this.fileData.append("iconFileId", this.form.iconFileId); //关联文件id
@@ -607,16 +634,6 @@ export default {
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function () {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "system/type/export",
-        {
-          ...this.queryParams,
-        },
-        `system_type.xlsx`
-      );
     },
   },
 };

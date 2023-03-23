@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdEquipmentTypeVo">
-        select type_id, type_name,type_abbr, create_by, create_time,icon_width,icon_height, is_control,
+        select type_id, type_name,type_abbr, create_by, create_time,if(icon_width is null,0,icon_width)icon_width,if(icon_height is null,0,icon_height)icon_height, is_control,
         update_by, update_time,icon_file_id,big_type,is_analog,eq_category,eq_system from sd_equipment_type
     </sql>
 
@@ -34,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>
             <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
             <if test="isAnalog != null  and isAnalog != ''"> and is_analog = #{isAnalog}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(type_id,#{ids}) > 0</if>
         </where>
         order by create_time desc
     </select>

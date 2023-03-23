@@ -383,7 +383,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除所选的设备类型数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delItem(ids);
       }).then(() => {
         this.getList();

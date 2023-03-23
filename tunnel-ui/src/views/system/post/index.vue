@@ -306,7 +306,8 @@ export default {
           { required: true, message: "岗位名称不能为空", trigger: "blur" }
         ],
         postCode: [
-          { required: true, message: "岗位编码不能为空", trigger: "blur" }
+          { required: true, message: "岗位编码不能为空", trigger: "blur" },
+          { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, message: '仅限输入数字/字母', trigger: 'blur' },
         ],
         postSort: [
           { required: true, message: "岗位顺序不能为空", trigger: "blur" }
@@ -415,7 +416,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const postIds = row.postId || this.ids;
-      this.$modal.confirm('是否确认删除选中数据项？').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delPost(postIds);
       }).then(() => {
         this.getList();

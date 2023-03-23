@@ -341,7 +341,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$confirm(
-        '是否确认删除该条情报板敏感字管理的数据项?',
+        '是否确认删除?',
         "警告",
         {
           confirmButtonText: "确定",
@@ -363,7 +363,7 @@ export default {
       const queryParams = this.queryParams;
       //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
       queryParams.ids = this.ids;
-      this.$confirm("是否确认导出情报板敏感字管理数据项?", "警告", {
+      this.$confirm("是否确认导出敏感字管理数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

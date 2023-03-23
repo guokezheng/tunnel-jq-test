@@ -172,7 +172,7 @@
       <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="修改者" align="center" prop="updateBy" />
       <el-table-column label="修改时间" align="center" prop="updateTime" /> -->
-      <el-table-column label="车道数量" align="center" prop="lane" width="80" />
+      <el-table-column label="车道数量" align="center" prop="lane" />
       <el-table-column
         label="隧道长度(米)"
         align="center"
@@ -183,13 +183,13 @@
         label="隧道开始桩号"
         align="center"
         prop="startPile"
-        width="160"
+        width="150"
       />
       <el-table-column
         label="隧道结束桩号"
         align="center"
         prop="endPile"
-        width="180"
+        width="150"
       />
       <el-table-column label="三维坐标" align="center" prop="coordinates" />
       <el-table-column
@@ -204,7 +204,6 @@
         align="center"
         prop="poll"
         :formatter="pollFormat"
-        width="100"
       />
       <!-- <el-table-column label="存储配置图的html" align="center" prop="storeConfigure" /> -->
       <!-- <el-table-column label="创建者" align="center" prop="createBy" />
@@ -223,7 +222,7 @@
         label="操作"
         align="center"
         class-name="small-padding fixed-width"
-        width="200"
+        width="240"
       >
         <template slot-scope="scope">
           <el-button
@@ -374,13 +373,13 @@
               </el-form-item>
             </el-col>
 
-            <el-col :span="5">
+            <el-col :span="6">
               <el-form-item label="外部系统隧道方向" prop="externalSystemTunnelDirection" label-width="130px" >
                 <el-input v-model="item.externalSystemTunnelDirection" placeholder="请输入外部系统隧道方向" />
               </el-form-item>
             </el-col>
 
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item label="备注" prop="remark">
                 <el-input v-model="item.remark" placeholder="请输入备注" />
               </el-form-item>
@@ -1120,6 +1119,8 @@ export default {
                 this.getList();
               }
             });
+          }else{
+            this.opens = false;
           }
         }
       });

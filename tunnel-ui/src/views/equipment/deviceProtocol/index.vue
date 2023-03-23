@@ -130,7 +130,7 @@
           </el-button>
           <el-button
             size="mini"
-            class="tableBlueButtton"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['device:protocol:remove']"
           >删除

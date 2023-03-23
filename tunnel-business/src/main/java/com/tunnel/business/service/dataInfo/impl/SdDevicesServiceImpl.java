@@ -175,6 +175,26 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_WORK_MODEL_TEXT.getCode())) {
                         devices.put("workModelText", data.getData());
                     }*/
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHUI_BENG.getCode()))) {
+                    //消防水泵
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUI_BENG.getCode())) {
+                        devices.put("state", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUAN.getCode())) {
+                        devices.put("xfsState", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_LIU_IA.getCode())) {
+                        devices.put("ia", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_LIU_IB.getCode())) {
+                        devices.put("ib", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_LIU_IC.getCode())) {
+                        devices.put("ic", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_YA_IA.getCode())) {
+                        devices.put("va", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_YA_IB.getCode())) {
+                        devices.put("vb", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_YA_IC.getCode())) {
+                        devices.put("vc", data.getData());
+                    }
+                    //基本照明
                 } else if (data != null) {
                     devices.put("state", data.getData());
                 }

@@ -1332,7 +1332,7 @@ export default {
     // 辅助线
     auxiliaryLine() {
       if (!$("#svg g")) return;
-      var MIN_DISTANCE = 8; //捕获的最小距离
+      var MIN_DISTANCE = 1; //捕获的最小距离
 
       var guides = []; // 没有可用的引导
 
@@ -1433,7 +1433,11 @@ export default {
           // 画布与窗口的距离
           let left = event.pageX - event.offsetX;
           let top = event.pageY - event.offsetY + 3; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
-
+          console.log(left,"left")
+          console.log(top,"top")
+          if(left != 87 || top != 295){
+            return
+          }
           if (chosenGuides.top.dist <= MIN_DISTANCE) {
             $("#guide-h")
               .css("top", chosenGuides.top.guide.top - top)

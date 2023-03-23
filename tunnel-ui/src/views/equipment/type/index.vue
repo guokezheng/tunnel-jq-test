@@ -257,7 +257,11 @@
         </el-form-item>
         <el-form-item label="所属模块" class="checkboxFormDialog" prop="bigType">
           <el-checkbox-group v-model="form.bigType">
-              <el-checkbox v-for="dict in bigTypeOptions" :label="dict.dictValue">{{dict.dictLabel}}</el-checkbox>
+              <el-checkbox   v-for="dict in bigTypeOptions"
+              :key="dict.dictSort"
+              :label="dict.dictSort">
+               {{dict.dictLabel}}
+              </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
       </el-form>
@@ -559,17 +563,19 @@ export default {
     handleUpdate(row) {
       var that = this;
       that.reset();
-	  this.form = {
-		  bigType:[]
-	  }
+      this.form = {
+        bigType:[]
+      }
       const typeId = row.typeId || that.ids;
       getType(typeId).then((response) => {
         console.log(response,'xiugai')
-		var resultData = response.data
-		if(resultData.bigType){
-			resultData.bigType = resultData.bigType.split(',')
-		}
-		this.form = resultData
+        var resultData = response.data
+        if(resultData.bigType!=null){
+          resultData.bigType = resultData.bigType.split(',');
+        }else{
+          resultData.bigType = [];
+        }
+        this.form = resultData
         that.planRoadmapUrl(that.form.iFileList);
         this.open = true;
         this.title = "修改设备类型";

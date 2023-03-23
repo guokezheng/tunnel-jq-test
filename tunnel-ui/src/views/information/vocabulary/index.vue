@@ -290,6 +290,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryParams");
+      this.queryParams.ids=[];
       this.queryParams.word = null
       this.handleQuery();
     },

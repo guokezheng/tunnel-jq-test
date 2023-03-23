@@ -649,7 +649,9 @@ export default {
       this.resetForm("queryForms");
       this.queryParam.ipaddr = "";
       this.queryParam.status = null;
+      this.queryParam.ids = [];
       this.queryParams.operIp = "";
+      this.queryParams.ids = [];
       // if (this.searchValue == '1') {
       //   this.$refs.tables.sort('loginTime', 'descending')
       // } else if (this.searchValue == '2') {
@@ -703,7 +705,6 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      debugger
       let  ids = this.ids.join();
       this.queryParam.ids = ids;
       const queryParams = this.queryParam;

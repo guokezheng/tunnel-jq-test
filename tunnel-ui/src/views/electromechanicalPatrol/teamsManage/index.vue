@@ -42,7 +42,6 @@
       </el-col>
     </el-row>
 
-    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="teamsList" @selection-change="handleSelectionChange"
     class="allTable" height="62vh">
       <el-table-column type="selection" width="55" align="center" />

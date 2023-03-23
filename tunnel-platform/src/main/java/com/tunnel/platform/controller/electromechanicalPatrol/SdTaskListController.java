@@ -2,7 +2,7 @@ package com.tunnel.platform.controller.electromechanicalPatrol;
 
 import cn.hutool.core.codec.Base64Decoder;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.resource.ClassPathResource;
+
 import cn.hutool.core.util.StrUtil;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
@@ -44,9 +44,12 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficImageService;
+import com.tunnel.business.utils.work.CustomXWPFDocument;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Encoder;
 
@@ -501,8 +504,8 @@ public class SdTaskListController extends BaseController
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/patrolReport.docx");
-            String resource = classPathResource.getUrl().getPath();
+            /*ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/patrolReport.docx");
+            String resource = classPathResource.getUrl().getPath();*/
             //渲染表格
             HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
             //构建巡查点巡查记录数据
@@ -510,7 +513,8 @@ public class SdTaskListController extends BaseController
             String finalPdTime = pdTime;
             String finalPlanEndTime = planEndTime;
             String finalTaskEndTime = taskEndTime;
-            XWPFTemplate template = XWPFTemplate.compile(resource, config).render(
+            XWPFDocument document = new CustomXWPFDocument(new ClassPathResource("exporttemplate/patrolReport.docx").getInputStream());
+            XWPFTemplate template = XWPFTemplate.compile(document, config).render(
                     new HashMap<String, Object>() {{
                         put("patrolBlock",convertList);
                         put("currentTime", DateUtils.getTime());

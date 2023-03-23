@@ -267,7 +267,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
-
+        userName:"",
       },
       paramsData: {
         tunnelId : ""
@@ -348,6 +348,7 @@ export default {
 
     // 节点单击事件
     handleNodeClick(data) {
+      this.queryParams.ids = "";
       this.queryParams.deptId = data.id;
       this.getList();
     },
@@ -403,12 +404,8 @@ export default {
       this.resetForm("queryForm");
       this.queryParams.userName="";
       this.queryParams.deptId="";
-     /* this.queryParams = {
-        tunnelId: null,
-        groupName: null,
-        userName: null,
-        // tunnelId: null,
-      };*/
+      this.queryParams.ids = "";
+      //this.ids = "";
       this.handleQuery();
     },
     // 多选框选中数据

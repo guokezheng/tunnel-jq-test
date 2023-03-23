@@ -4,15 +4,16 @@
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
-          >
-          <el-button
+        <el-button
             size="small"
             :loading="exportLoading"
             @click="handleExport"
             v-hasPermi="['monitor:operlog:export']"
-          >导出</el-button>
+        >导出</el-button>
+        <el-button size="small" @click="resetQuery"
+          >刷新</el-button
+          >
+
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">

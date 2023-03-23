@@ -19,7 +19,7 @@ public class SdEmergencyVehicle extends BaseEntity
     private Long id;
 
     /** 应急机构id */
-    @Excel(name = "应急机构id")
+    /*@Excel(name = "应急机构id")*/
     private String orgId;
 
     //机构名
@@ -62,23 +62,23 @@ public class SdEmergencyVehicle extends BaseEntity
     private String vPlace;
 
     /** 使用状态(取字典值) */
-    @Excel(name = "使用状态")
+   /* @Excel(name = "使用状态")*/
     private String useStatus;
 
     /** 车载终端安装 */
-    @Excel(name = "车载终端安装")
+    /*@Excel(name = "车载终端安装")*/
     private String terminalInstall;
 
     /** 技术状态描述 */
-    @Excel(name = "技术状态描述")
+    /*@Excel(name = "技术状态描述")*/
     private String statusDesc;
 
     /**
      * 车辆运行状态
      */
-    @Excel(name = "运行状态")
+    @Excel(name = "运行状态", readConverterExp = "0=未启动,1=启动,2=离线,4=清障救援,5=道路巡查")
     private String accState;
-    @Excel(name = "运行状态")
+    /*@Excel(name = "运行状态")*/
     private String yxzt;
 
     public String getYxzt() {
@@ -97,6 +97,7 @@ public class SdEmergencyVehicle extends BaseEntity
     /**
      * 车辆型号
      */
+    @Excel(name = "品牌")
     private String vehicleModel;
 
     /**

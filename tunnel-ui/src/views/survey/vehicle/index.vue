@@ -244,6 +244,7 @@
       v-loading="loading"
       :data="mechanismList"
       class="allTable"
+      @selection-change="handleSelectionChange"
       height="62vh"
     >
       <el-table-column type="selection" width="55" align="center" />

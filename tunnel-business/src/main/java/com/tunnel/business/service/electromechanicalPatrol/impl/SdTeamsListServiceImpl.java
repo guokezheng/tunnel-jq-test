@@ -3,14 +3,17 @@ package com.tunnel.business.service.electromechanicalPatrol.impl;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysRoleDept;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTeamsList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdUserTeams;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdTeamsListMapper;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -121,6 +124,21 @@ public class SdTeamsListServiceImpl implements ISdTeamsListService
     @Override
     public int teamsUserSelectAll(String deptId, Long[] userIds) {
 
-        return userMapper.batchUserTeams(deptId,userIds);
+        int rows = 1;
+
+        // 新增人员与班组管理
+        List<SdUserTeams> list = new ArrayList<SdUserTeams>();
+        for (int i= 0;i<userIds.length;i++)
+        {
+            SdUserTeams rt = new SdUserTeams();
+            rt.setTeamsId(deptId);
+            rt.setUserId(userIds[i]);
+            list.add(rt);
+        }
+        if (list.size() > 0)
+        {
+            rows = sdTeamsListMapper.batchUserTeams(list);
+        }
+        return rows;
     }
 }

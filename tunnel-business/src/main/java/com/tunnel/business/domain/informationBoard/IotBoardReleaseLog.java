@@ -38,7 +38,7 @@ public class IotBoardReleaseLog extends BaseEntity
     private String direction;
 
     /** 设备编号 */
-    @Excel(name = "发布设备")
+    @Excel(name = "发布设备",type = Excel.Type.IMPORT)
     private String deviceId;
 
     @Excel(name = "设备桩号")

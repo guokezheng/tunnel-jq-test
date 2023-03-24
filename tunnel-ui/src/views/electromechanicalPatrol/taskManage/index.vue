@@ -116,7 +116,7 @@
       >
         <template slot-scope="scope">
           <span>{{
-            parseTime(scope.row.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
+            scope.row.dispatchTime
           }}</span>
         </template>
       </el-table-column>
@@ -131,7 +131,7 @@
       >
         <template slot-scope="scope">
           <span>{{
-            parseTime(scope.row.endPlantime, "{y}-{m}-{d} {h}:{m}:{s}")
+            scope.row.endPlantime
           }}</span>
         </template>
       </el-table-column>
@@ -565,7 +565,7 @@
           <el-col :span="8">
             <div>派单时间：</div>
             <span>{{
-              parseTime(item.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
+             item.dispatchTime
             }}</span>
           </el-col>
           <el-col :span="8">
@@ -643,7 +643,7 @@
           <el-col :span="8">
             <div>任务完成时间：</div>
             <span>{{
-            parseTime(tas.taskEndtime, "{y}-{m}-{d} {h}:{m}:{s}")
+              tas.taskEndtime
           }}</span>
           </el-col>
           <el-col :span="8">
@@ -1233,6 +1233,7 @@ export default {
           this.isActive = false;
         }
         this.taskNews1 = response.data.task;
+        debugger
         this.taskNews2 = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;

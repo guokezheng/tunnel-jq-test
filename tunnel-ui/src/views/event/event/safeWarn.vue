@@ -933,14 +933,14 @@
       :before-close="handleClose">
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClickDevice">
-          <el-tab-pane 
-          v-for="(item,index) in DeviceDetail" 
+          <el-tab-pane
+          v-for="(item,index) in DeviceDetail"
           :key="index"
           :label="item.tableName" :name="index"></el-tab-pane>
         </el-tabs>
       </div>
-      <div v-for="(item,index) in DeviceDetail" 
-        :key="index" 
+      <div v-for="(item,index) in DeviceDetail"
+        :key="index"
         v-show="deviceIndexShow == index">
         <el-table
           :data="item.devicesList"
@@ -1005,7 +1005,7 @@ import {
   listEventType,
   getTodayEventCount,
   getEventDetail,
-  handleStrategy 
+  handleStrategy
 } from "@/api/event/eventType";
 import { examineDeviceDetail,getStrategyData } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -1336,7 +1336,7 @@ export default {
         fuzzySearch1:'',
         // 表单校验
         rules: {
-          
+
         },
       };
     },
@@ -1692,7 +1692,7 @@ export default {
             this.$modal.msgSuccess("下发指令成功");
           })
         }
-        // 1.预案不为空 
+        // 1.预案不为空
         // 2.当前状态为0
         // 3.普通事件
         if(this.eventFormDetail.prevControlType == 0 && currencyId && this.eventFormDetail.eventState == 0){
@@ -1801,7 +1801,7 @@ export default {
       }else{
         this.getReservePlanData();
       }
-      
+
       this.$nextTick(() => {
         const swiperTop = this.$refs.swiperTop.$el.swiper;
         const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
@@ -2273,6 +2273,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.zd_boxShow = false;
       this.getList();
     },
     /** 重置按钮操作 */

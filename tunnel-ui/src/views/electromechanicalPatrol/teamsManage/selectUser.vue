@@ -3,7 +3,7 @@
     <!-- 授权用户 -->
       <el-dialog
         title="选择用户"
-        class="workbench-dialog batch-table operationDiglog"
+        class="workbench-dialog batch-table operationDiglog explain-table"
         :visible.sync="visible"
         width="1000px"
         append-to-body
@@ -11,7 +11,7 @@
       >
         <el-row
           :gutter="20"
-          style="margin: 10px 0 6px"
+          style="margin: 10px 5px 6px"
         >
           <el-col :span="10" :offset="14">
             <div class="grid-content bg-purple" ref="main">
@@ -20,7 +20,9 @@
                 v-model="queryParams.userName"
                 @keyup.enter.native="handleQuery"
                 size="small"
-                style="padding-right: 5px"
+                style="
+                border-right: #00c8ff solid 1px !important;
+                border-radius: 3px;"
               >
               </el-input>
             </div>

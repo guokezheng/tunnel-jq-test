@@ -354,13 +354,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int deleteSdStrategyById(Long id) {
         // 删除策略之前要先判断策略是否已经在预案管理中被引用
         SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(id);
-        if (!ObjectUtils.isEmpty(sdStrategy)) {
-            List<Map<String, Object>> maps = sdStrategyMapper.checkStrategyIfExist(id);
-            if (maps.size() > 0) {
-                throw new RuntimeException("控制策略已经在预案管理中引用，不可删除!");
+        if (!ObjectUtils.isEmpty(sdStrategy) && "0".equals(sdStrategy.getStrategyType()) && "2".equals(sdStrategy.getStrategyGroup())) {
+            int count = sdStrategyMapper.checkStrategyIfExist(id);
+            if (count > 0) {
+                throw new RuntimeException("控制策略已经在安全预警中引用，不可删除!");
             }
-        } else {
-            throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
         }
         //删除定时任务
         if(!"0".equals(sdStrategy.getStrategyType())){
@@ -394,13 +392,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             Long id = ids[i];
             sdStrategy.setId(id);
             List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(sdStrategy);
-            if (sdStrategies.size() > 0 && sdStrategies.size() == 1) {
-                List<Map<String, Object>> maps = sdStrategyMapper.checkStrategyIfExist(id);
-                if (maps.size() > 0) {
-                    throw new RuntimeException("控制策略已经在预案管理中引用，不可删除!");
+            if (!ObjectUtils.isEmpty(sdStrategy) && "0".equals(sdStrategy.getStrategyType()) && "2".equals(sdStrategy.getStrategyGroup())) {
+                int count = sdStrategyMapper.checkStrategyIfExist(id);
+                if (count > 0) {
+                    throw new RuntimeException("控制策略已经在安全预警中引用，不可删除!");
                 }
-            } else {
-                throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
             }
         }
         int result = sdStrategyMapper.deleteSdStrategyByIds(ids);
@@ -438,16 +434,20 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int addStrategysInfo(SdStrategyModel model) {
-        // 判断是否符合规范并返回策略
         SdStrategy sty = conditionalJudgement(model);
-        SdStrategy strategy = new SdStrategy();
-        strategy.setTunnelId(sty.getTunnelId());
-        strategy.setDirection(sty.getDirection());
-        strategy.setStrategyType(sty.getStrategyType());
-        strategy.setEventType(sty.getEventType());
-        int checkCount = sdStrategyMapper.checkStrategy(strategy);
-        if(checkCount > 0){
-            throw new RuntimeException("已存在策略信息，请勿重复添加！");
+        // 判断是否符合规范并返回策略
+        //参数1：预警策略  参数2：事件触发  参数3：自动执行
+        if("2".equals(model.getStrategyGroup()) && "0".equals(model.getStrategyType()) && "1".equals(model.getIsAutomatic())){
+            SdStrategy strategy = new SdStrategy();
+            strategy.setTunnelId(sty.getTunnelId());
+            strategy.setDirection(sty.getDirection());
+            strategy.setStrategyType(sty.getStrategyType());
+            strategy.setEventType(sty.getEventType());
+            strategy.setIsAutomatic(strategy.getIsAutomatic());
+            int checkCount = sdStrategyMapper.checkStrategy(strategy);
+            if(checkCount > 0){
+                throw new RuntimeException("已存在策略信息，请勿重复添加！");
+            }
         }
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
 //        if(insetStrResult < 1){
@@ -483,16 +483,20 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int updateSdStrategyInfo(SdStrategyModel model) {
         //判断输入的值是否符合规范并返回策略信息
         SdStrategy sty = conditionalJudgement(model);
-        /*SdStrategy strategy = new SdStrategy();
-        strategy.setTunnelId(sty.getTunnelId());
-        strategy.setDirection(sty.getDirection());
-        strategy.setStrategyType(sty.getStrategyType());
-        strategy.setEventType(sty.getEventType());
-        strategy.setId(model.getId());
-        int checkCount = sdStrategyMapper.checkStrategy(strategy);
-        if(checkCount > 0){
-            throw new RuntimeException("已存在策略信息，请勿重复添加！");
-        }*/
+        //参数1：预警策略  参数2：事件触发  参数3：自动执行
+        if("2".equals(model.getStrategyGroup()) && "0".equals(model.getStrategyType()) && "1".equals(model.getIsAutomatic())){
+            SdStrategy strategy = new SdStrategy();
+            strategy.setId(model.getId());
+            strategy.setTunnelId(sty.getTunnelId());
+            strategy.setDirection(sty.getDirection());
+            strategy.setStrategyType(sty.getStrategyType());
+            strategy.setEventType(sty.getEventType());
+            strategy.setIsAutomatic(strategy.getIsAutomatic());
+            int checkCount = sdStrategyMapper.checkStrategy(strategy);
+            if(checkCount > 0){
+                throw new RuntimeException("已存在策略信息，请勿重复添加！");
+            }
+        }
         String strategyType = model.getStrategyType();
         //更新策略 主表
         int updatePrimary = sdStrategyMapper.updateSdStrategyById(sty);

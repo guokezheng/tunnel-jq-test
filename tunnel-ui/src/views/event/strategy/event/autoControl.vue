@@ -663,14 +663,18 @@ export default {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
           let response = JSON.parse(JSON.stringify(autoControl))
-          console.log(response,"response")
-          let result = response.every(function (item) {
-              return item.equipmentTypeId && item.state && item.equipments
-          });
-          console.log(result);
-          if(!result){
-            return this.$modal.msgError("请填写完整");
+          console.log(response,"response");
+          // 如果为预警联动则判断是否填写完整
+          if(this.strategyForm.triggers.warningType == '1'){
+            let result = response.every(function (item) {
+                return item.equipmentTypeId && item.state && item.equipments
+            });
+            console.log(result);
+            if(!result){
+              return this.$modal.msgError("请填写完整");
+            }
           }
+
           // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();

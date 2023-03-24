@@ -523,7 +523,7 @@ public class SysUserServiceImpl implements ISysUserService
             {
                 // 验证是否存在这个用户
                 SysUser u = userMapper.selectUserByUserName(user.getUserName());
-                if (!StringUtils.isNull(u))
+                if (StringUtils.isNull(u))
                 {
                     user.setPassword(SecurityUtils.encryptPassword(password));
                     user.setCreateBy(operName);
@@ -538,7 +538,7 @@ public class SysUserServiceImpl implements ISysUserService
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 更新成功");
                 }
-                else if (u == null)
+                else if (user.getUserName() == null)
                 {
                     failureNum++;
                     failureMsg.append("<br/>" + failureNum + "、账号 " + user.getUserName() + " 导入失败！名称不能为空");
@@ -581,13 +581,13 @@ public class SysUserServiceImpl implements ISysUserService
     }
 
     @Override
-    public List<SysUser> unTeamsUserList(SysUser user) {
-        return userMapper.unTeamsUserList(user);
+    public List<SysUser> unTeamsUserList(String userName,String phonenumber,String deptId,String depts) {
+        return userMapper.unTeamsUserList(userName,phonenumber,deptId,depts);
     }
 
     @Override
     public int deleteTeamsUserCancel(SysUser user) {
-        user.setDeptId(user.getDeptId().substring(0,user.getDeptId().length()-2));
+        //user.setDeptId(user.getDeptId().substring(0,user.getDeptId().length()-2));
 
         return userMapper.updateUserDept(user);
     }

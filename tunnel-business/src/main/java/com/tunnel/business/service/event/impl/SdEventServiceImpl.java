@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
@@ -220,10 +219,9 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEvent(SdEvent sdEvent) {
-        if ("1".equals(sdEvent.getEventState())) {
+        if (EventStateEnum.processed.getCode().equals(sdEvent.getEventState())) {
             instreEventFlowData(sdEvent.getId(),"事件已完结");
-            sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
-        }else if("0".equals(sdEvent.getEventState()) && PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(sdEvent.getPrevControlType())){
+        }else if(EventStateEnum.processing.getCode().equals(sdEvent.getEventState()) && PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(sdEvent.getPrevControlType())){
             //更新预案设备
             setStrategyRlEquipment(sdEvent);
             //如有处置中的普通事件则将处理中的安全预警状态改为已处理
@@ -242,8 +240,15 @@ public class SdEventServiceImpl implements ISdEventService {
         }else {
             sdEvent.setUpdateTime(DateUtils.getNowDate());
         }
+        if(!EventStateEnum.processing.getCode().equals(sdEvent.getEventState())){
+            sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+        }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
-        return sdEventMapper.updateSdEvent(sdEvent);
+        int count = sdEventMapper.updateSdEvent(sdEvent);
+        /*if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
+            radarEventServiceImpl.sendDataToOtherSystem(null, sdEventMapper.selectSdEventById(sdEvent.getId()));
+        }*/
+        return count;
     }
 
     /**
@@ -289,9 +294,10 @@ public class SdEventServiceImpl implements ISdEventService {
         List<String[]> list1 = setDiscoveryMap(eventDiscovery);
         //图片，如果是多个图片，就新建多个map
         List<SdTrafficImage> imgList = eventDiscovery.getIconUrlList();
-        int listLength = imgList.size() >= 3 ? 3 : imgList.size();
+        List<SdTrafficImage> images = imgList.stream().filter(item -> "0".equals(item.getImgType())).collect(Collectors.toList());
+        int listLength = images.size() >= 3 ? 3 : images.size();
         for(int i = 0; i < listLength; i++){
-            Map<String, Object> map = setImgMap(imgList.get(i).getImgUrl());
+            Map<String, Object> map = setImgMap(images.get(i).getImgUrl());
             if(map == null){
                 continue;
             }
@@ -758,8 +764,7 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEvent eventDiscovery = sdEventMapper.getEventDiscovery(sdEvent);
         //查询事件详情-事件发现-图片
         List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
-        List<SdTrafficImage> images = image1.stream().filter(item -> "0".equals(item.getImgType())).collect(Collectors.toList());
-        eventDiscovery.setIconUrlList(images.subList(0,images.size() > 10 ? 10 : images.size()));
+        eventDiscovery.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
         //计算持续时间
         String datePoor = "";
         if("3".equals(sdEventData.getEventState())){
@@ -924,7 +929,7 @@ public class SdEventServiceImpl implements ISdEventService {
             SdEventFlowMapper flowMapper = SpringUtils.getBean(SdEventFlowMapper.class);
             SdEventFlow flow = new SdEventFlow();
             flow.setEventId(sdEvent.getId().toString());
-            flow.setFlowTime(DateUtils.getNowDate());
+            flow.setFlowTime(sdEvent.getEventTime());
             flow.setFlowHandler(SecurityUtils.getUsername());
             flow.setFlowDescription("预警记录".concat(name));
             flowMapper.insertSdEventFlow(flow);
@@ -933,9 +938,9 @@ public class SdEventServiceImpl implements ISdEventService {
             //做区分+1秒
             Date nowDate = DateUtils.getNowDate();
             nowDate.setTime(DateUtils.getNowDate().getTime() + 1000);
-            eventFlow.setFlowTime(nowDate);
+            eventFlow.setFlowTime(sdEvent.getUpdateTime());
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
-            eventFlow.setFlowDescription(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()).concat(" ")
+            eventFlow.setFlowDescription(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,sdEvent.getUpdateTime()).concat(" ")
                     .concat("复核事件为【").concat(sdEventType.getEventType()).concat("】、【")
                     .concat(EventGradeEnum.getValue(sdEvent.getEventGrade())).concat("】，复核状态为突发事件处置"));
             flowMapper.insertSdEventFlow(eventFlow);
@@ -1054,7 +1059,7 @@ public class SdEventServiceImpl implements ISdEventService {
         if("5".equals(retrievalRule)){
             rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, 0,sdEvent.getTunnelId());
         }
-        return org.apache.commons.lang3.StringUtils.join(rlDeviceList,",");
+        return StringUtils.join(rlDeviceList,",");
     }
 
     //最近5条

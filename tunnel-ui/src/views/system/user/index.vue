@@ -711,6 +711,7 @@ export default {
       this.dateRange = [];
       this.resetForm("queryForm");
       this.queryParams.userName = "";
+      this.queryParams.deptId = ''
       this.handleQuery();
     },
     // 多选框选中数据

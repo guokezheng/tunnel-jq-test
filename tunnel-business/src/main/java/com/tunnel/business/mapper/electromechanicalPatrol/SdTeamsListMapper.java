@@ -1,6 +1,7 @@
 package com.tunnel.business.mapper.electromechanicalPatrol;
 
 import com.tunnel.business.domain.electromechanicalPatrol.SdTeamsList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdUserTeams;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface SdTeamsListMapper
 
 
     int deleteTeamsById(@Param("deptId")String deptId);
+
+    int batchUserTeams(List<SdUserTeams> list);
 }

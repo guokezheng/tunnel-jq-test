@@ -10,7 +10,7 @@
 
     <el-row
       :gutter="20"
-      style="margin: 10px 0 6px"
+      style="margin: 10px 5px 6px"
     >
       <el-col :span="10" :offset="14">
         <div class="grid-content bg-purple" ref="main">
@@ -19,7 +19,9 @@
             v-model="queryParams.userName"
             @keyup.enter.native="handleQuery"
             size="small"
-            style="padding-right: 5px"
+            style="
+            border-right: #00c8ff solid 1px !important;
+              border-radius: 3px;"
           >
           </el-input>
         </div>
@@ -30,8 +32,8 @@
         ref="tables"
         :data="userList"
         @selection-change="handleSelectionChange"
-        :row-class-name="tableRowClassName"
-        max-height="430px">
+        max-height="430px"
+ 		class="allTable">
         <el-table-column type="selection" align="center" />
         <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
         <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
@@ -90,7 +92,7 @@
     </el-form>
     <el-row>
       <el-table @row-click="clickRow" ref="table" :data="userList" @selection-change="handleSelectionChange"
-          height="260px" class="allTable">
+          height="300" class="allTable">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
         <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />

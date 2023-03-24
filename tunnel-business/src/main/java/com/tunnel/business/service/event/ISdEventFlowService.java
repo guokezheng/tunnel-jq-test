@@ -143,4 +143,12 @@ public interface ISdEventFlowService {
      * @return
      */
     int addEventPlanFlow(SdEvent sdEvent, SdReservePlan reservePlan);
+
+    /**
+     * 储存事件处置记录
+     * @param eventId
+     * @param content
+     * @return
+     */
+    int instreEventFlowData(Long eventId, String content, String flowHandler);
 }

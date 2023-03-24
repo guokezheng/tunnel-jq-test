@@ -244,10 +244,12 @@
       v-loading="loading"
       :data="mechanismList"
       class="allTable"
-      @selection-change="handleSelectionChange"
       height="62vh"
+      @selection-change="handleSelectionChange"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column
         type="index"
         :index="indexMethod"
@@ -524,6 +526,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     //同步车辆按钮
     syncButton(){
       syncVehicle().then((res) => {
@@ -570,6 +576,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = ''
         })
         .catch(() => {});
     },
@@ -599,7 +607,7 @@ export default {
     handleQuery() {
       // this.queryParams.pageNum = 1;
       this.queryParams.cx = this.result.toString();
-      console.log(this.queryParams.cx);
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -609,12 +617,6 @@ export default {
       this.$refs.queryForm.resetFields();
       this.queryParams.vType = [];
       this.result = [];
-      this.queryParams = {
-        pageNum: 1,
-        pageSize: 10,
-        orgName: null,
-        stagPointName: null,
-      };
       this.handleQuery();
     },
     // 多选框选中数据

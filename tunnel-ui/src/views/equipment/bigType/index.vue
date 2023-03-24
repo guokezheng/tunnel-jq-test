@@ -52,7 +52,7 @@
       </el-form-item>
     </el-form>-->
     <!--全局搜索-->
-    <el-row :gutter="20" style="margin: 10px 0 25px">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
         <el-button
           size="small"
@@ -60,13 +60,13 @@
           v-hasPermi="['device:bigType:add']"
         >新增
         </el-button>
-        <el-button
+        <!-- <el-button
           size="small"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['device:bigType:edit']"
         >修改
-        </el-button>
+        </el-button> -->
         <el-button
           size="small"
           :disabled="multiple"
@@ -74,21 +74,23 @@
           v-hasPermi="['device:bigType:remove']"
         >删除
         </el-button>
+        <el-button size="small"  @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple">
           <el-input
             v-model="queryParams.name"
-            placeholder="请输入设备类型名称,回车搜索"
+            placeholder="请输入设备类型名称，回车搜索"
             clearable
             size="small"
-            @keyup.enter.native="handleQuery">
+            @keyup.enter.native="handleQuery"
+            style="border-right:solid 1px #00C8FF !important;border-radius: 3px;" >
           </el-input>
           </div>
       </el-col>
     </el-row>
-
-    <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange" class="allTable" >
+    <div class="tableTopHr" ></div>
+    <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange" class="allTable" height="62vh">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" type="index" align="center" :index="indexMethod"></el-table-column>
       <!--<el-table-column label="类型ID" align="center" prop="id" />-->

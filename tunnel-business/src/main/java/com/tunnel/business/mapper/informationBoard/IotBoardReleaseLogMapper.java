@@ -63,4 +63,10 @@ public interface IotBoardReleaseLogMapper
     public int deleteIotBoardReleaseLogByIds(String[] ids);
 
     public List<IotBoardReleaseLog> getLastReleaseLogsByDeviceId(@Param("deviceId") String deviceId);
+
+    /**
+     * 查询情报板日志记录(用于恢复)
+     * @return
+     */
+    IotBoardReleaseLog selectBoardContentList(@Param("deviceId") String deviceId);
 }

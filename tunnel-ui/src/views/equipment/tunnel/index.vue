@@ -158,8 +158,9 @@
       @selection-change="handleSelectionChange"
       class="allTable"
       height="62vh"
+      :row-key="getRowKey"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column type="index" :index="indexMethod" label="序号" align="center" width="60"></el-table-column>
       <!-- <el-table-column label="隧道ID" align="center" prop="tunnelId" /> -->
       <el-table-column label="隧道ID" align="center" prop="tunnelId" width="210"/>
@@ -850,6 +851,10 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
@@ -1032,6 +1037,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.boxShow = false;
+      this.$refs.tableRef.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -1195,6 +1202,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableRef.clearSelection();
+          this.queryParams.ids = ''
         })
         .catch(() => {});
     },

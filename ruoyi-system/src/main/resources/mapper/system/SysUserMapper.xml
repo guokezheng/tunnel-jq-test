@@ -120,6 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectUserByUserName" parameterType="String" resultMap="SysUserResult">
 	    <include refid="selectUserVo"/>
 		where u.user_name = #{userName}
+		and u.del_flag != '2'
 	</select>
 
 	<select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
@@ -233,8 +234,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="teamsUserList" parameterType="String" resultMap="SysUserResult">
 		select distinct u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time
 		from sys_user u
-		left join sd_teams d on u.dept_id = d.dept_id
-		where u.del_flag = '0' and d.dept_id = #{deptId}
+		left join sd_user_teams d on u.user_id = d.user_id
+		where u.del_flag = '0' and d.teams_id = #{deptId}
 		<if test="userName != null and userName != ''">
 			AND CONCAT(u.nick_name, u.phonenumber) LIKE CONCAT('%',#{userName},'%')
 		</if>
@@ -248,38 +249,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="unTeamsUserList" parameterType="String" resultMap="SysUserResult">
 		select distinct u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time
 		from sys_user u
-		left join sd_teams d on u.dept_id = d.dept_id
-		where u.del_flag = '0' and (u.dept_id != #{deptId} or u.dept_id IS NULL)
+		left join sd_user_teams d on u.user_id = d.user_id
+		left join sys_dept p on p.dept_id = u.dept_id
+		where u.del_flag = '0' and (d.teams_id != #{deptId} or d.teams_id IS NULL)
 		<if test="userName != null and userName != ''">
 			AND CONCAT(u.nick_name, u.phonenumber) LIKE CONCAT('%',#{userName},'%')
 		</if>
 		<if test="phonenumber != null and phonenumber != ''">
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
 		</if>
+		<if test="depts != null and depts != ''">
+			AND (p.dept_id = #{depts} OR p.dept_id IN ( SELECT c.dept_id FROM sys_dept c WHERE FIND_IN_SET (#{depts},c.ancestors) ))
+		</if>
 		<!-- 数据范围过滤 -->
-		${params.dataScope}
 	</select>
 
 
-	<update id="batchUserTeams">
-		update sys_user set dept_id = #{deptId} where user_id in
+
+
+	<delete id="updateUserDept" parameterType="Long">
+ 		delete from sd_user_teams where user_id = #{userId}
+	</delete>
+
+
+	<delete id="updateUserDeptAll" parameterType="Long">
+		delete from sd_user_teams  where user_id in
 		<foreach item="userIds" collection="userIds"  open="(" separator="," close=")">
 			(#{userIds})
 		</foreach>
-	</update>
-
-
-	<update id="updateUserDept" parameterType="SysUser">
- 		update sys_user set dept_id = #{deptId} where user_id = #{userId}
-	</update>
-
-
-	<update id="updateUserDeptAll" >
-		update sys_user set dept_id = #{deptId} where user_id in
-		<foreach item="userIds" collection="userIds"  open="(" separator="," close=")">
-			(#{userIds})
-		</foreach>
-	</update>
+	</delete>
 
 
 

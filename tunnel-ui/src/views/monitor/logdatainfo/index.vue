@@ -58,7 +58,7 @@
       <el-form
         ref="queryForm"
         :inline="true"
-        :model="queryParams"
+        :model="queryParam"
         label-width="75px"
       >
         <!--          <el-form-item label="用户名称" prop="userName" style="width: 100%">
@@ -282,8 +282,9 @@
       @sort-change="handleSortChange"
       class="allTable"
       height="62vh"
+      :row-key="getRowKey"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
       <!--      <el-table-column label="序号" align="center" prop="index"  />-->
 <!--      <el-table-column label="序号" align="center">
@@ -297,8 +298,6 @@
         align="center"
         prop="userName"
         :show-overflow-tooltip="true"
-        sortable="custom"
-        :sort-orders="['descending', 'ascending']"
       />
       <el-table-column
         label="登录地址"
@@ -349,6 +348,9 @@
       @selection-change="handleSelectionChange2"
       height="62vh"
       v-show="activeName == '2'"
+      @sort-change="handleSortChange2"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
@@ -386,7 +388,8 @@
         align="center"
         prop="createTime"
         width="180"
-        sortable
+        sortable="custom"
+        :sort-orders="['descending', 'ascending']"
       >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -528,13 +531,12 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.infoId
+    },
     bodyCloseMenus(e) {
       let self = this;
-       /*if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-         if (self.xt_boxShow == true) {
-           self.xt_boxShow = false;
-         }
-       }*/
       if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
         if (self.xt_boxShow == true){
           self.xt_boxShow = false;
@@ -568,6 +570,8 @@ export default {
       this.resetForm("queryForm");
       this.resetForm("queryForms");
       this.getList(this.activeName);
+      this.$refs.tables.clearSelection();
+      this.$refs.tableFile.clearSelection();
     },
     // // 切换按钮
     // qiehuan(inx) {
@@ -611,9 +615,11 @@ export default {
       this.loading = true;
       this.xt_boxShow = false;
       this.cz_boxShow = false;
-      if (inx == null || inx == "1" || this.activeName == "1") {
+      console.log(inx,this.activeName,"+++++++++++++")
+      if (inx == "1" || this.activeName == "1") {
+
         console.log(this.activeName, "this.activeName");
-        console.log(this.queryParams, "this.queryParams");
+        console.log(this.queryParam, "this.queryParam");
         list(this.addDateRange(this.queryParam, this.dateRange)).then(
           (response) => {
             this.list = response.rows;
@@ -621,7 +627,7 @@ export default {
             this.loading = false;
           }
         );
-      } else if ((inx != null && inx == "2") || this.activeName == "2") {
+      } else if (inx == "2" || this.activeName == "2") {
         if (this.manageStatin == "1") {
           this.queryParams.tunnelId = this.$cache.local.get(
             "manageStationSelect"
@@ -640,6 +646,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tables.clearSelection();
+      this.$refs.tableFile.clearSelection();
       this.getList(this.activeName);
     },
     /** 重置按钮操作 */
@@ -667,13 +675,22 @@ export default {
 
     /** 多选框选中数据 */
     handleSelectionChange2(selection) {
-      this.ids = selection.map((item) => item.id);
+      this.ids = selection.map((item) => item.infoId);
       this.multiple = !selection.length;
     },
     /** 排序触发事件 */
     handleSortChange(column, prop, order) {
+      console.log(column,"column")
+      this.queryParam.orderByColumn = column.prop;
+      this.queryParam.isAsc = column.order;
+      this.getList();
+    },
+    /** 排序触发事件 */
+    handleSortChange2(column, prop, order) {
+      console.log(column,"column")
       this.queryParams.orderByColumn = column.prop;
       this.queryParams.isAsc = column.order;
+      console.log(this.queryParams,"this.queryParamsthis.queryParams")
       this.getList();
     },
     /** 删除按钮操作 */
@@ -705,11 +722,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      debugger
       let  ids = this.ids.join();
       this.queryParam.ids = ids;
       const queryParams = this.queryParam;
-      console.log("queryParams=========" + queryParams);
       this.$modal
         .confirm("是否确认导出系统日志数据项？")
         .then(() => {
@@ -719,6 +734,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tables.clearSelection();
+          this.queryParam.ids = ''
         })
         .catch(() => {});
     },
@@ -728,7 +745,6 @@ export default {
       let  ids = this.ids.join();
       this.queryParams.ids = ids;
       const queryParams = this.queryParams;
-      console.log("queryParams=========" + queryParams);
       this.$modal
         .confirm("是否确认导出操作日志数据项？")
         .then(() => {
@@ -738,6 +754,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = ''
         })
         .catch(() => {});
     },

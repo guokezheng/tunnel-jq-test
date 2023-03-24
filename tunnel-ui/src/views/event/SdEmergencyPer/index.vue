@@ -121,10 +121,11 @@
       :data="SdEmergencyPerList"
       @selection-change="handleSelectionChange"
       @row-click="peopleTableRowClick"
-      :row-class-name="tableRowClassName"
-      max-height="640"
+      height="62vh"
+      class="allTable"
+      :row-key="getRowKey"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
 <!--      <el-table-column label="隧道" align="center" prop="tunnelName" />-->
       <el-table-column label="所属部门" align="center" prop="deptName" />
@@ -319,6 +320,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -401,6 +406,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       console.log(this.queryParams)
+      this.$refs.peopleTable.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -508,15 +514,9 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
+          this.$refs.peopleTable.clearSelection();
+          this.queryParams.ids = ''
         });
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   },
   watch: {

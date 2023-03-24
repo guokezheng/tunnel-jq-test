@@ -2,14 +2,14 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-21 08:56:55
+ * @LastEditTime: 2023-03-24 17:32:58
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="app-container dispatchAss">
     <div class="tunnelBox3">
-      <!-- <iframe
+      <iframe
         name="tuniframe"
         id="miframe"
         class="map3D"
@@ -18,7 +18,7 @@
         allowfullscreen="true"
         allow="autoplay"
         src="http://106.120.201.126:14712/dashboard"
-      ></iframe> -->
+      ></iframe>
     </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>
@@ -31,6 +31,8 @@
       :visible.sync="drawer"
       direction="ltr"
       :before-close="drawerHandleClose"
+      append-to-body
+      :modal="false"
       style="left:26%;">
       <el-col :span="24">
         <el-timeline :reverse="reverse">
@@ -1856,6 +1858,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.drawerBox:hover{
+  cursor: pointer;
+}
+::v-deep .el-drawer.ltr, .el-drawer.rtl{
+  height: 87%;
+  top: 9%;
+  bottom: unset;
+}
 // ::v-deep .drawerLog .el-drawer.ltr{left: 25%!important;}
 ::v-deep .el-dialog__title{padding-left:20px;}
 ::v-deep .contentList .el-button--success.is-plain{
@@ -1884,10 +1894,13 @@ export default {
   // background-color: #007aff;
 }
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper{overflow-x: hidden;}
-::v-deep .el-table--scrollable-y .el-table__body-wrapper{
-  overflow-y: unset;
-  overflow:unset;
+::v-deep .el-table--scrollable-x .el-table__body-wrapper::-webkit-scrollbar {
+display: none;
 }
+// ::v-deep .el-table--scrollable-y .el-table__body-wrapper{
+//   overflow-y: unset;
+//   overflow:unset;
+// }
 ::v-deep .el-drawer__header{
   color:white;
   padding:10px;

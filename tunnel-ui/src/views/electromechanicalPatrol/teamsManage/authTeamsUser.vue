@@ -27,8 +27,15 @@
           <el-input
             placeholder="请输入用户昵称、手机号码"
             v-model="queryParams.userName"
+            clearable
+            size="small"
             @keyup.enter.native="handleQuery"
+            style="
+            border-right: #00c8ff solid 1px !important;
+            border-radius: 3px;
+            "
           >
+
 <!--            <el-button
               slot="append"
               icon="icon-gym-Gsearch"

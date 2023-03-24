@@ -95,7 +95,7 @@
         </div>
       </div>
       <div class="dialogForm">
-        <el-form :model="eventFormDetail" label-width="80px" :rules="rules">
+        <el-form :model="eventFormDetail" label-width="80px">
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="8">
               <el-form-item label="告警来源" prop="eventSource">
@@ -243,6 +243,8 @@
                       placeholder="车道"
                       clearable
                       size="small"
+                      multiple
+                      collapse-tags
                       style="width: 100%; margin-left: 8px"
                     >
                       <el-option
@@ -369,7 +371,7 @@
                       :value="item.id"
                     ></el-option>
                   </el-select>
-                  <el-button @click="openDoor(eventFormDetail)">查看</el-button>
+                  <el-button v-show="eventFormDetail.currencyId" @click="openDoor(eventFormDetail)">查看</el-button>
                   <span style="color:#c59105;">(事件处置预案根据事件类型、事件等级智能推荐,处置过程中允许升级及更改预案)</span>
                 </el-form-item>
               </el-col>
@@ -883,7 +885,6 @@ export default {
     },
     // 复核提交
     submitDialog() {
-      console.log(this.eventFormDetail,'1123123')
       this.$cache.local.set('currencyId',this.eventFormDetail.currencyId);
       if (this.eventFormDetail.stakeNum1 && this.eventFormDetail.stakeNum2) {
         this.eventFormDetail.stakeNum =
@@ -902,7 +903,7 @@ export default {
         return this.$modal.msgWarning("请选择事件处置预案");
       }
       const currencyId = this.eventFormDetail.currencyId;
-      console.log(this.eventFormDetail,"11111");
+      this.eventFormDetail.laneNo = this.eventFormDetail.laneNo.toString();
       updateEvent(this.eventFormDetail).then((response) => {
         console.log(this.eventFormDetail,"zxczxc")
         this.processDialog = false;

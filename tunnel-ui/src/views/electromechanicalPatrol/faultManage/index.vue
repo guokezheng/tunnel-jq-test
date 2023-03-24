@@ -69,8 +69,10 @@
       @selection-change="handleSelectionChange"
       height="62vh"
       class="allTable"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <!--      <el-table-column label="故障编号" align="center" prop="id" />
       <el-table-column label="隧道id" align="center" prop="tunnelId" />-->
       <el-table-column
@@ -790,6 +792,10 @@ export default {
     });
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -1022,6 +1028,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -1051,6 +1058,8 @@ export default {
     handleUpdate(row) {
       let that = this;
       this.isWritable = true;
+      this.removeStata = false;
+      this.disstate = false;
       this.activeName = "2";
       this.getTunnel();
       that.reset();
@@ -1294,6 +1303,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = ''
         })
         .catch(() => {});
     },

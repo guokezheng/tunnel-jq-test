@@ -206,10 +206,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select> -->
 
-    <select id="checkStrategyIfExist" resultType="hashmap">
-        select A.id, A.plan_name, B.strategy_id, A.create_time from sd_reserve_plan A
-        left join sd_reserve_process B on A.id = B.reserve_id
-        where B.strategy_id like concat("%",#{id},"%")
+    <select id="checkStrategyIfExist" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            sd_strategy s
+                RIGHT JOIN sd_event e ON CONCAT( s.id, '' )= e.currency_id
+        WHERE
+            1 = 1
+          AND s.id = #{id}
     </select>
 
     <select id="getManualStrategy" resultType="hashmap" >
@@ -277,12 +282,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyType != null  and strategyType != ''"> and A.strategy_type = #{strategyType}</if>
             <if test="direction != null  and direction != ''"> and A.direction = #{direction}</if>
             <if test="eventType != null  and eventType != ''"> and A.event_type = #{eventType}</if>
+            <if test="isAutomatic != null  and isAutomatic != ''"> and A.is_automatic = #{isAutomatic}</if>
         </where>
         order by A.id desc
     </select>
 
     <select id="getEventStrategyData" parameterType="sdStrategy" resultType="hashmap">
         SELECT
+            s.id AS strategyId,
             s.strategy_type AS strategyType,
             sr.equipments,
             sr.state,

@@ -113,8 +113,10 @@
       @selection-change="handleSelectionChange"
       class="allTable"
       height="62vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column
         type="index"
         :index="indexMethod"
@@ -488,6 +490,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.jobId
+    },
     //翻页时不刷新序号
     indexMethod(index) {
       return (
@@ -541,6 +547,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -674,6 +681,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
         .confirm("是否确认导出定时任务数据项？")
@@ -684,6 +692,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = ''
         })
         .catch(() => {});
     },

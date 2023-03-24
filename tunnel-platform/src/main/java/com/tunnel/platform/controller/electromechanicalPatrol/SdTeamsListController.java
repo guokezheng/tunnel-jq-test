@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysUserService;
@@ -130,7 +131,11 @@ public class SdTeamsListController extends BaseController
     public TableDataInfo<List<SysUser>> unTeamsUserList(SysUser user)
     {
         startPage();
-        List<SysUser> list = userService.unTeamsUserList(user);
+        String depts = SecurityUtils.getDeptId();
+        if (depts == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        List<SysUser> list = userService.unTeamsUserList(user.getUserName(),user.getPhonenumber(),user.getDeptId(),depts);
         return getDataTable(list);
     }
 

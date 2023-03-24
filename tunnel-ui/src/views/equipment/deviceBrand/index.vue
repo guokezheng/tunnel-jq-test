@@ -93,8 +93,10 @@
       @selection-change="handleSelectionChange"
       class="allTable"
       height="62vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
 
       <el-table-column label="序号" type="index" align="center" :index="indexMethod">
         <!--<template slot-scope="scope">
@@ -228,6 +230,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.supplierId
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
@@ -271,6 +277,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -352,6 +359,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = ''
         })
         .catch(() => {});
     },

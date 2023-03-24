@@ -207,7 +207,7 @@ public interface ISysUserService
 
     List<SysUser> teamsUserList(SysUser user);
 
-    List<SysUser> unTeamsUserList(SysUser user);
+    List<SysUser> unTeamsUserList(String userName,String phonenumber,String deptId,String depts);
 
     int deleteTeamsUserCancel(SysUser user);
 

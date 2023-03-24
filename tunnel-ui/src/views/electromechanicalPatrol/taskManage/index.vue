@@ -96,8 +96,10 @@
       @selection-change="handleSelectionChange"
       class="allTable"
       height="70vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
 
       <el-table-column
@@ -114,7 +116,7 @@
       >
         <template slot-scope="scope">
           <span>{{
-            parseTime(scope.row.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
+            scope.row.dispatchTime
           }}</span>
         </template>
       </el-table-column>
@@ -129,7 +131,7 @@
       >
         <template slot-scope="scope">
           <span>{{
-            parseTime(scope.row.endPlantime, "{y}-{m}-{d} {h}:{m}:{s}")
+            scope.row.endPlantime
           }}</span>
         </template>
       </el-table-column>
@@ -563,7 +565,7 @@
           <el-col :span="8">
             <div>派单时间：</div>
             <span>{{
-              parseTime(item.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
+             item.dispatchTime
             }}</span>
           </el-col>
           <el-col :span="8">
@@ -641,7 +643,7 @@
           <el-col :span="8">
             <div>任务完成时间：</div>
             <span>{{
-            parseTime(tas.taskEndtime, "{y}-{m}-{d} {h}:{m}:{s}")
+              tas.taskEndtime
           }}</span>
           </el-col>
           <el-col :span="8">
@@ -955,6 +957,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -1227,6 +1233,7 @@ export default {
           this.isActive = false;
         }
         this.taskNews1 = response.data.task;
+        debugger
         this.taskNews2 = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;
@@ -1329,6 +1336,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -1534,6 +1542,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = ''
         })
         .catch(() => {});
     },

@@ -327,7 +327,7 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-
+                     
                       <div
                       v-show="
                           (item.eqType != 7 &&
@@ -427,10 +427,10 @@
                             :style="{
                               animation:
                                 'boardBox1 ' +
-                                getBoardStyle(
+                                Number(getBoardStyle(
                                   item.associated_device_id,
                                   'content'
-                                ).length +
+                                ).length)*1.3 +
                                 's' +
                                 ' linear infinite',
                             }"
@@ -493,10 +493,10 @@
                             :style="{
                               animation:
                                 'boardBox2 ' +
-                                getBoardStyle(
+                                Number(getBoardStyle(
                                   item.associated_device_id,
                                   'content'
-                                ).length +
+                                ).length)*1.3 +
                                 's' +
                                 ' linear infinite',
                             }"
@@ -625,21 +625,21 @@
         >
           <div class="indicatorLight" @click="isDrawerA()">
             <i
-              :class="[drawerA ? 'el-icon-caret-left' : 'el-icon-caret-right']"
+              :class="[drawerA ? 'el-icon-caret-right' : 'el-icon-caret-left']"
             ></i
             >一键控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
             <i
-              :class="[drawerB ? 'el-icon-caret-left' : 'el-icon-caret-right']"
+              :class="[drawerB ? 'el-icon-caret-right' : 'el-icon-caret-left']"
             ></i
             >分时控制模块
           </div>
           <div class="triggerControl" @click="isDrawerC()">
             <i
               :class="[
-                drawerCVisible ? 'el-icon-caret-left' : 'el-icon-caret-right',
+                drawerCVisible ? 'el-icon-caret-right' : 'el-icon-caret-left',
               ]"
             ></i
             >触发控制模块
@@ -897,7 +897,7 @@
             <div class="Time">
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
-                <el-time-picker
+                <el-time-picker 
                   v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
@@ -912,6 +912,7 @@
                   size="mini"
                   :clearable="false"
                   value-format="HH:mm:ss"
+                  @change="changeEndTime(item.arr[0],item.arr[1],index)"
                 >
                 </el-time-picker>
               </div>
@@ -921,6 +922,7 @@
                 class="handleLightClass"
                 @click="timingStrategy(item)"
                 v-hasPermi="['workbench:dialog:save']"
+                :disabled="timingStrategyDisabled"
                 >确定
               </el-button>
             </div>
@@ -1088,7 +1090,7 @@
                             display: flex;
                             justify-content: right;
                             align-items: center;
-                            transform: scale(0.7) translateY(8px);
+                            transform: scale(0.7);
                           "
                         >
                           <img :src="item.eventType.iconUrl" style="width:100%"/>
@@ -3828,6 +3830,7 @@ export default {
 
   data() {
     return {
+      timingStrategyDisabled:true,
       videoNoPic1:false,
       videoNoPic2:false,
       videoTitle1:'',
@@ -3894,7 +3897,7 @@ export default {
         operIp:"",
         pageNum: 1,
         pageSize: 10,
-    },
+      },
 
       operationParam_xt: {
         ipaddr: "",
@@ -3931,7 +3934,6 @@ export default {
       timStrategyList: [], //定时控制
       BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
-      tunnelLane: "", //当前隧道有几条车道
       eqInfo: {},
       brandList: [],
       directionList: [{}, {}], //设备方向字典
@@ -4381,23 +4383,7 @@ export default {
       ],
       // 一键车道指示器 车道下拉框
       chezhiLaneList: [],
-      chezhiLaneList1: [
-        {
-          laneId: 1,
-          laneName: "一车道",
-        },
-      ],
-      chezhiLaneList2: [
-        {
-          laneId: 1,
-          laneName: "一车道",
-        },
-        {
-          laneId: 2,
-          laneName: "二车道",
-        },
-      ],
-      chezhiLaneList3: [
+      chezhiLaneOptionList: [
         {
           laneId: 1,
           laneName: "一车道",
@@ -4410,6 +4396,29 @@ export default {
           laneId: 3,
           laneName: "三车道",
         },
+        {
+          laneId: 4,
+          laneName: "四车道",
+        },{
+          laneId: 5,
+          laneName: "五车道",
+        },
+        {
+          laneId: 6,
+          laneName: "六车道",
+        },
+        {
+          laneId: 7,
+          laneName: "七车道",
+        },,{
+          laneId: 8,
+          laneName: "八车道",
+        },
+        {
+          laneId: 9,
+          laneName: "九车道",
+        },
+
       ],
       // 一键车指状态下拉框
       chezhiStateList: [],
@@ -4986,8 +4995,25 @@ export default {
   },
 
   methods: {
+    changeEndTime(start,end,index){
+      console.log(start,end,"start,end")
+      let date = new Date();
+      let a = start.split(":");
+      let b = end.split(":");
+      let bool = date.setHours(a[0],a[1]) > date.setHours(b[0],b[1])
+      if(bool){
+        this.$modal.msgWarning("结束时间必须大于开始时间");
+        console.log(this.timStrategyList,"this.timStrategyList")
+        for(let i=0;i< this.timStrategyList.length;i++){
+          this.timStrategyList[index].arr[1] = ''
+          this.timingStrategyDisabled = true
 
-    //翻页时不刷新序号
+        }
+      }else{
+        this.timingStrategyDisabled = false
+      } 
+    },
+ //翻页时不刷新序号
     indexMethod(index){
       return index+(this.operationParam_xt.pageNum-1)*this.operationParam_xt.pageSize+1
     },
@@ -5482,15 +5508,9 @@ export default {
       }
     },
     // 抽屉车指批量控制 车道下拉框
-    getTunnelLane() {
-      this.chezhiLaneList = [];
-      if (this.tunnelLane == 1) {
-        this.chezhiLaneList = this.chezhiLaneList1;
-      } else if (this.tunnelLane == 2) {
-        this.chezhiLaneList = this.chezhiLaneList2;
-      } else if (this.tunnelLane == 3) {
-        this.chezhiLaneList = this.chezhiLaneList3;
-      }
+    getTunnelLane(tunnelLane) {
+      let laneArray = JSON.parse(JSON.stringify(this.chezhiLaneOptionList));
+      this.chezhiLaneList = laneArray.slice(0,tunnelLane);
     },
     // 抽屉车指批量控制 状态下拉框
     getTunnelState() {
@@ -5704,6 +5724,7 @@ export default {
       this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
+      this.timingStrategyDisabled = true
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
@@ -7209,7 +7230,6 @@ export default {
         }
         this.tunnelNameEarlyWarn = response.rows[0].tunnelName;
         this.tunnelId = response.rows[0].tunnelId;
-        this.tunnelLane = response.rows[0].lane;
         // this.specialEcharts(this.tunnelId)
         this.vehicleEcharts();
         this.specialVehicleEcharts();
@@ -7258,7 +7278,7 @@ export default {
             }
           }
         }
-        this.getTunnelLane();
+        this.getTunnelLane(response.rows[0].lane);
         this.$nextTick(() => {
           this.getEnergyConsumption(this.currentTunnel.id);
         });
@@ -7818,6 +7838,7 @@ export default {
       //   this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-HSD");
       //   return;
       // }
+      this.getTunnelLane(item.lane);
       this.buttonIndex = index;
       this.tunnelNameEarlyWarn = item.tunnelName;
       this.tunnelId = item.tunnelId;

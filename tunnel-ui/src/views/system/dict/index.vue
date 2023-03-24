@@ -467,6 +467,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      this.dict_boxShow = false;
       this.queryParams.pageNum = 1;
       this.getList();
     },

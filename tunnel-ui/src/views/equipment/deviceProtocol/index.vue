@@ -93,8 +93,12 @@
       </el-form>
     </div>
     <div class="tableTopHr" ></div>
-    <el-table v-loading="loading" :data="protocolList" @selection-change="handleSelectionChange" class="allTable">
-      <el-table-column type="selection" width="55" align="center"/>
+    <el-table 
+    v-loading="loading" :data="protocolList"
+     @selection-change="handleSelectionChange" class="allTable"
+     :row-key="getRowKey"
+      ref="tableFile">
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <!--      <el-table-column label="ID" align="center" prop="id"/>-->
       <el-table-column label="设备品牌" align="center" prop="brandId">
@@ -292,6 +296,10 @@
       document.addEventListener("click", this.bodyCloseMenus);
     },
     methods: {
+      // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+      getRowKey(row) {
+        return row.id
+      },
       //翻页时不刷新序号
       indexMethod(index){
         return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
@@ -365,6 +373,7 @@
       /** 搜索按钮操作 */
       handleQuery() {
         this.queryParams.pageNum = 1;
+        this.$refs.tableFile.clearSelection();
         this.getList();
       },
       /** 重置按钮操作 */
@@ -419,7 +428,7 @@
       /** 删除按钮操作 */
       handleDelete(row) {
         const ids = row.id || this.ids;
-        this.$modal.confirm('是否确认删除设备协议编号为"' + ids + '"的数据项？').then(function () {
+        this.$modal.confirm('是否确认删除？').then(function () {
           return delProtocol(ids);
         }).then(() => {
           this.getList();
@@ -436,6 +445,8 @@
         }).then(response => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = ''
         }).catch(() => {
         });
       }

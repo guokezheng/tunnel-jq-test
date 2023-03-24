@@ -130,7 +130,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</delete>
 
 
-
+    <insert id="batchUserTeams">
+        insert into sd_user_teams(user_id, teams_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.userId},#{item.teamsId})
+        </foreach>
+    </insert>
 
 
 

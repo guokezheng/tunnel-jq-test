@@ -143,8 +143,14 @@
           <div style="width: 100%;overflow: hidden;white-space: nowrap;">
             位置 <span>{{ item.position }}</span>
           </div>
-          <div>
+          <div v-show="item.eventState == '3'">
             时间 <span>{{ item.eventTime }}</span>
+          </div>
+          <div v-show="item.eventState == '2' || item.eventState == '4' || item.eventState == '5' || item.eventState == '1'">
+            时间 <span>{{ item.endTime }}</span>
+          </div>
+          <div v-show="item.eventState == '0'">
+            时间 <span>{{ item.updateTime }}</span>
           </div>
           <div class="contentButton" >
             <div @click="detailsOpen(item)">详情</div>
@@ -264,23 +270,23 @@
             :fit="contain">
           </el-image>
           <!-- 现场用这个 -->
-          <!-- <video
-                id="h5sVideo1"
-                class="h5video_"
-                controls
-                muted
-                loop
-                autoplay
-                webkit-playsinline
-                playsinline
-                disablePictureInPicture="true"
-                controlslist="nodownload noplaybackrate noremoteplayback"
-                style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
-              ></video> -->
+          <video
+            id="h5sVideo1"
+            class="h5video_"
+            controls
+            muted
+            loop
+            autoplay
+            webkit-playsinline
+            playsinline
+            disablePictureInPicture="true"
+            controlslist="nodownload noplaybackrate noremoteplayback"
+            style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
+          ></video>
         </div>
       </div>
       <div class="dialogForm">
-        <el-form :model="eventFormDetail" label-width="80px" :rules="rules">
+        <el-form ref="eventFormDetail" :model="eventFormDetail" label-width="80px">
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="8">
               <el-form-item label="告警来源" prop="eventSource">
@@ -428,6 +434,8 @@
                       placeholder="车道"
                       clearable
                       size="small"
+                      multiple
+                      collapse-tags
                       style="width: 100%; margin-left: 8px"
                     >
                       <el-option
@@ -554,7 +562,7 @@
                       :value="item.id"
                     ></el-option>
                   </el-select>
-                  <el-button @click="openDoor(eventFormDetail)">查看</el-button>
+                  <el-button v-show="eventFormDetail.currencyId" @click="openDoor(eventFormDetail)">查看</el-button>
                   <span style="color:#c59105;">(事件处置预案根据事件类型、事件等级智能推荐,处置过程中允许升级及更改预案)</span>
                 </el-form-item>
               </el-col>
@@ -1247,12 +1255,6 @@ export default {
           endTime: null,
           deptId: null,
         },
-        queryParams1: {
-          pageNum: 1,
-          pageSize: 10,
-          faultType:null,
-          faultDescription:"",
-        },
         allmsg: "",
         process: "",
         proportion: "",
@@ -1334,60 +1336,7 @@ export default {
         fuzzySearch1:'',
         // 表单校验
         rules: {
-          /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
-          eventTitle: [
-            { required: true, message: "请输入事件标题", trigger: "blur" },
-          ],
-          eventTypeId: [
-            { required: true, message: "请选择事件类型", trigger: "change" },
-          ],
-          eventGrade: [
-            { required: true, message: "请选择事件级别", trigger: "change" },
-          ],
-          eventLocation: [
-            { required: true, message: "请输入位置", trigger: "blur" },
-          ],
-          eventDescription: [
-            { required: true, message: "请输入内容", trigger: "blur" },
-          ],
-          faultLevel: [
-            { required: true, message: "请选择故障等级", trigger: "faultLevel" },
-          ],
-          faultLocation: [
-            {
-              required: true,
-              message: "请填写故障位置",
-              trigger: "faultLocation",
-            },
-          ],
-          faultType: [
-            {
-              required: true,
-              message: "请选中故障类型",
-              trigger: "faultType",
-            },
-          ],
-          faultFxtime: [
-            { required: true, message: "请填写发现时间", trigger: "faultFxtime" },
-          ],
-          faultCxtime: [
-            { required: true, message: "请填写持续时间", trigger: "faultCxtime" },
-          ],
-          eqId: [{ required: true, message: "请填写设备名称", trigger: "eqId" }],
-          eqStatus: [
-            {
-              required: true,
-              message: "请选中设备填报状态",
-              trigger: "eqStatus",
-            },
-          ],
-          tunnelId: [
-            {
-              required: true,
-              message: "请选中所在路段隧道",
-              trigger: "tunnelId",
-            },
-          ],
+          
         },
       };
     },
@@ -1421,7 +1370,7 @@ export default {
     this.getTunnel();
     this.getEqType();
     this.getDevices();
-    this.getTunnelLane();
+    // this.getTunnelLane();
     // 事件来源
     this.getDicts("sd_event_source").then((data) => {
       this.fromList = data.data;
@@ -1708,6 +1657,7 @@ export default {
     submitDialog() {
       console.log(this.eventFormDetail,'1123123')
       this.$cache.local.set('currencyId',this.eventFormDetail.currencyId);
+
       if (this.eventFormDetail.stakeNum1 && this.eventFormDetail.stakeNum2) {
         this.eventFormDetail.stakeNum =
           "K" + this.eventFormDetail.stakeNum1 + "+" + this.eventFormDetail.stakeNum2;
@@ -1725,6 +1675,7 @@ export default {
         return this.$modal.msgWarning("请选择事件处置预案");
       }
       const currencyId = this.eventFormDetail.currencyId;
+      this.eventFormDetail.laneNo = this.eventFormDetail.laneNo.toString();
       updateEvent(this.eventFormDetail).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;
@@ -1764,7 +1715,7 @@ export default {
     },
     // 获取车道数
     getTunnelLane() {
-      getTunnelLane(this.manageStationSelect).then((res) => {
+      getTunnelLane(this.tunnelId).then((res) => {
         this.chezhiLaneList = [];
         if (res.data.lane == 1) {
           this.chezhiLaneList = this.chezhiLaneList1;
@@ -1840,6 +1791,7 @@ export default {
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
       this.tunnelId = item.tunnelId;
+
       this.direction = item.direction;
       this.details = true;
       this.eventFormDetail = {...item};
@@ -1878,6 +1830,8 @@ export default {
         );
       }
       this.title = item.eventTitle;
+      // 获取车道
+      this.getTunnelLane();
       // 获取实时视频
       this.getVideoUrl(item);
       // 获取实时视频截图
@@ -2323,66 +2277,64 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams = { pageNum: 1, pageSize: 16 };
-      this.queryParams1 = { pageNum: 1, pageSize: 10 };
+      // this.queryParams.pageSize bug:857
+      this.queryParams = { pageNum: 1, pageSize:  16};
       this.dateRange = [];
       // this.tunnelList = [];
       this.queryParams.eventTypeId = "";
-      this.queryParams1.faultDescription = "";
       this.fuzzySearch1 = ''
       this.checkBoxEventState = []
-
-        // this.resetForm("queryForm");
-        this.handleQuery();
-      },
-      //关闭drawer
-      handleClose(done) {
-        done();
-      },
-      /** 提交按钮 */
-      submitEventForm() {
-        this.dloading = true;
-        if (this.submitEventFormLoading) return;
-        this.submitEventFormLoading = true;
-        this.$refs["form1"].validate(async (valid) => {
-          if (valid) {
-            await addEvent(this.eventForm).then((response) => {
-              if (response.code === 200) {
-                this.$modal.msgSuccess("新增成功");
-                setTimeout(() => {
-                  this.resetEvent();
-                  this.dloading = false;
-                  this.open = false;
-                }, 400);
-                this.getList();
-              }
-            });
-          }
-          this.submitEventFormLoading = false;
-        });
-      },
-      //关闭弹窗
-      eventFormClose() {
-        this.resetEvent();
-        this.open = false;
-      },
-      // 表单重置
-      resetEvent() {
-        this.$refs.form1.resetFields();
-        this.eventForm.eventTypeId = null;
-        this.eventForm.eventInjured = null;
-      },
-      // 取消按钮
-      cancel() {
-        this.open = false;
-        this.details = false;
-        this.processDialog = false;
-        this.processType = false;
-        this.reset();
-        this.getList();
-      },
+      // this.resetForm("queryForm");
+      this.handleQuery();
     },
-  };
+    //关闭drawer
+    handleClose(done) {
+      done();
+    },
+    /** 提交按钮 */
+    submitEventForm() {
+      this.dloading = true;
+      if (this.submitEventFormLoading) return;
+      this.submitEventFormLoading = true;
+      this.$refs["form1"].validate(async (valid) => {
+        if (valid) {
+          await addEvent(this.eventForm).then((response) => {
+            if (response.code === 200) {
+              this.$modal.msgSuccess("新增成功");
+              setTimeout(() => {
+                this.resetEvent();
+                this.dloading = false;
+                this.open = false;
+              }, 400);
+              this.getList();
+            }
+          });
+        }
+        this.submitEventFormLoading = false;
+      });
+    },
+    //关闭弹窗
+    eventFormClose() {
+      this.resetEvent();
+      this.open = false;
+    },
+    // 表单重置
+    resetEvent() {
+      this.$refs.form1.resetFields();
+      this.eventForm.eventTypeId = null;
+      this.eventForm.eventInjured = null;
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false;
+      this.details = false;
+      this.processDialog = false;
+      this.processType = false;
+      this.reset();
+      this.getList();
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

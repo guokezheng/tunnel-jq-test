@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-08 14:02:22
+ * @LastEditTime: 2023-03-24 13:59:10
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1164,7 +1164,10 @@ export default {
         this.exportLoading = false;
         this.$refs.planTable.clearSelection();
         this.queryParams.ids = ''
-      }).catch(() => {});
+      }).catch(() => {
+        this.queryParams.ids = ''
+        // console.log('1231');
+      });
     },
     addInfo(index) {
       let data = {
@@ -1492,8 +1495,8 @@ export default {
         })
         if(!result){
           return this.$modal.msgError("请填写完整");
-          }
         }
+      }
 
       this.planTypeIdList.forEach((item, index) => {
         item.processSort = index;

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-24 14:32:15
+ * @LastEditTime: 2023-03-24 17:29:26
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1858,6 +1858,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.drawerBox:hover{
+  cursor: pointer;
+}
+::v-deep .el-drawer.ltr, .el-drawer.rtl{
+  height: 87%;
+  top: 9%;
+  bottom: unset;
+}
 // ::v-deep .drawerLog .el-drawer.ltr{left: 25%!important;}
 ::v-deep .el-dialog__title{padding-left:20px;}
 ::v-deep .contentList .el-button--success.is-plain{

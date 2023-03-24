@@ -373,13 +373,8 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
     @Override
     public List<SdEquipmentType> selectSdEquipmentTypeByBigType(String bigType) {
         if (StringUtils.isNotBlank(bigType)) {
-            if (bigType.equals("0")) {
-                List<SdEquipmentType> list = sdEquipmentTypeMapper.selectSdEquipmentTypeByBigType(null);
-                return list;
-            } else {
-                List<SdEquipmentType> list = sdEquipmentTypeMapper.selectSdEquipmentTypeByBigType(bigType);
-                return list;
-            }
+            List<SdEquipmentType> list = sdEquipmentTypeMapper.selectSdEquipmentTypeByBigType(bigType);
+            return list;
         }
         return null;
 

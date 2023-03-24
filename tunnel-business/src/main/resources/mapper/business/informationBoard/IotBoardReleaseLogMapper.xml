@@ -132,4 +132,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY id DESC LIMIT 10
     </select>
 
+    <select id="selectBoardContentList" parameterType="java.lang.String" resultMap="IotBoardReleaseLogResult">
+        SELECT
+            brl.device_id,
+            brl.release_old_content,
+            brl.release_time
+        FROM
+            iot_board_release_log brl
+        WHERE
+            1 = 1
+          AND brl.device_id = #{deviceId}
+        ORDER BY
+            brl.release_time DESC LIMIT 0,1
+    </select>
 </mapper>

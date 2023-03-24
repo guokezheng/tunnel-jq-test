@@ -1,9 +1,12 @@
 package com.tunnel.business.utils.work;
 
+import com.tunnel.business.service.event.impl.SdEventServiceImpl;
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import sun.net.www.protocol.http.HttpURLConnection;
 
@@ -21,6 +24,7 @@ import java.util.Map.Entry;
  */
 public class WorderToNewWordUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(WorderToNewWordUtils.class);
 
     /**
      * 根据模板生成word文档
@@ -278,6 +282,7 @@ public class WorderToNewWordUtils {
             return btImg;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.getMessage());
             return null;
         }
     }

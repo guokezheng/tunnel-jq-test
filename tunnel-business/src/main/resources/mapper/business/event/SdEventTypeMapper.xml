@@ -29,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="prevControlType != null  and prevControlType != ''">and prev_control_type =#{prevControlType}</if>
             <if test="id != null  and id != ''">and id = #{id}</if>
             <if test="isUsable != null and isUsable != ''">and is_usable = #{isUsable}</if>
-        </where> order by id
+        </where> order by create_time desc
     </select>
 
     <select id="selectSdEventTypeById" parameterType="Long" resultMap="SdEventTypeResult">

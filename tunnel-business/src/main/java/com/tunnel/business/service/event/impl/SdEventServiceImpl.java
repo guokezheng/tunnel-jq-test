@@ -219,10 +219,9 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEvent(SdEvent sdEvent) {
-        if ("1".equals(sdEvent.getEventState())) {
+        if (EventStateEnum.processed.getCode().equals(sdEvent.getEventState())) {
             instreEventFlowData(sdEvent.getId(),"事件已完结");
-            sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
-        }else if("0".equals(sdEvent.getEventState()) && PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(sdEvent.getPrevControlType())){
+        }else if(EventStateEnum.processing.getCode().equals(sdEvent.getEventState()) && PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(sdEvent.getPrevControlType())){
             //更新预案设备
             setStrategyRlEquipment(sdEvent);
             //如有处置中的普通事件则将处理中的安全预警状态改为已处理
@@ -241,11 +240,14 @@ public class SdEventServiceImpl implements ISdEventService {
         }else {
             sdEvent.setUpdateTime(DateUtils.getNowDate());
         }
+        if(!EventStateEnum.processing.getCode().equals(sdEvent.getEventState())){
+            sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+        }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.updateSdEvent(sdEvent);
-        if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
+        /*if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
             radarEventServiceImpl.sendDataToOtherSystem(null, sdEventMapper.selectSdEventById(sdEvent.getId()));
-        }
+        }*/
         return count;
     }
 

@@ -155,8 +155,10 @@
       :default-sort = "{prop: 'releaseTime', order: 'descending'}"
       class="allTable"
       height="62vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <!--      <el-table-column label="发布用户" align="center" prop="id" />-->
        <el-table-column label="发布设备" align="center" prop="deviceName" />
@@ -336,6 +338,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
@@ -505,6 +511,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -535,9 +542,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids;
       const queryParams = this.queryParams;
       //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
-      queryParams.ids = this.ids;
       this.$confirm("是否确认导出发布记录数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -548,7 +555,8 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
-          queryParams.ids = null;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = ''
         });
     },
   },

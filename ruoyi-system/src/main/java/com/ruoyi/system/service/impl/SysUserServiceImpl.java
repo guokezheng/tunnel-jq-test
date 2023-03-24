@@ -581,13 +581,13 @@ public class SysUserServiceImpl implements ISysUserService
     }
 
     @Override
-    public List<SysUser> unTeamsUserList(SysUser user) {
-        return userMapper.unTeamsUserList(user);
+    public List<SysUser> unTeamsUserList(String userName,String phonenumber,String deptId,String depts) {
+        return userMapper.unTeamsUserList(userName,phonenumber,deptId,depts);
     }
 
     @Override
     public int deleteTeamsUserCancel(SysUser user) {
-        user.setDeptId(user.getDeptId().substring(0,user.getDeptId().length()-2));
+        //user.setDeptId(user.getDeptId().substring(0,user.getDeptId().length()-2));
 
         return userMapper.updateUserDept(user);
     }

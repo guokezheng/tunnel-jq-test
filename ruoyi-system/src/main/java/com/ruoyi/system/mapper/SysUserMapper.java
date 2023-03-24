@@ -128,7 +128,7 @@ public interface SysUserMapper
 
     List<SysUser> teamsUserList(SysUser user);
 
-    List<SysUser> unTeamsUserList(SysUser user);
+    List<SysUser> unTeamsUserList(@Param("userName")String userName,@Param("phonenumber")String phonenumber,@Param("deptId")String deptId,@Param("depts")String depts);
 
 
 
@@ -136,5 +136,4 @@ public interface SysUserMapper
 
     int updateUserDeptAll(@Param("deptId") String deptId,@Param("userIds")Long[] userIds);
 
-    int batchUserTeams(@Param("deptId") String deptId,@Param("userIds")Long[] userIds);
 }

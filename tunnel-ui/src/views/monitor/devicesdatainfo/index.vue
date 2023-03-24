@@ -94,8 +94,9 @@
         @selection-change="handleSelectionChangeTab"
         class="allTable"
         height="58vh"
+        :row-key="getRowKey"
       >
-        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="selection" width="55" align="center" reserve-selection/>
         <el-table-column type="index" :index="indexMethodTab" label="序号" width="68" align="center"></el-table-column>
         <el-table-column label="设备名称" align="center" prop="eqName" />
         <el-table-column label="所属隧道" align="center" prop="tunnelName" />
@@ -191,6 +192,7 @@
           v-show="searchValue == '1'"
           class="allTable"
           height="58vh"
+          :row-key="getRowKey"
         >
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -242,6 +244,7 @@
           v-show="searchValue == '3'"
           class="allTable"
           height="58vh"
+          :row-key="getRowKey"
         >
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
@@ -262,6 +265,7 @@
           v-show="searchValue == '4'"
           class="allTable"
           height="58vh"
+          :row-key="getRowKey"
         >
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column type="index" :index="indexMethod3" label="序号" width="68" align="center"></el-table-column>
@@ -470,6 +474,10 @@ export default {
   },
 
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -505,7 +513,6 @@ export default {
     handleExportTab() {
       this.querysParamsTab.ids = this.ids.join();
       const queryParams = this.querysParamsTab;
-      console.log("queryParams=========" + queryParams);
       this.$modal
         .confirm("是否确认导出数据报表数据项？")
         .then(() => {
@@ -515,6 +522,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tables.clearSelection();
+          this.querysParamsTab.ids = ''
         })
         .catch(() => {});
     },
@@ -547,6 +556,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tables.clearSelection();
+          this.querysParams.ids = ''
         })
         .catch(() => {});
     },
@@ -911,6 +922,7 @@ export default {
     /*table搜索*/
     handleQueryTab(){
       this.querysParamsTab.pageNum = 1;
+      this.$refs.tables.clearSelection();
       this.getListTab();
     },
 

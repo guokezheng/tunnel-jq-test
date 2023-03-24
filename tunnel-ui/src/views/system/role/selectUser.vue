@@ -1,7 +1,70 @@
 <template>
+  <div class="app-container" style = "height:0px!important;">
   <!-- 授权用户 -->
-  <el-dialog title="选择1用户" :visible.sync="visible" width="800px" top="5vh" append-to-body>
-    <el-form :model="queryParams" ref="queryForm" :inline="true">
+  <el-dialog title="选择用户"
+             class="workbench-dialog batch-table operationDiglog"
+             :visible.sync="visible"
+             width="1000px"
+             append-to-body
+             v-dialogDrag>
+
+    <el-row
+      :gutter="20"
+      style="margin: 10px 0 6px"
+    >
+      <el-col :span="10" :offset="14">
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请输入用户昵称、手机号码，回车搜索"
+            v-model="queryParams.userName"
+            @keyup.enter.native="handleQuery"
+            size="small"
+            style="padding-right: 5px"
+          >
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-table
+        ref="tables"
+        :data="userList"
+        @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
+        max-height="430px">
+        <el-table-column type="selection" align="center" />
+        <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+        <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
+        <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
+        <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
+        <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
+        <el-table-column label="状态" align="center" prop="status">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" align="center" prop="createTime" width="220" sortable>
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </el-row>
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="handleSelectUser">确 定</el-button>
+      <el-button type="primary" @click="visible = false">取 消</el-button>
+    </div>
+
+
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-form-item label="用户名称" prop="userName">
         <el-input
           v-model="queryParams.userName"
@@ -55,8 +118,9 @@
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="handleSelectUser">确 定</el-button>
       <el-button @click="visible = false">取 消</el-button>
-    </div>
+    </div>-->
   </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -99,6 +163,13 @@ export default {
     clickRow(row) {
       this.$refs.table.toggleRowSelection(row);
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
+      } else {
+        return "tableOddRow";
+      }
+    },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.userIds = selection.map(item => item.userId);
@@ -123,6 +194,9 @@ export default {
     },
     /** 选择授权用户操作 */
     handleSelectUser() {
+      if(this.userIds.length==0){
+        return this.$modal.msgWarning("请选择用户");
+      }
       const roleId = this.queryParams.roleId;
       const userIds = this.userIds.join(",");
       authUserSelectAll({ roleId: roleId, userIds: userIds }).then(res => {

@@ -180,6 +180,7 @@
             v-model="form.deptId"
             :options="deptOptions"
             placeholder="请选择归属部门"
+            @input="changeParentDept"
           />
         </el-form-item>
         <el-form-item label="岗位" prop="groupName">
@@ -267,7 +268,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
-
+        userName:"",
       },
       paramsData: {
         tunnelId : ""
@@ -287,9 +288,9 @@ export default {
       },
       // 表单校验
       rules: {
-       /* tunnelId: {
-          required: true, message: '请选择隧道', trigger: 'change'
-        },*/
+        deptId: {
+          required: true, message: '请选择归属部门', trigger: 'blur'
+        },
         userName: [{
           required: true, message: '请输入应急人员', trigger: 'blur'
         },
@@ -332,6 +333,9 @@ export default {
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
 
+    changeParentDept(){
+      this.$refs.form.validateField('deptId');
+    },
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true;
@@ -348,6 +352,7 @@ export default {
 
     // 节点单击事件
     handleNodeClick(data) {
+      this.queryParams.ids = "";
       this.queryParams.deptId = data.id;
       this.getList();
     },
@@ -403,12 +408,8 @@ export default {
       this.resetForm("queryForm");
       this.queryParams.userName="";
       this.queryParams.deptId="";
-     /* this.queryParams = {
-        tunnelId: null,
-        groupName: null,
-        userName: null,
-        // tunnelId: null,
-      };*/
+      this.queryParams.ids = "";
+      //this.ids = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -448,12 +449,12 @@ export default {
     submitForm() {
       if(this.submitBtnLoading) return
       this.submitBtnLoading = true
-      if(this.form.deptId==""||this.form.deptId==null){
+     /* if(this.form.deptId==""||this.form.deptId==null){
         this.$message("请选择部门节点");
         this.submitBtnLoading = false
         return;
 
-      }
+      }*/
       this.$refs["form"].validate(async (valid) => {
         if (valid) {
           if (this.form.id != null) {

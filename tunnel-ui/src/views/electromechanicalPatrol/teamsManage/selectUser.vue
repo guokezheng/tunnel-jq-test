@@ -1,10 +1,17 @@
 <template>
   <div class="app-container" style = "height:0px!important;">
     <!-- 授权用户 -->
-    <el-dialog title="选择用户" :visible.sync="visible" width="1000px" append-to-body class="operationDiglog">
+      <el-dialog
+        title="选择用户"
+        class="workbench-dialog batch-table operationDiglog"
+        :visible.sync="visible"
+        width="1000px"
+        append-to-body
+        v-dialogDrag
+      >
         <el-row
           :gutter="20"
-          style="margin: 0px 0 6px"
+          style="margin: 10px 0 6px"
         >
           <el-col :span="10" :offset="14">
             <div class="grid-content bg-purple" ref="main">
@@ -13,41 +20,32 @@
                 v-model="queryParams.userName"
                 @keyup.enter.native="handleQuery"
                 size="small"
-                clearable
-                style="border-right:#00C8FF solid 1px !important;border-radius:3px"
+                style="padding-right: 5px"
               >
-
-<!--                <el-button
-                  slot="append"
-                  size="small"
-                  icon="icon-gym-Gsearch"
-                  style="transform: translateX(20px)"
-                ></el-button>-->
               </el-input>
             </div>
           </el-col>
         </el-row>
 
       <el-row>
-<!--        <el-table @row-click="clickRow" ref="table" :data="userList" @selection-change="handleSelectionChange"
-            height="260px"  :row-class-name="tableRowClassName">-->
           <el-table
           ref="tables"
           :data="userList"
           @selection-change="handleSelectionChange"
           :row-class-name="tableRowClassName"
-          style="color: #ffffff;height:62vh">
-          <el-table-column type="selection" width="55"></el-table-column>
+          max-height="430px">
+          <el-table-column type="selection" align="center" />
+          <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
           <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
           <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
           <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
           <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
-          <el-table-column label="状态" align="center" prop="status">
+          <el-table-column label="状态" align="center" prop="status"  >
             <template slot-scope="scope">
               <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column label="创建时间" align="center" prop="createTime" width="180" sortable>
+          <el-table-column label="创建时间" align="center" prop="createTime" width="220" sortable>
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.createTime) }}</span>
             </template>
@@ -63,7 +61,7 @@
       </el-row>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handleSelectUser">确 定</el-button>
-        <el-button @click="visible = false">取 消</el-button>
+        <el-button type="primary" @click="visible = false">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -101,6 +99,11 @@ export default {
     };
   },
   methods: {
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
     // 显示弹框
     show() {
       this.queryParams.deptId = this.deptId;
@@ -140,6 +143,9 @@ export default {
     },
     /** 选择授权用户操作 */
     handleSelectUser() {
+      if(this.userIds.length==0){
+        return this.$modal.msgWarning("请选择用户");
+      }
       const deptId = this.queryParams.deptId;
       const userIds = this.userIds.join(",");
       teamsUserSelectAll({ deptId: deptId, userIds: userIds }).then(res => {

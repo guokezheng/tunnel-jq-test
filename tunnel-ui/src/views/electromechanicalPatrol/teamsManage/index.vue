@@ -42,7 +42,6 @@
       </el-col>
     </el-row>
 
-    <div class="tableTopHr" ></div>
     <el-table v-loading="loading" :data="teamsList" @selection-change="handleSelectionChange"
     class="allTable" height="62vh">
       <el-table-column type="selection" width="55" align="center" />
@@ -273,6 +272,7 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.queryParams.deptName ="";
+      this.queryParams.ids = "";
       this.handleQuery();
     },
     // 多选框选中数据

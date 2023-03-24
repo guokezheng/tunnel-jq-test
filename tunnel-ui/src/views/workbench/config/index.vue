@@ -327,7 +327,7 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-                     
+
                       <div
                       v-show="
                           (item.eqType != 7 &&
@@ -1495,7 +1495,7 @@
           <div class="grid-content bg-purple" ref="main">
             <el-input
               placeholder="请输入登录地址、用户名称，回车搜索"
-              v-model="operationParam.ipaddr"
+              v-model="operationParam_xt.ipaddr"
               @keyup.enter.native="handleQueryOperationParam"
               style="padding-right: 5px"
               size="small"
@@ -1513,15 +1513,15 @@
       </el-row>
       <div class="syxt_searchBox" v-show="syxt_boxShow" ref="cc">
         <el-form
-          ref="operationParam"
+          ref="operationParam_xt"
           :inline="true"
-          :model="operationParam"
+          :model="operationParam_xt"
           label-width="68px"
           v-show="operationActive == 'xitong'"
         >
           <el-form-item label="登录状态" prop="status">
             <el-select
-              v-model="operationParam.status"
+              v-model="operationParam_xt.status"
               clearable
               placeholder="请选择登录状态"
               size="small"
@@ -1545,6 +1545,7 @@
               range-separator="-"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              :picker-options="setoptions"
               :default-time="['00:00:00', '23:59:59']"
               :class="this.sideTheme != 'theme-dark' ? 'themeDarkPicker' : ''"
             ></el-date-picker>
@@ -1693,6 +1694,7 @@
               range-separator="-"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              :picker-options="setoptions"
               :default-time="['00:00:00', '23:59:59']"
             ></el-date-picker>
           </el-form-item>
@@ -1785,11 +1787,7 @@
         max-height="430"
       >
         <el-table-column type="selection" align="center" />
-        <el-table-column label="序号" width="55" align="center">
-          <template slot-scope="scope">
-            {{ scope.$index + 1 }}
-          </template>
-        </el-table-column>
+        <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
         <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
         <el-table-column
           label="用户名称"
@@ -1854,11 +1852,7 @@
         v-show="operationActive == 'caozuo'"
       >
         <el-table-column type="selection" align="center" />
-        <el-table-column label="序号" width="55" align="center">
-          <template slot-scope="scope">
-            {{ scope.$index + 1 }}
-          </template>
-        </el-table-column>
+        <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
         <el-table-column
           label="隧道名称"
           align="center"
@@ -1903,8 +1897,8 @@
       <pagination
         v-show="total1 > 0 && operationActive == 'xitong'"
         :total="total1"
-        :page.sync="operationParam.pageNum"
-        :limit.sync="operationParam.pageSize"
+        :page.sync="operationParam_xt.pageNum"
+        :limit.sync="operationParam_xt.pageSize"
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
@@ -3897,6 +3891,14 @@ export default {
         eqTypeId: "",
         tunnelId: "",
         controlType: "",
+        operIp:"",
+        pageNum: 1,
+        pageSize: 10,
+    },
+
+      operationParam_xt: {
+        ipaddr: "",
+        status: "",
         pageNum: 1,
         pageSize: 10,
       },
@@ -3990,6 +3992,14 @@ export default {
       tunnelData: [],
       //所属隧道
       eqTunnelData: {},
+
+      setoptions: {
+        // 时间不能大于当前时间
+        disabledDate: time => {
+          return time.getTime() > Date.now()
+        },
+        selectableRange: '00:00:00 - 23:59:59'
+      },
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -4976,6 +4986,15 @@ export default {
   },
 
   methods: {
+
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.operationParam_xt.pageNum-1)*this.operationParam_xt.pageSize+1
+    },
+    //翻页时不刷新序号
+    indexMethod2(index){
+      return index+(this.operationParam.pageNum-1)*this.operationParam.pageSize+1
+    },
     videoRadioChange() {
       if (this.footChangeRadio == "视频" && this.tunnelId) {
         this.getFooterVideo();
@@ -5310,6 +5329,7 @@ export default {
     // 操作日志 搜索
     handleQueryOperationParam() {
       this.operationParam.pageNum = 1;
+      this.operationParam_xt.pageNum = 1;
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
@@ -5321,7 +5341,7 @@ export default {
       this.loading = true;
       // if ( inx == 'xitong' ) {
       console.log(this.operationParam, "this.queryParams");
-      list(this.addDateRange(this.operationParam, this.dateRange)).then(
+      list(this.addDateRange(this.operationParam_xt, this.dateRange)).then(
         (response) => {
           console.log(response, "系统日志");
           this.operationList1 = response.rows;
@@ -5797,6 +5817,8 @@ export default {
       this.operationParam.eqTypeId = null;
       this.operationParam.tunnelId = null;
       this.operationParam.controlType = null;
+      this.operationParam_xt.status = null;
+      this.operationParam_xt.operIp = "";
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },

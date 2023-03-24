@@ -57,7 +57,7 @@ export function exportData(data) {
     return request({
         url: '/system/vehicle/export',
         method: 'get',
-        data
+        params: data
     })
 }
 // 机构查询

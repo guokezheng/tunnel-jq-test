@@ -528,6 +528,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.ids = "";
       this.resetForm("queryForm");
       this.handleQuery();
     },

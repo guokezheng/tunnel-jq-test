@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="height: 649px!important;">
+  <div class="app-container" >
 
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
@@ -39,7 +39,7 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="allTable">
+    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="allTable" height="62vh">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />

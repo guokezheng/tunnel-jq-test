@@ -101,10 +101,14 @@
       </el-form>
     </div>
     <div class="tableTopHr" ></div>
-    <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange"
+    <el-table 
+    v-loading="loading" :data="warehouseList" 
+    @selection-change="handleSelectionChange"
      height="62vh" class="allTable"
+     :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="所属隧道" align="center" prop="tunnelName" min-width="100" show-overflow-tooltip/>
       <el-table-column label="备件名称" align="center" prop="partName" show-overflow-tooltip/>
@@ -337,6 +341,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     //翻页时不刷新序号
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
@@ -405,11 +413,14 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.ids=[];
       this.queryParams.searchValue = '';
+      this.queryParams.ids = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -475,6 +486,8 @@ export default {
       }).then(response => {
         this.$download.name(response.msg);
         this.exportLoading = false;
+        this.$refs.tableFile.clearSelection();
+        this.queryParams.ids = ''
       }).catch(() => {});
     },
   },

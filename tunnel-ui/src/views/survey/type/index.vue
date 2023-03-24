@@ -129,9 +129,14 @@
       </el-form-item>
     </el-form>-->
     <div class="tableTopHr" ></div>
-    <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange"
-              height="62vh" class="allTable">
-      <el-table-column type="selection" width="55" align="center" />
+    <el-table 
+        v-loading="loading" :data="typeList" 
+        @selection-change="handleSelectionChange"
+        height="62vh" class="allTable"
+        :row-key="getRowKey"
+        ref="tableFile"
+        >
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column label="类型编码" align="center" prop="vehicleTypeCode" />
       <el-table-column label="类型名称" align="center" prop="vehicleTypeName" />
       <el-table-column label="重点车辆" align="center" prop="iskeyVehicle">
@@ -261,6 +266,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -303,6 +312,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -379,6 +389,8 @@ export default {
       }).then(response => {
         this.$download.name(response.msg);
         this.exportLoading = false;
+        this.$refs.tableFile.clearSelection();
+        this.queryParams.ids = ''
       }).catch(() => {});
     }
   }

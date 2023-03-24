@@ -1465,7 +1465,40 @@
     padding: 7px 15px !important;
   }
 }
+  .userDialog{
+    .el-table::before{
+      height: 0;
+    }
+    .el-table td.el-table__cell{
+      border-bottom: 1px solid rgba(225, 228, 230, 0.16);
+    }
+    .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
+      border-bottom: 1px solid rgba(225, 228, 230, 0.16);
+    }
+    .el-pagination__total,.el-pagination__jump{
+      color: #01AAFD;
+    }
+    .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, 
+    .el-pagination.is-background .el-pager li{
+      background-color: #00152B;
+      border: solid 1px #01AAFD;
+      color: #01AAFD;
 
+    }
+    .el-pagination.is-background .btn-prev:disabled, .el-pagination.is-background .btn-next:disabled{
+      color:'#01AAFD !important'
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled).active{
+      color: #fff;
+      background: #01AAFD !important;
+    }
+    .el-pagination .el-input--medium .el-input__inner{
+      border: solid 1px #01AAFD !important;
+    }
+    .el-pagination .el-input__inner{
+      border: solid 1px #01AAFD !important;
+    }
+  }
   .workbench-dialog{
     .mesModeBg{
       // background: #012e51;
@@ -1577,6 +1610,9 @@
     }
     .el-pagination.is-background .el-pager li:not(.disabled).active{
       color: #01AAFD;
+    }
+    .el-pagination .el-input--medium .el-input__inner{
+      border: solid 1px #01AAFD !important;
     }
     /* 按钮*/
     .el-button {
@@ -1868,7 +1904,7 @@
         color: #fff !important;
       }
       tr:nth-of-type(even){
-        background: rgba(0,100,176,0.3) !important;
+        background: #004D87 !important;
         color: #fff !important;
       }
       

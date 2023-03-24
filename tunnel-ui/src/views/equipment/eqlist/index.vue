@@ -133,8 +133,10 @@
       @selection-change="handleSelectionChange"
       class="allTable"
       height="62vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column
         type="index"
         :index="indexMethod"
@@ -869,6 +871,8 @@ import {
 import { getToken } from "@/utils/auth";
 import { listAllSystem } from "@/api/equipment/externalsystem/system";
 import { listCategory } from "@/api/equipment/bigType/category";
+import {treeSelectYG1} from "@/api/system/dept";
+import {getTeams} from "@/api/electromechanicalPatrol/teamsManage/teams";
 
 export default {
   name: "Devices",
@@ -1129,6 +1133,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.eqId
+    },
     //翻页时不刷新序号
     indexMethod(index) {
       return (
@@ -1230,6 +1238,9 @@ export default {
     },
     /** 查询设备列表 */
     getList() {
+      console.log(this.ids,"ids")
+      console.log(this.queryParams.exportIds,"this.queryParams.exportIds")
+
       if (this.manageStatin == "1") {
         this.queryParams.eqTunnelId = this.$cache.local.get(
           "manageStationSelect"
@@ -1351,6 +1362,7 @@ export default {
         this.queryParams.remark = "1,2";
       }
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       /* this.queryParams.eqDirection = 0; */
       this.getList();
     },
@@ -1364,12 +1376,31 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
+      console.log(selection,"selection")
       this.ids = selection.map((item) => item.eqId);
       if (this.ids.length > 0) {
         this.queryParams.exportIds = this.ids.join();
       }
       this.single = selection.length !== 1;
-      this.multiple = !selection.length;
+      this.multiple = !selection.length; //非多个禁用
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      this.queryParams.exportIds = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$confirm("是否确认导出设备管理数据项?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(function () {
+          return exportDevices(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.exportIds = ''
+        });
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -1512,21 +1543,7 @@ export default {
         })
         .catch(function () {});
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm("是否确认导出设备管理数据项?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(function () {
-          return exportDevices(queryParams);
-        })
-        .then((response) => {
-          this.$download.name(response.msg);
-        });
-    },
+    
 
     /** 打开导入表弹窗 */
     handleImport() {

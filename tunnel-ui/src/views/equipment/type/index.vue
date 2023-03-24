@@ -91,8 +91,10 @@
       @selection-change="handleSelectionChange"
       height="62vh"
       class="allTable"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="设备类型名称" align="center" prop="typeName" />
       <el-table-column label="设备类型代号" align="center" prop="typeAbbr" />
@@ -257,7 +259,11 @@
         </el-form-item>
         <el-form-item label="所属模块" class="checkboxFormDialog" prop="bigType">
           <el-checkbox-group v-model="form.bigType">
-              <el-checkbox v-for="dict in bigTypeOptions" :label="dict.dictValue">{{dict.dictLabel}}</el-checkbox>
+            <el-row>
+              <el-col :span="8" v-for="(dict,index) in bigTypeOptions" :key="index">
+                <el-checkbox  :label="dict.dictValue">{{dict.dictLabel}}</el-checkbox>
+              </el-col>
+            </el-row>
           </el-checkbox-group>
         </el-form-item>
       </el-form>
@@ -399,6 +405,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.typeId
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
@@ -520,10 +530,12 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.ids = "";
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -546,13 +558,14 @@ export default {
       }).then(response => {
         this.$download.name(response.msg);
         this.exportLoading = false;
+        this.$refs.tableFile.clearSelection();
+        this.queryParams.ids = ''
       }).catch(() => {});
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
       this.open = true;
-
       this.title = "添加设备类型";
     },
     /** 修改按钮操作 */
@@ -566,8 +579,10 @@ export default {
       getType(typeId).then((response) => {
         console.log(response,'xiugai')
 		var resultData = response.data
-		if(resultData.bigType){
-			resultData.bigType = resultData.bigType.split(',')
+        if(resultData.bigType!=null){
+          resultData.bigType = resultData.bigType.split(',');
+        }else{
+          resultData.bigType = [];
 		}
 		this.form = resultData
         that.planRoadmapUrl(that.form.iFileList);

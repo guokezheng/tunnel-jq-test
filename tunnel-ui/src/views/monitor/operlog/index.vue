@@ -4,15 +4,16 @@
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
-          >
-          <el-button
+        <el-button
             size="small"
             :loading="exportLoading"
             @click="handleExport"
             v-hasPermi="['monitor:operlog:export']"
-          >导出</el-button>
+        >导出</el-button>
+        <el-button size="small" @click="resetQuery"
+          >刷新</el-button
+          >
+
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
@@ -249,7 +250,7 @@
       <el-form ref="form" :model="form" label-width="100px" size="mini">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="操作模块：">{{ form.title }} / {{ typeFormat(form) }}</el-form-item>
+            <el-form-item label="系统模块：">{{ form.title }} / {{ typeFormat(form) }}</el-form-item>
             <el-form-item
               label="登录信息："
             >{{ form.operName }} / {{ form.operIp }} / {{ form.operLocation }}</el-form-item>
@@ -269,12 +270,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="操作状态：">
-              <div v-if="form.status === 0">正常</div>
+              <div v-if="form.status === 0">成功</div>
               <div v-else-if="form.status === 1">失败</div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="操作时间：">{{ parseTime(form.operTime) }}</el-form-item>
+            <el-form-item label="操作日期：">{{ parseTime(form.operTime) }}</el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="异常信息：" v-if="form.status === 1">{{ form.errorMsg }}</el-form-item>

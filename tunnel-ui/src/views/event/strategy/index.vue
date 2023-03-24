@@ -155,10 +155,12 @@
           :data="strategyList"
           @selection-change="handleSelectionChange"
           :header-cell-style="{ 'text-align': 'center' }"
-          max-height="640"
-          :row-class-name="tableRowClassName"
+          height="62vh"
+          class="allTable"
+          :row-key="getRowKey"
+          ref="tableFile1"
         >
-          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column type="selection" width="55" align="center" reserve-selection/>
           <el-table-column
             type="index"
             width="70"
@@ -284,7 +286,7 @@
               >
                 <el-button
                   slot="append"
-                  icon="el-icon-s-fold"
+                  icon="icon-gym-Gsearch"
                   @click="boxShow1 = !boxShow1"
                 ></el-button>
               </el-input>
@@ -343,10 +345,12 @@
           :data="strategyList"
           @selection-change="handleSelectionChange"
           :header-cell-style="{ 'text-align': 'center' }"
-          max-height="640"
-          :row-class-name="tableRowClassName"
+          height="62vh"
+          class="allTable"
+          :row-key="getRowKey"
+          ref="tableFile2"
         >
-          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column type="selection" width="55" align="center" reserve-selection/>
           <el-table-column
             type="index"
             width="70"
@@ -763,6 +767,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -782,6 +790,8 @@ export default {
     handleClick(tab, event) {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
+      this.$refs.tableFile1.clearSelection();
+      this.$refs.tableFile2.clearSelection();
       this.getList();
     },
     closeDialogEvent() {
@@ -1176,6 +1186,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile1.clearSelection();
+      this.$refs.tableFile2.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -1299,6 +1311,9 @@ export default {
       }).then(response => {
         this.$download.name(response.msg);
         this.exportLoading = false;
+        this.$refs.tableFile1.clearSelection();
+        this.$refs.tableFile2.clearSelection();
+        this.queryParams.ids = ''
       }).catch(() => {});
     },
     /** 添加定时任务 */
@@ -1323,14 +1338,7 @@ export default {
     changeValue(value) {
       this.changeVal = value;
     },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
+    
   },
 };
 </script>

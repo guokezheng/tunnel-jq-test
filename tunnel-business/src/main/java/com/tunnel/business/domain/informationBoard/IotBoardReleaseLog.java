@@ -21,6 +21,10 @@ public class IotBoardReleaseLog extends BaseEntity
     /** id */
     private Long id;
 
+    /** 设备名称 */
+    @Excel(name = "发布设备")
+    private String deviceName;
+
     /** 尺寸 **/
     @Excel(name = "屏幕尺寸")
     private String devicePixel;
@@ -34,15 +38,13 @@ public class IotBoardReleaseLog extends BaseEntity
     private String direction;
 
     /** 设备编号 */
-//    @Excel(name = "发布设备")
+    @Excel(name = "发布设备")
     private String deviceId;
 
     @Excel(name = "设备桩号")
     private String pile;
 
-    /** 设备名称 */
-//    @Excel(name = "设备名称")
-    private String deviceName;
+
 
     /** 发布前的内容 */
 //    @Excel(name = "发布前的内容")

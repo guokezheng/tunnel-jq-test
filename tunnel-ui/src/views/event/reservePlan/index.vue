@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-22 15:45:27
+ * @LastEditTime: 2023-03-08 14:02:22
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -119,10 +119,11 @@
       :data="planList"
       @selection-change="handleSelectionChange"
       @row-click="handleRowClick"
-      max-height="640"
-      :row-class-name="tableRowClassName"
+      height="62vh"
+      class="allTable"
+      :row-key="getRowKey"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column
         type="index"
         width="70"
@@ -1129,6 +1130,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -1157,6 +1162,8 @@ export default {
       }).then(response => {
         this.$download.name(response.msg);
         this.exportLoading = false;
+        this.$refs.planTable.clearSelection();
+        this.queryParams.ids = ''
       }).catch(() => {});
     },
     addInfo(index) {
@@ -1481,12 +1488,12 @@ export default {
             items.state &&
             items.retrievalRule &&
             items.state
-          }
+            }
         })
         if(!result){
           return this.$modal.msgError("请填写完整");
+          }
         }
-      }
 
       this.planTypeIdList.forEach((item, index) => {
         item.processSort = index;
@@ -2026,6 +2033,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.planTable.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
@@ -2051,14 +2059,6 @@ export default {
     // 点击某一行，将其选中(相关策略弹窗)
     addMultipleTableRowClick(row) {
       this.$refs.addMultipleTable.toggleRowSelection(row);
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
     },
   },
   watch: {

@@ -427,10 +427,10 @@
                             :style="{
                               animation:
                                 'boardBox1 ' +
-                                getBoardStyle(
+                                Number(getBoardStyle(
                                   item.associated_device_id,
                                   'content'
-                                ).length +
+                                ).length)*1.3 +
                                 's' +
                                 ' linear infinite',
                             }"
@@ -493,10 +493,10 @@
                             :style="{
                               animation:
                                 'boardBox2 ' +
-                                getBoardStyle(
+                                Number(getBoardStyle(
                                   item.associated_device_id,
                                   'content'
-                                ).length +
+                                ).length)*1.3 +
                                 's' +
                                 ' linear infinite',
                             }"
@@ -625,21 +625,21 @@
         >
           <div class="indicatorLight" @click="isDrawerA()">
             <i
-              :class="[drawerA ? 'el-icon-caret-left' : 'el-icon-caret-right']"
+              :class="[drawerA ? 'el-icon-caret-right' : 'el-icon-caret-left']"
             ></i
             >一键控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
             <i
-              :class="[drawerB ? 'el-icon-caret-left' : 'el-icon-caret-right']"
+              :class="[drawerB ? 'el-icon-caret-right' : 'el-icon-caret-left']"
             ></i
             >分时控制模块
           </div>
           <div class="triggerControl" @click="isDrawerC()">
             <i
               :class="[
-                drawerCVisible ? 'el-icon-caret-left' : 'el-icon-caret-right',
+                drawerCVisible ? 'el-icon-caret-right' : 'el-icon-caret-left',
               ]"
             ></i
             >触发控制模块
@@ -897,7 +897,7 @@
             <div class="Time">
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
-                <el-time-picker
+                <el-time-picker 
                   v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
@@ -912,6 +912,7 @@
                   size="mini"
                   :clearable="false"
                   value-format="HH:mm:ss"
+                  @change="changeEndTime(item.arr[0],item.arr[1],index)"
                 >
                 </el-time-picker>
               </div>
@@ -921,6 +922,7 @@
                 class="handleLightClass"
                 @click="timingStrategy(item)"
                 v-hasPermi="['workbench:dialog:save']"
+                :disabled="timingStrategyDisabled"
                 >确定
               </el-button>
             </div>
@@ -1088,7 +1090,7 @@
                             display: flex;
                             justify-content: right;
                             align-items: center;
-                            transform: scale(0.7) translateY(8px);
+                            transform: scale(0.7);
                           "
                         >
                           <img :src="item.eventType.iconUrl" style="width:100%"/>
@@ -1495,7 +1497,7 @@
           <div class="grid-content bg-purple" ref="main">
             <el-input
               placeholder="请输入登录地址、用户名称，回车搜索"
-              v-model="operationParam.ipaddr"
+              v-model="operationParam_xt.ipaddr"
               @keyup.enter.native="handleQueryOperationParam"
               style="padding-right: 5px"
               size="small"
@@ -1513,15 +1515,15 @@
       </el-row>
       <div class="syxt_searchBox" v-show="syxt_boxShow" ref="cc">
         <el-form
-          ref="operationParam"
+          ref="operationParam_xt"
           :inline="true"
-          :model="operationParam"
+          :model="operationParam_xt"
           label-width="68px"
           v-show="operationActive == 'xitong'"
         >
           <el-form-item label="登录状态" prop="status">
             <el-select
-              v-model="operationParam.status"
+              v-model="operationParam_xt.status"
               clearable
               placeholder="请选择登录状态"
               size="small"
@@ -1545,6 +1547,7 @@
               range-separator="-"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              :picker-options="setoptions"
               :default-time="['00:00:00', '23:59:59']"
               :class="this.sideTheme != 'theme-dark' ? 'themeDarkPicker' : ''"
             ></el-date-picker>
@@ -1693,6 +1696,7 @@
               range-separator="-"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              :picker-options="setoptions"
               :default-time="['00:00:00', '23:59:59']"
             ></el-date-picker>
           </el-form-item>
@@ -1785,11 +1789,7 @@
         max-height="430"
       >
         <el-table-column type="selection" align="center" />
-        <el-table-column label="序号" width="55" align="center">
-          <template slot-scope="scope">
-            {{ scope.$index + 1 }}
-          </template>
-        </el-table-column>
+        <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
         <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
         <el-table-column
           label="用户名称"
@@ -1854,11 +1854,7 @@
         v-show="operationActive == 'caozuo'"
       >
         <el-table-column type="selection" align="center" />
-        <el-table-column label="序号" width="55" align="center">
-          <template slot-scope="scope">
-            {{ scope.$index + 1 }}
-          </template>
-        </el-table-column>
+        <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
         <el-table-column
           label="隧道名称"
           align="center"
@@ -1903,8 +1899,8 @@
       <pagination
         v-show="total1 > 0 && operationActive == 'xitong'"
         :total="total1"
-        :page.sync="operationParam.pageNum"
-        :limit.sync="operationParam.pageSize"
+        :page.sync="operationParam_xt.pageNum"
+        :limit.sync="operationParam_xt.pageSize"
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
@@ -3834,6 +3830,7 @@ export default {
 
   data() {
     return {
+      timingStrategyDisabled:true,
       videoNoPic1:false,
       videoNoPic2:false,
       videoTitle1:'',
@@ -3897,6 +3894,14 @@ export default {
         eqTypeId: "",
         tunnelId: "",
         controlType: "",
+        operIp:"",
+        pageNum: 1,
+        pageSize: 10,
+      },
+
+      operationParam_xt: {
+        ipaddr: "",
+        status: "",
         pageNum: 1,
         pageSize: 10,
       },
@@ -3990,6 +3995,14 @@ export default {
       tunnelData: [],
       //所属隧道
       eqTunnelData: {},
+
+      setoptions: {
+        // 时间不能大于当前时间
+        disabledDate: time => {
+          return time.getTime() > Date.now()
+        },
+        selectableRange: '00:00:00 - 23:59:59'
+      },
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -4976,6 +4989,32 @@ export default {
   },
 
   methods: {
+    changeEndTime(start,end,index){
+      console.log(start,end,"start,end")
+      let date = new Date();
+      let a = start.split(":");
+      let b = end.split(":");
+      let bool = date.setHours(a[0],a[1]) > date.setHours(b[0],b[1])
+      if(bool){
+        this.$modal.msgWarning("结束时间必须大于开始时间");
+        console.log(this.timStrategyList,"this.timStrategyList")
+        for(let i=0;i< this.timStrategyList.length;i++){
+          this.timStrategyList[index].arr[1] = ''
+          this.timingStrategyDisabled = true
+
+        }
+      }else{
+        this.timingStrategyDisabled = false
+      } 
+    },
+ //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.operationParam_xt.pageNum-1)*this.operationParam_xt.pageSize+1
+    },
+    //翻页时不刷新序号
+    indexMethod2(index){
+      return index+(this.operationParam.pageNum-1)*this.operationParam.pageSize+1
+    },
     videoRadioChange() {
       if (this.footChangeRadio == "视频" && this.tunnelId) {
         this.getFooterVideo();
@@ -5310,6 +5349,7 @@ export default {
     // 操作日志 搜索
     handleQueryOperationParam() {
       this.operationParam.pageNum = 1;
+      this.operationParam_xt.pageNum = 1;
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
@@ -5321,7 +5361,7 @@ export default {
       this.loading = true;
       // if ( inx == 'xitong' ) {
       console.log(this.operationParam, "this.queryParams");
-      list(this.addDateRange(this.operationParam, this.dateRange)).then(
+      list(this.addDateRange(this.operationParam_xt, this.dateRange)).then(
         (response) => {
           console.log(response, "系统日志");
           this.operationList1 = response.rows;
@@ -5684,6 +5724,7 @@ export default {
       this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
+      this.timingStrategyDisabled = true
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
@@ -5797,6 +5838,8 @@ export default {
       this.operationParam.eqTypeId = null;
       this.operationParam.tunnelId = null;
       this.operationParam.controlType = null;
+      this.operationParam_xt.status = null;
+      this.operationParam_xt.operIp = "";
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },

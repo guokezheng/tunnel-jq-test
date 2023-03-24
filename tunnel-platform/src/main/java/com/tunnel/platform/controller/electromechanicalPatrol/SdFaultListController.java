@@ -1,7 +1,6 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
@@ -29,9 +28,12 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdEquipmentTypeService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import com.tunnel.business.utils.work.CustomXWPFDocument;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -236,15 +238,16 @@ public class SdFaultListController extends BaseController {
                 map.put("remark", i.getAndIncrement());
                 convertList.add(map);
             }
-            ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/faultReport.docx");
-            String resource = classPathResource.getUrl().getPath();
+           /* ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/faultReport.docx");
+            String resource = classPathResource.getUrl().getPath();*/
             //渲染表格
             HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
             //绑定数据
             Configure config = Configure.newBuilder().bind("detailList", policy).build();
             String finalFaultFxtime = faultFxtime;
             String finalFaultTbtime = faultTbtime;
-            XWPFTemplate template = XWPFTemplate.compile(resource, config).render(
+            XWPFDocument document = new CustomXWPFDocument(new ClassPathResource("exporttemplate/faultReport.docx").getInputStream());
+            XWPFTemplate template = XWPFTemplate.compile(document, config).render(
                 new HashMap<String, Object>() {{
                     put("faultBlock", convertList);
                     put("currentTime", DateUtils.getTime());

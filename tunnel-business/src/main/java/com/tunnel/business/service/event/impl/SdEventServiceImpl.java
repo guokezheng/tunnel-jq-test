@@ -22,7 +22,6 @@ import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
-import com.tunnel.business.utils.util.CronUtil;
 import com.tunnel.business.utils.util.UUIDUtil;
 import com.tunnel.business.utils.work.CustomXWPFDocument;
 import com.tunnel.business.utils.work.WorderToNewWordUtils;
@@ -137,7 +136,6 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public List<SdEvent> selectSdEventList(SdEvent sdEvent) {
-        String cron = CronUtil.getCron(DateUtils.getNowDate(), CronUtil.DATEFORMAT_EVERYDAY);
         if (SecurityUtils.getDeptId() != null && !"".equals(SecurityUtils.getDeptId())) {
             String deptId = SecurityUtils.getDeptId();
             if (deptId == null) {

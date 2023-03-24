@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-21 08:56:55
+ * @LastEditTime: 2023-03-24 10:16:39
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -31,6 +31,8 @@
       :visible.sync="drawer"
       direction="ltr"
       :before-close="drawerHandleClose"
+      append-to-body
+      :modal="false"
       style="left:26%;">
       <el-col :span="24">
         <el-timeline :reverse="reverse">

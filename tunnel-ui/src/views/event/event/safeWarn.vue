@@ -224,8 +224,6 @@
                 <img :src="item.imgUrl" style="width:100%;height:100%;"
                      v-if="index != 0" @click="clickImg(item.imgUrl)" />
               </swiper-slide>
-              <div class="swiper-button-prev" slot="button-prev"></div>
-              <div class="swiper-button-next" slot="button-next"></div>
               <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
             </swiper>
             <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs"
@@ -237,6 +235,8 @@
                 </video>
                 <img :src="item.imgUrl" style="width:100%;height:100%;" v-if="index != 0">
               </swiper-slide>
+              <div class="swiper-button-prev" slot="button-prev"></div>
+              <div class="swiper-button-next" slot="button-next"></div>
             </swiper>
           </div>
           <div v-if="eventFormDetail.iconUrlList.length < 1" style="width: 100%; height: 87%">
@@ -1057,15 +1057,15 @@ export default {
         loop: false,
         loopedSlides: 5, // looped slides should be the same
         spaceBetween: 10,
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev'
-        }
       },
       swiperOptionThumbs: {
         loop: false,
         loopedSlides: 5, // looped slides should be the same
         spaceBetween: 10,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        },
         centeredSlides: true,
         slidesPerView: 'auto',
         touchRatio: 0.2,

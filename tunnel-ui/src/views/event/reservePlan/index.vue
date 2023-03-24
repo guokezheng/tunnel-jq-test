@@ -72,7 +72,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预案类型" prop="category" >
+        <!-- <el-form-item label="预案类型" prop="category" >
           <el-select
             v-model="queryParams.category"
             placeholder="请选择预案类型"
@@ -86,7 +86,7 @@
               :value="item.dictValue"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="事件类型" prop="planTypeId" >
           <el-select
             v-model="queryParams.planTypeId"

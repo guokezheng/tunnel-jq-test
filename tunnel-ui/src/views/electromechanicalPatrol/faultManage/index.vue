@@ -1058,6 +1058,8 @@ export default {
     handleUpdate(row) {
       let that = this;
       this.isWritable = true;
+      this.removeStata = false;
+      this.disstate = false;
       this.activeName = "2";
       this.getTunnel();
       that.reset();

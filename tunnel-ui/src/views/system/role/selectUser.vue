@@ -10,7 +10,7 @@
 
     <el-row
       :gutter="20"
-      style="margin: 10px 0 6px"
+      style="margin: 10px 5px 6px"
     >
       <el-col :span="10" :offset="14">
         <div class="grid-content bg-purple" ref="main">
@@ -19,7 +19,9 @@
             v-model="queryParams.userName"
             @keyup.enter.native="handleQuery"
             size="small"
-            style="padding-right: 5px"
+            style="
+            border-right: #00c8ff solid 1px !important;
+              border-radius: 3px;"
           >
           </el-input>
         </div>

@@ -1037,6 +1037,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.boxShow = false;
       this.$refs.tableRef.clearSelection();
       this.getList();
     },

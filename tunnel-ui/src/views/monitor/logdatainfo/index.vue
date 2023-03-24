@@ -389,7 +389,7 @@
         prop="createTime"
         width="180"
         sortable="custom"
-        :sort-orders="['ascending']"
+        :sort-orders="['descending', 'ascending']"
       >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>

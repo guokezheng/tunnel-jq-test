@@ -4,32 +4,31 @@
     <el-row :gutter="20" class="topFormRow">
       <el-col :span="4">
         <el-button
-            size="small"
-            @click="handleAdd"
-            v-hasPermi="['system:type:add']"
-            >新增</el-button
-          >
-<!--          <el-button-->
-<!--            type="primary"-->
-<!--            plain-->
-<!--            size="mini"-->
-<!--            :disabled="single"-->
-<!--            @click="handleUpdate"-->
-<!--            v-hasPermi="['system:type:edit']"-->
-<!--            >修改</el-button-->
-<!--          >-->
-          <el-button
-            size="small"
-            :disabled="multiple"
-            @click="handleDelete"
-            v-hasPermi="['system:type:remove']"
-            >删除</el-button>
-            <el-button
-              size="small"
-              :loading="exportLoading"
-              @click="handleExport"
-            >导出</el-button>
-          <el-button size="small" @click="resetQuery" >刷新</el-button>
+          size="small"
+          @click="handleAdd"
+          v-hasPermi="['system:type:add']"
+          >新增</el-button
+        >
+        <!--          <el-button-->
+        <!--            type="primary"-->
+        <!--            plain-->
+        <!--            size="mini"-->
+        <!--            :disabled="single"-->
+        <!--            @click="handleUpdate"-->
+        <!--            v-hasPermi="['system:type:edit']"-->
+        <!--            >修改</el-button-->
+        <!--          >-->
+        <el-button
+          size="small"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:type:remove']"
+          >删除</el-button
+        >
+        <el-button size="small" :loading="exportLoading" @click="handleExport"
+          >导出</el-button
+        >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
@@ -56,35 +55,31 @@
         :model="queryParams"
         label-width="100px"
       >
-      <el-form-item label="设备类型名称" prop="typeName">
-       <el-input
-         v-model="queryParams.typeName"
-         placeholder="请输入设备类型名称"
-         clearable
-         size="small"
-         @keyup.enter.native="handleQuery"
-       />
-      </el-form-item>
-      <el-form-item label="设备类型代号" prop="typeAbbr">
-        <el-input
-          v-model="queryParams.typeAbbr"
-          placeholder="请输入设备类型代号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+        <el-form-item label="设备类型名称" prop="typeName">
+          <el-input
+            v-model="queryParams.typeName"
+            placeholder="请输入设备类型名称"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item label="设备类型代号" prop="typeAbbr">
+          <el-input
+            v-model="queryParams.typeAbbr"
+            placeholder="请输入设备类型代号"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
         <el-form-item class="bottomBox">
-          <el-button size="small" @click="handleQuery"
-          >搜索</el-button
-          >
-          <el-button size="small" @click="resetQuery"
-          >重置</el-button
-          >
+          <el-button size="small" @click="handleQuery">搜索</el-button>
+          <el-button size="small" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="typeList"
@@ -94,15 +89,26 @@
       :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
       <el-table-column label="设备类型名称" align="center" prop="typeName" />
       <el-table-column label="设备类型代号" align="center" prop="typeAbbr" />
-      <el-table-column label="是否可控" align="center" prop="isControl" >
-      <template slot-scope="scope">
-          <span>{{ scope.row.isControl==1?'是':'否' }} </span>
+      <el-table-column label="是否可控" align="center" prop="isControl">
+        <template slot-scope="scope">
+          <span>{{ scope.row.isControl == 1 ? "是" : "否" }} </span>
         </template>
-       </el-table-column>
+      </el-table-column>
       <el-table-column label="图标宽度(px)" align="center" prop="iconWidth">
         <template slot-scope="scope">
           <span>{{ scope.row.iconWidth }}</span>
@@ -120,14 +126,14 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-<!--          <el-button-->
-<!--            v-show="scope.row.typeId==31"-->
-<!--            size="mini"-->
-<!--            class="tableBlueButtton"-->
-<!--            @click="configData(scope.row)"-->
-<!--            v-hasPermi="['system:type:edit']"-->
-<!--            >配置参数</el-button-->
-<!--          >-->
+          <!--          <el-button-->
+          <!--            v-show="scope.row.typeId==31"-->
+          <!--            size="mini"-->
+          <!--            class="tableBlueButtton"-->
+          <!--            @click="configData(scope.row)"-->
+          <!--            v-hasPermi="['system:type:edit']"-->
+          <!--            >配置参数</el-button-->
+          <!--          >-->
           <el-button
             size="mini"
             class="tableBlueButtton"
@@ -155,7 +161,13 @@
     />
 
     <!-- 添加或修改设备类型对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body class="eqTypeDialog">
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      class="eqTypeDialog"
+    >
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="设备类型名称" prop="typeName">
           <el-input v-model="form.typeName" placeholder="请输入设备类型名称" />
@@ -165,10 +177,19 @@
           <!-- <div style="color: #9c9c9c;font-size: 12px;line-height: 20px;">* 设备类型代号只能输入数字、字母、下划线</div> -->
         </el-form-item>
         <el-form-item label="是否可控" prop="isControl">
-                  <el-select v-model="form.isControl" placeholder="请选择是否可控" style="width:100%">
-                    <el-option v-for="dict in isControlOptions" :key="dict.dictSort" :label="dict.dictLabel" :value="dict.dictValue"></el-option>
-                  </el-select>
-                </el-form-item>
+          <el-select
+            v-model="form.isControl"
+            placeholder="请选择是否可控"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="dict in isControlOptions"
+              :key="dict.dictSort"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="图标宽度" prop="iconWidth">
           <el-input
             v-model="form.iconWidth"
@@ -187,7 +208,7 @@
           />
           px
         </el-form-item>
-        <el-form-item label="默认图标" >
+        <el-form-item label="默认图标" prop="upload">
           <el-upload
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -199,12 +220,15 @@
             :on-exceed="handleExceed"
             :on-change="handleChange"
             :limit="2"
-            :class="fileList.length >=2 ? 'showUpload':''"
+            :class="fileList.length >= 2 ? 'showUpload' : ''"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible"  class="modifyEqTypeDialog"
-          :append-to-body="true" style="width:600px !important;margin: 0 auto;"
+          <el-dialog
+            :visible.sync="dialogVisible"
+            class="modifyEqTypeDialog"
+            :append-to-body="true"
+            style="width: 600px !important; margin: 0 auto"
           >
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
@@ -257,11 +281,21 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="所属模块" class="checkboxFormDialog" prop="bigType">
+        <el-form-item
+          label="所属模块"
+          class="checkboxFormDialog"
+          prop="bigType"
+        >
           <el-checkbox-group v-model="form.bigType">
             <el-row>
-              <el-col :span="8" v-for="(dict,index) in bigTypeOptions" :key="index">
-                <el-checkbox  :label="dict.dictValue">{{dict.dictLabel}}</el-checkbox>
+              <el-col
+                :span="8"
+                v-for="(dict, index) in bigTypeOptions"
+                :key="index"
+              >
+                <el-checkbox :label="dict.dictValue">{{
+                  dict.dictLabel
+                }}</el-checkbox>
               </el-col>
             </el-row>
           </el-checkbox-group>
@@ -284,13 +318,22 @@ import {
   updateType,
   groupByBigType,
   eqTypeList,
-  loadPicture, exportDeviceIcon,
+  loadPicture,
+  exportDeviceIcon,
 } from "@/api/equipment/type/api.js";
-import {listCategory} from "@/api/equipment/bigType/category";
-
+import { listCategory } from "@/api/equipment/bigType/category";
 export default {
   name: "Type",
   data() {
+    const validateImage = (rule, value, callback) => {
+      this.fileData.forEach((value, key) => {
+        if (key != "file") {
+          callback(new Error("请先上传文件"));
+        } else {
+          callback();
+        }
+      });
+    };
     return {
       boxShow: false,
       // 导出遮罩层
@@ -298,9 +341,9 @@ export default {
       eqSystemData: {},
       // 设备大类
       eqCategoryData: {},
-      bigType:'',
-      eqCategory:'',
-      eqSystem:'',
+      bigType: "",
+      eqCategory: "",
+      eqSystem: "",
       // 遮罩层
       loading: true,
       // 选中数组
@@ -311,7 +354,7 @@ export default {
       multiple: true,
       // 显示搜索条件
       showSearch: true,
-	  bigTypeOptions:[],
+      bigTypeOptions: [],
       // 总条数
       total: 0,
       // 设备类型表格数据
@@ -320,11 +363,11 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-	  form:{
-		  bigType:[],
-      eqCategory: "",
-      eqSystem:""
-	  },
+      form: {
+        bigType: [],
+        eqCategory: "",
+        eqSystem: "",
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -333,41 +376,56 @@ export default {
       },
       // 表单参数
       form1: {
-		  bigType:[]
-	  },
+        bigType: [],
+      },
+
       // 表单校验
       rules: {
-          typeName: [
-              { required: true, message: "设备类型不能为空", trigger: "blur" }
-          ],
-        typeAbbr:[
+        upload: [
+          {
+            trigger: "change",
+            required: true,
+            validator: validateImage,
+          },
+        ],
+        typeName: [
+          { required: true, message: "设备类型不能为空", trigger: "blur" },
+        ],
+        typeAbbr: [
           { required: true, message: "设备代号不能为空", trigger: "blur" },
           {
-            pattern:/^\w+$/,
+            pattern: /^\w+$/,
             message: "只能输入数字、字母、下划线",
           },
         ],
-          iconWidth: [
-              { required: true, message: "图标宽度不能为空", trigger: "blur" },
-              { pattern: /^[1-9]\d*$/, message: '请输入0以上正整数', trigger: 'blur' },
-
-          ],
-          iconHeight: [
-              { required: true, message: "图标高度不能为空", trigger: "blur" },
-              { pattern: /^[1-9]\d*$/, message: '请输入0以上正整数', trigger: 'blur' },
-          ],
-          bigType: [
-              { required: true, message: "请选择所属模块", trigger: 'change' }
-          ],
-          eqSystem: [
-              { required: true, message: "请选择所属系统", trigger: 'change' }
-          ],
-          eqCategory: [
-              { required: true, message: "请选择所属大类", trigger: 'change' }
-          ],
-          isControl: [
-              { required: true, message: "是否可控不能为空", trigger: 'change' }
-          ],
+        iconWidth: [
+          { required: true, message: "图标宽度不能为空", trigger: "blur" },
+          {
+            pattern: /^[1-9]\d*$/,
+            message: "请输入0以上正整数",
+            trigger: "blur",
+          },
+        ],
+        iconHeight: [
+          { required: true, message: "图标高度不能为空", trigger: "blur" },
+          {
+            pattern: /^[1-9]\d*$/,
+            message: "请输入0以上正整数",
+            trigger: "blur",
+          },
+        ],
+        bigType: [
+          { required: true, message: "请选择所属模块", trigger: "change" },
+        ],
+        eqSystem: [
+          { required: true, message: "请选择所属系统", trigger: "change" },
+        ],
+        eqCategory: [
+          { required: true, message: "请选择所属大类", trigger: "change" },
+        ],
+        isControl: [
+          { required: true, message: "是否可控不能为空", trigger: "change" },
+        ],
       },
       //是否区分方向
       direction: "",
@@ -378,65 +436,68 @@ export default {
       //需要移除的文件ids
       removeIds: [],
       // fIds:[]//需要移除的关联图标iconFileId
-      typeList:[],//所属分类
-      isControlOptions:[]//是否可控字典值
+      typeList: [], //所属分类
+      isControlOptions: [], //是否可控字典值
     };
   },
   created() {
-    this.getDicts("eq_system").then(response => {
+    this.getDicts("eq_system").then((response) => {
       this.eqSystemData = response.data;
     });
     /*this.getDicts("eq_category").then(response => {
       this.eqCategoryData = response.data;
-    })*/;
-	  this.getDicts("sd_sys_name").then(response => {
-	    this.bigTypeOptions = response.data;
-	  });
+    })*/ this.getDicts("sd_sys_name").then((response) => {
+      console.log(response.data, "所属系统");
+      this.bigTypeOptions = response.data;
+    });
     this.getEqBigType();
     this.getList();
     this.getGroupByBigType();
     this.fileData = new FormData(); // new formData对象
-    this.getDicts("sys_type_control").then(response => {
-        this.isControlOptions = response.data;
-        console.log(this.isControlOptions,'this.isControlOptions')
-      });
+    this.getDicts("sys_type_control").then((response) => {
+      this.isControlOptions = response.data;
+      console.log(this.isControlOptions, "this.isControlOptions");
+    });
   },
-  mounted(){
+  mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+   
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.typeId
+      return row.typeId;
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.boxShow == true){
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
+        if (self.boxShow == true) {
           self.boxShow = false;
         }
       }
     },
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     getEqBigType() {
-      listCategory().then(response => {
-        console.log(response,"response")
+      listCategory().then((response) => {
         this.eqCategoryData = response.rows;
       });
     },
-    configData(){
+    configData() {
       this.$router.push({
-        path:'/inductionLamp'
-      })
+        path: "/inductionLamp",
+      });
     },
-    getGroupByBigType(){
+    getGroupByBigType() {
       groupByBigType().then((response) => {
-        // console.log(response,'responseresponse')
         this.typeList = response.rows;
-        console.log(this.typeList)
       });
     },
     //删除文件
@@ -458,6 +519,7 @@ export default {
     //监控上传文件列表
     handleChange(file, fileList) {
       this.fileList = fileList;
+      this.$refs.form.clearValidate('upload');
     },
     // 选取文件超过数量提示
     handleExceed(files, fileList) {
@@ -470,7 +532,7 @@ export default {
       for (let i = 0; i < iFileList.length; i++) {
         let iconName = iFileList[i].stateIconName;
         // let iconUrl = await that.picture(iFileList[i].url);
-        let iconUrl = iFileList[i].url
+        let iconUrl = iFileList[i].url;
 
         that.fileList.push({
           name: iconName,
@@ -501,7 +563,6 @@ export default {
       this.loading = true;
       this.boxShow = false;
       listType(this.queryParams).then((response) => {
-        console.log(response,'getListgetListgetListgetListgetList')
         this.typeList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -521,7 +582,7 @@ export default {
         createTime: null,
         updateBy: null,
         updateTime: null,
-		bigType:[]
+        bigType: [],
       };
       this.fileList = [];
       this.removeIds = [];
@@ -542,8 +603,6 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.typeId);
-      console.log(this.ids)
-      // this.fIds = selection.map(item => item.iconFileId)
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
@@ -552,15 +611,19 @@ export default {
     handleExport() {
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出设备图标数据项？').then(() => {
-        this.exportLoading = true;
-        return exportDeviceIcon(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-        this.$refs.tableFile.clearSelection();
-        this.queryParams.ids = ''
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否确认导出设备图标数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportDeviceIcon(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = "";
+        })
+        .catch(() => {});
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -572,19 +635,19 @@ export default {
     handleUpdate(row) {
       var that = this;
       that.reset();
-	  this.form = {
-		  bigType:[]
-	  }
+      this.form = {
+        bigType: [],
+      };
       const typeId = row.typeId || that.ids;
       getType(typeId).then((response) => {
-        console.log(response,'xiugai')
-		var resultData = response.data
-        if(resultData.bigType!=null){
-          resultData.bigType = resultData.bigType.split(',');
-        }else{
+        console.log(response, "xiugai");
+        var resultData = response.data;
+        if (resultData.bigType != null) {
+          resultData.bigType = resultData.bigType.split(",");
+        } else {
           resultData.bigType = [];
-		}
-		this.form = resultData
+        }
+        this.form = resultData;
         that.planRoadmapUrl(that.form.iFileList);
         this.open = true;
         this.title = "修改设备类型";
@@ -595,18 +658,15 @@ export default {
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       this.fileData.append("typeName", this.form.typeName); //类型名称
-      this.fileData.append("typeAbbr",this.form.typeAbbr);
+      this.fileData.append("typeAbbr", this.form.typeAbbr);
       this.fileData.append("iconWidth", this.form.iconWidth);
       this.fileData.append("iconHeight", this.form.iconHeight);
       this.fileData.append("isControl", this.form.isControl);
-	    this.fileData.append("bigType", this.form.bigType.join(','));
-	    this.fileData.append("eqSystem", this.form.eqSystem);
-	    this.fileData.append("eqCategory", this.form.eqCategory);
+      this.fileData.append("bigType", this.form.bigType.join(","));
+      this.fileData.append("eqSystem", this.form.eqSystem);
+      this.fileData.append("eqCategory", this.form.eqCategory);
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          // if(this.fileList.length <= 0) {
-          //   return this.$modal.msgWarning('请选择要上传的图标')
-          // }
           if (this.form.typeId != null) {
             this.fileData.append("typeId", this.form.typeId); //类型id
             this.fileData.append("iconFileId", this.form.iconFileId); //关联文件id
@@ -648,35 +708,34 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-  ::v-deep .checkboxFormDialog .el-checkbox{
-      width: 80px;
-    }
+::v-deep .checkboxFormDialog .el-checkbox {
+  width: 80px;
+}
 
-  ::v-deep .showUpload {
-    .el-upload {
-      display: none;
-    }
+::v-deep .showUpload {
+  .el-upload {
+    display: none;
   }
-  .modifyEqTypeDialog .el-dialog__headerbtn{
-    top: 10px !important;
-  }
-  ::v-deep .el-dialog__headerbtn{
-    top:14px !important;
-  }
-  ::v-deep .el-dialog__header{
-    padding: 20px;
-  }
-
+}
+.modifyEqTypeDialog .el-dialog__headerbtn {
+  top: 10px !important;
+}
+::v-deep .el-dialog__headerbtn {
+  top: 14px !important;
+}
+::v-deep .el-dialog__header {
+  padding: 20px;
+}
 </style>
 <style lang="scss">
- .eqTypeDialog{
-    .el-dialog__body{
-      max-height: 700px;
-      overflow: auto;
-    }
-    ::-webkit-scrollbar{
-      width:0px;
-    }
+.eqTypeDialog {
+  .el-dialog__body {
+    max-height: 700px;
+    overflow: auto;
   }
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+}
 </style>
 

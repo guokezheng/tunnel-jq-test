@@ -359,4 +359,14 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
         return row;
     }
 
+    @Override
+    public int instreEventFlowData(Long eventId, String content, String flowHandler) {
+        SdEventFlow eventFlow = new SdEventFlow();
+        eventFlow.setEventId(eventId.toString());
+        eventFlow.setFlowTime(DateUtils.getNowDate());
+        eventFlow.setFlowDescription(content);
+        eventFlow.setFlowHandler(flowHandler);
+        return sdEventFlowMapper.insertSdEventFlow(eventFlow);
+    }
+
 }

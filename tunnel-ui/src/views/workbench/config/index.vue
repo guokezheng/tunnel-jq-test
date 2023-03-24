@@ -3931,7 +3931,6 @@ export default {
       timStrategyList: [], //定时控制
       BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
-      tunnelLane: "", //当前隧道有几条车道
       eqInfo: {},
       brandList: [],
       directionList: [{}, {}], //设备方向字典
@@ -4381,23 +4380,7 @@ export default {
       ],
       // 一键车道指示器 车道下拉框
       chezhiLaneList: [],
-      chezhiLaneList1: [
-        {
-          laneId: 1,
-          laneName: "一车道",
-        },
-      ],
-      chezhiLaneList2: [
-        {
-          laneId: 1,
-          laneName: "一车道",
-        },
-        {
-          laneId: 2,
-          laneName: "二车道",
-        },
-      ],
-      chezhiLaneList3: [
+      chezhiLaneOptionList: [
         {
           laneId: 1,
           laneName: "一车道",
@@ -4410,6 +4393,29 @@ export default {
           laneId: 3,
           laneName: "三车道",
         },
+        {
+          laneId: 4,
+          laneName: "四车道",
+        },{
+          laneId: 5,
+          laneName: "五车道",
+        },
+        {
+          laneId: 6,
+          laneName: "六车道",
+        },
+        {
+          laneId: 7,
+          laneName: "七车道",
+        },,{
+          laneId: 8,
+          laneName: "八车道",
+        },
+        {
+          laneId: 9,
+          laneName: "九车道",
+        },
+
       ],
       // 一键车指状态下拉框
       chezhiStateList: [],
@@ -5482,15 +5488,9 @@ export default {
       }
     },
     // 抽屉车指批量控制 车道下拉框
-    getTunnelLane() {
-      this.chezhiLaneList = [];
-      if (this.tunnelLane == 1) {
-        this.chezhiLaneList = this.chezhiLaneList1;
-      } else if (this.tunnelLane == 2) {
-        this.chezhiLaneList = this.chezhiLaneList2;
-      } else if (this.tunnelLane == 3) {
-        this.chezhiLaneList = this.chezhiLaneList3;
-      }
+    getTunnelLane(tunnelLane) {
+      let laneArray = JSON.parse(JSON.stringify(this.chezhiLaneOptionList));
+      this.chezhiLaneList = laneArray.slice(0,tunnelLane);
     },
     // 抽屉车指批量控制 状态下拉框
     getTunnelState() {
@@ -7209,7 +7209,6 @@ export default {
         }
         this.tunnelNameEarlyWarn = response.rows[0].tunnelName;
         this.tunnelId = response.rows[0].tunnelId;
-        this.tunnelLane = response.rows[0].lane;
         // this.specialEcharts(this.tunnelId)
         this.vehicleEcharts();
         this.specialVehicleEcharts();
@@ -7258,7 +7257,7 @@ export default {
             }
           }
         }
-        this.getTunnelLane();
+        this.getTunnelLane(response.rows[0].lane);
         this.$nextTick(() => {
           this.getEnergyConsumption(this.currentTunnel.id);
         });
@@ -7818,6 +7817,7 @@ export default {
       //   this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-HSD");
       //   return;
       // }
+      this.getTunnelLane(item.lane);
       this.buttonIndex = index;
       this.tunnelNameEarlyWarn = item.tunnelName;
       this.tunnelId = item.tunnelId;

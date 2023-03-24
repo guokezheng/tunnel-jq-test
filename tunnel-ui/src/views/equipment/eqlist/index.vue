@@ -17,17 +17,18 @@
           v-hasPermi="['system:devices:remove']"
           >删除
         </el-button>
-        <el-button
-          size="small"
-          @click="handleExport"
-          v-hasPermi="['system:devices:export']"
-          >导出
-        </el-button>
+        
         <el-button
           size="small"
           @click="handleImport"
           v-hasPermi="['system:devices:import']"
           >导入
+        </el-button>
+        <el-button
+          size="small"
+          @click="handleExport"
+          v-hasPermi="['system:devices:export']"
+          >导出
         </el-button>
         <el-button size="small" @click="resetQuery"
           >刷新</el-button

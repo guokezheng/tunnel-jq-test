@@ -617,12 +617,6 @@ export default {
       this.$refs.queryForm.resetFields();
       this.queryParams.vType = [];
       this.result = [];
-      this.queryParams = {
-        pageNum: 1,
-        pageSize: 10,
-        orgName: null,
-        stagPointName: null,
-      };
       this.handleQuery();
     },
     // 多选框选中数据

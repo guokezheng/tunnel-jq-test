@@ -1780,6 +1780,15 @@
       line-height: 24px;
     }
   }
+  .noSearchDialog{
+    .grid-content .el-input--small .el-input__inner{
+      border: solid 1px #00C8FF !important;
+      background: #012E51 !important;
+    }
+    .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
+      border-bottom: solid 1px  #0a88bd !important;
+    }
+  }
   // 操作日志
   .operationDiglog{
     // 表格隔行变色
@@ -1799,7 +1808,7 @@
       .el-button{
         background:#012E51 !important;
         color: #00C8FF !important;
-        border: solid 1px #05AFE3 !important;
+        border: solid 1px #00C8FF !important;
         border-left:none !important;
 
       }

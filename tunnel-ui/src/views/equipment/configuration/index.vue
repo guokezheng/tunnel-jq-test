@@ -40,7 +40,7 @@
         <div ref="main" class="grid-content bg-purple">
             <el-input
               v-model="queryParams.sdName"
-              placeholder="请输入名称,回车搜索"
+              placeholder="请输入名称，回车搜索"
               clearable
               size="small"
               @keyup.enter.native="handleQuery"

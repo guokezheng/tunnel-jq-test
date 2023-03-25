@@ -57,7 +57,8 @@
     <sql id="selectSdTunnelsVo">
         select tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
                tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
-               create_time, update_by, update_time, dept_id,start_pile,end_pile,start_pile_num,end_pile_num,road_id from sd_tunnels
+               create_time, update_by, update_time, dept_id,start_pile,end_pile,start_pile_num,end_pile_num,road_id,level_code,length_code,construct_year,
+               manager_id,org_name,org_code,level_name,length_name,road_code,road_name from sd_tunnels
     </sql>
 
     <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
@@ -222,7 +223,17 @@
             <if test="endPile != null">end_pile = #{endPile},</if>
             <if test="startPileNum != null">start_pile_num = #{startPileNum},</if>
             <if test="endPileNum != null">end_pile_num = #{endPileNum},</if>
-            <if test="roadId != null">road_id = #{roadId}</if>
+            <if test="roadId != null">road_id = #{roadId},</if>
+            <if test="levelCode != null">level_code = #{levelCode},</if>
+            <if test="lengthCode != null">length_code = #{lengthCode},</if>
+            <if test="constructYear != null">construct_year = #{constructYear},</if>
+            <if test="managerId != null">manager_id = #{managerId},</if>
+            <if test="orgName != null">org_name = #{orgName},</if>
+            <if test="orgCode != null">org_code = #{orgCode},</if>
+            <if test="levelName != null">level_name = #{levelName},</if>
+            <if test="lengthName != null">length_name = #{lengthName}</if>
+            <if test="roadCode != null">road_code = #{roadCode}</if>
+            <if test="roadName != null">road_name = #{roadName}</if>
         </trim>
         where tunnel_id = #{tunnelId}
     </update>

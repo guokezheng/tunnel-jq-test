@@ -229,7 +229,7 @@
           <el-button
             size="mini"
             class="tableBlueButtton"
-            @click="handleUpdate"
+            @click="handleUpdate(scope.row,'')"
             v-hasPermi="['system:tunnels:edit']"
           >修改
           </el-button>

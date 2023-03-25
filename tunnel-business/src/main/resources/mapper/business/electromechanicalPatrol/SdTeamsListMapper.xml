@@ -43,6 +43,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND status = #{status}
         </if>
         <if test="ids != null and ids != ''"> and FIND_IN_SET(dept_id,#{ids}) > 0</if>
+        <if test="depts != null and depts != ''">
+            AND (parent_id = #{depts} OR parent_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{depts},d.ancestors) ))
+        </if>
         <!-- 数据范围过滤 -->
         ${params.dataScope}
         order by d.parent_id, d.order_num

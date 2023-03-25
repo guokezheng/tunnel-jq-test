@@ -261,6 +261,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="depts != null and depts != ''">
 			AND (p.dept_id = #{depts} OR p.dept_id IN ( SELECT c.dept_id FROM sys_dept c WHERE FIND_IN_SET (#{depts},c.ancestors) ))
 		</if>
+		AND u.user_id not in(d.user_id)
 		<!-- 数据范围过滤 -->
 	</select>
 

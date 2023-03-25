@@ -148,7 +148,7 @@
             v-hasPermi="['system:dept:add']"
           >新增</el-button>
           <el-button
-            v-if="scope.row.parentId != 0"
+            v-if="scope.row.ancestors!= 0"
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"

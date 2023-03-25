@@ -542,10 +542,14 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的发布记录数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的发布记录数据项？";
+      }
       this.queryParams.ids = this.ids;
       const queryParams = this.queryParams;
       //查看当前ids是否存在,如果存在。则按照当前ids进行导出。
-      this.$confirm("是否确认导出发布记录数据项?", "警告", {
+      this.$confirm(confirmInfo, "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

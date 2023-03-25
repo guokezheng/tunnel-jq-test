@@ -1154,9 +1154,13 @@ export default {
 
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的应急预案数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的应急预案数据项？";
+      }
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出应急预案数据项？').then(() => {
+      this.$modal.confirm(confirmInfo).then(() => {
         this.exportLoading = true;
         return exportPlan(queryParams);
       }).then(response => {
@@ -1484,7 +1488,7 @@ export default {
           if(items.retrievalRule == 1){
             return items.equipments &&
             items.processName &&
-            items.state && 
+            items.state &&
             items.equipments
           }else{//非指定由后端判断具体设备
             return items.processName &&

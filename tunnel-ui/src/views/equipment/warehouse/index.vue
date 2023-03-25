@@ -101,8 +101,8 @@
       </el-form>
     </div>
     <div class="tableTopHr" ></div>
-    <el-table 
-    v-loading="loading" :data="warehouseList" 
+    <el-table
+    v-loading="loading" :data="warehouseList"
     @selection-change="handleSelectionChange"
      height="62vh" class="allTable"
      :row-key="getRowKey"
@@ -478,9 +478,13 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的备品备件数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的备品备件数据项？";
+      }
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出备品备件数据项？').then(() => {
+      this.$modal.confirm(confirmInfo).then(() => {
         this.exportLoading = true;
         return exportWarehouse(queryParams);
       }).then(response => {

@@ -722,11 +722,15 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的系统日志数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的系统日志数据项？";
+      }
       let  ids = this.ids.join();
       this.queryParam.ids = ids;
       const queryParams = this.queryParam;
       this.$modal
-        .confirm("是否确认导出系统日志数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportLogininfor(queryParams);
@@ -742,11 +746,15 @@ export default {
 
     /** 操作日志导出按钮操作 */
     handleExport1() {
+      let confirmInfo ="是否确认导出所有的操作日志数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的操作日志数据项？";
+      }
       let  ids = this.ids.join();
       this.queryParams.ids = ids;
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出操作日志数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportLogininfor1(queryParams);

@@ -681,10 +681,14 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的定时任务数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的定时任务数据项？";
+      }
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出定时任务数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportJob(queryParams);

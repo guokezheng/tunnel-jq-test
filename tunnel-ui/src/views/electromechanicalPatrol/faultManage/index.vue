@@ -1292,10 +1292,14 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的故障管理数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的故障管理数据项？";
+      }
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出设备故障数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportFaultList(queryParams);

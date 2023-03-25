@@ -599,9 +599,13 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的环境配置数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的环境配置数据项？";
+      }
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出环境配置数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportConfiguration(queryParams);

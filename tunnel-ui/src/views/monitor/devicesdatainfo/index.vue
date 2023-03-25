@@ -511,10 +511,14 @@ export default {
 
     /** 数据报表Tab导出按钮操作 */
     handleExportTab() {
+      let confirmInfo ="是否确认导出所有的数据报表数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的数据报表数据项？";
+      }
       this.querysParamsTab.ids = this.ids.join();
       const queryParams = this.querysParamsTab;
       this.$modal
-        .confirm("是否确认导出数据报表数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportDatainforTab(queryParams);
@@ -538,13 +542,25 @@ export default {
       const queryParams = this.querysParams;
       let confirmInfo;
       if(this.searchValue=="1"){//covi
-        confirmInfo = "是否确认导出COVI数据项？";
+        confirmInfo = "是否确认导出所有的COVI数据项？";
+        if(this.ids.length>0){
+          confirmInfo = "是否确认导出所选的COVI数据项？";
+        }
       }else if(this.searchValue=="2"){//风速风向
-        confirmInfo = "是否确认导出风速风向数据项？";
+        confirmInfo = "是否确认导出所有的风速风向数据项？";
+        if(this.ids.length>0){
+          confirmInfo = "是否确认导出所选的风速风向数据项？";
+        }
       }else if(this.searchValue=="3"){//洞内光强
-        confirmInfo = "是否确认导出洞内光强数据项？";
+        confirmInfo = "是否确认导出所有的洞内光强数据项？";
+        if(this.ids.length>0){
+          confirmInfo = "是否确认导出所选的洞内光强数据项？";
+        }
       }else{//洞外光强
-        confirmInfo = "是否确认导出洞外光强数据项？";
+        confirmInfo = "是否确认导出所有的洞外光强数据项？";
+        if(this.ids.length>0){
+          confirmInfo = "是否确认导出所选的洞外光强数据项？";
+        }
       }
 
       this.$modal

@@ -463,7 +463,7 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-   
+
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.typeId;
@@ -609,10 +609,14 @@ export default {
 
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的设备图标数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的设备图标数据项？";
+      }
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出设备图标数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportDeviceIcon(queryParams);

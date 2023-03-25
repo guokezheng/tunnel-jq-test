@@ -107,7 +107,7 @@
       </el-form>
     </div>
     <div class="tableTopHr" ></div>
-    <el-table 
+    <el-table
     v-loading="loading" :data="itemList" @selection-change="handleSelectionChange"
     class="allTable" height="59vh"
     :row-key="getRowKey"
@@ -401,8 +401,12 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的设备类型数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的设备类型数据项？";
+      }
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出设备类型数据项数据项？').then(() => {
+      this.$modal.confirm(confirmInfo).then(() => {
         this.exportLoading = true;
         return exportItem(queryParams);
       }).then(response => {

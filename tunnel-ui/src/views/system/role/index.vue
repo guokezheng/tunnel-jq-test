@@ -759,8 +759,12 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的角色管理数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的角色管理数据项？";
+      }
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出用户数据项？').then(() => {
+      this.$modal.confirm(confirmInfo).then(() => {
         this.exportLoading = true;
         return exportRole(queryParams);
       }).then(response => {

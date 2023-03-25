@@ -1301,9 +1301,15 @@ export default {
       const queryParams = this.queryParams;
       let confirmInfo = "";
       if(flag ==1){
-        confirmInfo = "是否确认导出日常策略数据项？";
+        confirmInfo = "是否确认导出所有的日常策略数据项？";
+        if(this.ids.length>0){
+          confirmInfo = "是否确认导出所选的日常策略数据项？";
+        }
       }if(flag ==2){
-        confirmInfo = "是否确认导出预警策略数据项？";
+        confirmInfo = "是否确认导出所有的预警策略数据项？";
+        if(this.ids.length>0){
+          confirmInfo = "是否确认导出所选的预警策略数据项？";
+        }
       }
       this.$modal.confirm(confirmInfo).then(() => {
         this.exportLoading = true;
@@ -1338,7 +1344,7 @@ export default {
     changeValue(value) {
       this.changeVal = value;
     },
-    
+
   },
 };
 </script>

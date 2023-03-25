@@ -93,7 +93,7 @@
       </el-form>
     </div>
     <div class="tableTopHr" ></div>
-    <el-table 
+    <el-table
     v-loading="loading" :data="protocolList"
      @selection-change="handleSelectionChange" class="allTable"
      :row-key="getRowKey"
@@ -438,8 +438,12 @@
       },
       /** 导出按钮操作 */
       handleExport() {
+        let confirmInfo ="是否确认导出所有的设备协议数据项？";
+        if(this.ids.length>0){
+          confirmInfo = "是否确认导出所选的设备协议数据项？";
+        }
         const queryParams = this.queryParams;
-        this.$modal.confirm('是否确认导出设备协议数据项？').then(() => {
+        this.$modal.confirm(confirmInfo).then(() => {
           this.exportLoading = true;
           return exportProtocol(queryParams);
         }).then(response => {

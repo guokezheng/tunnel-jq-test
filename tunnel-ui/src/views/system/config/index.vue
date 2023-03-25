@@ -512,9 +512,13 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的参数设置数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的参数设置数据项？";
+      }
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出参数数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportConfig(queryParams);

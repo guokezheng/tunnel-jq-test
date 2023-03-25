@@ -1191,10 +1191,14 @@ export default {
 
 /*导出*/
     handleExport() {
+      let confirmInfo ="是否确认导出所有的隧道管理数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的隧道管理数据项？";
+      }
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出隧道管理数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportTunnels(queryParams);

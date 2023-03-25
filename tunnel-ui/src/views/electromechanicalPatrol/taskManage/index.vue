@@ -1530,11 +1530,15 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo ="是否确认导出所有的巡查任务数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的巡查任务数据项？";
+      }
       let  ids = this.ids.join();
       this.queryParams.ids = ids;
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出巡查任务数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportList(queryParams);

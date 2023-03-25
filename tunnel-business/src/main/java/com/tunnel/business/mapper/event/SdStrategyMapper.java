@@ -133,4 +133,11 @@ public interface SdStrategyMapper
      * @return
      */
     List<Map<String, Object>> getEventStrategyData(SdStrategy strategy);
+
+    /**
+     * 校验名称是否重复
+     * @param strategy
+     * @return
+     */
+    int checkStrName(SdStrategy strategy);
 }

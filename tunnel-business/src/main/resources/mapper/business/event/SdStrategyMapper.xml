@@ -307,4 +307,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND s.event_type = #{eventType}
           AND s.is_automatic = '1'
     </select>
+
+    <select id="checkStrName" resultType="int" parameterType="sdStrategy">
+        SELECT
+            count(*)
+        FROM
+            sd_strategy
+        WHERE
+            1 = 1
+          AND strategy_name = #{strategyName}
+          AND strategy_group = #{strategyGroup}
+        <if test="id != null">
+            AND id <![CDATA[ <> ]]> #{id}
+        </if>
+    </select>
 </mapper>

@@ -438,21 +438,17 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         // 判断是否符合规范并返回策略
         //参数1：预警策略  参数2：事件触发  参数3：自动执行
         if("2".equals(model.getStrategyGroup()) && "0".equals(model.getStrategyType()) && "1".equals(model.getIsAutomatic())){
-            SdStrategy strategy = new SdStrategy();
-            strategy.setTunnelId(sty.getTunnelId());
-            strategy.setDirection(sty.getDirection());
-            strategy.setStrategyType(sty.getStrategyType());
-            strategy.setEventType(sty.getEventType());
-            strategy.setIsAutomatic(strategy.getIsAutomatic());
-            int checkCount = sdStrategyMapper.checkStrategy(strategy);
+            int checkCount = checkAuto(sty);
             if(checkCount > 0){
                 throw new RuntimeException("已存在策略信息，请勿重复添加！");
             }
         }
+        //校验名称是否存在
+        int strNameCount = sdStrategyMapper.checkStrName(sty);
+        if(strNameCount > 0){
+            throw new RuntimeException("策略名称已存在，请重新输入后保存");
+        }
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
-//        if(insetStrResult < 1){
-//            throw new RuntimeException("数据保存异常");
-//        }
         int result = saveRelation(model, sty);
         return result;
     }
@@ -485,17 +481,15 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         SdStrategy sty = conditionalJudgement(model);
         //参数1：预警策略  参数2：事件触发  参数3：自动执行
         if("2".equals(model.getStrategyGroup()) && "0".equals(model.getStrategyType()) && "1".equals(model.getIsAutomatic())){
-            SdStrategy strategy = new SdStrategy();
-            strategy.setId(model.getId());
-            strategy.setTunnelId(sty.getTunnelId());
-            strategy.setDirection(sty.getDirection());
-            strategy.setStrategyType(sty.getStrategyType());
-            strategy.setEventType(sty.getEventType());
-            strategy.setIsAutomatic(strategy.getIsAutomatic());
-            int checkCount = sdStrategyMapper.checkStrategy(strategy);
+            int checkCount = checkAuto(sty);
             if(checkCount > 0){
                 throw new RuntimeException("已存在策略信息，请勿重复添加！");
             }
+        }
+        //校验名称是否存在
+        int strNameCount = sdStrategyMapper.checkStrName(sty);
+        if(strNameCount > 0){
+            throw new RuntimeException("策略名称已存在，请重新输入后保存");
         }
         String strategyType = model.getStrategyType();
         //更新策略 主表
@@ -1181,5 +1175,23 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         sdEventHandle.setEventState("1");
         sdEventHandle.setUpdateTime(DateUtils.getNowDate());
         sdEventHandleMapper.updateHandleState(sdEventHandle);
+    }
+
+    /**
+     * 预警策略-事件触发-自动时校验
+     * @param sty
+     * @return
+     */
+    public int checkAuto(SdStrategy sty){
+        SdStrategy strategy = new SdStrategy();
+        if(sty.getId() != null){
+            strategy.setId(sty.getId());
+        }
+        strategy.setTunnelId(sty.getTunnelId());
+        strategy.setDirection(sty.getDirection());
+        strategy.setStrategyType(sty.getStrategyType());
+        strategy.setEventType(sty.getEventType());
+        strategy.setIsAutomatic(strategy.getIsAutomatic());
+        return sdStrategyMapper.checkStrategy(strategy);
     }
 }

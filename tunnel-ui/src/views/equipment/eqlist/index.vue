@@ -17,7 +17,7 @@
           v-hasPermi="['system:devices:remove']"
           >删除
         </el-button>
-        
+
         <el-button
           size="small"
           @click="handleImport"
@@ -449,7 +449,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备桩号" prop="pile">
+            <el-form-item label="桩号" prop="pile">
               <el-input
                 v-model="form.pile"
                 maxlength="20"
@@ -539,11 +539,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="出场时间" prop="deliveryTime">
+            <el-form-item label="出厂时间" prop="deliveryTime">
               <el-date-picker
                 v-model="form.deliveryTime"
                 type="date"
-                placeholder="请选择出场时间"
+                placeholder="请选择出厂时间"
                 :picker-options="optionsDisable"
                 value-format="yyyy-MM-dd"
                 style="width: 100%"
@@ -1544,7 +1544,7 @@ export default {
         })
         .catch(function () {});
     },
-    
+
 
     /** 打开导入表弹窗 */
     handleImport() {

@@ -576,12 +576,7 @@ export default {
         ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" },
-          {
-            pattern: /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/,
-            min: 8,
-            message: "密码必须由8位及以上大小写字母，数字，特殊字符组成",
-            trigger: "blur",
-          },
+
         ],
         email: [
           {

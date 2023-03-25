@@ -32,10 +32,10 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private List<String> eqIds;
 
     /**
-     * 父设备ID-PLC
+     * plc主机
      */
-    @Excel(name = "父设备ID-PLC",type = Excel.Type.IMPORT)
-    @ApiModelProperty("父设备ID-PLC")
+    @Excel(name = "plc主机",type = Excel.Type.IMPORT)
+    @ApiModelProperty("plc主机")
     private String fEqId;
 
     @ApiModelProperty("部门id")
@@ -46,8 +46,8 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 所属隧道 ID
      */
-    @Excel(name = "所属隧道 ID",type = Excel.Type.IMPORT)
-    @ApiModelProperty("所属隧道 ID")
+    @Excel(name = "所属隧道",type = Excel.Type.IMPORT)
+    @ApiModelProperty("所属隧道")
     private String eqTunnelId;
 
     /**
@@ -96,10 +96,10 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private SdEquipmentType eqTypeName;
 
     /**
-     * 设备品牌编号
+     * 设备品牌
      */
-    @Excel(name = "设备品牌编号",type = Excel.Type.IMPORT)
-    @ApiModelProperty("设备品牌编号")
+    @Excel(name = "设备品牌ID",type = Excel.Type.IMPORT)
+    @ApiModelProperty("设备品牌")
     private String brandId;
 
     /**
@@ -131,8 +131,8 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 外部系统ID
      */
-    @Excel(name = "外部系统ID",type= Excel.Type.IMPORT)
-    @ApiModelProperty("外部系统ID")
+    @Excel(name = "外部系统",type= Excel.Type.IMPORT)
+    @ApiModelProperty("外部系统")
     private Long externalSystemId;
 
 
@@ -148,14 +148,14 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      * 所属道路方向(上行、下行)
      */
     @Excel(name = "设备方向", dictType = "sd_direction")
-    @ApiModelProperty("所属道路方向(上行、下行)")
+    @ApiModelProperty("设备方向")
     private String eqDirection;
 
     /**
      * 设备所属车道
      */
-    @Excel(name = "设备所属车道",type= Excel.Type.IMPORT)
-    @ApiModelProperty("设备所属车道")
+    @Excel(name = "所属车道",type= Excel.Type.IMPORT)
+    @ApiModelProperty("所属车道")
     private String lane;
 
     /**
@@ -176,7 +176,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      * 设备桩号
      */
     @Excel(name = "桩号")
-    @ApiModelProperty("设备桩号")
+    @ApiModelProperty("桩号")
     private String pile;
 
     @Excel(name = "备注")
@@ -240,7 +240,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("出厂时间")
-   /* @Excel(name = "出厂时间", width = 30, dateFormat = "yyyy-MM-dd")*/
+    @Excel(name = "出厂时间", width = 30, dateFormat = "yyyy-MM-dd",type= Excel.Type.IMPORT)
     private Date deliveryTime;
 
     /**
@@ -262,7 +262,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 预期寿命/设计寿命,单位为年
      */
-    @Excel(name = "预期寿命/设计寿命,单位为年",type= Excel.Type.IMPORT)
+    @Excel(name = "预期寿命",type= Excel.Type.IMPORT)
     @ApiModelProperty("预期寿命/设计寿命,单位为年")
     private String useLife;
 

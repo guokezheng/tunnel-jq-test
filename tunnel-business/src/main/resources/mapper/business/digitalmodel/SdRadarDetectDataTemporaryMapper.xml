@@ -182,6 +182,6 @@
     </delete>
 
     <delete id="deleteData">
-        delete from sd_radar_detect_data_temporary where DATE_FORMAT(detect_time,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d')
+        delete from sd_radar_detect_data_temporary where 1=1
     </delete>
 </mapper>

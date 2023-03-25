@@ -151,7 +151,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="班组名称" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
+              <el-input v-model="form.deptName" placeholder="请输入班组名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">

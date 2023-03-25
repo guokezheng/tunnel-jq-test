@@ -45,6 +45,11 @@ public class SdTeamsListController extends BaseController
     public TableDataInfo list(SdTeamsList sdTeamsList)
     {
         startPage();
+        String depts = SecurityUtils.getDeptId();
+        if (depts == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdTeamsList.setDepts(depts);
         List<SdTeamsList> list = sdTeamsListService.selectSdTeamsList(sdTeamsList);
         return getDataTable(list);
     }
@@ -92,6 +97,11 @@ public class SdTeamsListController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(SdTeamsList sdTeamsList)
     {
+        String depts = SecurityUtils.getDeptId();
+        if (depts == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdTeamsList.setDepts(depts);
         List<SdTeamsList> list = sdTeamsListService.selectSdTeamsList(sdTeamsList);
         ExcelUtil<SdTeamsList> util = new ExcelUtil<SdTeamsList>(SdTeamsList.class);
         return util.exportExcel(list, "班组数据");

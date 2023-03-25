@@ -105,6 +105,16 @@ public class SdTeamsList extends BaseEntity {
     @ApiModelProperty("子部门")
     private List<SdTeamsList> children = new ArrayList<SdTeamsList>();
 
+    private String depts;
+
+    public String getDepts() {
+        return this.depts;
+    }
+
+    public void setDepts( String depts) {
+        this.depts = depts;
+    }
+
     @Override
     public Date getCreateTime() {
         return this.createTime;

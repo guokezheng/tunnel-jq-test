@@ -250,6 +250,7 @@
       },
       /** 重置按钮操作 */
       resetQuery() {
+        this.queryParams.name = "";
         this.resetForm("queryForm");
         this.handleQuery();
       },

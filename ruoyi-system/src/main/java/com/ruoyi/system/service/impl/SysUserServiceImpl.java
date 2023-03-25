@@ -523,7 +523,11 @@ public class SysUserServiceImpl implements ISysUserService
             {
                 // 验证是否存在这个用户
                 SysUser u = userMapper.selectUserByUserName(user.getUserName());
-                if (StringUtils.isNull(u))
+                if (user.getUserName() == null || "".equals(user.getUserName()))
+                {
+                    failureNum++;
+                    failureMsg.append("<br/>" + failureNum + "、账号 " + user.getUserName() + " 导入失败！名称不能为空");
+                }else if (StringUtils.isNull(u))
                 {
                     user.setPassword(SecurityUtils.encryptPassword(password));
                     user.setCreateBy(operName);
@@ -537,11 +541,6 @@ public class SysUserServiceImpl implements ISysUserService
                     this.updateUser(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 更新成功");
-                }
-                else if (user.getUserName() == null)
-                {
-                    failureNum++;
-                    failureMsg.append("<br/>" + failureNum + "、账号 " + user.getUserName() + " 导入失败！名称不能为空");
                 }
                 else
                 {

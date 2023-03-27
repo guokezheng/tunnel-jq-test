@@ -327,7 +327,7 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-                     
+
                       <div
                       v-show="
                           (item.eqType != 7 &&
@@ -897,7 +897,7 @@
             <div class="Time">
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
-                <el-time-picker 
+                <el-time-picker
                   v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
@@ -1875,14 +1875,13 @@
           label="控制方式"
           align="center"
           prop="controlType"
-          :formatter="controlTypeFormat"
         />
         <el-table-column
           label="操作结果"
           align="center"
           prop="state"
-          :formatter="stateFormat"
         />
+
         <el-table-column label="操作地址" align="center" prop="operIp" />
         <el-table-column
           label="创建时间"
@@ -5011,7 +5010,7 @@ export default {
         }
       }else{
         this.timingStrategyDisabled = false
-      } 
+      }
     },
  //翻页时不刷新序号
     indexMethod(index){

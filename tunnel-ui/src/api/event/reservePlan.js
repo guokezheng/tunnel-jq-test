@@ -127,3 +127,12 @@ export function getStrategyData(query) {
     params: query
   })
 }
+
+
+export function getVmsDataList(query) {
+  return request({
+    url: '/system/template/getVmsDataList',
+    method: 'get',
+    params: query
+  })
+}

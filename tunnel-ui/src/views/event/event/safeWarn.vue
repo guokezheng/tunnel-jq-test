@@ -1675,7 +1675,10 @@ export default {
         return this.$modal.msgWarning("请选择事件处置预案");
       }
       const currencyId = this.eventFormDetail.currencyId;
-      this.eventFormDetail.laneNo = this.eventFormDetail.laneNo.toString();
+      if(this.eventFormDetail.laneNo){
+        this.eventFormDetail.laneNo = this.eventFormDetail.laneNo.toString();
+      }
+      
       updateEvent(this.eventFormDetail).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;

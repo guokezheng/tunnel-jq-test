@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-27 10:48:49
+ * @LastEditTime: 2023-03-27 15:01:42
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1280,11 +1280,7 @@ export default {
       console.log(this.eventForm,'当前事件详情');
     },
     handleClose(done){
-      this.$confirm('确认关闭？')
-      .then(_ => {
-        done();
-      })
-      .catch(_ => {});
+      done();
     },
     //右键拖动
     dragImg(e) {
@@ -2241,7 +2237,7 @@ display: none;
     background-repeat: no-repeat;
     background-size:100% 100%;
     .IncHand{
-      background-color: rgba(1, 46, 81,0.7);
+      background-color: rgba(1, 46, 81,0.9);
       height: 100%;
       box-sizing: border-box;
       border: 1px solid #0661ae;
@@ -2250,7 +2246,7 @@ display: none;
         background-image: url(../../../assets/cloudControl/distitlebg.png);
         background-repeat: no-repeat;
         background-size: 100% 100%;
-        span{font-size:13px;color:#365770;padding-left:15px;}
+        span{font-size:13px;color:#93a8b9;padding-left:15px;}
       }
       .incHandBox {
         height: calc(100% - 40px);
@@ -2712,7 +2708,7 @@ display: none;
 .disRightBox{
   .title span{
     font-size:13px;
-    color:#365770;
+    color:#93a8b9;
     padding-left:15px;
   }
 }

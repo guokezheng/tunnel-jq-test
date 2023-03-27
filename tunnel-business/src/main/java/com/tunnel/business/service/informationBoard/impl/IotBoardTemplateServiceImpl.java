@@ -1,12 +1,15 @@
 package com.tunnel.business.service.informationBoard.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 情报板模板Service业务层处理
@@ -42,6 +46,9 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
 
     @Autowired
     private ISdIotDeviceService sdIotDeviceService;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
 
     /**
      * 查询情报板模板
@@ -280,5 +287,13 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
             }
         }
         return listMap;
+    }
+
+    @Override
+    public AjaxResult getVmsDataList(SdDevices sdDevices) {
+        //查询出相关设备id
+        List<String> deviceIds = sdDevicesMapper.selectDropSdDevicesList(sdDevices).stream().map(SdDevices::getEqId).collect(Collectors.toList());
+        //返回情报板模板信息
+        return AjaxResult.success(getVMSTemplatesByDevIdAndCategory(deviceIds));
     }
 }

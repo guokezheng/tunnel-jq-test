@@ -243,4 +243,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND rp.plan_type_id = #{planTypeId}
         </if>
     </select>
+
+    <select id="checkCurrId" resultType="int" parameterType="sdReservePlan">
+        SELECT
+            count(*)
+        FROM
+            sd_event e
+        WHERE
+            1 = 1
+          AND e.tunnel_id = #{tunnelId}
+          AND e.currency_id = #{id}
+          AND e.event_state = '0'
+    </select>
 </mapper>

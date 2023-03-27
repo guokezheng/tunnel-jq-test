@@ -7,6 +7,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 import com.tunnel.business.service.informationBoard.IIotBoardTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,5 +124,15 @@ public class IotBoardTemplateController extends BaseController
     @PostMapping("/getVMSTemplatesByDevIdAndCategory")
     public AjaxResult getVMSTemplatesByDevIdAndCategory(@RequestBody List<String> devIds) {
         return AjaxResult.success(iotBoardTemplateService.getVMSTemplatesByDevIdAndCategory(devIds));
+    }
+
+    /**
+     * 预案-除指定设备情况下查询情报板
+     * @param sdDevices
+     * @return
+     */
+    @GetMapping("/getVmsDataList")
+    public AjaxResult getVmsDataList(SdDevices sdDevices){
+        return iotBoardTemplateService.getVmsDataList(sdDevices);
     }
 }

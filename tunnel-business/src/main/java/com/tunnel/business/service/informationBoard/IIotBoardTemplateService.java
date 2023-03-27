@@ -1,6 +1,8 @@
 package com.tunnel.business.service.informationBoard;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 
 import java.util.List;
@@ -68,4 +70,12 @@ public interface IIotBoardTemplateService {
     Map<String, List<IotBoardTemplate>> getAllVmsTemplate(String category, String devicePixel);
 
     List<Map<String, Object>> getVMSTemplatesByDevIdAndCategory(List<String> devIds);
+
+
+    /**
+     * 预案-除指定设备情况下查询情报板
+     * @param sdDevices
+     * @return
+     */
+    AjaxResult getVmsDataList(SdDevices sdDevices);
 }

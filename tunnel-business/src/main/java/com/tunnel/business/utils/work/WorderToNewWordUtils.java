@@ -467,8 +467,8 @@ public class WorderToNewWordUtils {
             }
 
             if(i+2 == list.size() && indexList.size() == 0){
-                index[0] = list.indexOf(key);;
-                index[1] = list.lastIndexOf(key);
+                index[0] = list.indexOf(key);
+                index[1] = list.indexOf(key);
                 indexList.add(index);
             }
         }

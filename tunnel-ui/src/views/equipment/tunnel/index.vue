@@ -816,7 +816,7 @@ export default {
           { required: false, message: "请选择是否可用", trigger: "change" },
           { validator:function(rule,value,callback){
               let re = /^[0-9]*$/;//判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/
-              if (!re.test(value)) {
+              if (!re.test(value)&&!!value) {
                 callback(new Error("请输入数字"));
               }else{
                 //校验通过
@@ -828,7 +828,7 @@ export default {
         lengthCode: [
           { validator:function(rule,value,callback){
               let re = /^[0-9]*$/;//判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/
-              if (!re.test(value)) {
+              if (!re.test(value)&&!!value) {
                 callback(new Error("请输入数字"));
               }else{
                 //校验通过
@@ -840,7 +840,7 @@ export default {
         constructYear: [
           { validator:function(rule,value,callback){
               let re = /^[0-9]*$/;//判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/
-              if (!re.test(value)) {
+              if (!re.test(value)&&!!value) {
                 callback(new Error("请输入数字"));
               }else{
                 //校验通过

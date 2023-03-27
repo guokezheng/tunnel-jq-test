@@ -139,10 +139,16 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 设备大类
      */
-    @Excel(name = "设备大类",type= Excel.Type.IMPORT)
+   /* @Excel(name = "设备大类",type= Excel.Type.IMPORT)*/
     @ApiModelProperty("设备大类")
     private Long fEqType;
 
+    /**
+     * 设备大类
+     */
+    @Excel(name = "设备大类",type= Excel.Type.IMPORT)
+    @ApiModelProperty("设备大类")
+    private Long FEqType;
 
     /**
      * 所属道路方向(上行、下行)
@@ -150,6 +156,18 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     @Excel(name = "设备方向", dictType = "sd_direction")
     @ApiModelProperty("设备方向")
     private String eqDirection;
+
+    @Excel(name = "设备方向：1-潍坊方向 2-济南方向")
+    @ApiModelProperty("设备方向：1-潍坊方向 2-济南方向")
+    private String direction;
+
+    public String getDirection() {
+        return this.direction;
+    }
+
+    public void setDirection( String direction) {
+        this.direction = direction;
+    }
 
     /**
      * 设备所属车道
@@ -400,6 +418,14 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      * 导出设备ID
      **/
     private String exportIds;
+
+    public Long getFEqType() {
+        return this.FEqType;
+    }
+
+    public void setFEqType( Long FEqType) {
+        this.FEqType = FEqType;
+    }
 
     public String getExportIds() {
         return this.exportIds;

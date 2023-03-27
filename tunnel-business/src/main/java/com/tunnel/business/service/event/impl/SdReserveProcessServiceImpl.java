@@ -49,6 +49,9 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Autowired
     private ISdEventService sdEventService;
 
+    @Autowired
+    private SdReservePlanMapper sdReservePlanMapper;
+
     /**
      * 查询预案流程节点
      *
@@ -103,12 +106,20 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchSdReserveProcessed(SdReserveProcessModel sdReserveProcesses) {
+        //获取预案id
+        String planId = sdReserveProcesses.getReserveId().toString();
+        //查询预案信息
+        SdReservePlan sdReservePlan = sdReservePlanMapper.selectSdReservePlanById(Long.valueOf(planId));
+        //查询此预案是否被使用
+        int currCount = sdReservePlanMapper.checkCurrId(sdReservePlan);
+        if(currCount > 0){
+            throw new RuntimeException("当前预案已被普通事件使用，请勿修改");
+        }
         if(sdReserveProcesses.getSdReserveProcesses().isEmpty()){
             throw new RuntimeException("无效数据策略添加失败");
         }
         List<SdReserveProcess> list = new ArrayList<>();
-        //获取预案id
-        String planId = sdReserveProcesses.getReserveId().toString();
+
         //删除预案流程节点
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
         SpringUtils.getBean(SdStrategyRlMapper.class).deleteSdStrategyRlByPlanId(Long.valueOf(planId));

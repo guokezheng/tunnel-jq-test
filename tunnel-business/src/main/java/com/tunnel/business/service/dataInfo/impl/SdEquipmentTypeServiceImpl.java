@@ -194,7 +194,7 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
             }
             sdEquipmentType.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdEquipmentType.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
-            if (file.length > 0) {
+            if (file != null && file.length > 0) {
                 String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
                 sdEquipmentType.setIconFileId(guid);// 文件关联ID
                 for (int i = 0; i < file.length; i++) {

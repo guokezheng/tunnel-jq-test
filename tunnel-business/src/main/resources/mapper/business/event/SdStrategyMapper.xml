@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
-        		A.scheduler_time, A.job_relation_id, A.direction,A.create_by,
+        		A.scheduler_time, A.job_relation_id, A.direction,A.create_by, A.strategy_group,
         		A.create_time, A.update_by, A.update_time, B.tunnel_name, A.is_automatic, A.event_type,c.dict_label lx,f.dict_label fx
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id

@@ -215,7 +215,12 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         searchObj.setPlanTypeId(sdReservePlan.getPlanTypeId());
         searchObj.setDirection(sdReservePlan.getDirection());
         searchObj.setEventGrade(sdReservePlan.getEventGrade());
-
+        searchObj.setId(sdReservePlan.getId());
+        //查询此预案是否被使用
+        int currCount = sdReservePlanMapper.checkCurrId(searchObj);
+        if(currCount > 0){
+            throw new RuntimeException("当前预案已被普通事件使用，请勿修改");
+        }
         List<SdReservePlan> planList = sdReservePlanMapper.checkIfSingleReservePlan(sdReservePlan);
         if (planList.size() > 0 && ids == null) {
             throw new RuntimeException("当前预案修改内容已经存在，请勿重复添加！");
@@ -320,6 +325,11 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
     public int deleteSdReservePlanById(Long id) {
         int result = -1;
         SdReservePlan sdReservePlan = sdReservePlanMapper.selectSdReservePlanById(id);
+        //查询此预案是否被使用
+        int currCount = sdReservePlanMapper.checkCurrId(sdReservePlan);
+        if(currCount > 0){
+            throw new RuntimeException("当前预案已被普通事件使用，请勿删除");
+        }
         if (sdReservePlan != null) {
             result = sdReservePlanMapper.deleteSdReservePlanById(id);
             if (result > 0) {

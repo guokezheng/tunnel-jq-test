@@ -1544,19 +1544,25 @@ export default {
         ).then((response)=>{
           videoStreaming(response.data[0].inlet).then((response) =>{
             console.log(response,"视频流");
-            response.data.title = '入口';
-            if(response.code == 200){
-              this.videoForm1 = response.data
-              this.videoForm1.cameraPlayer = true
+            if(response.data){
+              response.data.title = '入口';
+              if(response.code == 200){
+                this.videoForm1 = response.data
+                this.videoForm1.cameraPlayer = true
+              }
             }
           })
           videoStreaming(response.data[0].outlet).then((response) =>{
             console.log(response,"视频流");
-            response.data.title = '出口';
-            if(response.code == 200){
-              this.videoForm2 = response.data
-              this.videoForm2.cameraPlayer = true
+            if(response.data){
+              response.data.title = '出口';
+              if(response.code == 200){
+                this.videoForm2 = response.data
+                this.videoForm2.cameraPlayer = true
+              }
             }
+
+
           })
         })
         setTimeout(()=>{
@@ -1567,18 +1573,23 @@ export default {
             ).then((res)=>{
               videoStreaming(res.data[0].eqId).then((response) =>{
                 console.log(response,"视频流");
-                response.data.title = '现场1';
-                if(response.code == 200){
-                  this.videoForm3 = response.data
-                  this.videoForm3.cameraPlayer = true
+                if(response.data){
+                  response.data.title = '现场1';
+                  if(response.code == 200){
+                    this.videoForm3 = response.data
+                    this.videoForm3.cameraPlayer = true
+                  }
                 }
+
               })
               videoStreaming(res.data[1].eqId).then((response) =>{
                 console.log(response,"视频流");
-                response.data.title = '现场2';
-                if(response.code == 200){
-                  this.videoForm4 = response.data
-                  this.videoForm4.cameraPlayer = true
+                if(response.data) {
+                  response.data.title = '现场2';
+                  if (response.code == 200) {
+                    this.videoForm4 = response.data
+                    this.videoForm4.cameraPlayer = true
+                  }
                 }
               })
           })

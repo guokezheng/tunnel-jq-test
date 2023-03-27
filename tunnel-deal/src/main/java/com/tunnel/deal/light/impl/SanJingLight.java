@@ -61,6 +61,7 @@ public class SanJingLight implements Light {
             response = client.newCall(request).execute();
         } catch (IOException e) {
             e.printStackTrace();
+            return "";
         }
         List<String> headers = response.headers("Set-Cookie");
         return headers.get(0);

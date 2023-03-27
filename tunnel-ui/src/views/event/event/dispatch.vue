@@ -2,14 +2,14 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-24 17:32:58
+ * @LastEditTime: 2023-03-27 15:01:42
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="app-container dispatchAss">
     <div class="tunnelBox3">
-      <iframe
+      <!-- <iframe
         name="tuniframe"
         id="miframe"
         class="map3D"
@@ -18,7 +18,7 @@
         allowfullscreen="true"
         allow="autoplay"
         src="http://106.120.201.126:14712/dashboard"
-      ></iframe>
+      ></iframe> -->
     </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>
@@ -213,7 +213,7 @@
               <p>{{deadline4}}</p>
             </div>
           </div>
-          <div style="height: 75%;overflow-y: scroll;">
+          <div class="dieBox" style="height: 75%;overflow-y: scroll;">
             <div class="heightBox" style="height:100%;">
               <div
                 v-for="(item, index) of incHandList"
@@ -322,10 +322,10 @@
               </div>
             </div>
           </div>
-          <el-divider></el-divider>
+          <!-- <el-divider></el-divider> -->
           <div class="rightButton">
-            <el-button type="primary" @click="over">立即完结</el-button>
-            <el-button type="warning" @click="levelTop">警情升级</el-button>
+            <el-button round type="primary" @click="over">立即完结</el-button>
+            <el-button round type="warning" @click="levelTop">警情升级</el-button>
           </div>
         </div>
       </div>
@@ -1280,11 +1280,7 @@ export default {
       console.log(this.eventForm,'当前事件详情');
     },
     handleClose(done){
-      this.$confirm('确认关闭？')
-      .then(_ => {
-        done();
-      })
-      .catch(_ => {});
+      done();
     },
     //右键拖动
     dragImg(e) {
@@ -1858,6 +1854,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .el-table .el-table__header-wrapper th{
+  background-color: rgba(0, 33, 69,0.7)!important;
+}
+::v-deep .theme-light .el-drawer__header{
+  // background-color
+}
 .drawerBox:hover{
   cursor: pointer;
 }
@@ -1865,6 +1867,13 @@ export default {
   height: 87%;
   top: 9%;
   bottom: unset;
+  border: 1px solid #0661ae;
+}
+.dieBox::-webkit-scrollbar {
+display: none;
+}
+::v-deep .el-table--scrollable-x .el-table__body-wrapper::-webkit-scrollbar {
+display: none;
 }
 // ::v-deep .drawerLog .el-drawer.ltr{left: 25%!important;}
 ::v-deep .el-dialog__title{padding-left:20px;}
@@ -1894,8 +1903,11 @@ export default {
   // background-color: #007aff;
 }
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper{overflow-x: hidden;}
+::v-deep .el-drawer__body::-webkit-scrollbar {
+  display: none;
+}
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper::-webkit-scrollbar {
-display: none;
+  display: none;
 }
 // ::v-deep .el-table--scrollable-y .el-table__body-wrapper{
 //   overflow-y: unset;
@@ -1905,6 +1917,12 @@ display: none;
   color:white;
   padding:10px;
   margin-bottom:0px;
+  background-image: url(../../../assets/cloudControl/distitlebg.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+::v-deep .el-table{
+  background-color: rgba(0, 32, 56,0.7)!important;
 }
 ::v-deep .el-table tr{
   background:#012e51;
@@ -1912,7 +1930,12 @@ display: none;
 ::v-deep .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell{
   background:#00518d;
 }
+.heightBox{
 
+  border-bottom:2px solid #0083FF;
+  border-color:linear-gradient(270deg, #0083FF 0%, #3FD7FE 84%, #0083FF 100%);
+  padding-bottom: 2%;
+}
 .dispatchAss {
   .tunnelBox3 {
     width: 100%;
@@ -1945,9 +1968,9 @@ display: none;
         margin-top: 0px !important;
         border-radius: 0px !important;
         .title{
-          background-image: url(../../../assets/cloudControl/dialogHeader.png);
+          background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
-          background-position-x: right;
+          background-size: 100% 100%;
         }
         .videoBox1 {
           width: 100%;
@@ -1997,9 +2020,9 @@ display: none;
         height: 33.3%;
         margin-top: 10px;
         .title{
-          background-image: url(../../../assets/cloudControl/dialogHeader.png);
+          background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
-          background-position-x: right;
+          background-size: 100% 100%;
         }
         .evtMessBox {
           display: flex;
@@ -2082,9 +2105,9 @@ display: none;
         height: 33.3%;
         margin-top: 10px;
         .title{
-          background-image: url(../../../assets/cloudControl/dialogHeader.png);
+          background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
-          background-position-x: right;
+          background-size: 100% 100%;
         }
         .planBox1 {
           width: 100%;
@@ -2199,9 +2222,9 @@ display: none;
   }
   ::v-deep .jingqing{
     .el-dialog__header{
-      background-image: url(../../../assets/cloudControl/dialogHeader.png);
+      background-image: url(../../../assets/cloudControl/distitlebg.png);
       background-repeat: no-repeat;
-      background-position-x: right;
+      background-size: 100% 100%;
     }
   }
   .disLeftBox{
@@ -2214,16 +2237,16 @@ display: none;
     background-repeat: no-repeat;
     background-size:100% 100%;
     .IncHand{
-      background-color: rgba(1, 46, 81,0.7);
+      background-color: rgba(1, 46, 81,0.9);
       height: 100%;
       box-sizing: border-box;
       border: 1px solid #0661ae;
       .title{
         font-size:16px;
-        background-image: url(../../../assets/cloudControl/dialogHeader.png);
+        background-image: url(../../../assets/cloudControl/distitlebg.png);
         background-repeat: no-repeat;
-        background-position-x: right;
-        span{font-size:13px;color:#FFFFFF;}
+        background-size: 100% 100%;
+        span{font-size:13px;color:#93a8b9;padding-left:15px;}
       }
       .incHandBox {
         height: calc(100% - 40px);
@@ -2372,6 +2395,7 @@ display: none;
         .rightButton{
           display: flex;
           justify-content: space-around;
+          margin-top: 5%;
         }
       }
     }
@@ -2401,8 +2425,8 @@ display: none;
 .dispatchLeft {
   > div {
     width: 100%;
-    background-color: rgba(1, 46, 81, 0.7);
-    border:1px solid #0661ae;
+    // background-color: rgba(1, 46, 81, 0.7);
+    background-color: transparent;
   }
 
 
@@ -2617,7 +2641,7 @@ display: none;
   }
 }
 ::v-deep .el-table .el-table__cell {
-  height: 30px !important;
+  height: 35px !important;
 }
 ::v-deep ::-webkit-scrollbar {
   width: 0px;
@@ -2684,7 +2708,8 @@ display: none;
 .disRightBox{
   .title span{
     font-size:13px;
-    color:#ffffff;
+    color:#93a8b9;
+    padding-left:15px;
   }
 }
 

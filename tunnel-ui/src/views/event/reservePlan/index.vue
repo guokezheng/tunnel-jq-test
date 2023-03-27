@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-24 13:59:10
+ * @LastEditTime: 2023-03-27 11:33:26
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -823,7 +823,7 @@ import {
   partitionTunnel,
   tunnelNames,
   getPlanType,
-  getTreeDeviceList, exportPlan,
+  getTreeDeviceList, exportPlan,getVmsDataList
 } from "@/api/event/reservePlan";
 import { listEventType } from "@/api/event/eventType";
 import {
@@ -1258,8 +1258,9 @@ export default {
     },
     // 规则条件修改事件
     ruleChange(number, index, value) {
+      console.log(value);
       if (value != 1) {
-        // 如果不指定设备则设备赋空
+        // 如果不指定设备
         this.$set(
           this.planTypeIdList[number].processesList[index],
           "equipments",
@@ -1270,6 +1271,15 @@ export default {
           "disabled",
           true
         );
+        // 同时如果为情报板则查询情报板模板
+        let params = {
+          eqTunnelId:this.currentClickData.tunnelId,
+          eqType:this.planTypeIdList[number].processesList[index].eqTypeId
+        }
+        getVmsDataList(params).then(res=>{
+          console.log(res);
+          this.$set(this.planTypeIdList[number].processesList[index],"templatesList",res.data);
+        })
       } else {
         this.$set(
           this.planTypeIdList[number].processesList[index],

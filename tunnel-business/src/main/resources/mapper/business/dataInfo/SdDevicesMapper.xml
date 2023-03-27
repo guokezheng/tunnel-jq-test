@@ -288,7 +288,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="brandId != null">brand_id,</if>
             <if test="externalSystemId != null">external_system_id,</if>
             <if test="fEqType != null">f_eq_type,</if>
+            <if test="FEqType != null">f_eq_type,</if>
             <if test="eqDirection != null">eq_direction,</if>
+            <if test="direction != null">eq_direction,</if>
             <if test="lane != null">lane,</if>
             <if test="pile != null">pile,</if>
             <if test="pileNum != null">pile_num,</if>
@@ -336,7 +338,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="brandId != null">#{brandId},</if>
             <if test="externalSystemId != null">#{externalSystemId},</if>
             <if test="fEqType != null">#{fEqType},</if>
+            <if test="FEqType != null">#{FEqType},</if>
             <if test="eqDirection != null">#{eqDirection},</if>
+            <if test="direction != null">#{direction},</if>
             <if test="lane != null">#{lane},</if>
             <if test="pile != null">#{pile},</if>
             <if test="pileNum != null">#{pileNum},</if>

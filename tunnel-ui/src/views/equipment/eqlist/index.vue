@@ -530,9 +530,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="协议类型" prop="protocol">
+            <el-form-item label="协议类型" prop="commProtocol">
               <el-input
-                v-model="form.protocol"
+                v-model="form.commProtocol"
                 maxlength="50"
                 placeholder="请输入协议类型"
               />

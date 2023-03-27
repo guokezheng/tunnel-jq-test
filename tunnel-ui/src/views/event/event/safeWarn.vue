@@ -270,7 +270,7 @@
             :fit="contain">
           </el-image>
           <!-- 现场用这个 -->
-          <video
+          <!-- <video
             id="h5sVideo1"
             class="h5video_"
             controls
@@ -282,7 +282,7 @@
             disablePictureInPicture="true"
             controlslist="nodownload noplaybackrate noremoteplayback"
             style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
-          ></video>
+          ></video> -->
         </div>
       </div>
       <div class="dialogForm">
@@ -2060,6 +2060,7 @@ export default {
         this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g,"")
       }
       listEvent(this.queryParams).then((response) => {
+        console.log(response,"responseresponse")
         for (let item of response.rows) {
           if (item.iconUrlList) {
             for (let i = 0; i < item.iconUrlList.length; i++) {
@@ -2073,6 +2074,7 @@ export default {
           }
         }
         this.eventList = response.rows;
+        console.log(this.eventList,"this.eventListthis.eventList");
         this.total = response.total;
         this.loading = false;
       });

@@ -116,6 +116,25 @@ public class BoardController extends BaseController {
             JSONObject items = new JSONObject();
 
             JSONArray resultObj = JSONArray.parseArray(jsonResult);
+            for (int i = 0;i < resultObj.size();i++) {
+                JSONObject jsonObject = resultObj.getJSONObject(i);
+                int length = String.valueOf(i).length();
+                String num = "";
+                if (length < 3) {
+                    int size = 3-length;
+                    for (int j = 0;j < size;j++) {
+                        num = num + "0";
+                    }
+                    num = num + String.valueOf(i);
+                } else if (length == 3) {
+                    num = String.valueOf(i);
+                }
+                JSONObject object = jsonObject.getJSONArray("ITEM" + num).getJSONObject(0);
+                String content = object.getString("CONTENT");
+                if (content.startsWith("S0")) {
+                    object.put("CONTENT", content.substring(3));
+                }
+            }
             items.put("content", resultObj);
             IotDeviceAccess deviceAccess = iotDeviceAccessService.selectIotDeviceAccessById(deviceId);
             items.put("devicePixel", deviceAccess.getDevicePixel());
@@ -179,6 +198,25 @@ public class BoardController extends BaseController {
             releaseContentMap.put(deviceId.toString(), result);
             JSONArray contentObject = JSONArray.parseArray(jsonContent);
             JSONObject items = new JSONObject();
+            for (int i = 0;i < contentObject.size();i++) {
+                JSONObject jsonObject = contentObject.getJSONObject(i);
+                int length = String.valueOf(i).length();
+                String num = "";
+                if (length < 3) {
+                    int size = 3-length;
+                    for (int j = 0;j < size;j++) {
+                        num = num + "0";
+                    }
+                    num = num + String.valueOf(i);
+                } else if (length == 3) {
+                    num = String.valueOf(i);
+                }
+                JSONObject object = jsonObject.getJSONArray("ITEM" + num).getJSONObject(0);
+                String content = object.getString("CONTENT");
+                if (content.startsWith("S0")) {
+                    object.put("CONTENT", content.substring(3));
+                }
+            }
             items.put("content", contentObject);
             items.put("support", DataUtils.getSupport(String.valueOf(deviceId), protocolType));
             paramsList.add(items.toString());

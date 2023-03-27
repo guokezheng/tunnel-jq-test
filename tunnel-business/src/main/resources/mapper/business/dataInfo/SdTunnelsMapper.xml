@@ -231,8 +231,8 @@
             <if test="orgName != null">org_name = #{orgName},</if>
             <if test="orgCode != null">org_code = #{orgCode},</if>
             <if test="levelName != null">level_name = #{levelName},</if>
-            <if test="lengthName != null">length_name = #{lengthName}</if>
-            <if test="roadCode != null">road_code = #{roadCode}</if>
+            <if test="lengthName != null">length_name = #{lengthName},</if>
+            <if test="roadCode != null">road_code = #{roadCode},</if>
             <if test="roadName != null">road_name = #{roadName}</if>
         </trim>
         where tunnel_id = #{tunnelId}

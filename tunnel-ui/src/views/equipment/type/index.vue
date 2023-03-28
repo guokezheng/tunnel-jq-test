@@ -381,13 +381,13 @@ export default {
 
       // 表单校验
       rules: {
-        upload: [
-          {
-            trigger: "change",
-            required: true,
-            validator: validateImage,
-          },
-        ],
+        // upload: [
+        //   {
+        //     trigger: "change",
+        //     required: true,
+        //     validator: validateImage,
+        //   },
+        // ],
         typeName: [
           { required: true, message: "设备类型不能为空", trigger: "blur" },
         ],
@@ -463,7 +463,7 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-
+   
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.typeId;
@@ -661,6 +661,9 @@ export default {
     submitForm() {
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
+      if(this.fileList = []){
+        this.fileData.append("file", null); // append增加数据
+      }
       this.fileData.append("typeName", this.form.typeName); //类型名称
       this.fileData.append("typeAbbr", this.form.typeAbbr);
       this.fileData.append("iconWidth", this.form.iconWidth);

@@ -296,11 +296,22 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
                 List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
+                //查询分是控制关闭指令
+                List<SdEquipmentState> endObject = new ArrayList<>();
+                if(rlList.get(j).getEndState() != null && !"".equals(rlList.get(j).getEndState())){
+                    state.setDeviceState(rlList.get(j).getEndState());
+                    endObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
+                }
                 if(stateObject.size()<1){
                     continue;
                 }
                 String stateName = stateObject.get(0).getStateName();//设备状态名称
-                sList.add(typeName + "控制执行：" + stateName + "；");
+                //1：日常策略  3：分时控制
+                if("1".equals(list.get(i).getStrategyGroup()) && "3".equals(list.get(i).getStrategyType()) && list.get(i).getId() == rlList.get(j).getStrategyId()){
+                    sList.add(typeName + "控制执行：" + "开启指令：" + stateName + "；" + "关闭指令：" + endObject.get(0).getStateName() + ";" );
+                }else {
+                    sList.add(typeName + "控制执行：" + stateName + "；");
+                }
             }
             list.get(i).setStrategyInfo(StringUtils.join(sList,""));
             list.get(i).setSlist(sList);

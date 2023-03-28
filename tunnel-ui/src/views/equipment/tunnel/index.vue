@@ -450,14 +450,14 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="道路名称" prop="roadCode">
-              <el-input v-model="form.roadCode" placeholder="请输入道路名称"
+              <el-input v-model="form.roadName" placeholder="请输入道路名称"
               :disabled="disabledInfo"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="等级编码" prop="levelCode">
               <el-input v-model="form.levelCode" placeholder="请输入等级编码"
-              :disabled="disabledInfo"/>
+              :disabled="disabledInfo" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -486,8 +486,9 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="建成通车日期" prop="activateTime">
-              <el-input v-model="form.activateTime" placeholder="请输入建成通车日期"
-              :disabled="disabledInfo"/>
+<!--              <el-input v-model="form.activateTime" placeholder="请输入建成通车日期"-->
+<!--              :disabled="disabledInfo"/>-->
+              <el-date-picker v-model="form.activateTime" :disabled="disabledInfo" type="date" style="width: 100%" value-format="yyyy-MM-dd HH:mm:ss" placeholder="请输入建成通车日期"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -811,6 +812,43 @@ export default {
         poll: [
           { required: true, message: "请选择是否可用", trigger: "change" },
         ],
+        levelCode: [
+          { required: false, message: "请选择是否可用", trigger: "change" },
+          { validator:function(rule,value,callback){
+              let re = /^[0-9]*$/;//判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/
+              if (!re.test(value)&&!!value) {
+                callback(new Error("请输入数字"));
+              }else{
+                //校验通过
+                callback();
+              }
+            }, trigger: 'blur'
+          }
+        ],
+        lengthCode: [
+          { validator:function(rule,value,callback){
+              let re = /^[0-9]*$/;//判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/
+              if (!re.test(value)&&!!value) {
+                callback(new Error("请输入数字"));
+              }else{
+                //校验通过
+                callback();
+              }
+            }, trigger: 'blur'
+          }
+        ],
+        constructYear: [
+          { validator:function(rule,value,callback){
+              let re = /^[0-9]*$/;//判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/
+              if (!re.test(value)&&!!value) {
+                callback(new Error("请输入数字"));
+              }else{
+                //校验通过
+                callback();
+              }
+            }, trigger: 'blur'
+          }
+        ]
       },
       rule: {
         tunnelId: [
@@ -1211,6 +1249,14 @@ export default {
         })
         .catch(() => {});
     },
+
+    allNumber(value) {
+      debugger
+      value = value.replace(/[^\d]/g,""); //只能输入数字
+      this.form.levelCode = value  //注意这里是string，你要数字类型记得自己转一下
+
+      console.log(value)
+    }
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
@@ -1268,4 +1314,7 @@ export default {
     max-height: 70vh;
     overflow: auto;
   }
+
+
+
 </style>

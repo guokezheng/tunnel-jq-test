@@ -227,7 +227,7 @@
       <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" />
       <el-table-column label="显示顺序" prop="roleSort" sortable />
       <el-table-column label="状态" align="center" >
-        <template slot-scope="scope">
+        <template slot-scope="scope" v-if="scope.row.roleId !== 1">
           <el-switch
             v-model="scope.row.status"
             active-value="0"
@@ -265,8 +265,8 @@
             class="tableBlueButtton"
           >更多</el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="handleDataScope" icon="el-icon-circle-check"
-                v-hasPermi="['system:role:edit']">数据权限</el-dropdown-item>
+<!--              <el-dropdown-item command="handleDataScope" icon="el-icon-circle-check"-->
+<!--                v-hasPermi="['system:role:edit']">数据权限</el-dropdown-item>-->
               <el-dropdown-item command="handleAuthUser" icon="el-icon-user"
                 v-hasPermi="['system:role:edit']">分配用户</el-dropdown-item>
             </el-dropdown-menu>

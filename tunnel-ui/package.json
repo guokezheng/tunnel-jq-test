@@ -38,7 +38,7 @@
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
     "@riophae/vue-treeselect": "0.4.0",
-    "@vue/composition-api": "^1.7.0",
+    "@vue/composition-api": "^1.7.1",
     "axios": "0.21.0",
     "clipboard": "2.0.6",
     "core-js": "3.8.1",
@@ -67,7 +67,7 @@
     "jsencrypt": "3.0.0-rc.1",
     "less": "^4.0.0",
     "less-loader": "^7.2.1",
-    "mathjs": "^11.3.3",
+    "mathjs": "^11.7.0",
     "moment": "^2.29.1",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",

@@ -134,7 +134,7 @@ public class SdEquipmentTypeController extends BaseController
 	@Log(title = "设备类型", businessType = BusinessType.INSERT)
 	@PostMapping
 	@ApiOperation("新增设备类型")
-	public Result add(@RequestParam("file") MultipartFile[] file,SdEquipmentType sdEquipmentType)
+	public Result add(@RequestParam(value = "file", required = false) MultipartFile[] file,SdEquipmentType sdEquipmentType)
 	{
 	  	Integer num = sdEquipmentTypeService.selectExistSameType(sdEquipmentType);
 	  	if(num > 0){

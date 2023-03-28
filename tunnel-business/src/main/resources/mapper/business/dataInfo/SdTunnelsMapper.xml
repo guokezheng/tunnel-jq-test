@@ -58,7 +58,7 @@
         select tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
                tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
                create_time, update_by, update_time, dept_id,start_pile,end_pile,start_pile_num,end_pile_num,road_id,level_code,length_code,construct_year,
-               manager_id,org_name,org_code,level_name,length_name,road_code,road_name from sd_tunnels
+               manager_id,org_name,org_code,level_name,length_name,road_code,road_name ,activate_time from sd_tunnels
     </sql>
 
     <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
@@ -168,7 +168,18 @@
             <if test="endPile != null">end_pile,</if>
             <if test="startPileNum != null">start_pile_num,</if>
             <if test="endPileNum != null">end_pile_num,</if>
-            <if test="roadId != null">road_id</if>
+            <if test="roadId != null">road_id,</if>
+            <if test="roadCode != null">road_code,</if>
+            <if test="roadName != null">road_name,</if>
+            <if test="levelName != null">level_name,</if>
+            <if test="lengthName != null">length_Name,</if>
+            <if test="activateTime != null">activate_time,</if>
+            <if test="orgCode != null">org_code,</if>
+            <if test="levelCode != null">level_code,</if>
+            <if test="lengthCode != null">length_code,</if>
+            <if test="constructYear != null">construct_year,</if>
+            <if test="managerId != null">manager_id,</if>
+            <if test="orgName != null">org_name</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -194,7 +205,18 @@
             <if test="endPile != null">#{endPile},</if>
             <if test="startPileNum != null">#{startPileNum},</if>
             <if test="endPileNum != null">#{endPileNum},</if>
-            <if test="roadId != null">#{roadId}</if>
+            <if test="roadId != null">#{roadId},</if>
+            <if test="roadCode != null">#{roadCode},</if>
+            <if test="roadName != null">#{roadName},</if>
+            <if test="levelName != null">#{levelName},</if>
+            <if test="lengthName != null">#{lengthName},</if>
+            <if test="activateTime != null">#{activateTime},</if>
+            <if test="orgCode != null">#{orgCode},</if>
+            <if test="levelCode != null">#{levelCode},</if>
+            <if test="lengthCode != null">#{lengthCode},</if>
+            <if test="constructYear != null">#{constructYear},</if>
+            <if test="managerId != null">#{managerId},</if>
+            <if test="orgName != null">#{orgName}</if>
         </trim>
     </insert>
 
@@ -233,7 +255,8 @@
             <if test="levelName != null">level_name = #{levelName},</if>
             <if test="lengthName != null">length_name = #{lengthName},</if>
             <if test="roadCode != null">road_code = #{roadCode},</if>
-            <if test="roadName != null">road_name = #{roadName}</if>
+            <if test="roadName != null">road_name = #{roadName},</if>
+            <if test="activateTime != null">activate_time = #{activateTime}</if>
         </trim>
         where tunnel_id = #{tunnelId}
     </update>

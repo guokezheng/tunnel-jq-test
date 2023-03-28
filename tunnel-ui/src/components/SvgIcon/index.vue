@@ -22,12 +22,14 @@ export default {
   },
   computed: {
     isExternal() {
+      console.log(this.iconClass,"this.iconClass")
       return isExternal(this.iconClass)
     },
     iconName() {
       return `#icon-${this.iconClass}`
     },
     svgClass() {
+      console.log(this.className,"this.className")
       if (this.className) {
         return 'svg-icon ' + this.className
       } else {
@@ -40,7 +42,13 @@ export default {
         '-webkit-mask': `url(${this.iconClass}) no-repeat 50% 50%`
       }
     }
-  }
+  },
+  created() {
+    console.log(22222222222)
+    console.log(this.iconClass,"this.iconClass")
+    console.log(this.className,"this.className")
+    
+  },
 }
 </script>
 

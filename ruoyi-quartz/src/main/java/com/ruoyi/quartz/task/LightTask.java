@@ -1,6 +1,7 @@
 package com.ruoyi.quartz.task;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
@@ -16,6 +17,8 @@ import com.tunnel.deal.light.impl.SanJingLight;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -27,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 @Component("lightTask")
 public class LightTask {
+
+    private static final Logger log = LoggerFactory.getLogger(LightTask.class);
 
     @Autowired
     private SanJingLight sanJingLight;
@@ -50,6 +55,10 @@ public class LightTask {
         String systemUrl = system.getSystemUrl();
         //获取cookie
         String jessionId = sanJingLight.login(username, password, systemUrl);
+        if(StringUtils.isEmpty(jessionId)){
+            log.error("照明定时任务报错：jessionId为空,jessionId=",jessionId);
+            return;
+        }
         // 上行对应的外部系统隧道洞ID
         String eSystemTunnelId1 = tunnelAssociationService.getExternalSystemTunnelId(tunnelId, TunnelDirectionEnum.UP_DIRECTION.getCode(), systemId);
         // 下行对应的外部系统隧道洞ID

@@ -85,9 +85,6 @@ public class SdFaultList extends BaseEntity
     /*@Excel(name = "设备状态")*/
     private String eqStatus;
 
-    @Excel(name = "设备状态")
-    private String fstatus;
-
     /** 设备运行状态 */
    /* @Excel(name = "设备运行状态")*/
     private String eqRunStatus;

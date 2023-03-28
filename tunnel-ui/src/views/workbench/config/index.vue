@@ -4938,7 +4938,7 @@ export default {
       console.log(dom);
       if (dom) {
         // 如果点击的区域不在自定义dom范围
-        if (!dom.contains(e.target)) {
+        if (!dom.contains(e.target) && that.treeShow == true) {
           that.treeShow = false;
         }
       }
@@ -5108,62 +5108,74 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (
-          !this.$refs.main.contains(e.target) &&
-          !this.$refs.cc.contains(e.target)
-        ) {
-          if (self.syxt_boxShow == true) {
-            self.syxt_boxShow = false;
+      if(self.syxt_boxShow == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main.contains(e.target) &&
+            !self.$refs.cc.contains(e.target)
+          ) {
+            if (self.syxt_boxShow == true) {
+              self.syxt_boxShow = false;
+            }
           }
-        }
-      })
+        })
+      }
+      
 
     },
     bodyCloseMenus1(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (
-          !this.$refs.main1.contains(e.target) &&
-          !this.$refs.cc1.contains(e.target)
-        ) {
-          if (self.sycz_boxShow1 == true) {
-            self.sycz_boxShow1 = false;
+      if(self.sycz_boxShow1 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main1.contains(e.target) &&
+            !self.$refs.cc1.contains(e.target)
+          ) {
+            if (self.sycz_boxShow1 == true) {
+              self.sycz_boxShow1 = false;
+            }
           }
-        }
-      })
+        })
+      }
+      
 
     },
     bodyCloseMenus2(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (
-          !this.$refs.main2.contains(e.target) &&
-          !this.$refs.cc2.contains(e.target)
-        ) {
-          if (self.syxt_boxShow2 == true) {
-            self.syxt_boxShow2 = false;
+      if(self.syxt_boxShow2 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main2.contains(e.target) &&
+            !self.$refs.cc2.contains(e.target)
+          ) {
+            if (self.syxt_boxShow2 == true) {
+              self.syxt_boxShow2 = false;
+            }
           }
-        }
-      })
+        })
+      }
+      
 
     },
     bodyCloseMenus3(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (
-          !this.$refs.main3.contains(e.target) &&
-          !this.$refs.cc3.contains(e.target)
-        ) {
-          if (self.sycz_boxShow3 == true) {
-            self.sycz_boxShow3 = false;
+      if(self.sycz_boxShow3 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main3.contains(e.target) &&
+            !self.$refs.cc3.contains(e.target) 
+          ) {
+            if (self.sycz_boxShow3 == true) {
+              self.sycz_boxShow3 = false;
+            }
           }
-        }
-      })
+        })
+      }
+      
 
     },
     otherClose(e) {
-      if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+      if (!this.$refs.treeBox.contains(e.target) && this.treeShow == true) this.treeShow = false;
     },
     treeClear() {
       for (var item of this.selectedIconList) {

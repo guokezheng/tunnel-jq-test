@@ -1037,27 +1037,36 @@ public class SdEventServiceImpl implements ISdEventService {
         //检索规则条件
         String retrievalRule = sdStrategyRl.getRetrievalRule();
         //最近3公里
-        if("2".equals(retrievalRule)){
+        if(EventSearchRulesEnum.TWO.getCode().equals(retrievalRule)){
             //前3公里
             Integer frontStakeNum = stakeNum - 3000;
             //后3公里
             Integer afterStakeNum = stakeNum + 3000;
             //查询区间设备
-            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), frontStakeNum, afterStakeNum,sdEvent.getTunnelId());
+            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), frontStakeNum, afterStakeNum,sdEvent.getTunnelId(), null);
         }
         //附近5个
-        if("3".equals(retrievalRule)){
+        if(EventSearchRulesEnum.THREE.getCode().equals(retrievalRule)){
             List<String> frontLatelyFive = sdDevicesMapper.getFrontLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId());
-            List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId());
+            List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId(), null);
             rlDeviceList = setLatelyFive(frontLatelyFive,afterLatelyFive);
         }
         //事发上游所有
-        if("4".equals(retrievalRule)){
-            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId());
+        if(EventSearchRulesEnum.FOUR.getCode().equals(retrievalRule)){
+            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId(), null);
         }
         //事发下游所有
-        if("5".equals(retrievalRule)){
-            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, 0,sdEvent.getTunnelId());
+        if(EventSearchRulesEnum.FIVE.getCode().equals(retrievalRule)){
+            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, 0,sdEvent.getTunnelId(), null);
+        }
+        //根据影响车道关闭上游所有
+        if(EventSearchRulesEnum.SIX.getCode().equals(retrievalRule)){
+            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId(), sdEvent.getLaneNo());
+        }
+        //根据影响车道关闭下游最近1个
+        if(EventSearchRulesEnum.SEVEN.getCode().equals(retrievalRule)){
+            List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, sdEvent.getTunnelId(), sdEvent.getLaneNo());
+            rlDeviceList = afterLatelyFive.size() == 0 ? new ArrayList<>() : afterLatelyFive.subList(0,1);
         }
         return StringUtils.join(rlDeviceList,",");
     }

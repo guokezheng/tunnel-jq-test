@@ -275,6 +275,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 sList.add(list.get(i).getStrategyInfo());
             }
             List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlList(rl);
+            //分时控制策略信息
+            String fsControlData = "";
             //策略关联表信息
             for (int j = 0; j < rlList.size(); j++) {
                 String eqTypeId = rlList.get(j).getEqTypeId();
@@ -296,19 +298,21 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
                 List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
-                //查询分是控制关闭指令
-                List<SdEquipmentState> endObject = new ArrayList<>();
-                if(rlList.get(j).getEndState() != null && !"".equals(rlList.get(j).getEndState())){
-                    state.setDeviceState(rlList.get(j).getEndState());
-                    endObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
-                }
                 if(stateObject.size()<1){
                     continue;
                 }
-                String stateName = stateObject.get(0).getStateName();//设备状态名称
+                //设备状态名称
+                String stateName = stateObject.get(0).getStateName();
+                //查询分是控制关闭指令
+                List<SdEquipmentState> endObject = new ArrayList<>();
+                if(rlList.get(j).getEndState() != null && !"".equals(rlList.get(j).getEndState()) && j == 0){
+                    state.setDeviceState(rlList.get(j).getEndState());
+                    endObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
+                    fsControlData = typeName + "控制执行：" + "开启指令：" + stateName + "；" + "关闭指令：" + endObject.get(0).getStateName() + ";";
+                }
                 //1：日常策略  3：分时控制
                 if("1".equals(list.get(i).getStrategyGroup()) && "3".equals(list.get(i).getStrategyType()) && list.get(i).getId() == rlList.get(j).getStrategyId()){
-                    sList.add(typeName + "控制执行：" + "开启指令：" + stateName + "；" + "关闭指令：" + endObject.get(0).getStateName() + ";" );
+                    sList.add(fsControlData);
                 }else {
                     sList.add(typeName + "控制执行：" + stateName + "；");
                 }
@@ -804,7 +808,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 try {
                     SysJob job = new SysJob();
                     // 定时任务名称
-                    job.setJobName(model.getStrategyName());
+                    job.setJobName(model.getStrategyName()+"执行");
                     // 调用目标字符串
                     job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
                     // corn表达式
@@ -815,7 +819,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 是否并发执行（0允许 1禁止）
                     job.setConcurrent("0");
                     // 状态（0正常 1暂停）
-                    job.setStatus("1");
+                    job.setStatus("0");
                     sysJobService.insertJob(job);
                     jobIdList.add(job.getJobId().toString());
                 } catch (Exception e) {
@@ -826,6 +830,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 endRlData.setEquipments(equipments);
                 endRlData.setStrategyId(sty.getId());
                 endRlData.setState(closeState);
+                endRlData.setEndState(closeState);
                 endRlData.setControlTime(endTime);
                 sdStrategyRlMapper.insertSdStrategyRl(endRlData);
                 refId = endRlData.getId();
@@ -833,7 +838,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 try {
                     SysJob job = new SysJob();
                     // 定时任务名称
-                    job.setJobName(model.getStrategyName());
+                    job.setJobName(model.getStrategyName()+"恢复");
                     // 调用目标字符串
                     job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
                     // corn表达式
@@ -844,7 +849,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 是否并发执行（0允许 1禁止）
                     job.setConcurrent("0");
                     // 状态（0正常 1暂停）
-                    job.setStatus("1");
+                    job.setStatus("0");
                     sysJobService.insertJob(job);
                     jobIdList.add(job.getJobId().toString());
                 } catch (Exception e) {
@@ -1202,7 +1207,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         strategy.setDirection(sty.getDirection());
         strategy.setStrategyType(sty.getStrategyType());
         strategy.setEventType(sty.getEventType());
-        strategy.setIsAutomatic(strategy.getIsAutomatic());
+        strategy.setIsAutomatic(sty.getIsAutomatic());
         return sdStrategyMapper.checkStrategy(strategy);
     }
 }

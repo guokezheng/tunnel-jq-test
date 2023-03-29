@@ -327,7 +327,7 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-                     
+
                       <div
                       v-show="
                           (item.eqType != 7 &&
@@ -897,7 +897,7 @@
             <div class="Time">
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
-                <el-time-picker 
+                <el-time-picker
                   v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
@@ -1787,6 +1787,7 @@
         v-show="operationActive == 'xitong'"
         :default-sort="{ prop: 'loginTime', order: 'descending' }"
         max-height="430"
+        :key="1"
       >
         <!-- <el-table-column type="selection" align="center" /> -->
         <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -1852,6 +1853,7 @@
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         v-show="operationActive == 'caozuo'"
+        :key="1"
       >
         <!-- <el-table-column type="selection" align="center" /> -->
         <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
@@ -2504,6 +2506,7 @@
           @selection-change="handleSelectionChange"
           @row-click="handleRowClick"
           empty-text="暂无设备"
+          :key="1"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
@@ -3299,6 +3302,7 @@
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         empty-text="暂无策略"
+        :key="1"
       >
       <el-table-column
             type="index"
@@ -5008,7 +5012,7 @@ export default {
         }
       }else{
         this.timingStrategyDisabled = false
-      } 
+      }
     },
  //翻页时不刷新序号
     indexMethod(index){
@@ -5120,7 +5124,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     bodyCloseMenus1(e) {
@@ -5137,7 +5141,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     bodyCloseMenus2(e) {
@@ -5154,7 +5158,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     bodyCloseMenus3(e) {
@@ -5163,7 +5167,7 @@ export default {
         self.$nextTick(()=>{
           if (
             !self.$refs.main3.contains(e.target) &&
-            !self.$refs.cc3.contains(e.target) 
+            !self.$refs.cc3.contains(e.target)
           ) {
             if (self.sycz_boxShow3 == true) {
               self.sycz_boxShow3 = false;
@@ -5171,7 +5175,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     otherClose(e) {

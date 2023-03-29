@@ -298,9 +298,9 @@
           </span>
           <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
         </el-form-item>
-        <el-form-item label="角色顺序" prop="roleSort">
+<!--        <el-form-item label="角色顺序" prop="roleSort">
           <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
             <el-radio
@@ -473,9 +473,9 @@ export default {
         roleKey: [
           { required: true, message: "权限字符不能为空", trigger: "blur" }
         ],
-        roleSort: [
+       /* roleSort: [
           { required: true, message: "角色顺序不能为空", trigger: "blur" }
-        ]
+        ]*/
       }
     };
   },

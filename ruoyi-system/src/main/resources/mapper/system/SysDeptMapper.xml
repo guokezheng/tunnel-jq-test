@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="listDeptExcYG1" parameterType="com.ruoyi.common.core.domain.entity.SysDept" resultMap="SysDeptResult">
 		<include refid="selectDeptVo"/>
-		where d.del_flag = '0' and  dept_id not like 'YG1%'
+		where d.del_flag = '0' and d.status = '0' and  d.dept_id  like 'YG1%'
 		<if test="deptId != null and deptId != 0">
 			AND dept_id = #{deptId}
 		</if>
@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="listDeptYG1" parameterType="com.ruoyi.common.core.domain.entity.SysDept" resultMap="SysDeptResult">
 		<include refid="selectDeptVo"/>
-		where d.del_flag = '0' and  dept_id like 'YG1%'
+		where d.del_flag = '0' and d.status = '0' and  dept_id like 'YG1%'
 		<if test="deptId != null and deptId != 0">
 			AND dept_id = #{deptId}
 		</if>
@@ -137,7 +137,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<select id="selectChildrenIncludeSelfById" parameterType="String" resultMap="SysDeptResult">
-		select * from sys_dept where status = 0 and del_flag = '0' and dept_id=#{deptId} or find_in_set(#{deptId}, ancestors)
+		select * from sys_dept where status = '0' and del_flag = '0' and (dept_id=#{deptId} or find_in_set(#{deptId}, ancestors))
+
 	</select>
 
 	<select id="selectNormalChildrenDeptById" parameterType="String" resultType="int">

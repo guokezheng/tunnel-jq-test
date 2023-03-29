@@ -366,15 +366,10 @@ public class SdEventServiceImpl implements ISdEventService {
         //查询预案流程节点
         List<String> list1 = Arrays.asList(sdEventHandle.getReserveId().split(","));
         SdReserveProcessMapper processMapper = SpringUtils.getBean(SdReserveProcessMapper.class);
-        //查询预案id
-        SdReserveProcess sdReserveProcess1 = processMapper.selectSdReserveProcessById(Long.valueOf(list1.get(0)));
-        SdReserveProcess sdReserveProcess = new SdReserveProcess();
-        sdReserveProcess.setReserveId(sdReserveProcess1.getReserveId());
-        List<SdReserveProcess> sdReserveProcesses = processMapper.selectSdReserveProcessList(sdReserveProcess);
-        //分别查询设备详情
         List<Map<String, Object>> list = new ArrayList<>();
-        for(SdReserveProcess item : sdReserveProcesses){
-            Map<String, Object> mapData = deviceDateiled(item.getId(),Long.valueOf(sdEventHandle.getEventId()));
+        for(String process : list1){
+            //分别查询设备详情
+            Map<String, Object> mapData = deviceDateiled(Long.valueOf(process),Long.valueOf(sdEventHandle.getEventId()));
             //将设备详情整合
             list.add(mapData);
         }

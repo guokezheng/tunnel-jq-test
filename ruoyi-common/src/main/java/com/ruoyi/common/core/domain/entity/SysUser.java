@@ -38,6 +38,7 @@ public class SysUser extends BaseEntity
     @ApiModelProperty("部门id")
     private String deptId;
 
+
     /** 用户账号 */
     @Excel(name = "用户名称")
     @ApiModelProperty("用户账号")
@@ -128,6 +129,7 @@ public class SysUser extends BaseEntity
     {
 
     }
+
 
     public SysUser(Long userId)
     {

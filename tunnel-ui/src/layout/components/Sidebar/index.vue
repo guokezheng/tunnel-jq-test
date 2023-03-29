@@ -182,7 +182,7 @@ export default {
     console.log(childrenLength,"childrenLengthchildrenLength")
     // 导航栏菜单
     if (childrenLength > 6) {
-      this.style = "min-width:20.7%;";
+      this.style = "width:147.77px;";
     } else {
       this.style = "width:20%;";
     }
@@ -190,7 +190,11 @@ export default {
 
     // 初始化
 
-    this.wrapWith  = childrenLength * 164; //总长度
+    this.wrapWith  = childrenLength * 147.77; //总长度
+    let wrap = this.$refs.scroll.$refs.wrap;
+    let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
+    this.rightIcon = rollWidth - 147.77 < wrap.offsetWidth ? false : true;
+    
   },
   async created() {
     console.log(
@@ -241,12 +245,12 @@ export default {
       let wrap = this.$refs.scroll.$refs.wrap;
       // console.log(wrap.offsetWidth,"可视区域")
       if(flag == 'left'){
-        wrap.scrollLeft = wrap.scrollLeft - 148;
+        wrap.scrollLeft = wrap.scrollLeft - 147.77;
       }else if(flag == 'right'){
-        wrap.scrollLeft = wrap.scrollLeft + 148;
+        wrap.scrollLeft = wrap.scrollLeft + 147.77;
       }
       let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
-      this.rightIcon = rollWidth - 148 < wrap.offsetWidth ? false : true;
+      this.rightIcon = rollWidth - 147.77 < wrap.offsetWidth ? false : true;
       this.leftIcon = wrap.scrollLeft == 0 ? false : true;
 
     },

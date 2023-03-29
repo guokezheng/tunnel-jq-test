@@ -220,7 +220,7 @@ public class SdReservePlanController extends BaseController {
     public Result implementPlan(@RequestParam("planId") String planId,
                                 @RequestParam("eventId") Long eventId) {
         int result = sdStrategyService.implementPlan(planId,eventId);
-        return Result.success(result);
+        return Result.toResult(result);
     }
 
     @Log(title = "环节执行")
@@ -228,7 +228,7 @@ public class SdReservePlanController extends BaseController {
     public Result implementProcess(@RequestParam("processId") Long processId,
                                    @RequestParam("eventId") Long eventId) {
         int result = sdStrategyService.implementProcess(processId,eventId);
-        return Result.success(result);
+        return Result.toResult(result);
     }
 
     /**

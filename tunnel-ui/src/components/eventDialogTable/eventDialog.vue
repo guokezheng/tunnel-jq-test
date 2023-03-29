@@ -1651,21 +1651,16 @@ export default {
       background-repeat: no-repeat;
       background-position-x: right;
   }
-  ::v-deep .detailsDialog {
+   .detailsDialog {
     width: 60%;
     position: absolute;
     left: 20%;
-    .el-dialog:not{
-      margin-top:0px!important;
-    }
+    // .el-dialog:not{
+    //   margin-top:0px!important;
+    // }
+   
   }
-  ::v-deep .detailsDialog .el-dialog {
-    height: calc(100% - 8vh) !important;
-    .el-dialog__body {
-      height: calc(100% - 4vh - 30px);
-      padding: 0 !important;
-    }
-  }
+  
 
   .animationDialog {
     z-index: 2008 !important;
@@ -2004,8 +1999,14 @@ export default {
     }
   }
   .evtInfo{
-    .el-dialog__body{
-      max-height: 62vh;
+    ::v-deep .el-dialog__body{
+      max-height: 70vh;
+      overflow: auto;
+    }
+  }
+  .detailsDialog{
+    ::v-deep .el-dialog__body{
+      max-height: 70vh;
       overflow: auto;
     }
   }

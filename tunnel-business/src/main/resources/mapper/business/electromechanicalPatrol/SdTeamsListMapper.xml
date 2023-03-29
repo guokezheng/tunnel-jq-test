@@ -6,7 +6,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="SdTeamsList" id="SdTeamsListResult">
         <id     property="deptId"     column="dept_id"     />
-        <result property="parentId"   column="parent_id"   />
         <result property="ancestors"  column="ancestors"   />
         <result property="deptName"   column="dept_name"   />
         <result property="orderNum"   column="order_num"   />
@@ -23,32 +22,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDeptVo">
-        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
+        select d.dept_id, d.parent_id parentId, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
         from sd_teams d
     </sql>
 
     <select id="selectSdTeamsList" parameterType="SdTeamsList" resultMap="SdTeamsListResult">
-        <include refid="selectDeptVo"/>
+        select d.dept_id, p.dept_name parentId, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
+        from sd_teams d
+        left join sys_dept p on d.parent_id = p.dept_id
         where d.del_flag = '0'
         <if test="deptId != null and deptId != 0">
-            AND dept_id = #{deptId}
+            AND d.dept_id = #{deptId}
         </if>
         <if test="parentId != null and parentId != 0">
-            AND parent_id = #{parentId}
+            AND d.parent_id = #{parentId}
         </if>
         <if test="deptName != null and deptName != ''">
-            AND dept_name like concat('%', #{deptName}, '%')
+            AND d.dept_name like concat('%', #{deptName}, '%')
         </if>
         <if test="status != null and status != ''">
-            AND status = #{status}
+            AND d.status = #{status}
         </if>
-        <if test="ids != null and ids != ''"> and FIND_IN_SET(dept_id,#{ids}) > 0</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(d.dept_id,#{ids}) > 0</if>
         <if test="depts != null and depts != ''">
-            AND (parent_id = #{depts} OR parent_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{depts},d.ancestors) ))
+            AND (d.parent_id = #{depts} OR d.parent_id IN ( SELECT s.dept_id FROM sys_dept s WHERE FIND_IN_SET (#{depts},s.ancestors) ))
         </if>
         <!-- 数据范围过滤 -->
         ${params.dataScope}
-        order by d.parent_id, d.order_num
+        order by d.create_time desc,d.update_time desc
     </select>
 
 
@@ -140,6 +141,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
 
+
+    <select id="checkTeamsExistUser" parameterType="String" resultType="int">
+		select count(1) from sd_user_teams where teams_id = #{deptId}
+	</select>
 
 
 </mapper>

@@ -20,7 +20,6 @@
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             ref="tree"
-            default-expand-all
             @node-click="handleNodeClick"
             style="height:740px; overflow: auto;"
           />

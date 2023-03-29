@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container infoBoardDialog">
     <!-- 添加信息弹窗 -->
     <el-dialog
       title="修改"
@@ -20,7 +20,7 @@
         >
           <span
             class="textBoard1 boardTextStyle"
-            style="position: absolute"
+            style="position: absolute;max-height: 123px;overflow: hidden;"
             :style="{
               color: dataForm.COLOR,
               fontSize: getFontSize(dataForm.FONT_SIZE),
@@ -555,10 +555,10 @@ export default {
       this.alignmentNum = alignmentNum;
       var divContent1 = document.getElementsByClassName("blackBoard1");
       var textBoard1 = document.getElementsByClassName("textBoard1");
-      console.log(textBoard1, "textBoard1");
-      console.log(divContent1, "divContent1");
+      // console.log(textBoard1, "textBoard1");
+      // console.log(divContent1, "divContent1");
 
-      console.log(textBoard1[0].style, "textBoard1[i].style");
+      // console.log(textBoard1[0].style, "textBoard1[i].style");
       // console.log(textWidth,divWidth,"999999999999999");
       switch (alignmentNum) {
         // 左对齐
@@ -606,13 +606,17 @@ export default {
       }
       var textLeft = this.addZero(textBoard1[0].offsetLeft);
       var textTop = this.addZero(textBoard1[0].offsetTop);
-
-      // console.log(textBoard1[0].offsetLeft,textBoard1[0].offsetTop,"9999999999");
+      console.log(textLeft,textTop,"左右居中")
+      console.log(textBoard1[0].offsetTop,"9999999999");
       this.dataForm.COORDINATE = textLeft + textTop;
       console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
     },
     addZero(num) {
-      return ("000" + num).slice(-3);
+      if(num<0){
+        return '000'
+      }else{
+        return ("000" + num).slice(-3);
+      }
     },
     faceDrop(e) {
       e.preventDefault(); //阻止默认行为
@@ -737,6 +741,7 @@ export default {
               templateId: this.dataForm.id,
               templateDelContent: [],
             };
+            console.log(params,"params")
             editTemplateContent(params).then((response) => {
               console.log(response, "返回结果");
             });
@@ -760,9 +765,10 @@ export default {
       this.$emit("dialogClose");
     },
     getDevicePixel(devicePixel, num) {
+      console.log(devicePixel,"devicePixel+++++++++++++++++")
       if (num == 0) {
-        if (devicePixel > 760) {
-          return 760 + "px";
+        if (devicePixel > 768) {
+          return 768 + "px";
         } else {
           return devicePixel + "px";
         }
@@ -775,9 +781,12 @@ export default {
       }
     },
     getCoordinate(coordinate, num) {
+      console.log(coordinate,"coordinate")
+      console.log(this.boardWidth,"this.boardWidth")
       if (num == 0) {
-        if (this.boardWidth > 760) {
-          let i = this.boardWidth / 760;
+        if (this.boardWidth > 768) {
+          let i = this.boardWidth / 768;
+          console.log(coordinate / i,"width")
           return coordinate / i + "px";
         } else {
           return coordinate + "px";
@@ -785,6 +794,7 @@ export default {
       } else if (num == 1) {
         if (this.boardHeight > 123) {
           let i = this.boardHeight / 123;
+          console.log(coordinate / i,"height")
           return coordinate / i + "px";
         } else {
           return coordinate + "px";
@@ -793,8 +803,8 @@ export default {
     },
     getFontSize(size) {
       // console.log(size,"size")
-      if (this.boardWidth > 760) {
-        let i = this.boardWidth / 760;
+      if (this.boardWidth > 768) {
+        let i = this.boardWidth / 768;
 
         return size.substring(0, 2) / i - 2 + "px";
       } else {

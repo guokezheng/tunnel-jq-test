@@ -593,7 +593,6 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Override
     public int deleteTeamsUserCancelAll(String deptId, Long[] userIds) {
-       deptId = deptId.substring(0,deptId.length()-2);
 
         return userMapper.updateUserDeptAll(deptId,userIds);
     }

@@ -313,11 +313,17 @@ export default {
     },
     /** 转换部门数据结构 */
     normalizer(node) {
-      if("无"==node.id){
+      if("YG0"==node.id){
         return {
-          id: "无",
-          label: "无",
-          children: "无"
+          id: "YG0",
+          label: "YG0",
+          children: "YG0"
+        };
+      }else if("0"==node.id){
+        return {
+          id: "0",
+          label: "0",
+          children: "0"
         };
       }else{
         if (node.children && !node.children.length) {
@@ -385,8 +391,13 @@ export default {
       getDept(row.deptId).then(response => {
         this.form = response.data;
         if(response.data.ancestors=='0'){
-          this.form.parentId = '无';
-          this.disstate = true;
+          if(response.data.deptId=='1'){
+            this.form.parentId = '0';
+            this.disstate = true;
+          }else{
+            this.form.parentId = 'YG0';
+            this.disstate = true;
+          }
         }else{
           this.disstate = false;
         }

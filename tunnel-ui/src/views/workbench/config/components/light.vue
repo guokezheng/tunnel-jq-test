@@ -315,9 +315,12 @@ export default {
       console.log(this.eqInfo.equipmentId,"this.eqInfo.equipmentId")
       console.log(this.stateForm.state, "单选框点击绑定");
       if(this.eqInfo.clickEqType != 45){
+        debugger
+        console.log(this.stateForm.brightness)
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state,
+          brightness: this.stateForm.brightness
         };
 
         controlDevice(param).then((response) => {

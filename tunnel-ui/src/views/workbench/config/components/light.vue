@@ -316,9 +316,12 @@ export default {
       let that = this
       console.log(this.eqInfo.clickEqType,"this.eqInfo.clickEqType")
       if(this.eqInfo.clickEqType != 45){
+        debugger
+        console.log(this.stateForm.brightness)
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state,
+          brightness: this.stateForm.brightness
         };
         controlDevice(param).then((response) => {
           if (response.data == 0) {

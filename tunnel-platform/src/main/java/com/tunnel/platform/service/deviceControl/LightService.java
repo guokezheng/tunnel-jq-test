@@ -12,6 +12,8 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.light.Light;
+import com.tunnel.deal.light.SansiLight;
+import com.tunnel.deal.light.impl.SansiLightImpl;
 import com.tunnel.platform.service.SdDeviceControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +41,13 @@ public class LightService {
     @Autowired
     private ISdDevicesProtocolService sdDevicesProtocolService;
 
-
     /**
-     * 从Spring容器中获取设备协议中配置的Class对象
+     * 获取该设备classname地址
      *
      * @param deviceId
      * @return
      */
-    public Light getBeanOfDeviceProtocol(String deviceId) {
+    public String getSdDevicesProtocolStrl(String deviceId){
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
 
         String brandId = device.getBrandId();
@@ -62,13 +63,41 @@ public class LightService {
 
         SdDevicesProtocol sdDevicesProtocol = protocolList.get(0);
         String className = sdDevicesProtocol.getClassName();
+        return className ;
+    }
 
+    /**
+     * 从Spring容器中获取设备协议中配置的Class对象
+     *
+     * @param className
+     * @return
+     */
+    public Light getBeanOfDeviceProtocol(String className) {
         Light light = null;
         try {
             Class<?> aClass = Class.forName(className);
             Object object = aClass.newInstance();
             if (object instanceof Light) {
                 light = (Light) SpringContextUtils.getBean(object.getClass());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return light;
+    }
+    /**
+     * 从Spring容器中获取设备协议中配置的Class对象
+     *
+     * @param className
+     * @return
+     */
+    public SansiLight getBeanOfSansiLightImpl(String className) {
+        SansiLight light = null;
+        try {
+            Class<?> aClass = Class.forName(className);
+            Object object = aClass.newInstance();
+            if (object instanceof SansiLight) {
+                light = (SansiLightImpl) SpringContextUtils.getBean(object.getClass());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,7 +163,7 @@ public class LightService {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
 
         Light light = getBeanOfDeviceProtocol(deviceId);
-        int resultStatus = light.lineControl(deviceId, openClose);
+        int resultStatus = light.lineControl(deviceId, openClose,null);
         // 如果控制成功
         if (resultStatus == 1) {
             //更新设备状态
@@ -178,11 +207,21 @@ public class LightService {
     /**
      * @param deviceId  设备ID
      * @param openClose 状态（1-开，0-关）
+     *   @param brightness 亮度
      * @return 控制结果 1-成功，0-失败
      */
-    public int lineControl(String deviceId, Integer openClose) {
-        Light light = getBeanOfDeviceProtocol(deviceId);
-        int resultStatus = light.lineControl(deviceId, openClose);
+    public int lineControl(String deviceId, Integer openClose,Integer brightness) {
+        int resultStatus = 0;
+        //获取该设备classname地址
+        String className = getSdDevicesProtocolStrl(deviceId);
+        if(className.contains("SanJingLight")){
+            Light light = getBeanOfDeviceProtocol(className);
+            resultStatus = light.lineControl(deviceId, openClose,brightness);
+        }else if(className.contains("SansiLightImpl")){
+            SansiLight light = getBeanOfSansiLightImpl(className);
+            resultStatus = light.lineControl(deviceId, openClose);
+        }
+
         return resultStatus;
     }
 

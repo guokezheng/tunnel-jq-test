@@ -2,7 +2,7 @@ package com.tunnel.deal.light;
 
 import java.util.List;
 
-public interface Light {
+public interface SansiLight {
 
     /**
      * 调光
@@ -12,14 +12,15 @@ public interface Light {
     int setBrightness(String deviceId, Integer bright);
 
     /**
-     * 开关 亮度
+     * 开关
      * @param deviceId
      * @param openClose
      * @return 控制结果 1-成功，0-失败
      */
-    int lineControl(String deviceId, Integer openClose, Integer brightness);
+    int lineControl(String deviceId, Integer openClose);
 
 
 
     void setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp);
+
 }

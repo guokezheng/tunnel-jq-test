@@ -10,7 +10,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
-import com.tunnel.deal.light.Light;
+import com.tunnel.deal.light.SansiLight;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class SanJingLight implements Light {
+public class SansiLightImpl implements SansiLight {
 
     @Autowired
     private ISdDevicesService sdDevicesService;
@@ -47,18 +47,16 @@ public class SanJingLight implements Light {
      * @throws IOException
      */
     public String login(String username, String password, String baseUrl) {
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("text/plain");
-        RequestBody body = RequestBody.create(mediaType, "");
-        // http://47.119.189.80:8888/login
-        String url = baseUrl + "/login?username=" + username + "&password=" + password;
-        Request request = new Request.Builder()
-                .url(url)
-                .method("POST", body)
-                .build();
         Response response = null;
         try {
-            response = client.newCall(request).execute();
+            String data = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType=MediaType.parse("application/json");
+            RequestBody body=RequestBody.create(mediaType, data);
+            Request request=new Request.Builder().url(baseUrl+"/api/core/users/login").method("POST",body).addHeader("Content-Type","application/json")
+                    .addHeader("Accept","application/json").build();
+            response=client.newCall(request).execute();
+
         } catch (IOException e) {
             e.printStackTrace();
             return "";
@@ -115,8 +113,14 @@ public class SanJingLight implements Light {
         return responseBody.contains("发送成功") ? 1 : 0;
     }
 
+    /**
+     * 照明灯开关控制
+     * @param deviceId
+     * @param openClose
+     * @return
+     */
     @Override
-    public int lineControl(String deviceId, Integer openClose, Integer brightness) {
+    public int lineControl(String deviceId, Integer openClose) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
 
         String eqTunnelId = device.getEqTunnelId();
@@ -135,79 +139,26 @@ public class SanJingLight implements Light {
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
-
+        //获取三思Cookie
         String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
-        //开关
-        int switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
-        //亮度
-        int brightnessType = 0;
-        //2表示关
-        if(openClose!=2){
-            brightnessType = updateBrightness(jessionId, baseUrl, deviceId, step ,brightness);
-        }
-        return switchType==1 &&brightnessType==1 ? 1 : 0;
-    }
 
-    /**
-     * 控制灯开关方法
-     * @param jessionId cookit
-     * @param baseUrl 外部系统地址
-     * @param externalSystemTunnelId  隧道洞编号
-     * @param step 关联的段号
-     * @param openClose 开关
-     * @return
-     */
-    public int updateSwitch(String jessionId ,String baseUrl ,String externalSystemTunnelId, String step , Integer openClose) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
-        RequestBody body = RequestBody.create(mediaType, "");
+        //传入的请求参数
+        String data = "{\"index\":\"" + deviceId + "\",\"status\":\"" + openClose + "\"}";
+        RequestBody body = RequestBody.create(mediaType, data);
+
         if (openClose == 2) {
             openClose = 0;
         }
-        String url = baseUrl + "/api/lineControl?tunnelId=" + externalSystemTunnelId + "&step=" + step + "&openClose=" + openClose;
-        // String url = lineControl + "?tunnelId=" + externalSystemTunnelId + "&step=" + step + "&openClose=" + openClose;
+        String url = baseUrl + "/api/core/assetGroups/605d36c9682d4f4e96e6db3d/action/device-sensor:switch-status";
+
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
-                .addHeader("Cookie", jessionId)
-                .build();
-        //调用开关返回参数
-        String responseBody = "";
-        //调用调节亮度返回参数
-        String responseLuminanceBody = "";
-
-        try {
-            Response response = client.newCall(request).execute();
-            //包含“发送成功"就可以
-            responseBody = response.body().string();
-        } catch (IOException e) {
-            return 0;
-        }
-        return responseBody.contains("发送成功") ? 1 : 0;
-    }
-
-    /**
-     * 控制灯亮度方法
-     * @param jessionId  cookit
-     * @param baseUrl 外部系统地址
-     * @param deviceId 隧道洞编号
-     * @param step 关联的段号
-     * @param bright 亮度
-     * @return
-     */
-    public int updateBrightness(String jessionId ,String baseUrl ,String deviceId,String step , Integer bright) {
-
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        // 示例 "tunnelId=2&step=0&bright=98"
-        String url = baseUrl + "/api/adjustBrightness";
-        String content = "tunnelId=" + deviceId + "&step=" + step + "&bright=" + bright;
-        RequestBody body = RequestBody.create(mediaType, content);
-        Request request = new Request.Builder()
-                .url(url)
-                .method("POST", body)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addHeader("Cookie", jessionId)
+                .addHeader("Content-Type","application/json")
+                .addHeader("Accept","application/json")
+                .addHeader("Authorization", jessionId)
                 .build();
 
         String responseBody = "";

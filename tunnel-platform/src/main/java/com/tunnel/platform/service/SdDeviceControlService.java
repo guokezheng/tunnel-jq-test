@@ -286,7 +286,7 @@ public class SdDeviceControlService {
 
     private int controlLightingDevices(int controlState, String isopen, String devId, String state, SdDevices sdDevices) {
         if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
-            controlState = lightService.lineControl(devId, Integer.parseInt(state));
+            controlState = lightService.lineControl(devId, Integer.parseInt(state),null);
         } else if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
             sdDevices.setEqStatus("1");

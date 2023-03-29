@@ -304,7 +304,7 @@
       title="选择用户"
       class="workbench-dialog batch-table operationDiglog explain-table"
       :visible.sync="teamsUserSelect"
-      width="1000px"
+      width="800px"
       append-to-body
       v-dialogDrag
     >

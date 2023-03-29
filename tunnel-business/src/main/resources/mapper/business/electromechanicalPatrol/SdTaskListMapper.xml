@@ -174,10 +174,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select *
         from sd_teams
         <where>
-            1=1
+            1=1 and status = '0'
             <if test="deptId != null and deptId != ''">
-                AND (dept_id = #{deptId} OR dept_id IN ( SELECT d.dept_id FROM sd_teams d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+                AND (parent_id = #{deptId} OR parent_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
+
         </where>
     </select>
 

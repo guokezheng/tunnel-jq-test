@@ -620,6 +620,7 @@ export default {
       this.resetForm("queryForm");
       this.$refs.queryForm.resetFields();
       this.queryParams.vType = [];
+      this.queryParams.plateNumber = "";
       this.result = [];
       this.handleQuery();
     },

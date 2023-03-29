@@ -150,13 +150,13 @@
   
   .el-card{
     .el-input--mini .el-input__inner{
-      background: #012E51 !important;
+      background: #1A3D62 !important;
       border: solid 1px #05AFE3;
       color: #fff;
     }
     .el-input-number__decrease, .el-input-number__increase{
-      background: #012E51 !important;
-      border: solid 1px #05AFE3;
+      background: #1A3D62 !important;
+      border: solid 1px #00152B;
       color: #fff;
     }
   }
@@ -313,7 +313,7 @@
       .el-input-number__increase, .el-input-number__decrease{
         background: #012E51 !important;
         color: white !important;
-        border-left: 1px solid #05AFE3;
+        border-left: 1px solid #00152B;
 
       }
       .vue-treeselect__single-value{
@@ -321,7 +321,7 @@
 
       }
       .el-input-number__increase{
-        border-bottom: 1px solid #05AFE3;
+        border-bottom: 1px solid #00152B;
 
       }
       .popup-main{
@@ -532,10 +532,10 @@
   .el-input-number__increase, .el-input-number__decrease{
     background: #012E51 !important;
     color: white !important;
-    border-left: 1px solid #05AFE3 !important;
+    border-left: 1px solid #00152B !important;
   }
   .el-input-number__increase{
-    border-bottom: 1px solid #05AFE3 !important;
+    border-bottom: 1px solid #00152B !important;
   }
   
   .hitchDialog{
@@ -629,6 +629,11 @@
     //   color: #fff;
 
     // }
+    .infoBoardDialog{
+      .el-input--mini .el-input__inner{
+        border:transparent !important;
+      }
+    }
    .infoBoardBox{
     background: #004375;
       .el-checkbox{
@@ -671,7 +676,7 @@
       color: #05afe3;
      }
      .el-table__body-wrapper .el-table__cell{
-      border-left:transparent !important;
+      border:transparent !important;
      }
      .el-table tr{
         background: #004375 !important;
@@ -2315,12 +2320,20 @@
     .el-input__inner{
       background-color: #2D69A5;
       color: white;
+      border: none;
     }
     .chezhiDrawerDirection{
       background: #31628B;
     }
     .chezhiControlButton{
       background: #D8D8D8 linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+      border: none;
+    }
+  }
+  .detailsDialog{
+    .el-dialog__body{
+      max-height: 70vh;
+      overflow: auto;
     }
   }
   // 应急调度

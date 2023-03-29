@@ -2567,7 +2567,7 @@ export default {
 
   .videoDialogBox {
     width: 100%;
-    height: 450px;
+    height: 400px;
     display: flex;
     justify-content: space-between;
     align-items:center;
@@ -3093,8 +3093,14 @@ export default {
     }
   }
   .evtInfo{
-    .el-dialog__body{
-      max-height: 62vh;
+    ::v-deep .el-dialog__body{
+      max-height: 70vh;
+      overflow: auto;
+    }
+  }
+  .detailsDialog{
+    ::v-deep .el-dialog__body{
+      max-height: 70vh;
       overflow: auto;
     }
   }

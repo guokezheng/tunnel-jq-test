@@ -10,7 +10,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
-import com.tunnel.deal.light.SansiLight;
+import com.tunnel.deal.light.Light;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class SansiLightImpl implements SansiLight {
+public class SansiLightImpl implements Light {
 
     @Autowired
     private ISdDevicesService sdDevicesService;
@@ -120,7 +120,7 @@ public class SansiLightImpl implements SansiLight {
      * @return
      */
     @Override
-    public int lineControl(String deviceId, Integer openClose) {
+    public int lineControl(String deviceId, Integer openClose, Integer brightness) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
 
         String eqTunnelId = device.getEqTunnelId();

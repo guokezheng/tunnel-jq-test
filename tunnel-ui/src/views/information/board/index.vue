@@ -182,7 +182,6 @@
             </el-table-column>
             <el-table-column
               align="left"
-              style="width: 20%; "
             >
               <template slot-scope="scope">
                 <div class="menuBox">
@@ -1330,6 +1329,8 @@ export default {
   padding-top: 10px;
 }
 ::v-deep .el-table {
+  caret-color: rgba(0, 0, 0, 0);
+  user-select: none;
   thead {
     display: none;
   }

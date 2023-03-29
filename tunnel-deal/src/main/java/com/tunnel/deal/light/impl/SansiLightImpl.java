@@ -1,5 +1,6 @@
 package com.tunnel.deal.light.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -16,6 +17,7 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
 import java.util.Date;
@@ -49,11 +51,14 @@ public class SansiLightImpl implements Light {
     public String login(String username, String password, String baseUrl) {
         Response response = null;
         try {
-            String data = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+
+            byte[] textByte = password.getBytes("UTF-8");
+            String encode = new BASE64Encoder().encode(textByte);
+            String data = "{\"username\":\"" + username + "\",\"password\":\"" + encode + "\"}";
             OkHttpClient client = new OkHttpClient().newBuilder().build();
             MediaType mediaType=MediaType.parse("application/json");
             RequestBody body=RequestBody.create(mediaType, data);
-            Request request=new Request.Builder().url(baseUrl+"/api/core/users/login").method("POST",body).addHeader("Content-Type","application/json")
+            Request request=new Request.Builder().url(baseUrl+"/  /core/users/login").method("POST",body).addHeader("Content-Type","application/json")
                     .addHeader("Accept","application/json").build();
             response=client.newCall(request).execute();
 
@@ -61,8 +66,8 @@ public class SansiLightImpl implements Light {
             e.printStackTrace();
             return "";
         }
-        List<String> headers = response.headers("Set-Cookie");
-        return headers.get(0);
+        JSONObject jo = JSONObject.parseObject(  response.body().toString());
+        return  jo.getJSONObject("data").getString("id");
     }
 
     @Override
@@ -142,22 +147,42 @@ public class SansiLightImpl implements Light {
         //获取三思Cookie
         String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
 
+        //灯开关
+        int switchType = updateSwitch(jessionId, baseUrl, baseUrl, openClose);
+        //亮度
+        int brightnessType = 0;
+        //2表示关
+        if(openClose!=2){
+            brightnessType = updateBrightness(jessionId, baseUrl, baseUrl, openClose);
+        }
+        return switchType==1 && brightnessType==1 ? 1 : 0;
+    }
+
+    /**
+     * 控制灯开关方法
+     * @param jessionId cookit
+     * @param baseUrl 外部系统地址
+     * @param step 关联的段号
+     * @param openClose 开关
+     * @return
+     */
+    public int updateSwitch(String jessionId ,String baseUrl , String step , Integer openClose) {
+        //灯开关
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
         //传入的请求参数
-        String data = "{\"index\":\"" + deviceId + "\",\"status\":\"" + openClose + "\"}";
+        String data = "{\"param\":\"" + openClose + "\"}";
         RequestBody body = RequestBody.create(mediaType, data);
 
         if (openClose == 2) {
             openClose = 0;
         }
-        String url = baseUrl + "/api/core/assetGroups/605d36c9682d4f4e96e6db3d/action/device-sensor:switch-status";
+        String url = baseUrl + "api/core/assets/"+step+"/action/device-sensor:switch-status";
 
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type","application/json")
-                .addHeader("Accept","application/json")
                 .addHeader("Authorization", jessionId)
                 .build();
 
@@ -169,7 +194,43 @@ public class SansiLightImpl implements Light {
         } catch (IOException e) {
             return 0;
         }
-        return responseBody.contains("发送成功") ? 1 : 0;
+        return responseBody.contains("pipelineId") ? 1 : 0;
+    }
+
+    /**
+     * 控制灯亮度方法
+     * @param jessionId  cookit
+     * @param baseUrl 外部系统地址
+     * @param step 关联的段号
+     * @param bright 亮度
+     * @return
+     */
+    public int updateBrightness(String jessionId ,String baseUrl , String step , Integer bright) {
+
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        MediaType mediaType = MediaType.parse("text/plain");
+        //传入的请求参数
+        String data = "{\"param\":\"" + bright + "\"}";
+        RequestBody body = RequestBody.create(mediaType, data);
+
+        String url = baseUrl + "api/core/assets/"+step+"/action/device-sensor:dim-level";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .addHeader("Content-Type","application/json")
+                .addHeader("Authorization", jessionId)
+                .build();
+
+        String responseBody = "";
+        try {
+            Response response = client.newCall(request).execute();
+            //包含“发送成功"就可以
+            responseBody = response.body().string();
+        } catch (IOException e) {
+            return 0;
+        }
+        return responseBody.contains("pipelineId") ? 1 : 0;
     }
 
     @Override

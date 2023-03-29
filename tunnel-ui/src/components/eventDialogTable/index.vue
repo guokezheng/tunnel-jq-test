@@ -46,8 +46,8 @@
           <li
             v-for="(item, index) of list"
             :key="index"
-            @click="handleSee(item.id)"
-            style="cursor: pointer"
+            @click="handleSee(item)"
+            :style="item.prevControlType != 2?'cursor: pointer':'cursor:default'"
           >
             <el-row style="color: white">
               <el-col :span="1">
@@ -87,7 +87,7 @@
                 <div class="overflowText">{{ item.frameEventTitle }}</div>
               </el-tooltip>
                 <div style="float: right; margin-right: 10px">
-                  {{ item.eventTime }}
+                  {{ parseTime(item.eventTime, "{yyyy}-{m}-{d} {h}:{i}:{s}" )}}
                 </div>
               </el-col>
 
@@ -243,14 +243,14 @@ export default {
         this.loading = false;
       }, 2000);
     },
-    handleSee(id) {
-      if(this.searchValue != 2){
+    handleSee(item) {
+      if(item.prevControlType != 2){
         setTimeout(() => {
-          bus.$emit("getPicId", id);
+          bus.$emit("getPicId", item.id);
         }, 200);
         bus.$emit("openPicDialog");
-      }
       this.eventTableDialog = !this.eventTableDialog;
+      }
     },
 
     // 忽略事件

@@ -182,7 +182,7 @@
             </el-table-column>
             <el-table-column
               align="left"
-              style="width: 20%; border: solid 1px red"
+              style="width: 20%; "
             >
               <template slot-scope="scope">
                 <div class="menuBox">

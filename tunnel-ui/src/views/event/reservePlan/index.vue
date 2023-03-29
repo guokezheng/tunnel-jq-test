@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-27 11:33:26
+ * @LastEditTime: 2023-03-28 14:51:26
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1496,14 +1496,15 @@ export default {
         let item = this.planTypeIdList[i].processesList;
         let result = item.every(items=>{
           if(items.retrievalRule == 1){
-            return items.equipments &&
-            items.processName &&
+            return items.processName &&
             items.state &&
-            items.equipments
+            items.eqTypeId &&
+            items.equipments.length >= 1
           }else{//非指定由后端判断具体设备
             return items.processName &&
             items.state &&
             items.retrievalRule &&
+            items.eqTypeId &&
             items.state
             }
         })
@@ -1587,6 +1588,7 @@ export default {
               let brr = arr.processesList[j];
               console.log(brr);
               brr.retrievalRule = brr.retrievalRule; //规则条件
+
               // 选择指定设备
               if (brr.retrievalRule != 1) {
                 this.$set(
@@ -1615,8 +1617,22 @@ export default {
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
               // 请求情报板数据
               if (brr.eqTypeId == 16 || brr.eqTypeId == 36) {
-                brr.state = +brr.state;
-                this.qbgChange(i,j, brr.equipments);
+                // 指定设备
+                if(brr.retrievalRule == 1){
+                  brr.state = +brr.state;
+                  this.qbgChange(i,j, brr.equipments);
+                }else{
+                  //不指定
+                  brr.state = +brr.state;
+                  let params = {
+                    eqTunnelId:this.currentClickData.tunnelId,
+                    eqType:brr.eqTypeId
+                  }
+                  getVmsDataList(params).then(res=>{
+                    console.log(res);
+                    this.$set(this.planTypeIdList[i].processesList[j],"templatesList",res.data);
+                  })
+                }
               }
               console.log('zxczxczxczxczx')
               //请求广播音频列表数据

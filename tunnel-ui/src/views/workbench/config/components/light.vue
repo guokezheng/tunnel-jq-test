@@ -215,13 +215,14 @@ export default {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       iconWidth: "",
       iconHeight: "",
+      clickEqType:''
       // stateForm2:{}
     };
   },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     console.log(this.eqInfo.clickEqType, "clickEqTypeclickEqTypeclickEqType");
-
+    this.clickEqType = JSON.parse(JSON.stringify(this.eqInfo.clickEqType))
     this.getMessage();
     // this.loadFlv();
   },
@@ -312,8 +313,8 @@ export default {
       }
     },
     handleOK() {
-      console.log(this.eqInfo.equipmentId,"this.eqInfo.equipmentId")
-      console.log(this.stateForm.state, "单选框点击绑定");
+      let that = this
+      console.log(this.eqInfo.clickEqType,"this.eqInfo.clickEqType")
       if(this.eqInfo.clickEqType != 45){
         debugger
         console.log(this.stateForm.brightness)
@@ -322,17 +323,18 @@ export default {
           state: this.stateForm.state,
           brightness: this.stateForm.brightness
         };
-
         controlDevice(param).then((response) => {
           if (response.data == 0) {
             this.$modal.msgError("控制失败");
           } else if (response.data == 1) {
-            if(this.eqInfo.clickEqType == 7){
+            console.log(that.clickEqType,"this.eqInfo.clickEqType")
+            if(that.clickEqType == 7){
               const params = {
                 bright: this.stateForm.brightness,
                 controlType: "0",
                 deviceId: this.eqInfo.equipmentId,
               };
+              console.log(params,"params")
               setBrightness(params).then((res) => {
                 console.log(res, "亮度");
                 this.$modal.msgSuccess("控制成功");

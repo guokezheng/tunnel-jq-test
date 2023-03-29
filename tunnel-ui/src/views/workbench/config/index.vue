@@ -327,7 +327,7 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-
+                     
                       <div
                       v-show="
                           (item.eqType != 7 &&
@@ -897,7 +897,7 @@
             <div class="Time">
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
-                <el-time-picker
+                <el-time-picker 
                   v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
@@ -1621,14 +1621,14 @@
               <el-button
                 slot="append"
                 icon="icon-gym-Gsearch"
-                @click="sycz_boxShow = !sycz_boxShow"
+                @click="sycz_boxShow1 = !sycz_boxShow1"
                 style="transform: translateX(-20px)"
               ></el-button>
             </el-input>
           </div>
         </el-col>
       </el-row>
-      <div class="syxt_searchBox" v-show="sycz_boxShow" ref="cc1">
+      <div class="syxt_searchBox" v-show="sycz_boxShow1" ref="cc1">
         <el-form
           ref="operationParam"
           :inline="true"
@@ -1788,7 +1788,7 @@
         :default-sort="{ prop: 'loginTime', order: 'descending' }"
         max-height="430"
       >
-        <el-table-column type="selection" align="center" />
+        <!-- <el-table-column type="selection" align="center" /> -->
         <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
         <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
         <el-table-column
@@ -1853,7 +1853,7 @@
         :row-class-name="tableRowClassName"
         v-show="operationActive == 'caozuo'"
       >
-        <el-table-column type="selection" align="center" />
+        <!-- <el-table-column type="selection" align="center" /> -->
         <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
         <el-table-column
           label="隧道名称"
@@ -1871,17 +1871,8 @@
           align="center"
           prop="stateName.stateName"
         />
-        <el-table-column
-          label="控制方式"
-          align="center"
-          prop="controlType"
-        />
-        <el-table-column
-          label="操作结果"
-          align="center"
-          prop="state"
-        />
-
+        <el-table-column label="控制方式" align="center" prop="controlType" />
+        <el-table-column label="操作结果" align="center" prop="state" />
         <el-table-column label="操作地址" align="center" prop="operIp" />
         <el-table-column
           label="创建时间"
@@ -3175,20 +3166,19 @@
               <el-button
                 slot="append"
                 icon="icon-gym-Gsearch"
-                @click="syxt_boxShow = !syxt_boxShow"
+                @click="syxt_boxShow2 = !syxt_boxShow2"
                 style="transform: translateX(-20px)"
               ></el-button>
             </el-input>
           </div>
         </el-col>
       </el-row>
-      <div class="syxt_searchBox" v-show="syxt_boxShow"  ref="cc2">
+      <div class="syxt_searchBox" v-show="syxt_boxShow2"  ref="cc2">
         <el-form
           ref="operationParam"
           :inline="true"
           :model="operationParam"
           label-width="68px"
-          v-show="operationActive == 'xitong'"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
             <el-select
@@ -3247,20 +3237,19 @@
               <el-button
                 slot="append"
                 icon="icon-gym-Gsearch"
-                @click="sycz_boxShow = !sycz_boxShow"
+                @click="sycz_boxShow3 = !sycz_boxShow3"
                 style="transform: translateX(-20px)"
               ></el-button>
             </el-input>
           </div>
         </el-col>
       </el-row>
-      <div class="syxt_searchBox" v-show="sycz_boxShow"  ref="cc3">
+      <div class="syxt_searchBox" v-show="sycz_boxShow3"  ref="cc3">
         <el-form
           ref="operationParam"
           :inline="true"
           :model="operationParam"
           label-width="68px"
-          v-show="operationActive == 'xitong'"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
             <el-select
@@ -3285,7 +3274,7 @@
               size="small"
             >
               <el-option
-                v-for="dict in strategyTypeOptions"
+                v-for="dict in strategyTypeEvent"
                 :key="dict.dictValue"
                 :label="dict.dictLabel"
                 :value="dict.dictValue"
@@ -3311,6 +3300,13 @@
         :row-class-name="tableRowClassName"
         empty-text="暂无策略"
       >
+      <el-table-column
+            type="index"
+            width="70"
+            align="center"
+            :index="indexMethod3"
+            label="序号">
+          </el-table-column>
         <el-table-column
           label="隧道名称"
           align="center"
@@ -3839,7 +3835,9 @@ export default {
 
       footChangeRadio: "图表",
       syxt_boxShow: false,
-      sycz_boxShow: false,
+      syxt_boxShow2: false,
+      sycz_boxShow1: false,
+      sycz_boxShow3: false,
       rccl_boxShow: false,
       yjcl_boxShow: false,
       treeShow: false,
@@ -3866,7 +3864,7 @@ export default {
         fileNames: [],
       },
       strategyTypeOptions: [],
-
+      strategyTypeEvent:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -4940,7 +4938,7 @@ export default {
       console.log(dom);
       if (dom) {
         // 如果点击的区域不在自定义dom范围
-        if (!dom.contains(e.target)) {
+        if (!dom.contains(e.target) && that.treeShow == true) {
           that.treeShow = false;
         }
       }
@@ -5010,7 +5008,7 @@ export default {
         }
       }else{
         this.timingStrategyDisabled = false
-      }
+      } 
     },
  //翻页时不刷新序号
     indexMethod(index){
@@ -5019,6 +5017,10 @@ export default {
     //翻页时不刷新序号
     indexMethod2(index){
       return index+(this.operationParam.pageNum-1)*this.operationParam.pageSize+1
+    },
+    //翻页时不刷新序号
+    indexMethod3(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
     videoRadioChange() {
       if (this.footChangeRadio == "视频" && this.tunnelId) {
@@ -5106,62 +5108,74 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (
-          !this.$refs.main.contains(e.target) &&
-          !this.$refs.cc.contains(e.target)
-        ) {
-          if (self.syxt_boxShow == true) {
-            self.syxt_boxShow = false;
+      if(self.syxt_boxShow == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main.contains(e.target) &&
+            !self.$refs.cc.contains(e.target)
+          ) {
+            if (self.syxt_boxShow == true) {
+              self.syxt_boxShow = false;
+            }
           }
-        }
-      })
+        })
+      }
+      
 
     },
     bodyCloseMenus1(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (
-          !this.$refs.main1.contains(e.target) &&
-          !this.$refs.cc1.contains(e.target)
-        ) {
-          if (self.sycz_boxShow == true) {
-            self.sycz_boxShow = false;
+      if(self.sycz_boxShow1 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main1.contains(e.target) &&
+            !self.$refs.cc1.contains(e.target)
+          ) {
+            if (self.sycz_boxShow1 == true) {
+              self.sycz_boxShow1 = false;
+            }
           }
-        }
-      })
+        })
+      }
+      
 
     },
     bodyCloseMenus2(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (
-          !this.$refs.main2.contains(e.target) &&
-          !this.$refs.cc2.contains(e.target)
-        ) {
-          if (self.syxt_boxShow == true) {
-            self.syxt_boxShow = false;
+      if(self.syxt_boxShow2 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main2.contains(e.target) &&
+            !self.$refs.cc2.contains(e.target)
+          ) {
+            if (self.syxt_boxShow2 == true) {
+              self.syxt_boxShow2 = false;
+            }
           }
-        }
-      })
+        })
+      }
+      
 
     },
     bodyCloseMenus3(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (
-          !this.$refs.main3.contains(e.target) &&
-          !this.$refs.cc3.contains(e.target)
-        ) {
-          if (self.sycz_boxShow == true) {
-            self.sycz_boxShow = false;
+      if(self.sycz_boxShow3 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main3.contains(e.target) &&
+            !self.$refs.cc3.contains(e.target) 
+          ) {
+            if (self.sycz_boxShow3 == true) {
+              self.sycz_boxShow3 = false;
+            }
           }
-        }
-      })
+        })
+      }
+      
 
     },
     otherClose(e) {
-      if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+      if (!this.$refs.treeBox.contains(e.target) && this.treeShow == true) this.treeShow = false;
     },
     treeClear() {
       for (var item of this.selectedIconList) {
@@ -8718,7 +8732,9 @@ export default {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.syxt_boxShow = false
-      this.sycz_boxShow = false
+      this.sycz_boxShow1 = false
+      this.syxt_boxShow2 = false
+      this.sycz_boxShow3 = false
       this.handlestrategyQuery();
     },
     // 关闭控制策略对话框

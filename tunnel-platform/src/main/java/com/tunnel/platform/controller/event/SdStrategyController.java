@@ -85,6 +85,7 @@ public class SdStrategyController extends BaseController
 
     @GetMapping(value = "/timeSharing/updateControlTime")
     @ApiOperation("工作台分时控制抽屉修改控制时间")
+    @Log(title = "控制策略分时控制", businessType = BusinessType.UPDATE)
     public Result updateControlTime(@RequestParam("strategyId") Long strategyId,@RequestParam("controlTime") String controlTime) {
         return Result.toResult(sdStrategyService.updateControlTime(strategyId,controlTime));
     }

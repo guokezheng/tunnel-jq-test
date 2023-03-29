@@ -33,4 +33,6 @@ public interface SdTeamsListMapper
     int deleteTeamsById(@Param("deptId")String deptId);
 
     int batchUserTeams(List<SdUserTeams> list);
+
+    int checkTeamsExistUser(@Param("deptId")String deptId);
 }

@@ -141,4 +141,10 @@ public class SdTeamsListServiceImpl implements ISdTeamsListService
         }
         return rows;
     }
+
+    @Override
+    public boolean checkTeamsExistUser(String deptId) {
+        int result = sdTeamsListMapper.checkTeamsExistUser(deptId);
+        return result > 0;
+    }
 }

@@ -29,4 +29,6 @@ public interface ISdTeamsListService
     int deleteTeamsById(String deptId);
 
     int teamsUserSelectAll(String deptId, Long[] userIds);
+
+    boolean checkTeamsExistUser(String deptId);
 }

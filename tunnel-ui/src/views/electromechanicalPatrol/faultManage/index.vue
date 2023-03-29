@@ -812,7 +812,6 @@ export default {
       }
     },
     handleTb: function() {
-      debugger
       var startAt = new Date(this.form.faultTbtime) * 1000 /1000;
       if(startAt > this.form.faultFxtime) {
         this.form.faultTbtime = new Date(this.form.faultFxtime);

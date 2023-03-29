@@ -115,7 +115,7 @@ public class SdTeamsListController extends BaseController
     @ApiOperation("删除班组")
     @ApiImplicitParam(name = "deptId", value = "班组ID", required = true, dataType = "String", paramType = "path", dataTypeClass = Long.class)
     public Result remove(@PathVariable String deptId) {
-        if (deptService.checkDeptExistUser(deptId)) {
+        if (sdTeamsListService.checkTeamsExistUser(deptId)) {
             return Result.error("班组存在用户,不允许删除");
         }
         return Result.toResult(sdTeamsListService.deleteTeamsById(deptId));
@@ -137,7 +137,7 @@ public class SdTeamsListController extends BaseController
      * 查询班组未包含的用户
      */
     @GetMapping("/unTeamsUserList")
-    @ApiOperation("查询班组已包含的用户")
+    @ApiOperation("查询班组未包含的用户")
     public TableDataInfo<List<SysUser>> unTeamsUserList(SysUser user)
     {
         startPage();

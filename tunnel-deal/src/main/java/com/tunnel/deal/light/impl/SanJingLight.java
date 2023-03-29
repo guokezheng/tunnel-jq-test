@@ -143,9 +143,9 @@ public class SanJingLight implements Light {
         int brightnessType = 0;
         //2表示关
         if(openClose!=2){
-            brightnessType = updateBrightness(jessionId, baseUrl, deviceId, step ,brightness);
+            brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
         }
-        return switchType==1 &&brightnessType==1 ? 1 : 0;
+        return switchType==1 && brightnessType==1 ? 1 : 0;
     }
 
     /**

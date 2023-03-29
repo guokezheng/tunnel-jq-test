@@ -12,8 +12,6 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.light.Light;
-import com.tunnel.deal.light.SansiLight;
-import com.tunnel.deal.light.impl.SansiLightImpl;
 import com.tunnel.platform.service.SdDeviceControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,13 +89,13 @@ public class LightService {
      * @param className
      * @return
      */
-    public SansiLight getBeanOfSansiLightImpl(String className) {
-        SansiLight light = null;
+    public Light getBeanOfSansiLightImpl(String className) {
+        Light light = null;
         try {
             Class<?> aClass = Class.forName(className);
             Object object = aClass.newInstance();
-            if (object instanceof SansiLight) {
-                light = (SansiLightImpl) SpringContextUtils.getBean(object.getClass());
+            if (object instanceof Light) {
+                light = (Light)SpringContextUtils.getBean(object.getClass());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,17 +209,10 @@ public class LightService {
      * @return 控制结果 1-成功，0-失败
      */
     public int lineControl(String deviceId, Integer openClose,Integer brightness) {
-        int resultStatus = 0;
         //获取该设备classname地址
         String className = getSdDevicesProtocolStrl(deviceId);
-        if(className.contains("SanJingLight")){
-            Light light = getBeanOfDeviceProtocol(className);
-            resultStatus = light.lineControl(deviceId, openClose,brightness);
-        }else if(className.contains("SansiLightImpl")){
-            SansiLight light = getBeanOfSansiLightImpl(className);
-            resultStatus = light.lineControl(deviceId, openClose);
-        }
-
+        Light light = getBeanOfSansiLightImpl(className);
+        int resultStatus = light.lineControl(deviceId, openClose,brightness);
         return resultStatus;
     }
 

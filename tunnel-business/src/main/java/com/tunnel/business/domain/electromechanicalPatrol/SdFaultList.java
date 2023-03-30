@@ -46,6 +46,8 @@ public class SdFaultList extends BaseEntity
     /*@Excel(name = "故障类型")*/
     private String faultType;
 
+    private String deptId;
+
     /** 故障发现源 */
    /* @Excel(name = "故障发现源")*/
     private String faultSource;
@@ -111,6 +113,14 @@ public class SdFaultList extends BaseEntity
     private String ftype;
 
     private String ids;
+
+    public String getDeptId() {
+        return this.deptId;
+    }
+
+    public void setDeptId( String deptId) {
+        this.deptId = deptId;
+    }
 
     public String getIds() {
         return this.ids;

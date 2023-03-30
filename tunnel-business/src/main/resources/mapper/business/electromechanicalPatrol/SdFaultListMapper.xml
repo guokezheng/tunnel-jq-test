@@ -210,7 +210,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id
         left join sys_dict_data s on f.fault_type = s.dict_value
     <where>
-        1=1 and  s.dict_type= 'fault_type'
+        1=1 and  s.dict_type= 'fault_type' and f.fallt_remove_statue = '1'
         <if test="tunnelId != null and tunnelId != '' ">and f.tunnel_id = #{tunnelId}</if>
         <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
     </where>

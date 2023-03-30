@@ -24,7 +24,7 @@
       <el-col :span="6" :offset="14">
         <div ref = "main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入所属单位，回车搜索"
+            placeholder="请输入巡查班组，回车搜索"
             v-model="queryParams.zzjgId"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -120,7 +120,7 @@
           }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="承巡班组" align="center" prop="bzName">
+      <el-table-column label="巡查班组" align="center" prop="bzName">
       </el-table-column>
       <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
       <el-table-column
@@ -257,10 +257,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="指派巡查班组" prop="bzId">
+              <el-form-item label="巡查班组" prop="bzId">
                 <el-select
                   v-model="form.bzId"
-                  placeholder=""
+                  placeholder="请选择巡查班组"
                   id="bzSel"
                 >
                   <el-option
@@ -281,6 +281,7 @@
                   v-model="form.endPlantime"
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
+                  @change="handleEndTime"
                   placeholder="选择完成时间"
                 >
                 </el-date-picker>
@@ -551,7 +552,7 @@
             <span>{{ item.zzjgId }}</span>
           </el-col>
           <el-col :span="8">
-            <div>指派巡查班组：</div>
+            <div>巡查班组：</div>
             <span>{{ item.bzName }}</span>
           </el-col >
           <el-col :span="8">
@@ -633,7 +634,7 @@
             <span>{{ tas.taskStatus }}</span>
           </el-col>
           <el-col :span="8">
-            <div>执行巡查班组：</div>
+            <div>巡查班组：</div>
             <span>{{ tas.bzName }}</span>
           </el-col>
           <el-col :span="8">
@@ -1225,7 +1226,6 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger
         this.taskNews = response.data.task;
         if (response.data.task[0].ifchaosgu == "已超时") {
           this.isActive = true;
@@ -1233,7 +1233,6 @@ export default {
           this.isActive = false;
         }
         this.taskNews1 = response.data.task;
-        debugger
         this.taskNews2 = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;
@@ -1275,6 +1274,14 @@ export default {
 
       });
     },
+    //handle实现插件能选取当前时间的时、分、秒，但是选择完毕之后，只要选择的时、分、秒小于当前时间，会自动填充为当前的时、分、秒
+    handleEndTime: function() {
+      var startAt = new Date(this.form.endPlantime) * 1000 /1000;
+      if(startAt < Date.now()) {
+        this.form.endPlantime = new Date();
+      }
+    },
+
     /** 查询巡查任务列表 */
     getList() {
       this.loading = true;

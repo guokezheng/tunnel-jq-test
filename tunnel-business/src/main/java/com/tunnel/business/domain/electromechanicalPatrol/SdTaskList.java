@@ -30,7 +30,7 @@ public class SdTaskList extends BaseEntity
     /** 所属单位id(新增时保存当前登录人的单位id) */
     private String zzjgId;
 
-
+    private String deptId;
 
     /** 隧道id */
     /*@Excel(name = "隧道id")*/
@@ -67,6 +67,14 @@ public class SdTaskList extends BaseEntity
 
     private String time;
 
+    public String getDeptId() {
+        return this.deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
+
     public String getTime() {
         return this.time;
     }
@@ -87,7 +95,7 @@ public class SdTaskList extends BaseEntity
     /** 指派巡查班组id */
    /* @Excel(name = "指派巡查班组id")*/
     private String bzId;
-    @Excel(name = "承巡班组")
+    @Excel(name = "巡查班组")
     private String bzName;
 
     /** 计划完成时间 */

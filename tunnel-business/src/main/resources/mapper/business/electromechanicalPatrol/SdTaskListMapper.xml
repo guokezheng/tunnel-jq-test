@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data a on a.dict_value= t.task_status and a.dict_type = 'task_status'
         <where>
           1=1
-            <if test="zzjgId != null  and zzjgId != ''"> and d.dept_name like concat('%', #{zzjgId}, '%')</if>
+            <if test="zzjgId != null  and zzjgId != ''"> and b.dept_name like concat('%', #{zzjgId}, '%')</if>
             <if test="endPlantime != null "> and t.end_plantime = #{endPlantime}</if>
             <if test="dispatcher != null  and dispatcher != ''"> and t.dispatcher = #{dispatcher}</if>
             <if test="dispatchTime != null "> and t.dispatch_time = #{dispatchTime}</if>
@@ -64,8 +64,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskCxtime != null "> and t.task_cxtime = #{taskCxtime}</if>
             <if test="siteDescription != null  and siteDescription != ''"> and t.site_description = #{siteDescription}</if>
             <if test="ids != null and ids != ''"> and FIND_IN_SET(t.id,#{ids}) > 0</if>
+            <if test="deptId != null and deptId != ''">
+                AND (s.dept_id = #{deptId} OR s.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+            </if>
         </where>
-        order  by  t.create_time desc
+        order  by  t.create_time desc,t.update_time desc
+    </select>
+
+
+    <select id="selectChaoshiSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
+        select t.id, s.tunnel_name,d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+        left join sys_dept d on d.dept_id =  t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        left join sys_dept b on b.dept_id =  t.bz_id
+        left join sys_user w on t.walker_id = w.user_id
+        left join sd_tunnels s on s.tunnel_id = t.tunnel_id
+        left join sys_dict_data p on p.dict_value= t.publish_status and p.dict_type = 'publish_status'
+        left join sys_dict_data a on a.dict_value= t.task_status and a.dict_type = 'task_status'
+        <where>
+            1=1
+            <if test="zzjgId != null  and zzjgId != ''"> and b.dept_name like concat('%', #{zzjgId}, '%')</if>
+            <if test="endPlantime != null "> and t.end_plantime = #{endPlantime}</if>
+            <if test="dispatcher != null  and dispatcher != ''"> and t.dispatcher = #{dispatcher}</if>
+            <if test="dispatchTime != null and dispatchTime !=''"> and t.dispatch_time = #{dispatchTime}</if>
+            <if test="bzId != null  and bzId != ''"> and t.bz_id = #{bzId}</if>
+            <if test="taskDescription != null  and taskDescription != ''"> and t.task_description = #{taskDescription}</if>
+            <if test="publishStatus != null and publishStatus!=''"> and t.publish_status = #{publishStatus}</if>
+            <if test="taskStatus != null and taskStatus !=''"> and t.task_status in ('0','1')</if>
+            <if test="walkerId != null  and walkerId != ''"> and t.walker_id = #{walkerId}</if>
+            <if test="taskEndtime != null and taskEndtime !=''"> and t.task_endtime = #{taskEndtime}</if>
+            <if test="taskCxtime != null and taskCxtime!=''"> and t.task_cxtime = #{taskCxtime}</if>
+            <if test="siteDescription != null  and siteDescription != ''"> and t.site_description = #{siteDescription}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(t.id,#{ids}) > 0</if>
+            <if test="deptId != null and deptId != ''">
+                AND (s.dept_id = #{deptId} OR s.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+            </if>
+        </where>
+        order  by  t.create_time desc,t.update_time desc
     </select>
     
     <select id="selectSdTaskListById" parameterType="String" resultMap="SdTaskListResult">

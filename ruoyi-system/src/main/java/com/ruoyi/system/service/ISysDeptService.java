@@ -180,4 +180,11 @@ public interface ISysDeptService
     List<SysDept> listDeptYG1(SysDept dept);
 
     String getParentDept(String deptId);
+
+    /**
+     * 根据ID查询所有子部门及自身(状态：正常)
+     * @param deptId
+     * @return
+     */
+    List<SysDept> selectChildrenIncludeSelfByIdNormal(String deptId);
 }

@@ -86,18 +86,47 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public List<SdTaskList> selectSdTaskListList(SdTaskList sdTaskList)
     {
-        List <SdTaskList> taskLists = sdTaskListMapper.selectSdTaskListList(sdTaskList);
-        if(taskLists!=null&&taskLists.size()>0){
+        List<SdTaskList> taskLists = new ArrayList<>();
+        if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&&TaskStatus.YICHAOSHI.getCode().equals(sdTaskList.getTaskStatus())) {
+            //已超时
+            List<SdTaskList> taskListsAll = sdTaskListMapper.selectChaoshiSdTaskListList(sdTaskList);
+            if(taskListsAll!=null&&taskListsAll.size() >0){
+                taskLists = getChaoshiTaskList(taskListsAll);
+            }
+
+        }else{
+            taskLists = sdTaskListMapper.selectSdTaskListList(sdTaskList);
             for(int i = 0;i<taskLists.size();i++){
-                if(taskLists.get(0).getTaskStatus()!=null&&!"".equals(taskLists.get(0).getTaskStatus())){
+                if(taskLists.get(i).getTaskStatus()!=null&&!"".equals(taskLists.get(i).getTaskStatus())){
                     taskListStatus(taskLists.get(i));
                 }
             }
         }
-
         return taskLists;
+
     }
 
+    /**
+     * 筛选超时的任务
+     * @param taskListsAll
+     * @return
+     */
+    private List<SdTaskList> getChaoshiTaskList(List<SdTaskList> taskListsAll) {
+        List<SdTaskList> chaoshiTaskLists = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for(int i = 0;i<taskListsAll.size();i++){
+            if(taskListsAll.get(i).getEndPlantime()!=null){
+                String  plantime = sdf.format(taskListsAll.get(i).getEndPlantime());//计划完成时间
+                long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+                long diff = System.currentTimeMillis() - time + 1000;
+                if(diff>0){//当前时间与计划完成时间的差值
+                    taskListsAll.get(i).setTask(taskListsAll.get(i).getTask()+","+TaskStatus.YICHAOSHI.getName());
+                    chaoshiTaskLists.add(taskListsAll.get(i));
+                }
+            }
+        }
+        return chaoshiTaskLists;
+    }
 
 
     /**

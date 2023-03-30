@@ -155,10 +155,6 @@ public class SysDeptController extends BaseController {
         return Result.success(deptService.buildDeptTreeSelect(target));
 
 
-        /*List<SysDept> deptList = deptService.listDeptExcYG1(dept);
-
-        System.out.println("22222222222222222222222222222" + deptService.buildDeptTreeSelect(deptList).size());
-        return Result.success(deptService.buildDeptTreeSelect(deptList));*/
     }
 
 
@@ -182,7 +178,7 @@ public class SysDeptController extends BaseController {
         List<TreeDeptSelect> treeDept = null;
         boolean hasChildren = deptService.hasChildByDeptId(deptId);
         if (hasChildren) {
-            target = deptService.selectChildrenIncludeSelfById(deptId);
+            target = deptService.selectChildrenIncludeSelfByIdNormal(deptId);
         }else{
             getTreeListByDeptId(source, deptId, target);
         }

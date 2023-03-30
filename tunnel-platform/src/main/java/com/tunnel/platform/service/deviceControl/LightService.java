@@ -83,25 +83,6 @@ public class LightService {
         }
         return light;
     }
-    /**
-     * 从Spring容器中获取设备协议中配置的Class对象
-     *
-     * @param className
-     * @return
-     */
-    public Light getBeanOfSansiLightImpl(String className) {
-        Light light = null;
-        try {
-            Class<?> aClass = Class.forName(className);
-            Object object = aClass.newInstance();
-            if (object instanceof Light) {
-                light = (Light)SpringContextUtils.getBean(object.getClass());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return light;
-    }
 
     /**
      * @param deviceId    设备ID
@@ -211,7 +192,7 @@ public class LightService {
     public int lineControl(String deviceId, Integer openClose,Integer brightness) {
         //获取该设备classname地址
         String className = getSdDevicesProtocolStrl(deviceId);
-        Light light = getBeanOfSansiLightImpl(className);
+        Light light = getBeanOfDeviceProtocol(className);
         int resultStatus = light.lineControl(deviceId, openClose,brightness);
         return resultStatus;
     }

@@ -58,7 +58,7 @@ public class SansiLightImpl implements Light {
             OkHttpClient client = new OkHttpClient().newBuilder().build();
             MediaType mediaType=MediaType.parse("application/json");
             RequestBody body=RequestBody.create(mediaType, data);
-            Request request=new Request.Builder().url(baseUrl+"/  /core/users/login").method("POST",body).addHeader("Content-Type","application/json")
+            Request request=new Request.Builder().url(baseUrl+"/api/core/users/login").method("POST",body).addHeader("Content-Type","application/json")
                     .addHeader("Accept","application/json").build();
             response=client.newCall(request).execute();
 

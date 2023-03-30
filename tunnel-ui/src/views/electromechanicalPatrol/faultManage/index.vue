@@ -487,9 +487,9 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <div v-if="isWritable" @click="submitForm" class="submitButton">仅保存</div>
-        <div v-if="isWritable" @click="publishForm" class="submitButton">保存并发布</div>
-        <div @click="cancel" class="closeButton">取 消</div>
+        <el-button v-if="isWritable" @click="submitForm" class="submitButton">仅保存</el-button>
+        <el-button v-if="isWritable" @click="publishForm" class="zancunButton">保存并发布</el-button>
+        <el-button @click="cancel" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
 

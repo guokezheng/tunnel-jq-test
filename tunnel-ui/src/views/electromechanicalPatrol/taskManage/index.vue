@@ -418,18 +418,14 @@
             :cell-style="{ 'text-align': 'center', padding: '0px' }"
             :header-row-style="{
               height: '30px',
-              background: '#F2F2F2',
-              color: '#606266',
             }"
             :row-style="{
               height: '30px',
-              background: '#fff',
-              color: '#606266',
             }"
             style="width: 100%"
             border
             height="358px"
-            class="allTable"
+            class="dialogTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
@@ -499,18 +495,14 @@
             :cell-style="{ 'text-align': 'center', padding: '0px' }"
             :header-row-style="{
               height: '30px',
-              background: '#F2F2F2',
-              color: '#606266',
             }"
             :row-style="{
               height: '30px',
-              background: '#fff',
-              color: '#606266',
             }"
             style="width: 100%"
             border
             height="358px"
-            class="allTable"
+            class="dialogTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>

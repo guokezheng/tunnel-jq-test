@@ -1900,6 +1900,13 @@
         font-size: 13px;
       }
   }
+  .dialogTable{
+    background: transparent !important;
+    .el-table__header-wrapper th,.el-table__fixed-header-wrapper th{
+      background: #03659E !important;
+    }
+    
+  }
   // 事件彈窗
   .eventDiglog{
     .title{
@@ -2128,11 +2135,15 @@
       border-bottom: solid 1px  #0a88bd !important;
     }
     .el-table{
-      padding: 15px;
-      background: transparent;
+      background: #05213E !important;
+      padding: 0 !important;
+      tr{
+        background: #05213E !important;
+        color: #fff;
+      }
     }
     .el-table .el-table__header-wrapper th{
-      background-color: #0090D8 !important;
+      background-color: #03659E !important;
       color:#fff !important;
     }
     .el-table__body{

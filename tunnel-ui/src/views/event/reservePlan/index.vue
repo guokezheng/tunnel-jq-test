@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-28 14:51:26
+ * @LastEditTime: 2023-03-30 09:25:09
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1258,28 +1258,35 @@ export default {
     },
     // 规则条件修改事件
     ruleChange(number, index, value) {
+      // 如果是否指定
+      // 如果是指定   根据类型查设备
+      // 如果不是指定  禁用选择设备 同时判断 设备类型是否为  16 和 36 如果是  则 请求情表板模板
       console.log(value);
       if (value != 1) {
-        // 如果不指定设备
+        //赋空
         this.$set(
           this.planTypeIdList[number].processesList[index],
           "equipments",
           ""
         );
+        // 禁用选择设备
         this.$set(
           this.planTypeIdList[number].processesList[index],
           "disabled",
           true
         );
+        let eqType = this.planTypeIdList[number].processesList[index].eqTypeId;
         // 同时如果为情报板则查询情报板模板
-        let params = {
-          eqTunnelId:this.currentClickData.tunnelId,
-          eqType:this.planTypeIdList[number].processesList[index].eqTypeId
+        if(eqType == '16' || eqType == '36'){
+          let params = {
+            eqTunnelId:this.currentClickData.tunnelId,
+            eqType:this.planTypeIdList[number].processesList[index].eqTypeId
+          }
+          getVmsDataList(params).then(res=>{
+            console.log(res);
+            this.$set(this.planTypeIdList[number].processesList[index],"templatesList",res.data);
+          })
         }
-        getVmsDataList(params).then(res=>{
-          console.log(res);
-          this.$set(this.planTypeIdList[number].processesList[index],"templatesList",res.data);
-        })
       } else {
         this.$set(
           this.planTypeIdList[number].processesList[index],
@@ -1399,6 +1406,16 @@ export default {
       this.$set(
         this.planTypeIdList[number].processesList[index],
         "eqStateList",
+        ""
+      );
+      this.$set(
+        this.planTypeIdList[number].processesList[index],
+        "retrievalRule",
+        ""
+      );
+      this.$set(
+        this.planTypeIdList[number].processesList[index],
+        "state",
         ""
       );
       let params = {

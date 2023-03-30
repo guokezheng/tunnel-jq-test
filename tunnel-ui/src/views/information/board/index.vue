@@ -141,6 +141,7 @@
             row-key="ID"
             v-loading="loading"
             max-height="700"
+            :key="toggleIndex"
           >
             <el-table-column align="right" width="560">
               <template slot-scope="scope">
@@ -395,6 +396,7 @@ export default {
 
   data() {
     return {
+      toggleIndex:0,
       toRightCategory: "", //向右类别绑定
       arrowRightVisible: false, //向右类别弹窗
       loading: false,
@@ -641,7 +643,9 @@ export default {
         ID: this.contentList.length,
       };
       this.contentList.push(list);
+      this.toggleIndex ++
       console.log(this.contentList, "this.contentList");
+      console.log(this.toggleIndex,"toggleIndex")
     },
 
     // 向右添加模板

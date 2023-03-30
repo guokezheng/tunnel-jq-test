@@ -121,7 +121,7 @@
           <dict-tag :options="dict.type.device_protocol_type" :value="scope.row.protocolType"/>
         </template>
       </el-table-column>
-      <el-table-column label="类名" align="center" prop="className"/>
+      <el-table-column label="类名" align="center" prop="className" width="380"/>
       <el-table-column label="备注" align="center" prop="note"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -153,6 +153,7 @@
 
     <!-- 添加或修改设备协议对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备品牌" prop="brandId">
           <el-select v-model="form.brandId" placeholder="请选择设备品牌" style="width: 100%">
@@ -203,9 +204,9 @@
           <el-input v-model="form.note" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div class="dialog-footer">
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>

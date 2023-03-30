@@ -257,6 +257,7 @@
 
     <!-- 添加或修改设备对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="740px" append-to-body>
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="12">
@@ -672,14 +673,14 @@
           </el-col> -->
         </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer">
         <el-button
-          type="primary"
+          class="submitButton"
           :loading="submitFormLoading"
           @click="submitForm"
           >确 定</el-button
         >
-        <el-button @click="cancel">取 消</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
 
@@ -690,6 +691,7 @@
       width="700px"
       append-to-body
     >
+    <div class="dialogCloseButton"></div>
       <el-row>
         <el-col
           :span="23"

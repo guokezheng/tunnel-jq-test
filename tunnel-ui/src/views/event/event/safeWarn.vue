@@ -204,6 +204,7 @@
       :modal="false"
       append-to-body
     >
+    <div class="dialogCloseButton"></div>
       <div class="videoDialogBox">
         <div
           style="display: none"
@@ -522,7 +523,7 @@
             <div style="width:100%;">
               <el-col :span="24" v-show="eventFormDetail.eventState == 4">
                 <el-form-item prop="reviewRemark">
-                  <el-checkbox-group v-model="eventFormDetail.reviewRemark">
+                  <el-checkbox-group v-model="eventFormDetail.reviewRemark" class="checkBox">
                     <el-checkbox-button label="已线下处理" value="已线下处理"></el-checkbox-button>
                     <el-checkbox-button label="车辆已驶离" value="车辆已驶离"></el-checkbox-button>
                     <el-checkbox-button label="施工车辆" value="施工车辆"></el-checkbox-button>
@@ -601,6 +602,7 @@
       </div>
     </el-dialog>
     <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%" class="evtInfo">
+      <div class="dialogCloseButton"></div>
       <el-timeline>
         <el-timeline-item timestamp="事件发现" placement="top">
           <el-card>
@@ -2567,7 +2569,7 @@ export default {
 
   .videoDialogBox {
     width: 100%;
-    height: 400px;
+    height: 386px;
     display: flex;
     justify-content: space-between;
     align-items:center;
@@ -2590,7 +2592,8 @@ export default {
     }
     .dialogBg2 {
       width: 55% !important;
-      padding: 0px 20px 10px 10px !important;
+      padding: 0px 10px 10px 10px !important;
+      margin-left: 10px;
       // .video-box {
       //   height: calc(90%) !important;
       // }
@@ -2674,9 +2677,10 @@ export default {
     width: 100%;
     height: calc(44% - 50px);
     background: #f7f7f7;
-    padding: 0px 10px 0;
+    padding: 10px 10px 0;
     overflow-y: auto;
     overflow-x: hidden;
+    margin-top:10px;
     .el-input {
       width: 100%;
       .el-input--medium .el-input__inner {
@@ -2735,11 +2739,16 @@ export default {
       background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
     }
   }
-  ::v-deep .el-dialog .el-dialog__header{
-      background-image: url(../../../assets/cloudControl/dialogHeader.png);
-      background-repeat: no-repeat;
-      background-position-x: right;
+  // ::v-deep .el-dialog .el-dialog__header{
+  //     background-image: url(../../../assets/cloudControl/dialogHeader.png);
+  //     background-repeat: no-repeat;
+  //     background-position-x: right;
+  //     background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
+  // }
+  .el-dialog__headerbtn{
+    z-index:3;
   }
+  
   ::v-deep .detailsDialog {
     width: 60%;
     position: absolute;
@@ -3100,7 +3109,7 @@ export default {
   }
   .detailsDialog{
     ::v-deep .el-dialog__body{
-      max-height: 70vh;
+      max-height: 86vh;
       overflow: auto;
     }
   }

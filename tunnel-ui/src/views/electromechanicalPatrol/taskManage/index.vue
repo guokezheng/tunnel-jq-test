@@ -206,6 +206,7 @@
     />
 
     <el-dialog :title="title" :visible.sync="open"  width="70%" class="xjDialog">
+      <div class="dialogCloseButton"></div>
       <!--      <h1>新增巡检任务</h1>-->
       <div class="task">
         <div class="topTxt">巡查任务基本信息</div>
@@ -357,21 +358,22 @@
             </div>
           </div>
         </div>
-        <div class="release-father">
-          <el-button style="height: 20%" @click="save">暂存</el-button>
+        <div class="dialog-footer">
+          <el-button class="zancunButton" @click="save">暂存</el-button>
           <el-button
-            style="height: 20%; display: none"
-            type="warning"
+            style="display: none"
+            class="closeButton"
             @click="abolish"
             >废止</el-button
           >
-          <el-button style="height: 20%" type="primary" @click="release"
+          <el-button class="submitButton" @click="release"
             >发布</el-button
           >
         </div>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="isShow1" width="50%" class="show">
+      <div class="dialogCloseButton"></div>
       <div class="show-left">
         <div class="show-title">设备位置</div>
         <el-tree
@@ -452,6 +454,7 @@
     <!-- -->
 
     <el-dialog :visible.sync="isShow2" width="50%" class="show">
+      <div class="dialogCloseButton"></div>
       <div class="show-left">
         <div class="show-title">故障位置</div>
         <el-tree
@@ -533,6 +536,7 @@
 
     <!--巡查任务及执行记录单-->
     <el-dialog :visible.sync="record" width="70%" title="巡检任务及执行记录单" class="xjDialog">
+      <div class="dialogCloseButton"></div>
       <div class="col-1" v-for="(ite, index) in taskNews2" :key="index">
         发布状态/执行状态：
         <div class="col-card" v-show="ite.publishStatus">
@@ -2017,13 +2021,12 @@ h1 {
     display: flex;
     .show-left,
     .show-right {
-      height: 478px;
+      height: 480px;
       // border: 1px solid black;
       border-radius: 3px;
       .show-title {
         font-weight: 400;
         font-style: normal;
-        background-color: rgba(242, 242, 242, 1);
         color: #5e7f89;
         border-radius: 3px;
         line-height: 30px;

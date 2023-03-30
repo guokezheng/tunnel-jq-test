@@ -155,10 +155,8 @@ p {
 .app-container {
   padding: 2px 15px;
   box-sizing: border-box;
-  // overflow: hidden;
   height: 100%;
   width: 100%;
-  // background: white;
 }
 // 内页标题全部样式
 .inner_title {
@@ -172,8 +170,8 @@ p {
 .pagination-container,.specialPagination {
   margin-top: 30px;
   .el-input--medium .el-input__inner{
-    height: 28px !important;
-    line-height: 28px !important;
+    height: 28px;
+    line-height: 28px;
   }
 }
 .specialPagination{
@@ -264,12 +262,35 @@ p {
 .el-range-editor--small.el-input__inner{
   height: 4vh;
 }
-.el-dialog__body{
+.el-dialog__body,.el-dialog__footer{
   // padding:0px 20px 10px 20px;
   .el-form-item__label{
     caret-color: rgba(0,0,0,0);
     user-select: none; 
   }
+  .dialog-footer{
+    display: flex;
+    justify-content: right;
+    .submitButton,.closeButton,.zancunButton{
+      width: 80px;
+      height: 28px;
+      border-radius: 14px;
+      line-height: 28px;
+      text-align: center;
+      padding: 0;
+      color: #fff;
+      border:none;
+      font-size: 14px;
+    }
+  }
+}
+.el-dialog__body{
+  max-height: 70vh;
+  overflow: auto;
+}
+.el-table{
+  caret-color: rgba(0,0,0,0);
+  user-select: none; 
 }
 .el-dialog__header{
   caret-color: rgba(0,0,0,0);

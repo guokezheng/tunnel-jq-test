@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-30 09:25:09
+ * @LastEditTime: 2023-03-28 14:51:26
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -17,15 +17,10 @@
           @click="handleAdd()"
           >新增
         </el-button>
-        <el-button
-          size="small"
-          :loading="exportLoading"
-          @click="handleExport"
-        >导出
+        <el-button size="small" :loading="exportLoading" @click="handleExport"
+          >导出
         </el-button>
-        <el-button size="small" @click="resetQuery"
-            >刷新</el-button
-          >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
@@ -87,7 +82,7 @@
             ></el-option>
           </el-select>
         </el-form-item> -->
-        <el-form-item label="事件类型" prop="planTypeId" >
+        <el-form-item label="事件类型" prop="planTypeId">
           <el-select
             v-model="queryParams.planTypeId"
             clearable
@@ -112,7 +107,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       ref="planTable"
       v-loading="loading"
@@ -155,11 +150,7 @@
         :formatter="eventGradeFormat"
       >
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="预案名称"
-        prop="planName"
-      >
+      <el-table-column align="center" label="预案名称" prop="planName">
       </el-table-column>
       <el-table-column
         align="center"
@@ -405,18 +396,19 @@
     <!--  预览-->
     <!--    <work-bench ref="workBench"></work-bench>-->
     <!-- 新增弹窗 -->
-    <el-dialog :title="title" :visible.sync="dialogFormVisible">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
+      <div class="dialogCloseButton"></div>
       <el-form
         ref="addform1"
         :model="reservePlanDrawForm"
         :rules="rules"
-        label-width="120px"
+        label-width="80px"
       >
         <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
             v-model="reservePlanDrawForm.tunnelId"
             placeholder="请选择所属隧道"
-            style="width: 80%"
+            style="width: 100%"
             @change="changeSelection"
           >
             <el-option
@@ -431,7 +423,7 @@
           <el-select
             v-model="reservePlanDrawForm.direction"
             placeholder="请选择隧道方向"
-            style="width: 80%"
+            style="width: 100%"
           >
             <el-option
               v-for="(item, index) in directionData"
@@ -445,7 +437,7 @@
           <el-select
             v-model="reservePlanDrawForm.planTypeId"
             placeholder="请选择事件类型"
-            style="width: 80%"
+            style="width: 100%"
           >
             <el-option
               v-for="(item, index) in planTypeData"
@@ -459,7 +451,7 @@
           <el-select
             v-model="reservePlanDrawForm.eventGrade"
             placeholder="请选择事件等级"
-            style="width: 80%"
+            style="width: 100%"
           >
             <el-option
               v-for="(item, index) in eventGradeList"
@@ -501,7 +493,7 @@
           <el-input
             v-model="reservePlanDrawForm.planName"
             placeholder="请输入预案名称"
-            style="width: 80%"
+            style="width: 100%"
           />
         </el-form-item>
         <el-form-item label="预案描述" prop="planDescription">
@@ -509,7 +501,7 @@
             v-model="reservePlanDrawForm.planDescription"
             maxlength="250"
             placeholder="请输入预案描述"
-            style="width: 80%"
+            style="width: 100%"
             type="textarea"
           />
         </el-form-item>
@@ -527,7 +519,7 @@
             action="http://xxx.xxx.xxx/personality/uploadExcel"
             class="upload-demo"
             multiple
-            style="width: 80%"
+            style="width: 100%"
           >
             <el-button slot="trigger" size="small" type="primary"
               >选取文件</el-button
@@ -543,9 +535,11 @@
           </el-upload>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelsubmitUpload">取 消</el-button>
-        <el-button type="primary" @click="submitUpload">保 存</el-button>
+      <div class="dialog-footer" slot="footer">
+        <el-button @click="submitUpload" class="submitButton">保 存</el-button>
+        <el-button @click="cancelsubmitUpload" class="closeButton"
+          >取 消</el-button
+        >
       </div>
     </el-dialog>
 
@@ -557,6 +551,7 @@
       append-to-body
       width="78%"
     >
+      <div class="dialogCloseButton"></div>
       <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm">
         <div
           v-for="(item, number) in planTypeIdList"
@@ -582,16 +577,14 @@
               style="display: flex; justify-content: flex-end"
             >
               <el-button
-                class="flex-row"
-                type="primary"
-                size="mini"
+                class="flex-row dialogButton"
                 icon="el-icon-delete"
                 @click="deleteInfo(number)"
               >
                 删除
               </el-button>
               <el-button
-                class="flex-row"
+                class="flex-row dialogButton"
                 type="primary"
                 size="mini"
                 icon="el-icon-plus"
@@ -601,27 +594,27 @@
               </el-button>
             </el-col>
           </el-row>
-          <el-row
-            class="myTable"
-            style="background-color: #51aced; color: white"
-          >
-            <el-col :span="2"> 排序 </el-col>
+          <el-row class="myTable" style="color: white">
+            <el-col :span="1"> 排序 </el-col>
             <el-col :span="4"> 操作处置名称 </el-col>
             <el-col :span="4"> 设备资源类型 </el-col>
             <el-col :span="4"> 检索规则条件 </el-col>
             <el-col :span="5"> 选择设备（可多选） </el-col>
-            <el-col :span="3"> 控制指令 </el-col>
+            <el-col :span="4"> 控制指令 </el-col>
             <el-col :span="2"> 操作 </el-col>
           </el-row>
-          <el-row :gutter="20" class="planBox">
+          <el-row class="planBox">
             <el-col
               :span="24"
               class="colflex"
               v-for="(itemed, index) in item.processesList"
               :key="index"
             >
-              <el-col :span="2" style="text-align: center">
-                <el-form-item prop="index">
+              <el-col
+                :span="1"
+                style="text-align: center; padding-left: 0px !important"
+              >
+                <el-form-item prop="index" class="sort">
                   {{ index + 1 }}
                 </el-form-item>
               </el-col>
@@ -658,7 +651,6 @@
                 </el-select> -->
               </el-col>
               <el-col :span="4">
-
                 <el-select
                   v-model="itemed.retrievalRule"
                   placeholder="规则条件"
@@ -672,7 +664,6 @@
                     :value="itemz.dictValue"
                   />
                 </el-select>
-
               </el-col>
               <el-col :span="5">
                 <el-cascader
@@ -682,7 +673,7 @@
                   :props="devicesProps"
                   :show-all-levels="false"
                   collapse-tags
-                  @change="qbgChange(number,index, itemed.equipments)"
+                  @change="qbgChange(number, index, itemed.equipments)"
                   style="width: 100%"
                 ></el-cascader>
                 <!-- <el-form-item label="活动名称">
@@ -716,7 +707,7 @@
               </el-col>
 
               <el-col
-                :span="3"
+                :span="4"
                 v-if="
                   itemed.eqTypeId != 16 &&
                   itemed.eqTypeId != 36 &&
@@ -735,22 +726,22 @@
               </el-col>
               <!-- 选择情报板模板 -->
               <el-col
-                :span="3"
+                :span="4"
                 v-if="itemed.eqTypeId == 16 || itemed.eqTypeId == 36"
               >
-                  <el-cascader
-                    placeholder="请选择模板"
-                    :props="checkStrictly"
-                    v-model="itemed.state"
-                    :options="itemed.templatesList"
-                    :show-all-levels="false"
-                    :key="resetCascader"
-                    clearable
-                    collapse-tags
-                  ></el-cascader>
+                <el-cascader
+                  placeholder="请选择模板"
+                  :props="checkStrictly"
+                  v-model="itemed.state"
+                  :options="itemed.templatesList"
+                  :show-all-levels="false"
+                  :key="resetCascader"
+                  clearable
+                  collapse-tags
+                ></el-cascader>
               </el-col>
 
-              <el-col :span="3" v-if="itemed.eqTypeId == 22">
+              <el-col :span="4" v-if="itemed.eqTypeId == 22">
                 <el-form-item prop="itemed.state">
                   <el-select v-model="itemed.state" placeholder="播放文件">
                     <el-option
@@ -763,24 +754,13 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col
-                :span="2"
-                style="
-                  display: flex;
-                  justify-content: space-around;
-                  height: 35px;
-                "
-              >
+              <el-col :span="2" class="dialogTableButtonBox">
                 <el-button
-                  type=""
-                  icon="el-icon-delete"
-                  circle
+                  class="delete"
                   @click="removeItem(number, index)"
                 ></el-button>
                 <el-button
-                  type=""
-                  icon="el-icon-plus"
-                  circle
+                  class="add"
                   @click="addItem(number, index)"
                 ></el-button>
               </el-col>
@@ -790,13 +770,12 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button
-          style="width: 10%"
-          type="primary"
+          class="submitButton"
           v-hasPermi="['plan:process:add']"
           @click="submitStrategy"
           >保存</el-button
         >
-        <el-button style="width: 10%" @click="closeStrategy">取 消</el-button>
+        <el-button @click="closeStrategy" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -823,7 +802,9 @@ import {
   partitionTunnel,
   tunnelNames,
   getPlanType,
-  getTreeDeviceList, exportPlan,getVmsDataList
+  getTreeDeviceList,
+  exportPlan,
+  getVmsDataList,
 } from "@/api/event/reservePlan";
 import { listEventType } from "@/api/event/eventType";
 import {
@@ -847,7 +828,7 @@ import {
   getListByRId,
   previewDisplay,
 } from "@/api/event/reserveProcess";
-import {exportFlow} from "@/api/event/planFlow";
+import { exportFlow } from "@/api/event/planFlow";
 
 export default {
   name: "Plan",
@@ -856,7 +837,7 @@ export default {
   // },
   data() {
     return {
-      resetCascader:0,
+      resetCascader: 0,
       equipmentTypeProps: {
         value: "id",
         label: "label",
@@ -901,12 +882,12 @@ export default {
               eqTypeId: "",
               equipments: [],
               state: "",
-              qbbState:'',
+              qbbState: "",
               retrievalRule: "", //规则条件
               equipmentTypeData: [],
               equipmentData: [],
               eqStateList: [],
-              templatesList:[],
+              templatesList: [],
             },
           ],
         },
@@ -1132,7 +1113,7 @@ export default {
   methods: {
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id
+      return row.id;
     },
     bodyCloseMenus(e) {
       let self = this;
@@ -1154,24 +1135,28 @@ export default {
 
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的应急预案数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的应急预案数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的应急预案数据项？";
       }
       this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$modal.confirm(confirmInfo).then(() => {
-        this.exportLoading = true;
-        return exportPlan(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-        this.$refs.planTable.clearSelection();
-        this.queryParams.ids = ''
-      }).catch(() => {
-        this.queryParams.ids = ''
-        // console.log('1231');
-      });
+      this.$modal
+        .confirm(confirmInfo)
+        .then(() => {
+          this.exportLoading = true;
+          return exportPlan(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+          this.$refs.planTable.clearSelection();
+          this.queryParams.ids = "";
+        })
+        .catch(() => {
+          this.queryParams.ids = "";
+          // console.log('1231');
+        });
     },
     addInfo(index) {
       let data = {
@@ -1182,13 +1167,13 @@ export default {
             eqTypeId: "",
             equipments: [],
             state: "",
-            qbbState:'',
+            qbbState: "",
             retrievalRule: null, //规则条件
             equipmentTypeData: [],
             equipmentData: [],
             eqStateList: [],
             disabled: false,
-            templatesList:[],
+            templatesList: [],
           },
         ],
       };
@@ -1305,7 +1290,7 @@ export default {
     },
     removeItem(number, index) {
       console.log(index);
-      if(this.planTypeIdList[number].processesList.length == 1){
+      if (this.planTypeIdList[number].processesList.length == 1) {
         return this.$modal.msgWarning("至少保留一行");
       }
       this.planTypeIdList[number].processesList.splice(index, 1);
@@ -1325,7 +1310,7 @@ export default {
             equipmentData: [],
             eqStateList: [],
             disabled: false,
-            templatesList:[],
+            templatesList: [],
           },
         ],
       };
@@ -1451,9 +1436,8 @@ export default {
       //   );
       //   console.log(res, "设备列表");
       // });
-
     },
-    getAudioFileListData(value,number,index) {
+    getAudioFileListData(value, number, index) {
       let params = {
         tunnelId: this.currentClickData.tunnelId,
         direction: this.currentClickData.direction,
@@ -1480,7 +1464,7 @@ export default {
         );
       });
     },
-    qbgChange(number,index, value) {
+    qbgChange(number, index, value) {
       console.log(value);
       let data = value;
       if (
@@ -1514,16 +1498,16 @@ export default {
         let result = item.every(items=>{
           if(items.retrievalRule == 1){
             return items.processName &&
-            items.state &&
-            items.eqTypeId &&
-            items.equipments.length >= 1
+              items.state &&
+              items.eqTypeId &&
+              items.equipments.length >= 1
           }else{//非指定由后端判断具体设备
             return items.processName &&
-            items.state &&
-            items.retrievalRule &&
-            items.eqTypeId &&
-            items.state
-            }
+              items.state &&
+              items.retrievalRule &&
+              items.eqTypeId &&
+              items.state
+          }
         })
         if(!result){
           return this.$modal.msgError("请填写完整");
@@ -1586,7 +1570,7 @@ export default {
                   retrievalRule: "",
                   equipments: [],
                   disabled: false,
-                  templatesList:[],
+                  templatesList: [],
                 },
               ],
             },
@@ -1651,12 +1635,12 @@ export default {
                   })
                 }
               }
-              console.log('zxczxczxczxczx')
+              console.log("zxczxczxczxczx");
               //请求广播音频列表数据
               if (brr.eqTypeId == 22) {
                 brr.state = brr.state;
-                console.log(brr.state,'asdadasdasdas');
-                this.getAudioFileListData(brr.equipments,i,j);
+                console.log(brr.state, "asdadasdasdas");
+                this.getAudioFileListData(brr.equipments, i, j);
               }
             }
           }
@@ -2143,11 +2127,12 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-  ::v-deep .el-dialog .el-dialog__header{
-      background-image: url(../../../assets/cloudControl/dialogHeader.png);
-      background-repeat: no-repeat;
-      background-position-x: right;
-  }
+// ::v-deep .el-dialog .el-dialog__header{
+//     // background-image: url(../../../assets/cloudControl/dialogHeader.png);
+//     // background-repeat: no-repeat;
+//     // background-position-x: right;
+//     background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
+// }
 ::v-deep .el-form-item--medium .el-form-item__label {
   line-height: 3vh;
 }
@@ -2253,8 +2238,31 @@ export default {
   }
 }
 .dialongBox {
-  border: 1px solid #05afe3;
+  // border: 1px solid #05afe3;
   padding: 10px;
   box-sizing: border-box;
+}
+.dialogTableButtonBox {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 35px;
+  padding-right: 0 !important;
+  .delete,
+  .add {
+    width: 16px;
+    height: 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border: none;
+    background-color: transparent;
+  }
+  .delete {
+    background-image: url(../../../assets/icons/delete.png);
+  }
+  .add {
+    background-image: url(../../../assets/icons/add.png);
+  }
 }
 </style>

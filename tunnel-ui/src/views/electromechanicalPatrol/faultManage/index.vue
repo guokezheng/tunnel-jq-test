@@ -211,6 +211,7 @@
       append-to-body
       class="hitchDialog"
     >
+    <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row style="display: flex; flex-wrap: wrap">
           <el-card>
@@ -485,16 +486,17 @@
           </el-card>
         </el-row>
       </el-form>
-      <div class="dialogFooterButton">
-        <div v-if="isWritable" @click="submitForm">仅保存</div>
-        <div v-if="isWritable" @click="publishForm">保存并发布</div>
-        <div @click="cancel">取 消</div>
+      <div slot="footer" class="dialog-footer">
+        <div v-if="isWritable" @click="submitForm" class="submitButton">仅保存</div>
+        <div v-if="isWritable" @click="publishForm" class="submitButton">保存并发布</div>
+        <div @click="cancel" class="closeButton">取 消</div>
       </div>
     </el-dialog>
 
     <el-dialog :visible.sync="record" width="70%">
+      <div class="dialogCloseButton"></div>
       <div style="text-align: center; font-size: 18px">故障检修记录</div>
-      <div class="card" v-if="news.length > 0" v-for="item in news">
+      <div class="card" v-show="news.length > 0" v-for="(item,index) in news" :key="index">
         <div class="card-col" style="font-size: 16px">
           <div>
             巡检时间:
@@ -812,6 +814,7 @@ export default {
       }
     },
     handleTb: function() {
+      debugger
       var startAt = new Date(this.form.faultTbtime) * 1000 /1000;
       if(startAt > this.form.faultFxtime) {
         this.form.faultTbtime = new Date(this.form.faultFxtime);
@@ -1330,7 +1333,7 @@ export default {
   height: 40px;
   margin-top: 20px;
   margin-bottom: 20px;
-  border-bottom: 1px solid #ddcccc;
+  // border-bottom: 1px solid #ddcccc;
 }
 
 .card {

@@ -91,13 +91,12 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
-        <el-col :span="24">
+      <el-row class="planBox">
         <el-form-item
           v-for="(dain, index) in strategyForm.autoControl"
           :key="index"
         >
-          <el-col :span="6">
+          <el-col :span="6" style="padding-left:0">
             <el-select
               v-model="dain.equipmentTypeId"
               placeholder="请选择设备类型"
@@ -183,26 +182,21 @@
           </el-col>
           <el-col :span="2" class="buttonBox">
             <el-button
-              type=""
-              icon="el-icon-delete"
-              circle
+              class="delete"
               @click="removeItem(index)"
             ></el-button>
             <el-button
-              type=""
-              icon="el-icon-plus"
-              circle
+              class="add"
               @click="addItem"
             ></el-button>
           </el-col>
         </el-form-item>
-      </el-col>
       </el-row>
       <el-form-item class="dialog-footer">
-        <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
+        <el-button class="submitButton" @click="submitStrategyForm"
           >提交</el-button
         >
-        <el-button style="width: 30%" @click="strategyFormClose"
+        <el-button class="closeButton" @click="strategyFormClose"
           >取 消</el-button
         >
       </el-form-item>
@@ -807,5 +801,21 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  height: 36px;
+  .delete,.add{
+    width:16px;
+    height: 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border:none;
+    background-color: transparent;
+  }
+  .delete{
+    background-image: url(../../../../assets/icons/delete.png);
+  }
+  .add{
+    background-image: url(../../../../assets/icons/add.png);
+  }
 }
 </style>

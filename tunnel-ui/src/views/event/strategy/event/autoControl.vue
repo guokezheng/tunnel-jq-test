@@ -111,11 +111,12 @@
                 >
                 </el-option>
               </el-select>
-              <el-form-item prop="triggers.deviceId" style="width: 20%">
+              <el-form-item prop="triggers.deviceId" style="width: 23%">
                 <el-select
                   v-model="strategyForm.triggers.deviceId"
                   placeholder="请选择设备名称"
                   multiple
+                  collapse-tags
                   style="width:100%;"
                 >
                   <!-- @change="selectDataItem()" -->
@@ -154,7 +155,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.compareValue" style="width: 15%">
+              <el-form-item prop="triggers.compareValue" style="width: 12%">
                 <el-input
                   v-model="strategyForm.triggers.compareValue"
                   placeholder="请输入阈值"
@@ -188,8 +189,7 @@
         </el-row>
       </el-row>
       <div v-show="strategyForm.triggers.warningType == 1">
-        <el-row :gutter="20">
-          <el-col :span="24">
+        <el-row class="planBox">
             <el-form-item
               v-for="(dain, index) in strategyForm.autoControl"
               :key="index"
@@ -260,33 +260,23 @@
               </el-col>
               <el-col :span="2" class="buttonBox">
                 <el-button
-                  type=""
-                  icon="el-icon-delete"
-                  circle
+                  class="delete"
                   @click="removeItem(index)"
                 ></el-button>
-                <el-form-item
-                  label=""
-                  style=""
-                  v-show="strategyForm.equipmentTypeId != 30"
-                >
                   <el-button
-                    type=""
-                    icon="el-icon-plus"
-                    circle
+                    v-show="strategyForm.equipmentTypeId != 30"
+                    class="add"
                     @click="addItem"
                   ></el-button>
-                </el-form-item>
               </el-col>
             </el-form-item>
-          </el-col>
         </el-row>
       </div>
       <el-form-item class="dialog-footer">
-        <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
+        <el-button class="submitButton" @click="submitStrategyForm"
           >提交</el-button
         >
-        <el-button style="width: 30%" @click="strategyFormClose"
+        <el-button class="closeButton" @click="strategyFormClose"
           >取 消</el-button
         >
       </el-form-item>
@@ -1012,7 +1002,7 @@ export default {
   align-items: center;
 } */
 .triggers .box .el-form-item__content .el-form-item {
-  margin-left: 15px;
+  margin-left: 4px;
 }
 </style>
 <style lang="scss" scoped>

@@ -157,7 +157,7 @@
 
     <!-- 添加或修改备品备件库对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="110px" style="max-height:600px;overflow:auto">
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px" >
         <el-form-item label="所属隧道" prop="eqTunnelId">
           <el-select v-model="form.tunnelId" placeholder="请选择所属隧道" style="width: 100%">
             <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId"/>
@@ -210,9 +210,9 @@
           <el-input v-model="form.remake" maxlength="200" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div  class="dialog-footer">
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -504,3 +504,9 @@ export default {
   }
 };
 </script>
+<style>
+  .el-dialog__body{
+    max-height: 70vh;
+    overflow: auto;
+  }
+</style>

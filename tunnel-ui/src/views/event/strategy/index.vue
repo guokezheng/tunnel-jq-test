@@ -424,14 +424,14 @@
                 class="tableBlueButtton"
                 @click="handleUpdate(scope.row)"
                 v-hasPermi="['system:strategy:edit']"
-              >编辑</el-button
+                >编辑</el-button
               >
               <el-button
                 size="mini"
                 class="tableDelButtton"
                 @click="handleDelete(scope.row)"
                 v-hasPermi="['system:strategy:remove']"
-              >删除</el-button
+                >删除</el-button
               >
             </template>
           </el-table-column>
@@ -456,6 +456,7 @@
       width="75%"
       class="celueDialog"
     >
+    <div class="dialogCloseButton"></div>
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">
           <el-radio-group v-model="strategyForm.strategyType">
@@ -465,7 +466,7 @@
               :key="dict.dictValue"
               :label="dict.dictValue"
               @change.native="strategyTypeClose()"
-            >{{ dict.dictLabel }}</el-radio
+              >{{ dict.dictLabel }}</el-radio
             >
           </el-radio-group>
         </el-form-item>
@@ -496,7 +497,9 @@
       :before-close="handleCloseEvent"
       :append-to-body="true"
       width="75%"
+      class="strategyDialog"
     >
+    <div class="dialogCloseButton"></div>
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">
           <el-radio-group v-model="strategyForm.strategyType">
@@ -506,7 +509,7 @@
               :key="dict.dictValue"
               :label="dict.dictValue"
               @change.native="strategyTypeEventClose()"
-            >{{ dict.dictLabel }}</el-radio
+              >{{ dict.dictLabel }}</el-radio
             >
           </el-radio-group>
         </el-form-item>
@@ -763,7 +766,7 @@ export default {
       });
     });
   },
-  //点击空白区域关闭全局搜索弹窗
+     //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
     document.addEventListener("click", this.bodyCloseMenus1);
@@ -801,10 +804,10 @@ export default {
       switch(index){
         case '0':
           this.$refs.manualControlEvent.resetForm();
-          break;
+        break;
         case '2':
           this.$refs.autoControlEvent.resetForm();
-          break;
+        break;
       }
       console.log(this.strategyForm.strategyType);
       this.strategyForm.strategyType = "";
@@ -818,13 +821,13 @@ export default {
         case '0':
           console.log(this.strategyForm.strategyType);
           this.$refs.manualControl.resetForm();
-          break;
+        break;
         case '1':
           this.$refs.timingControl.resetForm();
-          break;
+        break;
         case '3':
           this.$refs.timeControl.resetForm();
-          break;
+        break;
       }
       console.log(this.strategyForm.strategyType);
       this.strategyForm.strategyType = "";
@@ -1089,13 +1092,13 @@ export default {
       switch(index){
         case '0':
           this.$refs.manualControl.resetForm();
-          break;
+        break;
         case '1':
           this.$refs.timingControl.resetForm();
-          break;
+        break;
         case '3':
           this.$refs.timeControl.resetForm();
-          break;
+        break;
       }
       console.log(this.strategyForm.strategyType);
       this.strategyForm.strategyType = "";
@@ -1108,10 +1111,10 @@ export default {
       switch(index){
         case '0':
           this.$refs.manualControlEvent.resetForm();
-          break;
+        break;
         case '2':
           this.$refs.autoControlEvent.resetForm();
-          break;
+        break;
       }
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
@@ -1350,7 +1353,7 @@ export default {
   },
 };
 </script>
-<style>
+  <style>
 .el-drawer__header {
   background: #dcdfe6;
   padding: 0 10px;
@@ -1362,11 +1365,11 @@ export default {
 }
 </style>
 <style scoped lang="scss">
-::v-deep .el-dialog .el-dialog__header{
-  background-image: url(../../../assets/cloudControl/dialogHeader.png);
-  background-repeat: no-repeat;
-  background-position-x: right;
-}
+  ::v-deep .el-dialog .el-dialog__header{
+      background-image: url(../../../assets/cloudControl/dialogHeader.png);
+      background-repeat: no-repeat;
+      background-position-x: right;
+  }
 ::v-deep .el-tabs {
   height: 100%;
   .el-tabs__item {

@@ -95,12 +95,11 @@
             <!-- 搜索栏树状结构 -->
             <div class="treeBox" ref="treeBox" v-show="treeShow">
               <el-tree
+                :show-checkbox="false"
                 :data="treeData"
                 :props="defaultProps"
                 @node-click="handleNodeClick"
                 accordion
-                :default-expand-all="false"
-                :filter-node-method="filterNode"
                 ref="tree"
               ></el-tree>
             </div>
@@ -5195,10 +5194,16 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      this.treeShow = false;
-      console.log(data.label);
-      this.screenEqName = data.label;
-      this.screenEqNameButton(data.label);
+      console.log(data);
+      // 如果存在children，则代表是父级
+      if(data.children){
+        // 点击父级业务
+      }else{
+        this.treeShow = false;
+        console.log(data.label);
+        this.screenEqName = data.label;
+        this.screenEqNameButton(data.label);
+      }
     },
     // 筛选设备名称
     // screenEqNameButton(screenEqName) {

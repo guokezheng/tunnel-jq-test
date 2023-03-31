@@ -136,7 +136,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getAllSdVmsTemplateList" resultType="hashmap">
         select a.id value, a.screen_size devicePixel, a.category, b.id contentId, b.template_id templateId, b.content label
         from iot_board_template a
-                 left join iot_board_template_content b on a.id = b.template_id
+                 right join iot_board_template_content b on a.id = b.template_id
         GROUP BY b.template_id
     </select>
 

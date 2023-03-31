@@ -72,7 +72,7 @@ public class SdMaterialController extends BaseController
     {
         List<SdMaterial> list = sdMaterialService.selectSdMaterialList(sdMaterial);
         ExcelUtil<SdMaterial> util = new ExcelUtil<SdMaterial>(SdMaterial.class);
-        return util.exportExcel(list, "应急资源");
+        return util.exportExcel(list, "应急物资");
     }
 
 

@@ -102,7 +102,7 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.faultFxtime) }}</span>
+          <span>{{scope.row.faultFxtime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="故障位置" align="center" prop="faultLocation" />
@@ -811,13 +811,18 @@ export default {
       var startAt = new Date(this.form.faultFxtime) * 1000 /1000;
       if(startAt > Date.now()) {
         this.form.faultFxtime = new Date();
+        //时间格式转换
+        var d = new Date(this.form.faultFxtime);
+        this.form.faultFxtime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
       }
     },
     handleTb: function() {
-      debugger
       var startAt = new Date(this.form.faultTbtime) * 1000 /1000;
       if(startAt > this.form.faultFxtime) {
         this.form.faultTbtime = new Date(this.form.faultFxtime);
+        //时间格式转换
+        var d = new Date(this.form.faultTbtime);
+        this.form.faultTbtime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
       }
     },
 

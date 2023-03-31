@@ -97,7 +97,7 @@ public class SdFaultListController extends BaseController {
         sdFaultList.setDeptId(deptId);
         List<SdFaultList> list = sdFaultListService.selectSdFaultListList(sdFaultList);
         ExcelUtil<SdFaultList> util = new ExcelUtil<SdFaultList>(SdFaultList.class);
-        return util.exportExcel(list, "设备故障");
+        return util.exportExcel(list, "故障管理");
     }
 
     /**

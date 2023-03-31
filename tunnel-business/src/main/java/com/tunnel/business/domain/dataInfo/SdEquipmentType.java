@@ -39,11 +39,11 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     private String iconFileId;
 
     /** 图片宽度 */
-    @Excel(name = "图片宽度(px)")
+    @Excel(name = "图标宽度(px)")
     @ApiModelProperty("图片宽度")
     private String iconWidth;
     /** 图片宽度 */
-    @Excel(name = "图片高度(px)")
+    @Excel(name = "图标高度(px)")
     @ApiModelProperty("图片高度")
     private String iconHeight;
 

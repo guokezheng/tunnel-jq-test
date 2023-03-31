@@ -53,7 +53,7 @@ public class SdEnvironmentConfigurationController extends BaseController {
     public AjaxResult export(SdEnvironmentConfiguration sdEnvironmentConfiguration) {
         List<SdEnvironmentConfiguration> list = sdEnvironmentConfigurationService.selectSdEnvironmentConfigurationList(sdEnvironmentConfiguration);
         ExcelUtil<SdEnvironmentConfiguration> util = new ExcelUtil<SdEnvironmentConfiguration>(SdEnvironmentConfiguration.class);
-        return util.exportExcel(list, "环境配置数据");
+        return util.exportExcel(list, "环境配置");
     }
 
     /**

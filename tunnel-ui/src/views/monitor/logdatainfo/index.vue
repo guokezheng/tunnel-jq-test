@@ -679,7 +679,7 @@ export default {
 
     /** 多选框选中数据 */
     handleSelectionChange2(selection) {
-      this.ids = selection.map((item) => item.infoId);
+      this.ids = selection.map((item) => item.id);
       this.multiple = !selection.length;
     },
     /** 排序触发事件 */
@@ -750,6 +750,7 @@ export default {
 
     /** 操作日志导出按钮操作 */
     handleExport1() {
+      debugger
       let confirmInfo ="是否确认导出所有的操作日志数据项？";
       if(this.ids.length>0){
         confirmInfo = "是否确认导出所选的操作日志数据项？";

@@ -36,18 +36,18 @@ public class SdMaterial extends BaseEntity {
     private String materialId;
 
     /**
-     * 物品名称
+     * 物资名称
      */
-    @Excel(name = "物品名称")
-    @ApiModelProperty("物品名称")
+    @Excel(name = "物资名称")
+    @ApiModelProperty("物资名称")
     private String materialName;
     /**
-     * 物品类型
+     * 物资类型
      */
-    /*@Excel(name = "物品类型")*/
-    @ApiModelProperty("物品类型")
+    /*@Excel(name = "物资类型")*/
+    @ApiModelProperty("物资类型")
     private String materialType;
-    @Excel(name = "物品类型")
+    @Excel(name = "物资类型")
     private String wzlx;
     @Excel(name = "隧道")
     private String tName;

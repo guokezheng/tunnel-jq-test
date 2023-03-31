@@ -299,7 +299,7 @@ public class SdTunnels extends BaseEntity
 	}
 
 	/** 是否使用 */
-    @Excel(name = "是否启用",readConverterExp = "0=启用,1=不启用")
+    @Excel(name = "是否启用",readConverterExp = "0=启用,1=停用")
     @ApiModelProperty("是否启")
     private Long poll;
 

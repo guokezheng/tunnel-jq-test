@@ -147,4 +147,11 @@ public interface SdTaskListMapper
      * @return
      */
     List<SdTaskList> selectChaoshiSdTaskListList(SdTaskList sdTaskList);
+
+    /**
+     * 查询当天任务数量
+     * @param pid
+     * @return
+     */
+    String selectCurrentDayTask(String pid);
 }

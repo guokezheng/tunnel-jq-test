@@ -37,7 +37,15 @@ public class SdDeviceTypeItem extends BaseEntity
     @Excel(name = "备注")
     public String remark;
 
+    private String ids;
 
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     @Override
     public String toString() {

@@ -162,7 +162,7 @@ public class SdDevicesController extends BaseController {
     public AjaxResult export(SdDevices sdDevices) {
         List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
-        return util.exportExcel(list, "设备管理数据");
+        return util.exportExcel(list, "设备管理");
     }
 
     /**

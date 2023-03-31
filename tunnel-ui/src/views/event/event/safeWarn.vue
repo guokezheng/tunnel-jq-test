@@ -1427,6 +1427,7 @@ export default {
         prevControlType:item.prevControlType,
         currencyId:item.currencyId,
         id:item.id,
+        laneNo:item.laneNo.toString()
       }
       examineDeviceDetail(query).then(res=>{
         console.log(res);
@@ -1681,7 +1682,7 @@ export default {
       if(this.eventFormDetail.laneNo){
         this.eventFormDetail.laneNo = this.eventFormDetail.laneNo.toString();
       }
-      
+
       updateEvent(this.eventFormDetail).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;
@@ -2749,7 +2750,7 @@ export default {
   .el-dialog__headerbtn{
     z-index:3;
   }
-  
+
   ::v-deep .detailsDialog {
     width: 60%;
     position: absolute;

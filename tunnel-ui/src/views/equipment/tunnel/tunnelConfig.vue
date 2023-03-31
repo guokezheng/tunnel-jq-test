@@ -386,6 +386,7 @@ export default {
         for (let i = 0; i < img.length; i++) {
           if (img[i].id == that.deleteObjs) {
             img[i].remove();
+            console.log(img[i])
             img.splice(i, 1);
             console.log(that.selectedIconList)
             that.selectedIconList.splice(i, 1);
@@ -393,7 +394,11 @@ export default {
           }
         }
           debugger
-        that.getEquipment(selectedIconLists[num],selectedIconLists[num])
+        console.log(selectedIconLists[num])
+        console.log( that.eqTypeList)
+        let selectedIcon = that.eqTypeList.find(item=> item.typeId ==selectedIconLists[num].eqType);
+        console.log( selectedIcon)
+        that.getEquipment(selectedIconLists[num],selectedIcon)
         debugger
       }
     };

@@ -29,6 +29,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId}</if>
             <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
             <if test="searchValue != null  and searchValue != ''"> and CONCAT(item_code,item_name) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(id,#{ids}) > 0</if>
+
         </where>
         order by create_time desc
     </select>

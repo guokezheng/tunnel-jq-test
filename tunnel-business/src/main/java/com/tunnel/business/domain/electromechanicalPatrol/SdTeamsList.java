@@ -31,6 +31,7 @@ public class SdTeamsList extends BaseEntity {
     /**
      * 父部门ID
      */
+    @Excel(name = "所属部门")
     @ApiModelProperty("父部门ID")
     private String parentId;
 
@@ -50,7 +51,7 @@ public class SdTeamsList extends BaseEntity {
     /**
      * 显示顺序
      */
-    @Excel(name = "排序")
+   /* @Excel(name = "排序")*/
     @ApiModelProperty("显示顺序")
     private String orderNum;
 

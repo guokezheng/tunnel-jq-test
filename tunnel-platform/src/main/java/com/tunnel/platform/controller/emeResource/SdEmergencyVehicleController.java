@@ -78,7 +78,7 @@ public class SdEmergencyVehicleController extends BaseController
     {
         List<SdEmergencyVehicle> list = sdEmergencyVehicleService.selectSdEmergencyVehicleList(sdEmergencyVehicle);
         ExcelUtil<SdEmergencyVehicle> util = new ExcelUtil<SdEmergencyVehicle>(SdEmergencyVehicle.class);
-        return util.exportExcel(list, "应急车辆数据");
+        return util.exportExcel(list, "应急车辆");
     }
 
     /**

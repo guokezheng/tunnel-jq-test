@@ -1,5 +1,6 @@
 package com.tunnel.business.service.electromechanicalPatrol.impl;
 
+import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -172,7 +173,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     public int insertSdTaskList(SdTaskList sdTaskList)
     {
         int result = -1;
-        String taskId = UUIDUtil.getRandom32BeginTimePK();//任务编号
+        //String taskId = UUIDUtil.getRandom32BeginTimePK();//任务编号
+        String taskId = createTaskId(sdTaskList.getTunnelId());
         sdTaskList.setId(taskId);//id
         sdTaskList.setZzjgId(SecurityUtils.getLoginUser().getDeptId());
         sdTaskList.setDispatcher(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
@@ -196,6 +198,51 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         }
         return result;
     }
+   /**
+    *
+    * 生成任务id  格式:隧道id的后三位+当前年月日+001  例HSD20230331001
+    *
+    * */
+    private String createTaskId(String tunnelId) {
+        tunnelId.substring(tunnelId.length()-3);
+
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date(System.currentTimeMillis());
+        String pid = tunnelId.substring(tunnelId.length()-3)+formatter.format(date);
+
+        String cid = sdTaskListMapper.selectCurrentDayTask(pid);
+        String countNum = "";
+        if(cid != null&&!"".equals(cid)){
+            String codeTmp = cid.substring(cid.length() - 3); // 获取字符串最后三个字符
+            int num = StrToInt(codeTmp) + 1;
+            if(num>=100) {
+                countNum += num;
+            }else if(10<=num&&num<100) {
+                countNum += ("0"+num);
+            }else if(num<10) {
+                countNum += ("00"+num);
+            }
+        }else
+            countNum += "001";
+        pid = pid+countNum;
+        return pid;
+
+    }
+
+    public static int StrToInt(String str) {
+        int rs = 0;
+        DecimalFormat df = new DecimalFormat("#");
+        if (str != null) {
+            try {
+                rs = df.parse(str).intValue();
+            } catch (Exception e) {
+                rs = 0;
+            }
+        }
+        return rs;
+    }
+
+
 
     private int insertPatrol(SdTaskList sdTaskList,String taskId){
         int result = -1;

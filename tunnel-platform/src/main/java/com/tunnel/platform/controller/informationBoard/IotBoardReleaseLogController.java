@@ -76,7 +76,7 @@ public class IotBoardReleaseLogController extends BaseController
 //        List<IotBoardReleaseLog> list = iotBoardReleaseLogService.selectIotBoardReleaseLogList(iotBoardReleaseLog);
         List<IotBoardReleaseLog> list = iotBoardReleaseLogService.selectIotBoardReleaseLogListToExport(iotBoardReleaseLog);
         ExcelUtil<IotBoardReleaseLog> util = new ExcelUtil<IotBoardReleaseLog>(IotBoardReleaseLog.class);
-        return util.exportExcel(list, "发送记录列表");
+        return util.exportExcel(list, "发送记录");
     }
 
     /**

@@ -52,7 +52,7 @@ public class IotBoardVocabularyController extends BaseController
     {
         List<IotBoardVocabulary> list = iotBoardVocabularyService.selectIotBoardVocabularyList(sdAuditVocabulary);
         ExcelUtil<IotBoardVocabulary> util = new ExcelUtil<IotBoardVocabulary>(IotBoardVocabulary.class);
-        return util.exportExcel(list, "情报板敏感字列表");
+        return util.exportExcel(list, "敏感字管理");
     }
 
     /**

@@ -94,6 +94,9 @@ public class SdFaultList extends BaseEntity
     /** 故障代码 */
     /*@Excel(name = "故障代码")*/
     private String faultCode;
+    @Excel(name = "设备状态")
+    private String fstatus;
+
 
     /** 故障等级 */
     /*@Excel(name = "故障等级")*/
@@ -113,6 +116,14 @@ public class SdFaultList extends BaseEntity
     private String ftype;
 
     private String ids;
+
+    public String getFstatus() {
+        return this.fstatus;
+    }
+
+    public void setFstatus( String fstatus) {
+        this.fstatus = fstatus;
+    }
 
     public String getDeptId() {
         return this.deptId;

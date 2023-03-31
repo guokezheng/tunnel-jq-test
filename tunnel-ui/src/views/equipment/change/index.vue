@@ -124,7 +124,11 @@
         </template> -->
       </el-table-column>
       <el-table-column label="桩号" align="center" prop="stakeMark" />
-      <el-table-column label="方向" align="center" prop="eqDirection" />
+      <el-table-column label="方向" align="center" prop="eqDirection" >
+      <template slot-scope="scope">
+        <span>{{ getDirectionText(scope.row.eqDirection) }}</span>
+      </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
         label="操作"
@@ -193,8 +197,14 @@
         </el-form-item>
         <el-form-item label="方向" prop="eqDirection">
           <el-select v-model="form.eqDirection" placeholder="请选择方向" style="width:100%">
-            <el-option label="上行" value="0" />
-            <el-option label="下行" value="1" />
+            <el-option
+              v-for="dict in directionOptions"
+              :key="dict.value"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+<!--            <el-option label="上行" value="0" />
+            <el-option label="下行" value="1" />-->
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -224,6 +234,7 @@ export default {
   data() {
     return {
       boxShow: false,
+      directionOptions: [], //方向列表
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -268,6 +279,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getDirection();
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
@@ -290,6 +302,22 @@ export default {
         }
       }
     },
+
+    //查询方向
+    getDirection() {
+      this.getDicts("sd_direction").then((response) => {
+        this.directionOptions = response.data;
+        console.log(this.directionOptions, "方向");
+      });
+    },
+    getDirectionText(num) {
+      for (let item of this.directionOptions) {
+        if (num == item.dictValue) {
+          return item.dictLabel;
+        }
+      }
+    },
+
     /** 查询设备变更列表 */
     getList() {
       this.loading = true;
@@ -305,13 +333,13 @@ export default {
         this.changeList = response.rows;
         this.total = response.total;
         this.loading = false;
-        this.changeList.forEach((e) => {
+       /* this.changeList.forEach((e) => {
           if (e.eqDirection == 0) {
             e.eqDirection = "上行";
           } else if (e.eqDirection == 1) {
             e.eqDirection = "下行";
           }
-        });
+        });*/
       });
     },
     // 取消按钮
@@ -403,6 +431,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       let confirmInfo ="是否确认导出所有的设备变更数据项？";
       if(this.ids.length>0){
         confirmInfo = "是否确认导出所选的设备变更数据项？";

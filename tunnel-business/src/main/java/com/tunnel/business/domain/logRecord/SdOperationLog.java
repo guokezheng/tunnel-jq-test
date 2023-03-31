@@ -75,7 +75,7 @@ public class SdOperationLog extends BaseEntity
     @Excel(name = "桩号")
     private String pile;
     /** 方向 */
-    @Excel(name = "方向")
+    @Excel(name = "方向",dictType = "sd_direction")
     private String direction;
     
     private String beginTime;

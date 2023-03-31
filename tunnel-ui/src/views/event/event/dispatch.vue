@@ -1345,12 +1345,12 @@ export default {
         laneNo: this.eventForm.laneNo,
         tunnelId: this.eventForm.tunnelId,
       };
-      await getAccidentPoint(params).then((res) => {
+      /*await getAccidentPoint(params).then((res) => {
         console.log(res, "事件点");
         this.accLeft = res.data["tunnelLeft"] * 100;
         this.accTop = res.data["tunnelTop"] * 100;
         this.getAccIcon();
-      });
+      });*/
     },
 
     // 返回安全预警

@@ -180,6 +180,7 @@
 
     <!-- 添加或修改情报板敏感字管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="文本" prop="word">
           <el-input v-model.trim="form.word" placeholder="请输入文本" />
@@ -196,14 +197,14 @@
           </el-date-picker>
         </el-form-item> -->
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer">
         <el-button
-          type="primary"
+          class="submitButton"
           :loading="submitFormLoading"
           @click="submitForm"
           >确 定</el-button
         >
-        <el-button @click="cancel">取 消</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>

@@ -141,8 +141,9 @@
             row-key="ID"
             v-loading="loading"
             max-height="700"
+            :key="toggleIndex"
           >
-            <el-table-column align="right" width="560">
+            <el-table-column width="545">
               <template slot-scope="scope">
                 <div class="con">
                   <div
@@ -180,9 +181,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column
-              align="left"
-            >
+            <el-table-column width="130">
               <template slot-scope="scope">
                 <div class="menuBox">
                   <!-- <el-tooltip content="加入信息模板" placement="top">
@@ -395,6 +394,7 @@ export default {
 
   data() {
     return {
+      toggleIndex:0,
       toRightCategory: "", //向右类别绑定
       arrowRightVisible: false, //向右类别弹窗
       loading: false,
@@ -641,7 +641,9 @@ export default {
         ID: this.contentList.length,
       };
       this.contentList.push(list);
+      this.toggleIndex ++
       console.log(this.contentList, "this.contentList");
+      console.log(this.toggleIndex,"toggleIndex")
     },
 
     // 向右添加模板
@@ -872,6 +874,7 @@ export default {
 
     // 多选
     handleCheckedCitiesChange(value) {
+      console.log(value,"value")
       this.checkedCities = value;
       let val = JSON.parse(JSON.stringify(value));
       for (let itm of this.deviceList) {
@@ -879,6 +882,7 @@ export default {
           this.checkAll = true;
         } else {
           this.checkAll = false;
+          return
         }
       }
       this.$forceUpdate();
@@ -1158,7 +1162,7 @@ export default {
     .contentBox {
       width: 100%;
       height: calc(100% - 67px);
-      overflow: auto;
+      // overflow: auto;
 
       .con {
         border: 1px solid #05afe3;
@@ -1377,6 +1381,6 @@ export default {
   border-bottom: transparent;
 }
 ::v-deep .el-table .cell {
-  padding-left: 20px;
+  padding-left: 5px;
 }
 </style>

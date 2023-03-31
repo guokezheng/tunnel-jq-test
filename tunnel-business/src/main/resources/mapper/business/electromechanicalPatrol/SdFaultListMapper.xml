@@ -46,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         u.dict_label fstatus
         from sd_fault_list s
         left join sd_devices a on a.eq_id = s.eq_id
+        left join sd_tunnels e on a.eq_tunnel_id = e.tunnel_id
         left join sys_dict_data t on t.dict_value = s.fault_type and t.dict_type ='fault_type'
         left join sys_dict_data r on r.dict_value = s.fallt_remove_statue and r.dict_type ='fault_remove_statue'
         left join sys_dict_data l on l.dict_value = s.fault_level and l.dict_type ='fault_level'
@@ -67,6 +68,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultDescription != null  and faultDescription != ''"> and concat(s.fault_description,s.fault_location) like concat('%', #{faultDescription}, '%')</if>
             <if test="faultStatus != null and faultStatus != ''"> and s.fault_status = #{faultStatus}</if>
             <if test="ids != null  and ids != ''"> and FIND_IN_SET(s.id,#{ids}) > 0</if>
+            <if test="deptId != null and deptId != ''">
+                AND (e.dept_id = #{deptId} OR e.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+            </if>
         </where>
         order by s.create_time desc
     </select>
@@ -210,7 +214,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id
         left join sys_dict_data s on f.fault_type = s.dict_value
     <where>
-        1=1 and  s.dict_type= 'fault_type'
+        1=1 and  s.dict_type= 'fault_type' and f.fallt_remove_statue = '1'
         <if test="tunnelId != null and tunnelId != '' ">and f.tunnel_id = #{tunnelId}</if>
         <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
     </where>

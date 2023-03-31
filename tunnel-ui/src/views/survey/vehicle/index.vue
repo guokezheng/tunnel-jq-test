@@ -7,9 +7,7 @@
           <el-button size="small" :loading="exportLoading" @click="handleExport"
             >导出</el-button
           >
-          <el-button size="small" @click="syncButton"
-            >同步</el-button
-          >
+          <el-button size="small" @click="syncButton">同步</el-button>
           <el-button size="small" @click="resetQuery" :disabled="resetDisabled"
             >刷新</el-button
           >
@@ -39,7 +37,7 @@
           label-width="75px"
         >
           <el-form-item label="机构" prop="orgName">
-            <el-cascader
+<!--            <el-cascader
               style="width: 100%"
               popper-class="jigou"
               v-model="queryParams.orgName"
@@ -47,7 +45,14 @@
               :options="orgData"
               :props="{ checkStrictly: true }"
               clearable
-            ></el-cascader>
+            ></el-cascader>-->
+            <treeselect
+              v-model="queryParams.orgName"
+              :options="deptOptions"
+              :show-count="true"
+              placeholder="请选择归属部门"
+              :disable-branch-nodes="true"
+            />
           </el-form-item>
 
           <el-form-item label="车型" prop="vType">
@@ -275,12 +280,12 @@
           />
         </template>
       </el-table-column>
-<!--      <el-table-column
+      <!--      <el-table-column
         label="车载终端安装"
         align="center"
         prop="terminalInstall"
       />-->
-<!--      <el-table-column label="技术状态描述" align="center" prop="statusDesc" />-->
+      <!--      <el-table-column label="技术状态描述" align="center" prop="statusDesc" />-->
       <el-table-column
         label="操作"
         align="center"
@@ -318,126 +323,133 @@
       append-to-body
       :before-close="cancel"
     >
-      <el-form ref="form" :model="form" :rules="rules" label-width="106px">
-        <el-col :span="12">
-          <el-form-item label="机构" prop="orgName" v-show="model">
-            <el-input
-              v-model="form.orgName"
-              placeholder="请输入机构名称"
-              :disabled="disabled"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="车牌" prop="plateNumber" v-show="updateModel">
-            <el-input
-              v-model="form.plateNumber"
-              placeholder="请输入车牌"
-              :disabled="disabled"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="车型" prop="vType" v-show="model">
-            <el-select
-              v-model="form.vType"
-              placeholder="请选择车型"
-              clearable
-              style="width: 100%"
-              :disabled="disabled"
-            >
-              <el-option
-                v-for="dict in dict.type.sd_emergency_vehicle_type"
-                :key="dict.label"
-                :label="dict.label"
-                :value="dict.label"
+      <div class="dialogCloseButton"></div>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="机构" prop="orgName" v-show="model">
+              <el-input
+                v-model="form.orgName"
+                placeholder="请输入机构名称"
+                :disabled="disabled"
               />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="存放地点" prop="vPlace" v-show="model">
-            <el-input
-              v-model="form.vPlace"
-              placeholder="请输入存放地点"
-              type="textarea"
-              :disabled="disabled"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="使用状态" prop="useStatus" v-show="model">
-            <el-select
-              v-model="form.useStatus"
-              placeholder="请选择使用状态"
-              clearable
-              style="width: 100%"
-              :disabled="disabled"
-            >
-              <el-option
-                v-for="dict in dict.type.sd_use_status"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车牌" prop="plateNumber" v-show="updateModel">
+              <el-input
+                v-model="form.plateNumber"
+                placeholder="请输入车牌"
+                :disabled="disabled"
               />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="运行状态" prop="accState" v-show="updateModel">
-            <el-select
-              v-model="form.accState"
-              placeholder="请选择运行状态"
-              clearable
-              style="width: 100%"
-              :disabled="upDisabled"
-            >
-              <el-option
-                v-for="dict in dict.type.sd_vehicle_run_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车型" prop="vType" v-show="model">
+              <el-select
+                v-model="form.vType"
+                placeholder="请选择车型"
+                clearable
+                style="width: 100%"
+                :disabled="disabled"
+              >
+                <el-option
+                  v-for="dict in dict.type.sd_emergency_vehicle_type"
+                  :key="dict.label"
+                  :label="dict.label"
+                  :value="dict.label"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="存放地点" prop="vPlace" v-show="model">
+              <el-input
+                v-model="form.vPlace"
+                placeholder="请输入存放地点"
+                :disabled="disabled"
               />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="资产归属" prop="ownerName" v-show="model">
-            <el-input v-model="form.ownerName" :disabled="disabled" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="车辆型号" prop="vehicleModel" v-show="model">
-            <el-input v-model="form.vehicleModel" :disabled="disabled" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="ETC卡类型" prop="etcTypeDesc" v-show="model">
-            <el-input v-model="form.etcTypeDesc" :disabled="disabled" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="ETC使用情况" prop="etcStateDesc" v-show="model">
-            <el-input v-model="form.etcStateDesc" :disabled="disabled" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="车龄" prop="carAge" v-show="model">
-            <el-input v-model="form.carAge" :disabled="disabled" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="公里数" prop="mileage" v-show="model">
-            <el-input v-model="form.mileage" :disabled="disabled" />
-          </el-form-item>
-        </el-col>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="使用状态" prop="useStatus" v-show="model">
+              <el-select
+                v-model="form.useStatus"
+                placeholder="请选择使用状态"
+                clearable
+                style="width: 100%"
+                :disabled="disabled"
+              >
+                <el-option
+                  v-for="dict in dict.type.sd_use_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="运行状态" prop="accState" v-show="updateModel">
+              <el-select
+                v-model="form.accState"
+                placeholder="请选择运行状态"
+                clearable
+                style="width: 100%"
+                :disabled="upDisabled"
+              >
+                <el-option
+                  v-for="dict in dict.type.sd_vehicle_run_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="资产归属" prop="ownerName" v-show="model">
+              <el-input v-model="form.ownerName" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车辆型号" prop="vehicleModel" v-show="model">
+              <el-input v-model="form.vehicleModel" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="ETC卡类型" prop="etcTypeDesc" v-show="model">
+              <el-input v-model="form.etcTypeDesc" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="ETC使用情况"
+              prop="etcStateDesc"
+              v-show="model"
+            >
+              <el-input v-model="form.etcStateDesc" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车龄" prop="carAge" v-show="model">
+              <el-input v-model="form.carAge" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="公里数" prop="mileage" v-show="model">
+              <el-input v-model="form.mileage" :disabled="disabled" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <div class="dialog-footer">
+          <el-button class="submitButton" @click="submitForm" v-show="upShow"
+            >确 定</el-button
+          >
+          <el-button class="closeButton" @click="cancel">取 消</el-button>
+        </div>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" @click="submitForm" v-show="upShow"
-          >确 定</el-button
-        >
-        <el-button size="small" @click="cancel">取 消</el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -455,9 +467,13 @@ import {
   syncVehicle,
 } from "@/api/equipment/yingJiGou/emergencyVehicles";
 import { batchDelete } from "@/api/surveyVehicle/api.js";
+import {treeselectExcYG1} from "@/api/system/dept";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   dicts: ["sd_use_status", "sd_emergency_vehicle_type", "sd_vehicle_run_type"],
+  components: { Treeselect },
   data() {
     const validateLongitude = (rule, value, callback) => {
       if (value == "" || (value == null && this.upDisabled == false)) {
@@ -508,14 +524,17 @@ export default {
       open: false,
       orgData: [],
       showSearch: true,
+      // 部门树选项
+      deptOptions: undefined,
     };
   },
   created() {
     this.getList();
-    veicleOrgId().then((res) => {
+    /*veicleOrgId().then((res) => {
       this.orgData = this.handleTree(res, "value");
       console.log(this.orgData, "机构名称");
-    });
+    });*/
+    this.getTreeselect();
     this.getDicts("sd_emergency_vehicle_type").then((data) => {
       console.log(data, "车型");
       this.vehicleTypeList = data.data;
@@ -526,14 +545,21 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    //查询部门树
+    getTreeselect() {
+      treeselectExcYG1().then((response) => {
+        this.deptOptions = response.data;
+        console.log(this.deptOptions);
+      });
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id
+      return row.id;
     },
     //同步车辆按钮
-    syncButton(){
+    syncButton() {
       syncVehicle().then((res) => {
-        if(res.code == 200){
+        if (res.code == 200) {
           this.$modal.msgSuccess(res.msg);
           this.getList();
         }
@@ -565,8 +591,8 @@ export default {
 
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的应急车辆数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的应急车辆数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的应急车辆数据项？";
       }
       this.queryParams.ids = this.ids.join();
@@ -581,7 +607,7 @@ export default {
           this.$download.name(response.msg);
           this.exportLoading = false;
           this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = ''
+          this.queryParams.ids = "";
         })
         .catch(() => {});
     },
@@ -589,15 +615,6 @@ export default {
     getList() {
       // console.log(this.queryParams)
       this.cl_boxShow = false;
-      if (this.queryParams.orgName) {
-        this.queryParams.orgName = this.queryParams.orgName[2]
-          ? this.queryParams.orgName[2]
-          : this.queryParams.orgName[1]
-          ? this.queryParams.orgName[1]
-          : this.queryParams.orgName[0]
-          ? this.queryParams.orgName[0]
-          : "";
-      }
       handleQueryList(this.queryParams).then((res) => {
         if (res.code == 200) {
           this.mechanismList = res.rows;

@@ -162,7 +162,9 @@
       width="1500px"
       append-to-body
       :before-close="cancel"
+      class="tunnelRelationDialog"
     >
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="6">
@@ -180,6 +182,9 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+          </el-col>
+          <el-col :span="1" v-show="title != '添加设备类型状态关系'">
+            <el-button class="dialogButton addFormButton" @click="addFrom()">添加</el-button>
           </el-col>
         </el-row>
         <template v-if="title === '添加设备类型状态关系'">
@@ -247,7 +252,6 @@
           </el-row>
         </template>
         <template v-else>
-          <el-button class=" addFormButton" @click="addFrom()" size="small">添加</el-button>
           <el-row v-for="(item, index) in equipmentStates" :key="index">
             <el-col :span="3">
               <el-form-item label="设备状态" prop="deviceState">
@@ -322,6 +326,7 @@
                   :on-change="handleChange"
                   :limit="2"
                   :on-progress="handleChange"
+                  :class="item.iFileList.length >= 2 ? 'showUpload' : ''"
                 >
                   <!-- <img :src="item.url" alt="">       -->
                 </el-upload>
@@ -347,9 +352,9 @@
           <el-radio v-model="direction" label="1">否</el-radio>
         </el-form-item> -->
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">提 交</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div class="dialog-footer">
+        <el-button class="submitButton" @click="submitForm">提 交</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -1090,7 +1095,7 @@ export default {
 }
 ::v-deep .showUpload {
   .el-upload {
-    display: none;
+    display: none !important;
   }
 }
 ::v-deep .el-upload--picture-card {
@@ -1113,19 +1118,17 @@ export default {
 }
 .dialogButton {
   width: 50px;
-  height: 24px;
-  border: solid 1px #ccc;
+  height: 30px;
+  padding: 0 10px;
+  // border: solid 1px #ccc;
   border-radius: 4px;
   font-size: 12px;
-  margin-top: 5px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .addFormButton {
-  position: absolute;
-  top: 69px;
-  left: 25%;
+  height: 36px ;
 }
 </style>

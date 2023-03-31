@@ -130,7 +130,7 @@
 
     <!--详情弹窗-->
     <el-dialog :visible.sync="record" width="70%">
-
+      <div class="dialogCloseButton"></div>
       <div>
         <el-row
           :gutter="20"

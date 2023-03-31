@@ -110,7 +110,7 @@
       <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <!-- <el-table-column label="更换时间" align="center" prop="id" /> -->
-      <el-table-column label="设备编号" align="center" prop="deviceId" />
+      <el-table-column label="设备编号" align="center" prop="deviceId" width="300"/>
       <el-table-column label="设备名称" align="center" prop="deviceName" />
       <el-table-column
         label="更换时间"
@@ -160,6 +160,7 @@
 
     <!-- 添加或修改设备变更对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备编号" prop="deviceId">
           <el-input v-model="form.deviceId" placeholder="请输入设备编号" />
@@ -200,9 +201,9 @@
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div class="dialog-footer">
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>

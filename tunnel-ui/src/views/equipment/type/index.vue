@@ -168,6 +168,7 @@
       append-to-body
       class="eqTypeDialog"
     >
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="设备类型名称" prop="typeName">
           <el-input v-model="form.typeName" placeholder="请输入设备类型名称" />
@@ -301,9 +302,9 @@
           </el-checkbox-group>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div class="dialog-footer">
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -463,7 +464,6 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-   
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.typeId;
@@ -519,7 +519,7 @@ export default {
     //监控上传文件列表
     handleChange(file, fileList) {
       this.fileList = fileList;
-      this.$refs.form.clearValidate('upload');
+      this.$refs.form.clearValidate("upload");
     },
     // 选取文件超过数量提示
     handleExceed(files, fileList) {
@@ -609,8 +609,8 @@ export default {
 
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的设备图标数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的设备图标数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的设备图标数据项？";
       }
       this.queryParams.ids = this.ids.join();
@@ -661,7 +661,7 @@ export default {
     submitForm() {
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
-      if(this.fileList = []){
+      if ((this.fileList = [])) {
         this.fileData.append("file", null); // append增加数据
       }
       this.fileData.append("typeName", this.form.typeName); //类型名称

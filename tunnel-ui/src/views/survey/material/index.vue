@@ -10,21 +10,16 @@
           @click="handleAdd()"
           >新增
         </el-button>
-        <el-button
-          size="small"
-          :loading="exportLoading"
-          @click="handleExport"
-        >导出
+        <el-button size="small" :loading="exportLoading" @click="handleExport"
+          >导出
         </el-button>
-<!--        <el-button type="primary" plain size="mini" @click="toggleExpandAll"
+        <!--        <el-button type="primary" plain size="mini" @click="toggleExpandAll"
           >展开/折叠</el-button
         >-->
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
-        >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="12">
-        <div  ref = "main" class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
             placeholder="请输入物资名称、桩号，回车搜索"
             v-model="queryParams.materialName"
@@ -271,7 +266,7 @@
         </el-tooltip>
       </div>
     </el-row> -->
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="materialList"
@@ -281,9 +276,20 @@
       :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-<!--      <el-table-column label="序号" align="center">
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
+      <!--      <el-table-column label="序号" align="center">
         <template slot-scope="scope">
           {{ scope.$index + 1 }}
         </template>
@@ -415,6 +421,7 @@
 
     <!-- 添加/修改应急资源对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <!--        <el-form-item label="物资编号" prop="materialId">-->
         <!--          <el-input v-model="form.materialId" placeholder="请输入物资编号" />-->
@@ -507,22 +514,21 @@
           >
           </el-date-picker>
         </el-form-item>
-
+        <div class="dialog-footer">
+          <el-button
+            class="submitButton"
+            :disabled="disabled"
+            :loading="submitBtnLoading"
+            @click="submitForm"
+            v-prevent-click
+            >确 定</el-button
+          >
+          <el-button @click="cancel" class="closeButton">取 消</el-button>
+        </div>
         <!-- <el-form-item label="价格(元)" prop="price">
           <el-input v-model="form.price" placeholder="请输入保留两位小数的单价" oninput="value=value.replace(/[^0-9.]/g,'')" />
         </el-form-item> -->
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button
-          type="primary"
-          :disabled="disabled"
-          :loading="submitBtnLoading"
-          @click="submitForm"
-          v-prevent-click
-          >确 定</el-button
-        >
-        <el-button @click="cancel">取 消</el-button>
-      </div>
     </el-dialog>
 
     <!-- 出入库应急资源对话框 -->
@@ -654,7 +660,8 @@ import {
   addMaterial,
   updateMaterial,
   getCrkDetailById,
-  updateMaterialCrk, exportList,
+  updateMaterialCrk,
+  exportList,
 } from "@/api/system/material";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 
@@ -923,7 +930,7 @@ export default {
   methods: {
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id
+      return row.id;
     },
     bodyCloseMenus(e) {
       let self = this;
@@ -935,8 +942,10 @@ export default {
     },
 
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     focus() {
       this.$nextTick(() => {
@@ -1250,8 +1259,8 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的应急物资数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的应急物资数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的应急物资数据项？";
       }
       this.queryParams.ids = this.ids.join();
@@ -1266,7 +1275,7 @@ export default {
           this.$download.name(response.msg);
           this.exportLoading = false;
           this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = ''
+          this.queryParams.ids = "";
         })
         .catch(() => {});
     },

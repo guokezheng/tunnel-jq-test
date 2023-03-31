@@ -45,7 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         		A.create_time, A.update_by, A.update_time, B.tunnel_name, A.is_automatic, A.event_type,c.dict_label lx,f.dict_label fx
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
-        left join sys_dict_data c on c.dict_value = A.strategy_type and c.dict_type = 'sd_strategy_type'
+        left join sys_dict_data c on c.dict_value = A.strategy_type
         left join sys_dict_data f on f.dict_value = A.direction and f.dict_type = 'sd_direction'
 
         <where>
@@ -61,6 +61,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.deptId != null and params.deptId != ''">
                 AND (B.dept_id = #{params.deptId} OR B.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
+            <if test="strategyGroup == '1'.toString()">
+                and c.dict_type = 'sd_strategy_type'
+            </if>
+            <if test="strategyGroup == '2'.toString()">
+                and c.dict_type = 'sys_common_event'
+            </if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(A.id,#{ids}) > 0</if>
         </where>
         order by A.id desc
     </select>

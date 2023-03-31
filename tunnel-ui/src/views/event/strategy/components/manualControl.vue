@@ -1,6 +1,6 @@
 <!-- 手动控制 -->
 <template>
-  <div>
+  <div >
     <el-form
       ref="manualControl"
       :model="strategyForm"
@@ -53,7 +53,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-row :gutter="20" style="clear:both;">
+        <el-row :gutter="20" style="clear: both">
           <el-col :span="24">
             <el-form-item label="执行操作">
               <div class="menu">
@@ -67,12 +67,18 @@
           </el-col>
         </el-row>
       </el-row>
-      <el-row :gutter="20">
-        <el-col :span="24">
-        <el-form-item v-for="(items, index) in strategyForm.manualControl" :key="index">
-          <el-col :span="6">
+      <el-row class="planBox">
+        <el-form-item
+          v-for="(items, index) in strategyForm.manualControl"
+          :key="index"
+        >
+          <el-col :span="6" style="padding-left: 0">
             <el-form-item prop="disposalName">
-              <el-input v-model="items.disposalName" placeholder="处置名称" style="width:100%;"/>
+              <el-input
+                v-model="items.disposalName"
+                placeholder="处置名称"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -81,7 +87,7 @@
               placeholder="请选择设备类型"
               clearable
               @change="changeEquipmentType(index)"
-              style="width:100%;"
+              style="width: 100%"
             >
               <el-option
                 v-for="item in items.equipmentTypeData"
@@ -143,31 +149,24 @@
             ></el-cascader>
           </el-col>
           <el-col :span="2" class="buttonBox">
-            <el-button
-              type=""
-              icon="el-icon-delete"
-              circle
-              @click="removeItem(index)"
-            ></el-button>
+            <el-button class="delete" @click="removeItem(index)"></el-button>
             <el-button
               v-show="strategyForm.equipmentTypeId != 30"
-              icon="el-icon-plus"
-              circle
+              class="add"
               @click="addItem"
             ></el-button>
           </el-col>
         </el-form-item>
-      </el-col>
       </el-row>
-      <el-form-item class="dialog-footer">
-        <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
-          >提交</el-button
-        >
-        <el-button style="width: 30%" @click="strategyFormClose"
-          >取 消</el-button
-        >
-      </el-form-item>
     </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button class="submitButton" @click="submitStrategyForm"
+        >提交</el-button
+      >
+      <el-button class="closeButton" @click="strategyFormClose"
+        >取 消</el-button
+      >
+    </div>
   </div>
 </template>
 
@@ -291,12 +290,16 @@ export default {
             ) {
               // 改变数据类型
               this.strategyForm.manualControl[i].state = +attr.state;
-              this.qbgChange(i,this.strategyForm.manualControl[i].value);
+              this.qbgChange(i, this.strategyForm.manualControl[i].value);
             }
-            this.$set(manualControl,"equipmentTypeData",this.equipmentTypeData);
+            this.$set(
+              manualControl,
+              "equipmentTypeData",
+              this.equipmentTypeData
+            );
             listDevices({
-              eqType: attr.eqTypeId,//设备类型
-              eqTunnelId: this.strategyForm.tunnelId,//隧道
+              eqType: attr.eqTypeId, //设备类型
+              eqTunnelId: this.strategyForm.tunnelId, //隧道
               eqDirection: this.strategyForm.direction, //方向
             }).then((res) => {
               this.$set(manualControl, "equipmentData", res.rows);
@@ -428,12 +431,16 @@ export default {
       this.$refs["manualControl"].validate((valid) => {
         if (valid) {
           console.log(this.strategyForm, "要提交数据");
-          var manualControl = JSON.parse(JSON.stringify(this.strategyForm.manualControl));
+          var manualControl = JSON.parse(
+            JSON.stringify(this.strategyForm.manualControl)
+          );
           let result = manualControl.every(function (item) {
-              return item.equipmentTypeId != "" && item.state != "" && item.value != ""
+            return (
+              item.equipmentTypeId != "" && item.state != "" && item.value != ""
+            );
           });
           console.log(result);
-          if(!result){
+          if (!result) {
             return this.$modal.msgError("请填写完整");
           }
           //如果不是疏散标志则判断是否填写
@@ -543,8 +550,6 @@ export default {
           newData = newData.split(",");
           console.log(newData);
 
-
-          
           for (let i = 0; i < data.length; i++) {
             for (let z = 0; z < newData.length; z++) {
               if (data[i].eqId == newData[z]) {
@@ -605,8 +610,8 @@ export default {
   color: white;
   background-color: #74c5ff;
   height: 40px;
-  
-  .el-col{
+
+  .el-col {
     text-align: center;
   }
 }
@@ -614,5 +619,22 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  height: 36px;
+  .delete,
+  .add {
+    width: 16px;
+    height: 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border: none;
+    background-color: transparent;
+  }
+  .delete {
+    background-image: url(../../../../assets/icons/delete.png);
+  }
+  .add {
+    background-image: url(../../../../assets/icons/add.png);
+  }
 }
 </style>

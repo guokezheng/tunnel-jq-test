@@ -53,6 +53,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Encoder;
 
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -95,6 +96,11 @@ public class SdTaskListController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SdTaskList sdTaskList)
     {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdTaskList.setDeptId(deptId);
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         return getDataTable(list);
@@ -108,6 +114,11 @@ public class SdTaskListController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(SdTaskList sdTaskList)
     {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdTaskList.setDeptId(deptId);
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         ExcelUtil<SdTaskList> util = new ExcelUtil<SdTaskList>(SdTaskList.class);
         return util.exportExcel(list, "巡查任务");

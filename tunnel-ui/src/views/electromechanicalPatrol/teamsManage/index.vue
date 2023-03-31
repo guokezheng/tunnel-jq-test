@@ -134,6 +134,7 @@
       append-to-body
       class="addUserDialog"
     >
+    <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
@@ -203,8 +204,8 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 包含用户弹窗对话框 -->
@@ -252,13 +253,12 @@
         </el-col>
       </el-row>
 
-      <el-row>
+      <el-row style="padding:0 15px">
         <el-table
           ref="tables"
           :data="userList"
           v-loading="loadingUser"
           @selection-change="handleUserSelectionChange"
-          :row-class-name="tableRowClassName"
           max-height="430px">
           <el-table-column type="selection" align="center" />
           <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -296,7 +296,7 @@
         />
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="teamsUserOpen = false">关闭</el-button>
+        <el-button class="closeButton" @click="teamsUserOpen = false">关闭</el-button>
       </div>
     </el-dialog>
     <!-- 添加用户弹窗对话框 -->
@@ -338,7 +338,6 @@
           ref="tables"
           :data="unUserList"
           @selection-change="handleUnSelectionChange"
-          :row-class-name="tableRowClassName"
           max-height="430px">
           <el-table-column type="selection" align="center" />
           <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
@@ -367,8 +366,8 @@
         />
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleSelectUser">确 定</el-button>
-        <el-button type="primary" @click="teamsUserSelect = false">取 消</el-button>
+        <el-button class="submitButton" @click="handleSelectUser">确 定</el-button>
+        <el-button class="closeButton" @click="teamsUserSelect = false">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -694,13 +693,7 @@ export default {
         .catch(() => {});
     },
 
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
+
     /** 批量取消授权按钮操作 */
     cancelAuthUserAll() {
       const deptId = this.queryParamsUser.deptId;

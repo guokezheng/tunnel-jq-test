@@ -327,7 +327,7 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-
+                     
                       <div
                       v-show="
                           (item.eqType != 7 &&
@@ -897,7 +897,7 @@
             <div class="Time">
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
-                <el-time-picker
+                <el-time-picker 
                   v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
@@ -5012,7 +5012,7 @@ export default {
         }
       }else{
         this.timingStrategyDisabled = false
-      }
+      } 
     },
  //翻页时不刷新序号
     indexMethod(index){
@@ -5125,7 +5125,6 @@ export default {
         })
       }
 
-
     },
     bodyCloseMenus1(e) {
       let self = this;
@@ -5141,7 +5140,7 @@ export default {
           }
         })
       }
-
+      
 
     },
     bodyCloseMenus2(e) {
@@ -5158,7 +5157,7 @@ export default {
           }
         })
       }
-
+      
 
     },
     bodyCloseMenus3(e) {
@@ -5167,7 +5166,7 @@ export default {
         self.$nextTick(()=>{
           if (
             !self.$refs.main3.contains(e.target) &&
-            !self.$refs.cc3.contains(e.target)
+            !self.$refs.cc3.contains(e.target) 
           ) {
             if (self.sycz_boxShow3 == true) {
               self.sycz_boxShow3 = false;
@@ -5175,7 +5174,7 @@ export default {
           }
         })
       }
-
+      
 
     },
     otherClose(e) {
@@ -5196,7 +5195,8 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      //console.log(data.label);
+      this.treeShow = false;
+      console.log(data.label);
       this.screenEqName = data.label;
       this.screenEqNameButton(data.label);
     },
@@ -10550,7 +10550,7 @@ input {
   }
   .el-table {
     padding: 0 15px;
-    margin-bottom: 60px;
+    margin-bottom: 20px;
   }
   .el-tabs {
     padding: 0 15px;

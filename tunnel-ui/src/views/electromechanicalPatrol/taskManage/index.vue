@@ -24,7 +24,7 @@
       <el-col :span="6" :offset="14">
         <div ref = "main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入所属单位，回车搜索"
+            placeholder="请输入巡查班组，回车搜索"
             v-model="queryParams.zzjgId"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -120,7 +120,7 @@
           }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="承巡班组" align="center" prop="bzName">
+      <el-table-column label="巡查班组" align="center" prop="bzName">
       </el-table-column>
       <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
       <el-table-column
@@ -206,6 +206,7 @@
     />
 
     <el-dialog :title="title" :visible.sync="open"  width="70%" class="xjDialog">
+      <div class="dialogCloseButton"></div>
       <!--      <h1>新增巡检任务</h1>-->
       <div class="task">
         <div class="topTxt">巡查任务基本信息</div>
@@ -257,10 +258,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="指派巡查班组" prop="bzId">
+              <el-form-item label="巡查班组" prop="bzId">
                 <el-select
                   v-model="form.bzId"
-                  placeholder=""
+                  placeholder="请选择巡查班组"
                   id="bzSel"
                 >
                   <el-option
@@ -273,7 +274,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="需完成日期" prop="endPlantime">
+              <el-form-item label="计划完成时间" prop="endPlantime">
                 <el-date-picker
                   clearable
                   :picker-options="forbiddenTime"
@@ -281,7 +282,8 @@
                   v-model="form.endPlantime"
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
-                  placeholder="选择完成时间"
+                  @change="handleEndTime"
+                  placeholder="选择计划完成时间"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -356,21 +358,22 @@
             </div>
           </div>
         </div>
-        <div class="release-father">
-          <el-button style="height: 20%" @click="save">暂存</el-button>
+        <div class="dialog-footer">
+          <el-button class="zancunButton" @click="save">暂存</el-button>
           <el-button
-            style="height: 20%; display: none"
-            type="warning"
+            style="display: none"
+            class="closeButton"
             @click="abolish"
             >废止</el-button
           >
-          <el-button style="height: 20%" type="primary" @click="release"
+          <el-button class="submitButton" @click="release"
             >发布</el-button
           >
         </div>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="isShow1" width="50%" class="show">
+      <div class="dialogCloseButton"></div>
       <div class="show-left">
         <div class="show-title">设备位置</div>
         <el-tree
@@ -415,18 +418,14 @@
             :cell-style="{ 'text-align': 'center', padding: '0px' }"
             :header-row-style="{
               height: '30px',
-              background: '#F2F2F2',
-              color: '#606266',
             }"
             :row-style="{
               height: '30px',
-              background: '#fff',
-              color: '#606266',
             }"
             style="width: 100%"
             border
             height="358px"
-            class="allTable"
+            class="dialogTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
@@ -451,6 +450,7 @@
     <!-- -->
 
     <el-dialog :visible.sync="isShow2" width="50%" class="show">
+      <div class="dialogCloseButton"></div>
       <div class="show-left">
         <div class="show-title">故障位置</div>
         <el-tree
@@ -495,18 +495,14 @@
             :cell-style="{ 'text-align': 'center', padding: '0px' }"
             :header-row-style="{
               height: '30px',
-              background: '#F2F2F2',
-              color: '#606266',
             }"
             :row-style="{
               height: '30px',
-              background: '#fff',
-              color: '#606266',
             }"
             style="width: 100%"
             border
             height="358px"
-            class="allTable"
+            class="dialogTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
@@ -532,6 +528,7 @@
 
     <!--巡查任务及执行记录单-->
     <el-dialog :visible.sync="record" width="70%" title="巡检任务及执行记录单" class="xjDialog">
+      <div class="dialogCloseButton"></div>
       <div class="col-1" v-for="(ite, index) in taskNews2" :key="index">
         发布状态/执行状态：
         <div class="col-card" v-show="ite.publishStatus">
@@ -546,12 +543,12 @@
               <div>任务编号：</div>
               <span>{{ item.id }}</span>
           </el-col>
-          <el-col :span="8">
+<!--          <el-col :span="8">
             <div>所属单位：</div>
             <span>{{ item.zzjgId }}</span>
-          </el-col>
+          </el-col>-->
           <el-col :span="8">
-            <div>指派巡查班组：</div>
+            <div>巡查班组：</div>
             <span>{{ item.bzName }}</span>
           </el-col >
           <el-col :span="8">
@@ -633,7 +630,7 @@
             <span>{{ tas.taskStatus }}</span>
           </el-col>
           <el-col :span="8">
-            <div>执行巡查班组：</div>
+            <div>巡查班组：</div>
             <span>{{ tas.bzName }}</span>
           </el-col>
           <el-col :span="8">
@@ -674,7 +671,7 @@
             <span> {{ item.tunnelName }} / {{ item.optPersonId }}</span>
           </el-col>
           <el-col :span="8">
-            <span> {{ parseTime(item.optTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+            <span> {{ item.optTime }}</span>
           </el-col>
         </el-row>
         <div v-show="taskOpt.length == 0">
@@ -1225,7 +1222,6 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger
         this.taskNews = response.data.task;
         if (response.data.task[0].ifchaosgu == "已超时") {
           this.isActive = true;
@@ -1233,7 +1229,6 @@ export default {
           this.isActive = false;
         }
         this.taskNews1 = response.data.task;
-        debugger
         this.taskNews2 = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;
@@ -1275,6 +1270,17 @@ export default {
 
       });
     },
+    //handle实现插件能选取当前时间的时、分、秒，但是选择完毕之后，只要选择的时、分、秒小于当前时间，会自动填充为当前的时、分、秒
+    handleEndTime: function() {
+      var startAt = new Date(this.form.endPlantime) * 1000 /1000;
+      if(startAt < Date.now()) {
+        this.form.endPlantime = new Date();
+        //时间格式转换
+        var d = new Date(this.form.endPlantime);
+        this.form.endPlantime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+      }
+    },
+
     /** 查询巡查任务列表 */
     getList() {
       this.loading = true;
@@ -2010,13 +2016,12 @@ h1 {
     display: flex;
     .show-left,
     .show-right {
-      height: 478px;
+      height: 480px;
       // border: 1px solid black;
       border-radius: 3px;
       .show-title {
         font-weight: 400;
         font-style: normal;
-        background-color: rgba(242, 242, 242, 1);
         color: #5e7f89;
         border-radius: 3px;
         line-height: 30px;

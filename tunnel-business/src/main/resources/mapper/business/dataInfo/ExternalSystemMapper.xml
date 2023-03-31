@@ -33,8 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
             <if test="password != null  and password != ''"> and password = #{password}</if>
             <if test="networkStatus != null  and networkStatus != ''"> and network_status = #{networkStatus}</if>
-            <if test="systemName != null  and systemName != ''"> and system_name like concat('%', #{systemName}, '%')</if>
-            <if test="systemUrl != null  and systemUrl != ''"> and system_url = #{systemUrl}</if>
+            <if test="searchValue != null  and searchValue != ''"> and CONCAT(system_name,system_url) LIKE CONCAT('%',#{searchValue},'%')</if>
         </where>
         order by create_time desc
     </select>

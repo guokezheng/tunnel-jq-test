@@ -140,4 +140,11 @@ public interface SdTaskListMapper
      * @return
      */
     String selectBzByTunnel(String tunnelId);
+
+    /**
+     * 查询超时任务列表
+     * @param sdTaskList
+     * @return
+     */
+    List<SdTaskList> selectChaoshiSdTaskListList(SdTaskList sdTaskList);
 }

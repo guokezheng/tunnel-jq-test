@@ -86,7 +86,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             for(int i = 0;i<list.size();i++){
                 if(list.get(i).getFalltRemoveStatue()!=null&&!"null".equals(list.get(i).getFalltRemoveStatue())&&!"".equals(list.get(i).getFalltRemoveStatue())){
                     int removeflag =  Integer.valueOf(list.get(i).getFalltRemoveStatue());
-                    if(1==removeflag){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
+                    if("1".equals(removeflag)){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     if(list.get(i).getFaultFxtime()!=null){
                         String  fxtime = sdf.format(list.get(i).getFaultFxtime());

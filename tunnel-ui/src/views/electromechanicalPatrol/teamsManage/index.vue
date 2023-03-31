@@ -693,7 +693,7 @@ export default {
         .catch(() => {});
     },
 
-    
+
     /** 批量取消授权按钮操作 */
     cancelAuthUserAll() {
       const deptId = this.queryParamsUser.deptId;

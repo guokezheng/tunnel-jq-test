@@ -274,7 +274,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="需完成日期" prop="endPlantime">
+              <el-form-item label="计划完成时间" prop="endPlantime">
                 <el-date-picker
                   clearable
                   :picker-options="forbiddenTime"
@@ -283,7 +283,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   @change="handleEndTime"
-                  placeholder="选择完成时间"
+                  placeholder="选择计划完成时间"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -543,10 +543,10 @@
               <div>任务编号：</div>
               <span>{{ item.id }}</span>
           </el-col>
-          <el-col :span="8">
+<!--          <el-col :span="8">
             <div>所属单位：</div>
             <span>{{ item.zzjgId }}</span>
-          </el-col>
+          </el-col>-->
           <el-col :span="8">
             <div>巡查班组：</div>
             <span>{{ item.bzName }}</span>
@@ -671,7 +671,7 @@
             <span> {{ item.tunnelName }} / {{ item.optPersonId }}</span>
           </el-col>
           <el-col :span="8">
-            <span> {{ parseTime(item.optTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+            <span> {{ item.optTime }}</span>
           </el-col>
         </el-row>
         <div v-show="taskOpt.length == 0">
@@ -1275,6 +1275,9 @@ export default {
       var startAt = new Date(this.form.endPlantime) * 1000 /1000;
       if(startAt < Date.now()) {
         this.form.endPlantime = new Date();
+        //时间格式转换
+        var d = new Date(this.form.endPlantime);
+        this.form.endPlantime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
       }
     },
 

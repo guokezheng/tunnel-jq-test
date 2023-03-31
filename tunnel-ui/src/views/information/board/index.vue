@@ -143,7 +143,7 @@
             max-height="700"
             :key="toggleIndex"
           >
-            <el-table-column width="560">
+            <el-table-column width="545">
               <template slot-scope="scope">
                 <div class="con">
                   <div
@@ -181,7 +181,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column>
+            <el-table-column width="130">
               <template slot-scope="scope">
                 <div class="menuBox">
                   <!-- <el-tooltip content="加入信息模板" placement="top">
@@ -874,6 +874,7 @@ export default {
 
     // 多选
     handleCheckedCitiesChange(value) {
+      console.log(value,"value")
       this.checkedCities = value;
       let val = JSON.parse(JSON.stringify(value));
       for (let itm of this.deviceList) {
@@ -881,6 +882,7 @@ export default {
           this.checkAll = true;
         } else {
           this.checkAll = false;
+          return
         }
       }
       this.$forceUpdate();
@@ -1379,6 +1381,6 @@ export default {
   border-bottom: transparent;
 }
 ::v-deep .el-table .cell {
-  padding: 0px;
+  padding-left: 5px;
 }
 </style>

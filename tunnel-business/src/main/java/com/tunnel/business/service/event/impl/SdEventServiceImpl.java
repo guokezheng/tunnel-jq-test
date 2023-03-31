@@ -245,9 +245,9 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.updateSdEvent(sdEvent);
-        if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
+        /*if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
             radarEventServiceImpl.sendDataToOtherSystem(null, sdEventMapper.selectSdEventById(sdEvent.getId()));
-        }
+        }*/
         return count;
     }
 
@@ -444,7 +444,10 @@ public class SdEventServiceImpl implements ISdEventService {
                 map = new HashMap<>();
                 for(SdReserveProcess temp : item.getProcessesList()){
                     List<SdStrategyRl> sdStrategyRls = new ArrayList<>();
-                    sdStrategyRls.add(sdStrategyRlMapper.selectSdStrategyRlById(temp.getStrategyId()));
+                    SdStrategyRl sdStrategyRl = sdStrategyRlMapper.selectSdStrategyRlById(temp.getStrategyId());
+                    String rlDevice = getRlDevice(sdEvent.getId(), sdStrategyRl);
+                    sdStrategyRl.setEquipments(rlDevice);
+                    sdStrategyRls.add(sdStrategyRl);
                     maps.addAll(setDeviceAllList(sdStrategyRls));
                 }
                 map.put("devicesList", maps);

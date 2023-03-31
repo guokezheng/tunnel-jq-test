@@ -5195,7 +5195,8 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      //console.log(data.label);
+      this.treeShow = false;
+      console.log(data.label);
       this.screenEqName = data.label;
       this.screenEqNameButton(data.label);
     },

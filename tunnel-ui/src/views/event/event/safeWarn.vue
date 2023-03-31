@@ -1426,6 +1426,7 @@ export default {
       let query = {
         prevControlType:item.prevControlType,
         currencyId:item.currencyId,
+        id:item.id,
       }
       examineDeviceDetail(query).then(res=>{
         console.log(res);

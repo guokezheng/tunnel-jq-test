@@ -46,9 +46,9 @@
     <div class="content config-back">
       <div class="config-content">
         <!--画布区域-->
-        <el-row class="config-img-box" v-loading="loading">
-          <el-image class="config-img" :src="selectedTunnel.lane.url" :style="{width:selectedTunnel.lane.width + 'px'}" lazy></el-image>
-          <svg id="svg" class="tunnelSvg" height="580" :style="{width:selectedTunnel.lane.width + 'px'}" style="position: relative;z-index: 3;"></svg>
+        <el-row class="config-img-box" v-loading="loading" >
+          <el-image class="config-img" id="imageId":src="selectedTunnel.lane.url" :style="{width:selectedTunnel.lane.width + 'px'}" lazy></el-image>
+          <svg id="svg" class="tunnelSvg" height="580" :style="{width:selectedTunnel.lane.width + 'px'}" style="position: relative;z-index: 3;" ></svg>
           <!-- 辅助线 -->
           <div id="guide-h" class="guide"></div>
           <div id="guide-v" class="guide"></div>
@@ -306,6 +306,7 @@ export default {
       selectedIconList: [], //全部拖动的图标
       svg: {},
       deleteObj: "",
+      deleteObjs: "",
       direction: 0,
       deleteIndex: 0,
       loading: true,
@@ -337,6 +338,7 @@ export default {
   },
   watch: {
     deleteVisible(value) {
+      debugger
       if (value) {
         document.body.addEventListener("click", this.closeMenu);
       } else {
@@ -358,6 +360,7 @@ export default {
     };
     //鼠标右键
     window.oncontextmenu = function (e) {
+      debugger
       e.preventDefault(); //取消默认右键
       if (e.target.localName == "image") {
         // debugger
@@ -367,6 +370,31 @@ export default {
         that.deleteVisible = true;
         that.deleteObj = e.target.parentElement.snap;
         console.log(e)
+      }
+    };
+    //鼠标拖动
+    window.ondrag = function (e) {
+      let oDiv=  document.getElementById("imageId")
+      console.log(oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX)
+      console.log("sssss"+oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX)
+      if(e.pageY-oDiv.getBoundingClientRect().top <5||e.pageX-oDiv.getBoundingClientRect().left <5||oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX<5
+        ||oDiv.clientHeight+oDiv.getBoundingClientRect().top-e.pageY<5){
+        debugger
+        let num = "";
+        let selectedIconLists = JSON.parse(JSON.stringify(that.selectedIconList))
+        that.deleteObjs = e.target.snap;
+        for (let i = 0; i < img.length; i++) {
+          if (img[i].id == that.deleteObjs) {
+            img[i].remove();
+            img.splice(i, 1);
+            console.log(that.selectedIconList)
+            that.selectedIconList.splice(i, 1);
+            num = i
+          }
+        }
+          debugger
+        that.getEquipment(selectedIconLists[num],selectedIconLists[num])
+        debugger
       }
     };
   },
@@ -857,6 +885,7 @@ export default {
     },
     /* 点击删除*/
     deleteImage() {
+      debugger
       console.log("我右键删除了",this.direction,img);
       if (this.direction == 1) {
         this.upList.splice(this.deleteIndex, 1, {});
@@ -960,7 +989,8 @@ export default {
     /* 选择设备*/
     getEquipment(item, eqType) {
       console.log(item, eqType, "选择设备");
-      // debugger
+      console.log(this.selectedIconList)
+      debugger
       var url = eqType.url;
       var iconWidth = Number(eqType.iconWidth);
       var iconHeight = Number(eqType.iconHeight);

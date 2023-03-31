@@ -72,8 +72,10 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
     @Override
     public List<SdEmergencyVehicle> selectSdEmergencyVehicleList(SdEmergencyVehicle sdEmergencyVehicle) {
         SysUser user = SecurityUtils.getLoginUser().getUser();
-        String deptId = user.getDeptId();
-        sdEmergencyVehicle.setOrgName(deptId);
+        if(sdEmergencyVehicle.getOrgName() == null || "".equals(sdEmergencyVehicle.getOrgName())){
+            String deptId = user.getDeptId();
+            sdEmergencyVehicle.setOrgName(deptId);
+        }
         List<SdEmergencyVehicle> emergencyVehicles = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(sdEmergencyVehicle);
         return emergencyVehicles;
     }

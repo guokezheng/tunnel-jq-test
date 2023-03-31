@@ -245,9 +245,9 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.updateSdEvent(sdEvent);
-        /*if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
+        if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
             radarEventServiceImpl.sendDataToOtherSystem(null, sdEventMapper.selectSdEventById(sdEvent.getId()));
-        }*/
+        }
         return count;
     }
 
@@ -314,7 +314,7 @@ public class SdEventServiceImpl implements ISdEventService {
             List<String[]> list3 = new ArrayList<>();
             for(Map<String, Object> plan : planDisposal){
                 List<SdEventHandle> planList = (List<SdEventHandle>)plan.get("planList");
-                list3.add(new String[]{plan.get("planName").toString(),""});
+                list3.add(new String[]{plan.get("planName") == null ? "" : plan.get("planName").toString(),""});
                 for(SdEventHandle item : planList){
                     for(SdEventHandle temp : item.getChildren()){
                         list3.add(new String[]{item.getFlowContent(),temp.getFlowContent()});
@@ -809,7 +809,7 @@ public class SdEventServiceImpl implements ISdEventService {
             endReport.setRemark(flowDescription);
             //计算累计时间
             if("1".equals(endReport.getEventState())){
-                String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(endReport.getEndTime()), DateUtils.parseDate(endReport.getStartTime()));
+                String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(endReport.getEndTime()) == null ? DateUtils.getNowDate() : DateUtils.parseDate(endReport.getEndTime()), DateUtils.parseDate(endReport.getStartTime()));
                 endReport.setContinuedTime(endDatePoor);
             }
             map.put("endReport",endReport);
@@ -855,7 +855,7 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEventTypeMapper typeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
         SdEventType sdEventType = typeMapper.selectSdEventTypeById(sdEvent1.getEventTypeId());
         //查询预案
-        List<SdReserveProcess> processList = SpringUtils.getBean(SdReserveProcessMapper.class).getProcessList(Long.valueOf(sdEvent.getCurrencyId()));
+        //List<SdReserveProcess> processList = SpringUtils.getBean(SdReserveProcessMapper.class).getProcessList(Long.valueOf(sdEvent.getCurrencyId()));
         //插入预警信息
         int sort = setWaring(sdEvent1, sdEventType, model);
         setEventHandleData(sort,sort,sdEvent);
@@ -863,6 +863,9 @@ public class SdEventServiceImpl implements ISdEventService {
     }
 
     public void setEventHandleData(int sort, int id, SdEvent sdEvent){
+        if(sdEvent.getCurrencyId() == null || "".equals(sdEvent.getCurrencyId())){
+            return;
+        }
         List<SdReserveProcess> processList = SpringUtils.getBean(SdReserveProcessMapper.class).getProcessList(Long.valueOf(sdEvent.getCurrencyId()));
         for(SdReserveProcess item : processList){
             SdEventHandle sdEventHandle = new SdEventHandle();

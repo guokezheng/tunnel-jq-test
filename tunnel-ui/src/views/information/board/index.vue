@@ -143,7 +143,7 @@
             max-height="700"
             :key="toggleIndex"
           >
-            <el-table-column align="right" width="560">
+            <el-table-column width="560">
               <template slot-scope="scope">
                 <div class="con">
                   <div
@@ -181,9 +181,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column
-              align="left"
-            >
+            <el-table-column>
               <template slot-scope="scope">
                 <div class="menuBox">
                   <!-- <el-tooltip content="加入信息模板" placement="top">
@@ -1162,7 +1160,7 @@ export default {
     .contentBox {
       width: 100%;
       height: calc(100% - 67px);
-      overflow: auto;
+      // overflow: auto;
 
       .con {
         border: 1px solid #05afe3;
@@ -1380,7 +1378,7 @@ export default {
 ::v-deep .el-collapse {
   border-bottom: transparent;
 }
-// ::v-deep .el-table .cell {
-//   padding-left: 20px;
-// }
+::v-deep .el-table .cell {
+  padding: 0px;
+}
 </style>

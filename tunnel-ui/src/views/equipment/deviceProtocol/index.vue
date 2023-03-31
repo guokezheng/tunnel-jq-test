@@ -380,7 +380,10 @@
       /** 重置按钮操作 */
       resetQuery() {
         this.resetForm("queryForm");
-        this.queryParams.protocolName = "";
+        this.queryParams.eqType = null;
+        this.queryParams.protocolName = null;
+        this.queryParams.protocolType = null;
+        this.queryParams.className = null;
         this.handleQuery();
 
       },

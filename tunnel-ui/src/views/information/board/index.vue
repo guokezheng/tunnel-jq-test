@@ -1380,7 +1380,7 @@ export default {
 ::v-deep .el-collapse {
   border-bottom: transparent;
 }
-::v-deep .el-table .cell {
-  padding-left: 20px;
-}
+// ::v-deep .el-table .cell {
+//   padding-left: 20px;
+// }
 </style>

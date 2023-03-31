@@ -46,7 +46,7 @@
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.jobName"
-            placeholder="请输入任务名称，回车搜索"
+            placeholder="请输入任务名称,回车搜索"
             size="small"
             @keyup.enter.native="handleQuery"
           >
@@ -318,8 +318,8 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
 
@@ -344,6 +344,7 @@
       width="700px"
       append-to-body
     >
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" label-width="120px" size="mini">
         <el-row>
           <el-col :span="12">
@@ -398,7 +399,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="openView = false">关 闭</el-button>
+        <el-button class="closeButton" @click="openView = false">关 闭</el-button>
       </div>
     </el-dialog>
   </div>

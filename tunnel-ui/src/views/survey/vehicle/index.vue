@@ -37,7 +37,7 @@
           label-width="75px"
         >
           <el-form-item label="机构" prop="orgName">
-            <el-cascader
+<!--            <el-cascader
               style="width: 100%"
               popper-class="jigou"
               v-model="queryParams.orgName"
@@ -45,7 +45,14 @@
               :options="orgData"
               :props="{ checkStrictly: true }"
               clearable
-            ></el-cascader>
+            ></el-cascader>-->
+            <treeselect
+              v-model="queryParams.orgName"
+              :options="deptOptions"
+              :show-count="true"
+              placeholder="请选择归属部门"
+              :disable-branch-nodes="true"
+            />
           </el-form-item>
 
           <el-form-item label="车型" prop="vType">
@@ -460,9 +467,13 @@ import {
   syncVehicle,
 } from "@/api/equipment/yingJiGou/emergencyVehicles";
 import { batchDelete } from "@/api/surveyVehicle/api.js";
+import {treeselectExcYG1} from "@/api/system/dept";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   dicts: ["sd_use_status", "sd_emergency_vehicle_type", "sd_vehicle_run_type"],
+  components: { Treeselect },
   data() {
     const validateLongitude = (rule, value, callback) => {
       if (value == "" || (value == null && this.upDisabled == false)) {
@@ -513,14 +524,17 @@ export default {
       open: false,
       orgData: [],
       showSearch: true,
+      // 部门树选项
+      deptOptions: undefined,
     };
   },
   created() {
     this.getList();
-    veicleOrgId().then((res) => {
+    /*veicleOrgId().then((res) => {
       this.orgData = this.handleTree(res, "value");
       console.log(this.orgData, "机构名称");
-    });
+    });*/
+    this.getTreeselect();
     this.getDicts("sd_emergency_vehicle_type").then((data) => {
       console.log(data, "车型");
       this.vehicleTypeList = data.data;
@@ -531,6 +545,13 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    //查询部门树
+    getTreeselect() {
+      treeselectExcYG1().then((response) => {
+        this.deptOptions = response.data;
+        console.log(this.deptOptions);
+      });
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id;
@@ -594,15 +615,6 @@ export default {
     getList() {
       // console.log(this.queryParams)
       this.cl_boxShow = false;
-      if (this.queryParams.orgName) {
-        this.queryParams.orgName = this.queryParams.orgName[2]
-          ? this.queryParams.orgName[2]
-          : this.queryParams.orgName[1]
-          ? this.queryParams.orgName[1]
-          : this.queryParams.orgName[0]
-          ? this.queryParams.orgName[0]
-          : "";
-      }
       handleQueryList(this.queryParams).then((res) => {
         if (res.code == 200) {
           this.mechanismList = res.rows;

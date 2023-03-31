@@ -229,8 +229,7 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-view"
+            class="tableBlueButtton"
             @click="handleView(scope.row)"
             v-hasPermi="['monitor:job:query']"
           >详细</el-button>
@@ -248,6 +247,7 @@
 
     <!-- 调度日志详细 -->
     <el-dialog title="调度日志详细" :visible.sync="open" width="700px" append-to-body>
+      <div class="dialogCloseButton"></div>
       <el-form ref="form" :model="form" label-width="120px" size="mini">
         <el-row>
           <el-col :span="12">
@@ -276,7 +276,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="open = false">关 闭</el-button>
+        <el-button class="closeButton" @click="open = false">关 闭</el-button>
       </div>
     </el-dialog>
   </div>

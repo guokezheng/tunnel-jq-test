@@ -1206,7 +1206,7 @@ export default {
       this.fileData.append("eqRunStatus", this.form.eqRunStatus);
       this.fileData.append("faultCode", this.form.faultCode);
       this.fileData.append("faultLevel", this.form.faultLevel);
-      this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
+      this.fileData.append("falltRemoveStatue", "1");
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 1);
       this.$refs["form"].validate((valid) => {
@@ -1253,7 +1253,7 @@ export default {
       this.fileData.append("eqRunStatus", this.form.eqRunStatus);
       this.fileData.append("faultCode", this.form.faultCode);
       this.fileData.append("faultLevel", this.form.faultLevel);
-      this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
+      this.fileData.append("falltRemoveStatue", "1");
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 0);
       this.$refs["form"].validate((valid) => {

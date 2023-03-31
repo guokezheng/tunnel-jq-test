@@ -67,6 +67,10 @@ public class SdStrategy extends BaseEntity
     private String lx;
 
 
+    private String ids;
+
+
+
     /** 预警信息ID */
     @ApiModelProperty("预警信息ID")
     private Long warningId;
@@ -92,6 +96,13 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("策略关联id")
     private Long strategyRlId;
 
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getFx() {
         return this.fx;

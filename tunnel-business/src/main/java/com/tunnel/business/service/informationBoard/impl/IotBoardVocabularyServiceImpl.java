@@ -90,7 +90,7 @@ public class IotBoardVocabularyServiceImpl implements IIotBoardVocabularyService
     @Override
     public int checkIotBoardContent(String content) {
         if (content == null || content.equals("")) {
-            return 0;
+            return 2;
         } else {
             Boolean flag = false;
             List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyMapper.selectIotBoardVocabularyList(null);

@@ -578,6 +578,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         String fEqId = devices.getFEqId();
         //所属隧道
         SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(devices.getEqTunnelId());
+        //根据隧道id和设备名称查询
+        List<SdDevices> sdDevicesList = sdDevicesMapper.tunnelEqNameOnly(devices.getEqTunnelId(), devices.getEqName());
         //设备类型
         SdEquipmentType sdEquipmentType = equipmentTypeService.selectSdEquipmentTypeById(eqType);
 //        SdEquipmentState sdEquipmentState = sdEquipmentStateService.selectSdEquipmentStateById(devices.getEqType());
@@ -597,6 +599,21 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             return map;
         } else if (StringUtils.isNull(sdEquipmentType)) {
             failureMsg.append("、设备ID " + devices.getEqId() + " 设备类型ID不正确");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
+        } else if (StringUtils.isEmpty(devices.getEqName())||StringUtils.isLongNotNull(devices.getEqType()) ||StringUtils.isLongNotNull(devices.getFEqType())) {
+            failureMsg.append("、设备ID " + devices.getEqId() + "设备名称或设备类型或设备大类不能为空 ");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
+        } else if (StringUtils.isEmpty(devices.getDirection())) {
+            failureMsg.append("、设备ID " + devices.getEqId() + "设备方向不能为空 ");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
+        } else if (sdDevicesList!=null&&sdDevicesList.size()>0) {
+            failureMsg.append("、设备ID " + devices.getEqId() + "该隧道下设备名称重复");
             map.put("flag", false);
             map.put("failureMsg", failureMsg);
             return map;

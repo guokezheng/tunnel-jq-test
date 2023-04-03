@@ -1591,7 +1591,7 @@ export default {
     importTemplate() {
       /* exportDevicesTemplate()*/
       /*.then((response) => {*/
-      this.$download.name("sbsj.xlsx", false);
+      this.$download.nameXlsx("sbsj.xlsx", false);
       /*});*/
     },
     handleCheckChange(val) {

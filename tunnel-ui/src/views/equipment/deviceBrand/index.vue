@@ -342,7 +342,7 @@ export default {
           return delBrand(supplierIds);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(() => {});

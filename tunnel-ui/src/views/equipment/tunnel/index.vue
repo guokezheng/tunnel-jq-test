@@ -1363,11 +1363,11 @@ export default {
         })
         .then(() => {
           delAssociationByTunnelIds(tunnelIds);
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function (e) {
-          that.getList();
+          that.handleQuery();
         });
     },
 

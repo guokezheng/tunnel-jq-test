@@ -2,11 +2,15 @@ package com.ruoyi.system.domain;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excel.ColumnType;
 import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.util.Date;
 
 /**
  * 参数配置表 sys_config
@@ -35,6 +39,43 @@ public class SysConfig extends BaseEntity
     /** 系统内置（Y是 N否） */
     @Excel(name = "系统内置", readConverterExp = "Y=是,N=否")
     private String configType;
+
+    private String ids;
+    @Excel(name = "备注")
+    private String remark;
+
+    /** 创建时间 */
+    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    @Override
+    public Date getCreateTime() {
+        return this.createTime;
+    }
+
+    @Override
+    public void setCreateTime( Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @Override
+    public String getRemark() {
+        return this.remark;
+    }
+
+    @Override
+    public void setRemark( String remark) {
+        this.remark = remark;
+    }
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public Long getConfigId()
     {

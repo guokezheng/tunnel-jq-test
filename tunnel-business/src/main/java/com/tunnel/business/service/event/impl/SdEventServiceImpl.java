@@ -445,8 +445,11 @@ public class SdEventServiceImpl implements ISdEventService {
                 for(SdReserveProcess temp : item.getProcessesList()){
                     List<SdStrategyRl> sdStrategyRls = new ArrayList<>();
                     SdStrategyRl sdStrategyRl = sdStrategyRlMapper.selectSdStrategyRlById(temp.getStrategyId());
-                    String rlDevice = getRlDevice(sdEvent.getId(), sdStrategyRl);
-                    sdStrategyRl.setEquipments(rlDevice);
+                    if(sdStrategyRl.getEquipments() != null && !"".equals(sdStrategyRl.getEquipments())){
+                        sdStrategyRl.setEquipments(sdStrategyRl.getEquipments());
+                    }else {
+                        sdStrategyRl.setEquipments(getRlDevice(sdEvent, sdStrategyRl));
+                    }
                     sdStrategyRls.add(sdStrategyRl);
                     maps.addAll(setDeviceAllList(sdStrategyRls));
                 }
@@ -1015,7 +1018,7 @@ public class SdEventServiceImpl implements ISdEventService {
         for(SdReserveProcess item : sdReserveProcesses){
             SdStrategyRl sdStrategyRl = rlMapper.selectSdStrategyRlById(item.getStrategyId());
             if(!"1".equals(sdStrategyRl.getRetrievalRule())){
-                sdStrategyRl.setEquipments(getRlDevice(sdEvent.getId(),sdStrategyRl));
+                sdStrategyRl.setEquipments(getRlDevice(sdEvent,sdStrategyRl));
                 rlMapper.updateSdStrategyRl(sdStrategyRl);
             }
         }
@@ -1023,15 +1026,15 @@ public class SdEventServiceImpl implements ISdEventService {
 
     /**
      * 根据设备检索规则查询设备
-     * @param eventId
+     * @param sdEventData
      * @param sdStrategyRl
      * @return
      */
-    public String getRlDevice(Long eventId, SdStrategyRl sdStrategyRl){
+    public String getRlDevice(SdEvent sdEventData, SdStrategyRl sdStrategyRl){
         SdEventMapper sdEventMapper = SpringUtils.getBean(SdEventMapper.class);
         SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
         //查询事件信息
-        SdEvent sdEvent = sdEventMapper.selectSdEventById(eventId);
+        SdEvent sdEvent = sdEventMapper.selectSdEventById(sdEventData.getId());
         //整形桩号
         Integer stakeNum = Integer.valueOf(sdEvent.getStakeNum().replaceAll("K", "").replaceAll(Pattern.quote("+"), "").replaceAll(" ", ""));
         List<String> rlDeviceList = new ArrayList<>();
@@ -1062,11 +1065,23 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         //根据影响车道关闭上游所有
         if(EventSearchRulesEnum.SIX.getCode().equals(retrievalRule)){
-            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId(), sdEvent.getLaneNo());
+            String lane = null;
+            if(sdEvent.getLaneNo() == null || "".equals(sdEvent.getLaneNo())){
+                lane = sdEventData.getLaneNo();
+            }else {
+                lane = sdEvent.getLaneNo();
+            }
+            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId(), lane);
         }
         //根据影响车道关闭下游最近1个
         if(EventSearchRulesEnum.SEVEN.getCode().equals(retrievalRule)){
-            List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, sdEvent.getTunnelId(), sdEvent.getLaneNo());
+            String lane = null;
+            if(sdEvent.getLaneNo() == null || "".equals(sdEvent.getLaneNo())){
+                lane = sdEventData.getLaneNo();
+            }else {
+                lane = sdEvent.getLaneNo();
+            }
+            List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, sdEvent.getTunnelId(), lane);
             rlDeviceList = afterLatelyFive.size() == 0 ? new ArrayList<>() : afterLatelyFive.subList(0,1);
         }
         return StringUtils.join(rlDeviceList,",");

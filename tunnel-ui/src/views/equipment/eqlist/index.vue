@@ -802,6 +802,7 @@
       append-to-body
       class="zxc"
     >
+    <div class="dialogCloseButton"></div>
       <el-upload
         ref="upload"
         :limit="1"

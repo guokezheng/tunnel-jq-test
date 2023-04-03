@@ -116,7 +116,6 @@
         class="contentBox"
         v-for="(item, index) in eventList"
         :key="index"
-        :style="{ width: topNav ? '24.2%' : '26.3%' }"
       >
         <div class="video">
           <img
@@ -563,7 +562,7 @@
                       :value="item.id"
                     ></el-option>
                   </el-select>
-                  <el-button v-show="eventFormDetail.currencyId" @click="openDoor(eventFormDetail)">查看</el-button>
+                  <el-button size="small" v-show="eventFormDetail.currencyId" @click="openDoor(eventFormDetail)">查看</el-button>
                   <span style="color:#c59105;">(事件处置预案根据事件类型、事件等级智能推荐,处置过程中允许升级及更改预案)</span>
                 </el-form-item>
               </el-col>
@@ -577,7 +576,7 @@
                       :value="item.id"
                     ></el-option>
                   </el-select>
-                  <el-button v-show="eventFormDetail.currencyId" @click="openDoor(eventFormDetail)">查看</el-button>
+                  <el-button size="small" type="primary" v-show="eventFormDetail.currencyId" @click="openDoor(eventFormDetail)">查看</el-button>
                   <span style="color:#c59105;">(事件处置预案根据事件类型、事件等级智能推荐,处置过程中允许升级及更改预案)</span>
                 </el-form-item>
               </el-col>
@@ -933,6 +932,7 @@
       :visible.sync="dialogVisibleDevice"
       width="50%"
       :before-close="handleClose">
+      <div class="dialogCloseButton"></div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClickDevice">
           <el-tab-pane
@@ -2468,6 +2468,7 @@ export default {
     word-break: normal;
     overflow-y: auto;
     overflow-x: hidden;
+    height: 68vh;
     //display: flex;
     .contentBox {
       // height: 135px;
@@ -2477,6 +2478,7 @@ export default {
       margin-bottom: 5px;
       position: relative;
       border-radius: 2px;
+      width:24.7%;
       .video {
         width: 40%;
         height: 100%;

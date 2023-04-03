@@ -191,7 +191,7 @@
       <el-table-column label="岗位编号" align="center" prop="postId" />
       <el-table-column label="岗位编码" align="center" prop="postCode" />
       <el-table-column label="岗位名称" align="center" prop="postName" />
-      <el-table-column label="岗位排序" align="center" prop="postSort" />
+<!--      <el-table-column label="岗位排序" align="center" prop="postSort" />-->
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
@@ -429,6 +429,7 @@ export default {
       if(this.ids.length>0){
         confirmInfo = "是否确认导出所选的岗位管理数据项？";
       }
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal.confirm(confirmInfo).then(() => {
         this.exportLoading = true;

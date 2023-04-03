@@ -751,6 +751,13 @@
     right: 0;
     z-index:0;
   }
+  // .treeselect-main{
+  //   color: #fff;
+  //   .vue-treeselect__menu{
+  //     background: #003D6C !important;
+  //     border:none;
+  //   }
+  // }
   #app {
     
     // 巡检
@@ -1747,7 +1754,7 @@
       color: #fff;
       width: 100%;
       margin: 0;
-      padding: 0 !important;
+      padding: 15px !important;
       // background-color: #fff;
       // border-left: solid 2px #00c2ff;
       // border-right: solid 2px #00c2ff;
@@ -2218,6 +2225,11 @@
       background: linear-gradient(2deg, #013663, #447bab) !important;
     }
   }
+  .drawerLog{
+    .el-card{
+      background-color: #002141 !important;
+    }
+  }
   .zoomClass{
     .input-with-select{
       .el-input__inner{
@@ -2340,7 +2352,7 @@
       line-height: 30px;
   }
   .el-drawer__header{
-    background-color: #0182CA !important;
+    background-color: #01365F !important;
     border-left: none !important;
     padding: 0 10px;
   }
@@ -2555,6 +2567,9 @@
     }
     .evtMessage .evtMessBox .evtMessRight .evtMessTarget > div:nth-of-type(2){
       color: #fff;
+     }
+     .evtMessBox,.videoBox1{
+      background: #012949;
      }
     .plan .planBox1 {
       .el-radio--medium.is-bordered{

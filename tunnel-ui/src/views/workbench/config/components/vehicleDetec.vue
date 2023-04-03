@@ -9,28 +9,13 @@
       :visible="visible"
       :before-close="handleClosee"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
-      </div>
+    <div class="dialogCloseButton"></div>
       <el-form
         ref="form"
         :model="stateForm"
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding: 15px; padding-top: 0px"
       >
         <el-row>
           <el-col :span="13">
@@ -78,7 +63,7 @@
         </el-row>
         <div class="lineClass"></div>
       </el-form>
-      <el-radio-group v-model="tab" style="margin-bottom: 10px" class="comCovi">
+      <el-radio-group v-model="tab" style="margin: 10px 0" class="comCovi">
         <el-radio-button label="data">车流量实时数据</el-radio-button>
         <el-radio-button label="trend">车流量实时趋势</el-radio-button>
       </el-radio-group>
@@ -420,10 +405,9 @@ export default {
   flex-wrap: wrap;
 }
 #trend {
-  width: 90%;
+  width: 100%;
   height: 200px;
   background: #fff;
-  margin-left: 5%;
   div {
     width: 100%;
     height: 200px !important;
@@ -440,8 +424,7 @@ export default {
   border-radius: 20px !important;
 }
 ::v-deep .el-table {
-  width: 94%;
-  margin-left: 3%;
+  width: 100%;
 
   .el-table__header-wrapper {
     line-height: 28px;

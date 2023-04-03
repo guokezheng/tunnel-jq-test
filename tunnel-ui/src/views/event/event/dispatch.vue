@@ -654,6 +654,7 @@
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose">
+      <div class="dialogCloseButton"></div>
       <el-form ref="levelForm" :model="levelForm" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -1896,6 +1897,7 @@ display: none;
   background-image: url(../../../assets/cloudControl/dialogHeader.png);
   background-repeat: no-repeat;
   background-position-x: right;
+  font-size:14px;
 }
 ::v-deep .drawerLog .el-drawer__container{left:-10%!important;}
 ::v-deep .drawerLog .el-drawer.ltr{
@@ -1926,11 +1928,12 @@ display: none;
 // }
 ::v-deep .el-drawer__header{
   color:white;
-  padding:10px;
   margin-bottom:0px;
   background-image: url(../../../assets/cloudControl/distitlebg.png);
   background-repeat: no-repeat;
   background-size: 100% 100%;
+  height:4vh;
+  font-size:14px;
 }
 ::v-deep .el-table{
   background-color: rgba(0, 32, 56,0.7)!important;
@@ -1966,6 +1969,7 @@ display: none;
     width: 35px;
     background-color: #012e51;
     padding: 8px 8px;
+    font-size:14px;
   }
   .disRightBox{
     position: fixed;
@@ -1982,6 +1986,7 @@ display: none;
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
+          background-color: #01365F ;
         }
         .videoBox1 {
           width: 100%;
@@ -2034,6 +2039,7 @@ display: none;
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
+          background-color: #012949;
         }
         .evtMessBox {
           display: flex;
@@ -2119,6 +2125,7 @@ display: none;
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
+          background-color: #012949;
         }
         .planBox1 {
           width: 100%;
@@ -2302,6 +2309,7 @@ display: none;
             display:flex;
             justify-content: space-evenly;
             align-items: center;
+            font-size:12px;
           }
         }
         .incHandContent {

@@ -225,7 +225,7 @@
       <el-table-column label="角色编号" prop="roleId" sortable />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" />
       <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" />
-      <el-table-column label="显示顺序" prop="roleSort" sortable />
+<!--      <el-table-column label="显示顺序" prop="roleSort" sortable />-->
       <el-table-column label="状态" align="center" >
         <template slot-scope="scope" v-if="scope.row.roleId !== 1">
           <el-switch
@@ -763,6 +763,7 @@ export default {
       if(this.ids.length>0){
         confirmInfo = "是否确认导出所选的角色管理数据项？";
       }
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal.confirm(confirmInfo).then(() => {
         this.exportLoading = true;

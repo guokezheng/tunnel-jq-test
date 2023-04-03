@@ -2,11 +2,15 @@ package com.ruoyi.system.domain;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excel.ColumnType;
 import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.util.Date;
 
 /**
  * 岗位表 sys_post
@@ -17,7 +21,7 @@ public class SysPost extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 岗位序号 */
-    @Excel(name = "岗位序号", cellType = ColumnType.NUMERIC)
+    @Excel(name = "岗位编号", cellType = ColumnType.NUMERIC)
     private Long postId;
 
     /** 岗位编码 */
@@ -29,15 +33,41 @@ public class SysPost extends BaseEntity
     private String postName;
 
     /** 岗位排序 */
-    @Excel(name = "岗位排序")
+    /*@Excel(name = "岗位排序")*/
     private String postSort;
 
     /** 状态（0正常 1停用） */
     @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
     private String status;
 
+    private String ids;
+
+    /** 创建时间 */
+    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    @Override
+    public Date getCreateTime() {
+        return this.createTime;
+    }
+
+    @Override
+    public void setCreateTime( Date createTime) {
+        this.createTime = createTime;
+    }
+
+
     /** 用户是否存在此岗位标识 默认不存在 */
     private boolean flag = false;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public Long getPostId()
     {

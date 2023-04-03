@@ -108,7 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND d.leader = #{leader}
         </if>
         <if test="deptName != null and deptName != ''">
-            AND INSTR(d.dept_name,#{deptName}) > 0
+            AND CONCAT(d.leader, d.dept_name) LIKE CONCAT('%',#{deptName},'%')
         </if>
         UNION ALL
         SELECT DISTINCT
@@ -135,7 +135,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND d.leader = #{leader}
         </if>-->
         <if test="deptName != null and deptName != ''">
-            AND INSTR(d.dept_name,#{deptName}) > 0
+
             AND CONCAT(d.leader, d.dept_name) LIKE CONCAT('%',#{deptName},'%')
         </if>
     </select>

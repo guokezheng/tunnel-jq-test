@@ -125,6 +125,16 @@ public class SysUser extends BaseEntity
     @ApiModelProperty("角色id")
     private Long roleId;
 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
     public SysUser()
     {
 

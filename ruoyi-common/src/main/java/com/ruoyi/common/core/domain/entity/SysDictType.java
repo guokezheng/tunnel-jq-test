@@ -39,10 +39,20 @@ public class SysDictType extends BaseEntity
     @Excel(name = "备注")
     private String remark;
 
+    private String ids;
+
     /** 创建时间 */
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public Long getDictId()
     {

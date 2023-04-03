@@ -51,8 +51,8 @@
               :options="deptOptions"
               :show-count="true"
               placeholder="请选择归属部门"
-              :disable-branch-nodes="true"
             />
+<!--            :disable-branch-nodes="true"-->
           </el-form-item>
 
           <el-form-item label="车型" prop="vType">

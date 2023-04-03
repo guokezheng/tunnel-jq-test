@@ -324,7 +324,7 @@ export default {
       },
 
       formDataValidator: {
-        direction: [{ required: true, message: "请选择方向", trigger: "blur" }],
+        direction: [{ required: true, message: "请选择隧道方向", trigger: "blur" }],
         tunnelId: [
           { required: true, message: "请选择隧道", trigger: "change" },
         ],
@@ -350,15 +350,14 @@ export default {
           // this.$refs.cron.checkClear();
         });
       }
-      this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
     getStrategyData(row) {
       console.log(row, "当前策略数据");
-      listType(this.queryEqTypeParams).then((response) => {
+/*      listType(this.queryEqTypeParams).then((response) => {
         this.equipmentTypeData = response.rows;
-      });
+      });*/
       getStrategy(this.id).then((response) => {
         let data = response.data;
         this.strategyForm.id = data.id;
@@ -400,10 +399,17 @@ export default {
               this.qbgChange(i,this.strategyForm.autoControl[i].equipments);
             }
             this.$set(autoControl, "equipmentTypeData", this.equipmentTypeData);
-            listDevices({
+
+            let params = {
               eqType: attr.eqTypeId,
               eqTunnelId: this.strategyForm.tunnelId,
               eqDirection: this.strategyForm.direction, //方向
+            };
+            if(this.strategyForm.direction == -1){
+              params.eqDirection = null;
+            }
+            listDevices({
+              params
             }).then((res) => {
               this.$set(autoControl, "equipmentData", res.rows);
               console.log(autoControl.equipmentData, "设备列表数据1");
@@ -421,6 +427,9 @@ export default {
         eqTunnelId: this.strategyForm.tunnelId, //隧道
         eqDirection: this.strategyForm.direction, //方向
       };
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
       listDevices(params).then((res) => {
         this.$set(
           this.strategyForm.autoControl[index],
@@ -461,6 +470,9 @@ export default {
         direction: direction,
         isControl: 1,
       };
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
       listEqTypeStateIsControl(params).then((response) => {
         this.strategyForm.autoControl[index].eqStateList = response.rows;
       });
@@ -472,10 +484,16 @@ export default {
       } else {
         var eqType = this.eqForm.equipment_type;
       }
-      listDevices({
+      let params = {
         eqType: eqType,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+      };
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
+      listDevices({
+        params
       }).then((res) => {
         let data = res.rows;
         if (this.chooseEq && this.strategyForm.autoControl.length > 1) {
@@ -561,24 +579,15 @@ export default {
     },
     // 改变设备类型或者方向
     changeEvent(value) {
-      //给设备名称重新赋值
-      let params = {
-        eqTunnelId: this.strategyForm.tunnelId, //隧道
-        eqDirection: this.strategyForm.direction, //方向
-      };
-      // listDevices(params).then((res) => {
-      //   this.equipmentData = res.rows;
-      //   console.log(this.equipmentData, "设备列表");
-      // });
-      // // 如果改变隧道||设备类型||方向，重置设备和执行状态
-      // if (
-      //   this.strategyForm.autoControl.length >= 1 ||
-      //   this.strategyForm.autoControl[0].value != ""
-      // ) {
-      //   this.strategyForm.autoControl = [{ value: "", state: "", type: "" }];
-      // }
-      if (value == "1") {
-        this.listEqTypeStateIsControl();
+
+      console.log("当前选中了隧道："+this.strategyForm.tunnelId+"，方向：" + this.strategyForm.direction);
+      // 重置设备列表
+      this.strategyForm.autoControl = [
+        { state: "", value: "", equipmentTypeId: "" },
+      ];
+      if(this.strategyForm.tunnelId.length !=0 && this.strategyForm.direction.length !=0){
+        //this.listEqTypeStateIsControl();
+        this.getEquipmentType();
       }
     },
     removeItem(index) {
@@ -598,17 +607,27 @@ export default {
       // if (flag == false) {
       //   return this.$modal.msgError("请选择设备并添加执行操作");
       // }
-      this.addCf();
-      this.strategyForm.autoControl.push({
-        value: "", //设备
-        state: "", //状态
-        type: "", //设备分类
-        equipmentTypeId: "", //设备类型
-        equipments: [], //设备列表
-        equipmentTypeData: [],
-        equipmentData: [],
-      });
-      this.getEquipmentType();
+      this.$refs["timingControl"].validate((valid) => {
+        if (valid) {
+      /*    let dataLength = this.strategyForm.autoControl.length - 1;
+          if (!this.strategyForm.autoControl[dataLength].state || this.strategyForm.autoControl[dataLength].state.length == 0) {
+            this.$modal.msgError("请先完成当前操作，再继续添加！");
+            return;
+            ;
+          }*/
+          this.addCf();
+          this.strategyForm.autoControl.push({
+            value: "", //设备
+            state: "", //状态
+            type: "", //设备分类
+            equipmentTypeId: "", //设备类型
+            equipments: [], //设备列表
+            equipmentTypeData: [],
+            equipmentData: [],
+          });
+          this.getEquipmentType();
+           }
+        });
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
@@ -619,10 +638,18 @@ export default {
     },
     listDevices() {
       var eqType = this.eqForm.equipment_type;
-      listDevices({
+
+      var params ={
         eqType: eqType,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+      }
+      // 选择双向，则不进行接口过滤条件
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
+      listDevices({
+        params
       }).then((res) => {
         let data = res.rows;
         if (this.chooseEq && this.strategyForm.autoControl.length > 1) {
@@ -650,10 +677,18 @@ export default {
     },
     // 去重，已选择设备增加disable
     addCf() {
-      listDevices({
+
+      let params = {
         eqType: this.strategyForm.equipmentTypeId,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+      };
+      // 选择双向，则不进行接口过滤条件
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
+      listDevices({
+        params
       }).then((res) => {
         let data = res.rows;
         if (this.strategyForm.autoControl.length > 1) {
@@ -678,16 +713,7 @@ export default {
         }
       });
     },
-    // 打开选择设备弹窗
-    openEqDialog2(event, index) {
-      if (this.strategyForm.autoControl[index].type == "") {
-        this.equipmentData = [];
-      }
-      this.eqForm.equipments = this.strategyForm.autoControl[index].value;
-      this.eqForm.equipment_type = this.strategyForm.autoControl[index].type;
-      this.getEquipmentType();
-      this.chooseEq = true;
-    },
+
     // 查询设备可控状态
     // listEqTypeStateIsControl() {
     //   var stateTypeId = this.strategyForm.equipmentTypeId;

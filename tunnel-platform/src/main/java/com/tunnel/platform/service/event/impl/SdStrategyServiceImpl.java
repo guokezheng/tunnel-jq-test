@@ -800,10 +800,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             job.setStatus("1");
             try{
                 sysJobService.insertJob(job);
+                jobIdList.add(job.getJobId().toString());
             }catch (Exception ex){
                 throw new RuntimeException("新增数据失败！");
             }
-            jobIdList.add(job.getJobId().toString());
         }
         String jobIdStr = jobIdList.stream().collect(Collectors.joining(","));
         sty.setJobRelationId(jobIdStr);

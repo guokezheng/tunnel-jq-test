@@ -119,6 +119,7 @@
 
           <div class="controlBox">
             <el-button
+              type="primary"
               @click.native="openDialogVisible(1, 2)"
               :disabled="form.devicePixel ? false : disabledButton"
               >添加信息</el-button
@@ -567,6 +568,7 @@ export default {
       this.checkedCities = [];
       this.contentList = [];
       this.form.tunnel = value;
+      this.form.devicePixel = ''
       this.getIotBoard();
     },
 

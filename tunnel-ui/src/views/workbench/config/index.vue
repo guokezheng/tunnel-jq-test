@@ -1474,13 +1474,14 @@
     </el-dialog>
     <!-- 操作日志 弹窗 -->
     <el-dialog
-      class="workbench-dialog batch-table operationDiglog"
+      class="explain-table operationDiglog"
       :title="title"
       :visible.sync="operationLogDialog"
       width="1000px"
       append-to-body
       v-dialogDrag
     >
+    <div class="dialogCloseButton"></div>
       <el-tabs v-model="operationActive">
         <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
         <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
@@ -1498,7 +1499,6 @@
               placeholder="请输入登录地址、用户名称，回车搜索"
               v-model="operationParam_xt.ipaddr"
               @keyup.enter.native="handleQueryOperationParam"
-              style="padding-right: 5px"
               size="small"
             >
               <el-button
@@ -3099,6 +3099,7 @@
       width="1240px"
       append-to-body
     >
+    <div class="dialogCloseButton"></div>
       <img
         src="@/assets/logo/equipment_log/all.png"
         style="width: 1240px; height: auto; padding: 20px"
@@ -3139,19 +3140,20 @@
     <!--查看控制策略对话框-->
     <el-dialog
       v-dialogDrag
-      class="workbench-dialog explain-table operationDiglog"
+      class="explain-table operationDiglog"
       :title="title"
       :visible.sync="strategyVisible"
       width="1000px"
       append-to-body
     >
+    <div class="dialogCloseButton"></div>
       <el-tabs v-model="strategyActive" @tab-click="handleClick">
         <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
         <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>
       </el-tabs>
       <el-row
         :gutter="20"
-        style="margin: 0px 0 6px; padding: 0px 5px"
+        style="margin: 0px 0 6px;"
         v-show="strategyActive == 'richang'"
       >
         <el-col :span="4">
@@ -3295,7 +3297,7 @@
         ref="multipleTable"
         :data="strategyList"
         tooltip-effect="dark"
-        style="width: 100%"
+        style="width: 100%;"
         :max-height="400"
         size="mini"
         @selection-change="handleSelectionChange"
@@ -4676,9 +4678,9 @@ export default {
     screenEqName(val) {
       this.$refs.tree.filter(val);
     },
-    tunnelList: function (newVal, oldVal) {
-      console.log(newVal, "8888888888888888");
-    },
+    // tunnelList: function (newVal, oldVal) {
+    //   console.log(newVal, "8888888888888888");
+    // },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
 
@@ -4952,7 +4954,7 @@ export default {
     // this.initEnergyConsumption();
     this.getTimeData();
     // this.vehicleEcharts()
-    this.specialEcharts();
+    // this.specialEcharts();
     let that = this;
     window.onresize = () => {
       return (() => {
@@ -5219,7 +5221,11 @@ export default {
     changeStrategyState(row) {
       let data = { strategyId: row.id, change: row.strategyState };
       updateState(data).then((result) => {
-        this.$modal.msgSuccess(result.msg);
+        if(row.strategyState == 0){
+          this.$modal.msgSuccess('开启成功');
+        }else if(row.strategyState == 1){
+          this.$modal.msgSuccess('关闭成功');
+        }
       });
     },
     directionFormat(row, column) {
@@ -6003,7 +6009,8 @@ export default {
           this.checkData(this.siteList[0], arr);
         })
         .then(() => {
-          this.getTunnelList();
+          // this.getTunnelList();
+          // console.log(222222222)
           if (this.manageStation == "1") {
             //let arr = ["6266", "5555", "555503"];
             let arr = ["YG118", "YG11801", "YG1180103"];
@@ -6062,7 +6069,6 @@ export default {
       if (index) {
         this.tunnelQueryParams.deptId = index[index.length - 1];
         this.$forceUpdate();
-        // console.log(3333333333);
 
         this.getTunnelList();
         // this.srollAuto()
@@ -7432,11 +7438,6 @@ export default {
         });
       }
       console.log(that.eqTypeStateList, "设备图标eqTypeStateList");
-      for (var item of that.eqTypeStateList) {
-        if (item.type == 18) {
-          console.log(item, "引道照明");
-        }
-      }
     },
     /* 请求图片base64地址*/
     picture(fileUrl) {
@@ -7466,51 +7467,40 @@ export default {
         tunnelId: tunnelId,
       };
       this.carchange(tunnelId);
-      getTunnels(tunnelId).then((response) => {
-        console.log(response, "获取隧道配置信息");
+      getTunnels(tunnelId).then((res1) => {
+        console.log(res1, "获取隧道配置信息");
         that.loading = false;
-        let res = response.data.storeConfigure;
+        let res = res1.data.storeConfigure;
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
           console.log(res, "eqList");
           listType("")
             .then((response) => {
-              for (let i = 0; i < res.eqList.length; i++) {
-                res.eqList[i].focus = false;
-                for (let j = 0; j < response.rows.length; j++) {
-                  if (response.rows[j].typeId == res.eqList[i].eqType) {
-                    let iconWidth = Number(response.rows[j].iconWidth);
-                    let iconHeight = Number(response.rows[j].iconHeight);
-                    res.eqList[i].iconWidth = iconWidth;
-                    res.eqList[i].iconHeight = iconHeight;
-
-                    // if(res.eqList[i].eqType == 16 || res.eqList[i].eqType == 36){
-
-                    //   console.log(res.eqList[i].associated_device_id,"res.eqList[i].associated_device_id")
-                    //   getBoardContent(res.eqList[i].associated_device_id).then((resp) => {
-                    //     console.log(resp.data,"0000000000000000")
-                    //     res.eqList[i].iconWidth = resp.data[0].devicePixel.split("*")[1]
-                    //     res.eqList[i].iconWidth = resp.data[0].devicePixel.split("*")[0]
-                    //     console.log(res.eqList[i].iconWidth,"res.eqList[i]")
-                    //   // if (type == "width") {
-                    //   //   return JSON.parse(res.data[0]).devicePixel.split("*")[1] / 2;
-                    //   // }else if(type == 'content'){
-                    //   //   return JSON.parse(res.data[0]).devicePixel.split("*")[0] / 2;
-                    //   // }
-                    // });
-                    // }else{
-                    //   let iconWidth = Number(response.rows[j].iconWidth);
-                    //   let iconHeight = Number(response.rows[j].iconHeight);
-                    //   res.eqList[i].iconWidth = iconWidth;
-                    //   res.eqList[i].iconHeight = iconHeight;
-
-                    // }
-                    break;
+                for (let i = 0; i < res.eqList.length; i++) {
+                  res.eqList[i].focus = false;
+                  for (let j = 0; j < response.rows.length; j++) {
+                    if (response.rows[j].typeId == res.eqList[i].eqType) {
+                      let iconWidth = Number(response.rows[j].iconWidth);
+                      let iconHeight = Number(response.rows[j].iconHeight);
+                      res.eqList[i].iconWidth = iconWidth;
+                      res.eqList[i].iconHeight = iconHeight;
+                      break;
+                    }
                   }
                 }
-              }
               that.selectedIconList = res.eqList; //设备zxczczxc
+              listDevices().then((data)=>{
+                console.log(data,"设备表")
+                for(let item of that.selectedIconList){
+                  for(let itm of data.rows){
+                    if(item.eqId == itm.eqId){
+                      item.eqDirection = itm.eqDirection
+                    }
+
+                  }
+                }
+              })
               that.getRealTimeData();
 
               console.log(
@@ -10553,13 +10543,19 @@ input {
       padding: 2px 15px !important;
     }
   }
+  .el-dialog__body{
+    padding:0 15px !important;
+    .el-col{
+      padding:0 !important;
+    }
+  }
   .el-table {
     padding: 0 15px;
     margin-bottom: 20px;
   }
-  .el-tabs {
-    padding: 0 15px;
-  }
+  // .el-tabs {
+  //   padding: 0 15px;
+  // }
 }
 ::v-deep .eventDiglog .el-button--medium {
   height: 22px !important;
@@ -11150,7 +11146,13 @@ input {
     }
   }
 }
-
+.icon-dialog{
+  .el-dialog__body{
+    max-height:70vh;
+    overflow-y:auto;
+    overflow-x:hidden;
+  }
+}
 .youdaoDialog {
   .el-dialog {
     position: absolute;
@@ -11338,8 +11340,8 @@ input {
 }
 .syxt_searchBox {
   position: absolute;
-  top: 118px;
-  right: 15px;
+  top: 145px;
+  right: 25px;
   width: 39%;
   z-index: 1996;
   background-color: #00335a;

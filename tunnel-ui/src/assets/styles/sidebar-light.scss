@@ -627,6 +627,7 @@
         position: static !important;
         margin-top: 0px !important;
         margin-bottom: 30px;
+        height: 45px;
         .el-pagination__total,
         .el-pagination__jump {
           color: #fff !important;
@@ -2060,6 +2061,20 @@
     .el-pagination.is-background .el-pager li:not(.disabled).active{
       background-color: #39ADFF !important;
       color: white !important;
+    }
+    .pagination-container{
+      margin-bottom: 0px !important;
+      .el-pagination.is-background .el-pager li{
+        border: solid 1px #01AAFD ;
+      }
+    }
+    
+    .el-range-editor--small.el-input__inner{
+      background: #052C4D;
+      border: none;
+    }
+    .el-date-editor .el-range-input{
+      background: #052C4D;
     }
     .el-button{
       border-radius: 3px !important;

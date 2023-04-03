@@ -303,7 +303,7 @@
         this.$modal.confirm('是否确认删除？').then(function () {
           return delCategory(ids);
         }).then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         }).catch(() => {
         });

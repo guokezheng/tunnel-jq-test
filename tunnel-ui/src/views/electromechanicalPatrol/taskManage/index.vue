@@ -426,12 +426,13 @@
             border
             height="358px"
             class="dialogTable"
+            :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
           >
-            <el-table-column type="selection" width="39"></el-table-column>
-            <el-table-column prop="type_name" label="设备类型">
-            </el-table-column>
-            <el-table-column prop="eq_name" label="设备名称"> </el-table-column>
+            <el-table-column type="selection" width="39" reserve-selection></el-table-column>
+            <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
+            <el-table-column prop="type_name" label="设备类型" width="160"></el-table-column>
+            <el-table-column prop="eq_name" label="设备名称" width="200"> </el-table-column>
             <el-table-column prop="pile" label="安装位置"> </el-table-column>
             <el-table-column prop="dict_label" label="方向"> </el-table-column>
           </el-table>
@@ -503,9 +504,11 @@
             border
             height="358px"
             class="dialogTable"
+            :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
           >
-            <el-table-column type="selection" width="39"></el-table-column>
+            <el-table-column type="selection" width="39" reserve-selection></el-table-column>
+            <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
             <el-table-column prop="type_name" label="故障类型">
             </el-table-column>
             <el-table-column prop="eq_name" label="故障设备名称">
@@ -956,7 +959,12 @@ export default {
   methods: {
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
+      console.log(row,"row")
       return row.id
+    },
+    getRowKey1(row) {
+      console.log(row,"row")
+      return row.eq_id
     },
     bodyCloseMenus(e) {
       let self = this;
@@ -970,7 +978,10 @@ export default {
     indexMethod(index){
       return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
     },
-
+    //翻页时不刷新序号
+    indexMethod1(index){
+      return index+(this.pageNum-1)*this.pageSize+1
+    },
     //班组点击时间
     /*selChange() {
       if (typeof this.form.tunnelId == "undefined") {

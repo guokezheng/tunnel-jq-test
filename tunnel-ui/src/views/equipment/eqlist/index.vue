@@ -673,7 +673,7 @@
           </el-col> -->
         </el-row>
       </el-form>
-      <div class="dialog-footer">
+      <div class="dialog-footer" slot="footer">
         <el-button
           class="submitButton"
           :loading="submitFormLoading"
@@ -1545,7 +1545,7 @@ export default {
           return delDevices(eqIds);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function () {});

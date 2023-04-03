@@ -675,7 +675,7 @@ export default {
           return delJob(jobIds);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(() => {});

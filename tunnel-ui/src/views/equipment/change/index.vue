@@ -340,7 +340,7 @@ export default {
             e.eqDirection = "下行";
           }
         });*/
-      });
+        });
     },
     // 取消按钮
     cancel() {
@@ -424,7 +424,7 @@ export default {
           return delChange(ids);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(() => {});

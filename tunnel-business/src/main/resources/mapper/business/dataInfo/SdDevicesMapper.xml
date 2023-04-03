@@ -270,7 +270,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             ${params.dataScope}
         </where>
-        order by a.create_time desc, a.update_time desc
+        order by a.create_time desc, a.update_time desc ,a.eq_id desc
     </select>
 
 

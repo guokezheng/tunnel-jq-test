@@ -91,113 +91,113 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row class="planBox">
-        <el-form-item
-          v-for="(dain, index) in strategyForm.autoControl"
-          :key="index"
-        >
-          <el-col :span="6" style="padding-left:0">
-            <el-select
-              v-model="dain.equipmentTypeId"
-              placeholder="请选择设备类型"
-              clearable
-              @change="changeEquipmentType(index)"
-              style="width:100%;"
-            >
-              <el-option
-                v-for="item in dain.equipmentTypeData"
-                :key="item.typeId"
-                :label="item.typeName"
-                :value="item.typeId"
-              />
-            </el-select>
-          </el-col>
-          <el-col :span="6">
-            <el-select
-              v-model="dain.equipments"
-              multiple
-              collapse-tags
-              placeholder="请选择设备"
-              @change="qbgChange(index, dain.equipments)"
-              style="width:100%;"
-            >
-              <el-option
-                v-for="item in dain.equipmentData"
-                :key="item.eqId"
-                :label="item.eqName"
-                :value="item.eqId"
-                :disabled="item.disabled"
-              />
-            </el-select>
-          </el-col>
-          <el-col
-            :span="10"
-            v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
+      <el-row :gutter="20">
+        <el-col :span="24">
+          <el-form-item
+            v-for="(dain, index) in strategyForm.autoControl"
+            :key="index"
           >
-            <el-col :span="12">
+            <el-col :span="6" style="padding-left:0">
               <el-select
-                v-model="dain.openState"
-                placeholder="启动指令"
-                style="width: 100%"
+                v-model="dain.equipmentTypeId"
+                placeholder="请选择设备类型"
+                clearable
+                @change="changeEquipmentType(index)"
+                style="width:100%;"
               >
                 <el-option
-                  v-for="(item, indx) in dain.eqStateList"
-                  :key="item.deviceState"
-                  :label="item.stateName"
-                  :value="item.deviceState"
-                >
-                </el-option>
+                  v-for="item in dain.equipmentTypeData"
+                  :key="item.typeId"
+                  :label="item.typeName"
+                  :value="item.typeId"
+                />
               </el-select>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <el-select
-                v-model="dain.closeState"
-                placeholder="关闭指令"
-                style="width: 100%"
+                v-model="dain.equipments"
+                multiple
+                collapse-tags
+                placeholder="请选择设备"
+                @change="qbgChange(index, dain.equipments)"
+                style="width:100%;"
               >
                 <el-option
-                  v-for="(item, indx) in dain.eqStateListFan"
-                  :key="item.deviceState"
-                  :label="item.stateName"
-                  :value="item.deviceState"
-                >
-                </el-option>
+                  v-for="item in dain.equipmentData"
+                  :key="item.eqId"
+                  :label="item.eqName"
+                  :value="item.eqId"
+                  :disabled="item.disabled"
+                />
               </el-select>
             </el-col>
-          </el-col>
-          <el-col
-            :span="10"
-            v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
-          >
-            <el-cascader
-              style="width: 100%"
-              :props="checkStrictly"
-              v-model="dain.state"
-              :options="dain.templatesList"
-              :show-all-levels="false"
-              clearable
-              collapse-tags
-              @change="handleChange"
-            ></el-cascader>
-          </el-col>
-          <el-col :span="2" class="buttonBox">
-            <el-button
-              class="delete"
-              @click="removeItem(index)"
-            ></el-button>
-            <el-button
-              class="add"
-              @click="addItem"
-            ></el-button>
-          </el-col>
-        </el-form-item>
+            <el-col :span="10"
+                    v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
+            >
+              <el-col :span="12">
+                <el-select
+                  v-model="dain.openState"
+                  placeholder="启动指令"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(item, indx) in dain.eqStateList"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="12">
+                <el-select
+                  v-model="dain.closeState"
+                  placeholder="关闭指令"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(item, indx) in dain.eqStateListFan"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+            </el-col>
+            <el-col :span="10"
+                    v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
+            >
+              <el-cascader
+                style="width: 100%"
+                :props="checkStrictly"
+                v-model="dain.state"
+                :options="dain.templatesList"
+                :show-all-levels="false"
+                clearable
+                collapse-tags
+                @change="handleChange"
+              ></el-cascader>
+            </el-col>
+            <el-col :span="2" class="buttonBox">
+              <el-button
+                class="delete"
+                @click="removeItem(index)"
+              ></el-button>
+              <el-button
+                class="add"
+                @click="addItem"
+              ></el-button>
+            </el-col>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-form-item class="dialog-footer">
         <el-button class="submitButton" @click="submitStrategyForm"
-          >提交</el-button
+        >提交</el-button
         >
         <el-button class="closeButton" @click="strategyFormClose"
-          >取 消</el-button
+        >取 消</el-button
         >
       </el-form-item>
     </el-form>
@@ -431,7 +431,7 @@ export default {
           let autoControl = this.strategyForm.autoControl;
           let response = JSON.parse(JSON.stringify(autoControl))
           let result = response.every(function (item) {
-              return item.equipmentTypeId != "" || item.closeState != "" || item.openState != ""
+            return item.equipmentTypeId != "" || item.closeState != "" || item.openState != ""
           });
           if(!result){
             return this.$modal.msgError("请填写完整");
@@ -443,7 +443,7 @@ export default {
           //     item.equipments == '' ||
           //     item.closeState == "" || item.openState == ""
           //   ) {
-              
+
           //   }
           // })
           if (this.sink == "edit") {
@@ -634,9 +634,9 @@ export default {
       //   return this.$modal.msgError("请选择设备并添加执行操作");
       // }
       this.addCf();
-      if (this.strategyForm.autoControl.length == 2) {
-        return this.$modal.msgError("最多添加2条数据");
-      }
+      /*    if (this.strategyForm.autoControl.length == 2) {
+            return this.$modal.msgError("最多添加2条数据");
+          }*/
       this.strategyForm.autoControl.push({
         value: "", //设备
         openState: "", //状态
@@ -735,7 +735,14 @@ export default {
     getDirection() {
       this.getDicts("sd_direction").then((response) => {
         this.directionOptions = response.data;
-        console.log(this.directionOptions, "方向");
+        let data = {
+          "value": "",
+          "dictLabel":"双向方向",
+          "dictValue":""
+        }
+        this.directionOptions.push(data);
+
+        console.log(this.directionOptions, "111111111111111111111方向");
       });
     },
     /** 查询设备类型列表 */

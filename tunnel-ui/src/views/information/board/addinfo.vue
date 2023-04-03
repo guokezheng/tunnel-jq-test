@@ -7,6 +7,7 @@
       width="44%"
       :before-close="handleClose"
     >
+    <div class="dialogCloseButton"></div>
       <el-card class="box-card">
         <div
           v-on:ondragenter="ondragenter"
@@ -794,6 +795,8 @@ export default {
       // if (!valid) return;
       if(!this.dataForm.CONTENT.trim()){
         return this.$modal.msgError("当前输入内容为空");
+      }else if(!this.dataForm.category){
+        return this.$modal.msgError("情报板所属类别不能为空");
       }
       //走接口检验内容是否包含敏感字段
       checkIotBoardContent(this.dataForm.CONTENT).then((response) => {

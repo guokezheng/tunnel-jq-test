@@ -1310,33 +1310,19 @@
     <!-- 批量操作弹窗 -->
 
     <el-dialog
-      class="workbench-dialog batch-table operationDiglog"
+      class="batch-table operationDiglog explain-table workbench-dialog"
       :title="title"
       :visible.sync="batchManageDialog"
-      width="560px"
+      width="450px"
       append-to-body
       v-dialogDrag
     >
-      <div
-        style="
-          width: 100%;
-          height: 10px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <div class="dialogLine"></div>
-        <img
-          src="../../../assets/cloudControl/dialogHeader.png"
-          style="height: 30px; transform: translateY(-30px)"
-          @click="closeBatchManageDialog"
-        />
-      </div>
+    <div class="dialogCloseButton"></div>
       <el-table
         ref="batchManageTable"
         :data="batchManageList"
         tooltip-effect="dark"
-        style="width: 100%; margin-bottom: 0px !important"
+        style="width: 100%; margin-bottom: 10px !important"
         max-height="220"
         size="mini"
         @row-click="handleRowClick"
@@ -1344,7 +1330,7 @@
         <el-table-column
           prop="eqName"
           label="设备名称"
-          width="220"
+          width="200"
           show-overflow-tooltip
         >
         </el-table-column>
@@ -3102,7 +3088,7 @@
     <div class="dialogCloseButton"></div>
       <img
         src="@/assets/logo/equipment_log/all.png"
-        style="width: 1240px; height: auto; padding: 20px"
+        style="width: 100%; height: auto;"
       />
       <!-- <el-table
         ref="multipleTable"
@@ -10533,7 +10519,7 @@ input {
     }
   }
   .el-dialog .el-form {
-    padding: 15px !important;
+    // padding: 15px !important;
     .el-form-item__content .el-button {
       width: 88px;
       height: 22px;
@@ -10550,7 +10536,7 @@ input {
     }
   }
   .el-table {
-    padding: 0 15px;
+    // padding: 0 15px;
     margin-bottom: 20px;
   }
   // .el-tabs {
@@ -10964,23 +10950,8 @@ input {
     background-color: #304156;
   }
 
-  // /* 鼠标悬浮*/
-  // .el-table--enable-row-hover .el-table__body tr:hover > td {
-  //   background-color: #455d79;
-  // }
-
-  /* table边框*/
-  .el-table--enable-row-transition .el-table__body td {
-    // border-color: #304156;
-    // border-width: 8px;
-  }
-
   .el-table::before {
     height: 0;
-  }
-
-  .el-table .cell {
-    // height: 33px;
   }
 
   .el-table--mini td {
@@ -11006,6 +10977,11 @@ input {
   .el-table__body-wrapper::-webkit-scrollbar-thumb {
     background-color: #455d79;
     border-radius: 3px;
+  }
+  .el-radio {
+    width: 240px;
+    height: 40px;
+    line-height: 40px;
   }
 }
 

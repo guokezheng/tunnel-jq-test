@@ -8,21 +8,7 @@
       :visible="cameraVisible"
       :before-close="handleClosee"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
-      </div>
+    <div class="dialogCloseButton"></div>
       <div v-show="infoType == 'info'" style="display:flex">
         <div style="float:left">
           <div class="infoBox">
@@ -84,7 +70,7 @@
             label-width="75px"
             label-position="left"
             size="mini"
-            style="padding: 0 15px 15px 15px;width:833px"
+            style="width:800px"
           >
             <el-tabs class="videoTabs" v-model="videoActive">
               <el-tab-pane label="详细信息" name="information">
@@ -159,7 +145,7 @@
               display: flex;
               justify-content: right;
               margin-bottom: 20px;
-              width:813px;
+              width:800px;
             "
           >
             <el-button
@@ -1048,7 +1034,7 @@ export default {
 .boardRightBox{
   float: right;
   width: 760px;
-  margin: 0 14px 10px;
+  margin-left: 20px;
   .el-collapse{
     border-top:transparent !important;
   }
@@ -1060,7 +1046,7 @@ export default {
 //   z-index: 2017;
   .mesModeBg {
     // background: #012e51;
-    width: calc(100% - 30px);
+    // width: calc(100% - 30px);
     height: 753px;
     overflow: auto;
     // .el-collapse-item__header {
@@ -1170,7 +1156,7 @@ export default {
   width: 783px;
   height: 550px;
   // background: #fff;
-  margin: 0 18px 0 15px;
+  // margin: 0 18px 0 15px;
   overflow: hidden;
   border: solid 1px #01aafd;
   

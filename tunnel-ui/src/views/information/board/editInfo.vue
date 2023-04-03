@@ -7,6 +7,7 @@
       width="44%"
       :before-close="closeDialog"
     >
+    <div class="dialogCloseButton"></div>
       <el-card class="box-card">
         <div
           class="blackBoard1"

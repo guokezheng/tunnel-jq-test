@@ -11,25 +11,8 @@
       :close-on-click-modal="false"
       :modal="false"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
-      </div>
+    <div class="dialogCloseButton"></div>
       <div style="width: 100%; height: 200px;padding:0 15px">
-
-
-
         <video
         v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
@@ -54,7 +37,6 @@
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding: 0 15px 15px 15px"
       >
         <el-tabs class="videoTabs" v-model="videoActive">
           <el-tab-pane label="详细信息" name="information">
@@ -193,6 +175,7 @@
       :close-on-click-modal="false"
       :modal="false"
     >
+    <div class="dialogCloseButton"></div>
       <el-form
         ref="historyForm"
         :model="queryParams"
@@ -295,6 +278,7 @@
       :close-on-click-modal="false"
       :modal="false"
     >
+    <div class="dialogCloseButton"></div>
       <el-row class="yuntaiBox">
         <el-col :span="18">
           <div class="yuntaiVideoBox">

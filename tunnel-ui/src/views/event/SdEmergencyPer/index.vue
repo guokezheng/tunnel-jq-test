@@ -191,6 +191,7 @@
             <treeselect
               v-model="form.deptId"
               :options="deptOptions"
+              :disable-branch-nodes="true"
               placeholder="请选择归属部门"
               @input="changeParentDept"
             />
@@ -359,9 +360,11 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.ry_boxShow == true) {
-          self.ry_boxShow = false;
+      if (self.ry_boxShow == true) {
+        if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+          if (self.ry_boxShow == true) {
+            self.ry_boxShow = false;
+          }
         }
       }
     },

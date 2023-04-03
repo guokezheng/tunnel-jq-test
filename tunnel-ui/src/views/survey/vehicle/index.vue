@@ -55,7 +55,7 @@
 <!--            :disable-branch-nodes="true"-->
           </el-form-item>
 
-          <el-form-item label="车型" prop="vType">
+          <el-form-item label="车型" prop="vType" style="width: 100%!important;">
             <el-checkbox
               v-for="dict in vehicleTypeList"
               :key="dict.dictValue"
@@ -512,6 +512,8 @@ export default {
         pageSize: 10,
         vType: [],
         cx: "",
+        plateNumber:"",
+        accState:null,
       },
       form: {},
       mechanismList: [],
@@ -567,7 +569,7 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      self.$nextTick(() => {
+      if (self.cl_boxShow == true) {
         if (
           !this.$refs.main.contains(e.target) &&
           !this.$refs.cc.contains(e.target)
@@ -576,7 +578,7 @@ export default {
             self.cl_boxShow = false;
           }
         }
-      });
+      }
     },
 
     //翻页时不刷新序号
@@ -752,12 +754,15 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .jigou .el-scrollbar {
   width: 215px !important;
 }
 .jigou .el-icon-arrow-right {
   right: 15px;
+}
+::v-deep .searchBox .el-form-item__content .el-checkbox{
+  margin-left: 0px!important;
 }
 </style>
 

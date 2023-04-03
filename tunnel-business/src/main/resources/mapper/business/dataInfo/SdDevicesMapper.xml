@@ -1036,7 +1036,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND d.eq_tunnel_id = #{tunnelId}
         </if>
         <if test="lane != null and lane != ''">
-            AND d.lane = #{lane}
+            AND FIND_IN_SET(d.lane, #{lane}) > 0
         </if>
     </select>
 

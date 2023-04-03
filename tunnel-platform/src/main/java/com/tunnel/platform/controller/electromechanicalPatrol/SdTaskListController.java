@@ -10,28 +10,36 @@ import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.PictureType;
 import com.deepoove.poi.data.Pictures;
 import com.deepoove.poi.plugin.table.HackLoopTableRenderPolicy;
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.common.utils.sql.SqlUtil;
 import com.ruoyi.system.service.ISysDeptService;
+import com.tunnel.business.datacenter.domain.dataReport.TaskStatus;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
+import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
@@ -94,17 +102,26 @@ public class SdTaskListController extends BaseController
      */
    /* @PreAuthorize("@ss.hasPermi('system:list:list')")*/
     @GetMapping("/list")
-    public TableDataInfo list(SdTaskList sdTaskList)
+    public TableDataInfo<List<SdTaskList>>list(SdTaskList sdTaskList)
     {
         String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
         sdTaskList.setDeptId(deptId);
+        //String status = "0,1";
+        /*if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&& TaskStatus.YICHAOSHI.getCode().equals(sdTaskList.getTaskStatus())) {
+            sdTaskList.setTaskStatus(status);
+        }*/
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         return getDataTable(list);
     }
+
+
+
+
+
 
     /**
      * 导出巡查任务列表

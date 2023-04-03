@@ -7,6 +7,7 @@
       width="44%"
       :before-close="handleClose"
     >
+    <div class="dialogCloseButton"></div>
       <el-card class="box-card">
         <div
           v-on:ondragenter="ondragenter"
@@ -788,15 +789,23 @@ export default {
     // },
     // 表单提交
     async dataFormSubmitHandle() {
-      let valid = await this.$refs.dataForm.validate().catch(() => {
-        return this.$modal.msgError("校验错误");
-      });
-      if (!valid) return;
+      // let valid = await this.$refs.dataForm.validate().catch(() => {
+      //   return this.$modal.msgError("校验错误");
+      // });
+      // if (!valid) return;
+      if(!this.dataForm.CONTENT.trim()){
+        return this.$modal.msgError("当前输入内容为空");
+      }else if(!this.dataForm.category){
+        return this.$modal.msgError("情报板所属类别不能为空");
+      }
       //走接口检验内容是否包含敏感字段
       checkIotBoardContent(this.dataForm.CONTENT).then((response) => {
         if (response.data == 0) {
           return this.$modal.msgError("当前发布内容包含敏感字段，请修改");
-        } else {
+        } else if(response.data == 2){
+          return this.$modal.msgError("当前输入内容为空");
+        }
+        else {
           this.loading = true;
           // let templateId = "";
           let method = "put";

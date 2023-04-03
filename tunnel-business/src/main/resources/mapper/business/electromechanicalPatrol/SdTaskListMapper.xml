@@ -57,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bzId != null  and bzId != ''"> and t.bz_id = #{bzId}</if>
             <if test="taskDescription != null  and taskDescription != ''"> and t.task_description = #{taskDescription}</if>
             <if test="publishStatus != null "> and t.publish_status = #{publishStatus}</if>
-            <if test="taskStatus != null "> and t.task_status = #{taskStatus}</if>
+            <if test="taskStatus != null and taskStatus != '' and  taskStatus !='4'.toString"> and t.task_status = #{taskStatus} </if>
             <if test="walkerId != null  and walkerId != ''"> and t.walker_id = #{walkerId}</if>
             <if test="taskEndtime != null "> and t.task_endtime = #{taskEndtime}</if>
             <if test="taskCxtime != null "> and t.task_cxtime = #{taskCxtime}</if>
@@ -66,6 +66,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null and deptId != ''">
                 AND (s.dept_id = #{deptId} OR s.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
             </if>
+            <if test="taskStatus != null and taskStatus != '' and  taskStatus == '4'.toString()"> and t.end_plantime &lt; now() and t.task_status in(0,1)</if>
+
         </where>
         order  by  t.create_time desc,t.update_time desc
     </select>

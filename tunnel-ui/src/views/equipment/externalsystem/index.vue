@@ -519,7 +519,7 @@ export default {
           return delSystem(ids);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(() => {});

@@ -313,7 +313,7 @@ public class SysJobServiceImpl implements ISysJobService
                 // 调用目标字符串
                 job.setInvokeTarget("strategyTask.strategyParams('" + guid + "')");
                 // corn表达式
-                String cronDate = CronUtil.CronDate(time);
+                String cronDate = CronUtil.DateConvertCron(time);
                 job.setCronExpression(cronDate);
                 // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
                 job.setMisfirePolicy("1");

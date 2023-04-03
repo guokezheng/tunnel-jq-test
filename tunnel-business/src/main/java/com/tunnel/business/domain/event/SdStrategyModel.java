@@ -81,6 +81,12 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("策略组")
     private String strategyGroup;
 
+    @ApiModelProperty("定时控制-执行时间")
+    private String execTime;
+
+    @ApiModelProperty("定时控制-执行日期")
+    private String execDate;
+
     @ApiModelProperty("分时控制-开始时间")
     private String startTime;
 
@@ -89,6 +95,22 @@ public class SdStrategyModel extends BaseEntity
 
     @ApiModelProperty("手动自动")
     private String isAutomatic;
+
+    public String getExecTime() {
+        return execTime;
+    }
+
+    public void setExecTime(String execTime) {
+        this.execTime = execTime;
+    }
+
+    public String getExecDate() {
+        return execDate;
+    }
+
+    public void setExecDate(String execDate) {
+        this.execDate = execDate;
+    }
 
     public String getIsAutomatic() {
         return isAutomatic;

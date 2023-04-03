@@ -435,7 +435,7 @@
         this.$modal.confirm('是否确认删除？').then(function () {
           return delProtocol(ids);
         }).then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         }).catch(() => {
         });

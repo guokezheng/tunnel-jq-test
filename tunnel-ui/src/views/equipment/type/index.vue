@@ -38,12 +38,13 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
+            style="border-right:solid 1px #00C8FF;border-radius: 3px;"
           >
-            <el-button
+            <!-- <el-button
               slot="append"
               icon="icon-gym-Gsearch"
               @click="boxShow = !boxShow"
-            ></el-button>
+            ></el-button> -->
           </el-input>
         </div>
       </el-col>
@@ -302,7 +303,7 @@
           </el-checkbox-group>
         </el-form-item>
       </el-form>
-      <div class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="submitForm">确 定</el-button>
         <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
@@ -706,8 +707,9 @@ export default {
           return delType(typeIds);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
+          console.log()
         })
         .catch(function () {});
     },

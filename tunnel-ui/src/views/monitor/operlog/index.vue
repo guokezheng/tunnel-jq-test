@@ -418,6 +418,7 @@ export default {
       if(this.ids.length>0){
         confirmInfo = "是否确认导出所选的操作日志数据项？";
       }
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal.confirm(confirmInfo).then(() => {
         this.exportLoading = true;

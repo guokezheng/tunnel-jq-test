@@ -276,7 +276,7 @@ public class SdDevicesController extends BaseController {
         }
 
         List<SdDevices> list1 = sdDevicesService.tunnelEqNameOnly(sdDevices.getEqTunnelId(), sdDevices.getEqName());
-        if (list1.size() > 0) {
+        if (list1.size() > 0 && !sdDevices.getEqId().equals(list1.get(0).getEqId())) {
             return Result.error("当前设备名称已经存在，请核对后重试！");
         }
 

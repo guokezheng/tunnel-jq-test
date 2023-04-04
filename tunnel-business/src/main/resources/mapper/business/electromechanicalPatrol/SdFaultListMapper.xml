@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">
-        select s.id, s.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, IFNULL(s.fault_description,"") fault_description, fault_status,t.dict_label ftype,
+        select s.id, e.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, IFNULL(s.fault_description,"") fault_description, fault_status,t.dict_label ftype,
         r.dict_label fremove,
         l.dict_label flevel,
         u.dict_label fstatus
@@ -215,7 +215,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data s on f.fault_type = s.dict_value
     <where>
         1=1 and  s.dict_type= 'fault_type' and f.fallt_remove_statue = '1'
-        <if test="tunnelId != null and tunnelId != '' ">and f.tunnel_id = #{tunnelId}</if>
+        <if test="tunnelId != null and tunnelId != '' ">and t.tunnel_id = #{tunnelId}</if>
         <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
     </where>
     </select>

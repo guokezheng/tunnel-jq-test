@@ -177,7 +177,7 @@ public class SansiLightImpl implements Light {
         if (openClose == 2) {
             openClose = 0;
         }
-        String url = baseUrl + "api/core/assets/"+step+"/action/device-sensor:switch-status";
+        String url = baseUrl + "api/core/assetGroups/"+step+"/action/device-sensor:switch-status";
 
         Request request = new Request.Builder()
                 .url(url)
@@ -212,8 +212,7 @@ public class SansiLightImpl implements Light {
         //传入的请求参数
         String data = "{\"param\":\"" + bright + "\"}";
         RequestBody body = RequestBody.create(mediaType, data);
-
-        String url = baseUrl + "api/core/assets/"+step+"/action/device-sensor:dim-level";
+        String url = baseUrl + "api/core/assetGroups/"+step+"/action/device-sensor:dim-level";
 
         Request request = new Request.Builder()
                 .url(url)

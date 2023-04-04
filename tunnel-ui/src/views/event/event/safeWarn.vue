@@ -1477,13 +1477,16 @@ export default {
     },
     bodyCloseMenus1(e) {
       let self = this;
-      self.$nextTick(()=>{
-        if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
-          if (self.zd_boxShow == true){
-            self.zd_boxShow = false;
+      if(self.zd_boxShow == true){
+        self.$nextTick(()=>{
+          if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
+            if (self.zd_boxShow == true){
+              self.zd_boxShow = false;
+            }
           }
-        }
-      })
+        })
+      }
+
     },
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus1);

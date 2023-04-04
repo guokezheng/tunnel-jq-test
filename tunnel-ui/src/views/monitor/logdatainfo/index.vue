@@ -539,11 +539,14 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.xt_boxShow == true){
-          self.xt_boxShow = false;
+      if(self.xt_boxShow == true){
+        if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+          if (self.xt_boxShow == true){
+            self.xt_boxShow = false;
+          }
         }
       }
+
     },
 
     //翻页时不刷新序号
@@ -561,11 +564,14 @@ export default {
       //     self.cz_boxShow = false;
       //   }
       // }
-      if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
-        if (self.cz_boxShow == true){
-          self.cz_boxShow = false;
+      if(self.cz_boxShow == true){
+        if (!this.$refs.main1.contains(e.target) && !this.$refs.cc1.contains(e.target)) {
+          if (self.cz_boxShow == true){
+            self.cz_boxShow = false;
+          }
         }
       }
+
     },
 
 

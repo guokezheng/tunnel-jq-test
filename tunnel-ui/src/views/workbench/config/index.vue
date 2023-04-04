@@ -5210,7 +5210,8 @@ export default {
       });
     },
     directionFormat(row, column) {
-      return this.selectDictLabel(this.directionList, row.direction);
+      let directionFormat = this.selectDictLabel(this.directionList, row.direction);
+      return directionFormat.length>0?directionFormat:'双向';
     },
     // 策略类型字典翻译
     strategyTypeFormat(row, column) {

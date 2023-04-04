@@ -218,8 +218,9 @@
             事发时抓图或录像
           </div>
           <!-- <video :src="eventForm.videoUrl" controls muted loop fluid></video> -->
-          <div class="picBox" v-if="eventFormDetail.iconUrlList.length >= 1">
-            <swiper class="swiper gallery-top" :options="swiperOptionTop" ref="swiperTop">
+          <div class="picBox">
+            <swiper class="swiper gallery-top" :options="swiperOptionTop" ref="swiperTop"
+            v-show="eventFormDetail.iconUrlList.length >= 1">
               <!-- slides -->
               <swiper-slide  v-for="(item, index) in eventFormDetail.iconUrlList" :key="index" :class="'slide-' + index">
                 <video :src="item.imgUrl"
@@ -234,7 +235,7 @@
               <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
             </swiper>
             <swiper class="swiper gallery-thumbs" :options="swiperOptionThumbs"
-              ref="swiperThumbs">
+              ref="swiperThumbs" v-show="eventFormDetail.iconUrlList.length >= 1">
               <swiper-slide v-for="(item, index) in eventFormDetail.iconUrlList"
                 :key="index" :class="'slide-' + index">
                 <video :src="item.imgUrl" :poster="item.imgUrl"
@@ -245,13 +246,13 @@
               <div class="swiper-button-prev" slot="button-prev"></div>
               <div class="swiper-button-next" slot="button-next"></div>
             </swiper>
-          </div>
-          <div v-if="eventFormDetail.iconUrlList.length < 1" style="width: 100%; height: 87%">
-            <el-image
-              style="width: 100%; height: 100%"
-              :src="noPic"
-              :fit="contain">
-            </el-image>
+            <div v-show="eventFormDetail.iconUrlList.length < 1" style="width: 100%; height: 329px;">
+              <el-image
+                style="width: 100%; height: 100%"
+                :src="noPic"
+                :fit="contain">
+              </el-image>
+            </div>
           </div>
         </div>
         <div class="dialogBg dialogBg2">
@@ -260,14 +261,14 @@
             <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
               <el-carousel-item v-for="(item, index) in videoList" :key="index" >
                 <videoPlayer
-                  v-if="item.liveUrl != null && item.liveUrl != ''"
+                  v-show="item.liveUrl != null && item.liveUrl != ''"
                   :rtsp="item.liveUrl"
                   :open="cameraPlayer"
                 ></videoPlayer>
               </el-carousel-item>
             </el-carousel>
             <el-image
-              v-if="videoList.length < 1"
+              v-show="videoList.length < 1"
               :src="noDataUrl"
               :fit="contain">
             </el-image>
@@ -2615,7 +2616,7 @@ export default {
         height: calc(400px - 71px);
       }
       ::v-deep .el-image{
-        height: 80%;
+        height: calc(400px - 71px);
         width: 100%;
         image{width:100%;height:100%;}
       }

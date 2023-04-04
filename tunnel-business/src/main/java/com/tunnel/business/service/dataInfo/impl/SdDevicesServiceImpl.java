@@ -138,7 +138,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         devices.put("state", data.getData());
                     }
                 //巡检机器人
-               /* } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.ROBOT.getCode()))) {
+                    // TODO 巡检代码暂不提交
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.ROBOT.getCode()))) {
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_IS_ONLINE.getCode())) {
                         devices.put("isOnline", data.getData());
                     }
@@ -174,7 +175,13 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     }
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_WORK_MODEL_TEXT.getCode())) {
                         devices.put("workModelText", data.getData());
-                    }*/
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_HD_VIDEO.getCode())) {
+                        devices.put("hd", data.getData());
+                    }
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_INFRARE_VIDEO.getCode())) {
+                        devices.put("infrared", data.getData());
+                    }
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHUI_BENG.getCode()))) {
                     //消防水泵
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUI_BENG.getCode())) {

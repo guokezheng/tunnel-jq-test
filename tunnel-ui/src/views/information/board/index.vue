@@ -447,7 +447,9 @@ export default {
   },
   watch: {
     contentList: function (newVal, oldVal) {
-      console.log(newVal, "newValcontentList");
+      this.$nextTick(()=>{
+        this.rowDrop();
+      })
     },
   },
   created() {
@@ -455,7 +457,7 @@ export default {
     this.getInfoMode();
   },
   mounted() {
-    this.rowDrop();
+    // this.rowDrop();
   },
 
   methods: {
@@ -472,17 +474,19 @@ export default {
 
     // 行拖拽
     rowDrop() {
-      // 要侦听拖拽响应的DOM对象
-      const tbody = document.querySelector(".el-table__body-wrapper tbody");
-      console.log(tbody, "tbodytbodytbody");
-      const _this = this;
-      Sortable.create(tbody, {
-        // 结束拖拽后的回调函数
-        onEnd({ newIndex, oldIndex }) {
-          const currentRow = _this.contentList.splice(oldIndex, 1)[0];
-          _this.contentList.splice(newIndex, 0, currentRow);
-        },
-      });
+      if(JSON.parse(JSON.stringify(this.contentList)).length>0){
+        // 要侦听拖拽响应的DOM对象
+        const tbody = document.querySelector(".contentBox .el-table__body-wrapper tbody");
+        const _this = this;
+        Sortable.create(tbody, {
+          // 结束拖拽后的回调函数
+          onEnd({ newIndex, oldIndex }) {
+            const currentRow = _this.contentList.splice(oldIndex, 1)[0];
+            _this.contentList.splice(newIndex, 0, currentRow);
+          },
+        });
+      }
+      
     },
 
     // 级联 管理站
@@ -1305,7 +1309,7 @@ export default {
         justify-content: center;
       }
       .el-collapse {
-        max-height: 700px !important;
+        max-height: 74vh !important;
         overflow: auto;
         border-bottom: none;
         border-top: none;

@@ -653,6 +653,9 @@ export default {
         this.devicePixelBoolean = false;
         (this.boardWidth = "400"), (this.boardHeight = "40");
       }
+      // type 1:待下发信息  2:信息模板 
+      // mode 1:工作台弹窗跳转 2：情报板管理跳转
+
       this.infoType = type;
       if (mode == 1 || type == 1) {
         this.categoryRules = false;
@@ -795,7 +798,7 @@ export default {
       // if (!valid) return;
       if(!this.dataForm.CONTENT.trim()){
         return this.$modal.msgError("当前输入内容为空");
-      }else if(!this.dataForm.category){
+      }else if(!this.dataForm.category && this.infoType == 2){
         return this.$modal.msgError("情报板所属类别不能为空");
       }
       //走接口检验内容是否包含敏感字段
@@ -812,7 +815,7 @@ export default {
           if (this.isAdd) {
             console.log(this.dataForm, "this.dataForm新增组件");
             console.log(this.devicePixelBoolean, "this.devicePixelBoolean");
-            if (this.infoType != 2) {
+            if (this.infoType == 1) {
               // 不走接口 存到待下发信息里
               this.dataForm.STAY = Number(this.dataForm.STAY) * 100;
               this.$emit("addInfo", this.dataForm);

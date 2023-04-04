@@ -114,4 +114,6 @@ public interface ISdDeviceDataService {
     List<SdDeviceDNData> handleDNExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
 
     List<SdDeviceDWData> handleDWExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+     void updateDeviceData(String deviceId, String value, Integer itemId,boolean createLog);
 }

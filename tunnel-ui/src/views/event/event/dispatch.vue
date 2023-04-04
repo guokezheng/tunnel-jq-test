@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-27 15:01:42
+ * @LastEditTime: 2023-04-04 11:23:58
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -183,13 +183,14 @@
                 label="姓名"
                 align="center"
                 prop="userName"
-                width="200"
+                width="100"
               />
-              <el-table-column label="联系方式" align="center" prop="phone" width="200">
+              <el-table-column label="联系方式" align="center" prop="phone" width="150">
                 <template slot-scope="scope">
                   <span>{{ scope.row.phone }}</span>
                 </template>
               </el-table-column>
+             <el-table-column label="岗位" align="center" prop="groupName" width="150"/>
             </el-table>
           </div>
         </div>
@@ -798,11 +799,12 @@
       </div>
       <div style="display:flex;justify-content:right">
         <el-button type="info" @click="cancelIssuedDialog">取 消</el-button>
-        <el-button type="primary" @click="changeIncHand">执 行</el-button>
+        <el-button v-show="buttonDisable" type="primary" @click="changeIncHand">执 行</el-button>
       </div>
     </el-dialog>
     <!-- 一键详情弹窗 -->
     <el-dialog
+      class="yjBox"
       title="设备控制详情"
       :visible.sync="oneKeyDialogVisible"
       width="60%"
@@ -870,7 +872,12 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="oneKeyDialogVisible = false">取 消</el-button>
-        <el-button type="primary" v-show="yjName == '一键'" @click="oneKeyExecute()">执 行</el-button>
+        <el-button
+          type="primary"
+          v-show="yjName == '一键'"
+          @click="oneKeyExecute()">
+          执 行
+        </el-button>
       </span>
     </el-dialog>
   </div>
@@ -945,6 +952,7 @@ export default {
   },
   data() {
     return {
+      buttonDisable:true,
       deviceStateName:'',
       yjName:'一键',
       oneKeyList:[],
@@ -1156,8 +1164,15 @@ export default {
       })
     },
     getManagementDevice(item){
+      console.log(item.eventState,item.processId);
+      if(item.eventState != '0' && item.processId){
+        console.log('false')
+        this.buttonDisable = false;
+      }else{
+        this.buttonDisable = true;
+      }
+      console.log(this.buttonDisable);
       this.GDeviceData.deviceIconUrl = null;
-      console.log(item,"itemitemitemitem");
       this.processId = item.processId;
       this.IssuedItem.id = item.id;
       let params = {id:item.processId};
@@ -1866,6 +1881,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 ::v-deep .el-table .el-table__header-wrapper th{
   background-color: rgba(0, 33, 69,0.7)!important;
 }
@@ -1892,6 +1908,7 @@ display: none;
 ::v-deep .contentList .el-button--success.is-plain{
   background: transparent;
 }
+
 ::v-deep .drawerLog .el-drawer__header{
   background-color: #012039!important;
   background-image: url(../../../assets/cloudControl/dialogHeader.png);
@@ -2237,6 +2254,16 @@ display: none;
         }
       }
     }
+  }
+  ::v-deep .yjBox .el-dialog__header{
+    background-image: url(../../../assets/cloudControl/dialogHeader.png)!important;
+    background-repeat: no-repeat!important;
+    background-position-x: right!important;
+  }
+  ::v-deep .IssuedDialog .el-dialog__header{
+    background-image: url(../../../assets/cloudControl/distitlebg.png)!important;
+    background-repeat: no-repeat!important;
+    background-size: 100% 100%!important;
   }
   ::v-deep .jingqing{
     .el-dialog__header{

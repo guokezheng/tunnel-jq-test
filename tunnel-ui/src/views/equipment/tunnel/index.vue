@@ -727,6 +727,7 @@
               <treeselect
                 v-model="form.deptId"
                 :options="deptOptions"
+                :disable-branch-nodes="true"
                 :show-count="true"
                 placeholder="请选择归属部门"
                 :disabled="disabledInfo"
@@ -806,7 +807,7 @@ import {
   updateTunnels,
   exportTunnels,
 } from "@/api/equipment/tunnel/api.js";
-import { listDept, treeselect, treeselectExcYG1 } from "@/api/system/dept";
+import {listDept, treeselect, treeselectExcYG1, treeSelectYG1} from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -1084,7 +1085,7 @@ export default {
       });
     },
     getTreeselect() {
-      treeselectExcYG1().then((response) => {
+      treeSelectYG1().then((response) => {
         this.deptOptions = response.data;
         console.log(this.deptOptions);
       });

@@ -2404,7 +2404,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog> -->
-
     <!--批量管理对话框-->
     <el-dialog
       v-dialogDrag
@@ -2581,7 +2580,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!--微波车检对话框-->
     <el-dialog
       v-dialogDrag
@@ -2821,7 +2819,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog> -->
-
     <el-dialog
       v-dialogDrag
       class="workbench-dialog batch-table"
@@ -2873,7 +2870,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!--道路结冰对话框-->
     <el-dialog
       v-dialogDrag
@@ -2967,7 +2963,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!-- 路面状态 -->
     <el-dialog
       v-dialogDrag
@@ -5215,7 +5210,8 @@ export default {
       });
     },
     directionFormat(row, column) {
-      return this.selectDictLabel(this.directionList, row.direction);
+      let directionFormat = this.selectDictLabel(this.directionList, row.direction);
+      return directionFormat.length>0?directionFormat:'双向';
     },
     // 策略类型字典翻译
     strategyTypeFormat(row, column) {

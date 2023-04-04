@@ -748,7 +748,7 @@ export default {
         this.directionOptions = response.data;
         let data = {
           "value": "-1",
-          "dictLabel":"双向方向",
+          "dictLabel":"双向",
           "dictValue":"-1"
         }
         this.directionOptions.push(data);

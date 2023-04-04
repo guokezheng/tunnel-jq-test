@@ -326,7 +326,7 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-                     
+
                       <div
                       v-show="
                           (item.eqType != 7 &&
@@ -896,7 +896,7 @@
             <div class="Time">
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
-                <el-time-picker 
+                <el-time-picker
                   v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
@@ -2404,7 +2404,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog> -->
-
     <!--批量管理对话框-->
     <el-dialog
       v-dialogDrag
@@ -2581,7 +2580,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!--微波车检对话框-->
     <el-dialog
       v-dialogDrag
@@ -2821,7 +2819,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog> -->
-
     <el-dialog
       v-dialogDrag
       class="workbench-dialog batch-table"
@@ -2873,7 +2870,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!--道路结冰对话框-->
     <el-dialog
       v-dialogDrag
@@ -2967,7 +2963,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!-- 路面状态 -->
     <el-dialog
       v-dialogDrag
@@ -4999,7 +4994,7 @@ export default {
         }
       }else{
         this.timingStrategyDisabled = false
-      } 
+      }
     },
  //翻页时不刷新序号
     indexMethod(index){
@@ -5127,7 +5122,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     bodyCloseMenus2(e) {
@@ -5144,7 +5139,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     bodyCloseMenus3(e) {
@@ -5153,7 +5148,7 @@ export default {
         self.$nextTick(()=>{
           if (
             !self.$refs.main3.contains(e.target) &&
-            !self.$refs.cc3.contains(e.target) 
+            !self.$refs.cc3.contains(e.target)
           ) {
             if (self.sycz_boxShow3 == true) {
               self.sycz_boxShow3 = false;
@@ -5161,7 +5156,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     otherClose(e) {

@@ -84,8 +84,26 @@ public enum DevicesTypeItemEnum {
     XIAO_FANG_DIAN_LIU_IC(94, "电流IC"),   //电流Ic
     XIAO_FANG_DIAN_YA_IA(95, "电压A"),   //电压Uab
     XIAO_FANG_DIAN_YA_IB(96, "电压B"),   //电压Ubc
-    XIAO_FANG_DIAN_YA_IC(97, "电压C");    //电压Uac
+    XIAO_FANG_DIAN_YA_IC(97, "电压C"),    //电压Uac
 
+    // 1000000 前四位设备类型 后三位设备属性  最大可支持9999个设备类型  999个设备属性
+    // 1000 巡检机器人  对应devicesType 29
+    ROBOT_IS_ONLINE(1000010,"机器人连接状态"),
+    ROBOT_CURRENT_DURATION(1000011,"运行时长"),
+    ROBOT_CURRENT_MILEAGE(1000012,"里程数"),
+    ROBOT_ELECTRICITY(1000013,"当前电量"),
+    ROBOT_CHARGE(1000014,"是否在充电"),
+    ROBOT_VOLTAGE(1000015,"当前电压"),
+    ROBOT_CURRENT(1000016,"当前电流"),
+    ROBOT_BATTERYTEMP(1000017,"电池温度"),
+    ROBOT_POSITION(1000018,"轨道位置"),
+    ROBOT_OXYGENDENSITY(1000019,"氧气浓度"),
+    ROBOT_CARBON_MONOXIDE_DENSITY(1000020,"一氧化碳浓度"),
+    ROBOT_WORK_MODEL_TEXT(1000021,"运行状态"),
+
+    ROBOT_HD_VIDEO(1000021,"视频高清地址"),
+
+    ROBOT_INFRARE_VIDEO(1000021,"视频红外地址");
     private int code;
     private String name;
 

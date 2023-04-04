@@ -183,13 +183,14 @@
                 label="姓名"
                 align="center"
                 prop="userName"
-                width="200"
+                width="100"
               />
-              <el-table-column label="联系方式" align="center" prop="phone" width="200">
+              <el-table-column label="联系方式" align="center" prop="phone" width="150">
                 <template slot-scope="scope">
                   <span>{{ scope.row.phone }}</span>
                 </template>
               </el-table-column>
+             <el-table-column label="岗位" align="center" prop="groupName" width="150"/>
             </el-table>
           </div>
         </div>
@@ -871,9 +872,9 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="oneKeyDialogVisible = false">取 消</el-button>
-        <el-button 
-          type="primary" 
-          v-show="yjName == '一键'" 
+        <el-button
+          type="primary"
+          v-show="yjName == '一键'"
           @click="oneKeyExecute()">
           执 行
         </el-button>

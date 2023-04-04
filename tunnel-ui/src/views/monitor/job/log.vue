@@ -389,7 +389,7 @@ export default {
       this.$modal.confirm('是否确认删除选中数据项？').then(function() {
         return delJobLog(jobLogIds);
       }).then(() => {
-        this.getList();
+        this.handleQuery();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },

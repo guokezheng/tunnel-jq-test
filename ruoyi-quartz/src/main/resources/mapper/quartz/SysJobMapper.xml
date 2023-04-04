@@ -40,6 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="invokeTarget != null and invokeTarget != ''">
 				AND invoke_target like concat('%', #{invokeTarget}, '%')
 			</if>
+			<if test="ids != null and ids != ''"> and FIND_IN_SET(job_id,#{ids}) > 0</if>
 		</where>
 	</select>
 	

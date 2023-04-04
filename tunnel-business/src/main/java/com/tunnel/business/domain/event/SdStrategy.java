@@ -96,6 +96,28 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("策略关联id")
     private Long strategyRlId;
 
+    @ApiModelProperty("定时策略-执行日期-不填则每日执行")
+    private String execDate;
+
+    @ApiModelProperty("定时策略-执行时间")
+    private String execTime;
+
+    public String getExecDate() {
+        return execDate;
+    }
+
+    public void setExecDate(String execDate) {
+        this.execDate = execDate;
+    }
+
+    public String getExecTime() {
+        return execTime;
+    }
+
+    public void setExecTime(String execTime) {
+        this.execTime = execTime;
+    }
+
     public String getIds() {
         return this.ids;
     }

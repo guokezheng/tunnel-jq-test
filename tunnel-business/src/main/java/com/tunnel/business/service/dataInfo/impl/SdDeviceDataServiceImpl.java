@@ -13,6 +13,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
@@ -39,6 +40,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     private IExternalSystemService externalSystemService;
     @Autowired
     private SdTunnelsMapper sdTunnelsMapper;
+
+    @Autowired
+    private SdDeviceDataRecordMapper sdDeviceDataRecordMapper;
 
     /**
      * 查询设备实时数据（存储模拟量）
@@ -542,6 +546,36 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         sdDeviceCOVIData.setBeginTime(beginTime);
         sdDeviceCOVIData.setEndTime(endTime);
         return sdDeviceCOVIData;
+    }
+
+
+    public void updateDeviceData(String deviceId, String value, Integer itemId,boolean createLog) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            insertSdDeviceData(sdDeviceData);
+        }
+
+        // 是否插入log
+        if(createLog){
+            //存入数据记录表中
+            SdDeviceDataRecord sdDeviceDataRecord = new SdDeviceDataRecord();
+            sdDeviceDataRecord.setDeviceId(deviceId);
+            sdDeviceDataRecord.setItemId(Long.valueOf(itemId));
+            sdDeviceDataRecord.setData(value);
+            sdDeviceDataRecord.setCreateTime(new Date());
+            sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
+        }
+
     }
 
 

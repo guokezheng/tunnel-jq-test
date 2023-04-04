@@ -14,10 +14,30 @@ export default {
       responseType: 'blob',
       headers: { 'Authorization': 'Bearer ' + getToken() }
     }).then(async (res) => {
+      debugger
       const isLogin = await this.blobValidate(res.data);
       if (isLogin) {
         const blob = new Blob([res.data])
         this.saveAs(blob, decodeURI(res.headers['download-filename']))
+      } else {
+        Message.error('无效的会话，或者会话已过期，请重新登录。');
+      }
+    })
+  },
+  nameXlsx(name, isDelete = true) {
+    var url = baseURL + "/common/downloadTo?fileName=" + encodeURI(name) + "&delete=" + isDelete
+    axios({
+      method: 'get',
+      url: url,
+      responseType: 'blob',
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    }).then(async (res) => {
+      debugger
+      const isLogin = await this.blobValidate(res.data);
+      if (isLogin) {
+        const blob = new Blob([res.data])
+        saveAs(new Blob([res.data], {type: "application/octet-stream"}),name);
+        // this.saveAs(blob, decodeURI(res.headers['download-filename']))
       } else {
         Message.error('无效的会话，或者会话已过期，请重新登录。');
       }

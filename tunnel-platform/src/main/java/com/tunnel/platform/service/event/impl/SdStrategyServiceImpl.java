@@ -109,7 +109,16 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      */
     @Override
     public SdStrategy selectSdStrategyById(Long id) {
-        return sdStrategyMapper.selectSdStrategyById(id);
+
+        SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(id);
+        if(StringUtils.isNotBlank(sdStrategy.getSchedulerTime())){
+            sdStrategy.setExecDate(CronUtil.CronConvertDate(sdStrategy.getSchedulerTime()));
+        }
+        if(StringUtils.isNotBlank(sdStrategy.getSchedulerTime())) {
+            sdStrategy.setExecTime(CronUtil.CronConvertDateTime(sdStrategy.getSchedulerTime()));
+        }
+
+        return sdStrategy;
     }
 
     /**
@@ -158,9 +167,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 Long jobId = Long.valueOf(relationId[i]);
                 SysJob job = sysJobService.selectJobById(jobId);
                 if(openRl.contains(job.getInvokeTarget().split("'")[1])){
-                    job.setCronExpression(CronUtil.CronDate(timeParam[0]));
+                    job.setCronExpression(CronUtil.DateConvertCron(timeParam[0]));
                 }else{
-                    job.setCronExpression(CronUtil.CronDate(timeParam[1]));
+                    job.setCronExpression(CronUtil.DateConvertCron(timeParam[1]));
                 }
                 sysJobService.updateJob(job);
             }
@@ -463,6 +472,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if(strNameCount > 0){
             throw new RuntimeException("策略名称已存在，请重新输入后保存");
         }
+
+        // 定时策略 格式处理
+        // 根据 客户端 填写的 日期 和时间  转换为 cron表达式
+        if(model.getStrategyType().equals("1")){
+
+            String schedulerTime = CronUtil.DateConvertCron(model.getExecTime());
+            if(null != model.getExecDate() && "" != model.getExecDate()){
+                schedulerTime = CronUtil.DateTimeConvertCron(model.getExecDate(),model.getExecTime());
+            }
+            sty.setSchedulerTime(schedulerTime);
+        }
+
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
         int result = saveRelation(model, sty);
         return result;
@@ -522,6 +543,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //删除触发器关联设备
             sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(model.getTriggers().getId());
         }
+
+        // 定时策略 格式处理
+        // 根据 客户端 填写的 日期 和时间  转换为 cron表达式
+        if(model.getStrategyType().equals("1")){
+
+            String schedulerTime = CronUtil.DateConvertCron(model.getExecTime());
+            if(null != model.getExecDate()){
+                schedulerTime = CronUtil.DateTimeConvertCron(model.getExecDate(),model.getExecTime());
+            }
+            model.setSchedulerTime(schedulerTime);
+        }
+
         //重新插入关系表及定时任务信息
         int relation = saveRelation(model, sty);
         return relation;
@@ -732,6 +765,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             String eqState = (String) map.get("state");
             SdStrategyRl rl = new SdStrategyRl();
             rl.setEqTypeId(equipmentTypeId);
+            // 设备未设置执行时间，则取策略执行时间
+            if(null == rl.getControlTime() || "" == rl.getControlTime()){
+                rl.setControlTime(model.getExecTime());
+            }
             rl.setEquipments(equipments);
             rl.setState(eqState);
             rl.setStrategyId(sty.getId());
@@ -763,10 +800,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             job.setStatus("1");
             try{
                 sysJobService.insertJob(job);
+                jobIdList.add(job.getJobId().toString());
             }catch (Exception ex){
                 throw new RuntimeException("新增数据失败！");
             }
-            jobIdList.add(job.getJobId().toString());
         }
         String jobIdStr = jobIdList.stream().collect(Collectors.joining(","));
         sty.setJobRelationId(jobIdStr);
@@ -812,7 +849,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 调用目标字符串
                     job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
                     // corn表达式
-                    String cronDate = CronUtil.CronDate(startTime);
+                    String cronDate = CronUtil.DateConvertCron(startTime);
                     job.setCronExpression(cronDate);
                     // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
                     job.setMisfirePolicy("1");
@@ -842,7 +879,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 调用目标字符串
                     job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
                     // corn表达式
-                    String cronDate = CronUtil.CronDate(endTime);
+                    String cronDate = CronUtil.DateConvertCron(endTime);
                     job.setCronExpression(cronDate);
                     // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
                     job.setMisfirePolicy("1");

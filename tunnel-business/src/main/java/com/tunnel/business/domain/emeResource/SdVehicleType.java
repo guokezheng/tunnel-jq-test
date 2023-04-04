@@ -30,6 +30,16 @@ public class SdVehicleType extends BaseEntity
     @Excel(name = "重点车辆")
     private String iskeyVehicle;
 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
     public void setId(Long id)
     {
         this.id = id;

@@ -87,22 +87,27 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public List<SdTaskList> selectSdTaskListList(SdTaskList sdTaskList)
     {
-        List<SdTaskList> taskLists = new ArrayList<>();
-        if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&&TaskStatus.YICHAOSHI.getCode().equals(sdTaskList.getTaskStatus())) {
-            //已超时
-            List<SdTaskList> taskListsAll = sdTaskListMapper.selectChaoshiSdTaskListList(sdTaskList);
-            if(taskListsAll!=null&&taskListsAll.size() >0){
-                taskLists = getChaoshiTaskList(taskListsAll);
-            }
-
-        }else{
-            taskLists = sdTaskListMapper.selectSdTaskListList(sdTaskList);
-            for(int i = 0;i<taskLists.size();i++){
+//        List<SdTaskList> taskLists = new ArrayList<>();
+//        taskLists = sdTaskListMapper.selectSdTaskListList(sdTaskList);
+//        String state  = "0,1";
+//        if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&&state.equals(sdTaskList.getTaskStatus())){
+//            List<SdTaskList> taskListsAll = taskLists;
+//            if(taskListsAll!=null&&taskListsAll.size() >0){
+//                taskLists = getChaoshiTaskList(taskListsAll);
+//            }
+//        }else{
+//            for(int i = 0;i<taskLists.size();i++){
+//                if(taskLists.get(i).getTaskStatus()!=null&&!"".equals(taskLists.get(i).getTaskStatus())){
+//                    taskListStatus(taskLists.get(i));
+//                }
+//            }
+//        }
+        List<SdTaskList> taskLists = sdTaskListMapper.selectSdTaskListList(sdTaskList);
+        for(int i = 0;i<taskLists.size();i++){
                 if(taskLists.get(i).getTaskStatus()!=null&&!"".equals(taskLists.get(i).getTaskStatus())){
                     taskListStatus(taskLists.get(i));
                 }
             }
-        }
         return taskLists;
 
     }

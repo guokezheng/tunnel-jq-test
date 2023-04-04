@@ -7,6 +7,7 @@
       width="44%"
       :before-close="handleClose"
     >
+    <div class="dialogCloseButton"></div>
       <el-card class="box-card">
         <div
           v-on:ondragenter="ondragenter"
@@ -652,6 +653,9 @@ export default {
         this.devicePixelBoolean = false;
         (this.boardWidth = "400"), (this.boardHeight = "40");
       }
+      // type 1:待下发信息  2:信息模板 
+      // mode 1:工作台弹窗跳转 2：情报板管理跳转
+
       this.infoType = type;
       if (mode == 1 || type == 1) {
         this.categoryRules = false;
@@ -788,22 +792,30 @@ export default {
     // },
     // 表单提交
     async dataFormSubmitHandle() {
-      let valid = await this.$refs.dataForm.validate().catch(() => {
-        return this.$modal.msgError("校验错误");
-      });
-      if (!valid) return;
+      // let valid = await this.$refs.dataForm.validate().catch(() => {
+      //   return this.$modal.msgError("校验错误");
+      // });
+      // if (!valid) return;
+      if(!this.dataForm.CONTENT.trim()){
+        return this.$modal.msgError("当前输入内容为空");
+      }else if(!this.dataForm.category && this.infoType == 2){
+        return this.$modal.msgError("情报板所属类别不能为空");
+      }
       //走接口检验内容是否包含敏感字段
       checkIotBoardContent(this.dataForm.CONTENT).then((response) => {
         if (response.data == 0) {
           return this.$modal.msgError("当前发布内容包含敏感字段，请修改");
-        } else {
+        } else if(response.data == 2){
+          return this.$modal.msgError("当前输入内容为空");
+        }
+        else {
           this.loading = true;
           // let templateId = "";
           let method = "put";
           if (this.isAdd) {
             console.log(this.dataForm, "this.dataForm新增组件");
             console.log(this.devicePixelBoolean, "this.devicePixelBoolean");
-            if (this.infoType != 2) {
+            if (this.infoType == 1) {
               // 不走接口 存到待下发信息里
               this.dataForm.STAY = Number(this.dataForm.STAY) * 100;
               this.$emit("addInfo", this.dataForm);

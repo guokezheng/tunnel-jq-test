@@ -372,4 +372,11 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<SdDevices> verifyEqNameOnly(@Param("eqId") String eqId,@Param("eqName") String eqName);
+	/**
+	 * 查询设备名称是否重复
+	 * @param eqTunnelId 所属隧道 ID
+	 * @param eqName 设备名称
+	 * @return
+	 */
+	List<SdDevices> tunnelEqNameOnly(@Param("eqTunnelId") String eqTunnelId,@Param("eqName") String eqName);
 }

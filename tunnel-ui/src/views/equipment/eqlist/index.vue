@@ -673,7 +673,7 @@
           </el-col> -->
         </el-row>
       </el-form>
-      <div class="dialog-footer">
+      <div class="dialog-footer" slot="footer">
         <el-button
           class="submitButton"
           :loading="submitFormLoading"
@@ -802,6 +802,7 @@
       append-to-body
       class="zxc"
     >
+    <div class="dialogCloseButton"></div>
       <el-upload
         ref="upload"
         :limit="1"
@@ -1545,7 +1546,7 @@ export default {
           return delDevices(eqIds);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function () {});
@@ -1591,7 +1592,7 @@ export default {
     importTemplate() {
       /* exportDevicesTemplate()*/
       /*.then((response) => {*/
-      this.$download.name("sbsj.xlsx", false);
+      this.$download.nameXlsx("sbsj.xlsx", false);
       /*});*/
     },
     handleCheckChange(val) {

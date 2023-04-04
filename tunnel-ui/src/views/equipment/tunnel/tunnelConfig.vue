@@ -338,7 +338,7 @@ export default {
   },
   watch: {
     deleteVisible(value) {
-      debugger
+      // debugger
       if (value) {
         document.body.addEventListener("click", this.closeMenu);
       } else {
@@ -360,7 +360,7 @@ export default {
     };
     //鼠标右键
     window.oncontextmenu = function (e) {
-      debugger
+      // debugger
       e.preventDefault(); //取消默认右键
       if (e.target.localName == "image") {
         // debugger
@@ -379,7 +379,7 @@ export default {
       console.log("sssss"+oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX)
       if(e.pageY-oDiv.getBoundingClientRect().top <5||e.pageX-oDiv.getBoundingClientRect().left <5||oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX<5
         ||oDiv.clientHeight+oDiv.getBoundingClientRect().top-e.pageY<5){
-        debugger
+        // debugger
         let num = "";
         let selectedIconLists = JSON.parse(JSON.stringify(that.selectedIconList))
         that.deleteObjs = e.target.snap;
@@ -393,13 +393,13 @@ export default {
             num = i
           }
         }
-          debugger
+          // debugger
         console.log(selectedIconLists[num])
         console.log( that.eqTypeList)
         let selectedIcon = that.eqTypeList.find(item=> item.typeId ==selectedIconLists[num].eqType);
         console.log( selectedIcon)
         that.getEquipment(selectedIconLists[num],selectedIcon)
-        debugger
+        // debugger
       }
     };
   },
@@ -890,7 +890,7 @@ export default {
     },
     /* 点击删除*/
     deleteImage() {
-      debugger
+      // debugger
       console.log("我右键删除了",this.direction,img);
       if (this.direction == 1) {
         this.upList.splice(this.deleteIndex, 1, {});
@@ -995,7 +995,7 @@ export default {
     getEquipment(item, eqType) {
       console.log(item, eqType, "选择设备");
       console.log(this.selectedIconList)
-      debugger
+      // debugger
       var url = eqType.url;
       var iconWidth = Number(eqType.iconWidth);
       var iconHeight = Number(eqType.iconHeight);
@@ -1436,16 +1436,7 @@ export default {
             top: event.pageY - innerOffsetY,
             left: event.pageX - innerOffsetX,
           };
-          console.log(innerOffsetY,"innerOffsetY")
-          console.log(innerOffsetX,"innerOffsetX")
-
-          if(pos.top<=295 || pos.left<87){
-          console.log(pos,"pos")
-            console.log(event,"event")
-            event.pageY = 295
-            // event.sourceEvent.stopPropagation();
-            return
-          }
+        
           //outerHeight、outerWidth：整个浏览器的高度、宽度
 
           var w = event.pageX - 1; //改

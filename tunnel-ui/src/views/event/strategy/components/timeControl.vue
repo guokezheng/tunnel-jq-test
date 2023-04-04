@@ -40,7 +40,7 @@
             <el-select
               clearable
               v-model="strategyForm.direction"
-              placeholder="请选择方向"
+              placeholder="请选择隧道方向"
               @change="changeEvent()"
               style="width: 100%"
             >
@@ -91,113 +91,113 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row class="planBox">
-        <el-form-item
-          v-for="(dain, index) in strategyForm.autoControl"
-          :key="index"
-        >
-          <el-col :span="6" style="padding-left:0">
-            <el-select
-              v-model="dain.equipmentTypeId"
-              placeholder="请选择设备类型"
-              clearable
-              @change="changeEquipmentType(index)"
-              style="width:100%;"
-            >
-              <el-option
-                v-for="item in dain.equipmentTypeData"
-                :key="item.typeId"
-                :label="item.typeName"
-                :value="item.typeId"
-              />
-            </el-select>
-          </el-col>
-          <el-col :span="6">
-            <el-select
-              v-model="dain.equipments"
-              multiple
-              collapse-tags
-              placeholder="请选择设备"
-              @change="qbgChange(index, dain.equipments)"
-              style="width:100%;"
-            >
-              <el-option
-                v-for="item in dain.equipmentData"
-                :key="item.eqId"
-                :label="item.eqName"
-                :value="item.eqId"
-                :disabled="item.disabled"
-              />
-            </el-select>
-          </el-col>
-          <el-col
-            :span="10"
-            v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
+      <el-row :gutter="20">
+        <el-col :span="24">
+          <el-form-item
+            v-for="(dain, index) in strategyForm.autoControl"
+            :key="index"
           >
-            <el-col :span="12">
+            <el-col :span="6" style="padding-left:0">
               <el-select
-                v-model="dain.openState"
-                placeholder="启动指令"
-                style="width: 100%"
+                v-model="dain.equipmentTypeId"
+                placeholder="请选择设备类型"
+                clearable
+                @change="changeEquipmentType(index)"
+                style="width:100%;"
               >
                 <el-option
-                  v-for="(item, indx) in dain.eqStateList"
-                  :key="item.deviceState"
-                  :label="item.stateName"
-                  :value="item.deviceState"
-                >
-                </el-option>
+                  v-for="item in dain.equipmentTypeData"
+                  :key="item.typeId"
+                  :label="item.typeName"
+                  :value="item.typeId"
+                />
               </el-select>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <el-select
-                v-model="dain.closeState"
-                placeholder="关闭指令"
-                style="width: 100%"
+                v-model="dain.equipments"
+                multiple
+                collapse-tags
+                placeholder="请选择设备"
+                @change="qbgChange(index, dain.equipments)"
+                style="width:100%;"
               >
                 <el-option
-                  v-for="(item, indx) in dain.eqStateListFan"
-                  :key="item.deviceState"
-                  :label="item.stateName"
-                  :value="item.deviceState"
-                >
-                </el-option>
+                  v-for="item in dain.equipmentData"
+                  :key="item.eqId"
+                  :label="item.eqName"
+                  :value="item.eqId"
+                  :disabled="item.disabled"
+                />
               </el-select>
             </el-col>
-          </el-col>
-          <el-col
-            :span="10"
-            v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
-          >
-            <el-cascader
-              style="width: 100%"
-              :props="checkStrictly"
-              v-model="dain.state"
-              :options="dain.templatesList"
-              :show-all-levels="false"
-              clearable
-              collapse-tags
-              @change="handleChange"
-            ></el-cascader>
-          </el-col>
-          <el-col :span="2" class="buttonBox">
-            <el-button
-              class="delete"
-              @click="removeItem(index)"
-            ></el-button>
-            <el-button
-              class="add"
-              @click="addItem"
-            ></el-button>
-          </el-col>
-        </el-form-item>
+            <el-col :span="10"
+                    v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
+            >
+              <el-col :span="12">
+                <el-select
+                  v-model="dain.openState"
+                  placeholder="启动指令"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(item, indx) in dain.eqStateList"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="12">
+                <el-select
+                  v-model="dain.closeState"
+                  placeholder="关闭指令"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="(item, indx) in dain.eqStateListFan"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+            </el-col>
+            <el-col :span="10"
+                    v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
+            >
+              <el-cascader
+                style="width: 100%"
+                :props="checkStrictly"
+                v-model="dain.state"
+                :options="dain.templatesList"
+                :show-all-levels="false"
+                clearable
+                collapse-tags
+                @change="handleChange"
+              ></el-cascader>
+            </el-col>
+            <el-col :span="2" class="buttonBox">
+              <el-button
+                class="delete"
+                @click="removeItem(index)"
+              ></el-button>
+              <el-button
+                class="add"
+                @click="addItem"
+              ></el-button>
+            </el-col>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-form-item class="dialog-footer">
         <el-button class="submitButton" @click="submitStrategyForm"
-          >提交</el-button
+        >提交</el-button
         >
         <el-button class="closeButton" @click="strategyFormClose"
-          >取 消</el-button
+        >取 消</el-button
         >
       </el-form-item>
     </el-form>
@@ -289,7 +289,7 @@ export default {
       equipmentTypeData: [], //设备类型列表
       equipmentData: [], //设备列表
       formDataValidator: {
-        direction: [{ required: true, message: "请选择方向", trigger: "blur" }],
+        direction: [{ required: true, message: "请选择隧道方向", trigger: "blur" }],
         tunnelId: [
           { required: true, message: "请选择隧道", trigger: "change" },
         ],
@@ -313,7 +313,6 @@ export default {
           this.strategyForm.jobRelationId = res;
         });
       }
-      this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
@@ -392,10 +391,19 @@ export default {
               "eqStateListFan",
               attr.eqStateList
             );
-            listDevices({
+
+            let params = {
               eqType: attr.eqTypeId,
               eqTunnelId: this.strategyForm.tunnelId,
               eqDirection: this.strategyForm.direction, //方向
+            };
+
+            // 选择双向，则不进行接口过滤条件
+            if(this.strategyForm.direction == -1){
+              params.eqDirection = null;
+            }
+            listDevices({
+              params
             }).then((res) => {
               this.$set(autoControl, "equipmentData", res.rows);
             });
@@ -431,7 +439,7 @@ export default {
           let autoControl = this.strategyForm.autoControl;
           let response = JSON.parse(JSON.stringify(autoControl))
           let result = response.every(function (item) {
-              return item.equipmentTypeId != "" || item.closeState != "" || item.openState != ""
+            return item.equipmentTypeId != "" || item.closeState != "" || item.openState != ""
           });
           if(!result){
             return this.$modal.msgError("请填写完整");
@@ -443,7 +451,7 @@ export default {
           //     item.equipments == '' ||
           //     item.closeState == "" || item.openState == ""
           //   ) {
-              
+
           //   }
           // })
           if (this.sink == "edit") {
@@ -502,11 +510,17 @@ export default {
       this.$set(this.strategyForm.autoControl[index], "openState", "");
       this.$set(this.strategyForm.autoControl[index], "closeState", "");
       this.$set(this.strategyForm.autoControl[index], "equipments", null);
+
+
       let params = {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
         eqDirection: this.strategyForm.direction, //方向
       };
+      // 选择双向，则不进行接口过滤条件
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
       listDevices(params).then((res) => {
         this.$set(
           this.strategyForm.autoControl[index],
@@ -527,6 +541,10 @@ export default {
         direction: direction,
         isControl: 1,
       };
+      // 选择双向，则不进行接口过滤条件
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
       listEqTypeStateIsControl(params).then((response) => {
         this.strategyForm.autoControl[index].eqStateList = response.rows;
         this.strategyForm.autoControl[index].eqStateListFan = response.rows;
@@ -559,41 +577,31 @@ export default {
     },
     // 改变设备类型或者方向
     changeEvent(value) {
-      //给设备名称重新赋值
-      // let params = {
-      //   eqType: this.strategyForm.equipmentTypeId, //设备类型
-      //   eqTunnelId: this.strategyForm.tunnelId, //隧道
-      //   eqDirection: this.strategyForm.direction, //方向
-      // };
-      // listDevices(params).then((res) => {
-      //   this.equipmentData = res.rows;
-      //   console.log(this.equipmentData, "设备列表");
-      // });
-      // // 如果改变隧道||设备类型||方向，重置设备和执行状态
-      // if (
-      //   this.strategyForm.autoControl.length >= 1 ||
-      //   this.strategyForm.autoControl[0].value != ""
-      // ) {
-      //   this.strategyForm.autoControl = [
-      //     {
-      //       value: "",
-      //       state: "",
-      //       type: "",
-      //       controlTime: "",
-      //     },
-      //   ];
-      // }
-      if (value == "1") {
-        this.listEqTypeStateIsControl();
+      console.log("当前选中了隧道："+this.strategyForm.tunnelId+"，方向：" + this.strategyForm.direction);
+      // 重置设备列表
+      this.strategyForm.autoControl = [
+        { state: "", value: "", equipmentTypeId: "" },
+      ];
+      if(this.strategyForm.tunnelId.length !=0 && this.strategyForm.direction.length !=0){
+
+        this.getEquipmentType();
       }
     },
     selectEqName() {
       this.rest();
-      // 选择设备名称赋值
-      listDevices({
+
+      let params = {
         eqType: this.strategyForm.triggers.deviceTypeId,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+      };
+      // 选择双向，则不进行接口过滤条件
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
+      // 选择设备名称赋值
+      listDevices({
+        params
       }).then((res) => {
         this.getListItem();
         this.equipmentData = res.rows;
@@ -625,29 +633,37 @@ export default {
     },
     // 添加执行操作
     addItem() {
-      let list = this.strategyForm.autoControl;
-      var flag = list.every(function (item) {
-        return item.value != "" || item.state != "" || item.type != "";
+      this.$refs["timeControl"].validate((valid) => {
+        if (valid) {
+       /*   let dataLength = this.strategyForm.autoControl.length-1;
+
+          console.log()
+          if(
+
+            (!this.strategyForm.autoControl[dataLength].state || this.strategyForm.autoControl[dataLength].state.length)
+
+          )
+
+            this.$modal.msgError("请先完成当前操作，再继续添加！");
+            return;;
+          }*/
+            this.addCf();
+            /*    if (this.strategyForm.autoControl.length == 2) {
+                  return this.$modal.msgError("最多添加2条数据");
+                }*/
+            this.strategyForm.autoControl.push({
+              value: "", //设备
+              openState: "", //状态
+              closeState: "",
+              type: "", //设备分类
+              equipmentTypeId: "", //设备类型
+              equipment: [], //设备列表
+              eqStateList: [], //执行开启操作
+              eqStateListFan: [], //关闭
+            });
+            this.getEquipmentType();
+        }
       });
-      console.log(flag);
-      // if (flag == false) {
-      //   return this.$modal.msgError("请选择设备并添加执行操作");
-      // }
-      this.addCf();
-      if (this.strategyForm.autoControl.length == 2) {
-        return this.$modal.msgError("最多添加2条数据");
-      }
-      this.strategyForm.autoControl.push({
-        value: "", //设备
-        openState: "", //状态
-        closeState: "",
-        type: "", //设备分类
-        equipmentTypeId: "", //设备类型
-        equipment: [], //设备列表
-        eqStateList: [], //执行开启操作
-        eqStateListFan: [], //关闭
-      });
-      this.getEquipmentType();
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
@@ -658,10 +674,19 @@ export default {
     },
     listDevices() {
       var eqType = this.eqForm.equipment_type;
-      listDevices({
+
+      let params = {
         eqType: eqType,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+      };
+      // 选择双向，则不进行接口过滤条件
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
+
+      listDevices({
+        params
       }).then((res) => {
         let data = res.rows;
         this.equipmentData = data;
@@ -670,26 +695,24 @@ export default {
     },
     // 去重，已选择设备增加disable
     addCf() {
-      listDevices({
+
+      let params = {
         eqType: this.strategyForm.equipmentTypeId,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+      };
+      // 选择双向，则不进行接口过滤条件
+      if(this.strategyForm.direction == -1){
+        params.eqDirection = null;
+      }
+      listDevices({
+        params
       }).then((res) => {
         let data = res.rows;
         this.equipmentData = data;
       });
     },
-    // 打开选择设备弹窗
-    openEqDialog2(event, index) {
-      this.selectIndex = index;
-      if (this.strategyForm.autoControl[index].type == "") {
-        this.equipmentData = [];
-      }
-      this.eqForm.equipments = this.strategyForm.autoControl[index].value;
-      this.eqForm.equipment_type = this.strategyForm.autoControl[index].type;
-      this.getEquipmentType();
-      this.chooseEq = true;
-    },
+
     // 查询设备可控状态
     // listEqTypeStateIsControl() {
     //   var stateTypeId = this.strategyForm.equipmentTypeId;
@@ -735,7 +758,13 @@ export default {
     getDirection() {
       this.getDicts("sd_direction").then((response) => {
         this.directionOptions = response.data;
-        console.log(this.directionOptions, "方向");
+        let data = {
+          "value": "-1",
+          "dictLabel":"双向",
+          "dictValue":"-1"
+        }
+        this.directionOptions.push(data);
+
       });
     },
     /** 查询设备类型列表 */

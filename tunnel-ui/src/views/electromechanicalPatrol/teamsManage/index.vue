@@ -217,6 +217,7 @@
       append-to-body
       v-dialogDrag
     >
+    <div class="dialogCloseButton"></div>
       <el-row
         :gutter="20"
         style="margin: 10px 5px 6px;display: flex"
@@ -302,22 +303,20 @@
     <!-- 添加用户弹窗对话框 -->
     <el-dialog
       title="选择用户"
-      class="workbench-dialog batch-table operationDiglog explain-table"
+      class="operationDiglog explain-table"
       :visible.sync="teamsUserSelect"
       width="800px"
       append-to-body
       v-dialogDrag
     >
-      <el-row
-        :gutter="20"
-        style="margin: 10px 5px 6px;display: flex"
-      >
-        <el-col >
+    <div class="dialogCloseButton"></div>
+      <el-row class="topFormRow">
+        <el-col :span="6">
           <el-button size="small" @click="resetQueryUnUser"
           >刷新</el-button
           >
         </el-col>
-        <el-col>
+        <el-col :span="10" :offset="8">
           <div class="grid-content bg-purple" ref="main">
             <el-input
               placeholder="请输入用户昵称、手机号码，回车搜索"
@@ -732,6 +731,7 @@ export default {
         this.$modal.msgSuccess(res.msg);
         if (res.code === 200) {
           this.teamsUserSelect = false;
+          this.multiple = true
           this.getUserList();
           this.$emit("ok");
         }

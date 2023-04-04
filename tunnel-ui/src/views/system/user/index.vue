@@ -817,6 +817,7 @@ export default {
       if(this.ids.length>0){
         confirmInfo = "是否确认导出所选的用户管理数据项？";
       }
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
         .confirm(confirmInfo)

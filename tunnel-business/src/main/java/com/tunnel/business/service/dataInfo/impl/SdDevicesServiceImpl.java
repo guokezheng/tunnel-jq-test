@@ -993,4 +993,10 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevices> verifyEqNameOnly(String eqId,String eqName) {
         return sdDevicesMapper.verifyEqNameOnly(eqId,eqName);
     }
+
+
+    @Override
+    public List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName) {
+        return sdDevicesMapper.tunnelEqNameOnly(eqTunnelId,eqName);
+    }
 }

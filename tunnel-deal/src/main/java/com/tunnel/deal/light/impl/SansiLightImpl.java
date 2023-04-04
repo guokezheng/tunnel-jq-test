@@ -1,6 +1,7 @@
 package com.tunnel.deal.light.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -11,10 +12,12 @@ import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.deal.light.Light;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import sun.misc.BASE64Encoder;
@@ -22,6 +25,7 @@ import sun.misc.BASE64Encoder;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class SansiLightImpl implements Light {
@@ -41,6 +45,9 @@ public class SansiLightImpl implements Light {
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
 
+    @Autowired
+    public RedisTemplate redisTemplate;
+
     /**
      * 登录获取会话ID
      * 用户名/密码默认是：admin/admin123
@@ -51,7 +58,6 @@ public class SansiLightImpl implements Light {
     public String login(String username, String password, String baseUrl) {
         Response response = null;
         try {
-
             byte[] textByte = password.getBytes("UTF-8");
             String encode = new BASE64Encoder().encode(textByte);
             String data = "{\"username\":\"" + username + "\",\"password\":\"" + encode + "\"}";
@@ -64,7 +70,7 @@ public class SansiLightImpl implements Light {
 
         } catch (IOException e) {
             e.printStackTrace();
-            return "";
+            return "99";
         }
         JSONObject jo = JSONObject.parseObject(  response.body().toString());
         return  jo.getJSONObject("data").getString("id");
@@ -145,7 +151,18 @@ public class SansiLightImpl implements Light {
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
         //获取三思Cookie
-        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+        String jessionId = "";
+        String sanSiToken = (String)redisTemplate.opsForValue().get("sanSiToken");
+        if(StringUtils.isNotEmpty(sanSiToken)){
+            jessionId = sanSiToken;
+        }else{
+            jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+            if(StringUtils.isNotEmpty(jessionId)){
+                //默认设置两小时
+                redisTemplate.opsForValue().set("sanSiToken",jessionId,2, TimeUnit.HOURS);
+            }
+        }
+
 
         //灯开关
         int switchType = updateSwitch(jessionId, baseUrl, baseUrl, openClose);

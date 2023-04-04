@@ -1172,7 +1172,7 @@ export default {
     // 设备方向字典翻译
     directionFormat(row, column) {
       let directionFormat = this.selectDictLabel(this.directionOptions, row.direction);
-      return directionFormat.length>0?directionFormat:'双向方向';
+      return directionFormat.length>0?directionFormat:'双向';
     },
     //选择设备提交按钮
     submitChooseEqForm() {

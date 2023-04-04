@@ -38,6 +38,13 @@ public interface ISdOperationLogService {
     int insertSdOperationLog(SdOperationLog sdOperationLog);
 
     /**
+     * 批量新增
+     * @param list
+     * @return
+     */
+    int insertBatchSdOperationLog(List<SdOperationLog> list);
+
+    /**
      * 修改操作日志
      *
      * @param sdOperationLog 操作日志

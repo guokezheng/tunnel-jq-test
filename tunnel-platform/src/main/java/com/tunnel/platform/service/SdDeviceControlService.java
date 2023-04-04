@@ -268,7 +268,7 @@ public class SdDeviceControlService {
             Long templateId = Long.parseLong(map.get("templateId").toString());
 
             //控制情报板
-            controlInformationBoard(controlState, isopen, templateId, sdDevices, state);
+            controlState = controlInformationBoard(controlState, isopen, templateId, sdDevices, state);
 
             sdOperationLog.setState(String.valueOf(controlState));
         } else if (sdDevices != null

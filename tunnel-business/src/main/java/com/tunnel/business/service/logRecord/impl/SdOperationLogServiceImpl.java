@@ -66,6 +66,11 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
         return sdOperationLogMapper.insertSdOperationLog(sdOperationLog);
     }
 
+    @Override
+    public int insertBatchSdOperationLog(List<SdOperationLog> list) {
+        return sdOperationLogMapper.insertBatchSdOperationLog(list);
+    }
+
     /**
      * 修改操作日志
      *

@@ -156,6 +156,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
     </insert>
 
+    <insert id="insertBatchSdOperationLog" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_operation_log
+        (eq_type_id,
+        tunnel_id,
+        user_name,
+        eq_id,
+        code,
+        create_by,
+        create_time,
+        update_by,
+        update_time,
+        before_state,
+        operation_state,
+        control_type,
+        state,
+        description,
+        oper_ip,
+        event_id)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.eqTypeId},
+            #{item.tunnelId},
+            #{item.userName},
+            #{item.eqId},
+            #{item.code},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.updateBy},
+            #{item.updateTime},
+            #{item.beforeState},
+            #{item.operationState},
+            #{item.controlType},
+            #{item.state},
+            #{item.description},
+            #{item.operIp},
+            #{item.eventId}
+            )
+        </foreach>
+    </insert>
+
     <update id="updateSdOperationLog" parameterType="SdOperationLog">
         update sd_operation_log
         <set>

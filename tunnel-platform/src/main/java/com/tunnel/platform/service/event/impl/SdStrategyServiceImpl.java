@@ -26,6 +26,7 @@ import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -1176,16 +1177,60 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int implementProcess(Long processId,Long eventId) {
         SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
         SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
-        Map flowParam = new HashMap();
-        flowParam.put("eventId",eventId);
-        flowParam.put("content",process.getProcessName());
         int issueResult = issuedDevice(rl,eventId,"4");
+        String deviceExecutionState = getDeviceExecutionState(rl, process);
         if(issueResult>0){
-            sdEventFlowService.savePlanProcessFlow(flowParam);
+            //保存处置记录
+            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "成功");
             //更新事件处置记录表状态
             updateHandleState(processId,eventId);
+        }else {
+            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "失败");
         }
         return issueResult;
+    }
+
+    /**
+     * 获取状态、模板、文件名称
+     * @param sdStrategyRl
+     * @param sdReserveProcess
+     * @return
+     */
+    public String getDeviceExecutionState(SdStrategyRl sdStrategyRl, SdReserveProcess sdReserveProcess){
+        //状态、模板、文件名称
+        String eqStateData = "";
+        //设备类型
+        Long eqType = Long.valueOf(sdStrategyRl.getEqTypeId());
+        SdEventMapper sdEventMapper = SpringUtils.getBean(SdEventMapper.class);
+        if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
+            //查询情报板
+            String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
+            eqStateData = sdVmsContent.get("content").toString().concat("------");
+        }else if(eqType == DevicesTypeEnum.LS.getCode()){
+            //截取广播文件名称
+            String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            List<String> list = Arrays.asList(lsData.split("\\\\"));
+            eqStateData = list.get(list.size() - 1).concat("------");
+        }else {
+            //查询普通设备状态
+            List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(sdReserveProcess);
+            eqStateData = maps.get(0).get("stateName").toString().concat("------");
+        }
+        return eqStateData;
+    }
+
+    /**
+     * 保存处置记录
+     * @param eventId
+     * @param content
+     * @return
+     */
+    public void setEventFlowData(Long eventId, String content){
+        Map flowParam = new HashMap();
+        flowParam.put("eventId",eventId);
+        flowParam.put("content",content);
+        sdEventFlowService.savePlanProcessFlow(flowParam);
     }
 
     @Override

@@ -73,7 +73,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.before_state,
         a.operation_state,
         IFNULL(e.state_name,a.operation_state) state_name,
-        CASE a.control_type WHEN 1 THEN '时间控制' WHEN 2 THEN '光强控制' ELSE '手动' END AS control_type ,
+        a.control_type,
+--         CASE a.control_type WHEN 1 THEN '时间控制' WHEN 2 THEN '光强控制' ELSE '手动' END AS control_type ,
         CASE a.state WHEN 0 THEN '失败' WHEN 1 THEN '成功' END AS state,
         a.description,
         a.oper_ip
@@ -96,10 +97,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="state != null  and state != ''"> and a.state = #{state}</if>
         <if test="description != null  and description != ''"> and a.description = #{description}</if>
         <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-            and date_format(a.create_time,'%Y-%m-%d %H:%i:%s') &gt;= date_format(#{params.beginTime},'%Y-%m-%d %H:%i:%s')
+            and date_format(a.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
         </if>
         <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-            and date_format(a.create_time,'%Y-%m-%d %H:%i:%s') &lt;= date_format(#{params.endTime},'%Y-%m-%d %H:%i:%s')
+            and date_format(a.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
         </if>
         <if test="params.deptId != null and params.deptId != ''">
             AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))

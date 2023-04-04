@@ -91,7 +91,7 @@
             v-model="dateRange"
             size="small"
             style="width: 100%"
-            value-format="yyyy-MM-dd HH-mm-ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="datetimerange"
             range-separator="-"
             start-placeholder="开始日期"
@@ -253,7 +253,7 @@
             v-model="dateRange"
             size="small"
             style="width: 100%"
-            value-format="yyyy-MM-dd HH-mm-ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="datetimerange"
             range-separator="-"
             start-placeholder="开始日期"
@@ -380,7 +380,12 @@
         prop="stateName.stateName"
         :formatter="operationStateFormat"
       />
-      <el-table-column label="控制方式" align="center" prop="controlType" />
+      <el-table-column label="控制方式" align="center" prop="controlType" >
+      <template slot-scope="scope">
+        <dict-tag :options="dict.type.sd_control_type" :value="scope.row.controlType"/>
+<!--        <dict-tag :options="controlTypeOptions" :value="scope.row.controlType"/>-->
+      </template>
+      </el-table-column>
       <el-table-column label="操作结果" align="center" prop="state" />
       <el-table-column label="操作地址" align="center" prop="operIp" />
       <el-table-column
@@ -426,7 +431,7 @@ import { exportLogininfor1, listLog } from "@/api/system/log";
 
 export default {
   name: "Logininfor",
-  dicts: ["sys_common_status, sd_control_type","sd_direction"],
+  dicts: ["sys_common_status","sd_control_type","sd_direction"],
   data() {
     return {
       activeName: "1",
@@ -645,7 +650,6 @@ export default {
         }
         listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
           (response) => {
-            console.log(response, "000000");
             this.logList = response.rows;
             this.total = response.total;
             this.loading = false;
@@ -756,7 +760,6 @@ export default {
 
     /** 操作日志导出按钮操作 */
     handleExport1() {
-      debugger
       let confirmInfo ="是否确认导出所有的操作日志数据项？";
       if(this.ids.length>0){
         confirmInfo = "是否确认导出所选的操作日志数据项？";

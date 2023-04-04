@@ -489,7 +489,7 @@
         SELECT
             e.id,
             e.event_description AS eventDescription,
-            et.event_type AS eventTypeName,
+            et.simplify_name AS eventTypeName,
             sdd.dict_label AS eventGrade,
             e.update_by AS updateBy,
             e.update_time AS updateTime,
@@ -502,8 +502,13 @@
                 END stakeNum,
             CASE
                 WHEN (e.event_state = '0' or e.event_state = '1') THEN
-                    '突发事件处置' ELSE sdd1.dict_label
-                END eventState
+                    '突发事件处置'
+                WHEN e.event_state = '4' THEN
+                    '确认(已处理)'
+                WHEN e.event_state = '2' THEN
+                    '挂起(稍后处理)' ELSE sdd1.dict_label
+                END eventState,
+            CONCAT(sdd2.dict_label,'/', e.lane_no) as laneNo
         FROM
             sd_event e
                 LEFT JOIN sd_event_type et ON e.event_type_id = et.id

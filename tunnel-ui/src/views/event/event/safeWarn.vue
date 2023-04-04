@@ -226,6 +226,7 @@
                 <video :src="item.imgUrl"
                        :poster="item.imgUrl" v-if="index == 0"
                        @click="openPicDialog(eventFormDetail)"
+                       class="leftVideo"
                        autoplay muted loop>
                 </video>
                 <img :src="item.imgUrl" style="width:100%;height:100%;"
@@ -256,20 +257,23 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div style="padding:15px 0;">实时视频<span>(事发位置最近的监控视频)</span></div>
-          <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
-            <el-carousel-item v-for="(item, index) in videoList" :key="index" >
-              <videoPlayer
-                v-if="item.liveUrl != null && item.liveUrl != ''"
-                :rtsp="item.liveUrl"
-                :open="cameraPlayer"
-              ></videoPlayer>
-            </el-carousel-item>
-          </el-carousel>
-          <el-image
-            v-if="videoList.length < 1"
-            :src="noDataUrl"
-            :fit="contain">
-          </el-image>
+          <div class="picBox">
+            <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
+              <el-carousel-item v-for="(item, index) in videoList" :key="index" >
+                <videoPlayer
+                  v-if="item.liveUrl != null && item.liveUrl != ''"
+                  :rtsp="item.liveUrl"
+                  :open="cameraPlayer"
+                ></videoPlayer>
+              </el-carousel-item>
+            </el-carousel>
+            <el-image
+              v-if="videoList.length < 1"
+              :src="noDataUrl"
+              :fit="contain">
+            </el-image>
+          </div>
+
           <!-- 现场用这个 -->
           <!-- <video
             id="h5sVideo1"
@@ -818,7 +822,7 @@
                           :key="inx"
                           class="contentList"
                         >
-                          <div style="float: left">{{ itm.flowContent }}</div>
+                          <div style="float: left;width:80%;">{{ itm.flowContent }}</div>
                           <div class="yzx" v-show="itm.eventState != '0'">已执行</div>
                           <div class="wzx" v-show="itm.eventState == '0'" type="info">未执行</div>
                         </div>
@@ -2364,7 +2368,7 @@ export default {
   ::v-deep .el-carousel__arrow{background-color: rgba(31, 45, 61, 0.8);}
   ::v-deep .el-carousel__arrow:hover{background-color: rgba(31, 45, 61, 0.8);}
   .gallery-thumbs {
-    height: 20% !important;
+    height: 75px;
     box-sizing: border-box;
     padding: 10px 0;
   }
@@ -2571,11 +2575,16 @@ export default {
 
   .videoDialogBox {
     width: 100%;
-    height: 386px;
     display: flex;
     justify-content: space-between;
     align-items:center;
     position: relative;
+    .swiper-slide{
+      video{
+        width: 100%;
+        height: 100%;
+      }
+    }
     .processButton {
       position: absolute;
       top: 20px;
@@ -2596,11 +2605,11 @@ export default {
       width: 55% !important;
       padding: 0px 10px 10px 10px !important;
       margin-left: 10px;
-      // .video-box {
-      //   height: calc(90%) !important;
+      // ::v-deep .el-carousel__container{
+      //   height:378px;
       // }
-      ::v-deep .el-carousel__container{
-        height:315px;
+      .picBox{
+        height: calc(400px - 71px);
       }
       ::v-deep .el-image{
         height: 80%;
@@ -2618,9 +2627,9 @@ export default {
         color: #767676 !important;
         padding-left: 10px;
       }
-      video {
+      .leftVideo {
         width: 100%;
-        height: 73%;
+        height: 251px;
       }
       .picBox {
         width: 100%;

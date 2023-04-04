@@ -1220,7 +1220,7 @@ export default {
     resetQuery() {
       this.queryParams = {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: this.queryParams.pageSize,
         tunnelId: null,
         strategyName: null,
         strategyType: null,

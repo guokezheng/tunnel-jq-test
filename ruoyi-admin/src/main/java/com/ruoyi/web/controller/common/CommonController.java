@@ -70,6 +70,13 @@ public class CommonController
         }
     }
 
+    /**
+     * 公共方法 项目生成文件流导出
+     * @param fileName
+     * @param delete
+     * @param response
+     * @param request
+     */
     @GetMapping("common/downloadTo")
     public void fileDownloadTo(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request)
     {
@@ -96,6 +103,36 @@ public class CommonController
         }
     }
 
+    /**
+     * 公共方法 项目模板流导出
+     * @param fileName
+     * @param delete
+     * @param response
+     * @param request
+     */
+    @GetMapping("common/fileMbDownloadTo")
+    public void fileMbDownloadTo(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request)
+    {
+        try
+        {
+            InputStream fis = new ClassPathResource("exporttemplate/" + fileName).getInputStream();
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            response.reset();
+            // 先去掉文件名称中的空格,然后转换编码格式为utf-8,保证不出现乱码,这个文件名称用于浏览器的下载框中自动显示的文件名
+            response.setContentType("application/vnd.ms-excel");
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String("".getBytes("utf-8"),"iso8859-1"));
+            OutputStream os = new BufferedOutputStream(response.getOutputStream());
+            os.write(buffer);// 输出文件
+            os.flush();
+            os.close();
+        }
+        catch (Exception e)
+        {
+            log.error("下载文件失败", e);
+        }
+    }
     /**
      * 通用上传请求
      */

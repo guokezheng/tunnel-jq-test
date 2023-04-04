@@ -1592,7 +1592,7 @@ export default {
     importTemplate() {
       /* exportDevicesTemplate()*/
       /*.then((response) => {*/
-      this.$download.nameXlsx("sbsj.xlsx", false);
+      this.$download.nameXlsx("设备数据.xlsx", false);
       /*});*/
     },
     handleCheckChange(val) {

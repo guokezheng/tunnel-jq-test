@@ -326,7 +326,7 @@
                       <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
-                     
+
                       <div
                       v-show="
                           (item.eqType != 7 &&
@@ -896,7 +896,7 @@
             <div class="Time">
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
-                <el-time-picker 
+                <el-time-picker
                   v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
@@ -3135,7 +3135,7 @@
     <div class="dialogCloseButton"></div>
       <el-tabs v-model="strategyActive" @tab-click="handleClick">
         <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
-        <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>
+<!--        <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>-->
       </el-tabs>
       <el-row
         :gutter="20"
@@ -4999,7 +4999,7 @@ export default {
         }
       }else{
         this.timingStrategyDisabled = false
-      } 
+      }
     },
  //翻页时不刷新序号
     indexMethod(index){
@@ -5127,7 +5127,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     bodyCloseMenus2(e) {
@@ -5144,7 +5144,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     bodyCloseMenus3(e) {
@@ -5153,7 +5153,7 @@ export default {
         self.$nextTick(()=>{
           if (
             !self.$refs.main3.contains(e.target) &&
-            !self.$refs.cc3.contains(e.target) 
+            !self.$refs.cc3.contains(e.target)
           ) {
             if (self.sycz_boxShow3 == true) {
               self.sycz_boxShow3 = false;
@@ -5161,7 +5161,7 @@ export default {
           }
         })
       }
-      
+
 
     },
     otherClose(e) {

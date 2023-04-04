@@ -130,6 +130,7 @@
       <el-table
         v-loading="loading"
         :data="userList"
+        max-height="500"
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
       >
@@ -705,8 +706,12 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
+      // Object.keys(this.queryParams).forEach(key => {
+      //   this.queryParams[key] = ""
+      // })
       this.queryParams.userName = "";
       this.queryParams.deptId = ''
+      this.queryParams.ids = ''
       this.handleQuery();
     },
     // 多选框选中数据

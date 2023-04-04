@@ -19,6 +19,7 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import sun.misc.BASE64Encoder;
 
@@ -76,6 +77,12 @@ public class SansiLightImpl implements Light {
         return  jo.getJSONObject("data").getString("id");
     }
 
+    /**
+     * 三思调光方法
+     * @param deviceId
+     * @param bright
+     * @return
+     */
     @Override
     public int setBrightness(String deviceId, Integer bright) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
@@ -98,34 +105,13 @@ public class SansiLightImpl implements Light {
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
 
-        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
-
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        // 示例 "tunnelId=2&step=0&bright=98"
-        String url = baseUrl + "/api/adjustBrightness";
-        String content = "tunnelId=" + externalSystemTunnelId + "&step=" + step + "&bright=" + bright;
-        RequestBody body = RequestBody.create(mediaType, content);
-        Request request = new Request.Builder()
-                .url(url)
-                .method("POST", body)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addHeader("Cookie", jessionId)
-                .build();
-
-        String responseBody = "";
-        try {
-            Response response = client.newCall(request).execute();
-            //包含“发送成功"就可以
-            responseBody = response.body().string();
-        } catch (IOException e) {
-            return 0;
-        }
-        return responseBody.contains("发送成功") ? 1 : 0;
+        //获取三思Cookie
+        String jessionId = loginRedis(externalSystem, baseUrl);
+        return updateBrightness(jessionId, baseUrl, baseUrl, 1);
     }
 
     /**
-     * 照明灯开关控制
+     * 照明 灯开关 控制
      * @param deviceId
      * @param openClose
      * @return
@@ -151,19 +137,7 @@ public class SansiLightImpl implements Light {
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
         //获取三思Cookie
-        String jessionId = "";
-        String sanSiToken = (String)redisTemplate.opsForValue().get("sanSiToken");
-        if(StringUtils.isNotEmpty(sanSiToken)){
-            jessionId = sanSiToken;
-        }else{
-            jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
-            if(StringUtils.isNotEmpty(jessionId)){
-                //默认设置两小时
-                redisTemplate.opsForValue().set("sanSiToken",jessionId,2, TimeUnit.HOURS);
-            }
-        }
-
-
+        String jessionId = loginRedis(externalSystem, baseUrl);
         //灯开关
         int switchType = updateSwitch(jessionId, baseUrl, baseUrl, openClose);
         //亮度
@@ -175,6 +149,26 @@ public class SansiLightImpl implements Light {
         return switchType==1 && brightnessType==1 ? 1 : 0;
     }
 
+    /**
+     * token获取设置默认过期时间1天
+     * @param externalSystem
+     * @param baseUrl
+     * @return
+     */
+    public String loginRedis( ExternalSystem externalSystem ,String baseUrl){
+        String jessionId = "";
+        String sanSiToken = (String)redisTemplate.opsForValue().get("sanSiToken");
+        if(StringUtils.isNotEmpty(sanSiToken)){
+            jessionId = sanSiToken;
+        }else{
+            jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+            if(StringUtils.isNotEmpty(jessionId)){
+                //默认设置两小时
+                redisTemplate.opsForValue().set("sanSiToken",jessionId,1, TimeUnit.DAYS);
+            }
+        }
+        return jessionId;
+    }
     /**
      * 控制灯开关方法
      * @param jessionId cookit
@@ -249,6 +243,13 @@ public class SansiLightImpl implements Light {
         return responseBody.contains("pipelineId") ? 1 : 0;
     }
 
+    /**
+     * 批量控制等亮度方法
+     * @param deviceIds  eqId 设备ID
+     * @param bright 亮度值
+     * @param controlType 操作方式
+     * @param operIp IP地址
+     */
     @Override
     public void setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp) {
         for (String deviceId:deviceIds ) {
@@ -287,6 +288,12 @@ public class SansiLightImpl implements Light {
         }
     }
 
+    /**
+     * 更新设备实时数据表
+     * @param sdDevices
+     * @param value
+     * @param itemId
+     */
     public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(sdDevices.getEqId());

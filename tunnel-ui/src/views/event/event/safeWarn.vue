@@ -910,6 +910,7 @@
       title="事件视频"
       class="videoDialog"
     >
+      <div class="dialogCloseButton"></div>
       <div class="videoDialogClass">
         <video :src="videoUrl" controls muted loop fluid autoplay></video>
       </div>
@@ -3061,9 +3062,9 @@ export default {
   ::-webkit-scrollbar {
     width: 6px;
   }
-  .videoDialog {
-    height: 92%;
-  }
+  // .videoDialog {
+  //   height: 92%;
+  // }
   .videoDialogClass {
     width: 100%;
     height: 100%;

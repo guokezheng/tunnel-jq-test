@@ -75,18 +75,20 @@ public class CommonController
     {
         try
         {
-            InputStream fis = new ClassPathResource("exporttemplate/" + fileName).getInputStream();
-            byte[] buffer = new byte[fis.available()];
-            fis.read(buffer);
-            fis.close();
-            response.reset();
-            // 先去掉文件名称中的空格,然后转换编码格式为utf-8,保证不出现乱码,这个文件名称用于浏览器的下载框中自动显示的文件名
-            response.setContentType("application/vnd.ms-excel");
-            response.addHeader("Content-Disposition", "attachment;filename=" + new String("".getBytes("utf-8"),"iso8859-1"));
-            OutputStream os = new BufferedOutputStream(response.getOutputStream());
-            os.write(buffer);// 输出文件
-            os.flush();
-            os.close();
+            if (!FileUtils.checkAllowDownload(fileName))
+            {
+                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
+            }
+            String realFileName = fileName.substring(fileName.indexOf("_") + 1);
+            String filePath = RuoYiConfig.getDownloadPath() + fileName;
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            FileUtils.setAttachmentResponseHeader(response, realFileName);
+            FileUtils.writeBytes(filePath, response.getOutputStream());
+            if (delete)
+            {
+                FileUtils.deleteFile(filePath);
+            }
         }
         catch (Exception e)
         {

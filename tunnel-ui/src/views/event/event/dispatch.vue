@@ -183,14 +183,14 @@
                 label="姓名"
                 align="center"
                 prop="userName"
-                width="100"
+                width="130"
               />
               <el-table-column label="联系方式" align="center" prop="phone" width="150">
                 <template slot-scope="scope">
                   <span>{{ scope.row.phone }}</span>
                 </template>
               </el-table-column>
-             <el-table-column label="岗位" align="center" prop="groupName" width="150"/>
+             <el-table-column label="岗位" align="center" prop="groupName" width="120"/>
             </el-table>
           </div>
         </div>

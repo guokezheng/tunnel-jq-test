@@ -430,7 +430,7 @@
             }"
             style="width: 100% ; border: solid 1px #284159 !important;"
             border
-            height="400px"
+            height="350px"
             class="dialogTable"
             :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
@@ -511,7 +511,7 @@
             }"
             style="width: 100%; border: solid 1px #284159 !important;"
             border
-            height="400px"
+            height="350px"
             class="dialogTable"
             :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"

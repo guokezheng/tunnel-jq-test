@@ -178,6 +178,8 @@
                   end-placeholder="结束日期"
                   @change="selectTime"
                   :default-time="['00:00:00', '23:59:59']"
+                  append-to-body
+                  popper-class="DataStyle"
                 ></el-date-picker>
               </el-form>
             </div>
@@ -1117,3 +1119,4 @@ hr {
   overflow: auto;
 }
 </style>
+

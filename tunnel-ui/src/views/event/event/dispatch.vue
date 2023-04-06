@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-06 16:46:47
+ * @LastEditTime: 2023-04-04 11:23:58
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -176,31 +176,31 @@
               <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
                 <el-tab-pane v-for="(item,index) in emergencyList" :key="index"
                  :label="item.dictLabel" :name="item.dictValue">
-                  <el-table
-                    :data="implementList"
-                    stripe
-                    class="phoneTable"
-                    :fit="true"
-                    height="84%"
-                  >
-                    <el-table-column
-                      label="姓名"
-                      align="center"
-                      prop="userName"
+            <el-table
+              :data="implementList"
+              stripe
+              class="phoneTable"
+              :fit="true"
+              height="84%"
+            >
+              <el-table-column
+                label="姓名"
+                align="center"
+                prop="userName"
                       width="100"
-                    />
-                    <el-table-column label="联系方式" align="center" prop="phone" width="150">
-                      <template slot-scope="scope">
-                        <span>{{ scope.row.phone }}</span>
-                      </template>
-                    </el-table-column>
+              />
+              <el-table-column label="联系方式" align="center" prop="phone" width="150">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.phone }}</span>
+                </template>
+              </el-table-column>
                   <el-table-column label="岗位" align="center" prop="groupName" width="150"/>
-                  </el-table>
+            </el-table>
                 </el-tab-pane>
               </el-tabs>
-            </div>
           </div>
         </div>
+    </div>
     </div>
     <div class="disLeftBox">
       <div style="height:100%;">
@@ -727,8 +727,8 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
-        <el-button type="primary" @click="changeLevel">确 定</el-button>
+        <el-button type="primary" @click="changeLevel" class="submitButton">确 定</el-button>
+        <el-button @click="closeDialog()" >取 消</el-button>
       </span>
     </el-dialog>
     <!-- 执行弹窗 -->
@@ -739,6 +739,10 @@
       text-align="center"
       class="IssuedDialog"
       >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="GDeviceBox">
         <el-row>
           <el-col :span="24">
@@ -807,9 +811,9 @@
           </el-col>
         </el-row>
       </div>
-      <div style="display:flex;justify-content:right">
-        <el-button type="info" @click="cancelIssuedDialog">取 消</el-button>
-        <el-button v-show="buttonDisable" type="primary" @click="changeIncHand">执 行</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelIssuedDialog" class="closeButton">取 消</el-button>
+        <el-button v-show="buttonDisable" @click="changeIncHand" class="submitButton">执 行</el-button>
       </div>
     </el-dialog>
     <!-- 一键详情弹窗 -->
@@ -819,6 +823,10 @@
       :visible.sync="oneKeyDialogVisible"
       width="60%"
       :before-close="oneKeyHandleClose">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="GDeviceBox" style="overflow: scroll;overflow-x: hidden;">
         <div v-for="(item,index) in oneKeyList" :key="index">
           <el-card>
@@ -881,13 +889,13 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="oneKeyDialogVisible = false">取 消</el-button>
         <el-button
-          type="primary"
+          class="submitButton"
           v-show="yjName == '一键'"
           @click="oneKeyExecute()">
           执 行
         </el-button>
+        <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -2299,23 +2307,24 @@ display: none;
       }
     }
   }
-  ::v-deep .yjBox .el-dialog__header{
-    background-image: url(../../../assets/cloudControl/dialogHeader.png)!important;
-    background-repeat: no-repeat!important;
-    background-position-x: right!important;
-  }
-  ::v-deep .IssuedDialog .el-dialog__header{
-    background-image: url(../../../assets/cloudControl/distitlebg.png)!important;
-    background-repeat: no-repeat!important;
-    background-size: 100% 100%!important;
-  }
-  ::v-deep .jingqing{
-    .el-dialog__header{
-      background-image: url(../../../assets/cloudControl/distitlebg.png);
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-    }
-  }
+  // ::v-deep .yjBox .el-dialog__header{
+  //   background-image: url(../../../assets/cloudControl/dialogHeader.png)!important;
+  //   background-repeat: no-repeat!important;
+  //   background-position-x: right!important;
+  // }
+  // ::v-deep .IssuedDialog .el-dialog__header{
+  //   background-image: url(../../../assets/cloudControl/distitlebg.png)!important;
+  //   background-repeat: no-repeat!important;
+  //   background-size: 100% 100%!important;
+  // }
+  // ::v-deep .jingqing{
+    // .el-dialog__header{
+    //   background-image: url(../../../assets/cloudControl/distitlebg.png);
+    //   background-repeat: no-repeat;
+    //   background-size: 100% 100%;
+    // }
+  // }
+  // }
   .disLeftBox{
     position: fixed;
     top:9vh;

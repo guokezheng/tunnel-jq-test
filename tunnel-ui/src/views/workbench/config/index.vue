@@ -1310,7 +1310,7 @@
     <!-- 批量操作弹窗 -->
 
     <el-dialog
-      class="batch-table operationDiglog explain-table workbench-dialog"
+      class="workbench-dialog vehicle-dialog"
       :title="title"
       :visible.sync="batchManageDialog"
       width="450px"
@@ -1485,7 +1485,12 @@
         style="margin: 0px 0 6px"
         v-show="operationActive == 'xitong'"
       >
-        <el-col :span="10" :offset="14">
+        <el-col :span="4">
+          <el-button size="small" @click="resetQuery"
+              >刷新</el-button
+            >
+        </el-col>
+        <el-col :span="10" :offset="10">
           <div class="grid-content bg-purple" ref="main">
             <el-input
               placeholder="请输入登录地址、用户名称，回车搜索"
@@ -1600,7 +1605,12 @@
         style="margin: 0px 0 6px"
         v-show="operationActive == 'caozuo'"
       >
-        <el-col :span="10" :offset="14">
+        <el-col :span="4">
+          <el-button size="small" @click="resetQuery"
+              >刷新</el-button
+            >
+        </el-col>
+        <el-col :span="10" :offset="10">
           <div class="grid-content bg-purple" ref="main1">
             <el-input
               placeholder="请输入操作地址，回车搜索"
@@ -5368,6 +5378,8 @@ export default {
     handleChangePhone(num) {},
     // 操作日志 搜索
     handleQueryOperationParam() {
+      this.syxt_boxShow = false
+      this.sycz_boxShow1 = false
       this.operationParam.pageNum = 1;
       this.operationParam_xt.pageNum = 1;
       this.getOperationList(this.operationActive);
@@ -8717,10 +8729,11 @@ export default {
     handleClick(tab, event) {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
-      this.syxt_boxShow = false
-      this.sycz_boxShow1 = false
-      this.syxt_boxShow2 = false
-      this.sycz_boxShow3 = false
+      // this.syxt_boxShow = false
+      // this.sycz_boxShow1 = false
+      // this.syxt_boxShow2 = false
+      // this.sycz_boxShow3 = false
+      this.handleQueryOperationParam()
       this.handlestrategyQuery();
     },
     // 关闭控制策略对话框
@@ -8729,6 +8742,10 @@ export default {
     },
     handlestrategyQuery() {
       this.loading = true;
+      // this.syxt_boxShow = false
+      // this.sycz_boxShow1 = false
+      this.syxt_boxShow2 = false
+      this.sycz_boxShow3 = false
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;

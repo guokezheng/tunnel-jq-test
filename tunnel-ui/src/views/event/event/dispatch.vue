@@ -728,7 +728,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="changeLevel" class="submitButton">确 定</el-button>
-        <el-button @click="closeDialog()" >取 消</el-button>
+        <el-button @click="closeDialog()" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 执行弹窗 -->

@@ -89,7 +89,7 @@
         prop="eqName"
         width="220"
       />
-
+      <el-table-column label="所属隧道" align="center" prop="tunnelName" />
       <el-table-column label="故障类型" align="center" prop="faultType">
         <template slot-scope="scope">
           <span>{{ getFaultType(scope.row.faultType) }}</span>

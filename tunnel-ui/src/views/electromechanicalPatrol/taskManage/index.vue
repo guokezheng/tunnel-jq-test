@@ -514,6 +514,10 @@
             <el-table-column prop="eq_name" label="故障设备名称">
             </el-table-column>
             <el-table-column prop="pile" label="故障位置"> </el-table-column>
+            <el-table-column prop="fault_fxtime" label="故障发现时间">
+              <template slot-scope="scope">
+                <span>{{ !!scope.row.fault_fxtime ?scope.row.fault_fxtime.replace(/T/g, ' ').replace(/.[\d]{3}Z/, ' '):''}}</span>
+              </template></el-table-column>
             <el-table-column prop="dict_label" label="故障描述">
             </el-table-column>
           </el-table>

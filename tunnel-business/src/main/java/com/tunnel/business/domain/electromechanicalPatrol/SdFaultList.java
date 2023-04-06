@@ -53,7 +53,7 @@ public class SdFaultList extends BaseEntity
     private String faultSource;
 
     /** 故障发现时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8",pattern="yyyy-MM-dd HH:mm:ss")
     @Excel(name = "发现时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date faultFxtime;
 
@@ -114,6 +114,8 @@ public class SdFaultList extends BaseEntity
 
     @Excel(name = "故障类型")
     private String ftype;
+
+    private String tunnelName;
 
     private String ids;
 
@@ -440,6 +442,14 @@ public class SdFaultList extends BaseEntity
 
     public void setEqName(final String eqName) {
         this.eqName = eqName;
+    }
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
     }
 
     @Override

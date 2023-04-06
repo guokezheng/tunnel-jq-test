@@ -18,15 +18,38 @@ export default {
     this.init()
     //调用监听事件
     this.screenFull()
+    void ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
+      window.addEventListener(item, () => {
+        console.log('窗口变化', this.checkFull())
+        this.isFullscreen = this.checkFull()
+      })
+    })
   },
   beforeDestroy() {
     this.destroy()
   },
   methods: {
+    // 判断全屏
+    checkFull(){
+      //判断浏览器是否处于全屏状态 （需要考虑兼容问题）
+      //火狐浏览器
+      var isFull = document.mozFullScreen||
+        document.fullScreen ||
+        //谷歌浏览器及Webkit内核浏览器
+        document.webkitIsFullScreen ||
+        document.webkitRequestFullScreen ||
+        document.mozRequestFullScreen ||
+        document.msFullscreenEnabled
+      if(isFull === undefined) {
+        isFull = false
+      }
+      return isFull;
+
+    },
      //监听Esc事件；
      screenFull() {
       //监听f11事件
-      window.addEventListener("keydown", this.KeyDown, true); 
+      window.addEventListener("keydown", this.KeyDown, true);
      },
      KeyDown(event) {
       if (event.keyCode === 122) {

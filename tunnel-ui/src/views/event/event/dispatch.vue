@@ -660,7 +660,10 @@
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="levelForm" :model="levelForm" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">

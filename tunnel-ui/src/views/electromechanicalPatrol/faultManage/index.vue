@@ -211,7 +211,10 @@
       append-to-body
       class="hitchDialog"
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row style="display: flex; flex-wrap: wrap">
           <el-card>
@@ -335,6 +338,8 @@
                   placeholder="请选择设备名称"
                   @change="eqStatusGet"
                   style="width: 100%"
+                  id="deviceSel"
+                  @click.native ="selChange"
                 >
                   <el-option
                     v-for="item in eqListData"
@@ -494,7 +499,10 @@
     </el-dialog>
 
     <el-dialog :visible.sync="record" width="70%">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div style="text-align: center; font-size: 18px">故障检修记录</div>
       <div class="card" v-show="news.length > 0" v-for="(item,index) in news" :key="index">
         <div class="card-col" style="font-size: 16px">
@@ -756,7 +764,7 @@ export default {
     this.getList();
     this.getTunnel();
     this.getEqType();
-    this.getDevices();
+    //this.getDevices();
     this.fileData = new FormData(); // new formData对象
     //设备状态
     this.getDicts("sd_monitor_state").then((data) => {
@@ -901,6 +909,7 @@ export default {
         falltRemoveStatue: null,
         faultDescription: null,
         faultStatus: 0,
+        eqRunStatus: null,
       };
       this.fileList = [];
       this.removeIds = [];
@@ -993,6 +1002,19 @@ export default {
         this.loading = false;
       });
     },
+
+    /*设备名称点击事件*/
+    selChange() {
+      debugger
+      if (this.form.tunnelId==null||typeof this.form.tunnelId == "undefined") {
+        this.$modal.msgWarning("请先选择隧道");
+        return;
+      } else {
+        $("#deviceSel").attr("pointer-events", "none");
+        this.getDevices()
+      }
+    },
+
     /** 巡查班组 */
     getBz() {
       // const response = listBz()
@@ -1023,10 +1045,11 @@ export default {
     },
     /** 设备 */
     getDevices() {
-      // const response = listDevices('sdkz')
+      if(this.form.tunnelId==""){
+        this.$message.warning("请先选择所属隧道");
+      }
       listDevices({
-        fEqId: this.form.codePlcId,
-        eqType: this.form.deviceTypeId,
+        eqTunnelId: this.form.tunnelId,
       }).then((response) => {
         this.eqListData = response.rows;
       });
@@ -1397,6 +1420,7 @@ export default {
   }
   ::v-deep .el-card {
     margin-bottom: 10px !important;
+    width:100%;
   }
 }
 .topTxt {

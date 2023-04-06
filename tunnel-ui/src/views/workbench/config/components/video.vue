@@ -11,7 +11,10 @@
       :close-on-click-modal="false"
       :modal="false"
     >
-    <div class="dialogCloseButton"></div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <div style="width: 100%; height: 200px;padding:0 15px">
         <video
         v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
@@ -175,7 +178,10 @@
       :close-on-click-modal="false"
       :modal="false"
     >
-    <div class="dialogCloseButton"></div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <el-form
         ref="historyForm"
         :model="queryParams"
@@ -278,7 +284,10 @@
       :close-on-click-modal="false"
       :modal="false"
     >
-    <div class="dialogCloseButton"></div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <el-row class="yuntaiBox">
         <el-col :span="18">
           <div class="yuntaiVideoBox">

@@ -166,7 +166,6 @@
           class="allTable"
           :row-key="getRowKey"
           ref="tableFile1"
-          :key="Math.random()"
         >
           <el-table-column type="selection" width="55" align="center" reserve-selection/>
           <el-table-column
@@ -472,7 +471,10 @@
       width="75%"
       class="celueDialog"
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">
           <el-radio-group v-model="strategyForm.strategyType">
@@ -854,9 +856,19 @@ export default {
       this.getList();
     },
     changeStrategyState(row) {
+
       let data = {strategyId: row.id, change: row.strategyState};
       updateState(data).then((result) => {
-        this.$modal.msgSuccess(result.msg);
+
+        if(result.code == 200){
+          if(row.strategyState == 0){
+            this.$modal.msgSuccess("开启成功");
+          }else{
+            this.$modal.msgSuccess("关闭成功");
+          }
+        }else{
+          this.$modal.msgSuccess(result.msg);
+        }
       });
     },
     // 改变策略类型

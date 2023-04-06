@@ -268,7 +268,10 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body class="addUserDialog">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -437,7 +440,7 @@
         <div class="el-upload__tip text-center" slot="tip">
           <div class="el-upload__tip" slot="tip">
             <el-checkbox v-model="upload.updateSupport" />
-            是否更新已经存在的用户数据
+            更新已经存在的用户数据
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
           <el-link

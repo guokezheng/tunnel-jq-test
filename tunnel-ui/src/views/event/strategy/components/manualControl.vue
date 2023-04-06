@@ -148,14 +148,14 @@
               @change="handleChange"
             ></el-cascader>
           </el-col>
-          <el-col :span="2" class="buttonBox">
+          <div class="buttonBox">
             <el-button class="delete" @click="removeItem(index)"></el-button>
             <el-button
               v-show="strategyForm.equipmentTypeId != 30"
               class="add"
               @click="addItem"
             ></el-button>
-          </el-col>
+          </div>
         </el-form-item>
       </el-row>
 
@@ -251,7 +251,7 @@ export default {
         console.log("123");
       }
       console.log("init");
-
+      this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
@@ -274,6 +274,8 @@ export default {
             let attr = response.rows[i];
             let manualControl = this.strategyForm.manualControl[i];
 
+
+            console.log(this.strategyForm.manualControl[i].value, "选择的设备");
             this.strategyForm.manualControl[i].state = attr.state;
 
             this.strategyForm.manualControl[i].manualControlStateList =
@@ -289,14 +291,13 @@ export default {
             ) {
               // 改变数据类型
               this.strategyForm.manualControl[i].state = +attr.state;
-              this.qbgChange(i, this.strategyForm.manualControl[i].value);
+              this.qbgChange(i, attr.equipments.split(","));
             }
             this.$set(
               manualControl,
               "equipmentTypeData",
               this.equipmentTypeData
             );
-
             let params = {
               eqType: attr.eqTypeId, //设备类型
               eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -311,10 +312,8 @@ export default {
             }).then((res) => {
               this.$set(manualControl, "equipmentData", res.rows);
               console.log(manualControl.equipmentData, "设备列表数据1");
-              this.strategyForm.manualControl[i].value =attr.equipments.split(",");
+              this.strategyForm.manualControl[i].value = attr.equipments.split(",");
             });
-
-
           }
         });
       });
@@ -323,7 +322,6 @@ export default {
     changeEquipmentType(index) {
       this.strategyForm.manualControl[index].state = "";
       this.strategyForm.manualControl[index].value = null;
-
       let params = {
         eqType: this.strategyForm.manualControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -513,7 +511,6 @@ export default {
     },
     // 改变隧道或者方向
     changeEvent(value) {
-
       console.log("当前选中了隧道："+this.strategyForm.tunnelId+"，方向：" + this.strategyForm.direction);
 
       // 重置设备列表
@@ -524,7 +521,29 @@ export default {
       if(this.strategyForm.tunnelId.length !=0 && this.strategyForm.direction.length !=0){
         this.getEquipmentType();
       }
-
+     /* //给设备名称重新赋值
+      let params = {
+        eqTunnelId: this.strategyForm.tunnelId, //隧道
+        eqDirection: this.strategyForm.direction, //方向
+      };
+      // 如果改变隧道||设备类型||方向，重置设备和执行状态
+      if (
+        this.strategyForm.manualControl.length >= 1 ||
+        this.strategyForm.manualControl[0].value != ""
+      ) {
+        this.strategyForm.manualControl = [
+          { state: "", value: "", equipmentTypeId: "" },
+        ];
+      }
+      // 查询设备类型并赋值
+      let manualControl = this.strategyForm.manualControl;
+      for (let i = 0; i < manualControl.length; i++) {
+        listType(this.queryEqTypeParams).then((data) => {
+          console.log(data.rows, "设备类型");
+          this.$set(manualControl[i], "equipmentTypeData", data.rows);
+          // this.strategyForm.manualControl[i].equipmentTypeData = data.rows;
+        });
+      }*/
     },
     removeItem(index) {
       console.log(index);
@@ -538,11 +557,6 @@ export default {
     addItem() {
       this.$refs["manualControl"].validate((valid) => {
         if (valid) {
- /*         let dataLength = this.strategyForm.manualControl.length-1;
-          if(!this.strategyForm.manualControl[dataLength].state || this.strategyForm.manualControl[dataLength].state.length == 0){
-            this.$modal.msgError("请先完成当前操作，再继续添加！");
-            return;;
-          }*/
           this.addCf();
           this.strategyForm.manualControl.push({
             disposalName: "",
@@ -555,12 +569,9 @@ export default {
           this.getEquipmentType();
         }
       });
-
-
     },
     // 去重，已选择设备增加disable
     addCf() {
-
       let params = {
         eqType: this.strategyForm.equipmentTypeId,
         eqTunnelId: this.strategyForm.tunnelId,

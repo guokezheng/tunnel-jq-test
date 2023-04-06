@@ -347,6 +347,13 @@ export default {
       this.currentId = row.id;
       this.sink = "edit";
       const id = row.id || this.ids;
+/*      this.loading = this.$loading({
+        lock: true,
+        text: "加载中...",
+       /!* spinner: 'el-icon-phone-outline',*!/
+        background: 'rgba(0, 0, 0, 0.7)'
+      });*/
+
       getStrategy(id).then((response) => {
         let data = response.data;
         this.strategyForm.id = data.id;
@@ -356,47 +363,48 @@ export default {
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
-        this.$set(this.strategyForm, "startTime", data.timerOpen);
-        this.$set(this.strategyForm, "endTime", data.timerClose);
+        this.strategyForm.startTime = data.timerOpen;
+        this.strategyForm.endTime = data.timerClose;
+
+
         listRl({ strategyId: id }).then((response) => {
           this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
-          listDevices({
-            eqType: response.rows[0].eqTypeId,
-            eqTunnelId: this.strategyForm.tunnelId,
-          }).then((res) => {
-            this.equipmentData = res.rows;
-          });
+
           this.strategyForm.autoControl = response.rows;
           for (let i = 0; i < response.rows.length; i++) {
             let autoControl = this.strategyForm.autoControl[i];
             let attr = response.rows[i];
-            this.strategyForm.autoControl[i].equipments =
-              attr.equipments.split(",");
-            this.strategyForm.autoControl[i].openState = attr.state;
-            this.strategyForm.autoControl[i].closeState = attr.state;
-            this.strategyForm.autoControl[i].type = attr.eqTypeId;
             this.strategyForm.autoControl[i].equipmentTypeId = Number(
               attr.eqTypeId
             );
+            // 情报板设备
+            if (
+              this.strategyForm.autoControl[i].equipmentTypeId == 16 ||
+              this.strategyForm.autoControl[i].equipmentTypeId == 36
+            ) {
+              // 改变数据类型
+              this.strategyForm.autoControl[i].state = +attr.state;
+              this.qbgChange(i, attr.equipments.split(","));
+            }
+
+            //初始化选项
             this.$set(autoControl, "equipmentTypeData", this.equipmentTypeData);
-            // this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
-            // this.strategyForm.autoControl[i].eqStateListFan = attr.eqStateList;
-            this.$set(
-              this.strategyForm.autoControl[i],
-              "eqStateList",
-              attr.eqStateList
-            );
-            this.$set(
-              this.strategyForm.autoControl[i],
-              "eqStateListFan",
-              attr.eqStateList
-            );
+            this.$set(this.strategyForm.autoControl[i], "eqStateList", attr.eqStateList);
+            this.$set(this.strategyForm.autoControl[i], "eqStateListFan", attr.eqStateList);
 
             let params = {
               eqType: attr.eqTypeId,
               eqTunnelId: this.strategyForm.tunnelId,
               eqDirection: this.strategyForm.direction, //方向
             };
+
+            this.strategyForm.autoControl[i].openState = attr.state;
+            this.strategyForm.autoControl[i].closeState = attr.endState;
+            this.strategyForm.autoControl[i].type = attr.eqTypeId;
+            this.strategyForm.autoControl[i].equipmentTypeId = Number(attr.eqTypeId);
+
+            let equipmentArray = attr.equipments.split(",");
+
 
             // 选择双向，则不进行接口过滤条件
             if(this.strategyForm.direction == -1){
@@ -406,7 +414,13 @@ export default {
               params
             }).then((res) => {
               this.$set(autoControl, "equipmentData", res.rows);
+              this.$set(autoControl, "equipments", equipmentArray);
+              // 赋值
+           //   this.strategyForm.autoControl[i].equipments = eqArray;
+
             });
+/*
+            this.loading.close();*/
           }
         });
       });
@@ -428,6 +442,7 @@ export default {
           );
         });
       }
+      this.$forceUpdate();
     },
     handleChange(e) {
       console.log(e);
@@ -444,6 +459,9 @@ export default {
           if(!result){
             return this.$modal.msgError("请填写完整");
           }
+
+
+          console.log(this.strategyForm.autoControl.length)
           // response.map((item,index)=>{
           //   console.log(item);
           //   if (
@@ -635,33 +653,33 @@ export default {
     addItem() {
       this.$refs["timeControl"].validate((valid) => {
         if (valid) {
-       /*   let dataLength = this.strategyForm.autoControl.length-1;
+          /*   let dataLength = this.strategyForm.autoControl.length-1;
 
-          console.log()
-          if(
+             console.log()
+             if(
 
-            (!this.strategyForm.autoControl[dataLength].state || this.strategyForm.autoControl[dataLength].state.length)
+               (!this.strategyForm.autoControl[dataLength].state || this.strategyForm.autoControl[dataLength].state.length)
 
-          )
+             )
 
-            this.$modal.msgError("请先完成当前操作，再继续添加！");
-            return;;
-          }*/
-            this.addCf();
-            /*    if (this.strategyForm.autoControl.length == 2) {
-                  return this.$modal.msgError("最多添加2条数据");
-                }*/
-            this.strategyForm.autoControl.push({
-              value: "", //设备
-              openState: "", //状态
-              closeState: "",
-              type: "", //设备分类
-              equipmentTypeId: "", //设备类型
-              equipment: [], //设备列表
-              eqStateList: [], //执行开启操作
-              eqStateListFan: [], //关闭
-            });
-            this.getEquipmentType();
+               this.$modal.msgError("请先完成当前操作，再继续添加！");
+               return;;
+             }*/
+          this.addCf();
+          /*    if (this.strategyForm.autoControl.length == 2) {
+                return this.$modal.msgError("最多添加2条数据");
+              }*/
+          this.strategyForm.autoControl.push({
+            value: "", //设备
+            openState: "", //状态
+            closeState: "",
+            type: "", //设备分类
+            equipmentTypeId: "", //设备类型
+            equipment: [], //设备列表
+            eqStateList: [], //执行开启操作
+            eqStateListFan: [], //关闭
+          });
+          this.getEquipmentType();
         }
       });
     },

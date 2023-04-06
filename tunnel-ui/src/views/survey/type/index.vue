@@ -172,7 +172,10 @@
 
     <!-- 添加或修改车辆类型配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="类型编码" prop="vehicleTypeCode">
           <el-input v-model="form.vehicleTypeCode" placeholder="请输入类型编码" />

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container infoBoardDialog">
     <!-- 添加信息弹窗 -->
     <el-dialog
       title="新增"
@@ -7,7 +7,10 @@
       width="44%"
       :before-close="handleClose"
     >
-    <div class="dialogCloseButton"></div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <el-card class="box-card">
         <div
           v-on:ondragenter="ondragenter"
@@ -338,18 +341,17 @@
         </el-form>
       </el-card>
 
-      <template slot="footer">
-        <el-button size="mini" type="primary" plain @click="handleClose"
-          >取消</el-button
-        >
+      <div slot="footer" class="dialog-footer">
         <el-button
-          size="mini"
           @click="dataFormSubmitHandle()"
-          type="primary"
           v-loading="loading"
+          class="submitButton"
           >确认
         </el-button>
-      </template>
+        <el-button class="closeButton" @click="handleClose"
+          >取消</el-button
+        >
+      </div>
     </el-dialog>
   </div>
 </template>

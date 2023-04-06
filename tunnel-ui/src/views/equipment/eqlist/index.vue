@@ -823,7 +823,7 @@
         </div>
         <div class="el-upload__tip" slot="tip">
           <el-checkbox v-model="upload.updateSupport" />
-          是否更新已经存在的设备数据
+          更新已经存在的设备数据
           <el-link
             type="info"
             style="font-size: 12px; color: #39adff"

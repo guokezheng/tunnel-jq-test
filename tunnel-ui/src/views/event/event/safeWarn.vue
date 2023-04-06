@@ -605,7 +605,10 @@
       </div>
     </el-dialog>
     <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%" class="evtInfo">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-timeline>
         <el-timeline-item timestamp="事件发现" placement="top">
           <el-card>
@@ -3127,6 +3130,9 @@ export default {
     top: 6% !important;
     right: 0.8% !important;
     width: 23.8% !important;
+    .el-checkbox+.el-checkbox{
+      margin-left: 0 !important;
+    }
   }
   .hitchDialog{
     ::v-deep .el-dialog__body{

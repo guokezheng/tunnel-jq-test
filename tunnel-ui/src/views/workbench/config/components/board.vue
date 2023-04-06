@@ -8,7 +8,10 @@
       :visible="cameraVisible"
       :before-close="handleClosee"
     >
-    <div class="dialogCloseButton"></div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <div v-show="infoType == 'info'" style="display:flex">
         <div style="float:left">
           <div class="infoBox">

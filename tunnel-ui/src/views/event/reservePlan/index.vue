@@ -550,6 +550,7 @@
       :visible.sync="strategyVisible"
       append-to-body
       width="78%"
+      class="strategy-dialog"
     >
       <div class="dialogCloseButton"></div>
       <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm">
@@ -2133,8 +2134,14 @@ export default {
 //     // background-position-x: right;
 //     background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
 // }
-::v-deep .el-form-item--medium .el-form-item__label {
-  line-height: 3vh;
+// ::v-deep .el-form-item--medium .el-form-item__label {
+//   line-height: 3vh;
+// }
+.strategy-dialog{
+  ::v-deep .el-dialog__body{
+    height: 72vh;
+    overflow: auto;
+  }
 }
 ::v-deep .in-checked-path .el-radio {
   display: none;
@@ -2197,7 +2204,7 @@ export default {
   text-align: center;
   line-height: 24px;
   font-size: 12px;
-  margin-top: 5px;
+  margin-top: 10px;
   cursor: pointer;
   margin-left: 20px;
   // margin-right: 10px;
@@ -2242,12 +2249,17 @@ export default {
   padding: 10px;
   box-sizing: border-box;
 }
+.dialongBox+.dialongBox{
+  margin-top:10px;
+}
+
 .dialogTableButtonBox {
   display: flex;
   justify-content: space-around;
   align-items: center;
   height: 35px;
   padding-right: 0 !important;
+  margin-left: 2px;
   .delete,
   .add {
     width: 16px;

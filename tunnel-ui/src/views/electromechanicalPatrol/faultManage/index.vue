@@ -276,7 +276,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8" >
+            <el-col :span="8">
               <el-form-item label="发现时间" prop="faultFxtime">
                 <el-date-picker
                   clearable
@@ -293,7 +293,7 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="8" >
+            <el-col :span="8">
               <el-form-item label="持续时间" prop="faultCxtime">
                 <el-input
                   :disabled="disstate"
@@ -327,7 +327,7 @@
               <div class="tableTopHr"></div>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="设备名称" prop="eqId" >
+              <el-form-item label="设备名称" prop="eqId">
                 <el-select
                   v-model="form.eqId"
                   :disabled="disstate"
@@ -1414,6 +1414,7 @@ export default {
   }
   ::v-deep .el-card {
     margin-bottom: 10px !important;
+    width:100%;
   }
 }
 .topTxt {

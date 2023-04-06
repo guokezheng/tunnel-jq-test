@@ -28,6 +28,10 @@
       color: white;
     }
   }
+  .el-menu--horizontal .el-menu .el-menu-item.is-active, 
+  .el-menu--horizontal .el-menu .el-submenu.is-active > .el-submenu__title{
+    color: #ffdb82 !important;
+  }
   .el-menu--horizontal .el-menu .el-menu-item:hover, .el-menu--horizontal .el-menu .el-submenu__title:hover{
     background-color: #2971CC;
     border-radius: 8px;
@@ -403,6 +407,9 @@
         background: #052C4D !important;
         border: none !important;
         color: #fff;
+      }
+      .el-input__inner::placeholder {
+        color:  #9f9f9f;
       }
       .el-input--small .el-input__inner{
         background: #052C4D !important;
@@ -1698,6 +1705,47 @@
       border: solid 1px #01AAFD !important;
     }
   }
+  .robot-dialog{
+    .el-radio:hover {
+      background: none !important;
+      border: none !important;
+    }
+    .el-input-group__append{
+      background: #052C4D  !important;
+    }
+    .switchBox{
+      .el-form-item__label{
+        color: #fff !important;
+      }
+    }
+    .rightSwitch{
+      .el-switch__label{
+        color:#fff;
+      }
+      .el-switch__label--left {
+        color: #fff;
+      }
+      .el-switch__core{
+        border:solid 1px #01AAFD !important;
+        background: transparent !important;
+      }
+      .el-switch__core:after{
+        background: #01AAFD;
+      }
+      .el-switch__label--right {
+        color: #fff;
+      }
+      .el-switch__label--right.is-active {
+        color: #06213E !important;
+      }
+      .el-switch__label--left.is-active {
+        color: #06213E !important;
+      }
+    }
+    .yellowButton{
+      background: #f6b542 linear-gradient(180deg, #e5a535 0%, #ffbd49 100%) !important;
+    }
+  }
   .workbench-dialog{
     .mesModeBg{
       // background: #012e51;
@@ -1719,8 +1767,8 @@
         transparent 90%
       );
       background-size: 15px 0.5px;
-
       background-repeat: repeat-x;
+      margin-top: 10px;
     }
     .el-dialog{
       background-color: #01162C;
@@ -1755,6 +1803,9 @@
       width: 100%;
       margin: 0;
       padding: 15px !important;
+      .el-form-item--mini.el-form-item{
+        margin-bottom: 10px !important;
+      }
       // background-color: #fff;
       // border-left: solid 2px #00c2ff;
       // border-right: solid 2px #00c2ff;

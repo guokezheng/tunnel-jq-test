@@ -45,7 +45,7 @@ public class IotBoardVocabularyController extends BaseController
     /**
      * 导出情报板敏感字管理列表
      */
-    @PreAuthorize("@ss.hasPermi('system:vocabulary:export')")
+    /*@PreAuthorize("@ss.hasPermi('system:vocabulary:export')")*/
     @Log(title = "情报板敏感字管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(IotBoardVocabulary sdAuditVocabulary)

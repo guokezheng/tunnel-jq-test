@@ -21,7 +21,7 @@
             :filter-node-method="filterNode"
             ref="tree"
             @node-click="handleNodeClick"
-            style="height: 740px; overflow: auto"
+            style="height: 100%; overflow: auto"
           />
         </div>
       </el-col>

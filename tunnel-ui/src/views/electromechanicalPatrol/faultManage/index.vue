@@ -276,7 +276,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" >
               <el-form-item label="发现时间" prop="faultFxtime">
                 <el-date-picker
                   clearable
@@ -293,7 +293,7 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" >
               <el-form-item label="持续时间" prop="faultCxtime">
                 <el-input
                   :disabled="disstate"
@@ -327,7 +327,7 @@
               <div class="tableTopHr"></div>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="设备名称" prop="eqId">
+              <el-form-item label="设备名称" prop="eqId" >
                 <el-select
                   v-model="form.eqId"
                   :disabled="disstate"
@@ -335,6 +335,8 @@
                   placeholder="请选择设备名称"
                   @change="eqStatusGet"
                   style="width: 100%"
+                  id="deviceSel"
+                  @click.native ="selChange"
                 >
                   <el-option
                     v-for="item in eqListData"
@@ -756,7 +758,7 @@ export default {
     this.getList();
     this.getTunnel();
     this.getEqType();
-    this.getDevices();
+    //this.getDevices();
     this.fileData = new FormData(); // new formData对象
     //设备状态
     this.getDicts("sd_monitor_state").then((data) => {
@@ -901,6 +903,7 @@ export default {
         falltRemoveStatue: null,
         faultDescription: null,
         faultStatus: 0,
+        eqRunStatus: null,
       };
       this.fileList = [];
       this.removeIds = [];
@@ -993,6 +996,19 @@ export default {
         this.loading = false;
       });
     },
+
+    /*设备名称点击事件*/
+    selChange() {
+      debugger
+      if (this.form.tunnelId==null||typeof this.form.tunnelId == "undefined") {
+        this.$modal.msgWarning("请先选择隧道");
+        return;
+      } else {
+        $("#deviceSel").attr("pointer-events", "none");
+        this.getDevices()
+      }
+    },
+
     /** 巡查班组 */
     getBz() {
       // const response = listBz()
@@ -1023,10 +1039,11 @@ export default {
     },
     /** 设备 */
     getDevices() {
-      // const response = listDevices('sdkz')
+      if(this.form.tunnelId==""){
+        this.$message.warning("请先选择所属隧道");
+      }
       listDevices({
-        fEqId: this.form.codePlcId,
-        eqType: this.form.deviceTypeId,
+        eqTunnelId: this.form.tunnelId,
       }).then((response) => {
         this.eqListData = response.rows;
       });

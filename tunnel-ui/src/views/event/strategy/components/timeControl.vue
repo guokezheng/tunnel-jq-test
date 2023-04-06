@@ -139,12 +139,14 @@
                   v-model="dain.openState"
                   placeholder="启动指令"
                   style="width: 100%"
+                  @change="$forceUpdate()"
                 >
                   <el-option
-                    v-for="(item, indx) in dain.eqStateList"
+                    v-for="(item, index) in dain.eqStateList"
                     :key="item.deviceState"
                     :label="item.stateName"
                     :value="item.deviceState"
+
                   >
                   </el-option>
                 </el-select>
@@ -154,9 +156,10 @@
                   v-model="dain.closeState"
                   placeholder="关闭指令"
                   style="width: 100%"
+                  @change="$forceUpdate()"
                 >
                   <el-option
-                    v-for="(item, indx) in dain.eqStateListFan"
+                    v-for="(item, index) in dain.eqStateListFan"
                     :key="item.deviceState"
                     :label="item.stateName"
                     :value="item.deviceState"
@@ -306,6 +309,15 @@ export default {
     };
   },
   methods: {
+    changeValue001(i,index){
+      $forceUpdate();
+      console.log("==============="+i+"====================")
+      if(i=1){
+        console.log(this.strategyForm.autoControl[index].openState)
+      }else{
+        console.log(this.strategyForm.autoControl[index].openState)
+      }
+    },
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -400,6 +412,8 @@ export default {
 
             this.strategyForm.autoControl[i].openState = attr.state;
             this.strategyForm.autoControl[i].closeState = attr.endState;
+
+
             this.strategyForm.autoControl[i].type = attr.eqTypeId;
             this.strategyForm.autoControl[i].equipmentTypeId = Number(attr.eqTypeId);
 
@@ -484,7 +498,9 @@ export default {
     updateStrategyInfoData() {
       let data = this.strategyForm.autoControl;
       data.forEach((item) => {
-        item.closeState = item.closeState.toString();
+        if (item.equipmentTypeId != 16 && item.equipmentTypeId != 36) {
+          item.closeState = item.closeState.toString();
+        }
         item.openState = item.openState.toString();
       });
       let params = this.strategyForm;
@@ -502,9 +518,15 @@ export default {
       //   );
       // }
       let data = this.strategyForm.autoControl;
+
+
       data.forEach((item) => {
-        item.closeState = item.closeState.toString();
-        item.openState = item.openState.toString();
+        if (item.equipmentTypeId != 16 && item.equipmentTypeId != 36) {
+          item.closeState = item.closeState.toString();
+        }else{
+          item.closeState = "";
+        }
+          item.openState = item.openState.toString();
       });
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {

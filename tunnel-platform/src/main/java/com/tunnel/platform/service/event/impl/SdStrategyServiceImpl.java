@@ -832,8 +832,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             List<String> value = (List<String>) map.get("equipments");
             String equipments = StringUtils.join(value,",");
             String equipmentTypeId = map.get("equipmentTypeId") + "";
-            if(map.get("openState") == null || map.get("closeState") == null){
-                throw new RuntimeException("请填写完整策略信息！");
+
+            if(!equipmentTypeId.equals("16") && !equipmentTypeId.equals("36")) {
+                if (map.get("openState") == null || map.get("closeState") == null) {
+                    throw new RuntimeException("请填写完整策略信息！");
+                }
             }
             String state = null;
             if(null != map.get("state")){

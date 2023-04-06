@@ -40,6 +40,13 @@ public interface SdOperationLogMapper
     public int insertSdOperationLog(SdOperationLog sdOperationLog);
 
     /**
+     * 批量新增
+     * @param list
+     * @return
+     */
+    int insertBatchSdOperationLog(@Param("list") List<SdOperationLog> list);
+
+    /**
      * 修改操作日志
      *
      * @param sdOperationLog 操作日志

@@ -1673,7 +1673,7 @@
           </el-form-item>
           <el-form-item label="创建时间">
             <el-date-picker
-              v-model="dateRange"
+              v-model="dateRange1"
               size="small"
               style="width: 252px"
               value-format="yyyy-MM-dd HH-mm-ss"
@@ -3130,7 +3130,7 @@
     <div class="dialogCloseButton"></div>
       <el-tabs v-model="strategyActive" @tab-click="handleClick">
         <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
-        <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>
+<!--        <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>-->
       </el-tabs>
       <el-row
         :gutter="20"
@@ -3980,13 +3980,15 @@ export default {
 
       setoptions: {
         // 时间不能大于当前时间
-        disabledDate: time => {
-          return time.getTime() > Date.now()
+        disabledDate(time) {
+          let current_time = new Date().format('yyyy-MM-dd')+' 23:59:59';  //时间日期为：‘当前日期 23:59:59’
+          let t = new Date(current_time).getTime(); //‘当前日期 23:59:59’的时间戳
+          return time.getTime() > t;
         },
         selectableRange: '00:00:00 - 23:59:59'
       },
       // 日期范围
-      dateRange: [],
+      dateRange1: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -5387,7 +5389,7 @@ export default {
       );
       // } else if (inx == 'caozuo' ) {
 
-      listLog(this.addDateRange(this.operationParam, this.dateRange)).then(
+      listLog(this.addDateRange(this.operationParam, this.dateRange1)).then(
         (response) => {
           console.log(response, "操作日志");
           this.operationList2 = response.rows;
@@ -5836,6 +5838,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
+      this.dateRange1 = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
       this.queryParams.strategyName = "";
@@ -8749,6 +8752,8 @@ export default {
       // this.$router.push({
       //   name: "OperationLog",
       // });
+      this.dateRange = [];
+      this.dateRange1 = [];
       this.title = "操作日志";
       this.operationLogDialog = true;
       this.getOperationList("xitong");

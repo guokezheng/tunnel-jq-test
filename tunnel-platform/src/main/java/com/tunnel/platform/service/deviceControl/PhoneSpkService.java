@@ -379,16 +379,21 @@ public class PhoneSpkService {
         int status = phoneSpeak.playVoice(systemUrl, map);
 
         //添加操作日志
-        SdOperationLog sdOperationLog = new SdOperationLog();
-        sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
-        sdOperationLog.setTunnelId(tunnelId);
-        sdOperationLog.setEqId(spkDeviceIds.toString());
-        sdOperationLog.setOperationState("playVoice");
-        sdOperationLog.setControlType(controlType);
-        sdOperationLog.setCreateTime(new Date());
-        sdOperationLog.setOperIp(operIp);
-        sdOperationLog.setState(String.valueOf(status));
-        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        List<SdOperationLog> list = new ArrayList<>();
+        for(String eqId : Arrays.asList(spkDeviceIds.toString().split(","))){
+            SdOperationLog sdOperationLog = new SdOperationLog();
+            sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
+            sdOperationLog.setTunnelId(tunnelId);
+            sdOperationLog.setEqId(eqId);
+            sdOperationLog.setOperationState("playVoice");
+            sdOperationLog.setControlType(controlType);
+            sdOperationLog.setCreateTime(new Date());
+            sdOperationLog.setOperIp(operIp);
+            sdOperationLog.setState(String.valueOf(status));
+            list.add(sdOperationLog);
+        }
+
+        sdOperationLogService.insertBatchSdOperationLog(list);
 
         return AjaxResult.success(status);
     }

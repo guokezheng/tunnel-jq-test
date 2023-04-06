@@ -262,4 +262,10 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> verifyEqNameOnly(String eqId,String eqName);
+    /**
+     *  查询指定隧道下设备名称是否重复
+     * @param eqName
+     * @return
+     */
+    List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName);
 }

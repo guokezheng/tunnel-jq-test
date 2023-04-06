@@ -25,7 +25,7 @@ export default {
     })
   },
   nameXlsx(name, isDelete = true) {
-    var url = baseURL + "/common/downloadTo?fileName=" + encodeURI(name) + "&delete=" + isDelete
+    var url = baseURL + "/common/fileMbDownloadTo?fileName=" + encodeURI(name) + "&delete=" + isDelete
     axios({
       method: 'get',
       url: url,

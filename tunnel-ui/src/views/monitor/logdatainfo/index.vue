@@ -91,7 +91,7 @@
             v-model="dateRange"
             size="small"
             style="width: 100%"
-            value-format="yyyy-MM-dd HH-mm-ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="datetimerange"
             range-separator="-"
             start-placeholder="开始日期"
@@ -380,7 +380,7 @@
         prop="stateName.stateName"
         :formatter="operationStateFormat"
       />
-      <el-table-column label="控制方式" align="center" prop="controlType" />
+      <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat" />
       <el-table-column label="操作结果" align="center" prop="state" />
       <el-table-column label="操作地址" align="center" prop="operIp" />
       <el-table-column

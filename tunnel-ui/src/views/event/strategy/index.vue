@@ -815,7 +815,7 @@ export default {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.$refs.tableFile1.clearSelection();
-      this.$refs.tableFile2.clearSelection();
+    //  this.$refs.tableFile2.clearSelection();
       this.getList();
     },
     closeDialogEvent() {
@@ -1213,7 +1213,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.$refs.tableFile1.clearSelection();
-      this.$refs.tableFile2.clearSelection();
+      //this.$refs.tableFile2.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */

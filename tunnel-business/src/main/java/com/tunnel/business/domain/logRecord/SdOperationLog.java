@@ -82,7 +82,7 @@ public class SdOperationLog extends BaseEntity
     
     private String endTime;
     /** 控制方式   3：手动 1：时间控制 2：光强控制 */
-    @Excel(name = "控制方式")
+    @Excel(name = "控制方式",dictType = "sd_control_type")
     private String controlType;
 
     /** 操作是否成功 0 成功；1失败 */

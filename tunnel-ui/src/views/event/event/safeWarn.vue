@@ -1441,11 +1441,17 @@ export default {
     },
     // 打开复核内详情
     openDoor(item){
+      let lane = "";
+      if(item.laneNo == null || item.laneNo.length == 0){
+        lane = "";
+      }else {
+        lane = item.laneNo.toString();
+      }
       let query = {
         prevControlType:item.prevControlType,
         currencyId:item.currencyId,
         id:item.id,
-        laneNo:item.laneNo.toString()
+        laneNo:lane
       }
       examineDeviceDetail(query).then(res=>{
         console.log(res);

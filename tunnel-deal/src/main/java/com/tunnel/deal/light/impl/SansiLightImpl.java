@@ -1,6 +1,7 @@
 package com.tunnel.deal.light.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -11,17 +12,21 @@ import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.deal.light.Light;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class SansiLightImpl implements Light {
@@ -41,6 +46,9 @@ public class SansiLightImpl implements Light {
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
 
+    @Autowired
+    public RedisTemplate redisTemplate;
+
     /**
      * 登录获取会话ID
      * 用户名/密码默认是：admin/admin123
@@ -51,7 +59,6 @@ public class SansiLightImpl implements Light {
     public String login(String username, String password, String baseUrl) {
         Response response = null;
         try {
-
             byte[] textByte = password.getBytes("UTF-8");
             String encode = new BASE64Encoder().encode(textByte);
             String data = "{\"username\":\"" + username + "\",\"password\":\"" + encode + "\"}";
@@ -64,12 +71,18 @@ public class SansiLightImpl implements Light {
 
         } catch (IOException e) {
             e.printStackTrace();
-            return "";
+            return "99";
         }
         JSONObject jo = JSONObject.parseObject(  response.body().toString());
         return  jo.getJSONObject("data").getString("id");
     }
 
+    /**
+     * 三思调光方法
+     * @param deviceId
+     * @param bright
+     * @return
+     */
     @Override
     public int setBrightness(String deviceId, Integer bright) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
@@ -92,34 +105,13 @@ public class SansiLightImpl implements Light {
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
 
-        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
-
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        // 示例 "tunnelId=2&step=0&bright=98"
-        String url = baseUrl + "/api/adjustBrightness";
-        String content = "tunnelId=" + externalSystemTunnelId + "&step=" + step + "&bright=" + bright;
-        RequestBody body = RequestBody.create(mediaType, content);
-        Request request = new Request.Builder()
-                .url(url)
-                .method("POST", body)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addHeader("Cookie", jessionId)
-                .build();
-
-        String responseBody = "";
-        try {
-            Response response = client.newCall(request).execute();
-            //包含“发送成功"就可以
-            responseBody = response.body().string();
-        } catch (IOException e) {
-            return 0;
-        }
-        return responseBody.contains("发送成功") ? 1 : 0;
+        //获取三思Cookie
+        String jessionId = loginRedis(externalSystem, baseUrl);
+        return updateBrightness(jessionId, baseUrl, baseUrl, 1);
     }
 
     /**
-     * 照明灯开关控制
+     * 照明 灯开关 控制
      * @param deviceId
      * @param openClose
      * @return
@@ -145,8 +137,7 @@ public class SansiLightImpl implements Light {
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
         //获取三思Cookie
-        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
-
+        String jessionId = loginRedis(externalSystem, baseUrl);
         //灯开关
         int switchType = updateSwitch(jessionId, baseUrl, baseUrl, openClose);
         //亮度
@@ -158,6 +149,26 @@ public class SansiLightImpl implements Light {
         return switchType==1 && brightnessType==1 ? 1 : 0;
     }
 
+    /**
+     * token获取设置默认过期时间1天
+     * @param externalSystem
+     * @param baseUrl
+     * @return
+     */
+    public String loginRedis( ExternalSystem externalSystem ,String baseUrl){
+        String jessionId = "";
+        String sanSiToken = (String)redisTemplate.opsForValue().get("sanSiToken");
+        if(StringUtils.isNotEmpty(sanSiToken)){
+            jessionId = sanSiToken;
+        }else{
+            jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+            if(StringUtils.isNotEmpty(jessionId)){
+                //默认设置两小时
+                redisTemplate.opsForValue().set("sanSiToken",jessionId,1, TimeUnit.DAYS);
+            }
+        }
+        return jessionId;
+    }
     /**
      * 控制灯开关方法
      * @param jessionId cookit
@@ -232,6 +243,13 @@ public class SansiLightImpl implements Light {
         return responseBody.contains("pipelineId") ? 1 : 0;
     }
 
+    /**
+     * 批量控制等亮度方法
+     * @param deviceIds  eqId 设备ID
+     * @param bright 亮度值
+     * @param controlType 操作方式
+     * @param operIp IP地址
+     */
     @Override
     public void setBrightnessByList(List<String> deviceIds, Integer bright, String controlType, String operIp) {
         for (String deviceId:deviceIds ) {
@@ -270,6 +288,12 @@ public class SansiLightImpl implements Light {
         }
     }
 
+    /**
+     * 更新设备实时数据表
+     * @param sdDevices
+     * @param value
+     * @param itemId
+     */
     public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(sdDevices.getEqId());

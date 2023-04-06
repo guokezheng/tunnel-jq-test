@@ -422,9 +422,9 @@
             :row-style="{
               height: '30px',
             }"
-            style="width: 100%"
+            style="width: 100% ; border: solid 1px #284159 !important;"
             border
-            height="358px"
+            height="400px"
             class="dialogTable"
             :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
@@ -500,9 +500,9 @@
             :row-style="{
               height: '30px',
             }"
-            style="width: 100%"
+            style="width: 100%; border: solid 1px #284159 !important;"
             border
-            height="358px"
+            height="400px"
             class="dialogTable"
             :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
@@ -1703,6 +1703,22 @@ export default {
       }, 500);
     },
   },
+  watch:{
+    isShow1:{
+      handler(val){
+        debugger
+        this.$refs.multipleTable1.clearSelection()
+        this.dialogSelection = []
+      }
+    },
+    isShow2:{
+      handler(val){
+        debugger
+        this.$refs.multipleTable2.clearSelection()
+        this.dialogSelection = []
+      }
+    }
+  }
 };
 </script>
 <style lang="scss">

@@ -1,12 +1,14 @@
 package com.tunnel.business.service.event.impl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
@@ -103,6 +105,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private SdEventTypeMapper sdEventTypeMapper;
+
+    @Autowired
+    private SysDictDataMapper sysDictDataMapper;
 
     /**
      * 查询事件管理
@@ -358,6 +363,9 @@ public class SdEventServiceImpl implements ISdEventService {
     public AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess) {
         //获取应急处置单条设备详情
         Map<String, Object> map = deviceDateiled(sdReserveProcess.getId(),0L);
+        if(map == null){
+            return AjaxResult.error("暂无设备");
+        }
         return AjaxResult.success(map);
     }
 
@@ -370,8 +378,14 @@ public class SdEventServiceImpl implements ISdEventService {
         for(String process : list1){
             //分别查询设备详情
             Map<String, Object> mapData = deviceDateiled(Long.valueOf(process),Long.valueOf(sdEventHandle.getEventId()));
+            if(mapData == null){
+                continue;
+            }
             //将设备详情整合
             list.add(mapData);
+        }
+        if(list.size() == 0){
+            return AjaxResult.error("暂无设备");
         }
         return AjaxResult.success(list);
     }
@@ -778,7 +792,19 @@ public class SdEventServiceImpl implements ISdEventService {
         if(!"3".equals(sdEventData.getEventState())){
             //查询事件详情-人工复核
             SdEvent manualReview = sdEventMapper.getManualReview(sdEvent);
+            List<SysDictData> sdLaneTwo = sysDictDataMapper.selectDictDataByType("sd_lane_two");
             if(manualReview != null){
+                //车道
+                List<String> list = Arrays.asList(manualReview.getLaneNo().split(","));
+                String lane = "";
+                list.stream().forEach(item -> {
+                    sdLaneTwo.stream().forEach(temp -> {
+                        if(item.equals(temp.getDictValue())){
+                            lane.concat(temp.getDictLabel());
+                        }
+                    });
+                });
+                manualReview.setLaneNo(manualReview.getDirection().concat("/").concat(lane));
                 //查询事件详情-人工复核-当事目标
                 String confidence = radarEventMapper.selectConfidence(sdEvent.getId());
                 manualReview.setConfidenceList(confidence == null ? "" : confidence);
@@ -926,7 +952,7 @@ public class SdEventServiceImpl implements ISdEventService {
         sdEventHandle.setFlowSort("3");
         sdEventHandle.setFlowContent(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()).concat(" ")
                 .concat("复核事件为【").concat(sdEventType.getEventType()).concat("】、【")
-                .concat(EventGradeEnum.getValue(sdEvent.getEventGrade())).concat("】，复核状态为突发事件处置"));
+                .concat(EventGradeEnum.getValue(sdEvent.getEventGrade())).concat("】，复核事件为【突发事件处置】"));
         sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
         //如第一次添加处置流程时新增事件流程记录
         if("add".equals(model)){
@@ -946,7 +972,7 @@ public class SdEventServiceImpl implements ISdEventService {
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
             eventFlow.setFlowDescription(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,sdEvent.getUpdateTime()).concat(" ")
                     .concat("复核事件为【").concat(sdEventType.getEventType()).concat("】、【")
-                    .concat(EventGradeEnum.getValue(sdEvent.getEventGrade())).concat("】，复核状态为突发事件处置"));
+                    .concat(EventGradeEnum.getValue(sdEvent.getEventGrade())).concat("】，复核事件为【突发事件处置】"));
             flowMapper.insertSdEventFlow(eventFlow);
         }
         return 4;
@@ -1205,6 +1231,9 @@ public class SdEventServiceImpl implements ISdEventService {
         SdReserveProcess sdReserveProcess = new SdReserveProcess();
         sdReserveProcess.setId(rpId);
         List<Map<String, Object>> deviceList = sdEventMapper.getManagementDevice(sdReserveProcess);
+        if(deviceList.size() == 0){
+            return null;
+        }
         //获取设备类型
         Long eqType = Long.valueOf(deviceList.get(0).get("eqType").toString());
         //根据状态类型查询不通类型得设备明细

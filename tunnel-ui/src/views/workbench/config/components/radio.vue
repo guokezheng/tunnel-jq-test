@@ -9,7 +9,10 @@
       :visible="visible"
       :before-close="handleClosee"
     >
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
       <div class="dialogCloseButton"></div>
+    </div>
       <el-form
         ref="form"
         :model="stateForm"

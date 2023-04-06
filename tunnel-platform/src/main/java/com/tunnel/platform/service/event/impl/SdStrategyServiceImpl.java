@@ -315,17 +315,21 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 String stateName = stateObject.get(0).getStateName();
                 //查询分是控制关闭指令
                 List<SdEquipmentState> endObject = new ArrayList<>();
-                if(rlList.get(j).getEndState() != null && !"".equals(rlList.get(j).getEndState()) && j == 0){
+                if(rlList.get(j).getEndState() != null && !"".equals(rlList.get(j).getEndState())){
                     state.setDeviceState(rlList.get(j).getEndState());
                     endObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
                     fsControlData = typeName + "控制执行：" + "开启指令：" + stateName + "；" + "关闭指令：" + endObject.get(0).getStateName() + ";";
+                    sList.add(fsControlData);
+                }else{
+
+                    sList.add(typeName + "控制执行：" + stateName + "；");
                 }
-                //1：日常策略  3：分时控制
+            /*    //1：日常策略  3：分时控制
                 if("1".equals(list.get(i).getStrategyGroup()) && "3".equals(list.get(i).getStrategyType()) && list.get(i).getId() == rlList.get(j).getStrategyId()){
                     sList.add(fsControlData);
                 }else {
                     sList.add(typeName + "控制执行：" + stateName + "；");
-                }
+                }*/
             }
             list.get(i).setStrategyInfo(StringUtils.join(sList,""));
             list.get(i).setSlist(sList);
@@ -785,22 +789,23 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 //                e.printStackTrace();
 //            }
             sdStrategyRlMapper.insertSdStrategyRl(rl);
-            Long refId = rl.getId();
-            //新增定时任务
-            SysJob job = new SysJob();
-            // 定时任务名称
-            job.setJobName(model.getStrategyName());
-            // 调用目标字符串
-            job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
-            job.setCronExpression(sty.getSchedulerTime());
-            // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
-            job.setMisfirePolicy("1");
-            // 是否并发执行（0允许 1禁止）
-            job.setConcurrent("0");
-            // 状态（0正常 1暂停）
-            job.setStatus("1");
             try{
+                Long refId = rl.getId();
+                //新增定时任务
+                SysJob job = new SysJob();
+                // 定时任务名称
+                job.setJobName(model.getStrategyName() + "-" + refId);
+                // 调用目标字符串
+                job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+                job.setCronExpression(sty.getSchedulerTime());
+                // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
+                job.setMisfirePolicy("1");
+                // 是否并发执行（0允许 1禁止）
+                job.setConcurrent("0");
+                // 状态（0正常 1暂停）
+                job.setStatus("1");
                 sysJobService.insertJob(job);
+                System.out.println(job.getJobId());
                 jobIdList.add(job.getJobId().toString());
             }catch (Exception ex){
                 throw new RuntimeException("新增数据失败！");
@@ -830,14 +835,22 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(map.get("openState") == null || map.get("closeState") == null){
                 throw new RuntimeException("请填写完整策略信息！");
             }
+            String state = null;
+            if(null != map.get("state")){
+                state = map.get("state").toString();
+            }
             String openState = (String) map.get("openState");
             String closeState = (String) map.get("closeState");
             try{
                 SdStrategyRl openRlData = new SdStrategyRl();
                 openRlData.setEqTypeId(equipmentTypeId);
                 openRlData.setEquipments(equipments);
-                openRlData.setState(openState);
-                openRlData.setEndState(closeState);
+                if(equipmentTypeId.equals("16") || equipmentTypeId.equals("36")){
+                    openRlData.setState(state);
+                }else{
+                    openRlData.setState(openState);
+                    openRlData.setEndState(closeState);
+                }
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);
                 sdStrategyRlMapper.insertSdStrategyRl(openRlData);
@@ -846,7 +859,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 try {
                     SysJob job = new SysJob();
                     // 定时任务名称
-                    job.setJobName(model.getStrategyName()+"执行");
+                    job.setJobName(model.getStrategyName()+ "-" + refId + "-执行");
                     // 调用目标字符串
                     job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
                     // corn表达式
@@ -863,20 +876,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 } catch (Exception e) {
                     throw new RuntimeException("新增数据失败！");
                 }
-                SdStrategyRl endRlData = new SdStrategyRl();
-                endRlData.setEqTypeId(equipmentTypeId);
-                endRlData.setEquipments(equipments);
-                endRlData.setStrategyId(sty.getId());
-                endRlData.setState(closeState);
-                endRlData.setEndState(closeState);
-                endRlData.setControlTime(endTime);
-                sdStrategyRlMapper.insertSdStrategyRl(endRlData);
-                refId = endRlData.getId();
+
                 //新增定时任务
                 try {
                     SysJob job = new SysJob();
                     // 定时任务名称
-                    job.setJobName(model.getStrategyName()+"恢复");
+                    job.setJobName(model.getStrategyName()+ "-" + refId + "-恢复");
                     // 调用目标字符串
                     job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
                     // corn表达式

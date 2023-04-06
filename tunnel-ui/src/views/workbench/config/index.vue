@@ -1317,7 +1317,10 @@
       append-to-body
       v-dialogDrag
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-table
         ref="batchManageTable"
         :data="batchManageList"
@@ -1467,7 +1470,10 @@
       append-to-body
       v-dialogDrag
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-tabs v-model="operationActive">
         <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
         <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
@@ -2414,19 +2420,9 @@
       append-to-body
       @close="batchForm.eqDirection = ''"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
+      <div class="dialogStyleBox">
         <div class="dialogLine"></div>
-        <img
-          src="../../../assets/cloudControl/dialogHeader.png"
-          style="height: 30px; transform: translateY(-30px)"
-        />
+        <div class="dialogCloseButton"></div>
       </div>
       <el-form
         ref="batchForm"
@@ -3080,7 +3076,10 @@
       width="1240px"
       append-to-body
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <img
         src="@/assets/logo/equipment_log/all.png"
         style="width: 100%; height: auto;"
@@ -3127,7 +3126,10 @@
       width="1000px"
       append-to-body
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-tabs v-model="strategyActive" @tab-click="handleClick">
         <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
 <!--        <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>-->

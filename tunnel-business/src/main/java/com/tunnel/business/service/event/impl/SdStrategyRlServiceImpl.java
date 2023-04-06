@@ -66,10 +66,10 @@ public class SdStrategyRlServiceImpl implements ISdStrategyRlService {
     @Override
     public List<SdStrategyRl> selectSdStrategyRlList(SdStrategyRl sdStrategyRl) {
         List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlList(sdStrategyRl);
-        SdStrategy strategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+       /* SdStrategy strategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
         if(strategy.getStrategyType().equals("3")){
             rlList = rlList.stream().filter(s-> StrUtil.isNotEmpty(s.getEndState())).collect(Collectors.toList());
-        }
+        }*/
         for (int i = 0; i < rlList.size(); i++) {
             SdEquipmentState sdEquipmentState = new SdEquipmentState();
             sdEquipmentState.setStateTypeId(Long.parseLong(rlList.get(i).getEqTypeId()));

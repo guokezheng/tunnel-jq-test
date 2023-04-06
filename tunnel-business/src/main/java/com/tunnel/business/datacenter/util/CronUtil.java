@@ -93,6 +93,10 @@ public class CronUtil {
 
         String [] array = cronStr.split(" ");
 
+        if(array[6].indexOf("*") > -1){
+            return null;
+        }
+
         return array[6]+"-"+array[4]+"-"+array[3];
     }
 

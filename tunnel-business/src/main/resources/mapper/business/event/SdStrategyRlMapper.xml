@@ -37,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="equipments != null  and equipments != ''"> and A.equipments = #{equipments}</if>
             <if test="state != null  and state != ''"> and A.state = #{state}</if>
         </where>
+       order by A.id
     </select>
 
     <select id="selectSdStrategyRlById" parameterType="Long" resultMap="SdStrategyRlResult">

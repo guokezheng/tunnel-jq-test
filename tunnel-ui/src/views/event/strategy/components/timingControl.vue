@@ -350,14 +350,15 @@ export default {
           // this.$refs.cron.checkClear();
         });
       }
+  //    this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
     getStrategyData(row) {
       console.log(row, "当前策略数据");
-/*      listType(this.queryEqTypeParams).then((response) => {
+      listType(this.queryEqTypeParams).then((response) => {
         this.equipmentTypeData = response.rows;
-      });*/
+      });
       getStrategy(this.id).then((response) => {
         let data = response.data;
         this.strategyForm.id = data.id;
@@ -383,22 +384,26 @@ export default {
           for (var i = 0; i < response.rows.length; i++) {
             let autoControl = this.strategyForm.autoControl[i];
             var attr = response.rows[i];
-            this.strategyForm.autoControl[i].equipments =
-              attr.equipments.split(",");
+
             this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
             this.strategyForm.autoControl[i].state = attr.state;
             this.strategyForm.autoControl[i].type = attr.eqTypeId;
             this.strategyForm.autoControl[i].equipmentTypeId = Number(
               attr.eqTypeId
             );
+
+            let  equipmentArray = attr.equipments.split(",");
             if (
               this.strategyForm.autoControl[i].equipmentTypeId == 16 ||
               this.strategyForm.autoControl[i].equipmentTypeId == 36
             ) {
               this.strategyForm.autoControl[i].state = +attr.state;
-              this.qbgChange(i,this.strategyForm.autoControl[i].equipments);
+              this.qbgChange(i,equipmentArray);
             }
             this.$set(autoControl, "equipmentTypeData", this.equipmentTypeData);
+
+
+
 
             let params = {
               eqType: attr.eqTypeId,
@@ -413,6 +418,9 @@ export default {
             }).then((res) => {
               this.$set(autoControl, "equipmentData", res.rows);
               console.log(autoControl.equipmentData, "设备列表数据1");
+              this.$set(autoControl, "equipments", equipmentArray);
+              //this.strategyForm.autoControl[i].equipments = equipmentArray;
+
             });
           }
         });
@@ -589,6 +597,26 @@ export default {
         //this.listEqTypeStateIsControl();
         this.getEquipmentType();
       }
+
+      //给设备名称重新赋值
+      /*let params = {
+        eqTunnelId: this.strategyForm.tunnelId, //隧道
+        eqDirection: this.strategyForm.direction, //方向
+      };
+      // listDevices(params).then((res) => {
+      //   this.equipmentData = res.rows;
+      //   console.log(this.equipmentData, "设备列表");
+      // });
+      // // 如果改变隧道||设备类型||方向，重置设备和执行状态
+      // if (
+      //   this.strategyForm.autoControl.length >= 1 ||
+      //   this.strategyForm.autoControl[0].value != ""
+      // ) {
+      //   this.strategyForm.autoControl = [{ value: "", state: "", type: "" }];
+      // }
+      if (value == "1") {
+        this.listEqTypeStateIsControl();
+      }*/
     },
     removeItem(index) {
       console.log(index);
@@ -609,14 +637,8 @@ export default {
       // }
       this.$refs["timingControl"].validate((valid) => {
         if (valid) {
-      /*    let dataLength = this.strategyForm.autoControl.length - 1;
-          if (!this.strategyForm.autoControl[dataLength].state || this.strategyForm.autoControl[dataLength].state.length == 0) {
-            this.$modal.msgError("请先完成当前操作，再继续添加！");
-            return;
-            ;
-          }*/
           this.addCf();
-          this.strategyForm.autoControl.push({
+         this.strategyForm.autoControl.push({
             value: "", //设备
             state: "", //状态
             type: "", //设备分类

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-03-28 14:51:26
+ * @LastEditTime: 2023-04-06 14:36:11
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -397,7 +397,10 @@
     <!--    <work-bench ref="workBench"></work-bench>-->
     <!-- 新增弹窗 -->
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="addform1"
         :model="reservePlanDrawForm"
@@ -550,8 +553,12 @@
       :visible.sync="strategyVisible"
       append-to-body
       width="78%"
+      class="strategy-dialog"
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm">
         <div
           v-for="(item, number) in planTypeIdList"
@@ -676,34 +683,6 @@
                   @change="qbgChange(number, index, itemed.equipments)"
                   style="width: 100%"
                 ></el-cascader>
-                <!-- <el-form-item label="活动名称">
-                  <el-input v-model="itemed.equipments"></el-input>
-                  <el-tree
-                    :data="itemed.equipmentData"
-                    show-checkbox
-                    default-expand-all
-                    node-key="id"
-                    ref="tree"
-                    highlight-current
-                    :props="defaultProps">
-                  </el-tree>
-                </el-form-item> -->
-                <!-- <el-select
-                  v-model="itemed.equipments"
-                  :disabled="itemed.disabled"
-                  multiple
-                  collapse-tags
-                  placeholder="请选择设备"
-                  style="width: 100%"
-                  @change="qbgChange(index, itemed.equipments)"
-                >
-                  <el-option
-                    v-for="single in itemed.equipmentData"
-                    :key="single.eqId"
-                    :label="single.eqName"
-                    :value="single.eqId"
-                  />
-                </el-select> -->
               </el-col>
 
               <el-col
@@ -716,8 +695,8 @@
               >
                 <el-select v-model="itemed.state" placeholder="设备操作">
                   <el-option
-                    v-for="ite in itemed.eqStateList"
-                    :key="ite.deviceState"
+                    v-for="(ite,idx) in itemed.eqStateList"
+                    :key="idx"
                     :label="ite.stateName"
                     :value="ite.deviceState"
                   >
@@ -727,7 +706,7 @@
               <!-- 选择情报板模板 -->
               <el-col
                 :span="4"
-                v-if="itemed.eqTypeId == 16 || itemed.eqTypeId == 36"
+                v-if="itemed.eqTypeId == '16' || itemed.eqTypeId == '36'"
               >
                 <el-cascader
                   placeholder="请选择模板"
@@ -741,11 +720,11 @@
                 ></el-cascader>
               </el-col>
 
-              <el-col :span="4" v-if="itemed.eqTypeId == 22">
+              <el-col :span="4" v-if="itemed.eqTypeId == '22'">
                 <el-form-item prop="itemed.state">
                   <el-select v-model="itemed.state" placeholder="播放文件">
                     <el-option
-                      v-for="(itemPl, figure) in itemed.eqStateList"
+                      v-for="(itemPl, figure) in itemed.templatesList"
                       :key="figure"
                       :label="itemPl.name"
                       :value="itemPl.fileName"
@@ -1196,25 +1175,6 @@ export default {
         }
       }
     },
-    //  上移
-    // moveTop(i, item) {
-    //   if (item && i) {
-    //     let obj = { ...this.planTypeIdList[i - 1] };
-    //     this.planTypeIdList.splice(i - 1, 1, item);
-    //     this.planTypeIdList.splice(i, 1, obj);
-    //     this.$forceUpdate();
-    //   }
-    // },
-    // 下移
-    // moveBottom(i, item) {
-    //   if (item && typeof i === "number") {
-    //     let obj = { ...this.planTypeIdList[i + 1] };
-    //     this.planTypeIdList.splice(i + 1, 1, item);
-    //     this.planTypeIdList.splice(i, 1, obj);
-    //     this.$forceUpdate();
-    //   }
-    // },
-
     controlDirectionFormat(row, column) {
       return this.selectDictLabel(
         this.controlDirectionList,
@@ -1289,7 +1249,7 @@ export default {
       this.planTypeIdList.splice(index + 1, 0, obj);
     },
     removeItem(number, index) {
-      console.log(index);
+      console.log(this.planTypeIdList[number].processesList[index]);
       if (this.planTypeIdList[number].processesList.length == 1) {
         return this.$modal.msgWarning("至少保留一行");
       }
@@ -1315,7 +1275,6 @@ export default {
         ],
       };
       this.planTypeIdList[number].processesList.splice(index + 1, 0, data);
-      // this.planTypeIdList.splice(index + 1, 0, data);
       this.getEquipmentType();
     },
     //获得预案类别
@@ -1349,23 +1308,6 @@ export default {
       this.eqTunnelDataList = [];
       // this.planCategory = [];
     },
-    //删除一行
-    updataDeleteForm(index) {
-      if (this.planTypeIdList.length <= 1) {
-        this.$modal.msgError("请保留一行");
-        return;
-      }
-      this.planTypeIdList.splice(index, 1);
-    },
-    //添加一行
-    addFrom() {
-      this.planTypeIdList.push({
-        a: [],
-      });
-      /*this.reserveProcessDrawForm.strategyId.push([{
-        id:[]
-      }])*/
-    },
     ceshiTime() {
       this.timer = setInterval(() => {
         if (this.active++ > 2) this.active = 0;
@@ -1382,60 +1324,52 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(eqTypeId, number, index) {
-      // 更改设备类型后状态和设备重置
-      this.$set(
-        this.planTypeIdList[number].processesList[index],
-        "equipments",
-        ""
-      );
-      this.$set(
-        this.planTypeIdList[number].processesList[index],
-        "eqStateList",
-        ""
-      );
-      this.$set(
-        this.planTypeIdList[number].processesList[index],
-        "retrievalRule",
-        ""
-      );
-      this.$set(
-        this.planTypeIdList[number].processesList[index],
-        "state",
-        ""
-      );
-      let params = {
-        eqType: eqTypeId, //设备类型
-        eqTunnelId: this.currentClickData.tunnelId, //隧道
-      };
-      getTreeDeviceList(params).then((res) => {
-        if (res.data.length == 0) {
-          return this.$modal.msgWarning("暂无设备");
-        }
+      if(eqTypeId){
+        // 更改设备类型后状态和设备重置
         this.$set(
           this.planTypeIdList[number].processesList[index],
-          "equipmentData",
-          res.data
+          "equipments",
+          ""
         );
-        console.log(res, "设备列表");
-      });
-      console.log(eqTypeId,"eqTypeIdeqTypeIdeqTypeId");
-      if (eqTypeId != 22) {
-        this.listEqTypeStateIsControl(eqTypeId, number, index);
-      } else {
-        //广播
-        this.getAudioFileListData('',number,index);
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "eqStateList",
+          ""
+        );
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "retrievalRule",
+          ""
+        );
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "state",
+          ""
+        );
+        let params = {
+          eqType: eqTypeId, //设备类型
+          eqTunnelId: this.currentClickData.tunnelId, //隧道
+        };
+        getTreeDeviceList(params).then((res) => {
+          if (res.data.length == 0) {
+            return this.$modal.msgWarning("暂无设备");
+          }
+          this.$set(
+            this.planTypeIdList[number].processesList[index],
+            "equipmentData",
+            res.data
+          );
+          console.log(res, "设备列表");
+        });
+        console.log(eqTypeId,"eqTypeIdeqTypeIdeqTypeId");
+        if (eqTypeId != 22) {
+          this.listEqTypeStateIsControl(eqTypeId, number, index);
+        } else {
+          console.log(eqTypeId,'广播')
+          //广播
+          this.getAudioFileListData('',number,index);
+        }
       }
-      // listDevices(params).then((res) => {
-      //   if (res.rows.length == 0) {
-      //     return this.$modal.msgWarning("暂无设备");
-      //   }
-      //   this.$set(
-      //     this.planTypeIdList[number].processesList[index],
-      //     "equipmentData",
-      //     res.rows
-      //   );
-      //   console.log(res, "设备列表");
-      // });
     },
     getAudioFileListData(value, number, index) {
       let params = {
@@ -1445,7 +1379,7 @@ export default {
       getAudioFileList(params).then((res) => {
         console.log(res.data, "广播");
         this.fileList = res.data;
-        this.$set(this.planTypeIdList[number].processesList[index], "eqStateList", res.data);
+        this.$set(this.planTypeIdList[number].processesList[index], "templatesList", res.data);
       });
     },
     // 查询设备可控状态
@@ -2133,8 +2067,14 @@ export default {
 //     // background-position-x: right;
 //     background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
 // }
-::v-deep .el-form-item--medium .el-form-item__label {
-  line-height: 3vh;
+// ::v-deep .el-form-item--medium .el-form-item__label {
+//   line-height: 3vh;
+// }
+.strategy-dialog{
+  ::v-deep .el-dialog__body{
+    height: 72vh;
+    overflow: auto;
+  }
 }
 ::v-deep .in-checked-path .el-radio {
   display: none;
@@ -2197,7 +2137,7 @@ export default {
   text-align: center;
   line-height: 24px;
   font-size: 12px;
-  margin-top: 5px;
+  margin-top: 10px;
   cursor: pointer;
   margin-left: 20px;
   // margin-right: 10px;
@@ -2242,12 +2182,17 @@ export default {
   padding: 10px;
   box-sizing: border-box;
 }
+.dialongBox+.dialongBox{
+  margin-top:10px;
+}
+
 .dialogTableButtonBox {
   display: flex;
   justify-content: space-around;
   align-items: center;
   height: 35px;
   padding-right: 0 !important;
+  margin-left: 2px;
   .delete,
   .add {
     width: 16px;

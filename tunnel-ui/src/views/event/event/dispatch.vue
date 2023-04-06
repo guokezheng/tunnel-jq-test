@@ -2,14 +2,14 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-04 11:23:58
+ * @LastEditTime: 2023-04-06 15:30:24
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="app-container dispatchAss">
     <div class="tunnelBox3">
-      <!-- <iframe
+      <iframe
         name="tuniframe"
         id="miframe"
         class="map3D"
@@ -18,7 +18,7 @@
         allowfullscreen="true"
         allow="autoplay"
         src="http://106.120.201.126:14712/dashboard"
-      ></iframe> -->
+      ></iframe>
     </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>
@@ -172,26 +172,33 @@
               调度联络
               <span>DISPATCHING LIAISON</span>
             </div>
-            <el-table
-              :data="implementList"
-              stripe
-              class="phoneTable"
-              :fit="true"
-              height="84%"
-            >
-              <el-table-column
-                label="姓名"
-                align="center"
-                prop="userName"
-                width="130"
-              />
-              <el-table-column label="联系方式" align="center" prop="phone" width="150">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.phone }}</span>
-                </template>
-              </el-table-column>
-             <el-table-column label="岗位" align="center" prop="groupName" width="120"/>
-            </el-table>
+            <div>
+              <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
+                <el-tab-pane v-for="(item,index) in emergencyList" :key="index"
+                 :label="item.dictLabel" :name="item.dictValue">
+                  <el-table
+                    :data="implementList"
+                    stripe
+                    class="phoneTable"
+                    :fit="true"
+                    height="84%"
+                  >
+                    <el-table-column
+                      label="姓名"
+                      align="center"
+                      prop="userName"
+                      width="100"
+                    />
+                    <el-table-column label="联系方式" align="center" prop="phone" width="150">
+                      <template slot-scope="scope">
+                        <span>{{ scope.row.phone }}</span>
+                      </template>
+                    </el-table-column>
+                  <el-table-column label="岗位" align="center" prop="groupName" width="150"/>
+                  </el-table>
+                </el-tab-pane>
+              </el-tabs>
+            </div>
           </div>
         </div>
     </div>
@@ -220,18 +227,16 @@
                 v-for="(item, index) of incHandList"
                 :key="index"
                 class="incHandContent"
+                :ref="'incHandContent'+index"
               >
                 <div class="classification">
                   <div class="topDashed" v-show="index != 0">
-                    <p></p>
+                    <p 
+                    :style="">
+                    </p>
                     <span class="topCircle"></span>
                   </div>
-                  <div style="
-                    border: 1px solid rgba(57, 173, 255, 0.6);
-                    display: flex;
-                    flex-flow: column;
-                    justify-content: center;
-                    align-items: center;">
+                  <div class="menuBox" :ref="item.reserveId?'menuBox':''">
                     <div
                       class="type"
                       :style="{
@@ -655,7 +660,10 @@
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="levelForm" :model="levelForm" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -724,7 +732,7 @@
     </el-dialog>
     <!-- 执行弹窗 -->
     <el-dialog
-      title="设备控制"
+      title="批量控制"
       :visible.sync="IssuedDialog"
       width="50%"
       text-align="center"
@@ -892,7 +900,7 @@ import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
 import { getEventCamera, getEntranceExitVideo} from "@/api/eventDialog/api.js";
 import { videoStreaming } from "@/api/equipment/eqlist/api";
-
+import {listSdEmergencyPer} from "@/api/event/SdEmergencyPer";
 import workBench from "@/views/event/reservePlan/workBench";
 import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
 import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
@@ -932,7 +940,7 @@ import {
   getEventInif,
   getAllManagementDevices
 } from "@/api/event/event";
-import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
+// import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
 export default {
   components: {
@@ -953,6 +961,8 @@ export default {
   },
   data() {
     return {
+      emergencyList:[],
+      activeName:'1',
       buttonDisable:true,
       deviceStateName:'',
       yjName:'一键',
@@ -1107,6 +1117,11 @@ export default {
       console.log(data,"事件来源")
       this.fromList = data.data;
     });
+    // 应急人员岗位
+    this.getDicts("sd_emergency_post").then((data) => {
+      console.log(data,"事件来源")
+      this.emergencyList = data.data;
+    });
   },
   mounted() {
     this.timer = setInterval(() => {
@@ -1118,6 +1133,18 @@ export default {
   //   clearInterval(this.deadline4);
   // },
   methods: {
+    handleClick(tab, event){
+      console.log(tab.name)
+      this.getImplementList(tab.name);
+    },
+    //请求应急人员数据
+    getImplementList(username){
+      let params = {'groupName':username,'tunnelId':this.eventForm.tunnelId};
+      listSdEmergencyPer(params).then(res=>{
+        console.log(res);
+        this.implementList = res.rows
+      })
+    },
     oneKeyExecute(){
       let planId = this.reserveId;
       let eventId = that.$route.query.id;
@@ -1502,6 +1529,7 @@ export default {
           }
         }
         this.incHandList = list;
+        // 获取一键操作盒子高度
         for (let item of this.incHandList) {
           for (let itm of item.children) {
             if (itm.flowId == 18 && itm.eventState == "1") {
@@ -1512,6 +1540,8 @@ export default {
           }
         }
         this.$forceUpdate();
+
+        
       });
     },
     // 查设备状态
@@ -1560,7 +1590,6 @@ export default {
         this.eventForm.direction
         ).then((response)=>{
           videoStreaming(response.data[0].inlet).then((response) =>{
-            console.log(response,"视频流");
             if(response.data){
               response.data.title = '入口';
               if(response.code == 200){
@@ -1570,7 +1599,6 @@ export default {
             }
           })
           videoStreaming(response.data[0].outlet).then((response) =>{
-            console.log(response,"视频流");
             if(response.data){
               response.data.title = '出口';
               if(response.code == 200){
@@ -1615,13 +1643,8 @@ export default {
     },
     /** 查询应急人员信息列表 */
     async getpersonnelList() {
-      const params = {
-        tunnelId: this.eventForm.tunnelId,
-      };
-      await listSdEmergencyPer(params).then((response) => {
-        this.implementList = response.rows;
-        console.log(this.implementList,"this.implementListthis.implementList");
-      });
+      // 高速交警默认字典值
+      this.getImplementList(1);
     },
     // 切换工作台和3D隧道
     changeActiveMap(type) {
@@ -1882,12 +1905,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-::v-deep .el-table .el-table__header-wrapper th{
-  background-color: rgba(0, 33, 69,0.7)!important;
+::v-deep .el-tabs--card > .el-tabs__header .el-tabs__nav{
+  border:0px;
 }
-::v-deep .theme-light .el-drawer__header{
-  // background-color
+.el-tabs--top .el-tabs__item.is-top:nth-child(2), .el-tabs--top .el-tabs__item.is-bottom:nth-child(2), .el-tabs--bottom .el-tabs__item.is-top:nth-child(2), .el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2){
+  padding-left:0px!important;
+}
+.theme-light #app .el-table{
+  background-color: rgba(1, 46, 81, 0.7)!important;
+}
+::v-deep .el-table .el-table__header-wrapper th{
+  background-color: rgba(1, 46, 81, 0.7)!important;
 }
 .drawerBox:hover{
   cursor: pointer;
@@ -1954,19 +1982,24 @@ display: none;
   font-size:14px;
 }
 ::v-deep .el-table{
-  background-color: rgba(0, 32, 56,0.7)!important;
+  background-color: rgba(1, 46, 81, 0.7)!important;
 }
 ::v-deep .el-table tr{
-  background:#012e51;
+  background:rgba(1, 46, 81, 0.7);
 }
 ::v-deep .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell{
-  background:#00518d;
+  background:rgba(1, 46, 81, 0.7);
 }
 .heightBox{
-
   border-bottom:2px solid #0083FF;
   border-color:linear-gradient(270deg, #0083FF 0%, #3FD7FE 84%, #0083FF 100%);
   padding-bottom: 2%;
+}
+.disRightBox > div{
+  background-color: rgba(1, 46, 81, 0.7)!important;
+}
+.videoBox1{
+  background-color: rgba(1, 46, 81, 0.7)!important;
 }
 .dispatchAss {
   .tunnelBox3 {
@@ -1985,7 +2018,7 @@ display: none;
     color:white;
     height: 120px;
     width: 35px;
-    background-color: #012e51;
+    background-color: rgba(1, 46, 81, 0.7);
     padding: 8px 8px;
     font-size:14px;
   }
@@ -2004,9 +2037,10 @@ display: none;
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
-          background-color: #01365F ;
+          background-color: rgba(1, 46, 81, 0.7);
         }
         .videoBox1 {
+          background-color: rgba(1, 46, 81, 0.7);
           width: 100%;
           height: calc(100% - 40px);
           // word-wrap: break-word;
@@ -2057,7 +2091,7 @@ display: none;
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
-          background-color: #012949;
+          background-color: rgba(1, 46, 81, 0.7);
         }
         .evtMessBox {
           display: flex;
@@ -2143,7 +2177,7 @@ display: none;
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
-          background-color: #012949;
+          background-color: rgba(1, 46, 81, 0.7);
         }
         .planBox1 {
           width: 100%;
@@ -2283,7 +2317,7 @@ display: none;
     background-repeat: no-repeat;
     background-size:100% 100%;
     .IncHand{
-      background-color: rgba(1, 46, 81,0.9);
+      background-color: rgba(1, 46, 81,0.7);
       height: 100%;
       box-sizing: border-box;
       border: 1px solid #0661ae;
@@ -2350,7 +2384,13 @@ display: none;
           margin-bottom:35px;
           .classification {
             position: relative;
-
+            .menuBox{
+              border: 1px solid rgba(57, 173, 255, 0.6);
+              display: flex;
+              flex-flow: column;
+              justify-content: center;
+              align-items: center;
+            }
             .dashed{
               position: absolute;
               display: flex;
@@ -2472,7 +2512,6 @@ display: none;
 .dispatchLeft {
   > div {
     width: 100%;
-    // background-color: rgba(1, 46, 81, 0.7);
     background-color: transparent;
   }
 
@@ -2591,7 +2630,6 @@ display: none;
       .phone {
         width: 100%;
         height: calc(50% - 5px);
-        // background: #012e51;
         .phoneTable {
           background: transparent !important;
           padding: 10px;
@@ -2604,8 +2642,6 @@ display: none;
       .eqRecord {
         width: 100%;
         height: 100%;
-        // margin-top: 10px;
-        // background: #012e51;
         .eqRecordBox {
           height: calc(100% - 40px);
           overflow: auto;
@@ -2703,7 +2739,6 @@ display: none;
   width: 12px;
   height: 12px;
   background: #008aff;
-  // border: solid 2px #012e51;
 }
 ::v-deep .el-dialog__header {
   padding: 0 !important;

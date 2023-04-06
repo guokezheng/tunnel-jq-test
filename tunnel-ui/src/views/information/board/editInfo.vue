@@ -7,7 +7,10 @@
       width="44%"
       :before-close="closeDialog"
     >
-    <div class="dialogCloseButton"></div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <el-card class="box-card">
         <div
           class="blackBoard1"
@@ -228,18 +231,17 @@
         </el-form>
       </el-card>
 
-      <template slot="footer">
-        <el-button size="mini" type="primary" plain @click="closeDialog()"
-          >取消</el-button
-        >
+      <div slot="footer" class="dialog-footer">
         <el-button
-          size="mini"
           @click="dataFormSubmitHandle()"
-          type="primary"
           v-loading="loading"
+          class="submitButton"
           >确认
         </el-button>
-      </template>
+        <el-button @click="closeDialog()" class="closeButton"
+          >取消</el-button
+        >
+      </div>
     </el-dialog>
   </div>
 </template>

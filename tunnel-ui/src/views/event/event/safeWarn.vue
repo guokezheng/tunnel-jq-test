@@ -203,7 +203,10 @@
       :modal="false"
       append-to-body
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="videoDialogBox">
         <div
           style="display: none"
@@ -446,8 +449,8 @@
                       <el-option
                         v-for="(item, index) in chezhiLaneList"
                         :key="index"
-                        :label="item.laneName"
-                        :value="item.laneId"
+                        :label="item.dictLabel"
+                        :value="item.dictValue"
                       />
                     </el-select>
                   </el-col>
@@ -470,13 +473,12 @@
                 <el-input
                   v-model="eventFormDetail.eventDescription"
                   placeholder="事件描述"
-                  :disabled="detailsDisabled"
                   style="width: calc(100% - 10px)"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="事件类型" prop="eventTypeId">
+              <el-form-item label="预估类型" prop="eventTypeId">
                 <el-select
                   v-model="eventFormDetail.eventTypeId"
                   clearable
@@ -494,7 +496,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="事件等级" prop="eventGrade">
+              <el-form-item label="预估等级" prop="eventGrade">
                 <el-select
                   v-model="eventFormDetail.eventGrade"
                   clearable
@@ -516,7 +518,7 @@
                 <el-radio-group v-model="eventFormDetail.eventState"
                                 @input="eventStateChange"
                 >
-                  <el-radio :label="4"> 确认(已确认) </el-radio>
+                  <el-radio :label="4"> 确认(已处理) </el-radio>
                   <el-radio :label="2"> 挂起(稍后处理) </el-radio>
                   <el-radio :label="5"> 误报 </el-radio>
                   <el-radio :label="0"> 突发事件处置 </el-radio>
@@ -606,7 +608,10 @@
       </div>
     </el-dialog>
     <el-dialog title="事件详情报告" :visible.sync="dialogTableVisible" width="70%" class="evtInfo">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-timeline>
         <el-timeline-item timestamp="事件发现" placement="top">
           <el-card>
@@ -669,58 +674,63 @@
           <el-form ref="manualReview" :model="manualReview" label-width="100px">
             <el-card>
               <el-row :gutter="20">
-                <el-col :span="12">
+                <el-col :span="24">
                   <el-form-item label="当事目标">
                     <el-input v-model="manualReview.confidenceList" readonly></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="24">
                   <el-form-item label="影响描述">
                     <el-input v-model="manualReview.eventDescription" readonly></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="6">
+                <el-col :span="8">
                   <el-form-item label="事件类型">
                     <el-input v-model="manualReview.eventTypeName" readonly></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="8">
                   <el-form-item label="事件等级">
                     <el-input v-model="manualReview.eventGrade" readonly></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="8">
                   <el-form-item label="复核结果">
                     <el-input v-model="manualReview.eventState" readonly></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
-                  <el-form-item label="复核人">
-                    <el-input v-model="manualReview.updateBy" readonly></el-input>
-                  </el-form-item>
-                </el-col>
+
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="6">
-                  <el-form-item label="复核时间">
-                    <el-input v-model="manualReview.updateTime" readonly></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item label="事发路段">
-                    <el-input v-model="manualReview.direction" readonly></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
+                <el-col :span="8">
                   <el-form-item label="事发位置">
                     <el-input v-model="manualReview.stakeNum" readonly></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="8">
                   <el-form-item label="影响车道">
-                    <el-input v-model="manualReview.direction" readonly></el-input>
+                    <el-input v-model="manualReview.laneNo" readonly></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="事发路段">
+                    <el-input v-model="manualReview.tunnelName" readonly></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  <el-form-item label="复核人">
+                    <el-input v-model="manualReview.updateBy" readonly></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="复核时间">
+                    <el-input v-model="manualReview.updateTime" readonly></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -915,7 +925,10 @@
       title="事件视频"
       class="videoDialog"
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="videoDialogClass">
         <video :src="videoUrl" controls muted loop fluid autoplay></video>
       </div>
@@ -938,7 +951,10 @@
       :visible.sync="dialogVisibleDevice"
       width="50%"
       :before-close="handleClose">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClickDevice">
           <el-tab-pane
@@ -1178,18 +1194,18 @@ export default {
         },
       ],
       chezhiLaneList3: [
-        {
-          laneId: "1",
-          laneName: "一车道",
-        },
-        {
-          laneId: "2",
-          laneName: "二车道",
-        },
-        {
-          laneId: "3",
-          laneName: "三车道",
-        },
+        // {
+        //   laneId: "1",
+        //   laneName: "一车道",
+        // },
+        // {
+        //   laneId: "2",
+        //   laneName: "二车道",
+        // },
+        // {
+        //   laneId: "3",
+        //   laneName: "三车道",
+        // },
       ],
 
         // 选中数组
@@ -1393,6 +1409,14 @@ export default {
     });
     this.getDicts("sd_direction").then((response) => {
       this.directionList = response.data;
+    });
+    // 二车道
+    this.getDicts("sd_lane_one").then((data) => {
+      this.chezhiLaneList2 = data.data;
+    });
+    // 三车道
+    this.getDicts("sd_lane_two").then((data) => {
+      this.chezhiLaneList3 = data.data;
     });
     // 事件类型
     // this.getPlanType();
@@ -3115,6 +3139,9 @@ export default {
     top: 6% !important;
     right: 0.8% !important;
     width: 23.8% !important;
+    .el-checkbox+.el-checkbox{
+      margin-left: 0 !important;
+    }
   }
   .hitchDialog{
     ::v-deep .el-dialog__body{

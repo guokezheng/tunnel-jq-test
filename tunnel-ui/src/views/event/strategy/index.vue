@@ -166,7 +166,6 @@
           class="allTable"
           :row-key="getRowKey"
           ref="tableFile1"
-          :key="Math.random()"
         >
           <el-table-column type="selection" width="55" align="center" reserve-selection/>
           <el-table-column
@@ -854,9 +853,19 @@ export default {
       this.getList();
     },
     changeStrategyState(row) {
+
       let data = {strategyId: row.id, change: row.strategyState};
       updateState(data).then((result) => {
-        this.$modal.msgSuccess(result.msg);
+
+        if(result.code == 200){
+          if(row.strategyState == 0){
+            this.$modal.msgSuccess("开启成功");
+          }else{
+            this.$modal.msgSuccess("关闭成功");
+          }
+        }else{
+          this.$modal.msgSuccess(result.msg);
+        }
       });
     },
     // 改变策略类型

@@ -33,6 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="fremove"    column="fremove"    />
         <result property="flevel"    column="flevel"    />
         <result property="faultEscalationType"    column="fault_escalation_type"    />
+        <result property="tunnel_name"    column="tunnelName"    />
     </resultMap>
 
     <sql id="selectSdFaultListVo">
@@ -43,7 +44,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select s.id, e.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, IFNULL(s.fault_description,"") fault_description, fault_status,t.dict_label ftype,
         r.dict_label fremove,
         l.dict_label flevel,
-        u.dict_label fstatus
+        u.dict_label fstatus,
+        e.tunnel_name
         from sd_fault_list s
         left join sd_devices a on a.eq_id = s.eq_id
         left join sd_tunnels e on a.eq_tunnel_id = e.tunnel_id
@@ -208,7 +210,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getFaultList1"  resultType="hashmap">
-        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name
+        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name,f.fault_fxtime
         from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id

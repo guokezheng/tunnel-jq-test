@@ -213,10 +213,16 @@
                 #{eventDescription}
             </if>
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and date_format(A.event_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+                and date_format(CASE
+                WHEN A.end_time IS NULL THEN
+                ( CASE WHEN A.update_time IS NULL THEN A.event_time ELSE A.update_time END ) ELSE A.end_time
+                END,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(A.event_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                and date_format(CASE
+                WHEN A.end_time IS NULL THEN
+                ( CASE WHEN A.update_time IS NULL THEN A.event_time ELSE A.update_time END ) ELSE A.end_time
+                END,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
             </if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
@@ -496,6 +502,7 @@
             t.tunnel_name AS tunnelName,
             sdd2.dict_label AS direction,
             e.review_remark,
+            IFNULL(e.lane_no,'') AS laneNo,
             CASE
                 WHEN ( e.stake_end_num IS NULL OR e.stake_end_num = '' ) THEN
                     CONCAT( e.stake_num, '至', e.stake_num ) ELSE CONCAT( e.stake_num, '至', e.stake_end_num )

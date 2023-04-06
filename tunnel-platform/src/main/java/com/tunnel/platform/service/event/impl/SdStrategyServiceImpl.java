@@ -832,8 +832,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             List<String> value = (List<String>) map.get("equipments");
             String equipments = StringUtils.join(value,",");
             String equipmentTypeId = map.get("equipmentTypeId") + "";
-            if(map.get("openState") == null || map.get("closeState") == null){
-                throw new RuntimeException("请填写完整策略信息！");
+
+            if(!equipmentTypeId.equals("16") && !equipmentTypeId.equals("36")) {
+                if (map.get("openState") == null || map.get("closeState") == null) {
+                    throw new RuntimeException("请填写完整策略信息！");
+                }
             }
             String state = null;
             if(null != map.get("state")){
@@ -845,11 +848,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 SdStrategyRl openRlData = new SdStrategyRl();
                 openRlData.setEqTypeId(equipmentTypeId);
                 openRlData.setEquipments(equipments);
-                if(StringUtils.isNotBlank(openState)){
+                if(equipmentTypeId.equals("16") || equipmentTypeId.equals("36")){
+                    openRlData.setState(state);
+                }else{
                     openRlData.setState(openState);
                     openRlData.setEndState(closeState);
-                }else{
-                    openRlData.setState(state);
                 }
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);
@@ -1167,7 +1170,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             SdReserveProcess sdReserveProcess = sdReserveProcessMapper.selectSdReserveProcessById(Long.valueOf(processId));
             SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(sdReserveProcess.getStrategyId());
             flowParam.put("content",sdReserveProcess.getProcessName());
-            issueResult = issuedDevice(rl,eventId,"4");
+            issueResult = issuedDevice(rl,eventId,"3");
             if(issueResult>0){
                 sdEventFlowService.savePlanProcessFlow(flowParam);
                 //更新事件处置记录表状态
@@ -1182,7 +1185,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int implementProcess(Long processId,Long eventId) {
         SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
         SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
-        int issueResult = issuedDevice(rl,eventId,"4");
+        int issueResult = issuedDevice(rl,eventId,"3");
         String deviceExecutionState = getDeviceExecutionState(rl, process);
         if(issueResult>0){
             //保存处置记录

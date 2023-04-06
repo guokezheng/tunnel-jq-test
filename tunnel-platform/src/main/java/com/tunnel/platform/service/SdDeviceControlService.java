@@ -18,6 +18,7 @@ import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -266,7 +267,11 @@ public class SdDeviceControlService {
                 throw new RuntimeException("没有找到需要发布的模板信息");
             }
             Long templateId = Long.parseLong(map.get("templateId").toString());
-
+            //模板内容
+            IotBoardTemplateContent templateContent = new IotBoardTemplateContent();
+            templateContent.setTemplateId(templateId.toString());
+            List<IotBoardTemplateContent> templateContentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(templateContent);
+            sdOperationLog.setOperationState(templateContentList.size() == 0 ? "" : templateContentList.get(0).getContent());
             //控制情报板
             controlState = controlInformationBoard(controlState, isopen, templateId, sdDevices, state);
 

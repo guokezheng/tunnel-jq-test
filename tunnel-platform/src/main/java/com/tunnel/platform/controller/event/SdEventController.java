@@ -254,7 +254,7 @@ public class SdEventController extends BaseController
                 issuedParam.put("eventId",eventId);
                 issuedParam.put("devId",data.getEqId());
                 issuedParam.put("state",data.getBeforeState());
-                issuedParam.put("controlType","4");
+                issuedParam.put("controlType","3");
                 //疏散标志
                 if(data.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode())){
                     issuedParam.put("brightness","50");

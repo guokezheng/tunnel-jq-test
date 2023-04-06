@@ -224,6 +224,7 @@ import { defaultIcon, laneImage } from "../../../utils/configData.js";
 
 var selectedIconIndex = ""; //删除索引
 var img = [];
+
 export default {
   name: "TunnelConfig",
   dicts: ["environment"],
@@ -319,6 +320,9 @@ export default {
       saveLoading: false,
       //环境变量临时扩大数组
       Clist: [],
+      pageXimage :0,
+      pageYimage :0,
+
     };
   },
   created: function () {
@@ -375,31 +379,23 @@ export default {
     //鼠标拖动
     window.ondrag = function (e) {
       let oDiv=  document.getElementById("imageId")
-      console.log(oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX)
-      console.log("sssss"+oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX)
+      this.pageXimage = e.pageX
+      this.pageYimage = e.pageY
       if(e.pageY-oDiv.getBoundingClientRect().top <5||e.pageX-oDiv.getBoundingClientRect().left <5||oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX<5
         ||oDiv.clientHeight+oDiv.getBoundingClientRect().top-e.pageY<5){
-        // debugger
         let num = "";
         let selectedIconLists = JSON.parse(JSON.stringify(that.selectedIconList))
         that.deleteObjs = e.target.snap;
         for (let i = 0; i < img.length; i++) {
           if (img[i].id == that.deleteObjs) {
             img[i].remove();
-            console.log(img[i])
             img.splice(i, 1);
-            console.log(that.selectedIconList)
             that.selectedIconList.splice(i, 1);
             num = i
           }
         }
-          // debugger
-        console.log(selectedIconLists[num])
-        console.log( that.eqTypeList)
         let selectedIcon = that.eqTypeList.find(item=> item.typeId ==selectedIconLists[num].eqType);
-        console.log( selectedIcon)
         that.getEquipment(selectedIconLists[num],selectedIcon)
-        // debugger
       }
     };
   },
@@ -1366,6 +1362,8 @@ export default {
     },
     // 辅助线
     auxiliaryLine() {
+      debugger
+      let that = this;
       if (!$("#svg g")) return;
       var MIN_DISTANCE = 1; //捕获的最小距离
 
@@ -1375,6 +1373,7 @@ export default {
 
       $("#svg g").draggable({
         start: function (event, ui) {
+          debugger
           guides = $.map($("#svg g").not(this), computeGuidesForElement);
           //鼠标距离选中元素最左边和最上边的距离
           for (const k in event.target) {
@@ -1411,6 +1410,8 @@ export default {
 		            */
 
         drag: function (event, ui) {
+          console.log(event)
+          debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1433,10 +1434,10 @@ export default {
 
           //pageX、pageY：文档坐标x、y ;
           var pos = {
-            top: event.pageY - innerOffsetY,
-            left: event.pageX - innerOffsetX,
+            top: event.pageY,
+            left: event.pageX ,
           };
-        
+
           //outerHeight、outerWidth：整个浏览器的高度、宽度
 
           var w = event.pageX - 1; //改
@@ -1456,11 +1457,16 @@ export default {
                 var d = Math.abs(elemGuide[prop] - guide[prop]);
 
                 if (d < chosenGuides[prop].dist) {
+                  debugger
                   chosenGuides[prop].dist = d;
 
                   chosenGuides[prop].offset = elemGuide[prop] - pos[prop];
-
-                  chosenGuides[prop].guide = guide;
+                  let guide1= {
+                    left:event.pageX+32,
+                    top: event.pageY+35,
+                    type:"h"
+                  }
+                  chosenGuides[prop].guide = guide1;
                 }
               }
             });
@@ -1475,6 +1481,7 @@ export default {
               .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           } else {
+            debugger
             $("#guide-h").hide();
             // ui.position.top = pos.top - 104;
           }

@@ -380,7 +380,7 @@ public class PhoneSpkService {
 
         //添加操作日志
         List<SdOperationLog> list = new ArrayList<>();
-        for(String eqId : Arrays.asList(spkDeviceIds.toString().split(","))){
+        for(String eqId : spkDeviceIds){
             SdOperationLog sdOperationLog = new SdOperationLog();
             sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
             sdOperationLog.setTunnelId(tunnelId);

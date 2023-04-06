@@ -746,6 +746,7 @@
               <el-table
                 :data="GDeviceData.deviceList"
                 stripe
+                max-height="400"
                 class="phoneTable"
                 :fit="true"
               >

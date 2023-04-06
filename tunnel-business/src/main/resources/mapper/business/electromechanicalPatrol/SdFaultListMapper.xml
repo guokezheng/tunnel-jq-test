@@ -41,10 +41,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">
-        select s.id, e.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, IFNULL(s.fault_description,"") fault_description, fault_status,t.dict_label ftype,
+        select s.id, e.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, IFNULL(s.fault_description,"") fault_description, s.fault_escalation_type,fault_status,t.dict_label ftype,
         r.dict_label fremove,
         l.dict_label flevel,
         u.dict_label fstatus,
+        b.dict_label fEscalationType
         e.tunnel_name
         from sd_fault_list s
         left join sd_devices a on a.eq_id = s.eq_id
@@ -52,11 +53,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data t on t.dict_value = s.fault_type and t.dict_type ='fault_type'
         left join sys_dict_data r on r.dict_value = s.fallt_remove_statue and r.dict_type ='fault_remove_statue'
         left join sys_dict_data l on l.dict_value = s.fault_level and l.dict_type ='fault_level'
+        left join sys_dict_data b on b.dict_value = s.fault_escalation_type and b.dict_type ='fault_escalation_type'
         left join sys_dict_data u on u.dict_value = s.eq_status and u.dict_type ='sd_monitor_state'
         <where>
             <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
             <if test="faultLocation != null  and faultLocation != ''"> and s.fault_location = #{faultLocation}</if>
-            <if test="faultType != null and faultType != ''"> and s.fault_type = #{faultType}</if>
+            <if test="paramFaultType != null and paramFaultType != ''"> and FIND_IN_SET(t.dict_label, #{paramFaultType}) > 0</if>
+            <if test="paramFaultRemoveState != null and paramFaultRemoveState != ''"> and FIND_IN_SET(r.dict_label, #{paramFaultRemoveState}) > 0</if>
+            <if test="paramFaultLevel != null and paramFaultLevel != ''"> and FIND_IN_SET(l.dict_label, #{paramFaultLevel}) > 0</if>
             <if test="faultSource != null  and faultSource != ''"> and s.fault_source = #{faultSource}</if>
             <if test="faultFxtime != null and faultFxtime != '' "> and s.fault_fxtime = #{faultFxtime}</if>
             <if test="faultCxtime != null  and faultCxtime != ''"> and s.fault_cxtime = #{faultCxtime}</if>
@@ -70,6 +74,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultDescription != null  and faultDescription != ''"> and concat(s.fault_description,s.fault_location) like concat('%', #{faultDescription}, '%')</if>
             <if test="faultStatus != null and faultStatus != ''"> and s.fault_status = #{faultStatus}</if>
             <if test="ids != null  and ids != ''"> and FIND_IN_SET(s.id,#{ids}) > 0</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and s.fault_fxtime &gt;= #{params.beginTime}
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and s.fault_fxtime &lt;= #{params.endTime}
+            </if>
             <if test="deptId != null and deptId != ''">
                 AND (e.dept_id = #{deptId} OR e.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
             </if>
@@ -210,7 +220,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getFaultList1"  resultType="hashmap">
-        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name,f.fault_fxtime
+        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name
         from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id

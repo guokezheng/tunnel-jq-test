@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-06 15:30:24
+ * @LastEditTime: 2023-04-06 16:46:47
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -226,17 +226,18 @@
               <div
                 v-for="(item, index) of incHandList"
                 :key="index"
-                class="incHandContent"
+                :class="item.reserveId?'incHandContent incHandContentBox':'incHandContent'"
                 :ref="'incHandContent'+index"
               >
-                <div class="classification">
-                  <div class="topDashed" v-show="index != 0">
+                <div :class="item.reserveId?'classification classificationBox':'classification'">
+                  <div class="topDashed" v-show="index != 0" 
+                    :style="{'top':circlePosition}">
                     <p 
-                    :style="">
+                      :style="{'height':lineHeight+'px'}">
                     </p>
                     <span class="topCircle"></span>
                   </div>
-                  <div class="menuBox" :ref="item.reserveId?'menuBox':''">
+                  <div class="menuBox">
                     <div
                       class="type"
                       :style="{
@@ -260,7 +261,7 @@
                     :style="{top:index == 0?'55px':'80px'}"
                     v-show="index != incHandList.length - 1">
                     <span class="circle"></span>
-                    <p :style="{height:index == 0?'58px':'30px'}"></p>
+                    <p :style="{height:index == 0?'58px':lineHeight + 'px'}"></p>
                   </div>
                 </div>
 
@@ -1055,6 +1056,8 @@ export default {
       curY: 0,
       ReservePlanList:null,//预案列表
       reserveId:'',
+      lineHeight:0,
+      circlePosition:'',
     };
   },
   computed: {
@@ -1528,6 +1531,14 @@ export default {
           }
         }
         this.incHandList = list;
+        this.$nextTick(()=>{
+          const incHandContentBox = document.querySelector('.incHandContentBox').offsetHeight
+          const classificationBox = document.querySelector('.classificationBox').offsetHeight;
+          console.log(incHandContentBox,classificationBox);
+          // 线的高度
+          this.lineHeight = (incHandContentBox - classificationBox) / 2;
+          this.circlePosition = '-' + (this.lineHeight + 10) + 'px';
+        })
         // 获取一键操作盒子高度
         for (let item of this.incHandList) {
           for (let itm of item.children) {
@@ -1911,7 +1922,7 @@ export default {
   padding-left:0px!important;
 }
 .theme-light #app .el-table{
-  background-color: rgba(1, 46, 81, 0.7)!important;
+  background-color: transparent;
 }
 ::v-deep .el-table .el-table__header-wrapper th{
   background-color: rgba(1, 46, 81, 0.7)!important;
@@ -1980,9 +1991,9 @@ display: none;
   height:4vh;
   font-size:14px;
 }
-::v-deep .el-table{
-  background-color: rgba(1, 46, 81, 0.7)!important;
-}
+// ::v-deep .el-table{
+//   background-color: rgba(1, 46, 81, 0.7)!important;
+// }
 ::v-deep .el-table tr{
   background:rgba(1, 46, 81, 0.7);
 }
@@ -1990,8 +2001,6 @@ display: none;
   background:rgba(1, 46, 81, 0.7);
 }
 .heightBox{
-  border-bottom:2px solid #0083FF;
-  border-color:linear-gradient(270deg, #0083FF 0%, #3FD7FE 84%, #0083FF 100%);
   padding-bottom: 2%;
 }
 .disRightBox > div{
@@ -2479,9 +2488,11 @@ display: none;
           }
         }
         .rightButton{
+          border-top: 2px solid #0083FF;
           display: flex;
           justify-content: space-around;
           margin-top: 5%;
+          padding-top: 5%;
         }
       }
     }

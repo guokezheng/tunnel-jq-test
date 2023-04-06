@@ -901,6 +901,7 @@ export default {
         falltRemoveStatue: null,
         faultDescription: null,
         faultStatus: 0,
+        eqRunStatus: null,
       };
       this.fileList = [];
       this.removeIds = [];

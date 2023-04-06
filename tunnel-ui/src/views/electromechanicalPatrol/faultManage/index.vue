@@ -879,7 +879,7 @@ export default {
     //故障发现源
     this.getDicts("fault_escalation_type").then((response) => {
       this.faultEscalationTypeOptions = response.data;
-      this.form.faultEscalationType = response.data[0].dictValue;
+
     });
     //故障等级
     this.getDicts("fault_level").then((response) => {
@@ -901,6 +901,7 @@ export default {
     this.getDicts("power").then((response) => {
       this.powerOptions = response.data;
     });
+
   },
   mounted() {
     this.$nextTick(() => {
@@ -908,6 +909,8 @@ export default {
     });
   },
   methods: {
+
+
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -1033,6 +1036,7 @@ export default {
         faultLevel: null,
         falltRemoveStatue: null,
         faultDescription: null,
+        faultEscalationType:"0",
         faultStatus: 0,
         eqRunStatus: null,
       };

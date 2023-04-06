@@ -119,9 +119,9 @@ public class SdFaultList extends BaseEntity
 
     @Excel(name = "故障等级")
     private String flevel;
-
+    @Excel(name = "故障类型")
     private String ftype;
-
+    @Excel(name = "所属隧道")
     private String tunnelName;
 
     private String ids;

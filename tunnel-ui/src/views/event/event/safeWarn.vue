@@ -712,7 +712,7 @@
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="事发路段">
-                    <el-input v-model="manualReview.direction" readonly></el-input>
+                    <el-input v-model="manualReview.tunnelName" readonly></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>

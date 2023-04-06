@@ -211,7 +211,10 @@
       append-to-body
       class="hitchDialog"
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row style="display: flex; flex-wrap: wrap">
           <el-card>
@@ -496,7 +499,10 @@
     </el-dialog>
 
     <el-dialog :visible.sync="record" width="70%">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div style="text-align: center; font-size: 18px">故障检修记录</div>
       <div class="card" v-show="news.length > 0" v-for="(item,index) in news" :key="index">
         <div class="card-col" style="font-size: 16px">

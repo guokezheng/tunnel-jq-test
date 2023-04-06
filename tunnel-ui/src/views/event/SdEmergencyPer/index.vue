@@ -181,7 +181,10 @@
         append-to-body
         class="addUserDialog"
       >
-        <div class="dialogCloseButton"></div>
+        <div class="dialogStyleBox">
+          <div class="dialogLine"></div>
+          <div class="dialogCloseButton"></div>
+        </div>
         <el-form ref="form" :model="form" :rules="rules" label-width="80px">
           <el-form-item label="应急人员" prop="userName">
             <el-input v-model="form.userName" placeholder="请输入应急人员" />

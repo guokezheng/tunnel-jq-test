@@ -353,7 +353,10 @@
       append-to-body
       class="tunnelRelationDialog"
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="forms" :model="forms" :rules="rule" label-width="80px">
         <el-row>
           <el-col :span="5">
@@ -471,7 +474,10 @@
       class="addUserDialog"
       :before-close="cancel"
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="12">

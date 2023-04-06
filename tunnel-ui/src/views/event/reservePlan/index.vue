@@ -397,7 +397,10 @@
     <!--    <work-bench ref="workBench"></work-bench>-->
     <!-- 新增弹窗 -->
     <el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="addform1"
         :model="reservePlanDrawForm"
@@ -552,7 +555,10 @@
       width="78%"
       class="strategy-dialog"
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm">
         <div
           v-for="(item, number) in planTypeIdList"

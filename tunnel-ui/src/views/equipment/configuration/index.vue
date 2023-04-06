@@ -195,7 +195,10 @@
     </el-dialog>
     <!-- 添加或修改隧道环境配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="名称" prop="sdName">
           <el-input v-model="form.sdName" placeholder="请输入上传名称" />

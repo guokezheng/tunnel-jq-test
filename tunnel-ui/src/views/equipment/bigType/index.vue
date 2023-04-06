@@ -130,7 +130,10 @@
 
     <!-- 添加或修改设备类型对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="类型名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入类型名称"/>

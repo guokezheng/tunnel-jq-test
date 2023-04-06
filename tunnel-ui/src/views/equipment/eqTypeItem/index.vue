@@ -150,7 +150,10 @@
 
     <!-- 添加或修改设备类型数据项对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="数据项编号" prop="itemCode">
           <el-input v-model="form.itemCode" placeholder="请输入数据项编号" />

@@ -153,7 +153,10 @@
 
     <!-- 添加或修改设备协议对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备品牌" prop="brandId">
           <el-select v-model="form.brandId" placeholder="请选择设备品牌" style="width: 100%">

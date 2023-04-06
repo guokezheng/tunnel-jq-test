@@ -203,7 +203,10 @@
       :modal="false"
       append-to-body
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="videoDialogBox">
         <div
           style="display: none"
@@ -922,7 +925,10 @@
       title="事件视频"
       class="videoDialog"
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="videoDialogClass">
         <video :src="videoUrl" controls muted loop fluid autoplay></video>
       </div>
@@ -945,7 +951,10 @@
       :visible.sync="dialogVisibleDevice"
       width="50%"
       :before-close="handleClose">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClickDevice">
           <el-tab-pane

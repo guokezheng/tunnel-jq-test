@@ -45,7 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         r.dict_label fremove,
         l.dict_label flevel,
         u.dict_label fstatus,
-        b.dict_label fEscalationType
+        b.dict_label fEscalationType,
         e.tunnel_name
         from sd_fault_list s
         left join sd_devices a on a.eq_id = s.eq_id

@@ -243,7 +243,7 @@ public class SdReserveProcessController extends BaseController
                     issuedParam.put("state",controlStatus);
                     issuedParam.put("devId",alarmPointEqId);
                     issuedParam.put("eventId",eventId);
-                    issuedParam.put("controlType","4");
+                    issuedParam.put("controlType","3");
                     issuedParam.put("operIp", InetAddress.getLocalHost().getHostAddress());
                     result = sdDeviceControlService.controlDevices(issuedParam);
                     issuedParam.clear();
@@ -253,7 +253,7 @@ public class SdReserveProcessController extends BaseController
                         issuedParam.put("devId",devId);
                         issuedParam.put("state",rl.getState());
                         issuedParam.put("eventId",eventId);
-                        issuedParam.put("controlType","4");
+                        issuedParam.put("controlType","3");
                         //诱导灯默认值
                         if(rl.getEqTypeId().equals("31")){
                             issuedParam.put("brightness","50");

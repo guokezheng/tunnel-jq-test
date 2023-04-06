@@ -792,18 +792,17 @@ public class SdEventServiceImpl implements ISdEventService {
         if(!"3".equals(sdEventData.getEventState())){
             //查询事件详情-人工复核
             SdEvent manualReview = sdEventMapper.getManualReview(sdEvent);
-            List<SysDictData> sdLaneTwo = sysDictDataMapper.selectDictDataByType("sd_lane_two");
             if(manualReview != null){
                 //车道
                 List<String> list = Arrays.asList(manualReview.getLaneNo().split(","));
                 String lane = "";
-                list.stream().forEach(item -> {
-                    sdLaneTwo.stream().forEach(temp -> {
-                        if(item.equals(temp.getDictValue())){
-                            lane.concat(temp.getDictLabel());
-                        }
-                    });
-                });
+                for(int i = 0; i < list.size(); i++){
+                    if(list.get(i) == null || "".equals(list.get(i))){
+                        continue;
+                    }
+                    String laneLabel = sysDictDataMapper.selectDictLabel("sd_lane_two", list.get(i));
+                    lane = lane.concat(laneLabel);
+                }
                 manualReview.setLaneNo(manualReview.getDirection().concat("/").concat(lane));
                 //查询事件详情-人工复核-当事目标
                 String confidence = radarEventMapper.selectConfidence(sdEvent.getId());

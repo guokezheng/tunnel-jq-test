@@ -845,11 +845,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 SdStrategyRl openRlData = new SdStrategyRl();
                 openRlData.setEqTypeId(equipmentTypeId);
                 openRlData.setEquipments(equipments);
-                if(StringUtils.isNotBlank(openState)){
+                if(equipmentTypeId.equals("16") || equipmentTypeId.equals("36")){
+                    openRlData.setState(state);
+                }else{
                     openRlData.setState(openState);
                     openRlData.setEndState(closeState);
-                }else{
-                    openRlData.setState(state);
                 }
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);

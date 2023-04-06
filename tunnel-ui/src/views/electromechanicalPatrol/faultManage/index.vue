@@ -16,7 +16,7 @@
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入故障位置、故障描述，回车搜索"
+            placeholder="请输入故障位置、故障描述、所属隧道，回车搜索"
             v-model="queryParams.faultDescription"
             @keyup.enter.native="handleQuery"
           >

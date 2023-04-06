@@ -211,7 +211,10 @@
       append-to-body
       class="hitchDialog"
     >
-    <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row style="display: flex; flex-wrap: wrap">
           <el-card>
@@ -276,7 +279,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8" >
+            <el-col :span="8">
               <el-form-item label="发现时间" prop="faultFxtime">
                 <el-date-picker
                   clearable
@@ -293,7 +296,7 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="8" >
+            <el-col :span="8">
               <el-form-item label="持续时间" prop="faultCxtime">
                 <el-input
                   :disabled="disstate"
@@ -327,7 +330,7 @@
               <div class="tableTopHr"></div>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="设备名称" prop="eqId" >
+              <el-form-item label="设备名称" prop="eqId">
                 <el-select
                   v-model="form.eqId"
                   :disabled="disstate"
@@ -496,7 +499,10 @@
     </el-dialog>
 
     <el-dialog :visible.sync="record" width="70%">
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div style="text-align: center; font-size: 18px">故障检修记录</div>
       <div class="card" v-show="news.length > 0" v-for="(item,index) in news" :key="index">
         <div class="card-col" style="font-size: 16px">
@@ -1414,6 +1420,7 @@ export default {
   }
   ::v-deep .el-card {
     margin-bottom: 10px !important;
+    width:100%;
   }
 }
 .topTxt {

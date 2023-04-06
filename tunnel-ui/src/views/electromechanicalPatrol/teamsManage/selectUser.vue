@@ -9,7 +9,10 @@
       append-to-body
       v-dialogDrag
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-row :gutter="20" style="margin: 10px 5px 6px">
         <el-col :span="10" :offset="14">
           <div class="grid-content bg-purple" ref="main">

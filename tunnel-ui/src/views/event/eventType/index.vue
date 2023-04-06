@@ -304,7 +304,10 @@
 
     <!-- 添加或修改事件类型对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="事件类型" prop="eventType">
           <el-input v-model="form.eventType" placeholder="请输入事件类型" />

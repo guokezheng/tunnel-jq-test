@@ -157,7 +157,10 @@
 
     <!-- 添加或修改备品备件库对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="110px" >
         <el-form-item label="所属隧道" prop="eqTunnelId">
           <el-select v-model="form.tunnelId" placeholder="请选择所属隧道" style="width: 100%">

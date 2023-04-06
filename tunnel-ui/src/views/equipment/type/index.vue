@@ -169,7 +169,10 @@
       append-to-body
       class="eqTypeDialog"
     >
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="设备类型名称" prop="typeName">
           <el-input v-model="form.typeName" placeholder="请输入设备类型名称" />

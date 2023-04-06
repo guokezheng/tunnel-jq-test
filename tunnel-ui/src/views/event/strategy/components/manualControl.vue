@@ -148,14 +148,14 @@
               @change="handleChange"
             ></el-cascader>
           </el-col>
-          <el-col :span="2" class="buttonBox">
+          <div class="buttonBox">
             <el-button class="delete" @click="removeItem(index)"></el-button>
             <el-button
               v-show="strategyForm.equipmentTypeId != 30"
               class="add"
               @click="addItem"
             ></el-button>
-          </el-col>
+          </div>
         </el-form-item>
       </el-row>
 
@@ -163,10 +163,10 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button class="submitButton" @click="submitStrategyForm"
-      >提交</el-button
+        >提交</el-button
       >
       <el-button class="closeButton" @click="strategyFormClose"
-      >取 消</el-button
+        >取 消</el-button
       >
     </div>
   </div>
@@ -284,8 +284,6 @@ export default {
             this.strategyForm.manualControl[i].equipmentTypeId = Number(
               attr.eqTypeId
             );
-
-
             // 情报板设备
             if (
               this.strategyForm.manualControl[i].equipmentTypeId == 16 ||
@@ -559,16 +557,16 @@ export default {
     addItem() {
       this.$refs["manualControl"].validate((valid) => {
         if (valid) {
-      this.addCf();
-      this.strategyForm.manualControl.push({
-        disposalName: "",
-        value: "",
-        state: "",
-        equipmentTypeId: "",
-        equipmentTypeData: [],
-        equipmentData: [],
-      });
-      this.getEquipmentType();
+          this.addCf();
+          this.strategyForm.manualControl.push({
+            disposalName: "",
+            value: "",
+            state: "",
+            equipmentTypeId: "",
+            equipmentTypeData: [],
+            equipmentData: [],
+          });
+          this.getEquipmentType();
         }
       });
     },

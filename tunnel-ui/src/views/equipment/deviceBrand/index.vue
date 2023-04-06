@@ -147,7 +147,10 @@
 
     <!-- 添加或修改物联设备厂商对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <div class="dialogCloseButton"></div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="设备厂商名称" prop="supplierName">
           <el-input

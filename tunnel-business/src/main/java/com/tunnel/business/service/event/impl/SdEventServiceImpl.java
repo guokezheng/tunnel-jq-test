@@ -779,6 +779,7 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEvent eventDiscovery = sdEventMapper.getEventDiscovery(sdEvent);
         //查询事件详情-事件发现-图片
         List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
+        image1.stream().filter(item -> "1".equals(item.getImgType())).forEach(item -> item.setImgUrl(item.getImgUrl().split(",")[0]));
         eventDiscovery.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
         //计算持续时间
         String datePoor = "";

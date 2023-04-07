@@ -46,11 +46,19 @@ public class SdFaultList extends BaseEntity
     /*@Excel(name = "故障类型")*/
     private String faultType;
 
+    private String paramFaultType;
+
+
+    private String paramFaultRemoveState;
+
+    private String paramFaultLevel;
+
     private String deptId;
 
     /** 故障发现源 */
    /* @Excel(name = "故障发现源")*/
     private String faultSource;
+
 
     /** 故障发现时间 */
     @JsonFormat(timezone = "GMT+8",pattern="yyyy-MM-dd HH:mm:ss")
@@ -111,13 +119,36 @@ public class SdFaultList extends BaseEntity
 
     @Excel(name = "故障等级")
     private String flevel;
-
     @Excel(name = "故障类型")
     private String ftype;
-
+    @Excel(name = "所属隧道")
     private String tunnelName;
 
     private String ids;
+
+    public String getParamFaultLevel() {
+        return this.paramFaultLevel;
+    }
+
+    public void setParamFaultLevel(final String paramFaultLevel) {
+        this.paramFaultLevel = paramFaultLevel;
+    }
+
+    public String getParamFaultRemoveState() {
+        return this.paramFaultRemoveState;
+    }
+
+    public void setParamFaultRemoveState(final String paramFaultRemoveState) {
+        this.paramFaultRemoveState = paramFaultRemoveState;
+    }
+
+    public String getParamFaultType() {
+        return this.paramFaultType;
+    }
+
+    public void setParamFaultType(final String paramFaultType) {
+        this.paramFaultType = paramFaultType;
+    }
 
     public String getFstatus() {
         return this.fstatus;
@@ -206,10 +237,23 @@ public class SdFaultList extends BaseEntity
     private List<SdTrafficImage> iFileList;
 
     @ApiModelProperty("上报区分")
+
     private String faultEscalationType;
+
+
+    @Excel(name = "故障发现源")
+    private String fEscalationType;
 
     @ApiModelProperty("设备类型")
     private String eqType;
+
+    public String getfEscalationType() {
+        return this.fEscalationType;
+    }
+
+    public void setfEscalationType( String fEscalationType) {
+        this.fEscalationType = fEscalationType;
+    }
 
     public String getEqType() {
         return eqType;

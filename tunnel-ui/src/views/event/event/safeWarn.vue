@@ -114,6 +114,7 @@
     >
       <div
         class="contentBox"
+        :style="topNav?'width:24.6%':'width:24.5%'"
         v-for="(item, index) in eventList"
         :key="index"
       >
@@ -986,8 +987,8 @@
         </el-table>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisibleDevice = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisibleDevice = false">确 定</el-button>
+        <el-button class="submitButton" @click="dialogVisibleDevice = false">确 定</el-button>
+        <el-button @click="dialogVisibleDevice = false" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -2513,14 +2514,12 @@ export default {
     height: 68vh;
     //display: flex;
     .contentBox {
-      // height: 135px;
-      // border: solid 1px #2aa6ff;
       display: inline-flex;
-      margin-right: 0.3vw;
-      margin-bottom: 5px;
+      margin-right: 0.5vw;
+      margin-bottom: 10px;
       position: relative;
       border-radius: 2px;
-      width:24.7%;
+      // width:24.6%;
       .video {
         width: 40%;
         height: 100%;
@@ -2537,8 +2536,10 @@ export default {
             font-size: .675rem;
             font-weight: 600;
             color: #fff;
-            padding:5px 10px;
+            // padding:5px 10px;
             width: 60%;
+            height: 3vh;
+            line-height: 3vh;
           }
           div{
             background: rgba(228, 14, 14, 0.2);
@@ -2583,6 +2584,7 @@ export default {
           padding: 0.6vh 0;
           span {
             padding-left: 6px;
+            font-weight: bold;
           }
         }
         .contentButton {

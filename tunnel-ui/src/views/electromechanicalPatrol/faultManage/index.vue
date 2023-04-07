@@ -16,7 +16,7 @@
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入故障位置、故障描述，回车搜索"
+            placeholder="请输入故障位置、故障描述、所属隧道，回车搜索"
             v-model="queryParams.faultDescription"
             @keyup.enter.native="handleQuery"
           >
@@ -29,14 +29,14 @@
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="device_boxShow">
+    <div class="searchBox" v-show="device_boxShow" ref="cc">
       <el-form
         ref="queryParams"
         :inline="true"
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="故障类型" prop="faultType">
+<!--        <el-form-item label="故障类型" prop="faultType">
           <el-select
             v-model="queryParams.faultType"
             placeholder="请选择故障类型"
@@ -50,7 +50,52 @@
               :value="dict.dictValue"
             />
           </el-select>
+        </el-form-item>-->
+        <el-form-item label="故障类型" prop="faultType" style="width: 100%!important;">
+          <el-checkbox
+            v-for="dict in faultTypeOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            v-model="resultFaultType"
+            style = "width:90px"
+          >{{ dict.dictLabel }}</el-checkbox
+          >
         </el-form-item>
+        <el-form-item label="消除状态" prop="faultRemoveState" style="width: 100%!important;">
+          <el-checkbox
+            v-for="dict in faultRemoveStateOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            v-model="resultFaultRemoveState"
+            style = "width:90px"
+          >{{ dict.dictLabel }}</el-checkbox
+          >
+        </el-form-item>
+        <el-form-item label="故障等级" prop="faultLevel" style="width: 100%!important;">
+          <el-checkbox
+            v-for="dict in faultLevelOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            v-model="resultFaultLevel"
+            style = "width:90px"
+          >{{ dict.dictLabel }}</el-checkbox
+          >
+        </el-form-item>
+        <el-form-item label="发现时间">
+          <el-date-picker
+            v-model="dateRange"
+            size="small"
+            style="width: 100%"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetimerange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :picker-options="setoptions"
+            :default-time="['00:00:00', '23:59:59']"
+          ></el-date-picker>
+        </el-form-item>
+
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
             >搜索</el-button
@@ -115,6 +160,11 @@
       />
       <!-- <el-table-column label="持续时间" align="center" prop="faultCxtime" /> -->
       <!-- <el-table-column label="设备" align="center" prop="eqName" /> -->
+      <el-table-column label="故障发现源" align="center" prop="faultEscalationType">
+        <template slot-scope="scope">
+          <span>{{ getFaultEscalationType(scope.row.faultEscalationType) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="设备状态" align="center" prop="eqStatus">
         <template slot-scope="scope">
           <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
@@ -126,6 +176,7 @@
           <span>{{ getFaultLevel(scope.row.faultLevel) }}</span>
         </template>
       </el-table-column>
+
       <el-table-column
         label="消除状态"
         align="center"
@@ -270,6 +321,26 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
+              <el-form-item label="故障发现源" prop="faultEscalationType">
+                <el-select
+                  v-model="form.faultEscalationType"
+                  :disabled="disstate"
+                  placeholder="请选择故障发现源"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in faultEscalationTypeOptions"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+
+
+<!--            <el-col :span="8">
               <el-form-item label="故障发现源" prop="faultSource">
                 <el-input
                   :disabled="disstate"
@@ -278,7 +349,7 @@
                   style="width: 100%"
                 />
               </el-form-item>
-            </el-col>
+            </el-col>-->
             <el-col :span="8">
               <el-form-item label="发现时间" prop="faultFxtime">
                 <el-date-picker
@@ -419,7 +490,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8" v-show="removeStata">
-              <el-form-item label="故障消除状态" prop="falltRemoveStatue">
+              <el-form-item label="消除状态" prop="falltRemoveStatue">
                 <el-select
                   v-model="form.falltRemoveStatue"
                   :disabled="disstate"
@@ -588,6 +659,7 @@ import { listDevices } from "@/api/equipment/eqlist/api";
 import { editForm } from "@/api/equipment/yingJiGou/emergencyVehicles";
 import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
 import { download } from "@/utils/request";
+import {list} from "@/api/monitor/logininfor";
 export default {
   name: "List",
   //字典值：故障类型、故障等级，故障消除状态
@@ -605,12 +677,17 @@ export default {
     return {
       removeStata: false,
       device_boxShow: false,
-
+      resultFaultType: [], //获取选中后的故障类型checkbox的数组值
+      resultFaultRemoveState:[],//获取选中后的消除状态checkbox的数组值
+      resultFaultLevel:[],//获取选中后的故障等级checkbox的数组值
       // fault_status_list:[],
       faultRemoveStateOptions: [],
       eqStatusList: [],
       faultLevelOptions: [],
       faultTypeOptions: [],
+      faultEscalationTypeOptions: [],
+      // 日期范围
+      dateRange: [],
       //检修记录弹出窗
       record: false,
       // 遮罩层
@@ -647,6 +724,15 @@ export default {
       eqTypeData: {},
       //设备
       eqListData: {},
+      setoptions: {
+        // 时间不能大于当前时间
+        disabledDate(time) {
+          let current_time = new Date().format('yyyy-MM-dd')+' 23:59:59';  //时间日期为：‘当前日期 23:59:59’
+          let t = new Date(current_time).getTime(); //‘当前日期 23:59:59’的时间戳
+          return time.getTime() > t;
+        },
+        selectableRange: '00:00:00 - 23:59:59'
+      },
       // 查询参数
       news: {
         xcTime: "",
@@ -667,8 +753,15 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
+        faultEscalationType:null,
         faultLocation: null,
-        faultType: null,
+        //faultType: null,
+        faultType:[],
+        faultRemoveState:[],
+        faultLevel:[],
+        paramFaultType:"",
+        paramFaultRemoveState:"",
+        paramFaultLevel:"",
         faultSource: null,
         faultFxtime: null,
         faultCxtime: null,
@@ -678,7 +771,7 @@ export default {
         eqStatus: null,
         eqRunStatus: null,
         faultCode: null,
-        faultLevel: null,
+        //faultLevel: null,
         falltRemoveStatue: null,
         faultDescription: null,
         faultStatus: null,
@@ -714,6 +807,13 @@ export default {
           {
             required: true,
             message: "请选中故障类型",
+            trigger: "blur",
+          },
+        ],
+        faultEscalationType: [
+          {
+            required: true,
+            message: "请选中故障发现源",
             trigger: "blur",
           },
         ],
@@ -775,6 +875,12 @@ export default {
     this.getDicts("fault_type").then((response) => {
       this.faultTypeOptions = response.data;
     });
+
+    //故障发现源
+    this.getDicts("fault_escalation_type").then((response) => {
+      this.faultEscalationTypeOptions = response.data;
+
+    });
     //故障等级
     this.getDicts("fault_level").then((response) => {
       this.faultLevelOptions = response.data;
@@ -795,6 +901,7 @@ export default {
     this.getDicts("power").then((response) => {
       this.powerOptions = response.data;
     });
+
   },
   mounted() {
     this.$nextTick(() => {
@@ -802,15 +909,30 @@ export default {
     });
   },
   methods: {
+
+
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
     },
-    bodyCloseMenus(e) {
+    /*bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
         if (self.device_boxShow == true) {
           self.device_boxShow = false;
+        }
+      }
+    },*/
+    bodyCloseMenus(e) {
+      let self = this;
+      if (self.device_boxShow == true) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.device_boxShow == true) {
+            self.device_boxShow = false;
+          }
         }
       }
     },
@@ -836,6 +958,13 @@ export default {
 
     getFalltRemoveStatue(num) {
       for (let item of this.faultRemoveStateOptions) {
+        if (num == item.dictValue) {
+          return item.dictLabel;
+        }
+      }
+    },
+    getFaultEscalationType(num) {
+      for (let item of this.faultEscalationTypeOptions) {
         if (num == item.dictValue) {
           return item.dictLabel;
         }
@@ -895,7 +1024,6 @@ export default {
         id: null,
         tunnelId: null,
         faultLocation: null,
-        faultType: null,
         faultSource: null,
         faultFxtime: null,
         faultCxtime: null,
@@ -908,6 +1036,7 @@ export default {
         faultLevel: null,
         falltRemoveStatue: null,
         faultDescription: null,
+        faultEscalationType:"0",
         faultStatus: 0,
         eqRunStatus: null,
       };
@@ -919,6 +1048,7 @@ export default {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+
     //删除文件
     handleRemove(file, fileList) {
       if (file.hasOwnProperty("fId")) {
@@ -981,7 +1111,7 @@ export default {
           "manageStationSelect"
         );
       }
-      listList(this.queryParams).then((response) => {
+      listList(this.addDateRange(this.queryParams, this.dateRange)).then((response) => {
         this.listList = response.rows;
         this.listList.forEach((item) => {
           if (item.faultLocation == "null") {
@@ -1005,13 +1135,12 @@ export default {
 
     /*设备名称点击事件*/
     selChange() {
-      debugger
       if (this.form.tunnelId==null||typeof this.form.tunnelId == "undefined") {
         this.$modal.msgWarning("请先选择隧道");
         return;
       } else {
-        $("#deviceSel").attr("pointer-events", "none");
         this.getDevices()
+        $("#deviceSel").attr("pointer-events", "none");
       }
     },
 
@@ -1057,16 +1186,26 @@ export default {
 
     /** 搜索按钮操作 */
     handleQuery() {
+      this.queryParams.paramFaultType = this.resultFaultType.join();
+      this.queryParams.paramFaultRemoveState = this.resultFaultRemoveState.join();
+      this.queryParams.paramFaultLevel = this.resultFaultLevel.join();
       this.queryParams.pageNum = 1;
       this.$refs.tableFile.clearSelection();
+      this.device_boxShow = false;
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
       this.queryParams.ids = "";
-      this.queryParams.faultType = "";
       this.queryParams.faultDescription = "";
+      this.queryParams.faultType = [];
+      this.resultFaultType = [];
+      this.queryParams.faultLevel = [];
+      this.resultFaultLevel = [];
+      this.queryParams.faultRemoveState = [];
+      this.resultFaultRemoveState = [];
+      this.dateRange = [];
       this.handleQuery();
     },
     // 多选框选中数据
@@ -1226,6 +1365,7 @@ export default {
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("faultType", this.form.faultType);
       this.fileData.append("faultSource", this.form.faultSource);
+      this.fileData.append("faultEscalationType", this.form.faultEscalationType);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
@@ -1274,6 +1414,7 @@ export default {
       this.fileData.append("faultType", this.form.faultType);
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
+      this.fileData.append("faultEscalationType", this.form.faultEscalationType);
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
       this.fileData.append("eqStatus", this.form.eqStatus);
@@ -1459,5 +1600,7 @@ export default {
   div:nth-of-type(3) {
     background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
+
+
 }
 </style>

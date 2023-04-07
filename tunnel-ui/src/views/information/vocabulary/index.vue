@@ -150,6 +150,7 @@
         label="操作"
         align="center"
         class-name="small-padding fixed-width"
+        v-if="userName != 'jlyadmin'"
       >
         <template slot-scope="scope">
           <el-button
@@ -228,6 +229,8 @@ export default {
   components: {},
   data() {
     return {
+      userName: this.$store.state.user.name,
+      //用户
       boxShow: false,
       // 遮罩层
       loading: true,
@@ -268,6 +271,7 @@ export default {
   },
   created() {
     this.getList();
+    console.log(this.userName,"用户")
   },
   methods: {
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据

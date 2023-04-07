@@ -31,6 +31,7 @@ import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
+import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.tunnel.platform.service.event.ISdStrategyService;
@@ -140,6 +141,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateControlTime(Long strategyId, String controlTime) {
+        String emg = "数据处理异常";
         String[] timeParam = controlTime.split("-");
         SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(strategyId);
         strategy.setTimerOpen(timeParam[0]);
@@ -147,7 +149,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         String[] relationId = strategy.getJobRelationId().split(",");
         List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(strategyId);
         if(rlList.size() < 2){
-            return 0;
+            throw new RuntimeException("未找到策略关联的设备信息");
         }
         //排序保证修改顺序
         //rlList = rlList.stream().sorted((Comparator.comparing(SdStrategyRl::getId))).collect(Collectors.toList());
@@ -167,6 +169,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (int i=0;i<relationId.length;i++) {
                 Long jobId = Long.valueOf(relationId[i]);
                 SysJob job = sysJobService.selectJobById(jobId);
+                if(com.ruoyi.common.utils.StringUtils.isNull(job)){
+                    emg = "未找到相应的定时任务";
+                    throw new RuntimeException("未找到相应的定时任务");
+                }
                 if(openRl.contains(job.getInvokeTarget().split("'")[1])){
                     job.setCronExpression(CronUtil.DateConvertCron(timeParam[0]));
                 }else{
@@ -176,7 +182,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             }
             sdStrategyMapper.updateSdStrategyById(strategy);
         } catch (Exception e) {
-            throw new RuntimeException("数据处理异常");
+            throw new RuntimeException(emg);
         }
         return 1;
     }

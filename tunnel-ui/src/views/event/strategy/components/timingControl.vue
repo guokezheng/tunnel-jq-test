@@ -410,12 +410,10 @@ export default {
               eqTunnelId: this.strategyForm.tunnelId,
               eqDirection: this.strategyForm.direction, //方向
             };
-            if(this.strategyForm.direction == -1){
+            if(this.strategyForm.direction == 3){
               params.eqDirection = null;
             }
-            listDevices({
-              params
-            }).then((res) => {
+            listDevices(params).then((res) => {
               this.$set(autoControl, "equipmentData", res.rows);
               console.log(autoControl.equipmentData, "设备列表数据1");
               this.$set(autoControl, "equipments", equipmentArray);
@@ -435,7 +433,7 @@ export default {
         eqTunnelId: this.strategyForm.tunnelId, //隧道
         eqDirection: this.strategyForm.direction, //方向
       };
-      if(this.strategyForm.direction == -1){
+      if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
       listDevices(params).then((res) => {
@@ -478,7 +476,7 @@ export default {
         direction: direction,
         isControl: 1,
       };
-      if(this.strategyForm.direction == -1){
+      if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
       listEqTypeStateIsControl(params).then((response) => {
@@ -497,12 +495,10 @@ export default {
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
       };
-      if(this.strategyForm.direction == -1){
+      if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
-      listDevices({
-        params
-      }).then((res) => {
+      listDevices(params).then((res) => {
         let data = res.rows;
         if (this.chooseEq && this.strategyForm.autoControl.length > 1) {
           if (this.strategyForm.strategyType != "0") {
@@ -667,12 +663,10 @@ export default {
         eqDirection: this.strategyForm.direction,
       }
       // 选择双向，则不进行接口过滤条件
-      if(this.strategyForm.direction == -1){
+      if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
-      listDevices({
-        params
-      }).then((res) => {
+      listDevices(params).then((res) => {
         let data = res.rows;
         if (this.chooseEq && this.strategyForm.autoControl.length > 1) {
           if (this.strategyForm.strategyType != "0") {
@@ -706,12 +700,10 @@ export default {
         eqDirection: this.strategyForm.direction,
       };
       // 选择双向，则不进行接口过滤条件
-      if(this.strategyForm.direction == -1){
+      if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
-      listDevices({
-        params
-      }).then((res) => {
+      listDevices(params).then((res) => {
         let data = res.rows;
         if (this.strategyForm.autoControl.length > 1) {
           var currentList = this.strategyForm.autoControl;

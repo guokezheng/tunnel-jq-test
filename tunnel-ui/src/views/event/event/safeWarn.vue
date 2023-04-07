@@ -129,7 +129,7 @@
             v-show="!item.eventImgUrl || item.eventImgUrl == null"
           />
           <div class="eventBox">
-            <span class="eventType">{{ item.prevControlType == '1' ? '主动安全' : '普通事件' }}</span>
+            <span class="eventType">{{ item.prevControlType == '1' ? '安全预警' : '普通事件' }}</span>
 
             <div>{{ item.simplifyName }}</div>
           </div>
@@ -2387,6 +2387,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  ::v-deep .el-timeline-item__content{
+    background-color: #022443;
+  }
   .scrollbar_li{
     width:145px;margin-right:15px;display:inline-block;white-space: nowrap;
     video{width: 100%;}

@@ -2,14 +2,14 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-06 16:46:47
+ * @LastEditTime: 2023-04-07 08:59:19
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="app-container dispatchAss">
     <div class="tunnelBox3">
-      <iframe
+      <!-- <iframe
         name="tuniframe"
         id="miframe"
         class="map3D"
@@ -18,7 +18,7 @@
         allowfullscreen="true"
         allow="autoplay"
         src="http://106.120.201.126:14712/dashboard"
-      ></iframe>
+      ></iframe> -->
     </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>
@@ -742,7 +742,7 @@
       <div class="GDeviceBox">
         <el-row>
           <el-col :span="24">
-            <p style="padding:15px 0;">设备控制</p>
+            <p style="padding:15px;">设备控制</p>
             <!-- <el-card shadow="always"> -->
               <el-table
                 :data="GDeviceData.deviceList"
@@ -770,7 +770,7 @@
             <!-- </el-card> -->
           </el-col>
           <el-col :span="24" v-if="GDeviceData.vmsData">
-            <p style="padding:15px 0;">{{boxName}}:</p>
+            <p style="padding:15px;">{{boxName}}:</p>
             <el-card shadow="always">
               <div style="display: flex;justify-content: center;align-items: center;">
                 <div :style="{
@@ -795,7 +795,7 @@
             </el-card>
           </el-col>
           <el-col :span="24" v-if="boxName == '下发指令' || boxName == '执行文件'">
-            <p style="padding:15px 0;">{{boxName}}:</p>
+            <p style="padding:15px;">{{boxName}}:</p>
             <el-card v-show="GDeviceData && !GDeviceData.vmsData" shadow="always">
               <div style="display: flex;align-items: center;">
                 <img v-for="(items,index) in GDeviceData.deviceIconUrl" :key="index"
@@ -1150,12 +1150,12 @@ export default {
     },
     oneKeyExecute(){
       let planId = this.reserveId;
-      let eventId = that.$route.query.id;
-      implementPlan(planId,eventId).then(res=>{
-        this.$modal.msgSuccess("执行成功");
-        this.yjName = '详情';
-        this.oneKeyDialogVisible = false;
-      })
+      let eventId = this.$route.query.id;
+      // implementPlan(planId,eventId).then(res=>{
+      //   this.$modal.msgSuccess("执行成功");
+      //   this.yjName = '详情';
+      //   this.oneKeyDialogVisible = false;
+      // })
     },
     // 事件处置 一键
     getYiJian(item) {
@@ -1916,6 +1916,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.dispatchAss .el-row .el-col{
+  background: #012646;
+  margin-bottom: 20px;
+}
 ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__nav{
   border:0px;
 }

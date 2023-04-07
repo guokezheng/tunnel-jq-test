@@ -1642,10 +1642,10 @@ public class KafkaReadListenToHuaWeiTopic {
         String matchLane = jsonObject.getString("matchLane");
         String laneNo = matchLane.substring(matchLane.length() - 1, matchLane.length());
         sdRadarDetectData.setLaneNum(laneNo);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
         //转换
-        Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
-        sdRadarDetectData.setDetectTime(time);
+//        Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
+        sdRadarDetectData.setDetectTime(new Date(jsonObject.getLong("time")));
         sdRadarDetectData.setRoadDir(jsonObject.getString("roadDir"));
         sdRadarDetectData.setVehicleId(jsonObject.getString("uniqId"));
         return sdRadarDetectData;

@@ -1874,7 +1874,7 @@
           align="center"
           prop="stateName.stateName"
         />
-        <el-table-column label="控制方式" align="center" prop="controlType" />
+        <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat"/>
         <el-table-column label="操作结果" align="center" prop="state" />
         <el-table-column label="操作地址" align="center" prop="operIp" />
         <el-table-column
@@ -4601,7 +4601,7 @@ export default {
   },
   created: function () {
     this.getUserDept();
-    this.getDicts("sd_direction").then((data) => {
+    this.getDicts("sd_strategy_direction").then((data) => {
       console.log(data, "方向");
       this.directionList = data.data;
     });
@@ -5051,12 +5051,20 @@ export default {
           }else{
             videoStreaming(res.data[0].inlet).then((res) => {
               console.log(res,'入口视频')
-            this.liveUrl1 = res.data.liveUrl;
-            this.cameraPlayer1 = true;
+            if(res.code == 200 && res.data) {
+              this.liveUrl1 = res.data.liveUrl;
+              this.cameraPlayer1 = true;
+            }else{
+                this.$modal.msgWarning("获取视频失败");
+              }
           });
           videoStreaming(res.data[0].outlet).then((res) => {
-            this.liveUrl2 = res.data.liveUrl;
-            this.cameraPlayer2 = true;
+            if(res.code == 200 && res.data) {
+              this.liveUrl2 = res.data.liveUrl;
+              this.cameraPlayer2 = true;
+            }else{
+              this.$modal.msgWarning("获取视频失败");
+            }
           });
           }
           }
@@ -5082,13 +5090,21 @@ export default {
           }else{
             videoStreaming(res.data[0].inlet).then((res) => {
               console.log(res,'入口视频')
+              if(res.code == 200 && res.data){
+                this.liveUrl3 = res.data.liveUrl;
+                this.cameraPlayer3 = true;
+              }else{
+                this.$modal.msgWarning("获取视频失败");
+              }
 
-              this.liveUrl3 = res.data.liveUrl;
-              this.cameraPlayer3 = true;
             });
             videoStreaming(res.data[0].outlet).then((res) => {
-              this.liveUrl4 = res.data.liveUrl;
-              this.cameraPlayer4 = true;
+            if(res.code == 200 && res.data) {
+                this.liveUrl4 = res.data.liveUrl;
+                this.cameraPlayer4 = true;
+            }else{
+              this.$modal.msgWarning("获取视频失败");
+            }
             });
           }
           }
@@ -5224,8 +5240,7 @@ export default {
       });
     },
     directionFormat(row, column) {
-      let directionFormat = this.selectDictLabel(this.directionList, row.direction);
-      return directionFormat.length>0?directionFormat:'双向';
+      return this.selectDictLabel(this.directionList, row.direction);
     },
     // 策略类型字典翻译
     strategyTypeFormat(row, column) {

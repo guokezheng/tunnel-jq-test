@@ -577,9 +577,11 @@ export default {
           }else{
             videoStreaming(this.eqInfo.equipmentId).then((response) =>{
               console.log(response,"视频流");
-              if(response.code == 200){
+              if(response.code == 200 && response.data){
                 this.videoForm = response.data
                 this.cameraPlayer = true
+              }else{
+                this.$modal.msgWarning("获取视频失败");
               }
             }).catch((e)=>{
               this.$modal.msgWarning("获取视频失败");

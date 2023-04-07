@@ -248,8 +248,8 @@ public class BoardController extends BaseController {
         String[] devices = deviceIds.split(",");
         Boolean flag = false;
         List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyService.selectIotBoardVocabularyList(null);
-        Long deptId = Long.valueOf(SecurityUtils.getDeptId());
-        SysDept sysDept = sysDeptService.selectDeptById(deptId.toString());
+        String deptId = SecurityUtils.getDeptId();
+        SysDept sysDept = sysDeptService.selectDeptById(deptId);
         String userId = SecurityUtils.getUserId().toString();
         String username = SecurityUtils.getUsername();
         for (int i = 0;i < devices.length;i++) {

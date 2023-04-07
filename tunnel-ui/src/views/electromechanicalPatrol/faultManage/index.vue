@@ -16,7 +16,7 @@
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入故障位置、故障描述，回车搜索"
+            placeholder="请输入故障位置、故障描述、所属隧道，回车搜索"
             v-model="queryParams.faultDescription"
             @keyup.enter.native="handleQuery"
           >
@@ -81,11 +81,21 @@
           >{{ dict.dictLabel }}</el-checkbox
           >
         </el-form-item>
-        <el-form-item label="发现时间" >
+        <el-form-item label="故障来源" prop="faultEscalationType" style="width: 100%!important;">
+          <el-checkbox
+            v-for="dict in faultEscalationTypeOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            v-model="resultFaultEscalationType"
+            style = "width:90px"
+          >{{ dict.dictLabel }}</el-checkbox
+          >
+        </el-form-item>
+        <el-form-item label="发现时间">
           <el-date-picker
             v-model="dateRange"
             size="small"
-            style="width: 100%; "
+            style="width: 100%"
             value-format="yyyy-MM-dd HH:mm:ss"
             type="datetimerange"
             range-separator="-"
@@ -160,7 +170,7 @@
       />
       <!-- <el-table-column label="持续时间" align="center" prop="faultCxtime" /> -->
       <!-- <el-table-column label="设备" align="center" prop="eqName" /> -->
-      <el-table-column label="故障发现源" align="center" prop="faultEscalationType">
+      <el-table-column label="故障来源" align="center" prop="faultEscalationType">
         <template slot-scope="scope">
           <span>{{ getFaultEscalationType(scope.row.faultEscalationType) }}</span>
         </template>
@@ -321,11 +331,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="故障发现源" prop="faultEscalationType">
+              <el-form-item label="故障来源" prop="faultEscalationType">
                 <el-select
                   v-model="form.faultEscalationType"
                   :disabled="disstate"
-                  placeholder="请选择故障发现源"
+                  placeholder="请选择故障来源"
                   style="width: 100%"
                 >
                   <el-option
@@ -341,7 +351,7 @@
 
 
 <!--            <el-col :span="8">
-              <el-form-item label="故障发现源" prop="faultSource">
+              <el-form-item label="故障来源" prop="faultSource">
                 <el-input
                   :disabled="disstate"
                   v-model="form.faultSource"
@@ -680,6 +690,7 @@ export default {
       resultFaultType: [], //获取选中后的故障类型checkbox的数组值
       resultFaultRemoveState:[],//获取选中后的消除状态checkbox的数组值
       resultFaultLevel:[],//获取选中后的故障等级checkbox的数组值
+      resultFaultEscalationType:[],//获取选中后的故障来源checkbox的数组值
       // fault_status_list:[],
       faultRemoveStateOptions: [],
       eqStatusList: [],
@@ -753,7 +764,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
-        faultEscalationType:null,
+        faultEscalationType:[],
         faultLocation: null,
         //faultType: null,
         faultType:[],
@@ -762,6 +773,7 @@ export default {
         paramFaultType:"",
         paramFaultRemoveState:"",
         paramFaultLevel:"",
+        paramFaultEscalationType:"",
         faultSource: null,
         faultFxtime: null,
         faultCxtime: null,
@@ -813,7 +825,7 @@ export default {
         faultEscalationType: [
           {
             required: true,
-            message: "请选中故障发现源",
+            message: "请选中故障来源",
             trigger: "blur",
           },
         ],
@@ -876,10 +888,10 @@ export default {
       this.faultTypeOptions = response.data;
     });
 
-    //故障发现源
+    //故障来源
     this.getDicts("fault_escalation_type").then((response) => {
       this.faultEscalationTypeOptions = response.data;
-      this.form.faultEscalationType = response.data[0].dictValue;
+
     });
     //故障等级
     this.getDicts("fault_level").then((response) => {
@@ -901,6 +913,7 @@ export default {
     this.getDicts("power").then((response) => {
       this.powerOptions = response.data;
     });
+
   },
   mounted() {
     this.$nextTick(() => {
@@ -908,6 +921,8 @@ export default {
     });
   },
   methods: {
+
+
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -1033,6 +1048,7 @@ export default {
         faultLevel: null,
         falltRemoveStatue: null,
         faultDescription: null,
+        faultEscalationType:"0",
         faultStatus: 0,
         eqRunStatus: null,
       };
@@ -1185,6 +1201,7 @@ export default {
       this.queryParams.paramFaultType = this.resultFaultType.join();
       this.queryParams.paramFaultRemoveState = this.resultFaultRemoveState.join();
       this.queryParams.paramFaultLevel = this.resultFaultLevel.join();
+      this.queryParams.paramFaultEscalationType = this.resultFaultEscalationType.join();
       this.queryParams.pageNum = 1;
       this.$refs.tableFile.clearSelection();
       this.device_boxShow = false;
@@ -1198,7 +1215,9 @@ export default {
       this.queryParams.faultType = [];
       this.resultFaultType = [];
       this.queryParams.faultLevel = [];
+      this.queryParams.faultEscalationType = [];
       this.resultFaultLevel = [];
+      this.resultFaultEscalationType = [];
       this.queryParams.faultRemoveState = [];
       this.resultFaultRemoveState = [];
       this.dateRange = [];

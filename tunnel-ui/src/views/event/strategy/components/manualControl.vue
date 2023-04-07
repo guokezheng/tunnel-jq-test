@@ -304,12 +304,10 @@ export default {
               eqDirection: this.strategyForm.direction, //方向
             };
             // 选择双向，则不进行接口过滤条件
-            if(this.strategyForm.direction == -1){
+            if(this.strategyForm.direction == 3){
               params.eqDirection = null;
             }
-            listDevices({
-              params
-            }).then((res) => {
+            listDevices(params).then((res) => {
               this.$set(manualControl, "equipmentData", res.rows);
               console.log(manualControl.equipmentData, "设备列表数据1");
               this.strategyForm.manualControl[i].value = attr.equipments.split(",");
@@ -328,7 +326,7 @@ export default {
         eqDirection: this.strategyForm.direction, //方向
       };
       // 选择双向，则不进行接口过滤条件
-      if(this.strategyForm.direction == -1){
+      if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
 
@@ -399,13 +397,11 @@ export default {
         eqDirection: this.strategyForm.direction,
       };
       // 选择双向，则不进行接口过滤条件
-      if(this.strategyForm.direction == -1){
+      if(this.strategyForm.direction == 3){
         this.strategyForm.direction = null;
       }
 
-      listDevices({
-        params
-      }).then((res) => {
+      listDevices(params).then((res) => {
         let data = res.rows;
         if (this.chooseEq && this.strategyForm.autoControl.length > 1) {
           if (this.strategyForm.strategyType != "0") {
@@ -578,12 +574,10 @@ export default {
         eqDirection: this.strategyForm.direction,
       };
       // 选择双向，则不进行接口过滤条件
-      if(this.strategyForm.direction == -1){
+      if(this.strategyForm.direction == 3){
         this.strategyForm.direction = null;
       }
-      listDevices({
-        params
-      }).then((res) => {
+      listDevices(params).then((res) => {
         let data = res.rows;
         if (this.strategyForm.manualControl.length > 1) {
           var currentList = this.strategyForm.manualControl;
@@ -618,14 +612,8 @@ export default {
     },
     //查询方向
     getDirection() {
-      this.getDicts("sd_direction").then((response) => {
+      this.getDicts("sd_strategy_direction").then((response) => {
         this.directionOptions = response.data;
-        let data = {
-          "value": "-1",
-          "dictLabel":"双向",
-          "dictValue":"-1"
-        }
-        this.directionOptions.push(data);
       });
     },
     /** 查询设备类型列表 */

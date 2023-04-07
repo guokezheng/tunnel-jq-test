@@ -61,6 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="paramFaultType != null and paramFaultType != ''"> and FIND_IN_SET(t.dict_label, #{paramFaultType}) > 0</if>
             <if test="paramFaultRemoveState != null and paramFaultRemoveState != ''"> and FIND_IN_SET(r.dict_label, #{paramFaultRemoveState}) > 0</if>
             <if test="paramFaultLevel != null and paramFaultLevel != ''"> and FIND_IN_SET(l.dict_label, #{paramFaultLevel}) > 0</if>
+            <if test="paramFaultEscalationType != null and paramFaultEscalationType != ''"> and FIND_IN_SET(b.dict_label, #{paramFaultEscalationType}) > 0</if>
             <if test="faultSource != null  and faultSource != ''"> and s.fault_source = #{faultSource}</if>
             <if test="faultFxtime != null and faultFxtime != '' "> and s.fault_fxtime = #{faultFxtime}</if>
             <if test="faultCxtime != null  and faultCxtime != ''"> and s.fault_cxtime = #{faultCxtime}</if>
@@ -71,7 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultCode != null  and faultCode != ''"> and s.fault_code = #{faultCode}</if>
             <if test="faultLevel != null and faultLevel != ''"> and s.fault_level = #{faultLevel}</if>
             <if test="falltRemoveStatue != null and falltRemoveStatue != ''"> and s.fallt_remove_statue = #{falltRemoveStatue}</if>
-            <if test="faultDescription != null  and faultDescription != ''"> and concat(s.fault_description,s.fault_location) like concat('%', #{faultDescription}, '%')</if>
+            <if test="faultDescription != null  and faultDescription != ''"> and concat(s.fault_description,s.fault_location,e.tunnel_name) like concat('%', #{faultDescription}, '%')</if>
             <if test="faultStatus != null and faultStatus != ''"> and s.fault_status = #{faultStatus}</if>
             <if test="ids != null  and ids != ''"> and FIND_IN_SET(s.id,#{ids}) > 0</if>
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->

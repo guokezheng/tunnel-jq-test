@@ -130,7 +130,7 @@
             v-show="!item.eventImgUrl || item.eventImgUrl == null"
           />
           <div class="eventBox">
-            <span class="eventType">{{ item.prevControlType == '1' ? '主动安全' : '普通事件' }}</span>
+            <span class="eventType">{{ item.prevControlType == '1' ? '安全预警' : '普通事件' }}</span>
 
             <div>{{ item.simplifyName }}</div>
           </div>
@@ -470,10 +470,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="事件描述" prop="eventDescription">
+              <el-form-item label="影响描述" prop="eventDescription">
                 <el-input
                   v-model="eventFormDetail.eventDescription"
-                  placeholder="事件描述"
+                  placeholder="影响描述"
                   style="width: calc(100% - 10px)"
                 />
               </el-form-item>
@@ -690,12 +690,12 @@
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="8">
-                  <el-form-item label="事件类型">
+                  <el-form-item label="预估类型">
                     <el-input v-model="manualReview.eventTypeName" readonly></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="事件等级">
+                  <el-form-item label="预估等级">
                     <el-input v-model="manualReview.eventGrade" readonly></el-input>
                   </el-form-item>
                 </el-col>
@@ -2388,6 +2388,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  ::v-deep .el-timeline-item__content{
+    background-color: #022443;
+  }
   .scrollbar_li{
     width:145px;margin-right:15px;display:inline-block;white-space: nowrap;
     video{width: 100%;}

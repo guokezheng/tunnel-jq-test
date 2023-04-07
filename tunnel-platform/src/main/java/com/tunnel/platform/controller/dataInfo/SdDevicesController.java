@@ -160,7 +160,24 @@ public class SdDevicesController extends BaseController {
     @Log(title = "设备", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public AjaxResult export(SdDevices sdDevices) {
-        List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);
+        if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
+            String deptId = SecurityUtils.getDeptId();
+            sdDevices.setDeptId(deptId);
+        }
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        //1：代表执行校验指令SQL
+        if ("1".equals(sdDevices.getEqDirection())) {
+            List<String> eqIds = new ArrayList<String>();
+            List<SdDevices> checklist = sdDevicesService.getChecklist(list);
+            for (SdDevices devices : checklist) {
+                eqIds.add(devices.getEqId());
+            }
+            sdDevices.setEqIds(eqIds);
+            list = sdDevicesService.selectSdDevicesList(sdDevices);
+        } else {
+            list = sdDevicesService.selectSdDevicesList(sdDevices);
+        }
+        /*List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);*/
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
         return util.exportExcel(list, "设备管理");
     }

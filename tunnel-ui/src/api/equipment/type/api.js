@@ -137,3 +137,10 @@ export function exportDeviceIcon(query) {
     params: query
   })
 }
+
+export function listDevicesType() {
+  return request({
+    url: '/type/list',
+    method: 'get',
+  })
+}

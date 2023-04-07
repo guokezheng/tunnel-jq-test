@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-06 16:45:52
+ * @LastEditTime: 2023-04-07 10:31:55
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -665,10 +665,11 @@
                   @change="ruleChange(number, index, itemed.retrievalRule)"
                 >
                   <el-option
-                    v-for="itemz in retrievalRuleList"
+                    v-for="itemz in itemed.retrievalRuleList"
                     :key="itemz.dictValue"
                     :label="itemz.dictLabel"
                     :value="itemz.dictValue"
+                    :disabled="itemz.disabled"
                   />
                 </el-select>
               </el-col>
@@ -1066,9 +1067,7 @@ export default {
       this.planCategory = response.data;
     });
     //规则条件
-    this.getDicts("sd_device_retrieval_rule").then((response) => {
-      this.retrievalRuleList = response.data;
-    });
+    this.getRules();
     // 管控方向
     this.getDicts("sd_control_direction").then((response) => {
       this.controlDirectionList = response.data;
@@ -1091,6 +1090,19 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    getRules(){
+      this.getDicts("sd_device_retrieval_rule").then((response) => {
+        for(let item of response.data){
+          item.disabled = false;
+        }
+        this.retrievalRuleList = response.data;
+        for(let item of this.planTypeIdList){
+          for(let itemed of item.processesList){
+            itemed.retrievalRuleList = response.data;
+          }
+        }
+      });
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id;
@@ -1258,6 +1270,7 @@ export default {
     },
     // 添加执行操作
     addItem(number, index) {
+      this.getRules();
       let data = {
         processStageName: "",
         processesList: [
@@ -1269,6 +1282,7 @@ export default {
             retrievalRule: null, //规则条件
             equipmentTypeData: [],
             equipmentData: [],
+            retrievalRuleList:[],
             eqStateList: [],
             disabled: false,
             templatesList: [],
@@ -1277,6 +1291,7 @@ export default {
       };
       this.planTypeIdList[number].processesList.splice(index + 1, 0, data);
       this.getEquipmentType();
+      
     },
     //获得预案类别
     // selectPlanType() {
@@ -1326,6 +1341,22 @@ export default {
     // 改变设备类型
     changeEquipmentType(eqTypeId, number, index) {
       if(eqTypeId){
+        let retrievalRuleList = this.planTypeIdList[number].processesList[index].retrievalRuleList;
+        console.log(retrievalRuleList);
+        // 如果是车指则判断 字典值然后禁用；  不是则解除禁用
+        if(eqTypeId == '1' || eqTypeId == '2'){
+          for(let item of retrievalRuleList){
+            if(item.dictValue == '6' || item.dictValue == '7'){
+              item.disabled = true;
+            }
+          }
+        }else{
+          // 重置禁用状态
+          for(let item of retrievalRuleList){
+            item.disabled = false;
+          }
+        }
+        console.log(retrievalRuleList)
         // 更改设备类型后状态和设备重置
         this.$set(
           this.planTypeIdList[number].processesList[index],
@@ -1512,6 +1543,7 @@ export default {
           ];
         } else {
           let data = res.data;
+          this.getRules();
           for (let i = 0; i < data.length; i++) {
             let arr = data[i];
             //阶段名称
@@ -1522,9 +1554,8 @@ export default {
             );
             for (let j = 0; j < arr.processesList.length; j++) {
               let brr = arr.processesList[j];
-              console.log(brr);
+              
               brr.retrievalRule = brr.retrievalRule; //规则条件
-
               // 选择指定设备
               if (brr.retrievalRule != 1) {
                 this.$set(

@@ -104,7 +104,7 @@
               multiple
               collapse-tags
               placeholder="请选择设备"
-              @change="qbgChange(index, items.value)"
+              @change="qbgChange(index, items.value,false)"
               style="width: 100%"
             >
               <el-option
@@ -245,6 +245,18 @@ export default {
     };
   },
   methods: {
+    openFullScreen2() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.strategy-dialog',
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 3000);
+    },
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -257,6 +269,7 @@ export default {
     },
     // 组件调用方法;回显数据;
     getStrategyData(row) {
+      this.openFullScreen2();
       getStrategy(this.id).then((response) => {
         let data = response.data;
         // this.strategyForm = data;
@@ -291,7 +304,7 @@ export default {
             ) {
               // 改变数据类型
               this.strategyForm.manualControl[i].state = +attr.state;
-              this.qbgChange(i, attr.equipments.split(","));
+              this.qbgChange(i, attr.equipments.split(","),true);
             }
             this.$set(
               manualControl,
@@ -347,7 +360,7 @@ export default {
       }
     },
     //情报板设备改变事件
-    qbgChange(index, value) {
+    qbgChange(index, value,flag) {
       console.log(value);
       let data = value;
       if (
@@ -363,6 +376,9 @@ export default {
             res.data
           );
         });
+      }
+      if(!flag){
+        this.strategyForm.manualControl[index].state = null;
       }
       this.$forceUpdate();
     },
@@ -455,7 +471,8 @@ export default {
           );
           let result = manualControl.every(function (item) {
             return (
-              item.equipmentTypeId != "" && item.state != "" && item.value != ""
+              item.equipmentTypeId != "" && item.state != "" && item.value != "" &&
+            item.equipmentTypeId != null && item.state != null && item.value != null
             );
           });
           console.log(result);

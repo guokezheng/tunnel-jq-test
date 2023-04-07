@@ -1179,22 +1179,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int implementPlan(String planId,Long eventId){
         //将id拆分
         List<String> list = Arrays.asList(planId.split(","));
-        Map flowParam = new HashMap();
-        flowParam.put("eventId",eventId);
         int issueResult = 0;
         for(String processId : list){
-            //查询预案流程节点
-            SdReserveProcess sdReserveProcess = sdReserveProcessMapper.selectSdReserveProcessById(Long.valueOf(processId));
-            SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(sdReserveProcess.getStrategyId());
-            flowParam.put("content",sdReserveProcess.getProcessName());
-            issueResult = issuedDevice(rl,eventId,"4");
-            if(issueResult>0){
-                sdEventFlowService.savePlanProcessFlow(flowParam);
-                //更新事件处置记录表状态
-                updateHandleState(sdReserveProcess.getId(),eventId);
+            //排除已经执行过的流程
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventId(eventId);
+            sdEventHandle.setProcessId(Long.valueOf(processId));
+            //0：未完成 1：已完成
+            sdEventHandle.setEventState("1");
+            if(sdEventHandleMapper.selectSdEventHandleList(sdEventHandle).size() > 0){
+                continue;
             }
+            issueResult = implementProcess(Long.valueOf(processId),eventId);
         }
-
         return issueResult;
     }
 
@@ -1206,11 +1203,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         String deviceExecutionState = getDeviceExecutionState(rl, process);
         if(issueResult>0){
             //保存处置记录
-            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "成功");
+            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "【成功】");
             //更新事件处置记录表状态
             updateHandleState(processId,eventId);
         }else {
-            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "失败");
+            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "【失败】");
         }
         return issueResult;
     }
@@ -1231,16 +1228,16 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //查询情报板
             String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
             Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
-            eqStateData = sdVmsContent.get("content").toString().concat("------");
+            eqStateData = sdVmsContent.get("content").toString().concat("    ------");
         }else if(eqType == DevicesTypeEnum.LS.getCode()){
             //截取广播文件名称
             String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
             List<String> list = Arrays.asList(lsData.split("\\\\"));
-            eqStateData = list.get(list.size() - 1).concat("------");
+            eqStateData = list.get(list.size() - 1).concat("    ------");
         }else {
             //查询普通设备状态
             List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(sdReserveProcess);
-            eqStateData = maps.get(0).get("stateName").toString().concat("------");
+            eqStateData = maps.get(0).get("stateName").toString().concat("    ------");
         }
         return eqStateData;
     }

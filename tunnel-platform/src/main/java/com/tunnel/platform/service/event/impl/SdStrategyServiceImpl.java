@@ -137,17 +137,24 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @param controlTime
      * @return
      */
+    /**
+     * 分时控制修改控制时间
+     * @param strategyId
+     * @param controlTime
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateControlTime(Long strategyId, String controlTime) {
+        String emg = "数据处理异常";
         String[] timeParam = controlTime.split("-");
         SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(strategyId);
         strategy.setTimerOpen(timeParam[0]);
         strategy.setTimerClose(timeParam[1]);
         String[] relationId = strategy.getJobRelationId().split(",");
         List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(strategyId);
-        if(rlList.size() < 2){
-            return 0;
+        if(rlList.size() < 1){
+            throw new RuntimeException("未找到策略关联的设备信息");
         }
         //排序保证修改顺序
         //rlList = rlList.stream().sorted((Comparator.comparing(SdStrategyRl::getId))).collect(Collectors.toList());
@@ -167,6 +174,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (int i=0;i<relationId.length;i++) {
                 Long jobId = Long.valueOf(relationId[i]);
                 SysJob job = sysJobService.selectJobById(jobId);
+                if(com.ruoyi.common.utils.StringUtils.isNull(job)){
+                    emg = "未找到相应的定时任务";
+                    throw new RuntimeException("未找到相应的定时任务");
+                }
                 if(openRl.contains(job.getInvokeTarget().split("'")[1])){
                     job.setCronExpression(CronUtil.DateConvertCron(timeParam[0]));
                 }else{
@@ -176,7 +187,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             }
             sdStrategyMapper.updateSdStrategyById(strategy);
         } catch (Exception e) {
-            throw new RuntimeException("数据处理异常");
+            throw new RuntimeException(emg);
         }
         return 1;
     }
@@ -881,7 +892,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName()+ "-" + refId + "-执行");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "',1)");
+                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + ")");
                     // corn表达式
                     String cronDate = CronUtil.DateConvertCron(startTime);
                     job.setCronExpression(cronDate);
@@ -903,7 +914,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName()+ "-" + refId + "-恢复");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "',2)");
+                    job.setInvokeTarget("strategyTask.strategyParamsPlus('" + refId + "')");
                     // corn表达式
                     String cronDate = CronUtil.DateConvertCron(endTime);
                     job.setCronExpression(cronDate);
@@ -1179,22 +1190,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int implementPlan(String planId,Long eventId){
         //将id拆分
         List<String> list = Arrays.asList(planId.split(","));
-        Map flowParam = new HashMap();
-        flowParam.put("eventId",eventId);
         int issueResult = 0;
         for(String processId : list){
-            //查询预案流程节点
-            SdReserveProcess sdReserveProcess = sdReserveProcessMapper.selectSdReserveProcessById(Long.valueOf(processId));
-            SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(sdReserveProcess.getStrategyId());
-            flowParam.put("content",sdReserveProcess.getProcessName());
-            issueResult = issuedDevice(rl,eventId,"4");
-            if(issueResult>0){
-                sdEventFlowService.savePlanProcessFlow(flowParam);
-                //更新事件处置记录表状态
-                updateHandleState(sdReserveProcess.getId(),eventId);
+            //排除已经执行过的流程
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventId(eventId);
+            sdEventHandle.setProcessId(Long.valueOf(processId));
+            //0：未完成 1：已完成
+            sdEventHandle.setEventState("1");
+            if(sdEventHandleMapper.selectSdEventHandleList(sdEventHandle).size() > 0){
+                continue;
             }
+            issueResult = implementProcess(Long.valueOf(processId),eventId);
         }
-
         return issueResult;
     }
 
@@ -1206,11 +1214,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         String deviceExecutionState = getDeviceExecutionState(rl, process);
         if(issueResult>0){
             //保存处置记录
-            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "成功");
+            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "【成功】");
             //更新事件处置记录表状态
             updateHandleState(processId,eventId);
         }else {
-            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "失败");
+            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "【失败】");
         }
         return issueResult;
     }
@@ -1231,16 +1239,16 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //查询情报板
             String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
             Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
-            eqStateData = sdVmsContent.get("content").toString().concat("------");
+            eqStateData = sdVmsContent.get("content").toString().concat("    ------");
         }else if(eqType == DevicesTypeEnum.LS.getCode()){
             //截取广播文件名称
             String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
             List<String> list = Arrays.asList(lsData.split("\\\\"));
-            eqStateData = list.get(list.size() - 1).concat("------");
+            eqStateData = list.get(list.size() - 1).concat("    ------");
         }else {
             //查询普通设备状态
             List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(sdReserveProcess);
-            eqStateData = maps.get(0).get("stateName").toString().concat("------");
+            eqStateData = maps.get(0).get("stateName").toString().concat("    ------");
         }
         return eqStateData;
     }

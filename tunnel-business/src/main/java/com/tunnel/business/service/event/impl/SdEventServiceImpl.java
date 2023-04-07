@@ -293,15 +293,13 @@ public class SdEventServiceImpl implements ISdEventService {
         data.put("${CZJL}", "处置记录");
         data.put("${WJBG}", "四、完结报告");
         data.put("${eventImg}","事件图片");
-        data.put("${eventImgNum}","(最多3张)");
 
         //事件发现
         List<String[]> list1 = setDiscoveryMap(eventDiscovery);
         //图片，如果是多个图片，就新建多个map
         List<SdTrafficImage> imgList = eventDiscovery.getIconUrlList();
         List<SdTrafficImage> images = imgList.stream().filter(item -> "0".equals(item.getImgType())).collect(Collectors.toList());
-        int listLength = images.size() >= 3 ? 3 : images.size();
-        for(int i = 0; i < listLength; i++){
+        for(int i = 0; i < images.size(); i++){
             Map<String, Object> map = setImgMap(images.get(i).getImgUrl());
             if(map == null){
                 continue;

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-07 09:28:56
+ * @LastEditTime: 2023-04-07 16:27:24
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -252,9 +252,18 @@
                     >
                       {{ item.flowContent }}
                     </div>
-                    <div v-show="item.reserveId" class="yijian" @click="getYiJian(item)"
-                    :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">
-                    {{ yjName }}
+                    <div 
+                      v-show="getShow(item,index) == false && index != '0'" 
+                      class="yijian" @click="getYiJian(item)"
+                      style="cursor: pointer">
+                      一键
+                    </div>
+                   
+                    <div class="yijian" 
+                      v-show="getShow(item,index) == true && index != '0'"
+                      @click="getYiJian(item)"
+                      style="cursor: pointer;">
+                      详情
                     </div>
                   </div>
                   <div class="dashed"
@@ -889,13 +898,13 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
+        <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
         <el-button
           class="submitButton"
-          v-show="yjName == '一键'"
+          v-show="yjShow == false"
           @click="oneKeyExecute()">
           执 行
         </el-button>
-        <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -970,11 +979,11 @@ export default {
   },
   data() {
     return {
+      yjShow:true,
       emergencyList:[],
       activeName:'1',
       buttonDisable:true,
       deviceStateName:'',
-      yjName:'一键',
       oneKeyList:[],
       oneKeyDialogVisible:false,
       eventInfo:{},
@@ -1144,6 +1153,16 @@ export default {
   //   clearInterval(this.deadline4);
   // },
   methods: {
+    getShow(item,index){
+      console.log(item)
+      let isShow = item.children.every(items=>{
+        return items.eventState == '1'
+      })
+      return isShow
+      // for(let items of item.children){
+      //   return items.eventState == '1'
+      // }
+    },
     handleClick(tab, event){
       console.log(tab.name)
       this.getImplementList(tab.name);
@@ -1152,22 +1171,24 @@ export default {
     getImplementList(username){
       let params = {'groupName':username,'tunnelId':this.eventForm.tunnelId};
       listSdEmergencyPer(params).then(res=>{
-        console.log(res);
         this.implementList = res.rows
       })
     },
     oneKeyExecute(){
       let planId = this.reserveId;
       let eventId = this.$route.query.id;
-      // implementPlan(planId,eventId).then(res=>{
-      //   this.$modal.msgSuccess("执行成功");
-      //   this.yjName = '详情';
-      //   this.oneKeyDialogVisible = false;
-      // })
+      implementPlan(planId,eventId).then(res=>{
+        this.$modal.msgSuccess("执行成功");
+        this.oneKeyDialogVisible = false;
+        this.evtHandle();
+      });
     },
     // 事件处置 一键
     getYiJian(item) {
-      console.log(item, "一键");
+      let show = item.children.every(items=>{
+        return items.eventState == '1'
+      })
+      this.yjShow = show;
       var that = this;
       let arr = [];
       for (let itm of item.children) {
@@ -1177,7 +1198,6 @@ export default {
       let data = {reserveId:item.reserveId,eventId:that.$route.query.id};
       getAllManagementDevices(data).then(res=>{
         this.oneKeyList = res.data;
-        console.log(this.oneKeyList);
         for(let i = 0;i < this.oneKeyList.length;i++){
           let item = this.oneKeyList[i];
           if(item.deviceType == 16 || item.deviceType == 36){//情报板
@@ -1548,7 +1568,6 @@ export default {
           this.lineHeight = (incHandContentBox - classificationBox) / 2;
           this.circlePosition = '-' + (this.lineHeight + 10) + 'px';
         })
-        // 获取一键操作盒子高度
         for (let item of this.incHandList) {
           for (let itm of item.children) {
             if (itm.flowId == 18 && itm.eventState == "1") {
@@ -1559,8 +1578,6 @@ export default {
           }
         }
         this.$forceUpdate();
-
-        
       });
     },
     // 查设备状态
@@ -1924,6 +1941,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+::v-deep .yjBox .is-always-shadow .el-card{
+  background-color: #012b4e;
+}
 .dispatchAss .el-row .el-col{
   background: #012646;
   margin-bottom: 20px;

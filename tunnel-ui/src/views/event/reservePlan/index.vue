@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-07 10:31:55
+ * @LastEditTime: 2023-04-07 15:03:14
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -801,8 +801,7 @@ import {
   getCategoryTree,
 } from "@/api/event/strategy";
 import { listType, getTypeAndStrategy } from "@/api/equipment/type/api.js";
-import { getJlyTunnel, getTunnels } from "@/api/equipment/tunnel/api.js";
-import { listTunnels } from "@/api/equipment/tunnel/api";
+import { getJlyTunnel, getTunnels,listTunnels } from "@/api/equipment/tunnel/api.js";
 import { fastLerp } from "zrender/lib/tool/color";
 import {
   addProcess,
@@ -810,6 +809,7 @@ import {
   previewDisplay,
 } from "@/api/event/reserveProcess";
 import { exportFlow } from "@/api/event/planFlow";
+import { Loading } from 'element-ui';
 
 export default {
   name: "Plan",
@@ -818,6 +818,7 @@ export default {
   // },
   data() {
     return {
+      dataLoading:false,
       resetCascader: 0,
       equipmentTypeProps: {
         value: "id",
@@ -1054,7 +1055,7 @@ export default {
     if (this.$cache.local.get("manageStation") == "1") {
       this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
     }
-    tunnelNames(this.paramsData).then((res) => {
+    listTunnels().then((res) => {
       this.eqTunnelData = res.rows;
       this.eqTunnelData.forEach((item) => {
         item.sdTunnelSubareas.forEach((item, index) => {
@@ -1090,6 +1091,18 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    openFullScreen2() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.strategy-dialog',
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 2000);
+    },
     getRules(){
       this.getDicts("sd_device_retrieval_rule").then((response) => {
         for(let item of response.data){
@@ -1454,8 +1467,6 @@ export default {
     },
     // 编辑策略保存方法
     submitStrategy() {
-      console.log(this.planTypeIdList, "000000000000000000");
-
       for (let i = 0; i < this.planTypeIdList.length; i++) {
         if(this.planTypeIdList[i].processStageName == ''){
           return this.$modal.msgWarning("请填写阶段名称");
@@ -1463,10 +1474,11 @@ export default {
         let item = this.planTypeIdList[i].processesList;
         let result = item.every(items=>{
           if(items.retrievalRule == 1){
+            console.log(item,'当前数据');
             return items.processName &&
               items.state &&
               items.eqTypeId &&
-              items.equipments.length >= 1
+              items.equipments.length >= 1 && items.equipments[0] != ''
           }else{//非指定由后端判断具体设备
             return items.processName &&
               items.state &&
@@ -1514,6 +1526,7 @@ export default {
      }, */
     // 配置策略
     async chooseStrategyInfo(row) {
+      this.openFullScreen2();
       this.getEquipmentType();
       this.reserveId = row.id;
       this.currentClickData = row;

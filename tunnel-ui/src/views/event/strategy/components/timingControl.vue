@@ -62,6 +62,7 @@
               value-format="yyyy-MM-dd"
               placeholder="请选择日期"
               :picker-options="forbiddenTime"
+              @change="changeTime"
               >
             </el-date-picker>
             <i style="color: red;margin-left: 10px;">不选择日期则每日执行</i>
@@ -75,6 +76,7 @@
               v-model="strategyForm.execTime"
               placeholder="请选择时间"
               value-format="HH:mm:ss"
+              @change="changeTime"
             >
             </el-time-picker>
           </el-form-item>
@@ -341,6 +343,17 @@ export default {
     };
   },
   methods: {
+
+    changeTime(){
+      debugger;
+      let date = this.strategyForm.execDate + " " + this.strategyForm.execTime;
+      let dateTime = new Date(date).getTime();
+      if(this.strategyForm.execDate && this.strategyForm.execTime && dateTime < new Date()){
+        this.$modal.msgWarning("执行时间不得早于当前时间");
+        this.strategyForm.execDate = null;
+        this.strategyForm.execTime = null;
+      }
+    },
 
     init() {
       if (this.sink == "add") {

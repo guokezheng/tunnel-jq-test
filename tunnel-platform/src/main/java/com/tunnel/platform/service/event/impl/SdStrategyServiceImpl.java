@@ -557,7 +557,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(null != model.getExecDate()){
                 schedulerTime = CronUtil.DateTimeConvertCron(model.getExecDate(),model.getExecTime());
             }
-            model.setSchedulerTime(schedulerTime);
+            sty.setSchedulerTime(schedulerTime);
+
         }
 
         //重新插入关系表及定时任务信息
@@ -866,6 +867,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 }
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);
+
+             /*   // 分时控制
+                if(model.getStrategyType().equals("3")){
+                    openRlData.setEffectiveTime(endTime);
+                }*/
+
                 sdStrategyRlMapper.insertSdStrategyRl(openRlData);
                 refId = openRlData.getId();
                 //新增定时任务

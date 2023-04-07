@@ -470,10 +470,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="事件描述" prop="eventDescription">
+              <el-form-item label="影响描述" prop="eventDescription">
                 <el-input
                   v-model="eventFormDetail.eventDescription"
-                  placeholder="事件描述"
+                  placeholder="影响描述"
                   style="width: calc(100% - 10px)"
                 />
               </el-form-item>
@@ -690,12 +690,12 @@
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="8">
-                  <el-form-item label="事件类型">
+                  <el-form-item label="预估类型">
                     <el-input v-model="manualReview.eventTypeName" readonly></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="事件等级">
+                  <el-form-item label="预估等级">
                     <el-input v-model="manualReview.eventGrade" readonly></el-input>
                   </el-form-item>
                 </el-col>

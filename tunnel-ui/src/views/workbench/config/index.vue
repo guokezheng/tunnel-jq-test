@@ -4601,7 +4601,7 @@ export default {
   },
   created: function () {
     this.getUserDept();
-    this.getDicts("sd_direction").then((data) => {
+    this.getDicts("sd_strategy_direction").then((data) => {
       console.log(data, "方向");
       this.directionList = data.data;
     });
@@ -5224,8 +5224,7 @@ export default {
       });
     },
     directionFormat(row, column) {
-      let directionFormat = this.selectDictLabel(this.directionList, row.direction);
-      return directionFormat.length>0?directionFormat:'双向';
+      return this.selectDictLabel(this.directionList, row.direction);
     },
     // 策略类型字典翻译
     strategyTypeFormat(row, column) {

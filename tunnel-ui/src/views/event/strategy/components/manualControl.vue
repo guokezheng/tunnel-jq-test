@@ -618,14 +618,8 @@ export default {
     },
     //查询方向
     getDirection() {
-      this.getDicts("sd_direction").then((response) => {
+      this.getDicts("sd_strategy_direction").then((response) => {
         this.directionOptions = response.data;
-        let data = {
-          "value": "-1",
-          "dictLabel":"双向",
-          "dictValue":"-1"
-        }
-        this.directionOptions.push(data);
       });
     },
     /** 查询设备类型列表 */

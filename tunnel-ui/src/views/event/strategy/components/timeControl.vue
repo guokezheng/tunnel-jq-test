@@ -309,15 +309,7 @@ export default {
     };
   },
   methods: {
-    changeValue001(i,index){
-      $forceUpdate();
-      console.log("==============="+i+"====================")
-      if(i=1){
-        console.log(this.strategyForm.autoControl[index].openState)
-      }else{
-        console.log(this.strategyForm.autoControl[index].openState)
-      }
-    },
+
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -796,15 +788,8 @@ export default {
     },
     //查询方向
     getDirection() {
-      this.getDicts("sd_direction").then((response) => {
+      this.getDicts("sd_strategy_direction").then((response) => {
         this.directionOptions = response.data;
-        let data = {
-          "value": "-1",
-          "dictLabel":"双向",
-          "dictValue":"-1"
-        }
-        this.directionOptions.push(data);
-
       });
     },
     /** 查询设备类型列表 */

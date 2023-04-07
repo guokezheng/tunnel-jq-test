@@ -72,7 +72,7 @@ public class IotBoardReleaseLog extends BaseEntity
 
     /** 发布机构 */
 //    @Excel(name = "发布机构")
-    private Long releaseDeptId;
+    private String releaseDeptId;
 
     /** 发布用户 */
     @Excel(name = "发布用户")
@@ -143,11 +143,11 @@ public class IotBoardReleaseLog extends BaseEntity
         this.releaseDeptName = releaseDeptName;
     }
 
-    public Long getReleaseDeptId() {
+    public String getReleaseDeptId() {
         return releaseDeptId;
     }
 
-    public void setReleaseDeptId(Long releaseDeptId) {
+    public void setReleaseDeptId(String releaseDeptId) {
         this.releaseDeptId = releaseDeptId;
     }
 

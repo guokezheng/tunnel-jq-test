@@ -557,7 +557,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(null != model.getExecDate()){
                 schedulerTime = CronUtil.DateTimeConvertCron(model.getExecDate(),model.getExecTime());
             }
-            model.setSchedulerTime(schedulerTime);
+            sty.setSchedulerTime(schedulerTime);
+
         }
 
         //重新插入关系表及定时任务信息
@@ -833,17 +834,27 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             String equipments = StringUtils.join(value,",");
             String equipmentTypeId = map.get("equipmentTypeId") + "";
 
-            if(!equipmentTypeId.equals("16") && !equipmentTypeId.equals("36")) {
-                if (map.get("openState") == null || map.get("closeState") == null) {
+            String state = null;
+            String openState = null;
+            String closeState = null;
+
+            if(equipmentTypeId.equals("16") || equipmentTypeId.equals("36")){
+                if (null != map.get("state") && StringUtils.isNotBlank(map.get("state").toString())) {
+                    state = map.get("state").toString();
+                }else {
+                    throw new RuntimeException("请填写完整策略信息！");
+                }
+            }else{
+
+                if ((null != map.get("openState") &&  StringUtils.isNotBlank(map.get("openState").toString()) ) &&
+                        (null != map.get("closeState") &&  StringUtils.isNotBlank(map.get("closeState").toString()))) {
+                    openState = map.get("openState").toString();
+                    closeState = map.get("closeState").toString();
+                }else{
                     throw new RuntimeException("请填写完整策略信息！");
                 }
             }
-            String state = null;
-            if(null != map.get("state")){
-                state = map.get("state").toString();
-            }
-            String openState = (String) map.get("openState");
-            String closeState = (String) map.get("closeState");
+
             try{
                 SdStrategyRl openRlData = new SdStrategyRl();
                 openRlData.setEqTypeId(equipmentTypeId);
@@ -856,6 +867,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 }
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);
+
+             /*   // 分时控制
+                if(model.getStrategyType().equals("3")){
+                    openRlData.setEffectiveTime(endTime);
+                }*/
+
                 sdStrategyRlMapper.insertSdStrategyRl(openRlData);
                 refId = openRlData.getId();
                 //新增定时任务
@@ -864,7 +881,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName()+ "-" + refId + "-执行");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "',1)");
                     // corn表达式
                     String cronDate = CronUtil.DateConvertCron(startTime);
                     job.setCronExpression(cronDate);
@@ -886,7 +903,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName()+ "-" + refId + "-恢复");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "',2)");
                     // corn表达式
                     String cronDate = CronUtil.DateConvertCron(endTime);
                     job.setCronExpression(cronDate);
@@ -1170,7 +1187,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             SdReserveProcess sdReserveProcess = sdReserveProcessMapper.selectSdReserveProcessById(Long.valueOf(processId));
             SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(sdReserveProcess.getStrategyId());
             flowParam.put("content",sdReserveProcess.getProcessName());
-            issueResult = issuedDevice(rl,eventId,"3");
+            issueResult = issuedDevice(rl,eventId,"4");
             if(issueResult>0){
                 sdEventFlowService.savePlanProcessFlow(flowParam);
                 //更新事件处置记录表状态
@@ -1185,7 +1202,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int implementProcess(Long processId,Long eventId) {
         SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
         SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
-        int issueResult = issuedDevice(rl,eventId,"3");
+        int issueResult = issuedDevice(rl,eventId,"4");
         String deviceExecutionState = getDeviceExecutionState(rl, process);
         if(issueResult>0){
             //保存处置记录

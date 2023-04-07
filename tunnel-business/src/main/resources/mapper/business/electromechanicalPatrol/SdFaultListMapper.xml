@@ -61,6 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="paramFaultType != null and paramFaultType != ''"> and FIND_IN_SET(t.dict_label, #{paramFaultType}) > 0</if>
             <if test="paramFaultRemoveState != null and paramFaultRemoveState != ''"> and FIND_IN_SET(r.dict_label, #{paramFaultRemoveState}) > 0</if>
             <if test="paramFaultLevel != null and paramFaultLevel != ''"> and FIND_IN_SET(l.dict_label, #{paramFaultLevel}) > 0</if>
+            <if test="paramFaultEscalationType != null and paramFaultEscalationType != ''"> and FIND_IN_SET(b.dict_label, #{paramFaultEscalationType}) > 0</if>
             <if test="faultSource != null  and faultSource != ''"> and s.fault_source = #{faultSource}</if>
             <if test="faultFxtime != null and faultFxtime != '' "> and s.fault_fxtime = #{faultFxtime}</if>
             <if test="faultCxtime != null  and faultCxtime != ''"> and s.fault_cxtime = #{faultCxtime}</if>

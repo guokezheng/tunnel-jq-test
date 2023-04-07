@@ -48,6 +48,8 @@ public class SdFaultList extends BaseEntity
 
     private String paramFaultType;
 
+    private String  paramFaultEscalationType;
+
 
     private String paramFaultRemoveState;
 
@@ -55,8 +57,8 @@ public class SdFaultList extends BaseEntity
 
     private String deptId;
 
-    /** 故障发现源 */
-   /* @Excel(name = "故障发现源")*/
+    /** 故障来源 */
+   /* @Excel(name = "故障来源")*/
     private String faultSource;
 
 
@@ -125,6 +127,14 @@ public class SdFaultList extends BaseEntity
     private String tunnelName;
 
     private String ids;
+
+    public String getParamFaultEscalationType() {
+        return this.paramFaultEscalationType;
+    }
+
+    public void setParamFaultEscalationType( String paramFaultEscalationType) {
+        this.paramFaultEscalationType = paramFaultEscalationType;
+    }
 
     public String getParamFaultLevel() {
         return this.paramFaultLevel;
@@ -241,7 +251,7 @@ public class SdFaultList extends BaseEntity
     private String faultEscalationType;
 
 
-    @Excel(name = "故障发现源")
+    @Excel(name = "故障来源")
     private String fEscalationType;
 
     @ApiModelProperty("设备类型")

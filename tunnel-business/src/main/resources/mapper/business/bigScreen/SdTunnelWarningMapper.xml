@@ -6,22 +6,39 @@
     
     <select id="getTunnelWarningNumber" resultType="java.lang.Long">
         SELECT
---                tbl._date AS countdate,
-               IFNULL(sum(tbr.totalnum), 0) AS totalnum
-        FROM (
-        SELECT @s :=@s + 1 AS _index,DATE(DATE_SUB(CURRENT_DATE, INTERVAL @s DAY)) AS _date
+            IFNULL( sum( tbr.totalnum ), 0 ) AS totalnum
         FROM
-        information_schema.tables,(SELECT @s := - 1) temp
-        WHERE @s <![CDATA[ < ]]> 29  ORDER BY   _date
+        (
+            SELECT
+            @s := @s + 1 AS _index,
+            DATE (
+            DATE_SUB( CURRENT_DATE, INTERVAL @s DAY )) AS _date
+            FROM
+            information_schema.TABLES,(
+            SELECT
+            @s := - 1
+        ) temp
+        WHERE
+            @s <![CDATA[ < ]]> 29
+        ORDER BY
+            _date
         ) AS tbl
         LEFT JOIN (
-            SELECT   count(*) AS totalnum,  DATE(warning_time) warningdate
-            FROM sd_warning_info where 1=1
+            SELECT
+                count(*) AS totalnum,
+                DATE ( CASE WHEN end_time IS NULL THEN ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time END ) event_time
+            FROM
+                sd_event
+            WHERE
+                1 = 1
             <if test="tunnelId != null and tunnelId != ''">
                 AND tunnel_id = #{tunnelId}
             </if>
-            GROUP BY  warning_time) AS tbr ON tbl._date = tbr.warningdate
-        GROUP BY    tbl._date
+            GROUP BY
+                DATE ( CASE WHEN end_time IS NULL THEN ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time END )
+        ) AS tbr ON tbl._date = tbr.event_time
+        GROUP BY
+        tbl._date
     </select>
 
     <select id="getTunnelWarningNumData" resultType="hashmap">
@@ -35,18 +52,31 @@
         WHERE @s <![CDATA[ < ]]> 29  ORDER BY   _date
         ) AS tbl
         LEFT JOIN (
-        SELECT   count(*) AS totalnum,  DATE(warning_time) warningdate
-        FROM sd_warning_info where 1=1
-        <if test="tunnelId != null and tunnelId != ''">
-            AND tunnel_id = #{tunnelId}
-        </if>
-        <if test="startDate != null and startDate != ''">
-            AND <![CDATA[ warning_time >= #{startDate} ]]>
-        </if>
-        <if test="endDate != null and endDate != ''">
-            AND <![CDATA[ warning_time <= #{endDate} ]]>
-        </if>
-        GROUP BY  warning_time) AS tbr ON tbl._date = tbr.warningdate
+            SELECT
+                count(*) AS totalnum,
+                DATE ( CASE WHEN end_time IS NULL THEN ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time END ) event_time
+            FROM
+                sd_event
+            WHERE
+                1 = 1
+            <if test="tunnelId != null and tunnelId != ''">
+                AND tunnel_id = #{tunnelId}
+            </if>
+            <if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
+                and date_format(CASE
+                WHEN end_time IS NULL THEN
+                ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time
+                END,'%y%m%d') &gt;= date_format(#{startDate},'%y%m%d')
+            </if>
+            <if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
+                and date_format(CASE
+                WHEN end_time IS NULL THEN
+                ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time
+                END,'%y%m%d') &lt;= date_format(#{endDate},'%y%m%d')
+            </if>
+            GROUP BY
+                DATE ( CASE WHEN end_time IS NULL THEN ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time END )
+        ) AS tbr ON tbl._date = tbr.event_time
         WHERE 1=1
         <if test="startDate != null and startDate != ''">
             AND <![CDATA[ tbl._date >= #{startDate} ]]>

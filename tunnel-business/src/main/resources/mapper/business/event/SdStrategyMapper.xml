@@ -46,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
         left join sys_dict_data c on c.dict_value = A.strategy_type
-        left join sys_dict_data f on f.dict_value = A.direction and f.dict_type = 'sd_direction'
+        left join sys_dict_data f on f.dict_value = A.direction and f.dict_type = 'sd_strategy_direction'
 
         <where>
             <if test="id != null">and A.id = #{id}</if>

@@ -781,7 +781,7 @@ export default {
     this.getDicts("sd_trigger_compare_type").then((response) => {
       this.symbol = response.data;
     });
-    this.getDicts("sd_direction").then((response) => {
+    this.getDicts("sd_strategy_direction").then((response) => {
       response.data.forEach((item) => {
         this.directionOptions.push(item);
       });
@@ -1183,8 +1183,7 @@ export default {
     },
     // 设备方向字典翻译
     directionFormat(row, column) {
-      let directionFormat = this.selectDictLabel(this.directionOptions, row.direction);
-      return directionFormat.length>0?directionFormat:'双向';
+      return this.selectDictLabel(this.directionOptions, row.direction);
     },
     //选择设备提交按钮
     submitChooseEqForm() {

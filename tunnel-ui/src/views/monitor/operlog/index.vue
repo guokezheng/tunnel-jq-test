@@ -203,7 +203,7 @@
               height="62vh" :data="list" @selection-change="handleSelectionChange"
               :default-sort="defaultSort" @sort-change="handleSortChange" class="allTable"
               >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection />
       <el-table-column label="日志编号" align="center" prop="operId" />
       <el-table-column label="系统模块" align="center" prop="title" />
       <el-table-column label="操作类型" align="center" prop="businessType">
@@ -304,6 +304,8 @@ export default {
       exportLoading: false,
       // 选中数组
       ids: [],
+      // 非单个禁用
+      single: true,
       // 非多个禁用
       multiple: true,
       // 显示搜索条件
@@ -339,6 +341,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -380,6 +386,7 @@ export default {
     /** 多选框选中数据 */
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.operId)
+      this.single = selection.length!==1
       this.multiple = !selection.length
     },
     /** 排序触发事件 */

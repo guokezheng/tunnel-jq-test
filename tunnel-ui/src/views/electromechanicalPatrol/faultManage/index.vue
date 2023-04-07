@@ -81,11 +81,11 @@
           >{{ dict.dictLabel }}</el-checkbox
           >
         </el-form-item>
-        <el-form-item label="发现时间">
+        <el-form-item label="发现时间" >
           <el-date-picker
             v-model="dateRange"
             size="small"
-            style="width: 100%"
+            style="width: 100%; "
             value-format="yyyy-MM-dd HH:mm:ss"
             type="datetimerange"
             range-separator="-"

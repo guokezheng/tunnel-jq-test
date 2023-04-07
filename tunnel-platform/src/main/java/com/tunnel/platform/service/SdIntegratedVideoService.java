@@ -4,10 +4,12 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.page.Result;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -22,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class SdIntegratedVideoService {
@@ -34,6 +37,9 @@ public class SdIntegratedVideoService {
     private String deptId;
     @Resource(name = "HttpTemplate")
     private RestTemplate template;
+
+    @Autowired
+    private RedisCache redisCache;
 
 
     /**
@@ -123,7 +129,13 @@ public class SdIntegratedVideoService {
         HttpHeaders headers = new HttpHeaders();
 
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-        headers.add("Authorization", getToken());
+        String token = getCacheToken();
+        if(token == null || "".equals(token)){
+//            return Result.error("获取视频平台token失败");
+            return Result.success();
+        }
+
+        headers.add("Authorization", token);
         headers.setContentType(type);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
@@ -143,6 +155,26 @@ public class SdIntegratedVideoService {
             log.info("打开相机实时流发生异常：{}",ex.getMessage());
             return Result.success();
         }
+    }
+
+
+    /**
+     * 获取缓存token
+     * @return
+     */
+    public String getCacheToken(){
+        //token缓存key值
+        String key = "video_platform_token";
+        //token有效时间15分钟
+        Integer expireTime = 15;
+        //获取缓存token
+      String token = redisCache.getCacheObject(key);
+      if(token == null || "".equals(token)){
+          //缓存中获取不到token，重新从接口中获取，更新缓存
+           token = getToken();
+          redisCache.setCacheObject( key, token, expireTime, TimeUnit.MINUTES);
+      }
+      return token;
     }
 
     /**

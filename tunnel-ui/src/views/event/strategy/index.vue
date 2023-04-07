@@ -1322,6 +1322,7 @@ export default {
           // }
           delStrategy(ids).then((res) => {
             if (res.code == 200) {
+              this.$refs.tableFile1.clearSelection()
               this.$modal.msgSuccess(res.msg);
             } else {
               this.$modal.msgError(res.msg);
@@ -1386,6 +1387,15 @@ export default {
     },
 
   },
+
+  watch:{
+    dialogVisible:{
+      handler(val){
+        debugger
+        this.$refs.tableFile1.clearSelection()
+      }
+    }
+  }
 };
 </script>
 <style>

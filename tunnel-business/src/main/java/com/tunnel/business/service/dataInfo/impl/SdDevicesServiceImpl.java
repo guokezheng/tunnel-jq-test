@@ -520,7 +520,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                 /*SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());*/
                 SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());
                 if (StringUtils.isNull(d)) {
-                    Map map = checkDevices(devices);
+                    Map map = checkDevices(devices,isUpdateSupport);
                     if ((Boolean) map.get("flag")) {
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
 //                        StringBuilder sb=new StringBuilder();
@@ -537,7 +537,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         failureMsg.append("<br/>" + failureNum + map.get("failureMsg").toString());
                     }
                 } else if (isUpdateSupport) {
-                    Map map = checkDevices(devices);
+                    Map map = checkDevices(devices,isUpdateSupport);
                     if ((Boolean) map.get("flag")) {
                         devices.setUpdateBy(operName);
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
@@ -577,7 +577,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return successMsg.toString();
     }
 
-    public Map checkDevices(SdDevices devices) {
+    public Map checkDevices(SdDevices devices, Boolean isUpdateSupport) {
         StringBuilder failureMsg = new StringBuilder();
         Map<String, Object> map = new HashMap<String, Object>();
         Long eqType = devices.getEqType();
@@ -619,7 +619,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             map.put("flag", false);
             map.put("failureMsg", failureMsg);
             return map;
-        } else if (sdDevicesList!=null&&sdDevicesList.size()>0) {
+        } else if (sdDevicesList!=null&&sdDevicesList.size()>0&&!sdDevicesList.get(0).getEqId().equals(devices.getEqId())) {
             failureMsg.append("、设备ID " + devices.getEqId() + "该隧道下设备名称重复");
             map.put("flag", false);
             map.put("failureMsg", failureMsg);

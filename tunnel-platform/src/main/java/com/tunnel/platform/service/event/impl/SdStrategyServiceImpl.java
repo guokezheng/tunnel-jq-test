@@ -31,6 +31,7 @@ import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
+import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.tunnel.platform.service.event.ISdStrategyService;
@@ -137,12 +138,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @param controlTime
      * @return
      */
-    /**
-     * 分时控制修改控制时间
-     * @param strategyId
-     * @param controlTime
-     * @return
-     */
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateControlTime(Long strategyId, String controlTime) {

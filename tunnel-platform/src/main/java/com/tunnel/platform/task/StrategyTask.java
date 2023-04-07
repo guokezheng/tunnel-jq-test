@@ -78,12 +78,14 @@ public class StrategyTask {
             Map<String,Object> map = new HashMap<>();
             SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
             map.put("devId",devId);
-            map.put("state",sdStrategyRl.getState());
+
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
             if(type == 1){
+                map.put("state",sdStrategyRl.getState());
                 map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
             }else {
+                map.put("state",sdStrategyRl.getEndState());
                 map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerClose());
             }
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);

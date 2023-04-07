@@ -385,7 +385,12 @@ public class PhoneSpkService {
             sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
             sdOperationLog.setTunnelId(tunnelId);
             sdOperationLog.setEqId(eqId);
-            sdOperationLog.setOperationState("playVoice");
+            if(fileList.size() > 0){
+                List<String> list1 = Arrays.asList(fileList.get(0).toString().split("\\\\"));
+                sdOperationLog.setOperationState(list1.get(list1.size()-1));
+            }else {
+                sdOperationLog.setOperationState("无播放文件");
+            }
             sdOperationLog.setControlType(controlType);
             sdOperationLog.setCreateTime(new Date());
             sdOperationLog.setOperIp(operIp);

@@ -779,7 +779,7 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEvent eventDiscovery = sdEventMapper.getEventDiscovery(sdEvent);
         //查询事件详情-事件发现-图片
         List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
-        image1.stream().filter(item -> "1".equals(item.getImgType())).forEach(item -> item.setImgUrl(item.getImgUrl().split(",")[0]));
+        image1.stream().filter(item -> "1".equals(item.getImgType())).forEach(item -> item.setImgUrl(item.getImgUrl().split(";")[0]));
         eventDiscovery.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
         //计算持续时间
         String datePoor = "";
@@ -796,15 +796,15 @@ public class SdEventServiceImpl implements ISdEventService {
             if(manualReview != null){
                 //车道
                 List<String> list = Arrays.asList(manualReview.getLaneNo().split(","));
-                String lane = "";
+                List<String> lane = new ArrayList<>();
                 for(int i = 0; i < list.size(); i++){
                     if(list.get(i) == null || "".equals(list.get(i))){
                         continue;
                     }
                     String laneLabel = sysDictDataMapper.selectDictLabel("sd_lane_two", list.get(i));
-                    lane = lane.concat(laneLabel);
+                    lane.add(laneLabel);
                 }
-                manualReview.setLaneNo(manualReview.getDirection().concat("/").concat(lane));
+                manualReview.setLaneNo(manualReview.getDirection().concat("/").concat(StringUtils.join(lane,"、")));
                 //查询事件详情-人工复核-当事目标
                 String confidence = radarEventMapper.selectConfidence(sdEvent.getId());
                 manualReview.setConfidenceList(confidence == null ? "" : confidence);

@@ -833,17 +833,27 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             String equipments = StringUtils.join(value,",");
             String equipmentTypeId = map.get("equipmentTypeId") + "";
 
-            if(!equipmentTypeId.equals("16") && !equipmentTypeId.equals("36")) {
-                if (map.get("openState") == null || map.get("closeState") == null) {
+            String state = null;
+            String openState = null;
+            String closeState = null;
+
+            if(equipmentTypeId.equals("16") || equipmentTypeId.equals("36")){
+                if (null != map.get("state") && StringUtils.isNotBlank(map.get("state").toString())) {
+                    state = map.get("state").toString();
+                }else {
+                    throw new RuntimeException("请填写完整策略信息！");
+                }
+            }else{
+
+                if ((null != map.get("openState") &&  StringUtils.isNotBlank(map.get("openState").toString()) ) &&
+                        (null != map.get("closeState") &&  StringUtils.isNotBlank(map.get("closeState").toString()))) {
+                    openState = map.get("openState").toString();
+                    closeState = map.get("closeState").toString();
+                }else{
                     throw new RuntimeException("请填写完整策略信息！");
                 }
             }
-            String state = null;
-            if(null != map.get("state")){
-                state = map.get("state").toString();
-            }
-            String openState = (String) map.get("openState");
-            String closeState = (String) map.get("closeState");
+
             try{
                 SdStrategyRl openRlData = new SdStrategyRl();
                 openRlData.setEqTypeId(equipmentTypeId);
@@ -864,7 +874,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName()+ "-" + refId + "-执行");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "',1)");
                     // corn表达式
                     String cronDate = CronUtil.DateConvertCron(startTime);
                     job.setCronExpression(cronDate);
@@ -886,7 +896,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName()+ "-" + refId + "-恢复");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "',2)");
                     // corn表达式
                     String cronDate = CronUtil.DateConvertCron(endTime);
                     job.setCronExpression(cronDate);

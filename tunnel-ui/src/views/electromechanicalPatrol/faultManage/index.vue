@@ -687,7 +687,7 @@ import {
   loadPicture,
   updateType,
 } from "@/api/equipment/type/api";
-import { listDevices } from "@/api/equipment/eqlist/api";
+import {getDevices, listDevices} from "@/api/equipment/eqlist/api";
 import { editForm } from "@/api/equipment/yingJiGou/emergencyVehicles";
 import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
 import { download } from "@/utils/request";
@@ -727,8 +727,6 @@ export default {
       loading: true,
       // 导出遮罩层
       exportLoading: false,
-      // 故障详情、修改遮罩层
-      selLoading: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -949,7 +947,18 @@ export default {
     });
   },
   methods: {
-
+    openDialogScreen() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.hitchDialog',
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 500);
+    },
 
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
@@ -1053,15 +1062,17 @@ export default {
         // this.getList();
       });
     },
-//隧道点击事件
+   //隧道点击事件
     tunnelGet(){
       this.form.eqId = null;
-      //this.getDevices();
+      this.disstateDevice = false;
+      $("#deviceSel").attr("pointer-events", "none");
+      this.getDevices();
     },
     //设备类型点击事件
     eqTypeGet(){
       this.form.eqId = null;
-      //this.getDevices();
+      this.getDevices();
     },
 
     // 取消按钮
@@ -1196,7 +1207,7 @@ export default {
         } else {
           this.disstateDevice = false;
           this.getDevices()
-          $("#deviceSel").attr("pointer-events", "none");
+          //$("#deviceSel").attr("pointer-events", "none");
         }
       }
 
@@ -1308,7 +1319,7 @@ export default {
     },
     /** 修改按钮操作 */
      handleUpdate(row) {
-
+      this.openDialogScreen();
       let that = this;
       this.isWritable = true;
       this.removeStata = false;
@@ -1319,6 +1330,8 @@ export default {
       that.reset();
       const id = row.id || that.ids;
       getList(id).then((response) => {
+        this.form.tunnelId = response.data.tunnelId;
+        this.getDevices();
         this.form = response.data;
         if (this.form.faultSource == "null"||this.form.faultSource == "undefined") {
           this.form.faultSource = "";
@@ -1348,12 +1361,12 @@ export default {
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
         this.disstateDevice = false;
-
-
+        this.open = true;
         this.title = "修改故障清单";
       });
-      this.open = true;
     },
+
+
     exportFaultReport(row) {
       let time = parseInt(new Date().getTime() / 1000) + "";
       let fileName = "检修报告" + time;
@@ -1363,8 +1376,8 @@ export default {
         fileName + ".docx"
       );
     },
-     handleCheckDetail(row) {
-
+    async handleCheckDetail(row) {
+      this.openDialogScreen();
       let that = this;
       this.removeStata = true;
       this.isWritable = false;
@@ -1374,6 +1387,8 @@ export default {
       // const response = getList()
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
+        this.form.tunnelId = response.data.tunnelId;
+        this.getDevices();
         this.form = response.data;
         if (this.form.faultSource == "null"||this.form.faultSource == "undefined") {
           this.form.faultSource = "";
@@ -1493,7 +1508,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 500);
+      }, 1000);
     },
 
     publishForm() {
@@ -1586,6 +1601,7 @@ export default {
 
 
 <style lang="scss" scoped>
+
 .topTxt {
   font-size: 18px;
   font-weight: 500;

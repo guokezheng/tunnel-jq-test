@@ -5051,12 +5051,20 @@ export default {
           }else{
             videoStreaming(res.data[0].inlet).then((res) => {
               console.log(res,'入口视频')
-            this.liveUrl1 = res.data.liveUrl;
-            this.cameraPlayer1 = true;
+            if(res.code == 200 && res.data) {
+              this.liveUrl1 = res.data.liveUrl;
+              this.cameraPlayer1 = true;
+            }else{
+                this.$modal.msgWarning("获取视频失败");
+              }
           });
           videoStreaming(res.data[0].outlet).then((res) => {
-            this.liveUrl2 = res.data.liveUrl;
-            this.cameraPlayer2 = true;
+            if(res.code == 200 && res.data) {
+              this.liveUrl2 = res.data.liveUrl;
+              this.cameraPlayer2 = true;
+            }else{
+              this.$modal.msgWarning("获取视频失败");
+            }
           });
           }
           }
@@ -5082,13 +5090,21 @@ export default {
           }else{
             videoStreaming(res.data[0].inlet).then((res) => {
               console.log(res,'入口视频')
+              if(res.code == 200 && res.data){
+                this.liveUrl3 = res.data.liveUrl;
+                this.cameraPlayer3 = true;
+              }else{
+                this.$modal.msgWarning("获取视频失败");
+              }
 
-              this.liveUrl3 = res.data.liveUrl;
-              this.cameraPlayer3 = true;
             });
             videoStreaming(res.data[0].outlet).then((res) => {
-              this.liveUrl4 = res.data.liveUrl;
-              this.cameraPlayer4 = true;
+            if(res.code == 200 && res.data) {
+                this.liveUrl4 = res.data.liveUrl;
+                this.cameraPlayer4 = true;
+            }else{
+              this.$modal.msgWarning("获取视频失败");
+            }
             });
           }
           }

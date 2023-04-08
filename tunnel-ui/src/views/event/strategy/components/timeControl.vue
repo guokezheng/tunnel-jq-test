@@ -119,7 +119,7 @@
                 multiple
                 collapse-tags
                 placeholder="请选择设备"
-                @change="qbgChange(index, dain.equipments)"
+                @change="qbgChange(index, dain.equipments,false)"
                 style="width:100%;"
               >
                 <el-option
@@ -274,7 +274,7 @@ export default {
             state:null,
             type: "", //设备分类
             equipmentTypeId: "", //设备类型
-            equipment: [], //设备列表
+            equipments: [], //设备列表
             eqStateList: [], //执行开启操作
             eqStateListFan: [], //关闭
           },
@@ -310,7 +310,19 @@ export default {
     };
   },
   methods: {
-
+    openFullScreen2() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        index:999,
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.strategy-dialog',
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 3000);
+    },
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -322,21 +334,14 @@ export default {
       this.getDirection();
     },
     changeEndTime(){
-      let startTime = this.strategyForm.startTime;
-      let endTime = this.strategyForm.endTime;
-      console.log(startTime,endTime)
-      let d1 = startTime.split(':');
-      let d2 = endTime.split(':');
-      console.log(d1,d2)
-      if(d1.length == 3 && d2.length){
-        for(let i = 0;i < d1.length;i++){
-          for(let i = 0;i < d2.length;i++){
-            if(d1[0] > d2[0] || d1[1] > d2[1] || d1[2] > d2[2]){
-              this.strategyForm.endTime = "";
-              return this.$modal.msgWarning("开始时间不能大于结束时间");
-            }
-          }
-        }
+      var date = new Date()
+      var dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      let startTime = Date.parse(dateStr + " " + this.strategyForm.startTime);
+      let endTime = Date.parse(dateStr + " " +  this.strategyForm.endTime);
+      console.log(startTime,endTime);
+      if(startTime >= endTime){
+        this.strategyForm.endTime = "";
+        return this.$modal.msgWarning("开始时间不能大于结束时间");
       }
     },
     /** 修改按钮操作 */
@@ -347,6 +352,7 @@ export default {
        /!* spinner: 'el-icon-phone-outline',*!/
         background: 'rgba(0, 0, 0, 0.7)'
       });*/
+
       //获取设备
       autoEqTypeList().then((res) => {
         this.eqTypeList = res.rows;
@@ -361,6 +367,7 @@ export default {
 
 
       getStrategy(id).then((response) => {
+        this.openFullScreen2();
         let data = response.data;
         this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
@@ -390,7 +397,7 @@ export default {
             ) {
               // 改变数据类型
               this.strategyForm.autoControl[i].state = +attr.state;
-              this.qbgChange(i, attr.equipments.split(","));
+              this.qbgChange(i, attr.equipments.split(","),true);
             }
 
             //初始化选项
@@ -437,7 +444,7 @@ export default {
       })*/
 
     },
-    qbgChange(index, value) {
+    qbgChange(index, value,flag) {
       console.log(value);
       let data = value;
       if (
@@ -452,13 +459,13 @@ export default {
             "templatesList",
             res.data
           );
-
-          // 设备联控，命令重置
-          this.strategyForm.autoControl[index].openState = null;
-          this.strategyForm.autoControl[index].closeState = null;
-          this.strategyForm.autoControl[index].state = null;
-
         });
+      }
+      if(!flag){
+        // 设备联控，命令重置
+        this.strategyForm.autoControl[index].openState = null;
+        this.strategyForm.autoControl[index].closeState = null;
+        this.strategyForm.autoControl[index].state = null;
       }
       this.$forceUpdate();
     },
@@ -472,10 +479,15 @@ export default {
           let autoControl = this.strategyForm.autoControl;
           let response = JSON.parse(JSON.stringify(autoControl))
           let result = response.every(function (item) {
-            return item.equipmentTypeId != "" || item.closeState != "" || item.openState != ""
+            if(item.equipmentTypeId == 16 || item.equipmentTypeId == 36){
+              return item.equipmentTypeId != "" && item.state != ""  &&  item.equipments != "" &&
+                item.equipmentTypeId != null && item.state != null && item.equipments != null
+            }
+            return item.equipmentTypeId != "" && item.closeState != "" && item.openState != "" &&  item.equipments != "" &&
+            item.equipmentTypeId != null && item.closeState != null && item.openState != null && item.equipments != null
           });
           if(!result){
-            return this.$modal.msgError("请填写完整");
+            return this.$modal.msgError("请填写完整策略信息！");
           }
 
 

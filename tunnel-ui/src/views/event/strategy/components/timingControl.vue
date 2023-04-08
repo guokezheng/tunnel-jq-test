@@ -141,7 +141,7 @@
                 multiple
                 collapse-tags
                 placeholder="请选择设备"
-                @change="qbgChange(index, items.equipments)"
+                @change="qbgChange(index, items.equipments,false)"
                 style="width:100%"
               >
                 <el-option
@@ -343,7 +343,18 @@ export default {
     };
   },
   methods: {
-
+    openFullScreen2() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.strategy-dialog',
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 3000);
+    },
     changeTime(){
       debugger;
       let date = this.strategyForm.execDate + " " + this.strategyForm.execTime;
@@ -368,11 +379,13 @@ export default {
       this.getDirection();
     },
     getStrategyData(row) {
+
       console.log(row, "当前策略数据");
       listType(this.queryEqTypeParams).then((response) => {
         this.equipmentTypeData = response.rows;
       });
       getStrategy(this.id).then((response) => {
+        this.openFullScreen2();
         let data = response.data;
         this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
@@ -411,7 +424,7 @@ export default {
               this.strategyForm.autoControl[i].equipmentTypeId == 36
             ) {
               this.strategyForm.autoControl[i].state = +attr.state;
-              this.qbgChange(i,equipmentArray);
+              this.qbgChange(i,equipmentArray,true);
             }
             this.$set(autoControl, "equipmentTypeData", this.equipmentTypeData);
 
@@ -459,7 +472,7 @@ export default {
       });
       this.listEqTypeStateIsControl(index);
     },
-    qbgChange(index, value) {
+    qbgChange(index, value,flag) {
       console.log(value, "当前选中板子");
       let data = value;
       if (
@@ -475,6 +488,10 @@ export default {
             res.data
           );
         });
+      }
+      if(!flag){
+        // 设备联控，命令重置
+        this.strategyForm.autoControl[index].state = null;
       }
     },
     handleChange(e) {
@@ -544,11 +561,12 @@ export default {
           let response = JSON.parse(JSON.stringify(autoControl))
           console.log(response,"response")
           let result = response.every(function (item) {
-            return item.equipmentTypeId != "" && item.state != "" && item.equipments != ""
+            return item.equipmentTypeId != "" && item.state != "" && item.equipments != "" &&
+            item.equipmentTypeId != null && item.state != null && item.equipments != null
           });
           console.log(result);
           if(!result){
-            return this.$modal.msgError("请填写完整");
+            return this.$modal.msgError("请填写完整策略信息！");
           }
           // 判断是修改还是删除
           if (this.sink == "edit") {
@@ -559,6 +577,8 @@ export default {
         }
       });
     },
+
+
     // 编辑操作
     async updateStrategyInfoData() {
       if (this.sink == "add") {

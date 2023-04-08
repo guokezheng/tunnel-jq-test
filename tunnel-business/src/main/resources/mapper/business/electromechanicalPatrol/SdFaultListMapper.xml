@@ -15,6 +15,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="faultTbr"    column="fault_tbr"    />
         <result property="faultTbtime"    column="fault_tbtime"    />
         <result property="eqId"    column="eq_id"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="typeId"    column="type_id"    />
         <result property="eqName"    column="eq_name"    />
         <result property="eqStatus"    column="eq_status"    />
         <result property="eqRunStatus"    column="eq_run_status"    />
@@ -89,8 +91,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectSdFaultListById" parameterType="String" resultMap="SdFaultListResult">
-        <include refid="selectSdFaultListVo"/>
-        where id = #{id}
+        select f.*,t.type_name,t.type_id from sd_fault_list f
+        left join sd_devices d on f.eq_id = d.eq_id
+        left join sd_equipment_type t on d.eq_type = t.type_id
+        where f.id = #{id}
     </select>
         
     <insert id="insertSdFaultList" parameterType="SdFaultList">
@@ -221,16 +225,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getFaultList1"  resultType="hashmap">
-        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name
+        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name,f.fault_fxtime
         from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id
         left join sys_dict_data s on f.fault_type = s.dict_value
     <where>
-        1=1 and  s.dict_type= 'fault_type' and f.fallt_remove_statue = '1'
+        1=1 and  s.dict_type= 'fault_type' and f.fallt_remove_statue = '1' and f.fault_status = '0'
         <if test="tunnelId != null and tunnelId != '' ">and t.tunnel_id = #{tunnelId}</if>
         <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
     </where>
+        order by f.create_time desc
     </select>
 
 

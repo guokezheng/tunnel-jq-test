@@ -92,6 +92,9 @@ public class SdFaultList extends BaseEntity
    /* @Excel(name = "设备id")*/
     private String eqId;
 
+    private String typeName;
+    private Integer typeId;
+
 
     /** 设备状态（1-在线，2-离线，3-故障） */
     /*@Excel(name = "设备状态")*/
@@ -127,6 +130,22 @@ public class SdFaultList extends BaseEntity
     private String tunnelName;
 
     private String ids;
+
+    public Integer getTypeId() {
+        return this.typeId;
+    }
+
+    public void setTypeId( Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getTypeName() {
+        return this.typeName;
+    }
+
+    public void setTypeName( String typeName) {
+        this.typeName = typeName;
+    }
 
     public String getParamFaultEscalationType() {
         return this.paramFaultEscalationType;

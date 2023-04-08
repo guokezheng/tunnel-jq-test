@@ -94,7 +94,6 @@
         @selection-change="handleSelectionChangeTab"
         class="allTable"
         height="58vh"
-        :row-key="getRowKey"
       >
         <el-table-column type="selection" width="55" align="center" reserve-selection/>
         <el-table-column type="index" :index="indexMethodTab" label="序号" width="68" align="center"></el-table-column>
@@ -357,6 +356,8 @@ export default {
       exportLoading: false,
       // 选中数组
       ids: [],
+      // 非单个禁用
+      single: true,
       // 非多个禁用
       multiple: true,
       // 显示搜索条件
@@ -967,12 +968,14 @@ export default {
     /** 多选框选中数据 */
     handleSelectionChangeTab(selection) {
       this.ids = selection.map((item) => item.eqId);
+      this.single = selection.length!==1
       this.multiple = !selection.length;
     },
 
     /** 多选框选中数据 */
     handleSelectionChange1(selection) {
       this.ids = selection.map((item) => item.createTime);
+      this.single = selection.length!==1
       this.multiple = !selection.length;
     },
 

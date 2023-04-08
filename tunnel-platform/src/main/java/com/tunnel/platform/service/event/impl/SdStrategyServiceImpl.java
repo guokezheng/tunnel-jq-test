@@ -31,6 +31,7 @@ import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
+import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.tunnel.platform.service.event.ISdStrategyService;
@@ -137,12 +138,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @param controlTime
      * @return
      */
-    /**
-     * 分时控制修改控制时间
-     * @param strategyId
-     * @param controlTime
-     * @return
-     */
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateControlTime(Long strategyId, String controlTime) {
@@ -879,11 +875,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);
 
-             /*   // 分时控制
-                if(model.getStrategyType().equals("3")){
-                    openRlData.setEffectiveTime(endTime);
-                }*/
-
                 sdStrategyRlMapper.insertSdStrategyRl(openRlData);
                 refId = openRlData.getId();
                 //新增定时任务
@@ -892,7 +883,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName()+ "-" + refId + "-执行");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + ")");
+                    job.setInvokeTarget("strategyTask.strategyParamsPlus('" + refId + "','1')");
                     // corn表达式
                     String cronDate = CronUtil.DateConvertCron(startTime);
                     job.setCronExpression(cronDate);
@@ -914,7 +905,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName()+ "-" + refId + "-恢复");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParamsPlus('" + refId + "')");
+                    job.setInvokeTarget("strategyTask.strategyParamsPlus('" + refId + "','2')");
                     // corn表达式
                     String cronDate = CronUtil.DateConvertCron(endTime);
                     job.setCronExpression(cronDate);

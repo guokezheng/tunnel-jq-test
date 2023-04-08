@@ -84,7 +84,7 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
                 item = item.substring(item.indexOf(",") + 1 == -1 ? 0 : item.indexOf(",") + 1);
                 String speed = item.substring(0, item.indexOf(",") == -1 ? 0 : item.indexOf(","));
                 object.put("SPEED", speed);
-                item = item.substring(item.indexOf("C") + 1 == -1 ? 0 : item.indexOf("C"));
+                item = item.substring(item.indexOf("C") + 1 == -1 ? 0 : item.indexOf("C") + 1);
                 String coordinate = item.substring(0, 6);
                 object.put("COORDINATE", coordinate);
                 item = item.substring(item.indexOf("c") + 1 == -1 ? 0 : item.indexOf("c") + 1);
@@ -236,7 +236,7 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
                 item = item.substring(item.indexOf(",") + 1 == -1 ? 0 : item.indexOf(",") + 1);
                 String speed = item.substring(0, item.indexOf(",") == -1 ? 0 : item.indexOf(","));
                 object.put("SPEED", speed);
-                item = item.substring(item.indexOf("C") + 1 == -1 ? 0 : item.indexOf("C"));
+                item = item.substring(item.indexOf("C") + 1 == -1 ? 0 : item.indexOf("C") + 1);
                 String coordinate = item.substring(0, 6);
                 object.put("COORDINATE", coordinate);
                 item = item.substring(item.indexOf("c") + 1 == -1 ? 0 : item.indexOf("c") + 1);

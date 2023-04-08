@@ -313,6 +313,9 @@
                     <div v-if="item.textFalse" class="textFalseBox">
                       请选择同种设备
                     </div>
+                    <div v-if="item.textKKFalse" class="textFalseBox">
+                      请选择可控设备
+                    </div>
                     <!-- <div class="tooltip" v-if="showTooltipIndex == index && showTooltip">{{ sensorContent(item) }}</div> -->
 
                     <el-tooltip
@@ -5100,8 +5103,8 @@ export default {
             });
             videoStreaming(res.data[0].outlet).then((res) => {
             if(res.code == 200 && res.data) {
-                this.liveUrl4 = res.data.liveUrl;
-                this.cameraPlayer4 = true;
+              this.liveUrl4 = res.data.liveUrl;
+              this.cameraPlayer4 = true;
             }else{
               this.$modal.msgWarning("获取视频失败");
             }
@@ -7346,7 +7349,7 @@ export default {
           //   typeId: "00",
           //   bigType: "全部",
           // });
-        });
+      });
       });
     },
     // 查询方向
@@ -7504,6 +7507,7 @@ export default {
                   }
                 }
               that.selectedIconList = res.eqList; //设备zxczczxc
+              // 匹配设备方向
               listDevices().then((data)=>{
                 console.log(data,"设备表")
                 for(let item of that.selectedIconList){
@@ -7511,10 +7515,20 @@ export default {
                     if(item.eqId == itm.eqId){
                       item.eqDirection = itm.eqDirection
                     }
-
                   }
                 }
               })
+              // 匹配设备是否可控
+              listType().then((response) => {
+                console.log(response.rows,"设备图标 是否可控")
+                for(let item of that.selectedIconList){
+                  for(let itm of response.rows){
+                    if(item.eqType == itm.typeId){
+                      item.isControl = itm.isControl
+                    }
+                  }
+                }
+              });
               that.getRealTimeData();
 
               console.log(
@@ -7522,14 +7536,13 @@ export default {
                 "所有设备图标selectedIconList"
               );
               for (var item of that.selectedIconList) {
-                // if(item.eqType == 16){
-                //   console.log(item,"情报板设备信息selectedIconList")
+                // if(item.eqType == 10){
+                //   console.log(item,"风机selectedIconList")
                 // }
                 if (
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29
                 ) {
-                  // this.dictList = this.dict.type.sd_sys_name;
                   this.robotShow = true;
                 } else {
                   this.robotShow = false;
@@ -8009,59 +8022,66 @@ export default {
     async openStateSwitch(item) {
       console.log(item, "item");
       if (this.addBatchManage == true) {
-        // 判断是否有选中项 有的话 判断本次点击和上次点击 设备类型是否一样
+        // 判断设备是否可控 不可控的不弹批量弹窗
+        if(item.isControl == '1'){
+           // 判断是否有选中项 有的话 判断本次点击和上次点击 设备类型是否一样
         // 要求每次点击选中的设备类型相同
-        if (this.itemEqType) {
-          // 第二次点击时
-          for (var itm of this.selectedIconList) {
-            //  多选 选择的设备类型相同时
-            if (itm.eqId == item.eqId && this.itemEqType == item.eqType) {
-              // 比对id 如果曾点过 取消选框
-              const result = this.itemEqId.findIndex(
-                (item) => item == itm.eqId
-              );
-              if (result === -1) {
-                itm.click = true;
-                this.itemEqId.push(itm.eqId);
-                this.$forceUpdate();
-              } else {
-                this.itemEqId.splice(result, 1);
-                itm.click = false;
-                this.$forceUpdate();
-                if (this.itemEqId.length == 0) {
-                  this.itemEqType = "";
-                  this.batchManageForm.eqType = "";
-                  this.batchManageForm.eqDirection = "";
-                  this.addBatchManage = false;
+          if (this.itemEqType) {
+            // 第二次点击时
+            for (var itm of this.selectedIconList) {
+              //  多选 选择的设备类型相同时
+              if (itm.eqId == item.eqId && this.itemEqType == item.eqType) {
+                // 比对id 如果曾点过 取消选框
+                const result = this.itemEqId.findIndex(
+                  (item) => item == itm.eqId
+                );
+                if (result === -1) {
+                  itm.click = true;
+                  this.itemEqId.push(itm.eqId);
                   this.$forceUpdate();
+                } else {
+                  this.itemEqId.splice(result, 1);
+                  itm.click = false;
+                  this.$forceUpdate();
+                  if (this.itemEqId.length == 0) {
+                    this.itemEqType = "";
+                    this.batchManageForm.eqType = "";
+                    this.batchManageForm.eqDirection = "";
+                    // this.addBatchManage = false;
+                    this.$forceUpdate();
+                  }
                 }
               }
+              // 多选 选择的设备类型不同时 提示红字
+              else if (itm.eqId == item.eqId && this.itemEqType != item.eqType) {
+                itm.textFalse = true;
+                this.$forceUpdate();
+              }
             }
-            // 多选 选择的设备类型不同时 提示红字
-            else if (itm.eqId == item.eqId && this.itemEqType != item.eqType) {
-              itm.textFalse = true;
-              this.$forceUpdate();
+          } else {
+            // 第一次点击时
+            for (let itm of this.selectedIconList) {
+              // console.log(itm);
+              if (itm.eqId == item.eqId) {
+                itm.click = true;
+                this.itemEqId.push(itm.eqId);
+                this.itemEqType = itm.eqType;
+                this.batchManageForm.eqType = itm.eqType;
+                this.batchManageForm.eqDirection = itm.eqDirection;
+                this.$forceUpdate();
+                getType(itm.eqType).then((res) => {
+                  console.log(res, "查询设备图标宽高");
+                  this.iconWidth = res.data.iconWidth;
+                  this.iconHeight = res.data.iconHeight;
+                });
+              }
             }
           }
-        } else {
-          // 第一次点击时
-          for (let itm of this.selectedIconList) {
-            // console.log(itm);
-            if (itm.eqId == item.eqId) {
-              itm.click = true;
-              this.itemEqId.push(itm.eqId);
-              this.itemEqType = itm.eqType;
-              this.batchManageForm.eqType = itm.eqType;
-              this.batchManageForm.eqDirection = itm.eqDirection;
-              this.$forceUpdate();
-              getType(itm.eqType).then((res) => {
-                console.log(res, "查询设备图标宽高");
-                this.iconWidth = res.data.iconWidth;
-                this.iconHeight = res.data.iconHeight;
-              });
-            }
-          }
+        }else if(item.isControl == '0'){
+          item.textKKFalse = true
+          this.$forceUpdate();
         }
+        
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
         console.log(item, "点击的设备");
@@ -9233,7 +9253,7 @@ export default {
   color: #da4a64;
   opacity: 0;
   animation: fadenum 2s;
-  z-index:4;
+  z-index:100;
 }
 @keyframes fadenum {
   0% {
@@ -10131,7 +10151,7 @@ export default {
 
 .workbench-content {
   // width: 90%;
-  height: 650px;
+  height: 100%;
 
   position: absolute;
   // top: 7%;
@@ -11337,15 +11357,15 @@ input {
   // transform: translateY(-30px);
   display: flex;
   > div:nth-of-type(1) {
-    width: 5%;
+    width: 3%;
     border-bottom: #2dbaf5 solid 1px;
   }
   > div:nth-of-type(2) {
-    width: 90%;
+    width: 94%;
     border-bottom: 1px solid rgba($color: #00b0ff, $alpha: 0.2);
   }
   > div:nth-of-type(3) {
-    width: 5%;
+    width: 3%;
     border-bottom: #2dbaf5 solid 1px;
   }
 }

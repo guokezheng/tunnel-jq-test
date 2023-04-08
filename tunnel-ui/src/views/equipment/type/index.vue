@@ -501,6 +501,7 @@ export default {
     },
     getGroupByBigType() {
       groupByBigType().then((response) => {
+        // console.log(response.rows,"列表")
         this.typeList = response.rows;
       });
     },
@@ -567,6 +568,7 @@ export default {
       this.loading = true;
       this.boxShow = false;
       listType(this.queryParams).then((response) => {
+        console.log(response.rows,"列表")
         this.typeList = response.rows;
         this.total = response.total;
         this.loading = false;

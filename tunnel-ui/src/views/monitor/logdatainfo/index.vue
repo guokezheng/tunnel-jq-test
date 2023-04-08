@@ -98,6 +98,7 @@
             end-placeholder="结束日期"
             :picker-options="setoptions"
             :default-time="['00:00:00', '23:59:59']"
+            popper-class="elDatePicker"
           ></el-date-picker>
         </el-form-item>
         <el-form-item class="bottomBox">
@@ -260,6 +261,7 @@
             end-placeholder="结束日期"
             :picker-options="setoptions"
             :default-time="['00:00:00', '23:59:59']"
+            popper-class="elDatePicker"
           ></el-date-picker>
         </el-form-item>
         <el-form-item class="bottomBox">
@@ -910,8 +912,6 @@ hr {
   right: 0.8% !important;
   width: 23.8% !important;
 }
-::v-deep .el-picker-panel{
-  transform:translateX(-25px)
-}
+
 </style>
 

@@ -274,7 +274,7 @@ export default {
             state:null,
             type: "", //设备分类
             equipmentTypeId: "", //设备类型
-            equipment: [], //设备列表
+            equipments: [], //设备列表
             eqStateList: [], //执行开启操作
             eqStateListFan: [], //关闭
           },
@@ -480,11 +480,11 @@ export default {
           let response = JSON.parse(JSON.stringify(autoControl))
           let result = response.every(function (item) {
             if(item.equipmentTypeId == 16 || item.equipmentTypeId == 36){
-              return item.equipmentTypeId != "" && item.state != ""  &&
-                item.equipmentTypeId != null && item.state != null
+              return item.equipmentTypeId != "" && item.state != ""  &&  item.equipments != "" &&
+                item.equipmentTypeId != null && item.state != null && item.equipments != null
             }
-            return item.equipmentTypeId != "" && item.closeState != "" && item.openState != "" &&
-            item.equipmentTypeId != null && item.closeState != null && item.openState != null
+            return item.equipmentTypeId != "" && item.closeState != "" && item.openState != "" &&  item.equipments != "" &&
+            item.equipmentTypeId != null && item.closeState != null && item.openState != null && item.equipments != null
           });
           if(!result){
             return this.$modal.msgError("请填写完整策略信息！");

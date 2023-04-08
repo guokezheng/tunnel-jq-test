@@ -4,6 +4,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.EventStateEnum;
+import com.tunnel.business.datacenter.domain.enumeration.FaultStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
 import com.tunnel.business.domain.event.SdRoadSectionStatistics;
@@ -64,7 +66,7 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         //查询交通事件
         List<Integer> eventList = sdSmartBigScreenMapper.getEventList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode());
         //查询主动安全
-        List<Integer> warningList = sdSmartBigScreenMapper.getWarningList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
+        List<Integer> warningList = sdSmartBigScreenMapper.getEventList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
         //查询设备故障
         List<Integer> faultList = sdSmartBigScreenMapper.getFaultList(tunnelId);
         map.put("event",eventList);
@@ -260,7 +262,7 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         BigDecimal noCompleted = new BigDecimal(0);
         for(Map<String, Object> item : eventWarning){
             String eventState = item.get("eventState").toString();
-            if("0".equals(eventState) || "3".equals(eventState)){
+            if(EventStateEnum.processing.getCode().equals(eventState) || EventStateEnum.unprocessed.getCode().equals(eventState)){
                 noCompleted = noCompleted.add(new BigDecimal(item.get("eventNumber").toString()));
             }else {
                 completed = completed.add(new BigDecimal(item.get("eventNumber").toString()));
@@ -268,7 +270,7 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         }
         for(Map<String, Object> item : faultWarning){
             String falltRemoveStatue = item.get("falltRemoveStatue").toString();
-            if("1".equals(falltRemoveStatue)){
+            if(FaultStatusEnum.DEVICE_NO_REMOVE.getCode().equals(falltRemoveStatue)){
                 noCompleted = noCompleted.add(new BigDecimal(item.get("eventNumber").toString()));
             }else {
                 completed = completed.add(new BigDecimal(item.get("eventNumber").toString()));

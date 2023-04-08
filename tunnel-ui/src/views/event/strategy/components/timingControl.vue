@@ -565,7 +565,7 @@ export default {
           });
           console.log(result);
           if(!result){
-            return this.$modal.msgError("请填写完整");
+            return this.$modal.msgError("请填写完整策略信息！");
           }
           // 判断是修改还是删除
           if (this.sink == "edit") {

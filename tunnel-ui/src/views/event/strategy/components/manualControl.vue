@@ -477,7 +477,7 @@ export default {
           });
           console.log(result);
           if (!result) {
-            return this.$modal.msgError("请填写完整");
+            return this.$modal.msgError("请填写完整策略信息！");
           }
           //如果不是疏散标志则判断是否填写
           // 判断是修改还是删除

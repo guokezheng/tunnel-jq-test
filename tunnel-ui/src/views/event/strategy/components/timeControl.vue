@@ -494,7 +494,7 @@ export default {
             item.equipmentTypeId != null && item.closeState != null && item.openState != null
           });
           if(!result){
-            return this.$modal.msgError("请填写完整");
+            return this.$modal.msgError("请填写完整策略信息！");
           }
 
 

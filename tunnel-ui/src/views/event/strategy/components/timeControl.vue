@@ -334,22 +334,14 @@ export default {
       this.getDirection();
     },
     changeEndTime(){
-      debugger
-      let startTime = this.strategyForm.startTime;
-      let endTime = this.strategyForm.endTime;
-      console.log(startTime,endTime)
-      let d1 = startTime.split(':');
-      let d2 = endTime.split(':');
-      console.log(d1,d2)
-      if(d1.length == 3 && d2.length){
-        for(let i = 0;i < d1.length;i++){
-          for(let i = 0;i < d2.length;i++){
-            if(d1[0] > d2[0] || d1[1] > d2[1] || d1[2] > d2[2]){
-              this.strategyForm.endTime = "";
-              return this.$modal.msgWarning("开始时间不能大于结束时间");
-            }
-          }
-        }
+      var date = new Date()
+      var dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      let startTime = Date.parse(dateStr + " " + this.strategyForm.startTime);
+      let endTime = Date.parse(dateStr + " " +  this.strategyForm.endTime);
+      console.log(startTime,endTime);
+      if(startTime >= endTime){
+        this.strategyForm.endTime = "";
+        return this.$modal.msgWarning("开始时间不能大于结束时间");
       }
     },
     /** 修改按钮操作 */
@@ -360,7 +352,7 @@ export default {
        /!* spinner: 'el-icon-phone-outline',*!/
         background: 'rgba(0, 0, 0, 0.7)'
       });*/
-      this.openFullScreen2();
+
       //获取设备
       autoEqTypeList().then((res) => {
         this.eqTypeList = res.rows;
@@ -375,6 +367,7 @@ export default {
 
 
       getStrategy(id).then((response) => {
+        this.openFullScreen2();
         let data = response.data;
         this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;

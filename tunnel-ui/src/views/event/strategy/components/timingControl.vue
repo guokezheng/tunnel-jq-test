@@ -379,12 +379,13 @@ export default {
       this.getDirection();
     },
     getStrategyData(row) {
-      this.openFullScreen2();
+
       console.log(row, "当前策略数据");
       listType(this.queryEqTypeParams).then((response) => {
         this.equipmentTypeData = response.rows;
       });
       getStrategy(this.id).then((response) => {
+        this.openFullScreen2();
         let data = response.data;
         this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;

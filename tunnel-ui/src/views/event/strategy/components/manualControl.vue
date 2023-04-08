@@ -269,7 +269,7 @@ export default {
     },
     // 组件调用方法;回显数据;
     getStrategyData(row) {
-      this.openFullScreen2();
+
       getStrategy(this.id).then((response) => {
         let data = response.data;
         // this.strategyForm = data;
@@ -279,7 +279,7 @@ export default {
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
-
+        this.openFullScreen2();
         listRl({ strategyId: this.id }).then((response) => {
           // console.log(response, "设备数据");
           this.strategyForm.manualControl = response.rows;

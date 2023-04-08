@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-07 15:03:14
+ * @LastEditTime: 2023-04-08 11:32:03
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1526,6 +1526,7 @@ export default {
      }, */
     // 配置策略
     async chooseStrategyInfo(row) {
+      
       this.openFullScreen2();
       this.getEquipmentType();
       this.reserveId = row.id;
@@ -1535,6 +1536,7 @@ export default {
       });
       getReservePlanProcess(this.reserveId).then((res) => {
         this.planTypeIdList = res.data;
+        this.getRules();
         console.log(this.planTypeIdList, "编辑数据");
         if (this.planTypeIdList.length == 0) {
           this.planTypeIdList = [
@@ -1547,6 +1549,7 @@ export default {
                   equipmentTypeData: [],
                   equipmentData: [],
                   retrievalRule: "",
+                  retrievalRuleList:[],
                   equipments: [],
                   disabled: false,
                   templatesList: [],

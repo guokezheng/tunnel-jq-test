@@ -130,7 +130,7 @@
             v-show="!item.eventImgUrl || item.eventImgUrl == null"
           />
           <div class="eventBox">
-            <span class="eventType">{{ item.prevControlType == '1' ? '安全预警' : '普通事件' }}</span>
+            <div class="eventType">{{ item.prevControlType == '1' ? '安全预警' : '普通事件' }}</div>
 
             <div>{{ item.simplifyName }}</div>
           </div>
@@ -2538,8 +2538,8 @@ export default {
             color: #fff;
             // padding:5px 10px;
             width: 60%;
-            height: 3vh;
-            line-height: 3vh;
+            // height: 3vh;
+            // line-height: 3vh;
           }
           div{
             background: rgba(228, 14, 14, 0.2);
@@ -2589,8 +2589,8 @@ export default {
         }
         .contentButton {
           display: flex;
-          justify-content: space-between;
-          width: 150px;
+          justify-content: right;
+          width: 260px;
           div {
             width: 65px;
             height: 2vh;
@@ -2600,6 +2600,7 @@ export default {
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            margin-left: 10px;
           }
           div:nth-of-type(1) {
             background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);
@@ -3143,7 +3144,7 @@ export default {
   .searchSafeWarn{
     top: 6% !important;
     right: 0.8% !important;
-    width: 23.8% !important;
+    width: 453px !important;
     .el-checkbox+.el-checkbox{
       margin-left: 0 !important;
     }

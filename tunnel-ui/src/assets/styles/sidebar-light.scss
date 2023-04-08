@@ -1522,7 +1522,7 @@
     // }
   }
   .my-back{
-    background-color: #010913;
+    background-color: rgba($color: #010913, $alpha: 1);
   }
   .popper-class-site {
     // border-color: #70cbf0;
@@ -1631,6 +1631,7 @@
   color: #C0C4CC;
   border: .0625rem solid #004375 !important;
   border-radius: 0.1875rem !important;
+  transform:translateX(-25px) !important;
   // 时间选择器箭头
   .el-picker-panel__icon-btn{
     color:#bbb;
@@ -2300,7 +2301,13 @@
   }
   .drawerLog{
     .el-card{
-      background-color: #002141 !important;
+      background-color: rgba($color: #012E51, $alpha: 0.7) !important;
+    }
+    .el-drawer__body{
+      background:rgba($color: #012E51, $alpha: 0.7)
+    }
+    .el-drawer{
+      background: transparent;
     }
   }
   .zoomClass{

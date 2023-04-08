@@ -2,14 +2,14 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-08 17:27:11
+ * @LastEditTime: 2023-04-08 17:39:57
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="app-container dispatchAss">
     <div class="tunnelBox3">
-      <!-- <iframe
+      <iframe
         name="tuniframe"
         id="miframe"
         class="map3D"
@@ -18,7 +18,7 @@
         allowfullscreen="true"
         allow="autoplay"
         src="http://106.120.201.126:14712/dashboard"
-      ></iframe> -->
+      ></iframe>
     </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>
@@ -187,7 +187,7 @@
                 label="姓名"
                 align="center"
                 prop="userName"
-                width="100"
+                      width="100"
               />
               <el-table-column label="联系方式" align="center" prop="phone" width="150">
                 <template slot-scope="scope">
@@ -264,7 +264,7 @@
                       @click="getYiJian(item)"
                       style="cursor: pointer;">
                       详情
-                    </div>
+                  </div>
                   </div>
                   <div class="dashed"
                     :style="{top:index == 0?'55px':'80px'}"
@@ -838,7 +838,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div class="GDeviceBox" style="overflow: scroll;overflow-x: hidden;">
+      <div class="GDeviceBox" style="overflow: scroll;overflow-x: hidden;height:60vh">
         <div v-for="(item,index) in oneKeyList" :key="index">
           <el-card>
             <el-table
@@ -889,8 +889,12 @@
                       'position':'absolute',
                       'top':item.vmsData['top'] + 'px',
                       'left':item.vmsData['left'] + 'px',
-                    }">
-                      {{item.vmsData['content']}}
+                    }"
+                    style="line-height:1"
+                     v-html="item.vmsData['content'].replace(
+                              /\n|\r\n/g,
+                              '<br>'
+                            ).replace(/ /g, ' &nbsp')">
                     </span>
                   </div>
                 </div>
@@ -900,13 +904,13 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
         <el-button
           class="submitButton"
           v-show="yjShow == false"
           @click="oneKeyExecute()">
           执 行
         </el-button>
+        <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -1149,6 +1153,7 @@ export default {
   // },
   methods: {
     getShow(item,index){
+      console.log(item)
       let isShow = item.children.every(items=>{
         return items.eventState == '1'
       })
@@ -1979,6 +1984,9 @@ display: none;
 }
 ::v-deep .el-statistic .number{
   color:white;
+}
+::v-deep .drawerLog .el-drawer__body{
+  background:rgba(1, 46, 81, 0.7) !important;
 }
 .sendMsg{
   // width: 60px;

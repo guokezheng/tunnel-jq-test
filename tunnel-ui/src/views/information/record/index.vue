@@ -167,14 +167,14 @@
       <el-table-column label="设备方向" align="center" prop="direction" />
 
       <el-table-column label="设备桩号" align="center" prop="pile" />
-      <el-table-column label="发布内容" align="center" prop="releaseNewContent" >
+      <el-table-column label="发布内容" align="center" prop="releaseNewContent" width="270px">
         <template slot-scope="scope">
           <div v-for="(item,index) of scope.row.list" :key="index"
           :style="{
-            width:item.WIDTH + 'px',
-            height:item.HEIGHT + 'px',
             color:item.COLOR,
             fontSize:item.FONT_SIZE,
+            width:item.WIDTH +'px',
+            height:item.HEIGHT + 'px'
             }"
           style="background: #000;position: relative;margin: 2px auto;">
             <span
@@ -382,7 +382,7 @@ export default {
               itm.HEIGHT = this.getDevicePixel(itm.DEVICEPIXEL,'height')
               itm.TOP = this.getCoordinate(itm.COORDINATE.substring(3, 6),'top',itm.DEVICEPIXEL) + 'px';
               itm.LEFT = this.getCoordinate(itm.COORDINATE.substring(0, 3),'left',itm.DEVICEPIXEL) + 'px';
-              itm.CONTENT = itm.CONTENT.replace('\\n', '<br>').replace(/ /g,' &nbsp')
+              itm.CONTENT = item.releaseNewContent.replace('<r><n>', '<br>').replace(/ /g,' &nbsp')
               arr.push(itm);
             }
           }
@@ -400,11 +400,11 @@ export default {
       if (width < 250 && height < 38) {
         return font;
       } else {
-        if (width / 250 > height / 38) {
+        // if (width / 250 > height / 38) {
           return font / (width / 250) - 1;
-        } else {
-          return font / (height / 38) - 1;
-        }
+        // } else {
+          // return font / (height / 38) - 1;
+        // }
       }
     },
     getCoordinate(coordinate, type, screenSize){
@@ -414,19 +414,19 @@ export default {
       if (width < 250 && height < 38) {
         return coordinate;
       } else {
-        if (width / 250 > height / 38) {
+        // if (width / 250 > height / 38) {
           if (type == "left") {
             return coordinate / (width / 250);
           } else if (type == "top") {
-            return coordinate / (width / 250);
+            return coordinate / (height / 38);
           }
-        } else {
-          if (type == "left") {
-            return coordinate / (height / 38) + 3;
-          } else if (type == "top") {
-            return coordinate / (height / 38) + 1;
-          }
-        }
+        // } else {
+          // if (type == "left") {
+          //   return coordinate / (height / 38) + 3;
+          // } else if (type == "top") {
+          //   return coordinate / (height / 38) + 1;
+          // }
+        // }
       }
     },
     // 转分辨率
@@ -440,19 +440,20 @@ export default {
           return height
         }
       }else{
-        if (width / 250 > height / 38) {
+        // if (width / 250 > height / 38) {
           if (type == "width") {
             return 250;
           } else if (type == "height") {
-            return height / (width / 250);
-          }
-        } else {
-          if (type == "width") {
-            return width / (height / 38);
-          } else if (type == "height") {
             return 38;
+            // return height / (width / 250);
           }
-        }
+        // } else {
+        //   if (type == "width") {
+        //     return width / (height / 38);
+        //   } else if (type == "height") {
+        //     return 38;
+        //   }
+        // }
       }
       // if (devicePixel) {
       //   if(width > 250){

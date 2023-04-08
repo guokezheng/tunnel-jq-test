@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-08 17:37:50
+ * @LastEditTime: 2023-04-08 11:37:34
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1315,6 +1315,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
+      this.handleQuery()
       this.resetReservePlanDrawForm();
     },
     //form表单置空
@@ -1467,6 +1468,7 @@ export default {
     closeStrategy() {
       // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
+      this.handleQuery()
     },
     everyForeach(value){
       return value != '';
@@ -1842,7 +1844,7 @@ export default {
                   this.dialogFormVisible = false;
                   this.resetReservePlanDrawForm(); //重置表单
                   //this.open = false;
-                  this.getList();
+                  this.handleQuery();
                 } else {
                   this.$modal.msgError("修改失败");
                 }
@@ -1968,10 +1970,13 @@ export default {
           return delPlan(ids);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(function () {});
+        .catch(function () {
+          console.log(11111111111)
+          that.handleQuery()
+        });
     },
     //移除文件
     handleRemove(file, fileList) {

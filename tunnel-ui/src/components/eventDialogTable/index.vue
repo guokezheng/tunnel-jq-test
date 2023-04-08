@@ -421,6 +421,7 @@ export default {
     }
     >li:hover{
       background-color: rgba(0, 0, 0, 0.2);
+      background:rgba($color: #000000, $alpha: 0.1);
     }
   }
   /*table滚动条背景色 */
@@ -499,7 +500,7 @@ export default {
     // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
     margin: 0 !important;
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
-    background-color: rgba($color: #00152b, $alpha: 0.6) !important;
+    // background-color: rgba($color: #00152b, $alpha: 0.6) !important;
 
   }
   .blueLine {

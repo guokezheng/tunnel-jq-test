@@ -1985,6 +1985,9 @@ display: none;
 ::v-deep .el-statistic .number{
   color:white;
 }
+::v-deep .drawerLog .el-drawer__body{
+  background:rgba(1, 46, 81, 0.7) !important;
+}
 .sendMsg{
   // width: 60px;
   display: flex;

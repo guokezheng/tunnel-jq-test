@@ -1988,7 +1988,7 @@ export default {
   .searchSafeWarn{
     top: 6% !important;
     right: 0.8% !important;
-    width: 23.8% !important;
+    width: 453px !important;
     .el-checkbox+.el-checkbox{
       margin-left: 0 !important;
     }

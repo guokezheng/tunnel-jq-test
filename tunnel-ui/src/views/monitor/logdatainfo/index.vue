@@ -349,10 +349,9 @@
       height="62vh"
       v-show="activeName == '2'"
       @sort-change="handleSortChange2"
-      :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" reserve-selection />
       <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
       <el-table-column
         label="隧道名称"

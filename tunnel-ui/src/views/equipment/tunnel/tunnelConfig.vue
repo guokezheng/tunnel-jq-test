@@ -46,12 +46,14 @@
     <div class="content config-back">
       <div class="config-content">
         <!--画布区域-->
-        <el-row class="config-img-box" v-loading="loading" >
+        <el-row class="config-img-box"  id ='svgRow' v-loading="loading" >
           <el-image class="config-img" id="imageId":src="selectedTunnel.lane.url" :style="{width:selectedTunnel.lane.width + 'px'}" lazy></el-image>
           <svg id="svg" class="tunnelSvg" height="580" :style="{width:selectedTunnel.lane.width + 'px'}" style="position: relative;z-index: 3;" ></svg>
           <!-- 辅助线 -->
           <div id="guide-h" class="guide"></div>
           <div id="guide-v" class="guide"></div>
+          <div id="guide-h1" class="guide"></div>
+          <div id="guide-v1" class="guide"></div>
         </el-row>
       </div>
     </div>
@@ -1466,6 +1468,36 @@ export default {
                     top: event.pageY+35,
                     type:"h"
                   }
+                  event.toElement.parentNode
+                  console.log(  event.toElement.parentNode)
+
+                  let style = window.getComputedStyle(event.toElement.parentNode, null);
+                  let paddingL = parseFloat(style.getPropertyValue('left')); //获取左侧内边距
+                  let paddingtop = parseFloat(style.getPropertyValue('top')); //获取左侧内边距
+                  console.log(paddingL)
+                  console.log(paddingtop)
+                  console.log("ddddddddddddddddddddddddddddddd")
+                  // let ds = getElementPosition(event.toElement.parentNode)
+                  // console.log(ds)
+                  let oDiv=  document.getElementById("imageId")
+
+                  let svgs=  document.getElementById("svgRow")
+                  let svgss=  document.querySelector(".config-content")
+                  let svgeimage=  document.querySelector(".el-image")
+                  console.log(svgss)
+
+                  let stylea = window.getComputedStyle(svgs, null);
+                  let styleas = window.getComputedStyle(svgss, null);
+                  let styleas1 = window.getComputedStyle(svgeimage, null);
+                  console.log(styleas)
+
+                  let paddingLa = parseFloat(stylea.getPropertyValue('padding-top')); //获取左侧内边距
+                  let paddingLa1 = parseFloat(styleas.getPropertyValue('width')); //获取左侧内边距
+                  let paddingLa2 = parseFloat(styleas1.getPropertyValue('width')); //获取左侧内边距
+                  console.log(paddingLa1-paddingLa2)
+
+                  guide1.left = paddingL+(paddingLa1-paddingLa2)/2-15
+                  guide1.top = paddingtop+paddingLa
                   chosenGuides[prop].guide = guide1;
                 }
               }
@@ -1479,10 +1511,14 @@ export default {
             $("#guide-h")
               .css("top", chosenGuides.top.guide.top - top)
               .show();
+            // $("#guide-h1")
+            //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
+            //   .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           } else {
             debugger
             $("#guide-h").hide();
+            $("#guide-h1").hide();
             // ui.position.top = pos.top - 104;
           }
 
@@ -1490,18 +1526,38 @@ export default {
             $("#guide-v")
               .css("left", chosenGuides.left.guide.left - left)
               .show();
+            // $("#guide-v1")
+            //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
+            //   .show();
             /* ui.position.left =
 				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
           } else {
             $("#guide-v").hide();
+            $("#guide-v1").hide();
             /* ui.position.left = pos.left; */
           }
         },
 
         stop: function (event, ui) {
-          $("#guide-v, #guide-h").hide();
+          $("#guide-v, #guide-h ,#guide-v1 ,#guide-h1").hide();
         },
       });
+
+      function getElementPosition(element) {
+        let top = element.offsetTop //这是获取元素距父元素顶部的距离
+        let left = element.offsetLeft
+        var current = element.offsetParent //这是获取父元素
+        while (current !== null) {
+          //当它上面有元素时就继续执行
+          top += current.offsetTop //这是获取父元素距它的父元素顶部的距离累加起来
+          left += current.offsetLeft
+          current = current.offsetParent //继续找父元素
+        }
+        return {
+          top,
+          left,
+        }
+      }
 
       function computeGuidesForElement(elem, pos, w, h) {
         if (elem != null) {
@@ -1929,8 +1985,16 @@ input {
   border-top: 1px solid red;
   width: 100%;
 }
+#guide-h1 {
+  border-top: 1px solid red;
+  width: 100%;
+}
 
 #guide-v {
+  border-left: 1px solid red;
+  height: 100%;
+}
+#guide-v1 {
   border-left: 1px solid red;
   height: 100%;
 }

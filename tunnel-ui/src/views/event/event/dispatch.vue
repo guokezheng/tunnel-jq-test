@@ -2,14 +2,14 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-08 14:51:15
+ * @LastEditTime: 2023-04-08 17:27:11
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="app-container dispatchAss">
     <div class="tunnelBox3">
-      <iframe
+      <!-- <iframe
         name="tuniframe"
         id="miframe"
         class="map3D"
@@ -18,7 +18,7 @@
         allowfullscreen="true"
         allow="autoplay"
         src="http://106.120.201.126:14712/dashboard"
-      ></iframe>
+      ></iframe> -->
     </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>
@@ -2750,8 +2750,11 @@ display: none;
     }
   }
 }
+::v-deep .el-table::before{height:0px!important;}
 ::v-deep .el-table .el-table__cell {
   height: 35px !important;
+  border-bottom: 1px solid rgba(225, 228, 230, .16) !important;
+  border-left: 1px solid rgba(225, 228, 230, .16) !important;
 }
 ::v-deep ::-webkit-scrollbar {
   width: 0px;
@@ -2781,6 +2784,8 @@ display: none;
   ::v-deep .el-table__row td{
     padding:10px 0!important;
     color:white;
+    border-bottom: 1px solid rgba(225, 228, 230, .16) !important;
+    border-left: 1px solid rgba(225, 228, 230, .16) !important;
   }
 }
 </style>
@@ -2822,5 +2827,4 @@ display: none;
     padding-left:15px;
   }
 }
-
 </style>

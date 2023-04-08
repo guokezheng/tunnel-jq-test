@@ -1100,10 +1100,10 @@
   }
   //  表格下边框
   .el-table td.el-table__cell{
-    border-bottom: 1px solid rgba(225,228,230,.16);
+    border-bottom: 1px solid rgba(225, 228, 230, .16) !important;
   }
   .el-table td:last-of-type {
-    border-right: 1px solid rgba(225,228,230,.16);
+    border-right: 1px solid rgba(225, 228, 230, .16) !important;
   }
   .el-table .el-table__expand-icon{
     color:#fff;

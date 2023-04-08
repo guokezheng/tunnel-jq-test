@@ -275,8 +275,8 @@ public class WorderToNewWordUtils {
             URL httpUrl = new URL(url);
             HttpURLConnection conn = (HttpURLConnection)httpUrl.openConnection();
             conn.setRequestMethod("GET");
-            conn.setConnectTimeout(3 * 1000);
-            conn.setReadTimeout(3 * 1000);
+            conn.setConnectTimeout(1 * 1000);
+            conn.setReadTimeout(1 * 1000);
             InputStream inStream = conn.getInputStream();//通过输入流获取图片数据
             byte[] btImg = readInputStream(inStream);//得到图片的二进制数据
             return btImg;

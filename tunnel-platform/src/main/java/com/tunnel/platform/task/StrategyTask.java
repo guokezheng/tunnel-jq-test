@@ -75,7 +75,7 @@ public class StrategyTask {
      * @Param type  分时控制   1  开始控制   2  结束控制
      * @throws UnknownHostException
      */
-    public void strategyParamsPlus(String strategyRlId) throws UnknownHostException {
+    public void strategyParamsPlus(String strategyRlId,String type) throws UnknownHostException {
         SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(strategyRlId));
         String[] split = sdStrategyRl.getEquipments().split(",");
         for (String devId : split){
@@ -85,7 +85,11 @@ public class StrategyTask {
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
             map.put("state",sdStrategyRl.getEndState());
-            map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerClose());
+            if(type.equals("1")){
+                map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerOpen());
+            }else{
+                map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerClose());
+            }
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }

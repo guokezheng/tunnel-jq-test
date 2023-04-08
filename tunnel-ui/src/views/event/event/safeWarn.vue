@@ -541,7 +541,7 @@
               </el-col>
               <el-col :span="24" v-show="eventFormDetail.eventState == 2">
                 <el-form-item prop="reviewRemark">
-                  <el-checkbox-group v-model="eventFormDetail.reviewRemark">
+                  <el-checkbox-group v-model="eventFormDetail.reviewRemark" class="checkBox">
                     <el-checkbox-button label="稍后处理" value="稍后处理"></el-checkbox-button>
                     <el-checkbox-button label="持续跟踪，事态发展情况" value="持续跟踪，事态发展情况"></el-checkbox-button>
                     <el-checkbox-button label="已通知高警现场处理" value="已通知高警现场处理"></el-checkbox-button>
@@ -552,7 +552,7 @@
               </el-col>
               <el-col :span="24" v-show="eventFormDetail.eventState == 5">
                 <el-form-item prop="reviewRemark">
-                  <el-checkbox-group v-model="eventFormDetail.reviewRemark">
+                  <el-checkbox-group v-model="eventFormDetail.reviewRemark" class="checkBox">
                     <el-checkbox-button label="系统误报" value="系统误报"></el-checkbox-button>
                     <el-checkbox-button label="误报或涉事车俩已驶离" value="误报或涉事车俩已驶离"></el-checkbox-button>
                     <el-checkbox-button label="无法复核事发情况" value="无法复核事发情况"></el-checkbox-button>

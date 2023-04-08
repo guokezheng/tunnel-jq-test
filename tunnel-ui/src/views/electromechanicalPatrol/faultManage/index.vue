@@ -301,6 +301,7 @@
                 <el-select
                   v-model="form.tunnelId"
                   :disabled="disstate"
+                  @change="tunnelGet"
                   placeholder="请选择所属隧道"
                   style="width: 100%"
                 >
@@ -410,11 +411,32 @@
               <div class="topTxt">故障设备情况</div>
               <div class="tableTopHr"></div>
             </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="设备类型" prop="typeId">
+                <el-select
+                  v-model="form.typeId"
+                  :disabled="disstate"
+                  @change="eqTypeGet"
+                  filterable
+                  placeholder="请选择设备类型"
+                  style="width: 100%"
+                  id="deviceTypeSel"
+                >
+                  <el-option
+                    v-for="item in eqTypeListData"
+                    :key="item.typeId"
+                    :label="item.typeName"
+                    :value="item.typeId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :span="8">
               <el-form-item label="设备名称" prop="eqId">
                 <el-select
                   v-model="form.eqId"
-                  :disabled="disstate"
+                  :disabled="disstateDevice"
                   filterable
                   placeholder="请选择设备名称"
                   @change="eqStatusGet"
@@ -660,12 +682,12 @@ import {
 } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import {
-  addType,
+  addType, listDevicesType,
   listType,
   loadPicture,
   updateType,
 } from "@/api/equipment/type/api";
-import { listDevices } from "@/api/equipment/eqlist/api";
+import {getDevices, listDevices} from "@/api/equipment/eqlist/api";
 import { editForm } from "@/api/equipment/yingJiGou/emergencyVehicles";
 import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
 import { download } from "@/utils/request";
@@ -721,6 +743,7 @@ export default {
       isWritable: true,
       // 是否不可点击
       disstate: false,
+      disstateDevice:false,
       // 弹出层标题
       //巡查班组
       bzData: {},
@@ -735,6 +758,8 @@ export default {
       eqTypeData: {},
       //设备
       eqListData: {},
+      //设备类型
+      eqTypeListData:{},
       setoptions: {
         // 时间不能大于当前时间
         disabledDate(time) {
@@ -876,7 +901,8 @@ export default {
     this.getList();
     this.getTunnel();
     this.getEqType();
-    //this.getDevices();
+    this.getDevicesType();
+    this.getDevices();
     this.fileData = new FormData(); // new formData对象
     //设备状态
     this.getDicts("sd_monitor_state").then((data) => {
@@ -921,7 +947,18 @@ export default {
     });
   },
   methods: {
-
+    openDialogScreen() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.hitchDialog',
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 500);
+    },
 
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
@@ -1025,6 +1062,19 @@ export default {
         // this.getList();
       });
     },
+   //隧道点击事件
+    tunnelGet(){
+      this.form.eqId = null;
+      this.disstateDevice = false;
+      $("#deviceSel").attr("pointer-events", "none");
+      this.getDevices();
+    },
+    //设备类型点击事件
+    eqTypeGet(){
+      this.form.eqId = null;
+      this.getDevices();
+    },
+
     // 取消按钮
     cancel() {
       this.open = false;
@@ -1147,14 +1197,32 @@ export default {
 
     /*设备名称点击事件*/
     selChange() {
+      if(this.title =="故障详情"){
+
+      }else{
+        if (this.form.tunnelId==null||typeof this.form.tunnelId == "undefined") {
+          this.disstateDevice = true;
+          this.$modal.msgWarning("请先选择隧道");
+          return;
+        } else {
+          this.disstateDevice = false;
+          this.getDevices()
+          //$("#deviceSel").attr("pointer-events", "none");
+        }
+      }
+
+    },
+
+    /*设备类型点击事件*/
+    /*selEqTypeChange() {
       if (this.form.tunnelId==null||typeof this.form.tunnelId == "undefined") {
         this.$modal.msgWarning("请先选择隧道");
         return;
       } else {
-        this.getDevices()
-        $("#deviceSel").attr("pointer-events", "none");
+        this.getDevicesType()
+        $("#deviceTypeSel").attr("pointer-events", "none");
       }
-    },
+    },*/
 
     /** 巡查班组 */
     getBz() {
@@ -1188,11 +1256,21 @@ export default {
     getDevices() {
       if(this.form.tunnelId==""){
         this.$message.warning("请先选择所属隧道");
+        return;
       }
       listDevices({
         eqTunnelId: this.form.tunnelId,
+        eqType:this.form.typeId,
       }).then((response) => {
         this.eqListData = response.rows;
+      });
+    },
+
+
+    /** 设备类型 */
+    getDevicesType() {
+      listDevicesType().then((response) => {
+        this.eqTypeListData = response.rows;
       });
     },
 
@@ -1235,20 +1313,25 @@ export default {
       this.removeStata = false;
       this.isWritable = true;
       this.disstate = false;
+      this.disstateDevice = true;
       this.open = true;
       this.title = "添加故障清单";
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+     handleUpdate(row) {
+      this.openDialogScreen();
       let that = this;
       this.isWritable = true;
       this.removeStata = false;
       this.disstate = false;
+      this.disstateDevice = false;
       this.activeName = "2";
       this.getTunnel();
       that.reset();
       const id = row.id || that.ids;
       getList(id).then((response) => {
+        this.form.tunnelId = response.data.tunnelId;
+        this.getDevices();
         this.form = response.data;
         if (this.form.faultSource == "null"||this.form.faultSource == "undefined") {
           this.form.faultSource = "";
@@ -1277,11 +1360,13 @@ export default {
 
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
-
+        this.disstateDevice = false;
         this.open = true;
         this.title = "修改故障清单";
       });
     },
+
+
     exportFaultReport(row) {
       let time = parseInt(new Date().getTime() / 1000) + "";
       let fileName = "检修报告" + time;
@@ -1291,15 +1376,19 @@ export default {
         fileName + ".docx"
       );
     },
-    handleCheckDetail(row) {
-      var that = this;
+    async handleCheckDetail(row) {
+      this.openDialogScreen();
+      let that = this;
       this.removeStata = true;
       this.isWritable = false;
       that.reset();
       const id = row.id || that.ids;
+      this.getTunnel();
       // const response = getList()
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
+        this.form.tunnelId = response.data.tunnelId;
+        this.getDevices();
         this.form = response.data;
         if (this.form.faultSource == "null"||this.form.faultSource == "undefined") {
           this.form.faultSource = "";
@@ -1324,6 +1413,7 @@ export default {
         }
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = true;
+        this.disstateDevice = true;
         this.open = true;
         this.title = "故障详情";
       });
@@ -1418,7 +1508,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 500);
+      }, 1000);
     },
 
     publishForm() {
@@ -1511,6 +1601,7 @@ export default {
 
 
 <style lang="scss" scoped>
+
 .topTxt {
   font-size: 18px;
   font-weight: 500;

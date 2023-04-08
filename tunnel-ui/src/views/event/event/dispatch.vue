@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-07 17:20:06
+ * @LastEditTime: 2023-04-04 11:23:58
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -181,7 +181,7 @@
               stripe
               class="phoneTable"
               :fit="true"
-              height="84%"
+              height="158"
             >
               <el-table-column
                 label="姓名"
@@ -264,7 +264,7 @@
                       @click="getYiJian(item)"
                       style="cursor: pointer;">
                       详情
-                    </div>
+                  </div>
                   </div>
                   <div class="dashed"
                     :style="{top:index == 0?'55px':'80px'}"
@@ -831,12 +831,14 @@
       title="设备控制详情"
       :visible.sync="oneKeyDialogVisible"
       width="60%"
-      :before-close="oneKeyHandleClose">
+      :before-close="oneKeyHandleClose"
+      :append-to-body="true"
+      >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div class="GDeviceBox" style="overflow: scroll;overflow-x: hidden;">
+      <div class="GDeviceBox" style="overflow: scroll;overflow-x: hidden;height:60vh">
         <div v-for="(item,index) in oneKeyList" :key="index">
           <el-card>
             <el-table
@@ -887,8 +889,12 @@
                       'position':'absolute',
                       'top':item.vmsData['top'] + 'px',
                       'left':item.vmsData['left'] + 'px',
-                    }">
-                      {{item.vmsData['content']}}
+                    }"
+                    style="line-height:1"
+                     v-html="item.vmsData['content'].replace(
+                              /\n|\r\n/g,
+                              '<br>'
+                            ).replace(/ /g, ' &nbsp')">
                     </span>
                   </div>
                 </div>
@@ -898,13 +904,13 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
         <el-button
           class="submitButton"
           v-show="yjShow == false"
           @click="oneKeyExecute()">
           执 行
         </el-button>
+        <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -1111,35 +1117,28 @@ export default {
     //当前等级
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
-      console.log(this.eventGradeList);
     });
     this.getDicts("sd_direction_list").then((response) => {
       console.log(response.data, "车道方向");
       this.directionList = response.data;
     });
     this.getDicts("sd_emergency_plan_type").then((response) => {
-      console.log(response.data, "预案类型");
       this.planType = response.data;
     });
     this.getDicts("brand").then((data) => {
-      console.log(data, "设备厂商");
       this.brandList = data.data;
     });
     this.getDicts("sd_direction").then((data) => {
-      console.log(data, "方向");
       this.directionList = data.data;
     });
     this.getDicts("sd_monitor_state").then((data) => {
-      console.log(data, "设备类型");
       this.eqTypeDialogList = data.data;
     });
     this.getDicts("sd_event_source").then((data) => {
-      console.log(data,"事件来源")
       this.fromList = data.data;
     });
     // 应急人员岗位
     this.getDicts("sd_emergency_post").then((data) => {
-      console.log(data,"事件来源")
       this.emergencyList = data.data;
     });
   },
@@ -1164,7 +1163,6 @@ export default {
       // }
     },
     handleClick(tab, event){
-      console.log(tab.name)
       this.getImplementList(tab.name);
     },
     //请求应急人员数据
@@ -1225,7 +1223,6 @@ export default {
     getManagementDevice(item){
       console.log(item.eventState,item.processId);
       if(item.eventState != '0' && item.processId){
-        console.log('false')
         this.buttonDisable = false;
       }else{
         this.buttonDisable = true;
@@ -1291,7 +1288,6 @@ export default {
         if(res.data.length  == 0){
           this.$modal.msgWarning("该等级下暂无预案");
         }
-        console.log(res);
         this.ReservePlanList = res.data;
       })
     },
@@ -1352,7 +1348,6 @@ export default {
         this.levelForm.typeName = data.eventTypeName;
         this.levelForm.yaName = data.planName;
       })
-      console.log(this.eventForm,'当前事件详情');
     },
     handleClose(done){
       done();
@@ -1440,7 +1435,6 @@ export default {
     },
     // 点设备弹窗
     openStateSwitch(item) {
-      console.log(item, "点击的设备");
       this.eqInfo = {
         clickEqType: item.eqType,
         equipmentId: item.eqId,
@@ -1458,9 +1452,7 @@ export default {
         planTypeId: this.eventForm.eventTypeId,
       };
       getRelation(params).then((res) => {
-        console.log(res, "关联事件");
         this.$modal.msgSuccess("关联成功");
-
         this.getListEvent();
         this.relationDisabled = true;
         this.disabledRadio = true;
@@ -1484,7 +1476,6 @@ export default {
         let processId = that.processId;
         let eventId = that.$route.query.id;
         implementProcess(processId, eventId).then((response) => {
-          console.log(response, "单点下发");
           that.$modal.msgSuccess("状态修改成功");
           this.IssuedDialog = false;
           this.getDispatchExecuted();
@@ -1529,7 +1520,6 @@ export default {
         eventTypeId: this.eventForm.eventTypeId,
       }).then((res) => {
         let list = this.handleTree(res.data, "flowId", "flowPid");
-        console.log(list, "事件处置");
         //  for(let item of list){
         //   console.log(item.flowContent.toString().length,"555555555555555")
         //  }
@@ -1563,7 +1553,6 @@ export default {
         this.$nextTick(()=>{
           const incHandContentBox = document.querySelector('.incHandContentBox').offsetHeight
           const classificationBox = document.querySelector('.classificationBox').offsetHeight;
-          console.log(incHandContentBox,classificationBox);
           // 线的高度
           this.lineHeight = (incHandContentBox - classificationBox) / 2;
           this.circlePosition = '-' + (this.lineHeight + 10) + 'px';
@@ -1653,7 +1642,6 @@ export default {
             this.eventForm.direction
             ).then((res)=>{
               videoStreaming(res.data[0].eqId).then((response) =>{
-                console.log(response,"视频流");
                 if(response.data){
                   response.data.title = '现场1';
                   if(response.code == 200){
@@ -1664,7 +1652,6 @@ export default {
 
               })
               videoStreaming(res.data[1].eqId).then((response) =>{
-                console.log(response,"视频流");
                 if(response.data) {
                   response.data.title = '现场2';
                   if (response.code == 200) {
@@ -1693,7 +1680,6 @@ export default {
     // 处置记录
     getEventList() {
       eventFlowList({ eventId: this.$route.query.id }).then((res) => {
-        console.log(res, "处置记录");
         this.eventList = res.rows;
       });
     },
@@ -1729,7 +1715,6 @@ export default {
     // 一进页面获取已执行数据
     getDispatchExecuted() {
       dispatchExecuted(this.$route.query.id).then((res) => {
-        console.log(res, "一进页面获取已执行数据");
         this.zxList = res.data;
       });
     },
@@ -1745,8 +1730,6 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          console.log(res, "获取隧道配置信息");
-
           let id = res.lane;
           for (let i = 0; i < that.laneUrlList.length; i++) {
             if (that.laneUrlList[i].id == id) {
@@ -1941,6 +1924,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .plan .el-table__body-wrapper{
+  width: 104%!important;
+}
 
 ::v-deep .yjBox .is-always-shadow .el-card{
   background-color: #012b4e;
@@ -1960,6 +1946,7 @@ export default {
 }
 ::v-deep .el-table .el-table__header-wrapper th{
   background-color: rgba(1, 46, 81, 0.7)!important;
+  color:white;
 }
 .drawerBox:hover{
   cursor: pointer;
@@ -2798,6 +2785,7 @@ display: none;
   .el-row{padding:10px 0px;}
   ::v-deep .el-table__row td{
     padding:10px 0!important;
+    color:white;
   }
 }
 </style>

@@ -24,7 +24,7 @@
         >
           <span
             class="textBoard1 boardTextStyle"
-            style="position: absolute;max-height: 123px;overflow: hidden;"
+            style="position: absolute;max-height: 128px;overflow: hidden;"
             :style="{
               color: dataForm.COLOR,
               fontSize: getFontSize(dataForm.FONT_SIZE),
@@ -782,8 +782,8 @@ export default {
           return devicePixel + "px";
         }
       } else if (num == 1) {
-        if (devicePixel > 123) {
-          return 123 + "px";
+        if (devicePixel > 128) {
+          return 128 + "px";
         } else {
           return devicePixel + "px";
         }
@@ -801,8 +801,8 @@ export default {
           return coordinate + "px";
         }
       } else if (num == 1) {
-        if (this.boardHeight > 123) {
-          let i = this.boardHeight / 123;
+        if (this.boardHeight > 128) {
+          let i = this.boardHeight / 128;
           console.log(coordinate / i,"height")
           return coordinate / i + "px";
         } else {

@@ -58,15 +58,6 @@ public interface SdSmartBigScreenMapper {
                                            @Param("dictValue") String dictValue);
 
     /**
-     * 查询本月报警趋势(主动安全)
-     * @param tunnelId
-     * @return
-     */
-    List<Integer> getWarningList(@Param("tunnelId") String tunnelId,
-                                             @Param("prevControlType") String prevControlType,
-                                             @Param("dictValue") String dictValue);
-
-    /**
      * 查询本月报警趋势(设备故障)
      * @param tunnelId
      * @return

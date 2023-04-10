@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-10 10:35:33
+ * @LastEditTime: 2023-04-08 11:37:34
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -182,19 +182,19 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         class-name="small-padding fixed-width"
         label="相关策略"
         width="200"
       >
-        <template slot-scope="scope">
+        <template slot-scope="scope"> -->
           <!-- <p v-show="scope.row.strategyNames != null"
                   style="overflow: hidden;text-overflow: ellipsis;cursor: default;"
                   @click="showStrategyContent(scope.row)">
                  {{ scope.row.strategyNames }}
             </p> -->
-          <el-tag
+          <!-- <el-tag
             v-show="scope.row.strategyNames != null"
             :key="tag"
             v-for="tag in scope.row.strategyNames"
@@ -206,7 +206,7 @@
           </el-tag>
           <div v-show="scope.row.strategyNames == ''">无</div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         align="center"
         class-name="small-padding fixed-width"
@@ -1164,7 +1164,6 @@ export default {
         });
     },
     addInfo(index) {
-      
       let data = {
         processStageName: "",
         processesList: [

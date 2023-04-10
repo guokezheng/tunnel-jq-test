@@ -93,8 +93,8 @@ public class LightService {
      */
     public int setBrightness(String deviceId, Integer bright, String controlType, String operIp) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
-
-        Light light = getBeanOfDeviceProtocol(deviceId);
+        String className = getSdDevicesProtocolStrl(deviceId);
+        Light light = getBeanOfDeviceProtocol(className);
         int resultStatus = light.setBrightness(deviceId, bright);
 
         // 如果控制成功

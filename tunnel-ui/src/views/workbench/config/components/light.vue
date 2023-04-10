@@ -13,7 +13,7 @@
       <div class="dialogLine"></div>
       <div class="dialogCloseButton"></div>
     </div>
-    
+
       <el-form
         ref="form"
         :model="stateForm"
@@ -160,21 +160,16 @@
               >
             </el-col>
           </el-row>
-          <div slot="footer" style="float: right; margin-bottom: 20px">
+          <div slot="footer" style=" margin-top: 10px" class="dialog-footer">
             <el-button
-              type="primary"
-              size="mini"
               @click="handleOK()"
-              style="width: 80px"
               class="submitButton"
               v-hasPermi="['workbench:dialog:save']"
-              >确 定</el-button
+              >执 行</el-button
             >
             <el-button
-              type="primary"
-              size="mini"
+              class="closeButton"
               @click="handleClosee()"
-              style="width: 80px"
               >取 消</el-button
             >
           </div>
@@ -305,7 +300,7 @@ export default {
       let that = this
       console.log(this.eqInfo.clickEqType,"this.eqInfo.clickEqType")
       if(this.eqInfo.clickEqType != 45){
-        debugger
+
         console.log(this.stateForm.brightness)
         const param = {
           devId: this.stateForm.eqId, //设备id
@@ -317,21 +312,21 @@ export default {
             this.$modal.msgError("控制失败");
           } else if (response.data == 1) {
             console.log(that.clickEqType,"this.eqInfo.clickEqType")
-            if(that.clickEqType == 7){
-              const params = {
-                bright: this.stateForm.brightness,
-                controlType: "0",
-                deviceId: this.eqInfo.equipmentId,
-              };
-              console.log(params,"params")
-              setBrightness(params).then((res) => {
-                console.log(res, "亮度");
-                this.$modal.msgSuccess("控制成功");
-
-              });
-            }else{
+            // if(that.clickEqType == 7){
+              // const params = {
+              //   bright: this.stateForm.brightness,
+              //   controlType: "0",
+              //   deviceId: this.eqInfo.equipmentId,
+              // };
+              // console.log(params,"params")
+              // setBrightness(params).then((res) => {
+              //   console.log(res, "亮度");
+              //   this.$modal.msgSuccess("控制成功");
+              //
+              // });
+            // }else{
               this.$modal.msgSuccess("控制成功");
-            }
+            // }
           }
         });
       }else if(this.eqInfo.clickEqType == 45){

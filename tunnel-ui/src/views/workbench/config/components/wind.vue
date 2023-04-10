@@ -89,7 +89,7 @@
         <el-radio-button label="co">风速风向实时趋势</el-radio-button>
       </el-radio-group>
       <div id="feng" style="margin-bottom: 10px"></div>
-      <div slot="footer">
+      <!-- <div slot="footer" class="dialog-footer"> -->
         <!-- <el-button
           type="primary"
           size="mini"
@@ -98,14 +98,12 @@
           class="submitButton"
           >确 定</el-button
         > -->
-        <el-button
-          type="primary"
-          size="mini"
+        <!-- <el-button
+          class="closeButton"
           @click="handleClosee()"
-          style="width: 80px"
           >取 消</el-button
-        >
-      </div>
+        > -->
+      <!-- </div> -->
     </el-dialog>
   </div>
 </template>

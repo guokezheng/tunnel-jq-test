@@ -846,7 +846,7 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取发布情报板",
+            message: "已取消发布情报板",
           });
         });
     },

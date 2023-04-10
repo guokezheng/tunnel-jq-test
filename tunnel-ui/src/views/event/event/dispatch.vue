@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-08 17:39:57
+ * @LastEditTime: 2023-04-10 11:16:37
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -800,7 +800,8 @@
                     'position':'absolute',
                     'top':GDeviceData.vmsData['top'] + 'px',
                     'left':GDeviceData.vmsData['left'] + 'px',
-                  }">
+                  }"
+                  style="line-height:1">
                     {{GDeviceData.vmsData['content']}}
                   </span>
                 </div>
@@ -821,8 +822,8 @@
         </el-row>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelIssuedDialog" class="closeButton">取 消</el-button>
         <el-button v-show="buttonDisable" @click="changeIncHand" class="submitButton">执 行</el-button>
+        <el-button @click="cancelIssuedDialog" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 一键详情弹窗 -->
@@ -1111,9 +1112,7 @@ export default {
     this.getListEvent();
     this.stateByData();
     this.getEventList();
-    this.getEventInfo();
-    // this.evtHandle()
-    // this.getpersonnelList()
+    
     //当前等级
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
@@ -1141,6 +1140,7 @@ export default {
     this.getDicts("sd_emergency_post").then((data) => {
       this.emergencyList = data.data;
     });
+    
   },
   mounted() {
     this.timer = setInterval(() => {
@@ -1566,6 +1566,7 @@ export default {
             }
           }
         }
+        this.getEventInfo();
         this.$forceUpdate();
       });
     },
@@ -1931,7 +1932,7 @@ export default {
 ::v-deep .yjBox .is-always-shadow .el-card{
   background-color: #012b4e;
 }
-.dispatchAss .el-row .el-col{
+.dispatchAss .GDeviceBox .el-row .el-col{
   background: #012646;
   margin-bottom: 20px;
 }
@@ -2045,7 +2046,7 @@ display: none;
   .drawerBox{
     position: fixed;
     top: 9.1%;
-    left: 24.5%;
+    left: 24%;
     z-index: 619;
     color:white;
     height: 120px;

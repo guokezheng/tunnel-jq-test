@@ -833,7 +833,7 @@
                           :key="inx"
                           class="contentList"
                         >
-                          <div style="float: left;width:80%;">{{ itm.flowContent }}</div>
+                          <h4 style="float: left;width:80%;">{{ itm.flowContent }}</h4>
                           <div class="yzx" v-show="itm.eventState != '0'">已执行</div>
                           <div class="wzx" v-show="itm.eventState == '0'" type="info">未执行</div>
                         </div>
@@ -844,7 +844,7 @@
               </div>
             </el-col>
             <el-col :span="12" v-if="prevControlType == 1">
-              <el-timeline :reverse="reverse" style="overflow: scroll;height:350px;padding: 0;">
+              <el-timeline :reverse="reverse" style="overflow-y: auto;height:420px;padding: 20px 10px 20px 25px;" >
                 <el-table
                   stripe
                   class="phoneTable"
@@ -869,8 +869,8 @@
                 </el-table>
               </el-timeline>
             </el-col>
-            <el-col :span="12">
-              <el-timeline :reverse="reverse" style="overflow: scroll;height:350px;">
+            <el-col :span="12" style="padding-bottom:10px">
+              <el-timeline :reverse="reverse" class="disposalRecordBox">
                 <el-timeline-item
                   v-for="(activity, index) in disposalRecord"
                   :key="index"
@@ -2461,14 +2461,17 @@ export default {
         border-top: solid 1px #39adff;
       }
       .shu {
-        width: 20px;
+        width: 5.5px;
         border-left: solid 1px #39adff;
         border-bottom: solid 1px #39adff;
         margin-top: 20px;
+        // border-right: none;
+        border-top-left-radius: 37px;
+        border-bottom-left-radius: 37px;
       }
       .gxp{
-        // margin-left: 20px;
         width:77%;
+        margin-left: 4px;
         .contentList {
           display: block;
           margin-top: 4px;
@@ -2581,7 +2584,7 @@ export default {
           right: -17px;
         }
         div {
-          padding: 0.6vh 0;
+          padding: 6px 0;
           span {
             padding-left: 6px;
             font-weight: bold;
@@ -2593,7 +2596,7 @@ export default {
           width: 260px;
           div {
             width: 65px;
-            height: 2vh;
+            height: 23px;
             border-radius: 14px;
             color: white;
             display: flex;
@@ -2935,9 +2938,9 @@ export default {
       margin-top: 4px;
       line-height: 40px;
       padding: 0 20px;
-      // background: #f2f8ff;
+      background: #052C4D ;
       color: #fff;
-      border: solid 1px #39adff;
+      // border: solid 1px #39adff;
       border-radius: 3px;
       width: 300px;
       display: flex;
@@ -3170,4 +3173,23 @@ export default {
       overflow: auto;
     }
   }
+  .el-divider{
+    background-color:transparent;
+  }
+  .disposalRecordBox{
+    overflow-y: auto;
+    height:420px;
+    padding: 20px 10px 20px 25px;
+    .el-card{
+      background: #052C4D !important;
+    }
+  }
+</style>
+<style lang="scss">
+.evtInfo .el-timeline-item__node{
+  background: #39adff !important;
+}
+.evtInfo .el-timeline-item__tail{
+  border-left: 1px dashed #39adff !important;
+}
 </style>

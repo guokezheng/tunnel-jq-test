@@ -23,7 +23,7 @@
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请输入页面名称、页面编码"
+            placeholder="请输入页面名称、页面标识符"
             v-model="queryParams.searchValue"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -41,8 +41,8 @@
       <el-table-column label="页面配置ID" align="center" prop="id"/>
       <el-table-column label="所属部门" align="center" prop="deptId"/>
       <el-table-column label="页面名称" align="center" prop="name"/>
-      <el-table-column label="页面编码" align="center" prop="code"/>
-      <el-table-column label="页面地址" align="center" prop="url"/>
+      <el-table-column label="页面标识符" align="center" prop="code"/>
+      <el-table-column label="页面路径" align="center" prop="url"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -86,11 +86,11 @@
         <el-form-item label="页面名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入页面名称"/>
         </el-form-item>
-        <el-form-item label="页面编码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入页面编码"/>
+        <el-form-item label="页面标识符" prop="code">
+          <el-input v-model="form.code" placeholder="请输入页面标识符"/>
         </el-form-item>
-        <el-form-item label="页面地址" prop="url">
-          <el-input v-model="form.url" placeholder="请输入页面地址"/>
+        <el-form-item label="页面路径" prop="url">
+          <el-input v-model="form.url" placeholder="请输入页面路径"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -155,10 +155,10 @@ export default {
           {required: true, message: "页面名称不能为空", trigger: "blur"}
         ],
         code: [
-          {required: true, message: "页面编码不能为空", trigger: "blur"}
+          {required: true, message: "页面标识符不能为空", trigger: "blur"}
         ],
         url: [
-          {required: true, message: "页面地址不能为空", trigger: "blur"}
+          {required: true, message: "页面路径不能为空", trigger: "blur"}
         ],
       }
     };

@@ -90,7 +90,7 @@ public interface SdTaskListMapper
      * @param id
      * @return
      */
-    int acceptSdTaskList(String id);
+    int acceptSdTaskList(@Param("id")String id,@Param("userId")Long userId);
 
     /**
      * app  查询巡查列表
@@ -98,7 +98,7 @@ public interface SdTaskListMapper
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(@Param("taskStatus")String taskStatus,@Param("taskName")String taskName,@Param("startTime") String startTime, @Param("endTime")String endTime );
+    List<SdTaskList> getTaskList(@Param("taskStatus")String taskStatus,@Param("taskName")String taskName,@Param("startTime") String startTime, @Param("endTime")String endTime,@Param("deptId")String deptId );
 
     /**
      * 操作记录

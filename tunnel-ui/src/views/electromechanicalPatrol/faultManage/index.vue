@@ -53,19 +53,21 @@
           </el-select>
         </el-form-item>-->
         <el-form-item
-          label="故障类型"
-          prop="faultType"
+          label="故障来源"
+          prop="faultEscalationType"
           style="width: 100% !important"
         >
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col
               :span="8"
-              v-for="dict in faultTypeOptions"
+              v-for="dict in faultEscalationTypeOptions"
               :key="dict.dictValue"
             >
-              <el-checkbox :label="dict.dictLabel" v-model="resultFaultType">{{
-                dict.dictLabel
-              }}</el-checkbox>
+              <el-checkbox
+                :label="dict.dictLabel"
+                v-model="resultFaultEscalationType"
+              >{{ dict.dictLabel }}</el-checkbox
+              >
             </el-col>
           </el-row>
         </el-form-item>
@@ -83,11 +85,29 @@
               <el-checkbox
                 :label="dict.dictLabel"
                 v-model="resultFaultRemoveState"
-                >{{ dict.dictLabel }}</el-checkbox
+              >{{ dict.dictLabel }}</el-checkbox
               >
             </el-col>
           </el-row>
         </el-form-item>
+        <el-form-item
+          label="故障类型"
+          prop="faultType"
+          style="width: 100% !important"
+        >
+          <el-row style="display: flex; flex-wrap: wrap">
+            <el-col
+              :span="8"
+              v-for="dict in faultTypeOptions"
+              :key="dict.dictValue"
+            >
+              <el-checkbox :label="dict.dictLabel" v-model="resultFaultType">{{
+                dict.dictLabel
+              }}</el-checkbox>
+            </el-col>
+          </el-row>
+        </el-form-item>
+
         <el-form-item
           label="故障等级"
           prop="faultLevel"
@@ -105,25 +125,7 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item
-          label="故障来源"
-          prop="faultEscalationType"
-          style="width: 100% !important"
-        >
-          <el-row style="display: flex; flex-wrap: wrap">
-            <el-col
-              :span="8"
-              v-for="dict in faultEscalationTypeOptions"
-              :key="dict.dictValue"
-            >
-              <el-checkbox
-                :label="dict.dictLabel"
-                v-model="resultFaultEscalationType"
-                >{{ dict.dictLabel }}</el-checkbox
-              >
-            </el-col>
-          </el-row>
-        </el-form-item>
+
         <el-form-item label="发现时间">
           <el-date-picker
             v-model="dateRange"
@@ -175,17 +177,45 @@
         width="68"
         align="center"
       ></el-table-column>
-
+      <el-table-column label="所属隧道" align="center" prop="tunnelName" />
       <el-table-column
         label="故障设备"
         align="center"
         prop="eqName"
         width="220"
       />
-      <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+      <el-table-column label="设备状态" align="center" prop="eqStatus">
+        <template slot-scope="scope">
+          <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="故障位置" align="center" prop="faultLocation" />
+      <el-table-column
+        label="故障描述"
+        align="center"
+        prop="faultDescription"
+        width="180"
+        :show-overflow-tooltip="true"
+      />
+      <el-table-column label="故障等级" align="center" prop="faultLevel">
+        <template slot-scope="scope">
+          <span>{{ getFaultLevel(scope.row.faultLevel) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="故障类型" align="center" prop="faultType">
         <template slot-scope="scope">
           <span>{{ getFaultType(scope.row.faultType) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="故障来源"
+        align="center"
+        prop="faultEscalationType"
+      >
+        <template slot-scope="scope">
+          <span>{{
+              getFaultEscalationType(scope.row.faultEscalationType)
+            }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -198,38 +228,13 @@
           <span>{{ scope.row.faultFxtime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="故障位置" align="center" prop="faultLocation" />
-      <el-table-column
-        label="故障描述"
-        align="center"
-        prop="faultDescription"
-        width="180"
-        :show-overflow-tooltip="true"
-      />
-      <!-- <el-table-column label="持续时间" align="center" prop="faultCxtime" /> -->
-      <!-- <el-table-column label="设备" align="center" prop="eqName" /> -->
-      <el-table-column
-        label="故障来源"
-        align="center"
-        prop="faultEscalationType"
-      >
-        <template slot-scope="scope">
-          <span>{{
-            getFaultEscalationType(scope.row.faultEscalationType)
-          }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="设备状态" align="center" prop="eqStatus">
-        <template slot-scope="scope">
-          <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
-        </template>
-      </el-table-column>
+
+
+
+
+
       <!--<el-table-column label="故障代码" align="center" prop="faultCode" />-->
-      <el-table-column label="故障等级" align="center" prop="faultLevel">
-        <template slot-scope="scope">
-          <span>{{ getFaultLevel(scope.row.faultLevel) }}</span>
-        </template>
-      </el-table-column>
+
 
       <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
@@ -321,7 +326,7 @@
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障基本信息</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
             <el-col :span="8" :style="{ display: 'none' }">
               <el-form-item
@@ -450,7 +455,7 @@
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障设备情况</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
 
             <el-col :span="8">
@@ -538,7 +543,7 @@
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障描述</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
             <el-col :span="8">
               <el-form-item label="故障代码" prop="faultCode">
@@ -1799,7 +1804,7 @@ export default {
 }
 .topTxt {
   margin-left: 7px;
-  margin-top: 10px;
+  margin-top: -5px;
   font-size: 16px;
   background-image: url(../../../assets/cloudControl/cardTitle.png);
   background-repeat: no-repeat;

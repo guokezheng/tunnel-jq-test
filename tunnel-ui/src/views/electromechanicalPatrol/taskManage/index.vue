@@ -212,8 +212,8 @@
       </div>
       <!--      <h1>新增巡检任务</h1>-->
       <div class="task">
-        <div class="topTxt">巡查任务基本信息</div>
-        <div class="tableTopHr"></div>
+        <div class="topTxt" style="margin-bottom: 20px">巡查任务基本信息</div>
+        <div class="tableTopHr" style = "display: none"></div>
         <el-form
           :inline="true"
           ref="form"
@@ -315,10 +315,9 @@
           </el-row>
         </el-form>
       </div>
-
       <div class="patrol">
         <div class="topTxt">巡查点信息</div>
-        <div class="tableTopHr"></div>
+        <div class="tableTopHr" style = "display: none"></div>
         <div class="button-father">
           <el-button type="primary" style="height: 15%" @click="show1"
             >选择巡检点</el-button
@@ -2075,7 +2074,7 @@ h1 {
 }
 .topTxt {
   margin-left: 7px;
-  margin-top: 10px;
+  margin-top: -5px;
   font-size: 16px;
   background-image: url(../../../assets/cloudControl/cardTitle.png);
   background-repeat: no-repeat;

@@ -11,6 +11,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.light.Light;
+import com.tunnel.deal.light.enums.SanjingLightStateEnum;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class SanJingLight implements Light {
@@ -47,7 +48,14 @@ public class SanJingLight implements Light {
      * @throws IOException
      */
     public String login(String username, String password, String baseUrl) {
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
+//        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        //设置超时时间
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(3, TimeUnit.SECONDS)
+                .writeTimeout(3, TimeUnit.SECONDS)
+                .readTimeout(3, TimeUnit.SECONDS)
+                .build();
+
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
         // http://47.119.189.80:8888/login
@@ -136,13 +144,20 @@ public class SanJingLight implements Light {
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
 
+
         String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+        if(jessionId == null || "".equals(jessionId)){
+            return 0;
+        }
+        //开关对应关系
+        openClose = SanjingLightStateEnum.getValue(openClose);
+
         //开关
         int switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
         //亮度
         int brightnessType = 0;
-        //2表示关
-        if(openClose!=2){
+        //如果亮度有值并且控制状态不是关，就控制亮度
+        if(brightness != null && !Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
             brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
         }
         return switchType==1 && brightnessType==1 ? 1 : 0;

@@ -140,12 +140,9 @@
           </el-tab-pane>
         </el-tabs>
       </el-form>
-      <div slot="footer">
+      <div slot="footer" class="dialog-footer">
         <el-button
-          type="primary"
-          size="mini"
           @click="videoYunTai()"
-          style="width: 80px"
           class="submitButton"
           v-show="stateForm.eqType == 24"
           >云台控制</el-button
@@ -159,10 +156,8 @@
           >录像查看</el-button
         > -->
         <el-button
-          type="primary"
-          size="mini"
+          class="closeButton"
           @click="handleClosee()"
-          style="width: 80px"
           >取 消</el-button
         >
       </div>

@@ -404,7 +404,7 @@
               label-position="right"
             >
               <el-row>
-                <el-col :span="12">
+<!--                <el-col :span="12">
                   <el-form-item label="主键 id:" prop="id">
                     <el-input
                       v-model="alarmConfigForm.id"
@@ -420,7 +420,7 @@
                       placeholder="请输入机器人 id"
                     ></el-input>
                   </el-form-item>
-                </el-col>
+                </el-col>-->
                 <el-col :span="12">
                   <el-form-item label="电量阈值配置名称:" prop="groupName">
                     <el-input
@@ -587,7 +587,7 @@ export default {
   created() {
     this.getMessage();
     this.findAlarmThresholdConfig();
-    
+
   },
   mounted() {
     var htmlStr = "<div class='robotButton'/>"
@@ -1148,7 +1148,7 @@ export default {
   .el-slider__bar {
     background: linear-gradient(90deg, #00aded 0%, #007cdd 100%);
   }
-  
+
   .el-slider__button-wrapper{
     top:-6px !important;
     .robotButton{
@@ -1166,7 +1166,7 @@ export default {
       border: solid 1px #fff;
       background-color: #ff9300;
       // background-image: url(../../../../assets/cloudControl/robot.png);
-      
+
     }
   }
 }

@@ -800,7 +800,8 @@
                     'position':'absolute',
                     'top':GDeviceData.vmsData['top'] + 'px',
                     'left':GDeviceData.vmsData['left'] + 'px',
-                  }">
+                  }"
+                  style="line-height:1">
                     {{GDeviceData.vmsData['content']}}
                   </span>
                 </div>
@@ -821,8 +822,8 @@
         </el-row>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelIssuedDialog" class="closeButton">取 消</el-button>
         <el-button v-show="buttonDisable" @click="changeIncHand" class="submitButton">执 行</el-button>
+        <el-button @click="cancelIssuedDialog" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 一键详情弹窗 -->
@@ -1931,7 +1932,7 @@ export default {
 ::v-deep .yjBox .is-always-shadow .el-card{
   background-color: #012b4e;
 }
-.dispatchAss .el-row .el-col{
+.dispatchAss .GDeviceBox .el-row .el-col{
   background: #012646;
   margin-bottom: 20px;
 }
@@ -2045,7 +2046,7 @@ display: none;
   .drawerBox{
     position: fixed;
     top: 9.1%;
-    left: 24.5%;
+    left: 24%;
     z-index: 619;
     color:white;
     height: 120px;

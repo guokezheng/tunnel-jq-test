@@ -440,7 +440,7 @@
             }"
             style="width: 100% ; border: solid 1px #284159 !important;"
             border
-            height="350px"
+            height="412px"
             class="dialogTable"
             :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
@@ -2090,7 +2090,7 @@ h1 {
     display: flex;
     .show-left,
     .show-right {
-      height: 480px;
+      height: 530px;
       // border: 1px solid black;
       border-radius: 3px;
       .show-title {

@@ -3,7 +3,7 @@ package com.tunnel.deal.light.enums;
 /**
  * describe: 三晶照明状态枚举类
  * 维护两个系统间的状态对应关系
- *
+ * 三晶照明：0为开灯，1为关灯
  * @author zs
  * @date 2023/4/3
  */

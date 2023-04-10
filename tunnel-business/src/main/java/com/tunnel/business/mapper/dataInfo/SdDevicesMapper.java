@@ -48,6 +48,15 @@ public interface SdDevicesMapper
 	 */
 	public List<SdDevices> selectDropSdDevicesList(SdDevices sdDevices);
 
+
+	/**
+	 * 根据隧道ID、设备类型获取设备列表
+	 * @param tunnelId 隧道ID
+	 * @param typeList 设备类型列表
+	 * @return
+	 */
+	List<SdDevices> selectDeviceList(@Param("tunnelId") String tunnelId,@Param("typeList") List<String> typeList);
+
 	/**
 	 * 新增设备
 	 *

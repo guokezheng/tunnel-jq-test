@@ -366,6 +366,7 @@
       }
     }
     .el-dialog__body{
+      
       // background: #012E51;
       // width: calc(100% - 30px);
       // margin: 20px auto;
@@ -463,6 +464,9 @@
       .vue-treeselect__single-value{
         // color: white !important;
 
+      }
+      .vue-treeselect__input{
+        color: #fff;
       }
       .el-input-number__increase{
         border-bottom: 1px solid #00152B;
@@ -792,7 +796,10 @@
     left: 1240px !important;
   }
   #app {
-
+    // 所有树形级联（部门）手动输入时文字颜色
+    .vue-treeselect__input{
+      color: #fff;
+    }
     // 巡检
     .patrol{
       .box-father{

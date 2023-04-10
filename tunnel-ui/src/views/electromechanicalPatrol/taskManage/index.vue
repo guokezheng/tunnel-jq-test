@@ -205,7 +205,7 @@
       @pagination="getList"
     />
 
-    <el-dialog :title="title" :visible.sync="open"  width="70%" class="xjDialog">
+    <el-dialog :title="title" :visible.sync="open"  width="70%" class="xjDialog" >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -331,14 +331,22 @@
           >-->
         </div>
         <div class="box-father">
-          <div class="box" :key="index" v-for="(item, index) in boxList">
-            <div class="contentTextRow">
-              <div class="number">{{ index + 1 }}</div>
-              <div class="text">
-                <div>{{ item.tunnel_name }}</div>
-                <div>{{ item.type_name }}</div>
-                <div>{{ item.eq_name }}</div>
-                <div>{{ item.pile }}</div>
+          <div style = "height:40px">
+            <div class="titleRow" style ="width:8%;">序号</div>
+            <div class="titleRow" style ="width:12%;">所属隧道</div>
+            <div class="titleRow" style ="width:15%;">设备类型</div>
+            <div class="titleRow" style ="width:20%;">设备名称</div>
+            <div class="titleRow" style ="width:30%;">设备位置</div>
+            <div class="titleRow" style ="width:15%;">操作</div>
+          </div>
+          <div class="box" :key="index" v-for="(item, index) in boxList" style ="display:block;height:25px;">
+            <div class="contentTextRow" style ="float: left;">
+              <div class="number" style ="width: 10%;">{{ index + 1 }}</div>
+              <div class="text" style="padding-left: 0px;margin-left: 0px">
+                <div style ="width:12%;">{{ item.tunnel_name }}</div>
+                <div style ="width:15%;margin-left: 30px">{{ item.type_name }}</div>
+                <div style ="width:20%;margin-left:40px">{{ item.eq_name }}</div>
+                <div style ="width:30%;margin-left: 62px">{{ item.pile }}</div>
               </div>
             </div>
 
@@ -346,6 +354,7 @@
               <div
                 :class="index == 0 ? 'disabledClass' : 'top'"
                 @click="clickUP(index, item)"
+                style ="float: left;margin-left:-40px"
               >
                 <i class="el-icon-top"></i>
               </div>
@@ -353,15 +362,16 @@
             <div
               :class="boxList.length == index + 1 ? 'disabledClass' : 'bottom'"
               @click="clickDown(index, item)"
+              style ="float: left;"
             >
               <i class="el-icon-bottom"></i>
             </div>
-            <div class="delete" @click="clickDelete(index, item)">
+            <div class="delete" style ="float: left;" @click="clickDelete(index, item)">
               <i class="el-icon-delete-solid"></i>
             </div>
           </div>
         </div>
-        <div class="dialog-footer">
+        <div class="dialog-footer" >
           <el-button class="zancunButton" @click="save">暂存</el-button>
           <el-button
             style="display: none"
@@ -593,7 +603,6 @@
         </el-row>
       </div>
       <div class="card" v-for="(pat, index) in patrolNews" :key="index">
-        <!-- <div class="card-col1" v-for="(pat, index) in patrolNews" :key="index"> -->
           <el-row>
             <el-col :span="2" class="cardName">
               设备巡检点:
@@ -676,17 +685,31 @@
         </el-row>
       </div>
       <div class="card">
+        <el-row>
+        <el-col :span="4">
+          <span style="color: #05AAFD;">序号</span>
+        </el-col>
+        <el-col :span="4">
+          <span style="color: #05AAFD;">操作类型</span>
+        </el-col>
+        <el-col :span="8">
+          <span style="color: #05AAFD;"> 操作记录</span>
+        </el-col>
+        <el-col :span="8">
+          <span style="color: #05AAFD;"> 操作时间</span>
+        </el-col>
+        </el-row>
         <el-row
             v-show="taskOpt.length > 0"
             v-for="(item, index) in taskOpt"
             :key="index">
           <el-col :span="4">
-            <span>操作记录</span>
+            <span>{{index+1>9?index+1:index+1}}</span>
           </el-col>
           <el-col :span="4">
             <span>{{ item.optType }}</span>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="8" style ="text-align: center!important;">
             <span> {{ item.tunnelName }} / {{ item.optPersonId }}</span>
           </el-col>
           <el-col :span="8">
@@ -1722,14 +1745,12 @@ export default {
   watch:{
     isShow1:{
       handler(val){
-        debugger
         this.$refs.multipleTable1.clearSelection()
         this.dialogSelection = []
       }
     },
     isShow2:{
       handler(val){
-        debugger
         this.$refs.multipleTable2.clearSelection()
         this.dialogSelection = []
       }
@@ -1946,6 +1967,14 @@ h1 {
     padding: 0 5px;
     margin-top: 20px;
     margin-bottom: 20px;
+    .titleRow{
+      float: left;
+      font-size: 16px;
+      color: #05AAFD;
+      height:40px;
+      text-align: center;
+    }
+
     .box {
       display: flex;
       margin-top: 5px;
@@ -1954,11 +1983,13 @@ h1 {
       .contentTextRow {
         display: flex;
         width: calc(100% - 100px);
+        //height:50px;
+
       }
       .number {
         width: 30px;
         height: 32px;
-        border: 1px solid rgba(215, 215, 215, 1);
+        /*border: 1px solid rgba(215, 215, 215, 1);*/
         border-radius: 3px;
         font-weight: 400;
         color: #333;
@@ -1973,7 +2004,7 @@ h1 {
         height: 32px;
         padding-left: 10px;
         background: inherit;
-        border: 1px solid rgba(215, 215, 215, 1);
+        /*border: 1px solid rgba(215, 215, 215, 1);*/
         border-radius: 3px;
         font-weight: 400;
         font-size: 14px;
@@ -2154,6 +2185,5 @@ h1 {
     color: #fff;
   }
 }
-
 
 </style>

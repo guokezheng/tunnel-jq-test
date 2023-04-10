@@ -550,15 +550,13 @@ export default {
       ],
     };
   },
-  // watch: {
-  //   'contentList[0].CONTENT':{
-  //     deep: true,
-  //       handler: function (newValue, oldValue) {
-  //         console.log(newValue,"newValuenewValuenewValue")
-  //         // this.dataForm.content1 = newValue;
-  //       },
-  //   }
-  // },
+  watch: {
+    contentList: function (newVal, oldVal) {
+      this.$nextTick(()=>{
+        this.rowDrop();
+      })
+    },
+  },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getmessage();
@@ -584,10 +582,8 @@ export default {
     // 行拖拽
     rowDrop() {
       if (JSON.parse(JSON.stringify(this.contentList)).length > 0) {
-        console.log(1111111)
         // 要侦听拖拽响应的DOM对象
         const tbody = document.querySelector(".infoBox .el-table__body-wrapper tbody");
-        console.log(tbody, "tbodytbodytbody");
         const _this = this;
         Sortable.create(tbody, {
           // 结束拖拽后的回调函数

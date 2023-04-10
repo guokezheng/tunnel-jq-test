@@ -1391,7 +1391,6 @@ export default {
   watch:{
     dialogVisible:{
       handler(val){
-        debugger
         this.$refs.tableFile1.clearSelection()
       }
     }

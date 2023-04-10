@@ -2328,7 +2328,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       // this.queryParams.pageSize bug:857
-      this.queryParams = { pageNum: 1, pageSize:  16};
+      this.queryParams.pageNum = 1;
       this.dateRange = [];
       // this.tunnelList = [];
       this.queryParams.eventTypeId = "";

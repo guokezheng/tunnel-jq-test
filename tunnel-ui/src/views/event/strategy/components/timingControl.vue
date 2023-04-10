@@ -356,7 +356,6 @@ export default {
       }, 3000);
     },
     changeTime(){
-      debugger;
       let date = this.strategyForm.execDate + " " + this.strategyForm.execTime;
       let dateTime = new Date(date).getTime();
       if(this.strategyForm.execDate && this.strategyForm.execTime && dateTime < new Date()){
@@ -594,7 +593,7 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-        this.$emit("dialogVisibleClose");
+        /*this.$emit("dialogVisibleClose");*/
         this.getList();
       });
     },

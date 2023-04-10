@@ -11260,7 +11260,7 @@ input {
   border-radius: 50%;
   position: absolute;
 }
-.sliderClass {
+.phoneBox1 .sliderClass {
   width: 150px;
   .el-slider__runway {
     width: 100%;

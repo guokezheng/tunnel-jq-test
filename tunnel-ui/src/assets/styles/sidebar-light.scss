@@ -2476,11 +2476,14 @@
     border-color: none;
   }
   .bottomEventForm, .el-card{
-    background-color: transparent !important;
+    background-color: transparent;
     border: none !important;
   }
   .bottomEventForm .el-card__body .tunnelMap{
     border-bottom: none !important;
+  }
+  .bottomEventForm+ .el-card{
+    background-color: transparent !important;
   }
   .formBox{
     background-color: #012E51;

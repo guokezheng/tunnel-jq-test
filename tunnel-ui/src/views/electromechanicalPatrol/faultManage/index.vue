@@ -277,8 +277,8 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-row style="display: flex; flex-wrap: wrap">
-          <el-card>
+        <el-card>
+          <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障基本信息</div>
               <div class="tableTopHr"></div>
@@ -405,13 +405,16 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-          </el-card>
-          <el-card>
+          </el-row>
+        </el-card>
+        
+        <el-card>
+          <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障设备情况</div>
               <div class="tableTopHr"></div>
             </el-col>
-
+            
             <el-col :span="8">
               <el-form-item label="设备类型" prop="typeId">
                 <el-select
@@ -477,6 +480,7 @@
                   :disabled="disstate"
                   v-model="form.faultLocation"
                   placeholder="请输入故障位置"
+                  style="width: 100%"
                 />
               </el-form-item>
             </el-col>
@@ -486,11 +490,14 @@
                   v-model="form.eqRunStatus"
                   :disabled="disstate"
                   placeholder="请输入设备运行状态"
+                  style="width: 100%"
                 />
               </el-form-item>
             </el-col>
-          </el-card>
-          <el-card>
+          </el-row>
+        </el-card>
+        <el-card>
+          <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障描述</div>
               <div class="tableTopHr"></div>
@@ -591,8 +598,8 @@
                 </el-dialog>
               </el-form-item>
             </el-col>
-          </el-card>
-        </el-row>
+          </el-row>
+        </el-card>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button v-if="isWritable" @click="submitForm" class="submitButton">仅保存</el-button>

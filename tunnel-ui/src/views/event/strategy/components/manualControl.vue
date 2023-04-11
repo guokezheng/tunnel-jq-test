@@ -246,18 +246,6 @@ export default {
     };
   },
   methods: {
-    openFullScreen2() {
-      const loading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.strategy-dialog',
-      });
-      setTimeout(() => {
-        loading.close();
-      }, 3000);
-    },
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -272,6 +260,13 @@ export default {
     getStrategyData(row) {
 
       getStrategy(this.id).then((response) => {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+          target:'.strategy-dialog',
+        });
         let data = response.data;
         // this.strategyForm = data;
         this.strategyForm.strategyName = data.strategyName;
@@ -281,7 +276,7 @@ export default {
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
-        this.openFullScreen2();
+
         listRl({ strategyId: this.id }).then((response) => {
           // console.log(response, "设备数据");
           this.strategyForm.manualControl = response.rows;
@@ -329,6 +324,9 @@ export default {
             });
           }
         });
+        setTimeout(() => {
+          loading.close();
+        }, 1700);
       });
     },
     // 改变设备类型

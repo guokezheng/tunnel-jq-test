@@ -311,19 +311,7 @@ export default {
     };
   },
   methods: {
-    openFullScreen2() {
-      const loading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        index:999,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.strategy-dialog',
-      });
-      setTimeout(() => {
-        loading.close();
-      }, 3000);
-    },
+
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -347,12 +335,6 @@ export default {
     },
     /** 修改按钮操作 */
     async getStrategyData(row) {
-/*      this.loading = this.$loading({
-        lock: true,
-        text: "加载中...",
-       /!* spinner: 'el-icon-phone-outline',*!/
-        background: 'rgba(0, 0, 0, 0.7)'
-      });*/
 
       //获取设备
       autoEqTypeList().then((res) => {
@@ -368,7 +350,14 @@ export default {
 
 
       getStrategy(id).then((response) => {
-        this.openFullScreen2();
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          index:999,
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+          target:'.strategy-dialog',
+        });
         let data = response.data;
         this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
@@ -440,10 +429,11 @@ export default {
 
           }
         });
+        setTimeout(() => {
+          loading.close();
+        }, 1700);
       });
-   /*   this.$nextTick(() => {
-        this.loading.close();
-      })*/
+
 
     },
     qbgChange(index, value,flag) {

@@ -5873,10 +5873,10 @@ export default {
       this.dateRange1 = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
+      
       this.queryParams.strategyName = "";
       this.queryParams.tunnelId = "";
       this.queryParams.strategyType = "";
-
       this.operationParam.ipaddr = "";
       this.operationParam.status = null;
       this.operationParam.operIp = "";
@@ -5885,6 +5885,8 @@ export default {
       this.operationParam.controlType = null;
       this.operationParam_xt.status = null;
       this.operationParam_xt.operIp = "";
+      this.operationParam_xt.ipaddr = ''
+      this.queryParams.pageNum = 1
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },
@@ -8746,6 +8748,7 @@ export default {
     strategyPage() {
       //this.$router.push('/strategy/index')
       this.loading = true;
+      this.queryParams.strategyName = ''
       this.strategyVisible = true;
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
@@ -8810,6 +8813,8 @@ export default {
       this.dateRange1 = [];
       this.title = "操作日志";
       this.operationLogDialog = true;
+      this.operationParam_xt.ipaddr = ''
+      this.operationParam.operIp = ''
       this.getOperationList("xitong");
       // this.getList();
     },
@@ -11260,7 +11265,7 @@ input {
   border-radius: 50%;
   position: absolute;
 }
-.sliderClass {
+.phoneBox1 .sliderClass {
   width: 150px;
   .el-slider__runway {
     width: 100%;

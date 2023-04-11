@@ -36,6 +36,7 @@ public class SdTaskList extends BaseEntity
     /*@Excel(name = "隧道id")*/
     private String tunnelId;
 
+    private String sdName;
 
     /** 任务名称 */
    /* @Excel(name = "任务名称")*/
@@ -66,6 +67,14 @@ public class SdTaskList extends BaseEntity
 
 
     private String time;
+
+    public String getSdName() {
+        return this.sdName;
+    }
+
+    public void setSdName( String sdName) {
+        this.sdName = sdName;
+    }
 
     public String getDeptId() {
         return this.deptId;
@@ -112,7 +121,7 @@ public class SdTaskList extends BaseEntity
     /*@Excel(name = "发布状态")*/
     private String publishStatus;
 
-    /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时） */
+    /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:超时） */
     /*@Excel(name = "任务状态")*/
     private String taskStatus;
 
@@ -125,6 +134,8 @@ public class SdTaskList extends BaseEntity
     /** 巡查人员id */
    /* @Excel(name = "巡查人员id")*/
     private String walkerId;
+
+    private Long userId;
 
     /** 任务完成时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -146,6 +157,14 @@ public class SdTaskList extends BaseEntity
 
 
     private String dictValue;
+
+    public Long getUserId() {
+        return this.userId;
+    }
+
+    public void setUserId( Long userId) {
+        this.userId = userId;
+    }
 
     public String getIds() {
         return this.ids;
@@ -324,7 +343,7 @@ public class SdTaskList extends BaseEntity
     {
         return taskStatus;
     }
-    public void setWalkerId(String walkerId) 
+    public void setWalkerId(String walkerId)
     {
         this.walkerId = walkerId;
     }

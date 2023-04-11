@@ -14,7 +14,7 @@ public enum TaskStatus {
     XUNCHAZHONG("1", "巡检中"),
     YIWANJIE("2", "已完结"),
     DAIHUICHUAN("3", "待回传"),
-    YICHAOSHI("4", "已超时");
+    YICHAOSHI("4", "超时");
 
 
 

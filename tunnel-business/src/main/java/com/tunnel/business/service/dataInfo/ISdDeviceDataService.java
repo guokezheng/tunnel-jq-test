@@ -116,4 +116,13 @@ public interface ISdDeviceDataService {
     List<SdDeviceDWData> handleDWExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
 
      void updateDeviceData(String deviceId, String value, Integer itemId,boolean createLog);
+
+
+    /**
+     * 修改设备数据表中实时数据
+     * @param sdDevices 设备信息
+     * @param value 数据
+     * @param itemId 数据项
+     */
+   void updateDeviceData(SdDevices sdDevices, String value, Integer itemId);
 }

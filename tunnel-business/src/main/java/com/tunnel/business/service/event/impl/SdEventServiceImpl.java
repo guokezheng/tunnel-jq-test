@@ -109,6 +109,9 @@ public class SdEventServiceImpl implements ISdEventService {
     @Autowired
     private SysDictDataMapper sysDictDataMapper;
 
+    @Autowired
+    private SdJoinReserveHandleMapper joinMapper;
+
     /**
      * 查询事件管理
      *
@@ -149,6 +152,22 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEvent.getParams().put("deptId", deptId);
         }
         List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+        //车道
+        for(SdEvent item : sdEvents){
+            if(item.getLaneNo() == null || "".equals(item.getLaneNo())){
+                continue;
+            }
+            List<String> list = Arrays.asList(item.getLaneNo().split(","));
+            List<String> lane = new ArrayList<>();
+            for(int i = 0; i < list.size(); i++){
+                if(list.get(i) == null || "".equals(list.get(i))){
+                    continue;
+                }
+                String laneLabel = sysDictDataMapper.selectDictLabel("sd_lane_two", list.get(i));
+                lane.add(laneLabel);
+            }
+            item.setLaneNoName(lane.size() == 0 ? "" : StringUtils.join(lane,"、"));
+        }
         sdEvents.stream().forEach(item -> {
             item.setPosition(item.getTunnelName().concat(DeviceDirectionEnum.getValue(item.getDirection())).concat(item.getStakeNum() == null ? "" : item.getStakeNum()));
             if(item.getVideoUrl()!=null){
@@ -404,9 +423,9 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEventHandle handleHistory = new SdEventHandle();
         handleHistory.setEventId(sdEvent.getId());
         List<SdEventHandle> sdEventHandles = sdEventHandleMapper.selectHistoryHandleList(handleHistory);
-        Long processId = sdEventHandles.stream().filter(item -> item.getProcessId() != null).limit(1).collect(Collectors.toList()).get(0).getProcessId();
-        Long reserveId = sdReserveProcessMapper.selectSdReserveProcessById(processId).getReserveId();
-        String planName = sdReservePlanMapper.selectSdReservePlanById(reserveId).getPlanName();
+        String planName = sdEventHandles.stream().filter(item -> item.getProcessId() != null).limit(1).collect(Collectors.toList()).get(0).getReserveName();
+        //Long reserveId = sdReserveProcessMapper.selectSdReserveProcessById(processId).getReserveId();
+        //String planName = sdReservePlanMapper.selectSdReservePlanById(reserveId).getPlanName();
         //查询是否存在历史数据
         String num = historyMapper.selectNum(sdEvent.getId());
         sdEventHandles.stream().forEach(item -> {
@@ -896,6 +915,7 @@ public class SdEventServiceImpl implements ISdEventService {
         if(sdEvent.getCurrencyId() == null || "".equals(sdEvent.getCurrencyId())){
             return;
         }
+        SdReservePlan sdReservePlan = sdReservePlanMapper.selectSdReservePlanById(Long.valueOf(sdEvent.getCurrencyId()));
         List<SdReserveProcess> processList = SpringUtils.getBean(SdReserveProcessMapper.class).getProcessList(Long.valueOf(sdEvent.getCurrencyId()));
         for(SdReserveProcess item : processList){
             SdEventHandle sdEventHandle = new SdEventHandle();
@@ -903,8 +923,13 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEventHandle.setFlowId(Long.valueOf(id));
             sdEventHandle.setFlowContent(item.getProcessStageName());
             sdEventHandle.setFlowSort(sort+"");
+            sdEventHandle.setReserveName(sdReservePlan.getPlanName());
             List<String> reserveIds = new ArrayList<>();
             for(SdReserveProcess temp : item.getProcessesList()){
+                SdJoinReserveHandle joinReserveHandle = new SdJoinReserveHandle();
+                joinReserveHandle.setEventId(sdEvent.getId());
+                joinReserveHandle.setStrategyRlId(temp.getStrategyId());
+                List<SdJoinReserveHandle> joinDevList = joinMapper.selectSdJoinReserveHandleList(joinReserveHandle);
                 sort++;
                 String flowId = id+"0";
                 SdEventHandle sdEventHandle1 = new SdEventHandle();
@@ -912,9 +937,10 @@ public class SdEventServiceImpl implements ISdEventService {
                 sdEventHandle1.setFlowId(Long.valueOf(flowId + 1));
                 sdEventHandle1.setFlowPid(Long.valueOf(id));
                 sdEventHandle1.setFlowContent(temp.getProcessName());
-                sdEventHandle1.setProcessId(temp.getId());
+                sdEventHandle1.setProcessId(joinDevList.get(0).getId());
                 sdEventHandle1.setFlowSort(sort+"");
-                reserveIds.add(temp.getId().toString());
+                sdEventHandle1.setReserveName(sdReservePlan.getPlanName());
+                reserveIds.add(joinDevList.get(0).getId().toString());
                 sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
             }
             sdEventHandle.setReserveId(StringUtils.join(reserveIds,","));
@@ -1041,10 +1067,15 @@ public class SdEventServiceImpl implements ISdEventService {
         SdStrategyRlMapper rlMapper = SpringUtils.getBean(SdStrategyRlMapper.class);
         for(SdReserveProcess item : sdReserveProcesses){
             SdStrategyRl sdStrategyRl = rlMapper.selectSdStrategyRlById(item.getStrategyId());
-            if(!"1".equals(sdStrategyRl.getRetrievalRule())){
-                sdStrategyRl.setEquipments(getRlDevice(sdEvent,sdStrategyRl));
-                rlMapper.updateSdStrategyRl(sdStrategyRl);
-            }
+            SdJoinReserveHandle joinReserveHandle = new SdJoinReserveHandle();
+            joinReserveHandle.setEquipments("".equals(sdStrategyRl.getEquipments()) || sdStrategyRl.getEquipments() == null ? getRlDevice(sdEvent,sdStrategyRl) : sdStrategyRl.getEquipments());
+            joinReserveHandle.setStrategyRlId(sdStrategyRl.getId());
+            joinReserveHandle.setEventId(sdEvent.getId());
+            joinReserveHandle.setState(sdStrategyRl.getState());
+            joinReserveHandle.setEqTypeId(Long.valueOf(sdStrategyRl.getEqTypeId()));
+            joinReserveHandle.setProcessName(item.getProcessName());
+            joinReserveHandle.setCreateTime(DateUtils.getNowDate());
+            joinMapper.insertSdJoinReserveHandle(joinReserveHandle);
         }
     }
 
@@ -1232,23 +1263,24 @@ public class SdEventServiceImpl implements ISdEventService {
         if(deviceList.size() == 0){
             return null;
         }
+        SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(rpId);
         //获取设备类型
-        Long eqType = Long.valueOf(deviceList.get(0).get("eqType").toString());
+        Long eqType = joinReserveHandle.getEqTypeId();
         //根据状态类型查询不通类型得设备明细
         if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
             //查询情报板
-            String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
+            //String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
             map.put("vmsData",sdVmsContent);
         }else if(eqType == DevicesTypeEnum.LS.getCode()){
             //截取广播文件名称
-            String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            List<String> list = Arrays.asList(lsData.split("\\\\"));
+            //String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            List<String> list = Arrays.asList(joinReserveHandle.getState().split("\\\\"));
             String lsContent = list.get(list.size() - 1);
             map.put("lsData",lsContent);
         }else {
             //查询普通设备状态
-            List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(sdReserveProcess);
+            List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(rpId);
             List<String> deviceIconUrl = new ArrayList<>();
             maps.stream().forEach(item -> {
                 deviceIconUrl.add(item.get("url").toString());
@@ -1271,7 +1303,7 @@ public class SdEventServiceImpl implements ISdEventService {
         List<SdEventHandle> planDisposal = (List<SdEventHandle>) getHandle(sdEventData).get("data");
         Map<String, Object> planMap = new HashMap<>();
         if(sdEventData.getCurrencyId() != null && sdEventData.getCurrencyId() != ""){
-            planMap.put("planName",sdReservePlanMapper.selectSdReservePlanById(Long.valueOf(sdEventData.getCurrencyId())).getPlanName());
+            planMap.put("planName",sdEventMapper.getEventInif(sdEventData).get("planName"));
         }else {
             planMap.put("planName",null);
         }

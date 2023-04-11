@@ -157,6 +157,9 @@ public class SdEvent extends BaseEntity {
     @ApiModelProperty("车道号")
     private String laneNo;
 
+    @ApiModelProperty("拼接车道号")
+    private String laneNoName;
+
     @ApiModelProperty("事件位置经度")
     private String eventLongitude;
 
@@ -287,6 +290,14 @@ public class SdEvent extends BaseEntity {
      * 防控类型
      */
     private String prevControlType;
+
+    public String getLaneNoName() {
+        return laneNoName;
+    }
+
+    public void setLaneNoName(String laneNoName) {
+        this.laneNoName = laneNoName;
+    }
 
     public String getPrevControlType() {
         return prevControlType;

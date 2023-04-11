@@ -204,6 +204,7 @@ export default {
       sink: "", //删除/修改
       id: "", //策略id
       strategyForm: {
+        strategyState:null,// 策略状态
         jobRelationId: "", //时间戳
         strategyGroup: 1,
         strategyType: "0", //策略类型
@@ -245,18 +246,6 @@ export default {
     };
   },
   methods: {
-    openFullScreen2() {
-      const loading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.strategy-dialog',
-      });
-      setTimeout(() => {
-        loading.close();
-      }, 3000);
-    },
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -271,15 +260,23 @@ export default {
     getStrategyData(row) {
 
       getStrategy(this.id).then((response) => {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+          target:'.strategy-dialog',
+        });
         let data = response.data;
         // this.strategyForm = data;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
+        this.strategyForm.strategyState = data.strategyState;
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
-        this.openFullScreen2();
+
         listRl({ strategyId: this.id }).then((response) => {
           // console.log(response, "设备数据");
           this.strategyForm.manualControl = response.rows;
@@ -327,6 +324,9 @@ export default {
             });
           }
         });
+        setTimeout(() => {
+          loading.close();
+        }, 1700);
       });
     },
     // 改变设备类型
@@ -508,6 +508,7 @@ export default {
     },
     // 提交保存方法
     async addStrategyInfoData() {
+      this.strategyForm.id = null;
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });

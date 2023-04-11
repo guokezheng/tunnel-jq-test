@@ -89,6 +89,7 @@
                   clearable
                   placeholder="请选择岗位"
                   size="small"
+                  @change="handlechange"
                 >
                   <el-option
                     v-for="item in emergencyPostList"
@@ -449,6 +450,9 @@ export default {
       console.log(this.queryParams);
       this.$refs.peopleTable.clearSelection();
       this.getList();
+    },
+    handlechange(){
+      this.$forceUpdate();
     },
     /** 重置按钮操作 */
     resetQuery() {

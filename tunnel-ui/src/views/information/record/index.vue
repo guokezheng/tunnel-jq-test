@@ -361,20 +361,31 @@ export default {
       let contents = [];
 
       listRecord(this.queryParams).then((response) => {
-        this.recordList = response.rows;
-        console.log(this.recordList,"发送记录表格")
-        for (var item of this.recordList) {
+        console.log(response.rows,"发送记录表格")
+
+        for (var item of response.rows) {
           if (item.releaseStatus == "0") {
             item.releaseStatus = "成功";
           } else {
             item.releaseStatus = "失败";
           }
+          console.log(item.releaseNewContent,"item.releaseNewContent")
           item.releaseNewContent = item.releaseNewContent.substring(item.releaseNewContent.indexOf("\\f")+7).replaceAll("\\n","");
           var arr = []
-          contents = JSON.parse(item.paramsList[0])['content']
+          // console.log(JSON.parse(item.paramsList[0]),"JSON.parse(item.paramsList[0])")
+          // console.log(JSON.parse(item.paramsList[0]).content,"JSON.parse(item.paramsList[0]).content")
+
+          // contents = JSON.parse(item.paramsList[0])['content']
+          contents = JSON.parse(item.paramsList[0]).content
+
+          // console.log(contents,"contents")
           for (var i = 0; i < contents.length; i++) {
             var content = contents[i];
             var itemId = "ITEM" + this.formatNum(i, 3);
+            // if(i == 0){
+            //   console.log(content[itemId],"content[itemId]")
+
+            // }
             for(var itm of content[itemId]){
               itm.COLOR = this.getColorStyle(itm.COLOR);
               itm.FONT_SIZE = this.getFontSize(itm.FONT_SIZE.substring(0, 2),itm.DEVICEPIXEL) + 'px';
@@ -382,12 +393,13 @@ export default {
               itm.HEIGHT = this.getDevicePixel(itm.DEVICEPIXEL,'height')
               itm.TOP = this.getCoordinate(itm.COORDINATE.substring(3, 6),'top',itm.DEVICEPIXEL) + 'px';
               itm.LEFT = this.getCoordinate(itm.COORDINATE.substring(0, 3),'left',itm.DEVICEPIXEL) + 'px';
-              itm.CONTENT = item.releaseNewContent.replace('<r><n>', '<br>').replace(/ /g,' &nbsp')
+              itm.CONTENT = itm.CONTENT.replace('<r><n>', '<br>').replace(/ /g,' &nbsp')
               arr.push(itm);
             }
           }
           item.list = arr
         }
+        this.recordList = response.rows;
         console.log(this.recordList,"发送记录表格1111111")
 
         this.total = response.total;

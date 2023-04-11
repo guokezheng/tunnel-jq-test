@@ -99,7 +99,7 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
                 String fontSize = item.substring(0, 4);
                 object.put("FONT_SIZE", fontSize);
                 item = item.substring(4);
-                item = item.replaceAll("<r><n>", "");
+                //item = item.replaceAll("<r><n>", "");
                 object.put("CONTENT", item);
                 object.put("STATE", "true");
                 for (int m = 0;m < iotDeviceAccesses.size();m++) {

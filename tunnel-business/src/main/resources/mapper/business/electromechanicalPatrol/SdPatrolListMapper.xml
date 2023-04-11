@@ -249,14 +249,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getPatrolInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
-        select p.eq_name,p.position,p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,f.fallt_remove_statue,u.tunnel_name, d.pile,y.type_name
+        select p.id,p.eq_name,p.position,p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,f.fallt_remove_statue,u.tunnel_name, d.pile,y.type_name
         from sd_patrol_list p
         left join sd_task_list t on t.id = p.task_id
         left join sd_fault_list f on f.id = p.eq_fault_id
         left join sd_tunnels u on u.tunnel_id = f.tunnel_id
         left join sd_devices d on d.eq_id = p.eq_fault_id
         left join sd_equipment_type y  on y.type_id = d.eq_type
-        where p.task_id = #{task_id}
+        where p.task_id = #{taskId}
     </select>
 
 

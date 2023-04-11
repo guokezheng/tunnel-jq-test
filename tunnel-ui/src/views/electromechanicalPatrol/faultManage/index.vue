@@ -37,35 +37,22 @@
         :model="queryParams"
         label-width="75px"
       >
-        <!--        <el-form-item label="故障类型" prop="faultType">
-          <el-select
-            v-model="queryParams.faultType"
-            placeholder="请选择故障类型"
-            clearable
-            size="small"
-          >
-            <el-option
-              v-for="dict in faultTypeOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            />
-          </el-select>
-        </el-form-item>-->
         <el-form-item
-          label="故障类型"
-          prop="faultType"
+          label="故障来源"
+          prop="faultEscalationType"
           style="width: 100% !important"
         >
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col
               :span="8"
-              v-for="dict in faultTypeOptions"
+              v-for="dict in faultEscalationTypeOptions"
               :key="dict.dictValue"
             >
-              <el-checkbox :label="dict.dictLabel" v-model="resultFaultType">{{
-                dict.dictLabel
-              }}</el-checkbox>
+              <el-checkbox
+                :label="dict.dictLabel"
+                v-model="resultFaultEscalationType"
+              >{{ dict.dictLabel }}</el-checkbox
+              >
             </el-col>
           </el-row>
         </el-form-item>
@@ -83,11 +70,29 @@
               <el-checkbox
                 :label="dict.dictLabel"
                 v-model="resultFaultRemoveState"
-                >{{ dict.dictLabel }}</el-checkbox
+              >{{ dict.dictLabel }}</el-checkbox
               >
             </el-col>
           </el-row>
         </el-form-item>
+        <el-form-item
+          label="故障类型"
+          prop="faultType"
+          style="width: 100% !important"
+        >
+          <el-row style="display: flex; flex-wrap: wrap">
+            <el-col
+              :span="8"
+              v-for="dict in faultTypeOptions"
+              :key="dict.dictValue"
+            >
+              <el-checkbox :label="dict.dictLabel" v-model="resultFaultType">{{
+                dict.dictLabel
+              }}</el-checkbox>
+            </el-col>
+          </el-row>
+        </el-form-item>
+
         <el-form-item
           label="故障等级"
           prop="faultLevel"
@@ -105,25 +110,7 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item
-          label="故障来源"
-          prop="faultEscalationType"
-          style="width: 100% !important"
-        >
-          <el-row style="display: flex; flex-wrap: wrap">
-            <el-col
-              :span="8"
-              v-for="dict in faultEscalationTypeOptions"
-              :key="dict.dictValue"
-            >
-              <el-checkbox
-                :label="dict.dictLabel"
-                v-model="resultFaultEscalationType"
-                >{{ dict.dictLabel }}</el-checkbox
-              >
-            </el-col>
-          </el-row>
-        </el-form-item>
+
         <el-form-item label="发现时间">
           <el-date-picker
             v-model="dateRange"
@@ -175,17 +162,45 @@
         width="68"
         align="center"
       ></el-table-column>
-
+      <el-table-column label="所属隧道" align="center" prop="tunnelName" />
       <el-table-column
         label="故障设备"
         align="center"
         prop="eqName"
         width="220"
       />
-      <el-table-column label="所属隧道" align="center" prop="tunnelName" />
+      <el-table-column label="设备状态" align="center" prop="eqStatus">
+        <template slot-scope="scope">
+          <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="故障位置" align="center" prop="faultLocation" />
+      <el-table-column
+        label="故障描述"
+        align="center"
+        prop="faultDescription"
+        width="180"
+        :show-overflow-tooltip="true"
+      />
+      <el-table-column label="故障等级" align="center" prop="faultLevel">
+        <template slot-scope="scope">
+          <span>{{ getFaultLevel(scope.row.faultLevel) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="故障类型" align="center" prop="faultType">
         <template slot-scope="scope">
           <span>{{ getFaultType(scope.row.faultType) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="故障来源"
+        align="center"
+        prop="faultEscalationType"
+      >
+        <template slot-scope="scope">
+          <span>{{
+              getFaultEscalationType(scope.row.faultEscalationType)
+            }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -198,38 +213,8 @@
           <span>{{ scope.row.faultFxtime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="故障位置" align="center" prop="faultLocation" />
-      <el-table-column
-        label="故障描述"
-        align="center"
-        prop="faultDescription"
-        width="180"
-        :show-overflow-tooltip="true"
-      />
-      <!-- <el-table-column label="持续时间" align="center" prop="faultCxtime" /> -->
-      <!-- <el-table-column label="设备" align="center" prop="eqName" /> -->
-      <el-table-column
-        label="故障来源"
-        align="center"
-        prop="faultEscalationType"
-      >
-        <template slot-scope="scope">
-          <span>{{
-            getFaultEscalationType(scope.row.faultEscalationType)
-          }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="设备状态" align="center" prop="eqStatus">
-        <template slot-scope="scope">
-          <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
-        </template>
-      </el-table-column>
-      <!--<el-table-column label="故障代码" align="center" prop="faultCode" />-->
-      <el-table-column label="故障等级" align="center" prop="faultLevel">
-        <template slot-scope="scope">
-          <span>{{ getFaultLevel(scope.row.faultLevel) }}</span>
-        </template>
-      </el-table-column>
+
+
 
       <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
@@ -239,13 +224,6 @@
           />
         </template>
       </el-table-column>
-      <!--<el-table-column label="故障描述" align="center" prop="faultDescription" />-->
-      <!-- <el-table-column label="状态" align="center" prop="faultStatus" >
-        <template slot-scope="scope">
-          <dict-tag :options="fault_status_list" :value="scope.row.faultStatus"/>
-        </template>
-      </el-table-column> -->
-
       <el-table-column
         label="操作"
         align="center"
@@ -321,7 +299,7 @@
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障基本信息</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
             <el-col :span="8" :style="{ display: 'none' }">
               <el-form-item
@@ -389,16 +367,6 @@
               </el-form-item>
             </el-col>
 
-            <!--            <el-col :span="8">
-              <el-form-item label="故障来源" prop="faultSource">
-                <el-input
-                  :disabled="disstate"
-                  v-model="form.faultSource"
-                  placeholder="请输入发现源"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>-->
             <el-col :span="8">
               <el-form-item label="发现时间" prop="faultFxtime">
                 <el-date-picker
@@ -450,7 +418,7 @@
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障设备情况</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
 
             <el-col :span="8">
@@ -538,7 +506,7 @@
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障描述</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
             <el-col :span="8">
               <el-form-item label="故障代码" prop="faultCode">
@@ -650,22 +618,26 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="record" width="70%">
+    <el-dialog  :title="titleHistory"
+                :visible.sync="record"
+                width="70%"
+                class = "hitchHistoryDialog"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div style="text-align: center; font-size: 18px">故障检修记录</div>
+<!--      <div style="text-align: center; font-size: 18px">故障检修记录</div>-->
       <div
         class="card"
         v-show="news.length > 0"
         v-for="(item, index) in news"
         :key="index"
       >
-        <div class="card-col" style="font-size: 16px">
+        <div class="card-col" style="font-size: 0.7vw;color: #05AAFD;">
           <div>
             巡检时间:
-            <span>{{ parseTime(item.xcTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+            <span>{{ item.xcTime }}</span>
           </div>
           <div>
             检修班组:
@@ -676,7 +648,7 @@
             <span>{{ item.userName }}</span>
           </div>
         </div>
-        <div class="card-col" style="font-size: 16px">
+        <div class="card-col" style="font-size: 0.7vw;color: #05AAFD;">
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -690,22 +662,22 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
           <div>
             设备运行状态:
             <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
-          <div class="col-test">(检修时检测情况)</div>
+          <div class="col-test" style ="font-size: 0.7vw;color: #05AAFD;">(检修时检测情况)</div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>
           </div>
-          <div class="col-test">(检修时检测情况)</div>
+          <div class="col-test"style ="font-size: 0.7vw;color: #05AAFD;">(检修时检测情况)</div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
           现场图片:
           <div v-for="pic in item.iFileList">
             <img :src="pic.imgUrl" :title="pic.imgName" />
@@ -713,7 +685,7 @@
         </div>
       </div>
       <div v-if="news.length == 0">
-        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;font-size: 0.7vw;color: #05AAFD;">
           暂无记录
         </div>
       </div>
@@ -801,6 +773,7 @@ export default {
       //巡查班组
       bzData: {},
       title: "",
+      titleHistory:"",
       // 是否显示弹出层
       open: false,
       //故障类型
@@ -934,6 +907,13 @@ export default {
             trigger: "blur",
           },
         ],
+        typeId: [
+          {
+            required: true,
+            message: "请选择设备类型",
+            trigger: "blur",
+          },
+        ],
       },
       direction: "",
       dialogImageUrl: "",
@@ -1010,7 +990,7 @@ export default {
       });
       setTimeout(() => {
         loading.close();
-      }, 500);
+      }, 300);
     },
 
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
@@ -1140,14 +1120,23 @@ export default {
     //隧道点击事件
     tunnelGet() {
       this.form.eqId = null;
-      this.disstateDevice = false;
+      this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
-      this.getDevices();
+      if(this.form.typeId != null&&this.form.typeId !=""&&typeof(this.form.typeId) != undefined ){
+        this.disstateDevice = false;
+        this.getDevices();
+      }
+
     },
     //设备类型点击事件
     eqTypeGet() {
       this.form.eqId = null;
-      this.getDevices();
+      this.disstateDevice = true;
+      $("#deviceSel").attr("pointer-events", "none");
+      if(this.form.tunnelId != null&&this.form.tunnelId !=""&&typeof(this.form.tunnelId)!= undefined){
+        this.disstateDevice = false;
+        this.getDevices();
+      }
     },
 
     // 取消按钮
@@ -1273,8 +1262,7 @@ export default {
 
     /*设备名称点击事件*/
     selChange() {
-      if (this.title == "故障详情") {
-      } else {
+      if (this.title != "故障详情") {
         if (
           this.form.tunnelId == null ||
           typeof this.form.tunnelId == "undefined"
@@ -1282,7 +1270,16 @@ export default {
           this.disstateDevice = true;
           this.$modal.msgWarning("请先选择隧道");
           return;
-        } else {
+        }
+        if (
+          this.form.typeId == null ||
+          typeof this.form.typeId == "undefined"
+        ) {
+          this.disstateDevice = true;
+          this.$modal.msgWarning("请先选择设备类型");
+          return;
+        }
+        else {
           this.disstateDevice = false;
           this.getDevices();
           //$("#deviceSel").attr("pointer-events", "none");
@@ -1333,6 +1330,10 @@ export default {
     getDevices() {
       if (this.form.tunnelId == "") {
         this.$message.warning("请先选择所属隧道");
+        return;
+      }
+      if(this.form.typeId == ""){
+        this.$message.warning("请先选择设备类型");
         return;
       }
       listDevices({
@@ -1409,6 +1410,7 @@ export default {
       const id = row.id || that.ids;
       getList(id).then((response) => {
         this.form.tunnelId = response.data.tunnelId;
+        this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
         if (
@@ -1489,6 +1491,7 @@ export default {
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
         this.form.tunnelId = response.data.tunnelId;
+        this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
         if (
@@ -1578,6 +1581,7 @@ export default {
           }
         }
       });
+      this.titleHistory = "检修记录";
     },
     // 关闭弹窗
     close() {
@@ -1633,7 +1637,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 1000);
+      }, 700);
     },
 
     publishForm() {
@@ -1678,7 +1682,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 500);
+      }, 300);
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -1797,9 +1801,20 @@ export default {
     width: 100%;
   }
 }
+
+.hitchHistoryDialog {
+  ::v-deep .el-dialog__body {
+    max-height: 70vh !important;
+    overflow: auto !important;
+  }
+  ::v-deep .el-card {
+    margin-bottom: 10px !important;
+    width: 100%;
+  }
+}
 .topTxt {
   margin-left: 7px;
-  margin-top: 10px;
+  margin-top: -5px;
   font-size: 16px;
   background-image: url(../../../assets/cloudControl/cardTitle.png);
   background-repeat: no-repeat;

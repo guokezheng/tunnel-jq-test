@@ -155,10 +155,10 @@ public interface SdEventMapper
 
     /**
      * 查询设备状态
-     * @param sdReserveProcess
+     * @param id
      * @return
      */
-    List<Map<String, Object>> getManagementDeviceState(SdReserveProcess sdReserveProcess);
+    List<Map<String, Object>> getManagementDeviceState(@Param("id") Long id);
 
     /**
      * 查询情报板以及广播

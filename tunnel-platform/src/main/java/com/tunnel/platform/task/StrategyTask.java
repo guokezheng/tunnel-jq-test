@@ -81,6 +81,9 @@ public class StrategyTask {
         for (String devId : split){
             Map<String,Object> map = new HashMap<>();
             SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+            if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
+                map.put("templateId",sdStrategyRl.getState());
+            }
             map.put("devId",devId);
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());

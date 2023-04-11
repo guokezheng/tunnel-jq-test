@@ -259,6 +259,7 @@ export default {
       },
       showCronBox: false,
       strategyForm: {
+        strategyState:null,// 策略状态
         strategyGroup: 1,
         strategyType: "3", //策略类型
         tunnelId: null, //隧道id
@@ -310,19 +311,7 @@ export default {
     };
   },
   methods: {
-    openFullScreen2() {
-      const loading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        index:999,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.strategy-dialog',
-      });
-      setTimeout(() => {
-        loading.close();
-      }, 3000);
-    },
+
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -346,12 +335,6 @@ export default {
     },
     /** 修改按钮操作 */
     async getStrategyData(row) {
-/*      this.loading = this.$loading({
-        lock: true,
-        text: "加载中...",
-       /!* spinner: 'el-icon-phone-outline',*!/
-        background: 'rgba(0, 0, 0, 0.7)'
-      });*/
 
       //获取设备
       autoEqTypeList().then((res) => {
@@ -367,12 +350,20 @@ export default {
 
 
       getStrategy(id).then((response) => {
-        this.openFullScreen2();
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          index:999,
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+          target:'.strategy-dialog',
+        });
         let data = response.data;
         this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
+        this.strategyForm.strategyState = data.strategyState;
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
@@ -438,10 +429,11 @@ export default {
 
           }
         });
+        setTimeout(() => {
+          loading.close();
+        }, 1700);
       });
-   /*   this.$nextTick(() => {
-        this.loading.close();
-      })*/
+
 
     },
     qbgChange(index, value,flag) {
@@ -505,6 +497,7 @@ export default {
           if (this.sink == "edit") {
             this.updateStrategyInfoData();
           } else {
+
             this.addStrategyInfoData();
           }
         }
@@ -545,8 +538,8 @@ export default {
         }
           item.openState = item.openState.toString();
       });*/
+      this.strategyForm.id = null;
       let params = this.strategyForm;
-
       console.log(params);
       addStrategyInfo(params).then((res) => {
         this.resetForm();

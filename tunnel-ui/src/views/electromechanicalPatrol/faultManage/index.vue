@@ -670,7 +670,7 @@
         <div class="card-col" style="font-size: 16px">
           <div>
             巡检时间:
-            <span>{{ parseTime(item.xcTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+            <span>{{ item.xcTime }}</span>
           </div>
           <div>
             检修班组:

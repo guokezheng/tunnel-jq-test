@@ -448,7 +448,7 @@
             <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
             <el-table-column prop="type_name" label="设备类型" width="160"></el-table-column>
             <el-table-column prop="eq_name" label="设备名称" width="200"> </el-table-column>
-            <el-table-column prop="pile" label="安装位置"> </el-table-column>
+            <el-table-column prop="pile" label="设备位置"> </el-table-column>
             <el-table-column prop="dict_label" label="方向"> </el-table-column>
           </el-table>
           <pagination
@@ -471,7 +471,7 @@
         <div class="dialogCloseButton"></div>
       </div>
       <div class="show-left">
-        <div class="show-title">故障位置</div>
+        <div class="show-title">设备位置</div>
         <el-tree
           class="tree"
           :data="treeData"
@@ -603,15 +603,16 @@
       </div>
       <div class="card" v-for="(pat, index) in patrolNews" :key="index">
           <el-row>
-            <el-col :span="2" class="cardName">
-              设备巡检点:
+<!--            <el-col :span="2" class="topTxt">
+              {{index+1}}设备巡检点:
+            </el-col>-->
+            <div class="topTxt">{{index+1}}&nbsp;&nbsp;&nbsp;&nbsp;设备巡检点</div>
+            <el-col :span="2" style ="margin-top: -34px;margin-left: 37%;width: 50%;">
+              <span style ="width:15%;">{{ pat.tunnelName }}</span><span>{{ pat.eqName }}</span>
             </el-col>
-            <el-col :span="2">
-              {{ pat.tunnelName }}
-            </el-col>
-            <el-col :span="2" style="width: auto;">
+<!--            <el-col :span="2" style="width: auto;margin-top: -34px;margin-left: 37%;" >
               {{ pat.eqName }}
-            </el-col>
+            </el-col>-->
             <el-col :span="2" >
               {{ pat.xcTime }}
             </el-col>
@@ -1272,7 +1273,7 @@ export default {
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
         this.taskNews = response.data.task;
-        if (response.data.task[0].ifchaosgu == "已超时") {
+        if (response.data.task[0].ifchaosgu == "超时") {
           this.isActive = true;
         } else {
           this.isActive = false;
@@ -2053,6 +2054,7 @@ h1 {
         border: 1px solid #ccc;
         border-radius: 50%;
         margin-right: 10px;
+        pointer-events: none;
       }
       .top,
       .bottom {
@@ -2084,6 +2086,8 @@ h1 {
   height: 30px;
   line-height: 30px;
 }
+
+
 .show {
   ::v-deep .el-dialog__body {
     display: flex;

@@ -15,7 +15,7 @@
           size="small"
           :loading="exportLoading"
           @click="handleExport"
-        >导出
+          >导出
         </el-button>
         <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
@@ -38,7 +38,6 @@
         </div>
       </el-col>
     </el-row>
-
 
     <div class="searchBox" v-show="task_boxShow">
       <el-form
@@ -80,7 +79,7 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-              >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
             >重置</el-button
@@ -89,7 +88,7 @@
       </el-form>
     </div>
 
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="listList"
@@ -99,8 +98,19 @@
       :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
 
       <el-table-column
         label="隧道名称"
@@ -115,9 +125,7 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{
-            scope.row.dispatchTime
-          }}</span>
+          <span>{{ scope.row.dispatchTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="巡查班组" align="center" prop="bzName">
@@ -130,26 +138,46 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{
-            scope.row.endPlantime
-          }}</span>
+          <span>{{ scope.row.endPlantime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布状态" align="center" prop="publishStatus">
         <template slot-scope="scope">
-          <dict-tag
+          <!-- <dict-tag
             :options="dict.type.publish_status"
             :value="scope.row.publishStatus"
-          />
+          /> -->
+          <span
+            :style="{
+              color:
+                scope.row.publish == '已废止'
+                  ? 'red'
+                  : scope.row.publish == '未发布'
+                  ? 'yellow'
+                  : '#00FF00',
+            }"
+            >{{ scope.row.publish }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column label="任务状态" align="center" prop="task">
-<!--        <template slot-scope="scope">
-          <dict-tag
+        <template slot-scope="scope">
+          <!-- <dict-tag
             :options="dict.type.task_status"
             :value="scope.row.taskStatus"
-          />
-        </template>-->
+          /> -->
+          <span
+            :style="{
+              color:
+                scope.row.task1 == '待巡检'
+                  ? 'yellow'
+                  : scope.row.task1 == '巡检中'
+                  ? '#00FF00': '#fff',
+            }"
+            >{{ scope.row.task1 }}</span
+          >
+          <span v-show="scope.row.task2" class="chaoshi">{{ scope.row.task2 }}</span>
+        </template>
       </el-table-column>
       <el-table-column
         label="操作"
@@ -205,7 +233,7 @@
       @pagination="getList"
     />
 
-    <el-dialog :title="title" :visible.sync="open"  width="70%" class="xjDialog" >
+    <el-dialog :title="title" :visible.sync="open" width="70%" class="xjDialog">
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -213,44 +241,42 @@
       <!--      <h1>新增巡检任务</h1>-->
       <div class="task">
         <div class="topTxt" style="margin-bottom: 20px">巡查任务基本信息</div>
-        <div class="tableTopHr" style = "display: none"></div>
+        <div class="tableTopHr" style="display: none"></div>
         <el-form
           :inline="true"
           ref="form"
           :model="form"
           :rules="rules"
-          label-width="110px">
+          label-width="110px"
+        >
           <el-row>
             <el-col :span="8">
               <el-form-item label="派单人员" prop="dispatcher">
-                 <el-input
-                    ref="dispatcher"
-                    disabled="disabled"
-                    v-model="form.dispatcher"
-                    placeholder="（默认当前登录人）"
-                  ></el-input>
+                <el-input
+                  ref="dispatcher"
+                  disabled="disabled"
+                  v-model="form.dispatcher"
+                  placeholder="（默认当前登录人）"
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="派单时间" prop="dispatchTime">
                 <el-date-picker
-                    clearable
-                    size="small"
-                    disabled="disabled"
-                    v-model="form.dispatchTime"
-                    type="datetime"
-                    value-format="yyyy-MM-dd hh:mm:ss"
-                    placeholder="选择派单时间"
-                  >
-                  </el-date-picker>
+                  clearable
+                  size="small"
+                  disabled="disabled"
+                  v-model="form.dispatchTime"
+                  type="datetime"
+                  value-format="yyyy-MM-dd hh:mm:ss"
+                  placeholder="选择派单时间"
+                >
+                </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="所属隧道" prop="tunnelId">
-                <el-select
-                  v-model="form.tunnelId"
-                  placeholder="请选择所属隧道"
-                >
+                <el-select v-model="form.tunnelId" placeholder="请选择所属隧道">
                   <el-option
                     v-for="item in eqTunnelData"
                     :key="item.tunnelId"
@@ -317,7 +343,7 @@
       </div>
       <div class="patrol">
         <div class="topTxt">巡查点信息</div>
-        <div class="tableTopHr" style = "display: none"></div>
+        <div class="tableTopHr" style="display: none"></div>
         <div class="button-father">
           <el-button type="primary" style="height: 15%" @click="show1"
             >选择巡检点</el-button
@@ -346,14 +372,14 @@
                 <div style ="width:15%;margin-left: 30px">{{ item.type_name }}</div>
                 <div style ="width:20%;margin-left:40px">{{ item.eq_name }}</div>
                 <div style ="width:30%;margin-left: 62px">{{ item.pile }}</div>
-              </div>
-            </div>
+                </div>
+                </div>
 
             <template @slot="scop">
               <div
                 :class="index == 0 ? 'disabledClass' : 'top'"
                 @click="clickUP(index, item)"
-                style ="float: left;margin-left:-40px"
+                style="float: left; margin-left: -40px"
               >
                 <i class="el-icon-top"></i>
               </div>
@@ -361,26 +387,25 @@
             <div
               :class="boxList.length == index + 1 ? 'disabledClass' : 'bottom'"
               @click="clickDown(index, item)"
-              style ="float: left;"
+              style="float: left"
             >
               <i class="el-icon-bottom"></i>
             </div>
-            <div class="delete" style ="float: left;" @click="clickDelete(index, item)">
+            <div
+              class="delete"
+              style="float: left"
+              @click="clickDelete(index, item)"
+            >
               <i class="el-icon-delete-solid"></i>
             </div>
           </div>
         </div>
-        <div class="dialog-footer" >
+        <div class="dialog-footer">
           <el-button class="zancunButton" @click="save">暂存</el-button>
-          <el-button
-            style="display: none"
-            class="closeButton"
-            @click="abolish"
+          <el-button style="display: none" class="closeButton" @click="abolish"
             >废止</el-button
           >
-          <el-button class="submitButton" @click="release"
-            >发布</el-button
-          >
+          <el-button class="submitButton" @click="release">发布</el-button>
         </div>
       </div>
     </el-dialog>
@@ -437,17 +462,32 @@
             :row-style="{
               height: '30px',
             }"
-            style="width: 100% ; border: solid 1px #284159 !important;"
+            style="width: 100%; border: solid 1px #284159 !important"
             border
             height="412px"
             class="dialogTable"
             :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
           >
-            <el-table-column type="selection" width="39" reserve-selection></el-table-column>
-            <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
-            <el-table-column prop="type_name" label="设备类型" width="160"></el-table-column>
-            <el-table-column prop="eq_name" label="设备名称" width="200"> </el-table-column>
+            <el-table-column
+              type="selection"
+              width="39"
+              reserve-selection
+            ></el-table-column>
+            <el-table-column
+              type="index"
+              :index="indexMethod1"
+              label="序号"
+              width="68"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              prop="type_name"
+              label="设备类型"
+              width="160"
+            ></el-table-column>
+            <el-table-column prop="eq_name" label="设备名称" width="200">
+            </el-table-column>
             <el-table-column prop="pile" label="设备位置"> </el-table-column>
             <el-table-column prop="dict_label" label="方向"> </el-table-column>
           </el-table>
@@ -518,15 +558,25 @@
             :row-style="{
               height: '30px',
             }"
-            style="width: 100%; border: solid 1px #284159 !important;"
+            style="width: 100%; border: solid 1px #284159 !important"
             border
-            height="350px"
+            height="412px"
             class="dialogTable"
             :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
           >
-            <el-table-column type="selection" width="39" reserve-selection></el-table-column>
-            <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
+            <el-table-column
+              type="selection"
+              width="39"
+              reserve-selection
+            ></el-table-column>
+            <el-table-column
+              type="index"
+              :index="indexMethod1"
+              label="序号"
+              width="68"
+              align="center"
+            ></el-table-column>
             <el-table-column prop="type_name" label="故障类型">
             </el-table-column>
             <el-table-column prop="eq_name" label="故障设备名称">
@@ -534,8 +584,15 @@
             <el-table-column prop="pile" label="故障位置"> </el-table-column>
             <el-table-column prop="fault_fxtime" label="故障发现时间">
               <template slot-scope="scope">
-                <span>{{ !!scope.row.fault_fxtime ?scope.row.fault_fxtime.replace(/T/g, ' ').replace(/.[\d]{3}Z/, ' '):''}}</span>
-              </template></el-table-column>
+                <span>{{
+                  !!scope.row.fault_fxtime
+                    ? scope.row.fault_fxtime
+                        .replace(/T/g, " ")
+                        .replace(/.[\d]{3}Z/, " ")
+                    : ""
+                }}</span>
+              </template></el-table-column
+            >
             <el-table-column prop="dict_label" label="故障描述">
             </el-table-column>
           </el-table>
@@ -552,7 +609,12 @@
     </el-dialog>
 
     <!--巡查任务及执行记录单-->
-    <el-dialog :visible.sync="record" width="70%" title="巡检任务及执行记录单" class="xjDialog">
+    <el-dialog
+      :visible.sync="record"
+      width="70%"
+      title="巡检任务及执行记录单"
+      class="xjDialog"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -568,17 +630,17 @@
       <div class="card" v-for="(item, index) in taskNews1" :key="index">
         <el-row>
           <el-col :span="8">
-              <div>任务编号：</div>
-              <span>{{ item.id }}</span>
+            <div>任务编号：</div>
+            <span>{{ item.id }}</span>
           </el-col>
-<!--          <el-col :span="8">
+          <!--          <el-col :span="8">
             <div>所属单位：</div>
             <span>{{ item.zzjgId }}</span>
           </el-col>-->
           <el-col :span="8">
             <div>巡查班组：</div>
             <span>{{ item.bzName }}</span>
-          </el-col >
+          </el-col>
           <el-col :span="8">
             <div>计划完成时间：</div>
             <span>{{ item.endPlantime }}</span>
@@ -589,9 +651,7 @@
           </el-col>
           <el-col :span="8">
             <div>派单时间：</div>
-            <span>{{
-             item.dispatchTime
-            }}</span>
+            <span>{{ item.dispatchTime }}</span>
           </el-col>
           <el-col :span="8">
             <div>任务描述：</div>
@@ -602,57 +662,63 @@
         </el-row>
       </div>
       <div class="card" v-for="(pat, index) in patrolNews" :key="index">
-          <el-row>
-<!--            <el-col :span="2" class="topTxt">
+        <el-row>
+          <!--            <el-col :span="2" class="topTxt">
               {{index+1}}设备巡检点:
             </el-col>-->
-            <div class="topTxt">{{index+1}}&nbsp;&nbsp;&nbsp;&nbsp;设备巡检点</div>
-            <el-col :span="2" style ="margin-top: -34px;margin-left: 37%;width: 50%;">
-              <span style ="width:15%;">{{ pat.tunnelName }}</span><span style ="width:62%;">{{ pat.eqName }}</span>
-            </el-col>
-<!--            <el-col :span="2" style="width: auto;margin-top: -34px;margin-left: 37%;" >
+          <div class="topTxt">
+            {{ index + 1 }}&nbsp;&nbsp;&nbsp;&nbsp;设备巡检点
+          </div>
+          <el-col
+            :span="2"
+            style="margin-top: -34px; margin-left: 37%; width: 50%"
+          >
+            <span style="width: 15%">{{ pat.tunnelName }}</span
+            ><span>{{ pat.eqName }}</span>
+          </el-col>
+          <!--            <el-col :span="2" style="width: auto;margin-top: -34px;margin-left: 37%;" >
               {{ pat.eqName }}
             </el-col>-->
 <!--            <el-col :span="2" >
-              {{ pat.xcTime }}
+            {{ pat.xcTime }}
             </el-col>-->
-          </el-row>
-          <el-row>
-            <el-col :span="8">
-              <div>设备描述：</div>
-              <span >{{ pat.eqFaultDescription }}</span>
-            </el-col>
-            <el-col :span="8">
-              <div>外观情况：</div>
-              <span >{{ pat.impression }}</span>
-            </el-col>
-            <el-col :span="8">
-              <div>网络情况：</div>
-              <span >{{ pat.network }}</span>
-            </el-col>
-            <el-col :span="8">
-              <div>配电情况：</div>
-              <span >{{ pat.power }}</span>
-            </el-col>
-            <el-col :span="8">
-              <div>现场故障情况：</div>
-              <span >{{ pat.eqFaultCode }}</span>
-            </el-col>
-            <el-col :span="8">
-              <div>设备运行状态：</div>
-              <span >{{ pat.runStatus }}</span>
-            </el-col>
-            <el-col :span="8">
-              <div>现场照片：</div>
-              <div v-for="(pic, index) in pat.iFileList" :key="index">
-                <img :src="pic.imgUrl" :title="pic.imgName" />
-              </div>
-            </el-col>
-          </el-row>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <div>设备描述：</div>
+            <span>{{ pat.eqFaultDescription }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>外观情况：</div>
+            <span>{{ pat.impression }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>网络情况：</div>
+            <span>{{ pat.network }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>配电情况：</div>
+            <span>{{ pat.power }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>现场故障情况：</div>
+            <span>{{ pat.eqFaultCode }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>设备运行状态：</div>
+            <span>{{ pat.runStatus }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>现场照片：</div>
+            <div v-for="(pic, index) in pat.iFileList" :key="index">
+              <img :src="pic.imgUrl" :title="pic.imgName" />
+            </div>
+          </el-col>
+        </el-row>
         <!-- </div> -->
       </div>
       <div class="card" v-for="(tas, index) in taskNews" :key="index">
-        <el-row style="width: 100%;">
+        <el-row style="width: 100%">
           <el-col :span="8">
             <div>任务执行状态：</div>
             <span>{{ tas.taskStatus }}</span>
@@ -667,9 +733,7 @@
           </el-col>
           <el-col :span="8">
             <div>任务完成时间：</div>
-            <span>{{
-              tas.taskEndtime
-          }}</span>
+            <span>{{ tas.taskEndtime }}</span>
           </el-col>
           <el-col :span="8">
             <div>任务持续时长：</div>
@@ -686,22 +750,22 @@
       </div>
       <div class="card">
         <el-row>
-        <el-col :span="4">
+          <el-col :span="4">
           <span style="color: #05AAFD;">序号</span>
-        </el-col>
-        <el-col :span="4">
+          </el-col>
+          <el-col :span="4">
           <span style="color: #05AAFD;">操作类型</span>
-        </el-col>
-        <el-col :span="8">
+          </el-col>
+          <el-col :span="8">
           <span style="color: #05AAFD;"> 操作记录</span>
-        </el-col>
-        <el-col :span="8">
+          </el-col>
+          <el-col :span="8">
           <span style="color: #05AAFD;"> 操作时间</span>
-        </el-col>
+          </el-col>
         </el-row>
         <el-row
-            v-show="taskOpt.length > 0"
-            v-for="(item, index) in taskOpt"
+          v-show="taskOpt.length > 0"
+          v-for="(item, index) in taskOpt"
             :key="index">
           <el-col :span="4">
             <span>{{index+1>9?index+1:index+1}}</span>
@@ -884,7 +948,7 @@ export default {
         taskEndtime: null,
         taskCxtime: null,
         siteDescription: null,
-        ids:"",
+        ids: "",
       },
       // 任务详情参数
       taskNews: {
@@ -998,12 +1062,12 @@ export default {
   methods: {
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      console.log(row,"row")
-      return row.id
+      // console.log(row,"row")
+      return row.id;
     },
     getRowKey1(row) {
-      console.log(row,"row")
-      return row.eq_id
+      // console.log(row,"row")
+      return row.eq_id;
     },
     bodyCloseMenus(e) {
       let self = this;
@@ -1014,12 +1078,14 @@ export default {
       }
     },
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     //翻页时不刷新序号
-    indexMethod1(index){
-      return index+(this.pageNum-1)*this.pageSize+1
+    indexMethod1(index) {
+      return index + (this.pageNum - 1) * this.pageSize + 1;
     },
     //班组点击时间
     /*selChange() {
@@ -1290,8 +1356,6 @@ export default {
           });
         });
 
-
-
         this.networkOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
             if (taskitem.network == opt.dictValue) {
@@ -1299,8 +1363,6 @@ export default {
             }
           });
         });
-
-
 
         this.powerOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
@@ -1317,17 +1379,27 @@ export default {
             }
           });
         });
-
       });
     },
     //handle实现插件能选取当前时间的时、分、秒，但是选择完毕之后，只要选择的时、分、秒小于当前时间，会自动填充为当前的时、分、秒
-    handleEndTime: function() {
-      var startAt = new Date(this.form.endPlantime) * 1000 /1000;
-      if(startAt < Date.now()) {
+    handleEndTime: function () {
+      var startAt = (new Date(this.form.endPlantime) * 1000) / 1000;
+      if (startAt < Date.now()) {
         this.form.endPlantime = new Date();
         //时间格式转换
         var d = new Date(this.form.endPlantime);
-        this.form.endPlantime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        this.form.endPlantime =
+          d.getFullYear() +
+          "-" +
+          (d.getMonth() + 1) +
+          "-" +
+          d.getDate() +
+          " " +
+          d.getHours() +
+          ":" +
+          d.getMinutes() +
+          ":" +
+          d.getSeconds();
       }
     },
 
@@ -1335,6 +1407,16 @@ export default {
     getList() {
       this.loading = true;
       listList(this.queryParams).then((response) => {
+        console.log(response.rows, "发布状态列表");
+        for (let item of response.rows) {
+          if (item.task.indexOf(",") > -1) {
+            console.log(item, "itemitemitemitem");
+            item.task1 = item.task.split(",")[0];
+            item.task2 = item.task.split(",")[1];
+          } else {
+            item.task1 = item.task;
+          }
+        }
         this.listList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -1574,7 +1656,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除？')
+        .confirm("是否确认删除？")
         .then(function () {
           return delList(ids);
         })
@@ -1586,11 +1668,11 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的巡查任务数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的巡查任务数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的巡查任务数据项？";
       }
-      let  ids = this.ids.join();
+      let ids = this.ids.join();
       this.queryParams.ids = ids;
       const queryParams = this.queryParams;
       this.$modal
@@ -1603,7 +1685,7 @@ export default {
           this.$download.name(response.msg);
           this.exportLoading = false;
           this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = ''
+          this.queryParams.ids = "";
         })
         .catch(() => {});
     },
@@ -1651,7 +1733,6 @@ export default {
           }
         }
       });
-
 
       setTimeout(() => {
         this.isClick = true;
@@ -1742,27 +1823,26 @@ export default {
       }, 500);
     },
   },
-  watch:{
-    isShow1:{
-      handler(val){
-        this.$refs.multipleTable1.clearSelection()
-        this.dialogSelection = []
-      }
+  watch: {
+    isShow1: {
+      handler(val) {
+        this.$refs.multipleTable1.clearSelection();
+        this.dialogSelection = [];
+      },
     },
-    isShow2:{
-      handler(val){
-        this.$refs.multipleTable2.clearSelection()
-        this.dialogSelection = []
-      }
-    }
-  }
+    isShow2: {
+      handler(val) {
+        this.$refs.multipleTable2.clearSelection();
+        this.dialogSelection = [];
+      },
+    },
+  },
 };
 </script>
 <style lang="scss">
 .el-table tr {
   background-color: transparent;
 }
-
 </style>
 <style lang="scss" scoped>
 .card {
@@ -1773,24 +1853,24 @@ export default {
   margin-top: 20px;
   border-radius: 10px;
   background-color: #f0f0f0;
-  .el-col{
+  .el-col {
     line-height: 40px;
     display: flex;
-    >div{
-      width:110px;
+    > div {
+      width: 110px;
     }
   }
   //.card-col {
-    //margin-top: 10px;
-    //display: flex;
-    .active {
-      height: 36px;
-      padding: 0px 5px;
-      color: #ffd69a;
-      display: inline;
-      margin-left: 10px;
-      border: 1px solid #ffd69a;
-   // }
+  //margin-top: 10px;
+  //display: flex;
+  .active {
+    height: 36px;
+    padding: 0px 5px;
+    color: #ffd69a;
+    display: inline;
+    margin-left: 10px;
+    border: 1px solid #ffd69a;
+    // }
     // div {
     //   width: 33%;
     //   span {
@@ -1841,8 +1921,8 @@ export default {
   align-items: center;
   text-align: right;
   .col-card {
-    width:80px;
-    height:28px;
+    width: 80px;
+    height: 28px;
     text-align: center;
     line-height: 28px;
     font-size: 14px;
@@ -1850,11 +1930,11 @@ export default {
     color: #fff;
     border-radius: 3px;
   }
-  .col-card:first-of-type{
-    background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
+  .col-card:first-of-type {
+    background: linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
   }
-  .col-card:nth-of-type(2){
-    background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+  .col-card:nth-of-type(2) {
+    background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
 }
 .card-cols {
@@ -1901,16 +1981,17 @@ h1 {
 }
 .task {
   margin-bottom: 30px;
-  .el-row{
-    display:flex;
+  .el-row {
+    display: flex;
     flex-wrap: wrap;
   }
-  ::v-deep .el-form-item{
+  ::v-deep .el-form-item {
     width: 100%;
-    .el-form-item__content{
-      width:calc(100% - 110px);
-      .el-select,.el-date-editor{
-        width:100%;
+    .el-form-item__content {
+      width: calc(100% - 110px);
+      .el-select,
+      .el-date-editor {
+        width: 100%;
       }
     }
   }
@@ -1967,11 +2048,11 @@ h1 {
     padding: 0 5px;
     margin-top: 20px;
     margin-bottom: 20px;
-    .titleRow{
+    .titleRow {
       float: left;
       font-size: 16px;
-      color: #05AAFD;
-      height:40px;
+      color: #05aafd;
+      height: 40px;
       text-align: center;
     }
 
@@ -1984,7 +2065,6 @@ h1 {
         display: flex;
         width: calc(100% - 100px);
         //height:50px;
-
       }
       .number {
         width: 30px;
@@ -2082,11 +2162,10 @@ h1 {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   text-align: center;
-  width:139px;
+  width: 139px;
   height: 30px;
   line-height: 30px;
 }
-
 
 .show {
   ::v-deep .el-dialog__body {
@@ -2168,10 +2247,10 @@ h1 {
     }
   }
 }
-::v-deep .xjDialog{
-  .el-dialog__body{
+::v-deep .xjDialog {
+  .el-dialog__body {
     max-height: 70vh;
-    overflow:auto;
+    overflow: auto;
   }
 }
 ::v-deep .tree {
@@ -2188,5 +2267,11 @@ h1 {
     color: #fff;
   }
 }
-
+.chaoshi{
+  background: rgba(255,44,44,.28);
+  color:#ff2c2c;
+  padding: 5px;
+  font-size: 12px;
+  margin-left: 4px;
+}
 </style>

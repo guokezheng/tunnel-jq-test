@@ -264,10 +264,16 @@
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag
+          <!-- <dict-tag
             :options="dict.type.sys_normal_disable"
             :value="scope.row.status"
-          />
+          /> -->
+          <span
+            :style="{
+              color: scope.row.status == '0' ? '#00FF00' : 'red',
+            }"
+            >{{ getStatus(scope.row.status) }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column
@@ -416,16 +422,24 @@ export default {
           return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
         },
       },
+      sysNormalDisableList:[],//状态
     };
   },
   created() {
     this.getList();
+    //状态
+    this.getDicts("sys_normal_disable").then((response) => {
+      this.sysNormalDisableList = response.data;
+    });
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    getStatus(row) {
+      return this.selectDictLabel(this.sysNormalDisableList, row);
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (!this.$refs.main.contains(e.target) &&

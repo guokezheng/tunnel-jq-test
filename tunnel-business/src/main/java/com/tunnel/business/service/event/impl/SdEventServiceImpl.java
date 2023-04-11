@@ -152,6 +152,22 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEvent.getParams().put("deptId", deptId);
         }
         List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+        //车道
+        for(SdEvent item : sdEvents){
+            if(item.getLaneNo() == null || "".equals(item.getLaneNo())){
+                continue;
+            }
+            List<String> list = Arrays.asList(item.getLaneNo().split(","));
+            List<String> lane = new ArrayList<>();
+            for(int i = 0; i < list.size(); i++){
+                if(list.get(i) == null || "".equals(list.get(i))){
+                    continue;
+                }
+                String laneLabel = sysDictDataMapper.selectDictLabel("sd_lane_two", list.get(i));
+                lane.add(laneLabel);
+            }
+            item.setLaneNoName(lane.size() == 0 ? "" : StringUtils.join(lane,"、"));
+        }
         sdEvents.stream().forEach(item -> {
             item.setPosition(item.getTunnelName().concat(DeviceDirectionEnum.getValue(item.getDirection())).concat(item.getStakeNum() == null ? "" : item.getStakeNum()));
             if(item.getVideoUrl()!=null){

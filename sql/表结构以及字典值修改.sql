@@ -231,7 +231,7 @@ CREATE TABLE `sd_task_list`  (
   `bz_id` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '指派巡查班组id',
   `task_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '任务描述',
   `publish_status` int(2) NULL DEFAULT NULL COMMENT '发布状态(0:未发布状态;1:已废止状态;2:发布状态)',
-  `task_status` int(2) NULL DEFAULT NULL COMMENT '任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时）',
+  `task_status` int(2) NULL DEFAULT NULL COMMENT '任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:超时）',
   `walker_id` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '巡查人员id',
   `task_endtime` datetime(0) NULL DEFAULT NULL COMMENT '任务完成时间',
   `task_cxtime` datetime(0) NULL DEFAULT NULL COMMENT '任务持续时间',
@@ -421,7 +421,7 @@ insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '巡检中', '1', 'task_status', 'default', '0', 'admin', sysdate() );
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '已完结', '2', 'task_status', 'default', '0', 'admin', sysdate() );
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 4, '待回传', '3', 'task_status', 'default', '0', 'admin', sysdate() );
-insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 5, '已超时', '4', 'task_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 5, '超时', '4', 'task_status', 'default', '0', 'admin', sysdate() );
 
 -- 数据字典 外观情况
 insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '外观情况', 'impression', '0', 'admin', sysdate() );

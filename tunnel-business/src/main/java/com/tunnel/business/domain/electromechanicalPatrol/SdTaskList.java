@@ -121,7 +121,7 @@ public class SdTaskList extends BaseEntity
     /*@Excel(name = "发布状态")*/
     private String publishStatus;
 
-    /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时） */
+    /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:超时） */
     /*@Excel(name = "任务状态")*/
     private String taskStatus;
 

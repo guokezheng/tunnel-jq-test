@@ -474,6 +474,7 @@ public class SdTaskListController extends BaseController
             SdTaskList task = sdTaskListService.selectSdTaskListById(taskNo);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String pdTime = "";
+            String xcTime = "";
             String planEndTime = "";
             String taskEndTime = "";
             if (task.getDispatchTime() != null) {
@@ -533,7 +534,11 @@ public class SdTaskListController extends BaseController
                             map.put("photo", pictureRenderData);
                         }
                     }
+                    if (map.get("xcTime") != null) {
+                        xcTime = format.format(DateUtil.parse(map.get("xcTime").toString()));
+                    }
                     //添加巡查记录序号
+                    map.put("xcTime",xcTime);
                     map.put("remark",obj.getXcSort()+1);
                     convertList.add(map);
                 }

@@ -670,7 +670,7 @@
         <div class="card-col" style="font-size: 16px">
           <div>
             巡检时间:
-            <span>{{ parseTime(item.xcTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
+            <span>{{ item.xcTime }}</span>
           </div>
           <div>
             检修班组:
@@ -939,6 +939,13 @@ export default {
             trigger: "blur",
           },
         ],
+        typeId: [
+          {
+            required: true,
+            message: "请选择设备类型",
+            trigger: "blur",
+          },
+        ],
       },
       direction: "",
       dialogImageUrl: "",
@@ -1145,14 +1152,23 @@ export default {
     //隧道点击事件
     tunnelGet() {
       this.form.eqId = null;
-      this.disstateDevice = false;
+      this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
-      this.getDevices();
+      if(this.form.typeId != null&&this.form.typeId !=""&&typeof(this.form.typeId) != undefined ){
+        this.disstateDevice = false;
+        this.getDevices();
+      }
+
     },
     //设备类型点击事件
     eqTypeGet() {
       this.form.eqId = null;
-      this.getDevices();
+      this.disstateDevice = true;
+      $("#deviceSel").attr("pointer-events", "none");
+      if(this.form.tunnelId != null&&this.form.tunnelId !=""&&typeof(this.form.tunnelId)!= undefined){
+        this.disstateDevice = false;
+        this.getDevices();
+      }
     },
 
     // 取消按钮
@@ -1278,8 +1294,7 @@ export default {
 
     /*设备名称点击事件*/
     selChange() {
-      if (this.title == "故障详情") {
-      } else {
+      if (this.title != "故障详情") {
         if (
           this.form.tunnelId == null ||
           typeof this.form.tunnelId == "undefined"
@@ -1287,7 +1302,16 @@ export default {
           this.disstateDevice = true;
           this.$modal.msgWarning("请先选择隧道");
           return;
-        } else {
+        }
+        if (
+          this.form.typeId == null ||
+          typeof this.form.typeId == "undefined"
+        ) {
+          this.disstateDevice = true;
+          this.$modal.msgWarning("请先选择设备类型");
+          return;
+        }
+        else {
           this.disstateDevice = false;
           this.getDevices();
           //$("#deviceSel").attr("pointer-events", "none");
@@ -1338,6 +1362,10 @@ export default {
     getDevices() {
       if (this.form.tunnelId == "") {
         this.$message.warning("请先选择所属隧道");
+        return;
+      }
+      if(this.form.typeId == ""){
+        this.$message.warning("请先选择设备类型");
         return;
       }
       listDevices({
@@ -1414,6 +1442,7 @@ export default {
       const id = row.id || that.ids;
       getList(id).then((response) => {
         this.form.tunnelId = response.data.tunnelId;
+        this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
         if (
@@ -1494,6 +1523,7 @@ export default {
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
         this.form.tunnelId = response.data.tunnelId;
+        this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
         if (

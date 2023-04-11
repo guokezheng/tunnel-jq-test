@@ -101,7 +101,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Autowired
     private SdEventHandleMapper sdEventHandleMapper;
 
-
+    @Autowired
+    private SdEventMapper sdEventMapper;
 
     /**
      * 查询控制策略
@@ -1216,46 +1217,61 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
     @Override
     public int implementProcess(Long processId,Long eventId) {
-        SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
-        SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
+        //SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
+        //SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
+        SdJoinReserveHandleMapper joinMapper = SpringUtils.getBean(SdJoinReserveHandleMapper.class);
+        //如果不是指定设备则查询相关设备
+        SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(processId);
+        SdStrategyRl rl = new SdStrategyRl();
+        if(joinReserveHandle.getEquipments() == null || "".equals(joinReserveHandle.getEquipments())){
+            return 0;
+        }
+        rl.setEquipments(joinReserveHandle.getEquipments());
+        rl.setEqTypeId(joinReserveHandle.getEqTypeId().toString());
+        rl.setState(joinReserveHandle.getState());
         int issueResult = issuedDevice(rl,eventId,"4");
-        String deviceExecutionState = getDeviceExecutionState(rl, process);
+        String deviceExecutionState = getDeviceExecutionState(processId);
         if(issueResult>0){
             //保存处置记录
-            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "【成功】");
+            setEventFlowData(eventId,joinReserveHandle.getProcessName() + "：" + deviceExecutionState + "【成功】");
             //更新事件处置记录表状态
             updateHandleState(processId,eventId);
+            SdEvent sdEvent = new SdEvent();
+            sdEvent.setUpdateTime(DateUtils.getNowDate());
+            sdEvent.setId(eventId);
+            sdEventMapper.updateSdEvent(sdEvent);
         }else {
-            setEventFlowData(eventId,process.getProcessName() + "：" + deviceExecutionState + "【失败】");
+            setEventFlowData(eventId,joinReserveHandle.getProcessName() + "：" + deviceExecutionState + "【失败】");
         }
         return issueResult;
     }
 
     /**
      * 获取状态、模板、文件名称
-     * @param sdStrategyRl
-     * @param sdReserveProcess
+     * @param processId
      * @return
      */
-    public String getDeviceExecutionState(SdStrategyRl sdStrategyRl, SdReserveProcess sdReserveProcess){
+    public String getDeviceExecutionState(Long processId){
         //状态、模板、文件名称
         String eqStateData = "";
+        SdJoinReserveHandleMapper joinMapper = SpringUtils.getBean(SdJoinReserveHandleMapper.class);
+        SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(processId);
         //设备类型
-        Long eqType = Long.valueOf(sdStrategyRl.getEqTypeId());
+        Long eqType = joinReserveHandle.getEqTypeId();
         SdEventMapper sdEventMapper = SpringUtils.getBean(SdEventMapper.class);
         if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
             //查询情报板
-            String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(vmsData));
+            //String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
             eqStateData = sdVmsContent.get("content").toString().concat("    ------");
         }else if(eqType == DevicesTypeEnum.LS.getCode()){
             //截取广播文件名称
-            String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            List<String> list = Arrays.asList(lsData.split("\\\\"));
+            //String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            List<String> list = Arrays.asList(joinReserveHandle.getState().split("\\\\"));
             eqStateData = list.get(list.size() - 1).concat("    ------");
         }else {
             //查询普通设备状态
-            List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(sdReserveProcess);
+            List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(joinReserveHandle.getId());
             eqStateData = maps.get(0).get("stateName").toString().concat("    ------");
         }
         return eqStateData;

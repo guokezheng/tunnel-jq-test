@@ -111,10 +111,10 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         //查询预案信息
         SdReservePlan sdReservePlan = sdReservePlanMapper.selectSdReservePlanById(Long.valueOf(planId));
         //查询此预案是否被使用
-        int currCount = sdReservePlanMapper.checkCurrId(sdReservePlan);
+        /*int currCount = sdReservePlanMapper.checkCurrId(sdReservePlan);
         if(currCount > 0){
             throw new RuntimeException("当前预案已被普通事件使用，请勿修改");
-        }
+        }*/
         if(sdReserveProcesses.getSdReserveProcesses().isEmpty()){
             throw new RuntimeException("无效数据策略添加失败");
         }

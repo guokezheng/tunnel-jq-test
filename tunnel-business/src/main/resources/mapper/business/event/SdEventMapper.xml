@@ -573,30 +573,28 @@
           AND FIND_IN_SET(
                 d.eq_id,(
                     SELECT
-                        sr.equipments
+                        jrh.equipments
                     FROM
-                        sd_reserve_process rp
-                            LEFT JOIN sd_strategy_rl sr ON rp.strategy_id = sr.id
+                        sd_join_reserve_handle jrh
                     WHERE
                         1 = 1
-                      AND rp.id = #{id}
+                      AND jrh.id = #{id}
                 ))
     </select>
 
-    <select id="getManagementDeviceState" parameterType="sdReserveProcess" resultType="hashmap">
+    <select id="getManagementDeviceState" parameterType="java.lang.Long" resultType="hashmap">
         SELECT
             es.state_name AS stateName,
             esif.url AS url
         FROM
-            sd_reserve_process rp
-                LEFT JOIN sd_strategy_rl sr ON rp.strategy_id = sr.id
-                LEFT JOIN sd_equipment_state es ON sr.eq_type_id = es.state_type_id
+            sd_join_reserve_handle jrh
+                LEFT JOIN sd_equipment_state es ON jrh.eq_type_id = es.state_type_id
                 AND es.state_type = '2'
                 LEFT JOIN sd_equipment_state_icon_file esif ON es.icon_file_id = esif.state_icon_id
         WHERE
             1 = 1
-          AND rp.id = #{id}
-          AND sr.state = es.device_state
+          AND jrh.id = #{id}
+          AND jrh.state = es.device_state
     </select>
 
     <select id="getManagementVmsLs" parameterType="sdReserveProcess" resultType="java.lang.String">
@@ -612,16 +610,19 @@
 
     <select id="getEventInif" parameterType="sdEvent" resultType="hashmap">
         SELECT
-            rp.plan_name AS planName,
+            eh.reserve_name AS planName,
             sdd.dict_label AS eventGrade
         FROM
             sd_event e
-                LEFT JOIN sd_reserve_plan rp ON e.currency_id = rp.id
-                LEFT JOIN sys_dict_data sdd ON e.event_grade = sdd.dict_value
-                AND sdd.dict_type = 'sd_event_grade'
+                LEFT JOIN sd_event_handle eh ON e.id = eh.event_id
+                AND eh.reserve_name IS NOT NULL
+                AND eh.reserve_name != ''
+	    LEFT JOIN sys_dict_data sdd ON e.event_grade = sdd.dict_value
+            AND sdd.dict_type = 'sd_event_grade'
         WHERE
-            1 =1
-        AND e.id = #{id}
+            1 = 1
+          AND e.id = #{id}
+            LIMIT 1
     </select>
 
     <select id="selectAllEvent" parameterType="sdEvent" resultType="hashmap">

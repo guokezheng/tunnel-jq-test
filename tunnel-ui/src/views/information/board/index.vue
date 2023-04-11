@@ -809,6 +809,7 @@ export default {
           var Item_No = Item_Start + length + "<r><n>";
           var value = "";
           content += Item_No;
+          console.log(content,"contentcontentcontent")
           for (var i = 0; i < this.contentList.length; i++) {
             value = ("000" + i).slice(-3);
             content += Item_Content + value + "=";
@@ -832,8 +833,9 @@ export default {
             if (i + 1 != this.contentList.length) {
               content += "<r><n>";
             }
-            console.log(content, "content");
           }
+          console.log(content, "content");
+
           let protocolType = "GUANGDIAN_V33";
           let deviceld = this.checkedCities.toString();
           uploadBoardEditInfo(deviceld, protocolType, content).then(
@@ -1350,7 +1352,10 @@ export default {
 }
 ::v-deep .vue-treeselect__placeholder,
 .vue-treeselect__single-value {
-  line-height: 3vh;
+  line-height: 4vh;
+}
+::v-deep .vue-treeselect--has-value .vue-treeselect__input{
+  vertical-align: baseline;
 }
 .huiduButton {
   background: transparent;

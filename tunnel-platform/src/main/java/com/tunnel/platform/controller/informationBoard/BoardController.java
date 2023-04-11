@@ -340,6 +340,9 @@ public class BoardController extends BaseController {
                 if (flag) {
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "发送的内容包含不恰当的关键字，请修改后重试！");
                 } else {
+                    parameters = parameters.replaceAll("\n", "<n>");
+                    parameters = parameters.replaceAll("\r", "<r>");
+                    iotBoardReleaseLog.setReleaseNewContent(parameters);
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
                 }
                 iotBoardReleaseLog.setReleaseStatus("1");

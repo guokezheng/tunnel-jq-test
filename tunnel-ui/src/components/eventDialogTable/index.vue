@@ -567,8 +567,8 @@ export default {
   text-overflow: ellipsis;
 }
 .iconBox{
-  width: 16px; 
-  height: 16px; 
+  width: 16px;
+  height: 16px;
   display: flex;
   justify-content: center;
   align-items: center;

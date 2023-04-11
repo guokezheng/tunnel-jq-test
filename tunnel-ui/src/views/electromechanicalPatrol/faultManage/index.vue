@@ -37,21 +37,6 @@
         :model="queryParams"
         label-width="75px"
       >
-        <!--        <el-form-item label="故障类型" prop="faultType">
-          <el-select
-            v-model="queryParams.faultType"
-            placeholder="请选择故障类型"
-            clearable
-            size="small"
-          >
-            <el-option
-              v-for="dict in faultTypeOptions"
-              :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            />
-          </el-select>
-        </el-form-item>-->
         <el-form-item
           label="故障来源"
           prop="faultEscalationType"
@@ -231,11 +216,6 @@
 
 
 
-
-
-      <!--<el-table-column label="故障代码" align="center" prop="faultCode" />-->
-
-
       <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
           <dict-tag
@@ -244,13 +224,6 @@
           />
         </template>
       </el-table-column>
-      <!--<el-table-column label="故障描述" align="center" prop="faultDescription" />-->
-      <!-- <el-table-column label="状态" align="center" prop="faultStatus" >
-        <template slot-scope="scope">
-          <dict-tag :options="fault_status_list" :value="scope.row.faultStatus"/>
-        </template>
-      </el-table-column> -->
-
       <el-table-column
         label="操作"
         align="center"
@@ -394,16 +367,6 @@
               </el-form-item>
             </el-col>
 
-            <!--            <el-col :span="8">
-              <el-form-item label="故障来源" prop="faultSource">
-                <el-input
-                  :disabled="disstate"
-                  v-model="form.faultSource"
-                  placeholder="请输入发现源"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>-->
             <el-col :span="8">
               <el-form-item label="发现时间" prop="faultFxtime">
                 <el-date-picker
@@ -655,19 +618,23 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="record" width="70%">
+    <el-dialog  :title="titleHistory"
+                :visible.sync="record"
+                width="70%"
+                class = "hitchHistoryDialog"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div style="text-align: center; font-size: 18px">故障检修记录</div>
+<!--      <div style="text-align: center; font-size: 18px">故障检修记录</div>-->
       <div
         class="card"
         v-show="news.length > 0"
         v-for="(item, index) in news"
         :key="index"
       >
-        <div class="card-col" style="font-size: 16px">
+        <div class="card-col" style="font-size: 0.7vw;color: #05AAFD;">
           <div>
             巡检时间:
             <span>{{ item.xcTime }}</span>
@@ -681,7 +648,7 @@
             <span>{{ item.userName }}</span>
           </div>
         </div>
-        <div class="card-col" style="font-size: 16px">
+        <div class="card-col" style="font-size: 0.7vw;color: #05AAFD;">
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -695,22 +662,22 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
           <div>
             设备运行状态:
             <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
-          <div class="col-test">(检修时检测情况)</div>
+          <div class="col-test" style ="font-size: 0.7vw;color: #05AAFD;">(检修时检测情况)</div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>
           </div>
-          <div class="col-test">(检修时检测情况)</div>
+          <div class="col-test"style ="font-size: 0.7vw;color: #05AAFD;">(检修时检测情况)</div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
           现场图片:
           <div v-for="pic in item.iFileList">
             <img :src="pic.imgUrl" :title="pic.imgName" />
@@ -718,7 +685,7 @@
         </div>
       </div>
       <div v-if="news.length == 0">
-        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;font-size: 0.7vw;color: #05AAFD;">
           暂无记录
         </div>
       </div>
@@ -806,6 +773,7 @@ export default {
       //巡查班组
       bzData: {},
       title: "",
+      titleHistory:"",
       // 是否显示弹出层
       open: false,
       //故障类型
@@ -1022,7 +990,7 @@ export default {
       });
       setTimeout(() => {
         loading.close();
-      }, 500);
+      }, 300);
     },
 
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
@@ -1613,6 +1581,7 @@ export default {
           }
         }
       });
+      this.titleHistory = "检修记录";
     },
     // 关闭弹窗
     close() {
@@ -1668,7 +1637,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 1000);
+      }, 700);
     },
 
     publishForm() {
@@ -1713,7 +1682,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 500);
+      }, 300);
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -1825,6 +1794,17 @@ export default {
 .hitchDialog {
   ::v-deep .el-dialog__body {
     height: 70vh !important;
+    overflow: auto !important;
+  }
+  ::v-deep .el-card {
+    margin-bottom: 10px !important;
+    width: 100%;
+  }
+}
+
+.hitchHistoryDialog {
+  ::v-deep .el-dialog__body {
+    max-height: 70vh !important;
     overflow: auto !important;
   }
   ::v-deep .el-card {

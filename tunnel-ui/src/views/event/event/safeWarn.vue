@@ -1185,12 +1185,12 @@
       :before-close="handleCloseImg"
     >
       <img :src="alongImgUrl" style="width: 100%" />
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleImg = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisibleImg = false"
           >确 定</el-button
         >
-      </span>
+      </span> -->
     </el-dialog>
     <!-- 复核详情展示 -->
     <el-dialog

@@ -63,6 +63,19 @@ public class SdEventHandle extends BaseEntity
     @ApiModelProperty("历史条数")
     private String flowNum;
 
+    /**
+     * 预案名称
+     */
+    private String reserveName;
+
+    public String getReserveName() {
+        return reserveName;
+    }
+
+    public void setReserveName(String reserveName) {
+        this.reserveName = reserveName;
+    }
+
     public String getFlowNum() {
         return flowNum;
     }

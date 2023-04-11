@@ -2,14 +2,14 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-10 11:16:37
+ * @LastEditTime: 2023-04-11 17:16:08
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
   <div class="app-container dispatchAss">
     <div class="tunnelBox3">
-      <iframe
+      <!-- <iframe
         name="tuniframe"
         id="miframe"
         class="map3D"
@@ -18,7 +18,7 @@
         allowfullscreen="true"
         allow="autoplay"
         src="http://106.120.201.126:14712/dashboard"
-      ></iframe>
+      ></iframe> -->
     </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>
@@ -137,8 +137,8 @@
                   <div>{{ getDirection(eventForm.direction) }}</div>
                 </div>
                 <div>
-                  <div>影响车道：</div>
-                  <div>{{ eventForm.laneNo }} 车道</div>
+                  <div style="display: flex;justify-content: center;align-items: center;">影响车道：</div>
+                  <div>{{ eventForm.laneNoName }}</div>
                 </div>
                 <div>
                   <div>桩号：</div>
@@ -238,20 +238,21 @@
                     <span class="topCircle"></span>
                   </div>
                   <div class="menuBox">
-                    <div
-                      class="type"
-                      :style="{
-                        padding: item.flowContent
-                          ? item.flowContent.toString().length > 2
-                            ? '8px'
-                            : '15px 12px'
-                          : '',
-                      }"
-                      v-if="item.flowContent"
-                      :title="item.flowContent"
-                    >
-                      {{ item.flowContent }}
-                    </div>
+                    <el-tooltip class="item" effect="dark" :content="item.flowContent" placement="right">
+                      <div
+                        class="type"
+                        :style="{
+                          padding: item.flowContent
+                            ? item.flowContent.toString().length > 2
+                              ? '8px'
+                              : '15px 12px'
+                            : '',
+                        }"
+                        v-if="item.flowContent"
+                      >
+                        {{ item.flowContent }}
+                      </div>
+                    </el-tooltip>
                     <div 
                       v-show="getShow(item,index) == false && index != '0'" 
                       class="yijian" @click="getYiJian(item)"
@@ -2460,11 +2461,11 @@ display: none;
               }
             }
             .type {
-              width: 50px;
+              width: 65px;
               height: 50px;
               overflow: hidden;
-              // background: rgba($color: #084e84, $alpha: 0.6);
-              // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
+              text-overflow: ellipsis;
+              white-space: nowrap;
               text-align: center;
             }
             .yijian {

@@ -167,6 +167,7 @@
                   size="small"
                   disabled
                   style="width: calc(100% - 10px)"
+                  @change="getReservePlanData"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -237,6 +238,7 @@
                       clearable
                       size="small"
                       style="width: 100%"
+                      @change="getReservePlanData"
                     >
                       <el-option
                         v-for="item in directionList"
@@ -1019,7 +1021,9 @@ export default {
         if(this.ReservePlanList.length > 0){
           this.eventFormDetail.currencyId = this.ReservePlanList[0].id
         }else{
-          this.$modal.msgWarning("暂无相关预案");
+          if(this.eventFormDetail.eventState == '0'){
+            this.$modal.msgWarning("暂无相关预案");
+          }
         }
       })
     },

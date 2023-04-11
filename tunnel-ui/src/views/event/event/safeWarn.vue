@@ -358,6 +358,7 @@
                   size="small"
                   disabled
                   style="width: calc(100% - 10px)"
+                  @change="getReservePlanData"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -428,6 +429,7 @@
                       clearable
                       size="small"
                       style="width: 100%"
+                      @change="getReservePlanData"
                     >
                       <el-option
                         v-for="item in directionList"
@@ -554,7 +556,7 @@
                 <el-form-item prop="reviewRemark">
                   <el-checkbox-group v-model="eventFormDetail.reviewRemark" class="checkBox">
                     <el-checkbox-button label="系统误报" value="系统误报"></el-checkbox-button>
-                    <el-checkbox-button label="误报或涉事车俩已驶离" value="误报或涉事车俩已驶离"></el-checkbox-button>
+                    <el-checkbox-button label="误报或涉事车辆已驶离" value="误报或涉事车辆已驶离"></el-checkbox-button>
                     <el-checkbox-button label="无法复核事发情况" value="无法复核事发情况"></el-checkbox-button>
                     <el-checkbox-button label="其他" value="其他"></el-checkbox-button>
                   </el-checkbox-group>
@@ -1524,7 +1526,9 @@ export default {
         if(this.ReservePlanList.length > 0){
           this.eventFormDetail.currencyId = this.ReservePlanList[0].id
         }else{
-          this.$modal.msgWarning("暂无相关预案");
+          if(this.eventFormDetail.eventState == '0'){
+            this.$modal.msgWarning("暂无相关预案");
+          }
         }
       })
     },

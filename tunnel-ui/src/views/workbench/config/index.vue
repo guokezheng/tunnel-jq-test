@@ -664,60 +664,6 @@
             <div class="chezhiDrawerInfo">
               <div class="chezhiName">车道:</div>
               <el-select
-                v-model="chezhiForm0.lane"
-                size="small"
-                multiple
-                collapse-tags
-                class="chezhiLaneSelect"
-              >
-                <el-option
-                  v-for="item in chezhiLaneList"
-                  :key="item.laneId"
-                  :label="item.laneName"
-                  :value="item.laneId"
-                />
-              </el-select>
-              <div class="chezhiName">状态:</div>
-              <el-select
-                v-model="chezhiForm0.state"
-                size="small"
-                class="chezhiStateSelect"
-              >
-                <el-option
-                  v-for="item in chezhiStateList"
-                  :key="item.Id"
-                  :value="item.deviceState"
-                  :label="item.stateName"
-                >
-                  <div style="display: flex; align-items: center">
-                    <el-image
-                      :src="item.url[0]"
-                      style="width: 20px; height: 20px"
-                    ></el-image>
-                    <el-image
-                      :src="item.url[1]"
-                      style="width: 20px; height: 20px"
-                    ></el-image>
-                    <div style="margin-left: 4px">{{ item.stateName }}</div>
-                  </div>
-                </el-option>
-              </el-select>
-              <el-button
-                class="chezhiControlButton"
-                @click="chezhiControl(0)"
-                :disabled="chezhiDisabled"
-                v-hasPermi="['workbench:dialog:save']"
-              >
-                控制
-              </el-button>
-            </div>
-
-            <div class="chezhiDrawerDirection">
-              {{ directionList[1].dictLabel }}-车道指示器
-            </div>
-            <div class="chezhiDrawerInfo">
-              <div class="chezhiName">车道:</div>
-              <el-select
                 v-model="chezhiForm1.lane"
                 size="small"
                 multiple
@@ -759,6 +705,60 @@
               <el-button
                 class="chezhiControlButton"
                 @click="chezhiControl(1)"
+                :disabled="chezhiDisabled"
+                v-hasPermi="['workbench:dialog:save']"
+              >
+                控制
+              </el-button>
+            </div>
+
+            <div class="chezhiDrawerDirection">
+              {{ directionList[1].dictLabel }}-车道指示器
+            </div>
+            <div class="chezhiDrawerInfo">
+              <div class="chezhiName">车道:</div>
+              <el-select
+                v-model="chezhiForm2.lane"
+                size="small"
+                multiple
+                collapse-tags
+                class="chezhiLaneSelect"
+              >
+                <el-option
+                  v-for="item in chezhiLaneList"
+                  :key="item.laneId"
+                  :label="item.laneName"
+                  :value="item.laneId"
+                />
+              </el-select>
+              <div class="chezhiName">状态:</div>
+              <el-select
+                v-model="chezhiForm2.state"
+                size="small"
+                class="chezhiStateSelect"
+              >
+                <el-option
+                  v-for="item in chezhiStateList"
+                  :key="item.Id"
+                  :value="item.deviceState"
+                  :label="item.stateName"
+                >
+                  <div style="display: flex; align-items: center">
+                    <el-image
+                      :src="item.url[0]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <el-image
+                      :src="item.url[1]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <div style="margin-left: 4px">{{ item.stateName }}</div>
+                  </div>
+                </el-option>
+              </el-select>
+              <el-button
+                class="chezhiControlButton"
+                @click="chezhiControl(2)"
                 :disabled="chezhiDisabled"
                 v-hasPermi="['workbench:dialog:save']"
               >
@@ -4423,11 +4423,11 @@ export default {
       // 一键车指状态下拉框
       chezhiStateList: [],
       // 一键车道指示器表单
-      chezhiForm0: {
+      chezhiForm1: {
         lane: [],
         state: "",
       },
-      chezhiForm1: {
+      chezhiForm2: {
         lane: [],
         state: "",
       },

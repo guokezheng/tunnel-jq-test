@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-08 11:37:34
+ * @LastEditTime: 2023-04-11 16:34:19
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -234,13 +234,6 @@
             @click="chooseStrategyInfo(scope.row)"
             >配置策略
           </el-button>
-          <!--          <el-button-->
-          <!--            v-hasPermi="['business:plan:remove']"-->
-          <!--            size="mini"-->
-          <!--            class="tableBlueButtton"-->
-          <!--            @click="openWorkbench(scope.row)"-->
-          <!--            >预览-->
-          <!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -1043,6 +1036,13 @@ export default {
         isControl: 1,
       },
       retrievalRuleList: [],
+      maskOptions : {
+        lock: true,
+        // text: 'Loading',
+        // spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.strategy-dialog',
+      },
     };
   },
   created() {
@@ -1092,16 +1092,10 @@ export default {
   },
   methods: {
     openFullScreen2() {
-      const loading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.strategy-dialog',
-      });
-      setTimeout(() => {
-        loading.close();
-      }, 2000);
+      const Loading = this.$loading(this.maskOptions);
+      setTimeout(()=>{
+        Loading.close();
+      },1200)
     },
     getRules(){
       this.getDicts("sd_device_retrieval_rule").then((response) => {
@@ -1536,8 +1530,6 @@ export default {
      }, */
     // 配置策略
     async chooseStrategyInfo(row) {
-      
-      this.openFullScreen2();
       this.getEquipmentType();
       this.reserveId = row.id;
       this.currentClickData = row;
@@ -1547,7 +1539,7 @@ export default {
       getReservePlanProcess(this.reserveId).then((res) => {
         this.planTypeIdList = res.data;
         this.getRules();
-        console.log(this.planTypeIdList, "编辑数据");
+        this.openFullScreen2();
         if (this.planTypeIdList.length == 0) {
           this.planTypeIdList = [
             {
@@ -1631,7 +1623,6 @@ export default {
               //请求广播音频列表数据
               if (brr.eqTypeId == 22) {
                 brr.state = brr.state;
-                console.log(brr.state, "asdadasdasdas");
                 this.getAudioFileListData(brr.equipments, i, j);
               }
             }
@@ -2061,7 +2052,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
+      // this.queryParams.pageNum = 1;
       this.$refs.planTable.clearSelection();
       this.getList();
     },

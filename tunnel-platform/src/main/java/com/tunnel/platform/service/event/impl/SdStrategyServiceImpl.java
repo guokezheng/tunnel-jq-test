@@ -811,8 +811,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 job.setMisfirePolicy("1");
                 // 是否并发执行（0允许 1禁止）
                 job.setConcurrent("0");
-                // 状态（0正常 1暂停）
-                job.setStatus("1");
+                if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+                    job.setStatus("0");
+                }else{
+                    // 状态（0正常 1暂停）
+                    job.setStatus("1");
+                }
                 sysJobService.insertJob(job);
                 System.out.println(job.getJobId());
                 jobIdList.add(job.getJobId().toString());
@@ -892,8 +896,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     job.setMisfirePolicy("1");
                     // 是否并发执行（0允许 1禁止）
                     job.setConcurrent("0");
-                    // 状态（0正常 1暂停）
-                    job.setStatus("0");
+                    if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+                        job.setStatus("0");
+                    }else{
+                        // 状态（0正常 1暂停）
+                        job.setStatus("1");
+                    }
                     sysJobService.insertJob(job);
                     jobIdList.add(job.getJobId().toString());
                 } catch (Exception e) {
@@ -914,8 +922,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     job.setMisfirePolicy("1");
                     // 是否并发执行（0允许 1禁止）
                     job.setConcurrent("0");
-                    // 状态（0正常 1暂停）
-                    job.setStatus("0");
+                    if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+                        job.setStatus("0");
+                    }else{
+                        // 状态（0正常 1暂停）
+                        job.setStatus("1");
+                    }
                     sysJobService.insertJob(job);
                     jobIdList.add(job.getJobId().toString());
                 } catch (Exception e) {
@@ -984,8 +996,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         job.setMisfirePolicy("1");
         // 是否并发执行（0允许 1禁止）
         job.setConcurrent("0");
-        // 状态（0正常 1暂停）
-        job.setStatus("1");
+        if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+            job.setStatus("0");
+        }else{
+            // 状态（0正常 1暂停）
+            job.setStatus("1");
+        }
         try{
             sysJobService.insertJob(job);
         }catch (Exception ex){

@@ -204,6 +204,7 @@ export default {
       sink: "", //删除/修改
       id: "", //策略id
       strategyForm: {
+        strategyState:null,// 策略状态
         jobRelationId: "", //时间戳
         strategyGroup: 1,
         strategyType: "0", //策略类型
@@ -276,6 +277,7 @@ export default {
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
+        this.strategyForm.strategyState = data.strategyState;
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
@@ -508,6 +510,7 @@ export default {
     },
     // 提交保存方法
     async addStrategyInfoData() {
+      this.strategyForm.id = null;
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });

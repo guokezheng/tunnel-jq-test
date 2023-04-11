@@ -291,6 +291,7 @@ export default {
       viewStrategy: false,
       showCronBox: false,
       strategyForm: {
+        strategyState:null,// 策略状态
         strategyGroup: 1,
         schedulerTime: "", //cron数据
         strategyType: "1", //策略类型
@@ -391,6 +392,7 @@ export default {
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
+        this.strategyForm.strategyState = data.strategyState;
         // this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
         this.strategyForm.schedulerTime = data.schedulerTime;
@@ -599,6 +601,7 @@ export default {
     },
     // 提交保存方法
     async addStrategyInfoData() {
+      this.strategyForm.id = null;
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });

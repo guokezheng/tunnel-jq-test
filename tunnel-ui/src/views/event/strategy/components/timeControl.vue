@@ -259,6 +259,7 @@ export default {
       },
       showCronBox: false,
       strategyForm: {
+        strategyState:null,// 策略状态
         strategyGroup: 1,
         strategyType: "3", //策略类型
         tunnelId: null, //隧道id
@@ -373,6 +374,7 @@ export default {
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
+        this.strategyForm.strategyState = data.strategyState;
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
@@ -505,6 +507,7 @@ export default {
           if (this.sink == "edit") {
             this.updateStrategyInfoData();
           } else {
+
             this.addStrategyInfoData();
           }
         }
@@ -545,8 +548,8 @@ export default {
         }
           item.openState = item.openState.toString();
       });*/
+      this.strategyForm.id = null;
       let params = this.strategyForm;
-
       console.log(params);
       addStrategyInfo(params).then((res) => {
         this.resetForm();

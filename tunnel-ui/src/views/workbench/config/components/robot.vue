@@ -217,6 +217,7 @@
               </div>
             </div>
           </div>
+          <div class="trafficFlowDashed"></div>
           <div class="trafficFlowRight">
             <el-form ref="form" label-width="80px">
               <el-row style="margin-bottom:20px">
@@ -1033,6 +1034,11 @@ export default {
       //   background: #f6b542 linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
       // }
     }
+  }
+  .trafficFlowDashed{
+    width:1px;
+    height: 100%;
+    border: dashed 1px #1eace8;
   }
   .trafficFlowRight {
     .rightButton {

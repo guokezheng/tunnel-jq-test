@@ -5873,6 +5873,7 @@ export default {
       this.dateRange1 = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
+      
       this.queryParams.strategyName = "";
       this.queryParams.tunnelId = "";
       this.queryParams.strategyType = "";
@@ -8747,6 +8748,7 @@ export default {
     strategyPage() {
       //this.$router.push('/strategy/index')
       this.loading = true;
+      this.queryParams.strategyName = ''
       this.strategyVisible = true;
       this.title = "控制策略";
       this.queryParams.pageNum = 1;

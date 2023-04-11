@@ -333,7 +333,7 @@
           <div style = "height:40px">
             <div class="titleRow" style ="width:8%;">序号</div>
             <div class="titleRow" style ="width:12%;">所属隧道</div>
-            <div class="titleRow" style ="width:15%;">设备类型</div>
+            <div class="titleRow" style ="width:15%;">设备/故障类型</div>
             <div class="titleRow" style ="width:20%;">设备名称</div>
             <div class="titleRow" style ="width:30%;">设备位置</div>
             <div class="titleRow" style ="width:15%;">操作</div>
@@ -608,14 +608,14 @@
             </el-col>-->
             <div class="topTxt">{{index+1}}&nbsp;&nbsp;&nbsp;&nbsp;设备巡检点</div>
             <el-col :span="2" style ="margin-top: -34px;margin-left: 37%;width: 50%;">
-              <span style ="width:15%;">{{ pat.tunnelName }}</span><span>{{ pat.eqName }}</span>
+              <span style ="width:15%;">{{ pat.tunnelName }}</span><span style ="width:62%;">{{ pat.eqName }}</span>
             </el-col>
 <!--            <el-col :span="2" style="width: auto;margin-top: -34px;margin-left: 37%;" >
               {{ pat.eqName }}
             </el-col>-->
-            <el-col :span="2" >
+<!--            <el-col :span="2" >
               {{ pat.xcTime }}
-            </el-col>
+            </el-col>-->
           </el-row>
           <el-row>
             <el-col :span="8">

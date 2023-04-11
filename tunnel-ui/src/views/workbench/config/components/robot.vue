@@ -147,12 +147,13 @@
           class="trafficFlowTab"
         >
           <div class="trafficFlowLeft">
-            <div>
+            <div style="width: 100%;height: 190px;">
               <videoPlayer
                 v-if="this.stateForm.hd"
                 :rtsp="this.stateForm.hd"
                 :open="true"
               ></videoPlayer>
+              <img v-else :src="noVideo" style="width: 100%;height: 100%;border: solid 0.5px rgba(255, 255, 255, 0.5) ;"/>
             </div>
             <div style="margin-top: 20px">
               <el-radio-group v-model="commend.type">
@@ -220,7 +221,7 @@
           <div class="trafficFlowDashed"></div>
           <div class="trafficFlowRight">
             <el-form ref="form" label-width="80px">
-              <el-row style="margin-bottom:20px">
+              <el-row style="margin-bottom: 20px">
                 <el-col :span="20">
                   <el-slider
                     v-model="commend.position"
@@ -229,7 +230,9 @@
                   ></el-slider>
                 </el-col>
                 <el-col :span="4">
-                  <span style="padding-left: 10px; line-height: 30px">{{ commend.position }}</span>
+                  <span style="padding-left: 10px; line-height: 30px">{{
+                    commend.position
+                  }}</span>
                 </el-col>
               </el-row>
               <div
@@ -405,7 +408,7 @@
               label-position="right"
             >
               <el-row>
-<!--                <el-col :span="12">
+                <!--                <el-col :span="12">
                   <el-form-item label="主键 id:" prop="id">
                     <el-input
                       v-model="alarmConfigForm.id"
@@ -533,7 +536,7 @@ export default {
       visible: true,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       tab: "trafficFlow",
-
+      noVideo: require("@/assets/image/noVideo.png"),
       commend: {
         type: 1, // 1： 云台   2：相机   3：移动
         chargeIndex: 1, // 充电位置
@@ -588,13 +591,14 @@ export default {
   created() {
     this.getMessage();
     this.findAlarmThresholdConfig();
-
   },
   mounted() {
-    var htmlStr = "<div class='robotButton'/>"
-    this.$nextTick(()=>{
-      document.getElementsByClassName('el-slider__button')[0].insertAdjacentHTML('afterEnd',htmlStr);
-    })
+    var htmlStr = "<div class='robotButton'/>";
+    this.$nextTick(() => {
+      document
+        .getElementsByClassName("el-slider__button")[0]
+        .insertAdjacentHTML("afterEnd", htmlStr);
+    });
   },
   methods: {
     // 查设备详情
@@ -939,6 +943,7 @@ export default {
   display: flex;
   justify-content: space-around;
   .trafficFlowLeft {
+    width:calc(50% - 70px);
     .kongzhiButtons {
       width: 100%;
       height: 95px;
@@ -1035,10 +1040,18 @@ export default {
       // }
     }
   }
-  .trafficFlowDashed{
-    width:1px;
-    height: 100%;
-    border: dashed 1px #1eace8;
+  .trafficFlowDashed {
+    width: 1px;
+    height: 400px;
+    background-image: linear-gradient(
+      to top,
+      #00c8fe 0%,
+      #00c8fe 90%,
+      transparent 90%
+    );
+    background-size: 1px 15px;
+    background-repeat: repeat-y;
+    opacity: 0.5;
   }
   .trafficFlowRight {
     .rightButton {
@@ -1093,7 +1106,6 @@ export default {
   // background: #f6b542 linear-gradient(180deg, #e5a535 0%, #ffbd49 100%) !important;
   float: right;
 }
-
 </style>
 <style lang="scss">
 .rightSwitch {
@@ -1145,7 +1157,7 @@ export default {
 }
 
 .trafficFlowRight .sliderClass {
-    width: 100% !important;
+  width: 100% !important;
   .el-slider__runway {
     width: 100%;
     // background-color: #006784;
@@ -1155,16 +1167,16 @@ export default {
     background: linear-gradient(90deg, #00aded 0%, #007cdd 100%);
   }
 
-  .el-slider__button-wrapper{
-    top:-6px !important;
-    .robotButton{
-      width:24px;
-      height:24px;
+  .el-slider__button-wrapper {
+    top: -6px !important;
+    .robotButton {
+      width: 24px;
+      height: 24px;
       margin: 2px auto;
       background-image: url(../../../../assets/cloudControl/robot.png);
       background-position: center;
       background-repeat: no-repeat;
-      background-size: 100% ;
+      background-size: 100%;
     }
     .el-slider__button {
       width: 10px;
@@ -1172,7 +1184,6 @@ export default {
       border: solid 1px #fff;
       background-color: #ff9300;
       // background-image: url(../../../../assets/cloudControl/robot.png);
-
     }
   }
 }

@@ -172,7 +172,7 @@
                 scope.row.task1 == '待巡检'
                   ? 'yellow'
                   : scope.row.task1 == '巡检中'
-                  ? '#00FF00': '#fff',
+                  ? '#00FF00': '#60BCFD',
             }"
             >{{ scope.row.task1 }}</span
           >

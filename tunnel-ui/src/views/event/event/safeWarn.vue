@@ -654,8 +654,8 @@
                       value="系统误报"
                     ></el-checkbox-button>
                     <el-checkbox-button
-                      label="误报或涉事车俩已驶离"
-                      value="误报或涉事车俩已驶离"
+                      label="误报或涉事车辆已驶离"
+                      value="误报或涉事车辆已驶离"
                     ></el-checkbox-button>
                     <el-checkbox-button
                       label="无法复核事发情况"

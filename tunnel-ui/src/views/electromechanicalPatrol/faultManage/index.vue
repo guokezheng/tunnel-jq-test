@@ -142,6 +142,7 @@
       v-loading="loading"
       :data="listList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       height="62vh"
       class="allTable"
       :row-key="getRowKey"
@@ -286,6 +287,7 @@
     <el-dialog
       :title="title"
       :visible.sync="open"
+      :before-close="cancel"
       width="70%"
       append-to-body
       class="hitchDialog"
@@ -620,6 +622,7 @@
 
     <el-dialog  :title="titleHistory"
                 :visible.sync="record"
+                :before-close="close"
                 width="70%"
                 class = "hitchHistoryDialog"
     >
@@ -980,6 +983,9 @@ export default {
     });
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     openDialogScreen() {
       const loading = this.$loading({
         lock: true,
@@ -1142,6 +1148,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -1586,6 +1593,7 @@ export default {
     // 关闭弹窗
     close() {
       // 关闭弹出层
+      this.$refs.tableFile.clearSelection();
       this.record = false;
     },
     /** 提交按钮 */
@@ -1620,6 +1628,7 @@ export default {
                 this.isClick = false;
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
+                this.$refs.tableFile.clearSelection();
                 this.getList();
               });
             }
@@ -1696,7 +1705,9 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          this.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

@@ -11,10 +11,7 @@
           @click="handleAdd"
           >新增
         </el-button>
-        <el-button
-          size="small"
-          :loading="exportLoading"
-          @click="handleExport"
+        <el-button size="small" :loading="exportLoading" @click="handleExport"
           >导出
         </el-button>
         <el-button size="small" @click="resetQuery" type="primary" plain
@@ -22,7 +19,7 @@
         >
       </el-col>
       <el-col :span="6" :offset="14">
-        <div ref = "main" class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
             placeholder="请输入巡查班组，回车搜索"
             v-model="queryParams.zzjgId"
@@ -93,6 +90,7 @@
       v-loading="loading"
       :data="listList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
       height="70vh"
       :row-key="getRowKey"
@@ -172,11 +170,14 @@
                 scope.row.task1 == '待巡检'
                   ? 'yellow'
                   : scope.row.task1 == '巡检中'
-                  ? '#00FF00': '#60BCFD',
+                  ? '#00FF00'
+                  : '#60BCFD',
             }"
             >{{ scope.row.task1 }}</span
           >
-          <span v-show="scope.row.task2" class="chaoshi">{{ scope.row.task2 }}</span>
+          <span v-show="scope.row.task2" class="chaoshi">{{
+            scope.row.task2
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -233,184 +234,203 @@
       @pagination="getList"
     />
 
-    <el-dialog :title="title" :visible.sync="open" width="70%" class="xjDialog">
+    <el-dialog :title="title" :visible.sync="open" width="70%" class="xjDialog" :before-close="cancel">
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
       <!--      <h1>新增巡检任务</h1>-->
       <el-card>
-      <div class="task">
-        <div class="topTxt" style="margin-bottom: 20px">巡查任务基本信息</div>
-        <div class="tableTopHr" style="display: none"></div>
-        <el-form
-          :inline="true"
-          ref="form"
-          :model="form"
-          :rules="rules"
-          label-width="110px"
-        >
-          <el-row>
-            <el-col :span="8">
-              <el-form-item label="派单人员" prop="dispatcher">
-                <el-input
-                  ref="dispatcher"
-                  disabled="disabled"
-                  v-model="form.dispatcher"
-                  placeholder="（默认当前登录人）"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="派单时间" prop="dispatchTime">
-                <el-date-picker
-                  clearable
-                  size="small"
-                  disabled="disabled"
-                  v-model="form.dispatchTime"
-                  type="datetime"
-                  value-format="yyyy-MM-dd hh:mm:ss"
-                  placeholder="选择派单时间"
-                >
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="所属隧道" prop="tunnelId">
-                <el-select v-model="form.tunnelId" placeholder="请选择所属隧道">
-                  <el-option
-                    v-for="item in eqTunnelData"
-                    :key="item.tunnelId"
-                    :label="item.tunnelName"
-                    :value="item.tunnelId"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="巡查班组" prop="bzId">
-                <el-select
-                  v-model="form.bzId"
-                  placeholder="请选择巡查班组"
-                  id="bzSel"
-                >
-                  <el-option
-                    v-for="item in bzData"
-                    :key="item.deptId"
-                    :label="item.deptName"
-                    :value="item.deptId"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="计划完成时间" prop="endPlantime">
-                <el-date-picker
-                  clearable
-                  :picker-options="forbiddenTime"
-                  size="small"
-                  v-model="form.endPlantime"
-                  type="datetime"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  @change="handleEndTime"
-                  placeholder="选择计划完成时间"
-                >
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="任务名称" prop="taskName">
-                <el-input
-                  type="text"
-                  placeholder="请输入内容"
-                  v-model="form.taskName"
-                >
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="任务描述" prop="taskDescription">
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  placeholder="请输入内容"
-                  v-model="form.taskDescription"
-                >
-                </el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
+        <div class="task">
+          <div class="topTxt" style="margin-bottom: 20px">巡查任务基本信息</div>
+          <div class="tableTopHr" style="display: none"></div>
+          <el-form
+            :inline="true"
+            ref="form"
+            :model="form"
+            :rules="rules"
+            label-width="110px"
+          >
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="派单人员" prop="dispatcher">
+                  <el-input
+                    ref="dispatcher"
+                    disabled="disabled"
+                    v-model="form.dispatcher"
+                    placeholder="（默认当前登录人）"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="派单时间" prop="dispatchTime">
+                  <el-date-picker
+                    clearable
+                    size="small"
+                    disabled="disabled"
+                    v-model="form.dispatchTime"
+                    type="datetime"
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    placeholder="选择派单时间"
+                  >
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="所属隧道" prop="tunnelId">
+                  <el-select
+                    v-model="form.tunnelId"
+                    placeholder="请选择所属隧道"
+                  >
+                    <el-option
+                      v-for="item in eqTunnelData"
+                      :key="item.tunnelId"
+                      :label="item.tunnelName"
+                      :value="item.tunnelId"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="巡查班组" prop="bzId">
+                  <el-select
+                    v-model="form.bzId"
+                    placeholder="请选择巡查班组"
+                    id="bzSel"
+                  >
+                    <el-option
+                      v-for="item in bzData"
+                      :key="item.deptId"
+                      :label="item.deptName"
+                      :value="item.deptId"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="计划完成时间" prop="endPlantime">
+                  <el-date-picker
+                    clearable
+                    :picker-options="forbiddenTime"
+                    size="small"
+                    v-model="form.endPlantime"
+                    type="datetime"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    @change="handleEndTime"
+                    placeholder="选择计划完成时间"
+                  >
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="任务名称" prop="taskName">
+                  <el-input
+                    type="text"
+                    placeholder="请输入内容"
+                    v-model="form.taskName"
+                  >
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="任务描述" prop="taskDescription">
+                  <el-input
+                    type="textarea"
+                    :rows="2"
+                    placeholder="请输入内容"
+                    v-model="form.taskDescription"
+                  >
+                  </el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
       </el-card>
       <el-card>
-      <div class="patrol">
-        <div class="topTxt">巡查点信息</div>
-        <div class="tableTopHr" style="display: none"></div>
-        <div class="button-father">
-          <el-button type="primary" style="height: 15%" @click="show1"
-            >选择巡检点</el-button
-          >
-          <el-button type="primary" style="height: 15%" @click="show2"
-            >选择故障点</el-button
-          >
-          <!--          <el-button type="primary" style="height: 15%" disabled
+        <div class="patrol">
+          <div class="topTxt">巡查点信息</div>
+          <div class="tableTopHr" style="display: none"></div>
+          <div class="button-father">
+            <el-button type="primary" style="height: 15%" @click="show1"
+              >选择巡检点</el-button
+            >
+            <el-button type="primary" style="height: 15%" @click="show2"
+              >选择故障点</el-button
+            >
+            <!--          <el-button type="primary" style="height: 15%" disabled
             >导入巡查计划</el-button
           >-->
-        </div>
-        <div class="box-father">
-          <div style = "height:40px">
-            <div class="titleRow" style ="width:8%;">序号</div>
-            <div class="titleRow" style ="width:12%;">所属隧道</div>
-            <div class="titleRow" style ="width:15%;">设备/故障类型</div>
-            <div class="titleRow" style ="width:20%;">设备名称</div>
-            <div class="titleRow" style ="width:30%;">设备位置</div>
-            <div class="titleRow" style ="width:15%;">操作</div>
           </div>
-          <div class="box" :key="index" v-for="(item, index) in boxList" style ="display:block;height:25px;">
-            <div class="contentTextRow" style ="float: left;">
-              <div class="number" style ="width: 10%;">{{ index + 1 }}</div>
-              <div class="text" style="padding-left: 0px;margin-left: 0px">
-                <div style ="width:12%;">{{ item.tunnel_name }}</div>
-                <div style ="width:15%;margin-left: 30px">{{ item.type_name }}</div>
-                <div style ="width:20%;margin-left:40px">{{ item.eq_name }}</div>
-                <div style ="width:30%;margin-left: 62px">{{ item.pile }}</div>
+          <div class="box-father">
+            <div style="height: 40px">
+              <div class="titleRow" style="width: 8%">序号</div>
+              <div class="titleRow" style="width: 12%">所属隧道</div>
+              <div class="titleRow" style="width: 15%">设备/故障类型</div>
+              <div class="titleRow" style="width: 20%">设备名称</div>
+              <div class="titleRow" style="width: 30%">设备位置</div>
+              <div class="titleRow" style="width: 15%">操作</div>
+            </div>
+            <div
+              class="box"
+              :key="index"
+              v-for="(item, index) in boxList"
+              style="display: block; height: 25px"
+            >
+              <div class="contentTextRow" style="float: left">
+                <div class="number" style="width: 10%">{{ index + 1 }}</div>
+                <div class="text" style="padding-left: 0px; margin-left: 0px">
+                  <div style="width: 12%">{{ item.tunnel_name }}</div>
+                  <div style="width: 15%; margin-left: 30px">
+                    {{ item.type_name }}
+                  </div>
+                  <div style="width: 20%; margin-left: 40px">
+                    {{ item.eq_name }}
+                  </div>
+                  <div style="width: 30%; margin-left: 62px">
+                    {{ item.pile }}
+                  </div>
                 </div>
-                </div>
-
-            <template @slot="scop">
-              <div
-                :class="index == 0 ? 'disabledClass' : 'top'"
-                @click="clickUP(index, item)"
-                style="float: left; margin-left: -40px"
-              >
-                <i class="el-icon-top"></i>
               </div>
-            </template>
-            <div
-              :class="boxList.length == index + 1 ? 'disabledClass' : 'bottom'"
-              @click="clickDown(index, item)"
-              style="float: left"
-            >
-              <i class="el-icon-bottom"></i>
-            </div>
-            <div
-              class="delete"
-              style="float: left"
-              @click="clickDelete(index, item)"
-            >
-              <i class="el-icon-delete-solid"></i>
+
+              <template @slot="scop">
+                <div
+                  :class="index == 0 ? 'disabledClass' : 'top'"
+                  @click="clickUP(index, item)"
+                  style="float: left; margin-left: -40px"
+                >
+                  <i class="el-icon-top"></i>
+                </div>
+              </template>
+              <div
+                :class="
+                  boxList.length == index + 1 ? 'disabledClass' : 'bottom'
+                "
+                @click="clickDown(index, item)"
+                style="float: left"
+              >
+                <i class="el-icon-bottom"></i>
+              </div>
+              <div
+                class="delete"
+                style="float: left"
+                @click="clickDelete(index, item)"
+              >
+                <i class="el-icon-delete-solid"></i>
+              </div>
             </div>
           </div>
+          <div class="dialog-footer">
+            <el-button class="zancunButton" @click="save">暂存</el-button>
+            <el-button
+              style="display: none"
+              class="closeButton"
+              @click="abolish"
+              >废止</el-button
+            >
+            <el-button class="submitButton" @click="release">发布</el-button>
+          </div>
         </div>
-        <div class="dialog-footer">
-          <el-button class="zancunButton" @click="save">暂存</el-button>
-          <el-button style="display: none" class="closeButton" @click="abolish"
-            >废止</el-button
-          >
-          <el-button class="submitButton" @click="release">发布</el-button>
-        </div>
-      </div>
       </el-card>
     </el-dialog>
     <el-dialog :visible.sync="isShow1" width="50%" class="show">
@@ -615,6 +635,7 @@
     <!--巡查任务及执行记录单-->
     <el-dialog
       :visible.sync="record"
+      :before-close="closeRecord"
       width="70%"
       title="巡检任务及执行记录单"
       class="xjDialog"
@@ -683,11 +704,11 @@
           <!--            <el-col :span="2" style="width: auto;margin-top: -34px;margin-left: 37%;" >
               {{ pat.eqName }}
             </el-col>-->
-<!--            <el-col :span="2" >
+          <!--            <el-col :span="2" >
             {{ pat.xcTime }}
             </el-col>-->
         </el-row>
-        <el-row style="margin-left: 3em;margin-top: 10px;">
+        <el-row style="margin-left: 3em; margin-top: 10px">
           <el-col :span="8">
             <div>设备描述：</div>
             <span>{{ pat.eqFaultDescription }}</span>
@@ -715,7 +736,7 @@
           <el-col :span="8">
             <div>现场照片：</div>
             <div v-for="(pic, index) in pat.iFileList" :key="index">
-              <img :src="pic.imgUrl"   :title="pic.imgName" />
+              <img :src="pic.imgUrl" :title="pic.imgName" />
             </div>
           </el-col>
         </el-row>
@@ -755,29 +776,30 @@
       <div class="card">
         <el-row>
           <el-col :span="4">
-          <span style="color: #05AAFD;">序号</span>
+            <span style="color: #05aafd">序号</span>
           </el-col>
           <el-col :span="4">
-          <span style="color: #05AAFD;">操作类型</span>
+            <span style="color: #05aafd">操作类型</span>
           </el-col>
           <el-col :span="8">
-          <span style="color: #05AAFD;"> 操作记录</span>
+            <span style="color: #05aafd"> 操作记录</span>
           </el-col>
           <el-col :span="8">
-          <span style="color: #05AAFD;"> 操作时间</span>
+            <span style="color: #05aafd"> 操作时间</span>
           </el-col>
         </el-row>
         <el-row
           v-show="taskOpt.length > 0"
           v-for="(item, index) in taskOpt"
-            :key="index">
+          :key="index"
+        >
           <el-col :span="4">
-            <span>{{index+1>9?index+1:index+1}}</span>
+            <span>{{ index + 1 > 9 ? index + 1 : index + 1 }}</span>
           </el-col>
           <el-col :span="4">
             <span>{{ item.optType }}</span>
           </el-col>
-          <el-col :span="8" style ="text-align: center!important;">
+          <el-col :span="8" style="text-align: center !important">
             <span> {{ item.tunnelName }} / {{ item.optPersonId }}</span>
           </el-col>
           <el-col :span="8">
@@ -1010,9 +1032,7 @@ export default {
       form: {},
       // 表单校验指派巡查班组
       rules: {
-        bzId: [
-          { required: true, message: "请选择巡查班组", trigger: "blur" },
-        ],
+        bzId: [{ required: true, message: "请选择巡查班组", trigger: "blur" }],
         taskName: [
           {
             required: true,
@@ -1064,6 +1084,14 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    closeRecord() {
+      // 关闭弹出层
+      this.$refs.tableFile.clearSelection();
+      this.record = false;
+    },
+    handleRowClick(row) {
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       // console.log(row,"row")
@@ -1429,6 +1457,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
 
@@ -1668,7 +1697,9 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          this.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -1806,6 +1837,7 @@ export default {
                 this.isClick = false;
                 this.$modal.msgSuccess("暂存成功");
                 this.open = false;
+                this.$refs.tableFile.clearSelection();
                 this.getList();
               });
             }
@@ -1815,6 +1847,7 @@ export default {
                 this.isClick = false;
                 this.$modal.msgSuccess("暂存成功");
                 this.open = false;
+                this.$refs.tableFile.clearSelection();
                 this.getList();
               });
             }
@@ -1840,7 +1873,6 @@ export default {
         this.dialogSelection = [];
       },
     },
-
   },
 };
 </script>
@@ -1989,10 +2021,10 @@ img {
   margin-top: 20px;
   margin-left: -20px;
 }
-  ::v-deep .el-card {
-    margin-bottom: 10px !important;
-    background: #0D203C !important;
-  }
+::v-deep .el-card {
+  margin-bottom: 10px !important;
+  background: #0d203c !important;
+}
 .task {
   //margin-bottom: 30px;
   .el-row {
@@ -2281,9 +2313,9 @@ img {
     color: #fff;
   }
 }
-.chaoshi{
-  background: rgba(255,44,44,.28);
-  color:#ff2c2c;
+.chaoshi {
+  background: rgba(255, 44, 44, 0.28);
+  color: #ff2c2c;
   padding: 5px;
   font-size: 12px;
   margin-left: 4px;

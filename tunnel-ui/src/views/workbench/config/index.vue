@@ -745,11 +745,11 @@
                 >
                   <div style="display: flex; align-items: center">
                     <el-image
-                      :src="item.url[0]"
+                      :src="item.url[1]"
                       style="width: 20px; height: 20px"
                     ></el-image>
                     <el-image
-                      :src="item.url[1]"
+                      :src="item.url[0]"
                       style="width: 20px; height: 20px"
                     ></el-image>
                     <div style="margin-left: 4px">{{ item.stateName }}</div>

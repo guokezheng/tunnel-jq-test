@@ -175,6 +175,7 @@
           v-loading="loading"
           :data="strategyList"
           @selection-change="handleSelectionChange"
+          @row-click="handleRowClick"
           :header-cell-style="{ 'text-align': 'center' }"
           height="62vh"
           class="allTable"
@@ -808,6 +809,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+    // 点击某一行，将其选中(表格)
+    handleRowClick(row, i, a) {
+      this.$refs.tableFile1.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -865,9 +870,10 @@ export default {
           this.$refs.timeControl.resetForm();
           break;
       }
-      console.log(this.strategyForm.strategyType);
+      console.log(this.strategyForm.strategyType,"0000000000");
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
+      this.$refs.tableFile1.clearSelection();
       this.getList();
     },
     changeStrategyState(row) {
@@ -1323,6 +1329,7 @@ export default {
 
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
       const rlIds = row.id || this.rlIds;
       const jobRelationId = row.jobRelationId;
@@ -1346,6 +1353,7 @@ export default {
           });
         })
         .catch(function () {
+          that.$refs.tableFile1.clearSelection();
         });
       this.model = "1";
     },

@@ -634,7 +634,7 @@
         v-for="(item, index) in news"
         :key="index"
       >
-        <div class="card-col" style="font-size: 0.7vw;color: #05AAFD;">
+        <div class="card-col" style="font-size: 15px;color: #05AAFD;">
           <div>
             巡检时间:
             <span>{{ item.xcTime }}</span>
@@ -648,7 +648,7 @@
             <span>{{ item.userName }}</span>
           </div>
         </div>
-        <div class="card-col" style="font-size: 0.7vw;color: #05AAFD;">
+        <div class="card-col" style="font-size: 15px;color: #05AAFD;">
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -662,22 +662,22 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
           <div>
             设备运行状态:
             <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
-          <div class="col-test" style ="font-size: 0.7vw;color: #05AAFD;">(检修时检测情况)</div>
+          <div class="col-test" style ="font-size: 15px;color: #05AAFD;">(检修时检测情况)</div>
         </div>
-        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>
           </div>
-          <div class="col-test"style ="font-size: 0.7vw;color: #05AAFD;">(检修时检测情况)</div>
+          <div class="col-test"style ="font-size: 15px;color: #05AAFD;">(检修时检测情况)</div>
         </div>
-        <div class="card-cols" style="font-size: 0.7vw;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
           现场图片:
           <div v-for="pic in item.iFileList">
             <img :src="pic.imgUrl" :title="pic.imgName" />
@@ -685,7 +685,7 @@
         </div>
       </div>
       <div v-if="news.length == 0">
-        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;font-size: 0.7vw;color: #05AAFD;">
+        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;font-size: 15px;color: #05AAFD;">
           暂无记录
         </div>
       </div>

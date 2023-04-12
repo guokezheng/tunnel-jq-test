@@ -61,6 +61,26 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="防控类型" prop="prevControlType">
+          <el-select
+            v-model="queryParams.prevControlType"
+            placeholder="请选择防控类型"
+            clearable
+            size="small"
+            style="width: 325px"
+            @change="$forceUpdate()"
+          >
+            <el-option
+              v-for="item in controlTypeOptions"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+
+
+
         <el-form-item
           label="所属隧道"
           prop="tunnelId"
@@ -1316,6 +1336,7 @@ export default {
   data() {
     return {
       strategyList: [], //策略列表
+      controlTypeOptions: [],//防控类型
       pickerOptionsStart: {
         // 时间不能大于当前时间
         disabledDate: (time) => {
@@ -1520,6 +1541,7 @@ export default {
         pageSize: 16,
         tunnelId: null,
         eventTypeId: null,
+        prevControlType:null,
         eventTitle: null,
         eventTime: null,
         eventState: [],
@@ -1627,6 +1649,7 @@ export default {
       this.manageStationSelect = newVal;
       this.queryParams.tunnelId = newVal;
       this.queryParams.eventTypeId = "";
+      this.queryParams.prevControlType = "";
       this.getList();
       this.getTunnelLane();
     },
@@ -1672,6 +1695,11 @@ export default {
     // 事件等级
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
+    });
+
+    //防控类型
+    this.getDicts("prev_control_type").then((response) => {
+      this.controlTypeOptions = response.data;
     });
     // 管理机构
     toll().then((res) => {
@@ -2510,6 +2538,7 @@ export default {
         currencyId: "",
         tunnelId: null,
         eventTypeId: null,
+        prevControlType:null,
         eventTitle: null,
         eventTime: null,
         eventState: null,
@@ -2616,6 +2645,9 @@ export default {
       this.dateRange = [];
       // this.tunnelList = [];
       this.queryParams.eventTypeId = "";
+      this.queryParams.tunnelId = null;
+      this.queryParams.prevControlType = null;
+      this.queryParams.fuzzySearch = "";
       this.fuzzySearch1 = "";
       this.checkBoxEventState = [];
       // this.resetForm("queryForm");
@@ -2848,7 +2880,7 @@ export default {
       }
     }
     .bottom {
-      height: 24%; 
+      height: 24%;
       display: flex;
       .eventBox {
         display: flex;
@@ -2861,7 +2893,7 @@ export default {
           font-size: 0.675rem;
           font-weight: 600;
           color: #fff;
-          
+
           // padding:5px 10px;
           width: 60%;
           // height: 3vh;

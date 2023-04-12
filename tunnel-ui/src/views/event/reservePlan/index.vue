@@ -954,6 +954,8 @@ export default {
         strategyId: null,
         tunnelId: null,
         category: null,
+        direction:null,
+        eventGrade:null,
       },
       // 表单校验
       rules: {

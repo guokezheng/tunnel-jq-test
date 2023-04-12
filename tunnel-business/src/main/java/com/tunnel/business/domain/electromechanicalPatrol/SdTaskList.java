@@ -44,7 +44,7 @@ public class SdTaskList extends BaseEntity
 
     /** tunnel对象 */
     @Excels({
-            @Excel(name = "隧道名称", targetAttr = "tunnelName"),
+            @Excel(name = "所属隧道", targetAttr = "tunnelName"),
     })
     private SdTunnels tunnelName;
 
@@ -107,8 +107,8 @@ public class SdTaskList extends BaseEntity
     @Excel(name = "巡查班组")
     private String bzName;
 
-    /** 计划完成时间 */
-    @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    /** 预完成时 */
+    @Excel(name = "预完成时", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endPlantime;
 

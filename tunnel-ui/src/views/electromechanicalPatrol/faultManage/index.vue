@@ -16,7 +16,7 @@
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入故障位置、故障描述、所属隧道，回车搜索"
+            placeholder="请输入故障位置、故障描述，回车搜索"
             v-model="queryParams.faultDescription"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -37,6 +37,36 @@
         :model="queryParams"
         label-width="75px"
       >
+        <el-form-item label="所属隧道" prop="tunnelId">
+          <el-select
+            v-model="queryParams.tunnelId"
+            placeholder="请选择所属隧道"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in tunnelList"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="发布状态" prop="faultStatus">
+          <el-select
+            v-model="queryParams.faultStatus"
+            placeholder="请选择发布状态"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in faultStatusOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item
           label="故障来源"
           prop="faultEscalationType"
@@ -215,7 +245,23 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="发布状态" align="center" prop="fbState">
+        <template slot-scope="scope">
+          <span
+            :style="{
+              color:
+               getFaultStatue(scope.row.fbState) == '未发布'
+                  ? 'yellow'
+                  : '#00FF00',
+            }"
+          >{{ getFaultStatue(scope.row.fbState) }}</span
+          >
 
+
+
+<!--          <span>{{ getFaultStatue(scope.row.fbState) }}</span>-->
+        </template>
+      </el-table-column>
 
       <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
@@ -382,6 +428,7 @@
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择发现时间"
                   style="width: 100%"
+                  popper-class="elDatePicker"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -747,6 +794,8 @@ export default {
       faultLevelOptions: [],
       faultTypeOptions: [],
       faultEscalationTypeOptions: [],
+      // 发布状态字典
+      faultStatusOptions: [],
       // 日期范围
       dateRange: [],
       //检修记录弹出窗
@@ -946,6 +995,11 @@ export default {
     this.getDicts("sd_monitor_state").then((data) => {
       this.eqStatusList = data.data;
     });
+    // 发布状态
+    this.getDicts("fault_status").then((response) => {
+      this.faultStatusOptions = response.data;
+    });
+
 
     //故障类型
     this.getDicts("fault_type").then((response) => {
@@ -1107,6 +1161,14 @@ export default {
         }
       }
     },
+
+    getFaultStatue(num) {
+      for (let item of this.faultStatusOptions) {
+        if (num == item.dictValue) {
+          return item.dictLabel;
+        }
+      }
+    },
     eqStatusGet(e) {
       getEquipmentInfo({ eqId: e }).then((response) => {
         this.form.faultLocation = "";
@@ -1160,6 +1222,7 @@ export default {
         faultSource: null,
         faultFxtime: null,
         faultCxtime: null,
+        faultStatus: null,
         eqTunnelId: null,
         faultTbr: null,
         faultTbtime: null,
@@ -1170,8 +1233,6 @@ export default {
         falltRemoveStatue: null,
         faultDescription: null,
         faultEscalationType: "0",
-        faultStatus: 0,
-        eqRunStatus: null,
       };
       this.fileList = [];
       this.removeIds = [];
@@ -1375,7 +1436,8 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.queryParams.ids = "";
-      this.queryParams.faultDescription = "";
+      this.queryParams.tunnelId = null;
+      this.queryParams.faultStatus = null;
       this.queryParams.faultType = [];
       this.resultFaultType = [];
       this.queryParams.faultLevel = [];
@@ -1618,7 +1680,7 @@ export default {
       this.fileData.append("faultLevel", this.form.faultLevel);
       this.fileData.append("falltRemoveStatue", "1");
       this.fileData.append("faultDescription", this.form.faultDescription);
-      this.fileData.append("faultStatus", 1);
+      this.fileData.append("faultStatus", "1");
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
@@ -1670,7 +1732,7 @@ export default {
       this.fileData.append("faultLevel", this.form.faultLevel);
       this.fileData.append("falltRemoveStatue", "1");
       this.fileData.append("faultDescription", this.form.faultDescription);
-      this.fileData.append("faultStatus", 0);
+      this.fileData.append("faultStatus", "0");
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {

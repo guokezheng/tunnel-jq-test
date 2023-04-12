@@ -15,6 +15,7 @@
         :name="item.name"
         v-for="item in tabList"
         :key="item.name"
+
       >
 
       </el-tab-pane>
@@ -88,7 +89,7 @@
         </el-form-item>
         <el-form-item label="登录时间">
           <el-date-picker
-            v-model="dateRange"
+            v-model="dateRangeDl"
             size="small"
             style="width: 100%"
             value-format="yyyy-MM-dd HH:mm:ss"
@@ -251,10 +252,10 @@
         </el-form-item>
         <el-form-item label="创建时间" style="width: 100%">
           <el-date-picker
-            v-model="dateRange"
+            v-model="dateRangeCz"
             size="small"
             style="width: 100%"
-            value-format="yyyy-MM-dd HH-mm-ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="datetimerange"
             range-separator="-"
             start-placeholder="开始日期"
@@ -469,7 +470,8 @@ export default {
       // 表格数据
       list: [],
       // 日期范围
-      dateRange: [],
+      dateRangeDl: [],
+      dateRangeCz: [],
       // 默认排序
       defaultSort: {},
       //所属隧道
@@ -515,6 +517,8 @@ export default {
     };
   },
   created() {
+    this.dateRangeDl = this.getPastTime(24);
+    this.dateRangeCz = this.getPastTime(24);
     this.getList("1");
     this.getTunnel();
     this.getEqType();
@@ -534,6 +538,56 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+
+    // 参数timer是过去的n个小时
+    getPastTime(timer) {
+      // 获取过去的时间
+      const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
+      const startTime = this.timeFormat(lastTime);
+      // 当前时间时间
+      let time = new Date().getTime();
+      const endTime = this.timeFormat(time);
+      /*this.$set(this.dateRangeCz,0,startTime);
+      this.$set(this.dateRangeCz,1,endTime);*/
+      /*this.$set(this.dateRangeDl,0,startTime)
+      this.$set(this.dateRangeDl,1,endTime)*/
+      console.log([startTime, endTime]+"=================");
+      return [startTime, endTime];
+    },
+
+    //时间生成并处理
+       timeFormat(time) {
+      // 对应的方法
+      const timeType = [
+        "getFullYear",
+        "getMonth",
+        "getDate",
+        "getHours",
+        "getMinutes",
+        "getSeconds"
+      ];
+      // 分隔符
+      const separator = {
+        getFullYear: "-",
+        getMonth: "-",
+        getDate: " ",
+        getHours: ":",
+        getMinutes: ":",
+        getSeconds: ""
+      };
+      let resStr = "";
+      for (let i = 0; i < timeType.length; i++) {
+        const element = timeType[i];
+        let resTime = new Date(time)[element]();
+        // 获取月份的要+1
+        resTime = element == "getMonth" ? resTime + 1 : resTime;
+        // 小于10，前面加0
+        resTime = resTime > 9 ? resTime : "0" + resTime;
+        resStr = resStr + resTime + separator[element];
+      }
+      return resStr;
+    },
+
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.infoId
@@ -577,7 +631,8 @@ export default {
 
 
     handleClick(e){
-      this.dateRange = [];
+      this.dateRangeDl = this.getPastTime(24);
+      this.dateRangeCz = this.getPastTime(24);
       this.resetForm("queryForm");
       this.resetForm("queryForms");
       this.getList(this.activeName);
@@ -631,7 +686,7 @@ export default {
 
         console.log(this.activeName, "this.activeName");
         console.log(this.queryParam, "this.queryParam");
-        list(this.addDateRange(this.queryParam, this.dateRange)).then(
+        list(this.addDateRange(this.queryParam, this.dateRangeDl)).then(
           (response) => {
             this.list = response.rows;
             this.total = response.total;
@@ -644,7 +699,7 @@ export default {
             "manageStationSelect"
           );
         }
-        listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
+        listLog(this.addDateRange(this.queryParams, this.dateRangeCz)).then(
           (response) => {
             console.log(response, "000000");
             this.logList = response.rows;
@@ -663,7 +718,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
+      this.dateRangeDl = [];
+      this.dateRangeCz = [];
       this.resetForm("queryForm");
       this.resetForm("queryForms");
       this.queryParam.ipaddr = "";
@@ -757,27 +813,39 @@ export default {
 
     /** 操作日志导出按钮操作 */
     handleExport1() {
-      debugger
-      let confirmInfo ="是否确认导出所有的操作日志数据项？";
-      if(this.ids.length>0){
-        confirmInfo = "是否确认导出所选的操作日志数据项？";
+      let startTime;
+      let endTime;
+      if (this.dateRangeCz.length>0) {
+        startTime=new Date(this.dateRangeCz[0].replace(/-/g,"/"));//转换
+        endTime =  new Date(this.dateRangeCz[1].replace(/-/g,"/"));//转换
       }
-      let  ids = this.ids.join();
-      this.queryParams.ids = ids;
-      const queryParams = this.queryParams;
-      this.$modal
-        .confirm(confirmInfo)
-        .then(() => {
-          this.exportLoading = true;
-          return exportLogininfor1(queryParams);
-        })
-        .then((response) => {
-          this.$download.name(response.msg);
-          this.exportLoading = false;
-          this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = ''
-        })
-        .catch(() => {});
+      var dateDiff = endTime.getTime() - startTime.getTime();//时间差的毫秒数
+      if(dateDiff>(7*24*60*60*1000)){
+        this.$message.warning("选中的创建时间段不得大于7天");
+        return;
+      }else{
+        let confirmInfo ="是否确认导出所有的操作日志数据项？";
+        if(this.ids.length>0){
+          confirmInfo = "是否确认导出所选的操作日志数据项？";
+        }
+        let  ids = this.ids.join();
+        this.queryParams.ids = ids;
+        const queryParams = this.queryParams;
+        this.$modal
+          .confirm(confirmInfo)
+          .then(() => {
+            this.exportLoading = true;
+            return exportLogininfor1(queryParams);
+          })
+          .then((response) => {
+            this.$download.name(response.msg);
+            this.exportLoading = false;
+            this.$refs.tableFile.clearSelection();
+            this.queryParams.ids = ''
+          })
+          .catch(() => {});
+      }
+
     },
 
   },

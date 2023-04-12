@@ -33,6 +33,8 @@ public class IotBoardReleaseLog extends BaseEntity
     @Excel(name = "所属隧道")
     private String tunnelName;
 
+    private String tunnelId;
+
     /** 方向 **/
     @Excel(name = "设备方向")
     private String direction;
@@ -86,6 +88,14 @@ public class IotBoardReleaseLog extends BaseEntity
 
     //批量导出单选id导出数据
     private Long[] ids;
+
+    public String getTunnelId() {
+        return this.tunnelId;
+    }
+
+    public void setTunnelId( String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
 
     public String getDevicePixel() {
         return devicePixel;

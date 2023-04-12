@@ -38,6 +38,8 @@ public class SdFaultList extends BaseEntity
     @Excel(name = "故障位置")
     private String faultLocation;
 
+    private Integer fbState;
+
     /** 故障描述 */
     @Excel(name = "故障描述")
     private String faultDescription;
@@ -130,6 +132,14 @@ public class SdFaultList extends BaseEntity
     private String tunnelName;
 
     private String ids;
+
+    public Integer getFbState() {
+        return this.fbState;
+    }
+
+    public void setFbState( Integer fbState) {
+        this.fbState = fbState;
+    }
 
     public Integer getTypeId() {
         return this.typeId;
@@ -236,7 +246,7 @@ public class SdFaultList extends BaseEntity
     }
 
     /** 状态（0：已发布；1：未发布） */
-   /* @Excel(name = "状态", readConverterExp = "0=：已发布；1：未发布")*/
+   @Excel(name = "发布状态", dictType = "fault_status")
     private String faultStatus;
 
     /** 创建者 */

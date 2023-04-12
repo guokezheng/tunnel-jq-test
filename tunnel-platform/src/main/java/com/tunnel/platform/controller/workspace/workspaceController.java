@@ -177,8 +177,19 @@ public class workspaceController extends BaseController {
             if (sdDeviceTypeItems.size() == 0) {
                 throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
             }
-            SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-            updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() == sdDevices.getEqType()){
+                sdDeviceTypeItems.stream().forEach(item -> {
+                     if("brightness".equals(item.getItemCode())){
+                        updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));
+                    }
+                    if("state".equals(item.getItemCode())){
+                        updateDeviceData(sdDevices, state, Integer.parseInt(item.getId().toString()));
+                    }
+                });
+            }else {
+                SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
+                updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+            }
             //添加操作记录
             SdOperationLog sdOperationLog = new SdOperationLog();
             sdOperationLog.setEqTypeId(sdDevices.getEqType());

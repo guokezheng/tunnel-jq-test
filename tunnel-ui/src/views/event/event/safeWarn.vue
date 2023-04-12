@@ -2704,6 +2704,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep .dialogForm .el-checkbox-button{
+  background: #052C4D;
+}
+.theme-light .el-dialog .el-dialog__body .dialogForm .checkBox{
+  display: unset!important;
+  width: unset!important;
+}
 ::v-deep .el-timeline-item__content {
   background-color: #022443;
 }
@@ -3541,4 +3548,5 @@ hr {
 .evtInfo .el-timeline-item__tail {
   border-left: 1px dashed #39adff !important;
 }
+
 </style>

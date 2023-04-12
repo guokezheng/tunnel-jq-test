@@ -388,4 +388,13 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<SdDevices> tunnelEqNameOnly(@Param("eqTunnelId") String eqTunnelId,@Param("eqName") String eqName);
+
+
+	/**
+	 * 根据条件查询 当前设备 数据 状态
+	 * @param sdDevices
+	 * @return
+	 */
+	List<SdDevices> selectSdDevicesDataByParam(SdDevices sdDevices);
+
 }

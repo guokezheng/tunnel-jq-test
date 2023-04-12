@@ -27,6 +27,14 @@ public interface SdDevicePointMapper
      */
     public List<SdDevicePoint> selectSdDevicePointList(SdDevicePoint sdDevicePoint);
 
+
+    /**
+     * 设备id集合
+     * @param sdDevicePoint
+     * @return
+     */
+    public List<SdDevicePoint> selectSdDeviceIdList(SdDevicePoint sdDevicePoint);
+
     /**
      * 新增设备点位状态详情
      * 

@@ -503,6 +503,28 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     //摄像机类型
     private String camType;
 
+    //设备  当前数据
+    private String data;
+
+    /** 设备数据项id */
+    private Integer itemId;
+
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
     public String getCamType() {
         return camType;
     }

@@ -276,6 +276,17 @@ export function getReservePlanData(query) {
   })
 }
 
+export function getReservePlanDataa(query) {
+  const param = {
+    id: "鲁BUD697",
+  };
+  return request({
+    url: '/radar/data/selectSdRadarDetectDataByVehicleLicense',
+    method: 'get',
+    params: param
+  })
+}
+
 // 事件详情导出
 export function detailExport(data) {
   return request({

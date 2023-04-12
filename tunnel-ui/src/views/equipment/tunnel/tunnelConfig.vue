@@ -1495,8 +1495,9 @@ export default {
                   let paddingLa1 = parseFloat(styleas.getPropertyValue('width')); //获取左侧内边距
                   let paddingLa2 = parseFloat(styleas1.getPropertyValue('width')); //获取左侧内边距
                   console.log(paddingLa1-paddingLa2)
-
-                  guide1.left = paddingL+(paddingLa1-paddingLa2)/2-15
+                  console.log(44444444444444444444444444444444444)
+                  console.log(event.toElement.width.animVal.value)
+                  guide1.left = paddingL+(paddingLa1-paddingLa2)/2-16
                   guide1.top = paddingtop+paddingLa
                   chosenGuides[prop].guide = guide1;
                 }
@@ -1539,6 +1540,131 @@ export default {
         },
 
         stop: function (event, ui) {
+          console.log(event)
+          debugger
+          //迭代所有的guids，记住最近的h和v guids
+
+          var guideV,
+            guideH,
+            distV = MIN_DISTANCE + 1,
+            distH = MIN_DISTANCE + 1,
+            offsetV,
+            offsetH;
+
+          var chosenGuides = {
+            top: {
+              dist: MIN_DISTANCE + 1,
+            },
+            left: {
+              dist: MIN_DISTANCE + 1,
+            },
+          };
+
+          var $t = $(this);
+
+          //pageX、pageY：文档坐标x、y ;
+          var pos = {
+            top: event.pageY,
+            left: event.pageX ,
+          };
+
+          //outerHeight、outerWidth：整个浏览器的高度、宽度
+
+          var w = event.pageX - 1; //改
+
+          var h = event.pageY - 1;
+
+          var elemGuides = computeGuidesForElement(null, pos, w, h);
+
+          // 旁边那个的
+          $.each(guides, function (i, guide) {
+            // 选择了那个的
+            $.each(elemGuides, function (i, elemGuide) {
+              // 高对高 航对航
+              if (guide.type == elemGuide.type) {
+                var prop = guide.type == "h" ? "top" : "left";
+
+                var d = Math.abs(elemGuide[prop] - guide[prop]);
+
+                if (d < chosenGuides[prop].dist) {
+                  debugger
+                  chosenGuides[prop].dist = d;
+
+                  chosenGuides[prop].offset = elemGuide[prop] - pos[prop];
+                  let guide1= {
+                    left:event.pageX+32,
+                    top: event.pageY+35,
+                    type:"h"
+                  }
+                  event.toElement.parentNode
+                  console.log(  event.toElement.parentNode)
+
+                  let style = window.getComputedStyle(event.toElement.parentNode, null);
+                  let paddingL = parseFloat(style.getPropertyValue('left')); //获取左侧内边距
+                  let paddingtop = parseFloat(style.getPropertyValue('top')); //获取左侧内边距
+                  console.log(paddingL)
+                  console.log(paddingtop)
+                  console.log("ddddddddddddddddddddddddddddddd")
+                  // let ds = getElementPosition(event.toElement.parentNode)
+                  // console.log(ds)
+                  let oDiv=  document.getElementById("imageId")
+
+                  let svgs=  document.getElementById("svgRow")
+                  let svgss=  document.querySelector(".config-content")
+                  let svgeimage=  document.querySelector(".el-image")
+                  console.log(svgss)
+
+                  let stylea = window.getComputedStyle(svgs, null);
+                  let styleas = window.getComputedStyle(svgss, null);
+                  let styleas1 = window.getComputedStyle(svgeimage, null);
+                  console.log(styleas)
+
+                  let paddingLa = parseFloat(stylea.getPropertyValue('padding-top')); //获取左侧内边距
+                  let paddingLa1 = parseFloat(styleas.getPropertyValue('width')); //获取左侧内边距
+                  let paddingLa2 = parseFloat(styleas1.getPropertyValue('width')); //获取左侧内边距
+                  console.log(paddingLa1-paddingLa2)
+                  console.log(44444444444444444444444444444444444)
+                  console.log(event.toElement.width.animVal.value)
+                  guide1.left = paddingL+(paddingLa1-paddingLa2)/2-16
+                  guide1.top = paddingtop+paddingLa
+                  chosenGuides[prop].guide = guide1;
+                }
+              }
+            });
+          });
+
+          // 画布与窗口的距离
+          let left = event.pageX - event.offsetX;
+          let top = event.pageY - event.offsetY ; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
+          if (chosenGuides.top.dist <= MIN_DISTANCE) {
+            $("#guide-h")
+              .css("top", chosenGuides.top.guide.top)
+              .show();
+            // $("#guide-h1")
+            //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
+            //   .show();
+            // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
+          } else {
+            debugger
+            $("#guide-h").hide();
+            $("#guide-h1").hide();
+            // ui.position.top = pos.top - 104;
+          }
+
+          if (chosenGuides.left.dist <= MIN_DISTANCE) {
+            $("#guide-v")
+              .css("left", chosenGuides.left.guide.left )
+              .show();
+            // $("#guide-v1")
+            //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
+            //   .show();
+            /* ui.position.left =
+				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
+          } else {
+            $("#guide-v").hide();
+            $("#guide-v1").hide();
+            /* ui.position.left = pos.left; */
+          }
           $("#guide-v, #guide-h ,#guide-v1 ,#guide-h1").hide();
         },
       });

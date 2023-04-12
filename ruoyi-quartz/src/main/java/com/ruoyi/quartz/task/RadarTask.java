@@ -11,6 +11,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -66,6 +67,12 @@ public class RadarTask {
 
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
+    @Autowired
+    private SdRadarDetectDataMapper sdRadarDetectDataMapper;
+    public static  List<SdRadarDetectData> sdRadarDetectDatalist = null;
+    public static  List<SdRadarDetectData> sdRadarDetectDatalist1 = null;
+
+    public int num = 0;
 
 //    @Scheduled(fixedRate = 100)
     public void radarTask() {
@@ -86,6 +93,94 @@ public class RadarTask {
         WebSocketService.broadcast("radarDataList", object.toString());
         long l1 = System.currentTimeMillis();
         log.info("耗时：" + (l1-l));
+    }
+
+    @Scheduled(fixedRate = 500)
+    public void radarTask1() throws InterruptedException {
+        if(sdRadarDetectDatalist==null){
+            sdRadarDetectDatalist = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("粤BU0697");
+            if(sdRadarDetectDatalist!=null&&sdRadarDetectDatalist.size()>0){
+                sdRadarDetectDatalist = sdRadarDetectDatalist;
+            }
+        }
+
+
+//        for( SdRadarDetectData sdRadarDetectData:sdRadarDetectDatalist){
+            Map<String, Object> map = new HashMap<>();
+            map.put("tunnelId", TunnelEnum.HANG_SHAN_DONG.getCode());
+            map.put("roadDir",sdRadarDetectDatalist.get(num).getRoadDir());
+            map.put("speed",sdRadarDetectDatalist.get(num).getSpeed());
+            map.put("laneNo",sdRadarDetectDatalist.get(num).getLaneNum());
+            map.put("vehicleType",sdRadarDetectDatalist.get(num).getVehicleType());
+            map.put("lat",sdRadarDetectDatalist.get(num).getLatitude());
+            map.put("lng",sdRadarDetectDatalist.get(num).getLongitude());
+            map.put("distance",sdRadarDetectDatalist.get(num).getDistance());
+            map.put("vehicleLicense",sdRadarDetectDatalist.get(num).getVehicleLicense());
+            List<Map> list = new ArrayList<>();
+            list.add(map);
+            JSONObject object = new JSONObject();
+            object.put("radarDataList", list);
+            if(num==sdRadarDetectDatalist.size()-3){
+                num= 0;
+            }else{
+                num=num+1;
+            }
+
+            try {
+                WebSocketService.broadcast("radarDataList", object.toString());
+            }catch(Exception e){
+                e.printStackTrace();
+                System.out.println("111111"+e.getMessage());
+                System.out.println("222222"+e.getLocalizedMessage());
+            }
+
+            //redis-key命名规则，固定字段vehicleSnap:隧道id:车牌号
+//            redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.MINUTES);
+//        }
+    }
+
+    @Scheduled(fixedRate = 500)
+    public void radarTask2() throws InterruptedException {
+        if(sdRadarDetectDatalist1==null){
+            sdRadarDetectDatalist1 = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("鲁BUD697");
+            if(sdRadarDetectDatalist1!=null&&sdRadarDetectDatalist.size()>0){
+                sdRadarDetectDatalist1 = sdRadarDetectDatalist1;
+            }
+        }
+
+
+//        for( SdRadarDetectData sdRadarDetectData:sdRadarDetectDatalist1){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId", TunnelEnum.HANG_SHAN_DONG.getCode());
+        map.put("roadDir",sdRadarDetectDatalist1.get(num).getRoadDir());
+        map.put("speed",sdRadarDetectDatalist1.get(num).getSpeed());
+        map.put("laneNo",sdRadarDetectDatalist1.get(num).getLaneNum());
+        map.put("vehicleType",sdRadarDetectDatalist1.get(num).getVehicleType());
+        map.put("lat",sdRadarDetectDatalist1.get(num).getLatitude());
+        map.put("lng",sdRadarDetectDatalist1.get(num).getLongitude());
+        map.put("distance",sdRadarDetectDatalist1.get(num).getDistance());
+        map.put("vehicleLicense",sdRadarDetectDatalist1.get(num).getVehicleLicense());
+        List<Map> list = new ArrayList<>();
+        list.add(map);
+        JSONObject object = new JSONObject();
+        object.put("radarDataList", list);
+        if(num==sdRadarDetectDatalist1.size()-3){
+            num= 0;
+        }else{
+            num=num+1;
+        }
+
+        try {
+            WebSocketService.broadcast("radarDataList", object.toString());
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println("111111"+e.getMessage());
+            System.out.println("222222"+e.getLocalizedMessage());
+        }
+
+        //redis-key命名规则，固定字段vehicleSnap:隧道id:车牌号
+//            redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.MINUTES);
+//        }
     }
 
     public void controlDevice(SdRadarDetectData cacheObject){

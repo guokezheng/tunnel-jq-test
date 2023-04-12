@@ -24,6 +24,14 @@ public interface SdRadarDetectDataMapper
     public SdRadarDetectData selectSdRadarDetectDataById(String id);
 
     /**
+     * 查询雷达监测感知数据
+     *
+     * @param vehicleLicens 雷达监测感知数据主键
+     * @return 雷达监测感知数据
+     */
+    public List<SdRadarDetectData> selectSdRadarDetectDataByVehicleLicense(String vehicleLicens);
+
+    /**
      * 查询雷达监测感知数据列表
      *
      * @param sdRadarDetectData 雷达监测感知数据

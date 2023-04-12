@@ -356,7 +356,7 @@
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
                             transform:
-                              item.eqType == 23 && item.eqDirection == 1
+                              item.eqType == 23 && item.eqDirection == 2
                                 ? 'scale(-1,1)'
                                 : '',
                           }"
@@ -2701,7 +2701,7 @@
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
       v-if="
-        [14, 21, 32, 33, 15, 35, 40, 39, 48].includes(this.eqInfo.clickEqType)
+        [14, 21, 32, 33, 15, 35, 40, 39, 48,41].includes(this.eqInfo.clickEqType)
       "
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
@@ -7761,7 +7761,7 @@ export default {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
                   5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48, 45,
+                  40, 39, 48, 45, 41
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -7769,8 +7769,13 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
+                    
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
+                    if(deviceData.eqType == 39){
+                    //   console.log(deviceData,"智能手动报警按钮")
+                      console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
+                    }
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =

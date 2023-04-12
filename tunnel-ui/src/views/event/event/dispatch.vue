@@ -802,8 +802,11 @@
                     'top':GDeviceData.vmsData['top'] + 'px',
                     'left':GDeviceData.vmsData['left'] + 'px',
                   }"
-                  style="line-height:1">
-                    {{GDeviceData.vmsData['content']}}
+                  style="line-height:1"
+                  v-html="GDeviceData.vmsData['content'].replace(
+                              /\n|\r\n/g,
+                              '<br>'
+                            ).replace(/ /g, ' &nbsp')">
                   </span>
                 </div>
               </div>

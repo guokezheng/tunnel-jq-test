@@ -579,6 +579,28 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     }
 
 
-
+    /**
+     * 修改设备数据表中实时数据
+     * @param sdDevices 设备信息
+     * @param value 数据
+     * @param itemId 数据项
+     */
+    @Override
+    public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            insertSdDeviceData(sdDeviceData);
+        }
+    }
 }
 

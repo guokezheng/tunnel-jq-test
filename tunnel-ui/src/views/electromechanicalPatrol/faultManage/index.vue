@@ -19,6 +19,7 @@
             placeholder="请输入故障位置、故障描述、所属隧道，回车搜索"
             v-model="queryParams.faultDescription"
             @keyup.enter.native="handleQuery"
+            size="small"
           >
             <el-button
               slot="append"
@@ -36,61 +37,80 @@
         :model="queryParams"
         label-width="75px"
       >
-<!--        <el-form-item label="故障类型" prop="faultType">
-          <el-select
-            v-model="queryParams.faultType"
-            placeholder="请选择故障类型"
-            clearable
-            size="small"
-          >
-            <el-option
+        <el-form-item
+          label="故障来源"
+          prop="faultEscalationType"
+          style="width: 100% !important"
+        >
+          <el-row style="display: flex; flex-wrap: wrap">
+            <el-col
+              :span="8"
+              v-for="dict in faultEscalationTypeOptions"
+              :key="dict.dictValue"
+            >
+              <el-checkbox
+                :label="dict.dictLabel"
+                v-model="resultFaultEscalationType"
+              >{{ dict.dictLabel }}</el-checkbox
+              >
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item
+          label="消除状态"
+          prop="faultRemoveState"
+          style="width: 100% !important"
+        >
+          <el-row style="display: flex; flex-wrap: wrap">
+            <el-col
+              :span="8"
+              v-for="dict in faultRemoveStateOptions"
+              :key="dict.dictValue"
+            >
+              <el-checkbox
+                :label="dict.dictLabel"
+                v-model="resultFaultRemoveState"
+              >{{ dict.dictLabel }}</el-checkbox
+              >
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item
+          label="故障类型"
+          prop="faultType"
+          style="width: 100% !important"
+        >
+          <el-row style="display: flex; flex-wrap: wrap">
+            <el-col
+              :span="8"
               v-for="dict in faultTypeOptions"
               :key="dict.dictValue"
-              :label="dict.dictLabel"
-              :value="dict.dictValue"
-            />
-          </el-select>
-        </el-form-item>-->
-        <el-form-item label="故障类型" prop="faultType" style="width: 100%!important;">
-          <el-checkbox
-            v-for="dict in faultTypeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            v-model="resultFaultType"
-            style = "width:90px"
-          >{{ dict.dictLabel }}</el-checkbox
-          >
+            >
+              <el-checkbox :label="dict.dictLabel" v-model="resultFaultType">{{
+                dict.dictLabel
+              }}</el-checkbox>
+            </el-col>
+          </el-row>
         </el-form-item>
-        <el-form-item label="消除状态" prop="faultRemoveState" style="width: 100%!important;">
-          <el-checkbox
-            v-for="dict in faultRemoveStateOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            v-model="resultFaultRemoveState"
-            style = "width:90px"
-          >{{ dict.dictLabel }}</el-checkbox
-          >
+
+        <el-form-item
+          label="故障等级"
+          prop="faultLevel"
+          style="width: 100% !important"
+        >
+          <el-row style="display: flex; flex-wrap: wrap">
+            <el-col
+              :span="8"
+              v-for="dict in faultLevelOptions"
+              :key="dict.dictValue"
+            >
+              <el-checkbox :label="dict.dictLabel" v-model="resultFaultLevel">{{
+                dict.dictLabel
+              }}</el-checkbox>
+            </el-col>
+          </el-row>
         </el-form-item>
-        <el-form-item label="故障等级" prop="faultLevel" style="width: 100%!important;">
-          <el-checkbox
-            v-for="dict in faultLevelOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            v-model="resultFaultLevel"
-            style = "width:90px"
-          >{{ dict.dictLabel }}</el-checkbox
-          >
-        </el-form-item>
-        <el-form-item label="故障来源" prop="faultEscalationType" style="width: 100%!important;">
-          <el-checkbox
-            v-for="dict in faultEscalationTypeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            v-model="resultFaultEscalationType"
-            style = "width:90px"
-          >{{ dict.dictLabel }}</el-checkbox
-          >
-        </el-form-item>
+
         <el-form-item label="发现时间">
           <el-date-picker
             v-model="dateRange"
@@ -127,7 +147,12 @@
       :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
       <!--      <el-table-column label="故障编号" align="center" prop="id" />
       <el-table-column label="隧道id" align="center" prop="tunnelId" />-->
       <el-table-column
@@ -137,27 +162,16 @@
         width="68"
         align="center"
       ></el-table-column>
-
+      <el-table-column label="所属隧道" align="center" prop="tunnelName" />
       <el-table-column
         label="故障设备"
         align="center"
         prop="eqName"
         width="220"
       />
-      <el-table-column label="所属隧道" align="center" prop="tunnelName" />
-      <el-table-column label="故障类型" align="center" prop="faultType">
+      <el-table-column label="设备状态" align="center" prop="eqStatus">
         <template slot-scope="scope">
-          <span>{{ getFaultType(scope.row.faultType) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="发现时间"
-        align="center"
-        prop="faultFxtime"
-        width="180"
-      >
-        <template slot-scope="scope">
-          <span>{{scope.row.faultFxtime }}</span>
+          <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="故障位置" align="center" prop="faultLocation" />
@@ -168,30 +182,41 @@
         width="180"
         :show-overflow-tooltip="true"
       />
-      <!-- <el-table-column label="持续时间" align="center" prop="faultCxtime" /> -->
-      <!-- <el-table-column label="设备" align="center" prop="eqName" /> -->
-      <el-table-column label="故障来源" align="center" prop="faultEscalationType">
-        <template slot-scope="scope">
-          <span>{{ getFaultEscalationType(scope.row.faultEscalationType) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="设备状态" align="center" prop="eqStatus">
-        <template slot-scope="scope">
-          <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
-        </template>
-      </el-table-column>
-      <!--<el-table-column label="故障代码" align="center" prop="faultCode" />-->
       <el-table-column label="故障等级" align="center" prop="faultLevel">
         <template slot-scope="scope">
           <span>{{ getFaultLevel(scope.row.faultLevel) }}</span>
         </template>
       </el-table-column>
-
+      <el-table-column label="故障类型" align="center" prop="faultType">
+        <template slot-scope="scope">
+          <span>{{ getFaultType(scope.row.faultType) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        label="消除状态"
+        label="故障来源"
         align="center"
-        prop="falltRemoveStatue"
+        prop="faultEscalationType"
       >
+        <template slot-scope="scope">
+          <span>{{
+              getFaultEscalationType(scope.row.faultEscalationType)
+            }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="发现时间"
+        align="center"
+        prop="faultFxtime"
+        width="180"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.faultFxtime }}</span>
+        </template>
+      </el-table-column>
+
+
+
+      <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
           <dict-tag
             :options="dict.type.fault_remove_statue"
@@ -199,13 +224,6 @@
           />
         </template>
       </el-table-column>
-      <!--<el-table-column label="故障描述" align="center" prop="faultDescription" />-->
-      <!-- <el-table-column label="状态" align="center" prop="faultStatus" >
-        <template slot-scope="scope">
-          <dict-tag :options="fault_status_list" :value="scope.row.faultStatus"/>
-        </template>
-      </el-table-column> -->
-
       <el-table-column
         label="操作"
         align="center"
@@ -277,11 +295,11 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-row style="display: flex; flex-wrap: wrap">
-          <el-card>
+        <el-card>
+          <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障基本信息</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
             <el-col :span="8" :style="{ display: 'none' }">
               <el-form-item
@@ -349,18 +367,6 @@
               </el-form-item>
             </el-col>
 
-
-
-<!--            <el-col :span="8">
-              <el-form-item label="故障来源" prop="faultSource">
-                <el-input
-                  :disabled="disstate"
-                  v-model="form.faultSource"
-                  placeholder="请输入发现源"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col>-->
             <el-col :span="8">
               <el-form-item label="发现时间" prop="faultFxtime">
                 <el-date-picker
@@ -393,7 +399,7 @@
                 <el-date-picker
                   clearable
                   size="small"
-                  :disabled= "true"
+                  :disabled="true"
                   v-model="form.faultTbtime"
                   :picker-options="setDateRangeTb"
                   @change="handleTb"
@@ -405,11 +411,14 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-          </el-card>
-          <el-card>
+          </el-row>
+        </el-card>
+
+        <el-card>
+          <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障设备情况</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
 
             <el-col :span="8">
@@ -442,7 +451,7 @@
                   @change="eqStatusGet"
                   style="width: 100%"
                   id="deviceSel"
-                  @click.native ="selChange"
+                  @click.native="selChange"
                 >
                   <el-option
                     v-for="item in eqListData"
@@ -477,6 +486,7 @@
                   :disabled="disstate"
                   v-model="form.faultLocation"
                   placeholder="请输入故障位置"
+                  style="width: 100%"
                 />
               </el-form-item>
             </el-col>
@@ -486,14 +496,17 @@
                   v-model="form.eqRunStatus"
                   :disabled="disstate"
                   placeholder="请输入设备运行状态"
+                  style="width: 100%"
                 />
               </el-form-item>
             </el-col>
-          </el-card>
-          <el-card>
+          </el-row>
+        </el-card>
+        <el-card>
+          <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="24">
               <div class="topTxt">故障描述</div>
-              <div class="tableTopHr"></div>
+              <div class="tableTopHr" style="display: none"></div>
             </el-col>
             <el-col :span="8">
               <el-form-item label="故障代码" prop="faultCode">
@@ -591,40 +604,51 @@
                 </el-dialog>
               </el-form-item>
             </el-col>
-          </el-card>
-        </el-row>
+          </el-row>
+        </el-card>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button v-if="isWritable" @click="submitForm" class="submitButton">仅保存</el-button>
-        <el-button v-if="isWritable" @click="publishForm" class="zancunButton">保存并发布</el-button>
+        <el-button v-if="isWritable" @click="submitForm" class="submitButton"
+          >仅保存</el-button
+        >
+        <el-button v-if="isWritable" @click="publishForm" class="zancunButton"
+          >保存并发布</el-button
+        >
         <el-button @click="cancel" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="record" width="70%">
+    <el-dialog  :title="titleHistory"
+                :visible.sync="record"
+                width="70%"
+                class = "hitchHistoryDialog"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div style="text-align: center; font-size: 18px">故障检修记录</div>
-      <div class="card" v-show="news.length > 0" v-for="(item,index) in news" :key="index">
-        <div class="card-col" style="font-size: 16px">
+<!--      <div style="text-align: center; font-size: 18px">故障检修记录</div>-->
+      <div
+        class="card"
+        v-show="news.length > 0"
+        v-for="(item, index) in news"
+        :key="index"
+      >
+        <div class="card-col" style="font-size: 15px;color: #05AAFD;">
           <div>
             巡检时间:
-            <span>{{
-                parseTime(item.xcTime, "{y}-{m}-{d} {h}:{m}:{s}")
-              }}</span>
+            <span>{{ item.xcTime }}</span>
           </div>
           <div>
             检修班组:
-            <span>{{ item.bzName}}</span>
+            <span>{{ item.bzName }}</span>
           </div>
           <div>
             检修人:
             <span>{{ item.userName }}</span>
           </div>
         </div>
-        <div class="card-col" style="font-size: 16px">
+        <div class="card-col" style="font-size: 15px;color: #05AAFD;">
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -638,22 +662,22 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
           <div>
             设备运行状态:
             <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
-          <div class="col-test">(检修时检测情况)</div>
+          <div class="col-test" style ="font-size: 15px;color: #05AAFD;">(检修时检测情况)</div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>
           </div>
-          <div class="col-test">(检修时检测情况)</div>
+          <div class="col-test"style ="font-size: 15px;color: #05AAFD;">(检修时检测情况)</div>
         </div>
-        <div class="card-cols" style="font-size: 16px">
+        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
           现场图片:
           <div v-for="pic in item.iFileList">
             <img :src="pic.imgUrl" :title="pic.imgName" />
@@ -661,7 +685,7 @@
         </div>
       </div>
       <div v-if="news.length == 0">
-        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;font-size: 15px;color: #05AAFD;">
           暂无记录
         </div>
       </div>
@@ -682,16 +706,17 @@ import {
 } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import {
-  addType, listDevicesType,
+  addType,
+  listDevicesType,
   listType,
   loadPicture,
   updateType,
 } from "@/api/equipment/type/api";
-import {getDevices, listDevices} from "@/api/equipment/eqlist/api";
+import { getDevices, listDevices } from "@/api/equipment/eqlist/api";
 import { editForm } from "@/api/equipment/yingJiGou/emergencyVehicles";
 import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
 import { download } from "@/utils/request";
-import {list} from "@/api/monitor/logininfor";
+import { list } from "@/api/monitor/logininfor";
 export default {
   name: "List",
   //字典值：故障类型、故障等级，故障消除状态
@@ -710,9 +735,9 @@ export default {
       removeStata: false,
       device_boxShow: false,
       resultFaultType: [], //获取选中后的故障类型checkbox的数组值
-      resultFaultRemoveState:[],//获取选中后的消除状态checkbox的数组值
-      resultFaultLevel:[],//获取选中后的故障等级checkbox的数组值
-      resultFaultEscalationType:[],//获取选中后的故障来源checkbox的数组值
+      resultFaultRemoveState: [], //获取选中后的消除状态checkbox的数组值
+      resultFaultLevel: [], //获取选中后的故障等级checkbox的数组值
+      resultFaultEscalationType: [], //获取选中后的故障来源checkbox的数组值
       // fault_status_list:[],
       faultRemoveStateOptions: [],
       eqStatusList: [],
@@ -743,11 +768,12 @@ export default {
       isWritable: true,
       // 是否不可点击
       disstate: false,
-      disstateDevice:false,
+      disstateDevice: false,
       // 弹出层标题
       //巡查班组
       bzData: {},
       title: "",
+      titleHistory:"",
       // 是否显示弹出层
       open: false,
       //故障类型
@@ -759,15 +785,15 @@ export default {
       //设备
       eqListData: {},
       //设备类型
-      eqTypeListData:{},
+      eqTypeListData: {},
       setoptions: {
         // 时间不能大于当前时间
         disabledDate(time) {
-          let current_time = new Date().format('yyyy-MM-dd')+' 23:59:59';  //时间日期为：‘当前日期 23:59:59’
+          let current_time = new Date().format("yyyy-MM-dd") + " 23:59:59"; //时间日期为：‘当前日期 23:59:59’
           let t = new Date(current_time).getTime(); //‘当前日期 23:59:59’的时间戳
           return time.getTime() > t;
         },
-        selectableRange: '00:00:00 - 23:59:59'
+        selectableRange: "00:00:00 - 23:59:59",
       },
       // 查询参数
       news: {
@@ -789,16 +815,16 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
-        faultEscalationType:[],
+        faultEscalationType: [],
         faultLocation: null,
         //faultType: null,
-        faultType:[],
-        faultRemoveState:[],
-        faultLevel:[],
-        paramFaultType:"",
-        paramFaultRemoveState:"",
-        paramFaultLevel:"",
-        paramFaultEscalationType:"",
+        faultType: [],
+        faultRemoveState: [],
+        faultLevel: [],
+        paramFaultType: "",
+        paramFaultRemoveState: "",
+        paramFaultLevel: "",
+        paramFaultEscalationType: "",
         faultSource: null,
         faultFxtime: null,
         faultCxtime: null,
@@ -816,17 +842,19 @@ export default {
       // 表单参数
       form: {},
       setDateRange: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           // 禁用今天之后的日期【当前天可选】
           return time.getTime() > Date.now();
-        }
+        },
       },
       setDateRangeTb: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           // 禁用今天之后的日期【当前天可选】
-            return (time.getTime() < new Date(this.form.faultFxtime).getTime()
-              ||time.getTime()>Date.now());
-        }
+          return (
+            time.getTime() < new Date(this.form.faultFxtime).getTime() ||
+            time.getTime() > Date.now()
+          );
+        },
       },
       // 表单校验
       rules: {
@@ -857,7 +885,7 @@ export default {
         faultFxtime: [
           { required: true, message: "请选择发现时间", trigger: "blur" },
         ],
-       /* faultCxtime: [
+        /* faultCxtime: [
           { required: true, message: "请填写持续时间", trigger: "blur" },
         ],*/
         faultDescription: [
@@ -876,6 +904,13 @@ export default {
           {
             required: true,
             message: "请选择所属隧道",
+            trigger: "blur",
+          },
+        ],
+        typeId: [
+          {
+            required: true,
+            message: "请选择设备类型",
             trigger: "blur",
           },
         ],
@@ -917,7 +952,6 @@ export default {
     //故障来源
     this.getDicts("fault_escalation_type").then((response) => {
       this.faultEscalationTypeOptions = response.data;
-
     });
     //故障等级
     this.getDicts("fault_level").then((response) => {
@@ -939,7 +973,6 @@ export default {
     this.getDicts("power").then((response) => {
       this.powerOptions = response.data;
     });
-
   },
   mounted() {
     this.$nextTick(() => {
@@ -950,19 +983,19 @@ export default {
     openDialogScreen() {
       const loading = this.$loading({
         lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.hitchDialog',
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+        target: ".hitchDialog",
       });
       setTimeout(() => {
         loading.close();
-      }, 500);
+      }, 300);
     },
 
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id
+      return row.id;
     },
     /*bodyCloseMenus(e) {
       let self = this;
@@ -986,22 +1019,44 @@ export default {
       }
     },
     //handle实现插件能选取当前时间的时、分、秒，但是选择完毕之后，只要选择的时、分、秒小于当前时间，会自动填充为当前的时、分、秒
-    handle: function() {
-      var startAt = new Date(this.form.faultFxtime) * 1000 /1000;
-      if(startAt > Date.now()) {
+    handle: function () {
+      var startAt = (new Date(this.form.faultFxtime) * 1000) / 1000;
+      if (startAt > Date.now()) {
         this.form.faultFxtime = new Date();
         //时间格式转换
         var d = new Date(this.form.faultFxtime);
-        this.form.faultFxtime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        this.form.faultFxtime =
+          d.getFullYear() +
+          "-" +
+          (d.getMonth() + 1) +
+          "-" +
+          d.getDate() +
+          " " +
+          d.getHours() +
+          ":" +
+          d.getMinutes() +
+          ":" +
+          d.getSeconds();
       }
     },
-    handleTb: function() {
-      var startAt = new Date(this.form.faultTbtime) * 1000 /1000;
-      if(startAt > this.form.faultFxtime) {
+    handleTb: function () {
+      var startAt = (new Date(this.form.faultTbtime) * 1000) / 1000;
+      if (startAt > this.form.faultFxtime) {
         this.form.faultTbtime = new Date(this.form.faultFxtime);
         //时间格式转换
         var d = new Date(this.form.faultTbtime);
-        this.form.faultTbtime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        this.form.faultTbtime =
+          d.getFullYear() +
+          "-" +
+          (d.getMonth() + 1) +
+          "-" +
+          d.getDate() +
+          " " +
+          d.getHours() +
+          ":" +
+          d.getMinutes() +
+          ":" +
+          d.getSeconds();
       }
     },
 
@@ -1062,17 +1117,26 @@ export default {
         // this.getList();
       });
     },
-   //隧道点击事件
-    tunnelGet(){
+    //隧道点击事件
+    tunnelGet() {
       this.form.eqId = null;
-      this.disstateDevice = false;
+      this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
-      this.getDevices();
+      if(this.form.typeId != null&&this.form.typeId !=""&&typeof(this.form.typeId) != undefined ){
+        this.disstateDevice = false;
+        this.getDevices();
+      }
+
     },
     //设备类型点击事件
-    eqTypeGet(){
+    eqTypeGet() {
       this.form.eqId = null;
-      this.getDevices();
+      this.disstateDevice = true;
+      $("#deviceSel").attr("pointer-events", "none");
+      if(this.form.tunnelId != null&&this.form.tunnelId !=""&&typeof(this.form.tunnelId)!= undefined){
+        this.disstateDevice = false;
+        this.getDevices();
+      }
     },
 
     // 取消按钮
@@ -1098,7 +1162,7 @@ export default {
         faultLevel: null,
         falltRemoveStatue: null,
         faultDescription: null,
-        faultEscalationType:"0",
+        faultEscalationType: "0",
         faultStatus: 0,
         eqRunStatus: null,
       };
@@ -1173,44 +1237,54 @@ export default {
           "manageStationSelect"
         );
       }
-      listList(this.addDateRange(this.queryParams, this.dateRange)).then((response) => {
-        this.listList = response.rows;
-        this.listList.forEach((item) => {
-          if (item.faultLocation == "null") {
-            item.faultLocation = "";
-          }
-          if (item.faultCxtime == "null") {
-            item.faultCxtime = "";
-          }
-          if (item.faultCode == "null") {
-            item.faultCode = "";
-          }
-          if (item.faultDescription == "null") {
-            item.faultDescription = "";
-          }
-
-        });
-        this.total = response.total;
-        this.loading = false;
-      });
+      listList(this.addDateRange(this.queryParams, this.dateRange)).then(
+        (response) => {
+          this.listList = response.rows;
+          this.listList.forEach((item) => {
+            if (item.faultLocation == "null") {
+              item.faultLocation = "";
+            }
+            if (item.faultCxtime == "null") {
+              item.faultCxtime = "";
+            }
+            if (item.faultCode == "null") {
+              item.faultCode = "";
+            }
+            if (item.faultDescription == "null") {
+              item.faultDescription = "";
+            }
+          });
+          this.total = response.total;
+          this.loading = false;
+        }
+      );
     },
 
     /*设备名称点击事件*/
     selChange() {
-      if(this.title =="故障详情"){
-
-      }else{
-        if (this.form.tunnelId==null||typeof this.form.tunnelId == "undefined") {
+      if (this.title != "故障详情") {
+        if (
+          this.form.tunnelId == null ||
+          typeof this.form.tunnelId == "undefined"
+        ) {
           this.disstateDevice = true;
           this.$modal.msgWarning("请先选择隧道");
           return;
-        } else {
+        }
+        if (
+          this.form.typeId == null ||
+          typeof this.form.typeId == "undefined"
+        ) {
+          this.disstateDevice = true;
+          this.$modal.msgWarning("请先选择设备类型");
+          return;
+        }
+        else {
           this.disstateDevice = false;
-          this.getDevices()
+          this.getDevices();
           //$("#deviceSel").attr("pointer-events", "none");
         }
       }
-
     },
 
     /*设备类型点击事件*/
@@ -1254,18 +1328,21 @@ export default {
     },
     /** 设备 */
     getDevices() {
-      if(this.form.tunnelId==""){
+      if (this.form.tunnelId == "") {
         this.$message.warning("请先选择所属隧道");
+        return;
+      }
+      if(this.form.typeId == ""){
+        this.$message.warning("请先选择设备类型");
         return;
       }
       listDevices({
         eqTunnelId: this.form.tunnelId,
-        eqType:this.form.typeId,
+        eqType: this.form.typeId,
       }).then((response) => {
         this.eqListData = response.rows;
       });
     },
-
 
     /** 设备类型 */
     getDevicesType() {
@@ -1277,9 +1354,11 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.paramFaultType = this.resultFaultType.join();
-      this.queryParams.paramFaultRemoveState = this.resultFaultRemoveState.join();
+      this.queryParams.paramFaultRemoveState =
+        this.resultFaultRemoveState.join();
       this.queryParams.paramFaultLevel = this.resultFaultLevel.join();
-      this.queryParams.paramFaultEscalationType = this.resultFaultEscalationType.join();
+      this.queryParams.paramFaultEscalationType =
+        this.resultFaultEscalationType.join();
       this.queryParams.pageNum = 1;
       this.$refs.tableFile.clearSelection();
       this.device_boxShow = false;
@@ -1318,7 +1397,7 @@ export default {
       this.title = "添加故障清单";
     },
     /** 修改按钮操作 */
-     handleUpdate(row) {
+    handleUpdate(row) {
       this.openDialogScreen();
       let that = this;
       this.isWritable = true;
@@ -1331,30 +1410,55 @@ export default {
       const id = row.id || that.ids;
       getList(id).then((response) => {
         this.form.tunnelId = response.data.tunnelId;
+        this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
-        if (this.form.faultSource == "null"||this.form.faultSource == "undefined") {
+        if (
+          this.form.faultSource == "null" ||
+          this.form.faultSource == "undefined"
+        ) {
           this.form.faultSource = "";
         }
-        if (this.form.eqRunStatus == "undefined"||this.form.eqRunStatus == "null") {
+        if (
+          this.form.eqRunStatus == "undefined" ||
+          this.form.eqRunStatus == "null"
+        ) {
           this.form.eqRunStatus = "";
         }
-        if (this.form.faultCode == "null"||this.form.faultCode == "undefined") {
+        if (
+          this.form.faultCode == "null" ||
+          this.form.faultCode == "undefined"
+        ) {
           this.form.faultCode = "";
         }
-        if (this.form.faultDescription == "null"||this.form.faultDescription == "undefined") {
+        if (
+          this.form.faultDescription == "null" ||
+          this.form.faultDescription == "undefined"
+        ) {
           this.form.faultDescription = "";
         }
-        if (this.form.faultCxtime == "null"||this.form.faultCxtime=="undefined") {
+        if (
+          this.form.faultCxtime == "null" ||
+          this.form.faultCxtime == "undefined"
+        ) {
           this.form.faultCxtime = "";
         }
-        if (this.form.faultLevel == "null"||this.form.faultLevel == "undefined") {
+        if (
+          this.form.faultLevel == "null" ||
+          this.form.faultLevel == "undefined"
+        ) {
           this.form.faultLevel = "";
         }
-        if (this.form.falltRemoveStatue == "null"||this.form.falltRemoveStatue == "undefined") {
+        if (
+          this.form.falltRemoveStatue == "null" ||
+          this.form.falltRemoveStatue == "undefined"
+        ) {
           this.form.falltRemoveStatue = "";
         }
-        if (this.form.faultLocation == "null"||this.form.faultLocation == "undefined") {
+        if (
+          this.form.faultLocation == "null" ||
+          this.form.faultLocation == "undefined"
+        ) {
           this.form.faultLocation = "";
         }
 
@@ -1365,7 +1469,6 @@ export default {
         this.title = "修改故障清单";
       });
     },
-
 
     exportFaultReport(row) {
       let time = parseInt(new Date().getTime() / 1000) + "";
@@ -1388,27 +1491,49 @@ export default {
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
         this.form.tunnelId = response.data.tunnelId;
+        this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
-        if (this.form.faultSource == "null"||this.form.faultSource == "undefined") {
+        if (
+          this.form.faultSource == "null" ||
+          this.form.faultSource == "undefined"
+        ) {
           this.form.faultSource = "";
         }
-        if (this.form.eqRunStatus == "undefined"||this.form.eqRunStatus == "null") {
+        if (
+          this.form.eqRunStatus == "undefined" ||
+          this.form.eqRunStatus == "null"
+        ) {
           this.form.eqRunStatus = "";
         }
-        if (this.form.faultCode == "null"||this.form.faultCode == "undefined") {
+        if (
+          this.form.faultCode == "null" ||
+          this.form.faultCode == "undefined"
+        ) {
           this.form.faultCode = "";
         }
-        if (this.form.faultDescription == "null"||this.form.faultDescription == "undefined") {
+        if (
+          this.form.faultDescription == "null" ||
+          this.form.faultDescription == "undefined"
+        ) {
           this.form.faultDescription = "";
         }
-        if (this.form.faultCxtime == "undefined"||this.form.faultCxtime == "null") {
+        if (
+          this.form.faultCxtime == "undefined" ||
+          this.form.faultCxtime == "null"
+        ) {
           this.form.faultCxtime = "";
         }
-        if (this.form.faultLevel == "undefined"||this.form.faultLevel == "null") {
+        if (
+          this.form.faultLevel == "undefined" ||
+          this.form.faultLevel == "null"
+        ) {
           this.form.faultLevel = "";
         }
-        if (this.form.falltRemoveStatue == "undefined"||this.form.falltRemoveStatue == "null") {
+        if (
+          this.form.falltRemoveStatue == "undefined" ||
+          this.form.falltRemoveStatue == "null"
+        ) {
           this.form.falltRemoveStatue = "";
         }
         that.planRoadmapUrl(that.form.iFileList);
@@ -1426,9 +1551,9 @@ export default {
       let that = this;
       getRepairRecordList(this.faultId).then((response) => {
         that.news = response.data;
-        if(that.news.length>0){
-          for(let i=0;i<that.news.length;i++){
-            if(that.news[i].hasOwnProperty("impression")){
+        if (that.news.length > 0) {
+          for (let i = 0; i < that.news.length; i++) {
+            if (that.news[i].hasOwnProperty("impression")) {
               that.impressionOptions.forEach((opt) => {
                 if (opt.dictValue == that.news[i].impression) {
                   that.news[i].impression = opt.dictLabel;
@@ -1436,8 +1561,8 @@ export default {
               });
             }
           }
-          for(let i=0;i<that.news.length;i++){
-            if(that.news[i].hasOwnProperty("network")){
+          for (let i = 0; i < that.news.length; i++) {
+            if (that.news[i].hasOwnProperty("network")) {
               that.networkOptions.forEach((opt) => {
                 if (opt.dictValue == that.news[i].network) {
                   that.news[i].network = opt.dictLabel;
@@ -1445,8 +1570,8 @@ export default {
               });
             }
           }
-          for(let i=0;i<that.news.length;i++){
-            if(that.news[i].hasOwnProperty("power")){
+          for (let i = 0; i < that.news.length; i++) {
+            if (that.news[i].hasOwnProperty("power")) {
               that.powerOptions.forEach((opt) => {
                 if (opt.dictValue == that.news[i].power) {
                   that.news[i].power = opt.dictLabel;
@@ -1456,6 +1581,7 @@ export default {
           }
         }
       });
+      this.titleHistory = "检修记录";
     },
     // 关闭弹窗
     close() {
@@ -1470,7 +1596,10 @@ export default {
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("faultType", this.form.faultType);
       this.fileData.append("faultSource", this.form.faultSource);
-      this.fileData.append("faultEscalationType", this.form.faultEscalationType);
+      this.fileData.append(
+        "faultEscalationType",
+        this.form.faultEscalationType
+      );
       this.fileData.append("faultFxtime", this.form.faultFxtime);
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
@@ -1508,7 +1637,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 1000);
+      }, 700);
     },
 
     publishForm() {
@@ -1519,7 +1648,10 @@ export default {
       this.fileData.append("faultType", this.form.faultType);
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
-      this.fileData.append("faultEscalationType", this.form.faultEscalationType);
+      this.fileData.append(
+        "faultEscalationType",
+        this.form.faultEscalationType
+      );
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
       this.fileData.append("eqStatus", this.form.eqStatus);
@@ -1550,13 +1682,13 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 500);
+      }, 300);
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除？')
+        .confirm("是否确认删除？")
         .then(function () {
           return delList(ids);
         })
@@ -1568,8 +1700,8 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的故障管理数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的故障管理数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的故障管理数据项？";
       }
       this.queryParams.ids = this.ids.join();
@@ -1584,7 +1716,7 @@ export default {
           this.$download.name(response.msg);
           this.exportLoading = false;
           this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = ''
+          this.queryParams.ids = "";
         })
         .catch(() => {});
     },
@@ -1601,7 +1733,6 @@ export default {
 
 
 <style lang="scss" scoped>
-
 .topTxt {
   font-size: 18px;
   font-weight: 500;
@@ -1667,12 +1798,23 @@ export default {
   }
   ::v-deep .el-card {
     margin-bottom: 10px !important;
-    width:100%;
+    width: 100%;
+  }
+}
+
+.hitchHistoryDialog {
+  ::v-deep .el-dialog__body {
+    max-height: 70vh !important;
+    overflow: auto !important;
+  }
+  ::v-deep .el-card {
+    margin-bottom: 10px !important;
+    width: 100%;
   }
 }
 .topTxt {
   margin-left: 7px;
-  margin-top: 10px;
+  margin-top: -5px;
   font-size: 16px;
   background-image: url(../../../assets/cloudControl/cardTitle.png);
   background-repeat: no-repeat;
@@ -1706,7 +1848,5 @@ export default {
   div:nth-of-type(3) {
     background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
-
-
 }
 </style>

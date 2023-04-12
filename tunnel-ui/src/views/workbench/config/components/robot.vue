@@ -9,10 +9,10 @@
       :visible="visible"
       :before-close="handleClosee"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="form"
         :model="stateForm"
@@ -49,7 +49,11 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="设备厂商:">
-              <el-tooltip effect="dark" :content="stateForm.supplierName" placement="top-start">
+              <el-tooltip
+                effect="dark"
+                :content="stateForm.supplierName"
+                placement="top-start"
+              >
                 <div class="overflowText">{{ stateForm.supplierName }}</div>
               </el-tooltip>
             </el-form-item>
@@ -143,12 +147,13 @@
           class="trafficFlowTab"
         >
           <div class="trafficFlowLeft">
-            <div>
+            <div style="width: 100%;height: 190px;">
               <videoPlayer
                 v-if="this.stateForm.hd"
                 :rtsp="this.stateForm.hd"
                 :open="true"
               ></videoPlayer>
+              <img v-else :src="noVideo" style="width: 100%;height: 100%;border: solid 0.5px rgba(255, 255, 255, 0.5) ;"/>
             </div>
             <div style="margin-top: 20px">
               <el-radio-group v-model="commend.type">
@@ -213,8 +218,23 @@
               </div>
             </div>
           </div>
+          <div class="trafficFlowDashed"></div>
           <div class="trafficFlowRight">
             <el-form ref="form" label-width="80px">
+              <el-row style="margin-bottom: 20px">
+                <el-col :span="20">
+                  <el-slider
+                    v-model="commend.position"
+                    :max="100"
+                    class="sliderClass"
+                  ></el-slider>
+                </el-col>
+                <el-col :span="4">
+                  <span style="padding-left: 10px; line-height: 30px">{{
+                    commend.position
+                  }}</span>
+                </el-col>
+              </el-row>
               <div
                 style="
                   height: 75px;
@@ -259,11 +279,13 @@
               </div>
               <div class="rightButton">
                 <div @click="setCharge()" class="button">
-                  <img src="../../../../assets/cloudControl/robotChongdian.png"/>
+                  <img
+                    src="../../../../assets/cloudControl/robotChongdian.png"
+                  />
                   <span>一键充电</span>
                 </div>
                 <div @click="gotoPreset()" class="button">
-                  <img src="../../../../assets/cloudControl/robotDaohang.png"/>
+                  <img src="../../../../assets/cloudControl/robotDaohang.png" />
                   <span>一键导航</span>
                 </div>
               </div>
@@ -274,10 +296,12 @@
                     placeholder="输入需要播放语音文字"
                     class="broadcastButton"
                   >
-                  <img  @click="broadcast()" slot="append" 
-                    src="../../../../assets/cloudControl/robotBroadcast.png"/>
-                </el-input>
-                  
+                    <img
+                      @click="broadcast()"
+                      slot="append"
+                      src="../../../../assets/cloudControl/robotBroadcast.png"
+                    />
+                  </el-input>
                 </div>
               </div>
               <div style="margin-top: 10px" class="switchBox">
@@ -384,7 +408,7 @@
               label-position="right"
             >
               <el-row>
-                <el-col :span="12">
+                <!--                <el-col :span="12">
                   <el-form-item label="主键 id:" prop="id">
                     <el-input
                       v-model="alarmConfigForm.id"
@@ -400,7 +424,7 @@
                       placeholder="请输入机器人 id"
                     ></el-input>
                   </el-form-item>
-                </el-col>
+                </el-col>-->
                 <el-col :span="12">
                   <el-form-item label="电量阈值配置名称:" prop="groupName">
                     <el-input
@@ -450,11 +474,11 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
-                    <el-button
-                      class="yellowButton"
-                      @click="setAlarmThresholdConfig()"
-                      >保存阈值</el-button
-                    >
+                  <el-button
+                    class="yellowButton"
+                    @click="setAlarmThresholdConfig()"
+                    >保存阈值</el-button
+                  >
                 </el-col>
               </el-row>
             </el-form>
@@ -512,7 +536,7 @@ export default {
       visible: true,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       tab: "trafficFlow",
-
+      noVideo: require("@/assets/image/noVideo.png"),
       commend: {
         type: 1, // 1： 云台   2：相机   3：移动
         chargeIndex: 1, // 充电位置
@@ -526,6 +550,7 @@ export default {
         controlPhoneIndex: 0, //相机索引
         controlMoveIndex: 0, // 移动方向
         videoText: "", // 语音播放内容
+        position: 40, //机器人移动位置进度条
       },
       alarmConfigForm: {
         deviceId: "",
@@ -567,7 +592,14 @@ export default {
     this.getMessage();
     this.findAlarmThresholdConfig();
   },
-  mounted() {},
+  mounted() {
+    var htmlStr = "<div class='robotButton'/>";
+    this.$nextTick(() => {
+      document
+        .getElementsByClassName("el-slider__button")[0]
+        .insertAdjacentHTML("afterEnd", htmlStr);
+    });
+  },
   methods: {
     // 查设备详情
     async getMessage() {
@@ -878,10 +910,6 @@ export default {
 
 .tabRobot {
   margin-top: 10px;
-
-  > .el-radio-button:nth-of-type(1) {
-    margin-left: 15px;
-  }
 }
 
 ::v-deep .el-radio-button--medium .el-radio-button__inner {
@@ -915,6 +943,7 @@ export default {
   display: flex;
   justify-content: space-around;
   .trafficFlowLeft {
+    width:calc(50% - 70px);
     .kongzhiButtons {
       width: 100%;
       height: 95px;
@@ -1001,7 +1030,7 @@ export default {
         border: none;
         background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
       }
-      > .el-button:last-of-type{
+      > .el-button:last-of-type {
         padding: 5px 20px;
         border: none;
         background: #f6b542 linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
@@ -1010,6 +1039,19 @@ export default {
       //   background: #f6b542 linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
       // }
     }
+  }
+  .trafficFlowDashed {
+    width: 1px;
+    height: 400px;
+    background-image: linear-gradient(
+      to top,
+      #00c8fe 0%,
+      #00c8fe 90%,
+      transparent 90%
+    );
+    background-size: 1px 15px;
+    background-repeat: repeat-y;
+    opacity: 0.5;
   }
   .trafficFlowRight {
     .rightButton {
@@ -1029,22 +1071,22 @@ export default {
         img {
           width: 18px;
           height: 18px;
-          margin-right: 2px;
+          margin-right: 4px;
         }
       }
     }
-    .broadcastButton{
-      width:300px;
-      img{
-        width:20px;
+    .broadcastButton {
+      width: 300px;
+      img {
+        width: 20px;
         cursor: pointer;
       }
     }
-    .initializationRow{
+    .initializationRow {
       margin-top: 10px;
       display: flex;
       justify-content: center;
-      .el-button{
+      .el-button {
         padding: 5px 20px;
         border: none;
         background: #f6b542 linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
@@ -1052,13 +1094,13 @@ export default {
     }
   }
 }
-.overflowText{
-  width:140px;
-  overflow:hidden;
-  text-overflow:ellipsis;
+.overflowText {
+  width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
-.yellowButton{
+.yellowButton {
   padding: 5px 20px;
   border: none;
   // background: #f6b542 linear-gradient(180deg, #e5a535 0%, #ffbd49 100%) !important;
@@ -1066,51 +1108,84 @@ export default {
 }
 </style>
 <style lang="scss">
-  .rightSwitch{
-    display: block;
-    position: relative;
-    transform: translateY(4px);
-    .el-switch{
-      width:50px !important;
+.rightSwitch {
+  display: block;
+  position: relative;
+  transform: translateY(4px);
+  .el-switch {
+    width: 50px !important;
+  }
+  .el-switch__label {
+    // color:#fff;
+    top: 3px;
+  }
+  .el-switch__label--left {
+    position: absolute;
+    left: 12px;
+    // color: #fff;
+  }
+  .el-switch__core {
+    width: 70px !important;
+    position: absolute;
+    height: 25px;
+    border-radius: 13px;
+    // border:solid 1px #01AAFD !important;
+    // background: transparent !important;
+  }
+  .el-switch__core:after {
+    width: 34px;
+    height: 21px;
+    border-radius: 11px;
+    // background: #01AAFD;
+  }
+  .el-switch__label--right {
+    position: absolute;
+    left: 34px;
+    // color: #fff;
+  }
+  .el-switch__label--right.is-active {
+    z-index: 1111;
+    // color: #06213E !important;
+  }
+  .el-switch__label--left.is-active {
+    z-index: 1111;
+    // color: #06213E !important;
+  }
+}
+.rightSwitch.is-checked .el-switch__core::after {
+  left: 73% !important;
+}
+
+.trafficFlowRight .sliderClass {
+  width: 100% !important;
+  .el-slider__runway {
+    width: 100%;
+    // background-color: #006784;
+    margin: 12px 0;
+  }
+  .el-slider__bar {
+    background: linear-gradient(90deg, #00aded 0%, #007cdd 100%);
+  }
+
+  .el-slider__button-wrapper {
+    top: -6px !important;
+    .robotButton {
+      width: 24px;
+      height: 24px;
+      margin: 2px auto;
+      background-image: url(../../../../assets/cloudControl/robot.png);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 100%;
     }
-    .el-switch__label{
-      // color:#fff;
-      top:3px;
-    }
-    .el-switch__label--left {
-      position:absolute;
-      left: 12px;
-      // color: #fff;
-    }
-    .el-switch__core{
-      width: 70px !important;
-      position: absolute;
-      height: 25px;
-      border-radius: 13px;
-      // border:solid 1px #01AAFD !important;
-      // background: transparent !important;
-    }
-    .el-switch__core:after{
-      width:34px;
-      height: 21px;
-      border-radius: 11px;
-      // background: #01AAFD;
-    }
-    .el-switch__label--right {
-      position: absolute;
-      left: 34px;
-      // color: #fff;
-    }
-    .el-switch__label--right.is-active {
-      z-index: 1111;
-      // color: #06213E !important;
-    }
-    .el-switch__label--left.is-active {
-      z-index: 1111;
-      // color: #06213E !important;
+    .el-slider__button {
+      width: 10px;
+      height: 10px;
+      border: solid 1px #fff;
+      background-color: #ff9300;
+      // background-image: url(../../../../assets/cloudControl/robot.png);
     }
   }
-  .rightSwitch.is-checked .el-switch__core::after{
-      left:73% !important;
-    }
+}
 </style>
+

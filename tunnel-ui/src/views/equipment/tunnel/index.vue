@@ -228,8 +228,13 @@
         label="是否启用"
         align="center"
         prop="poll"
-        :formatter="pollFormat"
-      />
+      >
+      <template slot-scope="scope">
+        <span :style="{
+          color:scope.row.poll == 0?'#00FF00':'red'
+        }">{{ pollFormat(scope.row.poll) }}</span>
+      </template>
+    </el-table-column>
       <!-- <el-table-column label="存储配置图的html" align="center" prop="storeConfigure" /> -->
       <!-- <el-table-column label="创建者" align="center" prop="createBy" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -829,6 +834,7 @@ import { listSystem } from "@/api/equipment/externalsystem/system";
 import { listAllTunnels } from "@/api/equipment/tunnel/api.js";
 import { exportDevices } from "@/api/equipment/eqlist/api";
 import { exportList } from "@/api/electromechanicalPatrol/taskManage/task";
+import { color } from "echarts";
 
 export default {
   name: "Tunnels",
@@ -1166,7 +1172,7 @@ export default {
     },
     // 是否使用字典翻译
     pollFormat(row, column) {
-      return this.selectDictLabel(this.pollOptions, row.poll);
+      return this.selectDictLabel(this.pollOptions, row);
     },
     // 取消按钮
     cancels() {

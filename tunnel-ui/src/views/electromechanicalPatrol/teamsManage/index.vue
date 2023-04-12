@@ -53,7 +53,12 @@
       :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
       <el-table-column
         type="index"
         :index="indexMethod"
@@ -71,17 +76,23 @@
         label="所属部门"
         align="center"
       ></el-table-column>
-<!--      <el-table-column
+      <!--      <el-table-column
         prop="orderNum"
         label="排序"
         align="center"
       ></el-table-column>-->
       <el-table-column prop="status" label="状态" align="center">
         <template slot-scope="scope">
-          <dict-tag
+          <!-- <dict-tag
             :options="dict.type.sys_normal_disable"
             :value="scope.row.status"
-          />
+          /> -->
+          <span
+            :style="{
+              color: scope.row.status == '0' ? '#00FF00' : 'red',
+            }"
+            >{{ getStatus(scope.row.status) }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime">
@@ -107,13 +118,13 @@
             @click="handleDelete(scope.row)"
             >删除</el-button
           >
-            <el-button
-              size="mini"
-              style="margin-left: 10px"
-              class="tableBlueButtton"
-              @click="handleAuthUser(scope.row)"
-              >包含用户</el-button
-            >
+          <el-button
+            size="mini"
+            style="margin-left: 10px"
+            class="tableBlueButtton"
+            @click="handleAuthUser(scope.row)"
+            >包含用户</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -155,7 +166,7 @@
               <el-input v-model="form.deptName" placeholder="请输入班组名称" />
             </el-form-item>
           </el-col>
-<!--          <el-col :span="12">
+          <!--          <el-col :span="12">
             <el-form-item label="显示排序" prop="orderNum">
               <el-input-number
                 v-model="form.orderNum"
@@ -224,25 +235,18 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <el-row
-        :gutter="20"
-        style="margin: 10px 5px 6px;display: flex"
-
-      >
-        <el-col >
-          <el-button
-            size="small"
-            @click="openSelectTeamsUser"
-          >添加用户
+      <el-row :gutter="20" style="margin: 10px 5px 6px; display: flex">
+        <el-col>
+          <el-button size="small" @click="openSelectTeamsUser"
+            >添加用户
           </el-button>
           <el-button
             size="small"
             :disabled="multiple"
             @click="cancelAuthUserAll"
-          >批量取消</el-button>
-          <el-button size="small" @click="resetQueryUser"
-          >刷新</el-button
+            >批量取消</el-button
           >
+          <el-button size="small" @click="resetQueryUser">刷新</el-button>
         </el-col>
         <el-col>
           <div class="grid-content bg-purple" ref="main">
@@ -253,49 +257,85 @@
               size="small"
               style="
                 border-right: #00c8ff solid 1px !important;
-                border-radius: 3px;"
+                border-radius: 3px;
+              "
             >
             </el-input>
           </div>
         </el-col>
       </el-row>
 
-      <el-row style="padding:0 15px">
+      <el-row style="padding: 0 15px">
         <el-table
           ref="tables"
           :data="userList"
           v-loading="loadingUser"
           @selection-change="handleUserSelectionChange"
-          max-height="430px">
+          max-height="430px"
+        >
           <el-table-column type="selection" align="center" />
-          <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-          <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
-          <el-table-column label="所属部门" prop="dept.deptName" :show-overflow-tooltip="true" />
-<!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
-          <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
-          <el-table-column label="状态" align="center" prop="status"  >
+          <el-table-column
+            type="index"
+            :index="indexMethod"
+            label="序号"
+            width="68"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            label="用户名称"
+            prop="userName"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="用户昵称"
+            prop="nickName"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="所属部门"
+            prop="dept.deptName"
+            :show-overflow-tooltip="true"
+          />
+          <!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
+          <el-table-column
+            label="手机"
+            prop="phonenumber"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column label="状态" align="center" prop="status">
             <template slot-scope="scope">
-              <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+              <!-- <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/> -->
+              <span
+                :style="{
+                  color: scope.row.status == '0' ? '#00FF00' : 'red',
+                }"
+                >{{ getStatus(scope.row.status) }}</span
+              >
             </template>
           </el-table-column>
-<!--          <el-table-column label="创建时间" align="center" prop="createTime" width="220" sortable>
+          <!--          <el-table-column label="创建时间" align="center" prop="createTime" width="220" sortable>
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.createTime) }}</span>
             </template>
           </el-table-column>-->
-          <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
+          <el-table-column
+            label="操作"
+            align="center"
+            width="180"
+            class-name="small-padding fixed-width"
+          >
             <template slot-scope="scope">
               <el-button
                 size="small"
                 class="tableDelButtton"
                 @click="cancelAuthUser(scope.row)"
-              >取消</el-button>
+                >取消</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
         <pagination
-          v-show="totalUser>0"
+          v-show="totalUser > 0"
           :total="totalUser"
           :page.sync="queryParamsUser.pageNum"
           :limit.sync="queryParamsUser.pageSize"
@@ -303,7 +343,9 @@
         />
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button class="closeButton" @click="teamsUserOpen = false">关闭</el-button>
+        <el-button class="closeButton" @click="teamsUserOpen = false"
+          >关闭</el-button
+        >
       </div>
     </el-dialog>
     <!-- 添加用户弹窗对话框 -->
@@ -321,9 +363,7 @@
       </div>
       <el-row class="topFormRow">
         <el-col :span="6">
-          <el-button size="small" @click="resetQueryUnUser"
-          >刷新</el-button
-          >
+          <el-button size="small" @click="resetQueryUnUser">刷新</el-button>
         </el-col>
         <el-col :span="10" :offset="8">
           <div class="grid-content bg-purple" ref="main">
@@ -334,7 +374,8 @@
               size="small"
               style="
                 border-right: #00c8ff solid 1px !important;
-                border-radius: 3px;"
+                border-radius: 3px;
+              "
             >
             </el-input>
           </div>
@@ -346,27 +387,59 @@
           ref="tables"
           :data="unUserList"
           @selection-change="handleUnSelectionChange"
-          max-height="430px">
+          max-height="430px"
+        >
           <el-table-column type="selection" align="center" />
-          <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-          <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
-          <el-table-column label="所属部门" prop="dept.deptName" :show-overflow-tooltip="true" />
-<!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
-          <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
-          <el-table-column label="状态" align="center" prop="status"  >
+          <el-table-column
+            type="index"
+            :index="indexMethod"
+            label="序号"
+            width="68"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            label="用户名称"
+            prop="userName"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="用户昵称"
+            prop="nickName"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="所属部门"
+            prop="dept.deptName"
+            :show-overflow-tooltip="true"
+          />
+          <!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
+          <el-table-column
+            label="手机"
+            prop="phonenumber"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column label="状态" align="center" prop="status">
             <template slot-scope="scope">
-              <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+              <!-- <dict-tag
+                :options="dict.type.sys_normal_disable"
+                :value="scope.row.status"
+              /> -->
+              <span
+                :style="{
+                  color: scope.row.status == '0' ? '#00FF00' : 'red',
+                }"
+                >{{ getStatus(scope.row.status) }}</span
+              >
             </template>
           </el-table-column>
-<!--          <el-table-column label="创建时间" align="center" prop="createTime" width="220" sortable>
+          <!--          <el-table-column label="创建时间" align="center" prop="createTime" width="220" sortable>
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.createTime) }}</span>
             </template>
           </el-table-column>-->
         </el-table>
         <pagination
-          v-show="totalUnUser>0"
+          v-show="totalUnUser > 0"
           :total="totalUnUser"
           :page.sync="queryParamsUnuser.pageNum"
           :limit.sync="queryParamsUnuser.pageSize"
@@ -374,8 +447,12 @@
         />
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button class="submitButton" @click="handleSelectUser">确 定</el-button>
-        <el-button class="closeButton" @click="teamsUserSelect = false">取 消</el-button>
+        <el-button class="submitButton" @click="handleSelectUser"
+          >确 定</el-button
+        >
+        <el-button class="closeButton" @click="teamsUserSelect = false"
+          >取 消</el-button
+        >
       </div>
     </el-dialog>
   </div>
@@ -384,11 +461,16 @@
 <script>
 import { treeSelectYG1 } from "@/api/system/dept";
 import {
-  addTeams, deleteTeamsUserCancel, deleteTeamsUserCancelAll,
+  addTeams,
+  deleteTeamsUserCancel,
+  deleteTeamsUserCancelAll,
   delTeams,
   exportTeams,
   getTeams,
-  listTeams, teamsUserList, teamsUserSelectAll, unTeamsUserList,
+  listTeams,
+  teamsUserList,
+  teamsUserSelectAll,
+  unTeamsUserList,
   updateTeams,
 } from "@/api/electromechanicalPatrol/teamsManage/teams";
 
@@ -399,7 +481,7 @@ import selectUser from "@/views/electromechanicalPatrol/teamsManage/selectUser";
 
 export default {
   name: "teams",
-  components: { Treeselect,authTeamsUser},
+  components: { Treeselect, authTeamsUser },
   dicts: ["sys_normal_disable"],
   data() {
     return {
@@ -412,9 +494,9 @@ export default {
       // 选中数组
       ids: [],
       // 选中的用户数组
-      userIds:[],
+      userIds: [],
       //未选中的用户数组
-      unUserIds:[],
+      unUserIds: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -432,15 +514,15 @@ export default {
       // 已包含用户表格数据
       userList: [],
       // 未包含用户表格数据
-      unUserList:[],
+      unUserList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
       // 是否显示包含用户弹出层
-      teamsUserOpen:false,
-     // 是否显示选择用户弹出层
-      teamsUserSelect:false,
+      teamsUserOpen: false,
+      // 是否显示选择用户弹出层
+      teamsUserSelect: false,
 
       // 部门列表
       deptOptions: [],
@@ -453,12 +535,12 @@ export default {
       queryParamsUser: {
         pageNum: 1,
         pageSize: 10,
-        userName:"",
+        userName: "",
       },
-      queryParamsUnuser:{
+      queryParamsUnuser: {
         pageNum: 1,
         pageSize: 10,
-        userName:"",
+        userName: "",
       },
       // 表单参数
       form: {},
@@ -485,16 +567,25 @@ export default {
           },
         ],
       },
+      sysNormalDisableList: [], //状态
     };
   },
   created() {
     this.getList();
+
+    //状态
+    this.getDicts("sys_normal_disable").then((response) => {
+      this.sysNormalDisableList = response.data;
+    });
   },
 
   methods: {
+    getStatus(row) {
+      return this.selectDictLabel(this.sysNormalDisableList, row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id
+      return row.id;
     },
     //翻页时不刷新序号
     indexMethod(index) {
@@ -510,6 +601,7 @@ export default {
     getList() {
       this.loading = true;
       listTeams(this.queryParams).then((response) => {
+        console.log(response.rows, "查询班组列表");
         this.teamsList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -519,21 +611,19 @@ export default {
     /** 查询授权用户列表 */
     getUserList() {
       this.loadingUser = true;
-      teamsUserList(this.queryParamsUser).then(response => {
-          this.userList = response.rows;
-          this.totalUser = response.total;
-          this.loadingUser = false;
-        }
-      );
+      teamsUserList(this.queryParamsUser).then((response) => {
+        this.userList = response.rows;
+        this.totalUser = response.total;
+        this.loadingUser = false;
+      });
     },
     // 查询未授权表数据
     getListUnuser() {
-      unTeamsUserList(this.queryParamsUnuser).then(res => {
+      unTeamsUserList(this.queryParamsUnuser).then((res) => {
         this.unUserList = res.rows;
         this.totalUnUser = res.total;
       });
     },
-
 
     // 取消按钮
     cancel() {
@@ -563,7 +653,7 @@ export default {
       this.resetForm("queryForm");
       this.queryParams.deptName = "";
       this.$refs.tableFile.clearSelection();
-	    this.queryParams.ids = "";
+      this.queryParams.ids = "";
       this.handleQuery();
     },
 
@@ -572,7 +662,7 @@ export default {
       this.queryParamsUser.userName = "";
       this.handleQueryUser();
     },
-/*刷新*/
+    /*刷新*/
     resetQueryUnUser() {
       this.queryParamsUnuser.userName = "";
       this.handleQueryUnUser();
@@ -581,13 +671,11 @@ export default {
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.deptId);
       this.single = selection.length != 1;
-
     },
 
     handleUnSelectionChange(selection) {
-      this.unUserIds = selection.map(item => item.userId);
+      this.unUserIds = selection.map((item) => item.userId);
       this.multiple = !selection.length;
-
     },
 
     // 表单重置
@@ -640,7 +728,7 @@ export default {
     /** 添加用户操作 */
     openSelectTeamsUser() {
       this.teamsUserSelect = true;
-      this.queryParamsUnuser.userName = '';
+      this.queryParamsUnuser.userName = "";
       this.getListUnuser();
     },
     /** 提交按钮 */
@@ -680,8 +768,8 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的班组管理数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的班组管理数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的班组管理数据项？";
       }
       this.queryParams.ids = this.ids.join();
@@ -696,51 +784,58 @@ export default {
           this.$download.name(response.msg);
           this.exportLoading = false;
           this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = ''
+          this.queryParams.ids = "";
         })
         .catch(() => {});
     },
-
 
     /** 批量取消授权按钮操作 */
     cancelAuthUserAll() {
       const deptId = this.queryParamsUser.deptId;
       const userIds = this.userIds.join(",");
-      this.$modal.confirm('是否取消班组中选中用户吗？').then(function() {
-        return deleteTeamsUserCancelAll({ deptId: deptId, userIds: userIds });
-      }).then(() => {
-        this.getUserList();
-        this.$modal.msgSuccess("取消成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否取消班组中选中用户吗？")
+        .then(function () {
+          return deleteTeamsUserCancelAll({ deptId: deptId, userIds: userIds });
+        })
+        .then(() => {
+          this.getUserList();
+          this.$modal.msgSuccess("取消成功");
+        })
+        .catch(() => {});
     },
 
     /** 取消授权按钮操作 */
     cancelAuthUser(row) {
       const deptId = this.queryParams.deptId;
-      this.$modal.confirm('确认要取消班组中"' + row.userName + '"用户吗？').then(function() {
-        return deleteTeamsUserCancel({ userId: row.userId, deptId: deptId });
-      }).then(() => {
-        this.getUserList();
-        this.$modal.msgSuccess("取消成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('确认要取消班组中"' + row.userName + '"用户吗？')
+        .then(function () {
+          return deleteTeamsUserCancel({ userId: row.userId, deptId: deptId });
+        })
+        .then(() => {
+          this.getUserList();
+          this.$modal.msgSuccess("取消成功");
+        })
+        .catch(() => {});
     },
-// 多选框选中数据
+    // 多选框选中数据
     handleUserSelectionChange(selection) {
-      this.userIds = selection.map(item => item.userId);
+      this.userIds = selection.map((item) => item.userId);
       this.multiple = !selection.length;
     },
     /** 选择授权用户操作 */
     handleSelectUser() {
-      if(this.unUserIds.length==0){
+      if (this.unUserIds.length == 0) {
         return this.$modal.msgWarning("请选择用户");
       }
       const deptId = this.queryParamsUser.deptId;
       const userIds = this.unUserIds.join(",");
-      teamsUserSelectAll({ deptId: deptId, userIds: userIds }).then(res => {
+      teamsUserSelectAll({ deptId: deptId, userIds: userIds }).then((res) => {
         this.$modal.msgSuccess(res.msg);
         if (res.code === 200) {
           this.teamsUserSelect = false;
-          this.multiple = true
+          this.multiple = true;
           this.getUserList();
           this.$emit("ok");
         }

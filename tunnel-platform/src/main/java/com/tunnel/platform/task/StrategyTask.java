@@ -81,14 +81,18 @@ public class StrategyTask {
         for (String devId : split){
             Map<String,Object> map = new HashMap<>();
             SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+            if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
+                map.put("templateId",sdStrategyRl.getState());
+            }
             map.put("devId",devId);
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
-            map.put("state",sdStrategyRl.getEndState());
             if(type.equals("1")){
                 map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerOpen());
+                map.put("state",sdStrategyRl.getState());
             }else{
                 map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerClose());
+                map.put("state",sdStrategyRl.getEndState());
             }
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }

@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,7 @@ public interface ISdTaskListService
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime);
+    List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId);
 
     /**
      * 查询任务关联的巡查点数量
@@ -121,7 +122,7 @@ public interface ISdTaskListService
      * @param id
      * @return
      */
-    int acceptSdTaskList(String id);
+    int acceptSdTaskList(String id,Long userId);
 
     /**
      * app端  巡查点清单
@@ -163,7 +164,7 @@ public interface ISdTaskListService
      * @param sdPatrolList
      * @return
      */
-    int savePatrol(SdPatrolList sdPatrolList);
+    int savePatrol(MultipartFile[] file, SdPatrolList sdPatrolList);
 
     /**
      * 获取任务状态

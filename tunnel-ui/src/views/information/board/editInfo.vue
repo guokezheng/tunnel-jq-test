@@ -774,7 +774,6 @@ export default {
       this.$emit("dialogClose");
     },
     getDevicePixel(devicePixel, num) {
-      console.log(devicePixel,"devicePixel+++++++++++++++++")
       if (num == 0) {
         if (devicePixel > 768) {
           return 768 + "px";
@@ -790,8 +789,6 @@ export default {
       }
     },
     getCoordinate(coordinate, num) {
-      console.log(coordinate,"coordinate")
-      console.log(this.boardWidth,"this.boardWidth")
       if (num == 0) {
         if (this.boardWidth > 768) {
           let i = this.boardWidth / 768;

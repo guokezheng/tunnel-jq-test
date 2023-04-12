@@ -39,6 +39,15 @@ public interface ISdDevicesService {
      */
     List<SdDevices> selectSdDevicesList(SdDevices sdDevices);
 
+
+    /**
+     * 根据隧道ID、设备类型获取设备列表
+     * @param tunnelId 隧道ID
+     * @param typeList 设备类型列表
+     * @return
+     */
+    List<SdDevices> selectDeviceList(String tunnelId,List<String> typeList);
+
     /**
      * 新增设备
      *

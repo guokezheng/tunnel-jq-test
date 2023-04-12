@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-06 16:45:52
+ * @LastEditTime: 2023-04-11 17:25:14
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -67,6 +67,23 @@
             ></el-option>
           </el-select>
         </el-form-item>
+
+        <el-form-item label="方向" prop="direction">
+          <el-select
+            v-model="queryParams.direction"
+            placeholder="请选择方向"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="(item, index) in directionData"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+
         <!-- <el-form-item label="预案类型" prop="category" >
           <el-select
             v-model="queryParams.category"
@@ -97,6 +114,21 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="事件等级" prop="eventGrade">
+          <el-select
+            v-model="queryParams.eventGrade"
+            clearable
+            placeholder="请选择事件等级"
+            size="small"
+          >
+            <el-option
+              v-for="(item, index) in eventGradeList"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
             >搜索</el-button
@@ -118,12 +150,13 @@
       class="allTable"
       :row-key="getRowKey"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <el-table-column
-        type="index"
-        width="70"
+        type="selection"
+        width="55"
         align="center"
-        label="序号">
+        reserve-selection
+      />
+      <el-table-column type="index" width="70" align="center" label="序号">
       </el-table-column>
       <el-table-column
         align="center"
@@ -182,19 +215,19 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         class-name="small-padding fixed-width"
         label="相关策略"
         width="200"
       >
-        <template slot-scope="scope">
-          <!-- <p v-show="scope.row.strategyNames != null"
+        <template slot-scope="scope"> -->
+      <!-- <p v-show="scope.row.strategyNames != null"
                   style="overflow: hidden;text-overflow: ellipsis;cursor: default;"
                   @click="showStrategyContent(scope.row)">
                  {{ scope.row.strategyNames }}
             </p> -->
-          <el-tag
+      <!-- <el-tag
             v-show="scope.row.strategyNames != null"
             :key="tag"
             v-for="tag in scope.row.strategyNames"
@@ -206,7 +239,7 @@
           </el-tag>
           <div v-show="scope.row.strategyNames == ''">无</div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         align="center"
         class-name="small-padding fixed-width"
@@ -234,13 +267,6 @@
             @click="chooseStrategyInfo(scope.row)"
             >配置策略
           </el-button>
-          <!--          <el-button-->
-          <!--            v-hasPermi="['business:plan:remove']"-->
-          <!--            size="mini"-->
-          <!--            class="tableBlueButtton"-->
-          <!--            @click="openWorkbench(scope.row)"-->
-          <!--            >预览-->
-          <!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -396,7 +422,12 @@
     <!--  预览-->
     <!--    <work-bench ref="workBench"></work-bench>-->
     <!-- 新增弹窗 -->
-    <el-dialog :title="title" :visible.sync="dialogFormVisible" width="500px">
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogFormVisible"
+      width="500px"
+      :before-close="cancelsubmitUpload"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -696,7 +727,7 @@
               >
                 <el-select v-model="itemed.state" placeholder="设备操作">
                   <el-option
-                    v-for="(ite,idx) in itemed.eqStateList"
+                    v-for="(ite, idx) in itemed.eqStateList"
                     :key="idx"
                     :label="ite.stateName"
                     :value="ite.deviceState"
@@ -801,7 +832,11 @@ import {
   getCategoryTree,
 } from "@/api/event/strategy";
 import { listType, getTypeAndStrategy } from "@/api/equipment/type/api.js";
-import { getJlyTunnel, getTunnels,listTunnels } from "@/api/equipment/tunnel/api.js";
+import {
+  getJlyTunnel,
+  getTunnels,
+  listTunnels,
+} from "@/api/equipment/tunnel/api.js";
 import { fastLerp } from "zrender/lib/tool/color";
 import {
   addProcess,
@@ -809,7 +844,7 @@ import {
   previewDisplay,
 } from "@/api/event/reserveProcess";
 import { exportFlow } from "@/api/event/planFlow";
-import { Loading } from 'element-ui';
+import { Loading } from "element-ui";
 
 export default {
   name: "Plan",
@@ -818,7 +853,7 @@ export default {
   // },
   data() {
     return {
-      dataLoading:false,
+      dataLoading: false,
       resetCascader: 0,
       equipmentTypeProps: {
         value: "id",
@@ -1043,6 +1078,13 @@ export default {
         isControl: 1,
       },
       retrievalRuleList: [],
+      maskOptions : {
+        lock: true,
+        // text: 'Loading',
+        // spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.strategy-dialog',
+      },
     };
   },
   created() {
@@ -1092,25 +1134,19 @@ export default {
   },
   methods: {
     openFullScreen2() {
-      const loading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.strategy-dialog',
-      });
-      setTimeout(() => {
-        loading.close();
-      }, 2000);
+      const Loading = this.$loading(this.maskOptions);
+      setTimeout(()=>{
+        Loading.close();
+      },1200)
     },
-    getRules(){
+    getRules() {
       this.getDicts("sd_device_retrieval_rule").then((response) => {
-        for(let item of response.data){
+        for (let item of response.data) {
           item.disabled = false;
         }
         this.retrievalRuleList = response.data;
-        for(let item of this.planTypeIdList){
-          for(let itemed of item.processesList){
+        for (let item of this.planTypeIdList) {
+          for (let itemed of item.processesList) {
             itemed.retrievalRuleList = response.data;
           }
         }
@@ -1174,6 +1210,7 @@ export default {
             state: "",
             qbbState: "",
             retrievalRule: null, //规则条件
+            retrievalRuleList: [],
             equipmentTypeData: [],
             equipmentData: [],
             eqStateList: [],
@@ -1182,6 +1219,7 @@ export default {
           },
         ],
       };
+      this.getRules();
       this.planTypeIdList.splice(index + 1, 0, data);
     },
     /** 查询设备类型列表 */
@@ -1248,15 +1286,19 @@ export default {
         );
         let eqType = this.planTypeIdList[number].processesList[index].eqTypeId;
         // 同时如果为情报板则查询情报板模板
-        if(eqType == '16' || eqType == '36'){
+        if (eqType == "16" || eqType == "36") {
           let params = {
-            eqTunnelId:this.currentClickData.tunnelId,
-            eqType:this.planTypeIdList[number].processesList[index].eqTypeId
-          }
-          getVmsDataList(params).then(res=>{
+            eqTunnelId: this.currentClickData.tunnelId,
+            eqType: this.planTypeIdList[number].processesList[index].eqTypeId,
+          };
+          getVmsDataList(params).then((res) => {
             console.log(res);
-            this.$set(this.planTypeIdList[number].processesList[index],"templatesList",res.data);
-          })
+            this.$set(
+              this.planTypeIdList[number].processesList[index],
+              "templatesList",
+              res.data
+            );
+          });
         }
       } else {
         this.$set(
@@ -1295,7 +1337,7 @@ export default {
             retrievalRule: null, //规则条件
             equipmentTypeData: [],
             equipmentData: [],
-            retrievalRuleList:[],
+            retrievalRuleList: [],
             eqStateList: [],
             disabled: false,
             templatesList: [],
@@ -1304,7 +1346,6 @@ export default {
       };
       this.planTypeIdList[number].processesList.splice(index + 1, 0, data);
       this.getEquipmentType();
-      
     },
     //获得预案类别
     // selectPlanType() {
@@ -1315,7 +1356,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
-      this.handleQuery()
+      this.handleQuery();
       this.resetReservePlanDrawForm();
     },
     //form表单置空
@@ -1354,23 +1395,34 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(eqTypeId, number, index) {
-      if(eqTypeId){
-        let retrievalRuleList = this.planTypeIdList[number].processesList[index].retrievalRuleList;
-        console.log(retrievalRuleList);
-        // 如果是车指则判断 字典值然后禁用；  不是则解除禁用
-        if(eqTypeId == '1' || eqTypeId == '2'){
-          for(let item of retrievalRuleList){
-            if(item.dictValue == '6' || item.dictValue == '7'){
-              item.disabled = false;
+      if (eqTypeId) {
+        let retrievalRuleList =
+          this.planTypeIdList[number].processesList[index].retrievalRuleList;
+        console.log(eqTypeId);
+        // 不是车指，则67禁用
+        if (eqTypeId != "1" && eqTypeId != "2") {
+          for (let item of retrievalRuleList) {
+            if (item.dictValue == "6" || item.dictValue == "7") {
+              item.disabled = true;
             }
           }
-        }else{
-          // 重置禁用状态
-          for(let item of retrievalRuleList){
-            item.disabled = true;
+        } else {
+          for (let item of retrievalRuleList) {
+            item.disabled = false;
           }
         }
-        console.log(retrievalRuleList)
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "retrievalRuleList",
+          retrievalRuleList
+        );
+        // else{
+        //   // 重置禁用状态
+        //   for(let item of retrievalRuleList){
+        //     item.disabled = false;
+        //   }
+        // }
+        console.log(retrievalRuleList);
         // 更改设备类型后状态和设备重置
         this.$set(
           this.planTypeIdList[number].processesList[index],
@@ -1407,13 +1459,13 @@ export default {
           );
           console.log(res, "设备列表");
         });
-        console.log(eqTypeId,"eqTypeIdeqTypeIdeqTypeId");
+        console.log(eqTypeId, "eqTypeIdeqTypeIdeqTypeId");
         if (eqTypeId != 22) {
           this.listEqTypeStateIsControl(eqTypeId, number, index);
         } else {
-          console.log(eqTypeId,'广播')
+          console.log(eqTypeId, "广播");
           //广播
-          this.getAudioFileListData('',number,index);
+          this.getAudioFileListData("", number, index);
         }
       }
     },
@@ -1425,7 +1477,11 @@ export default {
       getAudioFileList(params).then((res) => {
         console.log(res.data, "广播");
         this.fileList = res.data;
-        this.$set(this.planTypeIdList[number].processesList[index], "templatesList", res.data);
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "templatesList",
+          res.data
+        );
       });
     },
     // 查询设备可控状态
@@ -1454,7 +1510,11 @@ export default {
         getVMSTemplatesByDevIdAndCategory(data).then((res) => {
           console.log(res.data, "模板信息");
           // this.templatesList = res.data;
-          this.$set(this.planTypeIdList[number].processesList[index], "templatesList", res.data);
+          this.$set(
+            this.planTypeIdList[number].processesList[index],
+            "templatesList",
+            res.data
+          );
         });
       }
     },
@@ -1462,34 +1522,40 @@ export default {
     closeStrategy() {
       // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
-      this.handleQuery()
+      this.handleQuery();
     },
-    everyForeach(value){
-      return value != '';
+    everyForeach(value) {
+      return value != "";
     },
     // 编辑策略保存方法
     submitStrategy() {
       for (let i = 0; i < this.planTypeIdList.length; i++) {
-        if(this.planTypeIdList[i].processStageName == ''){
+        if (this.planTypeIdList[i].processStageName == "") {
           return this.$modal.msgWarning("请填写阶段名称");
         }
         let item = this.planTypeIdList[i].processesList;
-        let result = item.every(items=>{
-          if(items.retrievalRule == 1){
-            console.log(item,'当前数据');
-            return items.processName &&
+        let result = item.every((items) => {
+          if (items.retrievalRule == 1) {
+            console.log(item, "当前数据");
+            return (
+              items.processName &&
               items.state &&
               items.eqTypeId &&
-              items.equipments.length >= 1 && items.equipments[0] != ''
-          }else{//非指定由后端判断具体设备
-            return items.processName &&
+              items.equipments.length >= 1 &&
+              items.equipments[0] != ""
+            );
+          } else {
+            //非指定由后端判断具体设备
+            return (
+              items.processName &&
               items.state &&
               items.retrievalRule &&
               items.eqTypeId &&
               items.state
+            );
           }
-        })
-        if(!result){
+        });
+        if (!result) {
           return this.$modal.msgError("请填写完整");
         }
       }
@@ -1528,8 +1594,6 @@ export default {
      }, */
     // 配置策略
     async chooseStrategyInfo(row) {
-      
-      this.openFullScreen2();
       this.getEquipmentType();
       this.reserveId = row.id;
       this.currentClickData = row;
@@ -1539,7 +1603,7 @@ export default {
       getReservePlanProcess(this.reserveId).then((res) => {
         this.planTypeIdList = res.data;
         this.getRules();
-        console.log(this.planTypeIdList, "编辑数据");
+        this.openFullScreen2();
         if (this.planTypeIdList.length == 0) {
           this.planTypeIdList = [
             {
@@ -1551,7 +1615,7 @@ export default {
                   equipmentTypeData: [],
                   equipmentData: [],
                   retrievalRule: "",
-                  retrievalRuleList:[],
+                  retrievalRuleList: [],
                   equipments: [],
                   disabled: false,
                   templatesList: [],
@@ -1572,7 +1636,7 @@ export default {
             );
             for (let j = 0; j < arr.processesList.length; j++) {
               let brr = arr.processesList[j];
-              
+
               brr.retrievalRule = brr.retrievalRule; //规则条件
               // 选择指定设备
               if (brr.retrievalRule != 1) {
@@ -1603,27 +1667,30 @@ export default {
               // 请求情报板数据
               if (brr.eqTypeId == 16 || brr.eqTypeId == 36) {
                 // 指定设备
-                if(brr.retrievalRule == 1){
+                if (brr.retrievalRule == 1) {
                   brr.state = +brr.state;
-                  this.qbgChange(i,j, brr.equipments);
-                }else{
+                  this.qbgChange(i, j, brr.equipments);
+                } else {
                   //不指定
                   brr.state = +brr.state;
                   let params = {
-                    eqTunnelId:this.currentClickData.tunnelId,
-                    eqType:brr.eqTypeId
-                  }
-                  getVmsDataList(params).then(res=>{
+                    eqTunnelId: this.currentClickData.tunnelId,
+                    eqType: brr.eqTypeId,
+                  };
+                  getVmsDataList(params).then((res) => {
                     console.log(res);
-                    this.$set(this.planTypeIdList[i].processesList[j],"templatesList",res.data);
-                  })
+                    this.$set(
+                      this.planTypeIdList[i].processesList[j],
+                      "templatesList",
+                      res.data
+                    );
+                  });
                 }
               }
               console.log("zxczxczxczxczx");
               //请求广播音频列表数据
               if (brr.eqTypeId == 22) {
                 brr.state = brr.state;
-                console.log(brr.state, "asdadasdasdas");
                 this.getAudioFileListData(brr.equipments, i, j);
               }
             }
@@ -1968,8 +2035,8 @@ export default {
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function () {
-          console.log(11111111111)
-          that.handleQuery()
+          console.log(11111111111);
+          that.handleQuery();
         });
     },
     //移除文件
@@ -2053,7 +2120,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
+      // this.queryParams.pageNum = 1;
       this.$refs.planTable.clearSelection();
       this.getList();
     },
@@ -2123,8 +2190,8 @@ export default {
 // ::v-deep .el-form-item--medium .el-form-item__label {
 //   line-height: 3vh;
 // }
-.strategy-dialog{
-  ::v-deep .el-dialog__body{
+.strategy-dialog {
+  ::v-deep .el-dialog__body {
     height: 72vh;
     overflow: auto;
   }
@@ -2235,8 +2302,8 @@ export default {
   padding: 10px;
   box-sizing: border-box;
 }
-.dialongBox+.dialongBox{
-  margin-top:10px;
+.dialongBox + .dialongBox {
+  margin-top: 10px;
 }
 
 .dialogTableButtonBox {

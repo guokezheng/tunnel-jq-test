@@ -176,6 +176,7 @@
                 :show-all-levels="false"
                 clearable
                 collapse-tags
+                style="width:100%"
                 @change="handleChange"
               ></el-cascader>
             </el-col>
@@ -291,6 +292,7 @@ export default {
       viewStrategy: false,
       showCronBox: false,
       strategyForm: {
+        strategyState:null,// 策略状态
         strategyGroup: 1,
         schedulerTime: "", //cron数据
         strategyType: "1", //策略类型
@@ -343,20 +345,7 @@ export default {
     };
   },
   methods: {
-    openFullScreen2() {
-      const loading = this.$loading({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.strategy-dialog',
-      });
-      setTimeout(() => {
-        loading.close();
-      }, 3000);
-    },
     changeTime(){
-      debugger;
       let date = this.strategyForm.execDate + " " + this.strategyForm.execTime;
       let dateTime = new Date(date).getTime();
       if(this.strategyForm.execDate && this.strategyForm.execTime && dateTime < new Date()){
@@ -378,20 +367,27 @@ export default {
       this.getTunnels();
       this.getDirection();
     },
-    getStrategyData(row) {
+    async getStrategyData(row) {
 
       console.log(row, "当前策略数据");
-      listType(this.queryEqTypeParams).then((response) => {
+      await listType(this.queryEqTypeParams).then((response) => {
         this.equipmentTypeData = response.rows;
       });
       getStrategy(this.id).then((response) => {
-        this.openFullScreen2();
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+          target:'.strategy-dialog',
+        });
         let data = response.data;
         this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
+        this.strategyForm.strategyState = data.strategyState;
         // this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
         this.strategyForm.schedulerTime = data.schedulerTime;
@@ -448,7 +444,12 @@ export default {
             });
           }
         });
+        setTimeout(() => {
+          loading.close();
+        }, 1700);
       });
+
+
     },
     // 改变设备类型
     changeEquipmentType(index) {
@@ -594,12 +595,13 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-        this.$emit("dialogVisibleClose");
+        /*this.$emit("dialogVisibleClose");*/
         this.getList();
       });
     },
     // 提交保存方法
     async addStrategyInfoData() {
+      this.strategyForm.id = null;
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });

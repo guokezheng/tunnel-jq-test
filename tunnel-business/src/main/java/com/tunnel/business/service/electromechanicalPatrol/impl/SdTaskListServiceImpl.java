@@ -1,5 +1,7 @@
 package com.tunnel.business.service.electromechanicalPatrol.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -7,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.domain.DeptTunnelTreeSelect;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
@@ -29,6 +32,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 import javax.xml.crypto.Data;
 
@@ -583,9 +588,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime ) {
+    public List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId ) {
 
-        return sdTaskListMapper.getTaskList(taskStatus,taskName,startTime,endTime);
+        return sdTaskListMapper.getTaskList(taskStatus,taskName,startTime,endTime,deptId);
     }
 
     /**
@@ -604,8 +609,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public int acceptSdTaskList(String id) {
-        return sdTaskListMapper.acceptSdTaskList(id);
+    public int acceptSdTaskList(String id,Long userId) {
+        return sdTaskListMapper.acceptSdTaskList(id,userId);
     }
 
     /**
@@ -733,8 +738,67 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public int savePatrol(SdPatrolList sdPatrolList) {
-        return sdPatrolListMapper.savePatrol(sdPatrolList);
+    public int savePatrol(MultipartFile[] file, SdPatrolList sdPatrolList) {
+        List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
+        int result = -1;
+        if(file!=null){
+            String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
+            sdPatrolList.setImgFileId(guid);// 文件关联ID
+            for (int i = 0; i < file.length; i++) {
+                // 图片Base64
+                String imageBaseStr = null;
+                try {
+                    String contentType = file[i].getContentType();
+                    if (!contentType.contains("image")) {
+                        throw new RuntimeException("文件类型不正确!");
+                    }
+                    byte[] imageBytes = file[i].getBytes();
+                    BASE64Encoder base64Encoder = new BASE64Encoder();
+                    imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+                    imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+                } catch (IOException e) {
+                    throw new RuntimeException("图片转换base64异常");
+                }
+                // 从缓存中获取文件存储路径
+                String fileServerPath = RuoYiConfig.getUploadPath();
+                // 原图文件名
+                String filename = file[i].getOriginalFilename();
+                // 原图扩展名
+                String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
+                // 新的全名
+                String fileName = extendName;
+                // 加路径全名
+                File dir = new File(fileServerPath + "/faultIcon/" + fileName);
+                File filepath = new File(fileServerPath + "/faultIcon");
+
+                SdTrafficImage iconFile = new SdTrafficImage();
+                iconFile.setBusinessId(guid);
+                iconFile.setImgUrl(imageBaseStr);
+                iconFile.setImgName(fileName);
+                iconFile.setCreateBy(SecurityUtils.getUsername());
+                iconFile.setCreateTime(DateUtils.getNowDate());
+                list.add(iconFile);
+
+                if (!filepath.exists()) {
+                    filepath.mkdirs();
+                } else {
+                }
+                try {
+                    file[i].transferTo(dir);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            result = sdTrafficImageMapper.brachInsertFaultIconFile(list);
+            if (result > -1) {
+                result = sdPatrolListMapper.savePatrol(sdPatrolList);
+            }
+        }else{
+            result = sdPatrolListMapper.savePatrol(sdPatrolList);
+        }
+
+
+        return result;
     }
 
     /***

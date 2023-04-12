@@ -681,8 +681,7 @@ export default {
       this.fileData.append("simplifyName", this.form.simplifyName); //类型名称
       this.fileData.append("prevControlType", this.form.prevControlType); //类型名称
       this.fileData.append("isUsable", this.form.isUsable); //是否可用
-      this.fileData.append("priority", this.form.priority); //是否可用
-      // this.fileData.append("uid", this.form.uid); //类型名称
+      this.fileData.append("priority", this.form.priority == null ? "" : this.form.priority); //是否可用
 
       if (this.form.id == null) {
         this.form.iconUrl = -1;

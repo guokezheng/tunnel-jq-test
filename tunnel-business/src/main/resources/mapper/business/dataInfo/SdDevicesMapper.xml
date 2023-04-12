@@ -281,6 +281,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+    <select id="selectDeviceList" resultMap="SdDevicesResult">
+        select eq_id, eq_tunnel_id, eq_name, eq_type, f_eq_type,external_system_id,
+        eq_direction, external_device_id
+        from sd_devices
+        where  eq_tunnel_id = #{tunnelId}
+        and eq_type in
+        <foreach collection="typeList" item="item" separator="," open="(" close=")">
+              #{item}
+        </foreach>
+    </select>
 
 
     <insert id="insertSdDevices" parameterType="SdDevices">

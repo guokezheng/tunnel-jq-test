@@ -126,7 +126,7 @@
                     (
                         SELECT
                             fault.id,
-                            concat( tunnel.tunnel_name, DATA.dict_label, devices.eq_name, type.dict_label ) AS frameEventTitle,
+                            concat( ifnull(tunnel.tunnel_name, ''), ifnull(DATA.dict_label, ''), ifnull(devices.eq_name, ''), ifnull(type.dict_label, '') ) AS frameEventTitle,
                             fault.fault_fxtime AS eventTime,
                             '故障' AS simplifyName,
                             ( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl
@@ -148,7 +148,7 @@
     </select>
 
     <select id="eventPopFault" resultType="hashmap" parameterType="string">
-        select fault.id,concat(tunnel.tunnel_name,data.dict_label,devices.eq_name,type.dict_label) as frameEventTitle,fault.fault_fxtime as eventTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200' AND is_usable = '1') as iconUrl, '2' AS  prevControlType from sd_fault_list fault
+        select fault.id,concat(ifnull(tunnel.tunnel_name, ''), ifnull(DATA.dict_label, ''), ifnull(devices.eq_name, ''), ifnull(type.dict_label, '')) AS frameEventTitle,fault.fault_fxtime as eventTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200' AND is_usable = '1') as iconUrl, '2' AS  prevControlType from sd_fault_list fault
                                                                                                                                                                                                                                                                          left join sd_tunnels tunnel on fault.tunnel_id = tunnel.tunnel_id
                                                                                                                                                                                                                                                                          left join sd_devices devices on devices.eq_id = fault.eq_id
                                                                                                                                                                                                                                                                          left join sys_dict_data data on data.dict_value = devices.eq_direction and data.dict_type='sd_direction'
@@ -202,6 +202,7 @@
             <if test="deptId != null  and deptId != ''">and C.dept_id = #{deptId}</if>
             <if test="tunnelId != null  and tunnelId != ''">and A.tunnel_id = #{tunnelId}</if>
             <if test="eventTypeId != null">and A.event_type_id = #{eventTypeId}</if>
+            <if test="prevControlType != null">and B.prev_control_type = #{prevControlType}</if>
             <if test="eventTitle != null  and eventTitle != ''">and A.event_title = #{eventTitle}</if>
             <if test="eventTime != null ">and A.event_time = #{eventTime}</if>
             <if test="eventState != null  and eventState != ''">and FIND_IN_SET(A.event_state, #{eventState}) > 0</if>
@@ -573,30 +574,28 @@
           AND FIND_IN_SET(
                 d.eq_id,(
                     SELECT
-                        sr.equipments
+                        jrh.equipments
                     FROM
-                        sd_reserve_process rp
-                            LEFT JOIN sd_strategy_rl sr ON rp.strategy_id = sr.id
+                        sd_join_reserve_handle jrh
                     WHERE
                         1 = 1
-                      AND rp.id = #{id}
+                      AND jrh.id = #{id}
                 ))
     </select>
 
-    <select id="getManagementDeviceState" parameterType="sdReserveProcess" resultType="hashmap">
+    <select id="getManagementDeviceState" parameterType="java.lang.Long" resultType="hashmap">
         SELECT
             es.state_name AS stateName,
             esif.url AS url
         FROM
-            sd_reserve_process rp
-                LEFT JOIN sd_strategy_rl sr ON rp.strategy_id = sr.id
-                LEFT JOIN sd_equipment_state es ON sr.eq_type_id = es.state_type_id
+            sd_join_reserve_handle jrh
+                LEFT JOIN sd_equipment_state es ON jrh.eq_type_id = es.state_type_id
                 AND es.state_type = '2'
                 LEFT JOIN sd_equipment_state_icon_file esif ON es.icon_file_id = esif.state_icon_id
         WHERE
             1 = 1
-          AND rp.id = #{id}
-          AND sr.state = es.device_state
+          AND jrh.id = #{id}
+          AND jrh.state = es.device_state
     </select>
 
     <select id="getManagementVmsLs" parameterType="sdReserveProcess" resultType="java.lang.String">
@@ -612,16 +611,19 @@
 
     <select id="getEventInif" parameterType="sdEvent" resultType="hashmap">
         SELECT
-            rp.plan_name AS planName,
+            eh.reserve_name AS planName,
             sdd.dict_label AS eventGrade
         FROM
             sd_event e
-                LEFT JOIN sd_reserve_plan rp ON e.currency_id = rp.id
-                LEFT JOIN sys_dict_data sdd ON e.event_grade = sdd.dict_value
-                AND sdd.dict_type = 'sd_event_grade'
+                LEFT JOIN sd_event_handle eh ON e.id = eh.event_id
+                AND eh.reserve_name IS NOT NULL
+                AND eh.reserve_name != ''
+	    LEFT JOIN sys_dict_data sdd ON e.event_grade = sdd.dict_value
+            AND sdd.dict_type = 'sd_event_grade'
         WHERE
-            1 =1
-        AND e.id = #{id}
+            1 = 1
+          AND e.id = #{id}
+            LIMIT 1
     </select>
 
     <select id="selectAllEvent" parameterType="sdEvent" resultType="hashmap">

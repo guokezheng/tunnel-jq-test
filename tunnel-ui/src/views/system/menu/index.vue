@@ -154,7 +154,13 @@
       <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true" align="center"></el-table-column>
       <el-table-column prop="status" label="状态" width="80" align="center">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+          <!-- <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/> -->
+          <span
+            :style="{
+              color: scope.row.status == '0' ? '#00FF00' : 'red',
+            }"
+            >{{ getStatus(scope.row.status) }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" sortable>
@@ -404,17 +410,25 @@ export default {
         path: [
           { required: true, message: "路由地址不能为空", trigger: "blur" }
         ]
-      }
+      },
+      sysNormalDisableList:[],//状态
     };
   },
   created() {
     this.getList();
+    //状态
+    this.getDicts("sys_normal_disable").then((response) => {
+      this.sysNormalDisableList = response.data;
+    });
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    getStatus(row) {
+      return this.selectDictLabel(this.sysNormalDisableList, row);
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {

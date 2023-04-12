@@ -52,6 +52,7 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficImageService;
+import com.tunnel.business.utils.util.UUIDUtil;
 import com.tunnel.business.utils.work.CustomXWPFDocument;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
@@ -59,6 +60,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
 import javax.security.auth.Subject;
@@ -346,9 +348,13 @@ public class SdTaskListController extends BaseController
      */
     @PostMapping("/app/getTaskList")
     public Result getTaskList(SdTaskList sdTaskList){
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         String startTime = "";//开始时间
         String endTime = "";//结束时间
-        if(sdTaskList.getTime()!=null&&!"".equals(sdTaskList.getTime())){//不为空\
+        if(sdTaskList.getTime()!=null&&!"".equals(sdTaskList.getTime())){//不为空
             //  0：最近1周；1：最近3周；2：最近1月；3：最近3月
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Calendar c = Calendar.getInstance();
@@ -383,7 +389,7 @@ public class SdTaskListController extends BaseController
         }
 
 
-        List<SdTaskList> taskList = sdTaskListService.getTaskList(sdTaskList.getTaskStatus(),sdTaskList.getTaskName(),startTime,endTime);
+        List<SdTaskList> taskList = sdTaskListService.getTaskList(sdTaskList.getTaskStatus(),sdTaskList.getTaskName(),startTime,endTime,deptId);
         if(taskList!=null&&taskList.size()>0){
             for(int i=0;i<taskList.size();i++){
                 if(taskList.get(i).getId()!=null){
@@ -415,7 +421,8 @@ public class SdTaskListController extends BaseController
     @GetMapping("/app/accept")
     public AjaxResult accept(String id)
     {
-        return toAjax(sdTaskListService.acceptSdTaskList(id));
+        Long userId  = SecurityUtils.getUserId();
+        return toAjax(sdTaskListService.acceptSdTaskList(id,userId));
     }
 
     /**
@@ -445,6 +452,7 @@ public class SdTaskListController extends BaseController
     /**
      * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见
      *     提交上报    task_status 变为2 已完结
+     *     接收任务    task_status 从“待巡检”改为“巡检中”
      * @param  sdTaskList
      * @return
      */
@@ -466,6 +474,7 @@ public class SdTaskListController extends BaseController
             SdTaskList task = sdTaskListService.selectSdTaskListById(taskNo);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String pdTime = "";
+            String xcTime = "";
             String planEndTime = "";
             String taskEndTime = "";
             if (task.getDispatchTime() != null) {
@@ -525,7 +534,11 @@ public class SdTaskListController extends BaseController
                             map.put("photo", pictureRenderData);
                         }
                     }
+                    if (map.get("xcTime") != null) {
+                        xcTime = format.format(DateUtil.parse(map.get("xcTime").toString()));
+                    }
                     //添加巡查记录序号
+                    map.put("xcTime",xcTime);
                     map.put("remark",obj.getXcSort()+1);
                     convertList.add(map);
                 }
@@ -605,9 +618,9 @@ public class SdTaskListController extends BaseController
      * @return
      */
     @GetMapping("/app/savePatrol")
-    public AjaxResult savePatrol(SdPatrolList sdPatrolList)
+    public AjaxResult savePatrol(@RequestParam(name = "file", required = false) MultipartFile[] file, SdPatrolList sdPatrolList)
     {
-        return toAjax(sdTaskListService.savePatrol(sdPatrolList));
+        return toAjax(sdTaskListService.savePatrol(file,sdPatrolList));
     }
 
     /**

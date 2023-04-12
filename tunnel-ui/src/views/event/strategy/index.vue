@@ -63,6 +63,20 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="方向" prop="direction">
+              <el-select
+                v-model="queryParams.direction"
+                placeholder="请选择方向"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="(item, index) in directionData"
+                  :key="index"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                ></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="策略类型" prop="strategyType">
               <el-select
                 v-model="queryParams.strategyType"
@@ -638,6 +652,8 @@ export default {
       total: 0,
       // 控制策略表格数据
       strategyList: [],
+
+      directionData: [], //方向
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -669,6 +685,7 @@ export default {
         pageSize: 10,
         tunnelId: null,
         strategyName: null,
+        direction:null,
         strategyType: null,
         strategyInfo: null,
         schedulerTime: null,
@@ -780,6 +797,10 @@ export default {
     });
     this.getDicts("sd_trigger_compare_type").then((response) => {
       this.symbol = response.data;
+    });
+    // 方向
+    this.getDicts("sd_direction").then((response) => {
+      this.directionData = response.data;
     });
     this.getDicts("sd_strategy_direction").then((response) => {
       response.data.forEach((item) => {
@@ -1391,7 +1412,6 @@ export default {
   watch:{
     dialogVisible:{
       handler(val){
-        debugger
         this.$refs.tableFile1.clearSelection()
       }
     }

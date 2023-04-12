@@ -239,6 +239,7 @@
         <div class="dialogCloseButton"></div>
       </div>
       <!--      <h1>新增巡检任务</h1>-->
+      <el-card>
       <div class="task">
         <div class="topTxt" style="margin-bottom: 20px">巡查任务基本信息</div>
         <div class="tableTopHr" style="display: none"></div>
@@ -341,6 +342,8 @@
           </el-row>
         </el-form>
       </div>
+      </el-card>
+      <el-card>
       <div class="patrol">
         <div class="topTxt">巡查点信息</div>
         <div class="tableTopHr" style="display: none"></div>
@@ -408,6 +411,7 @@
           <el-button class="submitButton" @click="release">发布</el-button>
         </div>
       </div>
+      </el-card>
     </el-dialog>
     <el-dialog :visible.sync="isShow1" width="50%" class="show">
       <div class="dialogStyleBox">
@@ -667,7 +671,7 @@
               {{index+1}}设备巡检点:
             </el-col>-->
           <div class="topTxt">
-            {{ index + 1 }}&nbsp;&nbsp;&nbsp;&nbsp;设备巡检点
+            {{ index + 1 }}&nbsp;&nbsp;&nbsp;&nbsp;、设备巡检点
           </div>
           <el-col
             :span="2"
@@ -683,7 +687,7 @@
             {{ pat.xcTime }}
             </el-col>-->
         </el-row>
-        <el-row>
+        <el-row style="margin-left: 3em;margin-top: 10px;">
           <el-col :span="8">
             <div>设备描述：</div>
             <span>{{ pat.eqFaultDescription }}</span>
@@ -711,7 +715,7 @@
           <el-col :span="8">
             <div>现场照片：</div>
             <div v-for="(pic, index) in pat.iFileList" :key="index">
-              <img :src="pic.imgUrl" :title="pic.imgName" />
+              <img :src="pic.imgUrl"   :title="pic.imgName" />
             </div>
           </el-col>
         </el-row>
@@ -1836,6 +1840,7 @@ export default {
         this.dialogSelection = [];
       },
     },
+
   },
 };
 </script>
@@ -1979,8 +1984,17 @@ h1 {
   //   padding: 15px 20px;
   // }
 }
+img {
+  width: 100px;
+  margin-top: 20px;
+  margin-left: -20px;
+}
+  ::v-deep .el-card {
+    margin-bottom: 10px !important;
+    background: #0D203C !important;
+  }
 .task {
-  margin-bottom: 30px;
+  //margin-bottom: 30px;
   .el-row {
     display: flex;
     flex-wrap: wrap;

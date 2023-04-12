@@ -67,6 +67,23 @@
             ></el-option>
           </el-select>
         </el-form-item>
+
+        <el-form-item label="方向" prop="direction">
+          <el-select
+            v-model="queryParams.direction"
+            placeholder="请选择方向"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="(item, index) in directionData"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+
         <!-- <el-form-item label="预案类型" prop="category" >
           <el-select
             v-model="queryParams.category"
@@ -94,6 +111,21 @@
               :key="index"
               :label="item.eventType"
               :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="事件等级" prop="eventGrade">
+          <el-select
+            v-model="queryParams.eventGrade"
+            clearable
+            placeholder="请选择事件等级"
+            size="small"
+          >
+            <el-option
+              v-for="(item, index) in eventGradeList"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
             />
           </el-select>
         </el-form-item>

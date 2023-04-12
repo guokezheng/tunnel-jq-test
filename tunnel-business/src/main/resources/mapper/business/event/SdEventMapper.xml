@@ -202,6 +202,7 @@
             <if test="deptId != null  and deptId != ''">and C.dept_id = #{deptId}</if>
             <if test="tunnelId != null  and tunnelId != ''">and A.tunnel_id = #{tunnelId}</if>
             <if test="eventTypeId != null">and A.event_type_id = #{eventTypeId}</if>
+            <if test="prevControlType != null">and B.prev_control_type = #{prevControlType}</if>
             <if test="eventTitle != null  and eventTitle != ''">and A.event_title = #{eventTitle}</if>
             <if test="eventTime != null ">and A.event_time = #{eventTime}</if>
             <if test="eventState != null  and eventState != ''">and FIND_IN_SET(A.event_state, #{eventState}) > 0</if>

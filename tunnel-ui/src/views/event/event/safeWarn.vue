@@ -2645,7 +2645,8 @@ export default {
       this.dateRange = [];
       // this.tunnelList = [];
       this.queryParams.eventTypeId = "";
-      this.queryParams.prevControlType = "";
+      this.queryParams.tunnelId = null;
+      this.queryParams.prevControlType = null;
       this.queryParams.fuzzySearch = "";
       this.fuzzySearch1 = "";
       this.checkBoxEventState = [];

@@ -293,6 +293,16 @@ p {
   caret-color: rgba(0,0,0,0);
   user-select: none; 
 }
+.el-table th.el-table__cell > .cell{
+  padding: 0;
+}
+.el-table--border .el-table__cell:first-child .cell{
+  padding: 0;
+}
+// 所有级联树 文字垂直居中
+.vue-treeselect--has-value .vue-treeselect__input{
+  vertical-align: baseline !important;
+}
 .el-dialog__header{
   caret-color: rgba(0,0,0,0);
   user-select: none; 

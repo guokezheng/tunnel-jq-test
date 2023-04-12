@@ -2742,7 +2742,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-callPolice>
-    <com-robot
+    <!-- <com-robot
       class="comClass"
       v-if="this.eqInfo.clickEqType == 29"
       :brandList="this.brandList"
@@ -2750,7 +2750,8 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-robot>
+    ></com-robot> -->
+    <robot class="comClass robotHtmlBox" v-if="this.eqInfo.clickEqType == 29"></robot>
     <com-bright
       class="comClass"
       v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
@@ -3749,6 +3750,8 @@ import comBoard from "@/views/workbench/config/components/board"; //情报板弹
 import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
 import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵弹窗
 import comSjb from "@/views/workbench/config/components/sjb"; //消防水泵弹窗
+import robot from "@/views/workbench/config/components/robotManagementt"; //消防水泵弹窗
+
 
 import { getLocalIP } from "@/api/event/vedioRecord";
 import { getHosts } from "@/api/equipment/plc/api";
@@ -3822,6 +3825,7 @@ export default {
     comRadio,
     comXfsb,
     comSjb,
+    robot
   },
 
   data() {
@@ -8812,6 +8816,7 @@ export default {
       this.dateRange = [];
       this.dateRange1 = [];
       this.title = "操作日志";
+      this.operationActive = 'xitong';
       this.operationLogDialog = true;
       this.operationParam_xt.ipaddr = ''
       this.operationParam.operIp = ''
@@ -9196,6 +9201,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.robotHtmlBox{
+  width: 1150px;
+  position: absolute;
+  left: 400px;
+  z-index:96659;
+  
+}
 .batchManageButton {
   width: 120px;
   display: flex;

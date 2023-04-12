@@ -38,7 +38,7 @@
 
     <el-table v-loading="loading" :data="configList"  class="allTable" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="页面配置ID" align="center" prop="id"/>
+<!--      <el-table-column label="页面配置ID" align="center" prop="id"/>-->
       <el-table-column label="所属部门" align="center" prop="deptId"/>
       <el-table-column label="页面名称" align="center" prop="name"/>
       <el-table-column label="页面标识符" align="center" prop="code"/>
@@ -73,7 +73,7 @@
 
     <!-- 添加或修改数字孪生页面配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body class="addUserDialog">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="90px">
         <el-form-item label="归属部门" prop="deptId">
           <treeselect
             v-model="form.deptId"
@@ -84,10 +84,10 @@
           />
         </el-form-item>
         <el-form-item label="页面名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入页面名称"/>
+          <el-input v-model="form.name" placeholder="请输入页面名称" />
         </el-form-item>
         <el-form-item label="页面标识符" prop="code">
-          <el-input v-model="form.code" placeholder="请输入页面标识符"/>
+          <el-input v-model="form.code" placeholder="请输入页面标识符" />
         </el-form-item>
         <el-form-item label="页面路径" prop="url">
           <el-input v-model="form.url" placeholder="请输入页面路径"/>

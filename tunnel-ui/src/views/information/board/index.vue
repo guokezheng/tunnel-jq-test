@@ -931,7 +931,7 @@ export default {
     // 转报文 色号
     getColorValue(color) {
       if (color == "蓝色" || color == "blue") return "000000255000";
-      if (color == "绿色" || color == "#00FF00") return "000255000000";
+      if (color == "绿色" || color == "#00FF00" || color == "GreenYellow") return "000255000000";
       if (color == "透明色") return "t";
       if (color == "红色" || color == "red") return "255000000000";
       return "255255000000"; //黄色
@@ -1393,5 +1393,8 @@ export default {
 }
 ::v-deep .el-table .cell {
   padding-left: 5px;
+}
+::v-deep .el-checkbox+.el-checkbox{
+  margin-left:0px !important;
 }
 </style>

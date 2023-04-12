@@ -70,7 +70,7 @@
                 style="width: 100%"
               >
                 <el-option
-                  v-for="(item, index) in directionData"
+                  v-for="(item, index) in directionOptions"
                   :key="index"
                   :label="item.dictLabel"
                   :value="item.dictValue"
@@ -652,8 +652,6 @@ export default {
       total: 0,
       // 控制策略表格数据
       strategyList: [],
-
-      directionData: [], //方向
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -797,10 +795,6 @@ export default {
     });
     this.getDicts("sd_trigger_compare_type").then((response) => {
       this.symbol = response.data;
-    });
-    // 方向
-    this.getDicts("sd_direction").then((response) => {
-      this.directionData = response.data;
     });
     this.getDicts("sd_strategy_direction").then((response) => {
       response.data.forEach((item) => {

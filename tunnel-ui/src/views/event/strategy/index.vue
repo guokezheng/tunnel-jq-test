@@ -70,7 +70,7 @@
                 style="width: 100%"
               >
                 <el-option
-                  v-for="(item, index) in directionData"
+                  v-for="(item, index) in directionOptions"
                   :key="index"
                   :label="item.dictLabel"
                   :value="item.dictValue"
@@ -175,6 +175,7 @@
           v-loading="loading"
           :data="strategyList"
           @selection-change="handleSelectionChange"
+          @row-click="handleRowClick"
           :header-cell-style="{ 'text-align': 'center' }"
           height="62vh"
           class="allTable"
@@ -652,8 +653,6 @@ export default {
       total: 0,
       // 控制策略表格数据
       strategyList: [],
-
-      directionData: [], //方向
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -798,10 +797,6 @@ export default {
     this.getDicts("sd_trigger_compare_type").then((response) => {
       this.symbol = response.data;
     });
-    // 方向
-    this.getDicts("sd_direction").then((response) => {
-      this.directionData = response.data;
-    });
     this.getDicts("sd_strategy_direction").then((response) => {
       response.data.forEach((item) => {
         this.directionOptions.push(item);
@@ -814,6 +809,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+    // 点击某一行，将其选中(表格)
+    handleRowClick(row, i, a) {
+      this.$refs.tableFile1.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -857,7 +856,8 @@ export default {
       this.getList();
     },
     // 每次点击取消按钮，策略类型赋空
-    closeDialog() {
+    closeDialog(flag) {
+
       let index = this.strategyForm.strategyType;
       switch (index) {
         case '0':
@@ -871,10 +871,14 @@ export default {
           this.$refs.timeControl.resetForm();
           break;
       }
-      console.log(this.strategyForm.strategyType);
+      console.log(this.strategyForm.strategyType,"0000000000");
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
-      this.getList();
+      this.$refs.tableFile1.clearSelection();
+      if(flag){
+        this.getList();
+      }
+
     },
     changeStrategyState(row) {
 
@@ -1329,6 +1333,7 @@ export default {
 
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
       const rlIds = row.id || this.rlIds;
       const jobRelationId = row.jobRelationId;
@@ -1352,6 +1357,7 @@ export default {
           });
         })
         .catch(function () {
+          that.$refs.tableFile1.clearSelection();
         });
       this.model = "1";
     },

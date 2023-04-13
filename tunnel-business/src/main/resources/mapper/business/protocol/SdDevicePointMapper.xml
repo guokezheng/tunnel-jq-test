@@ -46,7 +46,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdDevicePointVo"/>
         where id = #{id}
     </select>
-        
+
+
+    <select id="selectSdDeviceIdList" parameterType="SdDevicePoint" resultMap="SdDevicePointResult">
+        select eq_id from sd_device_point
+        <where>
+            <if test="eqId != null  and eqId != ''"> and eq_id = #{eqId}</if>
+            <if test="eqType != null "> and eq_type = #{eqType}</if>
+            <if test="itemId != null "> and item_id = #{itemId}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="addressIndex != null "> and address_index = #{addressIndex}</if>
+            <if test="functionName != null  and functionName != ''"> and function_name like concat('%', #{functionName}, '%')</if>
+            <if test="dataType != null  and dataType != ''"> and data_type = #{dataType}</if>
+            <if test="signalName != null  and signalName != ''"> and signal_name like concat('%', #{signalName}, '%')</if>
+            <if test="stateId != null "> and state_id = #{stateId}</if>
+            <if test="dataStatus != null  and dataStatus != ''"> and data_status = #{dataStatus}</if>
+            <if test="functionDescription != null  and functionDescription != ''"> and function_description = #{functionDescription}</if>
+            <if test="isReserved != null "> and is_reserved = #{isReserved}</if>
+        </where>
+        GROUP BY eq_id
+    </select>
+
+
     <insert id="insertSdDevicePoint" parameterType="SdDevicePoint" useGeneratedKeys="true" keyProperty="id">
         insert into sd_device_point
         <trim prefix="(" suffix=")" suffixOverrides=",">

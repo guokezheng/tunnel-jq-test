@@ -92,4 +92,8 @@ public interface SdOperationLogMapper
      * @return
      */
     List<SdOperationLog> selectAppOperationLogList(@Param("start") String start, @Param("end") String end, @Param("deptId") String deptId);
+
+    int selectSdOperationLogCountList(SdOperationLog sdOperationLog);
+
+    List<String> getTunnelArrayByDeptId(@Param("deptId")String deptId);
 }

@@ -217,6 +217,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	left join sys_dict_data o on o.dict_value = p.impression and o.dict_type = 'power'
 	left join sys_dict_data c on c.dict_value = p.fault_clstatus and c.dict_type = 'fault_clstatus'
     where p.task_id = #{task_id}
+    order by p.xc_sort
     </select>
 
 

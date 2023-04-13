@@ -132,6 +132,7 @@
       v-loading="loading"
       :data="devicesList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
       height="62vh"
       :row-key="getRowKey"
@@ -693,6 +694,7 @@
       :visible.sync="ctrlcmd"
       width="700px"
       append-to-body
+      :before-close="cancel"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -1146,6 +1148,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.eqId
@@ -1303,6 +1308,8 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.ctrlcmd = false;
+      this.$refs.tableFile.clearSelection();
       this.submitFormLoading = false;
       this.reset();
     },
@@ -1526,6 +1533,7 @@ export default {
             await updateDevices(this.form).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
+                this.$refs.tableFile.clearSelection();
                 this.open = false;
                 this.getList();
               }
@@ -1545,6 +1553,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const eqIds = row.eqId || this.ids;
       this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
@@ -1558,7 +1567,9 @@ export default {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(function () {});
+        .catch(function () {
+          that.$refs.tableFile.clearSelection();
+        });
     },
 
 

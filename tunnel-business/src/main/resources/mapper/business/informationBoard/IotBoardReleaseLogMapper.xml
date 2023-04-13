@@ -35,6 +35,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data d on d.dict_value = b.eq_direction and d.dict_type = "sd_direction"
         <where>
             <if test="deviceId != null  and deviceId != ''"> and a.device_id = #{deviceId}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+            <if test="direction != null  and direction != ''"> and b.eq_direction = #{direction}</if>
             <if test="deviceName != null  and deviceName != ''"> and (a.device_name like concat('%', #{deviceName}, '%') or b.eq_name like concat('%', #{deviceName}, '%'))</if>
             <if test="releaseOldContent != null  and releaseOldContent != ''"> and a.release_old_content = #{releaseOldContent}</if>
             <if test="releaseNewContent != null  and releaseNewContent != ''"> and a.release_new_content = #{releaseNewContent}</if>

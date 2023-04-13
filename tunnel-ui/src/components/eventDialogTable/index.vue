@@ -30,11 +30,11 @@
           </div>
           <div>|</div>
           <div :class="searchValue == 1 ? 'xz' : ''" @click="handleClick(1)">
-            主动安全
+            安全预警
           </div>
           <div>|</div>
           <div :class="searchValue == 0 ? 'xz' : ''" @click="handleClick(0)">
-            交通事件
+            普通事件
           </div>
           <div>|</div>
           <div :class="searchValue == 2 ? 'xz' : ''" @click="handleClick(2)">

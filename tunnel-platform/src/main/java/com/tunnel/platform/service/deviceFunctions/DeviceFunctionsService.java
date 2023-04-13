@@ -1,22 +1,31 @@
 package com.tunnel.platform.service.deviceFunctions;
 
+import cn.hutool.system.SystemUtil;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.quartz.task.OmronTask;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.dataInfo.SdEquipmentState;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.domain.protocol.SdDevicePoint;
+import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdEquipmentStateService;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
-import com.tunnel.deal.plc.omron.OmronConnectProperties;
+import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.deal.plc.omron.finsTCP.OmronTcpClient;
 import com.tunnel.deal.plc.omron.util.ByteUtil;
-import io.netty.channel.ChannelFuture;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class DeviceFunctionsService {
@@ -33,9 +42,19 @@ public class DeviceFunctionsService {
     private String hostIp = "127.0.0.1";
 
     @Autowired
-    private ISdDevicesService sdDevicesService;
+    private ISdEquipmentStateService sdEquipmentStateService;
     @Autowired
     private ISdDevicePointService devicePointService;
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+    @Autowired
+    private ISdDeviceDataService sdDeviceDataService;
+    @Autowired
+    private ISdOperationLogService sdOperationLogService;
+
+
+
+
 
     /**
      * 设备控制指令接口
@@ -80,6 +99,65 @@ public class DeviceFunctionsService {
                 }
                 break;
         }
+        if(resultData){
+            SdDevices device = sdDevicesService.selectSdDevicesById(eqId);
+            //添加操作日志
+            SdOperationLog sdOperationLog = new SdOperationLog();
+            sdOperationLog.setEqTypeId(device.getEqType());
+            sdOperationLog.setTunnelId(device.getEqTunnelId());
+            sdOperationLog.setEqId(device.getEqId());
+            sdOperationLog.setOperationState(data);
+            //控制方式   0：手动 1：时间控制 2：光强控制
+            sdOperationLog.setControlType("0");
+            sdOperationLog.setCreateTime(new Date());
+            try {
+                sdOperationLog.setOperIp(InetAddress.getLocalHost().getHostAddress());
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            //操作是否成功 0 不成功；1成功
+            sdOperationLog.setState("1");
+            // 获取设备之前状态
+            SdDeviceData sdDeviceData = new SdDeviceData();
+            sdDeviceData.setDeviceId(eqId);
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUI_BENG.getCode()));
+            List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+            if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+                sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+            }
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+//            //更新设备data状态
+//            sdDeviceData.setData(data);
+//            sdDeviceData.setUpdateTime(new Date());
+//            sdDeviceDataService.updateSdDeviceData(sdDeviceData);
+        }else{
+            SdDevices device = sdDevicesService.selectSdDevicesById(eqId);
+            //添加操作日志
+            SdOperationLog sdOperationLog = new SdOperationLog();
+            sdOperationLog.setEqTypeId(device.getEqType());
+            sdOperationLog.setTunnelId(device.getEqTunnelId());
+            sdOperationLog.setEqId(device.getEqId());
+            sdOperationLog.setOperationState(data);
+            //控制方式   0：手动 1：时间控制 2：光强控制
+            sdOperationLog.setControlType("0");
+            sdOperationLog.setCreateTime(new Date());
+            try {
+                sdOperationLog.setOperIp(InetAddress.getLocalHost().getHostAddress());
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            //操作是否成功 0 不成功；1成功
+            sdOperationLog.setState("0");
+            // 获取设备之前状态
+            SdDeviceData sdDeviceData = new SdDeviceData();
+            sdDeviceData.setDeviceId(eqId);
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUI_BENG.getCode()));
+            List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+            if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+                sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+            }
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        }
         return resultData;
     }
 
@@ -92,6 +170,8 @@ public class DeviceFunctionsService {
             SdDevicePoint sdDevicePointInfo = sdDevicePointList.get(0);
             switch (sdDevicePointInfo.getDataStatus()){
                 case "sbBoolean":
+                    //data 消防栓数据转化
+                    data = getStatusByData(data, Math.toIntExact(sdDevicePointInfo.getStateId()));
                     //二进制解析  将数据转化为byte[]
                     if("bin".equals(sdDevicePointInfo.getDataType())){
                         //获取对应数据   解析为对应状态值
@@ -124,5 +204,31 @@ public class DeviceFunctionsService {
             }
         }
         return resultStatus;
+    }
+
+
+    /**
+     * 控制状态解析
+     * @param data
+     * @param statusId
+     * @return
+     */
+    public String getStatusByData(String data, int statusId){
+        String resultData = "";
+        //消防水泵
+        if(DevicesTypeEnum.SHUI_BENG.getCode() == statusId){
+            //置1启动；置0停止
+            switch (data){
+                case "1":
+                    //开启
+                    resultData = "1";
+                    break;
+                case "2":
+                    //关闭
+                    resultData = "0";
+                    break;
+            }
+        }
+        return resultData;
     }
 }

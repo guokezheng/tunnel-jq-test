@@ -85,6 +85,7 @@
       v-loading="loading"
       :data="typeList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       height="62vh"
       class="allTable"
       :row-key="getRowKey"
@@ -468,6 +469,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.typeId;
@@ -577,6 +581,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -665,6 +670,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      let that = this
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       if ((this.fileList = [])) {
@@ -687,6 +693,7 @@ export default {
             updateType(this.fileData).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              that.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -701,6 +708,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const typeIds = row.typeId || this.ids;
       // const iconFileIds = row.iconFileId || this.fIds;
       this.$confirm("是否确认删除?", "警告", {
@@ -716,7 +724,9 @@ export default {
           this.$modal.msgSuccess("删除成功");
           console.log()
         })
-        .catch(function () {});
+        .catch(function () {
+          that.$refs.tableFile.clearSelection();
+        });
     },
   },
 };

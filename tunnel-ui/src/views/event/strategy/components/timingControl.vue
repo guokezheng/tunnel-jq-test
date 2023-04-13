@@ -292,7 +292,7 @@ export default {
       viewStrategy: false,
       showCronBox: false,
       strategyForm: {
-        strategyState:null,// 策略状态
+        strategyState:1,// 策略状态
         strategyGroup: 1,
         schedulerTime: "", //cron数据
         strategyType: "1", //策略类型
@@ -376,8 +376,8 @@ export default {
       getStrategy(this.id).then((response) => {
         const loading = this.$loading({
           lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
+          // text: 'Loading',
+          // spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)',
           target:'.strategy-dialog',
         });
@@ -595,7 +595,7 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-        /*this.$emit("dialogVisibleClose");*/
+        this.$emit("dialogVisibleClose");
         this.getList();
       });
     },

@@ -181,6 +181,7 @@
         width="500px"
         append-to-body
         class="addUserDialog"
+        :before-close="cancel"
       >
         <div class="dialogStyleBox">
           <div class="dialogLine"></div>
@@ -427,6 +428,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.peopleTable.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -457,6 +459,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.deptName = "";
       this.queryParams.userName = "";
       this.queryParams.deptId = "";
       this.queryParams.ids = "";
@@ -511,6 +514,7 @@ export default {
             await updateSdEmergencyPer(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.peopleTable.clearSelection();
               this.getList();
             });
           } else {
@@ -526,6 +530,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
       this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
@@ -538,7 +543,10 @@ export default {
         .then(() => {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
-        });
+        })
+        .catch(function () {
+          that.$refs.peopleTable.clearSelection();
+        });;
     },
     /** 导出按钮操作 */
     handleExport() {

@@ -186,8 +186,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     //消防水泵
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUI_BENG.getCode())) {
                         devices.put("state", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUAN.getCode())) {
-                        devices.put("xfsState", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUAN_STATUS.getCode())) {
+                        devices.put("xfsStatus", data.getData());
                     } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_LIU_IA.getCode())) {
                         devices.put("ia", data.getData());
                     } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_LIU_IB.getCode())) {

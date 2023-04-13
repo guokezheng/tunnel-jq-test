@@ -63,9 +63,14 @@
               {{ geteqType(stateForm.eqStatus)}}
             </el-form-item>
           </el-col>
+          <el-col :span="11">
+            <el-form-item label="消防泵状态:">
+              {{ stateForm.xfsStatus}}
+            </el-form-item>
+          </el-col>
         </el-row>
         <div class="lineClass"></div>
-        <el-row style="margin-top: 10px">
+        <!-- <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="电流Ia:">
               {{ stateForm.ia}} <span style="padding-left:5px">I</span>
@@ -102,7 +107,7 @@
               {{ stateForm.vc}} <span style="padding-left:5px">V</span>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
         <div style="margin-top: 10px">
           <el-form-item label="配置状态:">
             <div class="wrap">

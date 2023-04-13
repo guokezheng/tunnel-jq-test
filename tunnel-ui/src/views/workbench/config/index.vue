@@ -372,7 +372,7 @@
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
                             transform:
-                              item.eqType == 23 && item.eqDirection == 1
+                              item.eqType == 23 && item.eqDirection == 2
                                 ? 'scale(-1,1)'
                                 : '',
                           }"
@@ -761,11 +761,11 @@
                 >
                   <div style="display: flex; align-items: center">
                     <el-image
-                      :src="item.url[0]"
+                      :src="item.url[1]"
                       style="width: 20px; height: 20px"
                     ></el-image>
                     <el-image
-                      :src="item.url[1]"
+                      :src="item.url[0]"
                       style="width: 20px; height: 20px"
                     ></el-image>
                     <div style="margin-left: 4px">{{ item.stateName }}</div>
@@ -1485,6 +1485,7 @@
       class="explain-table operationDiglog"
       :title="title"
       :visible.sync="operationLogDialog"
+      :before-close="cancel"
       width="1000px"
       append-to-body
       v-dialogDrag
@@ -2693,6 +2694,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-covi>
+    <!--   消防泵  -->
     <com-xfsb
       class="comClass"
       v-if="this.eqInfo.clickEqType == 13"
@@ -2702,6 +2704,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-xfsb>
+    <!--   潜水深井泵  -->
     <com-sjb
       class="comClass"
       v-if="this.eqInfo.clickEqType == 49"
@@ -2711,13 +2714,33 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-sjb>
+    <!--    温湿传感器  -->
+    <com-temperatureHumidity
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 41"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-temperatureHumidity>
+    <!--    液位传感器  -->
+    <com-liquidLevel
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 42"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-liquidLevel>
     <com-data
       class="comClass"
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
       v-if="
-        [14, 21, 32, 33, 15, 35, 40, 39, 48].includes(this.eqInfo.clickEqType)
+        [14, 21, 32, 33, 15, 35, 40, 39, 48,41].includes(this.eqInfo.clickEqType)
       "
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
@@ -2758,7 +2781,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-callPolice>
-    <com-robot
+    <!-- <com-robot
       class="comClass"
       v-if="this.eqInfo.clickEqType == 29"
       :brandList="this.brandList"
@@ -2766,7 +2789,8 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-robot>
+    ></com-robot> -->
+    <robot class="comClass robotHtmlBox" v-if="this.eqInfo.clickEqType == 29"></robot>
     <com-bright
       class="comClass"
       v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
@@ -3764,7 +3788,10 @@ import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯�
 import comBoard from "@/views/workbench/config/components/board"; //情报板弹窗
 import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
 import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵弹窗
-import comSjb from "@/views/workbench/config/components/sjb"; //消防水泵弹窗
+import comSjb from "@/views/workbench/config/components/sjb"; //潜水深水泵
+import robot from "@/views/workbench/config/components/robotManagementt"; //消防水泵弹窗
+import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
+import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
 
 import { getLocalIP } from "@/api/event/vedioRecord";
 import { getHosts } from "@/api/equipment/plc/api";
@@ -3837,12 +3864,15 @@ export default {
     comBoard,
     comRadio,
     comXfsb,
-    comSjb,
+    comSjb,//深水泵
+    robot,
+    comTemperatureHumidity, //温湿度传感器
+    comLiquidLevel,//液位传感器
   },
 
   data() {
     return {
-      timingStrategyDisabled:true,
+      timingStrategyDisabled:false,
       videoNoPic1:false,
       videoNoPic2:false,
       videoTitle1:'',
@@ -5794,7 +5824,7 @@ export default {
       this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
-      this.timingStrategyDisabled = true
+      this.timingStrategyDisabled = false
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
@@ -5899,7 +5929,7 @@ export default {
       this.dateRange1 = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
-      
+
       this.queryParams.strategyName = "";
       this.queryParams.tunnelId = "";
       this.queryParams.strategyType = "";
@@ -7564,9 +7594,9 @@ export default {
                 "所有设备图标selectedIconList"
               );
               for (var item of that.selectedIconList) {
-                // if(item.eqType == 10){
-                //   console.log(item,"风机selectedIconList")
-                // }
+               // if(item.eqType == 45){
+                 // console.log(item,"警示灯带")
+               // }
                 if (
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29
@@ -7783,7 +7813,7 @@ export default {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
                   5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48, 45,
+                  40, 39, 48,  41
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -7791,8 +7821,13 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
+                    
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
+                    // if(deviceData.eqType == 45){
+                    //   console.log(deviceData,"智能手动报警按钮")
+                    //   console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
+                    // }
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =
@@ -8838,6 +8873,7 @@ export default {
       this.dateRange = [];
       this.dateRange1 = [];
       this.title = "操作日志";
+      this.operationActive = 'xitong';
       this.operationLogDialog = true;
       this.operationParam_xt.ipaddr = ''
       this.operationParam.operIp = ''
@@ -8856,6 +8892,8 @@ export default {
     },
     /* 关闭所有对话框*/
     cancel() {
+      this.operationParam.pageNum = 1;
+      this.operationParam_xt.pageNum = 1;
       this.operationLogDialog = false;
       this.tunnelVisible = false;
       this.stateSwitchVisible = false;
@@ -9227,6 +9265,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.robotHtmlBox{
+  width: 1150px;
+  position: absolute;
+  left: 400px;
+  z-index:96659;
+
+}
 .batchManageButton {
   width: 120px;
   display: flex;

@@ -39,6 +39,36 @@
         :model="queryParams"
         label-width="75px"
       >
+        <el-form-item label="所属隧道" prop="tunnelId">
+          <el-select
+            v-model="queryParams.tunnelId"
+            placeholder="请选择所属隧道"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in tunnelList"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="设备方向" prop="direction">
+          <el-select
+            v-model="queryParams.direction"
+            placeholder="请选择设备方向"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sd_direction"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
           <el-form-item label="发布时间" prop="releaseTime">
             <el-date-picker
               clearable
@@ -48,6 +78,7 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="选择发布时间"
+              :picker-options="pickerOptionsStart"
             >
             </el-date-picker>
           </el-form-item>
@@ -278,10 +309,12 @@ import {
   listRecord,
   exportRecord,
 } from "@/api/board/record";
+import {listTunnels} from "@/api/equipment/tunnel/api";
 
 export default {
   name: "Record",
   components: {},
+  dicts: ["sd_direction"],
   data() {
     return {
       boxShow: false,
@@ -298,6 +331,9 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+
+      //所属隧道
+      tunnelList: {},
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -313,6 +349,12 @@ export default {
       // 是否显示弹出层
       open: false,
       submitFormLoading: false,
+      pickerOptionsStart: {
+        // 时间不能大于当前时间
+        disabledDate: (time) => {
+          return time.getTime() > Date.now();
+        },
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -322,7 +364,9 @@ export default {
         releaseStatus: null,
         releaseDeptName: null,
         searchValue: null,
+        tunnelId:null,
         releaseUserName: null,
+        direction: null,
       },
       // 表单参数
       form: {},
@@ -332,12 +376,27 @@ export default {
   },
   created() {
     this.getList();
+    this.getTunnel();
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+
+    /** 所属隧道 */
+    getTunnel() {
+      if (this.$cache.local.get("manageStation") == "1") {
+        this.queryParams.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        );
+      }
+      // const response = listTunnels()
+      listTunnels(this.queryParams).then((response) => {
+        console.log(response.rows, "所属隧道列表");
+        this.tunnelList = response.rows;
+      });
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -412,11 +471,12 @@ export default {
       if (width < 250 && height < 38) {
         return font;
       } else {
-        // if (width / 250 > height / 38) {
+        if(width < 250 && height > 38){
+          return font / (height / 38) - 1;
+        }else{
           return font / (width / 250) - 1;
-        // } else {
-          // return font / (height / 38) - 1;
-        // }
+        }
+
       }
     },
     getCoordinate(coordinate, type, screenSize){
@@ -428,9 +488,17 @@ export default {
       } else {
         // if (width / 250 > height / 38) {
           if (type == "left") {
-            return coordinate / (width / 250);
+            if(width < 250 && height > 38){
+              return coordinate / (height / 38);
+            }else{
+              return coordinate / (width / 250);
+            }
           } else if (type == "top") {
-            return coordinate / (height / 38);
+            if(width < 250 && height > 38){
+              return coordinate / (height / 38);
+            }else{
+              return coordinate / (width / 250);
+            }
           }
         // } else {
           // if (type == "left") {
@@ -454,10 +522,18 @@ export default {
       }else{
         // if (width / 250 > height / 38) {
           if (type == "width") {
-            return 250;
+            if(width < 250 && height > 38){
+              return width / (height / 38);
+            }else{
+              return width / (width / 250);
+            }
           } else if (type == "height") {
-            return 38;
-            // return height / (width / 250);
+            if(width < 250 && height > 38){
+              return height / (height / 38);
+            }else{
+              return height / (width / 250);
+
+            }
           }
         // } else {
         //   if (type == "width") {
@@ -531,6 +607,8 @@ export default {
     resetQuery() {
       this.queryParams.ids=[];
       this.queryParams.searchValue='';
+      this.queryParams.tunnelId = null;
+      this.queryParams.direction = null;
       this.queryParams.ids = [];
       this.resetForm("queryForm");
       this.handleQuery();

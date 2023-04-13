@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-11 17:16:08
+ * @LastEditTime: 2023-04-13 16:51:27
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -134,11 +134,11 @@
                 </div>
                 <div>
                   <div>方向：</div>
-                  <div>{{ getDirection(eventForm.direction) }}</div>
+                  <div>{{ getDirection(eventForm.direction,eventForm) }}</div>
                 </div>
                 <div>
-                  <div style="display: flex;justify-content: center;align-items: center;">影响车道：</div>
-                  <div>{{ eventForm.laneNoName }}</div>
+                  <div style="display: flex;justify-content: left;align-items: center;">影响车道：</div>
+                  <div style="width: 45%;">{{ eventForm.laneNoName }}</div>
                 </div>
                 <div>
                   <div>桩号：</div>
@@ -802,8 +802,11 @@
                     'top':GDeviceData.vmsData['top'] + 'px',
                     'left':GDeviceData.vmsData['left'] + 'px',
                   }"
-                  style="line-height:1">
-                    {{GDeviceData.vmsData['content']}}
+                  style="line-height:1"
+                  v-html="GDeviceData.vmsData['content'].replace(
+                              /\n|\r\n/g,
+                              '<br>'
+                            ).replace(/ /g, ' &nbsp')">
                   </span>
                 </div>
               </div>
@@ -813,7 +816,7 @@
             <p style="padding:15px;">{{boxName}}:</p>
             <el-card v-show="GDeviceData && !GDeviceData.vmsData" shadow="always">
               <div style="display: flex;align-items: center;">
-                <img v-for="(items,index) in GDeviceData.deviceIconUrl" :key="index"
+                <img v-for="(items,idx) in GDeviceData.deviceIconUrl" :key="idx"
                   :src="items"
                 />
                 <p style="padding-left: 15px;">{{ GDeviceData.deviceState }}</p>
@@ -1084,6 +1087,7 @@ export default {
       reserveId:'',
       lineHeight:0,
       circlePosition:'',
+      deviceIconUrl:[],
     };
   },
   computed: {
@@ -1118,10 +1122,10 @@ export default {
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
     });
-    this.getDicts("sd_direction_list").then((response) => {
-      console.log(response.data, "车道方向");
-      this.directionList = response.data;
-    });
+    // this.getDicts("sd_direction_list").then((response) => {
+    //   console.log(response.data, "车道方向");
+    //   this.directionList = response.data;
+    // });
     this.getDicts("sd_emergency_plan_type").then((response) => {
       this.planType = response.data;
     });
@@ -1154,14 +1158,12 @@ export default {
   // },
   methods: {
     getShow(item,index){
-      console.log(item)
-      let isShow = item.children.every(items=>{
-        return items.eventState == '1'
-      })
-      return isShow
-      // for(let items of item.children){
-      //   return items.eventState == '1'
-      // }
+      if(item.children != undefined){
+        let isShow = item.children.every(items=>{
+          return items.eventState == '1'
+        })
+        return isShow
+      }
     },
     handleClick(tab, event){
       this.getImplementList(tab.name);
@@ -1256,6 +1258,7 @@ export default {
         }else{
           this.boxName = "下发指令";
           this.GDeviceData = data;
+          // this.deviceIconUrl = this.GDeviceData.deviceIconUrl;
         }
         this.IssuedDialog = true;
       })
@@ -1699,7 +1702,7 @@ export default {
       }
     },
     // 查询方向
-    getDirection(num) {
+    getDirection(num,item) {
       for (var item of this.directionList) {
         if (item.dictValue == num) {
           return item.dictLabel;

@@ -204,7 +204,7 @@ export default {
       sink: "", //删除/修改
       id: "", //策略id
       strategyForm: {
-        strategyState:null,// 策略状态
+        strategyState:1,// 策略状态
         jobRelationId: "", //时间戳
         strategyGroup: 1,
         strategyType: "0", //策略类型
@@ -262,8 +262,8 @@ export default {
       getStrategy(this.id).then((response) => {
         const loading = this.$loading({
           lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
+          // text: 'Loading',
+          // spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)',
           target:'.strategy-dialog',
         });
@@ -502,7 +502,8 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
- /*       this.$emit("dialogVisibleClose");*/
+        let data = true;
+        this.$emit("dialogVisibleClose",data);
         this.getList();
       });
     },
@@ -519,7 +520,8 @@ export default {
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();
-        this.$emit("dialogVisibleClose");
+        let data = true;
+          this.$emit("dialogVisibleClose",data);
         this.$modal.msgSuccess("新增策略成功");
       });
     },
@@ -654,7 +656,8 @@ export default {
       ];
     },
     strategyFormClose() {
-      this.$emit("dialogVisibleClose");
+      let data = false;
+      this.$emit("dialogVisibleClose",data);
     },
   },
 };

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-11 17:25:14
+ * @LastEditTime: 2023-04-08 11:37:34
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -72,7 +72,9 @@
           <el-select
             v-model="queryParams.direction"
             placeholder="请选择方向"
+            clearable
             style="width: 100%"
+            @change="$forceUpdate()"
           >
             <el-option
               v-for="(item, index) in directionData"
@@ -694,13 +696,14 @@
                   placeholder="规则条件"
                   clearable
                   @change="ruleChange(number, index, itemed.retrievalRule)"
+                  @visible-change="ruleVisible"
                 >
                   <el-option
-                    v-for="itemz in itemed.retrievalRuleList"
-                    :key="itemz.dictValue"
-                    :label="itemz.dictLabel"
-                    :value="itemz.dictValue"
-                    :disabled="itemz.disabled"
+                    v-for="(tag,inx) in itemed.retrievalRuleList"
+                    :key="inx"
+                    :label="tag.dictLabel"
+                    :value="tag.dictValue"
+                    :disabled="tag.disabled"
                   />
                 </el-select>
               </el-col>
@@ -953,6 +956,8 @@ export default {
         strategyId: null,
         tunnelId: null,
         category: null,
+        direction:null,
+        eventGrade:null,
       },
       // 表单校验
       rules: {
@@ -1106,11 +1111,10 @@ export default {
       });
     });
     this.getDicts("sd_emergency_plan_type").then((response) => {
-      console.log(response.data, "预案类型");
       this.planCategory = response.data;
     });
     //规则条件
-    this.getRules();
+    // this.getRules();
     // 管控方向
     this.getDicts("sd_control_direction").then((response) => {
       this.controlDirectionList = response.data;
@@ -1123,27 +1127,24 @@ export default {
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
     });
-    // listEventType().then((response) => {
-    //   console.log(response, "事件类型下拉");
-    //   this.planTypeData = response.rows;
-    // });
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 规则下拉显示或者隐藏触发
+    ruleVisible(e){
+      console.log(e)
+    },
     openFullScreen2() {
       const Loading = this.$loading(this.maskOptions);
       setTimeout(()=>{
         Loading.close();
-      },1200)
+      },1000)
     },
     getRules() {
       this.getDicts("sd_device_retrieval_rule").then((response) => {
-        for (let item of response.data) {
-          item.disabled = false;
-        }
         this.retrievalRuleList = response.data;
         for (let item of this.planTypeIdList) {
           for (let itemed of item.processesList) {
@@ -1196,7 +1197,6 @@ export default {
         })
         .catch(() => {
           this.queryParams.ids = "";
-          // console.log('1231');
         });
     },
     addInfo(index) {
@@ -1226,7 +1226,6 @@ export default {
     getEquipmentType() {
       for (let i = 0; i < this.planTypeIdList.length; i++) {
         getCategoryTree().then((data) => {
-          console.log(data, "设备类型");
           this.$set(this.planTypeIdList[i], "equipmentTypeData", data.data);
           this.equipmentTypeData = data.data;
         });
@@ -1270,7 +1269,6 @@ export default {
       // 如果是否指定
       // 如果是指定   根据类型查设备
       // 如果不是指定  禁用选择设备 同时判断 设备类型是否为  16 和 36 如果是  则 请求情表板模板
-      console.log(value);
       if (value != 1) {
         //赋空
         this.$set(
@@ -1292,7 +1290,6 @@ export default {
             eqType: this.planTypeIdList[number].processesList[index].eqTypeId,
           };
           getVmsDataList(params).then((res) => {
-            console.log(res);
             this.$set(
               this.planTypeIdList[number].processesList[index],
               "templatesList",
@@ -1317,7 +1314,6 @@ export default {
       this.planTypeIdList.splice(index + 1, 0, obj);
     },
     removeItem(number, index) {
-      console.log(this.planTypeIdList[number].processesList[index]);
       if (this.planTypeIdList[number].processesList.length == 1) {
         return this.$modal.msgWarning("至少保留一行");
       }
@@ -1325,7 +1321,7 @@ export default {
     },
     // 添加执行操作
     addItem(number, index) {
-      this.getRules();
+      // this.getRules();
       let data = {
         processStageName: "",
         processesList: [
@@ -1356,7 +1352,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
-      this.handleQuery();
+      //this.handleQuery();
       this.resetReservePlanDrawForm();
     },
     //form表单置空
@@ -1395,34 +1391,36 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(eqTypeId, number, index) {
+      console.log('设备类型:' + eqTypeId,'第'+ number+'阶段','第'+ index+ '个','设备类型改变')
       if (eqTypeId) {
-        let retrievalRuleList =
-          this.planTypeIdList[number].processesList[index].retrievalRuleList;
-        console.log(eqTypeId);
         // 不是车指，则67禁用
-        if (eqTypeId != "1" && eqTypeId != "2") {
+        let retrievalRuleList = JSON.parse(JSON.stringify(this.retrievalRuleList));
           for (let item of retrievalRuleList) {
+          if (eqTypeId != "1" && eqTypeId != "2") {
             if (item.dictValue == "6" || item.dictValue == "7") {
               item.disabled = true;
             }
-          }
-        } else {
-          for (let item of retrievalRuleList) {
+          }else{
             item.disabled = false;
           }
         }
+        // if (eqTypeId != "1" && eqTypeId != "2") {
+        //   for (let item of retrievalRuleList) {
+        //     if (item.dictValue == "6" || item.dictValue == "7") {
+        //       item.disabled = true;
+        //     }
+        //   }
+        // } else {
+        //   for (let item of retrievalRuleList) {
+        //     item.disabled = false;
+        //   }
+        // }
         this.$set(
           this.planTypeIdList[number].processesList[index],
           "retrievalRuleList",
           retrievalRuleList
         );
-        // else{
-        //   // 重置禁用状态
-        //   for(let item of retrievalRuleList){
-        //     item.disabled = false;
-        //   }
-        // }
-        console.log(retrievalRuleList);
+        console.log( this.planTypeIdList[number].processesList)
         // 更改设备类型后状态和设备重置
         this.$set(
           this.planTypeIdList[number].processesList[index],
@@ -1457,13 +1455,10 @@ export default {
             "equipmentData",
             res.data
           );
-          console.log(res, "设备列表");
         });
-        console.log(eqTypeId, "eqTypeIdeqTypeIdeqTypeId");
         if (eqTypeId != 22) {
           this.listEqTypeStateIsControl(eqTypeId, number, index);
         } else {
-          console.log(eqTypeId, "广播");
           //广播
           this.getAudioFileListData("", number, index);
         }
@@ -1475,7 +1470,6 @@ export default {
         direction: this.currentClickData.direction,
       };
       getAudioFileList(params).then((res) => {
-        console.log(res.data, "广播");
         this.fileList = res.data;
         this.$set(
           this.planTypeIdList[number].processesList[index],
@@ -1501,14 +1495,12 @@ export default {
       });
     },
     qbgChange(number, index, value) {
-      console.log(value);
       let data = value;
       if (
         this.planTypeIdList[number].processesList[index].eqTypeId == 16 ||
         this.planTypeIdList[number].processesList[index].eqTypeId == 36
       ) {
         getVMSTemplatesByDevIdAndCategory(data).then((res) => {
-          console.log(res.data, "模板信息");
           // this.templatesList = res.data;
           this.$set(
             this.planTypeIdList[number].processesList[index],
@@ -1536,7 +1528,6 @@ export default {
         let item = this.planTypeIdList[i].processesList;
         let result = item.every((items) => {
           if (items.retrievalRule == 1) {
-            console.log(item, "当前数据");
             return (
               items.processName &&
               items.state &&
@@ -1576,22 +1567,6 @@ export default {
         }
       });
     },
-    //预览按钮
-    // openWorkbench(row) {
-    //   this.tunnelId = row.tunnelId;
-    //   this.$nextTick(() => {
-    //     this.$refs.workBench.currentClass = "red";
-    //     this.$refs.workBench.id = row.id;
-    //     this.$refs.workBench.tunnelId = this.tunnelId;
-    //     this.$refs.workBench.init();
-    //   });
-    // },
-    //=========================执行相关预案开始=====================
-    //执行策略
-    /* executionStrategy(row){
-       this.$modal.msgSuccess("执行策略中.......");
-       handleStrategy(row.strategyId);
-     }, */
     // 配置策略
     async chooseStrategyInfo(row) {
       this.getEquipmentType();
@@ -1660,7 +1635,6 @@ export default {
                   "equipmentData",
                   res.data
                 );
-                console.log(res.data, "设备列表");
               });
               // 渲染设备可控状态
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
@@ -1678,7 +1652,6 @@ export default {
                     eqType: brr.eqTypeId,
                   };
                   getVmsDataList(params).then((res) => {
-                    console.log(res);
                     this.$set(
                       this.planTypeIdList[i].processesList[j],
                       "templatesList",
@@ -1687,7 +1660,6 @@ export default {
                   });
                 }
               }
-              console.log("zxczxczxczxczx");
               //请求广播音频列表数据
               if (brr.eqTypeId == 22) {
                 brr.state = brr.state;
@@ -1787,7 +1759,6 @@ export default {
     //===========================选择相关预案结束=========================
     //点击查看文件
     openFileDrawer(row) {
-      console.log(row, "row");
       this.fileLoading = true;
       listReservePlanFile({ planFileId: row.planFileId }).then((response) => {
         this.drawerFileTitle = "相关文档";
@@ -1804,7 +1775,6 @@ export default {
     },
     downfiles(datas, filename) {
       var data = new Blob([datas]);
-      console.log(data);
       var downloadUrl = window.URL.createObjectURL(data);
       var anchor = document.createElement("a");
       anchor.href = downloadUrl;
@@ -1819,13 +1789,11 @@ export default {
     },
     // 上传文件
     uploadFile(file) {
-      console.log(file, "上传文件");
       this.fileData.append("file", file.file); // append增加数据
     },
 
     // 上传到服务器
     async submitUpload() {
-      console.log(this.reservePlanDrawForm.sId, "this.reservePlanDrawForm");
       this.$refs["addform1"].validate((valid) => {
         if (valid) {
           if (this.loading) return;
@@ -1873,10 +1841,6 @@ export default {
             this.fileData.append(
               "eventGrade",
               Number(this.reservePlanDrawForm.eventGrade)
-            );
-            console.log(
-              this.fileData,
-              "this.fileDatathis.fileDatathis.fileData"
             );
             if (this.planChangeSink == "add") {
               addPlanFile(this.fileData).then((response) => {
@@ -1951,23 +1915,10 @@ export default {
           that.$forceUpdate();
         }
       });
-      // this.getDicts("sd_reserve_plan_category").then((response) => {
-      //   this.planCategory = response.data;
-      // });
-      console.log(
-        this.eqTunnelDataList,
-        " this.eqTunnelDataList this.eqTunnelDataList"
-      );
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      console.log(row);
-
-      // this.$nextTick(() => {
-      //   this.$refs["addForm1"].clearValidate();
-      // });
       this.resetForm("addForm1");
-
       // this.resetReservePlanDrawForm();
       this.planChangeSink = "edit";
       const id = row.id || this.ids;
@@ -2020,6 +1971,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       /* debugger */
+      let that = this
       const ids = row.id || this.ids;
       //  const rlIds = row.id || this.rlIds;
       this.$confirm("是否确认删除?", "警告", {
@@ -2035,8 +1987,7 @@ export default {
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function () {
-          console.log(11111111111);
-          that.handleQuery();
+          that.$refs.planTable.clearSelection();
         });
     },
     //移除文件
@@ -2053,8 +2004,6 @@ export default {
     },
     //监控上传文件列表
     handleChange(file, fileList) {
-      console.log(file, "filefile");
-      console.log(fileList, "fileListfileList");
       let existFile = fileList
         .slice(0, fileList.length - 1)
         .find((f) => f.name === file.name);
@@ -2086,7 +2035,6 @@ export default {
     getPlanType() {
       let data = { prevControlType: 0 };
       listEventType(data).then((response) => {
-        console.log(response, "事件类型下拉");
         this.planTypeData = response.rows;
       });
     },
@@ -2097,7 +2045,6 @@ export default {
     },
     //关闭drawer
     handleFileClose(done) {
-      // console.log(done,'donedone')
       done();
     },
     /** 查询预案信息列表 */
@@ -2110,10 +2057,6 @@ export default {
       }
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
-        console.log(this.planList, "========");
-        this.planList.forEach((item) => {
-          console.log(item.strategyName);
-        });
         this.total = response.total;
         this.loading = false;
       });
@@ -2159,12 +2102,10 @@ export default {
     },
 
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "0000000000000000000000");
       this.getList();
       this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
       tunnelNames(this.paramsData).then((res) => {
         this.eqTunnelData = res.rows;
-        console.log(this.eqTunnelData, "111");
         this.eqTunnelData.forEach((item) => {
           item.sdTunnelSubareas.forEach((item, index) => {
             this.eqTunnelDataList.push(item);

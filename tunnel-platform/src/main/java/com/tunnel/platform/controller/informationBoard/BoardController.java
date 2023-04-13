@@ -349,8 +349,10 @@ public class BoardController extends BaseController {
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
             }
         }
-        if (flag) {
+        if (flag && devices.length > 1) {
             ajaxResult = new AjaxResult(HttpStatus.ERROR, "部分设备发布失败，请检查后重试！");
+        }else {
+            ajaxResult = new AjaxResult(HttpStatus.ERROR, "发布失败，请检查后重试！");
         }
         return ajaxResult;
     }

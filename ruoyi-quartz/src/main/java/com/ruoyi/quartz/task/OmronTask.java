@@ -1,7 +1,10 @@
 package com.ruoyi.quartz.task;
 
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.protocol.SdDevicePoint;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.business.mapper.protocol.SdDevicePointMapper;
@@ -56,64 +59,88 @@ public class OmronTask {
     @Autowired
     private SdDeviceDataRecordMapper sdDeviceDataRecordMapper;
 
+    /**
+     * Redis缓存工具类
+     * */
+    private RedisCache redisCache = SpringUtils.getBean(RedisCache.class);
+
+
     public void runTask(){
-            if(omronTcpClient == null){
+        //获取当前所有设备以及点位信息。       根据条件筛选 当前 项目下 欧姆龙FINS协议的点位信息 下所有点位信息
+        SdDevicePoint sdDevicePoint = new SdDevicePoint();
+        //获取可读点位信息   状态为 1
+        sdDevicePoint.setIsReserved(1L);
+        //筛选条件。   (当前为测试  默认筛选所有。后期根据设备类型  以及  协议ID进行筛选)
+        List<SdDevicePoint> sdDeviceIdList = sdDevicePointMapper.selectSdDeviceIdList(sdDevicePoint);
+        if(omronTcpClient == null){
+            try {
+                omronTcpClient = new OmronTcpClient(getOmronConnectProperties());
+                //初始化链接     服务器地址
+                omronTcpClient.init(serviceIp,serviceProt);
+                //获取ChannelFuture
+                ChannelFuture channelFuture = omronTcpClient.channelFuture;
+                //推送握手协议
+                omronTcpClient.send(omronTcpClient.successCallback(channelFuture).array());
+            } catch (Exception e) {
+                log.error("omron链接异常。请联系管理员");
+                omronTcpClient = null;
+            }
+        }
+        if(omronTcpClient!=null){
+            //设备在线状态
+            for (SdDevicePoint devicePoint:sdDeviceIdList) {
+                SdDevices sonDevices = new SdDevices();
+                sonDevices.setEqId(devicePoint.getEqId());
+                //1-在线，2-离线，3-故障
+                sonDevices.setEqStatus("1");
+                sdDevicesService.updateSdDevices(sonDevices);
+            }
+            //筛选条件。   (当前为测试  默认筛选所有。后期根据设备类型  以及  协议ID进行筛选)
+            List<SdDevicePoint> sdDevicePointList = sdDevicePointMapper.selectSdDevicePointList(sdDevicePoint);
+            for (SdDevicePoint sdd:sdDevicePointList) {
+                byte[] data;
                 try {
-                    omronTcpClient = new OmronTcpClient(getOmronConnectProperties());
-                    //初始化链接     服务器地址
-                    omronTcpClient.init(serviceIp,serviceProt);
-                    //获取ChannelFuture
-                    ChannelFuture channelFuture = omronTcpClient.channelFuture;
-                    //推送握手协议
-                    omronTcpClient.send(omronTcpClient.successCallback(channelFuture).array());
-                } catch (Exception e) {
-                    log.error("omron链接异常。请联系管理员");
-                    omronTcpClient = null;
-                }
-            }
-            if(omronTcpClient!=null){
-                //获取当前所有设备以及点位信息。       根据条件筛选 当前 项目下 欧姆龙FINS协议的点位信息 下所有点位信息
-                SdDevicePoint sdDevicePoint = new SdDevicePoint();
-                //获取可读点位信息   状态为 1
-                sdDevicePoint.setIsReserved(1L);
-                //筛选条件。   (当前为测试  默认筛选所有。后期根据设备类型  以及  协议ID进行筛选)
-                List<SdDevicePoint> sdDevicePointList = sdDevicePointMapper.selectSdDevicePointList(sdDevicePoint);
+                    //查看当前点位信息是否为   位信息。
+                    boolean isBit = sdd.getAddress().contains(".")?true:false;
+                    //读取数据
+                    byte[] dataInfo = omronTcpClient.buildReadRequestBody(sdd.getAddress(),isBit);
 
-                for (SdDevicePoint sdd:sdDevicePointList) {
-                    byte[] data;
-                    try {
-                        //查看当前点位信息是否为   位信息。
-                        boolean isBit = sdd.getAddress().contains(".")?true:false;
-                        //读取数据
-                        byte[] dataInfo = omronTcpClient.buildReadRequestBody(sdd.getAddress(),isBit);
-
-                        OmronMessageHeader  omronMessageHeader = new OmronMessageHeader();
-                        byte[] dataBody = omronTcpClient.getMessageBody(omronMessageHeader,dataInfo.length);
-                        data = omronTcpClient.send(ByteUtil.byteMerger(dataBody,dataInfo));
-                        //返回数据校验        true  成功   false  失败
-                        if(omronTcpClient.doBuildResponseMessage(data)){
-                            //解析当前数据  根据设备点位信息解析
-                            if(isBit){
-                                //获取结尾2字节  结果集
-                                Integer number = ByteUtil.bytesToIntOfReverse2Byte(data,data.length-2);
-                                ThreadPool.executor.execute(() ->{
-                                    //数据持久化
-                                    createDate(sdd,number.toString());
-                                });
-                            }else{
-                                //获取结尾4字节  结果集
-                                String number = omronTcpClient.getCodeByDataType(data,sdd.getDataType());
-                                ThreadPool.executor.execute(() ->{
-                                    //数据持久化
-                                    createDate(sdd,number);
-                                });
-                            }
+                    OmronMessageHeader  omronMessageHeader = new OmronMessageHeader();
+                    byte[] dataBody = omronTcpClient.getMessageBody(omronMessageHeader,dataInfo.length);
+                    data = omronTcpClient.send(ByteUtil.byteMerger(dataBody,dataInfo));
+                    //返回数据校验        true  成功   false  失败
+                    if(omronTcpClient.doBuildResponseMessage(data)){
+                        //解析当前数据  根据设备点位信息解析
+                        if(isBit){
+                            //获取结尾2字节  结果集
+                            Integer number = ByteUtil.bytesToIntOfReverse2Byte(data,data.length-2);
+                            ThreadPool.executor.execute(() ->{
+                                //数据持久化
+                                createDate(sdd,number.toString());
+                            });
+                        }else{
+                            //获取结尾4字节  结果集
+                            String number = omronTcpClient.getCodeByDataType(data,sdd.getDataType());
+                            ThreadPool.executor.execute(() ->{
+                                //数据持久化
+                                createDate(sdd,number);
+                            });
                         }
-                    } catch (PlcException e) {
-                        e.printStackTrace();
                     }
+                } catch (PlcException e) {
+                    e.printStackTrace();
                 }
             }
+        }else{
+            // 当前链接  不存在。则默认当前说有设备为离线状态
+            for (SdDevicePoint devicePoint:sdDeviceIdList) {
+                SdDevices sonDevices = new SdDevices();
+                sonDevices.setEqId(devicePoint.getEqId());
+                //1-在线，2-离线，3-故障
+                sonDevices.setEqStatus("2");
+                sdDevicesService.updateSdDevices(sonDevices);
+            }
+        }
     }
 
 
@@ -186,13 +213,21 @@ public class OmronTask {
                     }
                     break;
                 case "xfsbStatus":
-                    //停止D512=184;运行D512=377 ;工作D512=569
-                    //item:  停止 0;运行 1;工作 2
+                    //停止D512=184;运行D512=377 ;故障D512=569
+                    //status    1	开启
+                    //          2	关闭
+                    //  停止 2;运行 1;故障 0
                     if(184 == Integer.parseInt(data)){
-                        resultData = "0";
+                        resultData = "2";
                     }else if(377 == Integer.parseInt(data)){
                         resultData = "1";
                     } if(569 == Integer.parseInt(data)){
+                        //当前设备 读取状态后  为故障状态。
+                        SdDevices sonDevices = new SdDevices();
+                        sonDevices.setEqId(dataStatus.getEqId());
+                        //1-在线，2-离线，3-故障
+                        sonDevices.setEqStatus("3");
+                        sdDevicesService.updateSdDevices(sonDevices);
                         resultData = "2";
                      }
                     break;

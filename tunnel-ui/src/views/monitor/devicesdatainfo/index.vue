@@ -88,12 +88,14 @@
     <div class="tableTopHr" ></div>
 
       <el-table
-        ref="tables"
+        ref="tableFile"
         v-loading="loading"
         :data="listTab"
         @selection-change="handleSelectionChangeTab"
+        @row-click="handleRowClick"
         class="allTable"
-        height="58vh"
+        :row-key="getRowKey"
+        height="62vh"
       >
         <el-table-column type="selection" width="55" align="center" reserve-selection/>
         <el-table-column type="index" :index="indexMethodTab" label="序号" width="68" align="center"></el-table-column>
@@ -128,7 +130,7 @@
 
 
     <!--详情弹窗-->
-    <el-dialog :visible.sync="record" width="70%">
+    <el-dialog :visible.sync="record" width="70%" :before-close="cancel">
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -314,9 +316,6 @@
       <div v-show="echartShow">
         <div ref="echartsBox" id="echarts-Box" class="echarts-Box" style ="width: 1220px !important;"></div>
       </div>
-
-
-
     </el-dialog>
 
   </div>
@@ -459,8 +458,8 @@ export default {
     };
   },
   created() {
+    this.dateRange = this.getPastTime(24);
     this.getListTab();
-    //this.getTreeselect();
     this.getUserDept();
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
@@ -480,10 +479,62 @@ export default {
   },
 
   methods: {
+    cancel(){
+      this.record = false;
+      this.$refs.tableFile.clearSelection();
+    },
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
     },
+
+    // 参数timer是过去的n个小时
+    getPastTime(timer) {
+      // 获取过去的时间
+      const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
+      const startTime = this.timeFormat(lastTime);
+      // 当前时间时间
+      let time = new Date().getTime();
+      const endTime = this.timeFormat(time);
+      return [startTime, endTime];
+    },
+
+    //时间生成并处理
+    timeFormat(time) {
+      // 对应的方法
+      const timeType = [
+        "getFullYear",
+        "getMonth",
+        "getDate",
+        "getHours",
+        "getMinutes",
+        "getSeconds"
+      ];
+      // 分隔符
+      const separator = {
+        getFullYear: "-",
+        getMonth: "-",
+        getDate: " ",
+        getHours: ":",
+        getMinutes: ":",
+        getSeconds: ""
+      };
+      let resStr = "";
+      for (let i = 0; i < timeType.length; i++) {
+        const element = timeType[i];
+        let resTime = new Date(time)[element]();
+        // 获取月份的要+1
+        resTime = element == "getMonth" ? resTime + 1 : resTime;
+        // 小于10，前面加0
+        resTime = resTime > 9 ? resTime : "0" + resTime;
+        resStr = resStr + resTime + separator[element];
+      }
+      return resStr;
+    },
+
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -532,7 +583,7 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
-          this.$refs.tables.clearSelection();
+          this.$refs.tableFile.clearSelection();
           this.querysParamsTab.ids = ''
         })
         .catch(() => {});
@@ -588,7 +639,7 @@ export default {
       this.device_boxShow = false;
       this.echartShow = false;
       this.record = true;
-      this.dateRange = [];
+      this.dateRange = this.getPastTime(24);
       //this.resetForm("queryForms");
       this.queryParams.pageNum = "1";
       this.queryParams.pageSize = "10";
@@ -944,7 +995,7 @@ export default {
     /*table搜索*/
     handleQueryTab(){
       this.querysParamsTab.pageNum = 1;
-      this.$refs.tables.clearSelection();
+      this.$refs.tableFile.clearSelection();
       this.getListTab();
     },
 

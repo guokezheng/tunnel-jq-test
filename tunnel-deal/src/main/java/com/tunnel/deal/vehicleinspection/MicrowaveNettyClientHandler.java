@@ -6,15 +6,18 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
 import com.tunnel.business.domain.dataInfo.SdMicrowaveRealData;
 //import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
+import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
 import com.tunnel.business.mapper.dataInfo.SdMicrowaveRealDataMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
 //import com.tunnel.business.mapper.enhancedLighting.SdEnhancedLightingConfigMapper;
+import com.tunnel.business.mapper.enhancedLighting.SdEnhancedLightingConfigMapper;
 import com.tunnel.business.utils.util.RadixUtil;
 import com.tunnel.deal.light.impl.SanJingLight;
 import com.zc.common.core.ThreadPool.ThreadPool;
@@ -32,6 +35,7 @@ import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -44,19 +48,15 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 
     private static SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
 
-//    private static SdEnhancedLightingConfigMapper sdEnhancedLightingConfigMapper = SpringUtils.getBean(SdEnhancedLightingConfigMapper.class);
+    private static SdEnhancedLightingConfigMapper sdEnhancedLightingConfigMapper = SpringUtils.getBean(SdEnhancedLightingConfigMapper.class);
 
     private SanJingLight sanJingLight =  SpringUtils.getBean(SanJingLight.class);
 
     private SdRadarDetectDataTemporaryMapper sdRadarDetectDataTemporaryMapper =  SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
 
+//    private static Thread[] threadArrs = new Thread[1];
 
-    private static Thread[] threadArrs = new Thread[1];
-
-    private static Integer bright = 20;
-
-    private int tallLuminance = 70;
-    private int lowLuminance = 20;
+    private static Map<String,Thread[]> threadArrsMap = new HashMap<>();
 
     /**
      * Redis缓存工具类
@@ -128,9 +128,9 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         byteBuf.readBytes(buffers);
         String receiveStr = ConvertCode.receiveHexToString(buffers);
         byteBuf.release();
-        log.info("读取到的信息："+receiveStr);
 
         log.info("接收到 " + host + ":" + port + "的数据");
+
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqType(DevicesTypeEnum.WEI_BO_CHE_JIAN.getCode());
         sdDevices.setIp(host);
@@ -140,61 +140,50 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
         dev.setEqStatusTime(new Date());
         sdDevicesMapper.updateSdDevices(dev);
-        //周期统计数据
-        if(receiveStr.startsWith("FFF9") || receiveStr.startsWith("fff9")){
-            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+
+//        //周期统计数据
+//        if(receiveStr.startsWith("FFF9") || receiveStr.startsWith("fff9")){
+//            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+//        }
+//        //单车数据
+//        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
+//            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+//        }
+//
+        //自动模式 节能模式  先暂不使用。
+        if(true){
+            return;
         }
+
         //单车数据
-        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
-            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
-        }
-
-        String direction =dev.getEqDirection();
-
         //增加  模式功能。根据选择不同模式 。做出响应策略。
         // 当前模式为自动模式时，根据过车信息来进行控制，当前加强照明。实现车来灯亮，车走灯灭
         // 当前模式为定时模式时，随时间段进行调整亮度照明。并增加根据当前时间  15分钟内隧道过车 流量数量来进行控制加强照明亮度浮动范围
         //  当前模式为ECO模式时，结合上述两种功能实现
         //redisCache.getCacheObject();
+        if(receiveStr.length()>=34&&(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8"))){
+            //查询当前加强照明配置信息
+            List<SdEnhancedLightingConfig> sdEnhancedLightingConfigList;
+            sdEnhancedLightingConfigList = redisCache.getCacheObject("control:lightFixedTimeTask");
+            if(sdEnhancedLightingConfigList == null){
+                //根据隧道id获取对应隧道  加强照明策略 配置信息
+                sdEnhancedLightingConfigList =  sdEnhancedLightingConfigMapper.selectSdEnhancedLightingConfigList(new SdEnhancedLightingConfig());
+                redisCache.setCacheObject("control:lightFixedTimeTask",sdEnhancedLightingConfigList);
+                redisCache.expire("control:lightFixedTimeTask",60);    //每分钟，重新请求一次
+            }
 
-        //单车数据      测试使用
-//        if(receiveStr.length()>=34&&(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8"))){
-//            //开启线程  推送加强照明灯指令。并  30秒后执行降低光照强度指令。
-//            ThreadPool.executor.execute(() -> {
-//                try {
-//                    //测试数据  后去需要根据隧道id  以及方向  获取 所有加强照明信息
-//                    List<String> deviceIds = new ArrayList<>();
-//                    deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-001");
-//                    deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-002");
-//                    deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-003");
-//                    String operIp = "";
-//                    try {
-//                        operIp = InetAddress.getLocalHost().getHostAddress();
-//                    } catch (UnknownHostException e) {
-//                        e.printStackTrace();
-//                    }
-//                    //推送调光 指令。
-//                    //bright
-//                    if(threadArrs[0]==null||bright != lowLuminance){
-//                        //线程开始推送加强照明指令
-//                        sanJingLight.setBrightnessByList(deviceIds,bright,tallLuminance,"2",operIp);
-//                    }
-//                    //替换线程
-//                    replaceThread(Thread.currentThread());
-//                    //等待30秒后 执行 降低 光照强度功能
-//                    Thread.sleep(30000);
-//                    //降低光照强度执行完毕
-//                    sanJingLight.setBrightnessByList(deviceIds,tallLuminance,lowLuminance,"2",operIp);
-//                    //清除当前记录线程
-//                    threadArrs[0] =  null;
-//                    //记录当前亮度值
-//                    bright = lowLuminance;
-//                } catch (InterruptedException e) {
-//                    log.error("异常被catch到");
-//                }
-//            });
-//        }
-        //MicrowaveNettyClient.channels.get(host + ":" + port).setActiveTime(new Timestamp(System.currentTimeMillis()));
+            for (SdEnhancedLightingConfig sdEnhancedLightingConfig:sdEnhancedLightingConfigList) {
+                //隧道id , 方向
+                //查看当前模式是否为 定时模式。 若为定时模式，则忽略操作
+                if(sdEnhancedLightingConfig.getTunnelId().equals(dev.getEqTunnelId())&&sdEnhancedLightingConfig.getModeType() != 0){
+                    //推送当前指令
+                    adjustBrightnessByRunMode(dev.getEqTunnelId(),dev.getEqDirection(),sdEnhancedLightingConfig);
+                    break;
+                }
+            }
+        }
+        //更新当前设备 连接时间。
+        MicrowaveNettyClient.channels.get(host + ":" + port).setActiveTime(new Timestamp(System.currentTimeMillis()));
     }
 
     private static void dataAnalySis(String firstContent, String id, String tunnelId) {
@@ -298,128 +287,170 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
     }
 
 
-//    /**
-//     *
-//     * @param tunnelId      隧道id
-//     * @param roadDir     方向
-//     * @param modeType      0 自动模式  1   定时模式    2节能模式
-//     */
-//    public void adjustBrightnessByRunMode(String tunnelId,String roadDir,Integer modeType){
-//        //根据隧道id获取对应隧道  加强照明策略 配置信息
-//        SdEnhancedLightingConfig sdEnhancedLightingConfig = new SdEnhancedLightingConfig();
-//        sdEnhancedLightingConfig.setTunnelId(tunnelId);
-//        SdEnhancedLightingConfig enhancedLightingConfig = sdEnhancedLightingConfigMapper.selectSdEnhancedLightingConfigListByParam(sdEnhancedLightingConfig);
-//        //获取当前时间。判断当前时间
-//        String json = enhancedLightingConfig.getTimeSlot();
-//        //配置信息 JSON
-//        List<Map> jsonArry  = JSONObject.parseArray(json, Map.class);
-//        //调光最大区间
-//        Integer  maxLuminanceRange = enhancedLightingConfig.getMaxLuminanceRange();
-//        //调光最小区间
-//        Integer  minLuminanceRange = enhancedLightingConfig.getMinLuminanceRange();
-//        //最大车流量
-//        Integer  maxTrafficFlow = enhancedLightingConfig.getMaxTrafficFlow();
-//        //响应时间
-//        Long respondTime = enhancedLightingConfig.getRespondTime();
-//        //从 sd_radar_detect_data_temporary  表中 获取当前1分钟内过车流量信息
-//        int nowTrafficFlow = sdRadarDetectDataTemporaryMapper.getSdRadarDetectDataCount();
-//
-//        //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
-//        Integer num = redisCache.getCacheObject("control:"+tunnelId+"_LuminanceRange");
-//
-//        //测试数据  后去需要根据隧道id  以及方向  获取 所有加强照明信息
-//        List<String> deviceIds = new ArrayList<>();
-//        deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-001");
-//        deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-002");
-//        deviceIds.add("JQ-WeiFang-JiuLongYu-HSD-RLC-003");
-//        String operIp = "";
-//        try {
-//            operIp = InetAddress.getLocalHost().getHostAddress();
-//        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-//        }
-//        switch (modeType){
-//            case 1:
-//                //定时模式
-//                //根据隧道ID  以及方向查出所有 加强照明设备。
-//                for (Map map:jsonArry) {
-//                    String startTime = map.get("startTime").toString();
-//                    String endTimne = map.get("endTime").toString();
-//                    //获取当前时间  查看是否符合当前时间段
-//                    try {
-//                        //查看当前时间是否在此时间范围内
-//                        if(belongCalendar(startTime,endTimne)){
-//                            Integer luminanceRange =  Integer.parseInt(map.get("value").toString());
-//                            //查看1分钟内车流量  是否超过最大车流量  maxTrafficFlow
-//                            int nowLuminanceRange =  getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
-//                            if(num == null ){
-//                                num = luminanceRange;
-//                            }
-//                            log.info("当前亮度num："+num+" 根据车流量计算的亮度nowLuminanceRange:" +nowLuminanceRange);
-//                            if(num ==null || num != nowLuminanceRange){
-//                                redisCache.setCacheObject("control:"+tunnelId+"_LuminanceRange",nowLuminanceRange);
-//                                Integer finalNum = num;
-//                                String finalOperIp = operIp;
-//                                ThreadPool.executor.execute(() -> {
-//                                    //推送调光 指令。
-//                                    sanJingLight.setBrightnessByList(deviceIds, finalNum,nowLuminanceRange,"2", finalOperIp);
-//                                    log.info(Thread.currentThread().getName()+"开始推送调光指令");
-//                                });
-//                            }
-//                            break;
-//                        }
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                break;
-//            case 2://2节能模式
-//                ;
-//                break;
-//            case 0:  //自动模式
-//                //当前亮度值初始值
-//                Integer luminanceRange = enhancedLightingConfig.getBeforeLuminance();
-//                //查看1分钟内车流量  是否超过最大车流量  maxTrafficFlow
-//                int nowLuminanceRange =  getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
-//                if(num == null ){
-//                    //给与初始值
-//                    num = luminanceRange;
-//                }
-//                log.info("当前亮度num："+num+" 根据车流量计算的亮度nowLuminanceRange:" +nowLuminanceRange);
-//                redisCache.setCacheObject("control:"+tunnelId+"_LuminanceRange",nowLuminanceRange);
-//                Integer finalNum1 = num;
-//                String finalOperIp1 = operIp;
-//                ThreadPool.executor.execute(() -> {
-//                    try {
-//                        if(threadArrs[0]==null|| finalNum1 == null || finalNum1 != nowLuminanceRange){
-//                            //推送调光 指令。
-//                            sanJingLight.setBrightnessByList(deviceIds, finalNum1,nowLuminanceRange,"2", finalOperIp1);
-//                            log.info(Thread.currentThread().getName()+"开始推送调光指令");
-//                        }
-//                        //替换线程
-//                        replaceThread(Thread.currentThread());
-//                        //等待30秒后 执行 降低 光照强度功能
-//                        Thread.sleep(respondTime);
-//                        //降低光照强度执行完毕
-//                        sanJingLight.setBrightnessByList(deviceIds, finalNum1,lowLuminance,"2", finalOperIp1);
-//                        //清除当前记录线程
-//                        threadArrs[0] =  null;
-//                        //记录当前亮度值
-//                        redisCache.setCacheObject("control:"+tunnelId+"_LuminanceRange",lowLuminance);
-//                    } catch (InterruptedException e) {
-//                        log.error("经过一辆车，当前线程被阻断。");
-//                    }
-//                });
-//                break;
-//        }
-//    }
+
+    /**
+     *
+     * @param tunnelId      隧道id
+     * @param roadDir     方向
+     */
+    public void adjustBrightnessByRunMode(String tunnelId,String roadDir,SdEnhancedLightingConfig sdEnhancedLightingConfig){
+        //查看当前线程  threadArrs  集合是否存在。
+        Thread[] threadArrs;
+        if(threadArrsMap.containsKey(tunnelId+roadDir)){
+            threadArrs = threadArrsMap.get(tunnelId+roadDir);
+        }else{
+            threadArrs =new Thread[1];
+        }
+        //查找所有加强照明
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqTunnelId(tunnelId);
+        sdDevices.setEqDirection(roadDir);
+        sdDevices.setEqType(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode());
+        sdDevices.setItemId(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+        List<SdDevices> deviceIds = sdDevicesMapper.selectSdDevicesDataByParam(sdDevices);
+        //推送加强照明
+        //从 sd_radar_detect_data_temporary  表中 获取当前1分钟内过车流量信息
+        int nowTrafficFlow = sdRadarDetectDataTemporaryMapper.getSdRadarDetectDataCount(tunnelId,roadDir);
+        //模式
+        Integer modeType = sdEnhancedLightingConfig.getModeType();
+        log.info("加强照明调光 当前模式为"+modeType);
+        //获取当前时间。判断当前时间
+        String json = sdEnhancedLightingConfig.getTimeSlot();
+        //配置信息 JSON
+        List<Map> jsonArry  = JSONObject.parseArray(json, Map.class);
+        //调光最大区间
+        Integer  maxLuminanceRange = sdEnhancedLightingConfig.getMaxLuminanceRange();
+        //调光最小区间
+        Integer  minLuminanceRange = sdEnhancedLightingConfig.getMinLuminanceRange();
+        //最大车流量
+        Integer  maxTrafficFlow = Math.toIntExact(sdEnhancedLightingConfig.getMaxTrafficFlow());
+        //响应时间
+        Long respondTime = sdEnhancedLightingConfig.getRespondTime();
+        //最小亮度值
+        Integer  minLuminance = sdEnhancedLightingConfig.getMinLuminance();
+
+
+        String operIp = "";
+        try {
+            operIp = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        Integer luminanceRange = 0;
+
+        //1  自动模式  2 节能模式
+        switch (modeType){
+            case 1:  //自动模式
+                //当前亮度值初始值
+                luminanceRange = sdEnhancedLightingConfig.getBeforeLuminance();
+                //查看1分钟内车流量  是否超过最大车流量  maxTrafficFlow
+                int nowLuminanceRange =  getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,luminanceRange);
+
+                String finalOperIp = operIp;
+                Integer finalLuminanceRange = luminanceRange;
+                ThreadPool.executor.execute(() -> {
+                    try {
+                        //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
+                        Integer num = redisCache.getCacheObject("control:"+tunnelId+"_"+roadDir+"_LuminanceRange");
+                        if(num == null ){
+                            //给与初始值
+                            num = finalLuminanceRange;
+                        }
+                        log.info("当前亮度num："+num+" 根据车流量计算的亮度nowLuminanceRange:" +nowLuminanceRange);
+                        if(threadArrs[0]==null|| num == null || num != nowLuminanceRange){
+                            //推送调光 指令。
+                            sanJingLight.setBrightnessByList(deviceIds, num,nowLuminanceRange,"2", finalOperIp);
+                            redisCache.setCacheObject("control:"+tunnelId+"_"+roadDir+"_LuminanceRange",nowLuminanceRange);
+                            log.info(Thread.currentThread().getName()+"开始推送调光指令，原有调光值："+num+"    当前调光值:"+nowLuminanceRange);
+                        }
+                        //替换线程
+                        replaceThread(threadArrs,Thread.currentThread());
+                        //等待30秒后 执行 降低 光照强度功能
+                        Thread.sleep(respondTime);
+                        log.info(Thread.currentThread().getName()+"结束推送调光指令，原有调光值："+nowLuminanceRange+"    当前调光值:"+minLuminance);
+                        //降低光照强度执行完毕
+                        sanJingLight.setBrightnessByList(deviceIds, nowLuminanceRange,minLuminance,"2", finalOperIp);
+                        //记录当前亮度值
+                        redisCache.setCacheObject("control:"+tunnelId+"_"+roadDir+"_LuminanceRange",minLuminance);
+                        //清除当前记录线程
+                        threadArrs[0] =  null;
+                    } catch (InterruptedException e) {
+                        log.error("经过一辆车，当前线程被阻断。");
+                    }
+                });
+                break;
+            case 2://2节能模式
+                Map nowMap = new HashMap();
+                for (Map map:jsonArry) {
+                    String startTime = map.get("startTime").toString();
+                    String endTimne = map.get("endTime").toString();
+                    //获取当前时间  查看是否符合当前时间段
+                    try {
+                        //查看当前时间是否在此时间范围内
+                        if(belongCalendar(startTime,endTimne)){
+                            nowMap = map;
+                            break;
+                        }else{
+                            log.info("当前过车信息未在时间范围内，故放弃当前调光。");
+                            return;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Map finalNowMap = nowMap;
+                String finalOperIp1 = operIp;
+                //当前时段  亮度值
+                Integer eluminanceRange =  Integer.parseInt(finalNowMap.get("value").toString());
+
+                //查看1分钟内车流量  是否超过最大车流量  maxTrafficFlow
+                int enowLuminanceRange =  getLuminanceByParam(nowTrafficFlow,maxTrafficFlow,maxLuminanceRange,minLuminanceRange,eluminanceRange);
+
+                ThreadPool.executor.execute(() -> {
+                    try {
+                        //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
+                        Integer num = redisCache.getCacheObject("control:"+tunnelId+"_"+roadDir+"_LuminanceRange");
+                        if(num == null ){
+                            num = eluminanceRange;
+                        }
+                        Integer finalNum = num;
+                        String efinalOperIp = finalOperIp1;
+                        log.info("当前亮度num："+num+" 根据车流量计算的亮度nowLuminanceRange:" +enowLuminanceRange);
+                        if(threadArrs[0]==null|| num ==null || num != enowLuminanceRange){
+                            ThreadPool.executor.execute(() -> {
+                                //推送调光 指令。
+                                sanJingLight.setBrightnessByList(deviceIds, finalNum,enowLuminanceRange,"2", efinalOperIp);
+                                redisCache.setCacheObject("control:"+tunnelId+"_"+roadDir+"_LuminanceRange",enowLuminanceRange);
+                                log.info(Thread.currentThread().getName()+"开始推送调光指令，原有调光值："+finalNum+"    当前调光值:"+enowLuminanceRange);
+                            });
+                        }
+                        //替换线程
+                        replaceThread(threadArrs,Thread.currentThread());
+                        //等待30秒后 执行 降低 光照强度功能
+                        Thread.sleep(respondTime);
+
+                        System.out.println(Thread.currentThread().getName()+"结束推送调光指令，原有调光值："+enowLuminanceRange+"    当前调光值:"+minLuminance);
+                        //降低光照强度执行完毕
+                        sanJingLight.setBrightnessByList(deviceIds, enowLuminanceRange,minLuminance,"2", efinalOperIp);
+                        //记录当前亮度值
+                        redisCache.setCacheObject("control:"+tunnelId+"_"+roadDir+"_LuminanceRange",minLuminance);
+                        //清除当前记录线程
+                        threadArrs[0] =  null;
+                    } catch (InterruptedException e) {
+                        log.error("经过一辆车，当前线程被阻断。");
+                    }
+                });
+                break;
+        }
+    }
+
 
 
     /**
      *
      * @param thread
      */
-    public static synchronized void replaceThread(Thread thread){
+    public static synchronized void replaceThread(Thread[] threadArrs,Thread thread){
         if(threadArrs[0]!=null){
             Thread oldThread = threadArrs[0];
             log.info("删除旧线程"+oldThread.getName());

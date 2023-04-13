@@ -793,12 +793,19 @@ export default {
 
     // 发布信息
     publishInfo() {
+      
       this.$confirm("是否确定发布情报板?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
+        //   let loading = this.$loading({
+        //   lock: true,
+        //   text: 'Loading',
+        //   spinner: 'el-icon-loading',
+        //   background: 'rgba(0, 0, 0, 0.7)'
+        // });
           console.log(this.contentList, "发布信息");
           var content = "";
           var playList = "[Playlist]<r><n>";
@@ -809,7 +816,6 @@ export default {
           var Item_No = Item_Start + length + "<r><n>";
           var value = "";
           content += Item_No;
-          console.log(content,"contentcontentcontent")
           for (var i = 0; i < this.contentList.length; i++) {
             value = ("000" + i).slice(-3);
             content += Item_Content + value + "=";
@@ -838,18 +844,19 @@ export default {
 
           let protocolType = "GUANGDIAN_V33";
           let deviceld = this.checkedCities.toString();
-          uploadBoardEditInfo(deviceld, protocolType, content).then(
-            (response) => {
-              console.log(response, "返回结果");
-              this.$modal.msgSuccess("发布成功");
-            }
-          );
-        })
-        .catch(() => {
+          uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
+                console.log(response, "返回结果");
+                loading.close();
+                this.$modal.msgSuccess("发布成功");
+          }).catch(() => {
+            loading.close();
+          });
+        }).catch(() => {
           this.$message({
             type: "info",
             message: "已取消发布情报板",
           });
+          loading.close();
         });
     },
 
@@ -931,7 +938,7 @@ export default {
     // 转报文 色号
     getColorValue(color) {
       if (color == "蓝色" || color == "blue") return "000000255000";
-      if (color == "绿色" || color == "#00FF00") return "000255000000";
+      if (color == "绿色" || color == "#00FF00" || color == "GreenYellow") return "000255000000";
       if (color == "透明色") return "t";
       if (color == "红色" || color == "red") return "255000000000";
       return "255255000000"; //黄色
@@ -1393,5 +1400,8 @@ export default {
 }
 ::v-deep .el-table .cell {
   padding-left: 5px;
+}
+::v-deep .el-checkbox+.el-checkbox{
+  margin-left:0px !important;
 }
 </style>

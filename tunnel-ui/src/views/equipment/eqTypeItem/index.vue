@@ -9,15 +9,16 @@
           size="small"
           @click="handleAdd"
           v-hasPermi="['eqType:item:add']"
-        >新增</el-button>
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['eqType:item:edit']"-->
-<!--        >修改</el-button>-->
+          >新增</el-button
+        >
+        <!--        <el-button-->
+        <!--          type="primary"-->
+        <!--          plain-->
+        <!--          size="mini"-->
+        <!--          :disabled="single"-->
+        <!--          @click="handleUpdate"-->
+        <!--          v-hasPermi="['eqType:item:edit']"-->
+        <!--        >修改</el-button>-->
         <el-button
           type="primary"
           plain
@@ -25,7 +26,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['eqType:item:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
         <el-button
           type="primary"
           plain
@@ -33,10 +35,11 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['eqType:item:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
         <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
-          >
+        >
       </el-col>
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
@@ -63,15 +66,15 @@
         :model="queryParams"
         label-width="80px"
       >
-<!--        <el-form-item label="数据项名称" style="width: 100%" prop="itemName">-->
-<!--          <el-input-->
-<!--            v-model="queryParams.itemName"-->
-<!--            placeholder="请输入数据项名称"-->
-<!--            clearable-->
-<!--            size="small"-->
-<!--            @keyup.enter.native="handleQuery"-->
-<!--          />-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="数据项名称" style="width: 100%" prop="itemName">-->
+        <!--          <el-input-->
+        <!--            v-model="queryParams.itemName"-->
+        <!--            placeholder="请输入数据项名称"-->
+        <!--            clearable-->
+        <!--            size="small"-->
+        <!--            @keyup.enter.native="handleQuery"-->
+        <!--          />-->
+        <!--        </el-form-item>-->
         <!-- <el-form-item label="设备类型id" prop="deviceTypeId">
           <el-input
             v-model="queryParams.deviceTypeId"
@@ -81,40 +84,64 @@
             @keyup.enter.native="handleQuery"
           />
         </el-form-item> -->
-        <el-form-item label="设备类型"style="width: 100%" prop="deviceTypeId">
-                <el-select v-model="queryParams.deviceTypeId" placeholder="请选择设备类型" clearable>
-                  <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-<!--        <el-form-item label="单位名称" style="width: 100%" prop="unit">-->
-<!--          <el-input-->
-<!--            v-model="queryParams.unit"-->
-<!--            placeholder="请输入单位名称"-->
-<!--            clearable-->
-<!--            size="small"-->
-<!--            @keyup.enter.native="handleQuery"-->
-<!--          />-->
-<!--        </el-form-item>-->
+        <el-form-item label="设备类型" style="width: 100%" prop="deviceTypeId">
+          <el-select
+            v-model="queryParams.deviceTypeId"
+            placeholder="请选择设备类型"
+            clearable
+          >
+            <el-option
+              v-for="item in eqTypeData"
+              :key="item.typeId"
+              :label="item.typeName"
+              :value="item.typeId"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!--        <el-form-item label="单位名称" style="width: 100%" prop="unit">-->
+        <!--          <el-input-->
+        <!--            v-model="queryParams.unit"-->
+        <!--            placeholder="请输入单位名称"-->
+        <!--            clearable-->
+        <!--            size="small"-->
+        <!--            @keyup.enter.native="handleQuery"-->
+        <!--          />-->
+        <!--        </el-form-item>-->
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
         </el-form-item>
       </el-form>
     </div>
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
-    v-loading="loading" :data="itemList" @selection-change="handleSelectionChange"
-    class="allTable" height="59vh"
-    :row-key="getRowKey"
-    ref="tableFile"
+      v-loading="loading"
+      :data="itemList"
+      @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
+      class="allTable"
+      height="62vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />
       <el-table-column label="设备类型" align="center" prop="typeName">
@@ -122,26 +149,32 @@
 
       <el-table-column label="单位名称" align="center" prop="unit" />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['eqType:item:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['eqType:item:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -161,12 +194,21 @@
         <el-form-item label="数据项名称" prop="itemName">
           <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
         </el-form-item>
-        <el-form-item label="设备类型" prop="deviceTypeId" >
-              <el-select v-model="form.deviceTypeId" placeholder="请选择设备类型" class="deviceTypeId" >
-                <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
-                </el-option>
-              </el-select>
-            </el-form-item>
+        <el-form-item label="设备类型" prop="deviceTypeId">
+          <el-select
+            v-model="form.deviceTypeId"
+            placeholder="请选择设备类型"
+            class="deviceTypeId"
+          >
+            <el-option
+              v-for="item in eqTypeData"
+              :key="item.typeId"
+              :label="item.typeName"
+              :value="item.typeId"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="单位" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位" />
         </el-form-item>
@@ -183,7 +225,14 @@
 </template>
 
 <script>
-import { listItem, getItem, delItem, addItem, updateItem, exportItem } from "@/api/equipment/eqTypeItem/item";
+import {
+  listItem,
+  getItem,
+  delItem,
+  addItem,
+  updateItem,
+  exportItem,
+} from "@/api/equipment/eqTypeItem/item";
 import { listType } from "@/api/equipment/type/api";
 export default {
   name: "Item",
@@ -213,7 +262,7 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
-        searchValue: '',
+        searchValue: "",
         pageSize: 10,
         itemCode: null,
         itemName: null,
@@ -224,101 +273,111 @@ export default {
       form: {},
       // 表单校验
       rules: {
-          itemCode: [
+        itemCode: [
           {
-              required: true,
-              message: "数据项编号不能为空",
-              trigger: "blur"
-            },
-            { validator: this.checkData, trigger: 'blur' }
-            // {
-            //   pattern: /^[0-9]*$/,
-            //   message: "数据项编号需为数字",
-            //   trigger: "blur"
-            // },
-          ],
-          itemName: [
-            { required: true, message: '请输入数据项名称', trigger: 'change' }
-          ],
-          deviceTypeId: [
-            { required: true, message: '请输入设备类型ID', trigger: 'change' }
-          ],
-          // unit: [
-          //   { required: true, message: '请输入单位', trigger: 'change' }
-          // ],
-          // remark: [
-          //   { required: true, message: '请输入备注', trigger: 'change' }
-          // ],
+            required: true,
+            message: "数据项编号不能为空",
+            trigger: "blur",
+          },
+          { validator: this.checkData, trigger: "blur" },
+          // {
+          //   pattern: /^[0-9]*$/,
+          //   message: "数据项编号需为数字",
+          //   trigger: "blur"
+          // },
+        ],
+        itemName: [
+          { required: true, message: "请输入数据项名称", trigger: "change" },
+        ],
+        deviceTypeId: [
+          { required: true, message: "请输入设备类型ID", trigger: "change" },
+        ],
+        // unit: [
+        //   { required: true, message: '请输入单位', trigger: 'change' }
+        // ],
+        // remark: [
+        //   { required: true, message: '请输入备注', trigger: 'change' }
+        // ],
       },
-      eqTypeData:[]//设备类型
+      eqTypeData: [], //设备类型
     };
   },
   created() {
     this.getList();
   },
-  mounted(){
+  mounted() {
     this.getEqType();
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id
+      return row.id;
     },
-//数据项编号校验不能输入中文
+    //数据项编号校验不能输入中文
     checkData(rule, value, callback) {
       if (value) {
         if (/[\一-\龥]/g.test(value)) {
-          callback(new Error('不能为中文!'))
+          callback(new Error("不能为中文!"));
         } else {
-          callback()
+          callback();
         }
       }
-      callback()
+      callback();
     },
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.boxShow == true){
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
+        if (self.boxShow == true) {
           self.boxShow = false;
         }
       }
     },
-     /** 设备类型 */
-     getEqType() {
-        listType().then((response) => {
-          this.eqTypeData = response.rows;
-          console.log(this.eqTypeData,'eqTypeDataeqTypeDataeqTypeDataeqTypeData')
-          // this.itemList.forEach((item,index)=>{
-          //   this.eqTypeData.forEach((it,id)=>{
-          //       if(item.deviceTypeId == it.typeId){
-          //         item.deviceTypeId= it.typeName
-          //       }
-          //   })
-          // })
-          console.log(this.itemList,'itemListitemListitemListitemList')
-        });
-      },
+    /** 设备类型 */
+    getEqType() {
+      listType().then((response) => {
+        this.eqTypeData = response.rows;
+        console.log(
+          this.eqTypeData,
+          "eqTypeDataeqTypeDataeqTypeDataeqTypeData"
+        );
+        // this.itemList.forEach((item,index)=>{
+        //   this.eqTypeData.forEach((it,id)=>{
+        //       if(item.deviceTypeId == it.typeId){
+        //         item.deviceTypeId= it.typeName
+        //       }
+        //   })
+        // })
+        console.log(this.itemList, "itemListitemListitemListitemList");
+      });
+    },
     /** 查询设备类型数据项列表 */
     getList() {
       this.loading = true;
       this.boxShow = false;
-      listItem(this.queryParams).then(response => {
+      listItem(this.queryParams).then((response) => {
         // console.log(response,'responseresponse')
         this.itemList = response.rows;
         this.total = response.total;
         this.loading = false;
-
       });
-
     },
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -332,7 +391,7 @@ export default {
         remark: null,
         createTime: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
       };
       this.resetForm("form");
     },
@@ -344,15 +403,15 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.searchValue = '';
+      this.queryParams.searchValue = "";
       this.resetForm("queryForm");
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -363,8 +422,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getItem(id).then(response => {
+      const id = row.id || this.ids;
+      getItem(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改设备类型数据项";
@@ -372,21 +431,22 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            updateItem(this.form).then(response => {
+            updateItem(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
-              this.getEqType()
+              this.getEqType();
             });
           } else {
-            addItem(this.form).then(response => {
+            addItem(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
-              this.getEqType()
+              this.getEqType();
             });
           }
         }
@@ -394,39 +454,50 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除？').then(function() {
-        return delItem(ids);
-      }).then(() => {
-        this.handleQuery();
-        this.getEqType()
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否确认删除？")
+        .then(function () {
+          return delItem(ids);
+        })
+        .then(() => {
+          this.handleQuery();
+          this.getEqType();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
       this.queryParams.ids = this.ids.join();
-      let confirmInfo ="是否确认导出所有的设备类型数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的设备类型数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的设备类型数据项？";
       }
       const queryParams = this.queryParams;
-      this.$modal.confirm(confirmInfo).then(() => {
-        this.exportLoading = true;
-        return exportItem(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-        this.$refs.tableFile.clearSelection();
-        this.queryParams.ids = ''
-      }).catch(() => {});
+      this.$modal
+        .confirm(confirmInfo)
+        .then(() => {
+          this.exportLoading = true;
+          return exportItem(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = "";
+        })
+        .catch(() => {});
     },
-  }
+  },
 };
 </script>
 <style scoped>
- .deviceTypeId{
+.deviceTypeId {
   width: 100%;
- }
+}
 </style>
 

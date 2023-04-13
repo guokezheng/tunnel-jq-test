@@ -130,9 +130,12 @@
       <el-table
         v-loading="loading"
         :data="userList"
-        max-height="500"
+        height="62vh"
         @selection-change="handleSelectionChange"
-        :row-class-name="tableRowClassName"
+        @row-click="handleRowClick"
+        class="allTable"
+        :row-key="getRowKey"
+        ref="tableFile"
       >
         <el-table-column type="selection" width="50" align="center" />
         <el-table-column
@@ -621,6 +624,13 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id;
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (!this.$refs.main.contains(e.target) &&
@@ -680,6 +690,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -776,9 +787,12 @@ export default {
         .then(({ value }) => {
           resetUserPwd(row.userId, value).then((response) => {
             this.$modal.msgSuccess("修改成功，新密码是：" + value);
+            this.$refs.tableFile.clearSelection();
           });
         })
-        .catch(() => {});
+        .catch(() => {
+          this.$refs.tableFile.clearSelection();
+        });
     },
     /** 分配角色操作 */
     handleAuthRole: function (row) {
@@ -793,6 +807,7 @@ export default {
             updateUser(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -807,6 +822,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const userIds = row.userId || this.ids;
       this.$modal
         .confirm("是否确认删除？")
@@ -817,7 +833,9 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -835,6 +853,7 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
+          this.$refs.tableFile.clearSelection();
           this.exportLoading = false;
         })
         .catch(() => {});

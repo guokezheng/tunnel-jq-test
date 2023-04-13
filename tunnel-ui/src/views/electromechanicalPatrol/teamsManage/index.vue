@@ -48,6 +48,7 @@
       v-loading="loading"
       :data="teamsList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
       height="62vh"
       :row-key="getRowKey"
@@ -141,6 +142,7 @@
     <el-dialog
       :title="title"
       :visible.sync="open"
+      :before-close="cancel"
       width="600px"
       append-to-body
       class="addUserDialog"
@@ -227,6 +229,7 @@
       title="包含用户"
       class="workbench-dialog batch-table operationDiglog explain-table"
       :visible.sync="teamsUserOpen"
+      :before-close="teamsUserCancel"
       width="1000px"
       append-to-body
       v-dialogDrag
@@ -235,7 +238,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <el-row :gutter="20" style="margin: 10px 5px 6px; display: flex">
+      <el-row :gutter="20" style="margin: 10px 0px 6px; display: flex">
         <el-col>
           <el-button size="small" @click="openSelectTeamsUser"
             >添加用户
@@ -265,7 +268,7 @@
         </el-col>
       </el-row>
 
-      <el-row style="padding: 0 15px">
+      <el-row >
         <el-table
           ref="tables"
           :data="userList"
@@ -343,7 +346,7 @@
         />
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button class="closeButton" @click="teamsUserOpen = false"
+        <el-button class="closeButton" @click="teamsUserCancel"
           >关闭</el-button
         >
       </div>
@@ -580,6 +583,13 @@ export default {
   },
 
   methods: {
+    teamsUserCancel(){
+      this.teamsUserOpen = false;
+      this.$refs.tableFile.clearSelection();
+    },
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     getStatus(row) {
       return this.selectDictLabel(this.sysNormalDisableList, row);
     },
@@ -628,6 +638,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
 
@@ -739,6 +750,7 @@ export default {
             updateTeams(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -764,7 +776,9 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          this.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -844,5 +858,15 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.operationDiglog {
+  .el-dialog__body{
+    padding:0 15px !important;
+    .el-col{
+      padding:0 !important;
+    }
+  }
+}
+</style>
 
 

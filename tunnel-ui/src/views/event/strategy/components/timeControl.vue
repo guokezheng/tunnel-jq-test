@@ -259,7 +259,7 @@ export default {
       },
       showCronBox: false,
       strategyForm: {
-        strategyState:null,// 策略状态
+        strategyState:1,// 策略状态
         strategyGroup: 1,
         strategyType: "3", //策略类型
         tunnelId: null, //隧道id
@@ -352,9 +352,8 @@ export default {
       getStrategy(id).then((response) => {
         const loading = this.$loading({
           lock: true,
-          text: 'Loading',
-          index:999,
-          spinner: 'el-icon-loading',
+          // text: 'Loading',
+          // spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)',
           target:'.strategy-dialog',
         });
@@ -516,7 +515,7 @@ export default {
       console.log(params);
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-       /* this.$emit("dialogVisibleClose");*/
+        this.$emit("dialogVisibleClose");
         this.getList();
       });
     },

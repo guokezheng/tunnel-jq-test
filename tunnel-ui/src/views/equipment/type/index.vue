@@ -85,6 +85,7 @@
       v-loading="loading"
       :data="typeList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       height="62vh"
       class="allTable"
       :row-key="getRowKey"
@@ -468,6 +469,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.typeId;
@@ -577,6 +581,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置

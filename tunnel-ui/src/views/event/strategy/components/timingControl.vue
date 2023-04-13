@@ -595,7 +595,7 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-        /*this.$emit("dialogVisibleClose");*/
+        this.$emit("dialogVisibleClose");
         this.getList();
       });
     },

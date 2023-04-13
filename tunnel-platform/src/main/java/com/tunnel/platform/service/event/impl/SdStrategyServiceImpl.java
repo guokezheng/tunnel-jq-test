@@ -1199,7 +1199,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int implementPlan(String planId,Long eventId){
         //将id拆分
         List<String> list = Arrays.asList(planId.split(","));
-        int issueResult = 0;
+        int issueResult = 1;
         for(String processId : list){
             //排除已经执行过的流程
             SdEventHandle sdEventHandle = new SdEventHandle();
@@ -1210,7 +1210,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(sdEventHandleMapper.selectSdEventHandleList(sdEventHandle).size() > 0){
                 continue;
             }
-            issueResult = implementProcess(Long.valueOf(processId),eventId);
+            implementProcess(Long.valueOf(processId),eventId);
         }
         return issueResult;
     }

@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -177,8 +178,19 @@ public class workspaceController extends BaseController {
             if (sdDeviceTypeItems.size() == 0) {
                 throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
             }
-            SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-            updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() == sdDevices.getEqType()){
+                sdDeviceTypeItems.stream().forEach(item -> {
+                     if("brightness".equals(item.getItemCode())){
+                        updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));
+                    }
+                    if("state".equals(item.getItemCode())){
+                        updateDeviceData(sdDevices, state, Integer.parseInt(item.getId().toString()));
+                    }
+                });
+            }else {
+                SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
+                updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+            }
             //添加操作记录
             SdOperationLog sdOperationLog = new SdOperationLog();
             sdOperationLog.setEqTypeId(sdDevices.getEqType());
@@ -733,14 +745,16 @@ public class workspaceController extends BaseController {
     @PostMapping("/controlDeviceByParam")
     public AjaxResult controlDeviceByParam(@RequestBody Map<String, Object> params){
         //参数校验
-        Assert.notEmpty(params, "控制设备参数为空");
+        if (CollectionUtils.isEmpty(params)) {
+            return AjaxResult.error("控制设备参数为空");
+        }
         //获取当前传输数据协议类型
         if ( params.get("comType") == null ||  params.get("comType").toString().equals("")) {
-            throw new RuntimeException("未指定设备通讯类型");
+            return AjaxResult.error("未指定设备通讯类型");
         } else if ( params.get("data") == null || params.get("data").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息");
+            return AjaxResult.error("未指定设备需要变更的状态信息");
         } else if (params.get("eqId") == null || params.get("eqId").toString().equals("")) {
-            throw new RuntimeException("未指定设备id");
+            return AjaxResult.error("未指定设备id");
         }
         boolean  b = deviceFunctionsService.deviceControlByParam( params.get("comType").toString(), params.get("eqId").toString(), params.get("data").toString());
         if(b){

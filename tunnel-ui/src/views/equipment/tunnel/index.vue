@@ -154,6 +154,7 @@
       :data="tunnelsList"
       ref="tableRef"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
       height="62vh"
       :row-key="getRowKey"
@@ -1033,6 +1034,9 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableRef.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id;
@@ -1177,10 +1181,12 @@ export default {
     // 取消按钮
     cancels() {
       this.opens = false;
+      this.$refs.tableRef.clearSelection();
       this.resets();
     },
     cancel() {
       this.open = false;
+      this.$refs.tableRef.clearSelection();
       this.disabledInfo = false;
       this.reset();
     },
@@ -1319,6 +1325,7 @@ export default {
                 if (response.code == 200) {
                   this.$modal.msgSuccess("修改成功");
                   this.opens = false;
+                  this.$refs.tableRef.clearSelection();
                   this.getList();
                 }
               }
@@ -1345,6 +1352,7 @@ export default {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
+                this.$refs.tableRef.clearSelection();
                 this.oper = "add";
                 this.getList();
               }

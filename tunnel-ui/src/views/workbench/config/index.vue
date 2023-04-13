@@ -192,11 +192,7 @@
           >
             操作日志
           </el-button>
-          <el-button
-            size="small"
-            @click="resetQuery1()"
-          >刷新1
-          </el-button>
+     
         </div>
       </div>
       <div class="vehicleLane">
@@ -7821,7 +7817,7 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
-                    
+
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
                     // if(deviceData.eqType == 45){
@@ -8880,11 +8876,7 @@ export default {
       this.getOperationList("xitong");
       // this.getList();
     },
-    resetQuery1() {
-      getReservePlanDataa("ddddd").then(res=>{
-        debugger
-      })
-    },
+
     /* 打开图标说明对话框*/
     iconExplain() {
       this.explainVisible = true;

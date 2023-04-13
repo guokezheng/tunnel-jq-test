@@ -664,7 +664,7 @@ export default {
     },
     getColorValue(color) {
       if (color == "蓝色" || color == "blue") return "000000255000";
-      if (color == "绿色" || color == "#00FF00") return "000255000000";
+      if (color == "绿色" || color == "#00FF00" ||  color == 'GreenYellow') return "000255000000";
       if (color == "透明色" || color == "transparent") return "t";
       if (color == "红色" || color == "red") return "255000000000";
       return "255255000000"; //黄色

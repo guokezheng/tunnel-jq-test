@@ -38,6 +38,22 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
         return sdOperationLogMapper.selectSdOperationLogById(id);
     }
 
+    @Override
+    public int selectSdOperationLogCountList(SdOperationLog sdOperationLog) {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            List<String> tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+            sdOperationLog.getParams().put("tunnelArray", tunnelArray);
+        }
+        return sdOperationLogMapper.selectSdOperationLogCountList(sdOperationLog);
+    }
+
     /**
      * 查询操作日志列表
      *
@@ -50,7 +66,14 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
-        sdOperationLog.getParams().put("deptId", deptId);
+
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            List<String> tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+            sdOperationLog.getParams().put("tunnelArray", tunnelArray);
+        }
+
         return sdOperationLogMapper.selectSdOperationLogList(sdOperationLog);
     }
 

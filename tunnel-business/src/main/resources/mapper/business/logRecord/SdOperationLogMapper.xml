@@ -51,6 +51,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, eq_type_id, tunnel_id, user_name, eq_id,code,create_by, create_time, update_by, update_time, before_state, operation_state, control_type, state, description from sd_operation_log
     </sql>
 
+
+    <select id="selectSdOperationLogCountList" resultType="int">
+        select count(1) from sd_operation_log a
+        where 1 = 1
+        <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
+        <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
+        <if test="controlType != null  and controlType != ''"> and a.control_type = #{controlType}</if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and a.create_time &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and a.create_time &lt;= #{params.endTime}
+        </if>
+        <if test="params.tunnelArray != null and params.size > 0">
+            and a.tunnel_id  in
+            <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getTunnelArrayByDeptId" resultType="string">
+
+        select tunnel_id from sd_tunnels where dept_id in (
+
+            SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET ( #{deptId}, d.ancestors )
+
+        ) or dept_id = #{deptId}
+
+    </select>
+
     <select id="selectSdOperationLogList" parameterType="SdOperationLog" resultMap="SdOperationLogResult">
         <!-- <include refid="selectSdOperationLogVo"/> -->
         select
@@ -101,11 +132,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
             and a.create_time &lt;= #{params.endTime}
         </if>
-        <if test="params.deptId != null and params.deptId != ''">
-            AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+
+        <if test="params.tunnelArray != null and params.size > 0">
+            and a.tunnel_id  in
+            <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
         </if>
+
         <if test="ids != null and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
         order by a.create_time desc
+        <if test="params.pageNum != null">
+        limit #{params.pageNum},#{params.pageSize}
+        </if>
     </select>
 
     <select id="selectSdOperationLogById" parameterType="Long" resultMap="SdOperationLogResult">

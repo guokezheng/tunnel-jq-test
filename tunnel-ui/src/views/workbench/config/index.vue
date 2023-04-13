@@ -7774,7 +7774,7 @@ export default {
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
                     if(deviceData.eqType == 39){
                     //   console.log(deviceData,"智能手动报警按钮")
-                      console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
+                      
                     }
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {

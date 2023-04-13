@@ -178,7 +178,7 @@ public class workspaceController extends BaseController {
             if (sdDeviceTypeItems.size() == 0) {
                 throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
             }
-            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() == sdDevices.getEqType()){
+            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() == sdDevices.getEqType() || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode() == sdDevices.getEqType()){
                 sdDeviceTypeItems.stream().forEach(item -> {
                      if("brightness".equals(item.getItemCode())){
                         updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));

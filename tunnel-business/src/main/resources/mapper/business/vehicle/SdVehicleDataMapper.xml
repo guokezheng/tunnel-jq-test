@@ -143,6 +143,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getDayVehicleDataByVehicleType" resultType="java.util.Map">
         SELECT HOUR
             ( t.create_time ) HOUR,
+            DATE_FORMAT( t.create_time, '%Y-%m-%d' ) date,
             ifnull( d.kcnum, 0 ) kcCount,
             ifnull( d.hcnum, 0 ) hcCount,
             ifnull( d.zdcnum, 0 ) zdcCount

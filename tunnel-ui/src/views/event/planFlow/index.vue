@@ -122,8 +122,8 @@
     <el-dialog :title="title" :visible.sync="open" width="880px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="事件分类" prop="prevControlType">
-          <el-radio v-model="form.radio" label="0" @change="radioFun">交通事件</el-radio>
-          <el-radio v-model="form.radio" label="1" @change="radioFun">主动安全</el-radio>
+          <el-radio v-model="form.radio" label="0" @change="radioFun">普通事件</el-radio>
+          <el-radio v-model="form.radio" label="1" @change="radioFun">安全预警</el-radio>
         </el-form-item>
         <el-form-item label="事件类型" prop="eventTypeId">
 <!--          <el-input v-model="form.eventTypeId" placeholder="请输入事件类型" />-->

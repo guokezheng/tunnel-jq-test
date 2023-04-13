@@ -95,7 +95,7 @@ public class RadarTask {
         log.info("耗时：" + (l1-l));
     }
 
-    @Scheduled(fixedRate = 500)
+    @Scheduled(fixedRate = 2000)
     public void radarTask1() throws InterruptedException {
         if(sdRadarDetectDatalist==null){
             sdRadarDetectDatalist = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("粤BU0697");

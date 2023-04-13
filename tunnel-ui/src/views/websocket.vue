@@ -41,6 +41,7 @@ export default {
       });
       this.socket.onopen = () => {};
       this.socket.onmessage = (message) => {
+        debugger
         message = JSON.parse(message);
         const method = message.method;
 
@@ -78,8 +79,11 @@ export default {
               contentList.deviceStatusChangeLog
             );
             break;
-            case "eventFlow":
+          case "eventFlow":
             this.$store.commit("EVENTFLOW", contentList.eventFlow);
+            break;
+          case "eventUntreatedNum":
+            this.$store.commit("EVENTUNTREATEDNUM", contentList);
             break;
           default:
         }

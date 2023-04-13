@@ -72,7 +72,9 @@
           <el-select
             v-model="queryParams.direction"
             placeholder="请选择方向"
+            clearable
             style="width: 100%"
+            @change="$forceUpdate()"
           >
             <el-option
               v-for="(item, index) in directionData"

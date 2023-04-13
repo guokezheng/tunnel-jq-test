@@ -481,8 +481,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     public List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData) {
         String deviceId = sdDeviceData.getDeviceId();
 
-        String beginTime = getCurrentDayTime().get(0);
-        String endTime = getCurrentDayTime().get(1);
+        String beginTime = "";
+        String endTime = "";
         if (!sdDeviceData.getParams().isEmpty()) {
             beginTime = sdDeviceData.getParams().get("beginTime").toString();
             endTime = sdDeviceData.getParams().get("endTime").toString();

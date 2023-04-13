@@ -78,6 +78,7 @@
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="选择发布时间"
+              :picker-options="pickerOptionsStart"
             >
             </el-date-picker>
           </el-form-item>
@@ -348,6 +349,12 @@ export default {
       // 是否显示弹出层
       open: false,
       submitFormLoading: false,
+      pickerOptionsStart: {
+        // 时间不能大于当前时间
+        disabledDate: (time) => {
+          return time.getTime() > Date.now();
+        },
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -469,7 +476,7 @@ export default {
         }else{
           return font / (width / 250) - 1;
         }
-      
+
       }
     },
     getCoordinate(coordinate, type, screenSize){

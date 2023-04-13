@@ -113,6 +113,7 @@
       v-loading="loading"
       :data="configurationList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       height="62vh"
       class="allTable"
       :row-key="getRowKey"
@@ -401,6 +402,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -437,6 +441,7 @@ export default {
     cancel() {
       this.open = false;
       this.$refs.upload.clearFiles();
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -535,6 +540,7 @@ export default {
                 updateConfiguration(this.fileData).then((response) => {
                   this.$modal.msgSuccess("修改成功");
                   this.open = false;
+                  this.$refs.tableFile.clearSelection();
                   this.$refs.upload.clearFiles();
                   this.getList();
                 });
@@ -589,6 +595,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
       this.$modal
         .confirm('是否确认删除？')
@@ -599,7 +606,9 @@ export default {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

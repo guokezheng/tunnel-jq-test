@@ -44,6 +44,24 @@
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
+
+        <el-form-item label="防控类型" prop="prevControlType">
+          <el-select
+            v-model="queryParams.prevControlType"
+            placeholder="请选择防控类型"
+            clearable
+            size="small"
+            style="width: 325px"
+            @change="handleChangeControl"
+          >
+            <el-option
+              v-for="item in controlTypeOptions"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="事件类型" prop="eventTypeId">
           <el-select
             v-model="queryParams.eventTypeId"
@@ -61,25 +79,6 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="防控类型" prop="prevControlType">
-          <el-select
-            v-model="queryParams.prevControlType"
-            placeholder="请选择防控类型"
-            clearable
-            size="small"
-            style="width: 325px"
-            @change="$forceUpdate()"
-          >
-            <el-option
-              v-for="item in controlTypeOptions"
-              :key="item.dictValue"
-              :label="item.dictLabel"
-              :value="item.dictValue"
-            />
-          </el-select>
-        </el-form-item>
-
-
 
         <el-form-item
           label="所属隧道"
@@ -1699,6 +1698,13 @@ export default {
 
     //防控类型
     this.getDicts("prev_control_type").then((response) => {
+      if(response.data.length>0){
+        for(let i = 0;i<response.data.length;i++){
+            if(response.data[i].dictLabel=='设备故障'){
+              response.data.splice(i,1)
+            }
+          }
+      }
       this.controlTypeOptions = response.data;
     });
     // 管理机构
@@ -1727,6 +1733,19 @@ export default {
     handleClickDevice(tab, event) {
       console.log(tab.index);
       this.deviceIndexShow = tab.index;
+    },
+
+    handleChangeControl(){
+      this.$forceUpdate();
+      this.queryParams.eventTypeId = null;
+      //查询事件类型
+      let prevControlType = {
+        isUsable: "1",
+        prevControlType:this.queryParams.prevControlType
+      };
+      listEventType(prevControlType).then((response) => {
+        this.eventTypeDataList = [...response.rows];
+      });
     },
     // 打开复核内详情
     openDoor(item) {

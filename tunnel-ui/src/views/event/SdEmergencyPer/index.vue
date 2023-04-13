@@ -459,6 +459,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.deptName = "";
       this.queryParams.userName = "";
       this.queryParams.deptId = "";
       this.queryParams.ids = "";

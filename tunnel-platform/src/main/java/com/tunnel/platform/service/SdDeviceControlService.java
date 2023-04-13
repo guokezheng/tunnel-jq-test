@@ -100,6 +100,9 @@ public class SdDeviceControlService {
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();
 
+        //部份设备未接入，无法正确获取设备控制结果，默认失败
+        sdOperationLog.setState("0");
+
         int controlState = 0;
         try {
             if (map == null || map.isEmpty()) {

@@ -1440,6 +1440,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.faultDescription = "";
       this.queryParams.ids = "";
       this.queryParams.tunnelId = null;
       this.queryParams.faultStatus = null;

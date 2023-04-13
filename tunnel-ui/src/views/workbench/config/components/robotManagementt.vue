@@ -134,6 +134,9 @@
   </div>
 </template>
   <style scoped>
+  div{
+    font-size: 20px;
+  }
     /* html,
     body {
       width: 100%;

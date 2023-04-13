@@ -91,6 +91,7 @@
       v-loading="loading"
       :data="brandList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
       height="62vh"
       :row-key="getRowKey"
@@ -234,6 +235,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.supplierId
@@ -262,6 +266,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -322,6 +327,7 @@ export default {
             updateBrand(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -336,6 +342,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const supplierIds = row.supplierId || this.ids;
       this.$modal
         .confirm(
@@ -348,7 +355,9 @@ export default {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

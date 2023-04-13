@@ -72,7 +72,9 @@
           <el-select
             v-model="queryParams.direction"
             placeholder="请选择方向"
+            clearable
             style="width: 100%"
+            @change="$forceUpdate()"
           >
             <el-option
               v-for="(item, index) in directionData"
@@ -1350,7 +1352,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
-      this.handleQuery();
+      //this.handleQuery();
       this.resetReservePlanDrawForm();
     },
     //form表单置空

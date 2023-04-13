@@ -856,7 +856,8 @@ export default {
       this.getList();
     },
     // 每次点击取消按钮，策略类型赋空
-    closeDialog() {
+    closeDialog(flag) {
+
       let index = this.strategyForm.strategyType;
       switch (index) {
         case '0':
@@ -874,7 +875,10 @@ export default {
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
       this.$refs.tableFile1.clearSelection();
-      this.getList();
+      if(flag){
+        this.getList();
+      }
+
     },
     changeStrategyState(row) {
 

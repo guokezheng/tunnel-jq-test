@@ -81,7 +81,7 @@
               </el-form-item>
             </el-col>
           </el-row> -->
-          <div class="lineClass" v-if="eqInfo.clickEqType == 48" style="margin-bottom:10px"></div>
+          <div class="lineClass" v-if="eqInfo.clickEqType == 48|| eqInfo.clickEqType == 41" style="margin-bottom:10px"></div>
           <el-row v-if="eqInfo.clickEqType == 48">
             <el-col :span="13">
               <el-form-item label="振动速度值:" label-width="90px">
@@ -111,6 +111,18 @@
             <el-col :span="11">
               <el-form-item label="沉降倾斜告警:" label-width="100px">
                 {{ getsubsideSlopeAlaram(stateForm2.subsideSlopeAlaram) }}
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="eqInfo.clickEqType == 41">
+            <el-col :span="13">
+              <el-form-item label="温度:" label-width="90px">
+                {{ stateForm2.slope }} <span v-show="stateForm2.temperature">°</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="湿度:" label-width="90px">
+                {{ stateForm2.slope }} <span v-show="stateForm2.humidity">°</span>
               </el-form-item>
             </el-col>
           </el-row>

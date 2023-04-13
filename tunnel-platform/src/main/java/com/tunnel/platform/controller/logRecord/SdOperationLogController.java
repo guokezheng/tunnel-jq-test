@@ -3,7 +3,9 @@ package com.tunnel.platform.controller.logRecord;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.SysLogininfor;
@@ -38,9 +40,16 @@ public class SdOperationLogController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SdOperationLog sdOperationLog)
     {
-        startPage();
-        List<SdOperationLog> list = sdOperationLogService.selectSdOperationLogList(sdOperationLog);
-        return getDataTable(list);
+        int count = sdOperationLogService.selectSdOperationLogCountList(sdOperationLog);
+        if(count > 0){
+            PageDomain pageDomain = TableSupport.getPageDomain();
+            sdOperationLog.getParams().put("pageSize", pageDomain.getPageSize());
+            sdOperationLog.getParams().put("pageNum", (pageDomain.getPageNum() - 1) *pageDomain.getPageSize());
+            List<SdOperationLog> list = sdOperationLogService.selectSdOperationLogList(sdOperationLog);
+            return new TableDataInfo(list,count);
+        }
+
+        return new TableDataInfo(null,0);
     }
 
     /**

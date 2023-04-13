@@ -547,11 +547,6 @@ export default {
       // 当前时间时间
       let time = new Date().getTime();
       const endTime = this.timeFormat(time);
-      /*this.$set(this.dateRangeCz,0,startTime);
-      this.$set(this.dateRangeCz,1,endTime);*/
-      /*this.$set(this.dateRangeDl,0,startTime)
-      this.$set(this.dateRangeDl,1,endTime)*/
-      console.log([startTime, endTime]+"=================");
       return [startTime, endTime];
     },
 

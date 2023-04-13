@@ -6,12 +6,14 @@ package com.tunnel.business.datacenter.domain.enumeration;
  *
  * @author zhai
  */
-public enum DeviceDirectionEnum {
+public enum DeviceControlTypeEnum {
 
-    JI_NAN("2", "济南方向"),
-    WEI_FANG("1", "潍坊方向"),
-
-    ALl("2", "双向");
+    AUTO_CONTROL("0", "手动控制"),
+    TRIGGER_CONTROL("1", "定时控制"),
+    AUTO_EXEC("2", "自动触发"),
+    TIMES_CONTROL("3", "分时控制"),
+    LIGHT_CONTROL("8", "光强控制"),
+    RESERVE_CONTROL("4", "预案执行");
     private String code;
     private String name;
 
@@ -25,7 +27,7 @@ public enum DeviceDirectionEnum {
         if (null == code) {
             return false;
         }
-        for (DeviceDirectionEnum typeEnum : DeviceDirectionEnum.values()) {
+        for (DeviceControlTypeEnum typeEnum : DeviceControlTypeEnum.values()) {
 
             if (code.equals(typeEnum.code)) {
                 return true;
@@ -42,7 +44,7 @@ public enum DeviceDirectionEnum {
      */
     public static String getValue(String code) {
         // 遍历枚举
-        for (DeviceDirectionEnum value : DeviceDirectionEnum.values()) {
+        for (DeviceControlTypeEnum value : DeviceControlTypeEnum.values()) {
             String s = value.getCode() + "";
             if (s.equals(String.valueOf(code))) {
                 return value.getName();
@@ -60,7 +62,7 @@ public enum DeviceDirectionEnum {
         return name;
     }
 
-    DeviceDirectionEnum(String code, String name) {
+    DeviceControlTypeEnum(String code, String name) {
         this.code = code;
         this.name = name;
     }

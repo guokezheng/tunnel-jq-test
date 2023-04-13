@@ -464,11 +464,12 @@ export default {
       if (width < 250 && height < 38) {
         return font;
       } else {
-        // if (width / 250 > height / 38) {
+        if(width < 250 && height > 38){
+          return font / (height / 38) - 1;
+        }else{
           return font / (width / 250) - 1;
-        // } else {
-          // return font / (height / 38) - 1;
-        // }
+        }
+      
       }
     },
     getCoordinate(coordinate, type, screenSize){
@@ -480,9 +481,17 @@ export default {
       } else {
         // if (width / 250 > height / 38) {
           if (type == "left") {
-            return coordinate / (width / 250);
+            if(width < 250 && height > 38){
+              return coordinate / (height / 38);
+            }else{
+              return coordinate / (width / 250);
+            }
           } else if (type == "top") {
-            return coordinate / (height / 38);
+            if(width < 250 && height > 38){
+              return coordinate / (height / 38);
+            }else{
+              return coordinate / (width / 250);
+            }
           }
         // } else {
           // if (type == "left") {
@@ -506,10 +515,18 @@ export default {
       }else{
         // if (width / 250 > height / 38) {
           if (type == "width") {
-            return 250;
+            if(width < 250 && height > 38){
+              return width / (height / 38);
+            }else{
+              return width / (width / 250);
+            }
           } else if (type == "height") {
-            return 38;
-            // return height / (width / 250);
+            if(width < 250 && height > 38){
+              return height / (height / 38);
+            }else{
+              return height / (width / 250);
+
+            }
           }
         // } else {
         //   if (type == "width") {

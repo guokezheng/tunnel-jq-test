@@ -265,10 +265,15 @@
 
       <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
-          <dict-tag
-            :options="dict.type.fault_remove_statue"
-            :value="scope.row.falltRemoveStatue"
-          />
+          <span
+            :style="{
+              color:
+               getFalltRemoveStatue(scope.row.falltRemoveStatue) == '未消除'
+                  ? 'yellow'
+                  : '#00FF00',
+            }"
+          >{{ getFalltRemoveStatue(scope.row.falltRemoveStatue) }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column

@@ -818,6 +818,9 @@ export default {
       if (this.dateRangeCz.length>0) {
         startTime=new Date(this.dateRangeCz[0].replace(/-/g,"/"));//转换
         endTime =  new Date(this.dateRangeCz[1].replace(/-/g,"/"));//转换
+      }else{
+        this.$message.warning("请先选择创建时间段");
+        return;
       }
       var dateDiff = endTime.getTime() - startTime.getTime();//时间差的毫秒数
       if(dateDiff>(7*24*60*60*1000)){

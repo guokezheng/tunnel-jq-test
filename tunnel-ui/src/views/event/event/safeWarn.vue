@@ -2859,7 +2859,7 @@ export default {
     margin-bottom: 10px;
     // position: relative;
     border-radius: 2px;
-    // width:24.6%;
+    overflow: hidden;
     height: 15.4vh;
     .top {
       height: 76%;

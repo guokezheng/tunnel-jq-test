@@ -133,7 +133,7 @@
     </div>
   </div>
 </template>
-  <style scope>
+  <style scoped>
     /* html,
     body {
       width: 100%;

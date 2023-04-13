@@ -56,6 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="externalDeviceId"    column="external_device_id"    />
         <result property="associatedDeviceId"    column="associated_device_id"    />
         <result property="brandName"    column="brand_name"    />
+        <result property="data"    column="data"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -1147,5 +1148,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
             1 = 1
           AND FIND_IN_SET(d.eq_id,#{ids})
+    </select>
+
+
+    <!-- 通过参数查询设备数据 -->
+    <select id="selectSdDevicesDataByParam" parameterType="SdDevices" resultMap="SdDevicesResult">
+        SELECT
+        a.*,
+        b.data
+        FROM sd_devices a
+        LEFT JOIN sd_device_data b ON a.eq_id = b.device_id
+        <if test="itemId != null">and b.item_id = #{itemId}</if>
+        <where>
+            <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
+            <if test="eqType != null  and eqType != ''">and a.eq_type = #{eqType}</if>
+            <if test="eqDirection != null and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
+        </where>
     </select>
 </mapper>

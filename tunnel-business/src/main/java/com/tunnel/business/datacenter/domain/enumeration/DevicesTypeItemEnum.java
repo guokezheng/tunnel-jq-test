@@ -79,12 +79,17 @@ public enum DevicesTypeItemEnum {
     QING_XIE_ZHI(79, "倾斜值"),
     ZHEN_DONG_GAO_JING(80, "振动告警"),
     CHEN_JIANG_QING_XIE_GAO_JING(81, "沉降倾斜告警"),
+    WEN_DU_CHUANGAN(89, "温度"),    //温度传感器
+    SHI_DU_CHUANGAN(90, "湿度"),   //湿度传感器
+    SHEN_SHUI_BENG(91, "深水泵"),    //深水泵状态 关闭D0=0；开启D0=1
     XIAO_FANG_DIAN_LIU_IA(92, "电流Ia"),    //电流Ia
     XIAO_FANG_DIAN_LIU_IB(93, "电流Ib"),   //电流Ib
     XIAO_FANG_DIAN_LIU_IC(94, "电流IC"),   //电流Ic
     XIAO_FANG_DIAN_YA_IA(95, "电压A"),   //电压Uab
     XIAO_FANG_DIAN_YA_IB(96, "电压B"),   //电压Ubc
     XIAO_FANG_DIAN_YA_IC(97, "电压C"),    //电压Uac
+    XIAO_FANG_SHUAN_STATUS(98, "水泵消防栓状态"),    //水泵消防栓状态   手动D502=184;自动D502=377
+
 
     // 1000000 前四位设备类型 后三位设备属性  最大可支持9999个设备类型  999个设备属性
     // 1000 巡检机器人  对应devicesType 29

@@ -9,16 +9,28 @@
       :visible="visible"
       :before-close="handleClosee"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
+      <div
+        style="
+          width: 100%;
+          height: 30px;
+          display: flex;
+          justify-content: space-between;
+        "
+      >
+        <div class="dialogLine"></div>
+        <img
+          :src="titleIcon"
+          style="height: 30px; transform: translateY(-30px); cursor: pointer"
+          @click="handleClosee"
+        />
+      </div>
       <el-form
         ref="form"
         :model="stateForm"
         label-width="90px"
         label-position="left"
         size="mini"
+        style="padding: 15px; padding-top: 0px"
       >
         <el-row>
           <el-col :span="13">
@@ -63,14 +75,9 @@
               {{ geteqType(stateForm.eqStatus)}}
             </el-form-item>
           </el-col>
-          <el-col :span="11">
-            <el-form-item label="消防泵状态:">
-              {{ stateForm.xfsStatus}}
-            </el-form-item>
-          </el-col>
         </el-row>
         <div class="lineClass"></div>
-        <!-- <el-row style="margin-top: 10px">
+        <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="电流Ia:">
               {{ stateForm.ia}} <span style="padding-left:5px">I</span>
@@ -107,60 +114,14 @@
               {{ stateForm.vc}} <span style="padding-left:5px">V</span>
             </el-form-item>
           </el-col>
-        </el-row> -->
-        <div style="margin-top: 10px">
-          <el-form-item label="配置状态:">
-            <div class="wrap">
-              <el-radio-group
-                v-for="(item, index) in eqTypeStateList"
-                :key="index"
-                v-model="stateForm.state"
-                style="display: flex; flex-direction: column"
-                @change="$forceUpdate()"
-              >
-                <el-radio
-                  class="el-radio flex-row"
-                  :label="item.state"
-                  style="align-items: center"
-                  :class="[
-                    String(stateForm.state) == String(item.state)
-                      ? 'el-radio-selcted'
-                      : '',
-                  ]"
-                >
-                  <el-row
-                    class="flex-row"
-                  >
-                    <img
-                      :width="iconWidth"
-                      :height="iconHeight"
-                      :src="item.url[1]"
-                      v-if="item.url.length > 1"
-                    />
-                    <img
-                      :width="iconWidth"
-                      :height="iconHeight"
-                      :src="item.url[0]"
-                    />
-                    <div style="margin: 0 0 0 10px; display: inline-block">
-                      {{ item.name }}
-                    </div>
-                  </el-row>
-                </el-radio>
-              </el-radio-group>
-            </div>
-          </el-form-item>
-        </div>
+        </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer">
         <el-button
-          @click="handleOK()"
-          class="submitButton"
-          >执 行</el-button
-        >
-        <el-button
-          class="closeButton"
+          type="primary"
+          size="mini"
           @click="handleClosee()"
+          style="width: 80px"
           >取 消</el-button
         >
       </div>
@@ -170,11 +131,7 @@
 
 <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
-import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
 import { getDevice } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
-import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
-import { setControlDeviceByParam } from "@/api/workbench/config.js"; //提交控制信息
-
 
 export default {
   props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
@@ -197,8 +154,6 @@ export default {
       eqTypeStateList: [],
       visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
-      iconWidth: "",
-      iconHeight: "",
     };
   },
   created() {
@@ -222,56 +177,13 @@ export default {
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
             this.stateForm.state = response.data.state;
-            this.getEqTypeStateIcon();
           });
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
     },
-    /* 查询设备状态图标*/
-    async getEqTypeStateIcon() {
-      let that = this;
-      await getType(this.eqInfo.clickEqType).then((res) => {
-        console.log(res, "查询设备图标宽高");
-        this.iconWidth = res.data.iconWidth;
-        this.iconHeight = res.data.iconHeight;
-      });
-      let list = [];
-      const param = {
-        stateTypeId: this.eqInfo.clickEqType,
-        isControl: 1,
-      };
-      await getStateByData(param).then((response) => {
-        console.log(response, "查询设备状态图标");
-        list = response.rows;
-      });
-
-      that.eqTypeStateList = [];
-      for (let i = 0; i < list.length; i++) {
-        let iconUrl = [];
-        if (list[i].iFileList != null) {
-          for (let j = 0; j < list[i].iFileList.length; j++) {
-            let img = list[i].iFileList[j].url;
-            iconUrl.push(img);
-          }
-        }
-
-        that.eqTypeStateList.push({
-          type: list[i].stateTypeId,
-          state: list[i].deviceState,
-          name: list[i].stateName,
-          control: list[i].isControl,
-          url: iconUrl,
-        });
-      }
-      console.log(that.eqTypeStateList, "that.eqTypeStateList");
-      this.visible = true;
-    },
     getDirection(num) {
-      // debugger
-      // console.log(num,"num")
-      // console.log(this.directionList,"this.directionList");
       for (var item of this.directionList) {
         if (item.dictValue == num) {
           return item.dictLabel;
@@ -295,23 +207,6 @@ export default {
         }
       }
     },
-    handleOK() {
-      const param = {
-        eqId: this.stateForm.eqId, //设备id
-        data: this.stateForm.state,
-        comType: "omron",
-      };
-      setControlDeviceByParam(param).then((res)=>{
-        console.log("消防栓控制成功",res)
-        let msg = res.msg;
-        if(res.data == 1){
-          this.$modal.msgSuccess(msg);
-        }else{
-          this.$modal.msgError(msg);
-        }
-      })
-      this.$emit("dialogClose");
-    },
     // 关闭弹窗
     handleClosee() {
       this.$emit("dialogClose");
@@ -325,31 +220,5 @@ export default {
   margin-bottom: -10px;
   display: flex;
   flex-wrap: wrap;
-}
-.el-radio {
-  width: 240px;
-  height: 40px;
-  line-height: 40px;
-}
-.flex-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  height: 40px;
-  align-items: center;
-}
-.el-radio-selcted {
-  padding: 5px 300px 5px 20px;
-  margin: 2px 0px;
-  color: #c0ccda;
-  border-radius: 4px;
-  background-color: #455d79;
-}
-
-.el-radio-button--medium .el-radio-button__inner {
-  padding: 5px 10px;
-}
-::v-deep .el-radio__label {
-  height: 40px !important;
 }
 </style>

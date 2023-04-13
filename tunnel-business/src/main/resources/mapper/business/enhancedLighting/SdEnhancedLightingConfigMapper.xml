@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.enhancedLighting.SdEnhancedLightingConfigMapper">
+
+    <resultMap type="SdEnhancedLightingConfig" id="SdEnhancedLightingConfigResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="modeType"    column="mode_type"    />
+        <result property="timeSlot"    column="time_slot"    />
+        <result property="beforeLuminance"    column="before_luminance"    />
+        <result property="minLuminance"    column="min_luminance"    />
+        <result property="respondTime"    column="respond_time"    />
+        <result property="maxLuminanceRange"    column="max_luminance_range"    />
+        <result property="minLuminanceRange"    column="min_luminance_range"    />
+        <result property="maxTrafficFlow"    column="max_traffic_flow"    />
+        <result property="isStatus"    column="is_status"    />
+        <result property="isTrafficVolume"    column="is_traffic_volume"    />
+    </resultMap>
+
+    <sql id="selectSdEnhancedLightingConfigVo">
+        select id, tunnel_id, mode_type, time_slot, before_luminance, min_luminance, respond_time, max_luminance_range, min_luminance_range, max_traffic_flow, is_status, is_traffic_volume from sd_enhanced_lighting_config
+    </sql>
+
+    <select id="selectSdEnhancedLightingConfigList" parameterType="SdEnhancedLightingConfig" resultMap="SdEnhancedLightingConfigResult">
+        <include refid="selectSdEnhancedLightingConfigVo"/>
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="modeType != null "> and mode_type = #{modeType}</if>
+            <if test="timeSlot != null  and timeSlot != ''"> and time_slot = #{timeSlot}</if>
+            <if test="beforeLuminance != null "> and before_luminance = #{beforeLuminance}</if>
+            <if test="minLuminance != null "> and min_luminance = #{minLuminance}</if>
+            <if test="respondTime != null "> and respond_time = #{respondTime}</if>
+            <if test="maxLuminanceRange != null "> and max_luminance_range = #{maxLuminanceRange}</if>
+            <if test="minLuminanceRange != null "> and min_luminance_range = #{minLuminanceRange}</if>
+            <if test="maxTrafficFlow != null "> and max_traffic_flow = #{maxTrafficFlow}</if>
+            <if test="isStatus != null "> and is_status = #{isStatus}</if>
+            <if test="isTrafficVolume != null "> and is_traffic_volume = #{isTrafficVolume}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdEnhancedLightingConfigById" parameterType="Long" resultMap="SdEnhancedLightingConfigResult">
+        <include refid="selectSdEnhancedLightingConfigVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdEnhancedLightingConfig" parameterType="SdEnhancedLightingConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_enhanced_lighting_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="modeType != null">mode_type,</if>
+            <if test="timeSlot != null">time_slot,</if>
+            <if test="beforeLuminance != null">before_luminance,</if>
+            <if test="minLuminance != null">min_luminance,</if>
+            <if test="respondTime != null">respond_time,</if>
+            <if test="maxLuminanceRange != null">max_luminance_range,</if>
+            <if test="minLuminanceRange != null">min_luminance_range,</if>
+            <if test="maxTrafficFlow != null">max_traffic_flow,</if>
+            <if test="isStatus != null">is_status,</if>
+            <if test="isTrafficVolume != null">is_traffic_volume,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="modeType != null">#{modeType},</if>
+            <if test="timeSlot != null">#{timeSlot},</if>
+            <if test="beforeLuminance != null">#{beforeLuminance},</if>
+            <if test="minLuminance != null">#{minLuminance},</if>
+            <if test="respondTime != null">#{respondTime},</if>
+            <if test="maxLuminanceRange != null">#{maxLuminanceRange},</if>
+            <if test="minLuminanceRange != null">#{minLuminanceRange},</if>
+            <if test="maxTrafficFlow != null">#{maxTrafficFlow},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+            <if test="isTrafficVolume != null">#{isTrafficVolume},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSdEnhancedLightingConfig" parameterType="SdEnhancedLightingConfig">
+        update sd_enhanced_lighting_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="modeType != null">mode_type = #{modeType},</if>
+            <if test="timeSlot != null">time_slot = #{timeSlot},</if>
+            <if test="beforeLuminance != null">before_luminance = #{beforeLuminance},</if>
+            <if test="minLuminance != null">min_luminance = #{minLuminance},</if>
+            <if test="respondTime != null">respond_time = #{respondTime},</if>
+            <if test="maxLuminanceRange != null">max_luminance_range = #{maxLuminanceRange},</if>
+            <if test="minLuminanceRange != null">min_luminance_range = #{minLuminanceRange},</if>
+            <if test="maxTrafficFlow != null">max_traffic_flow = #{maxTrafficFlow},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+            <if test="isTrafficVolume != null">is_traffic_volume = #{isTrafficVolume},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdEnhancedLightingConfigById" parameterType="Long">
+        delete from sd_enhanced_lighting_config where id = #{id}
+    </delete>
+
+    <delete id="deleteSdEnhancedLightingConfigByIds" parameterType="String">
+        delete from sd_enhanced_lighting_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectSdEnhancedLightingConfigListByParam" parameterType="SdEnhancedLightingConfig" resultMap="SdEnhancedLightingConfigResult">
+        <include refid="selectSdEnhancedLightingConfigVo"/>
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="modeType != null "> and mode_type = #{modeType}</if>
+            <if test="timeSlot != null  and timeSlot != ''"> and time_slot = #{timeSlot}</if>
+            <if test="beforeLuminance != null "> and before_luminance = #{beforeLuminance}</if>
+            <if test="minLuminance != null "> and min_luminance = #{minLuminance}</if>
+            <if test="respondTime != null "> and respond_time = #{respondTime}</if>
+            <if test="maxLuminanceRange != null "> and max_luminance_range = #{maxLuminanceRange}</if>
+            <if test="minLuminanceRange != null "> and min_luminance_range = #{minLuminanceRange}</if>
+            <if test="maxTrafficFlow != null "> and max_traffic_flow = #{maxTrafficFlow}</if>
+        </where>
+    </select>
+</mapper>

@@ -2677,6 +2677,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-covi>
+    <!--   消防泵  -->
     <com-xfsb
       class="comClass"
       v-if="this.eqInfo.clickEqType == 13"
@@ -2686,6 +2687,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-xfsb>
+    <!--   潜水深井泵  -->
     <com-sjb
       class="comClass"
       v-if="this.eqInfo.clickEqType == 49"
@@ -2695,6 +2697,26 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-sjb>
+    <!--    温湿传感器  -->
+    <com-temperatureHumidity
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 41"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-temperatureHumidity>
+    <!--    液位传感器  -->
+    <com-liquidLevel
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 42"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-liquidLevel>
     <com-data
       class="comClass"
       :brandList="this.brandList"
@@ -3749,9 +3771,10 @@ import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯�
 import comBoard from "@/views/workbench/config/components/board"; //情报板弹窗
 import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
 import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵弹窗
-import comSjb from "@/views/workbench/config/components/sjb"; //消防水泵弹窗
+import comSjb from "@/views/workbench/config/components/sjb"; //潜水深水泵
 import robot from "@/views/workbench/config/components/robotManagementt"; //消防水泵弹窗
-
+import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
+import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
 
 import { getLocalIP } from "@/api/event/vedioRecord";
 import { getHosts } from "@/api/equipment/plc/api";
@@ -3824,13 +3847,15 @@ export default {
     comBoard,
     comRadio,
     comXfsb,
-    comSjb,
-    robot
+    comSjb,//深水泵
+    robot,
+    comTemperatureHumidity, //温湿度传感器
+    comLiquidLevel,//液位传感器
   },
 
   data() {
     return {
-      timingStrategyDisabled:true,
+      timingStrategyDisabled:false,
       videoNoPic1:false,
       videoNoPic2:false,
       videoTitle1:'',
@@ -5772,7 +5797,7 @@ export default {
       this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
-      this.timingStrategyDisabled = true
+      this.timingStrategyDisabled = false
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
@@ -5877,7 +5902,7 @@ export default {
       this.dateRange1 = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
-      
+
       this.queryParams.strategyName = "";
       this.queryParams.tunnelId = "";
       this.queryParams.strategyType = "";
@@ -8092,7 +8117,7 @@ export default {
           item.textKKFalse = true
           this.$forceUpdate();
         }
-        
+
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
         console.log(item, "点击的设备");
@@ -9211,7 +9236,7 @@ export default {
   position: absolute;
   left: 400px;
   z-index:96659;
-  
+
 }
 .batchManageButton {
   width: 120px;

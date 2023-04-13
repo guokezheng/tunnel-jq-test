@@ -1469,6 +1469,7 @@
       class="explain-table operationDiglog"
       :title="title"
       :visible.sync="operationLogDialog"
+      :before-close="cancel"
       width="1000px"
       append-to-body
       v-dialogDrag
@@ -7567,9 +7568,9 @@ export default {
                 "所有设备图标selectedIconList"
               );
               for (var item of that.selectedIconList) {
-                // if(item.eqType == 10){
-                //   console.log(item,"风机selectedIconList")
-                // }
+               // if(item.eqType == 45){
+                 // console.log(item,"警示灯带")
+               // }
                 if (
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29
@@ -7786,7 +7787,7 @@ export default {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
                   5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48, 45, 41
+                  40, 39, 48,  41
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -7797,10 +7798,10 @@ export default {
                     
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                    if(deviceData.eqType == 39){
+                    // if(deviceData.eqType == 45){
                     //   console.log(deviceData,"智能手动报警按钮")
-                      
-                    }
+                    //   console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
+                    // }
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =
@@ -8860,6 +8861,8 @@ export default {
     },
     /* 关闭所有对话框*/
     cancel() {
+      this.operationParam.pageNum = 1;
+      this.operationParam_xt.pageNum = 1;
       this.operationLogDialog = false;
       this.tunnelVisible = false;
       this.stateSwitchVisible = false;

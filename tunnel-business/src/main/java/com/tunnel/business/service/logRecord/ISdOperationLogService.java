@@ -89,4 +89,11 @@ public interface ISdOperationLogService {
      * @return
      */
     List<SdOperationLog> selectAppOperationLogList(String time);
+
+    /**
+     * 查询操作日志总数
+     * @param sdOperationLog
+     * @return
+     */
+    int selectSdOperationLogCountList(SdOperationLog sdOperationLog);
 }

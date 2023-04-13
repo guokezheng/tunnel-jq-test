@@ -3826,7 +3826,7 @@ export default {
 
   data() {
     return {
-      timingStrategyDisabled:true,
+      timingStrategyDisabled:false,
       videoNoPic1:false,
       videoNoPic2:false,
       videoTitle1:'',
@@ -5768,7 +5768,7 @@ export default {
       this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
-      this.timingStrategyDisabled = true
+      this.timingStrategyDisabled = false
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
@@ -5873,7 +5873,7 @@ export default {
       this.dateRange1 = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
-      
+
       this.queryParams.strategyName = "";
       this.queryParams.tunnelId = "";
       this.queryParams.strategyType = "";
@@ -8083,7 +8083,7 @@ export default {
           item.textKKFalse = true
           this.$forceUpdate();
         }
-        
+
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
         console.log(item, "点击的设备");

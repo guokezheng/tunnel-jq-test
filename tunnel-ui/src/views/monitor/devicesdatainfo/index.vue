@@ -88,12 +88,14 @@
     <div class="tableTopHr" ></div>
 
       <el-table
-        ref="tables"
+        ref="tableFile"
         v-loading="loading"
         :data="listTab"
         @selection-change="handleSelectionChangeTab"
+        @row-click="handleRowClick"
         class="allTable"
-        height="58vh"
+        :row-key="getRowKey"
+        height="62vh"
       >
         <el-table-column type="selection" width="55" align="center" reserve-selection/>
         <el-table-column type="index" :index="indexMethodTab" label="序号" width="68" align="center"></el-table-column>
@@ -128,7 +130,7 @@
 
 
     <!--详情弹窗-->
-    <el-dialog :visible.sync="record" width="70%">
+    <el-dialog :visible.sync="record" width="70%" :before-close="cancel">
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -314,9 +316,6 @@
       <div v-show="echartShow">
         <div ref="echartsBox" id="echarts-Box" class="echarts-Box" style ="width: 1220px !important;"></div>
       </div>
-
-
-
     </el-dialog>
 
   </div>
@@ -480,6 +479,13 @@ export default {
   },
 
   methods: {
+    cancel(){
+      this.record = false;
+      this.$refs.tableFile.clearSelection();
+    },
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -577,7 +583,7 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
-          this.$refs.tables.clearSelection();
+          this.$refs.tableFile.clearSelection();
           this.querysParamsTab.ids = ''
         })
         .catch(() => {});
@@ -989,7 +995,7 @@ export default {
     /*table搜索*/
     handleQueryTab(){
       this.querysParamsTab.pageNum = 1;
-      this.$refs.tables.clearSelection();
+      this.$refs.tableFile.clearSelection();
       this.getListTab();
     },
 

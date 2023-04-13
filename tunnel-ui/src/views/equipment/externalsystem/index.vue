@@ -116,7 +116,11 @@
       v-loading="loading"
       :data="systemList"
       @selection-change="handleSelectionChange"
+      height="62vh"
       class="allTable"
+      @row-click="handleRowClick"
+      ref="tableFile"
+      :row-key="getRowKey"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="系统名称" align="center" prop="systemName" />
@@ -277,7 +281,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="submitButton"  @click="submitForm">确 定</el-button>
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
         <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -367,6 +371,13 @@ export default {
     this.getTunnelList();
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id;
+    },
     getTunnelList() {
       listAllTunnels1().then((response) => {
         this.tunnelList = response.data;
@@ -438,6 +449,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -468,7 +480,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
-      this.queryParams.searchValue = ''
+      this.queryParams.searchValue = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -501,6 +513,7 @@ export default {
             updateSystem(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -515,6 +528,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
       this.$modal
         .confirm("是否确认删除？")
@@ -525,7 +539,9 @@ export default {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

@@ -234,6 +234,7 @@
       v-loading="loading"
       :data="eventTypeList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
       height="62vh"
       :row-key="getRowKey"
@@ -517,6 +518,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -588,6 +592,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -700,6 +705,7 @@ export default {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
+                this.$refs.tableFile.clearSelection();
                 this.$refs.upload.clearFiles();
                 this.getList();
                 this.dialogOkDisabled = false;
@@ -721,6 +727,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
       this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
@@ -734,7 +741,9 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(function () {});
+        .catch(function () {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

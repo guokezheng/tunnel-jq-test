@@ -1352,7 +1352,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
-      this.handleQuery();
+      //this.handleQuery();
       this.resetReservePlanDrawForm();
     },
     //form表单置空

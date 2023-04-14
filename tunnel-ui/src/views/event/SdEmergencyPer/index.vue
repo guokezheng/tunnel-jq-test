@@ -443,7 +443,7 @@ export default {
         createTime: null,
         updateBy: null,
       };
-      this.getList();
+      //this.getList();
       this.resetForm("form");
     },
     /** 搜索按钮操作 */

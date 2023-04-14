@@ -285,6 +285,22 @@ p {
     }
   }
 }
+.el-message-box{
+  .el-message-box__btns{
+    .el-button{
+      width: 80px;
+      height: 28px;
+      border-radius: 14px !important;
+      line-height: 27px;
+      text-align: center;
+      padding: 0;
+      color: #fff;
+      border:none;
+      font-size: 14px;
+      border-color: transparent !important;
+    }
+  }
+}
 // .el-dialog__body{
 //   max-height: 78vh;
 //   overflow: auto;

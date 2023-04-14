@@ -581,7 +581,7 @@
 
     <!-- 配置策略 -->
     <el-dialog
-      :before-close="handleClose"
+      :before-close="closeStrategy"
       title="联控流程"
       :visible.sync="strategyVisible"
       append-to-body
@@ -1352,6 +1352,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
+      this.$refs.planTable.clearSelection();
       //this.handleQuery();
       this.resetReservePlanDrawForm();
     },
@@ -1563,6 +1564,7 @@ export default {
         if (res.code === 200) {
           this.strategyVisible = false;
           this.$modal.msgSuccess(res.msg);
+          this.$refs.planTable.clearSelection();
           this.getList();
         }
       });
@@ -2046,6 +2048,7 @@ export default {
     //关闭drawer
     handleFileClose(done) {
       done();
+      this.$refs.planTable.clearSelection();
     },
     /** 查询预案信息列表 */
     getList() {

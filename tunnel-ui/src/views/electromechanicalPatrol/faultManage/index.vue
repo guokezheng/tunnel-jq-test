@@ -265,10 +265,15 @@
 
       <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
-          <dict-tag
-            :options="dict.type.fault_remove_statue"
-            :value="scope.row.falltRemoveStatue"
-          />
+          <span
+            :style="{
+              color:
+               getFalltRemoveStatue(scope.row.falltRemoveStatue) == '未消除'
+                  ? 'yellow'
+                  : '#00FF00',
+            }"
+          >{{ getFalltRemoveStatue(scope.row.falltRemoveStatue) }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column
@@ -1435,6 +1440,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.faultDescription = "";
       this.queryParams.ids = "";
       this.queryParams.tunnelId = null;
       this.queryParams.faultStatus = null;
@@ -1740,6 +1746,7 @@ export default {
             updateList(this.fileData).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {

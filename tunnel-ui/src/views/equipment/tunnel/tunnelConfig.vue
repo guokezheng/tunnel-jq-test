@@ -810,7 +810,7 @@ export default {
         tunnelId: this.selectedTunnel.id,
         storeConfigure: JSON.stringify(configData),
       };
-      console.log(param, configData, "configData");
+      // console.log(param, configData, "configData");
       configData.eqList.forEach((v) => {
         if (v.eqType == 3) {
           console.log(v, "交通信号灯");

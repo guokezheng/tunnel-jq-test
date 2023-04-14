@@ -1740,6 +1740,7 @@ export default {
             updateList(this.fileData).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {

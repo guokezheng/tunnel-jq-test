@@ -1239,7 +1239,7 @@
         :key="index"
         v-show="deviceIndexShow == index"
       >
-        <el-table :data="item.devicesList" style="width: 100%">
+        <el-table :data="item.devicesList" style="width: 100%" height="700">
           <el-table-column prop="eqName" label="设备名称"> </el-table-column>
           <el-table-column prop="pile" label="桩号"> </el-table-column>
           <el-table-column prop="stateName" label="修改后状态">

@@ -93,7 +93,7 @@
               ></el-button>
             </el-input>
             <!-- 搜索栏树状结构 -->
-            <div class="treeBox" ref="treeBox" v-show="treeShow">
+            <div class="treeBox" ref="treeBox" v-show="treeShow" :style="dragFlag?'47%':'54.5%'">
               <el-tree
                 :show-checkbox="false"
                 :data="treeData"
@@ -192,6 +192,7 @@
           >
             操作日志
           </el-button>
+     
         </div>
       </div>
       <div class="vehicleLane">
@@ -222,14 +223,25 @@
                   :src="currentTunnel.lane.url"
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
-                <div class="carBox" v-show="carShow">
+<!--                <div class="carBox" v-show="carShow">-->
+<!--                  <span-->
+<!--                    v-for="(value, key) in carList"-->
+<!--                    :key="key"-->
+<!--                    :style="{-->
+<!--                      left: value.left,-->
+<!--                      top: value.top,-->
+<!--                      background: value.background,-->
+<!--                    }"-->
+<!--                  ></span>-->
+<!--                </div>-->
+                <div class="carBox" v-show="carShow"  v-for="(value, key) in carList">
                   <span
-                    v-for="item in carList"
-                    :key="item.id"
+                    v-for="data in value"
+                    :key="key"
                     :style="{
-                      left: item.left,
-                      top: item.top,
-                      background: item.background,
+                      left: data.left,
+                      top: data.top,
+                      background: data.background,
                     }"
                   ></span>
                 </div>
@@ -3814,7 +3826,7 @@ import {
   getCategoryTree,
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
-import { listEvent, getWarnEvent } from "@/api/event/event";
+import {listEvent, getWarnEvent, getReservePlanDataa} from "@/api/event/event";
 import { getVehicleSelectList } from "@/api/surveyType/api"; //车辆类型
 import { list } from "@/api/monitor/logininfor";
 
@@ -3939,7 +3951,7 @@ export default {
       manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
       lane: "",
-      carList: [],
+      carList: new Map(),
       tunnelKm: "", //隧道实际长度
       tunnelLength: "", //隧道px长度
       chezhiDisabled: false, //车指按钮 返回接口结果前禁用
@@ -4736,6 +4748,8 @@ export default {
       }
     },
     radarDataList(event) {
+      console.log(event)
+      debugger
       // console.log(event, "websockt工作台接收车辆感知事件数据");
       // 首先应判断推送数据和当前选择隧道是否一致
       // if(item.tunnelId == this.tunnelId){}
@@ -4820,7 +4834,14 @@ export default {
           event[i].background = "red";
         }
       }
-      this.carList = event;
+      this.carList.set(event[0].vehicleLicense, event[0]);
+      console.log(this.carList)
+
+      this.carList.forEach((value, key, map) => {
+        console.log(value, key, map)
+      })
+      // this.carList.push( event[0])
+      // this.carList = event[0];
       this.$forceUpdate();
     },
     deviceStatus(event) {
@@ -5462,6 +5483,7 @@ export default {
       // }
     },
     carShowChange(val) {
+      debugger
       this.carShow = val;
     },
     getStartTime(time) {
@@ -7787,7 +7809,7 @@ export default {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
                   5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48,  41
+                  40, 39, 48, 41
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -7795,13 +7817,13 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
-                    
+
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                    // if(deviceData.eqType == 45){
-                    //   console.log(deviceData,"智能手动报警按钮")
-                    //   console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
-                    // }
+                    if(deviceData.eqType == 48){
+                      console.log(deviceData,"内外振动仪")
+                      console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
+                    }
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =
@@ -8854,6 +8876,7 @@ export default {
       this.getOperationList("xitong");
       // this.getList();
     },
+
     /* 打开图标说明对话框*/
     iconExplain() {
       this.explainVisible = true;
@@ -11389,7 +11412,7 @@ input {
   position: absolute;
   z-index: 960619;
   top: 5%;
-  left: 54.5%;
+  // left: 54.5%;
   width: 13.5%;
   height: 60vh;
   overflow: scroll;

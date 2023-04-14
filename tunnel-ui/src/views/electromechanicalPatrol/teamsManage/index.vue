@@ -775,6 +775,7 @@ export default {
         .then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");
+          this.$refs.tableFile.clearSelection();
         })
         .catch(() => {
           this.$refs.tableFile.clearSelection();

@@ -477,7 +477,6 @@ import Search from "@/components/HeaderSearch";
 import RuoYiGit from "@/components/RuoYi/Git";
 import RuoYiDoc from "@/components/RuoYi/Doc";
 import {
-  listWarning,
   listWarningInfo,
   getStrategyList,
   getDeviceInfo,
@@ -495,7 +494,6 @@ import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import earlyWarning from "@/components/earlyWarning"; // 路侧设备
 import { checkPermi } from "@/utils/permission.js";
 import { getUserProfile } from "@/api/system/user";
-import { getEventUntreatedNum } from "@/api/event/event";
 
 export default {
   data() {
@@ -652,6 +650,7 @@ export default {
   computed: {
     ...mapState({
       sdEventList: (state) => state.websocket.sdEventList,
+      eventUntreatedNum: (state) => state.websocket.eventUntreatedNum,
     }),
     ...mapGetters(["sidebar", "device"]),
     setting: {
@@ -676,25 +675,29 @@ export default {
       },
     },
   },
-  // watch: {
-  //   sdEventList(event) {
-  //     console.log(event,"事件弹窗");
-  //   this.nodealNum += event.length;
-  //   this.$forceUpdate()
-  //   },
-  // },
+  watch: {
+    // sdEventList(event) {
+    //   console.log(event,"事件弹窗");
+    // this.nodealNum += event.length;
+    // this.$forceUpdate()
+    // },
+    eventUntreatedNum(event){
+      console.log(event, "事件总数");
+      this.nodealNum = event;
+    },
+  },
+
   created() {
     this.getUser();
-    this.getAlarmInfo();
-    setInterval(() => {
-      setTimeout(this.getAlarmInfo, 0);
-    }, 5000 * 1);
+    // setInterval(() => {
+    //   setTimeout(this.getAlarmInfo, 0);
+    // }, 5000 * 1);
   },
   mounted() {
-    setInterval(()=>{
-      this.getNodealNum()
-
-    },5000)
+    // setInterval(()=>{
+    //   this.getNodealNum()
+    //
+    // },5000)
 
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
@@ -705,12 +708,12 @@ export default {
     // });
   },
   methods: {
-    getNodealNum() {
-      getEventUntreatedNum().then((res) => {
-        // console.log(res, "事件总数");
-        this.nodealNum = res.data;
-      });
-    },
+    // getNodealNum() {
+    //   getEventUntreatedNum().then((res) => {
+    //     // console.log(res, "事件总数");
+    //     this.nodealNum = res.data;
+    //   });
+    // },
     getRoute(path) {
       var arr = [
         "/index",
@@ -767,16 +770,16 @@ export default {
     // handleClick(tab, event) {
     //   console.log(tab, event);
     // },
-    
+
     // 鼠标经过铃铛提示信息
-    getAlarmInfo() {
-      listWarning(this.queryParams).then((response) => {
-        this.warningInfoList = response.rows;
-        this.total = response.total;
-        this.alarmTitle = "您有" + response.total + "个未处理预警";
-        // this.nodealNum = response.total;
-      });
-    },
+    // getAlarmInfo() {
+    //   listWarning(this.queryParams).then((response) => {
+    //     this.warningInfoList = response.rows;
+    //     this.total = response.total;
+    //     this.alarmTitle = "您有" + response.total + "个未处理预警";
+    //     // this.nodealNum = response.total;
+    //   });
+    // },
     // 更多
     moreInfo() {
       this.$router.push({
@@ -830,7 +833,7 @@ export default {
         bus.$emit("closeDialog");
 
       }
-      
+
     },
     // 监听弹层关闭
     closeDialog() {

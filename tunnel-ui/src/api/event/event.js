@@ -122,10 +122,10 @@ export function dispatchExecuted(eventId) {
 }
 
 // 事件弹窗分类数组
-export function eventList(searchValue, pageNum, eventTime) {
+export function eventList(searchValue, pageNum, startTime) {
   return request({
     // url: searchValue == 3?'/event/list?remark=pop&pageNum='+pageNum +'&pageSize=10&startTime='+startTime:'/event/list?searchValue='+searchValue+'&remark=pop&pageNum='+pageNum +'&pageSize=10$startTime='+startTime,
-    url: '/event/list?searchValue=' + searchValue + '&remark=pop&pageNum=' + pageNum + '&pageSize=10&eventTime=' + eventTime,
+    url: '/event/list?searchValue=' + searchValue + '&remark=pop&pageNum=' + pageNum + '&pageSize=10&startTime=' + startTime,
     method: 'get',
   })
 }
@@ -273,6 +273,17 @@ export function getReservePlanData(query) {
     url: '/plan/getReservePlanData',
     method: 'get',
     params: query
+  })
+}
+
+export function getReservePlanDataa(query) {
+  const param = {
+    id: "鲁BUD697",
+  };
+  return request({
+    url: '/radar/data/selectSdRadarDetectDataByVehicleLicense',
+    method: 'get',
+    params: param
   })
 }
 

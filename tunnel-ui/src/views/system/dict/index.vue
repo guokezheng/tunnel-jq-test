@@ -22,9 +22,7 @@
           v-hasPermi="['system:post:export']"
           >导出</el-button
         >
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
-        >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
@@ -49,7 +47,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="字典状态" prop="status" >
+        <el-form-item label="字典状态" prop="status">
           <el-select
             style="width: 100%"
             v-model="queryParams.status"
@@ -232,13 +230,16 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="typeList"
       height="62vh"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="字典编号" align="center" prop="dictId" />
@@ -311,7 +312,8 @@
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:dict:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -325,7 +327,17 @@
     />
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      :before-close="cancel"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="字典名称" prop="dictName">
           <el-input v-model="form.dictName" placeholder="请输入字典名称" />
@@ -352,8 +364,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="submitForm" class="submitButton">确 定</el-button>
+        <el-button @click="cancel" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -422,7 +434,7 @@ export default {
           return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
         },
       },
-      sysNormalDisableList:[],//状态
+      sysNormalDisableList: [], //状态
     };
   },
   created() {
@@ -437,13 +449,22 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id;
+    },
+    handleRowClick(row) {
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     getStatus(row) {
       return this.selectDictLabel(this.sysNormalDisableList, row);
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)) {
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
         if (self.dict_boxShow == true) {
           self.dict_boxShow = false;
         }
@@ -466,6 +487,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -522,6 +544,7 @@ export default {
             updateType(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -536,6 +559,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this;
       const dictIds = row.dictId || this.ids;
       this.$modal
         .confirm("是否确认删除？")
@@ -546,12 +570,14 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的字典管理数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的字典管理数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的字典管理数据项？";
       }
       this.queryParams.ids = this.ids.join();
@@ -564,6 +590,7 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
+          this.$refs.tableFile.clearSelection();
           this.exportLoading = false;
         })
         .catch(() => {});

@@ -24,6 +24,10 @@ export default {
   },
   watch: {
     websocket({ password, path, port, interval }) {
+      // debugger
+      console.log(path)
+      console.log(port)
+      console.log(location.hostname )
       // 建立 websocket 连接
       this.socket.initialize({
         // url: 'ws://' + location.hostname + ':' + port + path,
@@ -37,6 +41,7 @@ export default {
       });
       this.socket.onopen = () => {};
       this.socket.onmessage = (message) => {
+        // debugger
         message = JSON.parse(message);
         const method = message.method;
 
@@ -74,8 +79,11 @@ export default {
               contentList.deviceStatusChangeLog
             );
             break;
-            case "eventFlow":
+          case "eventFlow":
             this.$store.commit("EVENTFLOW", contentList.eventFlow);
+            break;
+          case "eventUntreatedNum":
+            this.$store.commit("EVENTUNTREATEDNUM", contentList);
             break;
           default:
         }

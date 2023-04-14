@@ -293,6 +293,10 @@
       append-to-body
       :before-close="cancel"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" label-width="100px" size="mini">
         <el-row>
           <el-col :span="12">
@@ -340,7 +344,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">关 闭</el-button>
+        <el-button @click="cancel" class="closeButton">关 闭</el-button>
       </div>
     </el-dialog>
   </div>

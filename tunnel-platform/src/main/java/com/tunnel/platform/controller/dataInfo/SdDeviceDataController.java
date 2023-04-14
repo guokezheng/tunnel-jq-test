@@ -264,5 +264,15 @@ public class SdDeviceDataController extends BaseController
         }
 
     }
+    /**
+     * 小车跑数据控制
+     * @param eqId
+     * @param switchType
+     * @return
+     */
+    @GetMapping(value = "/getFanSafeData/{eqId}/{switchType}")
+    public void carSwitchType(@PathVariable("eqId") String eqId,@PathVariable("switchType") String switchType){
+        sdDeviceDataService.getFanSafeData(eqId);
+    }
 
 }

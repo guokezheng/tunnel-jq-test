@@ -111,6 +111,7 @@
       v-loading="loading"
       :data="jobList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
       height="62vh"
       :row-key="getRowKey"
@@ -228,7 +229,7 @@
     />
 
     <!-- 添加或修改定时任务对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body :before-close="cancel">
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="12">
@@ -341,6 +342,7 @@
     <el-dialog
       title="任务详细"
       :visible.sync="openView"
+      :before-close="closeView"
       width="700px"
       append-to-body
     >
@@ -402,7 +404,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="closeButton" @click="openView = false">关 闭</el-button>
+        <el-button class="closeButton" @click="closeView">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -494,6 +496,13 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    closeView(){
+      this.openView = false;
+      this.$refs.tableFile.clearSelection();
+    },
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.jobId
@@ -532,6 +541,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -657,6 +667,7 @@ export default {
             updateJob(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -671,6 +682,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const jobIds = row.jobId || this.ids;
       this.$modal
         .confirm("是否确认删除？")
@@ -681,7 +693,9 @@ export default {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

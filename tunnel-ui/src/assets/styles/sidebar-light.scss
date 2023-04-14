@@ -2115,12 +2115,12 @@
     }
     .el-table{
       background: transparent;
-      padding: 0 15px;
+      // padding: 0 15px;
       .el-loading-mask{
         background: #00152B !important;
       }
       .el-table__body{
-        width: calc(100% - 30px);
+        width: 100% !important;
       }
       // tr{
       //   color: white;
@@ -2129,7 +2129,7 @@
         background-color: #034A77 !important;
         color:#fff !important;
       }
-      th.el-table__cell.is-leaf, td.el-table__cell{
+      th.el-table__cell.is-leaf, td.el-table__cell,th.el-table__cell.gutter{
         border-bottom: solid 1px  #0a88bd !important;
       }
 

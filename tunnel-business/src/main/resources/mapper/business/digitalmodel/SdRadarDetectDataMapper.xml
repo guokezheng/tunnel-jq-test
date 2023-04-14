@@ -19,6 +19,7 @@
         <result property="licenseColor" column="license_color"/>
         <result property="stakeNum" column="stake_num"/>
         <result property="detectTime" column="detect_time"/>
+        <result property="distance" column="distance"/>
         <result property="startTime" column="startTime"/>
         <result property="endTime" column="endTime"/>
         <result property="deptId" column="dept_id" />
@@ -40,7 +41,8 @@
                vehicle_license,
                license_color,
                stake_num,
-               detect_time
+               detect_time,
+               distance
         from sd_radar_detect_data
     </sql>
 
@@ -97,6 +99,11 @@
     <select id="selectSdRadarDetectDataById" parameterType="String" resultMap="SdRadarDetectDataResult">
         <include refid="selectSdRadarDetectDataVo"/>
         where id = #{id}
+    </select>
+
+    <select id="selectSdRadarDetectDataByVehicleLicense" parameterType="String" resultMap="SdRadarDetectDataResult">
+        <include refid="selectSdRadarDetectDataVo"/>
+        where vehicle_license = #{vehicleLicense} and distance!=0
     </select>
 
     <insert id="insertSdRadarDetectData" parameterType="SdRadarDetectData">

@@ -126,6 +126,7 @@
       :data="vocabularyList"
       max-height="62vh"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       :default-sort="{ prop: 'creatTime', order: 'descending' }"
       class="allTable"
       :row-key="getRowKey"
@@ -274,6 +275,9 @@ export default {
     console.log(this.userName,"用户")
   },
   methods: {
+    handleRowClick(row){
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
       return row.id
@@ -296,6 +300,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -352,6 +357,7 @@ export default {
             updateVocabulary(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -379,6 +385,8 @@ export default {
         .then(() => {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
+        }).catch(() => {
+          this.$refs.tableFile.clearSelection();
         });
     },
     /** 导出按钮操作 */

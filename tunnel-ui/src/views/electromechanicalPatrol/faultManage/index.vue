@@ -265,15 +265,10 @@
 
       <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
-          <span
-            :style="{
-              color:
-               getFalltRemoveStatue(scope.row.falltRemoveStatue) == '未消除'
-                  ? 'yellow'
-                  : '#00FF00',
-            }"
-          >{{ getFalltRemoveStatue(scope.row.falltRemoveStatue) }}</span
-          >
+          <dict-tag
+            :options="dict.type.fault_remove_statue"
+            :value="scope.row.falltRemoveStatue"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -1440,7 +1435,6 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
-      this.queryParams.faultDescription = "";
       this.queryParams.ids = "";
       this.queryParams.tunnelId = null;
       this.queryParams.faultStatus = null;

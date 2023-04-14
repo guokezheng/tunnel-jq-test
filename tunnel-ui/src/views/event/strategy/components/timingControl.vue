@@ -595,7 +595,7 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-        this.$emit("dialogVisibleClose");
+/*        this.$emit("dialogVisibleClose");*/
         this.getList();
       });
     },
@@ -612,7 +612,8 @@ export default {
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();
-        this.$emit("dialogVisibleClose");
+        let data = true;
+        this.$emit("dialogVisibleClose",data);
         this.$modal.msgSuccess("新增策略成功");
       });
     },
@@ -826,7 +827,8 @@ export default {
       }];
     },
     strategyFormClose() {
-      this.$emit("dialogVisibleClose");
+      let data = false;
+      this.$emit("dialogVisibleClose",data);
     },
     /** cron表达式按钮操作 */
     handleShowCron() {

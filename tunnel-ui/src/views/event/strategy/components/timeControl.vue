@@ -515,7 +515,7 @@ export default {
       console.log(params);
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-        this.$emit("dialogVisibleClose");
+      /*  this.$emit("dialogVisibleClose");*/
         this.getList();
       });
     },
@@ -542,7 +542,8 @@ export default {
       console.log(params);
       addStrategyInfo(params).then((res) => {
         this.resetForm();
-        this.$emit("dialogVisibleClose");
+        let data = true;
+        this.$emit("dialogVisibleClose",data);
         this.$modal.msgSuccess("新增策略成功");
       });
     },
@@ -837,7 +838,8 @@ export default {
     },
     // 取消按钮
     strategyFormClose() {
-      this.$emit("dialogVisibleClose");
+      let data = false;
+      this.$emit("dialogVisibleClose",data);
     },
   },
 };

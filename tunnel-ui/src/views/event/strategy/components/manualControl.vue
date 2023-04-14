@@ -502,8 +502,8 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-        let data = true;
-        this.$emit("dialogVisibleClose",data);
+ /*       let data = true;
+        this.$emit("dialogVisibleClose",data);*/
         this.getList();
       });
     },
@@ -537,29 +537,29 @@ export default {
       if(this.strategyForm.tunnelId.length !=0 && this.strategyForm.direction.length !=0){
         this.getEquipmentType();
       }
-     /* //给设备名称重新赋值
-      let params = {
-        eqTunnelId: this.strategyForm.tunnelId, //隧道
-        eqDirection: this.strategyForm.direction, //方向
-      };
-      // 如果改变隧道||设备类型||方向，重置设备和执行状态
-      if (
-        this.strategyForm.manualControl.length >= 1 ||
-        this.strategyForm.manualControl[0].value != ""
-      ) {
-        this.strategyForm.manualControl = [
-          { state: "", value: "", equipmentTypeId: "" },
-        ];
-      }
-      // 查询设备类型并赋值
-      let manualControl = this.strategyForm.manualControl;
-      for (let i = 0; i < manualControl.length; i++) {
-        listType(this.queryEqTypeParams).then((data) => {
-          console.log(data.rows, "设备类型");
-          this.$set(manualControl[i], "equipmentTypeData", data.rows);
-          // this.strategyForm.manualControl[i].equipmentTypeData = data.rows;
-        });
-      }*/
+      /* //给设备名称重新赋值
+       let params = {
+         eqTunnelId: this.strategyForm.tunnelId, //隧道
+         eqDirection: this.strategyForm.direction, //方向
+       };
+       // 如果改变隧道||设备类型||方向，重置设备和执行状态
+       if (
+         this.strategyForm.manualControl.length >= 1 ||
+         this.strategyForm.manualControl[0].value != ""
+       ) {
+         this.strategyForm.manualControl = [
+           { state: "", value: "", equipmentTypeId: "" },
+         ];
+       }
+       // 查询设备类型并赋值
+       let manualControl = this.strategyForm.manualControl;
+       for (let i = 0; i < manualControl.length; i++) {
+         listType(this.queryEqTypeParams).then((data) => {
+           console.log(data.rows, "设备类型");
+           this.$set(manualControl[i], "equipmentTypeData", data.rows);
+           // this.strategyForm.manualControl[i].equipmentTypeData = data.rows;
+         });
+       }*/
     },
     removeItem(index) {
       console.log(index);

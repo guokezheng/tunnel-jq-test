@@ -24,9 +24,7 @@ public class WorkbenchIncidentTask {
         long l = System.currentTimeMillis();
         try{
             Integer eventUntreatedNum = SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum();
-            Random r = new Random();
-
-            WebSocketService.broadcast("eventUntreatedNum", r.nextInt());
+            WebSocketService.broadcast("eventUntreatedNum", eventUntreatedNum);
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -205,7 +205,8 @@
             color:item.COLOR,
             fontSize:item.FONT_SIZE,
             width:item.WIDTH +'px',
-            height:item.HEIGHT + 'px'
+            height:item.HEIGHT + 'px',
+            fontFamily:item.FONT,
             }"
           style="background: #000;position: relative;margin: 2px auto;">
             <span
@@ -441,10 +442,10 @@ export default {
           for (var i = 0; i < contents.length; i++) {
             var content = contents[i];
             var itemId = "ITEM" + this.formatNum(i, 3);
-            // if(i == 0){
-            //   console.log(content[itemId],"content[itemId]")
+            if(i == 0){
+              console.log(content[itemId],"content[itemId]")
 
-            // }
+            }
             for(var itm of content[itemId]){
               itm.COLOR = this.getColorStyle(itm.COLOR);
               itm.FONT_SIZE = this.getFontSize(itm.FONT_SIZE.substring(0, 2),itm.DEVICEPIXEL) + 'px';
@@ -453,6 +454,7 @@ export default {
               itm.TOP = this.getCoordinate(itm.COORDINATE.substring(3, 6),'top',itm.DEVICEPIXEL) + 'px';
               itm.LEFT = this.getCoordinate(itm.COORDINATE.substring(0, 3),'left',itm.DEVICEPIXEL) + 'px';
               itm.CONTENT = itm.CONTENT.replace('<r><n>', '<br>').replace(/ /g,' &nbsp')
+              itm.FONT = itm.FONT;
               arr.push(itm);
             }
           }
@@ -472,9 +474,9 @@ export default {
         return font;
       } else {
         if(width < 250 && height > 38){
-          return font / (height / 38) - 1;
+          return font / (height / 38);
         }else{
-          return font / (width / 250) - 1;
+          return font / (width / 250);
         }
 
       }

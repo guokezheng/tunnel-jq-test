@@ -24,7 +24,7 @@ export default {
   },
   watch: {
     websocket({ password, path, port, interval }) {
-      debugger
+      // debugger
       console.log(path)
       console.log(port)
       console.log(location.hostname )
@@ -41,7 +41,7 @@ export default {
       });
       this.socket.onopen = () => {};
       this.socket.onmessage = (message) => {
-        debugger
+        // debugger
         message = JSON.parse(message);
         const method = message.method;
 

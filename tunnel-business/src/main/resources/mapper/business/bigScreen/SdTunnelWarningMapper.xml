@@ -26,7 +26,7 @@
         LEFT JOIN (
             SELECT
                 count(*) AS totalnum,
-                DATE ( CASE WHEN end_time IS NULL THEN ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time END ) event_time
+                DATE (event_time) event_time
             FROM
                 sd_event
             WHERE
@@ -35,7 +35,7 @@
                 AND tunnel_id = #{tunnelId}
             </if>
             GROUP BY
-                DATE ( CASE WHEN end_time IS NULL THEN ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time END )
+                DATE (event_time)
         ) AS tbr ON tbl._date = tbr.event_time
         GROUP BY
         tbl._date
@@ -54,7 +54,7 @@
         LEFT JOIN (
             SELECT
                 count(*) AS totalnum,
-                DATE ( CASE WHEN end_time IS NULL THEN ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time END ) event_time
+                DATE (event_time) event_time
             FROM
                 sd_event
             WHERE
@@ -63,19 +63,13 @@
                 AND tunnel_id = #{tunnelId}
             </if>
             <if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
-                and date_format(CASE
-                WHEN end_time IS NULL THEN
-                ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time
-                END,'%y%m%d') &gt;= date_format(#{startDate},'%y%m%d')
+                and date_format(event_time,'%y%m%d') &gt;= date_format(#{startDate},'%y%m%d')
             </if>
             <if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
-                and date_format(CASE
-                WHEN end_time IS NULL THEN
-                ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time
-                END,'%y%m%d') &lt;= date_format(#{endDate},'%y%m%d')
+                and date_format(event_time,'%y%m%d') &lt;= date_format(#{endDate},'%y%m%d')
             </if>
             GROUP BY
-                DATE ( CASE WHEN end_time IS NULL THEN ( CASE WHEN update_time IS NULL THEN event_time ELSE update_time END ) ELSE end_time END )
+                DATE (event_time)
         ) AS tbr ON tbl._date = tbr.event_time
         WHERE 1=1
         <if test="startDate != null and startDate != ''">

@@ -537,3 +537,9 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss" >
+::v-deep .el-dialog__body {
+  max-height: 70vh;
+  overflow: auto;
+}
+</style>

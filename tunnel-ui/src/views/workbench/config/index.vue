@@ -7820,10 +7820,10 @@ export default {
 
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                    if(deviceData.eqType == 48){
-                      console.log(deviceData,"内外振动仪")
-                      console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
-                    }
+                    // if(deviceData.eqType == 48){
+                    //   console.log(deviceData,"内外振动仪")
+                    //   console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
+                    // }
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =
@@ -9299,17 +9299,20 @@ export default {
 }
 .screenEqNameBox {
   width: 120px;
-  height: 40px;
+  // height: 40px;
   position: absolute;
   top: -40px;
   left: 30px;
-  line-height: 28px;
+  line-height: 1;
   text-align: center;
+  padding: 10px;
+  padding-bottom: 22px;
   font-size: 10px;
   background-image: url(../../../assets/cloudControl/screenEqName.png);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   color: #07c3fc;
+  z-index:10;
 }
 .textFalseBox {
   width: 120px;

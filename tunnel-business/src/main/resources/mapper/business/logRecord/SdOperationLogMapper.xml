@@ -54,6 +54,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdOperationLogCountList" resultType="int">
         select count(1) from sd_operation_log a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        left join sd_devices c on a.eq_id = c.eq_id
         where 1 = 1
         <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
         <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
@@ -61,6 +63,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
             and a.create_time &gt;= #{params.beginTime}
         </if>
+
+        <if test="operIp != null  and operIp != ''"> AND CONCAT(c.pile, c.eq_name,a.oper_ip) LIKE CONCAT('%',#{operIp},'%')</if>
+
         <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
             and a.create_time &lt;= #{params.endTime}
         </if>

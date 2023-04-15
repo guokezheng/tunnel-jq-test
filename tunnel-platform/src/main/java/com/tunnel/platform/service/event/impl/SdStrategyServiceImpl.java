@@ -175,10 +175,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     emg = "未找到相应的定时任务";
                     throw new RuntimeException("未找到相应的定时任务");
                 }
-                if(openRl.contains(job.getInvokeTarget().split("'")[1])){
-                    job.setCronExpression(CronUtil.DateConvertCron(timeParam[0]));
+                //  0 偶数开启  奇数关闭
+                if(i%2 == 0){
+            /*    if(openRl.contains(job.getInvokeTarget().split("'")[1])){*/
+                    job.setCronExpression(CronUtil.DateConvertCron(strategy.getTimerOpen()));
                 }else{
-                    job.setCronExpression(CronUtil.DateConvertCron(timeParam[1]));
+                    job.setCronExpression(CronUtil.DateConvertCron(strategy.getTimerClose()));
                 }
                 sysJobService.updateJob(job);
             }

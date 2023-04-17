@@ -504,7 +504,7 @@ export default {
         this.$modal.msgSuccess("修改策略成功");
  /*       let data = true;
         this.$emit("dialogVisibleClose",data);*/
-        this.getList();
+        this.$emit("refreshList");
       });
     },
     // 提交保存方法

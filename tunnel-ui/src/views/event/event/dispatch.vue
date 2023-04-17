@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-13 16:51:27
+ * @LastEditTime: 2023-04-17 10:27:32
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -764,6 +764,7 @@
                 max-height="400"
                 class="phoneTable"
                 :fit="true"
+                empty-text="该桩号下暂无匹配设备"
               >
                 <el-table-column
                   label="设备名称"
@@ -812,7 +813,7 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="24" v-if="boxName == '下发指令' || boxName == '执行文件'">
+          <el-col :span="24" v-if="boxName == '下发指令11' || boxName == '执行文件' && GDeviceData.deviceList != undefined">
             <p style="padding:15px;">{{boxName}}:</p>
             <el-card v-show="GDeviceData && !GDeviceData.vmsData" shadow="always">
               <div style="display: flex;align-items: center;">
@@ -844,11 +845,13 @@
         <div class="dialogCloseButton"></div>
       </div>
       <div class="GDeviceBox" style="overflow: scroll;overflow-x: hidden;height:60vh">
+        <p class="empty-text" v-show="oneKeyList.length < 1">暂无匹配设备</p>
         <div v-for="(item,index) in oneKeyList" :key="index">
           <el-card>
             <el-table
+              v-show="oneKeyList.length >= 1"
               :data="item.deviceList"
-              style="width: 100%">
+              style="width: 100%" >
               <el-table-column
                 prop="eqName"
                 label="设备名称"
@@ -1179,7 +1182,7 @@ export default {
       let planId = this.reserveId;
       let eventId = this.$route.query.id;
       implementPlan(planId,eventId).then(res=>{
-        this.$modal.msgSuccess("执行成功");
+        this.$modal.msgSuccess(res.msg);
         this.oneKeyDialogVisible = false;
         this.evtHandle();
       });
@@ -1258,6 +1261,7 @@ export default {
         }else{
           this.boxName = "下发指令";
           this.GDeviceData = data;
+          console.log(this.GDeviceData.deviceList);
           // this.deviceIconUrl = this.GDeviceData.deviceIconUrl;
         }
         this.IssuedDialog = true;
@@ -1480,7 +1484,7 @@ export default {
         let processId = that.processId;
         let eventId = that.$route.query.id;
         implementProcess(processId, eventId).then((response) => {
-          that.$modal.msgSuccess("状态修改成功");
+          that.$modal.msgSuccess("执行成功");
           this.IssuedDialog = false;
           this.getDispatchExecuted();
           that.evtHandle();
@@ -1929,6 +1933,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.empty-text{text-align: center;padding:35px;}
 ::v-deep .plan .el-table__body-wrapper{
   width: 104%!important;
 }

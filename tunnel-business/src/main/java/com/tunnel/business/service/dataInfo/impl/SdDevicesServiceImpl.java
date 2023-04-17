@@ -800,7 +800,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             }
             SdDevices devices = new SdDevices();
             devices.setEqTunnelId(tunnelName);
-            devices.setEqType(1L);
+            Long [] eqTypes = new Long[]{1L,2L};
+            //devices.setEqType(1L);
+            devices.setEqTypes(eqTypes);
             devices.setEqDirection(direction);
             devices.setLane(lane.toString());
             List<SdDevices> sdDevicesLists = sdDevicesMapper.batchControlCarFinger(devices);

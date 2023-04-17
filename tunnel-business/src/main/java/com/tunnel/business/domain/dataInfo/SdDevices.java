@@ -86,6 +86,9 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private Long eqType;
 
 
+    private Long[] eqTypes;
+
+
     /**
      * eqType对象
      */
@@ -418,6 +421,15 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      * 导出设备ID
      **/
     private String exportIds;
+
+
+    public Long[] getEqTypes() {
+        return eqTypes;
+    }
+
+    public void setEqTypes(Long[] eqTypes) {
+        this.eqTypes = eqTypes;
+    }
 
     public Long getFEqType() {
         return this.FEqType;

@@ -719,6 +719,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="eqTunnelId != null ">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
+            <if test="eqTypes != null ">
+                and a.eq_type in
+                <foreach item="id" collection="eqTypes" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
             <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
         </where>

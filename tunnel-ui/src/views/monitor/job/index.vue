@@ -230,7 +230,7 @@
 
     <!-- 添加或修改定时任务对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body :before-close="cancel">
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="任务名称" prop="jobName">
@@ -256,7 +256,7 @@
           <el-col :span="24">
             <el-form-item prop="invokeTarget">
               <span slot="label">
-                调用方法
+                调用目标字符串
                 <el-tooltip placement="top">
                   <div slot="content">
                     Bean调用示例：ryTask.ryParams('ry')
@@ -377,7 +377,7 @@
             }}</el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="调用目标方法：">{{
+            <el-form-item label="调用目标字符串：">{{
               form.invokeTarget
             }}</el-form-item>
           </el-col>

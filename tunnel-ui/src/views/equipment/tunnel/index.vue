@@ -802,7 +802,7 @@
           </el-form-item> -->
         </el-row>
         <div class="dialog-footer">
-          <el-button class="submitButton" @click="submitForm">确 定</el-button>
+          <el-button class="submitButton" @click="submitForm" v-show="!disabledInfo">确 定</el-button>
           <el-button class="closeButton" @click="cancel">取 消</el-button>
         </div>
       </el-form>

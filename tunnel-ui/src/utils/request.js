@@ -80,6 +80,12 @@ service.interceptors.response.use(res => {
         title: msg
       })
       return Promise.reject('error')
+    } else if (code === 900) {
+      Message({
+        message: msg,
+        type: 'error'
+      })
+      return 
     } else {
       return res.data
     }

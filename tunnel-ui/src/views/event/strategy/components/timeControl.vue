@@ -538,6 +538,7 @@ export default {
           item.openState = item.openState.toString();
       });*/
       this.strategyForm.id = null;
+      this.strategyForm.strategyState = 1;
       let params = this.strategyForm;
       console.log(params);
       addStrategyInfo(params).then((res) => {

@@ -602,6 +602,7 @@ export default {
     // 提交保存方法
     async addStrategyInfoData() {
       this.strategyForm.id = null;
+      this.strategyForm.strategyState = 1;
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });

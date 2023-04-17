@@ -131,8 +131,15 @@ public class SanJingLight implements Light {
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
         String jessionId;
         try {
-            jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+            String tokenKey = "control:"+deviceId+"_token";
+            jessionId = redisCache.getCacheObject(tokenKey);
+            if(jessionId == null){
+                jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+                redisCache.setCacheObject(tokenKey,jessionId);
+                redisCache.expire(tokenKey,15*60);
+            }
         } catch (Exception e) {
+            logger.info("获取token异常，请联系管理员。");
             return 0;
         }
         OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -154,6 +161,7 @@ public class SanJingLight implements Light {
             //包含“发送成功"就可以
             responseBody = response.body().string();
         } catch (IOException e) {
+            logger.info("加强照明调光功能异常，请联系管理员。");
             return 0;
         }
         return responseBody.contains("发送成功") ? 1 : 0;
@@ -181,7 +189,19 @@ public class SanJingLight implements Light {
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
 
 
-        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+//        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+        String jessionId;
+
+        String tokenKey = "control:"+deviceId+"_token";
+
+        jessionId = redisCache.getCacheObject(tokenKey);
+
+        if(jessionId == null){
+            jessionId =  login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+            redisCache.setCacheObject(tokenKey,jessionId);
+            redisCache.expire(tokenKey,15*60);
+        }
+
         if(jessionId == null || "".equals(jessionId)){
             return 0;
         }
@@ -388,9 +408,9 @@ public class SanJingLight implements Light {
             sdDevicesService.updateSdDevices(device);
             //更新设备实时数据
             updateDeviceData(device, String.valueOf(luminanceRange), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
-            redisCache.setCacheObject("control:"+device.getEqTunnelId()+"_"+device.getEqId()+"_LuminanceRange",luminanceRange);
-        }else{
-            redisCache.deleteObject("control:"+device.getEqTunnelId()+"_"+device.getEqId()+"_LuminanceRange");
+            //更新redis缓存
+            String redisLuminanceRangeKey = "control:"+device.getEqId()+"_LuminanceRange";
+            redisCache.setCacheObject(redisLuminanceRangeKey,luminanceRange);
         }
         //添加操作日志
         SdOperationLog sdOperationLog = new SdOperationLog();
@@ -411,6 +431,52 @@ public class SanJingLight implements Light {
         return resultStatus;
     }
 
+
+    /**
+     * 单个设备调光
+     * @param device
+     * @param nowLuminanceRange    原有亮度
+     * @param luminanceRange    当前亮度
+     * @param controlType
+     * @return
+     */
+    public int setBrightnessByDevice(SdDevices device,Integer nowLuminanceRange ,Integer luminanceRange, String controlType) {
+        int resultStatus;
+        try{
+            resultStatus = setBrightness(device.getEqId(),luminanceRange);
+        }catch (Exception e){
+            resultStatus = 0;
+        }
+        // 如果控制成功
+        if (resultStatus == 1) {
+            // 更新设备在线状态
+            device.setEqStatus("1");
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
+            //更新设备实时数据
+            updateDeviceData(device, String.valueOf(luminanceRange), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+            //更新redis缓存
+            String redisLuminanceRangeKey = "control:"+device.getEqId()+"_LuminanceRange";
+            redisCache.setCacheObject(redisLuminanceRangeKey,luminanceRange);
+        }
+        //添加操作日志
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(device.getEqType());
+        sdOperationLog.setTunnelId(device.getEqTunnelId());
+        sdOperationLog.setEqId(device.getEqId());
+        sdOperationLog.setOperationState(String.valueOf(luminanceRange));
+        sdOperationLog.setControlType(controlType);
+        sdOperationLog.setCreateTime(new Date());
+        try {
+            sdOperationLog.setOperIp(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        sdOperationLog.setState(String.valueOf(resultStatus));
+        sdOperationLog.setBeforeState(nowLuminanceRange.toString());
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        return resultStatus;
+    }
 
     public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
         SdDeviceData sdDeviceData = new SdDeviceData();

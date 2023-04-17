@@ -3,6 +3,7 @@ package com.ruoyi.common.utils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
@@ -151,5 +152,50 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         // 计算差多少秒//输出结果
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
+    }
+
+
+    /**
+     * 判断当前时间是否在此时间范围内   格式默认为：HH:mm:ss
+     * @param startTimeStr
+     * @param endTimneStr
+     * @return
+     * @throws ParseException
+     */
+    public static boolean belongCalendar(String startTimeStr, String endTimneStr) throws ParseException {
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss"); // 设置日期格式
+        Date nowTime = df.parse(df.format(new Date()));
+        Date startTime = df.parse(startTimeStr);
+        Date endTime = df.parse(endTimneStr);
+        boolean result;
+        if (nowTime.getTime() == startTime.getTime()
+                || nowTime.getTime() == endTime.getTime()) {
+            return true;
+        }
+
+        Calendar date = Calendar.getInstance();
+        date.setTime(nowTime);
+
+        Calendar start = Calendar.getInstance();
+        start.setTime(startTime);
+
+        Calendar end = Calendar.getInstance();
+        end.setTime(endTime);
+        //查看当前  开始时间是否大于结束时间
+        if(start.getTimeInMillis()>end.getTimeInMillis()){
+            end.add(Calendar.DAY_OF_MONTH,1);
+            if (date.after(start) && date.before(end)) {
+                result =  true;
+            } else {
+                result = false;
+            }
+        }else{
+            if (date.after(start) && date.before(end)) {
+                result =  true;
+            } else {
+                result = false;
+            }
+        }
+        return result;
     }
 }

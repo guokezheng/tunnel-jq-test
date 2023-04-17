@@ -493,11 +493,11 @@ export default {
 
     // 参数timer是过去的n个小时
     getPastTime(timer) {
-      // 获取过去的时间
-      const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
+      // 获取当天0点时间
+      const lastTime = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
       const startTime = this.timeFormat(lastTime);
-      // 当前时间时间
-      let time = new Date().getTime();
+      // 当前当天24点时间
+      let time = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1).getTime();
       const endTime = this.timeFormat(time);
       return [startTime, endTime];
     },

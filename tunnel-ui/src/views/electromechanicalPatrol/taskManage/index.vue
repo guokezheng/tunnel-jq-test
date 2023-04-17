@@ -598,7 +598,7 @@
             />
           </el-select>
           <div class="cancel-determine">
-            <el-button @click="determine2">取消</el-button>
+            <el-button @click="cancelDetermine2">取消</el-button>
             <el-button type="primary" @click="determine2">确定</el-button>
           </div>
         </div>
@@ -1616,6 +1616,10 @@ export default {
     cancelDetermine1() {
       this.dialogSelection = [];
       this.isShow1 = false;
+    },
+    cancelDetermine2() {
+      this.dialogSelection = [];
+      this.isShow2 = false;
     },
     determine1() {
       this.isShow1 = false;

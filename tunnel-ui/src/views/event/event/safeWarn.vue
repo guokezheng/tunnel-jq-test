@@ -1250,7 +1250,7 @@
         <el-button class="submitButton" @click="dialogVisibleDevice = false"
           >确 定</el-button
         >
-        <el-button @click="dialogVisibleDevice = false" class="closeButton"
+        <el-button @click="closeDetail()" class="closeButton"
           >取 消</el-button
         >
       </span>
@@ -1717,6 +1717,11 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+    closeDetail(){
+      this.deviceIndexShow = 0;
+      this.activeName = '0';
+      this.dialogVisibleDevice = false
+    },
     getStrategyData(item) {
       console.log(item);
       let param = {

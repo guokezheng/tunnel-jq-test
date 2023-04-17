@@ -176,7 +176,7 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
     public Map<Long, String> getEventTypeMap() {
         List<SdEventType> list = sdEventTypeMapper.selectSdEventTypeList(new SdEventType());
 
-        Map<Long,String> map = list.stream().collect(Collectors.toMap(SdEventType::getId, SdEventType::getEventType));
+        Map<Long,String> map = list.stream().collect(Collectors.toMap(SdEventType::getId, SdEventType::getSimplifyName));
 
         return map;
     }

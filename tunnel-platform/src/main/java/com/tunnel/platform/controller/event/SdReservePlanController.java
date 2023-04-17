@@ -217,10 +217,9 @@ public class SdReservePlanController extends BaseController {
 
     @Log(title = "预案一键执行")
     @GetMapping(value = "/implementPlan")
-    public Result implementPlan(@RequestParam("planId") String planId,
+    public AjaxResult implementPlan(@RequestParam("planId") String planId,
                                 @RequestParam("eventId") Long eventId) {
-        int result = sdStrategyService.implementPlan(planId,eventId);
-        return Result.toResult(result);
+        return sdStrategyService.implementPlan(planId,eventId);
     }
 
     @Log(title = "环节执行")

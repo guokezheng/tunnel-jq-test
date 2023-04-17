@@ -381,7 +381,7 @@ public class SdEventServiceImpl implements ISdEventService {
         //获取应急处置单条设备详情
         Map<String, Object> map = deviceDateiled(sdReserveProcess.getId(),0L);
         if(map == null){
-            return AjaxResult.error("暂无设备");
+            return AjaxResult.success(new HashMap<>());
         }
         return AjaxResult.success(map);
     }
@@ -400,9 +400,6 @@ public class SdEventServiceImpl implements ISdEventService {
             }
             //将设备详情整合
             list.add(mapData);
-        }
-        if(list.size() == 0){
-            return AjaxResult.error("暂无设备");
         }
         return AjaxResult.success(list);
     }
@@ -586,14 +583,15 @@ public class SdEventServiceImpl implements ISdEventService {
             directionDict = DictUtils.getDictLabel(DictTypeEnum.sd_direction.getCode(), sdEvent.getDirection());
         }
         if(!StringUtils.isEmpty(directionDict)){
-            titleDesc.append(directionDict);
+            titleDesc.append(" " + directionDict);
         }
-        if(!StringUtils.isEmpty(sdEvent.getStakeNum())){
+        /*if(!StringUtils.isEmpty(sdEvent.getStakeNum())){
             titleDesc.append("桩号").append(sdEvent.getStakeNum());
-        }
+        }*/
         //事件类型名称
         String eventTypeName = eventTypeMap.get(sdEvent.getEventTypeId());
-        titleDesc.append("发生").append(eventTypeName).append("事件");
+        titleDesc.append("," + eventTypeName);
+        //titleDesc.append("发生").append(eventTypeName).append("事件");
 
         return titleDesc.toString();
     }

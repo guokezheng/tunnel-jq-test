@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowContent != null  and flowContent != ''"> and flow_content = #{flowContent}</if>
             <if test="eventState != null  and eventState != ''"> and event_state = #{eventState}</if>
         </where>
-        ORDER BY create_time ASC
+        ORDER BY flow_sort+0 ASC
     </select>
 
     <select id="selectHistoryHandleList" parameterType="SdEventHandle" resultMap="SdEventHandleResult">

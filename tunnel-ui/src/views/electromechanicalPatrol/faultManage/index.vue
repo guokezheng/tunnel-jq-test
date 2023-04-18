@@ -1233,6 +1233,7 @@ export default {
         faultTbtime: null,
         eqId: null,
         eqStatus: null,
+        eqRunStatus:"",
         faultCode: null,
         faultLevel: null,
         falltRemoveStatue: null,
@@ -1269,7 +1270,6 @@ export default {
       this.$refs.form.clearValidate("upload");
     },
     async planRoadmapUrl(iFileList) {
-      debugger
       var that = this;
       that.fileList = [];
       if (iFileList) {
@@ -1695,6 +1695,7 @@ export default {
             this.fileData.append("removeIds", this.removeIds);
             if (this.isClick) {
               updateList(this.fileData).then((response) => {
+                this.fileList = [];
                 this.isClick = false;
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
@@ -1705,6 +1706,7 @@ export default {
           } else {
             if (this.isClick) {
               addList(this.fileData).then((response) => {
+                this.fileList = [];
                 this.isClick = false;
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;

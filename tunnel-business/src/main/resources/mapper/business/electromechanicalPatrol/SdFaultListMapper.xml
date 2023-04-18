@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data b on b.dict_value = s.fault_escalation_type and b.dict_type ='fault_escalation_type'
         left join sys_dict_data u on u.dict_value = s.eq_status and u.dict_type ='sd_monitor_state'
         <where>
-            <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and e.tunnel_id = #{tunnelId}</if>
             <if test="faultLocation != null  and faultLocation != ''"> and s.fault_location = #{faultLocation}</if>
             <if test="paramFaultType != null and paramFaultType != ''"> and FIND_IN_SET(t.dict_label, #{paramFaultType}) > 0</if>
             <if test="paramFaultRemoveState != null and paramFaultRemoveState != ''"> and FIND_IN_SET(r.dict_label, #{paramFaultRemoveState}) > 0</if>

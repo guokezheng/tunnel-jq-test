@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
+import java.util.concurrent.TimeUnit;
 
 public class MinaConnection implements IConnection {
 
@@ -68,7 +69,7 @@ public class MinaConnection implements IConnection {
 		 */
 		ConnectFuture cf = connector.connect(new InetSocketAddress(ip, port));
 		// 3.1 等待连接创建完成
-		cf.awaitUninterruptibly();
+		cf.awaitUninterruptibly(3L,TimeUnit.SECONDS);
 
 		/*
 		 * 4.建立连接后，获取连接session

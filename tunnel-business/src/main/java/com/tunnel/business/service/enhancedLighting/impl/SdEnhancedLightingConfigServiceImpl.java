@@ -1,6 +1,7 @@
 package com.tunnel.business.service.enhancedLighting.impl;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.ruoyi.common.core.redis.RedisCache;
@@ -102,5 +103,32 @@ public class SdEnhancedLightingConfigServiceImpl implements ISdEnhancedLightingC
         return sdEnhancedLightingConfigMapper.deleteSdEnhancedLightingConfigById(id);
     }
 
+
+
+
+    /**
+     *
+     * @param nowTrafficFlow    当前车流量
+     * @param maxTrafficFlow     最大车流量
+     * @param maxLuminanceRange     最大调光区间值
+     * @param minLuminanceRange     最小调光区间值
+     * @param luminanceRange        当前时间段调光值
+     * @return
+     */
+    @Override
+    public int getLuminanceByParam(Integer nowTrafficFlow, Integer maxTrafficFlow, Integer maxLuminanceRange, Integer minLuminanceRange, Integer luminanceRange) {
+        if(nowTrafficFlow >= maxTrafficFlow ){
+            //当前车流量大于现在车流量
+            return luminanceRange+maxLuminanceRange;
+        }else{
+            Integer regionLuminanceRange = maxLuminanceRange - minLuminanceRange;
+            //计算公式  (当前车流量/最大车流量)*亮度区间值
+            BigDecimal nowTrafficFlowBig = new BigDecimal(nowTrafficFlow);
+            BigDecimal maxTrafficFlowBig = new BigDecimal(maxTrafficFlow);
+            BigDecimal regionLuminanceRangeBig = new BigDecimal(regionLuminanceRange);
+            nowTrafficFlowBig = nowTrafficFlowBig.divide(maxTrafficFlowBig, 2,BigDecimal.ROUND_HALF_UP).multiply(regionLuminanceRangeBig);
+            return luminanceRange + (nowTrafficFlowBig.intValue()/5)*5;
+        }
+    }
 
 }

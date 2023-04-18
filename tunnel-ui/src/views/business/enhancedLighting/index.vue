@@ -138,6 +138,34 @@
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="开启调光模式" prop="isStatus">
+              <el-tooltip :content="form.isStatus==1?'开启':'关闭'" placement="top">
+                <el-switch
+                  v-model="form.isStatus"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="1"
+                  :inactive-value="0">
+                </el-switch>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="开启车流量模式" prop="isTrafficVolume">
+              <el-tooltip :content="form.isTrafficVolume==1?'开启':'关闭'" placement="top">
+                <el-switch
+                  v-model="form.isTrafficVolume"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="1"
+                  :inactive-value="0">
+                </el-switch>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="最小亮度值" prop="minLuminance" v-if="form.modeType != 0">
               <el-input v-model="form.minLuminance" placeholder="请输入最小亮度值(0-100)" />
             </el-form-item>
@@ -341,7 +369,9 @@ export default {
         respondTime: null,
         maxLuminanceRange: null,
         minLuminanceRange: null,
-        maxTrafficFlow: null
+        maxTrafficFlow: null,
+        isStatus:0,
+        isTrafficVolume:0,
       };
       this.resetForm("form");
     },
@@ -370,6 +400,13 @@ export default {
       this.reset();
       this.open = true;
       this.form.iskeyVehicle='0';
+      this.timeSlotList = [
+        {
+          startTime:null,
+          endTime:null,
+          value:null,
+        }
+      ];
       this.title = "添加加强照明配置信息";
     },
     /** 修改按钮操作 */
@@ -377,6 +414,7 @@ export default {
       this.reset();
       const id = row.id || this.ids
       getConfig(id).then(response => {
+        console.log(response.data,"response.data");
         this.form = response.data;
         this.timeSlotList = JSON.parse(response.data.timeSlot);
         for (let index = 0; index < this.timeSlotList.length; index++) {

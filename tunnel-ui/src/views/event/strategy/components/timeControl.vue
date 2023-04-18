@@ -516,7 +516,7 @@ export default {
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
       /*  this.$emit("dialogVisibleClose");*/
-        this.getList();
+        this.$emit("refreshList");
       });
     },
     // 提交保存方法
@@ -538,6 +538,7 @@ export default {
           item.openState = item.openState.toString();
       });*/
       this.strategyForm.id = null;
+      this.strategyForm.strategyState = 1;
       let params = this.strategyForm;
       console.log(params);
       addStrategyInfo(params).then((res) => {

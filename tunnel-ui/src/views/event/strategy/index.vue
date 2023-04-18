@@ -510,16 +510,19 @@
         v-show="strategyForm.strategyType == '0'"
         ref="manualControl"
         @dialogVisibleClose="closeDialog"
+        @refreshList = "getList"
       ></manual-control>
       <!-- 定时控制 -->
       <timingControl
         v-show="strategyForm.strategyType == '1'"
         @dialogVisibleClose="closeDialog"
+        @refreshList = "getList"
         ref="timingControl"
       ></timingControl>
       <timeControl
         v-show="strategyForm.strategyType == '3'"
         @dialogVisibleClose="closeDialog"
+        @refreshList = "getList"
         ref="timeControl"
       ></timeControl>
     </el-dialog>

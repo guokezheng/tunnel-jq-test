@@ -669,7 +669,6 @@
           class="drawerTop"
         >
           <div style="width: 100%; height: 100%; position: relative">
-            <div class="jianbianLine"></div>
             <div class="chezhiDrawerDirection">
               {{ directionList[0].dictLabel }}-车道指示器
             </div>

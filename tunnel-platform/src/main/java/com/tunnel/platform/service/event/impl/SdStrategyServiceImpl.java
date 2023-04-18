@@ -104,6 +104,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Autowired
     private SdEventMapper sdEventMapper;
 
+    @Autowired
+    private SdJoinReserveHandleMapper joinMapper;
+
     /**
      * 查询控制策略
      *
@@ -1198,7 +1201,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     }
 
     @Override
-    public int implementPlan(String planId,Long eventId){
+    public AjaxResult implementPlan(String planId,Long eventId){
+        //储存失败的数据
+        List<String> errorList = new ArrayList();
         //将id拆分
         List<String> list = Arrays.asList(planId.split(","));
         int issueResult = 1;
@@ -1212,21 +1217,30 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(sdEventHandleMapper.selectSdEventHandleList(sdEventHandle).size() > 0){
                 continue;
             }
-            implementProcess(Long.valueOf(processId),eventId);
+            int count = implementProcess(Long.valueOf(processId),eventId);
+            if(count == 0){
+                //查询失败的流程名称
+                SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(Long.valueOf(processId));
+                errorList.add(joinReserveHandle.getProcessName());
+            }
         }
-        return issueResult;
+        if(errorList.size() == 0){
+            return AjaxResult.success("执行成功");
+        }if(list.size() == errorList.size()){
+            return AjaxResult.error("执行失败");
+        }else {
+            return AjaxResult.success("执行成功,部分流程执行失败[" + StringUtils.join(errorList,",") + "]");
+        }
     }
 
     @Override
     public int implementProcess(Long processId,Long eventId) {
-        //SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
-        //SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
-        SdJoinReserveHandleMapper joinMapper = SpringUtils.getBean(SdJoinReserveHandleMapper.class);
         //如果不是指定设备则查询相关设备
         SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(processId);
         SdStrategyRl rl = new SdStrategyRl();
         if(joinReserveHandle.getEquipments() == null || "".equals(joinReserveHandle.getEquipments())){
-            return 0;
+            //更新事件处置记录表状态
+            return updateHandleState(processId,eventId);
         }
         rl.setEquipments(joinReserveHandle.getEquipments());
         rl.setEqTypeId(joinReserveHandle.getEqTypeId().toString());
@@ -1324,14 +1338,14 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @param processId
      * @param eventId
      */
-    public void updateHandleState(Long processId,Long eventId){
+    public int updateHandleState(Long processId,Long eventId){
         SdEventHandle sdEventHandle = new SdEventHandle();
         sdEventHandle.setEventId(eventId);
         sdEventHandle.setProcessId(processId);
         //0:未完成 1:已完成'
         sdEventHandle.setEventState("1");
         sdEventHandle.setUpdateTime(DateUtils.getNowDate());
-        sdEventHandleMapper.updateHandleState(sdEventHandle);
+        return sdEventHandleMapper.updateHandleState(sdEventHandle);
     }
 
     /**

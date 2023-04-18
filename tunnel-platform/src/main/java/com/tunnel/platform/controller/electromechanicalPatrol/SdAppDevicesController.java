@@ -1,7 +1,11 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.Result;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.page.TableSupport;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
@@ -9,6 +13,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdEquipmentTypeService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,14 +76,15 @@ public class SdAppDevicesController extends BaseController
      * @param eqId
      * @return
      */
-    @PostMapping("/app/getAppDevicesInfo")
+    @GetMapping("/app/getAppDevicesInfo")
     public Result getAppDevicesInfo(String eqId){
         Map<String,Object>map = new HashMap<>();
         List<SdDevices> eqList = devicesService.getAppDevicesInfo(eqId);
         List<SdDevices> statusList = devicesService.getAppDevicesStatus(eqId);
         if(statusList!=null&&statusList.size()>0){
-            eqList.get(0).setEqStatus(statusList.get(0).getEqStatus());
-            eqList.get(0).setRunStatus(statusList.get(0).getRunStatus());
+            eqList.get(0).setEqStatus(statusList.get(0).getEqState());
+            eqList.get(0).setRunStatus(statusList.get(0).getRunState());
+            eqList.get(0).setUpdateTime(statusList.get(0).getUpdateTime());
         }
         return Result.success(eqList);
     }
@@ -89,12 +95,26 @@ public class SdAppDevicesController extends BaseController
      * @return
      */
     @PostMapping("/app/logList")
-    public Result getLogList(String time){
-        Map<String,Object>map = new HashMap<>();
-        List<SdOperationLog> list = sdOperationLogService.selectAppOperationLogList(time);
-        map.put("list",list);
-        map.put("num",list.size());
-        return Result.success(list);
+    public TableDataInfo getLogList(String time,Integer pageSize,Integer pageNum){
+        pageSize = 20;
+        pageNum = 1;
+        String deptId = SecurityUtils.getDeptId();
+        //String deptId = "YG11803";
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        int count = sdOperationLogService.selectAppOperationLogCountList(time,deptId);
+        if(count > 0){
+            List<SdOperationLog> list = sdOperationLogService.selectAppOperationLogList(time,deptId,pageSize,pageNum);
+            return new TableDataInfo(list,count);
+        }
+
+        return new TableDataInfo(null,0);
+
+
+
+
+
     }
 
 }

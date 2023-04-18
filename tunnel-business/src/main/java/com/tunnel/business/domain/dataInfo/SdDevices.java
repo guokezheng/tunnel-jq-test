@@ -512,6 +512,10 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      **/
     private String runStatus;
 
+
+    private String runState;
+
+    private String eqState;
     //摄像机类型
     private String camType;
 
@@ -520,6 +524,22 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
 
     /** 设备数据项id */
     private Integer itemId;
+
+    public String getRunState() {
+        return this.runState;
+    }
+
+    public void setRunState(final String runState) {
+        this.runState = runState;
+    }
+
+    public String getEqState() {
+        return this.eqState;
+    }
+
+    public void setEqState(final String eqState) {
+        this.eqState = eqState;
+    }
 
     public Integer getItemId() {
         return itemId;

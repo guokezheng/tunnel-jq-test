@@ -38,6 +38,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="gatewayNetstatus"    column="gateway_netstatus"    />
         <result property="gatewayNetstatusTime"    column="gateway_netstatus_time"    />
         <result property="eqStatus"    column="eq_status"    />
+        <result property="eqState"    column="eqState"    />
+        <result property="runState"    column="runState"    />
         <result property="eqStatusTime"    column="eq_status_time"    />
         <result property="controlPointAddress"    column="control_point_address"    />
         <result property="queryPointAddress"    column="query_point_address"    />
@@ -851,7 +853,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select t.eq_name,t.pile,u.tunnel_name eq_tunnel_id,q.icon_file_id  icon_file_id from sd_devices t
+        select t.eq_id,t.eq_name,t.pile,u.tunnel_name eq_tunnel_id,q.icon_file_id  icon_file_id from sd_devices t
         left join sd_device_data d on t.eq_id = d.device_id
         left join  sd_device_type_item i on i.id = d.item_id
         left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '1'
@@ -894,7 +896,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesStatus" parameterType="SdDevices" resultMap="SdDevicesResult">
-        SELECT t.eq_id,i.item_name,i.item_code,d.data,s.state_name runStatus,e.state_name eqStatus
+        SELECT t.eq_id,i.item_name,i.item_code,d.data,s.state_name runState,e.state_name eqState,d.update_time
         FROM `sd_device_type_item` i
         left join sd_device_data d on i.id = d.item_id
         left join sd_devices t on t.eq_id = d.device_id

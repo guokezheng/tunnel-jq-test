@@ -1261,14 +1261,15 @@ export default {
     },
     // 选取文件超过数量提示
     handleExceed(files, fileList) {
-      // let num = this.direction == 0 ? 2 : 1;
       this.$message.warning("限制上传图标个数不超过2个");
     },
     //监控上传文件列表
     handleChange(file, fileList) {
       this.fileList = fileList;
+      this.$refs.form.clearValidate("upload");
     },
     async planRoadmapUrl(iFileList) {
+      debugger
       var that = this;
       that.fileList = [];
       if (iFileList) {
@@ -1279,7 +1280,7 @@ export default {
           that.fileList.push({
             name: iconName,
             url: iconUrl,
-            fId: iFileList[i].businessId,
+            fId: iFileList[i].imgId,
           });
         }
       }
@@ -1677,6 +1678,7 @@ export default {
         this.form.faultEscalationType
       );
       this.fileData.append("faultFxtime", this.form.faultFxtime);
+      this.fileData.append("imgFileId", this.form.imgFileId);
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
       this.fileData.append("eqStatus", this.form.eqStatus);
@@ -1725,6 +1727,7 @@ export default {
       this.fileData.append("faultType", this.form.faultType);
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
+      this.fileData.append("imgFileId", this.form.imgFileId);
       this.fileData.append(
         "faultEscalationType",
         this.form.faultEscalationType

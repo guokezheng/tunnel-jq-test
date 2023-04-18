@@ -59,13 +59,13 @@ export function treeSelectYG1() {
   })
 }
 
-// 查询部门下拉树结构(deptId=YG1及其自诉案)
-export function treeselectYG1() {
-  return request({
-    url: '/system/dept/treeselectYG1',
-    method: 'get'
-  })
-}
+// // 查询部门下拉树结构(deptId=YG1及其自诉案)
+// export function treeselectYG1() {
+//   return request({
+//     url: '/system/dept/treeselectYG1',
+//     method: 'get'
+//   })
+// }
 
 // 根据角色ID查询部门树结构
 export function roleDeptTreeselect(roleId) {

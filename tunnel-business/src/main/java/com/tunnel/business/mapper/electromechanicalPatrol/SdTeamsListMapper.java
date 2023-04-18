@@ -35,4 +35,5 @@ public interface SdTeamsListMapper
     int batchUserTeams(List<SdUserTeams> list);
 
     int checkTeamsExistUser(@Param("deptId")String deptId);
+
 }

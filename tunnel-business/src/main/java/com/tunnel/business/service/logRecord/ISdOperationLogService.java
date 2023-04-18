@@ -88,7 +88,7 @@ public interface ISdOperationLogService {
      * @param time
      * @return
      */
-    List<SdOperationLog> selectAppOperationLogList(String time);
+    List<SdOperationLog> selectAppOperationLogList(String time,String deptId,Integer pageSize,Integer pageNum);
 
     /**
      * 查询操作日志总数
@@ -96,4 +96,12 @@ public interface ISdOperationLogService {
      * @return
      */
     int selectSdOperationLogCountList(SdOperationLog sdOperationLog);
+
+    /**
+     * 查询app端操控日志的条数
+     * @param time
+     * @param deptId
+     * @return
+     */
+    int selectAppOperationLogCountList(String time, String deptId);
 }

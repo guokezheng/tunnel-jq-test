@@ -517,8 +517,8 @@ export default {
     };
   },
   created() {
-    this.dateRangeDl = this.getPastTime(24);
-    this.dateRangeCz = this.getPastTime(24);
+    this.dateRangeDl = this.getPastTime();
+    this.dateRangeCz = this.getPastTime();
     this.getList("1");
     this.getTunnel();
     this.getEqType();
@@ -540,7 +540,7 @@ export default {
   methods: {
 
     // 参数timer是过去的n个小时
-    getPastTime(timer) {
+    getPastTime() {
       //alert(this.timeFormat(new Date(new Date().setHours(0, 0, 0, 0)).getTime()));
       // 获取过去的时间
       //const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
@@ -630,8 +630,8 @@ export default {
 
 
     handleClick(e){
-      this.dateRangeDl = this.getPastTime(24);
-      this.dateRangeCz = this.getPastTime(24);
+      this.dateRangeDl = this.getPastTime();
+      this.dateRangeCz = this.getPastTime();
       this.resetForm("queryForm");
       this.resetForm("queryForms");
       this.getList(this.activeName);

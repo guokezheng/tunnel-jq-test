@@ -127,7 +127,7 @@ public class SdFaultListController extends BaseController {
     /*@PreAuthorize("@ss.hasPermi('system:list:edit')")*/
     @Log(title = "故障清单", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody MultipartFile[] file, SdFaultList sdFaultList, @RequestParam("removeIds") Long[] removeIds) {
+    public AjaxResult edit(@RequestBody MultipartFile[] file, SdFaultList sdFaultList, @RequestParam("removeIds") String[] removeIds) {
         return toAjax(sdFaultListService.updateSdFaultList(file, sdFaultList, removeIds));
 
     }

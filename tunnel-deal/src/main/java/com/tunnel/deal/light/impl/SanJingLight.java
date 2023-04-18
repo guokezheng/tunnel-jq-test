@@ -211,7 +211,7 @@ public class SanJingLight implements Light {
         //开关
         int switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
         //亮度
-        int brightnessType = 0;
+        int brightnessType = 1;
         //如果亮度有值并且控制状态不是关，就控制亮度
         if(brightness != null && !Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
             brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);

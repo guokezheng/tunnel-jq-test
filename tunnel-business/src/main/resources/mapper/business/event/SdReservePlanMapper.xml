@@ -255,4 +255,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND e.currency_id = #{id}
           AND e.event_state = '0'
     </select>
+
+    <select id="checkPlanName" parameterType="sdReservePlan" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            sd_reserve_plan rp
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND rp.tunnel_id = #{tunnelId}
+        </if>
+        <if test="planName != null and planName != ''">
+            AND rp.plan_name = #{planName}
+        </if>
+        <if test="id != null">
+            AND rp.id <![CDATA[ <> ]]> #{id}
+        </if>
+    </select>
 </mapper>

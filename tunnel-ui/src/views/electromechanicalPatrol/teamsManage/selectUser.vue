@@ -105,138 +105,138 @@
 </template>
 
 <script>
-import {
-  teamsUserSelectAll,
-  unTeamsUserList,
-} from "@/api/electromechanicalPatrol/teamsManage/teams";
+  import {
+    teamsUserSelectAll,
+    unTeamsUserList,
+  } from "@/api/electromechanicalPatrol/teamsManage/teams";
 
-export default {
-  dicts: ["sys_normal_disable"],
-  props: {
-    // 角色编号
-    deptId: {
-      type: [Number, String],
-    },
-  },
-  data() {
-    return {
-      // 遮罩层
-      visible: false,
-      // 选中数组值
-      userIds: [],
-      // 总条数
-      total: 0,
-      // 未授权用户数据
-      userList: [],
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        deptId: undefined,
-        userName: undefined,
-        phonenumber: undefined,
+  export default {
+    dicts: ["sys_normal_disable"],
+    props: {
+      // 角色编号
+      deptId: {
+        type: [Number, String],
       },
-    };
-  },
-  methods: {
-    //翻页时不刷新序号
-    indexMethod(index) {
-      return (
-        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
-      );
     },
-    // 显示弹框
-    show() {
-      this.queryParams.deptId = this.deptId;
-      this.getList();
-      this.visible = true;
+    data() {
+      return {
+        // 遮罩层
+        visible: false,
+        // 选中数组值
+        userIds: [],
+        // 总条数
+        total: 0,
+        // 未授权用户数据
+        userList: [],
+        // 查询参数
+        queryParams: {
+          pageNum: 1,
+          pageSize: 10,
+          deptId: undefined,
+          userName: undefined,
+          phonenumber: undefined,
+        },
+      };
     },
-    clickRow(row) {
-      this.$refs.table.toggleRowSelection(row);
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.userIds = selection.map((item) => item.userId);
-    },
-    // 查询表数据
-    getList() {
-      unTeamsUserList(this.queryParams).then((res) => {
-        this.userList = res.rows;
-        this.total = res.total;
-      });
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
-    /** 选择授权用户操作 */
-    handleSelectUser() {
-      if (this.userIds.length == 0) {
-        return this.$modal.msgWarning("请选择用户");
-      }
-      const deptId = this.queryParams.deptId;
-      const userIds = this.userIds.join(",");
-      teamsUserSelectAll({ deptId: deptId, userIds: userIds }).then((res) => {
-        this.$modal.msgSuccess(res.msg);
-        if (res.code === 200) {
-          this.visible = false;
-          this.$emit("ok");
+    methods: {
+      //翻页时不刷新序号
+      indexMethod(index) {
+        return (
+          index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+        );
+      },
+      // 显示弹框
+      show() {
+        this.queryParams.deptId = this.deptId;
+        this.getList();
+        this.visible = true;
+      },
+      clickRow(row) {
+        this.$refs.table.toggleRowSelection(row);
+      },
+      // 多选框选中数据
+      handleSelectionChange(selection) {
+        this.userIds = selection.map((item) => item.userId);
+      },
+      // 查询表数据
+      getList() {
+        unTeamsUserList(this.queryParams).then((res) => {
+          this.userList = res.rows;
+          this.total = res.total;
+        });
+      },
+      /** 搜索按钮操作 */
+      handleQuery() {
+        this.queryParams.pageNum = 1;
+        this.getList();
+      },
+      /** 重置按钮操作 */
+      resetQuery() {
+        this.resetForm("queryForm");
+        this.handleQuery();
+      },
+      tableRowClassName({ row, rowIndex }) {
+        if (rowIndex % 2 == 0) {
+          return "tableEvenRow";
+        } else {
+          return "tableOddRow";
         }
-      });
+      },
+      /** 选择授权用户操作 */
+      handleSelectUser() {
+        if (this.userIds.length == 0) {
+          return this.$modal.msgWarning("请选择用户");
+        }
+        const deptId = this.queryParams.deptId;
+        const userIds = this.userIds.join(",");
+        teamsUserSelectAll({ deptId: deptId, userIds: userIds }).then((res) => {
+          this.$modal.msgSuccess(res.msg);
+          if (res.code === 200) {
+            this.visible = false;
+            this.$emit("ok");
+          }
+        });
+      },
     },
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped>
-.operationDiglog {
-  ::v-deep .el-input-group__append {
-    padding: 0;
-    width: 60px;
-    border-left: none !important;
-    .el-button {
-      height: 32px;
-      border-top-right-radius: 3px !important;
-      border-bottom-right-radius: 3px !important;
-      border-top-left-radius: 0px !important;
-      border-bottom-left-radius: 0px !important;
-      // transform: translateX(20px);
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  .operationDiglog {
+    ::v-deep .el-input-group__append {
+      padding: 0;
+      width: 60px;
+      border-left: none !important;
+      .el-button {
+        height: 32px;
+        border-top-right-radius: 3px !important;
+        border-bottom-right-radius: 3px !important;
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
+        // transform: translateX(20px);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    .el-dialog .el-form {
+      padding: 15px !important;
+      .el-form-item__content .el-button {
+        width: 88px;
+        height: 22px;
+        border: none;
+      }
+      .el-form-item__content .el-button--mini {
+        padding: 2px 15px !important;
+      }
+    }
+    .el-table {
+      padding: 0 15px;
+      margin-bottom: 20px;
+    }
+    .el-tabs {
+      padding: 0 15px;
     }
   }
-  .el-dialog .el-form {
-    padding: 15px !important;
-    .el-form-item__content .el-button {
-      width: 88px;
-      height: 22px;
-      border: none;
-    }
-    .el-form-item__content .el-button--mini {
-      padding: 2px 15px !important;
-    }
-  }
-  .el-table {
-    padding: 0 15px;
-    margin-bottom: 20px;
-  }
-  .el-tabs {
-    padding: 0 15px;
-  }
-}
 </style>

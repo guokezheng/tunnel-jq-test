@@ -645,7 +645,7 @@
                   :on-exceed="handleExceed"
                   :on-change="handleChange"
                 >
-                  <i class="el-icon-plus"></i>
+                  <i class="el-icon-plus" v-show ="uploadDisabled"></i>
                 </el-upload>
                 <el-dialog
                   :visible.sync="dialogVisible"
@@ -662,10 +662,10 @@
         </el-card>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button v-if="isWritable" @click="submitForm" class="submitButton"
+        <el-button v-if="isWritable" @click="submitForm" class="submitButton" :loading="waiting"
           >仅保存</el-button
         >
-        <el-button v-if="isWritable" @click="publishForm" class="zancunButton"
+        <el-button v-if="isWritable" @click="publishForm" class="zancunButton" :loading="waiting"
           >保存并发布</el-button
         >
         <el-button @click="cancel" class="closeButton">取 消</el-button>
@@ -801,6 +801,8 @@ export default {
   ],
   data() {
     return {
+      uploadDisabled:true,
+      waiting:false,
       removeStata: false,
       device_boxShow: false,
       resultFaultType: [], //获取选中后的故障类型checkbox的数组值
@@ -1406,7 +1408,7 @@ export default {
         );
       }
       // const response = listTunnels()
-      listTunnels(this.queryParams).then((response) => {
+      listTunnels().then((response) => {
         console.log(response.rows, "所属隧道列表");
         this.tunnelList = response.rows;
       });
@@ -1484,6 +1486,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.uploadDisabled = true;
       this.removeStata = false;
       this.isWritable = true;
       this.disstate = false;
@@ -1493,6 +1496,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.uploadDisabled = true;
       this.openDialogScreen();
       let that = this;
       this.isWritable = true;
@@ -1575,6 +1579,7 @@ export default {
       );
     },
     async handleCheckDetail(row) {
+      this.uploadDisabled = false;
       this.openDialogScreen();
       let that = this;
       this.removeStata = true;
@@ -1585,6 +1590,7 @@ export default {
       // const response = getList()
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
+        debugger
         this.form.tunnelId = response.data.tunnelId;
         this.form.typeId = response.data.typeId;
         this.getDevices();
@@ -1686,6 +1692,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      this.isClick = true;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       this.fileData.append("id", this.form.id);
@@ -1713,6 +1720,7 @@ export default {
           if (this.form.id != null) {
             this.fileData.append("removeIds", this.removeIds);
             if (this.isClick) {
+              this.waiting = true;
               updateList(this.fileData).then((response) => {
                 this.fileList = [];
                 this.isClick = false;
@@ -1724,6 +1732,7 @@ export default {
             }
           } else {
             if (this.isClick) {
+              this.waiting = true;
               addList(this.fileData).then((response) => {
                 this.fileList = [];
                 this.isClick = false;
@@ -1737,10 +1746,12 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 700);
+        this.waiting = false;
+      }, 300);
     },
 
     publishForm() {
+      this.isClick = true;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       this.fileData.append("id", this.form.id);
@@ -1767,6 +1778,7 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             this.fileData.append("removeIds", this.removeIds);
+            this.waiting = true;
             updateList(this.fileData).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -1774,6 +1786,7 @@ export default {
               this.getList();
             });
           } else {
+            this.waiting = true;
             addList(this.fileData).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -1784,6 +1797,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
+        this.waiting = false;
       }, 300);
     },
     /** 删除按钮操作 */
@@ -1834,7 +1848,6 @@ export default {
   },
 };
 </script>
-
 
 <style lang="scss" scoped>
 .topTxt {

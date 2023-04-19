@@ -132,12 +132,12 @@
               </el-select>
             </el-col>
             <el-col :span="10"
-                    v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
+                    v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36 && dain.equipmentTypeId != 7"
             >
               <el-col :span="12">
                 <el-select
                   v-model="dain.openState"
-                  placeholder="启动指令"
+                  placeholder="起始指令"
                   style="width: 100%"
                   @change="$forceUpdate()"
                 >
@@ -154,7 +154,7 @@
               <el-col :span="12">
                 <el-select
                   v-model="dain.closeState"
-                  placeholder="关闭指令"
+                  placeholder="结束指令"
                   style="width: 100%"
                   @change="$forceUpdate()"
                 >
@@ -181,6 +181,48 @@
                 collapse-tags
                 @change="handleChange"
               ></el-cascader>
+            </el-col>
+            <el-col :span="10"
+                    v-show="dain.equipmentTypeId == 7"
+            >
+              <el-col :span="12">
+                <el-select
+                  :style="{'width':  dain.openState == 1 ? '40%' :'100%' }"
+                  v-model="dain.openState"
+                  placeholder="起始指令"
+                  style="width: 100%"
+                  @change="$forceUpdate();selectStateVal(index,'open')"
+                >
+                  <el-option
+                    v-for="(item, index) in dain.eqStateList"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+
+                  >
+                  </el-option>
+                </el-select>
+                <el-input-number v-if="dain.openState == 1" v-model="dain.stateNum" style="width: 60%"   :min="1" :max="100" ></el-input-number>
+              </el-col>
+              <el-col :span="12">
+                <el-select
+                  :style="{'width':  dain.closeState == 1 ? '40%' :'100%' }"
+                  v-model="dain.closeState"
+                  placeholder="结束 指令"
+                  style="width: 100%"
+                  @change="$forceUpdate();selectStateVal(index,'close')"
+                >
+
+                  <el-option
+                    v-for="(item, index) in dain.eqStateListFan"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+                <el-input-number v-if="dain.closeState == 1" v-model="dain.endStateNum" style="width: 60%"   :min="1" :max="100" ></el-input-number>
+              </el-col>
             </el-col>
             <el-col :span="2" class="buttonBox">
               <el-button
@@ -273,6 +315,8 @@ export default {
             openState: null, //状态
             closeState: null,
             state:null,
+            endStateNum:100,
+            stateNum: 100,
             type: "", //设备分类
             equipmentTypeId: "", //设备类型
             equipments: [], //设备列表
@@ -311,7 +355,18 @@ export default {
     };
   },
   methods: {
+    selectStateVal(index,cmd){
+      if(cmd == 'open'){
+        if(this.strategyForm.autoControl[index].openState == 1){
+          this.$set(this.strategyForm.autoControl[index], "stateNum", 100);
+        }
+      }else{
+        if(this.strategyForm.autoControl[index].closeState == 1){
+          this.$set(this.strategyForm.autoControl[index], "endStateNum", 100);
+        }
+      }
 
+    },
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -398,7 +453,9 @@ export default {
 
 
             this.strategyForm.autoControl[i].openState = attr.state;
+            this.strategyForm.autoControl[i].stateNum = attr.stateNum;
             this.strategyForm.autoControl[i].closeState = attr.endState;
+            this.strategyForm.autoControl[i].endStateNum = attr.endStateNum;
 
 
             this.strategyForm.autoControl[i].type = attr.eqTypeId;

@@ -178,7 +178,7 @@ public class SdDeviceControlService {
             if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()
                 || sdDevices.getEqType().longValue() == DevicesTypeEnum.JUAN_LIAN_MEN.getCode().longValue() ||
                     sdDevices.getEqType().longValue() == DevicesTypeEnum.FENG_JI.getCode().longValue() ||
-                    sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
+                  //  sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
                     sdDevices.getEqType().longValue() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode().longValue() ||
                     sdDevices.getEqType().longValue() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode().longValue() ||
                     sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) ||
@@ -260,10 +260,23 @@ public class SdDeviceControlService {
                 if (data.size() > 0) {
                     sdOperationLog.setBeforeState(data.get(0).getData());
                 }
-
+                Integer brightness = null;
+                // 加强照明，可设置照明亮度
+                if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()){
+                    if(map.get("stateNum") != null){
+                        brightness = Integer.parseInt(map.get("stateNum").toString());
+                        sdOperationLog.setDescription(brightness+"");
+                    }
+                }
                 //控制照明设备
-                controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices);
+                controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices,brightness);
 
+                // 加强照明  开始（10）
+                if(brightness != null){
+                    String operationStateStr = state.equals("1")?"开启":"关闭";
+                    operationStateStr += "，亮度："+brightness;
+                    sdOperationLog.setOperationState(operationStateStr);
+                }
                 sdOperationLog.setState(String.valueOf(controlState));
             } else if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.VMS.getCode().longValue()
                     || sdDevices.getEqType().longValue() == DevicesTypeEnum.MEN_JIA_VMS.getCode().longValue())) {
@@ -312,9 +325,9 @@ public class SdDeviceControlService {
         return controlState;
     }
 
-    private int controlLightingDevices(int controlState, String isopen, String devId, String state, SdDevices sdDevices) {
+    private int controlLightingDevices(int controlState, String isopen, String devId, String state, SdDevices sdDevices,Integer brightness) {
         if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
-            controlState = lightService.lineControl(devId, Integer.parseInt(state),null);
+            controlState = lightService.lineControl(devId, Integer.parseInt(state),brightness);
         } else if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
             sdDevices.setEqStatus("1");

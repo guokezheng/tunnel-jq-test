@@ -105,7 +105,28 @@ public class SdStrategyRl extends BaseEntity
     @Excel(name = "设备状态")
     private String state;
 
-    public void setId(Long id) 
+    private String stateNum;
+
+    private String endStateNum;
+
+
+    public String getStateNum() {
+        return stateNum;
+    }
+
+    public void setStateNum(String stateNum) {
+        this.stateNum = stateNum;
+    }
+
+    public String getEndStateNum() {
+        return endStateNum;
+    }
+
+    public void setEndStateNum(String endStateNum) {
+        this.endStateNum = endStateNum;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

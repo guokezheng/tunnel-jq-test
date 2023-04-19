@@ -6,6 +6,7 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.Threads;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
@@ -377,6 +378,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                             threadArrsMap.put(key,threadArrs);
                         }
                         try {
+                            //  redis 缓存问题。  当前改为数据库直接读取。  后期更改为  redis   获取。
                             String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
                             //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
                             Integer num = redisCache.getCacheObject(redisLuminanceRangeKey);
@@ -397,7 +399,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                                 //推送调光 指令。
                                 try{
                                     log.info("开始亮光值:["+devices.getEqId()+"]当前亮度num："+num+" 根据车流量计算的亮度nowLuminanceRange:" +nowLuminanceRange);
-                                    int flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange,"2");
+                                    int flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange, DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                     if(flag == 0){
                                         log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                     }
@@ -412,7 +414,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                             //降低光照强度执行完毕,推送调光 指令。
                             try{
                                 log.info("结束亮光值:["+devices.getEqId()+"]当前亮度nowLuminanceRange："+nowLuminanceRange+" 结束推送亮度值" +minLuminance);
-                                int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                                int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                 //清除当前记录线程
                                 threadArrs[0] =  null;
                                 if(flag == 0){
@@ -478,7 +480,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                                         //推送调光 指令。
                                         try{
                                             log.info("开始亮光值:["+devices.getEqId()+"]当前亮度num："+num+" 根据车流量计算的亮度nowLuminanceRange:" +enowLuminanceRange);
-                                            int flag = sanJingLight.setBrightnessByDevice(devices,num,enowLuminanceRange,"2");
+                                            int flag = sanJingLight.setBrightnessByDevice(devices,num,enowLuminanceRange,DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                             if(flag == 0){
                                                 log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                             }
@@ -493,7 +495,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                                         Thread.sleep(respondTime);
                                          //降低光照强度执行完毕
                                         log.info("结束亮光值:["+devices.getEqId()+"]当前亮度nowLuminanceRange："+enowLuminanceRange+" 结束推送亮度值" +minLuminance);
-                                        int flag = sanJingLight.setBrightnessByDevice(devices,enowLuminanceRange,minLuminance,"2");
+                                        int flag = sanJingLight.setBrightnessByDevice(devices,enowLuminanceRange,minLuminance,DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                         if(flag == 0){
                                             log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                         }

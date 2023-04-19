@@ -142,13 +142,7 @@
     />
 
     <!-- 添加或修改加强照明配置信息对话框 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="open"
-      width="30%"
-      append-to-body
-      :close-on-click-modal="false"
-    >
+    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="12">
@@ -283,20 +277,34 @@
             v-for="(item, index) in timeSlotList"
             :key="item.key"
             :label="'定时区间' + index"
-            ><el-row :gutter="15">
-              <el-col :span="8">
-                <el-time-picker
-                  placeholder="选择时间"
-                  v-model="item.startTime"
-                  style="width: 100%"
-                ></el-time-picker>
+          >
+            <el-row :gutter="15">
+              <el-col :span="4" >
+                  <el-select v-model="item.eqIds"  placeholder="请选择控制段" width="80px">
+                    <el-option
+                      v-for="eqInfo in eqIdList"
+                      :key="eqInfo.value"
+                      :label="eqInfo.name"
+                      :value="eqInfo.value"
+                      >
+                    </el-option>
+                  </el-select>
               </el-col>
-              <el-col :span="8">
-                <el-time-picker
-                  placeholder="选择时间"
-                  v-model="item.endTime"
-                  style="width: 100%"
-                ></el-time-picker>
+              <el-col :span="4" >
+                  <el-select v-model="item.direction" placeholder="请选择路段方向" >
+                    <el-option
+                      v-for="dict in directionOptions"
+                      :key="dict.value"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                    />
+                  </el-select>
+              </el-col>
+              <el-col :span="4" >
+                <el-time-picker placeholder="选择时间" v-model="item.startTime" style="width: 100%;"></el-time-picker>
+              </el-col>
+              <el-col :span="4" >
+                <el-time-picker placeholder="选择时间" v-model="item.endTime" style="width: 100%;"></el-time-picker>
               </el-col>
               <el-col :span="4">
                 <el-input placeholder="亮度" v-model="item.value"></el-input>
@@ -337,6 +345,9 @@ import {
   exportConfig,
 } from "@/api/business/enhancedLighting/app.js";
 import { listTunnels } from "@/api/equipment/tunnel/api";
+import {
+  newListDevices,
+} from "@/api/equipment/eqlist/api";
 
 export default {
   name: "Type",
@@ -396,12 +407,39 @@ export default {
       timeSlotList: [],
       nowTimeSlotList: [
         {
-          startTime: null,
-          endTime: null,
-          value: null,
+          startTime:null,
+          endTime:null,
+          value:null,
+          direction:"3",
+          eqIds:null,
+        }
+      ],
+      //获取当前隧道下全部加强照明
+      eqIdList:[
+        {
+          name:"棚洞段加强照明",
+          value: "0"
+        },
+        {
+          name:"入口段加强照明",
+          value: "1"
+        },
+        {
+          name:"过渡段加强照明",
+          value: "2"
+        },
+        {
+          name:"基本段",
+          value: "4"
+        },
+        {
+          name:"出口段加强照明",
+          value: "5"
         },
       ],
-      modeTypeList: [
+      //根据隧道
+      directionEqList:[],
+      modeTypeList:[
         {
           name: "定时模式",
           value: 0,
@@ -420,6 +458,7 @@ export default {
   created() {
     this.getList();
     this.getTunnel();
+    this.getDirection();
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
@@ -429,9 +468,32 @@ export default {
     /** 所属隧道 */
     getTunnel() {
       listTunnels(this.queryParams).then((response) => {
-        console.log(response.rows, "所属隧道列表");
         this.eqTunnelData = response.rows;
       });
+    },
+    // //获取设备列表信息
+    // getListDevices(eqTunnelId,eqType){
+    //   let param = {eqTunnelId:eqTunnelId,eqType:eqType};
+    //   newListDevices(param).then((response) => {
+    //     if (response.code == 200) {
+    //       this.eqIdList = response.rows;
+    //     }
+    //   });
+    // },
+    // getListDevicesByParam(){
+    //   //查询加强照明
+    //   this.getListDevices(this.form.tunnelId,7);
+    // },
+    //发生改变时，清空item.eqIds;
+    //查询方向
+    //查询方向
+    getDirection() {
+      this.getDicts("sd_strategy_direction").then((response) => {
+        this.directionOptions = response.data;
+      });
+    },
+    clearEqIds(item){
+      item.eqIds = [];
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
@@ -508,19 +570,20 @@ export default {
       this.form.iskeyVehicle = "0";
       this.timeSlotList = [
         {
-          startTime: null,
-          endTime: null,
-          value: null,
-        },
+          startTime:null,
+          endTime:null,
+          value:null,
+          direction:"3",
+          eqIds:null,
+        }
       ];
       this.title = "添加加强照明配置信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids;
-      getConfig(id).then((response) => {
-        console.log(response.data, "response.data");
+      const id = row.id || this.ids
+      getConfig(id).then(response => {
         this.form = response.data;
         this.timeSlotList = JSON.parse(response.data.timeSlot);
         for (let index = 0; index < this.timeSlotList.length; index++) {
@@ -536,11 +599,13 @@ export default {
         //获取 HH:mm:ss;
         this.open = true;
         this.title = "修改加强照明配置信息";
+        // this.getListDevicesByParam();
       });
     },
     /** 提交按钮 */
     submitForm() {
-      if (this.form.modeType != 1) {
+      if(this.form.modeType != 1){
+        console.log(this.timeSlotList,"this.timeSlotList");
         //timeSlotList 校验
         for (let index = 0; index < this.timeSlotList.length; index++) {
           const element = this.timeSlotList[index];

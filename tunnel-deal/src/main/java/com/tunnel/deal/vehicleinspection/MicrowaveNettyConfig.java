@@ -65,15 +65,8 @@ public class MicrowaveNettyConfig {
                     List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
 //                    List<DeviceEntity> list = deviceRepository.getIps();
                     for(SdDevices it : devicesList) {
-//                        NettyConnectInfo info = new NettyConnectInfo();
-//                        info.setPort(Integer.parseInt(it.getPort()));
-//                        info.setChannel(null);
-//                        info.setConnected(false);
-//                        info.setSdDevices(it);
-//                        mapParam.put(it.getIp()+":"+(it.getPort()), info);
-
-                        //目前 只提供了  一个隧道入口微波车检  可用。   仅用来测试使用。后期优化。
-                        if("10.7.187.145".equals(it.getIp())){
+                        //隧道入口微波车检  可用。   仅用来测试使用。后期优化。
+                        if("10.7.187.145".equals(it.getIp())||"10.7.187.147".equals(it.getIp())){
                             NettyConnectInfo info = new NettyConnectInfo();
                             info.setPort(Integer.parseInt(it.getPort()));
                             info.setChannel(null);

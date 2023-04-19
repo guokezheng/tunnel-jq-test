@@ -5,15 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.enhancedLighting.SdEnhancedLightingConfig;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
-import com.tunnel.business.mapper.enhancedLighting.SdEnhancedLightingConfigMapper;
 import com.tunnel.business.service.enhancedLighting.ISdEnhancedLightingConfigService;
 import com.tunnel.deal.light.impl.SanJingLight;
 import com.zc.common.core.ThreadPool.ThreadPool;
@@ -21,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 
@@ -65,10 +62,8 @@ public class LightFixedTimeTask {
             //查看当前隧道 照明配置文件中  是否开启调光模式  0关闭  1开启
             if(sdEnhancedLightingConfig.getModeType() == 0 && sdEnhancedLightingConfig.getIsStatus() == 1){
                 ThreadPool.executor.execute(() -> {
-                    //定时 开启上行隧道
-                    adjustBrightnessByRunMode(sdEnhancedLightingConfig.getTunnelId(),"1",sdEnhancedLightingConfig);
-                    //定时 开启下行隧道
-                    adjustBrightnessByRunMode(sdEnhancedLightingConfig.getTunnelId(),"2",sdEnhancedLightingConfig);
+                    //定时 开启上行隧道  TunnelDirectionEnum.UP_DIRECTION TunnelDirectionEnum.UP_DIRECTION.getCode(),
+                    adjustBrightnessByRunMode(sdEnhancedLightingConfig.getTunnelId(),sdEnhancedLightingConfig);
                 });
             }
         }
@@ -79,24 +74,9 @@ public class LightFixedTimeTask {
     /**
      *
      * @param tunnelId      隧道id
-     * @param roadDir     方向
      */
-    public void adjustBrightnessByRunMode(String tunnelId,String roadDir,SdEnhancedLightingConfig sdEnhancedLightingConfig){
-        //查找所有加强照明
-        SdDevices sdDevices = new SdDevices();
-        sdDevices.setEqTunnelId(tunnelId);
-        sdDevices.setEqDirection(roadDir);
-        sdDevices.setEqType(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode());
-        sdDevices.setItemId(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
-        //推送加强照明
-        List<SdDevices> deviceIds = sdDevicesMapper.selectSdDevicesDataByParam(sdDevices);
-        if(deviceIds.size()<=0){
-            log.info("当前隧道【{}】无加强照明设备。忽略当前调光操作。",tunnelId);
-            return;
-        }
-        //从 sd_radar_detect_data_temporary  表中 获取当前1分钟内过车流量信息
-        int nowTrafficFlow = sdRadarDetectDataTemporaryMapper.getSdRadarDetectDataCount(tunnelId,roadDir);
-        //获取当前时间。判断当前时间
+    public void adjustBrightnessByRunMode(String tunnelId,SdEnhancedLightingConfig sdEnhancedLightingConfig){
+        //获取配置信息
         String json = sdEnhancedLightingConfig.getTimeSlot();
         //配置信息 JSON
         List<Map> jsonArry  = JSONObject.parseArray(json, Map.class);
@@ -113,15 +93,42 @@ public class LightFixedTimeTask {
         for (Map map:jsonArry) {
             String startTime = map.get("startTime").toString();
             String endTimne = map.get("endTime").toString();
+            String roadDir =  map.get("direction").toString();
+            //其他默认全选
+            if(!TunnelDirectionEnum.UP_DIRECTION.getCode().equals(roadDir)&&!TunnelDirectionEnum.DOWN_DIRECTION.getCode().equals(roadDir)){
+                roadDir = null;
+            }
+            //从 sd_radar_detect_data_temporary  表中 获取当前1分钟内过车流量信息
+            int nowTrafficFlow = sdRadarDetectDataTemporaryMapper.getSdRadarDetectDataCount(tunnelId,roadDir);
+
             //获取当前时间  查看是否符合当前时间段
             try {
                 //查看当前时间是否在此时间范围内
                 if(DateUtils.belongCalendar(startTime,endTimne)){
+                    //获取到 控制段信息 segment
+                    String segment =  map.get("eqIds").toString();
+                    if(segment == null ){
+                        log.info("当前定时时间段【{}】无加强照明设备。忽略当前调光操作。",tunnelId);
+                        return;
+                    }
                     //根据每个 设备  亮度进行逐个调光
-                    for (SdDevices devices:deviceIds) {
+                    SdDevices devicesParam = new SdDevices();
+                    //查看当前属于哪个 路段  并推送其路段 设备信息
+                    devicesParam.setEqTunnelId(tunnelId);
+                    devicesParam.setEqDirection(roadDir);
+                    devicesParam.setItemId(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+                    if(TunnelStepEnum.BASE_STEP.getValue().equals(segment)){
+                        //基本照明
+                        devicesParam.setEqType(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode());
+                    }else {
+                        devicesParam.setEqType( DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode());
+                    }
+                    devicesParam.setExternalDeviceId(segment);
+                    //获取当前设备信息
+                    List<SdDevices>  sdDevicesList = sdDevicesMapper.selectSdDevicesDataByParam(devicesParam);
+                    for (SdDevices devices:sdDevicesList) {
                         //查看当前加强照明设备开启状态
                         SdDeviceData sdDeviceData = new SdDeviceData();
-                        sdDeviceData.setItemId((long)DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
                         sdDeviceData.setDeviceId(devices.getEqId());
                         List<SdDeviceData> list = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
                         //查看当前设备是否存在开启状态
@@ -129,16 +136,39 @@ public class LightFixedTimeTask {
                             continue;
                         }else{
                             //获取开启状态
-                            String status = list.get(0).getData();
-                            //当前设备状态是否为关闭
-                            if("2".equals(status)){
-                                log.info("当前设备【{}】状态为关闭状态无法控制。",devices.getEqId());
-                                continue;
+                            String status = "2";
+                            Integer num = 0;
+                            for (SdDeviceData sdDeviceDataInfo:list) {
+                                if(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode() == sdDeviceDataInfo.getItemId()||DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode() == sdDeviceDataInfo.getItemId()){
+                                    status = sdDeviceDataInfo.getData();
+                                }else if(DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode() == sdDeviceDataInfo.getItemId()||DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode() == sdDeviceDataInfo.getItemId()){
+                                    num = Integer.parseInt(sdDeviceDataInfo.getData());
+                                }
                             }
-                            //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
-                            Integer num = Integer.parseInt(devices.getData());
+                            //推送状态值
+                            Integer finalNum = num;
                             //获取 当前时间段内  亮度值
                             luminanceRange =  Integer.parseInt(map.get("value").toString());
+                            //如果当前时段调光值为 0   则关闭当前加强照明
+                            if( luminanceRange == 0){
+                                //状态（1-开，2-关）
+                                int flag  = sanJingLight.lineControlAddLog(devices.getEqId(),2,null);
+                                if(flag == 0){
+                                    log.error("关闭当前照明无效,请联系管理员");
+                                }
+                                continue;
+                            }
+                            //当前设备状态是否为关闭
+                            if("2".equals(status)){
+                                //如果当前状态为关闭 ，则开启当前设备
+                                int flag  = sanJingLight.lineControlAddLog(devices.getEqId(),1,null);
+                                if(flag == 0){
+                                    log.error("当前加强照明为关闭状态，开启失败。请联系管理员");
+                                    continue;
+                                }
+                            }
+//                            //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
+//                            Integer num = Integer.parseInt(devices.getData());
                             //等待推送的亮度值
                             int nowLuminanceRange;
                             //查看是否开启车流量模式  0关闭  1开启
@@ -148,12 +178,13 @@ public class LightFixedTimeTask {
                             }else{
                                 nowLuminanceRange = luminanceRange;
                             }
-                            if(num ==null || num != nowLuminanceRange){
+                            if( num ==null || num != nowLuminanceRange || "2".equals(status)){
                                 ThreadPool.executor.execute(() -> {
                                     //推送调光 指令。
                                     try{
-                                        log.info("当前亮度num：{} 根据车流量计算的亮度nowLuminanceRange:{}",num ,nowLuminanceRange);
-                                        int flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange,"2");
+                                        //推送指令时，判断当前灯是否 关闭。  如果关闭。 则开启当前灯  并且  调整 灯亮度。
+                                        log.info("当前亮度num：{} 根据车流量计算的亮度nowLuminanceRange:{}", finalNum,nowLuminanceRange);
+                                        int flag = sanJingLight.setBrightnessByDevice(devices, finalNum,nowLuminanceRange, DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                         if(flag == 0){
                                             log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                         }

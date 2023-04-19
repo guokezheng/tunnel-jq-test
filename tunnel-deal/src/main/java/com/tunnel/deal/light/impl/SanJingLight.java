@@ -492,8 +492,7 @@ public class SanJingLight implements Light {
     public int setBrightnessByDevice(SdDevices device,Integer nowLuminanceRange ,Integer luminanceRange, String controlType) {
         int resultStatus;
         try{
-//            resultStatus = setBrightness(device.getEqId(),luminanceRange);
-            resultStatus = 1;
+            resultStatus = setBrightness(device.getEqId(),luminanceRange);
         }catch (Exception e){
             resultStatus = 0;
         }

@@ -192,7 +192,7 @@
           >
             操作日志
           </el-button>
-     
+
         </div>
       </div>
       <div class="vehicleLane">
@@ -909,7 +909,7 @@
             </div>
             <div class="Time">
               <div class="timeStart">
-                <span class="setTime">开启时间：</span>
+                <span class="setTime">起始时间：</span>
                 <el-time-picker
                   v-model="item.arr[0]"
                   size="mini"
@@ -919,7 +919,7 @@
                 </el-time-picker>
               </div>
               <div class="timeEnd">
-                <span class="setTime">关闭时间：</span>
+                <span class="setTime">结束时间：</span>
                 <el-time-picker
                   v-model="item.arr[1]"
                   size="mini"
@@ -1491,7 +1491,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <el-tabs v-model="operationActive" @tab-click="handleTabClick">
+      <el-tabs v-model="operationActive">
         <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
         <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
       </el-tabs>
@@ -1555,7 +1555,7 @@
               v-model="dateRange"
               size="small"
               style="width: 100%"
-              value-format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH-mm-ss"
               type="datetimerange"
               range-separator="-"
               start-placeholder="开始日期"
@@ -1709,7 +1709,7 @@
               v-model="dateRange1"
               size="small"
               style="width: 252px"
-              value-format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH-mm-ss"
               type="datetimerange"
               range-separator="-"
               start-placeholder="开始日期"
@@ -3234,21 +3234,6 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="方向" prop="direction">
-            <el-select
-              v-model="queryParams.direction"
-              placeholder="请选择方向"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="(item, index) in directionOptions"
-                :key="index"
-                :label="item.dictLabel"
-                :value="item.dictValue"
-              ></el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item label="策略类型" prop="strategyType">
             <el-select
               v-model="queryParams.strategyType"
@@ -4052,8 +4037,7 @@ export default {
       tunnelData: [],
       //所属隧道
       eqTunnelData: {},
-      // 设备方向字典
-      directionOptions: [],
+
       setoptions: {
         // 时间不能大于当前时间
         disabledDate(time) {
@@ -4073,7 +4057,6 @@ export default {
         tunnelId: null,
         userName: null,
         eqId: null,
-        direction:null,
         /* eqName: null, */
         code: null,
         cmd: null,
@@ -4727,12 +4710,6 @@ export default {
       console.log(response, "车辆类型");
       this.vehicleTypeList = response;
     });
-
-    this.getDicts("sd_strategy_direction").then((response) => {
-      response.data.forEach((item) => {
-        this.directionOptions.push(item);
-      });
-    });
     this.getTunnelState();
     // this.carchange();
     //调取滚动条
@@ -5072,56 +5049,6 @@ export default {
   },
 
   methods: {
-
-    // 参数timer是过去的n个小时
-    getPastTime() {
-      //alert(this.timeFormat(new Date(new Date().setHours(0, 0, 0, 0)).getTime()));
-      // 获取过去的时间
-      //const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
-      //获取当天0点时间
-      const lastTime = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
-      const startTime = this.timeFormat(lastTime);
-      // 当天24点时间
-      let time = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1).getTime();
-      const endTime = this.timeFormat(time);
-      return [startTime, endTime];
-
-    },
-
-    //时间生成并处理
-    timeFormat(time) {
-      // 对应的方法
-      const timeType = [
-        "getFullYear",
-        "getMonth",
-        "getDate",
-        "getHours",
-        "getMinutes",
-        "getSeconds"
-      ];
-      // 分隔符
-      const separator = {
-        getFullYear: "-",
-        getMonth: "-",
-        getDate: " ",
-        getHours: ":",
-        getMinutes: ":",
-        getSeconds: ""
-      };
-      let resStr = "";
-      for (let i = 0; i < timeType.length; i++) {
-        const element = timeType[i];
-        let resTime = new Date(time)[element]();
-        // 获取月份的要+1
-        resTime = element == "getMonth" ? resTime + 1 : resTime;
-        // 小于10，前面加0
-        resTime = resTime > 9 ? resTime : "0" + resTime;
-        resStr = resStr + resTime + separator[element];
-      }
-      return resStr;
-    },
-
-
     changeEndTime(start,end,index){
       console.log(start,end,"start,end")
       let date = new Date();
@@ -6008,7 +5935,6 @@ export default {
 
       this.queryParams.strategyName = "";
       this.queryParams.tunnelId = "";
-      this.queryParams.direction = null;
       this.queryParams.strategyType = "";
       this.operationParam.ipaddr = "";
       this.operationParam.status = null;
@@ -8914,19 +8840,6 @@ export default {
       this.handleQueryOperationParam()
       this.handlestrategyQuery();
     },
-    //系统日志操作日志tab切换
-    handleTabClick(tab,event){
-      if(tab.name == 'xitong'){
-        // 系统日志
-        this.dateRange = this.getPastTime();
-        this.getOperationList("xitong");
-      }else{
-        // 操作日志
-        this.dateRange1 = this.getPastTime();
-        this.getOperationList("caozuo");
-
-      }
-    },
     // 关闭控制策略对话框
     strategyCancel() {
       this.strategyVisible = false;
@@ -8962,8 +8875,8 @@ export default {
       // this.$router.push({
       //   name: "OperationLog",
       // });
-      this.dateRange = this.getPastTime();
-      this.dateRange1 = this.getPastTime();
+      this.dateRange = [];
+      this.dateRange1 = [];
       this.title = "操作日志";
       this.operationActive = 'xitong';
       this.operationLogDialog = true;

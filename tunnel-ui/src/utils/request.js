@@ -59,9 +59,6 @@ service.interceptors.response.use(res => {
     // 获取错误信息
     const msg = errorCode[code] || res.data.msg || errorCode['default'];
     const data = res.data;
-    console.log(code,"codecodecode")
-    // console.log(msg,"msg")
-    // console.log(data,"data")
     if (code === 401) {
         MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
           confirmButtonText: '重新登录',
@@ -81,15 +78,12 @@ service.interceptors.response.use(res => {
       })
       return Promise.reject(new Error(msg))
     } else if (code == 900) {
-      console.log(msg,"msgmsgmsgmsgmsgmsg")
       let arr = msg.split(',')
-      console.log(arr,"arr")
       let content = ''
       for(let item of arr){
         content += "<div style='margin-bottom:4px'>" + item + ',' + '</div>'
       }
       content += '发布失败，请检查后重试'
-      console.log(content,"content")
       Message({
         message: content,
         duration:0,

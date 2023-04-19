@@ -215,10 +215,7 @@
             }"
             style="position: absolute;line-height: 1;"
             v-html="
-                    item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                      / /g,
-                      '&nbsp'
-                    )">
+                    item.CONTENT.replace(/\n|\r\n/g, '<br>')">
           </span>
           </div>
 
@@ -432,20 +429,10 @@ export default {
           console.log(item.releaseNewContent,"item.releaseNewContent")
           item.releaseNewContent = item.releaseNewContent.substring(item.releaseNewContent.indexOf("\\f")+7).replaceAll("\\n","");
           var arr = []
-          // console.log(JSON.parse(item.paramsList[0]),"JSON.parse(item.paramsList[0])")
-          // console.log(JSON.parse(item.paramsList[0]).content,"JSON.parse(item.paramsList[0]).content")
-
-          // contents = JSON.parse(item.paramsList[0])['content']
           contents = JSON.parse(item.paramsList[0]).content
-
-          // console.log(contents,"contents")
           for (var i = 0; i < contents.length; i++) {
             var content = contents[i];
             var itemId = "ITEM" + this.formatNum(i, 3);
-            if(i == 0){
-              console.log(content[itemId],"content[itemId]")
-
-            }
             for(var itm of content[itemId]){
               itm.COLOR = this.getColorStyle(itm.COLOR);
               itm.FONT_SIZE = this.getFontSize(itm.FONT_SIZE.substring(0, 2),itm.DEVICEPIXEL) + 'px';
@@ -453,7 +440,7 @@ export default {
               itm.HEIGHT = this.getDevicePixel(itm.DEVICEPIXEL,'height')
               itm.TOP = this.getCoordinate(itm.COORDINATE.substring(3, 6),'top',itm.DEVICEPIXEL) + 'px';
               itm.LEFT = this.getCoordinate(itm.COORDINATE.substring(0, 3),'left',itm.DEVICEPIXEL) + 'px';
-              itm.CONTENT = itm.CONTENT.replace('<r><n>', '<br>').replace(/ /g,' &nbsp')
+              itm.CONTENT = itm.CONTENT.replace('<r><n>', '<br>').replace(/ /g,'&nbsp')
               itm.FONT = itm.FONT;
               arr.push(itm);
             }

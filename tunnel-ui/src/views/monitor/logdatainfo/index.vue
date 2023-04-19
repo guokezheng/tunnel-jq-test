@@ -205,6 +205,7 @@
             v-model="queryParams.eqTypeId"
             placeholder="请选择设备类型"
             filterable
+            clearable
             size="small"
           >
             <el-option

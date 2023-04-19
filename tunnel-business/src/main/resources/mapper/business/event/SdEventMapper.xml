@@ -166,7 +166,7 @@
                 FROM
                     sd_fault_list
                 WHERE
-                    fault_status = '0'
+                    fault_status = '0' and fallt_remove_statue = '1'
                   AND TO_DAYS( fault_fxtime ) = TO_DAYS(
                         NOW()) ) as num
         FROM

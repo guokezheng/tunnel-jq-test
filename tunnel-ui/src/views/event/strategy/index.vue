@@ -485,6 +485,7 @@
       :append-to-body="true"
       width="75%"
       class="celueDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

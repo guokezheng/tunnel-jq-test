@@ -269,6 +269,7 @@
       width="70%"
       class="xjDialog"
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -466,7 +467,12 @@
         </div>
       </el-card>
     </el-dialog>
-    <el-dialog :visible.sync="isShow1" width="50%" class="show">
+    <el-dialog
+      :visible.sync="isShow1"
+      width="50%"
+      class="show"
+      :close-on-click-modal="false"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -562,7 +568,12 @@
 
     <!-- -->
 
-    <el-dialog :visible.sync="isShow2" width="50%" class="show">
+    <el-dialog
+      :visible.sync="isShow2"
+      width="50%"
+      class="show"
+      :close-on-click-modal="false"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -672,6 +683,7 @@
       width="70%"
       title="巡检任务及执行记录单"
       class="xjDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

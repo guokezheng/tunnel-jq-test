@@ -6,6 +6,7 @@
       :visible.sync="dialogVisible"
       width="44%"
       :before-close="handleClose"
+      :close-on-click-modal="false"
     >
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>

@@ -21,7 +21,7 @@
               max-height="550"
               v-loading="loading"
             >
-              <el-table-column align="center" width="645">
+              <el-table-column align="left" width="645">
                 <template slot-scope="scope">
                   <div class="contentBox">
                     <div
@@ -647,7 +647,7 @@ export default {
               this.$modal.msgSuccess("发布成功");
               console.log(response, "返回结果");
             }
-          );
+          )
         })
         .catch(() => {
           this.$message({

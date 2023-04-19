@@ -1330,6 +1330,7 @@
       width="450px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -1484,6 +1485,7 @@
       width="1000px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -3123,6 +3125,7 @@
       :visible.sync="explainVisible"
       width="1240px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -3173,6 +3176,7 @@
       :visible.sync="strategyVisible"
       width="1000px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -5521,6 +5525,7 @@ export default {
     handleChangePhone(num) {},
     // 操作日志 搜索
     handleQueryOperationParam() {
+      console.log(22222222)
       this.syxt_boxShow = false
       this.sycz_boxShow1 = false
       this.operationParam.pageNum = 1;
@@ -5528,6 +5533,7 @@ export default {
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
+      console.log(11111)
       if (this.manageStation == "1") {
         this.operationParam.tunnelId = this.$cache.local.get(
           "manageStationSelect"
@@ -6014,6 +6020,8 @@ export default {
       this.operationParam_xt.operIp = "";
       this.operationParam_xt.ipaddr = ''
       this.queryParams.pageNum = 1
+      this.operationParam.pageNum = 1;
+      this.operationParam_xt.pageNum = 1;
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },

@@ -187,7 +187,13 @@
     />
 
     <!-- 添加或修改设备协议对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -347,7 +353,7 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
@@ -490,7 +496,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      let that = this
+      let that = this;
       const ids = row.id || this.ids;
       this.$modal
         .confirm("是否确认删除？")

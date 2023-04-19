@@ -780,6 +780,7 @@
     <el-dialog
       title="事件详情报告"
       :visible.sync="dialogTableVisible"
+      :close-on-click-modal="false"
       width="70%"
       class="evtInfo"
     >
@@ -1186,6 +1187,7 @@
     <!-- 视频展示 -->
     <el-dialog
       :visible.sync="picUrlDialog"
+      :close-on-click-modal="false"
       width="70%"
       title="事件视频"
       class="videoDialog"
@@ -1204,6 +1206,7 @@
       :visible.sync="dialogVisibleImg"
       width="60%"
       :before-close="handleCloseImg"
+      :close-on-click-modal="false"
     >
       <img :src="alongImgUrl" style="width: 100%" />
       <!-- <span slot="footer" class="dialog-footer">
@@ -1219,6 +1222,7 @@
       :visible.sync="dialogVisibleDevice"
       width="50%"
       :before-close="handleClose"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

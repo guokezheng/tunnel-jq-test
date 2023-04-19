@@ -176,6 +176,7 @@
       append-to-body
       class="addUserDialog"
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

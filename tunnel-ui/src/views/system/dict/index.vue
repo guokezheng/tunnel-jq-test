@@ -333,6 +333,7 @@
       width="500px"
       append-to-body
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

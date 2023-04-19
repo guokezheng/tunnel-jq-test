@@ -292,6 +292,7 @@
       width="700px"
       append-to-body
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -397,7 +398,7 @@ export default {
         businessType: undefined,
         status: undefined,
       },
-      loginStatusOptions:[],//状态
+      loginStatusOptions: [], //状态
     };
   },
   created() {
@@ -414,11 +415,11 @@ export default {
     pollFormat(row) {
       return this.selectDictLabel(this.loginStatusOptions, row);
     },
-    cancel(){
+    cancel() {
       this.open = false;
       this.$refs.tables.clearSelection();
     },
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tables.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据

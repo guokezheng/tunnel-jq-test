@@ -38,7 +38,7 @@
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
-            style="border-right:solid 1px #00C8FF;border-radius: 3px;"
+            style="border-right: solid 1px #00c8ff; border-radius: 3px"
           >
             <!-- <el-button
               slot="append"
@@ -169,6 +169,7 @@
       width="500px"
       append-to-body
       class="eqTypeDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -235,6 +236,7 @@
             class="modifyEqTypeDialog"
             :append-to-body="true"
             style="width: 600px !important; margin: 0 auto"
+            :close-on-click-modal="false"
           >
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
@@ -469,7 +471,7 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
@@ -572,7 +574,7 @@ export default {
       this.loading = true;
       this.boxShow = false;
       listType(this.queryParams).then((response) => {
-        console.log(response.rows,"列表")
+        console.log(response.rows, "列表");
         this.typeList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -670,7 +672,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      let that = this
+      let that = this;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       if ((this.fileList = [])) {
@@ -708,7 +710,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      let that = this
+      let that = this;
       const typeIds = row.typeId || this.ids;
       // const iconFileIds = row.iconFileId || this.fIds;
       this.$confirm("是否确认删除?", "警告", {
@@ -722,7 +724,7 @@ export default {
         .then(() => {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
-          console.log()
+          console.log();
         })
         .catch(function () {
           that.$refs.tableFile.clearSelection();

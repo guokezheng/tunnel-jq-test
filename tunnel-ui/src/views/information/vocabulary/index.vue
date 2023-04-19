@@ -181,7 +181,13 @@
     />
 
     <!-- 添加或修改情报板敏感字管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -272,15 +278,15 @@ export default {
   },
   created() {
     this.getList();
-    console.log(this.userName,"用户")
+    console.log(this.userName, "用户");
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id
+      return row.id;
     },
     //翻页时不刷新序号
     indexMethod(index) {
@@ -321,7 +327,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryParams");
-      this.queryParams.ids=[];
+      this.queryParams.ids = [];
       this.queryParams.word = null;
       this.queryParams.ids = [];
       this.handleQuery();
@@ -385,14 +391,15 @@ export default {
         .then(() => {
           this.handleQuery();
           this.$modal.msgSuccess("删除成功");
-        }).catch(() => {
+        })
+        .catch(() => {
           this.$refs.tableFile.clearSelection();
         });
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的敏感字管理数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的敏感字管理数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的敏感字管理数据项？";
       }
       this.queryParams.ids = this.ids.join();
@@ -409,7 +416,7 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = ''
+          this.queryParams.ids = "";
         });
     },
   },

@@ -322,6 +322,7 @@
       :before-close="cancel"
       append-to-body
       class="addRoleDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -404,6 +405,7 @@
       :visible.sync="openDataScope"
       width="500px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <el-form :model="form" label-width="80px">
         <el-form-item label="角色名称">

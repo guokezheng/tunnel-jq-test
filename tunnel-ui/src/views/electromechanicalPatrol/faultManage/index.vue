@@ -81,7 +81,7 @@
               <el-checkbox
                 :label="dict.dictLabel"
                 v-model="resultFaultEscalationType"
-              >{{ dict.dictLabel }}</el-checkbox
+                >{{ dict.dictLabel }}</el-checkbox
               >
             </el-col>
           </el-row>
@@ -100,7 +100,7 @@
               <el-checkbox
                 :label="dict.dictLabel"
                 v-model="resultFaultRemoveState"
-              >{{ dict.dictLabel }}</el-checkbox
+                >{{ dict.dictLabel }}</el-checkbox
               >
             </el-col>
           </el-row>
@@ -230,8 +230,8 @@
       >
         <template slot-scope="scope">
           <span>{{
-              getFaultEscalationType(scope.row.faultEscalationType)
-            }}</span>
+            getFaultEscalationType(scope.row.faultEscalationType)
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -250,16 +250,14 @@
           <span
             :style="{
               color:
-               getFaultStatue(scope.row.fbState) == '未发布'
+                getFaultStatue(scope.row.fbState) == '未发布'
                   ? 'yellow'
                   : '#00FF00',
             }"
-          >{{ getFaultStatue(scope.row.fbState) }}</span
+            >{{ getFaultStatue(scope.row.fbState) }}</span
           >
 
-
-
-<!--          <span>{{ getFaultStatue(scope.row.fbState) }}</span>-->
+          <!--          <span>{{ getFaultStatue(scope.row.fbState) }}</span>-->
         </template>
       </el-table-column>
 
@@ -268,11 +266,11 @@
           <span
             :style="{
               color:
-               getFalltRemoveStatue(scope.row.falltRemoveStatue) == '未消除'
+                getFalltRemoveStatue(scope.row.falltRemoveStatue) == '未消除'
                   ? 'yellow'
                   : '#00FF00',
             }"
-          >{{ getFalltRemoveStatue(scope.row.falltRemoveStatue) }}</span
+            >{{ getFalltRemoveStatue(scope.row.falltRemoveStatue) }}</span
           >
         </template>
       </el-table-column>
@@ -342,6 +340,7 @@
       width="70%"
       append-to-body
       class="hitchDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -653,6 +652,7 @@
                   class="modifyEqTypeDialog"
                   :append-to-body="true"
                   style="width: 600px !important; margin: 0 auto"
+                  :close-on-click-modal="false"
                 >
                   <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
@@ -672,24 +672,26 @@
       </div>
     </el-dialog>
 
-    <el-dialog  :title="titleHistory"
-                :visible.sync="record"
-                :before-close="close"
-                width="70%"
-                class = "hitchHistoryDialog"
+    <el-dialog
+      :title="titleHistory"
+      :visible.sync="record"
+      :before-close="close"
+      width="70%"
+      class="hitchHistoryDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-<!--      <div style="text-align: center; font-size: 18px">故障检修记录</div>-->
+      <!--      <div style="text-align: center; font-size: 18px">故障检修记录</div>-->
       <div
         class="card"
         v-show="news.length > 0"
         v-for="(item, index) in news"
         :key="index"
       >
-        <div class="card-col" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-col" style="font-size: 15px; color: #05aafd">
           <div>
             巡检时间:
             <span>{{ item.xcTime }}</span>
@@ -703,7 +705,7 @@
             <span>{{ item.userName }}</span>
           </div>
         </div>
-        <div class="card-col" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-col" style="font-size: 15px; color: #05aafd">
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -717,22 +719,26 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px; color: #05aafd">
           <div>
             设备运行状态:
             <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
-          <div class="col-test" style ="font-size: 15px;color: #05AAFD;">(检修时检测情况)</div>
+          <div class="col-test" style="font-size: 15px; color: #05aafd">
+            (检修时检测情况)
+          </div>
         </div>
-        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px; color: #05aafd">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>
           </div>
-          <div class="col-test"style ="font-size: 15px;color: #05AAFD;">(检修时检测情况)</div>
+          <div class="col-test" style="font-size: 15px; color: #05aafd">
+            (检修时检测情况)
+          </div>
         </div>
-        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px; color: #05aafd">
           现场图片:
           <div v-for="pic in item.iFileList">
             <img :src="pic.imgUrl" :title="pic.imgName" />
@@ -740,7 +746,15 @@
         </div>
       </div>
       <div v-if="news.length == 0">
-        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;font-size: 15px;color: #05AAFD;">
+        <div
+          style="
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            font-size: 15px;
+            color: #05aafd;
+          "
+        >
           暂无记录
         </div>
       </div>
@@ -830,7 +844,7 @@ export default {
       //巡查班组
       bzData: {},
       title: "",
-      titleHistory:"",
+      titleHistory: "",
       // 是否显示弹出层
       open: false,
       //故障类型
@@ -1005,7 +1019,6 @@ export default {
       this.faultStatusOptions = response.data;
     });
 
-
     //故障类型
     this.getDicts("fault_type").then((response) => {
       this.faultTypeOptions = response.data;
@@ -1042,7 +1055,7 @@ export default {
     });
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     openDialogScreen() {
@@ -1195,18 +1208,25 @@ export default {
       this.form.eqId = null;
       this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
-      if(this.form.typeId != null&&this.form.typeId !=""&&typeof(this.form.typeId) != undefined ){
+      if (
+        this.form.typeId != null &&
+        this.form.typeId != "" &&
+        typeof this.form.typeId != undefined
+      ) {
         this.disstateDevice = false;
         this.getDevices();
       }
-
     },
     //设备类型点击事件
     eqTypeGet() {
       this.form.eqId = null;
       this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
-      if(this.form.tunnelId != null&&this.form.tunnelId !=""&&typeof(this.form.tunnelId)!= undefined){
+      if (
+        this.form.tunnelId != null &&
+        this.form.tunnelId != "" &&
+        typeof this.form.tunnelId != undefined
+      ) {
         this.disstateDevice = false;
         this.getDevices();
       }
@@ -1233,7 +1253,7 @@ export default {
         faultTbtime: null,
         eqId: null,
         eqStatus: null,
-        eqRunStatus:"",
+        eqRunStatus: "",
         faultCode: null,
         faultLevel: null,
         falltRemoveStatue: null,
@@ -1352,8 +1372,7 @@ export default {
           this.disstateDevice = true;
           this.$modal.msgWarning("请先选择设备类型");
           return;
-        }
-        else {
+        } else {
           this.disstateDevice = false;
           this.getDevices();
           //$("#deviceSel").attr("pointer-events", "none");
@@ -1406,7 +1425,7 @@ export default {
         this.$message.warning("请先选择所属隧道");
         return;
       }
-      if(this.form.typeId == ""){
+      if (this.form.typeId == "") {
         this.$message.warning("请先选择设备类型");
         return;
       }

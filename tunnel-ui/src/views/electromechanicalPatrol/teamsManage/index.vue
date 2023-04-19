@@ -146,6 +146,7 @@
       width="600px"
       append-to-body
       class="addUserDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -233,6 +234,7 @@
       width="1000px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -268,7 +270,7 @@
         </el-col>
       </el-row>
 
-      <el-row >
+      <el-row>
         <el-table
           ref="tables"
           :data="userList"
@@ -350,9 +352,7 @@
         />
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button class="closeButton" @click="teamsUserCancel"
-          >关闭</el-button
-        >
+        <el-button class="closeButton" @click="teamsUserCancel">关闭</el-button>
       </div>
     </el-dialog>
     <!-- 添加用户弹窗对话框 -->
@@ -363,6 +363,7 @@
       width="800px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -591,11 +592,11 @@ export default {
   },
 
   methods: {
-    teamsUserCancel(){
+    teamsUserCancel() {
       this.teamsUserOpen = false;
       this.$refs.tableFile.clearSelection();
     },
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     getStatus(row) {
@@ -869,10 +870,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .operationDiglog {
-  .el-dialog__body{
-    padding:0 15px !important;
-    .el-col{
-      padding:0 !important;
+  .el-dialog__body {
+    padding: 0 15px !important;
+    .el-col {
+      padding: 0 !important;
     }
   }
 }

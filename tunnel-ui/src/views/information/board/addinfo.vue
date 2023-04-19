@@ -41,7 +41,7 @@
               dataForm.CONTENT
                 ? dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                     / /g,
-                    ' &nbsp'
+                    '&nbsp'
                   )
                 : ''
             "
@@ -941,7 +941,7 @@ export default {
         case 1:
           divContent2[0].style.justifyContent = "left";
           divContent2[0].style.alignItems = "center";
-          textBoard2[0].style.textAlign = "left";
+          // textBoard2[0].style.textAlign = "left";
           textBoard2[0].style.position = "static";
 
           break;
@@ -949,7 +949,7 @@ export default {
         case 2:
           divContent2[0].style.justifyContent = "center";
           divContent2[0].style.alignItems = "center";
-          textBoard2[0].style.textAlign = "center";
+          // textBoard2[0].style.textAlign = "center";
           textBoard2[0].style.position = "static";
 
           break;
@@ -957,7 +957,7 @@ export default {
         case 3:
           divContent2[0].style.justifyContent = "right";
           divContent2[0].style.alignItems = "center";
-          textBoard2[0].style.textAlign = "right";
+          // textBoard2[0].style.textAlign = "right";
           textBoard2[0].style.position = "static";
 
           break;

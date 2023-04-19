@@ -182,7 +182,7 @@
           :row-key="getRowKey"
           ref="tableFile1"
         >
-          <el-table-column type="selection" width="55" align="center" reserve-selection/>
+          <el-table-column type="selection" width="55" align="center" reserve-selection />
           <el-table-column
             type="index"
             width="70"
@@ -224,7 +224,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="状态" align="center" prop="schedulerTime">
+          <el-table-column label="状态" align="center" prop="schedulerTime" >
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.strategyState"
@@ -232,7 +232,7 @@
                 inactive-color="#ccc"
                 active-value="0"
                 inactive-value="1"
-                @change="changeStrategyState(scope.row)"
+                @change="changeStrategyState(scope.row,scope.row.index)"
               >
               </el-switch>
             </template>
@@ -814,7 +814,9 @@ export default {
   methods: {
     // 点击某一行，将其选中(表格)
     handleRowClick(row, i, a) {
-      this.$refs.tableFile1.toggleRowSelection(row);
+      if(i.label != '状态'){
+        this.$refs.tableFile1.toggleRowSelection(row);
+      }
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
@@ -883,8 +885,7 @@ export default {
       }
 
     },
-    changeStrategyState(row) {
-
+    changeStrategyState(row,index) {
       let data = {strategyId: row.id, change: row.strategyState};
       updateState(data).then((result) => {
 

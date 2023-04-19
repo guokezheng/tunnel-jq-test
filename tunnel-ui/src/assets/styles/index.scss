@@ -332,6 +332,17 @@ p {
   border: 1px solid #65BFFF !important;
   color: #fff !important;
 }
+.el-tooltip__popper{
+  max-width: 400px;
+  word-wrap: break-word;
+}
+// 导入结果弹窗
+.el-message-box__wrapper{
+  .el-message-box__message{
+    max-height: 60vh;
+    overflow: auto;
+  }
+}
 // // 输入框背景色
 // .el-input--small .el-input__inner{
 //   background-color: #F2F8FF;

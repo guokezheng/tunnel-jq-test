@@ -31,7 +31,7 @@
               class="item"
               popper-class="wb-tip"
               v-for="(item, index) in tunnelList"
-              :key="index"
+              :key="item.tunnelId"
               effect="dark"
               :content="item.tunnelLength"
               placement="top-start"
@@ -192,7 +192,7 @@
           >
             操作日志
           </el-button>
-
+     
         </div>
       </div>
       <div class="vehicleLane">
@@ -300,7 +300,7 @@
                   <div
                     class="icon-box mouseHover"
                     v-for="(item, index) in selectedIconList"
-                    :key="index"
+                    :key="item.eqId"
                     :style="{
                       left: item.position.left + 'px',
                       top: item.position.top + 'px',
@@ -454,7 +454,7 @@
                                 item.associated_device_id,
                                 'array'
                               )"
-                              :key="index"
+                              :key="item.associated_device_id"
                               :style="{
                                 color: getColorStyle(item.COLOR),
                               }"
@@ -520,7 +520,7 @@
                                 item.associated_device_id,
                                 'array'
                               )"
-                              :key="index"
+                              :key="item.associated_device_id"
                               :style="{
                                 color: getColorStyle(item.COLOR),
                               }"
@@ -615,7 +615,7 @@
             type="info"
             size="small"
             v-for="(item, index) in dictList"
-            :key="index"
+            :key="item.raw.dictCode"
             :label="item.label"
             :value="index"
             @click="displayControl(index, item.label)"
@@ -894,7 +894,7 @@
         >
           <div
             v-for="(item, index) in timStrategyList"
-            :key="index"
+            :key="item.strategy_id"
             style="width: 100%"
           >
             <div class="ledLighting">
@@ -1375,7 +1375,7 @@
           <div class="wrap">
             <el-radio-group
               v-for="(item, index) in eqTypeStateList2"
-              :key="index"
+              :key="item.state"
               v-model="batchManageForm.state"
               style="display: flex; flex-direction: column"
               @change="$forceUpdate()"
@@ -3799,7 +3799,7 @@ import comBoard from "@/views/workbench/config/components/board"; //情报板弹
 import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
 import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵弹窗
 import comSjb from "@/views/workbench/config/components/sjb"; //潜水深水泵
-import robot from "@/views/workbench/config/components/robotManagementt"; //消防水泵弹窗
+import robot from "@/views/workbench/config/components/robotManagement"; //消防水泵弹窗
 import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
 import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
 
@@ -4857,7 +4857,7 @@ export default {
         }
       }
       this.carList.set(event[0].vehicleLicense, event[0]);
-      console.log(this.carList)
+      console.log(this.carList,'this.carList')
 
       this.carList.forEach((value, key, map) => {
         console.log(value, key, map)
@@ -5012,7 +5012,7 @@ export default {
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
       console.log(dom);
-      if (dom) {
+      if (dom && that.treeShow) {
         // 如果点击的区域不在自定义dom范围
         if (!dom.contains(e.target) && that.treeShow == true) {
           that.treeShow = false;
@@ -5316,7 +5316,9 @@ export default {
 
     },
     otherClose(e) {
-      if (!this.$refs.treeBox.contains(e.target) && this.treeShow == true) this.treeShow = false;
+      if(this.treeShow == true){
+        if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+      }
     },
     treeClear() {
       for (var item of this.selectedIconList) {
@@ -5333,7 +5335,7 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      console.log(data);
+      console.log(data,"data");
       // 如果存在children，则代表是父级
       if(data.children){
         // 点击父级业务

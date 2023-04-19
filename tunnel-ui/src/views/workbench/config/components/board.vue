@@ -58,7 +58,7 @@
                         v-html="
                           scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                             / /g,
-                            ' &nbsp'
+                            '&nbsp'
                           )
                         "
                       ></span>
@@ -191,6 +191,7 @@
               @click="releaseInfo()"
               class="zancunButton"
               v-hasPermi="['workbench:dialog:save']"
+              :disabled="contentList.length == 0"
               >信息发布</el-button
             >
           </div>
@@ -243,7 +244,7 @@
                           v-html="
                             itm.tcontents[0].content
                               .replace(/\n|\r\n/g, '<br>')
-                              .replace(/ /g, ' &nbsp')
+                              .replace(/ /g, '&nbsp')
                           "
                         ></span>
                       </div>
@@ -262,7 +263,7 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       class="workbench-dialog mesModeDialog"
       title="信息模板"
       width="800px"
@@ -333,7 +334,7 @@
           </el-collapse>
         </div>
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <editInfo
       :boardEmitItem="this.boardEmitItem"
       @receiveForm="receiveForm"

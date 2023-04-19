@@ -198,7 +198,7 @@
       <el-table-column label="设备方向" align="center" prop="direction" />
 
       <el-table-column label="设备桩号" align="center" prop="pile" />
-      <el-table-column label="发布内容" align="center" prop="releaseNewContent" width="270px">
+      <el-table-column label="发布内容"  prop="releaseNewContent" width="270px">
         <template slot-scope="scope">
           <div v-for="(item,index) of scope.row.list" :key="index"
           :style="{
@@ -217,7 +217,7 @@
             v-html="
                     item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                       / /g,
-                      ' &nbsp'
+                      '&nbsp'
                     )">
           </span>
           </div>

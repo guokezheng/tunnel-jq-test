@@ -585,8 +585,10 @@ export default {
     getRowKey(row) {
       return row.id;
     },
-    handleRowClick(row){
-      this.$refs.tableFile.toggleRowSelection(row);
+    handleRowClick(row, i, a){
+      if(i.label != '状态'){
+        this.$refs.tableFile.toggleRowSelection(row);
+      }
     },
     bodyCloseMenus(e) {
       let self = this;

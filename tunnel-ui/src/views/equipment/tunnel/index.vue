@@ -358,6 +358,7 @@
       width="1500px"
       append-to-body
       class="tunnelRelationDialog"
+      :before-close="cancels"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

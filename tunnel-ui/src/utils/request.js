@@ -53,10 +53,15 @@ service.interceptors.request.use(config => {
 
 // 响应拦截器
 service.interceptors.response.use(res => {
+  
     // 未设置状态码则默认成功状态
     const code = res.data.code || 200;
     // 获取错误信息
-    const msg = errorCode[code] || res.data.msg || errorCode['default']
+    const msg = errorCode[code] || res.data.msg || errorCode['default'];
+    const data = res.data;
+    console.log(code,"codecodecode")
+    // console.log(msg,"msg")
+    // console.log(data,"data")
     if (code === 401) {
         MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
           confirmButtonText: '重新登录',
@@ -75,17 +80,24 @@ service.interceptors.response.use(res => {
         type: 'error'
       })
       return Promise.reject(new Error(msg))
-    } else if (code !== 200) {
-      Notification.error({
-        title: msg
-      })
-      return Promise.reject('error')
-    } else if (code === 900) {
+    } else if (code == 900) {
+      console.log(msg,"msgmsgmsgmsgmsgmsg")
+      let arr = msg.split(',')
+      console.log(arr,"arr")
+      let content = ''
+      for(let item of arr){
+        content += "<div style='margin-bottom:4px'>" + item + ',' + '</div>'
+      }
+      content += '发布失败，请检查后重试'
+      console.log(content,"content")
       Message({
-        message: msg,
-        type: 'error'
-      })
-      return 
+        message: content,
+        duration:0,
+        showClose: true,
+        type: "error",
+        dangerouslyUseHTMLString:true
+      });
+      return Promise.reject(new Error(msg))
     } else {
       return res.data
     }

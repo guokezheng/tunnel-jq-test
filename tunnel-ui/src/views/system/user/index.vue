@@ -270,7 +270,7 @@
 
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body class="addUserDialog">
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body class="addUserDialog" :before-close="cancel">
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -624,8 +624,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    handleRowClick(row){
-      this.$refs.tableFile.toggleRowSelection(row);
+    handleRowClick(row, i, a){
+      if(i.label != '状态'){
+        this.$refs.tableFile.toggleRowSelection(row);
+      }
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {

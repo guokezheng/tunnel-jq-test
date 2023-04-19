@@ -287,21 +287,25 @@
           <el-table-column
             label="用户名称"
             prop="userName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="用户昵称"
             prop="nickName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="所属部门"
+            align="center"
             prop="dept.deptName"
             :show-overflow-tooltip="true"
           />
           <!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
           <el-table-column
             label="手机"
+            align="center"
             prop="phonenumber"
             :show-overflow-tooltip="true"
           />
@@ -403,22 +407,26 @@
           <el-table-column
             label="用户名称"
             prop="userName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="用户昵称"
             prop="nickName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="所属部门"
             prop="dept.deptName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
           <el-table-column
             label="手机"
             prop="phonenumber"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column label="状态" align="center" prop="status">

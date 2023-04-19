@@ -442,7 +442,7 @@ export default {
       };
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){
-        this.strategyForm.direction = null;
+        params.eqDirection = null;
       }
 
       listDevices(params).then((res) => {
@@ -624,7 +624,7 @@ export default {
       };
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){
-        this.strategyForm.direction = null;
+        params.eqDirection = null;
       }
       listDevices(params).then((res) => {
         let data = res.rows;

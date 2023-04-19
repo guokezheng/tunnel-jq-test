@@ -34,7 +34,7 @@
               >
                 <el-button
                   slot="append"
-                  icon="icon-gym-Gsearch"
+                  class="searchTable"
                   @click="boxShow = !boxShow"
                 ></el-button>
               </el-input>
@@ -313,7 +313,7 @@
               >
                 <el-button
                   slot="append"
-                  icon="icon-gym-Gsearch"
+                  class="searchTable"
                   @click="boxShow1 = !boxShow1"
                 ></el-button>
               </el-input>

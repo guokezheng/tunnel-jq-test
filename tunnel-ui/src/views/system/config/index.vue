@@ -33,7 +33,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="config_boxShow = !config_boxShow"
             ></el-button>
           </el-input>

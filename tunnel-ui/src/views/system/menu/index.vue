@@ -21,7 +21,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="menu_boxShow = !menu_boxShow"
             ></el-button>
           </el-input>

@@ -222,6 +222,10 @@
     }
     // 联控策略弹窗
     .celueDialog,.strategyDialog{
+      .el-dialog__body{
+        max-height: 70vh;
+        overflow: auto;
+      }
       .menu{
         background-color: #034A77 !important;
       }
@@ -309,11 +313,11 @@
   }
   .el-dialog{
     background-color: #00152B !important;
-    border-bottom: solid 1px white;
+    border-bottom: solid 2px white;
     border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)1 10;
     border-left: solid 1px rgba($color: #0198FF, $alpha: 0.8);
     border-right: solid 1px rgba($color: #0198FF, $alpha: 0.8);
-    border-top: solid 1px rgba($color: #0198FF, $alpha: 0.8);
+    border-top: solid 2px rgba($color: #0198FF, $alpha: 0.8);
     .el-dialog__headerbtn {
         top: 6px;
         background: url(../../assets/cloudControl/closeIcon.png) left no-repeat;
@@ -1842,11 +1846,11 @@
     }
     .el-dialog{
       background-color: #01162C;
-      border-bottom: solid 1px white;
+      border-bottom: solid 2px white;
       border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)1 10;
       border-left: solid 1px rgba($color: #0198FF, $alpha: 0.8);
       border-right: solid 1px rgba($color: #0198FF, $alpha: 0.8);
-      border-top: solid 1px rgba($color: #0198FF, $alpha: 0.8);
+      border-top: solid 2px rgba($color: #0198FF, $alpha: 0.8);
     }
     .dialogLine{
 

@@ -32,7 +32,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -2073,6 +2073,7 @@ export default {
     handleQuery() {
       // this.queryParams.pageNum = 1;
       this.$refs.planTable.clearSelection();
+      this.queryParams.pageNum = 1
       this.getList();
     },
     /** 重置按钮操作 */

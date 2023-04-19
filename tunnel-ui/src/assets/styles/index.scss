@@ -305,6 +305,14 @@ p {
 //   max-height: 78vh;
 //   overflow: auto;
 // }
+// 右上角搜索icon
+.searchTable{
+  width: 30px;
+  height: 30px;
+  background-image: url(../icons/searchTable.png);
+  background-position: center;
+  background-repeat: no-repeat;
+}
 .el-table{
   caret-color: rgba(0,0,0,0);
   user-select: none; 

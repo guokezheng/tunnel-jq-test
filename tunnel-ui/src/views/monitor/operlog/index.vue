@@ -22,7 +22,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="rz_boxShow = !rz_boxShow"
             ></el-button>
           </el-input>

@@ -192,7 +192,7 @@
           >
             操作日志
           </el-button>
-
+     
         </div>
       </div>
       <div class="vehicleLane">
@@ -450,16 +450,16 @@
                             }"
                           >
                             <span
-                              v-for="(item, index) in getBoardStyle(
+                              v-for="itm in getBoardStyle(
                                 item.associated_device_id,
                                 'array'
                               )"
-                              :key="item.associated_device_id"
+                              :key="itm.associated_device_id"
                               :style="{
-                                color: getColorStyle(item.COLOR),
+                                color: getColorStyle(itm.COLOR),
                               }"
                               style="padding-top: 10px"
-                              >{{ item.CONTENT }}</span
+                              >{{ itm.CONTENT }}</span
                             >
                           </div>
                         </div>
@@ -516,16 +516,16 @@
                             }"
                           >
                             <span
-                              v-for="(item, index) in getBoardStyle(
+                              v-for="itm in getBoardStyle(
                                 item.associated_device_id,
                                 'array'
                               )"
-                              :key="item.associated_device_id"
+                              :key="itm.associated_device_id"
                               :style="{
-                                color: getColorStyle(item.COLOR),
+                                color: getColorStyle(itm.COLOR),
                               }"
                               style="padding-top: 10px"
-                              >{{ item.CONTENT }}</span
+                              >{{ itm.CONTENT }}</span
                             >
                           </div>
                         </div>
@@ -1491,7 +1491,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <el-tabs v-model="operationActive">
+      <el-tabs v-model="operationActive" @tab-click="handleTabClick">
         <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
         <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
       </el-tabs>
@@ -1518,7 +1518,7 @@
               <el-button
                 slot="append"
                 size="small"
-                icon="icon-gym-Gsearch"
+                class="searchTable"
                 @click="syxt_boxShow = !syxt_boxShow"
                 style="transform: translateX(20px)"
               ></el-button>
@@ -1555,7 +1555,7 @@
               v-model="dateRange"
               size="small"
               style="width: 100%"
-              value-format="yyyy-MM-dd HH-mm-ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
               type="datetimerange"
               range-separator="-"
               start-placeholder="开始日期"
@@ -1638,7 +1638,7 @@
             >
               <el-button
                 slot="append"
-                icon="icon-gym-Gsearch"
+                class="searchTable"
                 @click="sycz_boxShow1 = !sycz_boxShow1"
                 style="transform: translateX(-20px)"
               ></el-button>
@@ -1709,7 +1709,7 @@
               v-model="dateRange1"
               size="small"
               style="width: 252px"
-              value-format="yyyy-MM-dd HH-mm-ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
               type="datetimerange"
               range-separator="-"
               start-placeholder="开始日期"
@@ -1808,25 +1808,26 @@
         :key="1"
       >
         <!-- <el-table-column type="selection" align="center" /> -->
-        <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+        <el-table-column type="index" :index="indexMethod" label="序号" width="50" align="center"></el-table-column>
         <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
         <el-table-column
           label="用户名称"
           align="center"
           prop="userName"
-          width="100"
+          width="70"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="登录地址"
           align="center"
           prop="ipaddr"
-          width="130"
+          width="100"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="登录地点"
           align="center"
+          width="70"
           prop="loginLocation"
           :show-overflow-tooltip="true"
         />
@@ -1834,29 +1835,35 @@
           label="浏览器"
           align="center"
           prop="browser"
+          width="100"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="操作系统"
           align="center"
           prop="os"
-          width="130"
         />
-        <el-table-column label="登录状态" align="center" prop="status">
+        <el-table-column label="登录状态" align="center" prop="status" width="80">
           <template slot-scope="scope">
-            <dict-tag
+            <!-- <dict-tag
               :options="dict.type.sys_common_status"
               :value="scope.row.status"
-            />
+            /> -->
+            <span
+            :style="{
+              color: scope.row.status == '0' ? '#00FF00' : 'red',
+            }"
+            >{{ pollFormat(scope.row.status) }}</span
+          >
           </template>
         </el-table-column>
-        <el-table-column label="操作信息" align="center" prop="msg" />
+        <el-table-column label="操作信息" align="center" prop="msg" width="80"/>
         <el-table-column
           label="登录日期"
           align="center"
           prop="loginTime"
           sortable
-          width="180"
+          width="150"
         >
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.loginTime) }}</span>
@@ -1874,11 +1881,12 @@
         :key="1"
       >
         <!-- <el-table-column type="selection" align="center" /> -->
-        <el-table-column type="index" :index="indexMethod2" label="序号" width="68" align="center"></el-table-column>
+        <el-table-column type="index" :index="indexMethod2" label="序号" width="50" align="center"></el-table-column>
         <el-table-column
           label="隧道名称"
           align="center"
           prop="tunnelName.tunnelName"
+          width="90"
         />
         <el-table-column
           label="设备类型"
@@ -1890,8 +1898,9 @@
           label="操作状态"
           align="center"
           prop="stateName.stateName"
+          width="80"
         />
-        <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat"/>
+        <el-table-column label="控制方式" align="center" prop="controlType" width="80" :formatter="controlTypeFormat"/>
         <el-table-column label="操作结果" align="center" prop="state" />
         <el-table-column label="操作地址" align="center" prop="operIp" />
         <el-table-column
@@ -3204,7 +3213,7 @@
             >
               <el-button
                 slot="append"
-                icon="icon-gym-Gsearch"
+                class="searchTable"
                 @click="syxt_boxShow2 = !syxt_boxShow2"
                 style="transform: translateX(-20px)"
               ></el-button>
@@ -3232,6 +3241,21 @@
                 :label="item.tunnelName"
                 :value="item.tunnelId"
               />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="方向" prop="direction">
+            <el-select
+              v-model="queryParams.direction"
+              placeholder="请选择方向"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="(item, index) in directionOptions"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="策略类型" prop="strategyType">
@@ -3275,7 +3299,7 @@
             >
               <el-button
                 slot="append"
-                icon="icon-gym-Gsearch"
+                class="searchTable"
                 @click="sycz_boxShow3 = !sycz_boxShow3"
                 style="transform: translateX(-20px)"
               ></el-button>
@@ -3871,6 +3895,7 @@ export default {
 
   data() {
     return {
+      loginStatusOptions:[],
       timingStrategyDisabled:false,
       videoNoPic1:false,
       videoNoPic2:false,
@@ -4037,7 +4062,8 @@ export default {
       tunnelData: [],
       //所属隧道
       eqTunnelData: {},
-
+      // 设备方向字典
+      directionOptions: [],
       setoptions: {
         // 时间不能大于当前时间
         disabledDate(time) {
@@ -4057,6 +4083,7 @@ export default {
         tunnelId: null,
         userName: null,
         eqId: null,
+        direction:null,
         /* eqName: null, */
         code: null,
         cmd: null,
@@ -4653,7 +4680,9 @@ export default {
       console.log(data, "方向");
       this.directionList = data.data;
     });
-
+    this.getDicts("sys_common_status").then((response) => {
+      this.loginStatusOptions = response.data;
+    });
     // this.flvPlayer()
     this.trafficFlowLane();
     this.getEqTypeStateIcon();
@@ -4709,6 +4738,12 @@ export default {
     getVehicleSelectList({}).then((response) => {
       console.log(response, "车辆类型");
       this.vehicleTypeList = response;
+    });
+
+    this.getDicts("sd_strategy_direction").then((response) => {
+      response.data.forEach((item) => {
+        this.directionOptions.push(item);
+      });
     });
     this.getTunnelState();
     // this.carchange();
@@ -5049,6 +5084,58 @@ export default {
   },
 
   methods: {
+    pollFormat(row) {
+      return this.selectDictLabel(this.loginStatusOptions, row);
+    },
+    // 参数timer是过去的n个小时
+    getPastTime() {
+      //alert(this.timeFormat(new Date(new Date().setHours(0, 0, 0, 0)).getTime()));
+      // 获取过去的时间
+      //const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
+      //获取当天0点时间
+      const lastTime = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
+      const startTime = this.timeFormat(lastTime);
+      // 当天24点时间
+      let time = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1).getTime();
+      const endTime = this.timeFormat(time);
+      return [startTime, endTime];
+
+    },
+
+    //时间生成并处理
+    timeFormat(time) {
+      // 对应的方法
+      const timeType = [
+        "getFullYear",
+        "getMonth",
+        "getDate",
+        "getHours",
+        "getMinutes",
+        "getSeconds"
+      ];
+      // 分隔符
+      const separator = {
+        getFullYear: "-",
+        getMonth: "-",
+        getDate: " ",
+        getHours: ":",
+        getMinutes: ":",
+        getSeconds: ""
+      };
+      let resStr = "";
+      for (let i = 0; i < timeType.length; i++) {
+        const element = timeType[i];
+        let resTime = new Date(time)[element]();
+        // 获取月份的要+1
+        resTime = element == "getMonth" ? resTime + 1 : resTime;
+        // 小于10，前面加0
+        resTime = resTime > 9 ? resTime : "0" + resTime;
+        resStr = resStr + resTime + separator[element];
+      }
+      return resStr;
+    },
+
+
     changeEndTime(start,end,index){
       console.log(start,end,"start,end")
       let date = new Date();
@@ -5452,7 +5539,6 @@ export default {
     handleChangePhone(num) {},
     // 操作日志 搜索
     handleQueryOperationParam() {
-      console.log(22222222)
       this.syxt_boxShow = false
       this.sycz_boxShow1 = false
       this.operationParam.pageNum = 1;
@@ -5460,24 +5546,22 @@ export default {
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
-      console.log(11111)
       if (this.manageStation == "1") {
         this.operationParam.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
       }
       this.loading = true;
-      // if ( inx == 'xitong' ) {
-      console.log(this.operationParam, "this.queryParams");
+      if ( inx == 'xitong' ) {
       list(this.addDateRange(this.operationParam_xt, this.dateRange)).then(
         (response) => {
           console.log(response, "系统日志");
           this.operationList1 = response.rows;
           this.total1 = response.total;
-          // this.loading = false;
+          this.loading = false;
         }
       );
-      // } else if (inx == 'caozuo' ) {
+      } else if (inx == 'caozuo' ) {
 
       listLog(this.addDateRange(this.operationParam, this.dateRange1)).then(
         (response) => {
@@ -5487,7 +5571,7 @@ export default {
           this.loading = false;
         }
       );
-      // }
+      }
     },
     carShowChange(val) {
       debugger
@@ -5928,13 +6012,14 @@ export default {
     // },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
-      this.dateRange1 = [];
+      this.dateRange = this.getPastTime();
+      this.dateRange1 = this.getPastTime();
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
 
       this.queryParams.strategyName = "";
       this.queryParams.tunnelId = "";
+      this.queryParams.direction = null;
       this.queryParams.strategyType = "";
       this.operationParam.ipaddr = "";
       this.operationParam.status = null;
@@ -5945,9 +6030,6 @@ export default {
       this.operationParam_xt.status = null;
       this.operationParam_xt.operIp = "";
       this.operationParam_xt.ipaddr = ''
-      this.queryParams.pageNum = 1
-      this.operationParam.pageNum = 1;
-      this.operationParam_xt.pageNum = 1;
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },
@@ -8840,6 +8922,19 @@ export default {
       this.handleQueryOperationParam()
       this.handlestrategyQuery();
     },
+    //系统日志操作日志tab切换
+    handleTabClick(tab,event){
+      if(tab.name == 'xitong'){
+        // 系统日志
+        this.dateRange = this.getPastTime();
+        this.getOperationList("xitong");
+      }else{
+        // 操作日志
+        this.dateRange1 = this.getPastTime();
+        this.getOperationList("caozuo");
+
+      }
+    },
     // 关闭控制策略对话框
     strategyCancel() {
       this.strategyVisible = false;
@@ -8875,8 +8970,8 @@ export default {
       // this.$router.push({
       //   name: "OperationLog",
       // });
-      this.dateRange = [];
-      this.dateRange1 = [];
+      this.dateRange = this.getPastTime();
+      this.dateRange1 = this.getPastTime();
       this.title = "操作日志";
       this.operationActive = 'xitong';
       this.operationLogDialog = true;

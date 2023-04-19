@@ -28,7 +28,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="wz_boxShow = !wz_boxShow"
             ></el-button>
           </el-input>

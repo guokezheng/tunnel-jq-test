@@ -28,7 +28,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="task_boxShow = !task_boxShow"
             ></el-button>
           </el-input>

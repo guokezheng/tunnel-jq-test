@@ -23,7 +23,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="device_boxShow = !device_boxShow"
             ></el-button>
           </el-input>
@@ -1590,7 +1590,6 @@ export default {
       // const response = getList()
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
-        debugger
         this.form.tunnelId = response.data.tunnelId;
         this.form.typeId = response.data.typeId;
         this.getDevices();

@@ -7,7 +7,7 @@
           v-hasPermi="['system:teams:add']"
           size="small"
           @click="handleAdd()"
-        >新增
+          >新增
         </el-button>
         <el-button
           type="primary"
@@ -16,7 +16,7 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['system:teams:export']"
-        >导出</el-button
+          >导出</el-button
         >
         <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
@@ -35,7 +35,7 @@
           >
             <!--            <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
 
             ></el-button>-->
           </el-input>
@@ -92,7 +92,7 @@
             :style="{
               color: scope.row.status == '0' ? '#00FF00' : 'red',
             }"
-          >{{ getStatus(scope.row.status) }}</span
+            >{{ getStatus(scope.row.status) }}</span
           >
         </template>
       </el-table-column>
@@ -111,20 +111,20 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
-          >修改</el-button
+            >修改</el-button
           >
           <el-button
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
-          >删除</el-button
+            >删除</el-button
           >
           <el-button
             size="mini"
             style="margin-left: 10px"
             class="tableBlueButtton"
             @click="handleAuthUser(scope.row)"
-          >包含用户</el-button
+            >包含用户</el-button
           >
         </template>
       </el-table-column>
@@ -213,7 +213,7 @@
                   v-for="dict in dict.type.sys_normal_disable"
                   :key="dict.value"
                   :label="dict.value"
-                >{{ dict.label }}</el-radio
+                  >{{ dict.label }}</el-radio
                 >
               </el-radio-group>
             </el-form-item>
@@ -243,13 +243,13 @@
       <el-row :gutter="20" style="margin: 10px 0px 6px; display: flex">
         <el-col>
           <el-button size="small" @click="openSelectTeamsUser"
-          >添加用户
+            >添加用户
           </el-button>
           <el-button
             size="small"
             :disabled="multiple"
             @click="cancelAuthUserAll"
-          >批量取消</el-button
+            >批量取消</el-button
           >
           <el-button size="small" @click="resetQueryUser">刷新</el-button>
         </el-col>
@@ -318,7 +318,7 @@
                 :style="{
                   color: scope.row.status == '0' ? '#00FF00' : 'red',
                 }"
-              >{{ getStatus(scope.row.status) }}</span
+                >{{ getStatus(scope.row.status) }}</span
               >
             </template>
           </el-table-column>
@@ -338,7 +338,7 @@
                 size="small"
                 class="tableDelButtton"
                 @click="cancelAuthUser(scope.row)"
-              >取消</el-button
+                >取消</el-button
               >
             </template>
           </el-table-column>
@@ -440,7 +440,7 @@
                 :style="{
                   color: scope.row.status == '0' ? '#00FF00' : 'red',
                 }"
-              >{{ getStatus(scope.row.status) }}</span
+                >{{ getStatus(scope.row.status) }}</span
               >
             </template>
           </el-table-column>
@@ -460,10 +460,10 @@
       </el-row>
       <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="handleSelectUser"
-        >确 定</el-button
+          >确 定</el-button
         >
         <el-button class="closeButton" @click="teamsUserSelect = false"
-        >取 消</el-button
+          >取 消</el-button
         >
       </div>
     </el-dialog>

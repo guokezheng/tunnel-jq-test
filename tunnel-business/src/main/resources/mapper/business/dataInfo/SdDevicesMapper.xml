@@ -664,6 +664,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
+            <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
         </where>
         order by a.create_time desc, a.update_time desc
     </select>
@@ -1171,6 +1172,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqType != null  and eqType != ''">and a.eq_type = #{eqType}</if>
             <if test="eqDirection != null and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
+            <if test="externalDeviceId != null  and externalDeviceId != ''">and a.external_device_id = #{externalDeviceId}</if>
         </where>
     </select>
+
 </mapper>

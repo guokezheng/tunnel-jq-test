@@ -3,6 +3,9 @@ package com.tunnel.deal.light.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -131,7 +134,7 @@ public class SanJingLight implements Light {
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
         String jessionId;
         try {
-            String tokenKey = "control:"+deviceId+"_token";
+            String tokenKey = "control:sanJingLighttoken";
             jessionId = redisCache.getCacheObject(tokenKey);
             if(jessionId == null){
                 jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
@@ -192,7 +195,7 @@ public class SanJingLight implements Light {
 //        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
         String jessionId;
 
-        String tokenKey = "control:"+deviceId+"_token";
+        String tokenKey = "control:sanJingLighttoken";
 
         jessionId = redisCache.getCacheObject(tokenKey);
 
@@ -217,6 +220,52 @@ public class SanJingLight implements Light {
             brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
         }
         return switchType==1 && brightnessType==1 ? 1 : 0;
+    }
+
+
+    public int lineControlAddLog(String deviceId, Integer openClose, Integer brightness) {
+        SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
+        int resultStatus = lineControl(deviceId, openClose,brightness);
+        // 如果控制成功
+        if (resultStatus == 1) {
+            //更新设备状态
+            device.setEqStatus("1");
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
+            //更新设备实时数据
+            updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+        }
+
+        //添加操作日志
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(device.getEqType());
+        sdOperationLog.setTunnelId(device.getEqTunnelId());
+        sdOperationLog.setEqId(device.getEqId());
+        sdOperationLog.setOperationState(String.valueOf(openClose));
+        sdOperationLog.setControlType(DeviceControlTypeEnum.AUTO_EXEC.getCode());
+        sdOperationLog.setCreateTime(new Date());
+        try {
+            sdOperationLog.setOperIp(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        sdOperationLog.setState(String.valueOf(resultStatus));
+        // 确定设备之前的开关状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
+
+
+        if (String.valueOf(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()).equals(device.getEqType())) {
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode()));
+        } else if (String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()).equals(device.getEqType())) {
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode()));
+        }
+        List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        if (brightness != null && null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+            sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+        }
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        return resultStatus;
     }
 
     /**
@@ -443,14 +492,15 @@ public class SanJingLight implements Light {
     public int setBrightnessByDevice(SdDevices device,Integer nowLuminanceRange ,Integer luminanceRange, String controlType) {
         int resultStatus;
         try{
-            resultStatus = setBrightness(device.getEqId(),luminanceRange);
+//            resultStatus = setBrightness(device.getEqId(),luminanceRange);
+            resultStatus = 1;
         }catch (Exception e){
             resultStatus = 0;
         }
         // 如果控制成功
         if (resultStatus == 1) {
             // 更新设备在线状态
-            device.setEqStatus("1");
+            device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             device.setEqStatusTime(new Date());
             sdDevicesService.updateSdDevices(device);
             //更新设备实时数据

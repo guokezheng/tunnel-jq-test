@@ -150,11 +150,6 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 //            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
 //        }
 //
-        //自动模式 节能模式  先暂不使用。
-        if(true){
-            return;
-        }
-
         //单车数据
         //增加  模式功能。根据选择不同模式 。做出响应策略。
         // 当前模式为自动模式时，根据过车信息来进行控制，当前加强照明。实现车来灯亮，车走灯灭
@@ -326,28 +321,6 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         sdDevices.setEqType(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode());
         sdDevices.setItemId(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
         List<SdDevices> deviceIds = sdDevicesMapper.selectSdDevicesDataByParam(sdDevices);
-
-        Iterator<SdDevices> iterator = deviceIds.iterator();
-        while (iterator.hasNext()) {
-            SdDevices param = iterator.next();
-            //查看当前加强照明设备开启状态
-            SdDeviceData sdParam = new SdDeviceData();
-            sdParam.setItemId((long)DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
-            sdParam.setDeviceId(param.getEqId());
-            List<SdDeviceData> list = sdDeviceDataMapper.selectSdDeviceDataList(sdParam);
-            //查看当前设备是否存在开启状态
-            if(list == null ||list.size()<=0){
-                iterator.remove();
-            }
-            //获取开启状态
-            String status = list.get(0).getData();
-            //当前设备状态是否为关闭
-            if("2".equals(status)){
-                log.info("当前设备【{}】状态为关闭状态无法控制。",param.getEqId());
-                iterator.remove();
-            }
-        }
-
         //推送加强照明
         int nowTrafficFlow;
         //是否开启车流量模式

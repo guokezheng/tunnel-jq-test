@@ -164,7 +164,7 @@ public class SanJingLight implements Light {
             //包含“发送成功"就可以
             responseBody = response.body().string();
         } catch (IOException e) {
-            logger.info("加强照明调光功能异常，请联系管理员。");
+            logger.error("加强照明调光功能异常，请联系管理员。");
             return 0;
         }
         return responseBody.contains("发送成功") ? 1 : 0;
@@ -494,6 +494,7 @@ public class SanJingLight implements Light {
         try{
             resultStatus = setBrightness(device.getEqId(),luminanceRange);
         }catch (Exception e){
+            e.printStackTrace();
             resultStatus = 0;
         }
         // 如果控制成功

@@ -195,7 +195,6 @@ public class LightFixedTimeTask {
                             }
                         }
                     }
-                    break;
                 }
             } catch (ParseException e) {
                 e.printStackTrace();

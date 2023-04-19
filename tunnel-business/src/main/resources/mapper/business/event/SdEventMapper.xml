@@ -139,7 +139,7 @@
                                 LEFT JOIN sys_dict_data type ON type.dict_value = fault.fault_type
                                 AND type.dict_type = 'fault_type'
                         WHERE
-                            fault.fault_status = '0'
+                            fault.fault_status = '0' and fault.fallt_remove_statue = '1'
                           AND TO_DAYS( fault.fault_fxtime ) = TO_DAYS( NOW( ) )
                     ) b
             ) AS MERGE
@@ -153,9 +153,9 @@
                                                                                                                                                                                                                                                                          left join sd_devices devices on devices.eq_id = fault.eq_id
                                                                                                                                                                                                                                                                          left join sys_dict_data data on data.dict_value = devices.eq_direction and data.dict_type='sd_direction'
                                                                                                                                                                                                                                                                          left join sys_dict_data type on type.dict_value = fault.fault_type and type.dict_type='fault_type'
-        where fault.fault_status = '0' and TO_DAYS(fault.fault_fxtime) = TO_DAYS(NOW())
+        where fault.fault_status = '0' and fault.fallt_remove_statue = '1' and TO_DAYS(fault.fault_fxtime) = TO_DAYS(NOW())
         ORDER BY
-            fault.create_time DESC limit ${subIndex}
+            fault.fault_fxtime DESC limit ${subIndex}
     </select>
 
     <select id = "getEventUntreatedNum" resultType="java.lang.Integer">

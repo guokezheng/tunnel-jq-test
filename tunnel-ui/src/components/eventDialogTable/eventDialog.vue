@@ -72,7 +72,7 @@
           <div style="padding:15px 0;">实时视频<span>(事发位置最近的监控视频)</span></div>
           <div class="picBox">
             <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
-              <el-carousel-item v-for="(item, index) in videoList" :key="index" >
+              <el-carousel-item v-for="(item, index) in videoList" :key="index" v-if="item.liveUrl != null">
                 <videoPlayer
                   v-show="item.liveUrl != null && item.liveUrl != ''"
                   :rtsp="item.liveUrl"
@@ -1078,8 +1078,10 @@ export default {
                 if (response.code == 200) {
                   console.log(response.data,"视频视频视频视频视频");
                   // return false;
-                  this.videoList.push(response.data);
-                  this.cameraPlayer = true;
+                  if(response.data != null){
+                    this.videoList.push(response.data);
+                    this.cameraPlayer = true;
+                  }
                 }
               });
             }

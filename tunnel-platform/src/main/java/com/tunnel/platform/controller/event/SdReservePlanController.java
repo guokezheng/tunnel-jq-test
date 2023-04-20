@@ -95,8 +95,8 @@ public class SdReservePlanController extends BaseController {
     @Log(title = "预案信息")
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
-    public Result addReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
-        return Result.toResult(sdReservePlanService.insertSdReservePlan(file, sdReservePlan));
+    public AjaxResult addReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
+        return sdReservePlanService.insertSdReservePlan(file, sdReservePlan);
     }
 
     /**
@@ -130,8 +130,8 @@ public class SdReservePlanController extends BaseController {
     @Log(title = "预案信息")
     @PostMapping(value = "/updateReservePlan")
     @ApiOperation("修改预案信息")
-    public Result updateReservePlan(MultipartFile[] file,SdReservePlan sdReservePlan) {
-        return Result.toResult(sdReservePlanService.updateSdReservePlan(file, sdReservePlan, sdReservePlan.getRemoveIds()));
+    public AjaxResult updateReservePlan(MultipartFile[] file,SdReservePlan sdReservePlan) {
+        return sdReservePlanService.updateSdReservePlan(file, sdReservePlan, sdReservePlan.getRemoveIds());
     }
 
 
@@ -217,10 +217,9 @@ public class SdReservePlanController extends BaseController {
 
     @Log(title = "预案一键执行")
     @GetMapping(value = "/implementPlan")
-    public Result implementPlan(@RequestParam("planId") String planId,
+    public AjaxResult implementPlan(@RequestParam("planId") String planId,
                                 @RequestParam("eventId") Long eventId) {
-        int result = sdStrategyService.implementPlan(planId,eventId);
-        return Result.toResult(result);
+        return sdStrategyService.implementPlan(planId,eventId);
     }
 
     @Log(title = "环节执行")

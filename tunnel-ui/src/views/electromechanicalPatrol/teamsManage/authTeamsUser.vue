@@ -25,7 +25,7 @@
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请输入用户昵称、手机号码"
+            placeholder="请输入用户昵称、手机号码,回车搜索"
             v-model="queryParams.userName"
             clearable
             size="small"
@@ -38,7 +38,7 @@
 
 <!--            <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
 
             ></el-button>-->
           </el-input>
@@ -49,10 +49,10 @@
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="allTable" height="62vh">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-      <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
-      <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
-      <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
-      <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
+      <el-table-column label="用户名称" prop="userName" align="center" :show-overflow-tooltip="true" />
+      <el-table-column label="用户昵称" prop="nickName" align="center" :show-overflow-tooltip="true" />
+      <el-table-column label="邮箱" prop="email" align="center" :show-overflow-tooltip="true" />
+      <el-table-column label="手机" prop="phonenumber" align="center" :show-overflow-tooltip="true" />
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>

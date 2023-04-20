@@ -32,7 +32,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -286,6 +286,7 @@
       width="500px"
       append-to-body
       :before-close="handleFileClose"
+      :close-on-click-modal="false"
     >
       <!-- <el-drawer
       :before-close="handleFileClose"
@@ -326,6 +327,7 @@
       :visible.sync="handleStrategyVisible"
       append-to-body
       width="60%"
+      :close-on-click-modal="false"
     >
       <div style="width: 100%; height: 31.25rem; overflow: auto">
         <el-table
@@ -372,6 +374,7 @@
       :visible.sync="addStrategyVisible"
       append-to-body
       width="60%"
+      :close-on-click-modal="false"
     >
       <div style="width: 100%; height: 31.25rem; overflow: auto">
         <el-table
@@ -411,7 +414,7 @@
         <el-button @click="addStrategyCancel">关 闭</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="strategyDialog" title="相关策略" width="30%">
+    <el-dialog :visible.sync="strategyDialog" title="相关策略" width="30%" :close-on-click-modal="false">
       <div
         v-for="(item, index) of str_arr"
         :key="index"
@@ -429,6 +432,7 @@
       :visible.sync="dialogFormVisible"
       width="500px"
       :before-close="cancelsubmitUpload"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -581,12 +585,13 @@
 
     <!-- 配置策略 -->
     <el-dialog
-      :before-close="handleClose"
+      :before-close="closeStrategy"
       title="联控流程"
       :visible.sync="strategyVisible"
       append-to-body
       width="78%"
       class="strategy-dialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -1352,6 +1357,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
+      this.$refs.planTable.clearSelection();
       //this.handleQuery();
       this.resetReservePlanDrawForm();
     },
@@ -1563,6 +1569,7 @@ export default {
         if (res.code === 200) {
           this.strategyVisible = false;
           this.$modal.msgSuccess(res.msg);
+          this.$refs.planTable.clearSelection();
           this.getList();
         }
       });
@@ -2046,6 +2053,7 @@ export default {
     //关闭drawer
     handleFileClose(done) {
       done();
+      this.$refs.planTable.clearSelection();
     },
     /** 查询预案信息列表 */
     getList() {
@@ -2065,6 +2073,7 @@ export default {
     handleQuery() {
       // this.queryParams.pageNum = 1;
       this.$refs.planTable.clearSelection();
+      this.queryParams.pageNum = 1
       this.getList();
     },
     /** 重置按钮操作 */

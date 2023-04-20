@@ -19,14 +19,17 @@ import java.util.Random;
 @Component("WorkbenchIncidentTask")
 public class WorkbenchIncidentTask {
 
-//    @Scheduled(fixedDelay=3000)
+    @Scheduled(fixedDelay=500)
     public void incidentNumTask(){
+        long l = System.currentTimeMillis();
         try{
             Integer eventUntreatedNum = SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum();
-            System.out.print("事件总数"+eventUntreatedNum);
             WebSocketService.broadcast("eventUntreatedNum", eventUntreatedNum);
         }catch (Exception e){
             e.printStackTrace();
         }
+        long l1 = System.currentTimeMillis();
+        System.out.print(l1-l);
+
     }
 }

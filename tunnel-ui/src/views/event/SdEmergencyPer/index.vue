@@ -49,7 +49,7 @@
                 >
                   <el-button
                     slot="append"
-                    icon="icon-gym-Gsearch"
+                    class="searchTable"
                     @click="ry_boxShow = !ry_boxShow"
                   ></el-button>
                 </el-input>
@@ -182,6 +182,7 @@
         append-to-body
         class="addUserDialog"
         :before-close="cancel"
+        :close-on-click-modal="false"
       >
         <div class="dialogStyleBox">
           <div class="dialogLine"></div>
@@ -443,7 +444,7 @@ export default {
         createTime: null,
         updateBy: null,
       };
-      this.getList();
+      //this.getList();
       this.resetForm("form");
     },
     /** 搜索按钮操作 */

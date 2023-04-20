@@ -21,7 +21,7 @@
               max-height="550"
               v-loading="loading"
             >
-              <el-table-column align="center" width="645">
+              <el-table-column align="left" width="645">
                 <template slot-scope="scope">
                   <div class="contentBox">
                     <div
@@ -58,7 +58,7 @@
                         v-html="
                           scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                             / /g,
-                            ' &nbsp'
+                            '&nbsp'
                           )
                         "
                       ></span>
@@ -191,6 +191,7 @@
               @click="releaseInfo()"
               class="zancunButton"
               v-hasPermi="['workbench:dialog:save']"
+              :disabled="contentList.length == 0"
               >信息发布</el-button
             >
           </div>
@@ -243,7 +244,7 @@
                           v-html="
                             itm.tcontents[0].content
                               .replace(/\n|\r\n/g, '<br>')
-                              .replace(/ /g, ' &nbsp')
+                              .replace(/ /g, '&nbsp')
                           "
                         ></span>
                       </div>
@@ -262,7 +263,7 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       class="workbench-dialog mesModeDialog"
       title="信息模板"
       width="800px"
@@ -333,7 +334,7 @@
           </el-collapse>
         </div>
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <editInfo
       :boardEmitItem="this.boardEmitItem"
       @receiveForm="receiveForm"
@@ -646,7 +647,7 @@ export default {
               this.$modal.msgSuccess("发布成功");
               console.log(response, "返回结果");
             }
-          );
+          )
         })
         .catch(() => {
           this.$message({

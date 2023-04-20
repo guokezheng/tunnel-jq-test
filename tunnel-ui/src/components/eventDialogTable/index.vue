@@ -500,6 +500,7 @@ export default {
     // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
     margin: 0 !important;
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
+    background-repeat: no-repeat;
     // background-color: rgba($color: #00152b, $alpha: 0.6) !important;
 
   }

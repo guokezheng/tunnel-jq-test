@@ -23,7 +23,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="device_boxShow = !device_boxShow"
             ></el-button>
           </el-input>
@@ -81,7 +81,7 @@
               <el-checkbox
                 :label="dict.dictLabel"
                 v-model="resultFaultEscalationType"
-              >{{ dict.dictLabel }}</el-checkbox
+                >{{ dict.dictLabel }}</el-checkbox
               >
             </el-col>
           </el-row>
@@ -100,7 +100,7 @@
               <el-checkbox
                 :label="dict.dictLabel"
                 v-model="resultFaultRemoveState"
-              >{{ dict.dictLabel }}</el-checkbox
+                >{{ dict.dictLabel }}</el-checkbox
               >
             </el-col>
           </el-row>
@@ -230,8 +230,8 @@
       >
         <template slot-scope="scope">
           <span>{{
-              getFaultEscalationType(scope.row.faultEscalationType)
-            }}</span>
+            getFaultEscalationType(scope.row.faultEscalationType)
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -250,25 +250,28 @@
           <span
             :style="{
               color:
-               getFaultStatue(scope.row.fbState) == '未发布'
+                getFaultStatue(scope.row.fbState) == '未发布'
                   ? 'yellow'
                   : '#00FF00',
             }"
-          >{{ getFaultStatue(scope.row.fbState) }}</span
+            >{{ getFaultStatue(scope.row.fbState) }}</span
           >
 
-
-
-<!--          <span>{{ getFaultStatue(scope.row.fbState) }}</span>-->
+          <!--          <span>{{ getFaultStatue(scope.row.fbState) }}</span>-->
         </template>
       </el-table-column>
 
       <el-table-column label="消除状态" align="center" prop="falltRemoveStatue">
         <template slot-scope="scope">
-          <dict-tag
-            :options="dict.type.fault_remove_statue"
-            :value="scope.row.falltRemoveStatue"
-          />
+          <span
+            :style="{
+              color:
+                getFalltRemoveStatue(scope.row.falltRemoveStatue) == '未消除'
+                  ? 'yellow'
+                  : '#00FF00',
+            }"
+            >{{ getFalltRemoveStatue(scope.row.falltRemoveStatue) }}</span
+          >
         </template>
       </el-table-column>
       <el-table-column
@@ -337,6 +340,7 @@
       width="70%"
       append-to-body
       class="hitchDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -641,13 +645,14 @@
                   :on-exceed="handleExceed"
                   :on-change="handleChange"
                 >
-                  <i class="el-icon-plus"></i>
+                  <i class="el-icon-plus" v-show ="uploadDisabled"></i>
                 </el-upload>
                 <el-dialog
                   :visible.sync="dialogVisible"
                   class="modifyEqTypeDialog"
                   :append-to-body="true"
                   style="width: 600px !important; margin: 0 auto"
+                  :close-on-click-modal="false"
                 >
                   <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
@@ -657,34 +662,36 @@
         </el-card>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button v-if="isWritable" @click="submitForm" class="submitButton"
+        <el-button v-if="isWritable" @click="submitForm" class="submitButton" :loading="waiting"
           >仅保存</el-button
         >
-        <el-button v-if="isWritable" @click="publishForm" class="zancunButton"
+        <el-button v-if="isWritable" @click="publishForm" class="zancunButton" :loading="waiting"
           >保存并发布</el-button
         >
         <el-button @click="cancel" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog  :title="titleHistory"
-                :visible.sync="record"
-                :before-close="close"
-                width="70%"
-                class = "hitchHistoryDialog"
+    <el-dialog
+      :title="titleHistory"
+      :visible.sync="record"
+      :before-close="close"
+      width="70%"
+      class="hitchHistoryDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-<!--      <div style="text-align: center; font-size: 18px">故障检修记录</div>-->
+      <!--      <div style="text-align: center; font-size: 18px">故障检修记录</div>-->
       <div
         class="card"
         v-show="news.length > 0"
         v-for="(item, index) in news"
         :key="index"
       >
-        <div class="card-col" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-col" style="font-size: 15px; color: #05aafd">
           <div>
             巡检时间:
             <span>{{ item.xcTime }}</span>
@@ -698,7 +705,7 @@
             <span>{{ item.userName }}</span>
           </div>
         </div>
-        <div class="card-col" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-col" style="font-size: 15px; color: #05aafd">
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -712,22 +719,26 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px; color: #05aafd">
           <div>
             设备运行状态:
             <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
-          <div class="col-test" style ="font-size: 15px;color: #05AAFD;">(检修时检测情况)</div>
+          <div class="col-test" style="font-size: 15px; color: #05aafd">
+            (检修时检测情况)
+          </div>
         </div>
-        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px; color: #05aafd">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>
           </div>
-          <div class="col-test"style ="font-size: 15px;color: #05AAFD;">(检修时检测情况)</div>
+          <div class="col-test" style="font-size: 15px; color: #05aafd">
+            (检修时检测情况)
+          </div>
         </div>
-        <div class="card-cols" style="font-size: 15px;color: #05AAFD;">
+        <div class="card-cols" style="font-size: 15px; color: #05aafd">
           现场图片:
           <div v-for="pic in item.iFileList">
             <img :src="pic.imgUrl" :title="pic.imgName" />
@@ -735,7 +746,15 @@
         </div>
       </div>
       <div v-if="news.length == 0">
-        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;font-size: 15px;color: #05AAFD;">
+        <div
+          style="
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            font-size: 15px;
+            color: #05aafd;
+          "
+        >
           暂无记录
         </div>
       </div>
@@ -782,6 +801,8 @@ export default {
   ],
   data() {
     return {
+      uploadDisabled:true,
+      waiting:false,
       removeStata: false,
       device_boxShow: false,
       resultFaultType: [], //获取选中后的故障类型checkbox的数组值
@@ -825,7 +846,7 @@ export default {
       //巡查班组
       bzData: {},
       title: "",
-      titleHistory:"",
+      titleHistory: "",
       // 是否显示弹出层
       open: false,
       //故障类型
@@ -1000,7 +1021,6 @@ export default {
       this.faultStatusOptions = response.data;
     });
 
-
     //故障类型
     this.getDicts("fault_type").then((response) => {
       this.faultTypeOptions = response.data;
@@ -1037,7 +1057,7 @@ export default {
     });
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     openDialogScreen() {
@@ -1190,18 +1210,25 @@ export default {
       this.form.eqId = null;
       this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
-      if(this.form.typeId != null&&this.form.typeId !=""&&typeof(this.form.typeId) != undefined ){
+      if (
+        this.form.typeId != null &&
+        this.form.typeId != "" &&
+        typeof this.form.typeId != undefined
+      ) {
         this.disstateDevice = false;
         this.getDevices();
       }
-
     },
     //设备类型点击事件
     eqTypeGet() {
       this.form.eqId = null;
       this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
-      if(this.form.tunnelId != null&&this.form.tunnelId !=""&&typeof(this.form.tunnelId)!= undefined){
+      if (
+        this.form.tunnelId != null &&
+        this.form.tunnelId != "" &&
+        typeof this.form.tunnelId != undefined
+      ) {
         this.disstateDevice = false;
         this.getDevices();
       }
@@ -1228,6 +1255,7 @@ export default {
         faultTbtime: null,
         eqId: null,
         eqStatus: null,
+        eqRunStatus: "",
         faultCode: null,
         faultLevel: null,
         falltRemoveStatue: null,
@@ -1256,12 +1284,12 @@ export default {
     },
     // 选取文件超过数量提示
     handleExceed(files, fileList) {
-      // let num = this.direction == 0 ? 2 : 1;
       this.$message.warning("限制上传图标个数不超过2个");
     },
     //监控上传文件列表
     handleChange(file, fileList) {
       this.fileList = fileList;
+      this.$refs.form.clearValidate("upload");
     },
     async planRoadmapUrl(iFileList) {
       var that = this;
@@ -1274,7 +1302,7 @@ export default {
           that.fileList.push({
             name: iconName,
             url: iconUrl,
-            fId: iFileList[i].businessId,
+            fId: iFileList[i].imgId,
           });
         }
       }
@@ -1346,8 +1374,7 @@ export default {
           this.disstateDevice = true;
           this.$modal.msgWarning("请先选择设备类型");
           return;
-        }
-        else {
+        } else {
           this.disstateDevice = false;
           this.getDevices();
           //$("#deviceSel").attr("pointer-events", "none");
@@ -1381,7 +1408,7 @@ export default {
         );
       }
       // const response = listTunnels()
-      listTunnels(this.queryParams).then((response) => {
+      listTunnels().then((response) => {
         console.log(response.rows, "所属隧道列表");
         this.tunnelList = response.rows;
       });
@@ -1400,7 +1427,7 @@ export default {
         this.$message.warning("请先选择所属隧道");
         return;
       }
-      if(this.form.typeId == ""){
+      if (this.form.typeId == "") {
         this.$message.warning("请先选择设备类型");
         return;
       }
@@ -1435,6 +1462,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.faultDescription = "";
       this.queryParams.ids = "";
       this.queryParams.tunnelId = null;
       this.queryParams.faultStatus = null;
@@ -1458,6 +1486,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.uploadDisabled = true;
       this.removeStata = false;
       this.isWritable = true;
       this.disstate = false;
@@ -1467,6 +1496,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.uploadDisabled = true;
       this.openDialogScreen();
       let that = this;
       this.isWritable = true;
@@ -1549,6 +1579,7 @@ export default {
       );
     },
     async handleCheckDetail(row) {
+      this.uploadDisabled = false;
       this.openDialogScreen();
       let that = this;
       this.removeStata = true;
@@ -1660,6 +1691,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      this.isClick = true;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       this.fileData.append("id", this.form.id);
@@ -1671,6 +1703,7 @@ export default {
         this.form.faultEscalationType
       );
       this.fileData.append("faultFxtime", this.form.faultFxtime);
+      this.fileData.append("imgFileId", this.form.imgFileId);
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
       this.fileData.append("eqStatus", this.form.eqStatus);
@@ -1686,7 +1719,9 @@ export default {
           if (this.form.id != null) {
             this.fileData.append("removeIds", this.removeIds);
             if (this.isClick) {
+              this.waiting = true;
               updateList(this.fileData).then((response) => {
+                this.fileList = [];
                 this.isClick = false;
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
@@ -1696,7 +1731,9 @@ export default {
             }
           } else {
             if (this.isClick) {
+              this.waiting = true;
               addList(this.fileData).then((response) => {
+                this.fileList = [];
                 this.isClick = false;
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
@@ -1708,10 +1745,12 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
-      }, 700);
+        this.waiting = false;
+      }, 300);
     },
 
     publishForm() {
+      this.isClick = true;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       this.fileData.append("id", this.form.id);
@@ -1719,6 +1758,7 @@ export default {
       this.fileData.append("faultType", this.form.faultType);
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
+      this.fileData.append("imgFileId", this.form.imgFileId);
       this.fileData.append(
         "faultEscalationType",
         this.form.faultEscalationType
@@ -1737,12 +1777,15 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             this.fileData.append("removeIds", this.removeIds);
+            this.waiting = true;
             updateList(this.fileData).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
+            this.waiting = true;
             addList(this.fileData).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -1753,6 +1796,7 @@ export default {
       });
       setTimeout(() => {
         this.isClick = true;
+        this.waiting = false;
       }, 300);
     },
     /** 删除按钮操作 */
@@ -1803,7 +1847,6 @@ export default {
   },
 };
 </script>
-
 
 <style lang="scss" scoped>
 .topTxt {

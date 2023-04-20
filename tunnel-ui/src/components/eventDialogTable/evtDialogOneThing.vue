@@ -254,6 +254,7 @@ export default {
     // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
     margin: 0 !important;
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
+    background-repeat: no-repeat;
   }
   .blueLine {
     width: 20%;
@@ -265,7 +266,7 @@ export default {
 .listContent {
   max-height: 290px;
   overflow: auto;
-  background: rgba($color: #6c8097, $alpha: 0.3);
+  background: #44576F;
   margin: 10px;
   > div {
     // margin-bottom: 6px;

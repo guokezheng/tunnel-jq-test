@@ -285,10 +285,34 @@ p {
     }
   }
 }
+.el-message-box{
+  .el-message-box__btns{
+    .el-button{
+      width: 80px;
+      height: 28px;
+      border-radius: 14px !important;
+      line-height: 27px;
+      text-align: center;
+      padding: 0;
+      color: #fff;
+      border:none;
+      font-size: 14px;
+      border-color: transparent !important;
+    }
+  }
+}
 // .el-dialog__body{
 //   max-height: 78vh;
 //   overflow: auto;
 // }
+// 右上角搜索icon
+.searchTable{
+  width: 30px;
+  height: 30px;
+  background-image: url(../icons/searchTable.png);
+  background-position: center;
+  background-repeat: no-repeat;
+}
 .el-table{
   caret-color: rgba(0,0,0,0);
   user-select: none; 
@@ -315,6 +339,17 @@ p {
   background: linear-gradient(180deg, #4CBFFF 0%, #259BFF 100%) !important;
   border: 1px solid #65BFFF !important;
   color: #fff !important;
+}
+.el-tooltip__popper{
+  max-width: 400px;
+  word-wrap: break-word;
+}
+// 导入结果弹窗
+.el-message-box__wrapper{
+  .el-message-box__message{
+    max-height: 60vh;
+    overflow: auto;
+  }
 }
 // // 输入框背景色
 // .el-input--small .el-input__inner{

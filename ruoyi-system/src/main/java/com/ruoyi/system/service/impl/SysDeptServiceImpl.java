@@ -65,18 +65,18 @@ public class SysDeptServiceImpl implements ISysDeptService
         return deptMapper.listDeptExcYG1(dept);
     }
 
-    /**
-     * 查询部门管理数据(dept=YG1及其子孙部门)
-     *
-     * @param dept 部门信息
-     * @return 部门信息集合
-     */
-    @Override
-    @DataScope(deptAlias = "d")
-    public List<SysDept> treeselectYG1(SysDept dept)
-    {
-        return deptMapper.listDeptYG1(dept);
-    }
+//    /**
+//     * 查询部门管理数据(dept=YG1及其子孙部门)
+//     *
+//     * @param dept 部门信息
+//     * @return 部门信息集合
+//     */
+//    @Override
+//    @DataScope(deptAlias = "d")
+//    public List<SysDept> treeselectYG1(SysDept dept)
+//    {
+//        return deptMapper.listDeptYG1(dept);
+//    }
 
 
 

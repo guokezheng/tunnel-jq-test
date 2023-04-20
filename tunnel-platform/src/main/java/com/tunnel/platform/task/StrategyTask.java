@@ -61,6 +61,7 @@ public class StrategyTask {
             }
             map.put("devId",devId);
             map.put("state",sdStrategyRl.getState());
+            map.put("stateNum",sdStrategyRl.getStateNum());
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
             map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
@@ -90,9 +91,11 @@ public class StrategyTask {
             if(type.equals("1")){
                 map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerOpen());
                 map.put("state",sdStrategyRl.getState());
+                map.put("stateNum",sdStrategyRl.getStateNum());
             }else{
                 map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerClose());
                 map.put("state",sdStrategyRl.getEndState());
+                map.put("stateNum",sdStrategyRl.getEndStateNum());
             }
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }

@@ -16,7 +16,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="zd_boxShow = !zd_boxShow"
             ></el-button>
           </el-input>
@@ -780,6 +780,7 @@
     <el-dialog
       title="事件详情报告"
       :visible.sync="dialogTableVisible"
+      :close-on-click-modal="false"
       width="70%"
       class="evtInfo"
     >
@@ -1186,6 +1187,7 @@
     <!-- 视频展示 -->
     <el-dialog
       :visible.sync="picUrlDialog"
+      :close-on-click-modal="false"
       width="70%"
       title="事件视频"
       class="videoDialog"
@@ -1204,6 +1206,7 @@
       :visible.sync="dialogVisibleImg"
       width="60%"
       :before-close="handleCloseImg"
+      :close-on-click-modal="false"
     >
       <img :src="alongImgUrl" style="width: 100%" />
       <!-- <span slot="footer" class="dialog-footer">
@@ -1219,6 +1222,7 @@
       :visible.sync="dialogVisibleDevice"
       width="50%"
       :before-close="handleClose"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -1239,7 +1243,7 @@
         :key="index"
         v-show="deviceIndexShow == index"
       >
-        <el-table :data="item.devicesList" style="width: 100%">
+        <el-table :data="item.devicesList" style="width: 100%" height="600">
           <el-table-column prop="eqName" label="设备名称"> </el-table-column>
           <el-table-column prop="pile" label="桩号"> </el-table-column>
           <el-table-column prop="stateName" label="修改后状态">

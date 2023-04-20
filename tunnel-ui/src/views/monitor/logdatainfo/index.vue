@@ -48,7 +48,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="xt_boxShow = !xt_boxShow"
             ></el-button>
           </el-input>
@@ -186,7 +186,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="cz_boxShow = !cz_boxShow"
             ></el-button>
           </el-input>
@@ -205,6 +205,7 @@
             v-model="queryParams.eqTypeId"
             placeholder="请选择设备类型"
             filterable
+            clearable
             size="small"
           >
             <el-option
@@ -517,8 +518,8 @@ export default {
     };
   },
   created() {
-    this.dateRangeDl = this.getPastTime(24);
-    this.dateRangeCz = this.getPastTime(24);
+    this.dateRangeDl = this.getPastTime();
+    this.dateRangeCz = this.getPastTime();
     this.getList("1");
     this.getTunnel();
     this.getEqType();
@@ -540,14 +541,18 @@ export default {
   methods: {
 
     // 参数timer是过去的n个小时
-    getPastTime(timer) {
+    getPastTime() {
+      //alert(this.timeFormat(new Date(new Date().setHours(0, 0, 0, 0)).getTime()));
       // 获取过去的时间
-      const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
+      //const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
+      //获取当天0点时间
+      const lastTime = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
       const startTime = this.timeFormat(lastTime);
-      // 当前时间时间
-      let time = new Date().getTime();
+      // 当天24点时间
+      let time = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1).getTime();
       const endTime = this.timeFormat(time);
       return [startTime, endTime];
+
     },
 
     //时间生成并处理
@@ -626,8 +631,8 @@ export default {
 
 
     handleClick(e){
-      this.dateRangeDl = this.getPastTime(24);
-      this.dateRangeCz = this.getPastTime(24);
+      this.dateRangeDl = this.getPastTime();
+      this.dateRangeCz = this.getPastTime();
       this.resetForm("queryForm");
       this.resetForm("queryForms");
       this.getList(this.activeName);

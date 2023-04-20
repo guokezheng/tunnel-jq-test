@@ -37,7 +37,7 @@ public interface ISdReservePlanService {
      * @param sdReservePlan 预案信息
      * @return 结果
      */
-    int insertSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan);
+    AjaxResult insertSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan);
 
     /**
      * 修改预案信息
@@ -45,7 +45,7 @@ public interface ISdReservePlanService {
      * @param sdReservePlan 预案信息
      * @return 结果
      */
-    int updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids);
+    AjaxResult updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids);
 
     /**
      * 批量删除预案信息

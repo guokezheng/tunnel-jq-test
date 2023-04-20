@@ -154,7 +154,7 @@
               </el-select>
             </el-col>
             <el-col :span="8"
-              v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36"
+              v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36 && items.equipmentTypeId != 7"
             >
               <el-select v-model="items.state" placeholder="请选择设备执行操作" style="width:100%">
                 <el-option
@@ -179,6 +179,26 @@
                 style="width:100%"
                 @change="handleChange"
               ></el-cascader>
+            </el-col>
+            <el-col
+              :span="8"
+              v-show="items.equipmentTypeId == 7"
+            >
+              <el-select
+                :style="{'width':  items.state == 1 ? '45%' :'100%' }"
+                v-model="items.state"
+                placeholder="请选择执行操作"
+                @change="selectStateVal(index)"
+              >
+                <el-option
+                  v-for="item in items.eqStateList"
+                  :key="item.deviceState + 1"
+                  :label="item.stateName"
+                  :value="item.deviceState"
+                >
+                </el-option>
+              </el-select>
+              <el-input-number v-if="items.state == 1" v-model="items.stateNum" style="width: 55%"   :min="1" :max="100" ></el-input-number>
             </el-col>
             <el-col :span="2" class="buttonBox">
               <el-button
@@ -306,6 +326,7 @@ export default {
             value: "", //设备
             state: "", //状态
             type: "", //设备分类
+            stateNum: 100,
             equipmentTypeId: "", //设备类型
             equipments: [], //设备列表
             equipmentTypeData: [],
@@ -345,6 +366,11 @@ export default {
     };
   },
   methods: {
+    selectStateVal(index){
+      if(this.strategyForm.autoControl[index].state == 1){
+        this.$set(this.strategyForm.autoControl[index], "stateNum", 100);
+      }
+    },
     changeTime(){
       let date = this.strategyForm.execDate + " " + this.strategyForm.execTime;
       let dateTime = new Date(date).getTime();
@@ -409,6 +435,7 @@ export default {
 
             this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
             this.strategyForm.autoControl[i].state = attr.state;
+            this.strategyForm.autoControl[i].stateNum = attr.stateNum;
             this.strategyForm.autoControl[i].type = attr.eqTypeId;
             this.strategyForm.autoControl[i].equipmentTypeId = Number(
               attr.eqTypeId
@@ -595,13 +622,14 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
-        this.$emit("dialogVisibleClose");
-        this.getList();
+/*        this.$emit("dialogVisibleClose");*/
+        this.$emit("refreshList");
       });
     },
     // 提交保存方法
     async addStrategyInfoData() {
       this.strategyForm.id = null;
+      this.strategyForm.strategyState = 1;
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });
@@ -612,7 +640,8 @@ export default {
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();
-        this.$emit("dialogVisibleClose");
+        let data = true;
+        this.$emit("dialogVisibleClose",data);
         this.$modal.msgSuccess("新增策略成功");
       });
     },
@@ -826,7 +855,8 @@ export default {
       }];
     },
     strategyFormClose() {
-      this.$emit("dialogVisibleClose");
+      let data = false;
+      this.$emit("dialogVisibleClose",data);
     },
     /** cron表达式按钮操作 */
     handleShowCron() {

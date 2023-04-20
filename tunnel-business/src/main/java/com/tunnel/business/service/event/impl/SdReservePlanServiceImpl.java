@@ -143,13 +143,15 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      * @return 结果
      */
     @Override
-    public int insertSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
+    public AjaxResult insertSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
         SdReservePlan searchObj = new SdReservePlan();
         searchObj.setTunnelId(sdReservePlan.getTunnelId());
-        searchObj.setPlanTypeId(sdReservePlan.getPlanTypeId());
-        searchObj.setDirection(sdReservePlan.getDirection());
-        searchObj.setEventGrade(sdReservePlan.getEventGrade());
-
+        searchObj.setPlanName(sdReservePlan.getPlanName());
+        //校验预案名称
+        int nameCount = sdReservePlanMapper.checkPlanName(searchObj);
+        if(nameCount > 0){
+            return AjaxResult.error("预案名称已存在请重新输入！");
+        }
         int result = -1;
         List<SdReservePlanFile> list = new ArrayList<SdReservePlanFile>();
         if ("#^#".equals(sdReservePlan.getPlanDescription())) {
@@ -166,8 +168,6 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             sdReservePlan.setPlanFileId(guid);
             for (int i = 0; i < file.length; i++) {
                 String savePath = OssUtil.upload(file[i], "upload");
-
-
                 // 从缓存中获取文件存储路径
                 //String fileServerPath = RuoYiConfig.getUploadPath();
                 // 原图文件名
@@ -194,7 +194,11 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             sdReservePlan.setPlanFileId(null);//文件关联ID
             result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
         }
-        return result;
+        if(result > 0){
+            return AjaxResult.success();
+        }else {
+            return AjaxResult.error();
+        }
     }
 
     /**
@@ -205,14 +209,17 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids) {
+    public AjaxResult updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids) {
         SdReservePlan searchObj = new SdReservePlan();
-        searchObj.setTunnelId(sdReservePlan.getTunnelId());
-        searchObj.setPlanTypeId(sdReservePlan.getPlanTypeId());
-        searchObj.setDirection(sdReservePlan.getDirection());
-        searchObj.setEventGrade(sdReservePlan.getEventGrade());
         searchObj.setId(sdReservePlan.getId());
-        //查询此预案是否被使用
+        searchObj.setTunnelId(sdReservePlan.getTunnelId());
+        searchObj.setPlanName(sdReservePlan.getPlanName());
+        //校验预案名称
+        int nameCount = sdReservePlanMapper.checkPlanName(searchObj);
+        if(nameCount > 0){
+            return AjaxResult.error("预案名称已存在请重新输入！");
+        }
+        //查询预案名称是否存在
         /*int currCount = sdReservePlanMapper.checkCurrId(searchObj);
         if(currCount > 0){
             throw new RuntimeException("当前预案已被普通事件使用，请勿修改");
@@ -287,8 +294,11 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         if (result >= 0) {
             result = sdReservePlanMapper.updateSdReservePlan(sdReservePlan);
         }
-
-        return result;
+        if(result > 0){
+            return AjaxResult.success();
+        }else {
+            return AjaxResult.error();
+        }
     }
 
     /**

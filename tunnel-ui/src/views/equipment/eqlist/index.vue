@@ -30,9 +30,7 @@
           v-hasPermi="['system:devices:export']"
           >导出
         </el-button>
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
-        >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
         <!--          <el-button-->
         <!--            type="info"-->
         <!--            icon="el-icon-s-help"-->
@@ -51,7 +49,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -66,7 +64,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="设备方向" >
+        <el-form-item label="设备方向">
           <el-checkbox-group v-model="checkeBox" @change="handleCheckChange">
             <el-checkbox
               v-for="item in dict.type.sd_direction"
@@ -127,7 +125,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="devicesList"
@@ -138,7 +136,12 @@
       :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
       <el-table-column
         type="index"
         :index="indexMethod"
@@ -235,7 +238,7 @@
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:devices:edit']"
-          >修改
+            >修改
           </el-button>
           <el-button
             size="mini"
@@ -244,7 +247,6 @@
             v-hasPermi="['system:devices:remove']"
             >删除
           </el-button>
-
         </template>
       </el-table-column>
     </el-table>
@@ -257,7 +259,13 @@
     />
 
     <!-- 添加或修改设备对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="740px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="740px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -695,6 +703,7 @@
       width="700px"
       append-to-body
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -747,6 +756,7 @@
       :visible.sync="instructionDialog"
       width="400px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <el-form
         ref="instructionForm"
@@ -809,6 +819,7 @@
       width="400px"
       append-to-body
       class="zxc"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -847,8 +858,12 @@
         </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="submitFileForm" class="submitButton">确 定</el-button>
-        <el-button @click="upload.open = false" class="closeButton">取 消</el-button>
+        <el-button @click="submitFileForm" class="submitButton"
+          >确 定</el-button
+        >
+        <el-button @click="upload.open = false" class="closeButton"
+          >取 消</el-button
+        >
       </div>
     </el-dialog>
   </div>
@@ -886,8 +901,8 @@ import {
 import { getToken } from "@/utils/auth";
 import { listAllSystem } from "@/api/equipment/externalsystem/system";
 import { listCategory } from "@/api/equipment/bigType/category";
-import {treeSelectYG1} from "@/api/system/dept";
-import {getTeams} from "@/api/electromechanicalPatrol/teamsManage/teams";
+import { treeSelectYG1 } from "@/api/system/dept";
+import { getTeams } from "@/api/electromechanicalPatrol/teamsManage/teams";
 
 export default {
   name: "Devices",
@@ -1148,12 +1163,12 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.eqId
+      return row.eqId;
     },
     //翻页时不刷新序号
     indexMethod(index) {
@@ -1256,8 +1271,8 @@ export default {
     },
     /** 查询设备列表 */
     getList() {
-      console.log(this.ids,"ids")
-      console.log(this.queryParams.exportIds,"this.queryParams.exportIds")
+      console.log(this.ids, "ids");
+      console.log(this.queryParams.exportIds, "this.queryParams.exportIds");
 
       if (this.manageStatin == "1") {
         this.queryParams.eqTunnelId = this.$cache.local.get(
@@ -1396,7 +1411,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      console.log(selection,"selection")
+      console.log(selection, "selection");
       this.ids = selection.map((item) => item.eqId);
       if (this.ids.length > 0) {
         this.queryParams.exportIds = this.ids.join();
@@ -1406,8 +1421,8 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的设备管理数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的设备管理数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的设备管理数据项？";
       }
       this.queryParams.exportIds = this.ids.join();
@@ -1423,7 +1438,7 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.$refs.tableFile.clearSelection();
-          this.queryParams.exportIds = ''
+          this.queryParams.exportIds = "";
         });
     },
     /** 新增按钮操作 */
@@ -1513,7 +1528,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      console.log(row,"row")
+      console.log(row, "row");
       this.reset();
       const eqId = row.eqId || this.ids;
       getDevices(eqId).then((response) => {
@@ -1553,7 +1568,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      let that = this
+      let that = this;
       const eqIds = row.eqId || this.ids;
       this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
@@ -1571,7 +1586,6 @@ export default {
           that.$refs.tableFile.clearSelection();
         });
     },
-
 
     /** 打开导入表弹窗 */
     handleImport() {

@@ -22,7 +22,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="rz_boxShow = !rz_boxShow"
             ></el-button>
           </el-input>
@@ -292,7 +292,12 @@
       width="700px"
       append-to-body
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" label-width="100px" size="mini">
         <el-row>
           <el-col :span="12">
@@ -340,7 +345,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">关 闭</el-button>
+        <el-button @click="cancel" class="closeButton">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -393,7 +398,7 @@ export default {
         businessType: undefined,
         status: undefined,
       },
-      loginStatusOptions:[],//状态
+      loginStatusOptions: [], //状态
     };
   },
   created() {
@@ -410,11 +415,11 @@ export default {
     pollFormat(row) {
       return this.selectDictLabel(this.loginStatusOptions, row);
     },
-    cancel(){
+    cancel() {
       this.open = false;
       this.$refs.tables.clearSelection();
     },
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tables.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
@@ -533,3 +538,9 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss" >
+::v-deep .el-dialog__body {
+  max-height: 70vh;
+  overflow: auto;
+}
+</style>

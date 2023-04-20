@@ -105,4 +105,11 @@ public interface SdReservePlanMapper
      * @return
      */
     int checkCurrId(SdReservePlan sdReservePlan);
+
+    /**
+     * 校验预案名称
+     * @param sdReservePlan
+     * @return
+     */
+    int checkPlanName(SdReservePlan sdReservePlan);
 }

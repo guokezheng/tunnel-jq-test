@@ -35,7 +35,7 @@
           >
             <!--            <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
 
             ></el-button>-->
           </el-input>
@@ -146,6 +146,7 @@
       width="600px"
       append-to-body
       class="addUserDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -233,6 +234,7 @@
       width="1000px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -268,7 +270,7 @@
         </el-col>
       </el-row>
 
-      <el-row >
+      <el-row>
         <el-table
           ref="tables"
           :data="userList"
@@ -287,21 +289,25 @@
           <el-table-column
             label="用户名称"
             prop="userName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="用户昵称"
             prop="nickName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="所属部门"
+            align="center"
             prop="dept.deptName"
             :show-overflow-tooltip="true"
           />
           <!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
           <el-table-column
             label="手机"
+            align="center"
             prop="phonenumber"
             :show-overflow-tooltip="true"
           />
@@ -346,9 +352,7 @@
         />
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button class="closeButton" @click="teamsUserCancel"
-          >关闭</el-button
-        >
+        <el-button class="closeButton" @click="teamsUserCancel">关闭</el-button>
       </div>
     </el-dialog>
     <!-- 添加用户弹窗对话框 -->
@@ -359,6 +363,7 @@
       width="800px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -403,22 +408,26 @@
           <el-table-column
             label="用户名称"
             prop="userName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="用户昵称"
             prop="nickName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="所属部门"
             prop="dept.deptName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
           <el-table-column
             label="手机"
             prop="phonenumber"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column label="状态" align="center" prop="status">
@@ -583,11 +592,11 @@ export default {
   },
 
   methods: {
-    teamsUserCancel(){
+    teamsUserCancel() {
       this.teamsUserOpen = false;
       this.$refs.tableFile.clearSelection();
     },
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     getStatus(row) {
@@ -775,6 +784,7 @@ export default {
         .then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");
+          this.$refs.tableFile.clearSelection();
         })
         .catch(() => {
           this.$refs.tableFile.clearSelection();
@@ -860,10 +870,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .operationDiglog {
-  .el-dialog__body{
-    padding:0 15px !important;
-    .el-col{
-      padding:0 !important;
+  .el-dialog__body {
+    padding: 0 15px !important;
+    .el-col {
+      padding: 0 !important;
     }
   }
 }

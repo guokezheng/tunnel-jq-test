@@ -174,7 +174,7 @@
                           ? scope.row.CONTENT.replace(
                               /\n|\r\n/g,
                               '<br>'
-                            ).replace(/ /g, ' &nbsp')
+                            ).replace(/ /g, '&nbsp')
                           : ''
                       "
                     ></span>
@@ -245,6 +245,7 @@
                     :style="{
                       width: getScreenSize(itm.screenSize, 'width') + 'px',
                       height: getScreenSize(itm.screenSize, 'height') + 'px',
+                      
                     }"
                     style="background: black; position: relative"
                   >
@@ -265,7 +266,7 @@
                       v-html="
                         itm.tcontents[0].content
                           .replace(/\n|\r\n/g, '<br>')
-                          .replace(/ /g, ' &nbsp')
+                          .replace(/ /g, '&nbsp')
                       "
                     ></span>
                   </div>
@@ -451,6 +452,15 @@ export default {
         this.rowDrop();
       })
     },
+    'form.tunnel':function(newVal,oldVal){
+      this.form.eqDirection = ''
+      this.boardDirectionList = []
+      this.iotBoardList = []
+    },
+    'form.eqDirection':function(newVal,oldVal){
+      console.log(newVal,"newVal")
+      this.iotBoardList = []
+    }
   },
   created() {
     this.getUserDept();
@@ -539,6 +549,7 @@ export default {
       this.form.tunnel = "";
       this.positionList = [];
       this.boardDirectionList = [];
+      
     },
 
     // 通过所属机构查隧道
@@ -563,19 +574,24 @@ export default {
           this.form.eqDirection = res.data[0].dictValue;
         }
         // console.log(this.boardDirectionList, "板子方向");
-        this.getIotBoard();
+        if(this.form.tunnel){
+          this.getIotBoard();
+        }
       });
     },
 
     // 改变隧道
     changeTunnel(value) {
+      this.getDicts("iot_board_direction").then((res) => {
+        this.boardDirectionList = res.data;
+      })
       this.checkedCities = [];
       this.contentList = [];
       this.form.tunnel = value;
       this.form.devicePixel = ''
-      this.getIotBoard();
+      this.changeDirection()
+      // this.getIotBoard();
     },
-
     // 情报板设备 折叠面板
     getIotBoard() {
       this.checkAll = false;
@@ -800,12 +816,12 @@ export default {
         type: "warning",
       })
         .then(() => {
-        //   let loading = this.$loading({
-        //   lock: true,
-        //   text: 'Loading',
-        //   spinner: 'el-icon-loading',
-        //   background: 'rgba(0, 0, 0, 0.7)'
-        // });
+          let loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
           console.log(this.contentList, "发布信息");
           var content = "";
           var playList = "[Playlist]<r><n>";
@@ -845,18 +861,19 @@ export default {
           let protocolType = "GUANGDIAN_V33";
           let deviceld = this.checkedCities.toString();
           uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
-                console.log(response, "返回结果");
-                loading.close();
-                this.$modal.msgSuccess("发布成功");
+              console.log(response, "返回结果");
+              loading.close();
+              this.$modal.msgSuccess("发布成功");
+                
           }).catch(() => {
-            loading.close();
-          });
+              loading.close();
+          })
         }).catch(() => {
           this.$message({
             type: "info",
             message: "已取消发布情报板",
           });
-          loading.close();
+          // loading.close();
         });
     },
 

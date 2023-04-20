@@ -65,7 +65,9 @@ service.interceptors.response.use(res => {
         title: msg
       })
       return Promise.reject('error')
-    } else {
+    } else if (code === 900) {
+      console.log("code========================="+code);
+    }else {
       return res.data
     }
   },

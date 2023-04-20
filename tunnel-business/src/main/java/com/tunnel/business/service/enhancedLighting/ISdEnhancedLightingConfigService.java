@@ -58,5 +58,14 @@ public interface ISdEnhancedLightingConfigService
      */
     public int deleteSdEnhancedLightingConfigById(Long id);
 
-
+    /**
+     * 根据车流量  以及 调光区间  计算 亮度
+     * @param nowTrafficFlow
+     * @param maxTrafficFlow
+     * @param maxLuminanceRange
+     * @param minLuminanceRange
+     * @param luminanceRange
+     * @return
+     */
+    public int getLuminanceByParam(Integer nowTrafficFlow, Integer maxTrafficFlow, Integer maxLuminanceRange,Integer minLuminanceRange,Integer luminanceRange);
 }

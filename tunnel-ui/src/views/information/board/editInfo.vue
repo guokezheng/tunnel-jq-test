@@ -6,6 +6,7 @@
       :visible.sync="dialogVisible"
       width="44%"
       :before-close="closeDialog"
+      :close-on-click-modal="false"
     >
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>
@@ -36,7 +37,7 @@
             v-html="
               dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                 / /g,
-                ' &nbsp'
+                '&nbsp'
               )
             "
           ></span>
@@ -569,24 +570,21 @@ export default {
           textBoard1[0].style.position = "static";
           divContent1[0].style.justifyContent = "left";
           divContent1[0].style.alignItems = "center";
-          textBoard1[0].style.textAlign = "left";
-
+          // textBoard1[0].style.textAlign = "left";
           break;
         // 左右居中
         case 2:
           textBoard1[0].style.position = "static";
           divContent1[0].style.justifyContent = "center";
           divContent1[0].style.alignItems = "center";
-          textBoard1[0].style.textAlign = "center";
-
-          break;
+          // textBoard1[0].style.textAlign = "center";
+           break;
         // 右对齐
         case 3:
           divContent1[0].style.justifyContent = "right";
           divContent1[0].style.alignItems = "center";
-          textBoard1[0].style.textAlign = "right";
+          // textBoard1[0].style.textAlign = "right";
           textBoard1[0].style.position = "static";
-
           break;
         // 上对齐
         case 4:

@@ -104,6 +104,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Autowired
     private SdEventMapper sdEventMapper;
 
+    @Autowired
+    private SdJoinReserveHandleMapper joinMapper;
+
     /**
      * 查询控制策略
      *
@@ -175,10 +178,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     emg = "未找到相应的定时任务";
                     throw new RuntimeException("未找到相应的定时任务");
                 }
-                if(openRl.contains(job.getInvokeTarget().split("'")[1])){
-                    job.setCronExpression(CronUtil.DateConvertCron(timeParam[0]));
+                //  0 偶数开启  奇数关闭
+                if(i%2 == 0){
+            /*    if(openRl.contains(job.getInvokeTarget().split("'")[1])){*/
+                    job.setCronExpression(CronUtil.DateConvertCron(strategy.getTimerOpen()));
                 }else{
-                    job.setCronExpression(CronUtil.DateConvertCron(timeParam[1]));
+                    job.setCronExpression(CronUtil.DateConvertCron(strategy.getTimerClose()));
                 }
                 sysJobService.updateJob(job);
             }
@@ -326,11 +331,36 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 if(rlList.get(j).getEndState() != null && !"".equals(rlList.get(j).getEndState())){
                     state.setDeviceState(rlList.get(j).getEndState());
                     endObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
-                    fsControlData = typeName + "控制执行：" + "开启指令：" + stateName + "；" + "关闭指令：" + endObject.get(0).getStateName() + ";";
+
+                    fsControlData = typeName + "控制执行：" + "起始指令：" + stateName ;
+
+                    // 附加数值的命令
+                    if(rlList.get(j).getState().equals("1") && rlList.get(j).getStateNum() != null && !"0".equals(rlList.get(j).getStateNum())){
+                        fsControlData += "，数值: "+rlList.get(j).getStateNum();
+                    }
+
+                    fsControlData +="；";
+                    fsControlData +="结束指令：" + endObject.get(0).getStateName();
+
+                    // 附加数值的命令
+                    if(rlList.get(j).getEndState().equals("1") && rlList.get(j).getEndStateNum() != null && !"0".equals(rlList.get(j).getEndStateNum())){
+
+                        fsControlData += "，数值: "+rlList.get(j).getEndStateNum();
+
+                    }
+                    fsControlData +="；";
+
                     sList.add(fsControlData);
                 }else{
 
-                    sList.add(typeName + "控制执行：" + stateName + "；");
+                    String controlData = typeName + "控制执行：" + stateName + "；";
+                    // 附加数值的命令
+                    if(rlList.get(j).getStateNum() != null && !"0".equals(rlList.get(j).getStateNum())){
+
+                        controlData = typeName + "控制执行：" + stateName + "，数值："+rlList.get(j).getStateNum()+"；";
+                    }
+
+                    sList.add(controlData);
                 }
             /*    //1：日常策略  3：分时控制
                 if("1".equals(list.get(i).getStrategyGroup()) && "3".equals(list.get(i).getStrategyType()) && list.get(i).getId() == rlList.get(j).getStrategyId()){
@@ -746,6 +776,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             SdStrategyRl sdStrategyRl = new SdStrategyRl();
             sdStrategyRl.setEquipments(equipments);
             sdStrategyRl.setState(state);
+            if(map.get("stateNum")!=null){
+                sdStrategyRl.setStateNum(map.get("stateNum").toString());
+            }
             if(map.get("effectiveTime")!=null){
                 sdStrategyRl.setEffectiveTime(map.get("effectiveTime").toString());
             }
@@ -777,13 +810,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(map.get("state") == null || map.get("state").equals("")){
                 throw new RuntimeException("请填写完整策略信息！");
             }
+
             String eqState = (String) map.get("state");
             SdStrategyRl rl = new SdStrategyRl();
+            if(map.get("stateNum")!=null){
+                rl.setStateNum(map.get("stateNum").toString());
+            }
             rl.setEqTypeId(equipmentTypeId);
             // 设备未设置执行时间，则取策略执行时间
             if(null == rl.getControlTime() || "" == rl.getControlTime()){
                 rl.setControlTime(model.getExecTime());
             }
+
             rl.setEquipments(equipments);
             rl.setState(eqState);
             rl.setStrategyId(sty.getId());
@@ -877,6 +915,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 }else{
                     openRlData.setState(openState);
                     openRlData.setEndState(closeState);
+                }
+                if(map.get("stateNum")!=null){
+                    openRlData.setStateNum(map.get("stateNum").toString());
+                }
+                if(map.get("endStateNum")!=null){
+                    openRlData.setEndStateNum(map.get("endStateNum").toString());
                 }
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);
@@ -1196,7 +1240,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     }
 
     @Override
-    public int implementPlan(String planId,Long eventId){
+    public AjaxResult implementPlan(String planId,Long eventId){
+        //储存失败的数据
+        List<String> errorList = new ArrayList();
         //将id拆分
         List<String> list = Arrays.asList(planId.split(","));
         int issueResult = 1;
@@ -1210,21 +1256,30 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(sdEventHandleMapper.selectSdEventHandleList(sdEventHandle).size() > 0){
                 continue;
             }
-            implementProcess(Long.valueOf(processId),eventId);
+            int count = implementProcess(Long.valueOf(processId),eventId);
+            if(count == 0){
+                //查询失败的流程名称
+                SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(Long.valueOf(processId));
+                errorList.add(joinReserveHandle.getProcessName());
+            }
         }
-        return issueResult;
+        if(errorList.size() == 0){
+            return AjaxResult.success("执行成功");
+        }if(list.size() == errorList.size()){
+            return AjaxResult.error("执行失败");
+        }else {
+            return AjaxResult.success("执行成功,部分流程执行失败[" + StringUtils.join(errorList,",") + "]");
+        }
     }
 
     @Override
     public int implementProcess(Long processId,Long eventId) {
-        //SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
-        //SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
-        SdJoinReserveHandleMapper joinMapper = SpringUtils.getBean(SdJoinReserveHandleMapper.class);
         //如果不是指定设备则查询相关设备
         SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(processId);
         SdStrategyRl rl = new SdStrategyRl();
         if(joinReserveHandle.getEquipments() == null || "".equals(joinReserveHandle.getEquipments())){
-            return 0;
+            //更新事件处置记录表状态
+            return updateHandleState(processId,eventId);
         }
         rl.setEquipments(joinReserveHandle.getEquipments());
         rl.setEqTypeId(joinReserveHandle.getEqTypeId().toString());
@@ -1322,14 +1377,14 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @param processId
      * @param eventId
      */
-    public void updateHandleState(Long processId,Long eventId){
+    public int updateHandleState(Long processId,Long eventId){
         SdEventHandle sdEventHandle = new SdEventHandle();
         sdEventHandle.setEventId(eventId);
         sdEventHandle.setProcessId(processId);
         //0:未完成 1:已完成'
         sdEventHandle.setEventState("1");
         sdEventHandle.setUpdateTime(DateUtils.getNowDate());
-        sdEventHandleMapper.updateHandleState(sdEventHandle);
+        return sdEventHandleMapper.updateHandleState(sdEventHandle);
     }
 
     /**

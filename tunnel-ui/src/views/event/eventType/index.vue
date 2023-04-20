@@ -21,7 +21,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="sj_boxShow = !sj_boxShow"
             ></el-button>
           </el-input>
@@ -240,7 +240,12 @@
       :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
       <el-table-column label="事件类型ID" align="center" prop="id" />
       <el-table-column label="防控类型" align="center">
         <template slot-scope="scope">
@@ -304,7 +309,13 @@
     />
 
     <!-- 添加或修改事件类型对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -387,6 +398,7 @@
             class="modifyEqTypeDialog"
             :append-to-body="true"
             style="width: 600px !important; margin: 0 auto"
+            :close-on-click-modal="false"
           >
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
@@ -394,7 +406,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button
-        class="submitButton"
+          class="submitButton"
           @click="submitForm"
           :disabled="dialogOkDisabled"
           >确 定</el-button
@@ -518,12 +530,12 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id
+      return row.id;
     },
     //优先级
     getPriority(num) {
@@ -686,7 +698,10 @@ export default {
       this.fileData.append("simplifyName", this.form.simplifyName); //类型名称
       this.fileData.append("prevControlType", this.form.prevControlType); //类型名称
       this.fileData.append("isUsable", this.form.isUsable); //是否可用
-      this.fileData.append("priority", this.form.priority == null ? "" : this.form.priority); //是否可用
+      this.fileData.append(
+        "priority",
+        this.form.priority == null ? "" : this.form.priority
+      ); //是否可用
 
       if (this.form.id == null) {
         this.form.iconUrl = -1;
@@ -727,7 +742,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      let that = this
+      let that = this;
       const ids = row.id || this.ids;
       this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
@@ -762,10 +777,9 @@ export default {
 ::v-deep .showUpload {
   .el-upload {
     display: none !important;
-    
   }
 }
 ::v-deep .el-upload-list__item {
-      transition: none !important;
-    }
+  transition: none !important;
+}
 </style>

@@ -1474,29 +1474,18 @@ export default {
                   let style = window.getComputedStyle(event.toElement.parentNode, null);
                   let paddingL = parseFloat(style.getPropertyValue('left')); //获取左侧内边距
                   let paddingtop = parseFloat(style.getPropertyValue('top')); //获取左侧内边距
-                  console.log(paddingL)
-                  console.log(paddingtop)
-                  console.log("ddddddddddddddddddddddddddddddd")
-                  // let ds = getElementPosition(event.toElement.parentNode)
-                  // console.log(ds)
-                  let oDiv=  document.getElementById("imageId")
 
                   let svgs=  document.getElementById("svgRow")
                   let svgss=  document.querySelector(".config-content")
                   let svgeimage=  document.querySelector(".el-image")
-                  console.log(svgss)
-
                   let stylea = window.getComputedStyle(svgs, null);
                   let styleas = window.getComputedStyle(svgss, null);
                   let styleas1 = window.getComputedStyle(svgeimage, null);
-                  console.log(styleas)
 
                   let paddingLa = parseFloat(stylea.getPropertyValue('padding-top')); //获取左侧内边距
                   let paddingLa1 = parseFloat(styleas.getPropertyValue('width')); //获取左侧内边距
                   let paddingLa2 = parseFloat(styleas1.getPropertyValue('width')); //获取左侧内边距
-                  console.log(paddingLa1-paddingLa2)
-                  console.log(44444444444444444444444444444444444)
-                  console.log(event.toElement.width.animVal.value)
+
                   guide1.left = paddingL+(paddingLa1-paddingLa2)/2-16
                   guide1.top = paddingtop+paddingLa
                   chosenGuides[prop].guide = guide1;

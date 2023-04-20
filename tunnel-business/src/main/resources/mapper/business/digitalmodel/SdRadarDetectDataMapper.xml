@@ -42,7 +42,8 @@
                license_color,
                stake_num,
                detect_time,
-               distance
+               distance,
+               road_dir
         from sd_radar_detect_data
     </sql>
 

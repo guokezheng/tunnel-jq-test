@@ -682,6 +682,7 @@ export default {
     // this.$forceUpdate()
     // },
     eventUntreatedNum(event){
+      debugger
       console.log(event, "事件总数");
       this.nodealNum = event;
     },

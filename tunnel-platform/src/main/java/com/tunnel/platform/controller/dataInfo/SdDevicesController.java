@@ -1,14 +1,19 @@
 package com.tunnel.platform.controller.dataInfo;
 
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.web.service.TokenService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -26,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.schema.Entry;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -45,6 +51,8 @@ public class SdDevicesController extends BaseController {
     private ISdDevicesService sdDevicesService;
     @Autowired
     private ISdIotDeviceService sdIotDeviceService;
+    @Autowired
+    private TokenService tokenService;
 
     /**
      * 平台
@@ -57,6 +65,12 @@ public class SdDevicesController extends BaseController {
      */
     @Autowired
     private PlatformApiController sdPlatformApiController;
+
+    /**
+     * redis工具类
+     */
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询设备列表
@@ -521,5 +535,52 @@ public class SdDevicesController extends BaseController {
     @GetMapping("/getTreeDeviceList")
     public AjaxResult getTreeDeviceList(SdDevices sdDevices){
         return sdDevicesService.getTreeDeviceList(sdDevices);
+    }
+
+    /**
+     * 小车跑数据控制
+     * @param eqId 隧道id
+     * @param switchType 开关状态
+     * @return
+     */
+    @GetMapping(value = "/carSwitchType/{eqId}/{switchType}")
+    public void carSwitchType(@PathVariable("eqId") String eqId,@PathVariable("switchType") String switchType){
+        //获取token
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        String token = loginUser.getToken();
+        //判断该token是否存在
+        Map<String, Object> cacheMap = redisCache.getCacheMap(getCacheKey(token));
+        //不存在则新增  destroyed标志 前端页面 跳转 刷新 关闭所有运行
+        if(StringUtils.isEmpty(cacheMap)&&!"destroyed".equals(eqId)){
+            Map<String, String> objectHashMap = new HashMap<>();
+            objectHashMap.put(eqId,switchType);
+            // 缓存到redis中
+            redisCache.setCacheMap(getCacheKey(token),objectHashMap);
+            return;
+        }
+
+        //清空集合
+        cacheMap = new HashMap<>();
+        // 特殊标记不要添加到map destroyed
+        if(!"destroyed".equals(eqId)){
+            //添加 要运行的
+            cacheMap.put(eqId,switchType);
+        }else{//带有destroyed就说明页面跳转刷新了所以要删除这个token
+            redisCache.deleteObject(getCacheKey(token));
+            return;
+        }
+        //修改  先删除在新增
+        redisCache.deleteObject(getCacheKey(token));
+        redisCache.setCacheMap(getCacheKey(token),cacheMap);
+    }
+    /**
+     * 设置cache key
+     *
+     * @param configKey 参数键
+     * @return 缓存键key
+     */
+    private String getCacheKey(String configKey)
+    {
+        return Constants.CAR_TOKEN + configKey;
     }
 }

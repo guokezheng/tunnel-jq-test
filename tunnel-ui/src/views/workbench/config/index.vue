@@ -192,7 +192,7 @@
           >
             操作日志
           </el-button>
-     
+
         </div>
       </div>
       <div class="vehicleLane">
@@ -216,6 +216,7 @@
             <div>
               <el-row
                 class="config-img-area"
+                id="config-img-id"
                 :style="{ width: currentTunnel.lane.width + 'px' }"
               >
                 <el-image
@@ -234,15 +235,18 @@
 <!--                    }"-->
 <!--                  ></span>-->
 <!--                </div>-->
-                <div class="carBox" v-show="carShow"  v-for="(value, key) in carList">
+                <div class="carBox" v-if="carShow"  v-for="(value, key) in carList">
                   <span
+                    id="carShowSpan"
                     v-for="data in value"
                     :key="key"
                     :style="{
+                      right: data.right,
                       left: data.left,
                       top: data.top,
                       background: data.background,
                     }"
+                    v-html="sd"
                   ></span>
                 </div>
                 <div
@@ -3824,6 +3828,7 @@ import {
   templateList,
   batchControlDevice,
   getCategoryTree,
+  carSwitchType,
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
 import {listEvent, getWarnEvent, getReservePlanDataa} from "@/api/event/event";
@@ -4487,6 +4492,7 @@ export default {
 
       carShow: false,
       carShowTwo: false,
+      carShowLeft: "",
       light:
         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAARCAYAAADOvw4PAAAAAXNSR0IArs4c6QAABUBJREFUaEPtWk9oXEUc/r63UA9JerCHQiuIVRDNoYfY6CGBrlrtIftsQ6J4Ezx4EUnxmD3uCl4aPHkTb4Uaa0wDjRR2iyJKVqRgDgGrohgv9rS7gXpIpuz7N/Nm3uzO22xA9O1ld7Pz3pf3m2++3+/3zRDRS6yiggNcAXEOwHj89xzvXQi0QFzlIjZs1xU4RmSOOG4ESADsgtH8zO/b52dtooISrkCUzoEcD6/1wnukPnu9ewKMfgvGBJ+7oNeC511leSfA6d0BYhU1CCznIFT/oUSdC6jqgwqcARE+bNxCMkWT3+/dq/NS15yfjRM1gMshoTQSpb5n/Kb/HhKuztkfqxSfYQ7AzZERLL4R4XNB3rfAcYywU9x6JIg1IlGqWLEy3mO1UdQIns/K/WTexVcn53BQupmhTBrhYlXrEU35HJBKJV+C6VNcRwNE2TEE7sMEmnwdLybpuMBxi50RNzbgsRymJhux1HSmpzVrumvy4q6cn9tnGgDLiYplEiZJiVFqtBAtSavB/9XsKVkbwIRbBHKN6nARxxOSFTiDgxemuw4XDmTcbhxrA5yI6qpslQoIqKY4p3TX4YVfJE7z2QgnJpJRa/UnVlKf6UrndXokE4OffrgRXAzXXlD3FThKEPunO87/I+O2NiZkCrMV3xmkkoW4Nd3x/LbE+WYqxLGTRRLZlhqD67UUCqIgWY71M9yiUWsmt3TH1zpy8jceFTm7O0Vx4u4vW5U405I4381EZM6jYHEqVtXLxCxINkqSOXd3KvFi9ZBqxLn7cvJvnRJmt+fc3UXKoqtL+J0vfC1xWhfSJEtUyVSmRFl15VItjUQVCyXLQTEgpWSrFG52geoluaU7XvxTTv7tMwPSmKoc+dIdpzYlzl0/wrGRSlW4rPSsP6dcPIWSDaSZVB0u7MtJuXEsJJlhVjp3dzYzE3z5nsRpTio12VDdnbVg59kvJM72G9lkVmsso8FQVVjpYpO4hLEoSKaSbEC64+UHclK+HI9IZqa7w5qZPP+TUpA/J0mWFNwO/pRDuuPkNYmz85Z8Hr1TzXL8NSLJBWf6dv9Tkg1nZtJvKwX5CWXlD9fd2cxMzmxJnO9no8I/D7GUFKp3i4oy8elPJM7P72hdrK5SmkWikizoZ9TdhnR6OEqfrMtF6b8doR83ACd/d5e5Xwd2Ofd34ieKzdOKr5TRZQ1vZnb5/B2J88MrbdCbCO0FnWhu3Z3FQ+vyqY8lzm/vtYEejsu2VMTNYOzAV/e/5/ivsgF4oXPtJOmu6a7U5Kt/KA75kw0wwsn0jfJYAaluscmpTYlz93K4I2NgxMqSZR/oqpOxwQ00+cRHEuf398PnyYpZstswkFDmAKLJ4FSEwPoQl/e/RN+DGylOKt35XNiXe3Brj1QguJ4OVsbe3SCHXDcze8/z0j2Jc2eyApTWU9swIzEzSz7Pfi5xtt+sgFxP7ynm6+7kglMWlPB8Pv6hxNldrkCIKG4jZYMf6N2/+3REv3Tn1Tn/wDxNsH68BnjRaQLr3p21uzNUA6yzvG3ifDtdA0ry1EKsNum9uz7bMUa6q3Pymomz83YNHpeThaOSOen47N1dhjrV+dgHJs5f1RqEGOFpHNZ5qlaVhd91+ACWQEwDGBuCy3sQ2IKHFfX0hX4f0Q/HzczcA7gFeCu81LGeHhG3TvoAlwBvGuSYsWWiG4fmUZU9sIdTWuFsy47TKvtAaQngNOiFOIlKZlkOip8U1lkRjrfCZz614/z6rg8hlsBS+DxOpUCqGN8DsQWBFZ6u23F2qz4oliAOwQMN5yErndtqYIc5/QAAAABJRU5ErkJggg==",
       dark: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAARCAMAAAD5Yf49AAAAAXNSR0IArs4c6QAAAUdQTFRFAAAArq6utbW1ubm5v7+/w8PDycnJzc3N09PTsLCwtra2vb29wMDAysrKzc3N1NTUsbGxt7e3wcHBzs7OsLCwtra2uLi4v7+/wcHBy8vLzc3N1dXVrq6usLCwtLS0tbW1t7e3uLi4v7+/wcHBw8PDycnJy8vLzMzMzc3N1NTU1dXVr6+vsLCwtbW1t7e3v7+/wcHBysrKzMzM1dXVr6+vsLCwtLS0uLi4vb29v7+/wsLCyMjIycnJzs7O1NTU1dXVr6+vsLCwtLS0uLi4vb29wsLCycnJzs7O1NTUr6+vsLCwsbGxsrKys7OztLS0tbW1t7e3uLi4ubm5urq6u7u7vLy8vb29vr6+v7+/wcHBwsLCw8PDxMTExcXFxsbGx8fHyMjIycnJysrKzMzMzc3Nzs7Oz8/P0NDQ0dHR0tLS09PT1NTU1dXV1E4hgwAAAEl0Uk5TAExMTExMTExMTU1NTU1NTU5OTk6EhISEhISEhL6+vr6+vr6+vr6+vr6+vvLy8vLy8vLy8vPz8/Pz8/Pz8/Pz8/T09PT09PT09GJ8jKsAAAG6SURBVEjH7dZHU8JAFMDxxQ5SLFgJKAhKsRuxK3aJGkrovffvf/YF4gwLL3jB0QPvyH928hsO+5YQomRYb/ewjIJ0ZkAxnr7DfMB8wvBu05hUVOazQDAYFIRQKBQORyLnlgmpqK2XyWQqlUqnM5lsNpe7sk1JRWu/KVcqlWq1VqvX643GrWNG/Fnv7R89+aFwHEfJeN631C7L/kCAkkWi0ZV2WY0nEpQsl8+vtct6qVSmZM1my0CIwouNkgwsHCLzqaCM+xFZTA1lMo7IChoo00VE1tIRBv0+AyfkixGVbUDZRGUWKFuobBvKDipzEhf6fReckC+7qGwPyj4qO4ByiMqOoByjshPixQdOyBcOlfmg+FFZDEr8W5bulhWgFFFZ65dkAiJL/IGMH8lGMlzW+H+yao8Mv7VY2fuMRe6zjszddZ/Rsov2fYbJrrvuM1p2N5QdwPftAAHZAb2yfM8OoGVOopTdjgMKKhP3pgqViXtTjcrEvalFZbqhvDX4vreGgLw1EBn11qBkBjHMMR7q4x5GKb2bBhTjPSV7MKmkMm9+pGRPllmpLFifKdmLTSOVRfsrJXtzwD/2Betpxj8VdhGZAAAAAElFTkSuQmCC",
@@ -4570,6 +4576,10 @@ export default {
       cameraPlayer2: false,
       cameraPlayer3: false,
       cameraPlayer4: false,
+      tunnelItem:null,
+      timer: null,
+      catNumber:1,//小车计数
+      catTime:null,//小车计数定时器
     };
   },
 
@@ -4644,7 +4654,12 @@ export default {
       );
     },
   },
-  created: function () {
+  created() {
+    debugger
+    //小车运行渲染定时任务
+    clearInterval(this.timer)
+    this.timer = null
+    this.carSetTimer()
     this.getUserDept();
     this.getDicts("sd_strategy_direction").then((data) => {
       console.log(data, "方向");
@@ -4711,8 +4726,8 @@ export default {
     // this.carchange();
     //调取滚动条
     this.srollAuto();
-  },
 
+  },
   watch: {
     // 工作台搜索关键词匹配
     screenEqName(val) {
@@ -4749,7 +4764,15 @@ export default {
     },
     radarDataList(event) {
       console.log(event)
-      debugger
+      let tunnelItems = null;
+      if(!!this.tunnelItem){
+        tunnelItems = this.tunnelItem
+      }else{
+        tunnelItems = this.tunnelList[0]
+      }
+      if(tunnelItems.tunnelId!=event[0].tunnelId){
+        return;
+      }
       // console.log(event, "websockt工作台接收车辆感知事件数据");
       // 首先应判断推送数据和当前选择隧道是否一致
       // if(item.tunnelId == this.tunnelId){}
@@ -4787,6 +4810,12 @@ export default {
       // let changB = math.divide(math.multiply(this.tunnelKm * 1000) / chang);
       // let gaoB = math.divide(+9 / +gao); //一个纬度代表的米数
       // console.log(gaoB, "gaoBgaoBgaoBgaoBgaoB"); //478
+      console.log(this.catNumber)
+      if(this.catNumber>20){
+        debugger
+        this.carList.clear()
+        this.catNumber=1
+      }
       for (let i = 0; i < event.length; i++) {
         //车辆实际经度
         var lng = Number(event[i].lng);
@@ -4802,9 +4831,7 @@ export default {
         // 车当前实际的高度
         // var carLat = math.multiply(math.subtract(+lat - +data[0].lat) * gaoB);
         // console.log(carLat, "carLatcarLatcarLat");
-        //计算最终经度
-        event[i].left =
-          math.add(math.multiply(+carKm * this.proportion) + 120) + "px";
+
         //计算最终纬度
         // event[i].top =
         //   math.add(
@@ -4821,6 +4848,69 @@ export default {
             event[i].top = 450 + "px";
           }
         }
+        //计算宽度 上中下三块无用总高度
+        let highNum = 57+70+73
+        let ratio = highNum/580
+        console.log(ratio)
+        let imgId =  document.getElementById("config-img-id")
+        console.log(imgId)
+        console.log(imgId.offsetHeight)
+        console.log(imgId)
+        let laneHighNum = imgId.offsetHeight - imgId.offsetHeight*ratio/6
+        //上
+        let topHigh = 73/580
+        //上道
+        let centreHighs = 60/580
+        //中
+        let centreHigh = 57/580
+        //下道
+        let nextHigh = 73/580
+
+
+        if(event[i].roadDir == 1){//上行
+          //计算最终经度 右边距
+          event[i].right =
+            math.add(math.multiply(+carKm * this.proportion) + 200) + "px";
+          event[i].left =""
+          //计算经度  上边距
+          switch (event[i].laneNo) {
+            case "3":
+              event[i].top = imgId.offsetHeight*topHigh+(imgId.offsetHeight*topHigh/3)+ "px";
+              break;
+            case "2":
+              event[i].top = imgId.offsetHeight*topHigh+imgId.offsetHeight*centreHighs+(imgId.offsetHeight*centreHighs/3)+ "px";
+              break;
+            case "1":
+              event[i].top = imgId.offsetHeight*topHigh+imgId.offsetHeight*centreHighs*2+(imgId.offsetHeight*centreHighs/3)+ "px";
+              break;
+            default:
+          }
+        }else if(event[i].roadDir==2){//下行
+          //计算最终经度 左边距
+          event[i].left =
+            math.add(math.multiply(+carKm * this.proportion) + 190) + "px";
+          event[i].right = ""
+          //计算经度  上边距
+          switch (event[i].laneNo) {
+            case "1":
+              event[i].top = ( imgId.offsetHeight*topHigh + imgId.offsetHeight*centreHighs*3+imgId.offsetHeight*centreHigh)+(imgId.offsetHeight*topHigh/2)+ "px";
+              break;
+            case "2":
+              event[i].top = ( imgId.offsetHeight*topHigh + imgId.offsetHeight*centreHighs*4+imgId.offsetHeight*centreHigh)+(imgId.offsetHeight*topHigh/2)+ "px";
+              break;
+            case "3":
+              event[i].top = ( imgId.offsetHeight*topHigh + imgId.offsetHeight*centreHighs*5+imgId.offsetHeight*centreHigh)+(imgId.offsetHeight*topHigh/2)+ "px";
+              break;
+            default:
+          }
+        }
+        console.log(math.add(math.multiply(+carKm * this.proportion) + 200))
+        console.log(math.add(math.multiply(+carKm * this.proportion) + 200))
+        if(math.add(math.multiply(+carKm * this.proportion) + 190)>1480 || math.add(math.multiply(+carKm * this.proportion) + 200)>1480){
+          this.carList.delete(event[i].vehicleLicense);
+          continue
+        }
+        //车辆类型
         if (
           event[i].vehicleType == "3" ||
           event[i].vehicleType == "7" ||
@@ -4830,20 +4920,18 @@ export default {
         } else {
           event[i].background = "yellow";
         }
-        if (event[i].speed > Number(90) || event[i].speed < Number(60)) {
+        //是否超速 或者低俗行驶
+        if (event[i].speed > Number(120) || event[i].speed < Number(60)) {
           event[i].background = "red";
         }
+        this.carList.set(event[i].vehicleLicense, event[i]);
+        console.log( this.carList)
       }
-      this.carList.set(event[0].vehicleLicense, event[0]);
-      console.log(this.carList)
 
-      this.carList.forEach((value, key, map) => {
-        console.log(value, key, map)
-      })
-      // this.carList.push( event[0])
-      // this.carList = event[0];
-      this.$forceUpdate();
+      // this.carShow = false
+      // this.carShow = true
     },
+
     deviceStatus(event) {
       this.deviceStatusList = event;
     },
@@ -4986,6 +5074,7 @@ export default {
     },
   },
   mounted() {
+
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
@@ -5043,9 +5132,25 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus2);
     document.addEventListener("click", this.bodyCloseMenus3);
 
+
   },
 
   methods: {
+    carSetTimer() {
+      if(this.timer == null) {
+        this.timer = setInterval( () => {
+          if( this.carShow == true){
+            this.carShow = false
+            this.carShow = true
+          }
+          // this.$forceUpdate();
+        }, 200)
+      }
+    },
+    async  destroyedDelete () {
+
+      await  carSwitchType("destroyed", 1).then((res) =>{})
+    },
     changeEndTime(start,end,index){
       console.log(start,end,"start,end")
       let date = new Date();
@@ -5484,6 +5589,27 @@ export default {
     },
     carShowChange(val) {
       debugger
+      let tunnelItems = null;
+      if(!!this.tunnelItem){
+        tunnelItems = this.tunnelItem
+      }else{
+        tunnelItems = this.tunnelList[0]
+      }
+      carSwitchType(tunnelItems.tunnelId, this.carShow ? 0:1).then((res) =>{})
+      this.$nextTick(() => {
+        this.getEnergyConsumption(this.currentTunnel.id);
+      });
+      if(this.carShow){
+        let that = this
+        //小车展示秒表 定时清除不动的车辆
+        this.catTime = setInterval(function(){
+          debugger
+          console.log( that.catNumber)
+          that.catNumber = that.catNumber+1
+        },1000)
+      }else{
+        clearInterval(this.catTime)
+      }
       this.carShow = val;
     },
     getStartTime(time) {
@@ -7932,6 +8058,9 @@ export default {
     },
     /* 选择隧道*/
     setTunnel(item, index) {
+      console.log(item)
+      console.log(index)
+      this.tunnelItem = item
       // if(this.manageStation == "0" && item.tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
       //   this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-HSD");
       //   return;
@@ -7953,6 +8082,11 @@ export default {
         (this.currentTunnel.name = item.tunnelName),
         this.selectEquipmentType(this.currentTunnel.id);
       this.getTunnelData(this.currentTunnel.id);
+      //先删除
+      this.carList =[]
+      this.carList = new Map()
+      //小车显示控制
+      carSwitchType(item.tunnelId, this.carShow ? 0:1).then((res) =>{})
       this.$nextTick(() => {
         this.getEnergyConsumption(this.currentTunnel.id);
       });
@@ -9247,6 +9381,11 @@ export default {
   },
   //实例销毁前清除定时器
   beforeDestroy() {
+    //修改小车redis状态
+    this.destroyedDelete()
+    // 每次离开当前界面时，小车清除定时器
+    clearInterval(this.timer)
+    this.timer = null
     clearInterval(this.timer);
     this.timer = null;
     clearInterval(this.imageTimer);

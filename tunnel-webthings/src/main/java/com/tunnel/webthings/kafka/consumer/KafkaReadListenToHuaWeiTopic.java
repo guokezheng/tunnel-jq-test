@@ -6,6 +6,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
@@ -1442,10 +1443,37 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param jsonArray
      */
     public void saveAnalysisCarsnap(JSONArray jsonArray){
+        List<Map> list = new ArrayList<>();
         for(int i = 0; i < jsonArray.size(); i++){
             JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
             //保存车辆快照数据
-            analysisAnalysisCarsnap(jsonObject);
+            Map map = analysisAnalysisCarsnap(jsonObject);
+            if(StringUtils.isNotEmpty(map)&&!"0".equals(map.get("distance"))){
+                list.add(map);
+            }
+        }
+        //传到前端实时展示
+        JSONObject object = new JSONObject();
+        object.put("radarDataList", list);
+        try {
+            //获取所有需要发送消息客服端的token
+            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
+            for (String key :scanKey){
+                //获取隧道以及是否推送
+                Map<String, Object> cacheMap = redisCache.getCacheMap(key);
+                //推送的token
+                String s = key.replaceAll(Constants.CAR_TOKEN, "");
+                //获取当前隧道tunnelId
+                String tunnelId = (String)list.get(0).get("tunnelId");
+                for(String keys : cacheMap.keySet()){
+                    //判断是否可以推送  && 前端可以推送的隧道是否和当前隧道匹配
+                    if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
+                        // 给指定客户端发送消息
+                        WebSocketService.postEvent(s,"radarDataList",object.toString());
+                    }
+                }
+            }
+        }catch(Exception e){
         }
     }
 
@@ -1604,7 +1632,7 @@ public class KafkaReadListenToHuaWeiTopic {
      *
      * @param jsonObject
      */
-    public void analysisAnalysisCarsnap(JSONObject jsonObject){
+    public Map analysisAnalysisCarsnap(JSONObject jsonObject){
         //车辆快照数据赋值
         SdRadarDetectData sdRadarDetectData = setRadarData(jsonObject);
         SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
@@ -1615,8 +1643,9 @@ public class KafkaReadListenToHuaWeiTopic {
         SdRadarDetectDataTemporaryMapper temporaryMapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
         temporaryMapper.insertSdRadarDetectData(sdRadarDetectDataTemporary);
         if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){
-            setCarsnapRedis(sdRadarDetectData);
+            return setCarsnapRedis(sdRadarDetectData);
         }
+        return null;
     }
 
     /**
@@ -1702,7 +1731,7 @@ public class KafkaReadListenToHuaWeiTopic {
      *
      * @param sdRadarDetectData
      */
-    public void setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
+    public Map setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
         Map<String, Object> map = new HashMap<>();
         map.put("tunnelId",TunnelEnum.HANG_SHAN_DONG.getCode());
         map.put("roadDir",sdRadarDetectData.getRoadDir());
@@ -1713,8 +1742,9 @@ public class KafkaReadListenToHuaWeiTopic {
         map.put("lng",sdRadarDetectData.getLongitude());
         map.put("distance",sdRadarDetectData.getDistance());
         map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        return  map;
         //redis-key命名规则，固定字段vehicleSnap:隧道id:车牌号
-        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.MINUTES);
+//        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.MINUTES);
     }
 
     /**

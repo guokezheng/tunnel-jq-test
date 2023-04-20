@@ -375,6 +375,14 @@ export function initializeRobot(query) {
     params: query
   })
 }
+// 查询风机安全检测仪实时数据
+export function carSwitchType(eqId,switchType) {
+  return request({
+    url: '/devices/carSwitchType/'+eqId+"/"+switchType,
+    method: 'get',
+  })
+}
+
 
 
 /************** 隧道机器人  end ******************/

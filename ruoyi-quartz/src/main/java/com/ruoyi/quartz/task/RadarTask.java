@@ -1,7 +1,10 @@
 package com.ruoyi.quartz.task;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.api.R;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -59,11 +62,6 @@ public class RadarTask {
     @Autowired
     private RedisCache redisCache;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
-
-    @Autowired
-    private RadarEventMapper radarEventMapper;
 
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
@@ -71,34 +69,126 @@ public class RadarTask {
     private SdRadarDetectDataMapper sdRadarDetectDataMapper;
     public static  List<SdRadarDetectData> sdRadarDetectDatalist = null;
     public static  List<SdRadarDetectData> sdRadarDetectDatalist1 = null;
+    public static  List<SdRadarDetectData> sdRadarDetectDatalist2 = null;
 
     public int num = 0;
+    public int num1 = 0;
+    public int num2 = 0;
+
+
 
 //    @Scheduled(fixedRate = 100)
-    public void radarTask() {
-        long l = System.currentTimeMillis();
-        int count = redisCache.getCacheObject("count");
-        SdRadarDetectData cacheObject = redisCache.getCacheObject("radar:" + count);
-        redisCache.setCacheObject("count", count + 1);
-        if (757 <= count) {
-            redisCache.setCacheObject("count", 0);
+    public void radarTask1() throws InterruptedException {
+        List<Map> list = new ArrayList<>();
+        if(sdRadarDetectDatalist2==null){
+            sdRadarDetectDatalist2 = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("豫K0376E");
+            if(sdRadarDetectDatalist2!=null&&sdRadarDetectDatalist.size()>0){
+                sdRadarDetectDatalist2 = sdRadarDetectDatalist2;
+            }
         }
-        controlDevice(cacheObject);
-        //log.info("第" + count + "条   " + cacheObject);
-        log.info("第" + count + "条   " + cacheObject.getDistance());
-        List<SdRadarDetectData> list = new ArrayList<>();
-        list.add(cacheObject);
+
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("tunnelId", TunnelEnum.HANG_SHAN_DONG.getCode());
+        map1.put("roadDir",sdRadarDetectDatalist2.get(num2).getRoadDir());
+        map1.put("speed",sdRadarDetectDatalist2.get(num2).getSpeed());
+        map1.put("laneNo",sdRadarDetectDatalist2.get(num2).getLaneNum());
+        map1.put("vehicleType",sdRadarDetectDatalist2.get(num2).getVehicleType());
+        map1.put("lat",sdRadarDetectDatalist2.get(num2).getLatitude());
+        map1.put("lng",sdRadarDetectDatalist2.get(num2).getLongitude());
+        map1.put("distance",sdRadarDetectDatalist2.get(num2).getDistance());
+        map1.put("vehicleLicense",sdRadarDetectDatalist2.get(num2).getVehicleLicense());
+
+        list.add(map1);
         JSONObject object = new JSONObject();
         object.put("radarDataList", list);
-        WebSocketService.broadcast("radarDataList", object.toString());
-        long l1 = System.currentTimeMillis();
-        log.info("耗时：" + (l1-l));
+        if(num2==sdRadarDetectDatalist2.size()-3){
+//            num2= 0;
+            return;
+        }else{
+            num2=num2+1;
+        }
+
+        try {
+//                WebSocketService.broadcast("radarDataList", object.toString());
+            //通过redis获取需要推送的数据的key
+            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
+            for (String key :scanKey){
+                Map<String, Object> cacheMap = redisCache.getCacheMap(key);
+                String s = key.replaceAll(Constants.CAR_TOKEN, "");
+                String tunnelId = (String)map1.get("tunnelId");
+                for(String keys : cacheMap.keySet()){
+                    if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
+                        WebSocketService.postEvent(s,"radarDataList",object.toString());
+                    }
+                }
+
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println("111111"+e.getMessage());
+            System.out.println("222222"+e.getLocalizedMessage());
+        }
+
     }
 
-    @Scheduled(fixedRate = 2000)
-    public void radarTask1() throws InterruptedException {
+//    @Scheduled(fixedRate = 100)
+    public void radarTask3() throws InterruptedException {
+        List<Map> list = new ArrayList<>();
+        if(sdRadarDetectDatalist1==null){
+            sdRadarDetectDatalist1 = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("辽JMJ225");
+            if(sdRadarDetectDatalist1!=null&&sdRadarDetectDatalist.size()>0){
+                sdRadarDetectDatalist1 = sdRadarDetectDatalist1;
+            }
+        }
+
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("tunnelId", TunnelEnum.HANG_SHAN_DONG.getCode());
+        map1.put("roadDir",sdRadarDetectDatalist1.get(num).getRoadDir());
+        map1.put("speed",sdRadarDetectDatalist1.get(num).getSpeed());
+        map1.put("laneNo",sdRadarDetectDatalist1.get(num).getLaneNum());
+        map1.put("vehicleType",sdRadarDetectDatalist1.get(num).getVehicleType());
+        map1.put("lat",sdRadarDetectDatalist1.get(num).getLatitude());
+        map1.put("lng",sdRadarDetectDatalist1.get(num).getLongitude());
+        map1.put("distance",sdRadarDetectDatalist1.get(num).getDistance());
+        map1.put("vehicleLicense",sdRadarDetectDatalist1.get(num).getVehicleLicense());
+
+        list.add(map1);
+        JSONObject object = new JSONObject();
+        object.put("radarDataList", list);
+        if(num==sdRadarDetectDatalist1.size()-3){
+            num= 0;
+            return;
+        }else{
+            num=num+1;
+        }
+
+        try {
+//                WebSocketService.broadcast("radarDataList", object.toString());
+            //通过redis获取需要推送的数据的key
+            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
+            for (String key :scanKey){
+                Map<String, Object> cacheMap = redisCache.getCacheMap(key);
+                String s = key.replaceAll(Constants.CAR_TOKEN, "");
+                String tunnelId = (String)map1.get("tunnelId");
+                for(String keys : cacheMap.keySet()){
+                    if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
+                        WebSocketService.postEvent(s,"radarDataList",object.toString());
+                    }
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println("111111"+e.getMessage());
+            System.out.println("222222"+e.getLocalizedMessage());
+        }
+
+    }
+
+//    @Scheduled(fixedRate = 100)
+    public void radarTask2() throws InterruptedException {
         if(sdRadarDetectDatalist==null){
-            sdRadarDetectDatalist = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("粤BU0697");
+            sdRadarDetectDatalist = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("鲁GF06332");
             if(sdRadarDetectDatalist!=null&&sdRadarDetectDatalist.size()>0){
                 sdRadarDetectDatalist = sdRadarDetectDatalist;
             }
@@ -106,81 +196,46 @@ public class RadarTask {
 
 
 //        for( SdRadarDetectData sdRadarDetectData:sdRadarDetectDatalist){
-            Map<String, Object> map = new HashMap<>();
-            map.put("tunnelId", TunnelEnum.HANG_SHAN_DONG.getCode());
-            map.put("roadDir",sdRadarDetectDatalist.get(num).getRoadDir());
-            map.put("speed",sdRadarDetectDatalist.get(num).getSpeed());
-            map.put("laneNo",sdRadarDetectDatalist.get(num).getLaneNum());
-            map.put("vehicleType",sdRadarDetectDatalist.get(num).getVehicleType());
-            map.put("lat",sdRadarDetectDatalist.get(num).getLatitude());
-            map.put("lng",sdRadarDetectDatalist.get(num).getLongitude());
-            map.put("distance",sdRadarDetectDatalist.get(num).getDistance());
-            map.put("vehicleLicense",sdRadarDetectDatalist.get(num).getVehicleLicense());
-            List<Map> list = new ArrayList<>();
-            list.add(map);
-            JSONObject object = new JSONObject();
-            object.put("radarDataList", list);
-            if(num==sdRadarDetectDatalist.size()-3){
-                num= 0;
-            }else{
-                num=num+1;
-            }
-
-            try {
-                WebSocketService.broadcast("radarDataList", object.toString());
-            }catch(Exception e){
-                e.printStackTrace();
-                System.out.println("111111"+e.getMessage());
-                System.out.println("222222"+e.getLocalizedMessage());
-            }
-
-            //redis-key命名规则，固定字段vehicleSnap:隧道id:车牌号
-//            redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.MINUTES);
-//        }
-    }
-
-    @Scheduled(fixedRate = 500)
-    public void radarTask2() throws InterruptedException {
-        if(sdRadarDetectDatalist1==null){
-            sdRadarDetectDatalist1 = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("鲁BUD697");
-            if(sdRadarDetectDatalist1!=null&&sdRadarDetectDatalist.size()>0){
-                sdRadarDetectDatalist1 = sdRadarDetectDatalist1;
-            }
-        }
-
-
-//        for( SdRadarDetectData sdRadarDetectData:sdRadarDetectDatalist1){
         Map<String, Object> map = new HashMap<>();
         map.put("tunnelId", TunnelEnum.HANG_SHAN_DONG.getCode());
-        map.put("roadDir",sdRadarDetectDatalist1.get(num).getRoadDir());
-        map.put("speed",sdRadarDetectDatalist1.get(num).getSpeed());
-        map.put("laneNo",sdRadarDetectDatalist1.get(num).getLaneNum());
-        map.put("vehicleType",sdRadarDetectDatalist1.get(num).getVehicleType());
-        map.put("lat",sdRadarDetectDatalist1.get(num).getLatitude());
-        map.put("lng",sdRadarDetectDatalist1.get(num).getLongitude());
-        map.put("distance",sdRadarDetectDatalist1.get(num).getDistance());
-        map.put("vehicleLicense",sdRadarDetectDatalist1.get(num).getVehicleLicense());
+        map.put("roadDir",sdRadarDetectDatalist.get(num1).getRoadDir());
+        map.put("speed",sdRadarDetectDatalist.get(num1).getSpeed());
+        map.put("laneNo",sdRadarDetectDatalist.get(num1).getLaneNum());
+        map.put("vehicleType",sdRadarDetectDatalist.get(num1).getVehicleType());
+        map.put("lat",sdRadarDetectDatalist.get(num1).getLatitude());
+        map.put("lng",sdRadarDetectDatalist.get(num1).getLongitude());
+        map.put("distance",sdRadarDetectDatalist.get(num1).getDistance());
+        map.put("vehicleLicense",sdRadarDetectDatalist.get(num1).getVehicleLicense());
         List<Map> list = new ArrayList<>();
         list.add(map);
         JSONObject object = new JSONObject();
         object.put("radarDataList", list);
-        if(num==sdRadarDetectDatalist1.size()-3){
-            num= 0;
+        if(num1==sdRadarDetectDatalist.size()-3){
+            num1= 0;
         }else{
-            num=num+1;
+            num1=num1+1;
         }
 
         try {
-            WebSocketService.broadcast("radarDataList", object.toString());
+//            WebSocketService.broadcast("radarDataList", object.toString());
+            //通过redis获取需要推送的数据的key
+            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
+            for (String key :scanKey){
+                Map<String, Object> cacheMap = redisCache.getCacheMap(key);
+                String s = key.replaceAll(Constants.CAR_TOKEN, "");
+                String tunnelId = (String)map.get("tunnelId");
+                for(String keys : cacheMap.keySet()){
+                    if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
+                        WebSocketService.postEvent(s,"radarDataList",object.toString());
+                    }
+                }
+
+            }
         }catch(Exception e){
             e.printStackTrace();
             System.out.println("111111"+e.getMessage());
             System.out.println("222222"+e.getLocalizedMessage());
         }
-
-        //redis-key命名规则，固定字段vehicleSnap:隧道id:车牌号
-//            redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.MINUTES);
-//        }
     }
 
     public void controlDevice(SdRadarDetectData cacheObject){

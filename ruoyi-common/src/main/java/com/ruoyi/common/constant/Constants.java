@@ -175,6 +175,10 @@ public class Constants
 
     public static final String UPLOAD_TYPE_LOCAL = "local";
     public static final String UPLOAD_TYPE_OSS = "alioss";
+    /**
+     * 小车token
+     */
+    public static final String CAR_TOKEN = "cat_token:";
 
 
 

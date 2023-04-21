@@ -8,6 +8,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysDeptService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -252,6 +253,8 @@ public class BoardController extends BaseController {
         SysDept sysDept = sysDeptService.selectDeptById(deptId);
         String userId = SecurityUtils.getUserId().toString();
         String username = SecurityUtils.getUsername();
+        //储存发布失败的设备
+        List<String> failDevList = new ArrayList<>();
         for (int i = 0;i < devices.length;i++) {
             String deviceId = devices[i];
             SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(Long.parseLong(deviceId));
@@ -294,12 +297,16 @@ public class BoardController extends BaseController {
                     iotBoardReleaseLog.setReleaseNewContent(newContent);
                     iotBoardReleaseLog.setReleaseStatus("1");
                     iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+                    //储存失败设备名称
+                    failDevList.add(device.getEqName());
                     continue;
                 }
                 for (int g = 0;g < iotBoardVocabularies.size();g++) {
                     String word = iotBoardVocabularies.get(g).getWord();
                     if (parameters.contains(word)) {
                         flag = true;
+                        //储存失败设备名称
+                        failDevList.add(device.getEqName());
                         break;
                     }
                 }
@@ -351,7 +358,7 @@ public class BoardController extends BaseController {
         }
 
         if(flag){
-            ajaxResult = new AjaxResult(HttpStatus.ERROR, devices.length > 1 ? "部分设备发布失败，请检查后重试！" : "发布失败，请检查后重试！");
+            ajaxResult = new AjaxResult(900, StringUtils.join(failDevList,","));
         }
 
         return ajaxResult;

@@ -49,7 +49,7 @@
                 >
                   <el-button
                     slot="append"
-                    icon="icon-gym-Gsearch"
+                    class="searchTable"
                     @click="ry_boxShow = !ry_boxShow"
                   ></el-button>
                 </el-input>
@@ -182,6 +182,7 @@
         append-to-body
         class="addUserDialog"
         :before-close="cancel"
+        :close-on-click-modal="false"
       >
         <div class="dialogStyleBox">
           <div class="dialogLine"></div>

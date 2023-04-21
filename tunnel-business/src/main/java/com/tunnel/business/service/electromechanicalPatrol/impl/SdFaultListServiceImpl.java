@@ -206,7 +206,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
      * @return 结果
      */
     @Override
-    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,Long[] removeIds)
+    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,String[] removeIds)
     {
         int result = 0;
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();

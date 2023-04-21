@@ -45,7 +45,7 @@ public interface ISdFaultListService
      * @param sdFaultList 故障清单
      * @return 结果
      */
-    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,Long[] removeIds);
+    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,String[] removeIds);
 
     /**
      * 批量删除故障清单

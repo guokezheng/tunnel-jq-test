@@ -21,7 +21,7 @@
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
           <el-input
-            placeholder="请输入页面名称、页面标识符"
+            placeholder="请输入页面名称、页面标识符，回车搜索"
             v-model="queryParams.searchValue"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -88,6 +88,7 @@
       append-to-body
       class="addUserDialog"
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -197,7 +198,7 @@ export default {
     this.getTreeselect();
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
@@ -309,7 +310,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      let that = this
+      let that = this;
       const ids = row.id || this.ids;
       this.$modal
         .confirm('是否确认删除数字孪生页面配置编号为"' + ids + '"的数据项？')

@@ -115,7 +115,7 @@ public interface SdEventMapper
      * @return
      */
     @Select("select count(id) from sd_fault_list where " +
-            "fault_status = '0' and TO_DAYS(create_time) = TO_DAYS(NOW())")
+            "fault_status = '0' and fallt_remove_statue = '1' and TO_DAYS(create_time) = TO_DAYS(NOW())")
     int eventPopFaultCount();
 
     /**

@@ -222,6 +222,10 @@
     }
     // 联控策略弹窗
     .celueDialog,.strategyDialog{
+      .el-dialog__body{
+        max-height: 70vh;
+        overflow: auto;
+      }
       .menu{
         background-color: #034A77 !important;
       }
@@ -309,11 +313,11 @@
   }
   .el-dialog{
     background-color: #00152B !important;
-    border-bottom: solid 1px white;
+    border-bottom: solid 2px white;
     border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)1 10;
     border-left: solid 1px rgba($color: #0198FF, $alpha: 0.8);
     border-right: solid 1px rgba($color: #0198FF, $alpha: 0.8);
-    border-top: solid 1px rgba($color: #0198FF, $alpha: 0.8);
+    border-top: solid 2px rgba($color: #0198FF, $alpha: 0.8);
     .el-dialog__headerbtn {
         top: 6px;
         background: url(../../assets/cloudControl/closeIcon.png) left no-repeat;
@@ -352,20 +356,23 @@
     ::-webkit-scrollbar-thumb {
       background-color: #0090D8;
     }
-    .el-dialog__footer{
-      .dialog-footer{
-        .submitButton{
-          background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
-        }
-        .closeButton{
-          background: linear-gradient(180deg, #C2C2C3 0%, #A1A1A1 100%);
-        }
-        .zancunButton{
-          background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
-        }
-      }
-    }
-    .el-dialog__body{
+    // .el-dialog__footer{
+    //   .dialog-footer{
+    //     .submitButton{
+    //       background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+    //     }
+    //     .closeButton{
+    //       background: linear-gradient(180deg, #C2C2C3 0%, #A1A1A1 100%);
+    //     }
+    //     .zancunButton{
+    //       background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
+    //     }
+    //     .zancunButtonDisabled{
+    //       background: linear-gradient(180deg, #e6bf7c 0%, #ffd792 100%);
+    //     }
+    //   }
+    // }
+    .el-dialog__body,.el-dialog__footer{
       
       // background: #012E51;
       // width: calc(100% - 30px);
@@ -398,6 +405,9 @@
         }
         .zancunButton{
           background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
+        }
+        .zancunButtonDisabled{
+          background: linear-gradient(180deg, #e6bf7c 0%, #ffd792 100%);
         }
       }
       .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
@@ -1842,11 +1852,11 @@
     }
     .el-dialog{
       background-color: #01162C;
-      border-bottom: solid 1px white;
+      border-bottom: solid 2px white;
       border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)1 10;
       border-left: solid 1px rgba($color: #0198FF, $alpha: 0.8);
       border-right: solid 1px rgba($color: #0198FF, $alpha: 0.8);
-      border-top: solid 1px rgba($color: #0198FF, $alpha: 0.8);
+      border-top: solid 2px rgba($color: #0198FF, $alpha: 0.8);
     }
     .dialogLine{
 
@@ -1935,18 +1945,18 @@
       border: solid 1px #01AAFD !important;
     }
     /* 按钮*/
-    .el-button {
-      background: linear-gradient(172deg, #00ACED, #0079DB);
-      border-radius: 20px !important;
+    // .el-button {
+    //   background: linear-gradient(172deg, #00ACED, #0079DB);
+    //   border-radius: 20px !important;
 
-    }
-    .submitButton{
-      background: linear-gradient(172deg, #00ACED, #0079DB);
-    }
-    .submitButton:hover{
-      background-color: #eebf00 !important;
-      border: solid 1px #c77700 !important;
-    }
+    // }
+    // .submitButton{
+    //   background: linear-gradient(172deg, #00ACED, #0079DB);
+    // }
+    // .submitButton:hover{
+    //   background-color: #eebf00 !important;
+    //   border: solid 1px #c77700 !important;
+    // }
 
     .el-dialog__headerbtn {
         top: 6px;
@@ -2129,11 +2139,10 @@
       border: transparent !important;
       border-left: transparent !important;
       .el-button{
-        background:#012E51 !important;
+        background-color:#012E51 !important;
         color: #00C8FF !important;
         border: solid 1px #00C8FF !important;
         border-left:none !important;
-
       }
     }
     .grid-content .el-input--small .el-input__inner{

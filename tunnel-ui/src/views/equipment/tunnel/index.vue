@@ -37,7 +37,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -225,17 +225,16 @@
         width="140"
       />
       <!--      <el-table-column label="备注" align="center" prop="remake" />-->
-      <el-table-column
-        label="是否启用"
-        align="center"
-        prop="poll"
-      >
-      <template slot-scope="scope">
-        <span :style="{
-          color:scope.row.poll == 0?'#00FF00':'red'
-        }">{{ pollFormat(scope.row.poll) }}</span>
-      </template>
-    </el-table-column>
+      <el-table-column label="是否启用" align="center" prop="poll">
+        <template slot-scope="scope">
+          <span
+            :style="{
+              color: scope.row.poll == 0 ? '#00FF00' : 'red',
+            }"
+            >{{ pollFormat(scope.row.poll) }}</span
+          >
+        </template>
+      </el-table-column>
       <!-- <el-table-column label="存储配置图的html" align="center" prop="storeConfigure" /> -->
       <!-- <el-table-column label="创建者" align="center" prop="createBy" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -358,6 +357,8 @@
       width="1500px"
       append-to-body
       class="tunnelRelationDialog"
+      :before-close="cancels"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -479,6 +480,7 @@
       append-to-body
       class="addUserDialog"
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -802,7 +804,12 @@
           </el-form-item> -->
         </el-row>
         <div class="dialog-footer">
-          <el-button class="submitButton" @click="submitForm" v-show="!disabledInfo">确 定</el-button>
+          <el-button
+            class="submitButton"
+            @click="submitForm"
+            v-show="!disabledInfo"
+            >确 定</el-button
+          >
           <el-button class="closeButton" @click="cancel">取 消</el-button>
         </div>
       </el-form>
@@ -819,7 +826,12 @@ import {
   updateTunnels,
   exportTunnels,
 } from "@/api/equipment/tunnel/api.js";
-import {listDept, treeselect, treeselectExcYG1, treeSelectYG1} from "@/api/system/dept";
+import {
+  listDept,
+  treeselect,
+  treeselectExcYG1,
+  treeSelectYG1,
+} from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -1034,7 +1046,7 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableRef.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据

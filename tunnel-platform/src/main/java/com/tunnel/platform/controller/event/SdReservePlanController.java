@@ -95,8 +95,8 @@ public class SdReservePlanController extends BaseController {
     @Log(title = "预案信息")
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
-    public Result addReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
-        return Result.toResult(sdReservePlanService.insertSdReservePlan(file, sdReservePlan));
+    public AjaxResult addReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
+        return sdReservePlanService.insertSdReservePlan(file, sdReservePlan);
     }
 
     /**
@@ -130,8 +130,8 @@ public class SdReservePlanController extends BaseController {
     @Log(title = "预案信息")
     @PostMapping(value = "/updateReservePlan")
     @ApiOperation("修改预案信息")
-    public Result updateReservePlan(MultipartFile[] file,SdReservePlan sdReservePlan) {
-        return Result.toResult(sdReservePlanService.updateSdReservePlan(file, sdReservePlan, sdReservePlan.getRemoveIds()));
+    public AjaxResult updateReservePlan(MultipartFile[] file,SdReservePlan sdReservePlan) {
+        return sdReservePlanService.updateSdReservePlan(file, sdReservePlan, sdReservePlan.getRemoveIds());
     }
 
 

@@ -6,6 +6,7 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.Threads;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
@@ -149,11 +150,6 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 //            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
 //        }
 //
-        //自动模式 节能模式  先暂不使用。
-        if(true){
-            return;
-        }
-
         //单车数据
         //增加  模式功能。根据选择不同模式 。做出响应策略。
         // 当前模式为自动模式时，根据过车信息来进行控制，当前加强照明。实现车来灯亮，车走灯灭
@@ -325,28 +321,6 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         sdDevices.setEqType(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode());
         sdDevices.setItemId(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
         List<SdDevices> deviceIds = sdDevicesMapper.selectSdDevicesDataByParam(sdDevices);
-
-        Iterator<SdDevices> iterator = deviceIds.iterator();
-        while (iterator.hasNext()) {
-            SdDevices param = iterator.next();
-            //查看当前加强照明设备开启状态
-            SdDeviceData sdParam = new SdDeviceData();
-            sdParam.setItemId((long)DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
-            sdParam.setDeviceId(param.getEqId());
-            List<SdDeviceData> list = sdDeviceDataMapper.selectSdDeviceDataList(sdParam);
-            //查看当前设备是否存在开启状态
-            if(list == null ||list.size()<=0){
-                iterator.remove();
-            }
-            //获取开启状态
-            String status = list.get(0).getData();
-            //当前设备状态是否为关闭
-            if("2".equals(status)){
-                log.info("当前设备【{}】状态为关闭状态无法控制。",param.getEqId());
-                iterator.remove();
-            }
-        }
-
         //推送加强照明
         int nowTrafficFlow;
         //是否开启车流量模式
@@ -377,6 +351,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                             threadArrsMap.put(key,threadArrs);
                         }
                         try {
+                            //  redis 缓存问题。  当前改为数据库直接读取。  后期更改为  redis   获取。
                             String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
                             //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
                             Integer num = redisCache.getCacheObject(redisLuminanceRangeKey);
@@ -397,7 +372,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                                 //推送调光 指令。
                                 try{
                                     log.info("开始亮光值:["+devices.getEqId()+"]当前亮度num："+num+" 根据车流量计算的亮度nowLuminanceRange:" +nowLuminanceRange);
-                                    int flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange,"2");
+                                    int flag = sanJingLight.setBrightnessByDevice(devices,num,nowLuminanceRange, DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                     if(flag == 0){
                                         log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                     }
@@ -412,7 +387,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                             //降低光照强度执行完毕,推送调光 指令。
                             try{
                                 log.info("结束亮光值:["+devices.getEqId()+"]当前亮度nowLuminanceRange："+nowLuminanceRange+" 结束推送亮度值" +minLuminance);
-                                int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                                int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                 //清除当前记录线程
                                 threadArrs[0] =  null;
                                 if(flag == 0){
@@ -478,7 +453,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                                         //推送调光 指令。
                                         try{
                                             log.info("开始亮光值:["+devices.getEqId()+"]当前亮度num："+num+" 根据车流量计算的亮度nowLuminanceRange:" +enowLuminanceRange);
-                                            int flag = sanJingLight.setBrightnessByDevice(devices,num,enowLuminanceRange,"2");
+                                            int flag = sanJingLight.setBrightnessByDevice(devices,num,enowLuminanceRange,DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                             if(flag == 0){
                                                 log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                             }
@@ -493,7 +468,7 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
                                         Thread.sleep(respondTime);
                                          //降低光照强度执行完毕
                                         log.info("结束亮光值:["+devices.getEqId()+"]当前亮度nowLuminanceRange："+enowLuminanceRange+" 结束推送亮度值" +minLuminance);
-                                        int flag = sanJingLight.setBrightnessByDevice(devices,enowLuminanceRange,minLuminance,"2");
+                                        int flag = sanJingLight.setBrightnessByDevice(devices,enowLuminanceRange,minLuminance,DeviceControlTypeEnum.AUTO_EXEC.getCode());
                                         if(flag == 0){
                                             log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                         }

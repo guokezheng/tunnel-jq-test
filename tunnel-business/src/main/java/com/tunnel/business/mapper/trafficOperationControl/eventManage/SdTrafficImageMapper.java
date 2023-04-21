@@ -111,5 +111,5 @@ public interface SdTrafficImageMapper
      * @param removeIds
      * @return
      */
-    int deleteFaultIconFileByIds(Long[] removeIds);
+    int deleteFaultIconFileByIds(String[] removeIds);
 }

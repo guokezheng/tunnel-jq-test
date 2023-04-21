@@ -20,7 +20,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="notice_boxShow = !notice_boxShow"
             ></el-button>
           </el-input>
@@ -223,6 +223,7 @@
       append-to-body
       class="noticeDialog"
       :before-close="cancel"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -348,7 +349,7 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    handleRowClick(row){
+    handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
@@ -451,7 +452,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      let that = this
+      let that = this;
       const noticeIds = row.noticeId || this.ids;
       this.$modal
         .confirm("是否确认删除？")

@@ -189,13 +189,13 @@ public class SysDeptController extends BaseController {
     }
 
 
-    @GetMapping("/treeselectYG1")
-    @ApiOperation("获取部门下拉树列表")
-    public Result treeselectYG1(SysDept dept) {
-        List<SysDept> deptList = deptService.treeselectYG1(dept);
-        System.out.println("22222222222222222222222222222" + deptService.buildDeptTreeSelect(deptList).size());
-        return Result.success(deptService.buildDeptTreeSelect(deptList));
-    }
+//    @GetMapping("/treeselectYG1")
+//    @ApiOperation("获取部门下拉树列表")
+//    public Result treeselectYG1(SysDept dept) {
+//        List<SysDept> deptList = deptService.treeselectYG1(dept);
+//        System.out.println("22222222222222222222222222222" + deptService.buildDeptTreeSelect(deptList).size());
+//        return Result.success(deptService.buildDeptTreeSelect(deptList));
+//    }
 
 
     /**

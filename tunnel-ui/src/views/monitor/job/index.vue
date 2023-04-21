@@ -38,9 +38,7 @@
           v-hasPermi="['monitor:job:query']"
           >日志</el-button
         >
-        <el-button size="small" @click="resetQuery"
-          >刷新</el-button
-        >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="13">
         <div ref="main" class="grid-content bg-purple">
@@ -52,7 +50,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -97,16 +95,12 @@
           </el-select>
         </el-form-item>
         <el-form-item class="bottomBox">
-          <el-button size="small"  @click="handleQuery"
-            >搜索</el-button
-          >
-          <el-button size="small" @click="resetQuery"
-            >重置</el-button
-          >
+          <el-button size="small" @click="handleQuery">搜索</el-button>
+          <el-button size="small" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="jobList"
@@ -117,7 +111,12 @@
       :row-key="getRowKey"
       ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" reserve-selection/>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
       <el-table-column
         type="index"
         :index="indexMethod"
@@ -229,7 +228,14 @@
     />
 
     <!-- 添加或修改定时任务对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body :before-close="cancel">
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="800px"
+      append-to-body
+      :before-close="cancel"
+      :close-on-click-modal="false"
+    >
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-row>
           <el-col :span="12">
@@ -330,6 +336,7 @@
       append-to-body
       destroy-on-close
       class="scrollbar"
+      :close-on-click-modal="false"
     >
       <crontab
         @hide="openCron = false"
@@ -345,6 +352,7 @@
       :before-close="closeView"
       width="700px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -360,7 +368,7 @@
             <el-form-item label="任务分组：">
               <div v-if="form.jobGroup == 'SYSTEM'">系统</div>
               <div v-else-if="form.jobGroup != 'SYSTEM'">其他</div>
-<!--              jobGroupFormat(form)-->
+              <!--              jobGroupFormat(form)-->
             </el-form-item>
             <el-form-item label="创建时间：">{{
               form.createTime
@@ -496,16 +504,18 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    closeView(){
+    closeView() {
       this.openView = false;
       this.$refs.tableFile.clearSelection();
     },
-    handleRowClick(row){
-      this.$refs.tableFile.toggleRowSelection(row);
+    handleRowClick(row, i, a) {
+      if (i.label != "状态") {
+        this.$refs.tableFile.toggleRowSelection(row);
+      }
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.jobId
+      return row.jobId;
     },
     //翻页时不刷新序号
     indexMethod(index) {
@@ -535,7 +545,7 @@ export default {
       });
     },
     // 任务组名字典翻译
-  /*  jobGroupFormat(row, column) {
+    /*  jobGroupFormat(row, column) {
       return this.selectDictLabel(this.dict.type.sys_job_group, row.jobGroup);
     },*/
     // 取消按钮
@@ -682,7 +692,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      let that = this
+      let that = this;
       const jobIds = row.jobId || this.ids;
       this.$modal
         .confirm("是否确认删除？")
@@ -699,8 +709,8 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      let confirmInfo ="是否确认导出所有的定时任务数据项？";
-      if(this.ids.length>0){
+      let confirmInfo = "是否确认导出所有的定时任务数据项？";
+      if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的定时任务数据项？";
       }
       this.queryParams.ids = this.ids.join();
@@ -715,7 +725,7 @@ export default {
           this.$download.name(response.msg);
           this.exportLoading = false;
           this.$refs.tableFile.clearSelection();
-          this.queryParams.ids = ''
+          this.queryParams.ids = "";
         })
         .catch(() => {});
     },

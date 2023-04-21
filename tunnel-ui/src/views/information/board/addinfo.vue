@@ -6,6 +6,7 @@
       :visible.sync="dialogVisible"
       width="44%"
       :before-close="handleClose"
+      :close-on-click-modal="false"
     >
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>
@@ -36,12 +37,11 @@
                 : '',
             }"
             class="textBoard2 boardTextStyle"
-            style="position: absolute"
             v-html="
               dataForm.CONTENT
                 ? dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                     / /g,
-                    ' &nbsp'
+                    '&nbsp'
                   )
                 : ''
             "
@@ -941,7 +941,7 @@ export default {
         case 1:
           divContent2[0].style.justifyContent = "left";
           divContent2[0].style.alignItems = "center";
-          textBoard2[0].style.textAlign = "left";
+          // textBoard2[0].style.textAlign = "left";
           textBoard2[0].style.position = "static";
 
           break;
@@ -949,7 +949,7 @@ export default {
         case 2:
           divContent2[0].style.justifyContent = "center";
           divContent2[0].style.alignItems = "center";
-          textBoard2[0].style.textAlign = "center";
+          // textBoard2[0].style.textAlign = "center";
           textBoard2[0].style.position = "static";
 
           break;
@@ -957,7 +957,7 @@ export default {
         case 3:
           divContent2[0].style.justifyContent = "right";
           divContent2[0].style.alignItems = "center";
-          textBoard2[0].style.textAlign = "right";
+          // textBoard2[0].style.textAlign = "right";
           textBoard2[0].style.position = "static";
 
           break;
@@ -1097,6 +1097,9 @@ export default {
   line-height: 1;
   caret-color: rgba(0, 0, 0, 0);
   user-select: none;
+  position: absolute;
+  max-height: 128px;
+  overflow: hidden;
 }
 .blackBoard2 {
   background: #000000;

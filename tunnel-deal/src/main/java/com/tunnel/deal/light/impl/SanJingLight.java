@@ -3,6 +3,9 @@ package com.tunnel.deal.light.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -131,7 +134,7 @@ public class SanJingLight implements Light {
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
         String jessionId;
         try {
-            String tokenKey = "control:"+deviceId+"_token";
+            String tokenKey = "control:sanJingLighttoken";
             jessionId = redisCache.getCacheObject(tokenKey);
             if(jessionId == null){
                 jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
@@ -161,7 +164,7 @@ public class SanJingLight implements Light {
             //包含“发送成功"就可以
             responseBody = response.body().string();
         } catch (IOException e) {
-            logger.info("加强照明调光功能异常，请联系管理员。");
+            logger.error("加强照明调光功能异常，请联系管理员。");
             return 0;
         }
         return responseBody.contains("发送成功") ? 1 : 0;
@@ -192,7 +195,7 @@ public class SanJingLight implements Light {
 //        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
         String jessionId;
 
-        String tokenKey = "control:"+deviceId+"_token";
+        String tokenKey = "control:sanJingLighttoken";
 
         jessionId = redisCache.getCacheObject(tokenKey);
 
@@ -211,12 +214,58 @@ public class SanJingLight implements Light {
         //开关
         int switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
         //亮度
-        int brightnessType = 0;
+        int brightnessType = 1;
         //如果亮度有值并且控制状态不是关，就控制亮度
         if(brightness != null && !Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
             brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
         }
         return switchType==1 && brightnessType==1 ? 1 : 0;
+    }
+
+
+    public int lineControlAddLog(String deviceId, Integer openClose, Integer brightness) {
+        SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
+        int resultStatus = lineControl(deviceId, openClose,brightness);
+        // 如果控制成功
+        if (resultStatus == 1) {
+            //更新设备状态
+            device.setEqStatus("1");
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
+            //更新设备实时数据
+            updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+        }
+
+        //添加操作日志
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(device.getEqType());
+        sdOperationLog.setTunnelId(device.getEqTunnelId());
+        sdOperationLog.setEqId(device.getEqId());
+        sdOperationLog.setOperationState(String.valueOf(openClose));
+        sdOperationLog.setControlType(DeviceControlTypeEnum.AUTO_EXEC.getCode());
+        sdOperationLog.setCreateTime(new Date());
+        try {
+            sdOperationLog.setOperIp(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        sdOperationLog.setState(String.valueOf(resultStatus));
+        // 确定设备之前的开关状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
+
+
+        if (String.valueOf(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()).equals(device.getEqType())) {
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode()));
+        } else if (String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()).equals(device.getEqType())) {
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode()));
+        }
+        List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        if (brightness != null && null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+            sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+        }
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        return resultStatus;
     }
 
     /**
@@ -445,12 +494,13 @@ public class SanJingLight implements Light {
         try{
             resultStatus = setBrightness(device.getEqId(),luminanceRange);
         }catch (Exception e){
+            e.printStackTrace();
             resultStatus = 0;
         }
         // 如果控制成功
         if (resultStatus == 1) {
             // 更新设备在线状态
-            device.setEqStatus("1");
+            device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             device.setEqStatusTime(new Date());
             sdDevicesService.updateSdDevices(device);
             //更新设备实时数据

@@ -5,7 +5,7 @@
       <el-col :span="6">
         <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
-          >
+        >
       </el-col>
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
@@ -16,12 +16,12 @@
             v-model="queryParams.searchValue"
             placeholder="请输入设备类型名称,回车搜索"
           >
-          <el-button
+            <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
-            </el-input>
+          </el-input>
         </div>
       </el-col>
     </el-row>
@@ -33,17 +33,27 @@
         :model="queryParams"
         label-width="80px"
       >
-      <el-form-item label="设备类型" prop="stateTypeId" >
-        <el-select v-model="queryParams.stateTypeId" placeholder="请选择设备类型" clearable size="small">
-          <el-option v-for="item in typeStateData" :key="item.typeId" :label="item.typeName" :value="item.typeId" />
-        </el-select>
-      </el-form-item>
+        <el-form-item label="设备类型" prop="stateTypeId">
+          <el-select
+            v-model="queryParams.stateTypeId"
+            placeholder="请选择设备类型"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in typeStateData"
+              :key="item.typeId"
+              :label="item.typeName"
+              :value="item.typeId"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
         </el-form-item>
       </el-form>
@@ -94,7 +104,7 @@
             </el-tooltip>
           </div>
         </el-row> -->
-        <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="eqTypeStateList"
@@ -163,6 +173,7 @@
       append-to-body
       :before-close="cancel"
       class="tunnelRelationDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -187,7 +198,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="1" v-show="title != '添加设备类型状态关系'">
-            <el-button class="dialogButton addFormButton" @click="addFrom()">添加</el-button>
+            <el-button class="dialogButton addFormButton" @click="addFrom()"
+              >添加</el-button
+            >
           </el-col>
         </el-row>
         <template v-if="title === '添加设备类型状态关系'">
@@ -241,7 +254,10 @@
                 >
                   <img v-if="imageUrl" :src="item.url" class="avatar" />
                 </el-upload>
-                <el-dialog :visible.sync="dialogVisible">
+                <el-dialog
+                  :visible.sync="dialogVisible"
+                  :close-on-click-modal="false"
+                >
                   <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
               </el-form-item>
@@ -334,7 +350,10 @@
                   <!-- <img :src="item.url" alt="">       -->
                 </el-upload>
 
-                <el-dialog :visible.sync="dialogVisible">
+                <el-dialog
+                  :visible.sync="dialogVisible"
+                  :close-on-click-modal="false"
+                >
                   <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
               </el-form-item>
@@ -521,14 +540,17 @@ export default {
       this.isStateType = response.data;
     });
   },
-  mounted(){
+  mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.boxShow == true){
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
+        if (self.boxShow == true) {
           self.boxShow = false;
         }
       }
@@ -1132,6 +1154,6 @@ export default {
   align-items: center;
 }
 .addFormButton {
-  height: 36px ;
+  height: 36px;
 }
 </style>

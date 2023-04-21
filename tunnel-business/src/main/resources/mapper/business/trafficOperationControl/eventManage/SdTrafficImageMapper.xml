@@ -119,7 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <delete id="delImageByBusinessIds">
          delete from sd_traffic_image where business_id in
         <foreach item="businessId" collection="businessIds" open="(" separator="," close=")">
-            #{businessId}
+            CONCAT(#{businessId},'')
         </foreach>
     </delete>
 

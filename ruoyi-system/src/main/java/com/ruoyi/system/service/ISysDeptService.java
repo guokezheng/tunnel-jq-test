@@ -29,13 +29,13 @@ public interface ISysDeptService
      */
     public List<SysDept> listDeptExcYG1(SysDept dept);
 
-    /**
-     * 查询部门管理数据(只查询 dept_id=YG1及其子孙部门)
-     *
-     * @param dept 部门信息
-     * @return 部门信息集合
-     */
-    public List<SysDept> treeselectYG1(SysDept dept);
+//    /**
+//     * 查询部门管理数据(只查询 dept_id=YG1及其子孙部门)
+//     *
+//     * @param dept 部门信息
+//     * @return 部门信息集合
+//     */
+//    public List<SysDept> treeselectYG1(SysDept dept);
 
     /**
      * 构建前端所需要树结构

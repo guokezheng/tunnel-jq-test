@@ -118,7 +118,7 @@
           </el-col>
           <el-col
             :span="4"
-            v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36"
+            v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36 && items.equipmentTypeId != 7"
           >
             <el-select
               style="width: 100%"
@@ -147,6 +147,26 @@
               collapse-tags
               @change="handleChange"
             ></el-cascader>
+          </el-col>
+          <el-col
+            :span="4"
+            v-show="items.equipmentTypeId == 7"
+          >
+            <el-select
+              :style="{'width':  items.state == 1 ? '45%' :'100%' }"
+              v-model="items.state"
+              placeholder="请选择执行操作"
+              @change="selectStateVal(index)"
+            >
+              <el-option
+                v-for="item in items.manualControlStateList"
+                :key="item.deviceState + 1"
+                :label="item.stateName"
+                :value="item.deviceState"
+              >
+              </el-option>
+            </el-select>
+            <el-input-number v-if="items.state == 1" v-model="items.stateNum" style="width: 55%"   :min="1" :max="100" ></el-input-number>
           </el-col>
           <div class="buttonBox">
             <el-button class="delete" @click="removeItem(index)"></el-button>
@@ -214,6 +234,7 @@ export default {
         manualControl: [
           {
             state: "",
+            stateNum: 100,
             value: "",
             equipmentTypeId: "",
             equipmentTypeData: [],
@@ -246,6 +267,12 @@ export default {
     };
   },
   methods: {
+
+    selectStateVal(index){
+      if(this.strategyForm.manualControl[index].state == 1){
+        this.$set(this.strategyForm.manualControl[index], "stateNum", 100);
+      }
+    },
     init() {
       if (this.sink == "add") {
         this.resetForm();
@@ -287,6 +314,7 @@ export default {
 
             console.log(this.strategyForm.manualControl[i].value, "选择的设备");
             this.strategyForm.manualControl[i].state = attr.state;
+            this.strategyForm.manualControl[i].stateNum = attr.stateNum;
 
             this.strategyForm.manualControl[i].manualControlStateList =
               attr.eqStateList;
@@ -414,7 +442,7 @@ export default {
       };
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){
-        this.strategyForm.direction = null;
+        params.eqDirection = null;
       }
 
       listDevices(params).then((res) => {
@@ -596,7 +624,7 @@ export default {
       };
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){
-        this.strategyForm.direction = null;
+        params.eqDirection = null;
       }
       listDevices(params).then((res) => {
         let data = res.rows;

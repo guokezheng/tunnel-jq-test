@@ -70,7 +70,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="listDeptYG1" parameterType="com.ruoyi.common.core.domain.entity.SysDept" resultMap="SysDeptResult">
 		<include refid="selectDeptVo"/>
-		where d.del_flag = '0' and d.status = '0' and  dept_id like 'YG1%'
+		where d.del_flag = '0' and d.status = '0'
+		<!-- 暂时注释YG1筛选 -->
+		  <!--  and  dept_id like 'YG1%' -->
 		<if test="deptId != null and deptId != 0">
 			AND dept_id = #{deptId}
 		</if>

@@ -27,7 +27,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="role_boxShow = !role_boxShow"
             ></el-button>
           </el-input>
@@ -322,6 +322,7 @@
       :before-close="cancel"
       append-to-body
       class="addRoleDialog"
+      :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -404,6 +405,7 @@
       :visible.sync="openDataScope"
       width="500px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <el-form :model="form" label-width="80px">
         <el-form-item label="角色名称">
@@ -585,8 +587,10 @@ export default {
     getRowKey(row) {
       return row.id;
     },
-    handleRowClick(row){
-      this.$refs.tableFile.toggleRowSelection(row);
+    handleRowClick(row, i, a){
+      if(i.label != '状态'){
+        this.$refs.tableFile.toggleRowSelection(row);
+      }
     },
     bodyCloseMenus(e) {
       let self = this;

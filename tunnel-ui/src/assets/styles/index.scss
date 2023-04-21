@@ -264,7 +264,16 @@ p {
   height: 4vh;
 }
 .el-dialog__body,.el-dialog__footer{
-  // padding:0px 20px 10px 20px;
+  // 弹窗内表格因滚动条宽4px 给表头gutter同样设置4px 不然表头会错位
+  .el-table th.el-table__cell.gutter {
+    display: table-cell !important;
+    width:4px !important;
+  }
+  .el-table colgroup col[name="gutter"]  {
+    display: table-cell !important;
+    width:4px !important;
+  }
+  
   .el-form-item__label{
     caret-color: rgba(0,0,0,0);
     user-select: none; 
@@ -272,7 +281,7 @@ p {
   .dialog-footer{
     display: flex;
     justify-content: right;
-    .submitButton,.closeButton,.zancunButton{
+    .submitButton,.closeButton,.zancunButton,.zancunButtonDisabled{
       width: 80px;
       height: 28px;
       border-radius: 14px !important;
@@ -282,6 +291,9 @@ p {
       color: #fff;
       border:none;
       font-size: 14px;
+    }
+    .submitButton:hover,.closeButton:hover,.zancunButton:hover,.zancunButtonDisabled:hover{
+      border:none;
     }
   }
 }
@@ -305,9 +317,33 @@ p {
 //   max-height: 78vh;
 //   overflow: auto;
 // }
+// 右上角搜索icon
+.searchTable{
+  width: 30px !important;
+  height: 30px !important;
+  background-image: url(../../assets/icons/searchTable.png) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+.el-table::before{
+  height: 0px !important;
+}
 .el-table{
   caret-color: rgba(0,0,0,0);
   user-select: none; 
+  // 表格缩小滚动条宽度后 滚动条左侧会有缝隙 设置100%补满
+  .el-table__body{
+    width: 100% !important;
+  }
+  // 列表页表格 滚动条宽12  给表头gutter同样设置12px 不然表头会错位
+  th.el-table__cell.gutter {
+    display: table-cell;
+    width:12px !important;
+  }
+  colgroup col[name="gutter"]  {
+    display: table-cell;
+    width:12px !important;
+  }
 }
 .el-table th.el-table__cell > .cell{
   padding: 0;
@@ -322,6 +358,7 @@ p {
 .el-dialog__header{
   caret-color: rgba(0,0,0,0);
   user-select: none; 
+
 }
 .el-button:hover{
   background-color: none;
@@ -331,6 +368,17 @@ p {
   background: linear-gradient(180deg, #4CBFFF 0%, #259BFF 100%) !important;
   border: 1px solid #65BFFF !important;
   color: #fff !important;
+}
+.el-tooltip__popper{
+  max-width: 400px;
+  word-wrap: break-word;
+}
+// 导入结果弹窗
+.el-message-box__wrapper{
+  .el-message-box__message{
+    max-height: 60vh;
+    overflow: auto;
+  }
 }
 // // 输入框背景色
 // .el-input--small .el-input__inner{

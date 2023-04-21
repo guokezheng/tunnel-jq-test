@@ -621,6 +621,8 @@ export default {
       this.$set(this.strategyForm.autoControl[index], "closeState", "");
       this.$set(this.strategyForm.autoControl[index], "equipments", null);
 
+      this.$set(this.strategyForm.autoControl[index], "stateNum", null);
+      this.$set(this.strategyForm.autoControl[index], "endStateNum", null);
 
       let params = {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型

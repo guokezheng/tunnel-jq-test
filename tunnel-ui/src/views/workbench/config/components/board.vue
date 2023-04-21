@@ -189,9 +189,9 @@
             >
             <el-button
               @click="releaseInfo()"
-              class="zancunButton"
               v-hasPermi="['workbench:dialog:save']"
               :disabled="contentList.length == 0"
+              :class="contentList.length == 0?'zancunButtonDisabled':'zancunButton'"
               >信息发布</el-button
             >
           </div>

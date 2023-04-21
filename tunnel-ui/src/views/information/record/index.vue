@@ -242,6 +242,7 @@
       <!-- <el-table-column label="发布机构" align="center" prop="releaseDeptName" /> -->
 
       <el-table-column label="发布用户" align="center" prop="releaseUserName" />
+      <el-table-column label="发布IP" align="center" prop="releaseIp" />
     </el-table>
 
     <pagination

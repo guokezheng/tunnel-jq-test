@@ -8,9 +8,13 @@ import com.tunnel.business.domain.informationBoard.IotDeviceAccess;
 import com.tunnel.business.mapper.informationBoard.IotBoardReleaseLogMapper;
 import com.tunnel.business.mapper.informationBoard.IotDeviceAccessMapper;
 import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +26,10 @@ import java.util.List;
  */
 @Service
 public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(IotBoardReleaseLogServiceImpl.class);
+
     @Autowired
     private IotBoardReleaseLogMapper iotBoardReleaseLogMapper;
     @Autowired
@@ -154,6 +162,17 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
      */
     @Override
     public int insertIotBoardReleaseLog(IotBoardReleaseLog iotBoardReleaseLog) {
+
+        String ip = null;
+        try {
+             ip = InetAddress.getLocalHost().getHostAddress();
+
+        } catch (UnknownHostException e) {
+            logger.info("获取IP失败：",e.getMessage());
+        }
+        // 记录服务ip
+        iotBoardReleaseLog.setReleaseIp(ip);
+
         return iotBoardReleaseLogMapper.insertIotBoardReleaseLog(iotBoardReleaseLog);
     }
 

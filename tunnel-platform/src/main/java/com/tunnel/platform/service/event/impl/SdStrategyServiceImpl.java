@@ -336,7 +336,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
                     // 附加数值的命令
                     if(rlList.get(j).getState().equals("1") && rlList.get(j).getStateNum() != null && !"0".equals(rlList.get(j).getStateNum())){
-                        fsControlData += "，数值: "+rlList.get(j).getStateNum();
+                        fsControlData += "，亮度："+rlList.get(j).getStateNum() + "%";
                     }
 
                     fsControlData +="；";
@@ -345,7 +345,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 附加数值的命令
                     if(rlList.get(j).getEndState().equals("1") && rlList.get(j).getEndStateNum() != null && !"0".equals(rlList.get(j).getEndStateNum())){
 
-                        fsControlData += "，数值: "+rlList.get(j).getEndStateNum();
+                        fsControlData += "，亮度："+rlList.get(j).getEndStateNum() + "%";
 
                     }
                     fsControlData +="；";
@@ -357,7 +357,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 附加数值的命令
                     if(rlList.get(j).getStateNum() != null && !"0".equals(rlList.get(j).getStateNum())){
 
-                        controlData = typeName + "控制执行：" + stateName + "，数值："+rlList.get(j).getStateNum()+"；";
+                        controlData = typeName + "控制执行：" + stateName + "，亮度："+rlList.get(j).getStateNum()+"%；";
                     }
 
                     sList.add(controlData);

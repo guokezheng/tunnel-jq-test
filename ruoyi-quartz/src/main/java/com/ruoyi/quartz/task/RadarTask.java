@@ -102,7 +102,7 @@ public class RadarTask {
         JSONObject object = new JSONObject();
         object.put("radarDataList", list);
         if(num2==sdRadarDetectDatalist2.size()-3){
-//            num2= 0;
+            num2= 0;
             return;
         }else{
             num2=num2+1;

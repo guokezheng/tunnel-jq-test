@@ -689,7 +689,8 @@ export default {
   },
 
   created() {
-    this.getUser();
+    this.nodealNum =0
+      this.getUser();
     // setInterval(() => {
     //   setTimeout(this.getAlarmInfo, 0);
     // }, 5000 * 1);

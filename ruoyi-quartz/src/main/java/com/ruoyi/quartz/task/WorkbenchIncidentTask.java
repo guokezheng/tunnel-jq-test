@@ -21,15 +21,12 @@ public class WorkbenchIncidentTask {
 
     @Scheduled(fixedDelay=500)
     public void incidentNumTask(){
-        long l = System.currentTimeMillis();
         try{
             Integer eventUntreatedNum = SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum();
+//            WebSocketService.broadcastCloser("eventUntreatedNum", eventUntreatedNum);
             WebSocketService.broadcast("eventUntreatedNum", eventUntreatedNum);
         }catch (Exception e){
             e.printStackTrace();
         }
-        long l1 = System.currentTimeMillis();
-        System.out.print(l1-l);
-
     }
 }

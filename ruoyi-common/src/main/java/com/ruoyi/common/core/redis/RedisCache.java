@@ -203,8 +203,6 @@ public class RedisCache
         }
         //切记这里一定要关闭，否则会耗尽连接数。
         cursor.close();
-        log.info("scan扫描共耗时：{} ms key数量：{}",System.currentTimeMillis()-start,result.size());
-
         return result;
     }
 

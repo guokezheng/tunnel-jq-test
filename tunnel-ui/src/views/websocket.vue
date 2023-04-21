@@ -83,7 +83,10 @@ export default {
             this.$store.commit("EVENTFLOW", contentList.eventFlow);
             break;
           case "eventUntreatedNum":
-            this.$store.commit("EVENTUNTREATEDNUM", contentList);
+            this.$nextTick(() => {
+              this.$store.commit("EVENTUNTREATEDNUM", contentList);
+            });
+
             break;
           default:
         }

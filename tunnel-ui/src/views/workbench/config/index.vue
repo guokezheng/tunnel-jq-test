@@ -4831,12 +4831,12 @@ export default {
       // math.subtract(a-b)//减
       // math.multiply(a*b)//乘
       // math.divide(a/b)//除
-      const data = [
-        { lng: 117.81632771, lat: 36.46771608 }, //下行入口左侧1
-        { lng: 117.81710505, lat: 36.47502258 }, //下行出口左侧2
-        { lng: 117.81641244, lat: 36.4677101 }, //下行入口右侧 基点4
-        { lng: 117.81718759, lat: 36.47501931 }, //下行出口右侧3
-      ];
+      // const data = [
+      //   { lng: 117.81632771, lat: 36.46771608 }, //下行入口左侧1
+      //   { lng: 117.81710505, lat: 36.47502258 }, //下行出口左侧2
+      //   { lng: 117.81641244, lat: 36.4677101 }, //下行入口右侧 基点4
+      //   { lng: 117.81718759, lat: 36.47501931 }, //下行出口右侧3
+      // ];
       // 道路实际高度 / 二维的px数 = 1米所占的px数
       // this.heightRatio = math.divide(7 / 190);
       // let gao = math.subtract(+data[0].lat - +data[2].lat); //隧道宽度差(纬度)
@@ -4859,9 +4859,9 @@ export default {
         var lng = Number(event[i].lng);
         //车辆实际纬度
         // var lat = event[i].latitude;
-        if (lng <= +data[3].lat) {
-          return;
-        }
+        // if (lng <= +data[3].lat) {
+        //   return;
+        // }
         // console.log(event[i].laneNo);
         //车辆实际距离入口距离
         var carKm = event[i].distance;

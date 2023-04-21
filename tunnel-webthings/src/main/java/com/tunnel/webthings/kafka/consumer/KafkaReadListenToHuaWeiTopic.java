@@ -33,7 +33,9 @@ import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.business.service.vehicle.ISdVehicleDataService;
 import com.tunnel.platform.service.event.impl.SdStrategyServiceImpl;
+import com.zc.common.core.kafka.kafkaTool;
 import com.zc.common.core.websocket.WebSocketService;
+import io.netty.channel.Channel;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -1455,26 +1457,8 @@ public class KafkaReadListenToHuaWeiTopic {
         //传到前端实时展示
         JSONObject object = new JSONObject();
         object.put("radarDataList", list);
-        try {
-            //获取所有需要发送消息客服端的token
-            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
-            for (String key :scanKey){
-                //获取隧道以及是否推送
-                Map<String, Object> cacheMap = redisCache.getCacheMap(key);
-                //推送的token
-                String s = key.replaceAll(Constants.CAR_TOKEN, "");
-                //获取当前隧道tunnelId
-                String tunnelId = (String)list.get(0).get("tunnelId");
-                for(String keys : cacheMap.keySet()){
-                    //判断是否可以推送  && 前端可以推送的隧道是否和当前隧道匹配
-                    if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
-                        // 给指定客户端发送消息
-                        WebSocketService.postEvent(s,"radarDataList",object.toString());
-                    }
-                }
-            }
-        }catch(Exception e){
-        }
+        //给指定的客户端发送websocket请求
+        kafkaTool.sendAssignWebSocket(list,object);
     }
 
     /**

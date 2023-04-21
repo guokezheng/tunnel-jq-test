@@ -247,7 +247,7 @@
                       height: getScreenSize(itm.screenSize, 'height') + 'px',
                       
                     }"
-                    style="background: black; position: relative"
+                    style="background: black; position: relative;overflow: hidden;"
                   >
                     <span
                       :style="{
@@ -619,7 +619,7 @@ export default {
       let width = num.split("*")[0];
       let height = num.split("*")[1];
       // 实际分辨率比页面板子小
-      if (width < 540 && height < 75) {
+      if (width <= 450 && height <= 75) {
         if (type == "width") {
           return width;
         } else if (type == "height") {
@@ -627,11 +627,11 @@ export default {
         }
       } else {
         // 实际分辨率比页面板子大
-        if (width / 540 > height / 75) {
+        if (width / 450 > height / 75) {
           if (type == "width") {
-            return 540;
+            return 450;
           } else if (type == "height") {
-            return height / (width / 540);
+            return height / (width / 450);
           }
         } else {
           if (type == "width") {
@@ -1076,24 +1076,24 @@ export default {
         width = screenSize.split("*")[0];
         height = screenSize.split("*")[1];
       }
-      if (width < 540 && height < 75) {
+      if (width <= 450 && height <= 75) {
         if (font.toString().length == 2) {
           return font + "px";
         } else {
           return font.substring(0, 2) + "px";
         }
       } else {
-        if (width / 540 > height / 75) {
+        if (width / 450 > height / 75) {
           if (font.toString().length == 2) {
-            return font / (width / 540) - 4 + "px";
+            return font / (width / 450) + "px";
           } else {
-            return font.substring(0, 2) / (width / 540) - 4 + "px";
+            return font.substring(0, 2) / (width / 450) + "px";
           }
         } else {
           if (font.toString().length == 2) {
-            return font / (height / 75) - 2 + "px";
+            return font / (height / 75) + "px";
           } else {
-            return font.substring(0, 2) / (height / 75) - 2 + "px";
+            return font.substring(0, 2) / (height / 75) + "px";
           }
         }
       }
@@ -1110,20 +1110,28 @@ export default {
         width = screenSize.split("*")[0];
         height = screenSize.split("*")[1];
       }
-      if (width < 540 && height < 75) {
+      if (width <= 450 && height <= 75) {
         return coordinate + "px";
       } else {
-        if (width / 540 > height / 75) {
-          if (type == "left") {
-            return coordinate / (width / 540) + "px";
-          } else if (type == "top") {
-            return coordinate / (width / 540) + "px";
+        if (type == "left") {
+          if (width < 450 && height > 75) {
+            return coordinate / (height / 75) + "px";
+          } else {
+            if (width / 450 >= height / 75) {
+              return coordinate / (width / 450) + "px";
+            } else {
+              return coordinate / (height / 75) + "px";
+            }
           }
-        } else {
-          if (type == "left") {
-            return coordinate / (height / 75) + 5 + "px";
-          } else if (type == "top") {
-            return coordinate / (height / 75) + 4 + "px";
+        } else if (type == "top") {
+          if (width < 450 && height > 75) {
+            return coordinate / (height / 75) + "px";
+          } else {
+            if (width / 450 >= height / 75) {
+              return coordinate / (width / 450) + "px";
+            } else {
+              return coordinate / (height / 75) + "px";
+            }
           }
         }
       }
@@ -1398,6 +1406,8 @@ export default {
   line-height: 1;
   caret-color: rgba(0, 0, 0, 0);
   user-select: none;
+  white-space: normal;
+  word-break: break-all;
 }
 ::v-deep .sortable-chosen:not(th) {
   background-color: rgba(5, 175, 227, 0.1) !important;

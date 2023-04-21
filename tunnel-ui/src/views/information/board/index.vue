@@ -91,7 +91,9 @@
                       :label="itm.deviceId"
                       :key="index"
                     >
+                    <el-tooltip :content="itm.deviceIp" placement="top">
                       <div>{{ itm.deviceName }}</div>
+                    </el-tooltip>
                       <el-tooltip content="回读当前信息" placement="top">
                         <el-button
                           class="el-icon-tickets huiduButton"

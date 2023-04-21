@@ -1347,12 +1347,14 @@
         style="width: 100%; margin-bottom: 10px !important"
         max-height="220"
         size="mini"
+        
         @row-click="handleRowClick"
       >
         <el-table-column
           prop="eqName"
           label="设备名称"
           width="200"
+          align="center"
           show-overflow-tooltip
         >
         </el-table-column>
@@ -1360,10 +1362,11 @@
           prop="pile"
           label="桩号"
           width="120"
+          align="center"
           show-overflow-tooltip
         >
         </el-table-column>
-        <el-table-column label="方向">
+        <el-table-column label="方向" align="center">
           <template slot-scope="scope">
             <span>{{ getDirection(scope.row.eqDirection) }}</span>
           </template>
@@ -1462,20 +1465,15 @@
           </div>
         </el-form-item>
       </el-form>
-      <div slot="footer" style="float: right; margin-bottom: 20px">
+      <div slot="footer" class="dialog-footer">
         <el-button
-          type="primary"
-          size="mini"
           @click="batchManageOK()"
-          style="width: 80px"
           class="submitButton"
           >确 定</el-button
         >
         <el-button
-          type="primary"
-          size="mini"
+          class="closeButton"
           @click="closeBatchManageDialog()"
-          style="width: 80px"
           >取 消</el-button
         >
       </div>
@@ -1521,10 +1519,8 @@
             >
               <el-button
                 slot="append"
-                size="small"
                 class="searchTable"
                 @click="syxt_boxShow = !syxt_boxShow"
-                style="transform: translateX(20px)"
               ></el-button>
             </el-input>
           </div>
@@ -1638,13 +1634,11 @@
               v-model="operationParam.operIp"
               @keyup.enter.native="handleQueryOperationParam"
               size="small"
-              style="padding-right: 5px"
             >
               <el-button
                 slot="append"
                 class="searchTable"
                 @click="sycz_boxShow1 = !sycz_boxShow1"
-                style="transform: translateX(-20px)"
               ></el-button>
             </el-input>
           </div>
@@ -3219,7 +3213,6 @@
                 slot="append"
                 class="searchTable"
                 @click="syxt_boxShow2 = !syxt_boxShow2"
-                style="transform: translateX(-20px)"
               ></el-button>
             </el-input>
           </div>
@@ -3305,7 +3298,6 @@
                 slot="append"
                 class="searchTable"
                 @click="sycz_boxShow3 = !sycz_boxShow3"
-                style="transform: translateX(-20px)"
               ></el-button>
             </el-input>
           </div>
@@ -6154,6 +6146,7 @@ export default {
       this.operationParam_xt.status = null;
       this.operationParam_xt.operIp = "";
       this.operationParam_xt.ipaddr = ''
+      this.queryParams.pageNum = 1;
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },
@@ -9498,12 +9491,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.searchTable {
+  margin: 0px;
+  width: 100% !important;
+  height: 32px !important;
+}
 .robotHtmlBox{
-  width: 1150px;
+  width: 770px;
   position: absolute;
   left: 400px;
   z-index:96659;
-
+  background: #071727;
 }
 .batchManageButton {
   width: 120px;
@@ -9904,9 +9902,9 @@ export default {
 // ::v-deep .operationDiglog .el-input--medium .el-input__inner {
 //   width: 100% !important;
 // }
-::v-deep .el-button--medium {
-  margin-left: 20px;
-}
+// ::v-deep .el-button--medium {
+//   margin-left: 20px;
+// }
 
 // ::v-deep .el-checkbox__inner {
 //   width: 26px;

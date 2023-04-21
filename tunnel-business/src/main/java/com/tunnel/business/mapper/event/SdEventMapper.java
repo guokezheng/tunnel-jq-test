@@ -160,6 +160,9 @@ public interface SdEventMapper
      */
     List<Map<String, Object>> getManagementDeviceState(@Param("id") Long id);
 
+    List<Map<String, Object>> getManagementJiaQiangState(@Param("id") Long id,
+                                                         @Param("state") String state);
+
     /**
      * 查询情报板以及广播
      * @param sdReserveProcess

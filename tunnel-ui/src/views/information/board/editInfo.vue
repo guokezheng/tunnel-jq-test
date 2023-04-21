@@ -25,7 +25,6 @@
         >
           <span
             class="textBoard1 boardTextStyle"
-            style="position: absolute;max-height: 128px;overflow: hidden;"
             :style="{
               color: dataForm.COLOR,
               fontSize: getFontSize(dataForm.FONT_SIZE),
@@ -944,6 +943,9 @@ export default {
   line-height: 1;
   caret-color: rgba(0, 0, 0, 0);
   user-select: none;
+  position: absolute;
+  max-height: 128px;
+  overflow: hidden;
 }
 .blackBoard1 {
   background: #000000;

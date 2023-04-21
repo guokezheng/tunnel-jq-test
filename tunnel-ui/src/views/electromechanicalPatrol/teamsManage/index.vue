@@ -233,7 +233,6 @@
       :before-close="teamsUserCancel"
       width="1000px"
       append-to-body
-      v-dialogDrag
       :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
@@ -362,7 +361,6 @@
       :visible.sync="teamsUserSelect"
       width="800px"
       append-to-body
-      v-dialogDrag
       :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
@@ -402,7 +400,7 @@
             type="index"
             :index="indexMethod"
             label="序号"
-            width="68"
+            width="50"
             align="center"
           ></el-table-column>
           <el-table-column
@@ -421,6 +419,7 @@
             label="所属部门"
             prop="dept.deptName"
             align="center"
+            width="130"
             :show-overflow-tooltip="true"
           />
           <!--          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />-->
@@ -874,6 +873,9 @@ export default {
     padding: 0 15px !important;
     .el-col {
       padding: 0 !important;
+    }
+    ::v-deep .el-table th.gutter{
+        display: table-cell !important;
     }
   }
 }

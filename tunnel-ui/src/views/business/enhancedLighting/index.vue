@@ -67,6 +67,7 @@
       :data="configList"
       @selection-change="handleSelectionChange"
       :row-key="getRowKey"
+      @row-click="handleRowClick"
       height="62vh"
       class="allTable"
       ref="tableFile"
@@ -148,7 +149,12 @@
       width="30%"
       append-to-body
       :close-on-click-modal="false"
+      :before-close="cancel"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="12">
@@ -334,8 +340,8 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -471,6 +477,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row) {
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     /** 所属隧道 */
     getTunnel() {
       listTunnels(this.queryParams).then((response) => {
@@ -528,6 +537,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -661,6 +671,7 @@ export default {
             updateConfig(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -685,7 +696,9 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          this.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -703,6 +716,7 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
         })
         .catch(() => {});
     },

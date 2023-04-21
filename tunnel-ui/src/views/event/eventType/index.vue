@@ -315,6 +315,7 @@
       width="500px"
       append-to-body
       :close-on-click-modal="false"
+      :before-close="cancel"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

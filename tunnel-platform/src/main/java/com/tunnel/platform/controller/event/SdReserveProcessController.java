@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
@@ -94,6 +95,14 @@ public class SdReserveProcessController extends BaseController
         processList.stream().forEach(item -> {
             item.getProcessesList().stream().forEach(temp -> {
                 temp.setEquipmentList(Arrays.asList(temp.getEquipments().split(",")));
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() == temp.getDeviceTypeId()){
+                    temp.setBrightness(temp.getState());
+                    if(Integer.valueOf(temp.getState()) > 0){
+                        temp.setState("1");
+                    }else {
+                        temp.setState("2");
+                    }
+                }
             });
         });
         return AjaxResult.success(processList);

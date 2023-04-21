@@ -480,6 +480,7 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.$set(this.strategyForm.autoControl[index], "stateNum", null);
       this.$set(this.strategyForm.autoControl[index], "state", "");
       this.$set(this.strategyForm.autoControl[index], "equipments", null);
       let params = {

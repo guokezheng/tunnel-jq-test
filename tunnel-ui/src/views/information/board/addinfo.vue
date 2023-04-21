@@ -37,7 +37,6 @@
                 : '',
             }"
             class="textBoard2 boardTextStyle"
-            style="position: absolute"
             v-html="
               dataForm.CONTENT
                 ? dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
@@ -1098,6 +1097,9 @@ export default {
   line-height: 1;
   caret-color: rgba(0, 0, 0, 0);
   user-select: none;
+  position: absolute;
+  max-height: 128px;
+  overflow: hidden;
 }
 .blackBoard2 {
   background: #000000;

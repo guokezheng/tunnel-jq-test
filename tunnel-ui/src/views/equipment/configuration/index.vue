@@ -216,6 +216,7 @@
       width="500px"
       append-to-body
       :close-on-click-modal="false"
+      :before-close="cancel"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -265,6 +266,10 @@
             class="environmentPicDialog"
             :close-on-click-modal="false"
           >
+            <div class="dialogStyleBox">
+              <div class="dialogLine"></div>
+              <div class="dialogCloseButton"></div>
+            </div>
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>

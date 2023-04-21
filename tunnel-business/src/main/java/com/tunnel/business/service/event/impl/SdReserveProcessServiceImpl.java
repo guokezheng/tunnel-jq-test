@@ -146,6 +146,13 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                 rl.setEqTypeId(eqTypeId);
                 rl.setEquipments(StringUtils.join(equipments,","));
                 rl.setState(eqState);
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)){
+                    if(eqState.equals("1")){
+                        rl.setState(item.get("brightness").toString());
+                    }else {
+                        rl.setState("0");
+                    }
+                }
                 rl.setPlanId(planId);
                 rl.setRetrievalRule(item.get("retrievalRule").toString());
                 SpringUtils.getBean(SdStrategyRlMapper.class).insertSdStrategyRl(rl);

@@ -8,14 +8,13 @@
       append-to-body
       :visible="cameraVisible"
       :before-close="handleClosee"
-      :close-on-click-modal="false"
       :modal="false"
     >
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>
       <div class="dialogCloseButton"></div>
     </div>
-      <div style="width: 100%; height: 200px;padding:0 15px">
+      <div style="width: 100%; height: 200px;">
         <video
         v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
@@ -170,7 +169,6 @@
       append-to-body
       :visible="historyVisible"
       :before-close="handleClosee"
-      :close-on-click-modal="false"
       :modal="false"
     >
     <div class="dialogStyleBox">
@@ -276,7 +274,6 @@
       append-to-body
       :visible="yunTaiVisible"
       :before-close="handleClosee"
-      :close-on-click-modal="false"
       :modal="false"
     >
     <div class="dialogStyleBox">

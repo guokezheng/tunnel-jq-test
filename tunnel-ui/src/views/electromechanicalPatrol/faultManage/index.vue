@@ -654,6 +654,10 @@
                   style="width: 600px !important; margin: 0 auto"
                   :close-on-click-modal="false"
                 >
+                  <div class="dialogStyleBox">
+                    <div class="dialogLine"></div>
+                    <div class="dialogCloseButton"></div>
+                  </div>
                   <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
               </el-form-item>

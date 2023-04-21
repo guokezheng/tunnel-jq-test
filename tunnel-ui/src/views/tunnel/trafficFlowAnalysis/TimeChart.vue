@@ -26,6 +26,10 @@ export default {
     },
     dayData: {
       type: null
+    },
+    timePickerDay:{
+      type: Array,
+      default: ()=>[]
     }
   },
   watch: {
@@ -60,17 +64,38 @@ export default {
     },
     setOptions() {
       var myData = this.dayData;
+      //获取当前时间范围内所有小时。
+      let startTime = new Date(this.timePickerDay[0]);
+      let endTime = new Date(this.timePickerDay[1]);
+      //"时间差 天"
+      let day = (endTime.getTime()-startTime.getTime())/(1000*60*60*24);
       // X轴
       var xData = [];
       // Y轴
       var yData = [];
       if(myData.length == 0){
-          xData = ['测试数据1','测试数据2','测试数据3','测试数据4']
-          yData = [0,0,0,0]
+          let dataInfoX = [];
+          let dataInfoY = [];
+          //模拟数据
+          for (let i = 1; i <= day; i++) {
+            let data = startTime;
+            data = data.setDate(data.getDate() + i);
+            for (let j = 0; j < 24; j++) {
+              let startYear = data.getFullYear();
+              let startMonth = data.getMonth();
+              let startDay = index;
+              dataInfoX.push(startYear+"-"+startMonth+"-"+startDay+" "+index<10?"0"+index:index);
+              dataInfoY.push(0);
+            }
+          }
+          xData = dataInfoX
+          yData = dataInfoY
       }else{
         for(var i=0;i<myData.length;i++){
-          xData.push(myData[i].date);
-          yData.push(Number(myData[i].byVehicelNum) / 2);
+          if(myData[i].date!=null){
+            xData.push(myData[i].date);
+            yData.push(Number(myData[i].byVehicelNum));
+          }
         }
       }
       this.chart.setOption({
@@ -84,7 +109,7 @@ export default {
           },
           backgroundColor: 'rgba(255,255,255,1)',
           formatter: function(params) {
-            console.log(params,"params")
+            //console.log(params,"params")
               var str = ''
               str += params[0].marker
               str += params[0].name + '时：  ' + params[0].value + '辆'

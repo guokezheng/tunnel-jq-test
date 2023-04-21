@@ -9,28 +9,16 @@
       :visible="visible"
       :before-close="handleClosee"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
-      </div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <el-form
         ref="form"
         :model="stateForm"
         label-width="80px"
         label-position="left"
         size="mini"
-        style="padding: 15px; padding-top: 0px"
       >
         <el-row>
           <el-col :span="13">
@@ -93,7 +81,7 @@
       </el-form>
       <el-radio-group
         v-model="tab"
-        style="margin-bottom: 10px; margin-left: 10px"
+        style="margin: 10px 0;"
         class="comCovi"
       >
         <el-radio-button label="Inside" v-if="this.eqInfo.clickEqType == 18"
@@ -104,7 +92,7 @@
         >
       </el-radio-group>
       <div id="Inside" style="margin-bottom: 10px"></div>
-      <div slot="footer">
+      <div slot="footer" class="dialog-footer">
         <!-- <el-button
           type="primary"
           size="mini"
@@ -114,10 +102,8 @@
           >确 定</el-button
         > -->
         <el-button
-          type="primary"
-          size="mini"
+          class="closeButton"
           @click="handleClosee()"
-          style="width: 80px"
           >取 消</el-button
         >
       </div>
@@ -372,10 +358,9 @@ export default {
 }
 #Outside,
 #Inside {
-  width: 90%;
+  width: 100%;
   height: 150px;
   background: #fff;
-  margin-left: 5%;
   div {
     width: 100%;
     height: 150px !important;

@@ -1,65 +1,74 @@
 <template>
   <div class="app-container">
-
-    <!-- 全局搜索 -->
-    <el-row :gutter="20" class="topFormRow">
-      <el-col :span="6">
-        <el-button
-        v-hasPermi="['business:SdEmergencyPer:add']"
-        size="small"
-        @click="handleAdd()"
-      >新增人员
-      </el-button>
-      <el-button size="small" @click="resetQuery" 
-            >刷新</el-button
-            >
+    <el-row :gutter="20">
+      <!--部门数据-->
+      <el-col :span="4" :xs="24">
+        <div class="head-container">
+          <el-input
+            v-model="deptName"
+            placeholder="请输入部门名称"
+            clearable
+            size="small"
+            prefix-icon="el-icon-search"
+            style="margin-bottom: 20px"
+          />
+        </div>
+        <div class="head-container">
+          <el-tree
+            :data="deptOptions"
+            :props="defaultProps"
+            :expand-on-click-node="false"
+            :filter-node-method="filterNode"
+            ref="tree"
+            @node-click="handleNodeClick"
+            style="height: 100%; overflow: auto"
+          />
+        </div>
       </el-col>
-      <el-col :span="6" :offset="12">
-          <div ref="main" class="grid-content bg-purple">
-            <el-input
-              placeholder="请输入人员姓名，回车搜索"
-              v-model="queryParams.userName"
-              @keyup.enter.native="handleQuery"
-              size="small"
-            >
+      <el-col :span="20" :xs="24">
+        <el-row :gutter="20" class="mb8">
+          <!-- 全局搜索 -->
+          <el-row :gutter="20" class="topFormRow">
+            <el-col :span="6">
               <el-button
-                slot="append"
-                icon="icon-gym-Gsearch"
-                @click="ry_boxShow = !ry_boxShow"
-              ></el-button>
-            </el-input>
-          </div>
-        </el-col>
-    </el-row>
+                v-hasPermi="['business:SdEmergencyPer:add']"
+                size="small"
+                @click="handleAdd()"
+                >新增
+              </el-button>
+              <el-button size="small" @click="handleExport">导出</el-button>
+              <el-button size="small" @click="resetQuery">刷新</el-button>
+            </el-col>
+            <el-col :span="7" :offset="11">
+              <div ref="main" class="grid-content bg-purple">
+                <el-input
+                  placeholder="请输入姓名、所属部门，回车搜索"
+                  v-model="queryParams.userName"
+                  @keyup.enter.native="handleQuery"
+                  size="small"
+                >
+                  <el-button
+                    slot="append"
+                    class="searchTable"
+                    @click="ry_boxShow = !ry_boxShow"
+                  ></el-button>
+                </el-input>
+              </div>
+            </el-col>
+          </el-row>
 
-    <!-- <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 25px">
-
-        <el-col :span="6" style ="width: 100%;">
-          <div class="grid-content bg-purple">
-            <el-input
-              placeholder="请输入人员姓名，回车搜索"
-              v-model="queryParams.userName"
-              @keyup.enter.native="handleQuery"
+          <div
+            class="treeSearchBox searchBox"
+            v-show="ry_boxShow"
+            style="top: 50px !important"
+          >
+            <el-form
+              ref="queryForm"
+              :inline="true"
+              :model="queryParams"
+              label-width="75px"
             >
-              <el-button
-                slot="append"
-                icon="el-icon-s-fold"
-                @click="ry_boxShow = !ry_boxShow"
-              ></el-button>
-            </el-input>
-          </div>
-        </el-col>
-      </el-row> -->
-      <div class="searchBox" v-show="ry_boxShow">
-        <el-form
-          ref="queryForm"
-          :inline="true"
-          :model="queryParams"
-          label-width="75px"
-        >
-
-          <el-form-item label="隧道名称" prop="tunnelId" style="width: 100%">
+              <!--          <el-form-item label="隧道名称" prop="tunnelId" >
             <el-select
               v-model="queryParams.tunnelId"
               clearable
@@ -73,13 +82,133 @@
                 :value="item.tunnelId"
               />
             </el-select>
+          </el-form-item>-->
+              <el-form-item label="岗位" prop="groupName" style="width: 100%">
+                <el-select
+                  v-model="queryParams.groupName"
+                  clearable
+                  placeholder="请选择岗位"
+                  size="small"
+                  @change="handlechange"
+                >
+                  <el-option
+                    v-for="item in emergencyPostList"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item class="bottomBox">
+                <el-button size="small" type="primary" @click="handleQuery"
+                  >搜索</el-button
+                >
+                <el-button size="small" @click="resetQuery" type="primary" plain
+                  >重置</el-button
+                >
+              </el-form-item>
+            </el-form>
+          </div>
+
+          <div class="tableTopHr"></div>
+
+          <el-table
+            v-loading="loading"
+            ref="peopleTable"
+            :data="SdEmergencyPerList"
+            @selection-change="handleSelectionChange"
+            @row-click="peopleTableRowClick"
+            height="62vh"
+            class="allTable"
+            :row-key="getRowKey"
+          >
+            <el-table-column
+              type="selection"
+              width="55"
+              align="center"
+              reserve-selection
+            />
+            <el-table-column
+              type="index"
+              :index="indexMethod"
+              label="序号"
+              width="68"
+              align="center"
+            ></el-table-column>
+            <!--      <el-table-column label="隧道" align="center" prop="tunnelName" />-->
+            <el-table-column label="所属部门" align="center" prop="deptName" />
+            <el-table-column label="姓名" align="center" prop="userName" />
+            <el-table-column label="岗位" align="center" prop="groupName" />
+            <el-table-column label="电话" align="center" prop="phone" />
+            <el-table-column
+              label="操作"
+              align="center"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  class="tableBlueButtton"
+                  @click="handleUpdate(scope.row)"
+                  v-hasPermi="['business:SdEmergencyPer:edit']"
+                  >修改</el-button
+                >
+                <el-button
+                  size="mini"
+                  class="tableDelButtton"
+                  @click="handleDelete(scope.row)"
+                  v-hasPermi="['business:SdEmergencyPer:remove']"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <pagination
+            v-show="total > 0"
+            :total="total"
+            :page.sync="queryParams.pageNum"
+            :limit.sync="queryParams.pageSize"
+            @pagination="getList"
+          />
+        </el-row>
+      </el-col>
+
+      <!-- 添加或修改应急人员信息对话框 -->
+      <el-dialog
+        :title="title"
+        :visible.sync="open"
+        width="500px"
+        append-to-body
+        class="addUserDialog"
+        :before-close="cancel"
+        :close-on-click-modal="false"
+      >
+        <div class="dialogStyleBox">
+          <div class="dialogLine"></div>
+          <div class="dialogCloseButton"></div>
+        </div>
+        <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+          <el-form-item label="应急人员" prop="userName">
+            <el-input v-model="form.userName" placeholder="请输入应急人员" />
           </el-form-item>
-          <el-form-item label="岗位" prop="groupName" style="width: 100%">
+
+          <el-form-item label="归属部门" prop="deptId">
+            <treeselect
+              v-model="form.deptId"
+              :options="deptOptions"
+              :disable-branch-nodes="true"
+              placeholder="请选择归属部门"
+              @input="changeParentDept"
+            />
+          </el-form-item>
+          <el-form-item label="岗位" prop="groupName">
             <el-select
-              v-model="queryParams.groupName"
-              clearable
+              v-model="form.groupName"
               placeholder="请选择岗位"
+              clearable
               size="small"
+              style="width: 100%"
             >
               <el-option
                 v-for="item in emergencyPostList"
@@ -89,254 +218,21 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item class="bottomBox">
-            <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
-            >
-            <el-button size="small" @click="resetQuery" type="primary" plain
-            >重置</el-button
-            >
+          <el-form-item label="电话" prop="phone">
+            <el-input v-model="form.phone" placeholder="请输入电话" />
           </el-form-item>
+          <div  class="dialog-footer">
+            <el-button
+              class="submitButton"
+              :loading="submitBtnLoading"
+              @click="submitForm"
+              >确 定</el-button
+            >
+            <el-button class="closeButton" @click="cancel">取 消</el-button>
+          </div>
         </el-form>
-      </div>
-    <!-- </div> -->
-
-<!--    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
-        <el-select
-          v-model="queryParams.tunnelId"
-          placeholder="请选择隧道"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="item in tunnelData"
-            :key="item.tunnelName"
-            :label="item.tunnelName"
-            :value="item.tunnelId"
-          />
-        </el-select>
-      </el-form-item>
-      &lt;!&ndash; <el-form-item label="机构" prop="tunnelId">
-        <el-input style="width:200px;" v-model.number="queryParams.groupName" placeholder="请输入机构名称" size="small" />
-      </el-form-item> &ndash;&gt;
-      <el-form-item label="姓名"  prop="stagPointName">
-          <el-input style="width:200px;" v-model.number="queryParams.userName" placeholder="请输入人员姓名" size="small" />
-      </el-form-item>
-      <el-form-item label="岗位" prop="groupName">
-        <el-select
-          v-model="queryParams.groupName"
-          placeholder="请选择岗位"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="item in emergencyPostList"
-            :key="item.dictValue"
-            :label="item.dictLabel"
-            :value="item.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button  size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['business:SdEmergencyPer:add']"
-          >新增</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['business:SdEmergencyPer:edit']"
-          >修改</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['business:SdEmergencyPer:remove']"
-          >删除</el-button
-        >
-      </el-form-item>
-    </el-form>-->
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['business:SdEmergencyPer:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['business:SdEmergencyPer:edit']"
-          >修改</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['business:SdEmergencyPer:remove']"
-          >删除</el-button
-        >
-      </el-col>
-     <el-col :span="1.5">
-       <el-button
-         type="warning"
-         plain
-         icon="el-icon-download"
-         size="mini"
-         @click="handleExport"
-         v-hasPermi="['business:SdEmergencyPer:export']/"
-         >导出</el-button
-       >
-     </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
-    </el-row> -->
-    <div class="tableTopHr" ></div>
-
-    <el-table
-      v-loading="loading"
-      ref="peopleTable"
-      :data="SdEmergencyPerList"
-      @selection-change="handleSelectionChange"
-      @row-click="peopleTableRowClick"
-      :row-class-name="tableRowClassName"
-      max-height="640"
-    >
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-<!--      <el-table-column label="序号"  align="center">
-        <template slot-scope="scope">
-          {{scope.$index+1}}
-        </template>
-      </el-table-column>-->
-      <!-- <el-table-column label="ID" align="center" prop="id" /> -->
-      <!--      <el-table-column label="隧道ID" align="center" prop="tunnelId" />  -->
-      <el-table-column label="隧道" align="center" prop="tunnelName" />
-      <el-table-column label="姓名" align="center" prop="userName" />
-      <el-table-column label="岗位" align="center" prop="groupName" />
-      <el-table-column label="电话" align="center" prop="phone" />
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="tableBlueButtton"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['business:SdEmergencyPer:edit']"
-            >修改</el-button
-          >
-          <el-button
-            size="mini"
-            class="tableDelButtton"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['business:SdEmergencyPer:remove']"
-            >删除</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
-
-    <!-- 添加或修改应急人员信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="隧道" prop="tunnelId">
-          <el-select
-            v-model="form.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            size="small"
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="应急人员" prop="userName">
-          <el-input v-model="form.userName" placeholder="请输入应急人员" />
-        </el-form-item>
-        <el-form-item label="岗位" prop="groupName">
-          <el-select
-          v-model="form.groupName"
-          placeholder="请选择岗位"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="item in emergencyPostList"
-            :key="item.dictValue"
-            :label="item.dictLabel"
-            :value="item.dictValue"
-          />
-        </el-select>
-        </el-form-item>
-        <el-form-item label="电话" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入电话" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :loading="submitBtnLoading" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
+      </el-dialog>
+    </el-row>
   </div>
 </template>
 
@@ -350,15 +246,26 @@ import {
   exportSdEmergencyPer,
 } from "@/api/event/SdEmergencyPer";
 import { listTunnels } from "@/api/equipment/tunnel/api";
+import { treeSelectYG1 } from "@/api/system/dept";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: "SdEmergencyPer",
-  components: {},
+  components: { Treeselect },
   data() {
     return {
-      manageStatin:this.$cache.local.get("manageStation"),
+      manageStatin: this.$cache.local.get("manageStation"),
+      defaultProps: {
+        children: "children",
+        label: "label",
+      },
 
-      emergencyPostList:[],
-      ry_boxShow:false,
+      // 部门树选项
+      deptOptions: undefined,
+      // 部门名称
+      deptName: undefined,
+      emergencyPostList: [],
+      ry_boxShow: false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -385,9 +292,10 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
+        userName: "",
       },
       paramsData: {
-        tunnelId : ""
+        tunnelId: "",
       },
       // 表单参数
       form: {
@@ -404,26 +312,45 @@ export default {
       },
       // 表单校验
       rules: {
-        tunnelId: {
-          required: true, message: '请选择隧道', trigger: 'change'
+        deptId: {
+          required: true,
+          message: "请选择归属部门",
+          trigger: "blur",
         },
-        userName: [{
-          required: true, message: '请输入应急人员', trigger: 'blur'
-        },
-        { min: 1, max: 30, message: '长度在 1 ~ 30 个字符之间', trigger: 'blur' }],
+        userName: [
+          {
+            required: true,
+            message: "请输入应急人员",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 30,
+            message: "长度在 1 ~ 30 个字符之间",
+            trigger: "blur",
+          },
+        ],
         groupName: {
-          required: true, message: '请选择岗位', trigger: 'change'
+          required: true,
+          message: "请选择岗位",
+          trigger: "change",
         },
         phone: [
-          { required: true, message: '请输入电话', trigger: 'blur' },
-          { pattern: /^1[3456789]\d{9}$/, message: '电话号码格式不正确!', trigger: 'blur' },
+          { required: true, message: "请输入电话", trigger: "blur" },
+          {
+            pattern: /^1[3456789]\d{9}$/,
+            message: "电话号码格式不正确!",
+            trigger: "blur",
+          },
         ],
       },
     };
   },
+
   created() {
     this.getList();
     this.getTunnels();
+    this.getTreeselect();
     this.getDicts("sd_emergency_post").then((response) => {
       this.emergencyPostList = response.data;
     });
@@ -433,23 +360,55 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id;
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.ry_boxShow == true){
-          self.ry_boxShow = false;
+      if (self.ry_boxShow == true) {
+        if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+          if (self.ry_boxShow == true) {
+            self.ry_boxShow = false;
+          }
         }
       }
     },
 
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
+    },
+
+    changeParentDept() {
+      this.$refs.form.validateField("deptId");
+    },
+    // 筛选节点
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+
+    /** 查询部门下拉树结构 */
+    getTreeselect() {
+      treeSelectYG1().then((response) => {
+        this.deptOptions = response.data;
+        console.log(this.deptOptions);
+      });
+    },
+
+    // 节点单击事件
+    handleNodeClick(data) {
+      this.queryParams.ids = "";
+      this.queryParams.deptId = data.id;
+      this.getList();
     },
 
     getTunnels() {
-      if(this.$cache.local.get("manageStation") == "1"){
-        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      if (this.$cache.local.get("manageStation") == "1") {
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
       }
       listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
@@ -458,11 +417,10 @@ export default {
     /** 查询应急人员信息列表 */
     getList() {
       this.loading = true;
-      if(this.manageStatin == '1'){
+      /*if(this.manageStatin == '1'){
         this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
-      }
+      }*/
       listSdEmergencyPer(this.queryParams).then((response) => {
-        console.log(response,"应急人员表格")
         this.SdEmergencyPerList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -471,6 +429,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.peopleTable.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -485,24 +444,27 @@ export default {
         createTime: null,
         updateBy: null,
       };
-      this.getList();
+      //this.getList();
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      console.log(this.queryParams)
+      console.log(this.queryParams);
+      this.$refs.peopleTable.clearSelection();
       this.getList();
+    },
+    handlechange(){
+      this.$forceUpdate();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
-      this.queryParams = {
-        tunnelId: null,
-        groupName: null,
-        userName: null,
-        // tunnelId: null,
-      };
+      this.deptName = "";
+      this.queryParams.userName = "";
+      this.queryParams.deptId = "";
+      this.queryParams.ids = "";
+      //this.ids = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -513,17 +475,21 @@ export default {
     },
     // 单击行切换行的选中状态（表格）
     peopleTableRowClick(row) {
-      this.$refs.peopleTable.toggleRowSelection(row)
+      this.$refs.peopleTable.toggleRowSelection(row);
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.getTreeselect();
       this.open = true;
+      this.submitBtnLoading = false;
       this.title = "添加应急人员信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.submitBtnLoading = false;
       this.reset();
+      this.getTreeselect();
       const id = row.id || this.ids;
       getSdEmergencyPer(id).then((response) => {
         console.log(response.data, "response.data");
@@ -535,14 +501,21 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      if(this.submitBtnLoading) return
-      this.submitBtnLoading = true
+      if (this.submitBtnLoading) return;
+      this.submitBtnLoading = true;
+      /* if(this.form.deptId==""||this.form.deptId==null){
+        this.$message("请选择部门节点");
+        this.submitBtnLoading = false
+        return;
+
+      }*/
       this.$refs["form"].validate(async (valid) => {
         if (valid) {
           if (this.form.id != null) {
             await updateSdEmergencyPer(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.peopleTable.clearSelection();
               this.getList();
             });
           } else {
@@ -553,33 +526,38 @@ export default {
             });
           }
         }
-        this.submitBtnLoading = false
+        this.submitBtnLoading = false;
       });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
-      this.$confirm(
-        '是否确认删除应急人员信息?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
+      this.$confirm("是否确认删除?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(function () {
           return delSdEmergencyPer(ids);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
-        });
+        })
+        .catch(function () {
+          that.$refs.peopleTable.clearSelection();
+        });;
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo = "是否确认导出所有的应急人员数据项？";
+      if (this.ids.length > 0) {
+        confirmInfo = "是否确认导出所选的应急人员数据项？";
+      }
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有应急人员信息数据项?", "警告", {
+      this.$confirm(confirmInfo, "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -589,15 +567,9 @@ export default {
         })
         .then((response) => {
           this.$download.name(response.msg);
+          this.$refs.peopleTable.clearSelection();
+          this.queryParams.ids = "";
         });
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   },
   watch: {
@@ -605,7 +577,18 @@ export default {
       console.log(newVal, "0000000000000000000000");
       this.getList();
       this.getTunnels();
-    }
-  }
+    },
+    // 根据名称筛选部门树
+    deptName(val) {
+      this.$refs.tree.filter(val);
+    },
+  },
 };
 </script>
+
+<style scoped lang="scss">
+.vue-treeselect__single-value {
+  color: #ffffff !important;
+}
+</style>
+

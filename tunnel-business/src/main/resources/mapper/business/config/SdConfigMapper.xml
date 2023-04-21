@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.config.SdConfigMapper">
+    
+    <resultMap type="SdConfig" id="SdConfigResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="name"    column="name"    />
+        <result property="code"    column="code"    />
+        <result property="url"    column="url"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdConfigVo">
+        select id, dept_id, name, code, url, create_by, create_time, update_by, update_time from sd_config
+    </sql>
+
+    <select id="selectSdConfigList" parameterType="SdConfig" resultMap="SdConfigResult">
+        select A.id, B.dept_name as dept_id, A.name, A.code, A.url, A.create_by, A.create_time, A.update_by, A.update_time
+        from sd_config A left join sys_dept B on A.dept_id = B.dept_id
+        <where>
+            b.del_flag = '0'
+            <if test="searchValue != null  and searchValue != ''"> and CONCAT(A.name,A.code) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="deptId != null  and deptId != ''"> and A.dept_id = #{deptId}</if>
+            <if test="name != null  and name != ''"> and A.name like concat('%', #{name}, '%')</if>
+            <if test="code != null  and code != ''"> and A.code = #{code}</if>
+            <if test="url != null  and url != ''"> and A.url = #{url}</if>
+        </where>
+        order by id
+    </select>
+
+
+    <select id ="selectSdConfigByDeptId" resultMap="SdConfigResult">
+        select name,code,url from sd_config
+        <where>
+            <if test="deptId != null  and deptId != ''"> and dept_id = #{deptId}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdConfigById" parameterType="Long" resultMap="SdConfigResult">
+        <include refid="selectSdConfigVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdConfig" parameterType="SdConfig">
+        insert into sd_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="deptId != null and deptId != ''">dept_id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="code != null and code != ''">code,</if>
+            <if test="url != null and url != ''">url,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="deptId != null and deptId != ''">#{deptId},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="code != null and code != ''">#{code},</if>
+            <if test="url != null and url != ''">#{url},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdConfig" parameterType="SdConfig">
+        update sd_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null and deptId != ''">dept_id = #{deptId},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdConfigById" parameterType="Long">
+        delete from sd_config where id = #{id}
+    </delete>
+
+    <delete id="deleteSdConfigByIds" parameterType="String">
+        delete from sd_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

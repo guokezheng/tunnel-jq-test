@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="createTime"   column="create_time"  />
 		<result property="updateBy"     column="update_by"    />
 		<result property="updateTime"   column="update_time"  />
+		<result property="dept_name"       column="deptName"       />
 		<result property="remark"       column="remark"       />
 		<association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
 		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
@@ -75,9 +76,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
 			AND date_format(u.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
 		</if>
-		<if test="deptId != null and deptId != 0">
+		<if test="deptId != null and deptId != ''">
 			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId}, ancestors) ))
 		</if>
+		<if test="ids != null and ids != ''"> and FIND_IN_SET(u.user_id,#{ids}) > 0</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
 	</select>
@@ -90,7 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			 left join sys_role r on r.role_id = ur.role_id
 	    where u.del_flag = '0' and r.role_id = #{roleId}
 	    <if test="userName != null and userName != ''">
-			AND u.user_name like concat('%', #{userName}, '%')
+			AND CONCAT(u.nick_name, u.phonenumber) LIKE CONCAT('%',#{userName},'%')
 		</if>
 		<if test="phonenumber != null and phonenumber != ''">
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
@@ -108,7 +110,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    where u.del_flag = '0' and (r.role_id != #{roleId} or r.role_id IS NULL)
 	    and u.user_id not in (select u.user_id from sys_user u inner join sys_user_role ur on u.user_id = ur.user_id and ur.role_id = #{roleId})
 	    <if test="userName != null and userName != ''">
-			AND u.user_name like concat('%', #{userName}, '%')
+			AND CONCAT(u.nick_name, u.phonenumber) LIKE CONCAT('%',#{userName},'%')
 		</if>
 		<if test="phonenumber != null and phonenumber != ''">
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
@@ -120,6 +122,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectUserByUserName" parameterType="String" resultMap="SysUserResult">
 	    <include refid="selectUserVo"/>
 		where u.user_name = #{userName}
+		and u.del_flag != '2'
 	</select>
 
 	<select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
@@ -142,7 +145,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
  		insert into sys_user(
  			<if test="userId != null and userId != 0">user_id,</if>
- 			<if test="deptId != null and deptId != 0">dept_id,</if>
+ 			<if test="deptId != null and deptId != ''">dept_id,</if>
  			<if test="userName != null and userName != ''">user_name,</if>
  			<if test="nickName != null and nickName != ''">nick_name,</if>
  			<if test="email != null and email != ''">email,</if>
@@ -174,7 +177,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="updateUser" parameterType="SysUser">
  		update sys_user
  		<set>
- 			<if test="deptId != null and deptId != 0">dept_id = #{deptId},</if>
+ 			<if test="deptId != null and deptId != ''">dept_id = #{deptId},</if>
  			<if test="userName != null and userName != ''">user_name = #{userName},</if>
  			<if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
  			<if test="email != null ">email = #{email},</if>
@@ -228,5 +231,58 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		${params.dataScope}
 		Limit 1
 	</select>
+
+
+	<select id="teamsUserList" parameterType="String" resultMap="SysUserResult">
+		select distinct u.user_id,p.dept_name,u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time
+		from sys_user u
+		left join sys_dept p on u.dept_id = p.dept_id
+		left join sd_user_teams d on u.user_id = d.user_id
+		where u.del_flag = '0' and d.teams_id = #{deptId}
+		<if test="userName != null and userName != ''">
+			AND CONCAT(u.nick_name, u.phonenumber) LIKE CONCAT('%',#{userName},'%')
+		</if>
+		<if test="phonenumber != null and phonenumber != ''">
+			AND u.phonenumber like concat('%', #{phonenumber}, '%')
+		</if>
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
+	</select>
+
+	<select id="unTeamsUserList" parameterType="String" resultMap="SysUserResult">
+		select distinct u.user_id,p.dept_name, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time
+		from sys_user u
+		left join sd_user_teams d on u.user_id = d.user_id
+		left join sys_dept p on p.dept_id = u.dept_id
+		where u.del_flag = '0' and (d.teams_id != #{deptId} or d.teams_id IS NULL)
+		<if test="userName != null and userName != ''">
+			AND CONCAT(u.nick_name, u.phonenumber) LIKE CONCAT('%',#{userName},'%')
+		</if>
+		<if test="phonenumber != null and phonenumber != ''">
+			AND u.phonenumber like concat('%', #{phonenumber}, '%')
+		</if>
+		<if test="depts != null and depts != ''">
+			AND (p.dept_id = #{depts} OR p.dept_id IN ( SELECT c.dept_id FROM sys_dept c WHERE FIND_IN_SET (#{depts},c.ancestors) ))
+		</if>
+		AND u.user_id not in (select user_id from sd_user_teams)
+		<!-- 数据范围过滤 -->
+	</select>
+
+
+
+
+	<delete id="updateUserDept" parameterType="Long">
+ 		delete from sd_user_teams where user_id = #{userId}
+	</delete>
+
+
+	<delete id="updateUserDeptAll" parameterType="Long">
+		delete from sd_user_teams  where user_id in
+		<foreach item="userIds" collection="userIds"  open="(" separator="," close=")">
+			(#{userIds})
+		</foreach>
+	</delete>
+
+
 
 </mapper>

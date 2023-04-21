@@ -6,6 +6,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 import com.tunnel.business.domain.emeResource.SdEmergencyVehicle;
@@ -42,11 +43,7 @@ public class SdEmergencyVehicleController extends BaseController
     @ApiOperation("查询应急车辆列表")
     public TableDataInfo list(SdEmergencyVehicle sdEmergencyVehicle)
     {
-        String syn = sdEmergencyVehicleService.synVehicleData();
         startPage();
-        if(syn == null || syn == ""){
-            return getDataTable(new ArrayList<>());
-        }
         List<SdEmergencyVehicle> list = sdEmergencyVehicleService.selectSdEmergencyVehicleList(sdEmergencyVehicle);
         return getDataTable(list);
     }
@@ -81,7 +78,7 @@ public class SdEmergencyVehicleController extends BaseController
     {
         List<SdEmergencyVehicle> list = sdEmergencyVehicleService.selectSdEmergencyVehicleList(sdEmergencyVehicle);
         ExcelUtil<SdEmergencyVehicle> util = new ExcelUtil<SdEmergencyVehicle>(SdEmergencyVehicle.class);
-        return util.exportExcel(list, "应急车辆数据");
+        return util.exportExcel(list, "应急车辆");
     }
 
     /**
@@ -139,5 +136,19 @@ public class SdEmergencyVehicleController extends BaseController
     public List<Map<String, Object>> getOrg(){
         List<Map<String, Object>> list=sdEmergencyVehicleService.getOrg();
         return list;
+    }
+
+    /**
+     * 同步应急车辆
+     * @return
+     */
+    @GetMapping("/syncVehicle")
+    public AjaxResult syncVehicle(){
+        String syn = sdEmergencyVehicleService.synVehicleData();
+        if(StringUtils.isNotEmpty(syn) && StringUtils.isNotNull(syn)){
+            return AjaxResult.success("同步成功");
+        }else {
+            return AjaxResult.error("同步失败，网络未连接");
+        }
     }
 }

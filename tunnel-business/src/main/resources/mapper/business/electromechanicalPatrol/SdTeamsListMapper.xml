@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.electromechanicalPatrol.SdTeamsListMapper">
+
+    <resultMap type="SdTeamsList" id="SdTeamsListResult">
+        <id     property="deptId"     column="dept_id"     />
+        <result property="ancestors"  column="ancestors"   />
+        <result property="deptName"   column="dept_name"   />
+        <result property="orderNum"   column="order_num"   />
+        <result property="leader"     column="leader"      />
+        <result property="phone"      column="phone"       />
+        <result property="email"      column="email"       />
+        <result property="status"     column="status"      />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="parentName" column="parent_name" />
+        <result property="createBy"   column="create_by"   />
+        <result property="createTime" column="create_time" />
+        <result property="updateBy"   column="update_by"   />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectDeptVo">
+        select d.dept_id, d.parent_id parentId, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
+        from sd_teams d
+    </sql>
+
+    <select id="selectSdTeamsList" parameterType="SdTeamsList" resultMap="SdTeamsListResult">
+        select d.dept_id, p.dept_name parentId, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
+        from sd_teams d
+        left join sys_dept p on d.parent_id = p.dept_id
+        where d.del_flag = '0'
+        <if test="deptId != null and deptId != 0">
+            AND d.dept_id = #{deptId}
+        </if>
+        <if test="parentId != null and parentId != 0">
+            AND d.parent_id = #{parentId}
+        </if>
+        <if test="deptName != null and deptName != ''">
+            AND d.dept_name like concat('%', #{deptName}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND d.status = #{status}
+        </if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(d.dept_id,#{ids}) > 0</if>
+        <if test="depts != null and depts != ''">
+            AND (d.parent_id = #{depts} OR d.parent_id IN ( SELECT s.dept_id FROM sys_dept s WHERE FIND_IN_SET (#{depts},s.ancestors) ))
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by d.create_time desc,d.update_time desc
+    </select>
+
+
+    <select id="checkTeamsNameUnique" resultMap="SdTeamsListResult">
+        <include refid="selectDeptVo"/>
+        where dept_name=#{deptName} and parent_id = #{parentId} limit 1
+    </select>
+
+
+    <insert id="insertTeams" parameterType="SdTeamsList">
+        insert into sd_teams(
+        <if test="deptId != null and deptId != ''">dept_id,</if>
+        <if test="parentId != null">parent_id,</if>
+        <if test="deptName != null and deptName != ''">dept_name,</if>
+        <if test="ancestors != null and ancestors != ''">ancestors,</if>
+        <if test="orderNum != null and orderNum != ''">order_num,</if>
+        <if test="leader != null and leader != ''">leader,</if>
+        <if test="phone != null and phone != ''">phone,</if>
+        <if test="email != null and email != ''">email,</if>
+        <if test="status != null">status,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="deptId != null and deptId != ''">#{deptId},</if>
+        <if test="parentId != null">#{parentId},</if>
+        <if test="deptName != null and deptName != ''">#{deptName},</if>
+        <if test="ancestors != null and ancestors != ''">#{ancestors},</if>
+        <if test="orderNum != null and orderNum != ''">#{orderNum},</if>
+        <if test="leader != null and leader != ''">#{leader},</if>
+        <if test="phone != null and phone != ''">#{phone},</if>
+        <if test="email != null and email != ''">#{email},</if>
+        <if test="status != null">#{status},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
+        )
+    </insert>
+
+
+
+    <select id="selectTeamsById" parameterType="String" resultMap="SdTeamsListResult">
+        select * from sys_dept
+        where dept_id = #{parentId}
+    </select>
+
+
+
+    <update id="updateTeams" parameterType="com.tunnel.business.domain.electromechanicalPatrol.SdTeamsList">
+        update sd_teams
+        <set>
+            <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
+            <if test="deptName != null and deptName != ''">dept_name = #{deptName},</if>
+            <if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
+            <if test="orderNum != null and orderNum != ''">order_num = #{orderNum},</if>
+            <if test="leader != null">leader = #{leader},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where dept_id = #{deptId}
+    </update>
+
+
+    <select id="selectTeamsChildByPid" parameterType="String" resultType="String">
+        select dept_id from sd_teams
+        where parent_id = #{parentId}
+		order by dept_id desc limit 1
+    </select>
+
+
+
+    <select id="selectTeamsInfoById" parameterType="String" resultMap="SdTeamsListResult">
+        select * from sd_teams
+        where dept_id = #{deptId}
+    </select>
+
+
+
+    <delete id="deleteTeamsById" parameterType="String">
+		delete from sd_teams  where dept_id = #{deptId}
+	</delete>
+
+
+    <insert id="batchUserTeams">
+        insert into sd_user_teams(user_id, teams_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.userId},#{item.teamsId})
+        </foreach>
+    </insert>
+
+
+    <select id="checkTeamsExistUser" parameterType="String" resultType="int">
+		select count(1) from sd_user_teams where teams_id = #{deptId}
+	</select>
+
+
+
+
+
+</mapper>

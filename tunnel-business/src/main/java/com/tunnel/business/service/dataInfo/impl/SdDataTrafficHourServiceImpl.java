@@ -62,8 +62,8 @@ public class SdDataTrafficHourServiceImpl implements ISdDataTrafficHourService {
      */
     @Override
     public int insertSdDataTrafficHour(SdDataTrafficHour sdDataTrafficHour) {
-        SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(sdDataTrafficHour.getDeviceId());
-        sdDataTrafficHour.setEqType(sdDevices.getEqType());
+//        SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(sdDataTrafficHour.getDeviceId());
+//        sdDataTrafficHour.setEqType(sdDevices.getEqType());
         return sdDataTrafficHourMapper.insertSdDataTrafficHour(sdDataTrafficHour);
     }
 

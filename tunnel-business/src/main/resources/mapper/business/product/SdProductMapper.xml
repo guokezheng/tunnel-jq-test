@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.product.SdProductMapper">
+    
+    <resultMap type="SdProduct" id="SdProductResult">
+        <result property="id"    column="id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="fEqType"    column="f_eq_type"    />
+        <result property="brandId"    column="brand_id"    />
+        <result property="protocolId"    column="protocol_id"    />
+    </resultMap>
+
+    <sql id="selectSdProductVo">
+        select id, product_name, f_eq_type, brand_id, protocol_id from sd_product
+    </sql>
+
+    <select id="selectSdProductList" parameterType="SdProduct" resultMap="SdProductResult">
+        <include refid="selectSdProductVo"/>
+        <where>  
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="fEqType != null "> and f_eq_type = #{fEqType}</if>
+            <if test="brandId != null "> and brand_id = #{brandId}</if>
+            <if test="protocolId != null "> and protocol_id = #{protocolId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdProductById" parameterType="Long" resultMap="SdProductResult">
+        <include refid="selectSdProductVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdProduct" parameterType="SdProduct">
+        insert into sd_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="productName != null">product_name,</if>
+            <if test="fEqType != null">f_eq_type,</if>
+            <if test="brandId != null">brand_id,</if>
+            <if test="protocolId != null">protocol_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="productName != null">#{productName},</if>
+            <if test="fEqType != null">#{fEqType},</if>
+            <if test="brandId != null">#{brandId},</if>
+            <if test="protocolId != null">#{protocolId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdProduct" parameterType="SdProduct">
+        update sd_product
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productName != null">product_name = #{productName},</if>
+            <if test="fEqType != null">f_eq_type = #{fEqType},</if>
+            <if test="brandId != null">brand_id = #{brandId},</if>
+            <if test="protocolId != null">protocol_id = #{protocolId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdProductById" parameterType="Long">
+        delete from sd_product where id = #{id}
+    </delete>
+
+    <delete id="deleteSdProductByIds" parameterType="String">
+        delete from sd_product where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

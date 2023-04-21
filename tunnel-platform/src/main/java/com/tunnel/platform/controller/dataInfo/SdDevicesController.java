@@ -160,10 +160,26 @@ public class SdDevicesController extends BaseController {
     @Log(title = "设备", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public AjaxResult export(SdDevices sdDevices) {
-        List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);
-        //List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
+            String deptId = SecurityUtils.getDeptId();
+            sdDevices.setDeptId(deptId);
+        }
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        //1：代表执行校验指令SQL
+        if ("1".equals(sdDevices.getEqDirection())) {
+            List<String> eqIds = new ArrayList<String>();
+            List<SdDevices> checklist = sdDevicesService.getChecklist(list);
+            for (SdDevices devices : checklist) {
+                eqIds.add(devices.getEqId());
+            }
+            sdDevices.setEqIds(eqIds);
+            list = sdDevicesService.selectSdDevicesList(sdDevices);
+        } else {
+            list = sdDevicesService.selectSdDevicesList(sdDevices);
+        }
+        /*List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);*/
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
-        return util.exportExcel(list, "设备管理数据");
+        return util.exportExcel(list, "设备管理");
     }
 
     /**
@@ -230,19 +246,24 @@ public class SdDevicesController extends BaseController {
         if (list.size() > 0) {
             // return Result.error(1,"当前设备ID重复，请重新输入");
             return Result.error("当前设备ID重复，请重新输入");
-        } else {
-            int i = sdDevicesService.insertSdDevices(sdDevices);
-            if (sdDevices.getEqType() != 31L) {
-                sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
-            }
-            //管理站平台下推送
-            if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
-                List<SdDevices> sdDevicesList = new ArrayList<>();
-                sdDevicesList.add(sdDevices);
-                sdPlatformApiController.devicesPush(sdDevicesList, "add", null);
-            }
-            return Result.toResult(i);
         }
+
+        List<SdDevices> list1 = sdDevicesService.tunnelEqNameOnly(sdDevices.getEqTunnelId(), sdDevices.getEqName());
+        if (list1.size() > 0) {
+            return Result.error("当前设备名称已经存在，请核对后重试！");
+        }
+
+        int i = sdDevicesService.insertSdDevices(sdDevices);
+        if (sdDevices.getEqType() != 31L) {
+            sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+        }
+        //管理站平台下推送
+        if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
+            List<SdDevices> sdDevicesList = new ArrayList<>();
+            sdDevicesList.add(sdDevices);
+            sdPlatformApiController.devicesPush(sdDevicesList, "add", null);
+        }
+        return Result.toResult(i);
     }
 
     @PostMapping("/autoId")
@@ -270,6 +291,12 @@ public class SdDevicesController extends BaseController {
                 && sdDevices.getDeliveryTime().getTime() > sdDevices.getInstallTime().getTime()) {
             throw new RuntimeException("出厂时间不能晚于设备安装时间");
         }
+
+        List<SdDevices> list1 = sdDevicesService.tunnelEqNameOnly(sdDevices.getEqTunnelId(), sdDevices.getEqName());
+        if (list1.size() > 0 && !sdDevices.getEqId().equals(list1.get(0).getEqId())) {
+            return Result.error("当前设备名称已经存在，请核对后重试！");
+        }
+
         int i = sdDevicesService.updateSdDevices(sdDevices);
         if (sdDevices.getEqType() != 31L) {
             sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
@@ -485,5 +512,14 @@ public class SdDevicesController extends BaseController {
         return AjaxResult.success(list);
     }
 
-
+    /**
+     * 查询级联选择设备列表
+     *
+     * @param sdDevices
+     * @return
+     */
+    @GetMapping("/getTreeDeviceList")
+    public AjaxResult getTreeDeviceList(SdDevices sdDevices){
+        return sdDevicesService.getTreeDeviceList(sdDevices);
+    }
 }

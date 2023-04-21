@@ -70,3 +70,13 @@ export function getRepairRecordList(data) {
     data: data
   })
 }
+
+
+// 导出设备故障
+export function exportFaultList(query) {
+  return request({
+    url: '/fault/list/export',
+    method: 'get',
+    params: query
+  })
+}

@@ -2,7 +2,9 @@ package com.tunnel.business.mapper.event;
 
 
 import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.event.SdReserveProcess;
 import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.HashMap;
@@ -113,7 +115,78 @@ public interface SdEventMapper
      * @return
      */
     @Select("select count(id) from sd_fault_list where " +
-            "fault_status = '0' and TO_DAYS(create_time) = TO_DAYS(NOW())")
+            "fault_status = '0' and fallt_remove_statue = '1' and TO_DAYS(create_time) = TO_DAYS(NOW())")
     int eventPopFaultCount();
 
+    /**
+     * 事件详情-事件发现
+     * @param sdEvent
+     * @return
+     */
+    SdEvent getEventDiscovery(SdEvent sdEvent);
+
+    /**
+     * 事件详情-人工复核
+     * @param sdEvent
+     * @return
+     */
+    SdEvent getManualReview(SdEvent sdEvent);
+
+    /**
+     * 事件详情-完结报告
+     * @param sdEvent
+     * @return
+     */
+    SdEvent getEndReport(SdEvent sdEvent);
+
+    /**
+     * 警情升级返现
+     * @param sdEvent
+     * @return
+     */
+    Map<String, Object> getSituationUpgrade(SdEvent sdEvent);
+
+    /**
+     * 应急调度-处置设备详情
+     * @param sdReserveProcess
+     * @return
+     */
+    List<Map<String, Object>> getManagementDevice(SdReserveProcess sdReserveProcess);
+
+    /**
+     * 查询设备状态
+     * @param id
+     * @return
+     */
+    List<Map<String, Object>> getManagementDeviceState(@Param("id") Long id);
+
+    /**
+     * 查询情报板以及广播
+     * @param sdReserveProcess
+     * @return
+     */
+    String getManagementVmsLs(SdReserveProcess sdReserveProcess);
+
+    /**
+     * 查询事件等级以及预案名称
+     * @param sdEvent
+     * @return
+     */
+    Map<String, Object> getEventInif(SdEvent sdEvent);
+
+    /**
+     * 查询事件以及优先级
+     * @param sdEvent
+     * @return
+     */
+    List<Map<String, Object>> selectAllEvent(SdEvent sdEvent);
+
+    /**
+     * 批量更新事件状态
+     * @param list
+     * @param eventState
+     * @return
+     */
+    public int updateSdEventStateIds(@Param("list") List<Long> list,
+                                     @Param("eventState") String eventState);
 }

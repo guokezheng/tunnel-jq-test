@@ -34,20 +34,20 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     private String typeAbbr;
 
     /** 设备类型默认图标ID */
-    @Excel(name = "设备类型默认图标ID")
+   /* @Excel(name = "设备类型默认图标ID")*/
     @ApiModelProperty("设备类型默认图标ID")
     private String iconFileId;
 
     /** 图片宽度 */
-    @Excel(name = "图片宽度")
+    @Excel(name = "图标宽度(px)")
     @ApiModelProperty("图片宽度")
     private String iconWidth;
     /** 图片宽度 */
-    @Excel(name = "图片高度")
+    @Excel(name = "图标高度(px)")
     @ApiModelProperty("图片高度")
     private String iconHeight;
 
-    @Excel(name = "是否可控")
+    @Excel(name = "是否可控", readConverterExp = "0=否,1=是")
     @ApiModelProperty("是否可控1：是 0：否")
     private String isControl;
 
@@ -62,6 +62,16 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
 
     @ApiModelProperty("所属系统")
     private String eqSystem;
+
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getIsAnalog() {
         return isAnalog;

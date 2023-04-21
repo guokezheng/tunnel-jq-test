@@ -101,7 +101,39 @@ public class SwaggerConfig {
                         basePackage(
                                 "com.tunnel.platform.controller.emeResource"
                                         + splitor
-                                        + "com.tunnel.platform.controller.event"
+                                        + "com.tunnel.platform.controller.event.SdEmergencyDeviceController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdEmergencyPerController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdEventController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdEventFlowController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdEventTypeController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdJoinTypeFlowController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdPlanTypeController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdReservePlanController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdReservePlanFileController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdReserveProcessController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdSafetyIndexController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdStrategyBackController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdStrategyController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdStrategyRlController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdTriggerController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdWarningTypeController"
+                                        + splitor
+                                        + "com.tunnel.platform.controller.event.SdWarningInfoController"
                                         + splitor
                         )
                 )

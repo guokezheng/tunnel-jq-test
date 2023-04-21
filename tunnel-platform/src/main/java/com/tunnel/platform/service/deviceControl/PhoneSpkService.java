@@ -206,19 +206,31 @@ public class PhoneSpkService {
         if (StringUtils.isNotBlank(deviceId)) {
             SdDevices devices = sdDevicesMapper.selectSdDevicesById(deviceId);
             externalSystemId = devices.getExternalSystemId();
-            Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
+            if(externalSystemId==null||"".equals(externalSystemId)){
+                throw new RuntimeException("未配置所选设备关联的外部系统！");
+            }
+            //Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
         } else {
             String tunnelId = (String) map.get("tunnelId");
             String direction = (String) map.get("direction");
-            Assert.hasText(tunnelId, "隧道ID参数必传");
-            Assert.hasText(direction, "隧道方向参数必传");
+            if(tunnelId==null||"".equals(tunnelId)){
+                throw new RuntimeException("未指定隧道信息！");
+            }
+            if(direction==null||"".equals(direction)){
+                throw new RuntimeException("未指定隧道方向！");
+            }
+            //Assert.hasText(tunnelId, "未指定隧道信息");
+            //Assert.hasText(direction, "未指定隧道方向");
 
             SdDevices device = new SdDevices();
             device.setEqTunnelId(tunnelId);
             device.setEqDirection(direction);
             device.setEqType(DevicesTypeEnum.LS.getCode());
             List<SdDevices> spkList = sdDevicesMapper.getSpkList(device);
-            Assert.notEmpty(spkList, "该方向隧道未查询到广播设备");
+            if(spkList==null||spkList.get(0)==null){
+                throw new RuntimeException("该方向隧道未查询到广播设备！");
+            }
+            //Assert.notEmpty(spkList, "该方向隧道未查询到广播设备");
 
             for (SdDevices devices : spkList) {
                 externalSystemId = devices.getExternalSystemId();
@@ -226,11 +238,17 @@ public class PhoneSpkService {
                     break;
                 }
             }
-            Assert.notNull(externalSystemId, "该方向隧道的广播设备未配置 关联的外部系统");
+            if(externalSystemId==null||"".equals(externalSystemId)){
+                throw new RuntimeException("该方向隧道的广播设备未配置 关联的外部系统！");
+            }
+            //Assert.notNull(externalSystemId, "该方向隧道的广播设备未配置 关联的外部系统");
         }
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String systemUrl = externalSystem.getSystemUrl();
-        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
+        if(systemUrl==null||"".equals(systemUrl)){
+            throw new RuntimeException("未配置该设备所属的外部系统地址！");
+        }
+        //Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)
@@ -274,11 +292,11 @@ public class PhoneSpkService {
         //参数校验
         Assert.notEmpty(fileList, "未选择音频文件！");
         Assert.notEmpty(spkDeviceIds, "未选择广播设备！");
-        Assert.hasText(controlType, "控制类型参数必传！");
-        Assert.hasText(tunnelId, "隧道ID参数必传");
+        Assert.hasText(controlType, "未指定控制类型参数！");
+        Assert.hasText(tunnelId, "未指定隧道信息");
 
         if ("GSY".equals(deploymentType)) {
-            Assert.hasText(operIp, "操作方IP地址参数{operIp}必传！");
+            Assert.hasText(operIp, "未提供操作方IP地址参数！");
             SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(tunnelId);
             //设备所属管理站host
             String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
@@ -361,16 +379,26 @@ public class PhoneSpkService {
         int status = phoneSpeak.playVoice(systemUrl, map);
 
         //添加操作日志
-        SdOperationLog sdOperationLog = new SdOperationLog();
-        sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
-        sdOperationLog.setTunnelId(tunnelId);
-        sdOperationLog.setEqId(spkDeviceIds.toString());
-        sdOperationLog.setOperationState("playVoice");
-        sdOperationLog.setControlType(controlType);
-        sdOperationLog.setCreateTime(new Date());
-        sdOperationLog.setOperIp(operIp);
-        sdOperationLog.setState(String.valueOf(status));
-        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        List<SdOperationLog> list = new ArrayList<>();
+        for(String eqId : spkDeviceIds){
+            SdOperationLog sdOperationLog = new SdOperationLog();
+            sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
+            sdOperationLog.setTunnelId(tunnelId);
+            sdOperationLog.setEqId(eqId);
+            if(fileList.size() > 0){
+                List<String> list1 = Arrays.asList(fileList.get(0).toString().split("\\\\"));
+                sdOperationLog.setOperationState(list1.get(list1.size()-1));
+            }else {
+                sdOperationLog.setOperationState("无播放文件");
+            }
+            sdOperationLog.setControlType(controlType);
+            sdOperationLog.setCreateTime(new Date());
+            sdOperationLog.setOperIp(operIp);
+            sdOperationLog.setState(String.valueOf(status));
+            list.add(sdOperationLog);
+        }
+
+        sdOperationLogService.insertBatchSdOperationLog(list);
 
         return AjaxResult.success(status);
     }
@@ -383,13 +411,17 @@ public class PhoneSpkService {
         String controlType = (String) map.get("controlType");
         String operIp = (String) map.get("operIp");
 
-        Assert.notEmpty(fileList, "未选择音频文件！");
-        Assert.hasText(tunnelId, "隧道ID参数必传");
-        Assert.hasText(direction, "隧道方向参数必传");
-        Assert.hasText(controlType, "控制类型参数必传！");
+        if (fileList.size()>0 && fileList.get(0) != null){
+        }else{
+            throw new RuntimeException("未选择音频文件！");
+            //Assert.notEmpty(fileList, "未选择音频文件！");
+        }
+        Assert.hasText(tunnelId, "未指定隧道信息");
+        Assert.hasText(direction, "未指定隧道方向");
+        Assert.hasText(controlType, "未指定控制类型！");
 
         if ("GSY".equals(deploymentType)) {
-            Assert.hasText(operIp, "操作方IP地址参数必传！");
+            Assert.hasText(operIp, "未提供操作方IP地址！");
 
             SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(tunnelId);
             //设备所属管理站host

@@ -95,7 +95,7 @@
             </div>
         </div>
     </div>
-    
+
 </template>
 
 <script>
@@ -107,10 +107,10 @@
             }
         },
         mounted(){
-            
+
         },
         methods:{
-            
+
         }
     }
 </script>
@@ -127,14 +127,14 @@
         .planContent{
             width: 103%;
             height: 100%;
-            
+
             border-radius: 1vw;
             padding: 1vw;
             box-sizing: border-box;
             overflow: auto;
             font-size: 0.8vw;
             color: white;
-            
+
             .planRow{
                 width:  100%;
                 // height: 13%;
@@ -173,5 +173,5 @@
             }
         }
     }
-    
+
 </style>

@@ -3,6 +3,7 @@ package com.tunnel.platform.service;
 import cn.hutool.json.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesHongTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -15,6 +16,9 @@ import com.tunnel.business.domain.event.SdDeviceNowState;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -89,201 +93,241 @@ public class SdDeviceControlService {
      * 控制诱导灯：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）
      * 控制疏散标志：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）、fireMark（设备地址标号，正常情况下为255,0为关灯）
      * 情报板控制：devId（设备ID）、state（情报板模板内容对应sdvmstemplatecontent中的content字段）、templateId（情报板模板ID）
-     * 控制方式controlType(控制方式   0：手动 1：时间控制 2：光强控制 3:预案控制)
+     * 控制方式controlType 根据字典sd_control_type
      * */
     public Integer controlDevices(Map<String, Object> map) {
-        if (map == null || map.isEmpty()) {
-            //当前设备控制参数为空，直接返回
-            log.error("当前设备控制参数为空");
-            return 0;
-        }
 
-        //解析map 杭山东隧道下调用瑞华赢接口控制设备
-        String deviceId = map.get("devId").toString();
-        String deviceState = map.get("state").toString();
-        SdDevices devicesHong = sdDevicesService.selectSdDevicesById(deviceId);
-        if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType()) && "AGREE".equals(platformControl)){
-            Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
-            Integer code = Integer.valueOf(hongMap.get("code"));
-            if(code == 200){
-                return 1;
-            }else {
-                return 0;
-            }
-        }
-
-        if ("GSY".equals(deploymentType)) {
-            return sdOptDeviceService.optSingleDevice(map);
-        }
-
-        //根据字典中配置的设备模拟控制值进行模拟状态展示
-        List<SysDictData> isopenList = sysDictDataService.getSysDictDataByDictType("sys_analog_control_isopen");
-        if (isopenList.size() == 0) {
-            throw new RuntimeException("设备模拟控制是否开启字典值不存在，请添加后重试");
-        }
-        SysDictData sysDictData = isopenList.get(0);
-        String isopen = sysDictData.getDictValue();
-
-        //控制车指
-        if (map.get("devId") == null || map.get("devId").toString().equals("")) {
-            throw new RuntimeException("未指定设备");
-        } else if (map.get("state") == null || map.get("state").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息");
-        } else if (map.get("controlType") == null || map.get("controlType").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息");
-        }
-        String devId = map.get("devId").toString();
-        String state = map.get("state").toString();
-        String controlType = map.get("controlType").toString();
-        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-        //获取当前设备状态
-        SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(devId);
-        //sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
-        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();
-        sdOperationLog.setEqTypeId(sdDevices.getEqType());
-        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
-        sdOperationLog.setEqId(sdDevices.getEqId());
-        sdOperationLog.setOperationState(state);
-        sdOperationLog.setControlType(controlType);
-        if (null != map.get("operIp")) {
-            sdOperationLog.setOperIp(map.get("operIp").toString());
-        }
-//        if (null != map.get("controlTime")) {
-//            sdOperationLog.setCreateTime(DateUtils.parseDate(map.get("controlTime")));
-//        }else{
-        sdOperationLog.setCreateTime(new Date());
-        //}
-        if (null != map.get("eventId")) {
-            sdOperationLog.setEventId(map.get("eventId").toString());
-        }
+
+        //部份设备未接入，无法正确获取设备控制结果，默认失败
+        sdOperationLog.setState("0");
 
         int controlState = 0;
-        String fireMark = "";
-        //控制车指
-        if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()
-            || sdDevices.getEqType().longValue() == DevicesTypeEnum.JUAN_LIAN_MEN.getCode().longValue() ||
-                sdDevices.getEqType().longValue() == DevicesTypeEnum.FENG_JI.getCode().longValue() ||
-                sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
-                sdDevices.getEqType().longValue() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode().longValue() ||
-                sdDevices.getEqType().longValue() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode().longValue() ||
-                sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) ||
-                sdDevices.getEqType().longValue() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode().longValue()) {
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
+        try {
+            if (map == null || map.isEmpty()) {
+                //当前设备控制参数为空，直接返回
+                log.error("当前设备控制参数为空");
+                return 0;
             }
 
-            //车指控制方法
-            controlState = controlLaneIndicator(controlState, isopen, devId, state, sdDevices);
-
-            sdOperationLog.setState(String.valueOf(controlState));
-            //通过websocket推送到前端
-            String[] states = new String[4];
-            states[0] = state;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"cz");
-            //控制诱导灯
-        } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
-            if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的亮度信息");
-            } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的频率信息");
-            }
-            String brightness = map.get("brightness").toString();
-            String frequency = map.get("frequency").toString();
-            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
-            data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
+            //解析map 杭山东隧道下调用瑞华赢接口控制设备
+            String deviceId = map.get("devId").toString();
+            String deviceState = map.get("state").toString();
+            SdDevices devicesHong = sdDevicesService.selectSdDevicesById(deviceId);
+            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType()) && "AGREE".equals(platformControl)){
+                Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
+                Integer code = Integer.valueOf(hongMap.get("code"));
+                if(code == 200){
+                    return 1;
+                }else {
+                    return 0;
+                }
             }
 
-            //控制器不在工作台展示，传进来的子设备需要关联查父级控制器的信息
-            sdDevices = sdDevicesService.selectSdDevicesById(sdDevices.getFEqId());
-            devId = sdDevices.getEqId();
-            //诱导灯控制方法
-            controlState = controlGuidanceLamp(controlState, isopen, devId, state, sdDevices, brightness, frequency);
-
-            sdOperationLog.setState(String.valueOf(controlState));
-            //通过websocket推送到前端
-            String[] states = new String[4];
-            states[0] = state;
-            states[1] = brightness;
-            states[2] = frequency;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
-            //控制疏散标志
-        } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
-            if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的亮度信息");
-            } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的频率信息");
-            } else if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的标号位置信息");
-            }
-            fireMark = map.get("fireMark").toString();
-            String brightness = map.get("brightness").toString();
-            String frequency = map.get("frequency").toString();
-            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()));
-            data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
+            if ("GSY".equals(deploymentType)) {
+                return sdOptDeviceService.optSingleDevice(map);
             }
 
-            //控制器不在工作台展示，传进来的子设备需要关联查父级控制器的信息
-            sdDevices = sdDevicesService.selectSdDevicesById(sdDevices.getFEqId());
-            devId = sdDevices.getEqId();
-            //疏散标志控制方法
-            controlState = controlEvacuationSign(controlState, isopen, devId, state, sdDevices, brightness, frequency, fireMark);
+            //根据字典中配置的设备模拟控制值进行模拟状态展示
+            List<SysDictData> isopenList = sysDictDataService.getSysDictDataByDictType("sys_analog_control_isopen");
+            if (isopenList.size() == 0) {
+                throw new RuntimeException("设备模拟控制是否开启字典值不存在，请添加后重试");
+            }
+            SysDictData sysDictData = isopenList.get(0);
+            String isopen = sysDictData.getDictValue();
 
-            sdOperationLog.setState(String.valueOf(controlState));
-            //通过websocket推送到前端
-            String[] states = new String[4];
-            states[0] = state;
-            states[1] = brightness;
-            states[2] = frequency;
-            states[3] = fireMark;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
-            //控制照明 目前只有加强照明和基本照明
-        } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) {
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
+            //控制车指
+            if (map.get("devId") == null || map.get("devId").toString().equals("")) {
+                throw new RuntimeException("未指定设备");
+            } else if (map.get("state") == null || map.get("state").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的状态信息");
+            } else if (map.get("controlType") == null || map.get("controlType").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的状态信息");
+            }
+            String devId = map.get("devId").toString();
+            String state = map.get("state").toString();
+            String controlType = map.get("controlType").toString();
+            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+            //获取当前设备状态
+            SdDeviceData sdDeviceData = new SdDeviceData();
+            sdDeviceData.setDeviceId(devId);
+            //sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
+            List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+
+            sdOperationLog.setEqTypeId(sdDevices.getEqType());
+            sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+            sdOperationLog.setEqId(sdDevices.getEqId());
+            sdOperationLog.setOperationState(state);
+            sdOperationLog.setControlType(controlType);
+            if (null != map.get("operIp")) {
+                sdOperationLog.setOperIp(map.get("operIp").toString());
+            }
+            if (null != map.get("controlTime")) {
+                sdOperationLog.setCreateTime(DateUtils.parseDate(map.get("controlTime")));
+            }else{
+                sdOperationLog.setCreateTime(new Date());
+            }
+            if (null != map.get("eventId")) {
+                sdOperationLog.setEventId(map.get("eventId").toString());
             }
 
-            //控制照明设备
-            controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices);
+            controlState = 0;
+            String fireMark = "";
+            //控制车指
+            if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()
+                || sdDevices.getEqType().longValue() == DevicesTypeEnum.JUAN_LIAN_MEN.getCode().longValue() ||
+                    sdDevices.getEqType().longValue() == DevicesTypeEnum.FENG_JI.getCode().longValue() ||
+                  //  sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
+                    sdDevices.getEqType().longValue() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode().longValue() ||
+                    sdDevices.getEqType().longValue() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode().longValue() ||
+                    sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) ||
+                    sdDevices.getEqType().longValue() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode().longValue()) {
+                if (data.size() > 0) {
+                    sdOperationLog.setBeforeState(data.get(0).getData());
+                }
 
-            sdOperationLog.setState(String.valueOf(controlState));
-        } else if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.VMS.getCode().longValue()
-                || sdDevices.getEqType().longValue() == DevicesTypeEnum.MEN_JIA_VMS.getCode().longValue())) {
-            //情报板控制需要根据模板ID获取到发送报文需要的各个元素
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
-            }
-            if (map.get("templateId") == null || map.get("templateId").toString().equals("")) {
-                throw new RuntimeException("没有找到需要发布的模板信息");
-            }
-            Long templateId = Long.parseLong(map.get("templateId").toString());
+                //车指控制方法
+                controlState = controlLaneIndicator(controlState, isopen, devId, state, sdDevices);
 
-            //控制情报板
-            controlInformationBoard(controlState, isopen, templateId, sdDevices, state);
+                sdOperationLog.setState(String.valueOf(controlState));
+                //通过websocket推送到前端
+                String[] states = new String[4];
+                states[0] = state;
+                sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"cz");
+                //控制诱导灯
+            } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
+                if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
+                    throw new RuntimeException("未指定设备需要变更的亮度信息");
+                } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
+                    throw new RuntimeException("未指定设备需要变更的频率信息");
+                }
+                String brightness = map.get("brightness").toString();
+                String frequency = map.get("frequency").toString();
+                sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
+                data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+                if (data.size() > 0) {
+                    sdOperationLog.setBeforeState(data.get(0).getData());
+                }
 
-            sdOperationLog.setState(String.valueOf(controlState));
-        } else if (sdDevices != null
-                && sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()) {
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
+                //控制器不在工作台展示，传进来的子设备需要关联查父级控制器的信息
+                sdDevices = sdDevicesService.selectSdDevicesById(sdDevices.getFEqId());
+                devId = sdDevices.getEqId();
+                //诱导灯控制方法
+                controlState = controlGuidanceLamp(controlState, isopen, devId, state, sdDevices, brightness, frequency);
+
+                sdOperationLog.setState(String.valueOf(controlState));
+                //通过websocket推送到前端
+                String[] states = new String[4];
+                states[0] = state;
+                states[1] = brightness;
+                states[2] = frequency;
+                sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
+                //控制疏散标志
+            } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
+                if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
+                    throw new RuntimeException("未指定设备需要变更的亮度信息");
+                } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
+                    throw new RuntimeException("未指定设备需要变更的频率信息");
+                } else if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
+                    throw new RuntimeException("未指定设备需要变更的标号位置信息");
+                }
+                fireMark = map.get("fireMark").toString();
+                String brightness = map.get("brightness").toString();
+                String frequency = map.get("frequency").toString();
+                sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()));
+                data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+                if (data.size() > 0) {
+                    sdOperationLog.setBeforeState(data.get(0).getData());
+                }
+
+                //控制器不在工作台展示，传进来的子设备需要关联查父级控制器的信息
+                sdDevices = sdDevicesService.selectSdDevicesById(sdDevices.getFEqId());
+                devId = sdDevices.getEqId();
+                //疏散标志控制方法
+                controlState = controlEvacuationSign(controlState, isopen, devId, state, sdDevices, brightness, frequency, fireMark);
+
+                sdOperationLog.setState(String.valueOf(controlState));
+                //通过websocket推送到前端
+                String[] states = new String[4];
+                states[0] = state;
+                states[1] = brightness;
+                states[2] = frequency;
+                states[3] = fireMark;
+                sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
+                //控制照明 目前只有加强照明和基本照明
+            } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) {
+                if (data.size() > 0) {
+                    sdOperationLog.setBeforeState(data.get(0).getData());
+                }
+                Integer brightness = null;
+                // 加强照明，可设置照明亮度
+                if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()){
+                    if(map.get("stateNum") != null){
+                        brightness = Integer.parseInt(map.get("stateNum").toString());
+                        sdOperationLog.setDescription(brightness+"");
+                    }
+                }
+                //控制照明设备
+                controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices,brightness);
+
+                // 加强照明  开始（10）
+                if(brightness != null){
+                    String operationStateStr = state.equals("1")?"开启":"关闭";
+                    operationStateStr += "，亮度："+brightness;
+                    sdOperationLog.setOperationState(operationStateStr);
+                }
+                sdOperationLog.setState(String.valueOf(controlState));
+            } else if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.VMS.getCode().longValue()
+                    || sdDevices.getEqType().longValue() == DevicesTypeEnum.MEN_JIA_VMS.getCode().longValue())) {
+                //情报板控制需要根据模板ID获取到发送报文需要的各个元素
+                if (data.size() > 0) {
+                    sdOperationLog.setBeforeState(data.get(0).getData());
+                }
+                if (map.get("templateId") == null || map.get("templateId").toString().equals("")) {
+                    throw new RuntimeException("没有找到需要发布的模板信息");
+                }
+                Long templateId = Long.parseLong(map.get("templateId").toString());
+                //模板内容
+                IotBoardTemplateContent templateContent = new IotBoardTemplateContent();
+                templateContent.setTemplateId(templateId.toString());
+                List<IotBoardTemplateContent> templateContentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(templateContent);
+                sdOperationLog.setOperationState(templateContentList.size() == 0 ? "" : templateContentList.get(0).getContent());
+                //控制情报板
+                controlState = controlInformationBoard(controlState, isopen, templateId, sdDevices, state);
+
+                sdOperationLog.setState(String.valueOf(controlState));
+            } else if (sdDevices != null
+                    && sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()) {
+                if (data.size() > 0) {
+                    sdOperationLog.setBeforeState(data.get(0).getData());
+                }
+                //警示灯带控制方法
+                controlState = controlWarningLightStripDevice(controlState, isopen, devId, state, sdDevices);
+                sdOperationLog.setState(String.valueOf(controlState));
             }
-            //警示灯带控制方法
-            controlState = controlWarningLightStripDevice(controlState, isopen, devId, state, sdDevices);
-            sdOperationLog.setState(String.valueOf(controlState));
+        } catch (RuntimeException e) {
+            sdOperationLog.setState("0");
+            // 异常信息最大支持vachar 2000. 实际记录1900
+            String errorMsg = null;
+            int index = 1900;
+            if(null != e.getMessage()){
+                errorMsg = e.getMessage();
+                if(e.getMessage().length() < 1900){
+                    index = e.getMessage().length();
+                }
+            }
+            sdOperationLog.setDescription(errorMsg.substring(0,index));
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+            throw new RuntimeException(e.getMessage());
         }
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return controlState;
     }
 
-    private int controlLightingDevices(int controlState, String isopen, String devId, String state, SdDevices sdDevices) {
+    private int controlLightingDevices(int controlState, String isopen, String devId, String state, SdDevices sdDevices,Integer brightness) {
         if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
-            controlState = lightService.lineControl(devId, Integer.parseInt(state));
+            controlState = lightService.lineControl(devId, Integer.parseInt(state),brightness);
         } else if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
             sdDevices.setEqStatus("1");

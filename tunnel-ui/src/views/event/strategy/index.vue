@@ -9,10 +9,18 @@
               size="small"
               @click="openInsertStrategy('richang')"
               v-hasPermi="['system:strategy:add']"
-              >新增</el-button
+            >新增
+            </el-button
             >
-            <el-button size="small" @click="resetQuery" 
-              >刷新</el-button
+            <el-button
+              size="small"
+              @click="handleExport('1')"
+            >导出
+            </el-button
+            >
+            <el-button size="small" @click="resetQuery"
+            >刷新
+            </el-button
             >
           </el-col>
           <el-col :span="6" :offset="12">
@@ -26,60 +34,76 @@
               >
                 <el-button
                   slot="append"
-                  icon="icon-gym-Gsearch"
+                  class="searchTable"
                   @click="boxShow = !boxShow"
                 ></el-button>
               </el-input>
             </div>
           </el-col>
         </el-row>
-        <div class="searchBoxTab" v-show="boxShow" >
+        <div class="searchBoxTab" v-show="boxShow">
           <el-form
             ref="queryForm"
             :inline="true"
             :model="queryParams"
             label-width="75px"
           >
-          <el-form-item label="隧道名称" prop="tunnelId" >
-            <el-select
-              v-model="queryParams.tunnelId"
-              placeholder="请选择隧道"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType" >
-            <el-select
-              v-model="queryParams.strategyType"
-              placeholder="请选择策略类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in strategyTypeOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-        <el-form-item class="bottomBox">
-          <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
-          >
-          <el-button size="small" @click="resetQuery" type="primary" plain
-            >重置</el-button
-          >
-        </el-form-item>
-      </el-form>
-    </div>
+            <el-form-item label="隧道名称" prop="tunnelId">
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择隧道"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in tunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="方向" prop="direction">
+              <el-select
+                v-model="queryParams.direction"
+                placeholder="请选择方向"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="(item, index) in directionOptions"
+                  :key="index"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="策略类型" prop="strategyType">
+              <el-select
+                v-model="queryParams.strategyType"
+                placeholder="请选择策略类型"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="dict in strategyTypeOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" type="primary" @click="handleQuery"
+              >搜索
+              </el-button
+              >
+              <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置
+              </el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
         <!--开始-->
         <!-- <el-form
           :model="queryParams"
@@ -111,47 +135,60 @@
               size="small"
               @keyup.enter.native="handleQuery"
             />
-          </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType">
-            <el-select
-              v-model="queryParams.strategyType"
-              placeholder="请选择策略类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in strategyTypeOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleQuery"
-              >搜索</el-button
-            >
-            <el-button size="mini" @click="resetQuery" type="primary" plain
-              >重置</el-button
-            >
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="openInsertStrategy('richang')"
-              v-hasPermi="['system:strategy:add']"
-              >新增</el-button
-            >
-          </el-form-item>
-        </el-form> -->
+          </el-form-item> -->
+        <!-- 日常 -->
+        <el-form-item label="策略类型" prop="strategyType">
+          <el-select
+            v-model="queryParams.strategyType"
+            placeholder="请选择策略类型"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in strategyTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" size="mini" @click="handleQuery"
+          >搜索
+          </el-button
+          >
+          <el-button size="mini" @click="resetQuery" type="primary" plain
+          >重置
+          </el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="openInsertStrategy('richang')"
+            v-hasPermi="['system:strategy:add']"
+          >新增
+          </el-button
+          >
+        </el-form-item>
         <el-table
           v-loading="loading"
           :data="strategyList"
           @selection-change="handleSelectionChange"
+          @row-click="handleRowClick"
           :header-cell-style="{ 'text-align': 'center' }"
-          max-height="640"
-          :row-class-name="tableRowClassName"
+          height="62vh"
+          class="allTable"
+          :row-key="getRowKey"
+          ref="tableFile1"
         >
+          <el-table-column type="selection" width="55" align="center" reserve-selection />
+          <el-table-column
+            type="index"
+            width="70"
+            align="center"
+            label="序号">
+          </el-table-column>
           <el-table-column
             label="隧道名称"
             align="center"
@@ -187,7 +224,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="状态" align="center" prop="schedulerTime">
+          <el-table-column label="状态" align="center" prop="schedulerTime" >
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.strategyState"
@@ -195,7 +232,7 @@
                 inactive-color="#ccc"
                 active-value="0"
                 inactive-value="1"
-                @change="changeStrategyState(scope.row)"
+                @change="changeStrategyState(scope.row,scope.row.index)"
               >
               </el-switch>
             </template>
@@ -219,14 +256,16 @@
                 class="tableBlueButtton"
                 @click="handleUpdate(scope.row)"
                 v-hasPermi="['system:strategy:edit']"
-                >编辑</el-button
+              >编辑
+              </el-button
               >
               <el-button
                 size="mini"
                 class="tableDelButtton"
                 @click="handleDelete(scope.row)"
                 v-hasPermi="['system:strategy:remove']"
-                >删除</el-button
+              >删除
+              </el-button
               >
             </template>
           </el-table-column>
@@ -241,18 +280,26 @@
         />
         <!--        结束-->
       </el-tab-pane>
-      <el-tab-pane :label="strategyTypeGroup[1]?strategyTypeGroup[1].dictLabel:''" name="two">
-        <!-- 全局搜索 -->
+<!--      <el-tab-pane :label="strategyTypeGroup[1]?strategyTypeGroup[1].dictLabel:''" name="two">
+        &lt;!&ndash; 全局搜索 &ndash;&gt;
         <el-row :gutter="20" class="tabTopFormRow">
           <el-col :span="6">
             <el-button
               size="small"
               @click="openInsertStrategy('event')"
               v-hasPermi="['system:strategy:add']"
-              >新增</el-button
+            >新增
+            </el-button
             >
-            <el-button size="small" @click="resetQuery" 
-              >刷新</el-button
+            <el-button
+              size="small"
+              @click="handleExport('2')"
+            >导出
+            </el-button
+            >
+            <el-button size="small" @click="resetQuery"
+            >刷新
+            </el-button
             >
           </el-col>
           <el-col :span="6" :offset="12">
@@ -266,131 +313,80 @@
               >
                 <el-button
                   slot="append"
-                  icon="el-icon-s-fold"
+                  class="searchTable"
                   @click="boxShow1 = !boxShow1"
                 ></el-button>
               </el-input>
             </div>
           </el-col>
         </el-row>
-        <div class="searchBoxTab" v-show="boxShow1" >
+        <div class="searchBoxTab" v-show="boxShow1">
           <el-form
             ref="queryForm"
             :inline="true"
             :model="queryParams"
             label-width="75px"
           >
-          <el-form-item label="隧道名称" prop="tunnelId" >
-            <el-select
-              v-model="queryParams.tunnelId"
-              placeholder="请选择隧道"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType" >
-            <el-select
-              v-model="queryParams.strategyType"
-              placeholder="请选择策略类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in strategyTypeOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-        <el-form-item class="bottomBox">
-          <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
-          >
-          <el-button size="small" @click="resetQuery" type="primary" plain
-            >重置</el-button
-          >
-        </el-form-item>
-      </el-form>
-    </div>
-        <!-- <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-          v-show="showSearch"
-          label-width="68px"
-        >
-          <el-form-item label="隧道名称" prop="tunnelId">
-            <el-select
-              v-model="queryParams.tunnelId"
-              placeholder="请选择隧道"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="策略名称" prop="strategyName">
-            <el-input
-              v-model="queryParams.strategyName"
-              placeholder="请输入策略名称"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType">
-            <el-select
-              v-model="queryParams.strategyType"
-              placeholder="请选择策略类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in strategyTypeOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleQuery"
-              >搜索</el-button
-            >
-            <el-button size="mini" @click="resetQuery" type="primary" plain
-              >重置</el-button
-            >
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="openInsertStrategy('event')"
-              v-hasPermi="['system:strategy:add']"
-              >新增</el-button
-            >
-          </el-form-item>
-        </el-form> -->
+            <el-form-item label="隧道名称" prop="tunnelId">
+              <el-select
+                v-model="queryParams.tunnelId"
+                placeholder="请选择隧道"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in tunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="策略类型" prop="strategyType">
+              <el-select
+                v-model="queryParams.strategyType"
+                placeholder="请选择策略类型"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="dict in strategyTypeEvent"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" type="primary" @click="handleQuery"
+              >搜索
+              </el-button
+              >
+              <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置
+              </el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
         <el-table
           v-loading="loading"
           :data="strategyList"
           @selection-change="handleSelectionChange"
           :header-cell-style="{ 'text-align': 'center' }"
-          max-height="640"
-          :row-class-name="tableRowClassName"
+          height="62vh"
+          class="allTable"
+          :row-key="getRowKey"
+          ref="tableFile2"
+          :key="Math.random()"
         >
+          <el-table-column type="selection" width="55" align="center" reserve-selection/>
+          <el-table-column
+            type="index"
+            width="70"
+            align="center"
+            label="序号">
+          </el-table-column>
           <el-table-column
             label="隧道名称"
             align="center"
@@ -399,7 +395,8 @@
           <el-table-column
             label="事件类型"
             align="center"
-            prop="tunnels.tunnelName"
+            prop="eventType"
+            :formatter="eventTypeFormatEvent"
           />
           <el-table-column
             label="策略名称"
@@ -416,7 +413,7 @@
             label="策略类型"
             align="center"
             prop="strategyType"
-            :formatter="strategyTypeFormat"
+            :formatter="strategyTypeFormatEvent"
           />
           <el-table-column
             label="策略信息"
@@ -455,14 +452,16 @@
                 class="tableBlueButtton"
                 @click="handleUpdate(scope.row)"
                 v-hasPermi="['system:strategy:edit']"
-                >编辑</el-button
+              >编辑
+              </el-button
               >
               <el-button
                 size="mini"
                 class="tableDelButtton"
                 @click="handleDelete(scope.row)"
                 v-hasPermi="['system:strategy:remove']"
-                >删除</el-button
+              >删除
+              </el-button
               >
             </template>
           </el-table-column>
@@ -475,7 +474,7 @@
           :limit.sync="queryParams.pageSize"
           @pagination="getList"
         />
-      </el-tab-pane>
+      </el-tab-pane>-->
     </el-tabs>
 
     <!-- 选择策略类型弹窗 -->
@@ -484,7 +483,14 @@
       :visible.sync="dialogVisible"
       :before-close="handleClose"
       :append-to-body="true"
+      width="75%"
+      class="celueDialog"
+      :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">
           <el-radio-group v-model="strategyForm.strategyType">
@@ -494,7 +500,8 @@
               :key="dict.dictValue"
               :label="dict.dictValue"
               @change.native="strategyTypeClose()"
-              >{{ dict.dictLabel }}</el-radio
+            >{{ dict.dictLabel }}
+            </el-radio
             >
           </el-radio-group>
         </el-form-item>
@@ -504,33 +511,33 @@
         v-show="strategyForm.strategyType == '0'"
         ref="manualControl"
         @dialogVisibleClose="closeDialog"
+        @refreshList = "getList"
       ></manual-control>
       <!-- 定时控制 -->
       <timingControl
         v-show="strategyForm.strategyType == '1'"
         @dialogVisibleClose="closeDialog"
+        @refreshList = "getList"
         ref="timingControl"
       ></timingControl>
-      <!-- 自动触发 -->
-      <!--      <autoControl-->
-      <!--        v-show="strategyForm.strategyType == '2'"-->
-      <!--        @dialogVisibleClose="closeDialog"-->
-      <!--        ref="autoControl"-->
-      <!--      ></autoControl>-->
       <timeControl
         v-show="strategyForm.strategyType == '3'"
         @dialogVisibleClose="closeDialog"
+        @refreshList = "getList"
         ref="timeControl"
       ></timeControl>
     </el-dialog>
     <!-- end -->
     <!--    预警事件弹窗-->
-    <el-dialog
+<!--    <el-dialog
       :title="title"
       :visible.sync="dialogVisibleEvent"
-      :before-close="handleClose"
+      :before-close="handleCloseEvent"
       :append-to-body="true"
+      width="75%"
+      class="strategyDialog"
     >
+      <div class="dialogCloseButton"></div>
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">
           <el-radio-group v-model="strategyForm.strategyType">
@@ -540,29 +547,30 @@
               :key="dict.dictValue"
               :label="dict.dictValue"
               @change.native="strategyTypeEventClose()"
-              >{{ dict.dictLabel }}</el-radio
+            >{{ dict.dictLabel }}
+            </el-radio
             >
           </el-radio-group>
         </el-form-item>
       </el-form>
-      <!-- 手动控制 -->
+      &lt;!&ndash; 手动控制 &ndash;&gt;
       <manual-control-event
         v-show="strategyForm.strategyType == '0'"
         ref="manualControlEvent"
         @dialogVisibleCloseEvent="closeDialogEvent"
       ></manual-control-event>
-      <!-- 自动触发 -->
+      &lt;!&ndash; 自动触发 &ndash;&gt;
       <autoControl-event
         v-show="strategyForm.strategyType == '2'"
         @dialogVisibleCloseEvent="closeDialogEvent"
         ref="autoControlEvent"
       ></autoControl-event>
-    </el-dialog>
+    </el-dialog>-->
   </div>
 </template>
-  <script src="../../../cronStrue/dist/cronstrue.min.js" type="text/javascript"></script>
-  <script src="../../../cronStrue/dist/cronstrue-i18n.min.js" type="text/javascript"></script>
-  <script>
+<script src="../../../cronStrue/dist/cronstrue.min.js" type="text/javascript"></script>
+<script src="../../../cronStrue/dist/cronstrue-i18n.min.js" type="text/javascript"></script>
+<script>
 import {
   listStrategy,
   getStrategy,
@@ -572,9 +580,10 @@ import {
   addStrategyInfo,
   updateStrategyInfo,
   getGuid,
-  handleStrategy,
+  handleStrategy, export1,
 } from "@/api/event/strategy";
-import { listRl, addRl } from "@/api/event/strategyRl";
+import {listEventType} from "@/api/event/eventType";
+import {listRl, addRl} from "@/api/event/strategyRl";
 import {
   listType,
   listHasType,
@@ -582,11 +591,11 @@ import {
   getStateTypeId,
   getTriggersByRelateId,
 } from "@/api/equipment/type/api";
-import { listItem } from "@/api/equipment/eqTypeItem/item";
-import { listDevices } from "@/api/equipment/eqlist/api";
-import { listTunnels } from "@/api/equipment/tunnel/api";
+import {listItem} from "@/api/equipment/eqTypeItem/item";
+import {listDevices} from "@/api/equipment/eqlist/api";
+import {listTunnels} from "@/api/equipment/tunnel/api";
 // import { delStrategy } from "@/api/event/strategy";
-import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
+import {listEqTypeStateIsControl} from "@/api/equipment/eqTypeState/api";
 import {
   addJob,
   updateJob,
@@ -601,7 +610,8 @@ import timeControl from "./components/timeControl"; //分时控制
 import cron from "@/components/cron/cron.vue";
 
 import manualControlEvent from "./event/manualControl"; //手动控制
-import autoControlEvent from "./event/autoControl"; //自动触发
+import autoControlEvent from "./event/autoControl";
+
 export default {
   components: {
     manualControl,
@@ -614,8 +624,8 @@ export default {
   },
   data() {
     return {
-      boxShow:false,
-      boxShow1:false,
+      boxShow: false,
+      boxShow1: false,
 
       activeName: "one",
       dialogVisible: false,
@@ -664,6 +674,8 @@ export default {
       insertStrategyTypeOptions: [],
       // 编辑策略选中rlId
       currentId: null,
+      // 导出遮罩层
+      exportLoading: false,
       // 添加/编辑标志 add添加，edit 编辑
       sink: "",
       checked: false,
@@ -676,6 +688,7 @@ export default {
         pageSize: 10,
         tunnelId: null,
         strategyName: null,
+        direction:null,
         strategyType: null,
         strategyInfo: null,
         schedulerTime: null,
@@ -723,8 +736,8 @@ export default {
       twoId2: [], //手动控制项的
       twoId1: [],
       twoName: [], //设备状态名称
-      list: [{ oneId: "", twoId: "", twoName: "" }],
-      list2: [{ twoId: "", twoName: "" }],
+      list: [{oneId: "", twoId: "", twoName: ""}],
+      list2: [{twoId: "", twoName: ""}],
       selectedList: [], //存储每次option选中的集合
       warningOptions: [
         {
@@ -759,12 +772,17 @@ export default {
       strategyTypeGroup: [],
       strategyTypeEvent: [],
       dictCode: "0",
+      eventTypeList: [],//主动安全列表
       // automaticEqType:[] //自动触发设备类型数组
     };
   },
   created() {
     this.getList(); //查询控制策略
     this.getTunnels(); //获取隧道
+    let data = {prevControlType: "1"};
+    listEventType(data).then(res => {
+      this.eventTypeList = res.rows;
+    })
     // 预警策略
     this.getDicts("sys_common_event").then((response) => {
       this.strategyTypeEvent = response.data;
@@ -775,6 +793,7 @@ export default {
       this.strategyTypeGroup = response.data;
       console.log(this.strategyTypeGroup, "this.strategyTypeGroup");
     });
+    // 日常策略
     this.getDicts("sd_strategy_type").then((response) => {
       this.strategyTypeOptions = response.data;
       this.insertStrategyTypeOptions = response.data;
@@ -782,18 +801,28 @@ export default {
     this.getDicts("sd_trigger_compare_type").then((response) => {
       this.symbol = response.data;
     });
-    this.getDicts("sd_direction").then((response) => {
+    this.getDicts("sd_strategy_direction").then((response) => {
       response.data.forEach((item) => {
         this.directionOptions.push(item);
       });
     });
   },
-     //点击空白区域关闭全局搜索弹窗
+  //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+    // 点击某一行，将其选中(表格)
+    handleRowClick(row, i, a) {
+      if(i.label != '状态'){
+        this.$refs.tableFile1.toggleRowSelection(row);
+      }
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -813,23 +842,63 @@ export default {
     handleClick(tab, event) {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
+      this.$refs.tableFile1.clearSelection();
+    //  this.$refs.tableFile2.clearSelection();
       this.getList();
     },
     closeDialogEvent() {
+      let index = this.strategyForm.strategyType;
+      switch (index) {
+        case '0':
+          this.$refs.manualControlEvent.resetForm();
+          break;
+        case '2':
+          this.$refs.autoControlEvent.resetForm();
+          break;
+      }
+      console.log(this.strategyForm.strategyType);
       this.strategyForm.strategyType = "";
       this.dialogVisibleEvent = false;
       this.getList();
     },
     // 每次点击取消按钮，策略类型赋空
-    closeDialog() {
+    closeDialog(flag) {
+
+      let index = this.strategyForm.strategyType;
+      switch (index) {
+        case '0':
+          console.log(this.strategyForm.strategyType);
+          this.$refs.manualControl.resetForm();
+          break;
+        case '1':
+          this.$refs.timingControl.resetForm();
+          break;
+        case '3':
+          this.$refs.timeControl.resetForm();
+          break;
+      }
+      console.log(this.strategyForm.strategyType,"0000000000");
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
-      this.getList();
+      this.$refs.tableFile1.clearSelection();
+      if(flag){
+        this.getList();
+      }
+
     },
-    changeStrategyState(row) {
-      let data = { strategyId: row.id, change: row.strategyState };
+    changeStrategyState(row,index) {
+      let data = {strategyId: row.id, change: row.strategyState};
       updateState(data).then((result) => {
-        this.$modal.msgSuccess(result.msg);
+
+        if(result.code == 200){
+          if(row.strategyState == 0){
+            this.$modal.msgSuccess("开启成功");
+          }else{
+            this.$modal.msgSuccess("关闭成功");
+          }
+        }else{
+          this.$modal.msgSuccess(result.msg);
+        }
       });
     },
     // 改变策略类型
@@ -850,13 +919,15 @@ export default {
       // 日常策略
       // this.strategyForm.strategyType = 0;
       this.$set(this.strategyForm, "strategyType", "0");
-      if (type == "richang") {
-        this.dialogVisible = true;
-        this.strategyTypeEventClose();
-      } else if (type == "event") {
-        this.dialogVisibleEvent = true;
-        this.strategyTypeEventClose();
-      }
+      this.$nextTick(() => {
+        if (type == "richang") {
+          this.dialogVisible = true;
+          this.strategyTypeClose();
+        } else if (type == "event") {
+          this.dialogVisibleEvent = true;
+          this.strategyTypeEventClose();
+        }
+      })
     },
     /** 编辑修改按钮操作 */
     handleUpdate(row) {
@@ -873,6 +944,7 @@ export default {
         this.strategyTypeEventClose(row);
       }
     },
+    //0:手动 1：自动
     strategyTypeEventClose(row) {
       this.$nextTick(() => {
         switch (this.strategyForm.strategyType) {
@@ -898,6 +970,8 @@ export default {
       });
     },
     // 策略改变触发方法
+    // this.strategyForm.strategyType 对应字典表组件索引
+    //0:手动 1：定时 2：分时
     strategyTypeClose(row) {
       console.log(this.$refs.manualControl, "获取组件");
       this.$nextTick(() => {
@@ -956,7 +1030,7 @@ export default {
     },
     // 设备名称查询设备数据类型项
     selectDataItem(e) {
-      listItem({ deviceTypeId: this.strategyForm.triggers.deviceTypeId }).then(
+      listItem({deviceTypeId: this.strategyForm.triggers.deviceTypeId}).then(
         (res) => {
           this.dataItem = res.rows;
         }
@@ -1002,7 +1076,8 @@ export default {
         .then(() => {
           this.$modal.msgSuccess("手动控制成功");
         })
-        .catch((_) => {});
+        .catch((_) => {
+        });
     },
     //public 查询设备可控状态
     listEqTypeStateIsControl(params) {
@@ -1019,7 +1094,7 @@ export default {
         }
       }
       this.eqForm.equipments = [];
-      listRl({ strategyId: row.id }).then((response) => {
+      listRl({strategyId: row.id}).then((response) => {
         let strategyRl = response.rows[index];
         let strategyRlArr = strategyRl.equipments.split(",");
         this.eqForm.equipment_type = strategyRl.eqTypeId;
@@ -1075,29 +1150,66 @@ export default {
     },
     //关闭drawer
     handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          this.strategyForm.strategyType = "";
-          this.dialogVisible = false;
-          // this.$refs.cron.checkClear();
-          done();
-        })
-        .catch((_) => {});
+      let index = this.strategyForm.strategyType;
+      switch (index) {
+        case '0':
+          this.$refs.manualControl.resetForm();
+          break;
+        case '1':
+          this.$refs.timingControl.resetForm();
+          break;
+        case '3':
+          this.$refs.timeControl.resetForm();
+          break;
+      }
+      console.log(this.strategyForm.strategyType);
+      this.strategyForm.strategyType = "";
+      this.dialogVisible = false;
+      // this.$refs.cron.checkClear();
+      done();
+    },
+    handleCloseEvent(done) {
+      let index = this.strategyForm.strategyType;
+      switch (index) {
+        case '0':
+          this.$refs.manualControlEvent.resetForm();
+          break;
+        case '2':
+          this.$refs.autoControlEvent.resetForm();
+          break;
+      }
+      this.strategyForm.strategyType = "";
+      this.dialogVisible = false;
+      // this.$refs.cron.checkClear();
+      done();
     },
     /** 查询控制策略列表 */
     getList() {
       this.loading = true;
-      this.queryParams.strategyGroup = this.activeName == 'one'?'1':'2'
+      this.queryParams.strategyGroup = this.activeName == 'one' ? '1' : '2'
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
+        console.log(this.strategyList, 'this.strategyListthis.strategyListthis.strategyListthis.strategyList')
         this.total = response.total;
         this.loading = false;
       });
     },
     //模式中转换
-    // 策略类型字典翻译
+    eventTypeFormatEvent(row, column) {
+      console.log(row)
+      for (let i = 0; i < this.eventTypeList.length; i++) {
+        if (row.eventType == this.eventTypeList[i].id) {
+          return this.eventTypeList[i].eventType;
+        }
+      }
+    },
+    //日常预警字典值翻译
     strategyTypeFormat(row, column) {
       return this.selectDictLabel(this.strategyTypeOptions, row.strategyType);
+    },
+    // 预警字典值翻译
+    strategyTypeFormatEvent(row, column) {
+      return this.selectDictLabel(this.strategyTypeEvent, row.strategyType);
     },
     // 设备方向字典翻译
     directionFormat(row, column) {
@@ -1141,19 +1253,22 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile1.clearSelection();
+      //this.$refs.tableFile2.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams = {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: this.queryParams.pageSize,
         tunnelId: null,
         strategyName: null,
         strategyType: null,
         strategyInfo: null,
         schedulerTime: null,
         jobTime: null,
+        strategyGroup: this.queryParams.strategyGroup
       };
       this.handleQuery();
       this.getList();
@@ -1210,7 +1325,7 @@ export default {
       this.oneIdEqTypeId = [];
       this.eqState = [];
       this.twoId = [];
-      this.list = [{ oneId: "", twoId: "" }];
+      this.list = [{oneId: "", twoId: ""}];
       this.selectedList = []; //存储每次option选中的集合
       this.strategyForm.strategyType = null;
       this.strategyForm.tunnelId = null;
@@ -1223,6 +1338,7 @@ export default {
 
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const ids = row.id || this.ids;
       const rlIds = row.id || this.rlIds;
       const jobRelationId = row.jobRelationId;
@@ -1237,6 +1353,7 @@ export default {
           // }
           delStrategy(ids).then((res) => {
             if (res.code == 200) {
+              this.$refs.tableFile1.clearSelection()
               this.$modal.msgSuccess(res.msg);
             } else {
               this.$modal.msgError(res.msg);
@@ -1244,18 +1361,39 @@ export default {
             this.getList();
           });
         })
-        .catch(function () {});
+        .catch(function () {
+          that.$refs.tableFile1.clearSelection();
+        });
       this.model = "1";
     },
     /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "system/strategy/export",
-        {
-          ...this.queryParams,
-        },
-        `system_strategy.xlsx`
-      );
+    handleExport(flag) {
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      let confirmInfo = "";
+      if (flag == 1) {
+        confirmInfo = "是否确认导出所有的日常策略数据项？";
+        if (this.ids.length > 0) {
+          confirmInfo = "是否确认导出所选的日常策略数据项？";
+        }
+      }
+      if (flag == 2) {
+        confirmInfo = "是否确认导出所有的预警策略数据项？";
+        if (this.ids.length > 0) {
+          confirmInfo = "是否确认导出所选的预警策略数据项？";
+        }
+      }
+      this.$modal.confirm(confirmInfo).then(() => {
+        this.exportLoading = true;
+        return export1(queryParams);
+      }).then(response => {
+        this.$download.name(response.msg);
+        this.exportLoading = false;
+        this.$refs.tableFile1.clearSelection();
+        this.$refs.tableFile2.clearSelection();
+        this.queryParams.ids = ''
+      }).catch(() => {
+      });
     },
     /** 添加定时任务 */
     addJobData(guid, str) {
@@ -1279,44 +1417,56 @@ export default {
     changeValue(value) {
       this.changeVal = value;
     },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
+
   },
+
+  watch:{
+    dialogVisible:{
+      handler(val){
+        this.$refs.tableFile1.clearSelection()
+      }
+    }
+  }
 };
 </script>
-  <style>
+<style>
 .el-drawer__header {
   background: #dcdfe6;
   padding: 0 10px;
   height: 58px;
   font-size: 1.125rem;
 }
+
 .el-table .cell {
   white-space: pre-line;
 }
 </style>
 <style scoped lang="scss">
+::v-deep .el-dialog .el-dialog__header {
+  background-image: url(../../../assets/cloudControl/dialogHeader.png);
+  background-repeat: no-repeat;
+  background-position-x: right;
+}
 
 ::v-deep .el-tabs {
   height: 100%;
+
   .el-tabs__item {
     height: 4vh;
     font-size: 0.7vw;
   }
+
   .el-tabs__content {
     height: calc(100% - 5vh);
+
     .el-tab-pane {
       height: 100%;
+
       .contentListBox {
         height: 60vh;
         overflow-x: hidden;
         overflow-y: auto;
+
         .contentBox {
           height: 14vh;
         }
@@ -1324,6 +1474,7 @@ export default {
     }
   }
 }
+
 ::v-deep .el-tabs__header {
   margin: 0 0 8px !important;
 }

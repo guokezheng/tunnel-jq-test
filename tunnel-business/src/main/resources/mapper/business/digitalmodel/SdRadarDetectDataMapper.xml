@@ -19,6 +19,7 @@
         <result property="licenseColor" column="license_color"/>
         <result property="stakeNum" column="stake_num"/>
         <result property="detectTime" column="detect_time"/>
+        <result property="distance" column="distance"/>
         <result property="startTime" column="startTime"/>
         <result property="endTime" column="endTime"/>
         <result property="deptId" column="dept_id" />
@@ -40,7 +41,8 @@
                vehicle_license,
                license_color,
                stake_num,
-               detect_time
+               detect_time,
+               distance
         from sd_radar_detect_data
     </sql>
 
@@ -99,6 +101,11 @@
         where id = #{id}
     </select>
 
+    <select id="selectSdRadarDetectDataByVehicleLicense" parameterType="String" resultMap="SdRadarDetectDataResult">
+        <include refid="selectSdRadarDetectDataVo"/>
+        where vehicle_license = #{vehicleLicense} and distance!=0
+    </select>
+
     <insert id="insertSdRadarDetectData" parameterType="SdRadarDetectData">
         insert into sd_radar_detect_data
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -119,6 +126,7 @@
             <if test="objectType != null">object_type,</if>
             <if test="roadDir != null">road_dir,</if>
             <if test="recordSerialNumber != null">record_Serial_Number,</if>
+            <if test="distance != null">distance,</if>
             create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -139,6 +147,7 @@
             <if test="objectType != null">#{objectType},</if>
             <if test="roadDir != null">#{roadDir},</if>
             <if test="recordSerialNumber != null">#{recordSerialNumber},</if>
+            <if test="distance != null">#{distance},</if>
             NOW()
         </trim>
     </insert>
@@ -210,5 +219,39 @@
        SELECT  * FROM  sd_radar_detect_data
         where vehicle_id = #{vehicleId}
         order by detect_time ASC
+    </select>
+
+
+
+    <select id="specialVehicleMonitoringInRecent24Hours" parameterType="String" resultType="hashmap">
+        select hour(t.start_time) hour,ifnull(d.num,0) count
+        <!--生成近24小时时间-->
+        from (
+        SELECT
+        DATE_FORMAT( DATE_SUB( NOW(), INTERVAL ( -( @i := @i - 1 ) ) HOUR ), '%Y-%m-%d %H' ) AS start_time
+        FROM
+        (
+        SELECT
+        a
+        FROM
+        ( SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' ) AS a
+        JOIN ( SELECT '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b ON 1
+        ) AS b,(
+        SELECT
+        @i :=+ 1
+        ) AS i
+        ) AS t
+        left join
+        (	SELECT count(*) num,DATE_FORMAT( start_time,'%Y-%m-%d %H') start_time  FROM `sd_special_vehicle`
+        where start_time > DATE_SUB(now(), INTERVAL 1 DAY)
+        AND tunnel_id = #{tunnelId}
+        GROUP BY DATE_FORMAT( start_time,'%Y-%m-%d %H')
+        ) d on t.start_time = d.start_time
+        order by t.start_time
+
+
+
+
+
     </select>
 </mapper>

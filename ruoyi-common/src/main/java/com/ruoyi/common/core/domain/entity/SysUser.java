@@ -38,6 +38,7 @@ public class SysUser extends BaseEntity
     @ApiModelProperty("部门id")
     private String deptId;
 
+
     /** 用户账号 */
     @Excel(name = "用户名称")
     @ApiModelProperty("用户账号")
@@ -124,10 +125,21 @@ public class SysUser extends BaseEntity
     @ApiModelProperty("角色id")
     private Long roleId;
 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
     public SysUser()
     {
 
     }
+
 
     public SysUser(Long userId)
     {

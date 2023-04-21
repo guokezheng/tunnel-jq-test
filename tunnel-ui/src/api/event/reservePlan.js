@@ -42,6 +42,15 @@ export function delPlan(id) {
     method: 'delete'
   })
 }
+
+// 导出预案信息
+export function exportPlan(query) {
+  return request({
+    url: '/plan/export',
+    method: 'get',
+    params: query
+  })
+}
 // 新增预案信息
 export function addPlanFile(data) {
   return request({
@@ -97,3 +106,33 @@ export function getTreeDeviceList(query) {
   })
 }
 
+// prevControlType
+// currencyId
+// 预案详情
+export function examineDeviceDetail(query) {
+  return request({
+    url: '/event/examineDeviceDetail',
+    method: 'get',
+    params: query
+  })
+}
+// 隧道id    tunnelId
+// 隧道方向    direction
+// 事件类型    eventType
+// 主动安全查询策略
+export function getStrategyData(query) {
+  return request({
+    url: '/strategy/getStrategyData',
+    method: 'get',
+    params: query
+  })
+}
+
+
+export function getVmsDataList(query) {
+  return request({
+    url: '/system/template/getVmsDataList',
+    method: 'get',
+    params: query
+  })
+}

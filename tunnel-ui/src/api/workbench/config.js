@@ -31,6 +31,16 @@ export function vehicleMonitoringInRecent24Hours(data) {
     data: data
   })
 }
+
+
+// 重点车辆监测数据
+export function specialVehicleMonitoringInRecent24Hours(data) {
+  return request({
+    url: '/workspace/specialVehicleMonitoringInRecent24Hours',
+    method: 'post',
+    data: data
+  })
+}
 // 重点车辆监测数据
 export function special(query) {
   return request({
@@ -250,3 +260,121 @@ export function getCategoryTree(tunnelId) {
 
 
 
+//欧姆龙控制状态（测试接口  后期变为设备控制 实际接口）
+export function setControlDeviceByParam(data) {
+  return request({
+    url: '/workspace/controlDeviceByParam',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+/************** 隧道机器人  start ******************/
+//投光灯
+export function setLEDLight(query) {
+  return request({
+    url: '/robot/setLEDLight',
+    method: 'get',
+    params: query
+  })
+}
+//报警灯
+export function setAlarmLight(query) {
+  return request({
+    url: '/robot/setAlarmLight',
+    method: 'get',
+    params: query
+  })
+}
+//一键充电
+export function setCharge(query) {
+  return request({
+    url: '/robot/charge',
+    method: 'get',
+    params: query
+  })
+}
+//设置机器人到达预置点
+export function gotoPreset(query) {
+  return request({
+    url: '/robot/gotoPreset',
+    method: 'get',
+    params: query
+  })
+}
+
+//移动
+export function move(query) {
+  return request({
+    url: '/robot/move',
+    method: 'get',
+    params: query
+  })
+}
+
+//云台
+export function ptz(query) {
+  return request({
+    url: '/robot/ptz',
+    method: 'get',
+    params: query
+  })
+}
+
+//语音播报
+export function broadcast(query) {
+  return request({
+    url: '/robot/broadcast',
+    method: 'get',
+    params: query
+  })
+}
+
+//自动巡航
+export function changeControl(query) {
+  return request({
+    url: '/robot/changeControl',
+    method: 'get',
+    params: query
+  })
+}
+
+//机器人雨刷
+export function controlWindscreen(query) {
+  return request({
+    url: '/robot/controlWindscreen',
+    method: 'get',
+    params: query
+  })
+}
+
+//获取电量阈值配置
+export function findAlarmThresholdConfig(query) {
+  return request({
+    url: '/robot/findAlarmThresholdConfig',
+    method: 'get',
+    params: query
+  })
+}
+//编辑电量阈值配置
+export function setAlarmThresholdConfig(data) {
+  return request({
+    url: '/robot/setAlarmThresholdConfig',
+    method: 'post',
+    data: data
+  })
+}
+
+//初始化机器人
+export function initializeRobot(query) {
+  return request({
+    url: '/robot/initializeRobot',
+    method: 'get',
+    params: query
+  })
+}
+
+
+/************** 隧道机器人  end ******************/

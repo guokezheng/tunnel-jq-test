@@ -21,16 +21,32 @@ public class IotBoardReleaseLog extends BaseEntity
     /** id */
     private Long id;
 
-    /** 设备编号 */
+    /** 设备名称 */
     @Excel(name = "发布设备")
+    private String deviceName;
+
+    /** 尺寸 **/
+    @Excel(name = "屏幕尺寸")
+    private String devicePixel;
+
+    /** 隧道 **/
+    @Excel(name = "所属隧道")
+    private String tunnelName;
+
+    private String tunnelId;
+
+    /** 方向 **/
+    @Excel(name = "设备方向")
+    private String direction;
+
+    /** 设备编号 */
+    @Excel(name = "发布设备",type = Excel.Type.IMPORT)
     private String deviceId;
 
     @Excel(name = "设备桩号")
     private String pile;
 
-    /** 设备名称 */
-//    @Excel(name = "设备名称")
-    private String deviceName;
+
 
     /** 发布前的内容 */
 //    @Excel(name = "发布前的内容")
@@ -58,7 +74,7 @@ public class IotBoardReleaseLog extends BaseEntity
 
     /** 发布机构 */
 //    @Excel(name = "发布机构")
-    private Long releaseDeptId;
+    private String releaseDeptId;
 
     /** 发布用户 */
     @Excel(name = "发布用户")
@@ -72,6 +88,38 @@ public class IotBoardReleaseLog extends BaseEntity
 
     //批量导出单选id导出数据
     private Long[] ids;
+
+    public String getTunnelId() {
+        return this.tunnelId;
+    }
+
+    public void setTunnelId( String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    public String getDevicePixel() {
+        return devicePixel;
+    }
+
+    public void setDevicePixel(String devicePixel) {
+        this.devicePixel = devicePixel;
+    }
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
     public String getPile() {
         return pile;
@@ -105,11 +153,11 @@ public class IotBoardReleaseLog extends BaseEntity
         this.releaseDeptName = releaseDeptName;
     }
 
-    public Long getReleaseDeptId() {
+    public String getReleaseDeptId() {
         return releaseDeptId;
     }
 
-    public void setReleaseDeptId(Long releaseDeptId) {
+    public void setReleaseDeptId(String releaseDeptId) {
         this.releaseDeptId = releaseDeptId;
     }
 

@@ -5,7 +5,7 @@
       <el-col :span="6">
         <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
-          >
+        >
       </el-col>
       <el-col :span="6" :offset="12">
         <div ref="main" class="grid-content bg-purple">
@@ -16,16 +16,16 @@
             v-model="queryParams.searchValue"
             placeholder="请输入设备类型名称,回车搜索"
           >
-          <el-button
+            <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
-            </el-input>
+          </el-input>
         </div>
       </el-col>
     </el-row>
-    
+
     <div ref="cc" class="searchBox" v-show="boxShow">
       <el-form
         ref="queryForm"
@@ -33,17 +33,27 @@
         :model="queryParams"
         label-width="80px"
       >
-      <el-form-item label="设备类型" prop="stateTypeId" >
-        <el-select v-model="queryParams.stateTypeId" placeholder="请选择设备类型" clearable size="small">
-          <el-option v-for="item in typeStateData" :key="item.typeId" :label="item.typeName" :value="item.typeId" />
-        </el-select>
-      </el-form-item>
+        <el-form-item label="设备类型" prop="stateTypeId">
+          <el-select
+            v-model="queryParams.stateTypeId"
+            placeholder="请选择设备类型"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in typeStateData"
+              :key="item.typeId"
+              :label="item.typeName"
+              :value="item.typeId"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
         </el-form-item>
       </el-form>
@@ -94,7 +104,7 @@
             </el-tooltip>
           </div>
         </el-row> -->
-        <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="eqTypeStateList"
@@ -162,7 +172,13 @@
       width="1500px"
       append-to-body
       :before-close="cancel"
+      class="tunnelRelationDialog"
+      :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="6">
@@ -180,6 +196,11 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+          </el-col>
+          <el-col :span="1" v-show="title != '添加设备类型状态关系'">
+            <el-button class="dialogButton addFormButton" @click="addFrom()"
+              >添加</el-button
+            >
           </el-col>
         </el-row>
         <template v-if="title === '添加设备类型状态关系'">
@@ -233,7 +254,10 @@
                 >
                   <img v-if="imageUrl" :src="item.url" class="avatar" />
                 </el-upload>
-                <el-dialog :visible.sync="dialogVisible">
+                <el-dialog
+                  :visible.sync="dialogVisible"
+                  :close-on-click-modal="false"
+                >
                   <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
               </el-form-item>
@@ -247,7 +271,6 @@
           </el-row>
         </template>
         <template v-else>
-          <div class="dialogButton addFormButton" @click="addFrom()">添加</div>
           <el-row v-for="(item, index) in equipmentStates" :key="index">
             <el-col :span="3">
               <el-form-item label="设备状态" prop="deviceState">
@@ -322,11 +345,15 @@
                   :on-change="handleChange"
                   :limit="2"
                   :on-progress="handleChange"
+                  :class="item.iFileList.length >= 2 ? 'showUpload' : ''"
                 >
                   <!-- <img :src="item.url" alt="">       -->
                 </el-upload>
 
-                <el-dialog :visible.sync="dialogVisible">
+                <el-dialog
+                  :visible.sync="dialogVisible"
+                  :close-on-click-modal="false"
+                >
                   <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
               </el-form-item>
@@ -347,9 +374,9 @@
           <el-radio v-model="direction" label="1">否</el-radio>
         </el-form-item> -->
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">提 交</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div class="dialog-footer">
+        <el-button class="submitButton" @click="submitForm">提 交</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -513,14 +540,17 @@ export default {
       this.isStateType = response.data;
     });
   },
-  mounted(){
+  mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.boxShow == true){
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
+        if (self.boxShow == true) {
           self.boxShow = false;
         }
       }
@@ -587,6 +617,7 @@ export default {
     /** 查询设备类型状态关系列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       listEqTypeStates(this.queryParams).then((response) => {
         console.log(response, "responseresponseresponse");
         response.rows.forEach((item) => {
@@ -1089,7 +1120,7 @@ export default {
 }
 ::v-deep .showUpload {
   .el-upload {
-    display: none;
+    display: none !important;
   }
 }
 ::v-deep .el-upload--picture-card {
@@ -1112,19 +1143,17 @@ export default {
 }
 .dialogButton {
   width: 50px;
-  height: 24px;
-  border: solid 1px #ccc;
+  height: 30px;
+  padding: 0 10px;
+  // border: solid 1px #ccc;
   border-radius: 4px;
   font-size: 12px;
-  margin-top: 5px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .addFormButton {
-  position: absolute;
-  top: 55px;
-  left: 25%;
+  height: 36px;
 }
 </style>

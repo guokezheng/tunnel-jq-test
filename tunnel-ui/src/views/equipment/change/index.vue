@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row  :gutter="20" class="topFormRow">
+    <el-row :gutter="20" class="topFormRow">
       <el-col :span="6">
         <el-button
           type="primary"
@@ -11,15 +11,15 @@
           v-hasPermi="['system:change:add']"
           >新增</el-button
         >
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['system:change:edit']"-->
-<!--          >修改</el-button-->
-<!--        >-->
+        <!--        <el-button-->
+        <!--          type="primary"-->
+        <!--          plain-->
+        <!--          size="mini"-->
+        <!--          :disabled="single"-->
+        <!--          @click="handleUpdate"-->
+        <!--          v-hasPermi="['system:change:edit']"-->
+        <!--          >修改</el-button-->
+        <!--        >-->
         <el-button
           type="primary"
           plain
@@ -36,10 +36,11 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['system:change:export']"
-          >导出</el-button>
-          <el-button size="small" @click="resetQuery" type="primary" plain
+          >导出</el-button
+        >
+        <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
-          >
+        >
         <!--          <el-button-->
         <!--            type="info"-->
         <!--            icon="el-icon-s-help"-->
@@ -48,7 +49,7 @@
         <!--            >校验指令</el-button>-->
       </el-col>
       <el-col :span="6" :offset="12">
-        <div  ref="main" class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.deviceName"
             placeholder="请输入设备名称、设备编号，回车搜索"
@@ -58,7 +59,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -73,43 +74,60 @@
         :model="queryParams"
         label-width="75px"
       >
-
-          <el-form-item style="width: 100%;" label="更换时间">
-            <el-date-picker
-              v-model="daterangeChangeTime"
-              size="small"
-              style="width: 320px"
-              value-format="yyyy-MM-dd"
-              type="daterange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            ></el-date-picker>
-          </el-form-item>
+        <el-form-item style="width: 100%" label="更换时间">
+          <el-date-picker
+            v-model="daterangeChangeTime"
+            size="small"
+            style="width: 320px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-form-item>
         <el-form-item class="bottomBox" align="center">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
         </el-form-item>
       </el-form>
     </div>
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="changeList"
       @selection-change="handleSelectionChange"
-      :default-sort = "{prop: 'changeTime', order: 'descending'}"
-      max-height="640"
-      :row-class-name="tableRowClassName"
-
+      @row-click="handleRowClick"
+      :default-sort="{ prop: 'changeTime', order: 'descending' }"
+      height="62vh"
+      class="allTable"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
       <!-- <el-table-column label="更换时间" align="center" prop="id" /> -->
-      <el-table-column label="设备编号" align="center" prop="deviceId" />
+      <el-table-column
+        label="设备编号"
+        align="center"
+        prop="deviceId"
+        width="300"
+      />
       <el-table-column label="设备名称" align="center" prop="deviceName" />
       <el-table-column
         label="更换时间"
@@ -123,7 +141,11 @@
         </template> -->
       </el-table-column>
       <el-table-column label="桩号" align="center" prop="stakeMark" />
-      <el-table-column label="方向" align="center" prop="eqDirection" />
+      <el-table-column label="方向" align="center" prop="eqDirection">
+        <template slot-scope="scope">
+          <span>{{ getDirectionText(scope.row.eqDirection) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
         label="操作"
@@ -158,7 +180,17 @@
     />
 
     <!-- 添加或修改设备变更对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备编号" prop="deviceId">
           <el-input v-model="form.deviceId" placeholder="请输入设备编号" />
@@ -182,7 +214,7 @@
             type="datetime"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择更换时间"
-            style="width:100%"
+            style="width: 100%"
           >
           </el-date-picker>
         </el-form-item>
@@ -190,18 +222,28 @@
           <el-input v-model="form.stakeMark" placeholder="请输入桩号" />
         </el-form-item>
         <el-form-item label="方向" prop="eqDirection">
-          <el-select v-model="form.eqDirection" placeholder="请选择方向" style="width:100%">
-            <el-option label="上行" value="0" />
-            <el-option label="下行" value="1" />
+          <el-select
+            v-model="form.eqDirection"
+            placeholder="请选择方向"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="dict in directionOptions"
+              :key="dict.value"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+            <!--            <el-option label="上行" value="0" />
+            <el-option label="下行" value="1" />-->
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div class="dialog-footer">
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -222,6 +264,7 @@ export default {
   data() {
     return {
       boxShow: false,
+      directionOptions: [], //方向列表
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -256,37 +299,77 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        deviceName: [{required: true, message: '请填写设备名称', trigger: 'blur'}],
-        deviceId: [{required: true, message: '请填写设备ID', trigger: 'blur'}],
-        changeTime: [{required: true, message: '请填写更换时间', trigger: 'blur'}],
-        eqDirection: [{required: true, message: '请选择方向', trigger: 'blur'}],
-        stakeMark: [{required: true, message: '请填写桩号信息', trigger: 'blur'}],
+        deviceName: [
+          { required: true, message: "请填写设备名称", trigger: "blur" },
+        ],
+        deviceId: [
+          { required: true, message: "请填写设备ID", trigger: "blur" },
+        ],
+        changeTime: [
+          { required: true, message: "请填写更换时间", trigger: "blur" },
+        ],
+        eqDirection: [
+          { required: true, message: "请选择方向", trigger: "blur" },
+        ],
+        stakeMark: [
+          { required: true, message: "请填写桩号信息", trigger: "blur" },
+        ],
       },
     };
   },
   created() {
     this.getList();
+    this.getDirection();
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row) {
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id;
+    },
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.boxShow == true){
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
+        if (self.boxShow == true) {
           self.boxShow = false;
         }
       }
     },
+
+    //查询方向
+    getDirection() {
+      this.getDicts("sd_direction").then((response) => {
+        this.directionOptions = response.data;
+        console.log(this.directionOptions, "方向");
+      });
+    },
+    getDirectionText(num) {
+      for (let item of this.directionOptions) {
+        if (num == item.dictValue) {
+          return item.dictLabel;
+        }
+      }
+    },
+
     /** 查询设备变更列表 */
     getList() {
       this.loading = true;
+      this.boxShow = false;
       this.queryParams.params = {};
       if (null != this.daterangeChangeTime && "" != this.daterangeChangeTime) {
         this.queryParams.params["beginChangeTime"] =
@@ -294,22 +377,23 @@ export default {
         this.queryParams.params["endChangeTime"] = this.daterangeChangeTime[1];
       }
       listChange(this.queryParams).then((response) => {
-        console.log(response,"查询设备变更列表")
+        console.log(response, "查询设备变更列表");
         this.changeList = response.rows;
         this.total = response.total;
         this.loading = false;
-        this.changeList.forEach((e) => {
+        /* this.changeList.forEach((e) => {
           if (e.eqDirection == 0) {
             e.eqDirection = "上行";
           } else if (e.eqDirection == 1) {
             e.eqDirection = "下行";
           }
-        });
+        });*/
       });
     },
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -328,11 +412,12 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.deviceName='';
+      this.queryParams.deviceName = "";
       this.daterangeChangeTime = [];
       this.resetForm("queryForm");
       this.handleQuery();
@@ -367,6 +452,7 @@ export default {
             updateChange(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -381,23 +467,31 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this;
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除选中数据项？')
+        .confirm("是否确认删除？")
         .then(function () {
           return delChange(ids);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
+      let confirmInfo = "是否确认导出所有的设备变更数据项？";
+      if (this.ids.length > 0) {
+        confirmInfo = "是否确认导出所选的设备变更数据项？";
+      }
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有设备变更数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportChange(queryParams);
@@ -405,16 +499,10 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = "";
         })
         .catch(() => {});
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
   },
 };

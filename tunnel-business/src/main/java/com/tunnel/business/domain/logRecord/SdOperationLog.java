@@ -70,12 +70,19 @@ public class SdOperationLog extends BaseEntity
     /** 设备名称 */
     /*@Excel(name = "设备名称")
     private String eqName;*/
+
+    /** 桩号 */
+    @Excel(name = "桩号")
+    private String pile;
+    /** 方向 */
+    @Excel(name = "方向",dictType = "sd_strategy_direction")
+    private String direction;
     
     private String beginTime;
     
     private String endTime;
     /** 控制方式   3：手动 1：时间控制 2：光强控制 */
-    @Excel(name = "控制方式")
+    @Excel(name = "控制方式",dictType = "sd_control_type")
     private String controlType;
 
     /** 操作是否成功 0 成功；1失败 */
@@ -89,9 +96,35 @@ public class SdOperationLog extends BaseEntity
     //事件ID
     private String eventId;
 
+    private String ids;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "创建时间", dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
+    public String getPile() {
+        return this.pile;
+    }
+
+    public void setPile(String pile) {
+        this.pile = pile;
+    }
+
+    public String getDirection() {
+        return this.direction;
+    }
+
+    public void setDirection( String direction) {
+        this.direction = direction;
+    }
 
     @Override
     public Date getCreateTime() {
@@ -99,7 +132,7 @@ public class SdOperationLog extends BaseEntity
     }
 
     @Override
-    public void setCreateTime(final Date createTime) {
+    public void setCreateTime( Date createTime) {
         this.createTime = createTime;
     }
 

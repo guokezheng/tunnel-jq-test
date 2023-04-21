@@ -155,20 +155,47 @@ public class SysDeptController extends BaseController {
         return Result.success(deptService.buildDeptTreeSelect(target));
 
 
-        /*List<SysDept> deptList = deptService.listDeptExcYG1(dept);
-
-        System.out.println("22222222222222222222222222222" + deptService.buildDeptTreeSelect(deptList).size());
-        return Result.success(deptService.buildDeptTreeSelect(deptList));*/
     }
 
 
-    @GetMapping("/treeselectYG1")
-    @ApiOperation("获取部门下拉树列表")
-    public Result treeselectYG1(SysDept dept) {
-        List<SysDept> deptList = deptService.treeselectYG1(dept);
-        System.out.println("22222222222222222222222222222" + deptService.buildDeptTreeSelect(deptList).size());
-        return Result.success(deptService.buildDeptTreeSelect(deptList));
+    /**
+     *
+     * 获取管养部门下拉树列表(包括 dept_id=YG1及其子孙部门)
+     * @param dept
+     * @return
+     */
+    @GetMapping("/treeSelectYG1")
+    @ApiOperation("应急人员获取部门下拉树列表")
+    public Result treeSelectYG1(SysDept dept) {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        List<SysDept> source = deptService.listDeptYG1(dept);
+
+        List<SysDept> target = new ArrayList<>();
+
+        List<TreeDeptSelect> treeDept = null;
+        boolean hasChildren = deptService.hasChildByDeptId(deptId);
+        if (hasChildren) {
+            target = deptService.selectChildrenIncludeSelfByIdNormal(deptId);
+        }else{
+            getTreeListByDeptId(source, deptId, target);
+        }
+
+        return Result.success(deptService.buildDeptTreeSelect(target));
+
+
     }
+
+
+//    @GetMapping("/treeselectYG1")
+//    @ApiOperation("获取部门下拉树列表")
+//    public Result treeselectYG1(SysDept dept) {
+//        List<SysDept> deptList = deptService.treeselectYG1(dept);
+//        System.out.println("22222222222222222222222222222" + deptService.buildDeptTreeSelect(deptList).size());
+//        return Result.success(deptService.buildDeptTreeSelect(deptList));
+//    }
 
 
     /**

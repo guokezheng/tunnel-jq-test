@@ -18,6 +18,7 @@ import com.ruoyi.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -64,18 +65,18 @@ public class SysDeptServiceImpl implements ISysDeptService
         return deptMapper.listDeptExcYG1(dept);
     }
 
-    /**
-     * 查询部门管理数据(dept=YG1及其子孙部门)
-     *
-     * @param dept 部门信息
-     * @return 部门信息集合
-     */
-    @Override
-    @DataScope(deptAlias = "d")
-    public List<SysDept> treeselectYG1(SysDept dept)
-    {
-        return deptMapper.listDeptYG1(dept);
-    }
+//    /**
+//     * 查询部门管理数据(dept=YG1及其子孙部门)
+//     *
+//     * @param dept 部门信息
+//     * @return 部门信息集合
+//     */
+//    @Override
+//    @DataScope(deptAlias = "d")
+//    public List<SysDept> treeselectYG1(SysDept dept)
+//    {
+//        return deptMapper.listDeptYG1(dept);
+//    }
 
 
 
@@ -163,6 +164,17 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public List<SysDept> selectChildrenIncludeSelfById(String deptId) {
         return deptMapper.selectChildrenIncludeSelfById(deptId);
+    }
+
+    /**
+     * 根据ID查询所有子部门及自身
+     *状态：正常
+     * @param deptId 部门ID
+     * @return 部门列表
+     */
+    @Override
+    public List<SysDept> selectChildrenIncludeSelfByIdNormal(String deptId) {
+        return deptMapper.selectChildrenIncludeSelfByIdNormal(deptId);
     }
 
     /**
@@ -257,8 +269,41 @@ public class SysDeptServiceImpl implements ISysDeptService
             throw new ServiceException("部门停用，不允许新增");
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
+        String parentId = dept.getParentId();
+        String deptId = generateTree(parentId);//根据选中的父节点生成子节点
+        dept.setDeptId(deptId);
         return deptMapper.insertDept(dept);
     }
+    private  String generateTree(String parentId) {
+        //判断该父节点有没有子节点
+        String cid = deptMapper.selectChildByPid(parentId);
+        if(cid != null&&!"".equals(cid)){
+            String codeTmp = cid.substring(cid.length() - 2); // 获取字符串最后两个字符
+            int num = StrToInt(codeTmp) + 1;
+            if(num>=10) {
+                parentId += num;
+            }else
+                parentId += ("0"+num);
+        }else
+            parentId += "01";
+
+        return parentId;
+
+    }
+
+    public static int StrToInt(String str) {
+        int rs = 0;
+        DecimalFormat df = new DecimalFormat("#");
+        if (str != null) {
+            try {
+                rs = df.parse(str).intValue();
+            } catch (Exception e) {
+                rs = 0;
+            }
+        }
+        return rs;
+    }
+
 
     /**
      * 修改保存部门信息
@@ -401,9 +446,20 @@ public class SysDeptServiceImpl implements ISysDeptService
         return deptMapper.selectTunnelDeptList(deptId);
     }
 
+
     @Override
-    public List<SysDept> selectTunnelDeptListBydw(String deptId, String ssdw) {
-        return deptMapper.selectTunnelDeptListBydw(deptId,ssdw);
+    public List<SysDept> selectTunnelDeptListBydw(String ssdw) {
+        return deptMapper.selectTunnelDeptListBydw(ssdw);
+    }
+
+    @Override
+    public List<SysDept> listDeptYG1(SysDept dept) {
+        return deptMapper.listDeptYG1(dept);
+    }
+
+    @Override
+    public String getParentDept(String deptId) {
+        return deptMapper.getParentDept(deptId);
     }
 
     private void childrenDeptUser(List<SysDeptUserTreeVO> list) {
@@ -418,4 +474,6 @@ public class SysDeptServiceImpl implements ISysDeptService
             sysDeptUserTreeVO.setChildren(children);
         }
     }
+
+
 }

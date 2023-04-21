@@ -10,7 +10,7 @@
         <el-col>
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
-              style="width: 90%"
+              style="width: 100%"
               v-model="strategyForm.strategyName"
               placeholder="请输入策略名称"
             />
@@ -34,14 +34,14 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="12">
           <el-form-item label="隧道方向" prop="direction">
             <el-select
               clearable
               v-model="strategyForm.direction"
               placeholder="请选择方向"
               @change="changeEvent()"
-              style="width: 95%"
+              style="width: 100%"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -52,7 +52,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="22">
+        <el-col :span="24">
           <el-form-item label="事件类型" prop="eventType">
             <el-select
               clearable
@@ -62,9 +62,9 @@
             >
               <el-option
                 v-for="dict in eventTypeList"
-                :key="dict.dictCode"
-                :label="dict.dictLabel"
-                :value="dict.dictCode"
+                :key="dict.id"
+                :label="dict.eventType"
+                :value="dict.id"
               />
             </el-select>
           </el-form-item>
@@ -74,7 +74,7 @@
             <el-form-item
               label="定时频率"
               prop="schedulerTime"
-              style="width: 92%"
+              style="width: 100%"
             >
               <el-input
                 v-model="strategyForm.schedulerTime"
@@ -91,7 +91,7 @@
           </el-col>
         </el-col>
         <el-col class="triggers">
-          <div class="box" style="width: 91%">
+          <div class="box" style="width: 100%">
             <el-form-item
               label="触发器"
               prop="triggers.deviceTypeId"
@@ -100,7 +100,7 @@
               <el-select
                 v-model="strategyForm.triggers.deviceTypeId"
                 placeholder="请选择设备类型"
-                style="width: 18%"
+                style="width: 20%"
                 @change="selectEqName()"
               >
                 <el-option
@@ -111,11 +111,13 @@
                 >
                 </el-option>
               </el-select>
-              <el-form-item prop="triggers.deviceId" style="width: 18%">
+              <el-form-item prop="triggers.deviceId" style="width: 23%">
                 <el-select
                   v-model="strategyForm.triggers.deviceId"
                   placeholder="请选择设备名称"
                   multiple
+                  collapse-tags
+                  style="width:100%;"
                 >
                   <!-- @change="selectDataItem()" -->
                   <el-option
@@ -127,7 +129,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.elementId" style="width: 17%">
+              <el-form-item prop="triggers.elementId" style="width: 15%">
                 <el-select
                   v-model="strategyForm.triggers.elementId"
                   placeholder="请选择数据项"
@@ -142,7 +144,7 @@
                 </el-select>
               </el-form-item>
               <!-- 计算符 -->
-              <el-form-item prop="triggers.comparePattern" style="width: 12%">
+              <el-form-item prop="triggers.comparePattern" style="width: 15%">
                 <el-select v-model="strategyForm.triggers.comparePattern">
                   <el-option
                     v-for="item in symbol"
@@ -173,114 +175,108 @@
             </el-form-item>
           </div>
         </el-col>
-        <el-col :span="22">
-          <el-form-item label="执行操作">
-            <div class="menu">
-              <span>设备类型</span>
-              <span>指定设备</span>
-              <span>控制指令</span>
-              <span>操作</span>
-            </div>
-          </el-form-item>
-        </el-col>
+        <el-row :gutter="20" style="clear:both;">
+          <el-col :span="24">
+            <el-form-item label="执行操作">
+              <div class="menu">
+                <el-col :span="8">设备类型</el-col>
+                <el-col :span="8">指定设备</el-col>
+                <el-col :span="6">控制指令</el-col>
+                <el-col :span="2">操作</el-col>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-row>
       <div v-show="strategyForm.triggers.warningType == 1">
-        <el-row>
-          <el-form-item
-            v-for="(dain, index) in strategyForm.autoControl"
-            :key="index"
-          >
-            <el-col :span="6">
-              <el-select
-                v-model="dain.equipmentTypeId"
-                placeholder="请选择设备类型"
-                clearable
-                title="手动控制"
-                @change="changeEquipmentType(index)"
-              >
-                <el-option
-                  v-for="item in dain.equipmentTypeData"
-                  :key="item.typeId"
-                  :label="item.typeName"
-                  :value="item.typeId"
-                />
-              </el-select>
-            </el-col>
-            <el-col :span="6">
-              <el-select
-                v-model="dain.equipments"
-                multiple
-                collapse-tags
-                placeholder="请选择设备"
-                @change="qbgChange(index, dain.equipments)"
-              >
-                <el-option
-                  v-for="item in dain.equipmentData"
-                  :key="item.eqId"
-                  :label="item.eqName"
-                  :value="item.eqId"
-                  :disabled="item.disabled"
-                />
-              </el-select>
-            </el-col>
-            <el-col
-              :span="6"
-              v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
+        <el-row class="planBox">
+            <el-form-item
+              v-for="(dain, index) in strategyForm.autoControl"
+              :key="index"
             >
-              <el-select v-model="dain.state" placeholder="请选择设备执行操作">
-                <el-option
-                  v-for="(item, indx) in dain.eqStateList"
-                  :key="item.deviceState"
-                  :label="item.stateName"
-                  :value="item.deviceState"
+              <el-col :span="8">
+                <el-select
+                  v-model="dain.equipmentTypeId"
+                  placeholder="请选择设备类型"
+                  clearable
+                  title="手动控制"
+                  @change="changeEquipmentType(index)"
+                  style="width:100%;"
                 >
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col
-              :span="6"
-              v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
-            >
-              <el-cascader
-                :props="checkStrictly"
-                v-model="dain.state"
-                :options="dain.templatesList"
-                :show-all-levels="false"
-                clearable
-                collapse-tags
-                @change="handleChange"
-              ></el-cascader>
-            </el-col>
-            <el-col :span="4" class="buttonBox">
-              <el-button
-                type=""
-                icon="el-icon-delete"
-                circle
-                @click="removeItem(index)"
-                style="margin-left: 2%"
-              ></el-button>
-              <el-form-item
-                label=""
-                style=""
-                v-show="strategyForm.equipmentTypeId != 30"
+                  <el-option
+                    v-for="item in dain.equipmentTypeData"
+                    :key="item.typeId"
+                    :label="item.typeName"
+                    :value="item.typeId"
+                  />
+                </el-select>
+              </el-col>
+              <el-col :span="8">
+                <el-select
+                  v-model="dain.equipments"
+                  multiple
+                  collapse-tags
+                  placeholder="请选择设备"
+                  @change="qbgChange(index, dain.equipments)"
+                  style="width:100%;"
+                >
+                  <el-option
+                    v-for="item in dain.equipmentData"
+                    :key="item.eqId"
+                    :label="item.eqName"
+                    :value="item.eqId"
+                    :disabled="item.disabled"
+                  />
+                </el-select>
+              </el-col>
+              <el-col
+                :span="6"
+                v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
               >
+                <el-select v-model="dain.state" placeholder="请选择设备执行操作" style="width:100%;">
+                  <el-option
+                    v-for="(item, indx) in dain.eqStateList"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col
+                :span="6"
+                v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
+              >
+                <el-cascader
+                  :props="checkStrictly"
+                  v-model="dain.state"
+                  :options="dain.templatesList"
+                  :show-all-levels="false"
+                  clearable
+                  collapse-tags
+                  @change="handleChange"
+                  style="width:100%;"
+                ></el-cascader>
+              </el-col>
+              <el-col :span="2" class="buttonBox">
                 <el-button
-                  type=""
-                  icon="el-icon-plus"
-                  circle
-                  @click="addItem"
-                  style="margin-left: 2%"
+                  class="delete"
+                  @click="removeItem(index)"
                 ></el-button>
-              </el-form-item>
-            </el-col>
-          </el-form-item>
+                  <el-button
+                    v-show="strategyForm.equipmentTypeId != 30"
+                    class="add"
+                    @click="addItem"
+                  ></el-button>
+              </el-col>
+            </el-form-item>
         </el-row>
       </div>
       <el-form-item class="dialog-footer">
-        <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
+        <el-button class="submitButton" @click="submitStrategyForm"
           >提交</el-button
         >
-        <el-button style="width: 30%" @click="strategyFormClose"
+        <el-button class="closeButton" @click="strategyFormClose"
           >取 消</el-button
         >
       </el-form-item>
@@ -329,6 +325,7 @@ import {
   handleStrategy,
 } from "@/api/event/strategy";
 import Crontab from "@/components/Crontab";
+import{listEventType}from "@/api/event/eventType";
 export default {
   components: {
     Crontab,
@@ -424,24 +421,27 @@ export default {
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
         ],
+        eventType: [
+          { required: true, message: "请选择事件类型", trigger: "blur" },
+        ],
+        schedulerTime:[
+          { required: true, message: "请选择定时频率", trigger: "blur" },
+        ],
         triggers: {
           deviceTypeId: [
-            { required: true, message: "请选择设备类型", trigger: "change" },
+            { required: true, message: "请选择设备类型", trigger: "blur" },
           ],
           deviceId: [
             { required: true, message: "请选择设备名称", trigger: "blur" },
           ],
           elementId: [
-            { required: true, message: "请选择数据项", trigger: "change" },
+            { required: true, message: "请选择数据项", trigger: "blur" },
           ],
           comparePattern: [
-            { required: true, message: "请选择运算符", trigger: "change" },
+            { required: true, message: "请选择运算符", trigger: "blur" },
           ],
           compareValue: [
-            { required: true, message: "请输入阈值", trigger: "change" },
-          ],
-          eventType: [
-            { required: true, message: "请选择事件类型", trigger: "change" },
+            { required: true, message: "请输入阈值", trigger: "blur" },
           ],
         },
       },
@@ -452,17 +452,22 @@ export default {
       if (this.sink == "add") {
         this.resetForm();
       }
-      // 事件类型
-      this.getDicts("incident_type").then((response) => {
-        this.eventTypeList = response.data;
-        console.log(this.eventTypeList, "事件类型");
-      });
+      // 获取事件类型
+      this.getListEventType();
       this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
+    getListEventType(){
+      let data = {prevControlType:"1"};
+      listEventType(data).then(res=>{
+        this.eventTypeList = res.rows;
+        console.log(this.eventTypeList,"事件类型");
+      })
+    },
     /** 获取当前策略数据 */
     async getStrategyData(row) {
+      this.getListEventType();
       //获取设备
       autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
@@ -500,7 +505,7 @@ export default {
             "warningType",
             res.data.warningType
           );
-          this.$set(this.strategyForm, "eventType", data.eventType);
+          this.$set(this.strategyForm, "eventType", +data.eventType);
           listDevices({
             eqType: this.strategyForm.triggers.deviceTypeId,
             eqTunnelId: this.strategyForm.tunnelId,
@@ -529,6 +534,13 @@ export default {
               this.strategyForm.autoControl[i].equipmentTypeId = Number(
                 attr.eqTypeId
               );
+              if (
+                this.strategyForm.autoControl[i].equipmentTypeId == 16 ||
+                this.strategyForm.autoControl[i].equipmentTypeId == 36
+              ) {
+                this.strategyForm.autoControl[i].state = +attr.state;
+                this.qbgChange(i,this.strategyForm.autoControl[i].equipments);
+              }
               this.$set(
                 autoControl,
                 "equipmentTypeData",
@@ -549,6 +561,8 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.$set(this.strategyForm.autoControl[index],"state",null);
+      this.$set(this.strategyForm.autoControl[index],"equipments",null);
       let params = {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -565,7 +579,6 @@ export default {
       this.listEqTypeStateIsControl(index);
     },
     qbgChange(index, value) {
-      console.log(value);
       let data = value;
       if (
         this.strategyForm.autoControl[index].equipmentTypeId == 16 ||
@@ -639,15 +652,17 @@ export default {
       this.$refs["autoControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-          console.log(autoControl.length);
-          if (this.strategyForm.warningType == 1) {
-            // if (
-            //   !autoControl.length ||
-            //   autoControl[0].value.length == 0 ||
-            //   autoControl[0].state == ""
-            // ) {
-            //   return this.$modal.msgError("请选择设备并添加执行操作");
-            // }
+          let response = JSON.parse(JSON.stringify(autoControl))
+          console.log(response,"response");
+          // 如果为预警联动则判断是否填写完整
+          if(this.strategyForm.triggers.warningType == '1'){
+            let result = response.every(function (item) {
+                return item.equipmentTypeId && item.state && item.equipments
+            });
+            console.log(result);
+            if(!result){
+              return this.$modal.msgError("请填写完整");
+            }
           }
 
           // 判断是修改还是删除
@@ -944,7 +959,7 @@ export default {
     },
     //表单重置方法
     resetForm() {
-      // this.$refs["autoControl"].resetFields();
+      this.$refs["autoControl"].resetFields();
       this.strategyForm.triggers = {
         deviceTypeId: "", //设备类型
         deviceId: "",
@@ -987,7 +1002,7 @@ export default {
   align-items: center;
 } */
 .triggers .box .el-form-item__content .el-form-item {
-  margin-left: 15px;
+  margin-left: 4px;
 }
 </style>
 <style lang="scss" scoped>
@@ -997,6 +1012,9 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  .el-col{
+    text-align: center;
+  }
 }
 .buttonBox {
   display: flex;

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -17,6 +18,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author ruoyi
  * @date 2022-11-02
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SdFaultList extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -25,78 +27,230 @@ public class SdFaultList extends BaseEntity
     private String id;
 
     /** 隧道id */
-    @Excel(name = "隧道id")
+    /*@Excel(name = "隧道id")*/
     private String tunnelId;
 
-    /** 故障位置（设备的“方向”、“桩号”，拼接展示） */
-    @Excel(name = "故障位置", readConverterExp = "设=备的“方向”、“桩号”，拼接展示")
-    private String faultLocation;
-
-    /** 故障类型(0:自然损坏；1：腐蚀泡水；2：变形或断裂；3：间歇性故障；4：机械故障；5：人为损坏；6：其他) */
-    @Excel(name = "故障类型(0:自然损坏；1：腐蚀泡水；2：变形或断裂；3：间歇性故障；4：机械故障；5：人为损坏；6：其他)")
-    private String faultType;
-
-    /** 故障发现源 */
-    @Excel(name = "故障发现源")
-    private String faultSource;
-
-    /** 故障发现时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "故障发现时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date faultFxtime;
-
-    /** 故障持续时间（根据当前时间与故障发现时间计算时间差，单位：天、小时；计算时间差，不保存只展示；记录变为“已消除”状态时，保存持续时间） */
-    @Excel(name = "故障持续时间", readConverterExp = "根=据当前时间与故障发现时间计算时间差，单位：天、小时；计算时间差，不保存只展示；记录变为“已消除”状态时，保存持续时间")
-    private String faultCxtime;
-
-    /** 故障填报人 */
-    @Excel(name = "故障填报人")
-    private String faultTbr;
-
-    /** 故障填报时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "故障填报时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date faultTbtime;
-
     /** 设备id */
-    @Excel(name = "设备id")
-    private String eqId;
-
-    /** 设备id */
-    @Excel(name = "设备名称")
+    @Excel(name = "故障设备")
     private String eqName;
 
-    /** 设备状态（1-在线，2-离线，3-故障） */
-    @Excel(name = "设备状态", readConverterExp = "1=-在线，2-离线，3-故障")
-    private String eqStatus;
+    /** 故障位置（设备的“方向”、“桩号”，拼接展示） */
+    @Excel(name = "故障位置")
+    private String faultLocation;
 
-
-    /** 设备运行状态 */
-    @Excel(name = "设备运行状态")
-    private String eqRunStatus;
-
-    /** 故障代码 */
-    @Excel(name = "故障代码")
-    private String faultCode;
-
-    /** 故障等级 */
-    @Excel(name = "故障等级")
-    private String faultLevel;
-
-    /** 故障消除状态（0：已消除；1：未消除） */
-    @Excel(name = "故障消除状态", readConverterExp = "0=：已消除；1：未消除")
-    private String falltRemoveStatue;
+    private Integer fbState;
 
     /** 故障描述 */
     @Excel(name = "故障描述")
     private String faultDescription;
 
+    /** 故障类型(0:自然损坏；1：腐蚀泡水；2：变形或断裂；3：间歇性故障；4：机械故障；5：人为损坏；6：其他) */
+    /*@Excel(name = "故障类型")*/
+    private String faultType;
+
+    private String paramFaultType;
+
+    private String  paramFaultEscalationType;
+
+
+    private String paramFaultRemoveState;
+
+    private String paramFaultLevel;
+
+    private String deptId;
+
+    /** 故障来源 */
+   /* @Excel(name = "故障来源")*/
+    private String faultSource;
+
+
+    /** 故障发现时间 */
+    @JsonFormat(timezone = "GMT+8",pattern="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "发现时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    private Date faultFxtime;
+
+
+
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+   /* @Excel(name = "故障消除时间", width = 30, dateFormat = "yyyy-MM-dd")*/
+    private Date faultRemoveTime;
+    /** 故障持续时间（根据当前时间与故障发现时间计算时间差，单位：天、小时；计算时间差，不保存只展示；记录变为“已消除”状态时，保存持续时间） */
+/*
+    @Excel(name = "故障持续时间", readConverterExp = "根=据当前时间与故障发现时间计算时间差，单位：天、小时；计算时间差，不保存只展示；记录变为“已消除”状态时，保存持续时间")
+*/
+    private String faultCxtime;
+
+    /** 故障填报人 */
+   /* @Excel(name = "故障填报人")*/
+    private String faultTbr;
+
+    /** 故障填报时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    /*@Excel(name = "故障填报时间", width = 30, dateFormat = "yyyy-MM-dd")*/
+    private Date faultTbtime;
+
+    /** 设备id */
+   /* @Excel(name = "设备id")*/
+    private String eqId;
+
+    private String typeName;
+    private Integer typeId;
+
+
+    /** 设备状态（1-在线，2-离线，3-故障） */
+    /*@Excel(name = "设备状态")*/
+    private String eqStatus;
+
+    /** 设备运行状态 */
+   /* @Excel(name = "设备运行状态")*/
+    private String eqRunStatus;
+
+    /** 故障代码 */
+    /*@Excel(name = "故障代码")*/
+    private String faultCode;
+    @Excel(name = "设备状态")
+    private String fstatus;
+
+
+    /** 故障等级 */
+    /*@Excel(name = "故障等级")*/
+    private String faultLevel;
+
+    /** 故障消除状态（0：已消除；1：未消除） */
+    /*@Excel(name = "消除状态")*/
+    private String falltRemoveStatue;
+
+    @Excel(name = "消除状态")
+    private String fremove;
+
+    @Excel(name = "故障等级")
+    private String flevel;
+    @Excel(name = "故障类型")
+    private String ftype;
+    @Excel(name = "所属隧道")
+    private String tunnelName;
+
+    private String ids;
+
+    public Integer getFbState() {
+        return this.fbState;
+    }
+
+    public void setFbState( Integer fbState) {
+        this.fbState = fbState;
+    }
+
+    public Integer getTypeId() {
+        return this.typeId;
+    }
+
+    public void setTypeId( Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getTypeName() {
+        return this.typeName;
+    }
+
+    public void setTypeName( String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getParamFaultEscalationType() {
+        return this.paramFaultEscalationType;
+    }
+
+    public void setParamFaultEscalationType( String paramFaultEscalationType) {
+        this.paramFaultEscalationType = paramFaultEscalationType;
+    }
+
+    public String getParamFaultLevel() {
+        return this.paramFaultLevel;
+    }
+
+    public void setParamFaultLevel(final String paramFaultLevel) {
+        this.paramFaultLevel = paramFaultLevel;
+    }
+
+    public String getParamFaultRemoveState() {
+        return this.paramFaultRemoveState;
+    }
+
+    public void setParamFaultRemoveState(final String paramFaultRemoveState) {
+        this.paramFaultRemoveState = paramFaultRemoveState;
+    }
+
+    public String getParamFaultType() {
+        return this.paramFaultType;
+    }
+
+    public void setParamFaultType(final String paramFaultType) {
+        this.paramFaultType = paramFaultType;
+    }
+
+    public String getFstatus() {
+        return this.fstatus;
+    }
+
+    public void setFstatus( String fstatus) {
+        this.fstatus = fstatus;
+    }
+
+    public String getDeptId() {
+        return this.deptId;
+    }
+
+    public void setDeptId( String deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
+    public Date getFaultRemoveTime() {
+        return this.faultRemoveTime;
+    }
+
+    public void setFaultRemoveTime( Date faultRemoveTime) {
+        this.faultRemoveTime = faultRemoveTime;
+    }
+
+    public String getFremove() {
+        return this.fremove;
+    }
+
+    public void setFremove(final String fremove) {
+        this.fremove = fremove;
+    }
+
+    public String getFlevel() {
+        return this.flevel;
+    }
+
+    public void setFlevel(final String flevel) {
+        this.flevel = flevel;
+    }
+
+    public String getFtype() {
+        return this.ftype;
+    }
+
+    public void setFtype(final String ftype) {
+        this.ftype = ftype;
+    }
+
     /** 状态（0：已发布；1：未发布） */
-    @Excel(name = "状态", readConverterExp = "0=：已发布；1：未发布")
+   @Excel(name = "发布状态", dictType = "fault_status")
     private String faultStatus;
 
     /** 创建者 */
-    @ApiModelProperty("创建者")
+   /* @ApiModelProperty("创建者")*/
     private String createBy;
 
     /** 创建时间 */
@@ -115,17 +269,30 @@ public class SdFaultList extends BaseEntity
 
     /**故障图片ID */
     @ApiModelProperty("故障图片ID")
-    @Excel(name = "故障图片ID")
+   /* @Excel(name = "故障图片ID")*/
     private String imgFileId;
 
     @ApiModelProperty("默认图标")
     private List<SdTrafficImage> iFileList;
 
     @ApiModelProperty("上报区分")
+
     private String faultEscalationType;
+
+
+    @Excel(name = "故障来源")
+    private String fEscalationType;
 
     @ApiModelProperty("设备类型")
     private String eqType;
+
+    public String getfEscalationType() {
+        return this.fEscalationType;
+    }
+
+    public void setfEscalationType( String fEscalationType) {
+        this.fEscalationType = fEscalationType;
+    }
 
     public String getEqType() {
         return eqType;
@@ -358,6 +525,14 @@ public class SdFaultList extends BaseEntity
 
     public void setEqName(final String eqName) {
         this.eqName = eqName;
+    }
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
     }
 
     @Override

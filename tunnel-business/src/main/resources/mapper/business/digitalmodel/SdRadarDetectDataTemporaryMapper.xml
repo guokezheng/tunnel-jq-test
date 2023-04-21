@@ -119,6 +119,7 @@
             <if test="objectType != null">object_type,</if>
             <if test="roadDir != null">road_dir,</if>
             <if test="recordSerialNumber != null">record_Serial_Number,</if>
+            <if test="distance != null">distance,</if>
             create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -139,6 +140,7 @@
             <if test="objectType != null">#{objectType},</if>
             <if test="roadDir != null">#{roadDir},</if>
             <if test="recordSerialNumber != null">#{recordSerialNumber},</if>
+            <if test="distance != null">#{distance},</if>
             NOW()
         </trim>
     </insert>
@@ -180,6 +182,25 @@
     </delete>
 
     <delete id="deleteData">
-        delete from sd_radar_detect_data_temporary where DATE_FORMAT(detect_time,'%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d')
+        delete from sd_radar_detect_data_temporary where 1=1
     </delete>
+
+
+    <select id="getSdRadarDetectDataCount" parameterType="String" resultType="int">
+        select count(s.vehicle_id)  from (
+            select vehicle_id from  sd_radar_detect_data_temporary t
+            where 1=1
+            and t.detect_time > DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MINUTE)
+            and t.detect_time <![CDATA[<=]]> now()
+            and t.vehicle_id != ''
+            and t.vehicle_license != ''
+            <if test="roadDir != null and roadDir != '' ">
+                and t.road_dir = #{roadDir}
+            </if>
+            <if test="tunnelId != null and tunnelId != '' ">
+                and t.tunnel_id = #{tunnelId}
+            </if>
+            GROUP BY t.vehicle_id
+        ) s
+    </select>
 </mapper>

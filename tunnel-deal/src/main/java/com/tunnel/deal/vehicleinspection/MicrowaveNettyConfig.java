@@ -33,7 +33,7 @@ public class MicrowaveNettyConfig {
         connectDevice();
     }
 
-    @Scheduled(cron = "30/60 * * * * ?")
+    //@Scheduled(cron = "30/60 * * * * ?")
     public void connectDevice() {
         log.info("剔除长时间不活动的终端");
         long curt = System.currentTimeMillis();
@@ -44,8 +44,8 @@ public class MicrowaveNettyConfig {
             //log.info("{},{}", curt, actt);
             if(curt-actt > 130000) {
                 log.info("--{}-连接2分钟无活动！", ip);
-//                info.getChannel().close();
-//                MicrowaveNettyClient.channels.remove(ip);
+                info.getChannel().close();
+                MicrowaveNettyClient.channels.remove(ip);
             }
         }
 
@@ -55,6 +55,9 @@ public class MicrowaveNettyConfig {
             public void run() {
                 try {
                     Map<String, NettyConnectInfo> mapParam = new HashMap<String, NettyConnectInfo>();
+                    //加强照明调光   需要 微波车检检测车辆经过信息。从而开启调光。需要 每个隧道入口 前的 微波车检  监控过车 信息。
+                    //后期  针对性查找  每个隧道入口的   微波车检 信息存入  mapParam
+                    //从而进行链接接收过车数据
 
                     // device from db
                     SdDevices sdDevices = new SdDevices();
@@ -62,17 +65,18 @@ public class MicrowaveNettyConfig {
                     List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
 //                    List<DeviceEntity> list = deviceRepository.getIps();
                     for(SdDevices it : devicesList) {
-                        NettyConnectInfo info = new NettyConnectInfo();
-                        info.setPort(Integer.parseInt(it.getPort()));
-                        info.setChannel(null);
-                        info.setConnected(false);
-                        info.setSdDevices(it);
-
-                        mapParam.put(it.getIp()+":"+(it.getPort()), info);
+                        //隧道入口微波车检  可用。   仅用来测试使用。后期优化。
+                        if("10.7.187.145".equals(it.getIp())||"10.7.187.147".equals(it.getIp())){
+                            NettyConnectInfo info = new NettyConnectInfo();
+                            info.setPort(Integer.parseInt(it.getPort()));
+                            info.setChannel(null);
+                            info.setConnected(false);
+                            info.setSdDevices(it);
+                            mapParam.put(it.getIp()+":"+(it.getPort()), info);
+                        }
                     }
-
                     // connect
-//                    MicrowaveNettyClient.getChannel(mapParam);
+                    MicrowaveNettyClient.getChannel(mapParam);
                 }
                 catch (Exception e) {
                     log.error("Netty client start fail : {}", e.getMessage());

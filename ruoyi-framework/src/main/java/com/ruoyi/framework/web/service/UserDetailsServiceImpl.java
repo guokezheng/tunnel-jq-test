@@ -1,5 +1,7 @@
 package com.ruoyi.framework.web.service;
 
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.system.service.ISysRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import com.ruoyi.common.enums.UserStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
+
+import java.util.List;
 
 /**
  * 用户验证处理
@@ -28,16 +32,20 @@ public class UserDetailsServiceImpl implements UserDetailsService
     private ISysUserService userService;
 
     @Autowired
+    private ISysRoleService roleService;
+
+    @Autowired
     private SysPermissionService permissionService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
         SysUser user = userService.selectUserByUserName(username);
+        List<SysRole> sysRoles = roleService.selectUserRole(user.getUserId());
         if (StringUtils.isNull(user))
         {
             log.info("登录用户：{} 不存在.", username);
-            throw new ServiceException("登录用户：" + username + " 不存在");
+            throw new ServiceException("用户名不存在");
         }
         else if (UserStatus.DELETED.getCode().equals(user.getDelFlag()))
         {
@@ -49,7 +57,10 @@ public class UserDetailsServiceImpl implements UserDetailsService
             log.info("登录用户：{} 已被停用.", username);
             throw new ServiceException("对不起，您的账号：" + username + " 已停用");
         }
-
+        else if (sysRoles.size() == 0){
+            log.info("登录用户：{} 所选角色已停用.", username);
+            throw new ServiceException("对不起，您的账号：" + username + "所选角色已停用");
+        }
         return createLoginUser(user);
     }
 

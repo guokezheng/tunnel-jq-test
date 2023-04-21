@@ -38,6 +38,13 @@ public interface ISdOperationLogService {
     int insertSdOperationLog(SdOperationLog sdOperationLog);
 
     /**
+     * 批量新增
+     * @param list
+     * @return
+     */
+    int insertBatchSdOperationLog(List<SdOperationLog> list);
+
+    /**
      * 修改操作日志
      *
      * @param sdOperationLog 操作日志
@@ -81,5 +88,20 @@ public interface ISdOperationLogService {
      * @param time
      * @return
      */
-    List<SdOperationLog> selectAppOperationLogList(String time);
+    List<SdOperationLog> selectAppOperationLogList(String time,String deptId,Integer pageSize,Integer pageNum);
+
+    /**
+     * 查询操作日志总数
+     * @param sdOperationLog
+     * @return
+     */
+    int selectSdOperationLogCountList(SdOperationLog sdOperationLog);
+
+    /**
+     * 查询app端操控日志的条数
+     * @param time
+     * @param deptId
+     * @return
+     */
+    int selectAppOperationLogCountList(String time, String deptId);
 }

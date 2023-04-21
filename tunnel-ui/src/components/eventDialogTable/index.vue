@@ -22,18 +22,21 @@
           @click="closeDialogTable()"
         />
       </div>
-      <div class="blueLine"></div>
+      <!-- <div class="blueLine"></div> -->
       <div class="contentBox">
         <div class="butBox">
           <div :class="searchValue == 3 ? 'xz' : ''" @click="handleClick(3)">
             全部
           </div>
+          <div>|</div>
           <div :class="searchValue == 1 ? 'xz' : ''" @click="handleClick(1)">
-            主动安全
+            安全预警
           </div>
+          <div>|</div>
           <div :class="searchValue == 0 ? 'xz' : ''" @click="handleClick(0)">
-            交通事件
+            普通事件
           </div>
+          <div>|</div>
           <div :class="searchValue == 2 ? 'xz' : ''" @click="handleClick(2)">
             设备故障
           </div>
@@ -46,12 +49,12 @@
           <li
             v-for="(item, index) of list"
             :key="index"
-            @click="handleSee(item.id)"
-            style="cursor: pointer"
+            @click="handleSee(item)"
+            :style="item.prevControlType != 2?'cursor: pointer':'cursor:default'"
           >
             <el-row style="color: white">
               <el-col :span="1">
-                <div style="width: 20px; height: 20px; display: flex;justify-content: center;align-items: center;transform:scale(0.8)">
+                <div class="iconBox">
                   <img
                     :src="item.iconUrl"
                     v-if="searchValue == 2 || searchValue == 3 "
@@ -61,18 +64,19 @@
                     v-else
                   />
                 </div>
-                
+
               </el-col>
+              <!--:style="{color: item.prevControlType == 0?'red':'#F6AC10'}"-->
               <el-col :span="4" style="display:flex">
                 <div v-if="searchValue == 2 || searchValue == 3"
-                :style="{color: item.prevControlType == 0?'red':'#F6AC10'}"
-                style="width:100%">
+                     :style="{color: item.prevControlType == 0?'red':(item.prevControlType == 2?'#F6AC10':'rgb(11,146,254)')}"
+                      style="width:100%">
                   {{ item.simplifyName }}
                 </div>
-                <div 
+                <div
                 v-else
                 style="width:100%"
-                :style="{color:searchValue == 0?'red':'blue'}"
+                :style="{color:searchValue == 0?'red':'rgb(11,146,254)'}"
                 >
                   {{ item.eventType.simplifyName }}
                 </div>
@@ -86,7 +90,7 @@
                 <div class="overflowText">{{ item.frameEventTitle }}</div>
               </el-tooltip>
                 <div style="float: right; margin-right: 10px">
-                  {{ item.eventTime }}
+                  {{ parseTime(item.eventTime, "{yyyy}-{m}-{d} {h}:{i}:{s}" )}}
                 </div>
               </el-col>
 
@@ -242,14 +246,14 @@ export default {
         this.loading = false;
       }, 2000);
     },
-    handleSee(id) {
-      if(this.searchValue != 2){
+    handleSee(item) {
+      if(item.prevControlType != 2){
         setTimeout(() => {
-          bus.$emit("getPicId", id);
+          bus.$emit("getPicId", item.id);
         }, 200);
         bus.$emit("openPicDialog");
+      this.eventTableDialog = !this.eventTableDialog;
       }
-
     },
 
     // 忽略事件
@@ -347,7 +351,8 @@ export default {
   left: 0 !important;
   margin: 0;
   box-shadow: none;
-  background: rgba($color: #00152b, $alpha: 0.6);
+  // background: rgba($color: #00152b, $alpha: 0.6);
+  // background-image: linear-gradient(180deg, #3A4F6A 93%,#154489);
 }
 ::v-deep .el-dialog:not(.is-fullscreen) {
   margin-top: 0vh !important;
@@ -366,15 +371,15 @@ export default {
   // transform: translateY(-30px);
   display: flex;
   > div:nth-of-type(1) {
-    width: 5%;
+    width: 3%;
     border-bottom: #2dbaf5 solid 1px;
   }
   > div:nth-of-type(2) {
-    width: 90%;
+    width: 94%;
     border-bottom: 1px solid rgba($color: #00b0ff, $alpha: 0.2);
   }
   > div:nth-of-type(3) {
-    width: 5%;
+    width: 3%;
     border-bottom: #2dbaf5 solid 1px;
   }
 }
@@ -385,13 +390,12 @@ export default {
   .butBox {
     width: 100%;
     display: flex;
-    padding: 4px 4px;
-    background: #6c8097;
+    padding: 0px 4px;
+    background: #44576F;
     border-radius: 4px;
-    // margin-bottom: 10px;
     margin-top: 20px;
     font-size: 14px;
-    // justify-content: space-between;
+    box-shadow: 0 0.125rem 0.25rem 0 #000;
     div {
       padding: 6px 10px;
       color: #3cd3fe;
@@ -405,13 +409,19 @@ export default {
   .listContent {
     max-height: 301px;
     overflow: auto;
-    background: rgba($color: #6c8097, $alpha: 0.3);
-    padding-left: 0;
+    // background: rgba($color: #6c8097, $alpha: 0.3);
+    background: #44576F;
+    box-shadow: 0 0.125rem 0.25rem 0 #000;
+    padding: 4px 10px;
     > li {
       // margin-bottom: 6px;
       list-style: none;
-      padding: 10px;
+      padding: 10px 4px;
       padding-bottom: 0px;
+    }
+    >li:hover{
+      background-color: rgba(0, 0, 0, 0.2);
+      background:rgba($color: #000000, $alpha: 0.1);
     }
   }
   /*table滚动条背景色 */
@@ -490,6 +500,9 @@ export default {
     // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
     margin: 0 !important;
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
+    background-repeat: no-repeat;
+    // background-color: rgba($color: #00152b, $alpha: 0.6) !important;
+
   }
   .blueLine {
     width: 20%;
@@ -553,5 +566,15 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.iconBox{
+  width: 16px;
+  height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img{
+    height: 100%;
+  }
 }
 </style>

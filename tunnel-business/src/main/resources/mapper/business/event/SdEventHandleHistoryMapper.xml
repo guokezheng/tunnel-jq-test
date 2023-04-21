@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.event.SdEventHandleHistoryMapper">
+    
+    <resultMap type="SdEventHandle" id="SdEventHandleResult">
+        <result property="id"    column="id"    />
+        <result property="eventId"    column="event_id"    />
+        <result property="flowId"    column="flow_id"    />
+        <result property="flowPid"    column="flow_pid"    />
+        <result property="flowContent"    column="flow_content"    />
+        <result property="eventState"    column="event_state"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdEventHandleVo">
+        select id, event_id, flow_id, flow_pid, flow_content, event_state, reserve_id, process_id, flow_sort, flow_num, create_time, update_time from sd_event_handle_history
+    </sql>
+
+    <select id="selectSdEventHandleList" parameterType="SdEventHandle" resultMap="SdEventHandleResult">
+        select
+            id,
+            event_id,
+            flow_id,
+            flow_pid,
+            flow_content,
+            event_state,
+            reserve_id,
+            process_id,
+            flow_sort,
+            flow_num,
+            create_time,
+            update_time
+        from
+            sd_event_handle_history
+        <where>  
+            <if test="eventId != null "> and event_id = #{eventId}</if>
+            <if test="flowId != null "> and flow_id = #{flowId}</if>
+            <if test="flowPid != null "> and flow_pid = #{flowPid}</if>
+            <if test="processId != null "> and process_id = #{processId}</if>
+            <if test="flowContent != null  and flowContent != ''"> and flow_content = #{flowContent}</if>
+        </where>
+        ORDER BY create_time ASC
+    </select>
+    
+    <select id="selectSdEventHandleById" parameterType="Long" resultMap="SdEventHandleResult">
+        <include refid="selectSdEventHandleVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSdEventHandle" parameterType="Long" resultType="int">
+        select
+            count(*)
+        from sd_event_handle_history
+        where event_id = #{eventId}
+    </select>
+        
+    <insert id="insertSdEventHandle" parameterType="SdEventHandle">
+        insert into sd_event_handle_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="eventId != null">event_id,</if>
+            <if test="flowId != null">flow_id,</if>
+            <if test="flowPid != null">flow_pid,</if>
+            <if test="flowContent != null">flow_content,</if>
+            <if test="eventState != null">event_state,</if>
+            <if test="reserveId != null">reserve_id,</if>
+            <if test="processId != null">process_id,</if>
+            <if test="flowSort != null">flow_sort,</if>
+            <if test="flowNum != null">flow_num,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="eventId != null">#{eventId},</if>
+            <if test="flowId != null">#{flowId},</if>
+            <if test="flowPid != null">#{flowPid},</if>
+            <if test="flowContent != null">#{flowContent},</if>
+            <if test="eventState != null">#{eventState},</if>
+            <if test="reserveId != null">#{reserveId},</if>
+            <if test="processId != null">#{processId},</if>
+            <if test="flowSort != null">#{flowSort},</if>
+            <if test="flowNum != null">#{flowNum},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEventHandle" parameterType="SdEventHandle">
+        update sd_event_handle_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventId != null">event_id = #{eventId},</if>
+            <if test="flowId != null">flow_id = #{flowId},</if>
+            <if test="flowPid != null">flow_pid = #{flowPid},</if>
+            <if test="flowContent != null">flow_content = #{flowContent},</if>
+            <if test="eventState != null">event_state = #{eventState},</if>
+            <if test="reserveId != null">reserve_id = #{reserveId},</if>
+            <if test="processId != null">process_id = #{processId},</if>
+            <if test="flowSort != null">flow_sort = #{flowSort},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateHandleState" parameterType="SdEventHandle">
+        update sd_event_handle_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="flowId != null">flow_id = #{flowId},</if>
+            <if test="flowPid != null">flow_pid = #{flowPid},</if>
+            <if test="flowContent != null">flow_content = #{flowContent},</if>
+            <if test="eventState != null">event_state = #{eventState},</if>
+            <if test="reserveId != null">reserve_id = #{reserveId},</if>
+            <if test="flowSort != null">flow_sort = #{flowSort},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where event_id = #{eventId} AND process_id = #{processId}
+    </update>
+
+    <delete id="deleteSdEventHandleById" parameterType="Long">
+        delete from sd_event_handle_history where id = #{id}
+    </delete>
+
+    <delete id="deleteSdEventHandleByIds" parameterType="String">
+        delete from sd_event_handle_history where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectNum" resultType="java.lang.String" parameterType="java.lang.Long">
+        SELECT
+            IFNULL( MAX( flow_num ), '0' ) AS aaa
+        FROM
+            sd_event_handle_history
+        WHERE
+            1 = 1
+          AND event_id = #{eventId}
+    </select>
+</mapper>

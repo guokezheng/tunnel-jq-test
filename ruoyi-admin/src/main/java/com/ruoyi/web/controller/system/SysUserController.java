@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ruoyi.common.core.domain.entity.SysUserImport;
 import com.ruoyi.common.core.page.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -75,7 +76,7 @@ public class SysUserController extends BaseController
     {
         List<SysUser> list = userService.selectUserList(user);
         ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
-        return util.exportExcel(list, "用户数据");
+        return util.exportExcel(list, "用户管理");
     }
 
     @Log(title = "用户管理", businessType = BusinessType.IMPORT)
@@ -93,7 +94,7 @@ public class SysUserController extends BaseController
     @GetMapping("/importTemplate")
     public AjaxResult importTemplate()
     {
-        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+        ExcelUtil<SysUserImport> util = new ExcelUtil<SysUserImport>(SysUserImport.class);
         return util.importTemplateExcel("用户数据");
     }
 

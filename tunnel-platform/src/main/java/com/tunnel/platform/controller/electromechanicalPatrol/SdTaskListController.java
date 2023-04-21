@@ -2,7 +2,7 @@ package com.tunnel.platform.controller.electromechanicalPatrol;
 
 import cn.hutool.core.codec.Base64Decoder;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.resource.ClassPathResource;
+
 import cn.hutool.core.util.StrUtil;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
@@ -10,26 +10,36 @@ import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.PictureType;
 import com.deepoove.poi.data.Pictures;
 import com.deepoove.poi.plugin.table.HackLoopTableRenderPolicy;
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.common.utils.sql.SqlUtil;
 import com.ruoyi.system.service.ISysDeptService;
+import com.tunnel.business.datacenter.domain.dataReport.TaskStatus;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
+import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
@@ -42,12 +52,18 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficImageService;
+import com.tunnel.business.utils.util.UUIDUtil;
+import com.tunnel.business.utils.work.CustomXWPFDocument;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -88,12 +104,26 @@ public class SdTaskListController extends BaseController
      */
    /* @PreAuthorize("@ss.hasPermi('system:list:list')")*/
     @GetMapping("/list")
-    public TableDataInfo list(SdTaskList sdTaskList)
+    public TableDataInfo<List<SdTaskList>>list(SdTaskList sdTaskList)
     {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdTaskList.setDeptId(deptId);
+        //String status = "0,1";
+        /*if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&& TaskStatus.YICHAOSHI.getCode().equals(sdTaskList.getTaskStatus())) {
+            sdTaskList.setTaskStatus(status);
+        }*/
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         return getDataTable(list);
     }
+
+
+
+
+
 
     /**
      * 导出巡查任务列表
@@ -103,20 +133,17 @@ public class SdTaskListController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(SdTaskList sdTaskList)
     {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdTaskList.setDeptId(deptId);
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         ExcelUtil<SdTaskList> util = new ExcelUtil<SdTaskList>(SdTaskList.class);
-        return util.exportExcel(list, "巡查任务数据");
+        return util.exportExcel(list, "巡查任务");
     }
 
-    /**
-     * 获取巡查任务详细信息
-     */
-   /* @PreAuthorize("@ss.hasPermi('system:list:query')")*/
-    /*@GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") String id)
-    {
-        return AjaxResult.success(sdTaskListService.selectSdTaskListById(id));
-    }*/
+
 
     /**
      * 获取修改任务信息
@@ -199,8 +226,11 @@ public class SdTaskListController extends BaseController
         String ssdw = tunnelsService.selectTunnelDept(tunnelId);
         List<SysDeptTunnel>deptTunnels = new ArrayList<>();
         List<SysDept> depts = new ArrayList<>();
-        if("1".equals(deptId))
-            depts = deptService.selectTunnelDeptListBydw(deptId,ssdw);
+        // 获取当前的用户
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        SysUser user = loginUser.getUser();
+        if(user.isAdmin())
+            depts = deptService.selectTunnelDeptListBydw(ssdw);
         else{
             depts = deptService.selectTunnelDeptList(deptId);
         }
@@ -318,9 +348,13 @@ public class SdTaskListController extends BaseController
      */
     @PostMapping("/app/getTaskList")
     public Result getTaskList(SdTaskList sdTaskList){
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         String startTime = "";//开始时间
         String endTime = "";//结束时间
-        if(sdTaskList.getTime()!=null&&!"".equals(sdTaskList.getTime())){//不为空\
+        if(sdTaskList.getTime()!=null&&!"".equals(sdTaskList.getTime())){//不为空
             //  0：最近1周；1：最近3周；2：最近1月；3：最近3月
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Calendar c = Calendar.getInstance();
@@ -355,7 +389,7 @@ public class SdTaskListController extends BaseController
         }
 
 
-        List<SdTaskList> taskList = sdTaskListService.getTaskList(sdTaskList.getTaskStatus(),sdTaskList.getTaskName(),startTime,endTime);
+        List<SdTaskList> taskList = sdTaskListService.getTaskList(sdTaskList.getTaskStatus(),sdTaskList.getTaskName(),startTime,endTime,deptId);
         if(taskList!=null&&taskList.size()>0){
             for(int i=0;i<taskList.size();i++){
                 if(taskList.get(i).getId()!=null){
@@ -387,7 +421,8 @@ public class SdTaskListController extends BaseController
     @GetMapping("/app/accept")
     public AjaxResult accept(String id)
     {
-        return toAjax(sdTaskListService.acceptSdTaskList(id));
+        Long userId  = SecurityUtils.getUserId();
+        return toAjax(sdTaskListService.acceptSdTaskList(id,userId));
     }
 
     /**
@@ -417,6 +452,7 @@ public class SdTaskListController extends BaseController
     /**
      * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见
      *     提交上报    task_status 变为2 已完结
+     *     接收任务    task_status 从“待巡检”改为“巡检中”
      * @param  sdTaskList
      * @return
      */
@@ -438,6 +474,7 @@ public class SdTaskListController extends BaseController
             SdTaskList task = sdTaskListService.selectSdTaskListById(taskNo);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String pdTime = "";
+            String xcTime = "";
             String planEndTime = "";
             String taskEndTime = "";
             if (task.getDispatchTime() != null) {
@@ -460,7 +497,16 @@ public class SdTaskListController extends BaseController
                     //处理图片需将原对象类型转为Map
                     Map<String,Object> map = BeanUtils.describe(obj);
                     if(map.get("eqFaultId") != null){
-                        SdDevices devices = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesById(map.get("eqFaultId").toString());
+                        String eqId = null;
+                        if(map.get("patrolType") != null){
+                            if("1".equals(map.get("patrolType"))){//故障点
+                               eqId = sdFaultListService.selectSdFaultEqById(map.get("eqFaultId").toString());
+                            }else if("0".equals(map.get("patrolType"))){//设备
+                               eqId = map.get("eqFaultId").toString();
+                            }
+                        }
+
+                        SdDevices devices = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesById(eqId);
                         map.put("tunnelName",SpringUtils.getBean(SdTunnelsMapper.class).selectSdTunnelsById(devices.getEqTunnelId()).getTunnelName());
                         map.put("typeName",SpringUtils.getBean(SdEquipmentTypeMapper.class).selectSdEquipmentTypeById(devices.getEqType()).getTypeName());
                     }
@@ -488,15 +534,19 @@ public class SdTaskListController extends BaseController
                             map.put("photo", pictureRenderData);
                         }
                     }
+                    if (map.get("xcTime") != null) {
+                        xcTime = format.format(DateUtil.parse(map.get("xcTime").toString()));
+                    }
                     //添加巡查记录序号
+                    map.put("xcTime",xcTime);
                     map.put("remark",obj.getXcSort()+1);
                     convertList.add(map);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/patrolReport.docx");
-            String resource = classPathResource.getUrl().getPath();
+            /*ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/patrolReport.docx");
+            String resource = classPathResource.getUrl().getPath();*/
             //渲染表格
             HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
             //构建巡查点巡查记录数据
@@ -504,7 +554,8 @@ public class SdTaskListController extends BaseController
             String finalPdTime = pdTime;
             String finalPlanEndTime = planEndTime;
             String finalTaskEndTime = taskEndTime;
-            XWPFTemplate template = XWPFTemplate.compile(resource, config).render(
+            XWPFDocument document = new CustomXWPFDocument(new ClassPathResource("exporttemplate/patrolReport.docx").getInputStream());
+            XWPFTemplate template = XWPFTemplate.compile(document, config).render(
                     new HashMap<String, Object>() {{
                         put("patrolBlock",convertList);
                         put("currentTime", DateUtils.getTime());
@@ -567,9 +618,9 @@ public class SdTaskListController extends BaseController
      * @return
      */
     @GetMapping("/app/savePatrol")
-    public AjaxResult savePatrol(SdPatrolList sdPatrolList)
+    public AjaxResult savePatrol(@RequestParam(name = "file", required = false) MultipartFile[] file, SdPatrolList sdPatrolList)
     {
-        return toAjax(sdTaskListService.savePatrol(sdPatrolList));
+        return toAjax(sdTaskListService.savePatrol(file,sdPatrolList));
     }
 
     /**

@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="listDeptExcYG1" parameterType="com.ruoyi.common.core.domain.entity.SysDept" resultMap="SysDeptResult">
 		<include refid="selectDeptVo"/>
-		where d.del_flag = '0' and  dept_id not like 'YG1%'
+		where d.del_flag = '0'  and  d.dept_id  like 'YG1%'
 		<if test="deptId != null and deptId != 0">
 			AND dept_id = #{deptId}
 		</if>
@@ -70,7 +70,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="listDeptYG1" parameterType="com.ruoyi.common.core.domain.entity.SysDept" resultMap="SysDeptResult">
 		<include refid="selectDeptVo"/>
-		where d.del_flag = '0' and  dept_id like 'YG1%'
+		where d.del_flag = '0' and d.status = '0'
+		<!-- 暂时注释YG1筛选 -->
+		  <!--  and  dept_id like 'YG1%' -->
 		<if test="deptId != null and deptId != 0">
 			AND dept_id = #{deptId}
 		</if>
@@ -137,8 +139,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<select id="selectChildrenIncludeSelfById" parameterType="String" resultMap="SysDeptResult">
-		select * from sys_dept where status = 0 and del_flag = '0' and dept_id=#{deptId} or find_in_set(#{deptId}, ancestors)
+		select * from sys_dept where  del_flag = '0' and (dept_id=#{deptId} or find_in_set(#{deptId}, ancestors))
+
 	</select>
+
+
+	<select id="selectChildrenIncludeSelfByIdNormal" parameterType="String" resultMap="SysDeptResult">
+		select * from sys_dept where  del_flag = '0' and status = 0  and (dept_id=#{deptId} or find_in_set(#{deptId}, ancestors))
+
+	</select>
+
 
 	<select id="selectNormalChildrenDeptById" parameterType="String" resultType="int">
 		select count(*) from sys_dept where status = 0 and del_flag = '0' and find_in_set(#{deptId}, ancestors)
@@ -266,5 +276,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectTunnelDeptListBydw" resultMap="SysDeptResult">
 		select * from sys_dept t where (t.dept_id = #{ssdw} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{ssdw},d.ancestors) ))
 	</select>
+
+
+	<select id="getParentDept" parameterType = "String" resultType="String">
+		select parent_id from sys_dept where dept_id = #{deptId}
+	</select>
+
+
+	<select id="selectChildByPid" parameterType="String" resultType="String">
+        select dept_id from sys_dept
+        where parent_id = #{parentId}
+		order by dept_id desc limit 1
+    </select>
+
 
 </mapper>

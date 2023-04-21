@@ -24,6 +24,7 @@ public class SdTunnels extends BaseEntity
 
     /** 隧道ID */
     @ApiModelProperty("隧道ID")
+    @Excel(name = "隧道ID")
     private String tunnelId;
 
     /** 隧道名称 */
@@ -32,7 +33,7 @@ public class SdTunnels extends BaseEntity
     private String tunnelName;
 
     /** 隧道编号 */
-    @Excel(name = "隧道编号")
+    /*@Excel(name = "隧道编号")*/
     @ApiModelProperty("隧道编号")
     private String tunnelCode;
 
@@ -52,12 +53,12 @@ public class SdTunnels extends BaseEntity
     private String latitude;
 
     /** 隧道所ID */
-    @Excel(name = "隧道所ID")
+   /* @Excel(name = "隧道所ID")*/
     @ApiModelProperty("隧道所ID")
     private String tunnelStationId;
 
     /** 隧道所名称 */
-    @Excel(name = "隧道所名称")
+    /*@Excel(name = "隧道所名称")*/
     @ApiModelProperty("隧道所名称")
     private String tunnelStationName;
 
@@ -72,19 +73,21 @@ public class SdTunnels extends BaseEntity
     private String coordinates;
 
     /** 备注 */
-    @Excel(name = "备注")
+    /*@Excel(name = "备注")*/
     @ApiModelProperty("备注")
     private String remake;
 
     /** 隧道长度 */
-    @Excel(name = "隧道长度")
+    @Excel(name = "隧道长度(米)")
     @ApiModelProperty("隧道长度")
     private String tunnelLength;
 
     @ApiModelProperty("隧道开始桩号")
+    @Excel(name = "隧道开始桩号")
     private String startPile;
 
     @ApiModelProperty("隧道结束桩号")
+    @Excel(name = "隧道结束桩号")
     private String endPile;
 
     @ApiModelProperty("隧道开始桩号(整形)")
@@ -135,6 +138,16 @@ public class SdTunnels extends BaseEntity
 
     @ApiModelProperty("区划名称")
     private String orgName;
+
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getRoadCode() {
         return roadCode;
@@ -286,12 +299,12 @@ public class SdTunnels extends BaseEntity
 	}
 
 	/** 是否使用 */
-    @Excel(name = "是否使用",readConverterExp = "0=可用,1=不可用")
-    @ApiModelProperty("是否使用")
+    @Excel(name = "是否启用",readConverterExp = "0=启用,1=停用")
+    @ApiModelProperty("是否启")
     private Long poll;
 
     /** 存储配置图的html */
-    @Excel(name = "存储配置图的html")
+   /* @Excel(name = "存储配置图的html")*/
     @ApiModelProperty("存储配置图的html")
     private String storeConfigure;
 
@@ -302,6 +315,7 @@ public class SdTunnels extends BaseEntity
     private String deptId;
 
     @ApiModelProperty("隧道所属部门名称")
+    @Excel(name = "所属部门")
     private String deptName;
 
     /**

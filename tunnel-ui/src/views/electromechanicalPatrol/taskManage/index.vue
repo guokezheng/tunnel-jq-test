@@ -9,68 +9,55 @@
           type="primary"
           plain
           @click="handleAdd"
-          >新增任务
+          >新增
+        </el-button>
+        <el-button size="small" :loading="exportLoading" @click="handleExport"
+          >导出
         </el-button>
         <el-button size="small" @click="resetQuery" type="primary" plain
           >刷新</el-button
         >
       </el-col>
       <el-col :span="6" :offset="14">
-        <div ref = "main" class="grid-content bg-purple">
+        <div ref="main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入所属单位，回车搜索"
+            placeholder="请输入巡查班组，回车搜索"
             v-model="queryParams.zzjgId"
             @keyup.enter.native="handleQuery"
             size="small"
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="task_boxShow = !task_boxShow"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <!-- <div>
-      <el-col :span="4">
-        <el-button style ="margin: 10px 0px 25px;height: 35px;"
-          v-hasPermi="['system:list:add']"
-          size="mini"
-          type="primary"
-          plain
-          @click="handleAdd"
-        >新增任务
-        </el-button>
-      </el-col>
-    </div> -->
-    <!-- <div ref="main" style = "margin-left: 75%">
-      <el-row :gutter="20" style="margin: 10px 0 0px">
 
-        <el-col :span="6" style="width: 100%;">
-          <div class="grid-content bg-purple">
-            <el-input
-              placeholder="请输入所属单位，回车搜索"
-              v-model="queryParams.zzjgId"
-              @keyup.enter.native="handleQuery"
-            >
-              <el-button
-                slot="append"
-                icon="el-icon-s-fold"
-                @click="task_boxShow = !task_boxShow"
-              ></el-button>
-            </el-input>
-          </div>
-        </el-col>
-      </el-row> -->
-
-    <div class="searchBox" v-show="task_boxShow">
+    <div class="searchBox" v-show="task_boxShow" ref="cc">
       <el-form
         ref="queryForm"
         :inline="true"
         :model="queryParams"
         label-width="75px"
       >
+        <el-form-item label="所属隧道" prop="tunnelId">
+          <el-select
+            v-model="queryParams.tunnelId"
+            placeholder="请选择所属隧道"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in eqTunnelData"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="发布状态" prop="publishStatus">
           <el-select
             v-model="queryParams.publishStatus"
@@ -102,6 +89,20 @@
             ></el-option>
           </el-select>
         </el-form-item>
+
+        <el-form-item label="预完成时">
+          <el-date-picker
+            v-model="dateRange"
+            size="small"
+            style="width: 100%"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetimerange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :default-time="['00:00:00', '23:59:59']"
+          ></el-date-picker>
+        </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
             >搜索</el-button
@@ -112,90 +113,37 @@
         </el-form-item>
       </el-form>
     </div>
-    <!-- </div> -->
 
-    <!--    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-form-item label="所属单位" prop="zzjgId">
-        <el-input
-          v-model="queryParams.zzjgId"
-          placeholder="请输入所属单位"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-
-      <el-form-item label="发布状态" prop="publishStatus">
-        <el-select
-          v-model="queryParams.publishStatus"
-          placeholder="请选择发布状态"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="dict in dict.type.publish_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="任务状态" prop="taskStatus">
-        <el-select
-          v-model="queryParams.taskStatus"
-          placeholder="请选择任务状态"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="dict in dict.type.task_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" type="primary" plain @click="resetQuery"
-          >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:list:add']"
-          >新增</el-button
-        >
-
-      </el-form-item>
-    </el-form>-->
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="listList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
       height="70vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
-<!--      <el-table-column label="序号" width="100px" align="center">
-        <template slot-scope="scope">
-          {{ scope.$index + 1 }}
-        </template>
-      </el-table-column>-->
-      <el-table-column label="所属单位" align="center" prop="zzjgId" />
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
+
+      <el-table-column
+        label="所属隧道"
+        align="center"
+        prop="tunnelName.tunnelName"
+      />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
         label="派单时间"
@@ -204,40 +152,61 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{
-            parseTime(scope.row.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
-          }}</span>
+          <span>{{ scope.row.dispatchTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="承巡班组" align="center" prop="bzName">
+      <el-table-column label="巡查班组" align="center" prop="bzName">
       </el-table-column>
       <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
       <el-table-column
-        label="计划完成时间"
+        label="预完成时"
         align="center"
         prop="endPlantime"
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{
-            parseTime(scope.row.endPlantime, "{y}-{m}-{d} {h}:{m}:{s}")
-          }}</span>
+          <span>{{ scope.row.endPlantime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布状态" align="center" prop="publishStatus">
         <template slot-scope="scope">
-          <dict-tag
+          <!-- <dict-tag
             :options="dict.type.publish_status"
             :value="scope.row.publishStatus"
-          />
+          /> -->
+          <span
+            :style="{
+              color:
+                scope.row.publish == '已废止'
+                  ? 'red'
+                  : scope.row.publish == '未发布'
+                  ? 'yellow'
+                  : '#00FF00',
+            }"
+            >{{ scope.row.publish }}</span
+          >
         </template>
       </el-table-column>
-      <el-table-column label="任务状态" align="center" prop="taskStatus">
+      <el-table-column label="任务状态" align="center" prop="task">
         <template slot-scope="scope">
-          <dict-tag
+          <!-- <dict-tag
             :options="dict.type.task_status"
             :value="scope.row.taskStatus"
-          />
+          /> -->
+          <span
+            :style="{
+              color:
+                scope.row.task1 == '待巡检'
+                  ? 'yellow'
+                  : scope.row.task1 == '巡检中'
+                  ? '#00FF00'
+                  : '#60BCFD',
+            }"
+            >{{ scope.row.task1 }}</span
+          >
+          <span v-show="scope.row.task2" class="chaoshi">{{
+            scope.row.task2
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -294,191 +263,220 @@
       @pagination="getList"
     />
 
-    <el-dialog :title="title" :visible.sync="open" width="70%">
-      <!--      <h1>新增巡检任务</h1>-->
-      <div class="task">
-        <div>巡查任务基本信息</div>
-        <hr />
-
-        <div class="form-one">
-          <div>
-            <span prop="dispatcher">派单人员</span>
-            <div>
-              <el-input
-                ref="dispatcher"
-                disabled="disabled"
-                v-model="form.dispatcher"
-                placeholder="（默认当前登录人）"
-              ></el-input>
-            </div>
-          </div>
-
-          <div>
-            <span>派单时间</span>
-            <div>
-              <el-date-picker
-                clearable
-                size="small"
-                disabled="disabled"
-                v-model="form.dispatchTime"
-                type="datetime"
-                style="width: 89%"
-                value-format="yyyy-MM-dd hh:mm:ss"
-                placeholder="选择派单时间"
-              >
-              </el-date-picker>
-            </div>
-          </div>
-          <div>
-            <span>所属隧道</span>
-            <el-select
-              v-model="form.tunnelId"
-              placeholder="请选择所属隧道"
-              @change="tunnelSelectGet"
-            >
-              <el-option
-                v-for="item in eqTunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              ></el-option>
-            </el-select>
-          </div>
-
-          <!--            <div>
-              <el-select v-model="form.bzId" placeholder="请选择班组">
-                <el-option
-                  v-for="item in bzData"
-                  :key="item.deptId"
-                  :label="item.deptName"
-                  :value="item.deptId"
-                ></el-option>
-              </el-select>
-            </div>-->
-        </div>
-        <div class="form-two">
-          <div>
-            <span prop="bzId">指派巡查班组</span>
-            <div>
-              <el-select
-                v-model="form.bzId"
-                placeholder=""
-                id="bzSel"
-                :disabled="true"
-                @click.native="selChange"
-              >
-                <el-option
-                  v-for="item in bzData"
-                  :key="item.deptId"
-                  :label="item.deptName"
-                  :value="item.deptId"
-                ></el-option>
-              </el-select>
-              <!--              <el-input
-                ref="bzId"
-                disabled = "disabled"
-                v-model="form.bzId"
-              ></el-input>-->
-            </div>
-          </div>
-          <div>
-            <span>需完成日期</span>
-            <el-date-picker
-              clearable
-              :picker-options="forbiddenTime"
-              size="small"
-              v-model="form.endPlantime"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              style="width: 63%"
-              placeholder="选择完成时间"
-            >
-            </el-date-picker>
-          </div>
-
-          <div>
-            <span>任务名称</span>
-            <el-input
-              type="text"
-              placeholder="请输入内容"
-              v-model="form.taskName"
-              style="width: 92%; margin-left: 8%"
-            >
-            </el-input>
-          </div>
-        </div>
-        <div class="describe">
-          <span>任务描述</span>
-          <el-input
-            type="textarea"
-            :rows="2"
-            placeholder="请输入内容"
-            v-model="form.taskDescription"
-          >
-          </el-input>
-        </div>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="70%"
+      class="xjDialog"
+      :before-close="cancel"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
       </div>
-
-      <div class="patrol">
-        <div>巡查点信息</div>
-        <hr />
-        <div class="button-father">
-          <el-button type="primary" style="height: 15%" @click="show1"
-            >选择巡检点</el-button
+      <!--      <h1>新增巡检任务</h1>-->
+      <el-card>
+        <div class="task">
+          <div class="topTxt" style="margin-bottom: 20px">巡查任务基本信息</div>
+          <div class="tableTopHr" style="display: none"></div>
+          <el-form
+            :inline="true"
+            ref="form"
+            :model="form"
+            :rules="rules"
+            label-width="110px"
           >
-          <el-button type="primary" style="height: 15%" @click="show2"
-            >选择故障点</el-button
-          >
-          <!--          <el-button type="primary" style="height: 15%" disabled
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="派单人员" prop="dispatcher">
+                  <el-input
+                    ref="dispatcher"
+                    disabled="disabled"
+                    v-model="form.dispatcher"
+                    placeholder="（默认当前登录人）"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="派单时间" prop="dispatchTime">
+                  <el-date-picker
+                    clearable
+                    size="small"
+                    disabled="disabled"
+                    v-model="form.dispatchTime"
+                    type="datetime"
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    placeholder="选择派单时间"
+                  >
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="所属隧道" prop="tunnelId">
+                  <el-select
+                    v-model="form.tunnelId"
+                    placeholder="请选择所属隧道"
+                  >
+                    <el-option
+                      v-for="item in eqTunnelData"
+                      :key="item.tunnelId"
+                      :label="item.tunnelName"
+                      :value="item.tunnelId"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="巡查班组" prop="bzId">
+                  <el-select
+                    v-model="form.bzId"
+                    placeholder="请选择巡查班组"
+                    id="bzSel"
+                  >
+                    <el-option
+                      v-for="item in bzData"
+                      :key="item.deptId"
+                      :label="item.deptName"
+                      :value="item.deptId"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="预完成时" prop="endPlantime">
+                  <el-date-picker
+                    clearable
+                    :picker-options="forbiddenTime"
+                    size="small"
+                    v-model="form.endPlantime"
+                    type="datetime"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    @change="handleEndTime"
+                    placeholder="选择预完成时"
+                  >
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="任务名称" prop="taskName">
+                  <el-input
+                    type="text"
+                    placeholder="请输入内容"
+                    v-model="form.taskName"
+                  >
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="任务描述" prop="taskDescription">
+                  <el-input
+                    type="textarea"
+                    :rows="2"
+                    placeholder="请输入内容"
+                    v-model="form.taskDescription"
+                  >
+                  </el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
+      </el-card>
+      <el-card>
+        <div class="patrol">
+          <div class="topTxt">巡查点信息</div>
+          <div class="tableTopHr" style="display: none"></div>
+          <div class="button-father">
+            <el-button type="primary" style="height: 15%" @click="show1"
+              >选择巡检点</el-button
+            >
+            <el-button type="primary" style="height: 15%" @click="show2"
+              >选择故障点</el-button
+            >
+            <!--          <el-button type="primary" style="height: 15%" disabled
             >导入巡查计划</el-button
           >-->
-        </div>
-        <div class="box-father">
-          <div class="box" :key="index" v-for="(item, index) in boxList">
-            <div class="contentTextRow">
-              <div class="number">{{ index + 1 }}</div>
-              <div class="text">
-                <div>{{ item.tunnel_name }}</div>
-                <div>{{ item.type_name }}</div>
-                <div>{{ item.eq_name }}</div>
-                <div>{{ item.pile }}</div>
-              </div>
+          </div>
+          <div
+            class="box-father"
+            style="display: block; max-height: 16vh; overflow: auto"
+          >
+            <div style="height: 4vh">
+              <div class="titleRow" style="width: 8%">序号</div>
+              <div class="titleRow" style="width: 12%">所属隧道</div>
+              <div class="titleRow" style="width: 15%">设备/故障类型</div>
+              <div class="titleRow" style="width: 20%">设备名称</div>
+              <div class="titleRow" style="width: 30%">设备位置</div>
+              <div class="titleRow" style="width: 15%">操作</div>
             </div>
+            <div class="box" :key="index" v-for="(item, index) in boxList">
+              <div class="contentTextRow" style="float: left">
+                <div class="number" style="width: 10%">{{ index + 1 }}</div>
+                <div class="text" style="padding-left: 0px; margin-left: 0px">
+                  <div style="width: 12%">{{ item.tunnel_name }}</div>
+                  <div style="width: 15%; margin-left: 30px">
+                    {{ item.type_name }}
+                  </div>
+                  <div style="width: 20%; margin-left: 40px">
+                    {{ item.eq_name }}
+                  </div>
+                  <div style="width: 30%; margin-left: 62px">
+                    {{ item.pile }}
+                  </div>
+                </div>
+              </div>
 
-            <template @slot="scop">
+              <template @slot="scop">
+                <div
+                  :class="index == 0 ? 'disabledClass' : 'top'"
+                  @click="clickUP(index, item)"
+                  style="float: left; margin-left: -40px"
+                >
+                  <i class="el-icon-top"></i>
+                </div>
+              </template>
               <div
-                :class="index == 0 ? 'disabledClass' : 'top'"
-                @click="clickUP(index, item)"
+                :class="
+                  boxList.length == index + 1 ? 'disabledClass' : 'bottom'
+                "
+                @click="clickDown(index, item)"
+                style="float: left"
               >
-                <i class="el-icon-top"></i>
+                <i class="el-icon-bottom"></i>
               </div>
-            </template>
-            <div
-              :class="boxList.length == index + 1 ? 'disabledClass' : 'bottom'"
-              @click="clickDown(index, item)"
-            >
-              <i class="el-icon-bottom"></i>
-            </div>
-            <div class="delete" @click="clickDelete(index, item)">
-              <i class="el-icon-delete-solid"></i>
+              <div
+                class="delete"
+                style="float: left"
+                @click="clickDelete(index, item)"
+              >
+                <i class="el-icon-delete-solid"></i>
+              </div>
             </div>
           </div>
+          <div class="dialog-footer">
+            <el-button class="zancunButton" @click="save">暂存</el-button>
+            <el-button
+              style="display: none"
+              class="closeButton"
+              @click="abolish"
+              >废止</el-button
+            >
+            <el-button class="submitButton" @click="release">发布</el-button>
+          </div>
         </div>
-        <div class="release-father">
-          <el-button style="height: 20%" @click="save">暂存</el-button>
-          <el-button
-            style="height: 20%; display: none"
-            type="warning"
-            @click="abolish"
-            >废止</el-button
-          >
-          <el-button style="height: 20%" type="primary" @click="release"
-            >发布</el-button
-          >
-        </div>
-      </div>
+      </el-card>
     </el-dialog>
-    <el-dialog :visible.sync="isShow1" width="50%" class="show">
+    <el-dialog
+      :visible.sync="isShow1"
+      width="50%"
+      class="show"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="show-left">
         <div class="show-title">设备位置</div>
         <el-tree
@@ -523,25 +521,37 @@
             :cell-style="{ 'text-align': 'center', padding: '0px' }"
             :header-row-style="{
               height: '30px',
-              background: '#F2F2F2',
-              color: '#606266',
             }"
             :row-style="{
               height: '30px',
-              background: '#fff',
-              color: '#606266',
             }"
-            style="width: 100%"
+            style="width: 100%; border: solid 1px #284159 !important"
             border
-            height="358px"
-            class="dialogTable allTable"
+            height="412px"
+            class="dialogTable"
+            :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
           >
-            <el-table-column type="selection" width="39"></el-table-column>
-            <el-table-column prop="type_name" label="设备类型">
+            <el-table-column
+              type="selection"
+              width="39"
+              reserve-selection
+            ></el-table-column>
+            <el-table-column
+              type="index"
+              :index="indexMethod1"
+              label="序号"
+              width="68"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              prop="type_name"
+              label="设备类型"
+              width="160"
+            ></el-table-column>
+            <el-table-column prop="eq_name" label="设备名称" width="200">
             </el-table-column>
-            <el-table-column prop="eq_name" label="设备名称"> </el-table-column>
-            <el-table-column prop="pile" label="安装位置"> </el-table-column>
+            <el-table-column prop="pile" label="设备位置"> </el-table-column>
             <el-table-column prop="dict_label" label="方向"> </el-table-column>
           </el-table>
           <pagination
@@ -558,9 +568,18 @@
 
     <!-- -->
 
-    <el-dialog :visible.sync="isShow2" width="50%" class="show">
+    <el-dialog
+      :visible.sync="isShow2"
+      width="50%"
+      class="show"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="show-left">
-        <div class="show-title">故障位置</div>
+        <div class="show-title">设备位置</div>
         <el-tree
           class="tree"
           :data="treeData"
@@ -590,7 +609,7 @@
             />
           </el-select>
           <div class="cancel-determine">
-            <el-button @click="determine2">取消</el-button>
+            <el-button @click="cancelDetermine2">取消</el-button>
             <el-button type="primary" @click="determine2">确定</el-button>
           </div>
         </div>
@@ -603,26 +622,45 @@
             :cell-style="{ 'text-align': 'center', padding: '0px' }"
             :header-row-style="{
               height: '30px',
-              background: '#F2F2F2',
-              color: '#606266',
             }"
             :row-style="{
               height: '30px',
-              background: '#fff',
-              color: '#606266',
             }"
-            style="width: 100%"
+            style="width: 100%; border: solid 1px #284159 !important"
             border
-            height="358px"
-            class="dialogTable allTable"
+            height="412px"
+            class="dialogTable"
+            :row-key="getRowKey1"
             @selection-change="onSiteInspectionSelection"
           >
-            <el-table-column type="selection" width="39"></el-table-column>
+            <el-table-column
+              type="selection"
+              width="39"
+              reserve-selection
+            ></el-table-column>
+            <el-table-column
+              type="index"
+              :index="indexMethod1"
+              label="序号"
+              width="68"
+              align="center"
+            ></el-table-column>
             <el-table-column prop="type_name" label="故障类型">
             </el-table-column>
             <el-table-column prop="eq_name" label="故障设备名称">
             </el-table-column>
             <el-table-column prop="pile" label="故障位置"> </el-table-column>
+            <el-table-column prop="fault_fxtime" label="发现时间">
+              <template slot-scope="scope">
+                <span>{{
+                  !!scope.row.fault_fxtime
+                    ? scope.row.fault_fxtime
+                        .replace(/T/g, " ")
+                        .replace(/.[\d]{3}Z/, " ")
+                    : ""
+                }}</span>
+              </template></el-table-column
+            >
             <el-table-column prop="dict_label" label="故障描述">
             </el-table-column>
           </el-table>
@@ -639,9 +677,17 @@
     </el-dialog>
 
     <!--巡查任务及执行记录单-->
-    <el-dialog :visible.sync="record" width="70%">
-      <div style="text-align: center; font-size: 20px">
-        巡检任务及执行记录单
+    <el-dialog
+      :visible.sync="record"
+      :before-close="closeRecord"
+      width="70%"
+      title="巡检任务及执行记录单"
+      class="xjDialog"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
       </div>
       <div class="col-1" v-for="(ite, index) in taskNews2" :key="index">
         发布状态/执行状态：
@@ -652,163 +698,160 @@
         <div v-show="!ite.publishStatus && !ite.taskStatus">暂无状态</div>
       </div>
       <div class="card" v-for="(item, index) in taskNews1" :key="index">
-        <div class="card-col" style="font-size: 16px">
-          <div>
-            任务编号：
+        <el-row style="margin-left: 2em">
+          <el-col :span="8">
+            <div>任务编号：</div>
             <span>{{ item.id }}</span>
-          </div>
-          <div>
-            所属单位：
+          </el-col>
+          <!--          <el-col :span="8">
+            <div>所属单位：</div>
             <span>{{ item.zzjgId }}</span>
-          </div>
-          <div>
-            指派巡查班组：
+          </el-col>-->
+          <el-col :span="8">
+            <div>巡查班组：</div>
             <span>{{ item.bzName }}</span>
-          </div>
-        </div>
-        <div class="card-col">
-          <div>
-            计划完成时间：
+          </el-col>
+          <el-col :span="8">
+            <div>预完成时：</div>
             <span>{{ item.endPlantime }}</span>
-          </div>
-          <div>
-            派单人员：
+          </el-col>
+          <el-col :span="8">
+            <div>派单人员：</div>
             <span>{{ item.dispatcher }}</span>
-          </div>
-          <div>
-            派单时间：
-            <!--            <span>{{ item.dispatchTime }}</span>-->
-            <span>{{
-              parseTime(item.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}")
-            }}</span>
-          </div>
-        </div>
-        <div class="card-cols">
-          <div>
-            任务描述：
+          </el-col>
+          <el-col :span="8">
+            <div>派单时间：</div>
+            <span>{{ item.dispatchTime }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>任务描述：</div>
             <span>{{
               item.taskDescription == "null" ? "" : item.taskDescription
             }}</span>
-          </div>
-        </div>
+          </el-col>
+        </el-row>
       </div>
-      <div class="card">
-        <div class="card-col1" v-for="(pat, index) in patrolNews" :key="index">
-          <div class="row">
-            <div class="row-card1">设备巡检点</div>
-            <div class="row-card2" style="margin-left: 10px">
-              {{ pat.tunnelName }}
-            </div>
-            <div class="row-card2">{{ pat.eqName }}</div>
-            <div class="row-card2" style="text-align: right">
-              {{ pat.xcTime }}
-            </div>
+      <div class="card" v-for="(pat, index) in patrolNews" :key="index">
+        <el-row>
+          <!--            <el-col :span="2" class="topTxt">
+              {{index+1}}设备巡检点:
+            </el-col>-->
+          <div class="topTxt">
+            {{ index + 1 }}&nbsp;&nbsp;&nbsp;&nbsp;、设备巡检点
           </div>
-          <div style="padding: 10px">
-            <div class="test">
-              设备描述：<span>{{ pat.eqFaultDescription }}</span>
+          <el-col
+            :span="2"
+            style="margin-top: -34px; margin-left: 37%; width: 50%"
+          >
+            <span style="width: 15%">{{ pat.tunnelName }}</span
+            ><span>{{ pat.eqName }}</span>
+          </el-col>
+          <!--            <el-col :span="2" style="width: auto;margin-top: -34px;margin-left: 37%;" >
+              {{ pat.eqName }}
+            </el-col>-->
+          <!--            <el-col :span="2" >
+            {{ pat.xcTime }}
+            </el-col>-->
+        </el-row>
+        <el-row style="margin-left: 2em; margin-top: 10px">
+          <el-col :span="8">
+            <div>设备描述：</div>
+            <span>{{ pat.eqFaultDescription }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>外观情况：</div>
+            <span>{{ pat.impression }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>网络情况：</div>
+            <span>{{ pat.network }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>配电情况：</div>
+            <span>{{ pat.power }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>现场故障情况：</div>
+            <span>{{ pat.eqFaultCode }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>设备运行状态：</div>
+            <span>{{ pat.runStatus }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>现场照片：</div>
+            <div v-for="(pic, index) in pat.iFileList" :key="index">
+              <img :src="pic.imgUrl" :title="pic.imgName" />
             </div>
-            <div style="display: flex; margin-top: 10px">
-              <div class="test" style="width: 30%">
-                外观情况：
-                <span>{{ pat.impression }}</span>
-              </div>
-              <div class="test" style="width: 30%">
-                网络情况：
-                <span>{{ pat.network }}</span>
-              </div>
-              <div class="test" style="width: 30%">
-                配电情况：
-                <span>{{ pat.power }}</span>
-              </div>
-            </div>
-            <div class="card-cols">
-              <div style="width: 80%">
-                设备运行状态:
-                <span
-                  >设备状态:{{
-                    pat.eqStatus
-                  }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备运行状态:{{
-                    pat.runStatus
-                  }}</span
-                >
-              </div>
-              <div class="col-test">(检修时检测情况)</div>
-            </div>
-            <div class="card-cols">
-              <div style="width: 80%">
-                现场故障情况:
-                <span>
-                  {{ pat.eqFaultCode }}
-                </span>
-              </div>
-              <div class="col-test">(检修时检测情况)</div>
-            </div>
-            <div class="card-cols">
-              现场照片：
-              <div>
-                <div v-for="(pic, index) in pat.iFileList" :key="index">
-                  <img :src="pic.imgUrl" :title="pic.imgName" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          </el-col>
+        </el-row>
+        <!-- </div> -->
       </div>
       <div class="card" v-for="(tas, index) in taskNews" :key="index">
-        <div class="card-col">
-          <div class="test">
-            任务执行状态：
+        <el-row style="width: 100%; margin-left: 1em">
+          <el-col :span="8">
+            <div>任务执行状态：</div>
             <span>{{ tas.taskStatus }}</span>
-          </div>
-          <div class="test">
-            执行巡查班组：
-            <!--            <span>{{ tas.bzId }}</span>-->
-          </div>
-          <div class="test">
-            执行巡查人：
+          </el-col>
+          <el-col :span="8">
+            <div>巡查班组：</div>
+            <span>{{ tas.bzName }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>执行巡查人：</div>
             <span>{{ tas.walkerId }}</span>
-          </div>
-        </div>
-        <div class="card-col">
-          <div class="test">
-            任务完成时间：
-            <span>{{
-              parseTime(tas.taskEndtime, "{y}-{m}-{d} {h}:{m}:{s}")
-            }}</span>
-          </div>
-          <div class="test">
-            任务持续时长：
+          </el-col>
+          <el-col :span="8">
+            <div>任务完成时间：</div>
+            <span>{{ tas.taskEndtime }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>任务持续时长：</div>
             <span>{{ tas.taskCxtime }}</span>
-            <!-- <div class="chaoshi">{{ tas.ifchaosgu }}</div> -->
-            <div :class="{ active: isActive }">{{ tas.ifchaosgu }}</div>
-          </div>
-        </div>
-        <div class="card-cols">
-          <div class="test">
-            任务描述：
+            <span :class="{ active: isActive }">{{ tas.ifchaosgu }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>任务描述：</div>
             <span>{{
               tas.taskDescription == "null" ? "" : tas.taskDescription
             }}</span>
-          </div>
-        </div>
+          </el-col>
+        </el-row>
       </div>
       <div class="card">
-        <div
-          class="table-row"
+        <el-row style="margin-left: 2em">
+          <el-col :span="4">
+            <span style="color: #05aafd">序号</span>
+          </el-col>
+          <el-col :span="4">
+            <span style="color: #05aafd">操作类型</span>
+          </el-col>
+          <el-col :span="8">
+            <span style="color: #05aafd"> 操作记录</span>
+          </el-col>
+          <el-col :span="8">
+            <span style="color: #05aafd"> 操作时间</span>
+          </el-col>
+        </el-row>
+        <el-row
           v-show="taskOpt.length > 0"
           v-for="(item, index) in taskOpt"
           :key="index"
+          style="margin-left: 2em"
         >
-          <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">{{ item.optType }}</div>
-          <div style="width: 20%">
-            {{ item.tunnelName }} / {{ item.optPersonId }}
-          </div>
-          <div style="width: 30%">
-            {{ parseTime(item.optTime, "{y}-{m}-{d} {h}:{m}:{s}") }}
-          </div>
-        </div>
+          <el-col :span="4">
+            <span>{{ index + 1 > 9 ? index + 1 : index + 1 }}</span>
+          </el-col>
+          <el-col :span="4">
+            <span>{{ item.optType }}</span>
+          </el-col>
+          <el-col :span="8" style="text-align: center !important">
+            <span> {{ item.tunnelName }} / {{ item.optPersonId }}</span>
+          </el-col>
+          <el-col :span="8">
+            <span> {{ item.optTime }}</span>
+          </el-col>
+        </el-row>
         <div v-show="taskOpt.length == 0">
           <div
             style="text-align: center; margin-top: 20px; margin-bottom: 20px"
@@ -908,6 +951,8 @@ export default {
       faultLevel: "",
       // 获取巡检点 表格选中项
       dialogSelection: [],
+      // 日期范围
+      dateRange: [],
       dialogTotal: 0,
       pageNum: 1,
       pageSize: 10,
@@ -973,10 +1018,12 @@ export default {
         taskDescription: null,
         publishStatus: null,
         taskStatus: null,
+        tunnelId: null,
         walkerId: null,
         taskEndtime: null,
         taskCxtime: null,
         siteDescription: null,
+        ids: "",
       },
       // 任务详情参数
       taskNews: {
@@ -1034,12 +1081,19 @@ export default {
       form: {},
       // 表单校验指派巡查班组
       rules: {
-        bzId: [{ required: true, message: "请选择", trigger: "bzId" }],
-        taskDescription: [
+        bzId: [{ required: true, message: "请选择巡查班组", trigger: "blur" }],
+        taskName: [
           {
             required: true,
-            message: "请填写任务描述",
-            trigger: "taskDescription",
+            message: "请填写任务名称",
+            trigger: "blur",
+          },
+        ],
+        tunnelId: [
+          {
+            required: true,
+            message: "请选择所属隧道",
+            trigger: "blur",
           },
         ],
       },
@@ -1079,28 +1133,55 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    closeRecord() {
+      // 关闭弹出层
+      this.$refs.tableFile.clearSelection();
+      this.record = false;
+    },
+    handleRowClick(row) {
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      // console.log(row,"row")
+      return row.id;
+    },
+    getRowKey1(row) {
+      // console.log(row,"row")
+      return row.eq_id;
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.task_boxShow == true) {
-          self.task_boxShow = false;
+      if (self.task_boxShow == true) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.task_boxShow == true) {
+            self.task_boxShow = false;
+          }
         }
       }
     },
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
-
+    //翻页时不刷新序号
+    indexMethod1(index) {
+      return index + (this.pageNum - 1) * this.pageSize + 1;
+    },
     //班组点击时间
-    selChange() {
-      if (typeof this.form.tunnelId == "undefined") {
-        this.$modal.msgWarning("请先选择隧道");
-        return;
-      } else {
-        $("#bzSel").attr("pointer-events", "none");
-      }
-    },
+    /*selChange() {
+        if (typeof this.form.tunnelId == "undefined") {
+          this.$modal.msgWarning("请先选择隧道");
+          return;
+        } else {
+          $("#bzSel").attr("pointer-events", "none");
+        }
+      },*/
     /*获取当前时间*/
     getCurrentTime() {
       //获取当前时间并打印
@@ -1121,17 +1202,17 @@ export default {
       return _this.gettime;
     },
 
-    tunnelSelectGet(e) {
-      this.tunnelId = e;
-      selectBzByTunnel(this.tunnelId).then((response) => {
-        this.form.bzId = response.data;
-        console.log(response.data, "隧道部门树");
-      });
-      treeselect(this.tunnelId).then((response) => {
-        this.treeData = response.data;
-        console.log(response.data, "隧道部门树");
-      });
-    },
+    /*tunnelSelectGet(e) {
+        this.tunnelId = e;
+        selectBzByTunnel(this.tunnelId).then((response) => {
+          this.form.bzId = response.data;
+          console.log(response.data, "隧道部门树");
+        });
+        treeselect(this.tunnelId).then((response) => {
+          this.treeData = response.data;
+          console.log(response.data, "隧道部门树");
+        });
+      },*/
 
     //  上移
     clickUP(i, item) {
@@ -1343,13 +1424,10 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger;
         this.taskNews = response.data.task;
-        if (response.data.task[0].ifchaosgu == "已超时") {
-          //this.active = true;
+        if (response.data.task[0].ifchaosgu == "超时") {
           this.isActive = true;
         } else {
-          //this.active = false;
           this.isActive = false;
         }
         this.taskNews1 = response.data.task;
@@ -1364,19 +1442,6 @@ export default {
           });
         });
 
-        /*   this.networkOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.network = opt.dictLabel;
-            });
-          }
-          if (opt.dictValue == "1") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.network = opt.dictLabel;
-            });
-          }
-        });*/
-
         this.networkOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
             if (taskitem.network == opt.dictValue) {
@@ -1384,19 +1449,6 @@ export default {
             }
           });
         });
-
-        /*  this.powerOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.power = opt.dictLabel;
-            });
-          }
-          if (opt.dictValue == "1") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.power = opt.dictLabel;
-            });
-          }
-        });*/
 
         this.powerOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
@@ -1413,51 +1465,55 @@ export default {
             }
           });
         });
-
-        /* this.taskNews.forEach((taskitem) => {
-            if(this.bzData!=""){
-              this.bzData.forEach((opt) => {
-                if (taskitem.bzId == opt.deptId) {
-                  taskitem.bzId = opt.deptName;
-                }else{
-                  taskitem.bzId = "";
-                }
-              });
-            }else {
-              taskitem.bzId = "";
-            }
-
-        });*/
       });
     },
+    //handle实现插件能选取当前时间的时、分、秒，但是选择完毕之后，只要选择的时、分、秒小于当前时间，会自动填充为当前的时、分、秒
+    handleEndTime: function () {
+      var startAt = (new Date(this.form.endPlantime) * 1000) / 1000;
+      if (startAt < Date.now()) {
+        this.form.endPlantime = new Date();
+        //时间格式转换
+        var d = new Date(this.form.endPlantime);
+        this.form.endPlantime =
+          d.getFullYear() +
+          "-" +
+          (d.getMonth() + 1) +
+          "-" +
+          d.getDate() +
+          " " +
+          d.getHours() +
+          ":" +
+          d.getMinutes() +
+          ":" +
+          d.getSeconds();
+      }
+    },
+
     /** 查询巡查任务列表 */
     getList() {
       this.loading = true;
-      listList(this.queryParams).then((response) => {
-        this.listList = response.rows;
-        this.total = response.total;
-        /*this.listList.forEach((item) =>{
-          if(item.bzId=="null"||item.bzId==NaN){
-            item.bzId = "";
-          }else{
-            if(this.bzData!=""){
-              this.bzData.forEach((sitem) =>{
-                if(sitem.deptId == parseInt(item.bzId)){
-                  item.bzId = sitem.deptName
-                }
-              })
-            }else{
-              item.bzId = ""
+      listList(this.addDateRange(this.queryParams, this.dateRange)).then(
+        (response) => {
+          console.log(response.rows, "发布状态列表");
+          for (let item of response.rows) {
+            if (item.task.indexOf(",") > -1) {
+              console.log(item, "itemitemitemitem");
+              item.task1 = item.task.split(",")[0];
+              item.task2 = item.task.split(",")[1];
+            } else {
+              item.task1 = item.task;
             }
-
           }
-        })*/
-        this.loading = false;
-      });
+          this.listList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        }
+      );
     },
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
 
@@ -1507,12 +1563,16 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.task_boxShow = false;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.ids = "";
       this.queryParams.zzjgId = "";
+      this.dateRange = [];
       this.handleQuery();
     },
     show1() {
@@ -1568,6 +1628,10 @@ export default {
     cancelDetermine1() {
       this.dialogSelection = [];
       this.isShow1 = false;
+    },
+    cancelDetermine2() {
+      this.dialogSelection = [];
+      this.isShow2 = false;
     },
     determine1() {
       this.isShow1 = false;
@@ -1633,10 +1697,10 @@ export default {
         }
 
         /*if(this.form.bzId!=null&&this.form.bzId!=""&&this.form.bzId!="null"){
-            this.form.bzId = parseInt(this.form.bzId)
-        }else{
-          this.form.bzId=""
-        }*/
+              this.form.bzId = parseInt(this.form.bzId)
+          }else{
+            this.form.bzId=""
+          }*/
         this.boxList.sort(this.arraySort("xc_sort"));
         this.open = true;
         this.openGz = true;
@@ -1687,7 +1751,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除巡查任务编号为"' + ids + '"的数据项？')
+        .confirm("是否确认删除？")
         .then(function () {
           return delList(ids);
         })
@@ -1695,13 +1759,21 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          this.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo = "是否确认导出所有的巡查任务数据项？";
+      if (this.ids.length > 0) {
+        confirmInfo = "是否确认导出所选的巡查任务数据项？";
+      }
+      let ids = this.ids.join();
+      this.queryParams.ids = ids;
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有巡查任务数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportList(queryParams);
@@ -1709,6 +1781,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = "";
         })
         .catch(() => {});
     },
@@ -1723,26 +1797,6 @@ export default {
       this.fileData.append("taskStatus", "0");
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
-      //判断是否选择点
-      if (
-        this.form.bzId == -1 ||
-        this.form.bzId == "" ||
-        this.form.bzId == null
-      ) {
-        this.$modal.msgWarning("请指派巡查班组");
-        return;
-      }
-      //判断两个字段是否填写
-      if (
-        this.form.tunnelId == "" ||
-        this.form.tunnelId == -1 ||
-        this.form.tunnelId == null
-      ) {
-        return this.$modal.msgWarning("请选择所属隧道");
-      }
-      if (this.form.taskName == "") {
-        return this.$modal.msgWarning("请填写任务名称");
-      }
       if (this.boxList == [] || this.boxList == "") {
         this.$modal.msgWarning("请选择巡检点或故障点");
         return;
@@ -1753,25 +1807,31 @@ export default {
         this.boxIds = this.boxIds + (item.eq_id + ",");
       });
       this.fileData.append("devicesList", this.boxIds);
-      if (this.form.id != null) {
-        if (this.isClick) {
-          updateTask(this.fileData).then((response) => {
-            this.isClick = false;
-            this.$modal.msgSuccess("发布成功");
-            this.open = false;
-            this.getList();
-          });
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if (this.form.id != null) {
+            if (this.isClick) {
+              updateTask(this.fileData).then((response) => {
+                this.isClick = false;
+                this.$modal.msgSuccess("发布成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          } else {
+            if (this.isClick) {
+              addTask(this.fileData).then((response) => {
+                this.isClick = false;
+                this.$modal.msgSuccess("发布成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          }
+          this.$refs.tableFile.clearSelection();
         }
-      } else {
-        if (this.isClick) {
-          addTask(this.fileData).then((response) => {
-            this.isClick = false;
-            this.$modal.msgSuccess("发布成功");
-            this.open = false;
-            this.getList();
-          });
-        }
-      }
+      });
+
       setTimeout(() => {
         this.isClick = true;
       }, 500);
@@ -1826,53 +1886,55 @@ export default {
         this.$modal.msgWarning("请选择巡检点或故障点");
         return;
       }
-      if (
-        this.form.bzId == -1 ||
-        this.form.bzId == "" ||
-        this.form.bzId == null
-      ) {
-        this.$modal.msgWarning("请指派巡查班组");
-        return;
-      }
-      //判断两个字段是否填写
-      if (
-        this.form.tunnelId == "" ||
-        this.form.tunnelId == -1 ||
-        this.form.tunnelId == null
-      ) {
-        return this.$modal.msgWarning("请选择所属隧道");
-      }
-      if (this.form.taskName == "") {
-        return this.$modal.msgWarning("请填写任务名称");
-      }
+
       this.boxIds = "";
       this.boxList.forEach((item) => {
         this.boxIds = this.boxIds + (item.eq_id + ",");
       });
       this.fileData.append("devicesList", this.boxIds);
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if (this.form.id != null) {
+            if (this.isClick) {
+              updateTask(this.fileData).then((response) => {
+                this.isClick = false;
+                this.$modal.msgSuccess("暂存成功");
+                this.open = false;
+                this.$refs.tableFile.clearSelection();
+                this.getList();
+              });
+            }
+          } else {
+            if (this.isClick) {
+              addTask(this.fileData).then((response) => {
+                this.isClick = false;
+                this.$modal.msgSuccess("暂存成功");
+                this.open = false;
+                this.$refs.tableFile.clearSelection();
+                this.getList();
+              });
+            }
+          }
+        }
+      });
 
-      if (this.form.id != null) {
-        if (this.isClick) {
-          updateTask(this.fileData).then((response) => {
-            this.isClick = false;
-            this.$modal.msgSuccess("暂存成功");
-            this.open = false;
-            this.getList();
-          });
-        }
-      } else {
-        if (this.isClick) {
-          addTask(this.fileData).then((response) => {
-            this.isClick = false;
-            this.$modal.msgSuccess("暂存成功");
-            this.open = false;
-            this.getList();
-          });
-        }
-      }
       setTimeout(() => {
         this.isClick = true;
       }, 500);
+    },
+  },
+  watch: {
+    isShow1: {
+      handler(val) {
+        this.$refs.multipleTable1.clearSelection();
+        this.dialogSelection = [];
+      },
+    },
+    isShow2: {
+      handler(val) {
+        this.$refs.multipleTable2.clearSelection();
+        this.dialogSelection = [];
+      },
     },
   },
 };
@@ -1881,7 +1943,6 @@ export default {
 .el-table tr {
   background-color: transparent;
 }
-
 </style>
 <style lang="scss" scoped>
 .card {
@@ -1892,24 +1953,31 @@ export default {
   margin-top: 20px;
   border-radius: 10px;
   background-color: #f0f0f0;
-  .card-col {
-    margin-top: 10px;
+  .el-col {
+    line-height: 40px;
     display: flex;
-    color: #79949c;
-    .active {
-      padding: 5px;
-      color: #ffd69a;
-      display: inline;
-      margin-left: 10px;
-      border: 1px solid #ffd69a;
+    > div {
+      width: 110px;
     }
-    div {
-      width: 33%;
-      span {
-        color: black;
-        margin-left: 10px;
-      }
-    }
+  }
+  //.card-col {
+  //margin-top: 10px;
+  //display: flex;
+  .active {
+    height: 36px;
+    padding: 0px 5px;
+    color: #ffd69a;
+    display: inline;
+    margin-left: 10px;
+    border: 1px solid #ffd69a;
+    // }
+    // div {
+    //   width: 33%;
+    //   span {
+    //     color: black;
+    //     margin-left: 10px;
+    //   }
+    // }
   }
   .card-cols {
     margin-top: 10px;
@@ -1927,7 +1995,7 @@ export default {
     }
   }
   .card-col1 {
-    font-size: 17px;
+    font-size: 14px;
     .row {
       margin-top: 5px;
       display: flex;
@@ -1947,16 +2015,26 @@ export default {
   }
 }
 .col-1 {
-  font-size: 20px;
+  font-size: 14px;
   display: flex;
   justify-content: right;
   align-items: center;
   text-align: right;
   .col-card {
-    padding: 10px;
+    width: 80px;
+    height: 28px;
+    text-align: center;
+    line-height: 28px;
+    font-size: 14px;
     margin-left: 5px;
-    color: #3e9e70;
-    background-color: rgba(230, 243, 235, 1);
+    color: #fff;
+    border-radius: 3px;
+  }
+  .col-card:first-of-type {
+    background: linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
+  }
+  .col-card:nth-of-type(2) {
+    background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
 }
 .card-cols {
@@ -1997,12 +2075,35 @@ h1 {
 }
 ::v-deep .el-dialog {
   margin-top: 7vh !important;
-  .el-dialog__body {
-    padding: 15px 20px;
-  }
+  // .el-dialog__body {
+  //   padding: 15px 20px;
+  // }
+}
+img {
+  width: 100px;
+  margin-top: 20px;
+  margin-left: -20px;
+}
+::v-deep .el-card {
+  margin-bottom: 10px !important;
+  background: #0d203c !important;
 }
 .task {
-  margin-bottom: 30px;
+  //margin-bottom: 30px;
+  .el-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  ::v-deep .el-form-item {
+    width: 100%;
+    .el-form-item__content {
+      width: calc(100% - 110px);
+      .el-select,
+      .el-date-editor {
+        width: 100%;
+      }
+    }
+  }
   .form-one,
   .form-two {
     display: flex;
@@ -2011,7 +2112,6 @@ h1 {
     div {
       display: flex;
       align-items: center;
-      width: 33%;
       &:nth-child(3) {
         ::v-deep .el-input {
           width: 100%;
@@ -2057,6 +2157,14 @@ h1 {
     padding: 0 5px;
     margin-top: 20px;
     margin-bottom: 20px;
+    .titleRow {
+      float: left;
+      font-size: 16px;
+      color: #05aafd;
+      height: 40px;
+      text-align: center;
+    }
+
     .box {
       display: flex;
       margin-top: 5px;
@@ -2065,11 +2173,12 @@ h1 {
       .contentTextRow {
         display: flex;
         width: calc(100% - 100px);
+        //height:50px;
       }
       .number {
         width: 30px;
         height: 32px;
-        border: 1px solid rgba(215, 215, 215, 1);
+        /*border: 1px solid rgba(215, 215, 215, 1);*/
         border-radius: 3px;
         font-weight: 400;
         color: #333;
@@ -2084,7 +2193,7 @@ h1 {
         height: 32px;
         padding-left: 10px;
         background: inherit;
-        border: 1px solid rgba(215, 215, 215, 1);
+        /*border: 1px solid rgba(215, 215, 215, 1);*/
         border-radius: 3px;
         font-weight: 400;
         font-size: 14px;
@@ -2092,23 +2201,23 @@ h1 {
         display: flex;
         align-items: center;
         > div:nth-of-type(1) {
-          width: 120px;
+          width: 180px;
         }
         > div:nth-of-type(2) {
-          width: 100px;
+          width: 200px;
           margin-left: 20px;
         }
         > div:nth-of-type(3) {
           margin-left: 20px;
-          width: 150px;
+          width: 200px;
         }
         > div:nth-of-type(4) {
           margin-left: 20px;
-          width: 150px;
+          width: 200px;
         }
         > div:nth-of-type(5) {
           margin-left: 20px;
-          width: 150px;
+          width: 200px;
         }
       }
       .top,
@@ -2134,6 +2243,7 @@ h1 {
         border: 1px solid #ccc;
         border-radius: 50%;
         margin-right: 10px;
+        pointer-events: none;
       }
       .top,
       .bottom {
@@ -2153,18 +2263,30 @@ h1 {
     }
   }
 }
+.topTxt {
+  margin-left: 7px;
+  margin-top: -5px;
+  font-size: 16px;
+  background-image: url(../../../assets/cloudControl/cardTitle.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  text-align: center;
+  width: 139px;
+  height: 30px;
+  line-height: 30px;
+}
+
 .show {
   ::v-deep .el-dialog__body {
     display: flex;
     .show-left,
     .show-right {
-      height: 478px;
+      height: 530px;
       // border: 1px solid black;
       border-radius: 3px;
       .show-title {
         font-weight: 400;
         font-style: normal;
-        background-color: rgba(242, 242, 242, 1);
         color: #5e7f89;
         border-radius: 3px;
         line-height: 30px;
@@ -2234,6 +2356,12 @@ h1 {
     }
   }
 }
+::v-deep .xjDialog {
+  .el-dialog__body {
+    max-height: 70vh;
+    overflow: auto;
+  }
+}
 ::v-deep .tree {
   height: 445px;
   overflow: auto;
@@ -2248,6 +2376,11 @@ h1 {
     color: #fff;
   }
 }
-
-
+.chaoshi {
+  background: rgba(255, 44, 44, 0.28);
+  color: #ff2c2c;
+  padding: 5px;
+  font-size: 12px;
+  margin-left: 4px;
+}
 </style>

@@ -51,3 +51,14 @@ export function exportVocabulary(query) {
     params: query
   })
 }
+
+export function checkIotBoardContent(parameters) {
+  var data = {
+    content:encodeURI(parameters)
+  }
+  return request({
+    url: '/system/vocabulary/checkIotBoardContent',
+    method: 'get',
+    params: data
+  })
+}

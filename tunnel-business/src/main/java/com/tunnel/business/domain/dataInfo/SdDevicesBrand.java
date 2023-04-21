@@ -54,6 +54,15 @@ public class SdDevicesBrand extends BaseEntity {
      * 是否删除（1-是，0-否）
      */
     private Integer isDel;
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public void setSupplierId(String supplierId) {
         this.supplierId = supplierId;

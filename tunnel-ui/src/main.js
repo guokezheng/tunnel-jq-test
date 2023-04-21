@@ -38,6 +38,8 @@ import VueMeta from 'vue-meta'
 import DictData from '@/components/DictData'
 // 无缝滚动组件
 import VueSeamlessScroll from 'vue-seamless-scroll'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+import 'swiper/css/swiper.css'
 // 事件弹窗组件
 import eventDialog from '@/components/eventDialogTable/eventDialog.vue'
 import eventDialogTable from '@/components/eventDialogTable'
@@ -57,6 +59,8 @@ import config from '../public/config'
 
 import request from '../public/config'
 import moment from 'moment'
+import dayjs from "dayjs"
+
 //定义全局过滤器
 Vue.filter('dateformat', function (dataStr, pattern = 'YYY-MM-DD HH:mm:ss') {
   if (dataStr === null || dataStr === "") {
@@ -69,6 +73,7 @@ Vue.filter('dateformat', function (dataStr, pattern = 'YYY-MM-DD HH:mm:ss') {
 
 
 // 全局方法挂载
+Vue.prototype.dayjs = dayjs;
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime
@@ -83,6 +88,7 @@ Vue.prototype.socket = Socket
 // gis 
 Vue.prototype.$GlobalConfig = config.GlobalConfig
 Vue.use(preventClick)
+Vue.use(VueAwesomeSwiper)
 // 全局组件挂载
 
 Vue.component('DictTag', DictTag)

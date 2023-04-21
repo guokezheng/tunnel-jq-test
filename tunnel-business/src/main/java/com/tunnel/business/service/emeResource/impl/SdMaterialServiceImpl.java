@@ -1,12 +1,17 @@
 package com.tunnel.business.service.emeResource.impl;
 
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.emeResource.SdMaterial;
 import com.tunnel.business.domain.emeResource.SdMaterialRecord;
+import com.tunnel.business.domain.event.SdEmergencyPer;
 import com.tunnel.business.mapper.emeResource.SdMaterialMapper;
 import com.tunnel.business.mapper.emeResource.SdMaterialRecordMapper;
 import com.tunnel.business.service.emeResource.ISdMaterialService;
+import com.tunnel.business.service.event.impl.SdEmergencyPerServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +27,7 @@ import java.util.List;
  */
 @Service
 public class SdMaterialServiceImpl implements ISdMaterialService {
+    private static final Logger logger = LoggerFactory.getLogger(SdEmergencyPerServiceImpl.class);
     @Autowired
     private SdMaterialMapper sdMaterialMapper;
 
@@ -99,6 +105,13 @@ public class SdMaterialServiceImpl implements ISdMaterialService {
      */
     @Override
     public int insertSdMaterial(SdMaterial sdMaterial) {
+        //添加前先检查当前隧道中新增应急物资是否已经存在
+        List<SdMaterial> sdMaterialList = sdMaterialMapper.selectMaterialList(sdMaterial);
+        if (sdMaterialList.size() > 0) {
+            logger.error("当前物资已经存在！");
+            //return 0;
+            throw new RuntimeException("当前物资已经存在！");
+        }
         sdMaterial.setCreateTime(DateUtils.getNowDate());
         return sdMaterialMapper.insertSdMaterial(sdMaterial);
     }

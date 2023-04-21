@@ -14,9 +14,9 @@
           </el-col>
           <el-col :span="10">
               <el-radio-group v-model="queryParams.holes" @change="getAnalysisData">
-                <el-radio style="margin-right: 5px;" border key="" label="1">全部</el-radio>
-                <el-radio style="margin-right: 5px;" border key="L" label="L">上行</el-radio>
-                <el-radio border key="R" label="R">下行</el-radio>
+                <el-radio style="margin-right: 5px;" border key="" label="">全部</el-radio>
+                <el-radio style="margin-right: 5px;" border key="1" label="1">上行</el-radio>
+                <el-radio border key="2" label="2">下行</el-radio>
               </el-radio-group>
           </el-col>
           </el-form>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="card-line"></div>
                 <div class="chart-wrapper" style="height: calc(100% - 50px);">
-                  <month-chart v-bind:monthData="monthData"/>
+                  <month-chart v-bind:monthData="monthData" :datePickerMonth="datePickerMonth"/>
                 </div>
               </div>
           </el-col>
@@ -87,7 +87,7 @@
               </div>
               <div class="card-line"></div>
               <div class="chart-wrapper" style="height: calc(100% - 50px);">
-                <day-chart v-bind:dayData="dayData"/>
+                <day-chart v-bind:dayData="dayData" :datePickerDay="datePickerDay"/>
               </div>
             </div>
           </el-col>
@@ -135,7 +135,7 @@
               </div>
               <div class="card-line"></div>
               <div class="chart-wrapper" style="height: calc(100% - 50px);">
-                <time-chart v-bind:dayData="timeData"/>
+                <time-chart v-bind:dayData="timeData" :timePickerDay="timePickerDay"/>
               </div>
             </div>
           </el-col>
@@ -169,7 +169,7 @@ export default {
     return {
       queryParams:{
         tunnelId:null,
-        holes:"1"
+        holes:""
       },
       tunnelList:[],
       yearData:[],
@@ -251,7 +251,6 @@ export default {
     },
     // 日期变更
     examTimesClick(key){
-     console.log(this.timePickerDay)
       // 季度
       var dateRange = [];
       if(key == 'quarter'){

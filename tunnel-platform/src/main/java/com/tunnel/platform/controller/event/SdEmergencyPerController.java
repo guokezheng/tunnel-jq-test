@@ -55,7 +55,7 @@ public class SdEmergencyPerController extends BaseController
     {
         List<SdEmergencyPer> list = sdEmergencyPerService.selectSdEmergencyPerList(sdEmergencyPer);
         ExcelUtil<SdEmergencyPer> util = new ExcelUtil<SdEmergencyPer>(SdEmergencyPer.class);
-        return util.exportExcel(list, "应急人员信息列表");
+        return util.exportExcel(list, "应急人员");
     }
 
     /**

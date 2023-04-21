@@ -1,3 +1,11 @@
+<!--
+ * @Author: Praise-Sun 18053314396@163.com
+ * @Date: 2022-12-08 15:17:28
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2023-04-08 11:37:34
+ * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
@@ -7,11 +15,12 @@
           v-hasPermi="['business:plan:add']"
           size="small"
           @click="handleAdd()"
-          >新增预案
+          >新增
         </el-button>
-        <el-button size="small" @click="resetQuery" 
-            >刷新</el-button
-          >
+        <el-button size="small" :loading="exportLoading" @click="handleExport"
+          >导出
+        </el-button>
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="14">
         <div class="grid-content bg-purple" ref="main">
@@ -23,7 +32,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -58,7 +67,26 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预案类型" prop="category" >
+
+        <el-form-item label="方向" prop="direction">
+          <el-select
+            v-model="queryParams.direction"
+            placeholder="请选择方向"
+            clearable
+            style="width: 100%"
+            @change="$forceUpdate()"
+          >
+            <el-option
+              v-for="(item, index) in directionData"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+
+        <!-- <el-form-item label="预案类型" prop="category" >
           <el-select
             v-model="queryParams.category"
             placeholder="请选择预案类型"
@@ -72,8 +100,8 @@
               :value="item.dictValue"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="事件类型" prop="planTypeId" >
+        </el-form-item> -->
+        <el-form-item label="事件类型" prop="planTypeId">
           <el-select
             v-model="queryParams.planTypeId"
             clearable
@@ -88,6 +116,21 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="事件等级" prop="eventGrade">
+          <el-select
+            v-model="queryParams.eventGrade"
+            clearable
+            placeholder="请选择事件等级"
+            size="small"
+          >
+            <el-option
+              v-for="(item, index) in eventGradeList"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
             >搜索</el-button
@@ -98,18 +141,25 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       ref="planTable"
       v-loading="loading"
       :data="planList"
       @selection-change="handleSelectionChange"
       @row-click="handleRowClick"
-      max-height="640"
-      :row-class-name="tableRowClassName"
+      height="62vh"
+      class="allTable"
+      :row-key="getRowKey"
     >
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column type="index" width="70" align="center" label="序号">
+      </el-table-column>
       <el-table-column
         align="center"
         label="隧道名称"
@@ -130,17 +180,13 @@
       </el-table-column>
       <el-table-column
         align="center"
-        label="管控方向"
-        prop="eventType.controlDirection"
-        :formatter="controlDirectionFormat"
+        label="事件等级"
+        prop="eventType.eventGrade"
+        :formatter="eventGradeFormat"
       >
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="预案类型"
-        prop="category"
-        :formatter="categoryFormat"
-      />
+      <el-table-column align="center" label="预案名称" prop="planName">
+      </el-table-column>
       <el-table-column
         align="center"
         label="预案描述"
@@ -171,19 +217,19 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         class-name="small-padding fixed-width"
         label="相关策略"
         width="200"
       >
-        <template slot-scope="scope">
-          <!-- <p v-show="scope.row.strategyNames != null"
+        <template slot-scope="scope"> -->
+      <!-- <p v-show="scope.row.strategyNames != null"
                   style="overflow: hidden;text-overflow: ellipsis;cursor: default;"
                   @click="showStrategyContent(scope.row)">
                  {{ scope.row.strategyNames }}
             </p> -->
-          <el-tag
+      <!-- <el-tag
             v-show="scope.row.strategyNames != null"
             :key="tag"
             v-for="tag in scope.row.strategyNames"
@@ -195,7 +241,7 @@
           </el-tag>
           <div v-show="scope.row.strategyNames == ''">无</div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         align="center"
         class-name="small-padding fixed-width"
@@ -223,13 +269,6 @@
             @click="chooseStrategyInfo(scope.row)"
             >配置策略
           </el-button>
-          <!--          <el-button-->
-          <!--            v-hasPermi="['business:plan:remove']"-->
-          <!--            size="mini"-->
-          <!--            class="tableBlueButtton"-->
-          <!--            @click="openWorkbench(scope.row)"-->
-          <!--            >预览-->
-          <!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -247,6 +286,7 @@
       width="500px"
       append-to-body
       :before-close="handleFileClose"
+      :close-on-click-modal="false"
     >
       <!-- <el-drawer
       :before-close="handleFileClose"
@@ -287,6 +327,7 @@
       :visible.sync="handleStrategyVisible"
       append-to-body
       width="60%"
+      :close-on-click-modal="false"
     >
       <div style="width: 100%; height: 31.25rem; overflow: auto">
         <el-table
@@ -333,6 +374,7 @@
       :visible.sync="addStrategyVisible"
       append-to-body
       width="60%"
+      :close-on-click-modal="false"
     >
       <div style="width: 100%; height: 31.25rem; overflow: auto">
         <el-table
@@ -372,7 +414,7 @@
         <el-button @click="addStrategyCancel">关 闭</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="strategyDialog" title="相关策略" width="30%">
+    <el-dialog :visible.sync="strategyDialog" title="相关策略" width="30%" :close-on-click-modal="false">
       <div
         v-for="(item, index) of str_arr"
         :key="index"
@@ -385,18 +427,28 @@
     <!--  预览-->
     <!--    <work-bench ref="workBench"></work-bench>-->
     <!-- 新增弹窗 -->
-    <el-dialog :title="title" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogFormVisible"
+      width="500px"
+      :before-close="cancelsubmitUpload"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="addform1"
         :model="reservePlanDrawForm"
         :rules="rules"
-        label-width="120px"
+        label-width="80px"
       >
         <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
             v-model="reservePlanDrawForm.tunnelId"
             placeholder="请选择所属隧道"
-            style="width: 80%"
+            style="width: 100%"
             @change="changeSelection"
           >
             <el-option
@@ -407,11 +459,11 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="方向" prop="direction">
+        <el-form-item label="隧道方向" prop="direction">
           <el-select
             v-model="reservePlanDrawForm.direction"
-            placeholder="请选择方向"
-            style="width: 80%"
+            placeholder="请选择隧道方向"
+            style="width: 100%"
           >
             <el-option
               v-for="(item, index) in directionData"
@@ -425,7 +477,7 @@
           <el-select
             v-model="reservePlanDrawForm.planTypeId"
             placeholder="请选择事件类型"
-            style="width: 80%"
+            style="width: 100%"
           >
             <el-option
               v-for="(item, index) in planTypeData"
@@ -435,8 +487,21 @@
             />
           </el-select>
         </el-form-item>
-
-        <el-form-item label="管控方向" prop="controlDirection">
+        <el-form-item label="事件等级" prop="eventGrade">
+          <el-select
+            v-model="reservePlanDrawForm.eventGrade"
+            placeholder="请选择事件等级"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="(item, index) in eventGradeList"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- <el-form-item label="管控方向" prop="controlDirection">
           <el-select
             v-model="reservePlanDrawForm.controlDirection"
             placeholder="请选择管控方向"
@@ -463,12 +528,12 @@
               :value="item.dictValue"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="预案名称" prop="planName">
           <el-input
             v-model="reservePlanDrawForm.planName"
             placeholder="请输入预案名称"
-            style="width: 80%"
+            style="width: 100%"
           />
         </el-form-item>
         <el-form-item label="预案描述" prop="planDescription">
@@ -476,7 +541,7 @@
             v-model="reservePlanDrawForm.planDescription"
             maxlength="250"
             placeholder="请输入预案描述"
-            style="width: 80%"
+            style="width: 100%"
             type="textarea"
           />
         </el-form-item>
@@ -494,7 +559,7 @@
             action="http://xxx.xxx.xxx/personality/uploadExcel"
             class="upload-demo"
             multiple
-            style="width: 80%"
+            style="width: 100%"
           >
             <el-button slot="trigger" size="small" type="primary"
               >选取文件</el-button
@@ -510,172 +575,227 @@
           </el-upload>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelsubmitUpload">取 消</el-button>
-        <el-button type="primary" @click="submitUpload">保 存</el-button>
+      <div class="dialog-footer" slot="footer">
+        <el-button @click="submitUpload" class="submitButton">保 存</el-button>
+        <el-button @click="cancelsubmitUpload" class="closeButton"
+          >取 消</el-button
+        >
       </div>
     </el-dialog>
 
     <!-- 配置策略 -->
     <el-dialog
-      :before-close="handleClose"
+      :before-close="closeStrategy"
       title="联控流程"
       :visible.sync="strategyVisible"
       append-to-body
-      width="60%"
+      width="78%"
+      class="strategy-dialog"
+      :close-on-click-modal="false"
     >
-      <el-form
-        ref="form1"
-        :inline="true"
-        :model="reserveProcessDrawForm"
-        label-width="120px"
-        size="medium"
-      >
-        <el-row class="myTable" style="background-color: #51aced; color: white">
-          <el-col :span="2"> 排序 </el-col>
-          <el-col :span="4"> 操作处置名称 </el-col>
-          <el-col :span="4"> 设备资源类型 </el-col>
-          <el-col :span="4"> 检索规则条件 </el-col>
-          <el-col :span="4"> 选择设备（可多选） </el-col>
-          <el-col :span="4"> 控制指令 </el-col>
-          <el-col :span="2"> 操作 </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col
-            v-for="(item, index) in planTypeIdList"
-            :key="index"
-            :span="24"
-            class="colflex"
-          >
-            <el-col :span="2" style="text-align: center">
-              <el-form-item prop="index">
-                {{ index + 1 }}
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item prop="processName">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm">
+        <div
+          v-for="(item, number) in planTypeIdList"
+          :key="number"
+          class="dialongBox"
+        >
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item
+                prop="processStageName"
+                label="阶段名称:"
+                label-width="80px"
+              >
                 <el-input
-                  v-model="item.processName"
-                  placeholder="操作处置名称"
+                  v-model="item.processStageName"
+                  placeholder="阶段名称"
                 ></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-select
-                v-model="item.eqTypeId"
-                placeholder="设备类型"
-                clearable
-                @change="changeEquipmentType(item.eqTypeId, index)"
-              >
-                <el-option
-                  v-for="items in equipmentTypeData"
-                  :key="items.typeId"
-                  :label="items.typeName"
-                  :value="items.typeId"
-                />
-              </el-select>
-            </el-col>
-            <el-col :span="2">
-              <el-select
-                v-model="item.retrievalRule"
-                placeholder="规则条件"
-                clearable
-              >
-                <el-option
-                  v-for="item in retrievalRuleList"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-col>
-            <el-col :span="6">
-              <el-select
-                v-model="item.equipments"
-                multiple
-                collapse-tags
-                placeholder="请选择设备"
-                style="width: 100%"
-                @change="qbgChange(index, item.equipments)"
-              >
-                <el-option
-                  v-for="items in item.equipmentData"
-                  :key="items.eqId"
-                  :label="items.eqName"
-                  :value="items.eqId"
-                />
-              </el-select>
-            </el-col>
             <el-col
               :span="4"
-              v-show="
-                item.eqTypeId != 16 &&
-                item.eqTypeId != 36 &&
-                item.eqTypeId != 22
-              "
+              :offset="12"
+              style="display: flex; justify-content: flex-end"
             >
-              <el-select v-model="item.state" placeholder="设备执行操作">
-                <el-option
-                  v-for="(item, indx) in item.eqStateList"
-                  :key="item.deviceState"
-                  :label="item.stateName"
-                  :value="item.deviceState"
-                >
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col
-              :span="4"
-              v-show="item.eqTypeId == 16 || item.eqTypeId == 36"
-            >
-              <el-cascader
-                :props="checkStrictly"
-                v-model="item.state"
-                :options="item.templatesList"
-                :show-all-levels="false"
-                clearable
-                collapse-tags
-                @change="handleChange"
-              ></el-cascader>
-            </el-col>
-            <el-col :span="4" v-show="item.eqTypeId == 22">
-              <el-select v-model="item.state" placeholder="播放文件">
-                <el-option
-                  v-for="(item, indx) in fileList"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.fileName"
-                >
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="2" style="display: flex; height: 35px">
               <el-button
-                type=""
+                class="flex-row dialogButton"
                 icon="el-icon-delete"
-                circle
-                @click="removeItem(index)"
-              ></el-button>
+                @click="deleteInfo(number)"
+              >
+                删除
+              </el-button>
               <el-button
-                type=""
+                class="flex-row dialogButton"
+                type="primary"
+                size="mini"
                 icon="el-icon-plus"
-                circle
-                @click="addItem(index)"
-              ></el-button>
+                @click="addInfo(number)"
+              >
+                插入
+              </el-button>
             </el-col>
-          </el-col>
-        </el-row>
+          </el-row>
+          <el-row class="myTable" style="color: white">
+            <el-col :span="1"> 排序 </el-col>
+            <el-col :span="4"> 操作处置名称 </el-col>
+            <el-col :span="4"> 设备资源类型 </el-col>
+            <el-col :span="4"> 检索规则条件 </el-col>
+            <el-col :span="5"> 选择设备（可多选） </el-col>
+            <el-col :span="4"> 控制指令 </el-col>
+            <el-col :span="2"> 操作 </el-col>
+          </el-row>
+          <el-row class="planBox">
+            <el-col
+              :span="24"
+              class="colflex"
+              v-for="(itemed, index) in item.processesList"
+              :key="index"
+            >
+              <el-col
+                :span="1"
+                style="text-align: center; padding-left: 0px !important"
+              >
+                <el-form-item prop="index" class="sort">
+                  {{ index + 1 }}
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item prop="itemed.processName">
+                  <el-input
+                    v-model="itemed.processName"
+                    placeholder="操作处置名称"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-cascader
+                  v-model="itemed.eqTypeId"
+                  :options="equipmentTypeData"
+                  :props="equipmentTypeProps"
+                  :show-all-levels="false"
+                  @change="changeEquipmentType(itemed.eqTypeId, number, index)"
+                  style="width: 100%"
+                ></el-cascader>
+
+                <!-- <el-select
+                  v-model="itemed.eqTypeId"
+                  placeholder="设备类型"
+                  clearable
+                  @change="changeEquipmentType(itemed.eqTypeId, number, index)"
+                >
+                  <el-option
+                    v-for="items in equipmentTypeData"
+                    :key="items.typeId"
+                    :label="items.typeName"
+                    :value="items.typeId"
+                  />
+                </el-select> -->
+              </el-col>
+              <el-col :span="4">
+                <el-select
+                  v-model="itemed.retrievalRule"
+                  placeholder="规则条件"
+                  clearable
+                  @change="ruleChange(number, index, itemed.retrievalRule)"
+                  @visible-change="ruleVisible"
+                >
+                  <el-option
+                    v-for="(tag,inx) in itemed.retrievalRuleList"
+                    :key="inx"
+                    :label="tag.dictLabel"
+                    :value="tag.dictValue"
+                    :disabled="tag.disabled"
+                  />
+                </el-select>
+              </el-col>
+              <el-col :span="5">
+                <el-cascader
+                  v-model="itemed.equipments"
+                  :options="itemed.equipmentData"
+                  :disabled="itemed.disabled"
+                  :props="devicesProps"
+                  :show-all-levels="false"
+                  collapse-tags
+                  @change="qbgChange(number, index, itemed.equipments)"
+                  style="width: 100%"
+                ></el-cascader>
+              </el-col>
+
+              <el-col
+                :span="4"
+                v-if="
+                  itemed.eqTypeId != 16 &&
+                  itemed.eqTypeId != 36 &&
+                  itemed.eqTypeId != 22
+                "
+              >
+                <el-select v-model="itemed.state" placeholder="设备操作">
+                  <el-option
+                    v-for="(ite, idx) in itemed.eqStateList"
+                    :key="idx"
+                    :label="ite.stateName"
+                    :value="ite.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+              <!-- 选择情报板模板 -->
+              <el-col
+                :span="4"
+                v-if="itemed.eqTypeId == '16' || itemed.eqTypeId == '36'"
+              >
+                <el-cascader
+                  placeholder="请选择模板"
+                  :props="checkStrictly"
+                  v-model="itemed.state"
+                  :options="itemed.templatesList"
+                  :show-all-levels="false"
+                  :key="resetCascader"
+                  clearable
+                  collapse-tags
+                  style="width: 100%"
+                ></el-cascader>
+              </el-col>
+
+              <el-col :span="4" v-if="itemed.eqTypeId == '22'">
+                <el-form-item prop="itemed.state">
+                  <el-select v-model="itemed.state" placeholder="播放文件">
+                    <el-option
+                      v-for="(itemPl, figure) in itemed.templatesList"
+                      :key="figure"
+                      :label="itemPl.name"
+                      :value="itemPl.fileName"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="2" class="dialogTableButtonBox">
+                <el-button
+                  class="delete"
+                  @click="removeItem(number, index)"
+                ></el-button>
+                <el-button
+                  class="add"
+                  @click="addItem(number, index)"
+                ></el-button>
+              </el-col>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
-      <el-form-item style="text-align: right; width: 100%"> </el-form-item>
       <div slot="footer" class="dialog-footer">
         <el-button
-          style="width: 10%"
-          type="primary"
+          class="submitButton"
           v-hasPermi="['plan:process:add']"
-          @click="submitstrategy"
+          @click="submitStrategy"
           >保存</el-button
         >
-        <el-button style="width: 10%" @click="closeStrategy">取 消</el-button>
+        <el-button @click="closeStrategy" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -702,6 +822,9 @@ import {
   partitionTunnel,
   tunnelNames,
   getPlanType,
+  getTreeDeviceList,
+  exportPlan,
+  getVmsDataList,
 } from "@/api/event/reservePlan";
 import { listEventType } from "@/api/event/eventType";
 import {
@@ -714,16 +837,22 @@ import {
   getStrategy,
   handleStrategy,
   getRl,
+  getCategoryTree,
 } from "@/api/event/strategy";
 import { listType, getTypeAndStrategy } from "@/api/equipment/type/api.js";
-import { getJlyTunnel, getTunnels } from "@/api/equipment/tunnel/api.js";
-import { listTunnels } from "@/api/equipment/tunnel/api";
+import {
+  getJlyTunnel,
+  getTunnels,
+  listTunnels,
+} from "@/api/equipment/tunnel/api.js";
 import { fastLerp } from "zrender/lib/tool/color";
 import {
   addProcess,
   getListByRId,
   previewDisplay,
 } from "@/api/event/reserveProcess";
+import { exportFlow } from "@/api/event/planFlow";
+import { Loading } from "element-ui";
 
 export default {
   name: "Plan",
@@ -732,12 +861,26 @@ export default {
   // },
   data() {
     return {
+      dataLoading: false,
+      resetCascader: 0,
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
+      devicesProps: {
+        multiple: true,
+        checkStrictly: false,
+        emitPath: false,
+      },
+      eventGradeList: "", //事件等级
       boxShow: false,
       fileList: null,
       checkStrictly: {
         multiple: false,
-        emitPath: false,
         checkStrictly: true,
+        emitPath: false,
       },
       equipmentTypeData: [],
       directionData: [], //方向
@@ -757,14 +900,21 @@ export default {
       //策略数组
       planTypeIdList: [
         {
-          processName: "",
-          eqTypeId: "",
-          equipments: [],
-          state: "",
-          retrievalRule: null, //规则条件
-          equipmentTypeData: [],
-          equipmentData: [],
-          eqStateList: [],
+          processStageName: "",
+          processesList: [
+            {
+              processName: "",
+              eqTypeId: "",
+              equipments: [],
+              state: "",
+              qbbState: "",
+              retrievalRule: "", //规则条件
+              equipmentTypeData: [],
+              equipmentData: [],
+              eqStateList: [],
+              templatesList: [],
+            },
+          ],
         },
       ],
       title: "",
@@ -799,6 +949,8 @@ export default {
       total: 0,
       // 预案信息表格数据
       planList: [],
+      // 导出遮罩层
+      exportLoading: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -809,6 +961,8 @@ export default {
         strategyId: null,
         tunnelId: null,
         category: null,
+        direction:null,
+        eventGrade:null,
       },
       // 表单校验
       rules: {
@@ -821,6 +975,11 @@ export default {
           message: "请选择事件类型",
           trigger: "change",
         },
+        eventGrade: {
+          required: true,
+          message: "请选择事件等级",
+          trigger: "change",
+        },
         tunnelId: {
           required: true,
           message: "请选择隧道类型",
@@ -831,22 +990,22 @@ export default {
           message: "请选择方向",
           trigger: "change",
         },
-        controlDirection: {
-          required: true,
-          message: "请选择管控方向",
-          trigger: "change",
-        },
+        // controlDirection: {
+        //   required: true,
+        //   message: "请选择管控方向",
+        //   trigger: "change",
+        // },
         sId: { required: true, message: "请选择分区隧道", trigger: "change" },
         planDescription: {
           required: true,
           message: "请输入预案描述",
           trigger: "blur",
         },
-        category: {
-          required: true,
-          trigger: "change",
-          message: "请选择预案类型",
-        },
+        // category: {
+        //   required: true,
+        //   trigger: "change",
+        //   message: "请选择预案类型",
+        // },
       },
       //draw开关
       drawer: false,
@@ -857,6 +1016,7 @@ export default {
       //from表单参数
       reservePlanDrawForm: {
         planTypeId: null, //事件类型
+        eventGrade: null, //事件等级
         planName: null, //预案名称
         category: null, //预案类别
         planDescription: null, //预案描述
@@ -928,6 +1088,13 @@ export default {
         isControl: 1,
       },
       retrievalRuleList: [],
+      maskOptions : {
+        lock: true,
+        // text: 'Loading',
+        // spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target:'.strategy-dialog',
+      },
     };
   },
   created() {
@@ -940,7 +1107,7 @@ export default {
     if (this.$cache.local.get("manageStation") == "1") {
       this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
     }
-    tunnelNames(this.paramsData).then((res) => {
+    listTunnels().then((res) => {
       this.eqTunnelData = res.rows;
       this.eqTunnelData.forEach((item) => {
         item.sdTunnelSubareas.forEach((item, index) => {
@@ -949,13 +1116,10 @@ export default {
       });
     });
     this.getDicts("sd_emergency_plan_type").then((response) => {
-      console.log(response.data, "预案类型");
       this.planCategory = response.data;
     });
     //规则条件
-    this.getDicts("sd_device_retrieval_rule").then((response) => {
-      this.retrievalRuleList = response.data;
-    });
+    // this.getRules();
     // 管控方向
     this.getDicts("sd_control_direction").then((response) => {
       this.controlDirectionList = response.data;
@@ -964,16 +1128,40 @@ export default {
     this.getDicts("sd_direction").then((response) => {
       this.directionData = response.data;
     });
-    // listEventType().then((response) => {
-    //   console.log(response, "事件类型下拉");
-    //   this.planTypeData = response.rows;
-    // });
+    // 事件等级
+    this.getDicts("sd_event_grade").then((response) => {
+      this.eventGradeList = response.data;
+    });
   },
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 规则下拉显示或者隐藏触发
+    ruleVisible(e){
+      console.log(e)
+    },
+    openFullScreen2() {
+      const Loading = this.$loading(this.maskOptions);
+      setTimeout(()=>{
+        Loading.close();
+      },1000)
+    },
+    getRules() {
+      this.getDicts("sd_device_retrieval_rule").then((response) => {
+        this.retrievalRuleList = response.data;
+        for (let item of this.planTypeIdList) {
+          for (let itemed of item.processesList) {
+            itemed.retrievalRuleList = response.data;
+          }
+        }
+      });
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id;
+    },
     bodyCloseMenus(e) {
       let self = this;
       if (this.$refs.main && !this.$refs.main.contains(e.target)) {
@@ -985,43 +1173,76 @@ export default {
     beforeDestroy() {
       document.removeEventListener("click", this.bodyCloseMenus);
     },
+    deleteInfo(index) {
+      if (this.planTypeIdList.length == 1) {
+        return this.$modal.msgWarning("至少保留一行");
+      }
+      this.planTypeIdList.splice(index, 1);
+    },
+
+    /** 导出按钮操作 */
+    handleExport() {
+      let confirmInfo = "是否确认导出所有的应急预案数据项？";
+      if (this.ids.length > 0) {
+        confirmInfo = "是否确认导出所选的应急预案数据项？";
+      }
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm(confirmInfo)
+        .then(() => {
+          this.exportLoading = true;
+          return exportPlan(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+          this.$refs.planTable.clearSelection();
+          this.queryParams.ids = "";
+        })
+        .catch(() => {
+          this.queryParams.ids = "";
+        });
+    },
+    addInfo(index) {
+      let data = {
+        processStageName: "",
+        processesList: [
+          {
+            processName: "",
+            eqTypeId: "",
+            equipments: [],
+            state: "",
+            qbbState: "",
+            retrievalRule: null, //规则条件
+            retrievalRuleList: [],
+            equipmentTypeData: [],
+            equipmentData: [],
+            eqStateList: [],
+            disabled: false,
+            templatesList: [],
+          },
+        ],
+      };
+      this.getRules();
+      this.planTypeIdList.splice(index + 1, 0, data);
+    },
     /** 查询设备类型列表 */
     getEquipmentType() {
       for (let i = 0; i < this.planTypeIdList.length; i++) {
-        listType(this.queryEqTypeParams).then((data) => {
-          console.log(data.rows, "设备类型");
-          this.$set(this.planTypeIdList[i], "equipmentTypeData", data.rows);
-          this.equipmentTypeData = data.rows;
+        getCategoryTree().then((data) => {
+          this.$set(this.planTypeIdList[i], "equipmentTypeData", data.data);
+          this.equipmentTypeData = data.data;
         });
       }
     },
     getPlanTypeData(id) {
       for (var item of this.planTypeData) {
         if (item.id == id) {
-          console.log(item.eventType);
           return item.eventType;
         }
       }
     },
-    //  上移
-    moveTop(i, item) {
-      if (item && i) {
-        let obj = { ...this.planTypeIdList[i - 1] };
-        this.planTypeIdList.splice(i - 1, 1, item);
-        this.planTypeIdList.splice(i, 1, obj);
-        this.$forceUpdate();
-      }
-    },
-    // 下移
-    moveBottom(i, item) {
-      if (item && typeof i === "number") {
-        let obj = { ...this.planTypeIdList[i + 1] };
-        this.planTypeIdList.splice(i + 1, 1, item);
-        this.planTypeIdList.splice(i, 1, obj);
-        this.$forceUpdate();
-      }
-    },
-
     controlDirectionFormat(row, column) {
       return this.selectDictLabel(
         this.controlDirectionList,
@@ -1031,8 +1252,11 @@ export default {
     directionFormat(row, column) {
       return this.selectDictLabel(this.directionData, row.direction);
     },
-    categoryFormat(row, column) {
-      return this.selectDictLabel(this.planCategory, row.category);
+    // categoryFormat(row, column) {
+    //   return this.selectDictLabel(this.planCategory, row.category);
+    // },
+    eventGradeFormat(row, column) {
+      return this.selectDictLabel(this.eventGradeList, row.eventGrade);
     },
     tunnelIdFormat(row, column) {
       return this.selectDictLabel(this.eqTunnelData, row.tunnelId);
@@ -1045,12 +1269,46 @@ export default {
       // this.getTunnelData(this.tunnelId);
       this.dialogVisible = false;
     },
-    deleteStrategy(index) {
-      console.log(index);
-      if (index == 0) {
-        return this.$modal.msgError("至少保留一行");
+    // 规则条件修改事件
+    ruleChange(number, index, value) {
+      // 如果是否指定
+      // 如果是指定   根据类型查设备
+      // 如果不是指定  禁用选择设备 同时判断 设备类型是否为  16 和 36 如果是  则 请求情表板模板
+      if (value != 1) {
+        //赋空
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "equipments",
+          ""
+        );
+        // 禁用选择设备
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "disabled",
+          true
+        );
+        let eqType = this.planTypeIdList[number].processesList[index].eqTypeId;
+        // 同时如果为情报板则查询情报板模板
+        if (eqType == "16" || eqType == "36") {
+          let params = {
+            eqTunnelId: this.currentClickData.tunnelId,
+            eqType: this.planTypeIdList[number].processesList[index].eqTypeId,
+          };
+          getVmsDataList(params).then((res) => {
+            this.$set(
+              this.planTypeIdList[number].processesList[index],
+              "templatesList",
+              res.data
+            );
+          });
+        }
+      } else {
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "disabled",
+          false
+        );
       }
-      this.planTypeIdList.splice(index, 1);
     },
     addStrategy(index) {
       let obj = {
@@ -1060,22 +1318,34 @@ export default {
       };
       this.planTypeIdList.splice(index + 1, 0, obj);
     },
-    removeItem(index) {
-      console.log(index);
-      this.planTypeIdList.splice(index, 1);
+    removeItem(number, index) {
+      if (this.planTypeIdList[number].processesList.length == 1) {
+        return this.$modal.msgWarning("至少保留一行");
+      }
+      this.planTypeIdList[number].processesList.splice(index, 1);
     },
     // 添加执行操作
-    addItem(index) {
+    addItem(number, index) {
+      // this.getRules();
       let data = {
-        value: "",
-        state: "",
-        eqTypeId: "",
-        equipmentTypeData: [],
-        equipmentData: [],
-        retrievalRule: "",
-        equipments: [],
+        processStageName: "",
+        processesList: [
+          {
+            processName: "",
+            eqTypeId: "",
+            equipments: [],
+            state: "",
+            retrievalRule: null, //规则条件
+            equipmentTypeData: [],
+            equipmentData: [],
+            retrievalRuleList: [],
+            eqStateList: [],
+            disabled: false,
+            templatesList: [],
+          },
+        ],
       };
-      this.planTypeIdList.splice(index + 1, 0, data);
+      this.planTypeIdList[number].processesList.splice(index + 1, 0, data);
       this.getEquipmentType();
     },
     //获得预案类别
@@ -1087,24 +1357,29 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
+      this.$refs.planTable.clearSelection();
+      //this.handleQuery();
       this.resetReservePlanDrawForm();
     },
-    //删除一行
-    updataDeleteForm(index) {
-      if (this.planTypeIdList.length <= 1) {
-        this.$modal.msgError("请保留一行");
-        return;
-      }
-      this.planTypeIdList.splice(index, 1);
-    },
-    //添加一行
-    addFrom() {
-      this.planTypeIdList.push({
-        a: [],
-      });
-      /*this.reserveProcessDrawForm.strategyId.push([{
-        id:[]
-      }])*/
+    //form表单置空
+    resetReservePlanDrawForm() {
+      (this.reservePlanDrawForm = {
+        planTypeId: null, //事件类型
+        planName: null, //预案名称
+        category: null, //预案类别
+        planDescription: null, //预案描述
+        strategyId: null, //多个策略ID
+        strategyNames: null, //多个策略的名称，以：分割
+        planFileId: null,
+        tunnelId: null, //隧道
+        sId: null, //分区隧道
+      }),
+        (this.fileList = []);
+      this.removeIds = [];
+      this.planChangeSink = null;
+      this.multipleSelectionIds = [];
+      this.eqTunnelDataList = [];
+      // this.planCategory = [];
     },
     ceshiTime() {
       this.timer = setInterval(() => {
@@ -1121,39 +1396,96 @@ export default {
       });
     },
     // 改变设备类型
-    changeEquipmentType(eqTypeId, index) {
-      // 更改设备类型后状态和设备重置
-      this.$set(this.planTypeIdList[index], "equipments", "");
-      this.$set(this.planTypeIdList[index], "eqStateList", "");
-      let params = {
-        eqType: eqTypeId, //设备类型
-        eqTunnelId: this.currentClickData.tunnelId, //隧道
-        eqDirection: this.currentClickData.direction, //方向
-      };
-      listDevices(params).then((res) => {
-        this.$set(this.planTypeIdList[index], "equipmentData", res.rows);
-        console.log(res, "设备列表");
-      });
-      if (eqTypeId != 22) {
-        this.listEqTypeStateIsControl(eqTypeId, index);
-      } else {
-        //广播
-        this.getAudioFileListData();
+    changeEquipmentType(eqTypeId, number, index) {
+      console.log('设备类型:' + eqTypeId,'第'+ number+'阶段','第'+ index+ '个','设备类型改变')
+      if (eqTypeId) {
+        // 不是车指，则67禁用
+        let retrievalRuleList = JSON.parse(JSON.stringify(this.retrievalRuleList));
+          for (let item of retrievalRuleList) {
+          if (eqTypeId != "1" && eqTypeId != "2") {
+            if (item.dictValue == "6" || item.dictValue == "7") {
+              item.disabled = true;
+            }
+          }else{
+            item.disabled = false;
+          }
+        }
+        // if (eqTypeId != "1" && eqTypeId != "2") {
+        //   for (let item of retrievalRuleList) {
+        //     if (item.dictValue == "6" || item.dictValue == "7") {
+        //       item.disabled = true;
+        //     }
+        //   }
+        // } else {
+        //   for (let item of retrievalRuleList) {
+        //     item.disabled = false;
+        //   }
+        // }
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "retrievalRuleList",
+          retrievalRuleList
+        );
+        console.log( this.planTypeIdList[number].processesList)
+        // 更改设备类型后状态和设备重置
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "equipments",
+          ""
+        );
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "eqStateList",
+          ""
+        );
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "retrievalRule",
+          ""
+        );
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "state",
+          ""
+        );
+        let params = {
+          eqType: eqTypeId, //设备类型
+          eqTunnelId: this.currentClickData.tunnelId, //隧道
+        };
+        getTreeDeviceList(params).then((res) => {
+          if (res.data.length == 0) {
+            return this.$modal.msgWarning("暂无设备");
+          }
+          this.$set(
+            this.planTypeIdList[number].processesList[index],
+            "equipmentData",
+            res.data
+          );
+        });
+        if (eqTypeId != 22) {
+          this.listEqTypeStateIsControl(eqTypeId, number, index);
+        } else {
+          //广播
+          this.getAudioFileListData("", number, index);
+        }
       }
     },
-    getAudioFileListData() {
+    getAudioFileListData(value, number, index) {
       let params = {
         tunnelId: this.currentClickData.tunnelId,
         direction: this.currentClickData.direction,
       };
       getAudioFileList(params).then((res) => {
-        console.log(res.data, "广播");
         this.fileList = res.data;
-        this.$set(this.planTypeIdList[index], "eqStateList", response.rows);
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "templatesList",
+          res.data
+        );
       });
     },
     // 查询设备可控状态
-    listEqTypeStateIsControl(eqTypeId, index) {
+    listEqTypeStateIsControl(eqTypeId, number, index) {
       let params = {
         stateTypeId: eqTypeId,
         direction: this.currentClickData.direction,
@@ -1161,20 +1493,26 @@ export default {
       };
       listEqTypeStateIsControl(params).then((response) => {
         // this.planTypeIdList[index].eqStateList = response.rows;
-        this.$set(this.planTypeIdList[index], "eqStateList", response.rows);
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "eqStateList",
+          response.rows
+        );
       });
     },
-    qbgChange(index, value) {
-      console.log(value);
+    qbgChange(number, index, value) {
       let data = value;
       if (
-        this.planTypeIdList[index].eqTypeId == 16 ||
-        this.planTypeIdList[index].eqTypeId == 36
+        this.planTypeIdList[number].processesList[index].eqTypeId == 16 ||
+        this.planTypeIdList[number].processesList[index].eqTypeId == 36
       ) {
         getVMSTemplatesByDevIdAndCategory(data).then((res) => {
-          console.log(res.data, "模板信息");
           // this.templatesList = res.data;
-          this.$set(this.planTypeIdList[index], "templatesList", res.data);
+          this.$set(
+            this.planTypeIdList[number].processesList[index],
+            "templatesList",
+            res.data
+          );
         });
       }
     },
@@ -1182,25 +1520,45 @@ export default {
     closeStrategy() {
       // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
+      this.handleQuery();
+    },
+    everyForeach(value) {
+      return value != "";
     },
     // 编辑策略保存方法
-    submitstrategy() {
+    submitStrategy() {
       for (let i = 0; i < this.planTypeIdList.length; i++) {
-        console.log(this.planTypeIdList[i].handleStrategyList);
-        if (
-          this.planTypeIdList[i].equipments == "" ||
-          this.planTypeIdList[i].processName == ""
-        ) {
-          return this.$modal.msgWarning("请填写完整");
+        if (this.planTypeIdList[i].processStageName == "") {
+          return this.$modal.msgWarning("请填写阶段名称");
+        }
+        let item = this.planTypeIdList[i].processesList;
+        let result = item.every((items) => {
+          if (items.retrievalRule == 1) {
+            return (
+              items.processName &&
+              items.state &&
+              items.eqTypeId &&
+              items.equipments.length >= 1 &&
+              items.equipments[0] != ""
+            );
+          } else {
+            //非指定由后端判断具体设备
+            return (
+              items.processName &&
+              items.state &&
+              items.retrievalRule &&
+              items.eqTypeId &&
+              items.state
+            );
+          }
+        });
+        if (!result) {
+          return this.$modal.msgError("请填写完整");
         }
       }
+
       this.planTypeIdList.forEach((item, index) => {
-        item.processSort = +index + 1;
-        item.eqStateList = "";
-        item.equipmentData = "";
-        item.equipmentTypeData = "";
-        item.templatesList = "";
-        item.state = item.state.toString();
+        item.processSort = index;
       });
       let data = {
         reserveId: this.reserveId,
@@ -1211,26 +1569,11 @@ export default {
         if (res.code === 200) {
           this.strategyVisible = false;
           this.$modal.msgSuccess(res.msg);
+          this.$refs.planTable.clearSelection();
           this.getList();
         }
       });
     },
-    //预览按钮
-    // openWorkbench(row) {
-    //   this.tunnelId = row.tunnelId;
-    //   this.$nextTick(() => {
-    //     this.$refs.workBench.currentClass = "red";
-    //     this.$refs.workBench.id = row.id;
-    //     this.$refs.workBench.tunnelId = this.tunnelId;
-    //     this.$refs.workBench.init();
-    //   });
-    // },
-    //=========================执行相关预案开始=====================
-    //执行策略
-    /* executionStrategy(row){
-       this.$modal.msgSuccess("执行策略中.......");
-       handleStrategy(row.strategyId);
-     }, */
     // 配置策略
     async chooseStrategyInfo(row) {
       this.getEquipmentType();
@@ -1241,53 +1584,95 @@ export default {
       });
       getReservePlanProcess(this.reserveId).then((res) => {
         this.planTypeIdList = res.data;
+        this.getRules();
+        this.openFullScreen2();
         if (this.planTypeIdList.length == 0) {
           this.planTypeIdList = [
             {
-              value: "",
-              state: "",
-              eqTypeId: "",
-              equipmentTypeData: [],
-              equipmentData: [],
-              retrievalRule: "",
-              equipments: [],
+              stageName: "",
+              processesList: [
+                {
+                  state: "",
+                  eqTypeId: "",
+                  equipmentTypeData: [],
+                  equipmentData: [],
+                  retrievalRule: "",
+                  retrievalRuleList: [],
+                  equipments: [],
+                  disabled: false,
+                  templatesList: [],
+                },
+              ],
             },
           ];
         } else {
           let data = res.data;
+          this.getRules();
           for (let i = 0; i < data.length; i++) {
-            this.planTypeIdList[i].processSort = data[i].process_sort;
+            let arr = data[i];
+            //阶段名称
             this.$set(
               this.planTypeIdList[i],
-              "processName",
-              data[i].process_name
+              "processStageName",
+              data[i].processStageName
             );
-            // this.planTypeIdList[i].processName = data[i].process_name;
-            this.planTypeIdList[i].retrievalRule = data[i].retrieval_rule;
-            this.planTypeIdList[i].eqTypeId = data[i].eq_type_id;
+            for (let j = 0; j < arr.processesList.length; j++) {
+              let brr = arr.processesList[j];
 
-            this.planTypeIdList[i].equipments = data[i].equipments.split(",");
-            console.log(this.planTypeIdList[i].equipments, "设备");
-            // 请求情报板数据
-            if (data[i].eq_type_id == 16 || data[i].eq_type_id == 36) {
-              this.qbgChange(i, this.planTypeIdList[i].equipments);
+              brr.retrievalRule = brr.retrievalRule; //规则条件
+              // 选择指定设备
+              if (brr.retrievalRule != 1) {
+                this.$set(
+                  this.planTypeIdList[i].processesList[j],
+                  "disabled",
+                  true
+                );
+              }
+              brr.eqTypeId = String(brr.deviceTypeId); //设备类型
+              brr.equipments = brr.equipmentList; //设备列表
+
+              // 渲染设备列表
+              let params = {
+                eqType: brr.eqTypeId, //设备类型
+                eqTunnelId: this.currentClickData.tunnelId, //隧道
+              };
+              getTreeDeviceList(params).then((res) => {
+                this.$set(
+                  this.planTypeIdList[i].processesList[j],
+                  "equipmentData",
+                  res.data
+                );
+              });
+              // 渲染设备可控状态
+              this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
+              // 请求情报板数据
+              if (brr.eqTypeId == 16 || brr.eqTypeId == 36) {
+                // 指定设备
+                if (brr.retrievalRule == 1) {
+                  brr.state = +brr.state;
+                  this.qbgChange(i, j, brr.equipments);
+                } else {
+                  //不指定
+                  brr.state = +brr.state;
+                  let params = {
+                    eqTunnelId: this.currentClickData.tunnelId,
+                    eqType: brr.eqTypeId,
+                  };
+                  getVmsDataList(params).then((res) => {
+                    this.$set(
+                      this.planTypeIdList[i].processesList[j],
+                      "templatesList",
+                      res.data
+                    );
+                  });
+                }
+              }
+              //请求广播音频列表数据
+              if (brr.eqTypeId == 22) {
+                brr.state = brr.state;
+                this.getAudioFileListData(brr.equipments, i, j);
+              }
             }
-            //请求广播音频列表数据
-            if (data[i].eq_type_id == 22) {
-              this.getAudioFileListData();
-            }
-            // 渲染设备列表
-            let params = {
-              eqType: data[i].eq_type_id, //设备类型
-              eqTunnelId: this.currentClickData.tunnelId, //隧道
-              eqDirection: this.currentClickData.direction, //方向
-            };
-            listDevices(params).then((res) => {
-              this.$set(this.planTypeIdList[i], "equipmentData", res.rows);
-              console.log(this.equipmentData, "设备列表");
-            });
-            // 渲染设备可控状态
-            this.listEqTypeStateIsControl(data[i].eq_type_id, i);
           }
         }
       });
@@ -1381,7 +1766,6 @@ export default {
     //===========================选择相关预案结束=========================
     //点击查看文件
     openFileDrawer(row) {
-      console.log(row, "row");
       this.fileLoading = true;
       listReservePlanFile({ planFileId: row.planFileId }).then((response) => {
         this.drawerFileTitle = "相关文档";
@@ -1398,7 +1782,6 @@ export default {
     },
     downfiles(datas, filename) {
       var data = new Blob([datas]);
-      console.log(data);
       var downloadUrl = window.URL.createObjectURL(data);
       var anchor = document.createElement("a");
       anchor.href = downloadUrl;
@@ -1413,40 +1796,11 @@ export default {
     },
     // 上传文件
     uploadFile(file) {
-      console.log(file, "上传文件");
       this.fileData.append("file", file.file); // append增加数据
     },
-    //form表单置空
-    resetReservePlanDrawForm() {
-      (this.reservePlanDrawForm = {
-        planTypeId: null, //事件类型
-        planName: null, //预案名称
-        category: null, //预案类别
-        planDescription: null, //预案描述
-        strategyId: null, //多个策略ID
-        strategyNames: null, //多个策略的名称，以：分割
-        planFileId: null,
-        tunnelId: null, //隧道
-        sId: null, //分区隧道
-      }),
-        // this.reservePlanDrawForm.planTypeId = null;
-        // this.reservePlanDrawForm.category = null;
-        // this.reservePlanDrawForm.planName = null;
-        // this.reservePlanDrawForm.strategyId = "";
-        // this.reservePlanDrawForm.strategyNames = null;
-        // this.reservePlanDrawForm.planDescription = null;
-        // this.reservePlanDrawForm.tunnelId = null;
-        // this.reservePlanDrawForm.sId = null;
-        (this.fileList = []);
-      this.removeIds = [];
-      this.planChangeSink = null;
-      this.multipleSelectionIds = [];
-      this.eqTunnelDataList = [];
-      // this.planCategory = [];
-    },
+
     // 上传到服务器
     async submitUpload() {
-      console.log(this.reservePlanDrawForm.sId, "this.reservePlanDrawForm");
       this.$refs["addform1"].validate((valid) => {
         if (valid) {
           if (this.loading) return;
@@ -1471,7 +1825,7 @@ export default {
               "planTypeId",
               this.reservePlanDrawForm.planTypeId
             ); // 事件类型
-            this.fileData.append("category", this.reservePlanDrawForm.category); // 预案类型
+            // this.fileData.append("category", this.reservePlanDrawForm.category); // 预案类型
             this.fileData.append(
               "planDescription",
               this.reservePlanDrawForm.planDescription == null
@@ -1483,17 +1837,17 @@ export default {
               "direction",
               this.reservePlanDrawForm.direction
             );
-            this.fileData.append(
-              "controlDirection",
-              this.reservePlanDrawForm.controlDirection
-            );
+            // this.fileData.append(
+            //   "controlDirection",
+            //   this.reservePlanDrawForm.controlDirection
+            // );
             this.fileData.append(
               "subareaId",
               Number(this.reservePlanDrawForm.sId)
             );
-            console.log(
-              this.fileData,
-              "this.fileDatathis.fileDatathis.fileData"
+            this.fileData.append(
+              "eventGrade",
+              Number(this.reservePlanDrawForm.eventGrade)
             );
             if (this.planChangeSink == "add") {
               addPlanFile(this.fileData).then((response) => {
@@ -1520,9 +1874,9 @@ export default {
                 if (response.code === 200) {
                   this.$modal.msgSuccess("修改成功");
                   this.dialogFormVisible = false;
-                  // this.resetReservePlanDrawForm(); //重置表单
+                  this.resetReservePlanDrawForm(); //重置表单
                   //this.open = false;
-                  this.getList();
+                  this.handleQuery();
                 } else {
                   this.$modal.msgError("修改失败");
                 }
@@ -1547,17 +1901,14 @@ export default {
     },
     /** 新增按钮操作 **/
     handleAdd() {
+      this.$nextTick(() => {
+        this.$refs["addform1"].resetFields();
+      });
       this.resetReservePlanDrawForm();
       this.title = "新增预案";
       this.planChangeSink = "add";
       this.dialogFormVisible = true;
-
       this.visibleAdd = true;
-      // this.addForm=true
-      this.$nextTick(() => {
-        this.$refs["form1"].clearValidate();
-      });
-      //this.$refs["form1"].clearValidate();
     },
     changePartitionSelection(e) {
       this.$forceUpdate();
@@ -1571,23 +1922,10 @@ export default {
           that.$forceUpdate();
         }
       });
-      // this.getDicts("sd_reserve_plan_category").then((response) => {
-      //   this.planCategory = response.data;
-      // });
-      console.log(
-        this.eqTunnelDataList,
-        " this.eqTunnelDataList this.eqTunnelDataList"
-      );
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      console.log(row);
-
-      // this.$nextTick(() => {
-      //   this.$refs["addForm1"].clearValidate();
-      // });
       this.resetForm("addForm1");
-
       // this.resetReservePlanDrawForm();
       this.planChangeSink = "edit";
       const id = row.id || this.ids;
@@ -1640,6 +1978,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       /* debugger */
+      let that = this
       const ids = row.id || this.ids;
       //  const rlIds = row.id || this.rlIds;
       this.$confirm("是否确认删除?", "警告", {
@@ -1651,10 +1990,12 @@ export default {
           return delPlan(ids);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(function () {});
+        .catch(function () {
+          that.$refs.planTable.clearSelection();
+        });
     },
     //移除文件
     handleRemove(file, fileList) {
@@ -1670,8 +2011,6 @@ export default {
     },
     //监控上传文件列表
     handleChange(file, fileList) {
-      console.log(file, "filefile");
-      console.log(fileList, "fileListfileList");
       let existFile = fileList
         .slice(0, fileList.length - 1)
         .find((f) => f.name === file.name);
@@ -1703,7 +2042,6 @@ export default {
     getPlanType() {
       let data = { prevControlType: 0 };
       listEventType(data).then((response) => {
-        console.log(response, "事件类型下拉");
         this.planTypeData = response.rows;
       });
     },
@@ -1714,8 +2052,8 @@ export default {
     },
     //关闭drawer
     handleFileClose(done) {
-      // console.log(done,'donedone')
       done();
+      this.$refs.planTable.clearSelection();
     },
     /** 查询预案信息列表 */
     getList() {
@@ -1727,22 +2065,21 @@ export default {
       }
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
-        console.log(this.planList, "========");
-        this.planList.forEach((item) => {
-          console.log(item.strategyName);
-        });
         this.total = response.total;
         this.loading = false;
       });
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
+      // this.queryParams.pageNum = 1;
+      this.$refs.planTable.clearSelection();
+      this.queryParams.pageNum = 1
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.planName = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -1764,23 +2101,20 @@ export default {
     addMultipleTableRowClick(row) {
       this.$refs.addMultipleTable.toggleRowSelection(row);
     },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
   },
   watch: {
+    config: {
+      handler() {
+        this.resetCascader++;
+      },
+      deep: true,
+    },
+
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "0000000000000000000000");
       this.getList();
       this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
       tunnelNames(this.paramsData).then((res) => {
         this.eqTunnelData = res.rows;
-        console.log(this.eqTunnelData, "111");
         this.eqTunnelData.forEach((item) => {
           item.sdTunnelSubareas.forEach((item, index) => {
             this.eqTunnelDataList.push(item);
@@ -1797,19 +2131,28 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-::v-deep .in-checked-path .el-radio {
-  display: none;
-}
-
-::v-deep .in-checked-path .el-radio {
-  display: none;
-}
-
-// .in-checked-path{
-//   ::v-deep .el-radio__original{
-//     display: none;
-//   }
+// ::v-deep .el-dialog .el-dialog__header{
+//     // background-image: url(../../../assets/cloudControl/dialogHeader.png);
+//     // background-repeat: no-repeat;
+//     // background-position-x: right;
+//     background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
 // }
+// ::v-deep .el-form-item--medium .el-form-item__label {
+//   line-height: 3vh;
+// }
+.strategy-dialog {
+  ::v-deep .el-dialog__body {
+    height: 72vh;
+    overflow: auto;
+  }
+}
+::v-deep .in-checked-path .el-radio {
+  display: none;
+}
+
+::v-deep .in-checked-path .el-radio {
+  display: none;
+}
 .colflex {
   display: flex;
 }
@@ -1864,7 +2207,7 @@ export default {
   text-align: center;
   line-height: 24px;
   font-size: 12px;
-  margin-top: 5px;
+  margin-top: 10px;
   cursor: pointer;
   margin-left: 20px;
   // margin-right: 10px;
@@ -1897,6 +2240,44 @@ export default {
     pointer-events: none;
     cursor: auto !important;
     color: #ccc;
+  }
+}
+.planBox {
+  .el-col {
+    text-align: center;
+  }
+}
+.dialongBox {
+  // border: 1px solid #05afe3;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.dialongBox + .dialongBox {
+  margin-top: 10px;
+}
+
+.dialogTableButtonBox {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 35px;
+  padding-right: 0 !important;
+  margin-left: 2px;
+  .delete,
+  .add {
+    width: 16px;
+    height: 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border: none;
+    background-color: transparent;
+  }
+  .delete {
+    background-image: url(../../../assets/icons/delete.png);
+  }
+  .add {
+    background-image: url(../../../assets/icons/add.png);
   }
 }
 </style>

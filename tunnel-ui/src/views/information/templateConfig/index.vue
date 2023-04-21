@@ -1,24 +1,25 @@
 <template>
   <div class="app-container">
     <!-- 全局搜索 -->
-    <el-row  :gutter="20" style="margin: 10px 0 25px">
+    <el-row  :gutter="20" class="topFormRow" style="margin: 10px 0 25px">
       <el-col :span="6">
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           @click="addOrUpdateHandle"
           v-hasPermi="['system:templateConfig:add']"
           >新增</el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:templateConfig:remove']"
           >删除</el-button>
-          <el-button size="mini" @click="resetQuery" type="primary" plain
+          <el-button
+          size="small"
+          @click="handleExport"
+          v-hasPermi="['system:templateConfig:export']"
+          >导出</el-button>
+          <el-button size="small" @click="resetQuery"  plain
           >刷新</el-button
           >
       </el-col>
@@ -233,7 +234,7 @@
 </template>
 <script>
 import addOrUpdate from './edit'
-import {getTemplates} from "@/api/board/template";
+import {exportTemplate, getTemplates} from "@/api/board/template";
 import {deleteTemplate} from "@/api/board/template";
 export default {
   name: 'vms-tiss-content-template',
@@ -437,6 +438,7 @@ export default {
     getList () {
       this.indexStart = (this.page - 1) * this.limit + 1;
       this.loading = true;
+      this.boxShow = false;
       getTemplates(this.queryParams).then((res) => {
       // listTemplate(this.queryParams).then((res) => {
         this.dataList = res.rows;
@@ -469,7 +471,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      let content = '是否确认删除选中数据项?'
+      let content = '是否确认删除?'
       if(ids == null || ids == undefined || ids == [] || ids == '') {
         content = '是否确认删除当前情报板模板?'
       }
@@ -533,8 +535,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有情报板模板数据项?", "警告", {
+      this.$confirm("是否确认导出情报板模板数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

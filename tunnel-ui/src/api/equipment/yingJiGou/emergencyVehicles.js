@@ -57,7 +57,7 @@ export function exportData(data) {
     return request({
         url: '/system/vehicle/export',
         method: 'get',
-        data
+        params: data
     })
 }
 // 机构查询
@@ -66,4 +66,12 @@ export function veicleOrgId() {
         url: '/system/vehicle/getOrg',
         method: 'get',
     })
+}
+
+// 应急车辆同步
+export function syncVehicle() {
+  return request({
+    url: '/system/vehicle/syncVehicle',
+    method: 'get',
+  })
 }

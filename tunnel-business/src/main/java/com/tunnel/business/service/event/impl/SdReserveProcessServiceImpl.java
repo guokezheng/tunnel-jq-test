@@ -1,6 +1,8 @@
 package com.tunnel.business.service.event.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -13,10 +15,7 @@ import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
-import com.tunnel.business.mapper.event.SdReservePlanMapper;
-import com.tunnel.business.mapper.event.SdReserveProcessMapper;
-import com.tunnel.business.mapper.event.SdStrategyMapper;
-import com.tunnel.business.mapper.event.SdStrategyRlMapper;
+import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
@@ -27,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +48,9 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
 
     @Autowired
     private ISdEventService sdEventService;
+
+    @Autowired
+    private SdReservePlanMapper sdReservePlanMapper;
 
     /**
      * 查询预案流程节点
@@ -103,37 +106,60 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchSdReserveProcessed(SdReserveProcessModel sdReserveProcesses) {
+        //获取预案id
+        String planId = sdReserveProcesses.getReserveId().toString();
+        //查询预案信息
+        SdReservePlan sdReservePlan = sdReservePlanMapper.selectSdReservePlanById(Long.valueOf(planId));
+        //查询此预案是否被使用
+        /*int currCount = sdReservePlanMapper.checkCurrId(sdReservePlan);
+        if(currCount > 0){
+            throw new RuntimeException("当前预案已被普通事件使用，请勿修改");
+        }*/
         if(sdReserveProcesses.getSdReserveProcesses().isEmpty()){
             throw new RuntimeException("无效数据策略添加失败");
         }
         List<SdReserveProcess> list = new ArrayList<>();
-        String planId = sdReserveProcesses.getReserveId().toString();
+
         //删除预案流程节点
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
         SpringUtils.getBean(SdStrategyRlMapper.class).deleteSdStrategyRlByPlanId(Long.valueOf(planId));
         for (Map process : sdReserveProcesses.getSdReserveProcesses()) {
-            List<String> value = (List<String>) process.get("equipments");
-            if(value.isEmpty() || process.get("state").equals("")){
-                throw new RuntimeException("无效数据策略添加失败");
+            //处置名称
+            String processStageName = process.get("processStageName").toString();
+            //联控流程集合
+            List<Map<String, Object>> list1 = (List<Map<String, Object>>)process.get("processesList");
+
+            for(Map<String, Object> item : list1){
+                List<String> equipments = new ArrayList<>();
+                if(item.get("equipments").toString() != "" && item.get("equipments") != null){
+                    equipments = (List<String>)item.get("equipments");
+                }
+                if(item.get("state").equals("")){
+                    throw new RuntimeException("无效数据策略添加失败");
+                }
+                SdReserveProcess reserveProcess = new SdReserveProcess();
+                String eqTypeId = item.get("eqTypeId").toString();
+                String eqState = String.valueOf(item.get("state"));
+
+                //新增策略关联设备信息
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(eqTypeId);
+                rl.setEquipments(StringUtils.join(equipments,","));
+                rl.setState(eqState);
+                rl.setPlanId(planId);
+                rl.setRetrievalRule(item.get("retrievalRule").toString());
+                SpringUtils.getBean(SdStrategyRlMapper.class).insertSdStrategyRl(rl);
+
+                //保存预案流程信息
+                reserveProcess.setProcessName(item.get("processName").toString());
+                reserveProcess.setProcessSort(Integer.parseInt(process.get("processSort").toString()));
+                reserveProcess.setDeviceTypeId(Long.valueOf(eqTypeId));
+                reserveProcess.setStrategyId(rl.getId());
+                reserveProcess.setReserveId(Long.valueOf(planId));
+                reserveProcess.setProcessStageName(processStageName);
+                reserveProcess.setCreateTime(DateUtils.getNowDate());
+                list.add(reserveProcess);
             }
-            SdReserveProcess reserveProcess = new SdReserveProcess();
-            SdStrategyRl rl = new SdStrategyRl();
-            String equipments = "";
-            equipments = StringUtils.join(value,",");
-            String equipmentTypeId = process.get("eqTypeId") + "";
-            String eqState = (String) process.get("state");
-            rl.setEqTypeId(equipmentTypeId);
-            rl.setEquipments(equipments);
-            rl.setState(eqState);
-            rl.setPlanId(planId);
-            rl.setRetrievalRule(process.get("retrievalRule").toString());
-            SpringUtils.getBean(SdStrategyRlMapper.class).insertSdStrategyRl(rl);
-            reserveProcess.setProcessName(process.get("processName").toString());
-            reserveProcess.setProcessSort(Integer.parseInt(process.get("processSort").toString()));
-            reserveProcess.setDeviceTypeId(Long.valueOf(equipmentTypeId));
-            reserveProcess.setStrategyId(rl.getId());
-            reserveProcess.setReserveId(Long.valueOf(planId));
-            list.add(reserveProcess);
         }
         int result = -1;
         result = sdReserveProcessMapper.batchSdReserveProcess(list);

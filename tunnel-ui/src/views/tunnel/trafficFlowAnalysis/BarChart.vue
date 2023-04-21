@@ -61,19 +61,26 @@ export default {
     setOptions() {
       var myData = this.yearData;
       console.log(this.yearData,'this.yearData')
-      
+
       // X轴
       var xData = [];
       // Y轴
       var yData = [];
       // 分开
       if(myData.length == 0){
-          xData = ['测试数据1','测试数据2','测试数据3','测试数据4']
+          var date = new Date();
+          var year = date .getFullYear()-2;
+          //模拟数据
+          let dataInfo = [];
+          for (let index = 0; index < 5; index++) {
+              dataInfo.push((year+index)+"年");
+          }
+          xData = dataInfo;
           yData = [0,0,0,0]
       }else{
         for(var i=0;i<myData.length;i++){
           xData.push(myData[i].date + "年");
-          yData.push( Number(myData[i].byVehicelNum) / 2 );
+          yData.push( Number(myData[i].byVehicelNum));
         }
       }
 

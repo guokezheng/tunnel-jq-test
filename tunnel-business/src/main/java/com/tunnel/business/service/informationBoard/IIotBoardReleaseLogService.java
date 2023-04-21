@@ -61,4 +61,6 @@ public interface IIotBoardReleaseLogService {
     int deleteIotBoardReleaseLogById(Long id);
 
     List<IotBoardReleaseLog> getLastReleaseLogsByDeviceId(String deviceId);
+
+    List<IotBoardReleaseLog> selectIotBoardReleaseLogListToExport(IotBoardReleaseLog iotBoardReleaseLog);
 }

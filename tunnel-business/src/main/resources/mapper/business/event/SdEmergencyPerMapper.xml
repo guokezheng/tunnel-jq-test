@@ -8,6 +8,8 @@
         <result property="id" column="id"/>
         <result property="tunnelId" column="tunnel_id"/>
         <result property="tunnelName" column="tunnel_name"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="deptId" column="dept_id"/>
         <result property="userName" column="user_name"/>
         <result property="groupName" column="group_name"/>
         <result property="phone" column="phone"/>
@@ -18,17 +20,18 @@
     </resultMap>
 
     <sql id="selectSdEmergencyPerVo">
-        select a.id, a.tunnel_id,b.tunnel_name, a.user_name,a.group_name, a.phone, a.create_by,
-        a.update_time, a.create_time, a.update_by
-        from sd_emergency_per a left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        select a.id, a.tunnel_id,b.dept_name, a.user_name,a.group_name, a.phone, a.create_by,
+        a.update_time, a.create_time, a.update_by,a.dept_id
+        from sd_emergency_per a left join sys_dept b on a.dept_id = b.dept_id
     </sql>
 
     <select id="selectSdEmergencyPerList" parameterType="SdEmergencyPer" resultMap="SdEmergencyPerResult">
         <include refid="selectSdEmergencyPerVo"/>
         <where>
-            <if test="tunnelId != null  and tunnelId != ''">and a.tunnel_id = #{tunnelId}</if>
-            <if test="userName != null  and userName != ''">and a.user_name like concat('%', #{userName},'%')</if>
+            <if test="deptId != null  and deptId != ''">and a.dept_id = #{deptId}</if>
+            <if test="userName != null  and userName != ''">concat(a.user_name, b.dept_name) like concat('%', #{userName},'%')</if>
             <if test="groupName != null  and groupName != ''">and a.group_name like concat('%', #{groupName},'%')</if>
+            <if test="ids != null  and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET
                 (#{params.deptId},d.ancestors) ))
@@ -46,6 +49,7 @@
         insert into sd_emergency_per
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">tunnel_id,</if>
+            <if test="deptId != null">dept_id,</if>
             <if test="userName != null">user_name,</if>
             <if test="groupName != null">group_name,</if>
             <if test="phone != null">phone,</if>
@@ -56,6 +60,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="deptId != null">#{deptId},</if>
             <if test="userName != null">#{userName},</if>
             <if test="groupName != null">#{groupName},</if>
             <if test="phone != null">#{phone},</if>
@@ -71,6 +76,7 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
             <if test="userName != null">user_name = #{userName},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
             <if test="groupName != null">group_name = #{groupName},</if>
             <if test="phone != null">phone = #{phone},</if>
             <if test="createBy != null">create_by = #{createBy},</if>

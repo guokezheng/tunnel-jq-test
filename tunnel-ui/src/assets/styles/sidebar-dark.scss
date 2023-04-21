@@ -81,6 +81,20 @@
   // .el-input-number__increase{
   //   border-bottom: 1px solid #05AFE3 !important;
   // }
+  // 表格上方虚线
+  .tableTopHr{
+    height: 1px;
+    margin: 14px 0;
+    background-image: linear-gradient(
+      to right,
+      #CFD5E0 0%,
+      #CFD5E0 50%,
+      transparent 50%
+    );
+    background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
+    background-repeat: repeat-x;
+  }
+  
   #app {
     // .eventTypeButton{
     //   border: solid 1px #65bfff;
@@ -88,18 +102,36 @@
     //   background: #fff;
 
     // }
-    // 表格上方虚线
-    .tableTopHr{
-      height: 1px;
-      margin: 14px 0;
-      background-image: linear-gradient(
-        to right,
-        #CFD5E0 0%,
-        #CFD5E0 50%,
-        transparent 50%
-      );
-      background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
-      background-repeat: repeat-x;
+    // 巡检
+    .patrol{
+      .box-father{
+        .number,.text{
+          border:1px solid rgba(215, 215, 215, 1);
+        }
+      }
+    }
+    // 工作台底部切换视频 图表按钮
+    .footer{
+      .footChangeButton{
+        .el-radio-button__inner{
+          color:#fff;
+          border:solid 0.1px #0067B2;
+        }
+        .is-active .el-radio-button__inner{
+          border:none !important;
+          background: linear-gradient(90deg, rgba(0, 172, 237, 0.8), rgba(0, 121, 219, 0.8)) !important;
+        }
+        .is-active{
+          border:none !important;
+        }
+        .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+          box-shadow:none !important;
+          border:none;
+        }
+        .el-radio-button {
+          border: solid 0.1px #0067b2 !important;
+        }
+      }
     }
     .searchBox,.searchBoxTab{
       background-color: #fff;
@@ -660,6 +692,10 @@
       background: linear-gradient(2deg, #00070D, #005AA8) !important;
       border: 1px solid #00c8ff;
     }
+    .el-button--primary:hover{
+      color: #fff;
+      background: linear-gradient(2deg, #013663, #447bab) !important;
+    }
   }
   .zoomClass{
     .input-with-select{
@@ -870,6 +906,24 @@
       }
       .el-collapse-item__wrap{
         background: #012e51;
+      }
+    }
+    .pagination-container {
+      position: static !important;
+      margin-top: 0px !important;
+      .el-pagination__total,
+      .el-pagination__jump {
+        color: #fff !important;
+      }
+      .el-input__inner {
+        background: transparent !important;
+        color: #fff;
+      }
+      .el-pagination.is-background .btn-prev,
+      .el-pagination.is-background .btn-next,
+      .el-pagination.is-background .el-pager li {
+        background: transparent;
+        color: #fff;
       }
     }
     .lineClass{
@@ -1138,6 +1192,118 @@
   }
    // 操作日志
   .operationDiglog{
+    //  时间日期选择器
+    .el-picker-panel{
+      background: #012E51 !important;
+      color: #C0C4CC;
+      border: .0625rem solid #004375 !important;
+      border-radius: 0.1875rem !important;
+      // 时间选择器箭头
+      .el-picker-panel__icon-btn{
+        color:#bbb;
+      }
+      .el-date-table td.disabled div{
+        background: transparent;
+      }
+      .el-date-range-picker__content.is-left{
+        border-right: .0625rem solid #004375 !important;
+      }
+      .el-date-range-picker__time-header,.el-date-picker__time-header{
+        border-bottom: .0625rem solid #004375 !important;
+        .el-input__inner{
+          background: transparent;
+          color: #FFF;
+        }
+      }
+      .el-date-table td.in-range div:hover{
+        background-color:rgba($color: #0292BA, $alpha: 0.5)!important;
+      }
+      .el-date-table td.in-range div{
+        background-color:rgba($color: #0292BA, $alpha: 0.5)!important;
+      }
+      .el-date-table th{
+        color: #C0C4CC;
+        border-bottom:none !important;
+      }
+      .el-date-picker__header-label{
+        color: #C0C4CC;
+      }
+      .el-input__inner{
+        border:solid 1px #00518D;
+      }
+      .start-date div span,.end-date div span,.current div span{
+        color: #fff !important;
+      }
+      .available{
+        div span{
+          box-shadow: inset 0 0 0.1875rem 0 #6ff;
+          border: 0.0625rem solid #0292ac;
+          color: #00fff4;
+          border-radius: 50%;
+        }
+      }
+      .prev-month,.next-month,.disabled{
+        div span{
+          color: #999 !important;
+          box-shadow: inset 0 0 .1875rem 0 #999 !important;
+          border: 0.0625rem solid #666 !important;
+          border-radius: 50%;
+        }
+      }
+      .el-picker-panel__footer{
+        background: #012E51 !important;
+        border-top:.0625rem solid #004375 !important;
+      }
+      .el-button{
+        background: linear-gradient(172deg, #00ACED, #0079DB);
+        color: #fff;
+        border: solid 1px #00ACED;
+      }
+      .el-button--mini{
+        padding: 7px 15px !important;
+      }
+    }
+        // tab页下方横线
+    .el-tabs__nav-wrap::after{
+      background-color: #054D83;
+    }
+    // 表格隔行变色
+    .tableEvenRow{
+      background: #00467B !important;
+    }
+    .tableOddRow{
+      background: #004F8B !important;
+    }
+    .hover-row{
+      background: #0064B0 !important;
+    }
+    .el-date-editor .el-range-input{
+      background-color: transparent !important;
+    }
+    .grid-content .el-input__inner{
+      background: #012E51 !important;
+      border: solid 1px #65BFFF !important;
+      border-right: none !important;
+    }
+    .el-input__inner{
+      background: #012E51 !important;
+      border:solid 1px #5FA6F5
+    }
+    
+    .el-input-group__append{
+      background: transparent !important;
+      color: #00C8FF;
+      border: transparent;
+      border-left: transparent !important;
+      .el-button{
+        border-left:none !important;
+        background:#012E51 !important;
+        color: #00ADFF !important;
+      }
+    }
+    .grid-content .el-input--small .el-input__inner{
+      border-right:none !important;
+    }
     .el-loading-mask{
       background: transparent;
     }
@@ -1150,9 +1316,9 @@
       .el-table__body{
         width: calc(100% - 30px);
       }
-      tr{
-        color: white;
-      }
+      // tr{
+      //   color: white;
+      // }
       .el-table__header-wrapper th{
         background-color: #00ADFF !important;
         color:#fff !important;
@@ -1169,15 +1335,18 @@
 
     /* table滚动条的滑块*/
     .el-table__body-wrapper::-webkit-scrollbar-thumb {
-      background-color: #00c2ff;
+      background-color: #0090D8;
     }
     /* 鼠标悬浮*/
-    .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #0e2c53;
-    }
+    // .el-table--enable-row-hover .el-table__body tr:hover > td {
+    //   background-color: #0064B0;
+    // }
     .el-pagination.is-background .el-pager li:not(.disabled).active{
-      background-color: #00afe0 !important;
+      background-color: #39ADFF !important;
       color: white !important;
+    }
+    .el-button{
+      border-radius: 3px !important;
     }
   }
   .eventDiglog {
@@ -1334,7 +1503,7 @@
     border-radius: 5px;
 }
   .el-drawer__header{
-    background-color: #0182CA !important;
+    background-color: #012b4d !important;
     border-left: none !important;
     padding: 0 10px;
   }

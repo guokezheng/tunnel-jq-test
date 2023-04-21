@@ -1,7 +1,6 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
@@ -17,6 +16,7 @@ import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -29,9 +29,12 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdEquipmentTypeService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import com.tunnel.business.utils.work.CustomXWPFDocument;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,6 +73,11 @@ public class SdFaultListController extends BaseController {
     /*@PreAuthorize("@ss.hasPermi('system:list:list')")*/
     @GetMapping("/list")
     public TableDataInfo list(SdFaultList sdFaultList) {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdFaultList.setDeptId(deptId);
         startPage();
         List<SdFaultList> list = sdFaultListService.selectSdFaultListList(sdFaultList);
         return getDataTable(list);
@@ -82,9 +90,14 @@ public class SdFaultListController extends BaseController {
     @Log(title = "故障清单", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdFaultList sdFaultList) {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdFaultList.setDeptId(deptId);
         List<SdFaultList> list = sdFaultListService.selectSdFaultListList(sdFaultList);
         ExcelUtil<SdFaultList> util = new ExcelUtil<SdFaultList>(SdFaultList.class);
-        return util.exportExcel(list, "故障清单数据");
+        return util.exportExcel(list, "故障管理");
     }
 
     /**
@@ -114,7 +127,7 @@ public class SdFaultListController extends BaseController {
     /*@PreAuthorize("@ss.hasPermi('system:list:edit')")*/
     @Log(title = "故障清单", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody MultipartFile[] file, SdFaultList sdFaultList, @RequestParam("removeIds") Long[] removeIds) {
+    public AjaxResult edit(@RequestBody MultipartFile[] file, SdFaultList sdFaultList, @RequestParam("removeIds") String[] removeIds) {
         return toAjax(sdFaultListService.updateSdFaultList(file, sdFaultList, removeIds));
 
     }
@@ -236,15 +249,16 @@ public class SdFaultListController extends BaseController {
                 map.put("remark", i.getAndIncrement());
                 convertList.add(map);
             }
-            ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/faultReport.docx");
-            String resource = classPathResource.getUrl().getPath();
+           /* ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/faultReport.docx");
+            String resource = classPathResource.getUrl().getPath();*/
             //渲染表格
             HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
             //绑定数据
             Configure config = Configure.newBuilder().bind("detailList", policy).build();
             String finalFaultFxtime = faultFxtime;
             String finalFaultTbtime = faultTbtime;
-            XWPFTemplate template = XWPFTemplate.compile(resource, config).render(
+            XWPFDocument document = new CustomXWPFDocument(new ClassPathResource("exporttemplate/faultReport.docx").getInputStream());
+            XWPFTemplate template = XWPFTemplate.compile(document, config).render(
                 new HashMap<String, Object>() {{
                     put("faultBlock", convertList);
                     put("currentTime", DateUtils.getTime());

@@ -15,6 +15,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="statusDesc"    column="status_desc"    />
         <result property="accState"    column="acc_state"    />
         <result property="orgName"    column="dept_name"    />
+        <result property="ownerName"    column="owner_name"    />
+        <result property="vehicleModel"    column="vehicle_model"    />
+        <result property="etcStateDesc"    column="etc_state_desc"    />
+        <result property="etcTypeDesc"    column="etc_type_desc"    />
+        <result property="carAge"    column="car_age"    />
+        <result property="mileage"    column="mileage"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -40,17 +46,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ev.create_by,
             ev.create_time,
             ev.update_by,
-            ev.update_time
+            ev.update_time,
+            s.dict_label yxzt,
+            ev.owner_name,
+            ev.vehicle_model,
+            ev.etc_state_desc,
+            ev.etc_type_desc,
+            ev.car_age,
+            ev.mileage
         FROM
             sd_emergency_vehicle ev
         LEFT JOIN sys_dept d ON ev.org_id = d.dept_id
+        left join sys_dict_data s on ev.acc_state = s.dict_value and s.dict_value = 'sd_vehicle_run_type'
         WHERE
         1 = 1
         <if test="orgName != null and orgName != ''">
             AND ev.org_id = #{orgName}
         </if>
         <if test="cx != null  and cx != ''">
-            and ev.v_type in (${cx})
+            and FIND_IN_SET(ev.v_type, #{cx}) > 0
         </if>
         <if test="plateNumber != null  and plateNumber != ''">
             AND INSTR(ev.plate_number, #{plateNumber}) > 0
@@ -61,6 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="accState != null  and accState != ''">
             AND ev.acc_state = #{accState}
         </if>
+        <if test="ids != null  and ids != ''"> and FIND_IN_SET(ev.id,#{ids}) > 0</if>
     </select>
     
     <select id="selectSdEmergencyVehicleById" parameterType="Long" resultMap="SdEmergencyVehicleResult">
@@ -155,18 +170,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <insert id="insertSdEmergencyVehicles" parameterType="list">
-
         insert into sd_emergency_vehicle
         (
         id,org_id,plate_number,v_type,v_place,use_status,terminal_install,
-        status_desc,acc_state,create_time
+        status_desc,acc_state,owner_name,vehicle_model,etc_state_desc,
+        etc_type_desc,car_age,mileage,create_time
         )
         values
         <foreach collection="list" index="index" item="item" separator=",">
             (#{item.id},#{item.orgId},#{item.plateNumber},#{item.vType},#{item.vPlace},#{item.useStatus},#{item.terminalInstall},
-            #{item.statusDesc},#{item.accState},#{item.createTime})
+            #{item.statusDesc},#{item.accState},#{item.ownerName},#{item.vehicleModel},#{item.etcStateDesc},#{item.etcTypeDesc},
+            #{item.carAge},#{item.mileage},#{item.createTime})
         </foreach>
     </insert>
+
+    <update id="updateSdEmergencyVehicles" parameterType="list">
+        <foreach collection="list" index="index" item="item">
+            update sd_emergency_vehicle
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="orgId != null">org_id = #{item.orgId},</if>
+                <if test="plateNumber != null">plate_number = #{item.plateNumber},</if>
+                <if test="vType != null">v_type = #{item.vType},</if>
+                <if test="vPlace != null">v_place = #{item.vPlace},</if>
+                <if test="useStatus != null">use_status = #{item.useStatus},</if>
+                <if test="terminalInstall != null">terminal_install = #{item.terminalInstall},</if>
+                <if test="statusDesc != null">status_desc = #{item.statusDesc},</if>
+                <if test="ownerName != null">owner_name = #{item.ownerName},</if>
+                <if test="vehicleModel != null">vehicle_model = #{item.vehicleModel},</if>
+                <if test="etcStateDesc != null">etc_state_desc = #{item.etcStateDesc},</if>
+                <if test="etcTypeDesc != null">etc_type_desc = #{item.etcTypeDesc},</if>
+                <if test="carAge != null">car_age = #{item.carAge},</if>
+                <if test="mileage != null">mileage = #{item.mileage},</if>
+                <if test="createBy != null">create_by = #{item.createBy},</if>
+                <if test="createTime != null">create_time = #{item.createTime},</if>
+                <if test="updateBy != null">update_by = #{item.updateBy},</if>
+                <if test="updateTime != null">update_time = #{item.updateTime},</if>
+            </trim>
+            where id = #{item.id};
+        </foreach>
+    </update>
 
     <delete id="deleteSdVehicle">
         delete from sd_emergency_vehicle where 1=1

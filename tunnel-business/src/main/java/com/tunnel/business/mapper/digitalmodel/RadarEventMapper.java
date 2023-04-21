@@ -18,7 +18,7 @@ public interface RadarEventMapper {
     void insertWjEvent(List<SdEvent> list);
 
     void insertPic(@Param("eventId") String eventId, @Param("imgUrl") String imgUrl, @Param("imgType") String imgType,
-                   @Param("picName") String picName, @Param("createBy") String createBy);
+                   @Param("picName") String picName);
 
     void updateVideoById(@Param("eventId") Long eventId,@Param("eventVideoUrl") String eventVideoUrl);
 
@@ -37,7 +37,7 @@ public interface RadarEventMapper {
      * @param eventId
      * @return
      */
-    List<WjConfidence> selectConfidence(@Param("eventId") Long eventId);
+    String selectConfidence(@Param("eventId") Long eventId);
 
     /**
      * 修改事件置信度

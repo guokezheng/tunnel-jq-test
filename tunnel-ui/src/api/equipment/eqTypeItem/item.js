@@ -68,4 +68,36 @@ export function dataLogInfoLineList(query) {
   })
 }
 
+//查询设备列表
+export function dataDevicesLogInfoList(query) {
+  return request({
+    url: '/system/data/dataDevicesLogInfoList',
+    method: 'get',
+    params: query
+  })
+}
+
+
+
+
+// 导出数据报表Tab
+export function exportDatainforTab(query) {
+  return request({
+    url: '/system/data/exportDatainforTab',
+    method: 'get',
+    params: query
+  })
+}
+
+
+
+// 导出详情数据报表
+export function handleExportRecord(query) {
+  return request({
+    url: '/system/data/handleExportRecord',
+    method: 'get',
+    params: query
+  })
+}
+
 

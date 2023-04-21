@@ -157,6 +157,17 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
     }
 
     /**
+     * * 判断一个long是否非空
+     *
+     * @param object Object
+     * @return true：非空 false：空
+     */
+    public static boolean isLongNotNull(Long object)
+    {
+        return object== null || object.longValue() == 0;
+    }
+
+    /**
      * 去空格
      */
     public static String trim(String str)

@@ -468,7 +468,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有雷达监测感知数据数据项？').then(() => {
+      this.$modal.confirm('是否确认导出雷达监测感知数据数据项？').then(() => {
         this.exportLoading = true;
         return exportData(queryParams);
       }).then(response => {

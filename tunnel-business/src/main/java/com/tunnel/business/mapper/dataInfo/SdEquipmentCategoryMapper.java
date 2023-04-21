@@ -8,15 +8,15 @@ import java.util.Map;
 
 /**
  * 设备类型Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2023-02-06
  */
-public interface SdEquipmentCategoryMapper 
+public interface SdEquipmentCategoryMapper
 {
     /**
      * 查询设备类型
-     * 
+     *
      * @param id 设备类型主键
      * @return 设备类型
      */
@@ -24,7 +24,7 @@ public interface SdEquipmentCategoryMapper
 
     /**
      * 查询设备类型列表
-     * 
+     *
      * @param sdEquipmentCategory 设备类型
      * @return 设备类型集合
      */
@@ -32,7 +32,7 @@ public interface SdEquipmentCategoryMapper
 
     /**
      * 新增设备类型
-     * 
+     *
      * @param sdEquipmentCategory 设备类型
      * @return 结果
      */
@@ -40,7 +40,7 @@ public interface SdEquipmentCategoryMapper
 
     /**
      * 修改设备类型
-     * 
+     *
      * @param sdEquipmentCategory 设备类型
      * @return 结果
      */
@@ -48,7 +48,7 @@ public interface SdEquipmentCategoryMapper
 
     /**
      * 删除设备类型
-     * 
+     *
      * @param id 设备类型主键
      * @return 结果
      */
@@ -56,7 +56,7 @@ public interface SdEquipmentCategoryMapper
 
     /**
      * 批量删除设备类型
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */

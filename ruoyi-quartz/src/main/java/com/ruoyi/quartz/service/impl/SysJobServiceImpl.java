@@ -1,6 +1,7 @@
 package com.ruoyi.quartz.service.impl;
 
 import com.ruoyi.common.constant.ScheduleConstants;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -200,15 +201,20 @@ public class SysJobServiceImpl implements ISysJobService
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insertJob(SysJob job) throws SchedulerException, TaskException
+    public AjaxResult insertJob(SysJob job) throws SchedulerException, TaskException
     {
         //job.setStatus(ScheduleConstants.Status.PAUSE.getValue());
+        //校验是否存在
+        int count = jobMapper.checkJob(job);
+        if(count > 0){
+            return AjaxResult.error("定时任务名称已存在");
+        }
         int rows = jobMapper.insertJob(job);
         if (rows > 0)
         {
             ScheduleUtils.createScheduleJob(scheduler, job);
         }
-        return rows;
+        return AjaxResult.success();
     }
 
     /**
@@ -218,15 +224,20 @@ public class SysJobServiceImpl implements ISysJobService
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateJob(SysJob job) throws SchedulerException, TaskException
+    public AjaxResult updateJob(SysJob job) throws SchedulerException, TaskException
     {
+        //校验是否存在
+        int count = jobMapper.checkJob(job);
+        if(count > 0){
+            return AjaxResult.error("定时任务名称已存在");
+        }
         SysJob properties = selectJobById(job.getJobId());
         int rows = jobMapper.updateJob(job);
         if (rows > 0)
         {
             updateSchedulerJob(job, properties.getJobGroup());
         }
-        return rows;
+        return AjaxResult.success();
     }
 
     /**
@@ -302,7 +313,7 @@ public class SysJobServiceImpl implements ISysJobService
                 // 调用目标字符串
                 job.setInvokeTarget("strategyTask.strategyParams('" + guid + "')");
                 // corn表达式
-                String cronDate = CronUtil.CronDate(time);
+                String cronDate = CronUtil.DateConvertCron(time);
                 job.setCronExpression(cronDate);
                 // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
                 job.setMisfirePolicy("1");

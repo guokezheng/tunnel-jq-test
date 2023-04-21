@@ -40,6 +40,13 @@ public interface SdOperationLogMapper
     public int insertSdOperationLog(SdOperationLog sdOperationLog);
 
     /**
+     * 批量新增
+     * @param list
+     * @return
+     */
+    int insertBatchSdOperationLog(@Param("list") List<SdOperationLog> list);
+
+    /**
      * 修改操作日志
      *
      * @param sdOperationLog 操作日志
@@ -84,5 +91,13 @@ public interface SdOperationLogMapper
      * @param end
      * @return
      */
-    List<SdOperationLog> selectAppOperationLogList(@Param("start") String start, @Param("end") String end, @Param("deptId") String deptId);
+    
+
+    int selectSdOperationLogCountList(SdOperationLog sdOperationLog);
+
+    List<String> getTunnelArrayByDeptId(@Param("deptId")String deptId);
+
+    int selectAppOperationLogCountList(@Param("start")String start,@Param("end")String end, @Param("tunnelArray")List<String> tunnelArray);
+
+    List<SdOperationLog> selectAppOperationLogList(SdOperationLog sdOperationLog);
 }

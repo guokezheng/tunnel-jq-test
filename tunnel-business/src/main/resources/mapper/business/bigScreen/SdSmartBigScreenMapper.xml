@@ -134,53 +134,13 @@
         FROM
             (
             SELECT
-                @cdate := date_add( @cdate, INTERVAL - 1 DAY ) AS DATE
+                @adate := date_add( @cdate, INTERVAL - 1 DAY ) AS DATE
             FROM
                 ( SELECT @cdate := date_add( CURDATE(), INTERVAL + 1 DAY ) FROM sd_event ) d1
             WHERE
-                YEAR ( @cdate )= YEAR (CURDATE())
-                AND MONTH ( @cdate )= MONTH (CURDATE())
-                AND DAY ( @cdate ) > 1
-            ORDER BY
-                DATE
-            ) date_c
-            LEFT JOIN (
-                SELECT
-                    COUNT(*) AS num,
-                    DATE ( se.event_time ) AS t
-                FROM
-                    sd_event se
-                LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
-                AND sdd.dict_type = #{prevControlType}
-                WHERE
-                    YEAR ( se.event_time )= YEAR (CURDATE())
-                    AND MONTH ( se.event_time )= MONTH (CURDATE())
-                    AND sdd.dict_value = #{dictValue}
-                    AND et.is_usable = '1'
-                    <if test="tunnelId != null and tunnelId != ''">
-                        AND se.tunnel_id = #{tunnelId}
-                    </if>
-                GROUP BY
-                DATE ( se.event_time )
-            ) tab ON DATE ( t )= DATE
-        ORDER BY
-            DATE ASC;
-    </select>
-
-    <select id="getWarningList" resultType="int" parameterType="java.lang.String">
-        SELECT
-            IFNULL( tab.num, 0 ) AS eventNumber
-        FROM
-            (
-            SELECT
-                @cdate := date_add( @cdate, INTERVAL - 1 DAY ) AS DATE
-            FROM
-                ( SELECT @cdate := date_add( CURDATE(), INTERVAL + 1 DAY ) FROM sd_event ) d1
-            WHERE
-                YEAR ( @cdate )= YEAR (CURDATE())
-                AND MONTH ( @cdate )= MONTH (CURDATE())
-                AND DAY ( @cdate ) > 1
+                YEAR ( @adate )= YEAR (CURDATE())
+                AND MONTH ( @adate )= MONTH (CURDATE())
+                AND DAY ( @adate ) > 1
             ORDER BY
                 DATE
             ) date_c
@@ -214,13 +174,13 @@
         FROM
             (
             SELECT
-                @cdate := date_add( @cdate, INTERVAL - 1 DAY ) AS DATE
+                @adate := date_add( @cdate, INTERVAL - 1 DAY ) AS DATE
             FROM
                 ( SELECT @cdate := date_add( CURDATE(), INTERVAL + 1 DAY ) FROM sd_event ) d1
             WHERE
-                YEAR ( @cdate )= YEAR (CURDATE())
-                AND MONTH ( @cdate )= MONTH (CURDATE())
-                AND DAY ( @cdate ) > 1
+                YEAR ( @adate )= YEAR (CURDATE())
+                AND MONTH ( @adate )= MONTH (CURDATE())
+                AND DAY ( @adate ) > 1
             ORDER BY
                 DATE
             ) date_c
@@ -537,7 +497,7 @@
                   AND vd.travel_type = '1'
                   AND vd.plate_number != ''
                   AND vd.plate_number IS NOT NULL
-                  AND DATE_FORMAT( vd.start_time, '%Y-%m-%d' ) = DATE_FORMAT( '2023-02-15', '%Y-%m-%d' )
+                  AND DATE_FORMAT( vd.start_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
                   <if test="tunnelId != null and tunnelId != ''">
                       AND vd.tunnel_id = #{tunnelId}
                   </if>

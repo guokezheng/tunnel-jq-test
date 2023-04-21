@@ -26,10 +26,12 @@ import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
+import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.tunnel.platform.service.event.ISdStrategyService;
@@ -46,6 +48,7 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -98,7 +101,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Autowired
     private SdEventHandleMapper sdEventHandleMapper;
 
+    @Autowired
+    private SdEventMapper sdEventMapper;
 
+    @Autowired
+    private SdJoinReserveHandleMapper joinMapper;
 
     /**
      * 查询控制策略
@@ -108,7 +115,16 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      */
     @Override
     public SdStrategy selectSdStrategyById(Long id) {
-        return sdStrategyMapper.selectSdStrategyById(id);
+
+        SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(id);
+        if(StringUtils.isNotBlank(sdStrategy.getSchedulerTime())){
+            sdStrategy.setExecDate(CronUtil.CronConvertDate(sdStrategy.getSchedulerTime()));
+        }
+        if(StringUtils.isNotBlank(sdStrategy.getSchedulerTime())) {
+            sdStrategy.setExecTime(CronUtil.CronConvertDateTime(sdStrategy.getSchedulerTime()));
+        }
+
+        return sdStrategy;
     }
 
     /**
@@ -126,17 +142,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @param controlTime
      * @return
      */
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateControlTime(Long strategyId, String controlTime) {
+        String emg = "数据处理异常";
         String[] timeParam = controlTime.split("-");
         SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(strategyId);
         strategy.setTimerOpen(timeParam[0]);
         strategy.setTimerClose(timeParam[1]);
         String[] relationId = strategy.getJobRelationId().split(",");
         List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(strategyId);
-        if(rlList.size() < 2){
-            return 0;
+        if(rlList.size() < 1){
+            throw new RuntimeException("未找到策略关联的设备信息");
         }
         //排序保证修改顺序
         //rlList = rlList.stream().sorted((Comparator.comparing(SdStrategyRl::getId))).collect(Collectors.toList());
@@ -156,16 +174,22 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (int i=0;i<relationId.length;i++) {
                 Long jobId = Long.valueOf(relationId[i]);
                 SysJob job = sysJobService.selectJobById(jobId);
-                if(openRl.contains(job.getInvokeTarget().split("'")[1])){
-                    job.setCronExpression(CronUtil.CronDate(timeParam[0]));
+                if(com.ruoyi.common.utils.StringUtils.isNull(job)){
+                    emg = "未找到相应的定时任务";
+                    throw new RuntimeException("未找到相应的定时任务");
+                }
+                //  0 偶数开启  奇数关闭
+                if(i%2 == 0){
+            /*    if(openRl.contains(job.getInvokeTarget().split("'")[1])){*/
+                    job.setCronExpression(CronUtil.DateConvertCron(strategy.getTimerOpen()));
                 }else{
-                    job.setCronExpression(CronUtil.CronDate(timeParam[1]));
+                    job.setCronExpression(CronUtil.DateConvertCron(strategy.getTimerClose()));
                 }
                 sysJobService.updateJob(job);
             }
             sdStrategyMapper.updateSdStrategyById(strategy);
         } catch (Exception e) {
-            throw new RuntimeException("数据处理异常");
+            throw new RuntimeException(emg);
         }
         return 1;
     }
@@ -274,6 +298,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 sList.add(list.get(i).getStrategyInfo());
             }
             List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlList(rl);
+            //分时控制策略信息
+            String fsControlData = "";
             //策略关联表信息
             for (int j = 0; j < rlList.size(); j++) {
                 String eqTypeId = rlList.get(j).getEqTypeId();
@@ -292,15 +318,58 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
                     continue;
                 }
+
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
                 List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
                 if(stateObject.size()<1){
                     continue;
                 }
-                String stateName = stateObject.get(0).getStateName();//设备状态名称
-                sList.add(typeName + "控制执行：" + stateName + "；");
-            }
+                //设备状态名称
+                String stateName = stateObject.get(0).getStateName();
+                //查询分是控制关闭指令
+                List<SdEquipmentState> endObject = new ArrayList<>();
+                if(rlList.get(j).getEndState() != null && !"".equals(rlList.get(j).getEndState())){
+                    state.setDeviceState(rlList.get(j).getEndState());
+                    endObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
 
+                    fsControlData = typeName + "控制执行：" + "起始指令：" + stateName ;
+
+                    // 附加数值的命令
+                    if(rlList.get(j).getState().equals("1") && rlList.get(j).getStateNum() != null && !"0".equals(rlList.get(j).getStateNum())){
+                        fsControlData += "，数值: "+rlList.get(j).getStateNum();
+                    }
+
+                    fsControlData +="；";
+                    fsControlData +="结束指令：" + endObject.get(0).getStateName();
+
+                    // 附加数值的命令
+                    if(rlList.get(j).getEndState().equals("1") && rlList.get(j).getEndStateNum() != null && !"0".equals(rlList.get(j).getEndStateNum())){
+
+                        fsControlData += "，数值: "+rlList.get(j).getEndStateNum();
+
+                    }
+                    fsControlData +="；";
+
+                    sList.add(fsControlData);
+                }else{
+
+                    String controlData = typeName + "控制执行：" + stateName + "；";
+                    // 附加数值的命令
+                    if(rlList.get(j).getStateNum() != null && !"0".equals(rlList.get(j).getStateNum())){
+
+                        controlData = typeName + "控制执行：" + stateName + "，数值："+rlList.get(j).getStateNum()+"；";
+                    }
+
+                    sList.add(controlData);
+                }
+            /*    //1：日常策略  3：分时控制
+                if("1".equals(list.get(i).getStrategyGroup()) && "3".equals(list.get(i).getStrategyType()) && list.get(i).getId() == rlList.get(j).getStrategyId()){
+                    sList.add(fsControlData);
+                }else {
+                    sList.add(typeName + "控制执行：" + stateName + "；");
+                }*/
+            }
+            list.get(i).setStrategyInfo(StringUtils.join(sList,""));
             list.get(i).setSlist(sList);
         }
         return list;
@@ -352,13 +421,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int deleteSdStrategyById(Long id) {
         // 删除策略之前要先判断策略是否已经在预案管理中被引用
         SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(id);
-        if (!ObjectUtils.isEmpty(sdStrategy)) {
-            List<Map<String, Object>> maps = sdStrategyMapper.checkStrategyIfExist(id);
-            if (maps.size() > 0) {
-                throw new RuntimeException("控制策略已经在预案管理中引用，不可删除!");
+        if (!ObjectUtils.isEmpty(sdStrategy) && "0".equals(sdStrategy.getStrategyType()) && "2".equals(sdStrategy.getStrategyGroup())) {
+            int count = sdStrategyMapper.checkStrategyIfExist(id);
+            if (count > 0) {
+                throw new RuntimeException("控制策略已经在安全预警中引用，不可删除!");
             }
-        } else {
-            throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
         }
         //删除定时任务
         if(!"0".equals(sdStrategy.getStrategyType())){
@@ -392,13 +459,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             Long id = ids[i];
             sdStrategy.setId(id);
             List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(sdStrategy);
-            if (sdStrategies.size() > 0 && sdStrategies.size() == 1) {
-                List<Map<String, Object>> maps = sdStrategyMapper.checkStrategyIfExist(id);
-                if (maps.size() > 0) {
-                    throw new RuntimeException("控制策略已经在预案管理中引用，不可删除!");
+            if (!ObjectUtils.isEmpty(sdStrategy) && "0".equals(sdStrategy.getStrategyType()) && "2".equals(sdStrategy.getStrategyGroup())) {
+                int count = sdStrategyMapper.checkStrategyIfExist(id);
+                if (count > 0) {
+                    throw new RuntimeException("控制策略已经在安全预警中引用，不可删除!");
                 }
-            } else {
-                throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
             }
         }
         int result = sdStrategyMapper.deleteSdStrategyByIds(ids);
@@ -436,12 +501,33 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int addStrategysInfo(SdStrategyModel model) {
-        // 判断是否符合规范并返回策略
         SdStrategy sty = conditionalJudgement(model);
+        // 判断是否符合规范并返回策略
+        //参数1：预警策略  参数2：事件触发  参数3：自动执行
+        if("2".equals(model.getStrategyGroup()) && "0".equals(model.getStrategyType()) && "1".equals(model.getIsAutomatic())){
+            int checkCount = checkAuto(sty);
+            if(checkCount > 0){
+                throw new RuntimeException("已存在策略信息，请勿重复添加！");
+            }
+        }
+        //校验名称是否存在
+        int strNameCount = sdStrategyMapper.checkStrName(sty);
+        if(strNameCount > 0){
+            throw new RuntimeException("策略名称已存在，请重新输入后保存");
+        }
+
+        // 定时策略 格式处理
+        // 根据 客户端 填写的 日期 和时间  转换为 cron表达式
+        if(model.getStrategyType().equals("1")){
+
+            String schedulerTime = CronUtil.DateConvertCron(model.getExecTime());
+            if(null != model.getExecDate() && "" != model.getExecDate()){
+                schedulerTime = CronUtil.DateTimeConvertCron(model.getExecDate(),model.getExecTime());
+            }
+            sty.setSchedulerTime(schedulerTime);
+        }
+
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
-//        if(insetStrResult < 1){
-//            throw new RuntimeException("数据保存异常");
-//        }
         int result = saveRelation(model, sty);
         return result;
     }
@@ -472,6 +558,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int updateSdStrategyInfo(SdStrategyModel model) {
         //判断输入的值是否符合规范并返回策略信息
         SdStrategy sty = conditionalJudgement(model);
+        //参数1：预警策略  参数2：事件触发  参数3：自动执行
+        if("2".equals(model.getStrategyGroup()) && "0".equals(model.getStrategyType()) && "1".equals(model.getIsAutomatic())){
+            int checkCount = checkAuto(sty);
+            if(checkCount > 0){
+                throw new RuntimeException("已存在策略信息，请勿重复添加！");
+            }
+        }
+        //校验名称是否存在
+        int strNameCount = sdStrategyMapper.checkStrName(sty);
+        if(strNameCount > 0){
+            throw new RuntimeException("策略名称已存在，请重新输入后保存");
+        }
         String strategyType = model.getStrategyType();
         //更新策略 主表
         int updatePrimary = sdStrategyMapper.updateSdStrategyById(sty);
@@ -488,6 +586,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //删除触发器关联设备
             sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(model.getTriggers().getId());
         }
+
+        // 定时策略 格式处理
+        // 根据 客户端 填写的 日期 和时间  转换为 cron表达式
+        if(model.getStrategyType().equals("1")){
+
+            String schedulerTime = CronUtil.DateConvertCron(model.getExecTime());
+            if(null != model.getExecDate()){
+                schedulerTime = CronUtil.DateTimeConvertCron(model.getExecDate(),model.getExecTime());
+            }
+            sty.setSchedulerTime(schedulerTime);
+
+        }
+
         //重新插入关系表及定时任务信息
         int relation = saveRelation(model, sty);
         return relation;
@@ -629,10 +740,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         //策略类型
         sty.setId(model.getId());
         sty.setStrategyType(model.getStrategyType());
-        sty.setStrategyState("1");
+      //  sty.setStrategyState("1");
+        sty.setStrategyState(model.getStrategyState());
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
         sty.setWarningId(model.getWarningId());
+        sty.setIsAutomatic(model.getIsAutomatic());
         if(model.getEventType()!=null){
             sty.setEventType(model.getEventType());
         }
@@ -663,6 +776,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             SdStrategyRl sdStrategyRl = new SdStrategyRl();
             sdStrategyRl.setEquipments(equipments);
             sdStrategyRl.setState(state);
+            if(map.get("stateNum")!=null){
+                sdStrategyRl.setStateNum(map.get("stateNum").toString());
+            }
             if(map.get("effectiveTime")!=null){
                 sdStrategyRl.setEffectiveTime(map.get("effectiveTime").toString());
             }
@@ -694,9 +810,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(map.get("state") == null || map.get("state").equals("")){
                 throw new RuntimeException("请填写完整策略信息！");
             }
+
             String eqState = (String) map.get("state");
             SdStrategyRl rl = new SdStrategyRl();
+            if(map.get("stateNum")!=null){
+                rl.setStateNum(map.get("stateNum").toString());
+            }
             rl.setEqTypeId(equipmentTypeId);
+            // 设备未设置执行时间，则取策略执行时间
+            if(null == rl.getControlTime() || "" == rl.getControlTime()){
+                rl.setControlTime(model.getExecTime());
+            }
+
             rl.setEquipments(equipments);
             rl.setState(eqState);
             rl.setStrategyId(sty.getId());
@@ -712,26 +837,31 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 //                e.printStackTrace();
 //            }
             sdStrategyRlMapper.insertSdStrategyRl(rl);
-            Long refId = rl.getId();
-            //新增定时任务
-            SysJob job = new SysJob();
-            // 定时任务名称
-            job.setJobName(model.getStrategyName());
-            // 调用目标字符串
-            job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
-            job.setCronExpression(sty.getSchedulerTime());
-            // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
-            job.setMisfirePolicy("1");
-            // 是否并发执行（0允许 1禁止）
-            job.setConcurrent("0");
-            // 状态（0正常 1暂停）
-            job.setStatus("1");
             try{
+                Long refId = rl.getId();
+                //新增定时任务
+                SysJob job = new SysJob();
+                // 定时任务名称
+                job.setJobName(model.getStrategyName() + "-" + refId);
+                // 调用目标字符串
+                job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+                job.setCronExpression(sty.getSchedulerTime());
+                // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
+                job.setMisfirePolicy("1");
+                // 是否并发执行（0允许 1禁止）
+                job.setConcurrent("0");
+                if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+                    job.setStatus("0");
+                }else{
+                    // 状态（0正常 1暂停）
+                    job.setStatus("1");
+                }
                 sysJobService.insertJob(job);
+                System.out.println(job.getJobId());
+                jobIdList.add(job.getJobId().toString());
             }catch (Exception ex){
                 throw new RuntimeException("新增数据失败！");
             }
-            jobIdList.add(job.getJobId().toString());
         }
         String jobIdStr = jobIdList.stream().collect(Collectors.joining(","));
         sty.setJobRelationId(jobIdStr);
@@ -754,66 +884,95 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             List<String> value = (List<String>) map.get("equipments");
             String equipments = StringUtils.join(value,",");
             String equipmentTypeId = map.get("equipmentTypeId") + "";
-            if(map.get("openState") == null || map.get("closeState") == null){
-                throw new RuntimeException("请填写完整策略信息！");
+
+            String state = null;
+            String openState = null;
+            String closeState = null;
+
+            if(equipmentTypeId.equals("16") || equipmentTypeId.equals("36")){
+                if (null != map.get("state") && StringUtils.isNotBlank(map.get("state").toString())) {
+                    state = map.get("state").toString();
+                }else {
+                    throw new RuntimeException("请填写完整策略信息！");
+                }
+            }else{
+
+                if ((null != map.get("openState") &&  StringUtils.isNotBlank(map.get("openState").toString()) ) &&
+                        (null != map.get("closeState") &&  StringUtils.isNotBlank(map.get("closeState").toString()))) {
+                    openState = map.get("openState").toString();
+                    closeState = map.get("closeState").toString();
+                }else{
+                    throw new RuntimeException("请填写完整策略信息！");
+                }
             }
-            String openState = (String) map.get("openState");
-            String closeState = (String) map.get("closeState");
+
             try{
                 SdStrategyRl openRlData = new SdStrategyRl();
                 openRlData.setEqTypeId(equipmentTypeId);
                 openRlData.setEquipments(equipments);
-                openRlData.setState(openState);
-                openRlData.setEndState(closeState);
+                if(equipmentTypeId.equals("16") || equipmentTypeId.equals("36")){
+                    openRlData.setState(state);
+                }else{
+                    openRlData.setState(openState);
+                    openRlData.setEndState(closeState);
+                }
+                if(map.get("stateNum")!=null){
+                    openRlData.setStateNum(map.get("stateNum").toString());
+                }
+                if(map.get("endStateNum")!=null){
+                    openRlData.setEndStateNum(map.get("endStateNum").toString());
+                }
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);
+
                 sdStrategyRlMapper.insertSdStrategyRl(openRlData);
                 refId = openRlData.getId();
                 //新增定时任务
                 try {
                     SysJob job = new SysJob();
                     // 定时任务名称
-                    job.setJobName(model.getStrategyName());
+                    job.setJobName(model.getStrategyName()+ "-" + refId + "-执行");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+                    job.setInvokeTarget("strategyTask.strategyParamsPlus('" + refId + "','1')");
                     // corn表达式
-                    String cronDate = CronUtil.CronDate(startTime);
+                    String cronDate = CronUtil.DateConvertCron(startTime);
                     job.setCronExpression(cronDate);
                     // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
                     job.setMisfirePolicy("1");
                     // 是否并发执行（0允许 1禁止）
                     job.setConcurrent("0");
-                    // 状态（0正常 1暂停）
-                    job.setStatus("1");
+                    if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+                        job.setStatus("0");
+                    }else{
+                        // 状态（0正常 1暂停）
+                        job.setStatus("1");
+                    }
                     sysJobService.insertJob(job);
                     jobIdList.add(job.getJobId().toString());
                 } catch (Exception e) {
                     throw new RuntimeException("新增数据失败！");
                 }
-                SdStrategyRl endRlData = new SdStrategyRl();
-                endRlData.setEqTypeId(equipmentTypeId);
-                endRlData.setEquipments(equipments);
-                endRlData.setStrategyId(sty.getId());
-                endRlData.setState(closeState);
-                endRlData.setControlTime(endTime);
-                sdStrategyRlMapper.insertSdStrategyRl(endRlData);
-                refId = endRlData.getId();
+
                 //新增定时任务
                 try {
                     SysJob job = new SysJob();
                     // 定时任务名称
-                    job.setJobName(model.getStrategyName());
+                    job.setJobName(model.getStrategyName()+ "-" + refId + "-恢复");
                     // 调用目标字符串
-                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+                    job.setInvokeTarget("strategyTask.strategyParamsPlus('" + refId + "','2')");
                     // corn表达式
-                    String cronDate = CronUtil.CronDate(endTime);
+                    String cronDate = CronUtil.DateConvertCron(endTime);
                     job.setCronExpression(cronDate);
                     // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
                     job.setMisfirePolicy("1");
                     // 是否并发执行（0允许 1禁止）
                     job.setConcurrent("0");
-                    // 状态（0正常 1暂停）
-                    job.setStatus("1");
+                    if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+                        job.setStatus("0");
+                    }else{
+                        // 状态（0正常 1暂停）
+                        job.setStatus("1");
+                    }
                     sysJobService.insertJob(job);
                     jobIdList.add(job.getJobId().toString());
                 } catch (Exception e) {
@@ -882,8 +1041,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         job.setMisfirePolicy("1");
         // 是否并发执行（0允许 1禁止）
         job.setConcurrent("0");
-        // 状态（0正常 1暂停）
-        job.setStatus("1");
+        if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+            job.setStatus("0");
+        }else{
+            // 状态（0正常 1暂停）
+            job.setStatus("1");
+        }
         try{
             sysJobService.insertJob(job);
         }catch (Exception ex){
@@ -1077,38 +1240,109 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     }
 
     @Override
-    public int implementPlan(Long planId,Long eventId){
-        List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(planId);
-        Map flowParam = new HashMap();
-        flowParam.put("eventId",eventId);
-        int issueResult = 0;
-        for(SdReserveProcess process:processList){
-            SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
-            flowParam.put("content",process.getProcessName());
-            issueResult = issuedDevice(rl,eventId,"4");
-            if(issueResult>0){
-                sdEventFlowService.savePlanProcessFlow(flowParam);
-                //更新事件处置记录表状态
-                updateHandleState(process.getId(),eventId);
+    public AjaxResult implementPlan(String planId,Long eventId){
+        //储存失败的数据
+        List<String> errorList = new ArrayList();
+        //将id拆分
+        List<String> list = Arrays.asList(planId.split(","));
+        int issueResult = 1;
+        for(String processId : list){
+            //排除已经执行过的流程
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventId(eventId);
+            sdEventHandle.setProcessId(Long.valueOf(processId));
+            //0：未完成 1：已完成
+            sdEventHandle.setEventState("1");
+            if(sdEventHandleMapper.selectSdEventHandleList(sdEventHandle).size() > 0){
+                continue;
+            }
+            int count = implementProcess(Long.valueOf(processId),eventId);
+            if(count == 0){
+                //查询失败的流程名称
+                SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(Long.valueOf(processId));
+                errorList.add(joinReserveHandle.getProcessName());
             }
         }
-        return issueResult;
+        if(errorList.size() == 0){
+            return AjaxResult.success("执行成功");
+        }if(list.size() == errorList.size()){
+            return AjaxResult.error("执行失败");
+        }else {
+            return AjaxResult.success("执行成功,部分流程执行失败[" + StringUtils.join(errorList,",") + "]");
+        }
     }
 
     @Override
     public int implementProcess(Long processId,Long eventId) {
-        SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
-        SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
-        Map flowParam = new HashMap();
-        flowParam.put("eventId",eventId);
-        flowParam.put("content",process.getProcessName());
+        //如果不是指定设备则查询相关设备
+        SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(processId);
+        SdStrategyRl rl = new SdStrategyRl();
+        if(joinReserveHandle.getEquipments() == null || "".equals(joinReserveHandle.getEquipments())){
+            //更新事件处置记录表状态
+            return updateHandleState(processId,eventId);
+        }
+        rl.setEquipments(joinReserveHandle.getEquipments());
+        rl.setEqTypeId(joinReserveHandle.getEqTypeId().toString());
+        rl.setState(joinReserveHandle.getState());
         int issueResult = issuedDevice(rl,eventId,"4");
+        String deviceExecutionState = getDeviceExecutionState(processId);
         if(issueResult>0){
-            sdEventFlowService.savePlanProcessFlow(flowParam);
+            //保存处置记录
+            setEventFlowData(eventId,joinReserveHandle.getProcessName() + "：" + deviceExecutionState + "【成功】");
             //更新事件处置记录表状态
             updateHandleState(processId,eventId);
+            SdEvent sdEvent = new SdEvent();
+            sdEvent.setUpdateTime(DateUtils.getNowDate());
+            sdEvent.setId(eventId);
+            sdEventMapper.updateSdEvent(sdEvent);
+        }else {
+            setEventFlowData(eventId,joinReserveHandle.getProcessName() + "：" + deviceExecutionState + "【失败】");
         }
         return issueResult;
+    }
+
+    /**
+     * 获取状态、模板、文件名称
+     * @param processId
+     * @return
+     */
+    public String getDeviceExecutionState(Long processId){
+        //状态、模板、文件名称
+        String eqStateData = "";
+        SdJoinReserveHandleMapper joinMapper = SpringUtils.getBean(SdJoinReserveHandleMapper.class);
+        SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(processId);
+        //设备类型
+        Long eqType = joinReserveHandle.getEqTypeId();
+        SdEventMapper sdEventMapper = SpringUtils.getBean(SdEventMapper.class);
+        if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
+            //查询情报板
+            //String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
+            eqStateData = sdVmsContent.get("content").toString().concat("    ------");
+        }else if(eqType == DevicesTypeEnum.LS.getCode()){
+            //截取广播文件名称
+            //String lsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
+            List<String> list = Arrays.asList(joinReserveHandle.getState().split("\\\\"));
+            eqStateData = list.get(list.size() - 1).concat("    ------");
+        }else {
+            //查询普通设备状态
+            List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(joinReserveHandle.getId());
+            eqStateData = maps.get(0).get("stateName").toString().concat("    ------");
+        }
+        return eqStateData;
+    }
+
+    /**
+     * 保存处置记录
+     * @param eventId
+     * @param content
+     * @return
+     */
+    public void setEventFlowData(Long eventId, String content){
+        Map flowParam = new HashMap();
+        flowParam.put("eventId",eventId);
+        flowParam.put("content",content);
+        sdEventFlowService.savePlanProcessFlow(flowParam);
     }
 
     @Override
@@ -1132,18 +1366,42 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         return count;
     }
 
+    @Override
+    public AjaxResult getStrategyData(SdStrategy strategy) {
+        List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(strategy);
+        return AjaxResult.success(sdStrategies);
+    }
+
     /**
      * 更新事件处置记录表状态
      * @param processId
      * @param eventId
      */
-    public void updateHandleState(Long processId,Long eventId){
+    public int updateHandleState(Long processId,Long eventId){
         SdEventHandle sdEventHandle = new SdEventHandle();
         sdEventHandle.setEventId(eventId);
         sdEventHandle.setProcessId(processId);
         //0:未完成 1:已完成'
         sdEventHandle.setEventState("1");
         sdEventHandle.setUpdateTime(DateUtils.getNowDate());
-        sdEventHandleMapper.updateHandleState(sdEventHandle);
+        return sdEventHandleMapper.updateHandleState(sdEventHandle);
+    }
+
+    /**
+     * 预警策略-事件触发-自动时校验
+     * @param sty
+     * @return
+     */
+    public int checkAuto(SdStrategy sty){
+        SdStrategy strategy = new SdStrategy();
+        if(sty.getId() != null){
+            strategy.setId(sty.getId());
+        }
+        strategy.setTunnelId(sty.getTunnelId());
+        strategy.setDirection(sty.getDirection());
+        strategy.setStrategyType(sty.getStrategyType());
+        strategy.setEventType(sty.getEventType());
+        strategy.setIsAutomatic(sty.getIsAutomatic());
+        return sdStrategyMapper.checkStrategy(strategy);
     }
 }

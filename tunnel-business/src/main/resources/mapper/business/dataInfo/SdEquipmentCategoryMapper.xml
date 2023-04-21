@@ -28,7 +28,7 @@
             <if test="isControl != null  and isControl != ''">
                 and is_control = #{isControl}
             </if>
-        </where>
+        </where> order by create_time desc
     </select>
 
     <select id="selectSdEquipmentCategoryById" parameterType="Long" resultMap="SdEquipmentCategoryResult">

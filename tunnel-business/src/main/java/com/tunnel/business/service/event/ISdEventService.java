@@ -2,10 +2,14 @@ package com.tunnel.business.service.event;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.event.SdEventHandle;
 import com.tunnel.business.domain.event.SdReservePlan;
+import com.tunnel.business.domain.event.SdReserveProcess;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -132,13 +136,6 @@ public interface ISdEventService {
     AjaxResult getHandle(SdEvent sdEvent);
 
     /**
-     * 主动安全-复核-处置获取预案流程
-     * @param sdEvent
-     * @return
-     */
-    AjaxResult getSafetyHandle(SdEvent sdEvent);
-
-    /**
      * 应急调度关联策略
      * @param sdReservePlan
      * @return
@@ -165,4 +162,67 @@ public interface ISdEventService {
      * @return
      */
     AjaxResult getEntranceExitVideo(SdEvent sdEvent);
+
+    /**
+     * 查看事件详情
+     *
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getEventDetail(SdEvent sdEvent);
+
+    /**
+     * 华为修改事件接口
+     * @param sdEvent
+     * @return
+     */
+    int updateSdEventHw(SdEvent sdEvent);
+
+    /**
+     * 事件详情导出
+     * @param sdEvent
+     */
+    void detailExport(HttpServletResponse response, SdEvent sdEvent);
+
+    /**
+     * 警情升级返现
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getSituationUpgrade(SdEvent sdEvent);
+
+    /**
+     * 应急调度-处置设备详情（单条）
+     * @param sdReserveProcess
+     * @return
+     */
+    AjaxResult getManagementDevice(SdReserveProcess sdReserveProcess);
+
+    /**
+     * 应急调度-处置设备详情（阶段）
+     * @param sdEventHandle
+     * @return
+     */
+    AjaxResult getAllManagementDevices(SdEventHandle sdEventHandle);
+
+    /**
+     * 修改警情升级
+     * @param sdEvent
+     * @return
+     */
+    int updateSituationUpgrade(SdEvent sdEvent);
+
+    /**
+     * 查询事件等级以及预案名称
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getEventInif(SdEvent sdEvent);
+
+    /**
+     * 查看所选预案或策略的设备详情
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult examineDeviceDetail(SdEvent sdEvent);
 }

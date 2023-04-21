@@ -62,4 +62,11 @@ public interface ISdSparePartsWarehouseService {
      * @return 结果
      */
     int deleteSdSparePartsWarehouseById(Long id);
+
+    /**
+     * 查询备件名称是否重复
+     * @param partName 备件名称
+     * @return
+     */
+    List<SdSparePartsWarehouse> verifySparePartsWarehouseOnly(SdSparePartsWarehouse sdSparePartsWarehouse);
 }

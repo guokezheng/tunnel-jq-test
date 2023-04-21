@@ -194,7 +194,7 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
             }
             sdEquipmentType.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdEquipmentType.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
-            if (file.length > 0) {
+            if (file != null && file.length > 0) {
                 String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
                 sdEquipmentType.setIconFileId(guid);// 文件关联ID
                 for (int i = 0; i < file.length; i++) {
@@ -373,13 +373,8 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
     @Override
     public List<SdEquipmentType> selectSdEquipmentTypeByBigType(String bigType) {
         if (StringUtils.isNotBlank(bigType)) {
-            if (bigType.equals("0")) {
-                List<SdEquipmentType> list = sdEquipmentTypeMapper.selectSdEquipmentTypeByBigType(null);
-                return list;
-            } else {
-                List<SdEquipmentType> list = sdEquipmentTypeMapper.selectSdEquipmentTypeByBigType(bigType);
-                return list;
-            }
+            List<SdEquipmentType> list = sdEquipmentTypeMapper.selectSdEquipmentTypeByBigType(bigType);
+            return list;
         }
         return null;
 

@@ -14,6 +14,12 @@
             @click="handleDelete"
             v-hasPermi="['system:flow:remove']"
           >删除</el-button>
+          <el-button
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+          >导出
+          </el-button>
           <el-button size="small" @click="resetQuery">刷新</el-button>
 
       </el-col>
@@ -27,7 +33,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -62,15 +68,21 @@
         </el-form-item>-->
         <el-form-item class="bottomBox">
           <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
-          <el-button type="primary" plain size="mini" @click="resetQuery">重置</el-button>
-          
+          <el-button type="primary"  size="mini" @click="resetQuery">重置</el-button>
+
         </el-form-item>
       </el-form>
     </div>
     <div class="tableTopHr" ></div>
-    <el-table v-loading="loading" :data="flowList" height="59vh" 
+    <el-table v-loading="loading" :data="flowList" height="59vh"
     @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column
+        type="index"
+        width="70"
+        align="center"
+        label="序号">
+      </el-table-column>
       <el-table-column label="事件分类" align="center" prop="dictLabel" />
       <el-table-column label="事件类型" align="center" prop="eventTypeId" >
         <template slot-scope="scope">
@@ -84,15 +96,13 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:flow:query']"
           >详情</el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:flow:remove']"
           >删除</el-button>
@@ -112,8 +122,8 @@
     <el-dialog :title="title" :visible.sync="open" width="880px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="事件分类" prop="prevControlType">
-          <el-radio v-model="form.radio" label="0" @change="radioFun">交通事件</el-radio>
-          <el-radio v-model="form.radio" label="1" @change="radioFun">主动安全</el-radio>
+          <el-radio v-model="form.radio" label="0" @change="radioFun">普通事件</el-radio>
+          <el-radio v-model="form.radio" label="1" @change="radioFun">安全预警</el-radio>
         </el-form-item>
         <el-form-item label="事件类型" prop="eventTypeId">
 <!--          <el-input v-model="form.eventTypeId" placeholder="请输入事件类型" />-->
@@ -135,7 +145,7 @@
           :from_data='fromData'
           :to_data='toData'
           :defaultProps="{label:'label'}"
-          height='540px'
+          height='580px'
           @add-btn='add'
           @remove-btn='remove'
           :mode='mode'
@@ -266,7 +276,7 @@ export default {
   methods: {
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+      if (!this.$refs.main.contains(e.target) && !this.$refs.main.contains(e.target)) {
         if (self.boxShow == true){
           self.boxShow = false;
         }
@@ -441,7 +451,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.eventTypeId || this.ids;
-      this.$modal.confirm('是否确认删除事件类型预案流程').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delFlow(ids);
       }).then(() => {
         this.getList();
@@ -450,8 +460,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有事件类型预案流程关联数据项？').then(() => {
+      this.$modal.confirm('是否确认导出预案流程数据项？').then(() => {
         this.exportLoading = true;
         return exportFlow(queryParams);
       }).then(response => {

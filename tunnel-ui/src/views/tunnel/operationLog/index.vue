@@ -219,11 +219,12 @@
 </template>
 
 <script>
-import { listLog, getLog, delLog, addLog, updateLog } from "@/api/system/log";
+import {listLog, getLog, delLog, addLog, updateLog, exportLogininfor1} from "@/api/system/log";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listType } from "@/api/equipment/type/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import { listEqTypeState } from "@/api/equipment/eqTypeState/api";
+import {exportUser} from "@/api/system/user";
 export default {
   name: "OperationLog",
   dicts: ['sd_control_type'],
@@ -432,13 +433,23 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download(
-        "system/log/export",
-        {
-          ...this.queryParams,
-        },
-        `system_log.xlsx`
-      );
+      let confirmInfo ="是否确认导出所有的操作日志数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的操作日志数据项？";
+      }
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm(confirmInfo)
+        .then(() => {
+          this.exportLoading = true;
+          return exportLogininfor1(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
     // 表格行样式
     tableRowClassName({ row, rowIndex }) {

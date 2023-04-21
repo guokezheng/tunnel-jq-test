@@ -24,10 +24,14 @@ export default {
   },
   watch: {
     websocket({ password, path, port, interval }) {
+      // debugger
+      console.log(path)
+      console.log(port)
+      console.log(location.hostname )
       // 建立 websocket 连接
       this.socket.initialize({
         // url: 'ws://' + location.hostname + ':' + port + path,
-        url: "ws://10.168.64.171" + ":" + port + path,
+        url: "ws://10.168.56.206" + ":" + port + path,
         // url: "ws://10.168.64.171" + ":" + port + path,
         //  url: 'ws://10.168.78.127'+ ':' + port + path,
 
@@ -37,17 +41,19 @@ export default {
       });
       this.socket.onopen = () => {};
       this.socket.onmessage = (message) => {
+        // debugger
         message = JSON.parse(message);
         const method = message.method;
 
         if (method !== "event") {
           return;
         }
+
         const params = message.params;
         const subEvent = params.subEvent;
         const content = params.content;
-
         var contentList = JSON.parse(content);
+
         switch (subEvent) {
           case "payment_webSocket_send":
             this.$store.commit("PAYMENT", content);
@@ -75,6 +81,9 @@ export default {
             break;
           case "eventFlow":
             this.$store.commit("EVENTFLOW", contentList.eventFlow);
+            break;
+          case "eventUntreatedNum":
+            this.$store.commit("EVENTUNTREATEDNUM", contentList);
             break;
           default:
         }

@@ -18,9 +18,9 @@
             @change="changeSite"
             placeholder="请选择"
             size="mini"
-            :class="manageStation=='1'?'siteClassDisabled':'siteClass'"
+            :class="manageStation == '1' ? 'siteClassDisabled' : 'siteClass'"
             popper-class="popper-class-site"
-            v-show="(!isManagementStation)"
+            v-show="!isManagementStation"
           />
           <el-button-group
             class="menu-button-group"
@@ -31,7 +31,7 @@
               class="item"
               popper-class="wb-tip"
               v-for="(item, index) in tunnelList"
-              :key="index"
+              :key="item.tunnelId"
               effect="dark"
               :content="item.tunnelLength"
               placement="top-start"
@@ -56,16 +56,16 @@
         </el-row>
 
         <div class="flex-row" style="z-index: 8">
-            <div class="display-box zoomClass">
-              <p class="zoom-title" style="font-size: 14px;margin-right:10px;">
-                {{ carShow ? "实时车辆关" : "实时车辆开" }}
-              </p>
-              <el-switch
-                v-model="carShow"
-                class="switchStyle"
-                @change="carShowChange"
-              ></el-switch>
-            </div>
+          <div class="display-box zoomClass">
+            <p class="zoom-title" style="font-size: 14px; margin-right: 10px">
+              {{ carShow ? "实时车辆关" : "实时车辆开" }}
+            </p>
+            <el-switch
+              v-model="carShow"
+              class="switchStyle"
+              @change="carShowChange"
+            ></el-switch>
+          </div>
           <div class="display-box zoomClass" ref="treeBox">
             <!-- <div class="display-box">
               <p class="zoom-title" style="font-size: 14px">
@@ -93,15 +93,16 @@
               ></el-button>
             </el-input>
             <!-- 搜索栏树状结构 -->
-            <div class="treeBox" ref="treeBox" v-show="treeShow">
-              <el-tree :data="treeData" :props="defaultProps"
-              @node-click="handleNodeClick"
-              accordion
-              :default-expand-all="false"
-              :filter-node-method="filterNode"
-              ref="tree"
+            <div class="treeBox" ref="treeBox" v-show="treeShow" :style="dragFlag?'47%':'54.5%'">
+              <el-tree
+                :show-checkbox="false"
+                :data="treeData"
+                :props="defaultProps"
+                @node-click="handleNodeClick"
+                accordion
+                ref="tree"
               ></el-tree>
-          </div>
+            </div>
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
@@ -140,6 +141,16 @@
             <p class="zoom-title" style="font-size: 14px;">统计图表</p>
             <el-switch v-model="displayThumbnail" @change="changeThumbnail"></el-switch>
           </div> -->
+          <el-button
+              v-if="resetCanvasFlag"
+              class="flex-row"
+              type="primary"
+              size="mini"
+              icon="el-icon-position"
+              @click="resetCanvas"
+          >
+            地图复位
+          </el-button>
           <el-button
             class="flex-row"
             type="primary"
@@ -181,6 +192,7 @@
           >
             操作日志
           </el-button>
+     
         </div>
       </div>
       <div class="vehicleLane">
@@ -211,14 +223,25 @@
                   :src="currentTunnel.lane.url"
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
-                <div class="carBox" v-show="carShow">
+<!--                <div class="carBox" v-show="carShow">-->
+<!--                  <span-->
+<!--                    v-for="(value, key) in carList"-->
+<!--                    :key="key"-->
+<!--                    :style="{-->
+<!--                      left: value.left,-->
+<!--                      top: value.top,-->
+<!--                      background: value.background,-->
+<!--                    }"-->
+<!--                  ></span>-->
+<!--                </div>-->
+                <div class="carBox" v-show="carShow"  v-for="(value, key) in carList">
                   <span
-                    v-for="item in carList"
-                    :key="item.id"
+                    v-for="data in value"
+                    :key="key"
                     :style="{
-                      left: item.left,
-                      top: item.top,
-                      background: item.background,
+                      left: data.left,
+                      top: data.top,
+                      background: data.background,
                     }"
                   ></span>
                 </div>
@@ -277,7 +300,7 @@
                   <div
                     class="icon-box mouseHover"
                     v-for="(item, index) in selectedIconList"
-                    :key="index"
+                    :key="item.eqId"
                     :style="{
                       left: item.position.left + 'px',
                       top: item.position.top + 'px',
@@ -302,23 +325,25 @@
                     <div v-if="item.textFalse" class="textFalseBox">
                       请选择同种设备
                     </div>
+                    <div v-if="item.textKKFalse" class="textFalseBox">
+                      请选择可控设备
+                    </div>
                     <!-- <div class="tooltip" v-if="showTooltipIndex == index && showTooltip">{{ sensorContent(item) }}</div> -->
 
                     <el-tooltip
                       effect="dark"
-
                       placement="right"
                       :title="item.pile"
                       :disabled="sensorDisabledTwo(item)"
                       style="position: relative; top: 0px; left: 0px"
                       popper-class="tipCase"
                     >
-                    <!-- :content="sensorContent(item)" -->
+                      <!-- :content="sensorContent(item)" -->
 
                       <!-- 巡检机器人 -->
 
                       <div
-                        v-show="
+                      v-show="
                           (item.eqType != 7 &&
                             item.eqType != 15 &&
                             item.eqType != 8 &&
@@ -329,12 +354,11 @@
                             item.eqType == 9 ||
                             item.eqType == 21) &&
                             item.display == true &&
-                            lightSwitch == 1)
-                        "
+                            lightSwitch == 1)"
                         :class="{ focus: item.focus }"
                       >
                         <img
-                        v-show="item.eqType != '31'  "
+                          v-show="item.eqType != '31'"
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{
@@ -344,14 +368,14 @@
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
                             transform:
-                              item.eqType == 23 && item.eqDirection == 1
+                              item.eqType == 23 && item.eqDirection == 2
                                 ? 'scale(-1,1)'
                                 : '',
                           }"
                           :width="item.iconWidth"
                           :height="item.iconHeight"
                           :key="item.eqId + indexs"
-                          :src='url'
+                          :src="url"
                           :class="
                             item.eqName == screenEqName
                               ? 'screenEqNameClass'
@@ -359,90 +383,151 @@
                           "
                         />
                         <img
-                         v-show="item.eqType == '31'"
-                        style="position: absolute"
+                          v-show="item.eqType == '31'"
+                          style="position: absolute"
                           :style="{
                             cursor:
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
-                              width:item.iconWidth + 'px',
-                            height:item.iconHeight + 'px',
-
+                            width: item.iconWidth + 'px',
+                            height: item.iconHeight + 'px',
                           }"
-                          :src= getTypePic(item)
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          " />
-                        <div v-show="item.eqType == 16"
-                        class="boardBox1"
-
-                        :style="{
-                          cursor:
-                            item.eqType || item.eqType == 0 ? 'pointer' : '',
-                          border:
-                            item.click == true ? 'solid 2px #09C3FC' : '',
-                          width:item.associated_device_id?getBoardStyle(item.associated_device_id,'width',item.eqType) + 'px':item.iconWidth + 'px',
-                          height:item.associated_device_id?getBoardStyle(item.associated_device_id,'height',item.eqType) + 'px':item.iconHeight + 'px',
-                          fontSize:item.associated_device_id?getBoardStyle(item.associated_device_id,'fontSize',item.eqType) + 'px':'15px'
-                          }"
-                          :src= getTypePic(item)
+                          :src="getTypePic(item)"
                           :class="
                             item.eqName == screenEqName
                               ? 'screenEqNameClass'
                               : ''
                           "
-                          >
+                        />
+                        <div
+                          v-show="item.eqType == 16"
+                          class="boardBox1"
+                          :style="{
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                            width: item.associated_device_id
+                              ? getBoardStyle(
+                                  item.associated_device_id,
+                                  'width',
+                                  item.eqType
+                                ) + 'px'
+                              : item.iconWidth + 'px',
+                            height: item.associated_device_id
+                              ? getBoardStyle(
+                                  item.associated_device_id,
+                                  'height',
+                                  item.eqType
+                                ) + 'px'
+                              : item.iconHeight + 'px',
+                            fontSize: item.associated_device_id
+                              ? getBoardStyle(
+                                  item.associated_device_id,
+                                  'fontSize',
+                                  item.eqType
+                                ) + 'px'
+                              : '15px',
+                          }"
+                          :src="getTypePic(item)"
+                          :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          "
+                        >
                           <div
-                          :style="{
-                              animation: 'boardBox1 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite'
-                          }">
-                            <span
-                            v-for="(item,index) in getBoardStyle(item.associated_device_id,'array')" :key="index"
                             :style="{
-                              color:getColorStyle(item.COLOR)
+                              animation:
+                                'boardBox1 ' +
+                                Number(getBoardStyle(
+                                  item.associated_device_id,
+                                  'content'
+                                ).length)*1.3 +
+                                's' +
+                                ' linear infinite',
+                            }"
+                          >
+                            <span
+                              v-for="itm in getBoardStyle(
+                                item.associated_device_id,
+                                'array'
+                              )"
+                              :key="itm.associated_device_id"
+                              :style="{
+                                color: getColorStyle(itm.COLOR),
                               }"
-                            style="padding-top:10px"
-                          >{{item.CONTENT}}</span>
+                              style="padding-top: 10px"
+                              >{{ itm.CONTENT }}</span
+                            >
                           </div>
-                          
                         </div>
-                        <div v-show="item.eqType == 36"
-                        class="boardBox2"
-
-                        :style="{
+                        <div
+                          v-show="item.eqType == 36"
+                          class="boardBox2"
+                          :style="{
                             cursor:
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
-                            width:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'width',item.eqType) + 'px':item.iconWidth + 'px',
-                            height:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'height',item.eqType) + 'px':item.iconHeight + 'px',
-                            fontSize:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'fontSize',item.eqType) + 'px':'15px'
+                            width:
+                              item.associated_device_id != undefined
+                                ? getBoardStyle(
+                                    item.associated_device_id,
+                                    'width',
+                                    item.eqType
+                                  ) + 'px'
+                                : item.iconWidth + 'px',
+                            height:
+                              item.associated_device_id != undefined
+                                ? getBoardStyle(
+                                    item.associated_device_id,
+                                    'height',
+                                    item.eqType
+                                  ) + 'px'
+                                : item.iconHeight + 'px',
+                            fontSize:
+                              item.associated_device_id != undefined
+                                ? getBoardStyle(
+                                    item.associated_device_id,
+                                    'fontSize',
+                                    item.eqType
+                                  ) + 'px'
+                                : '15px',
                           }"
-
-                          :src= getTypePic(item)
+                          :src="getTypePic(item)"
                           :class="
                             item.eqName == screenEqName
                               ? 'screenEqNameClass'
                               : ''
                           "
-                          >
-                          <div 
-                          :style="{
-                                animation: 'boardBox2 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite',
-                              
-                            }">
-                            <span
-                            v-for="(item,index) in getBoardStyle(item.associated_device_id,'array')" :key="index"
+                        >
+                          <div
                             :style="{
-                                color:getColorStyle(item.COLOR)
+                              animation:
+                                'boardBox2 ' +
+                                Number(getBoardStyle(
+                                  item.associated_device_id,
+                                  'content'
+                                ).length)*1.3 +
+                                's' +
+                                ' linear infinite',
                             }"
-                            style="padding-top:10px"
-                            >{{item.CONTENT}}</span>
+                          >
+                            <span
+                              v-for="itm in getBoardStyle(
+                                item.associated_device_id,
+                                'array'
+                              )"
+                              :key="itm.associated_device_id"
+                              :style="{
+                                color: getColorStyle(itm.COLOR),
+                              }"
+                              style="padding-top: 10px"
+                              >{{ itm.CONTENT }}</span
+                            >
                           </div>
-                          
                         </div>
                         <!-- 调光数值 -->
                         <label
@@ -458,9 +543,7 @@
                         >
                         <!-- CO/VI -->
                         <label
-                          style="
-                            color: #79e0a9;
-                          "
+                          style="color: #79e0a9"
                           class="labelClass"
                           v-if="item.eqType == 19"
                         >
@@ -470,9 +553,7 @@
                         </label>
                         <!-- 风速风向 -->
                         <label
-                          style="
-                            color: #79e0a9;
-                          "
+                          style="color: #79e0a9"
                           class="labelClass"
                           v-if="item.eqType == 17"
                         >
@@ -481,9 +562,7 @@
                         </label>
                         <!-- 洞内洞外 -->
                         <label
-                          style="
-                            color: #f2a520;
-                          "
+                          style="color: #f2a520"
                           class="labelClass"
                           v-if="item.eqType == 5 || item.eqType == 18"
                         >
@@ -536,7 +615,7 @@
             type="info"
             size="small"
             v-for="(item, index) in dictList"
-            :key="index"
+            :key="item.raw.dictCode"
             :label="item.label"
             :value="index"
             @click="displayControl(index, item.label)"
@@ -558,16 +637,26 @@
           "
           :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
-          <div class="indicatorLight" @click="isDrawerA()"
-          >
-            <i :class="[drawerA ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>一键控制模块
+          <div class="indicatorLight" @click="isDrawerA()">
+            <i
+              :class="[drawerA ? 'el-icon-caret-right' : 'el-icon-caret-left']"
+            ></i
+            >一键控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
-            <i :class="[drawerB ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>分时控制模块
+            <i
+              :class="[drawerB ? 'el-icon-caret-right' : 'el-icon-caret-left']"
+            ></i
+            >分时控制模块
           </div>
           <div class="triggerControl" @click="isDrawerC()">
-            <i :class="[drawerCVisible ? 'el-icon-caret-left' : 'el-icon-caret-right']"></i>触发控制模块
+            <i
+              :class="[
+                drawerCVisible ? 'el-icon-caret-right' : 'el-icon-caret-left',
+              ]"
+            ></i
+            >触发控制模块
           </div>
         </div>
 
@@ -580,63 +669,8 @@
           class="drawerTop"
         >
           <div style="width: 100%; height: 100%; position: relative">
-            <div class="jianbianLine"></div>
             <div class="chezhiDrawerDirection">
               {{ directionList[0].dictLabel }}-车道指示器
-            </div>
-            <div class="chezhiDrawerInfo">
-              <div class="chezhiName">车道:</div>
-              <el-select
-                v-model="chezhiForm0.lane"
-                size="small"
-                multiple
-                collapse-tags
-                class="chezhiLaneSelect"
-              >
-                <el-option
-                  v-for="item in chezhiLaneList"
-                  :key="item.laneId"
-                  :label="item.laneName"
-                  :value="item.laneId"
-                />
-              </el-select>
-              <div class="chezhiName">状态:</div>
-              <el-select
-                v-model="chezhiForm0.state"
-                size="small"
-                class="chezhiStateSelect"
-              >
-                <el-option
-                  v-for="item in chezhiStateList"
-                  :key="item.Id"
-                  :value="item.deviceState"
-                  :label="item.stateName"
-                >
-                  <div style="display: flex; align-items: center">
-                    <el-image
-                      :src="item.url[0]"
-                      style="width: 20px; height: 20px"
-                    ></el-image>
-                    <el-image
-                      :src="item.url[1]"
-                      style="width: 20px; height: 20px"
-                    ></el-image>
-                    <div style="margin-left: 4px">{{ item.stateName }}</div>
-                  </div>
-                </el-option>
-              </el-select>
-              <el-button
-                class="chezhiControlButton"
-                @click="chezhiControl(0)"
-                :disabled="chezhiDisabled"
-                v-hasPermi="['workbench:dialog:save']"
-              >
-                控制
-              </el-button>
-            </div>
-
-            <div class="chezhiDrawerDirection">
-              {{ directionList[1].dictLabel }}-车道指示器
             </div>
             <div class="chezhiDrawerInfo">
               <div class="chezhiName">车道:</div>
@@ -688,7 +722,61 @@
                 控制
               </el-button>
             </div>
-            <div class="chezhiDrawerDirection" style="margin:10px 0">
+
+            <div class="chezhiDrawerDirection">
+              {{ directionList[1].dictLabel }}-车道指示器
+            </div>
+            <div class="chezhiDrawerInfo">
+              <div class="chezhiName">车道:</div>
+              <el-select
+                v-model="chezhiForm2.lane"
+                size="small"
+                multiple
+                collapse-tags
+                class="chezhiLaneSelect"
+              >
+                <el-option
+                  v-for="item in chezhiLaneList"
+                  :key="item.laneId"
+                  :label="item.laneName"
+                  :value="item.laneId"
+                />
+              </el-select>
+              <div class="chezhiName">状态:</div>
+              <el-select
+                v-model="chezhiForm2.state"
+                size="small"
+                class="chezhiStateSelect"
+              >
+                <el-option
+                  v-for="item in chezhiStateList"
+                  :key="item.Id"
+                  :value="item.deviceState"
+                  :label="item.stateName"
+                >
+                  <div style="display: flex; align-items: center">
+                    <el-image
+                      :src="item.url[1]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <el-image
+                      :src="item.url[0]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <div style="margin-left: 4px">{{ item.stateName }}</div>
+                  </div>
+                </el-option>
+              </el-select>
+              <el-button
+                class="chezhiControlButton"
+                @click="chezhiControl(2)"
+                :disabled="chezhiDisabled"
+                v-hasPermi="['workbench:dialog:save']"
+              >
+                控制
+              </el-button>
+            </div>
+            <div class="chezhiDrawerDirection" style="margin: 10px 0">
               {{ directionList[0].dictLabel }} -广播
             </div>
             <div class="phoneBox1">
@@ -700,8 +788,13 @@
                 :min="0"
                 size="small"
               />
-              <el-checkbox v-model="phoneForm1.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
-
+              <el-checkbox
+                v-model="phoneForm1.loop"
+                label="循环播放"
+                border
+                class="phoneCheckBox"
+                >循环播放</el-checkbox
+              >
             </div>
             <div class="phoneBox1">
               <div class="chezhiName">音量:</div>
@@ -719,7 +812,7 @@
                 placeholder="请选择播放文件"
                 clearable
                 size="small"
-                @click.native="clickFileNames((directionList[1].dictValue))"
+                @click.native="clickFileNames(directionList[1].dictValue)"
               >
                 <el-option
                   v-for="item in fileNamesList"
@@ -737,7 +830,7 @@
                 控制
               </el-button>
             </div>
-            <div class="chezhiDrawerDirection" style="margin:10px 0">
+            <div class="chezhiDrawerDirection" style="margin: 10px 0">
               {{ directionList[1].dictLabel }} -广播
             </div>
             <div class="phoneBox1">
@@ -749,7 +842,13 @@
                 size="small"
                 :min="0"
               />
-              <el-checkbox v-model="phoneForm2.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
+              <el-checkbox
+                v-model="phoneForm2.loop"
+                label="循环播放"
+                border
+                class="phoneCheckBox"
+                >循环播放</el-checkbox
+              >
             </div>
             <div class="phoneBox1">
               <div class="chezhiName">音量:</div>
@@ -766,7 +865,7 @@
                 placeholder="请选择播放文件"
                 clearable
                 size="small"
-                @click.native="clickFileNames((directionList[1].dictValue))"
+                @click.native="clickFileNames(directionList[1].dictValue)"
               >
                 <el-option
                   v-for="item in fileNamesList"
@@ -795,7 +894,7 @@
         >
           <div
             v-for="(item, index) in timStrategyList"
-            :key="index"
+            :key="item.strategy_id"
             style="width: 100%"
           >
             <div class="ledLighting">
@@ -810,7 +909,7 @@
             </div>
             <div class="Time">
               <div class="timeStart">
-                <span class="setTime">开启时间：</span>
+                <span class="setTime">起始时间：</span>
                 <el-time-picker
                   v-model="item.arr[0]"
                   size="mini"
@@ -820,23 +919,25 @@
                 </el-time-picker>
               </div>
               <div class="timeEnd">
-                <span class="setTime">关闭时间：</span>
+                <span class="setTime">结束时间：</span>
                 <el-time-picker
                   v-model="item.arr[1]"
                   size="mini"
                   :clearable="false"
                   value-format="HH:mm:ss"
+                  @change="changeEndTime(item.arr[0],item.arr[1],index)"
                 >
                 </el-time-picker>
               </div>
               <el-button
-                  type="primary"
-                  size="mini"
-                  class="handleLightClass"
-                  @click="timingStrategy(item)"
-                  v-hasPermi="['workbench:dialog:save']"
-                  >确定
-                </el-button>
+                type="primary"
+                size="mini"
+                class="handleLightClass"
+                @click="timingStrategy(item)"
+                v-hasPermi="['workbench:dialog:save']"
+                :disabled="timingStrategyDisabled"
+                >确定
+              </el-button>
             </div>
           </div>
         </el-drawer>
@@ -868,191 +969,354 @@
                 >相关预案</span
               >
             </div>
-            <div v-for="(item, index) in isDrawerCList" :key="index"
-            style="
-                  display: flex;
-                  padding: 4px;
-                  line-height: 30px;
-                  border-bottom: 1px solid rgba(224, 231, 237, 0.2);
-                ">
-
-                <div style="width: 80px; margin-right: 5px; padding-left: 5px">
-                  {{ item.name }}
-                </div>
-                <div style="width: 66px; margin-right: 5px; padding-left: 5px">
-                  {{ item.str }}
-                </div>
-                <div class="reservePlan" v-for="(itm,inx) in item.plan" :key="inx">{{ itm }}</div>
+            <div
+              v-for="(item, index) in isDrawerCList"
+              :key="index"
+              style="
+                display: flex;
+                padding: 4px;
+                line-height: 30px;
+                border-bottom: 1px solid rgba(224, 231, 237, 0.2);
+              "
+            >
+              <div style="width: 80px; margin-right: 5px; padding-left: 5px">
+                {{ item.name }}
+              </div>
+              <div style="width: 66px; margin-right: 5px; padding-left: 5px">
+                {{ item.str }}
+              </div>
+              <div
+                class="reservePlan"
+                v-for="(itm, inx) in item.plan"
+                :key="inx"
+              >
+                {{ itm }}
               </div>
             </div>
-
+          </div>
         </el-drawer>
       </div>
 
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
       <div class="footer" v-show="displayThumbnail == true">
-        <div class="footMiniBox" >
-          <div class="footTitle">
-            <div class="footTitleCont">
-              <img
-                :src="carIcon"
-                style="width: 18px; margin-right: 5px"
-                v-show="sideTheme != 'theme-blue'"
-              />
-              <p>车辆监测</p>
-              <p>Vehicle detection</p>
-            </div>
-          </div>
-          <div id="vehicle"></div>
-        </div>
-        <div class="footMiniBox footerRight" >
-          <div class="footTitle">
-            <!-- <div class="footTriangle"></div> -->
-            <div class="footTitleCont">
-              <img
-                :src="energyIcon"
-                style="width: 18px; margin-right: 5px"
-                v-show="sideTheme != 'theme-blue'"
-              />
-              <p>能耗监测</p>
-              <p>Energy consumption monitoring</p>
-            </div>
-          </div>
-          <div id="energyConsumption"></div>
-        </div>
-
-        <div class="footMiniBox footerRight" >
-          <div class="footTitle">
-            <div class="footTitleCont">
-              <img
-                :src="keyVehiclesIcon"
-                style="width: 17px; margin-right: 5px"
-                v-show="sideTheme != 'theme-blue'"
-              />
-              <p>重点车辆</p>
-              <p>Key vehicles</p>
-            </div>
-          </div>
-          <div id="focusCar"></div>
-          <!-- <div class="realTimeTable">
-            <ul>
-              <li>
-                <div>车牌号</div>
-                <div>速度</div>
-                <div>车道</div>
-              </li>
-            </ul>
-            <vue-seamless-scroll
-              :class-option="defaultOption"
-              class="listContent"
-              :data="realTimeList"
-            >
-              <div
-                v-for="(item, index) in realTimeList"
-                :key="index"
-                class="listRow"
-                style="display: flex"
-              >
-                <div style="text-align: center; width: 15px; margin-left: 25px">
-                  {{ index + 1 }}
-                </div>
-                <div style="width: 95px; text-align: center; margin-left: 10px">
-                  {{ item.vehicleLicense }}
-                </div>
-                <div
-                  style="width: 112px; text-align: center; margin-left: 30px"
-                >
-                  {{ item.speed }}km/h
-                </div>
-                <div style="width: 86px; text-align: center; margin-left: 35px">
-                  {{ item.laneNum }}车道
-                </div>
-
+        <div class="fourBox">
+          <div class="footMiniBox" v-show="footChangeRadio == '图表'">
+            <div class="footTitle">
+              <div class="footTitleCont">
+                <img
+                  :src="carIcon"
+                  style="width: 18px; margin-right: 5px"
+                  v-show="sideTheme != 'theme-blue'"
+                />
+                <p>车辆监测</p>
+                <p>Vehicle detection</p>
               </div>
-            </vue-seamless-scroll>
-          </div> -->
-        </div>
-        <div class="footerRight footMiniBox" >
-          <div class="footTitle">
-            <div class="footTitleCont">
-              <img
-                :src="warningIcon"
-                style="width: 16px; margin-right: 5px"
-                v-show="sideTheme != 'theme-blue'"
-              />
-              <p>预警事件</p>
-              <p>Alert event</p>
             </div>
+            <div id="vehicle"></div>
           </div>
           <div
-            v-if="trafficList.length == 0"
-            style="
-              width: 100%;
-              text-align: center;
-              font-size: 14px;
-              margin-top: 80px;
-            "
+            class="footMiniBox footerRight"
+            v-show="footChangeRadio == '图表'"
           >
-            暂无交通事件
+            <div class="footTitle">
+              <!-- <div class="footTriangle"></div> -->
+              <div class="footTitleCont">
+                <img
+                  :src="energyIcon"
+                  style="width: 18px; margin-right: 5px"
+                  v-show="sideTheme != 'theme-blue'"
+                />
+                <p>能耗监测</p>
+                <p>Energy consumption monitoring</p>
+              </div>
+            </div>
+            <div id="energyConsumption"></div>
           </div>
-          <div v-if="trafficList" @click="jumpYingJi">
-            <vue-seamless-scroll
-              :class-option="defaultOption"
-              class="listContent"
-              :data="trafficList"
+
+          <div
+            class="footMiniBox footerRight"
+            v-show="footChangeRadio == '图表'"
+          >
+            <div class="footTitle">
+              <div class="footTitleCont">
+                <img
+                  :src="keyVehiclesIcon"
+                  style="width: 17px; margin-right: 5px"
+                  v-show="sideTheme != 'theme-blue'"
+                />
+                <p>重点车辆</p>
+                <p>Key vehicles</p>
+              </div>
+            </div>
+            <div id="focusCar"></div>
+          </div>
+          <div
+            class="footerRight footMiniBox"
+            v-show="footChangeRadio == '图表'"
+          >
+            <div class="footTitle">
+              <div class="footTitleCont">
+                <img
+                  :src="warningIcon"
+                  style="width: 16px; margin-right: 5px"
+                  v-show="sideTheme != 'theme-blue'"
+                />
+                <p>预警事件</p>
+                <p>Alert event</p>
+              </div>
+            </div>
+            <div
+              v-if="trafficList.length == 0"
+              style="
+                width: 100%;
+                text-align: center;
+                font-size: 14px;
+                margin-top: 80px;
+              "
             >
-              <ul style="padding-left:0">
-                <li
-                  v-for="(item, index) of trafficList"
-                  :key="index"
-                  style="cursor: pointer;list-style: none;"
-                >
-                  <el-row
-                    class="listRow"
-                    :data-index="JSON.stringify(item)"
-                    :id="item.id"
+              暂无交通事件
+            </div>
+            <div v-if="trafficList" @click="jumpYingJi">
+              <vue-seamless-scroll
+                :class-option="defaultOption"
+                class="listContent"
+                :data="trafficList"
+              >
+                <ul style="padding-left: 0">
+                  <li
+                    v-for="(item, index) of trafficList"
+                    :key="index"
+                    style="cursor: pointer; list-style: none"
                   >
-                  <!-- @click.native="jumpYingJi(item.id)"  -->
-                    <el-col  :span="2">
-                      <div style="width: 100%; height: 20px; display: flex;justify-content: right;align-items: center;transform:scale(0.7) translateY(8px)">
-                        <img :src="item.eventType.iconUrl"   />
-                      </div>
-                    </el-col>
-                    <el-col style="display:flex" :span="4">
-                    <div 
-                      style="width:100%" 
-                      :style="{color:item.eventType.prevControlType == '0'?'red':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
-                      {{item.eventType.simplifyName}}
-                    </div>
-                      
-                    </el-col>
-                    <el-col :span="18" style="display: flex;">
-                      <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
+                    <el-row
+                      class="listRow"
+                      :data-index="JSON.stringify(item)"
+                      :id="item.id"
+                    >
+                      <!-- @click.native="jumpYingJi(item.id)"  -->
+                      <el-col :span="2">
+                        <div
+                          style="
+                            width: 30px;
+                            height: 30px;
+                            display: flex;
+                            justify-content: right;
+                            align-items: center;
+                            transform: scale(0.7);
+                          "
+                        >
+                          <img :src="item.eventType.iconUrl" style="width:100%"/>
+                        </div>
+                      </el-col>
+                      <el-col style="display: flex" :span="4">
+                        <div
+                          style="width: 100%"
+                          :style="{
+                            color:
+                              item.eventType.prevControlType == '0'
+                                ? 'red'
+                                : item.eventType.prevControlType == '1'
+                                ? '#0B92FE'
+                                : 'yellow',
+                          }"
+                        >
+                          {{ item.eventType.simplifyName }}
+                        </div>
+                      </el-col>
+                      <el-col :span="18" style="display: flex">
+                        <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                         item.eventType.eventType
                       }}事件 -->
-                      <div
-                        style="width:300px;
-                        overflow: hidden;
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
-                        z-index:10;
-                        ">
-                        {{item.eventTitle}}</div>
-                      <div style="font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
-
-                    </el-col>
-                  </el-row>
-                  <div class="lineBT" >
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                  </div>
-                </li>
-              </ul>
-            </vue-seamless-scroll>
+                        <div
+                          style="
+                            width: 210px;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            z-index: 10;
+                          "
+                        >
+                          <span v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'">{{ item.eventTitle }}</span>
+                          <span v-else>{{ item.frameEventTitle }}</span>
+                        </div>
+                        <div
+                          style="
+                            font-size: 12px;
+                            float: right;
+                            margin-right: 10px;
+                          "
+                        >
+                          {{ item.startTime }}
+                        </div>
+                      </el-col>
+                    </el-row>
+                    <div class="lineBT">
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </div>
+                  </li>
+                </ul>
+              </vue-seamless-scroll>
+            </div>
           </div>
+          <div class="footMiniBox" v-show="footChangeRadio == '视频'">
+            <div class="footTitle">
+              <div class="footTitleCont">
+                <img
+                  :src="warningIcon"
+                  style="width: 16px; margin-right: 5px"
+                  v-show="sideTheme != 'theme-blue'"
+                />
+                <p>{{videoTitle1}}</p>
+                <p>real-time video</p>
+              </div>
+            </div>
+            <videoPlayer
+              v-if="liveUrl1 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
+              :rtsp="liveUrl1"
+              :open="cameraPlayer1"
+            ></videoPlayer>
+            <video
+              v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic1"
+                id="h5sVideo2"
+                class="h5video_"
+                controls
+                muted
+                loop
+                disablePictureInPicture="true"
+                style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
+              ></video>
+              <div class="noPicBox" v-show="videoNoPic1">
+                <img  src="../../../assets/image/noVideo.png" />
 
+              </div>
+          </div>
+          <div
+            class="footMiniBox footerRight"
+            v-show="footChangeRadio == '视频'"
+          >
+            <div class="footTitle">
+              <div class="footTitleCont">
+                <img
+                  :src="warningIcon"
+                  style="width: 16px; margin-right: 5px"
+                  v-show="sideTheme != 'theme-blue'"
+                />
+                <p>{{videoTitle2}}</p>
+                <p>real-time video</p>
+              </div>
+            </div>
+            <videoPlayer
+              v-if="liveUrl2 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
+              :rtsp="liveUrl2"
+              :open="cameraPlayer2"
+            ></videoPlayer>
+            <video
+              v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic1"
+                id="h5sVideo3"
+                class="h5video_"
+                controls
+                muted
+                loop
+                autoplay
+                webkit-playsinline
+                playsinline
+                disablePictureInPicture="true"
+                controlslist="nodownload noplaybackrate noremoteplayback"
+                style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
+              ></video>
+              <div class="noPicBox" v-show="videoNoPic1">
+                <img  src="../../../assets/image/noVideo.png" />
+
+              </div>
+          </div>
+          <div
+            class="footMiniBox footerRight"
+            v-show="footChangeRadio == '视频'"
+          >
+            <div class="footTitle">
+              <div class="footTitleCont">
+                <img
+                  :src="warningIcon"
+                  style="width: 16px; margin-right: 5px"
+                  v-show="sideTheme != 'theme-blue'"
+                />
+                <p>{{ videoTitle3 }}</p>
+                <p>real-time video</p>
+              </div>
+            </div>
+            <videoPlayer
+              v-if="liveUrl3 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS'"
+              :rtsp="liveUrl3"
+              :open="cameraPlayer3"
+            ></videoPlayer>
+            <video
+              v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
+                id="h5sVideo4"
+                class="h5video_"
+                controls
+                muted
+                loop
+                autoplay
+                webkit-playsinline
+                playsinline
+                disablePictureInPicture="true"
+                controlslist="nodownload noplaybackrate noremoteplayback"
+                style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
+              ></video>
+              <div class="noPicBox" v-show="videoNoPic2">
+                <img  src="../../../assets/image/noVideo.png" />
+
+              </div>
+          </div>
+          <div
+            class="footMiniBox footerRight"
+            v-show="footChangeRadio == '视频'"
+          >
+            <div class="footTitle">
+              <div class="footTitleCont">
+                <img
+                  :src="warningIcon"
+                  style="width: 16px; margin-right: 5px"
+                  v-show="sideTheme != 'theme-blue'"
+                />
+                <p>{{videoTitle4}}</p>
+                <p>real-time video</p>
+              </div>
+            </div>
+            <videoPlayer
+              v-if="liveUrl4 && tunnelId != 'WLJD-JiNan-YanJiuYuan-FHS' "
+              :rtsp="liveUrl4"
+              :open="cameraPlayer4"
+            ></videoPlayer>
+            <video
+              v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS' && !videoNoPic2"
+                id="h5sVideo5"
+                class="h5video_"
+                loop
+                controls
+                muted
+                autoplay
+                webkit-playsinline
+                playsinline
+                disablePictureInPicture="true"
+                controlslist="nodownload noplaybackrate noremoteplayback"
+                style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
+              ></video>
+              <div class="noPicBox" v-show="videoNoPic2">
+                <img  src="../../../assets/image/noVideo.png" />
+
+              </div>
+          </div>
+        </div>
+
+        <div class="footChangeButton">
+          <el-radio-group v-model="footChangeRadio" @change="videoRadioChange">
+            <el-radio-button label="图表"></el-radio-button>
+            <el-radio-button label="视频"></el-radio-button>
+          </el-radio-group>
         </div>
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
@@ -1060,41 +1324,33 @@
     <!-- 批量操作弹窗 -->
 
     <el-dialog
-      class="workbench-dialog batch-table operationDiglog"
+      class="workbench-dialog vehicle-dialog"
       :title="title"
       :visible.sync="batchManageDialog"
-      width="560px"
+      width="450px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
     >
-      <div
-        style="
-          width: 100%;
-          height: 10px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
+      <div class="dialogStyleBox">
         <div class="dialogLine"></div>
-        <img
-          src="../../../assets/cloudControl/dialogHeader.png"
-          style="height: 30px; transform: translateY(-30px)"
-          @click="closeBatchManageDialog"
-        />
+        <div class="dialogCloseButton"></div>
       </div>
       <el-table
         ref="batchManageTable"
         :data="batchManageList"
         tooltip-effect="dark"
-        style="width: 100%; margin-bottom: 0px !important"
+        style="width: 100%; margin-bottom: 10px !important"
         max-height="220"
         size="mini"
+        
         @row-click="handleRowClick"
       >
         <el-table-column
           prop="eqName"
           label="设备名称"
-          width="220"
+          width="200"
+          align="center"
           show-overflow-tooltip
         >
         </el-table-column>
@@ -1102,10 +1358,11 @@
           prop="pile"
           label="桩号"
           width="120"
+          align="center"
           show-overflow-tooltip
         >
         </el-table-column>
-        <el-table-column label="方向">
+        <el-table-column label="方向" align="center">
           <template slot-scope="scope">
             <span>{{ getDirection(scope.row.eqDirection) }}</span>
           </template>
@@ -1122,7 +1379,7 @@
           <div class="wrap">
             <el-radio-group
               v-for="(item, index) in eqTypeStateList2"
-              :key="index"
+              :key="item.state"
               v-model="batchManageForm.state"
               style="display: flex; flex-direction: column"
               @change="$forceUpdate()"
@@ -1141,8 +1398,8 @@
                 <el-row
                   class="flex-row"
                   v-if="
-                    batchManageForm.eqDirection == '1' &&(
-                    batchManageForm.eqType == 1 || batchManageForm.eqType == 2)
+                    batchManageForm.eqDirection == '1' &&
+                    (batchManageForm.eqType == 1 || batchManageForm.eqType == 2)
                   "
                 >
                   <img
@@ -1165,21 +1422,18 @@
                   v-if="
                     batchManageForm.eqDirection == '2' &&
                     (batchManageForm.eqType == 1 || batchManageForm.eqType == 2)
-
                   "
                 >
                   <img
                     :width="iconWidth"
                     :height="iconHeight"
                     :src="item.url[1]"
-
                   />
                   <img
                     :width="iconWidth"
                     :height="iconHeight"
                     :src="item.url[0]"
                     v-if="item.url.length > 1"
-
                   />
                   <div style="margin: 0 0 0 10px; display: inline-block">
                     {{ item.name }}
@@ -1188,7 +1442,9 @@
 
                 <el-row
                   class="flex-row"
-                  v-if="batchManageForm.eqType != 1 && batchManageForm.eqType != 2"
+                  v-if="
+                    batchManageForm.eqType != 1 && batchManageForm.eqType != 2
+                  "
                 >
                   <img
                     :width="iconWidth"
@@ -1205,110 +1461,122 @@
           </div>
         </el-form-item>
       </el-form>
-      <div slot="footer" style="float: right; margin-bottom: 20px">
+      <div slot="footer" class="dialog-footer">
         <el-button
-          type="primary"
-          size="mini"
           @click="batchManageOK()"
-          style="width: 80px"
           class="submitButton"
           >确 定</el-button
         >
         <el-button
-          type="primary"
-          size="mini"
+          class="closeButton"
           @click="closeBatchManageDialog()"
-          style="width: 80px"
           >取 消</el-button
         >
       </div>
     </el-dialog>
     <!-- 操作日志 弹窗 -->
     <el-dialog
-      class="workbench-dialog batch-table operationDiglog"
+      class="explain-table operationDiglog"
       :title="title"
       :visible.sync="operationLogDialog"
+      :before-close="cancel"
       width="1000px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
     >
-    <el-tabs  v-model="operationActive">
-          <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
-          <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
-
-    </el-tabs>
-
-
-      <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;margin-top: 5%">
-        <el-row :gutter="20" style="margin: 10px 0 25px">
-
-          <el-col :span="12"  >
-            <div class="grid-content bg-purple">
-              <el-input
-                placeholder="请输入登录地址、用户名称，回车搜索"
-                v-model="operationParam.ipaddr"
-                @keyup.enter.native="handleQueryOperationParam"
-                v-show="operationActive == 'xitong'"
-                class="zj"
-              >
-                <el-button
-                  slot="append"
-                  icon="el-icon-s-fold"
-                  @click="syxt_boxShow = !syxt_boxShow"
-                ></el-button>
-              </el-input>
-            </div>
-          </el-col>
-        </el-row>
-        <div class="syxt_searchBox" v-show="syxt_boxShow">
-          <el-form
-            ref="operationParam"
-            :inline="true"
-            :model="operationParam"
-            label-width="68px" style="margin-top: 10px"
-            v-show="operationActive == 'xitong'"
-          >
-            <el-form-item label="登录状态" prop="status" style="width: 100%">
-              <el-select
-                v-model="operationParam.status"
-                clearable
-                placeholder="请选择登录状态"
-                size="small"
-              >
-                <el-option
-                  v-for="dict in dict.type.sys_common_status"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="登录时间">
-              <el-date-picker
-                v-model="dateRange"
-                size="small"
-                style="width: 252px;"
-                value-format="yyyy-MM-dd HH-mm-ss"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :default-time="['00:00:00', '23:59:59']"
-              ></el-date-picker>
-            </el-form-item>
-            <el-form-item class="bottomBox">
-              <el-button size="small" type="primary" @click="handleQueryOperationParam"
-              >搜索</el-button
-              >
-              <el-button size="small" @click="resetQuery" type="primary" plain
-              >重置</el-button
-              >
-            </el-form-item>
-          </el-form>
-        </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
       </div>
+      <el-tabs v-model="operationActive" @tab-click="handleTabClick">
+        <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
+        <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
+      </el-tabs>
 
-<!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'xitong'"
+      <!-- <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;"> -->
+      <el-row
+        :gutter="20"
+        style="margin: 0px 0 6px"
+        v-show="operationActive == 'xitong'"
+      >
+        <el-col :span="4">
+          <el-button size="small" @click="resetQuery"
+              >刷新</el-button
+            >
+        </el-col>
+        <el-col :span="10" :offset="10">
+          <div class="grid-content bg-purple" ref="main">
+            <el-input
+              placeholder="请输入登录地址、用户名称，回车搜索"
+              v-model="operationParam_xt.ipaddr"
+              @keyup.enter.native="handleQueryOperationParam"
+              size="small"
+            >
+              <el-button
+                slot="append"
+                class="searchTable"
+                @click="syxt_boxShow = !syxt_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="syxt_searchBox" v-show="syxt_boxShow" ref="cc">
+        <el-form
+          ref="operationParam_xt"
+          :inline="true"
+          :model="operationParam_xt"
+          label-width="68px"
+          v-show="operationActive == 'xitong'"
+        >
+          <el-form-item label="登录状态" prop="status">
+            <el-select
+              v-model="operationParam_xt.status"
+              clearable
+              placeholder="请选择登录状态"
+              size="small"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="dict in dict.type.sys_common_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="登录时间">
+            <el-date-picker
+              v-model="dateRange"
+              size="small"
+              style="width: 100%"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="setoptions"
+              :default-time="['00:00:00', '23:59:59']"
+              :class="this.sideTheme != 'theme-dark' ? 'themeDarkPicker' : ''"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button
+              size="small"
+              type="primary"
+              @click="handleQueryOperationParam"
+              >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
+              >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
+      <!-- </div> -->
+
+      <!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'xitong'"
              label-width="68px" style="margin-top: 10px">
 
       <el-form-item label="状态" prop="status">
@@ -1345,109 +1613,120 @@
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>-->
-      <div ref="main1" style = "margin-left: 60%;margin-bottom: 4%;margin-top: -4%" >
-        <el-row :gutter="20" style="margin: 10px 0 25px">
-
-          <el-col :span="12"  >
-            <div class="grid-content bg-purple">
-              <el-input
-                placeholder="请输入操作地址，回车搜索"
-                v-model="operationParam.operIp"
-                @keyup.enter.native="handleQueryOperationParam"
-                v-show="operationActive == 'caozuo'"
-                class="zj"
-              >
-                <el-button
-                  slot="append"
-                  icon="el-icon-s-fold"
-                  @click="sycz_boxShow = !sycz_boxShow"
-                ></el-button>
-              </el-input>
-            </div>
-          </el-col>
-        </el-row>
-        <div class="syxt_searchBox" v-show="sycz_boxShow">
-          <el-form
-            ref="operationParam"
-            :inline="true"
-            :model="operationParam"
-            label-width="68px" style="margin-top: 10px"
-            v-show="operationActive == 'caozuo'"
+      <el-row
+        :gutter="20"
+        style="margin: 0px 0 6px"
+        v-show="operationActive == 'caozuo'"
+      >
+        <el-col :span="4">
+          <el-button size="small" @click="resetQuery"
+              >刷新</el-button
+            >
+        </el-col>
+        <el-col :span="10" :offset="10">
+          <div class="grid-content bg-purple" ref="main1">
+            <el-input
+              placeholder="请输入操作地址，回车搜索"
+              v-model="operationParam.operIp"
+              @keyup.enter.native="handleQueryOperationParam"
+              size="small"
+            >
+              <el-button
+                slot="append"
+                class="searchTable"
+                @click="sycz_boxShow1 = !sycz_boxShow1"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="syxt_searchBox" v-show="sycz_boxShow1" ref="cc1">
+        <el-form
+          ref="operationParam"
+          :inline="true"
+          :model="operationParam"
+          label-width="68px"
+          v-show="operationActive == 'caozuo'"
+        >
+          <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
+            <el-select
+              v-model="operationParam.eqTypeId"
+              clearable
+              placeholder="请选择设备类型"
+              size="small"
+            >
+              <el-option
+                v-for="item in eqTypeData"
+                :key="item.typeId"
+                :label="item.typeName"
+                :value="item.typeId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            label="隧道名称"
+            prop="tunnelId"
+            v-show="manageStation == '0'"
           >
-            <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
-              <el-select
-
-                v-model="operationParam.eqTypeId"
-                clearable
-                placeholder="请选择设备类型"
-                size="small"
-              >
-                <el-option
-                  v-for="item in eqTypeData"
-                  :key="item.typeId"
-                  :label="item.typeName"
-                  :value="item.typeId"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStation == '0'">
-              <el-select
-                v-model="operationParam.tunnelId"
-                placeholder="请选择隧道"
-                style="width: 252px;"
-                clearable
-                size="small"
-              >
-                <el-option
-                  v-for="item in eqTunnelData"
-                  :key="item.tunnelId"
-                  :label="item.tunnelName"
-                  :value="item.tunnelId"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="控制方式" prop="controlType" style="width: 100%">
-              <el-select
-
-                v-model="operationParam.controlType"
-                clearable
-                placeholder="请选择控制方式"
-                size="small"
-              >
-                <el-option
-                  v-for="dict in dict.type.sd_control_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="创建时间">
-              <el-date-picker
-                v-model="dateRange"
-                size="small"
-                style="width: 252px"
-                value-format="yyyy-MM-dd HH-mm-ss"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :default-time="['00:00:00', '23:59:59']"
-              ></el-date-picker>
-            </el-form-item>
-            <el-form-item class="bottomBox">
-              <el-button size="small" type="primary" @click="handleQueryOperationParam"
+            <el-select
+              v-model="operationParam.tunnelId"
+              placeholder="请选择隧道"
+              style="width: 252px"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in eqTunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="控制方式" prop="controlType" style="width: 100%">
+            <el-select
+              v-model="operationParam.controlType"
+              clearable
+              placeholder="请选择控制方式"
+              size="small"
+            >
+              <el-option
+                v-for="dict in dict.type.sd_control_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="创建时间">
+            <el-date-picker
+              v-model="dateRange1"
+              size="small"
+              style="width: 252px"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="setoptions"
+              :default-time="['00:00:00', '23:59:59']"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button
+              size="small"
+              type="primary"
+              @click="handleQueryOperationParam"
               >搜索</el-button
-              >
-              <el-button size="small" @click="resetQuery" type="primary" plain
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
               >重置</el-button
-              >
-            </el-form-item>
-          </el-form>
-        </div>
+            >
+          </el-form-item>
+        </el-form>
       </div>
 
-<!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'caozuo'"
+      <!--    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'caozuo'"
                label-width="68px" style="margin-top: 10px">
       <el-form-item label="设备类型" prop="eqTypeId">
         <el-select
@@ -1511,77 +1790,130 @@
         >
       </el-form-item>
     </el-form>-->
-    <el-table ref="tables" v-loading="loading" :data="operationList1" @selection-change="handleSelectionChange"
-            :row-class-name="tableRowClassName" v-show="operationActive == 'xitong'"
-            :default-sort="{prop: 'loginTime', order: 'descending'}" max-height="430" >
-       <el-table-column type="selection" align="center" />
-      <el-table-column label="序号" width="55" align="center">
-        <template slot-scope="scope">
-          {{scope.$index+1}}
-        </template>
-      </el-table-column>
-<!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
-      <el-table-column label="用户名称" align="center" prop="userName" width="100" :show-overflow-tooltip="true" />
-      <el-table-column label="登录地址" align="center" prop="ipaddr" width="130" :show-overflow-tooltip="true" />
-      <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
-      <el-table-column label="浏览器" align="center" prop="browser" :show-overflow-tooltip="true" />
-      <el-table-column label="操作系统" align="center" prop="os" width="130"/>
-      <el-table-column label="登录状态" align="center" prop="status">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_common_status" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作信息" align="center" prop="msg" />
-      <el-table-column label="登录日期" align="center" prop="loginTime" sortable  width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.loginTime) }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-      <el-table v-loading="loading" :data="operationList2" max-height="430" :default-sort="{ prop: 'createTime', order: 'descending' }"
-        @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" v-show="operationActive == 'caozuo'" >
-        <el-table-column type="selection" align="center" />
-        <el-table-column label="序号" width="55" align="center">
+      <el-table
+        ref="tables"
+        v-loading="loading"
+        :data="operationList1"
+        @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
+        v-show="operationActive == 'xitong'"
+        :default-sort="{ prop: 'loginTime', order: 'descending' }"
+        max-height="430"
+        :key="1"
+      >
+        <!-- <el-table-column type="selection" align="center" /> -->
+        <el-table-column type="index" :index="indexMethod" label="序号" width="50" align="center"></el-table-column>
+        <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
+        <el-table-column
+          label="用户名称"
+          align="center"
+          prop="userName"
+          width="70"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column
+          label="登录地址"
+          align="center"
+          prop="ipaddr"
+          width="100"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column
+          label="登录地点"
+          align="center"
+          width="70"
+          prop="loginLocation"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column
+          label="浏览器"
+          align="center"
+          prop="browser"
+          width="100"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column
+          label="操作系统"
+          align="center"
+          prop="os"
+        />
+        <el-table-column label="登录状态" align="center" prop="status" width="80">
           <template slot-scope="scope">
-            {{scope.$index+1}}
+            <!-- <dict-tag
+              :options="dict.type.sys_common_status"
+              :value="scope.row.status"
+            /> -->
+            <span
+            :style="{
+              color: scope.row.status == '0' ? '#00FF00' : 'red',
+            }"
+            >{{ pollFormat(scope.row.status) }}</span
+          >
           </template>
         </el-table-column>
-      <el-table-column
-        label="隧道名称"
-        align="center"
-        prop="tunnelName.tunnelName"
-      />
-      <el-table-column
-        label="设备类型"
-        align="center"
-        prop="typeName.typeName"
-      />
-      <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
-      <el-table-column
-        label="操作状态"
-        align="center"
-        prop="stateName.stateName"
-      />
-      <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat"/>
-      <el-table-column label="操作结果" align="center" prop="state" :formatter="stateFormat"/>
-      <el-table-column label="操作地址" align="center" prop="operIp" />
-      <el-table-column
-        label="创建时间"
-        align="center"
-        prop="createTime"
-        width="180"
-        sortable
+        <el-table-column label="操作信息" align="center" prop="msg" width="80"/>
+        <el-table-column
+          label="登录日期"
+          align="center"
+          prop="loginTime"
+          sortable
+          width="150"
+        >
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.loginTime) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table
+        v-loading="loading"
+        :data="operationList2"
+        max-height="430"
+        :default-sort="{ prop: 'createTime', order: 'descending' }"
+        @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
+        v-show="operationActive == 'caozuo'"
+        :key="1"
       >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
+        <!-- <el-table-column type="selection" align="center" /> -->
+        <el-table-column type="index" :index="indexMethod2" label="序号" width="50" align="center"></el-table-column>
+        <el-table-column
+          label="隧道名称"
+          align="center"
+          prop="tunnelName.tunnelName"
+          width="90"
+        />
+        <el-table-column
+          label="设备类型"
+          align="center"
+          prop="typeName.typeName"
+        />
+        <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
+        <el-table-column
+          label="操作状态"
+          align="center"
+          prop="stateName.stateName"
+          width="80"
+        />
+        <el-table-column label="控制方式" align="center" prop="controlType" width="80" :formatter="controlTypeFormat"/>
+        <el-table-column label="操作结果" align="center" prop="state" />
+        <el-table-column label="操作地址" align="center" prop="operIp" />
+        <el-table-column
+          label="创建时间"
+          align="center"
+          prop="createTime"
+          width="180"
+          sortable
+        >
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
       <pagination
         v-show="total1 > 0 && operationActive == 'xitong'"
         :total="total1"
-        :page.sync="operationParam.pageNum"
-        :limit.sync="operationParam.pageSize"
+        :page.sync="operationParam_xt.pageNum"
+        :limit.sync="operationParam_xt.pageSize"
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
@@ -1593,7 +1925,6 @@
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
-
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2109,7 +2440,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog> -->
-
     <!--批量管理对话框-->
     <el-dialog
       v-dialogDrag
@@ -2120,19 +2450,9 @@
       append-to-body
       @close="batchForm.eqDirection = ''"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
+      <div class="dialogStyleBox">
         <div class="dialogLine"></div>
-        <img
-          src="../../../assets/cloudControl/dialogHeader.png"
-          style="height: 30px; transform: translateY(-30px)"
-        />
+        <div class="dialogCloseButton"></div>
       </div>
       <el-form
         ref="batchForm"
@@ -2196,6 +2516,7 @@
           @selection-change="handleSelectionChange"
           @row-click="handleRowClick"
           empty-text="暂无设备"
+          :key="1"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column
@@ -2285,7 +2606,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!--微波车检对话框-->
     <el-dialog
       v-dialogDrag
@@ -2346,16 +2666,18 @@
     <com-video
       class="comClass"
       v-if="[23, 24, 25].includes(this.eqInfo.clickEqType)"
-      @dialogClose="dialogClose"
-      :eqInfo="this.eqInfo"
-      :eqTypeDialogList="this.eqTypeDialogList"
       :brandList="this.brandList"
       :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
     ></com-video>
     <com-light
       class="comClass"
       v-if="
-        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 45].includes(this.eqInfo.clickEqType)
+        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 45].includes(
+          this.eqInfo.clickEqType
+        )
       "
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
@@ -2372,12 +2694,54 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-covi>
+    <!--   消防泵  -->
+    <com-xfsb
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 13"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-xfsb>
+    <!--   潜水深井泵  -->
+    <com-sjb
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 49"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-sjb>
+    <!--    温湿传感器  -->
+    <com-temperatureHumidity
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 41"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-temperatureHumidity>
+    <!--    液位传感器  -->
+    <com-liquidLevel
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 42"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-liquidLevel>
     <com-data
       class="comClass"
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 35,40,39,48].includes(this.eqInfo.clickEqType)"
+      v-if="
+        [14, 21, 32, 33, 15, 35, 40, 39, 48,41].includes(this.eqInfo.clickEqType)
+      "
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>
@@ -2417,7 +2781,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-callPolice>
-    <com-robot
+    <!-- <com-robot
       class="comClass"
       v-if="this.eqInfo.clickEqType == 29"
       :brandList="this.brandList"
@@ -2425,7 +2789,8 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-robot>
+    ></com-robot> -->
+    <robot class="comClass robotHtmlBox" v-if="this.eqInfo.clickEqType == 29"></robot>
     <com-bright
       class="comClass"
       v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
@@ -2503,7 +2868,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog> -->
-
     <el-dialog
       v-dialogDrag
       class="workbench-dialog batch-table"
@@ -2555,7 +2919,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!--道路结冰对话框-->
     <el-dialog
       v-dialogDrag
@@ -2649,7 +3012,6 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
     <!-- 路面状态 -->
     <el-dialog
       v-dialogDrag
@@ -2764,11 +3126,18 @@
       class="workbench-dialog explain-table icon-dialog"
       :title="title"
       :visible.sync="explainVisible"
-      width="1000px"
+      width="1240px"
       append-to-body
+      :close-on-click-modal="false"
     >
-      <img src="@/assets/logo/equipment_log/all.png"
-      style="width:1000px;height:auto;padding:20px"/>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <img
+        src="@/assets/logo/equipment_log/all.png"
+        style="width: 100%; height: auto;"
+      />
       <!-- <el-table
         ref="multipleTable"
         :data="eqIcon"
@@ -2805,21 +3174,51 @@
     <!--查看控制策略对话框-->
     <el-dialog
       v-dialogDrag
-      class="workbench-dialog explain-table strategyClass eventDiglog"
+      class="explain-table operationDiglog"
       :title="title"
       :visible.sync="strategyVisible"
       width="1000px"
       append-to-body
+      :close-on-click-modal="false"
     >
-    <el-tabs  v-model="strategyActive" @tab-click="handleClick" >
-          <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
-          <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>
-    </el-tabs>
-    <el-form
-          :model="queryParams"
-          ref="queryForm"
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <el-tabs v-model="strategyActive" @tab-click="handleClick">
+        <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
+<!--        <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>-->
+      </el-tabs>
+      <el-row
+        :gutter="20"
+        style="margin: 0px 0 6px;"
+        v-show="strategyActive == 'richang'"
+      >
+        <el-col :span="4">
+          <el-button size="small" @click="resetQuery">刷新</el-button>
+        </el-col>
+        <el-col :span="10" :offset="10">
+          <div class="grid-content bg-purple" ref="main2">
+            <el-input
+              v-model="queryParams.strategyName"
+              placeholder="请输入策略名称"
+              @keyup.enter.native="handlestrategyQuery"
+              size="small"
+            >
+              <el-button
+                slot="append"
+                class="searchTable"
+                @click="syxt_boxShow2 = !syxt_boxShow2"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="syxt_searchBox" v-show="syxt_boxShow2"  ref="cc2">
+        <el-form
+          ref="operationParam"
           :inline="true"
-
+          :model="operationParam"
           label-width="68px"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
@@ -2837,15 +3236,20 @@
               />
             </el-select>
           </el-form-item>
-
-          <el-form-item label="策略名称" prop="strategyName">
-            <el-input
-              v-model="queryParams.strategyName"
-              placeholder="请输入策略名称"
+          <el-form-item label="方向" prop="direction">
+            <el-select
+              v-model="queryParams.direction"
+              placeholder="请选择方向"
               clearable
               size="small"
-              @keyup.enter.native="handleQuery"
-            />
+            >
+              <el-option
+                v-for="(item, index) in directionOptions"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              ></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="策略类型" prop="strategyType">
             <el-select
@@ -2862,51 +3266,143 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handlestrategyQuery"
-            >搜索</el-button
+          <el-form-item class="bottomBox">
+            <el-button size="small" @click="handlestrategyQuery"
+              >搜索</el-button
             >
-            <el-button size="mini" @click="resetQuery" type="primary" plain
-            >重置</el-button
-            >
+            <el-button size="small" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
+      </div>
+      <el-row
+        :gutter="20"
+        style="margin: 0px 0 6px; padding: 0px 5px"
+        v-show="strategyActive == 'yujing'"
+      >
+        <el-col :span="4">
+          <el-button size="small" @click="resetQuery">刷新</el-button>
+        </el-col>
+        <el-col :span="10" :offset="10">
+          <div class="grid-content bg-purple" ref="main3">
+            <el-input
+              v-model="queryParams.strategyName"
+              placeholder="请输入策略名称"
+              @keyup.enter.native="handlestrategyQuery"
+              size="small"
+            >
+              <el-button
+                slot="append"
+                class="searchTable"
+                @click="sycz_boxShow3 = !sycz_boxShow3"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="syxt_searchBox" v-show="sycz_boxShow3"  ref="cc3">
+        <el-form
+          ref="operationParam"
+          :inline="true"
+          :model="operationParam"
+          label-width="68px"
+        >
+          <el-form-item label="隧道名称" prop="tunnelId">
+            <el-select
+              v-model="queryParams.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="策略类型" prop="strategyType">
+            <el-select
+              v-model="queryParams.strategyType"
+              placeholder="请选择策略类型"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in strategyTypeEvent"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button size="small" @click="handlestrategyQuery"
+              >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
       <el-table
         ref="multipleTable"
         :data="strategyList"
         tooltip-effect="dark"
-        style="width: 100%"
+        style="width: 100%;"
         :max-height="400"
         size="mini"
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         empty-text="暂无策略"
+        :key="1"
       >
+      <el-table-column
+            type="index"
+            width="70"
+            align="center"
+            :index="indexMethod3"
+            label="序号">
+          </el-table-column>
         <el-table-column
           label="隧道名称"
           align="center"
           prop="tunnels.tunnelName"
         />
         <el-table-column
-            label="事件类型"
-            align="center"
-            prop="tunnels.tunnelName"
-            v-if="strategyActive == 'yujing'"
-          />
+          label="事件类型"
+          align="center"
+          prop="tunnels.tunnelName"
+          v-if="strategyActive == 'yujing'"
+        />
         <el-table-column label="策略名称" align="center" prop="strategyName" />
         <el-table-column
-            label="方向"
-            align="center"
-            prop="direction"
-            :formatter="directionFormat"
-          />
-          <el-table-column
-            label="策略类型"
-            align="center"
-            prop="strategyType"
-            :formatter="strategyTypeFormat"
-          />
-        <el-table-column label="策略信息" align="center" prop="strategyInfo" :show-overflow-tooltip='true'>
+          label="方向"
+          align="center"
+          prop="direction"
+          :formatter="directionFormat"
+        />
+        <el-table-column
+          label="策略类型"
+          align="center"
+          prop="strategyType"
+          :formatter="strategyTypeFormat"
+          v-if="strategyActive=='richang'"
+        />
+        <el-table-column
+          label="策略类型"
+          align="center"
+          prop="strategyType"
+          :formatter="strategyTypeFormatEvent"
+          v-if="strategyActive=='yujing'"
+        />
+
+        <el-table-column
+          label="策略信息"
+          align="center"
+          prop="strategyInfo"
+          :show-overflow-tooltip="true"
+
+        >
           <template slot-scope="scope" v-if="scope.row.slist != []">
             <div v-for="(item, index) in scope.row.slist" :key="index">
               {{ item }}
@@ -2915,18 +3411,18 @@
           <div v-else>暂无信息</div>
         </el-table-column>
         <el-table-column label="状态" align="center" prop="schedulerTime">
-            <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.strategyState"
-                active-color="#39ADFF"
-                inactive-color="#ccc"
-                active-value="0"
-                inactive-value="1"
-                @change="changeStrategyState(scope.row)"
-              >
-              </el-switch>
-            </template>
-          </el-table-column>
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.strategyState"
+              active-color="#39ADFF"
+              inactive-color="#ccc"
+              active-value="0"
+              inactive-value="1"
+              @change="changeStrategyState(scope.row)"
+            >
+            </el-switch>
+          </template>
+        </el-table-column>
         <!-- <el-table-column
           label="操作"
           align="center"
@@ -2959,16 +3455,16 @@
         </el-table-column> -->
       </el-table>
       <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="handlestrategyQuery"
-          class="paginationWorkbench"
-        />
-      <div slot="footer">
+        v-show="total > 0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="handlestrategyQuery"
+        class="paginationWorkbench"
+      />
+      <!-- <div slot="footer">
         <el-button type="primary" @click="strategyCancel">关 闭</el-button>
-      </div>
+      </div> -->
     </el-dialog>
     <!-- 情报板编辑弹窗 -->
     <vms-content-update ref="vmsContentUpdate"></vms-content-update>
@@ -3220,6 +3716,7 @@
 import flvjs from "flv.js";
 import { math } from "@/utils/math.js";
 import moment from "moment";
+import { displayH5sVideoAll } from "@/api/icyH5stream";
 
 import vueSeamlessScroll from "vue-seamless-scroll";
 import $ from "jquery";
@@ -3239,6 +3736,8 @@ import {
   updateDevices,
   getAudioFileList,
   playVoiceGroup,
+  videoStreaming,
+  getDeviceById
 } from "@/api/equipment/eqlist/api";
 import {
   listType,
@@ -3285,6 +3784,7 @@ import {
   workTriggerInfo,
   updateState,
 } from "@/api/event/strategy";
+import { getEntranceExitVideo } from "@/api/eventDialog/api.js";
 import { selectByEqDeno } from "@/api/business/roadState.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
@@ -3302,6 +3802,11 @@ import comData from "@/views/workbench/config/components/data"; //只有数据�
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
 import comBoard from "@/views/workbench/config/components/board"; //情报板弹窗
 import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
+import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵弹窗
+import comSjb from "@/views/workbench/config/components/sjb"; //潜水深水泵
+import robot from "@/views/workbench/config/components/robotManagement"; //消防水泵弹窗
+import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
+import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
 
 import { getLocalIP } from "@/api/event/vedioRecord";
 import { getHosts } from "@/api/equipment/plc/api";
@@ -3330,6 +3835,7 @@ import {
   timeSharing,
   updateControlTime,
   timeStrategySwitch,
+  specialVehicleMonitoringInRecent24Hours,
 } from "@/api/workbench/config.js";
 import {
   getDeviceBase,
@@ -3339,7 +3845,7 @@ import {
   getCategoryTree,
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
-import { listEvent, getWarnEvent } from "@/api/event/event";
+import {listEvent, getWarnEvent, getReservePlanDataa} from "@/api/event/event";
 import { getVehicleSelectList } from "@/api/surveyType/api"; //车辆类型
 import { list } from "@/api/monitor/logininfor";
 
@@ -3372,14 +3878,34 @@ export default {
     comYoudao,
     comBoard,
     comRadio,
+    comXfsb,
+    comSjb,//深水泵
+    robot,
+    comTemperatureHumidity, //温湿度传感器
+    comLiquidLevel,//液位传感器
   },
 
   data() {
     return {
+      loginStatusOptions:[],
+      timingStrategyDisabled:false,
+      videoNoPic1:false,
+      videoNoPic2:false,
+      videoTitle1:'',
+      videoTitle2:'',
+      videoTitle3:'',
+      videoTitle4:'',
 
-      syxt_boxShow:false,
-      sycz_boxShow:false,
+      footChangeRadio: "图表",
+      syxt_boxShow: false,
+      syxt_boxShow2: false,
+      sycz_boxShow1: false,
+      sycz_boxShow3: false,
+      rccl_boxShow: false,
+      yjcl_boxShow: false,
       treeShow: false,
+      //地图复位按钮
+      resetCanvasFlag : false,
       //搜索树状数据
       treeData: [],
       defaultProps: {
@@ -3401,7 +3927,7 @@ export default {
         fileNames: [],
       },
       strategyTypeOptions: [],
-
+      strategyTypeEvent:[],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -3428,6 +3954,14 @@ export default {
         eqTypeId: "",
         tunnelId: "",
         controlType: "",
+        operIp:"",
+        pageNum: 1,
+        pageSize: 10,
+      },
+
+      operationParam_xt: {
+        ipaddr: "",
+        status: "",
         pageNum: 1,
         pageSize: 10,
       },
@@ -3437,7 +3971,7 @@ export default {
       manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
       lane: "",
-      carList: [],
+      carList: new Map(),
       tunnelKm: "", //隧道实际长度
       tunnelLength: "", //隧道px长度
       chezhiDisabled: false, //车指按钮 返回接口结果前禁用
@@ -3460,7 +3994,6 @@ export default {
       timStrategyList: [], //定时控制
       BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
-      tunnelLane: "", //当前隧道有几条车道
       eqInfo: {},
       brandList: [],
       directionList: [{}, {}], //设备方向字典
@@ -3521,8 +4054,19 @@ export default {
       tunnelData: [],
       //所属隧道
       eqTunnelData: {},
+      // 设备方向字典
+      directionOptions: [],
+      setoptions: {
+        // 时间不能大于当前时间
+        disabledDate(time) {
+          let current_time = new Date().format('yyyy-MM-dd')+' 23:59:59';  //时间日期为：‘当前日期 23:59:59’
+          let t = new Date(current_time).getTime(); //‘当前日期 23:59:59’的时间戳
+          return time.getTime() > t;
+        },
+        selectableRange: '00:00:00 - 23:59:59'
+      },
       // 日期范围
-      dateRange: [],
+      dateRange1: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -3531,6 +4075,7 @@ export default {
         tunnelId: null,
         userName: null,
         eqId: null,
+        direction:null,
         /* eqName: null, */
         code: null,
         cmd: null,
@@ -3786,7 +4331,7 @@ export default {
       userDeptId: null,
       tunnelQueryParams: {
         deptId: "",
-        deptName: "",
+        // deptName: "",
       },
       userQueryParams: {
         userName: this.$store.state.user.name,
@@ -3902,23 +4447,7 @@ export default {
       ],
       // 一键车道指示器 车道下拉框
       chezhiLaneList: [],
-      chezhiLaneList1: [
-        {
-          laneId: 1,
-          laneName: "一车道",
-        },
-      ],
-      chezhiLaneList2: [
-        {
-          laneId: 1,
-          laneName: "一车道",
-        },
-        {
-          laneId: 2,
-          laneName: "二车道",
-        },
-      ],
-      chezhiLaneList3: [
+      chezhiLaneOptionList: [
         {
           laneId: 1,
           laneName: "一车道",
@@ -3931,15 +4460,38 @@ export default {
           laneId: 3,
           laneName: "三车道",
         },
+        {
+          laneId: 4,
+          laneName: "四车道",
+        },{
+          laneId: 5,
+          laneName: "五车道",
+        },
+        {
+          laneId: 6,
+          laneName: "六车道",
+        },
+        {
+          laneId: 7,
+          laneName: "七车道",
+        },,{
+          laneId: 8,
+          laneName: "八车道",
+        },
+        {
+          laneId: 9,
+          laneName: "九车道",
+        },
+
       ],
       // 一键车指状态下拉框
       chezhiStateList: [],
       // 一键车道指示器表单
-      chezhiForm0: {
+      chezhiForm1: {
         lane: [],
         state: "",
       },
-      chezhiForm1: {
+      chezhiForm2: {
         lane: [],
         state: "",
       },
@@ -4032,6 +4584,14 @@ export default {
       clickEqType: "", //点击设备的eqType
       equipmentId: "",
       // eqInfo: {},
+      liveUrl1: "",
+      liveUrl2: "",
+      liveUrl3: "",
+      liveUrl4: "",
+      cameraPlayer1: false,
+      cameraPlayer2: false,
+      cameraPlayer3: false,
+      cameraPlayer4: false,
     };
   },
 
@@ -4108,12 +4668,13 @@ export default {
   },
   created: function () {
     this.getUserDept();
-
-    this.getDicts("sd_direction").then((data) => {
+    this.getDicts("sd_strategy_direction").then((data) => {
       console.log(data, "方向");
       this.directionList = data.data;
     });
-
+    this.getDicts("sys_common_status").then((response) => {
+      this.loginStatusOptions = response.data;
+    });
     // this.flvPlayer()
     this.trafficFlowLane();
     this.getEqTypeStateIcon();
@@ -4134,7 +4695,12 @@ export default {
     });
     // 策略类型
     this.getDicts("sd_strategy_type").then((response) => {
+      console.log("策略类型",response)
       this.strategyTypeOptions = response.data;
+    });
+    this.getDicts("sys_common_event").then((response) => {
+      this.strategyTypeEvent = response.data;
+      console.log(this.strategyTypeEvent, "this.strategyTypeEvent");
     });
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
@@ -4165,6 +4731,12 @@ export default {
       console.log(response, "车辆类型");
       this.vehicleTypeList = response;
     });
+
+    this.getDicts("sd_strategy_direction").then((response) => {
+      response.data.forEach((item) => {
+        this.directionOptions.push(item);
+      });
+    });
     this.getTunnelState();
     // this.carchange();
     //调取滚动条
@@ -4176,9 +4748,9 @@ export default {
     screenEqName(val) {
       this.$refs.tree.filter(val);
     },
-    tunnelList: function (newVal, oldVal) {
-      console.log(newVal, "8888888888888888");
-    },
+    // tunnelList: function (newVal, oldVal) {
+    //   console.log(newVal, "8888888888888888");
+    // },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
 
@@ -4206,6 +4778,8 @@ export default {
       }
     },
     radarDataList(event) {
+      console.log(event)
+      debugger
       // console.log(event, "websockt工作台接收车辆感知事件数据");
       // 首先应判断推送数据和当前选择隧道是否一致
       // if(item.tunnelId == this.tunnelId){}
@@ -4290,7 +4864,14 @@ export default {
           event[i].background = "red";
         }
       }
-      this.carList = event;
+      this.carList.set(event[0].vehicleLicense, event[0]);
+      console.log(this.carList,'this.carList')
+
+      this.carList.forEach((value, key, map) => {
+        console.log(value, key, map)
+      })
+      // this.carList.push( event[0])
+      // this.carList = event[0];
       this.$forceUpdate();
     },
     deviceStatus(event) {
@@ -4439,9 +5020,9 @@ export default {
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
       console.log(dom);
-      if (dom) {
+      if (dom && that.treeShow) {
         // 如果点击的区域不在自定义dom范围
-        if (!dom.contains(e.target)) {
+        if (!dom.contains(e.target) && that.treeShow == true) {
           that.treeShow = false;
         }
       }
@@ -4452,7 +5033,7 @@ export default {
     // this.initEnergyConsumption();
     this.getTimeData();
     // this.vehicleEcharts()
-    this.specialEcharts();
+    // this.specialEcharts();
     let that = this;
     window.onresize = () => {
       return (() => {
@@ -4489,39 +5070,273 @@ export default {
     // this.srollAuto()
     document.addEventListener("click", this.bodyCloseMenus);
     document.addEventListener("click", this.bodyCloseMenus1);
+    document.addEventListener("click", this.bodyCloseMenus2);
+    document.addEventListener("click", this.bodyCloseMenus3);
+
   },
 
   methods: {
+    pollFormat(row) {
+      return this.selectDictLabel(this.loginStatusOptions, row);
+    },
+    // 参数timer是过去的n个小时
+    getPastTime() {
+      //alert(this.timeFormat(new Date(new Date().setHours(0, 0, 0, 0)).getTime()));
+      // 获取过去的时间
+      //const lastTime = new Date().getTime() - `${timer * 60 * 60 * 1000}`;
+      //获取当天0点时间
+      const lastTime = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
+      const startTime = this.timeFormat(lastTime);
+      // 当天24点时间
+      let time = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1).getTime();
+      const endTime = this.timeFormat(time);
+      return [startTime, endTime];
+
+    },
+
+    //时间生成并处理
+    timeFormat(time) {
+      // 对应的方法
+      const timeType = [
+        "getFullYear",
+        "getMonth",
+        "getDate",
+        "getHours",
+        "getMinutes",
+        "getSeconds"
+      ];
+      // 分隔符
+      const separator = {
+        getFullYear: "-",
+        getMonth: "-",
+        getDate: " ",
+        getHours: ":",
+        getMinutes: ":",
+        getSeconds: ""
+      };
+      let resStr = "";
+      for (let i = 0; i < timeType.length; i++) {
+        const element = timeType[i];
+        let resTime = new Date(time)[element]();
+        // 获取月份的要+1
+        resTime = element == "getMonth" ? resTime + 1 : resTime;
+        // 小于10，前面加0
+        resTime = resTime > 9 ? resTime : "0" + resTime;
+        resStr = resStr + resTime + separator[element];
+      }
+      return resStr;
+    },
+
+
+    changeEndTime(start,end,index){
+      console.log(start,end,"start,end")
+      let date = new Date();
+      let a = start.split(":");
+      let b = end.split(":");
+      let bool = date.setHours(a[0],a[1]) > date.setHours(b[0],b[1])
+      if(bool){
+        this.$modal.msgWarning("结束时间必须大于开始时间");
+        console.log(this.timStrategyList,"this.timStrategyList")
+        for(let i=0;i< this.timStrategyList.length;i++){
+          this.timStrategyList[index].arr[1] = ''
+          this.timingStrategyDisabled = true
+
+        }
+      }else{
+        this.timingStrategyDisabled = false
+      }
+    },
+ //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.operationParam_xt.pageNum-1)*this.operationParam_xt.pageSize+1
+    },
+    //翻页时不刷新序号
+    indexMethod2(index){
+      return index+(this.operationParam.pageNum-1)*this.operationParam.pageSize+1
+    },
+    //翻页时不刷新序号
+    indexMethod3(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+    videoRadioChange() {
+      if (this.footChangeRadio == "视频" && this.tunnelId) {
+        this.getFooterVideo();
+      } else {
+        this.cameraPlayer1 = false;
+        this.cameraPlayer2 = false;
+        this.cameraPlayer3 = false;
+        this.cameraPlayer4 = false;
+      }
+    },
+    getFooterVideo() {
+        // 潍坊方向
+        getEntranceExitVideo(this.tunnelId, this.directionList[0].dictValue).then((res) => {
+          if(res.data.length == 0){
+            this.videoNoPic2 = true
+          }else{
+          this.videoTitle3 = res.data[0].inletName;
+          this.videoTitle4 = res.data[0].outletName;
+          console.log(res,"后两个视频")
+          if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+            getDeviceById(res.data[0].inlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo4',3);
+            })
+            getDeviceById(res.data[0].outlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo5',4);
+            })
+          }else{
+            videoStreaming(res.data[0].inlet).then((res) => {
+              console.log(res,'入口视频')
+            if(res.code == 200 && res.data) {
+              this.liveUrl1 = res.data.liveUrl;
+              this.cameraPlayer1 = true;
+            }else{
+                this.$modal.msgWarning("获取视频失败");
+              }
+          });
+          videoStreaming(res.data[0].outlet).then((res) => {
+            if(res.code == 200 && res.data) {
+              this.liveUrl2 = res.data.liveUrl;
+              this.cameraPlayer2 = true;
+            }else{
+              this.$modal.msgWarning("获取视频失败");
+            }
+          });
+          }
+          }
+
+
+        });
+        // 济南方向
+        getEntranceExitVideo(this.tunnelId, this.directionList[1].dictValue).then((res) => {
+          console.log(res,"前两个视频")
+          if(res.data.length == 0){
+            this.videoNoPic1 = true
+          }else{
+          this.videoTitle1 = res.data[0].inletName;
+          this.videoTitle2 = res.data[0].outletName;
+          if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+            getDeviceById(res.data[0].inlet).then((response)=>{
+              console.log(response,"0000000000000")
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo2',1);
+            })
+            getDeviceById(res.data[0].outlet).then((response)=>{
+                displayH5sVideoAll(response.data.secureKey,'h5sVideo3',2);
+            })
+          }else{
+            videoStreaming(res.data[0].inlet).then((res) => {
+              console.log(res,'入口视频')
+              if(res.code == 200 && res.data){
+                this.liveUrl3 = res.data.liveUrl;
+                this.cameraPlayer3 = true;
+              }else{
+                this.$modal.msgWarning("获取视频失败");
+              }
+
+            });
+            videoStreaming(res.data[0].outlet).then((res) => {
+            if(res.code == 200 && res.data) {
+              this.liveUrl4 = res.data.liveUrl;
+              this.cameraPlayer4 = true;
+            }else{
+              this.$modal.msgWarning("获取视频失败");
+            }
+            });
+          }
+          }
+        });
+
+    },
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus);
+      document.removeEventListener("click", this.bodyCloseMenus1);
+      document.removeEventListener("click", this.bodyCloseMenus2);
+      document.removeEventListener("click", this.bodyCloseMenus3);
+
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
-        if (self.syxt_boxShow == true){
-          self.syxt_boxShow = false;
-        }
+      if(self.syxt_boxShow == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main.contains(e.target) &&
+            !self.$refs.cc.contains(e.target)
+          ) {
+            if (self.syxt_boxShow == true) {
+              self.syxt_boxShow = false;
+            }
+          }
+        })
       }
+
     },
     bodyCloseMenus1(e) {
       let self = this;
-      if (this.$refs.main1 && !this.$refs.main1.contains(e.target)) {
-        if (self.sycz_boxShow == true){
-          self.sycz_boxShow = false;
-        }
+      if(self.sycz_boxShow1 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main1.contains(e.target) &&
+            !self.$refs.cc1.contains(e.target)
+          ) {
+            if (self.sycz_boxShow1 == true) {
+              self.sycz_boxShow1 = false;
+            }
+          }
+        })
       }
+
+
+    },
+    bodyCloseMenus2(e) {
+      let self = this;
+      if(self.syxt_boxShow2 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main2.contains(e.target) &&
+            !self.$refs.cc2.contains(e.target)
+          ) {
+            if (self.syxt_boxShow2 == true) {
+              self.syxt_boxShow2 = false;
+            }
+          }
+        })
+      }
+
+
+    },
+    bodyCloseMenus3(e) {
+      let self = this;
+      if(self.sycz_boxShow3 == true){
+        self.$nextTick(()=>{
+          if (
+            !self.$refs.main3.contains(e.target) &&
+            !self.$refs.cc3.contains(e.target)
+          ) {
+            if (self.sycz_boxShow3 == true) {
+              self.sycz_boxShow3 = false;
+            }
+          }
+        })
+      }
+
+
     },
     otherClose(e) {
-      if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+      if(this.treeShow == true){
+        if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+      }
     },
-    treeClear(){
+    treeClear() {
       for (var item of this.selectedIconList) {
-          if (item.eqName.indexOf(this.screenEqName) > -1) {
-            console.log(item.eqName);
-            item.click = false;
-          }
+        if (item.eqName.indexOf(this.screenEqName) > -1) {
+          console.log(item.eqName);
+          item.click = false;
         }
+      }
     },
     // 模糊查询
     treeClick() {
@@ -4530,9 +5345,16 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      //console.log(data.label);
-      this.screenEqName = data.label;
-      this.screenEqNameButton(data.label);
+      console.log(data,"data");
+      // 如果存在children，则代表是父级
+      if(data.children){
+        // 点击父级业务
+      }else{
+        this.treeShow = false;
+        console.log(data.label);
+        this.screenEqName = data.label;
+        this.screenEqNameButton(data.label);
+      }
     },
     // 筛选设备名称
     // screenEqNameButton(screenEqName) {
@@ -4548,7 +5370,11 @@ export default {
     changeStrategyState(row) {
       let data = { strategyId: row.id, change: row.strategyState };
       updateState(data).then((result) => {
-        this.$modal.msgSuccess(result.msg);
+        if(row.strategyState == 0){
+          this.$modal.msgSuccess('开启成功');
+        }else if(row.strategyState == 1){
+          this.$modal.msgSuccess('关闭成功');
+        }
       });
     },
     directionFormat(row, column) {
@@ -4557,6 +5383,10 @@ export default {
     // 策略类型字典翻译
     strategyTypeFormat(row, column) {
       return this.selectDictLabel(this.strategyTypeOptions, row.strategyType);
+    },
+    // 预警字典值翻译
+    strategyTypeFormatEvent(row, column){
+      return this.selectDictLabel(this.strategyTypeEvent, row.strategyType);
     },
     // 点击侧边栏文件列表下拉框
     clickFileNames(direction) {
@@ -4588,14 +5418,17 @@ export default {
               return devicePixel.split("*")[0] / 4;
             }
           }
-          let array = []
+          let array = [];
           let arr = "";
           let fontS = "";
           for (let i = 0; i < content.length; i++) {
             var itemId = "ITEM" + this.formatNum(i, 3);
             var con = content[i][itemId][0];
-            con.CONTENT = con.CONTENT.replace("<br>", " ").replace(" &nbsp", " ");
-            array.push(con)
+            con.CONTENT = con.CONTENT.replace("<br>", " ").replace(
+              " &nbsp",
+              " "
+            );
+            array.push(con);
             arr += con.CONTENT.replace("<br>", " ").replace(" &nbsp", " ");
             arr += " ";
             fontS = Number(con.FONT_SIZE.substring(0, 2));
@@ -4603,15 +5436,14 @@ export default {
 
           if (type == "content") {
             return arr;
-          } 
-          else if (type == "fontSize") {
+          } else if (type == "fontSize") {
             if (eqType && eqType == 16) {
               return fontS / 2;
             } else if (eqType && eqType == 36) {
               return fontS / 4;
             }
-          }else if(type == 'array'){
-            return array
+          } else if (type == "array") {
+            return array;
           }
         } else {
           let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
@@ -4629,11 +5461,11 @@ export default {
             }
           } else if (type == "content") {
             return "山东高速欢迎您";
-          }else if (type == "fontSize") {
+          } else if (type == "fontSize") {
             return 15;
-          }else if(type == 'array'){
-            let array = [{CONTENT:'山东高速欢迎您',COLOR:'黄色'}]
-            return array
+          } else if (type == "array") {
+            let array = [{ CONTENT: "山东高速欢迎您", COLOR: "黄色" }];
+            return array;
           }
         }
       } else {
@@ -4699,7 +5531,10 @@ export default {
     handleChangePhone(num) {},
     // 操作日志 搜索
     handleQueryOperationParam() {
+      this.syxt_boxShow = false
+      this.sycz_boxShow1 = false
       this.operationParam.pageNum = 1;
+      this.operationParam_xt.pageNum = 1;
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
@@ -4709,19 +5544,18 @@ export default {
         );
       }
       this.loading = true;
-      // if ( inx == 'xitong' ) {
-      console.log(this.operationParam, "this.queryParams");
-      list(this.addDateRange(this.operationParam, this.dateRange)).then(
+      if ( inx == 'xitong' ) {
+      list(this.addDateRange(this.operationParam_xt, this.dateRange)).then(
         (response) => {
           console.log(response, "系统日志");
           this.operationList1 = response.rows;
           this.total1 = response.total;
-          // this.loading = false;
+          this.loading = false;
         }
       );
-      // } else if (inx == 'caozuo' ) {
+      } else if (inx == 'caozuo' ) {
 
-      listLog(this.addDateRange(this.operationParam, this.dateRange)).then(
+      listLog(this.addDateRange(this.operationParam, this.dateRange1)).then(
         (response) => {
           console.log(response, "操作日志");
           this.operationList2 = response.rows;
@@ -4729,9 +5563,10 @@ export default {
           this.loading = false;
         }
       );
-      // }
+      }
     },
     carShowChange(val) {
+      debugger
       this.carShow = val;
     },
     getStartTime(time) {
@@ -4767,7 +5602,6 @@ export default {
         state: this.batchManageForm.state,
       };
       batchControlDevice(param).then((res) => {
-        console.log(res, "000000000000000");
         this.$modal.msgSuccess("控制成功");
         this.batchManageDialog = false;
         this.closeBatchManageDialog();
@@ -4853,15 +5687,9 @@ export default {
       }
     },
     // 抽屉车指批量控制 车道下拉框
-    getTunnelLane() {
-      this.chezhiLaneList = [];
-      if (this.tunnelLane == 1) {
-        this.chezhiLaneList = this.chezhiLaneList1;
-      } else if (this.tunnelLane == 2) {
-        this.chezhiLaneList = this.chezhiLaneList2;
-      } else if (this.tunnelLane == 3) {
-        this.chezhiLaneList = this.chezhiLaneList3;
-      }
+    getTunnelLane(tunnelLane) {
+      let laneArray = JSON.parse(JSON.stringify(this.chezhiLaneOptionList));
+      this.chezhiLaneList = laneArray.slice(0,tunnelLane);
     },
     // 抽屉车指批量控制 状态下拉框
     getTunnelState() {
@@ -4990,6 +5818,23 @@ export default {
       });
     },
     // 重点车辆监测数据
+    specialVehicleEcharts() {
+      // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
+      const param = {
+        tunnelId: this.tunnelId,
+      };
+      specialVehicleMonitoringInRecent24Hours(param).then((res) => {
+        console.log(res, "重点车辆监测数据");
+        var specialVehicleXData = [];
+        var specialVehicleYData = [];
+        for (var item of res.data) {
+          specialVehicleXData.push(item.hour);
+          specialVehicleYData.push(item.count);
+        }
+        this.loadFocusCar(specialVehicleXData, specialVehicleYData);
+      });
+    },
+    // 重点车辆监测数据
     specialEcharts() {
       const param = {
         tunnelId: this.tunnelId,
@@ -5052,12 +5897,13 @@ export default {
       this.phoneForm2 = {
         loopCount: "1",
       };
-      this.$forceUpdate()
+      this.$forceUpdate();
     },
     isDrawerB() {
       this.drawerB = !this.drawerB;
       this.drawerA = false;
       this.drawerCVisible = false;
+      this.timingStrategyDisabled = false
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
@@ -5158,15 +6004,24 @@ export default {
     // },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
+      this.dateRange = this.getPastTime();
+      this.dateRange1 = this.getPastTime();
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
+
+      this.queryParams.strategyName = "";
+      this.queryParams.tunnelId = "";
+      this.queryParams.direction = null;
+      this.queryParams.strategyType = "";
       this.operationParam.ipaddr = "";
       this.operationParam.status = null;
       this.operationParam.operIp = "";
       this.operationParam.eqTypeId = null;
       this.operationParam.tunnelId = null;
       this.operationParam.controlType = null;
+      this.operationParam_xt.status = null;
+      this.operationParam_xt.operIp = "";
+      this.operationParam_xt.ipaddr = ''
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },
@@ -5285,7 +6140,7 @@ export default {
       const params = { status: 0 };
       getTreeByDeptId(params)
         .then((response) => {
-          console.log(response,"级联")
+          console.log(response.data, "级联");
           const options = response.data;
           let childs = [];
           function a(list) {
@@ -5302,14 +6157,17 @@ export default {
             this.siteList = options[0].children;
           } else {
             this.siteList = childs;
+            console.log(this.siteList, "位置list");
           }
           let arr = [];
           this.checkData(this.siteList[0], arr);
         })
         .then(() => {
-          this.getTunnelList();
+          // this.getTunnelList();
+          // console.log(222222222)
           if (this.manageStation == "1") {
-            let arr = ["6266", "5555", "555503"];
+            //let arr = ["6266", "5555", "555503"];
+            let arr = ["YG118", "YG11801", "YG1180103"];
             this.changeSite(arr);
           }
         });
@@ -5365,7 +6223,6 @@ export default {
       if (index) {
         this.tunnelQueryParams.deptId = index[index.length - 1];
         this.$forceUpdate();
-        // console.log(3333333333);
 
         this.getTunnelList();
         // this.srollAuto()
@@ -5516,7 +6373,7 @@ export default {
         // that.initechartsB(res.data)
       });
       // that.initeChartsEnd()
-      that.loadFocusCar();
+      //that.loadFocusCar();
     },
     // 获取最近七天数组
     dateFormat(dateData) {
@@ -5967,7 +6824,7 @@ export default {
         });
       });
     },
-    loadFocusCar() {
+    loadFocusCar(specialVehicleXData, specialVehicleYData) {
       let newPromise = new Promise((resolve) => {
         resolve();
       });
@@ -5994,8 +6851,8 @@ export default {
             type: "category",
             boundaryGap: false,
             // data: this.keyVehiclesXData,
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-
+            data: specialVehicleXData,
+            name: "小时",
             axisLabel: {
               textStyle: {
                 color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
@@ -6011,7 +6868,7 @@ export default {
           },
           yAxis: {
             type: "value",
-            name: "辆",
+            name: "总车辆",
             nameTextStyle: {
               color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
               fontSize: 10,
@@ -6076,7 +6933,7 @@ export default {
                 },
               },
               // data: this.keyVehiclesYData,
-              data: [65, 43, 23, 65, 34, 45, 23, 87, 45],
+              data: specialVehicleYData,
             },
           ],
         };
@@ -6277,6 +7134,12 @@ export default {
         this.getDeptList();
       });
     },
+    //地图复位
+    resetCanvas(){
+      this.resetCanvasFlag = false;
+      this.$refs.dragImgDom.style.left = "0px";
+      this.$refs.dragImgDom.style.top = "0px";
+    },
     //右键拖动
     dragImg(e) {
       console.log(e, "e");
@@ -6288,6 +7151,7 @@ export default {
       this.mouseTop = e.clientY - parseInt(this.$refs.dragImgDom.offsetTop);
       document.onmousemove = (e) => {
         if (this.dragFlag) {
+          this.resetCanvasFlag = true;
           this.curX = e.clientX - this.mouseLeft;
           this.curY = e.clientY - this.mouseTop;
           this.$refs.dragImgDom.style.left = this.curX + "px";
@@ -6548,9 +7412,9 @@ export default {
         }
         this.tunnelNameEarlyWarn = response.rows[0].tunnelName;
         this.tunnelId = response.rows[0].tunnelId;
-        this.tunnelLane = response.rows[0].lane;
         // this.specialEcharts(this.tunnelId)
         this.vehicleEcharts();
+        this.specialVehicleEcharts();
         this.getDeviceDataAndStateData();
         var newDict = this.dict.type.sd_sys_name;
         if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
@@ -6596,7 +7460,7 @@ export default {
             }
           }
         }
-        this.getTunnelLane();
+        this.getTunnelLane(response.rows[0].lane);
         this.$nextTick(() => {
           this.getEnergyConsumption(this.currentTunnel.id);
         });
@@ -6622,7 +7486,7 @@ export default {
           //   typeId: "00",
           //   bigType: "全部",
           // });
-        });
+      });
       });
     },
     // 查询方向
@@ -6728,11 +7592,6 @@ export default {
         });
       }
       console.log(that.eqTypeStateList, "设备图标eqTypeStateList");
-      for (var item of that.eqTypeStateList) {
-        if (item.type == 18) {
-          console.log(item, "引道照明");
-        }
-      }
     },
     /* 请求图片base64地址*/
     picture(fileUrl) {
@@ -6762,51 +7621,51 @@ export default {
         tunnelId: tunnelId,
       };
       this.carchange(tunnelId);
-      getTunnels(tunnelId).then((response) => {
-        console.log(response, "获取隧道配置信息");
+      getTunnels(tunnelId).then((res1) => {
+        console.log(res1, "获取隧道配置信息");
         that.loading = false;
-        let res = response.data.storeConfigure;
+        let res = res1.data.storeConfigure;
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
           console.log(res, "eqList");
           listType("")
             .then((response) => {
-              for (let i = 0; i < res.eqList.length; i++) {
-                res.eqList[i].focus = false;
-                for (let j = 0; j < response.rows.length; j++) {
-                  if (response.rows[j].typeId == res.eqList[i].eqType) {
-                    let iconWidth = Number(response.rows[j].iconWidth);
-                    let iconHeight = Number(response.rows[j].iconHeight);
-                    res.eqList[i].iconWidth = iconWidth;
-                    res.eqList[i].iconHeight = iconHeight;
-
-                    // if(res.eqList[i].eqType == 16 || res.eqList[i].eqType == 36){
-
-                    //   console.log(res.eqList[i].associated_device_id,"res.eqList[i].associated_device_id")
-                    //   getBoardContent(res.eqList[i].associated_device_id).then((resp) => {
-                    //     console.log(resp.data,"0000000000000000")
-                    //     res.eqList[i].iconWidth = resp.data[0].devicePixel.split("*")[1]
-                    //     res.eqList[i].iconWidth = resp.data[0].devicePixel.split("*")[0]
-                    //     console.log(res.eqList[i].iconWidth,"res.eqList[i]")
-                    //   // if (type == "width") {
-                    //   //   return JSON.parse(res.data[0]).devicePixel.split("*")[1] / 2;
-                    //   // }else if(type == 'content'){
-                    //   //   return JSON.parse(res.data[0]).devicePixel.split("*")[0] / 2;
-                    //   // }
-                    // });
-                    // }else{
-                    //   let iconWidth = Number(response.rows[j].iconWidth);
-                    //   let iconHeight = Number(response.rows[j].iconHeight);
-                    //   res.eqList[i].iconWidth = iconWidth;
-                    //   res.eqList[i].iconHeight = iconHeight;
-
-                    // }
-                    break;
+                for (let i = 0; i < res.eqList.length; i++) {
+                  res.eqList[i].focus = false;
+                  for (let j = 0; j < response.rows.length; j++) {
+                    if (response.rows[j].typeId == res.eqList[i].eqType) {
+                      let iconWidth = Number(response.rows[j].iconWidth);
+                      let iconHeight = Number(response.rows[j].iconHeight);
+                      res.eqList[i].iconWidth = iconWidth;
+                      res.eqList[i].iconHeight = iconHeight;
+                      break;
+                    }
                   }
                 }
-              }
               that.selectedIconList = res.eqList; //设备zxczczxc
+              // 匹配设备方向
+              listDevices().then((data)=>{
+                console.log(data,"设备表")
+                for(let item of that.selectedIconList){
+                  for(let itm of data.rows){
+                    if(item.eqId == itm.eqId){
+                      item.eqDirection = itm.eqDirection
+                    }
+                  }
+                }
+              })
+              // 匹配设备是否可控
+              listType().then((response) => {
+                console.log(response.rows,"设备图标 是否可控")
+                for(let item of that.selectedIconList){
+                  for(let itm of response.rows){
+                    if(item.eqType == itm.typeId){
+                      item.isControl = itm.isControl
+                    }
+                  }
+                }
+              });
               that.getRealTimeData();
 
               console.log(
@@ -6814,14 +7673,13 @@ export default {
                 "所有设备图标selectedIconList"
               );
               for (var item of that.selectedIconList) {
-                // if(item.eqType == 16){
-                //   console.log(item,"情报板设备信息selectedIconList")
-                // }
+               // if(item.eqType == 45){
+                 // console.log(item,"警示灯带")
+               // }
                 if (
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29
                 ) {
-                  // this.dictList = this.dict.type.sd_sys_name;
                   this.robotShow = true;
                 } else {
                   this.robotShow = false;
@@ -6870,11 +7728,11 @@ export default {
           that.rightDirection = "";
         }
       });
-           // 树状搜索
-    getCategoryTree( tunnelId).then((res) => {
-      console.log(res, "-------------------------");
-      this.treeData = res.data;
-    });
+      // 树状搜索
+      getCategoryTree(tunnelId).then((res) => {
+        console.log(res, "-------------------------");
+        this.treeData = res.data;
+      });
     },
 
     /* 根据车道数获取车道图*/
@@ -7033,7 +7891,8 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39, 48, 45
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
+                  40, 39, 48, 41
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -7041,8 +7900,13 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
+
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
+                    // if(deviceData.eqType == 48){
+                    //   console.log(deviceData,"内外振动仪")
+                    //   console.log(this.selectedIconList[j],"selectedIconListselectedIconListselectedIconList")
+                    // }
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =
@@ -7155,6 +8019,7 @@ export default {
       //   this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-HSD");
       //   return;
       // }
+      this.getTunnelLane(item.lane);
       this.buttonIndex = index;
       this.tunnelNameEarlyWarn = item.tunnelName;
       this.tunnelId = item.tunnelId;
@@ -7299,59 +8164,66 @@ export default {
     async openStateSwitch(item) {
       console.log(item, "item");
       if (this.addBatchManage == true) {
-        // 判断是否有选中项 有的话 判断本次点击和上次点击 设备类型是否一样
+        // 判断设备是否可控 不可控的不弹批量弹窗
+        if(item.isControl == '1'){
+           // 判断是否有选中项 有的话 判断本次点击和上次点击 设备类型是否一样
         // 要求每次点击选中的设备类型相同
-        if (this.itemEqType) {
-          // 第二次点击时
-          for (var itm of this.selectedIconList) {
-            //  多选 选择的设备类型相同时
-            if (itm.eqId == item.eqId && this.itemEqType == item.eqType) {
-              // 比对id 如果曾点过 取消选框
-              const result = this.itemEqId.findIndex(
-                (item) => item == itm.eqId
-              );
-              if (result === -1) {
-                itm.click = true;
-                this.itemEqId.push(itm.eqId);
-                this.$forceUpdate();
-              } else {
-                this.itemEqId.splice(result, 1);
-                itm.click = false;
-                this.$forceUpdate();
-                if (this.itemEqId.length == 0) {
-                  this.itemEqType = "";
-                  this.batchManageForm.eqType = "";
-                  this.batchManageForm.eqDirection = "";
-                  this.addBatchManage = false;
+          if (this.itemEqType) {
+            // 第二次点击时
+            for (var itm of this.selectedIconList) {
+              //  多选 选择的设备类型相同时
+              if (itm.eqId == item.eqId && this.itemEqType == item.eqType) {
+                // 比对id 如果曾点过 取消选框
+                const result = this.itemEqId.findIndex(
+                  (item) => item == itm.eqId
+                );
+                if (result === -1) {
+                  itm.click = true;
+                  this.itemEqId.push(itm.eqId);
                   this.$forceUpdate();
+                } else {
+                  this.itemEqId.splice(result, 1);
+                  itm.click = false;
+                  this.$forceUpdate();
+                  if (this.itemEqId.length == 0) {
+                    this.itemEqType = "";
+                    this.batchManageForm.eqType = "";
+                    this.batchManageForm.eqDirection = "";
+                    // this.addBatchManage = false;
+                    this.$forceUpdate();
+                  }
                 }
               }
+              // 多选 选择的设备类型不同时 提示红字
+              else if (itm.eqId == item.eqId && this.itemEqType != item.eqType) {
+                itm.textFalse = true;
+                this.$forceUpdate();
+              }
             }
-            // 多选 选择的设备类型不同时 提示红字
-            else if (itm.eqId == item.eqId && this.itemEqType != item.eqType) {
-              itm.textFalse = true;
-              this.$forceUpdate();
+          } else {
+            // 第一次点击时
+            for (let itm of this.selectedIconList) {
+              // console.log(itm);
+              if (itm.eqId == item.eqId) {
+                itm.click = true;
+                this.itemEqId.push(itm.eqId);
+                this.itemEqType = itm.eqType;
+                this.batchManageForm.eqType = itm.eqType;
+                this.batchManageForm.eqDirection = itm.eqDirection;
+                this.$forceUpdate();
+                getType(itm.eqType).then((res) => {
+                  console.log(res, "查询设备图标宽高");
+                  this.iconWidth = res.data.iconWidth;
+                  this.iconHeight = res.data.iconHeight;
+                });
+              }
             }
           }
-        } else {
-          // 第一次点击时
-          for (let itm of this.selectedIconList) {
-            // console.log(itm);
-            if (itm.eqId == item.eqId) {
-              itm.click = true;
-              this.itemEqId.push(itm.eqId);
-              this.itemEqType = itm.eqType;
-              this.batchManageForm.eqType = itm.eqType;
-              this.batchManageForm.eqDirection = itm.eqDirection;
-              this.$forceUpdate();
-              getType(itm.eqType).then((res) => {
-                console.log(res, "查询设备图标宽高");
-                this.iconWidth = res.data.iconWidth;
-                this.iconHeight = res.data.iconHeight;
-              });
-            }
-          }
+        }else if(item.isControl == '0'){
+          item.textKKFalse = true
+          this.$forceUpdate();
         }
+
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
         console.log(item, "点击的设备");
@@ -7359,6 +8231,9 @@ export default {
           clickEqType: item.eqType,
           equipmentId: item.eqId,
         };
+        // if(item.eqType == 23 || item.eqType == 24 || item.eqType == 25){
+        //   this.$refs.dialogVideo.init(this.eqInfo,this.eqTypeDialogList,this.brandList,this.directionList)
+        // }
 
         let StateTypeId = {
           StateTypeId: item.eqType,
@@ -8013,6 +8888,7 @@ export default {
     strategyPage() {
       //this.$router.push('/strategy/index')
       this.loading = true;
+      this.queryParams.strategyName = ''
       this.strategyVisible = true;
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
@@ -8031,7 +8907,25 @@ export default {
     handleClick(tab, event) {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
+      // this.syxt_boxShow = false
+      // this.sycz_boxShow1 = false
+      // this.syxt_boxShow2 = false
+      // this.sycz_boxShow3 = false
+      this.handleQueryOperationParam()
       this.handlestrategyQuery();
+    },
+    //系统日志操作日志tab切换
+    handleTabClick(tab,event){
+      if(tab.name == 'xitong'){
+        // 系统日志
+        this.dateRange = this.getPastTime();
+        this.getOperationList("xitong");
+      }else{
+        // 操作日志
+        this.dateRange1 = this.getPastTime();
+        this.getOperationList("caozuo");
+
+      }
     },
     // 关闭控制策略对话框
     strategyCancel() {
@@ -8039,6 +8933,10 @@ export default {
     },
     handlestrategyQuery() {
       this.loading = true;
+      // this.syxt_boxShow = false
+      // this.sycz_boxShow1 = false
+      this.syxt_boxShow2 = false
+      this.sycz_boxShow3 = false
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;
@@ -8064,11 +8962,17 @@ export default {
       // this.$router.push({
       //   name: "OperationLog",
       // });
+      this.dateRange = this.getPastTime();
+      this.dateRange1 = this.getPastTime();
       this.title = "操作日志";
+      this.operationActive = 'xitong';
       this.operationLogDialog = true;
+      this.operationParam_xt.ipaddr = ''
+      this.operationParam.operIp = ''
       this.getOperationList("xitong");
       // this.getList();
     },
+
     /* 打开图标说明对话框*/
     iconExplain() {
       this.explainVisible = true;
@@ -8076,6 +8980,8 @@ export default {
     },
     /* 关闭所有对话框*/
     cancel() {
+      this.operationParam.pageNum = 1;
+      this.operationParam_xt.pageNum = 1;
       this.operationLogDialog = false;
       this.tunnelVisible = false;
       this.stateSwitchVisible = false;
@@ -8447,6 +9353,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.searchTable {
+  margin: 0px;
+  width: 100% !important;
+  height: 32px !important;
+}
+.robotHtmlBox{
+  width: 770px;
+  position: absolute;
+  left: 400px;
+  z-index:96659;
+  background: #071727;
+}
 .batchManageButton {
   width: 120px;
   display: flex;
@@ -8482,17 +9400,20 @@ export default {
 }
 .screenEqNameBox {
   width: 120px;
-  height: 40px;
+  // height: 40px;
   position: absolute;
   top: -40px;
   left: 30px;
-  line-height: 28px;
+  line-height: 1;
   text-align: center;
+  padding: 10px;
+  padding-bottom: 22px;
   font-size: 10px;
   background-image: url(../../../assets/cloudControl/screenEqName.png);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   color: #07c3fc;
+  z-index:10;
 }
 .textFalseBox {
   width: 120px;
@@ -8509,6 +9430,7 @@ export default {
   color: #da4a64;
   opacity: 0;
   animation: fadenum 2s;
+  z-index:100;
 }
 @keyframes fadenum {
   0% {
@@ -8836,13 +9758,15 @@ export default {
 //     padding-right: 10px;
 //     border: solid 1px #1088B9;
 // }
-::v-deep .el-input--medium .el-input__inner {
-  width: 5.4vw;
-}
-
-::v-deep .el-button--medium {
-  margin-left: 20px;
-}
+// ::v-deep .el-input--medium .el-input__inner {
+//   width: 5.4vw;
+// }
+// ::v-deep .operationDiglog .el-input--medium .el-input__inner {
+//   width: 100% !important;
+// }
+// ::v-deep .el-button--medium {
+//   margin-left: 20px;
+// }
 
 // ::v-deep .el-checkbox__inner {
 //   width: 26px;
@@ -8906,12 +9830,46 @@ export default {
 .footer {
   width: 100%;
   height: 25%;
-  padding: 0px 16px;
+  padding: 0px 0px 0px 16px;
   // margin-top: 10px;
   display: flex;
   padding-bottom: 5px;
   justify-content: space-between;
   margin-top: 8px;
+  .fourBox {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 30px);
+    margin-right: 20px;
+  }
+  .footChangeButton {
+    width: 30px;
+    height: 100%;
+    ::v-deep .el-radio-group {
+      width: 100%;
+      height: 100%;
+      .el-radio-button {
+        width: 100%;
+        height: 50%;
+        .el-radio-button__inner {
+          padding: 0 !important;
+          writing-mode: tb-rl;
+          white-space: nowrap;
+          text-align: center;
+          width: 100%;
+          height: 100%;
+          line-height: 26px;
+          letter-spacing: 16px;
+          border-radius: 0;
+          font-size: 16px;
+        }
+      }
+    }
+    .el-radio-button {
+      border: solid 0.1px #0067b2 !important;
+      border-radius: 0px !important;
+    }
+  }
   .footTitle {
     padding: 5px 20px;
     // line-height: 25px;
@@ -8962,13 +9920,24 @@ export default {
     // background-color: rgba($color: #0b1329, $alpha: 0.4);
     // border: solid 1px #183b57;
     // color: white;
-
+    .noPicBox{
+      width:100%;
+      height:200px;
+      display:flex;
+      justify-content: center;
+      img{
+        height:200px;
+      }
+    }
+    video {
+      height: 186px;
+    }
     .listContent {
       height: 70%;
       font-size: 14px;
       overflow: hidden;
-      ul{
-        margin:0;
+      ul {
+        margin: 0;
       }
       > li {
         // margin-bottom: 6px;
@@ -9359,7 +10328,7 @@ export default {
 
 .workbench-content {
   // width: 90%;
-  height: 650px;
+  height: 100%;
 
   position: absolute;
   // top: 7%;
@@ -9764,8 +10733,25 @@ input {
 }
 .eventDiglog,
 .operationDiglog {
+  ::v-deep .el-input-group__append {
+    padding: 0;
+    width: 60px;
+    border-left: none !important;
+    .el-button {
+      height: 32px;
+      border-top-right-radius: 3px !important;
+      border-bottom-right-radius: 3px !important;
+      border-top-left-radius: 0px !important;
+      border-bottom-left-radius: 0px !important;
+      // transform: translateX(20px);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
   .el-dialog .el-form {
-    padding: 15px !important;
+    // padding: 15px !important;
     .el-form-item__content .el-button {
       width: 88px;
       height: 22px;
@@ -9775,13 +10761,19 @@ input {
       padding: 2px 15px !important;
     }
   }
+  .el-dialog__body{
+    padding:0 15px !important;
+    .el-col{
+      padding:0 !important;
+    }
+  }
   .el-table {
-    padding: 0 15px;
-    margin-bottom: 60px;
+    // padding: 0 15px;
+    margin-bottom: 20px;
   }
-  .el-tabs {
-    padding: 0 15px;
-  }
+  // .el-tabs {
+  //   padding: 0 15px;
+  // }
 }
 ::v-deep .eventDiglog .el-button--medium {
   height: 22px !important;
@@ -10190,23 +11182,8 @@ input {
     background-color: #304156;
   }
 
-  // /* 鼠标悬浮*/
-  // .el-table--enable-row-hover .el-table__body tr:hover > td {
-  //   background-color: #455d79;
-  // }
-
-  /* table边框*/
-  .el-table--enable-row-transition .el-table__body td {
-    // border-color: #304156;
-    // border-width: 8px;
-  }
-
   .el-table::before {
     height: 0;
-  }
-
-  .el-table .cell {
-    // height: 33px;
   }
 
   .el-table--mini td {
@@ -10232,6 +11209,11 @@ input {
   .el-table__body-wrapper::-webkit-scrollbar-thumb {
     background-color: #455d79;
     border-radius: 3px;
+  }
+  .el-radio {
+    width: 240px;
+    height: 40px;
+    line-height: 40px;
   }
 }
 
@@ -10372,7 +11354,13 @@ input {
     }
   }
 }
-
+.icon-dialog{
+  .el-dialog__body{
+    max-height:70vh;
+    overflow-y:auto;
+    overflow-x:hidden;
+  }
+}
 .youdaoDialog {
   .el-dialog {
     position: absolute;
@@ -10449,7 +11437,7 @@ input {
   border-radius: 50%;
   position: absolute;
 }
-.sliderClass {
+.phoneBox1 .sliderClass {
   width: 150px;
   .el-slider__runway {
     width: 100%;
@@ -10528,7 +11516,7 @@ input {
   position: absolute;
   z-index: 960619;
   top: 5%;
-  left: 54.5%;
+  // left: 54.5%;
   width: 13.5%;
   height: 60vh;
   overflow: scroll;
@@ -10538,18 +11526,6 @@ input {
 }
 </style>
 
-<style>
-.syxt_searchBox {
-  position: absolute;
-  top: 172px;
-
-  width: 39%;
-  z-index: 1996;
-  background-color: #00335a;
-  padding: 20px;
-  box-sizing: border-box;
-}
-</style>
 <style lang="scss" scoped>
 .lineBT {
   width: 100%;
@@ -10558,44 +11534,48 @@ input {
   // transform: translateY(-30px);
   display: flex;
   > div:nth-of-type(1) {
-    width: 5%;
+    width: 3%;
     border-bottom: #2dbaf5 solid 1px;
   }
   > div:nth-of-type(2) {
-    width: 90%;
+    width: 94%;
     border-bottom: 1px solid rgba($color: #00b0ff, $alpha: 0.2);
   }
   > div:nth-of-type(3) {
-    width: 5%;
+    width: 3%;
     border-bottom: #2dbaf5 solid 1px;
   }
 }
 .syxt_searchBox {
-  ::v-deep .el-form-item__content {
-    width: 78%;
-    .el-select {
-      width: 100%;
+  position: absolute;
+  top: 145px;
+  right: 25px;
+  width: 39%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+  ::v-deep .el-form-item {
+    width: 100%;
+    .el-form-item__content {
+      width: 78%;
+      .el-select {
+        width: 100%;
+      }
     }
   }
   .bottomBox {
-    .el-form-item__content {
+    width: 100%;
+    ::v-deep .el-form-item__content {
       display: flex;
       justify-content: center;
-      align-items: flex-end;
+      align-items: center;
+      width: 100% !important;
     }
   }
 }
-.bottomBox {
-  width: 100%;
-  ::v-deep .el-form-item__content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-}
 </style>
-<style lang="scss" scoped>
+<!-- <style lang="scss" scoped>
 .zj {
   ::v-deep input {
     width: 16.5vw !important;
@@ -10611,4 +11591,4 @@ input {
   }
 }
 
-</style>
+</style> -->

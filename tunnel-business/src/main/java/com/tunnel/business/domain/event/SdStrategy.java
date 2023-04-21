@@ -27,13 +27,13 @@ public class SdStrategy extends BaseEntity
     private Long id;
 
     /** 隧道ID */
-    @Excel(name = "隧道ID")
+    /*@Excel(name = "隧道ID")*/
     @ApiModelProperty("隧道ID")
     private String tunnelId;
 
     /** 隧道对象 */
     @Excels({
-        @Excel(name = "隧道", targetAttr = "tunnels"),
+        @Excel(name = "隧道名称", targetAttr = "tunnelName"),
     })
     @ApiModelProperty("隧道对象")
     private SdTunnels tunnels;
@@ -44,11 +44,11 @@ public class SdStrategy extends BaseEntity
     private String strategyName;
 
     /** 策略类型 */
-    @Excel(name = "策略类型")
+   /* @Excel(name = "策略类型")*/
     @ApiModelProperty("策略类型")
     private String strategyType;
 
-    @Excel(name = "预案状态")
+    @Excel(name = "状态", readConverterExp = "0=启用,1=弃用")
     @ApiModelProperty("预案状态")
     private String strategyState;
 
@@ -60,13 +60,23 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("列表")
     private List<String> slist;
 
+    @Excel(name = "方向")
+    private String fx;
+
+    @Excel(name = "策略类型")
+    private String lx;
+
+
+    private String ids;
+
+
 
     /** 预警信息ID */
     @ApiModelProperty("预警信息ID")
     private Long warningId;
 
     /** 时间表 */
-    @Excel(name = "时间表")
+    /*@Excel(name = "时间表")*/
     @ApiModelProperty("时间表")
     private String schedulerTime;
 
@@ -85,6 +95,52 @@ public class SdStrategy extends BaseEntity
 
     @ApiModelProperty("策略关联id")
     private Long strategyRlId;
+
+    @ApiModelProperty("定时策略-执行日期-不填则每日执行")
+    private String execDate;
+
+    @ApiModelProperty("定时策略-执行时间")
+    private String execTime;
+
+    public String getExecDate() {
+        return execDate;
+    }
+
+    public void setExecDate(String execDate) {
+        this.execDate = execDate;
+    }
+
+    public String getExecTime() {
+        return execTime;
+    }
+
+    public void setExecTime(String execTime) {
+        this.execTime = execTime;
+    }
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
+    public String getFx() {
+        return this.fx;
+    }
+
+    public void setFx(final String fx) {
+        this.fx = fx;
+    }
+
+    public String getLx() {
+        return this.lx;
+    }
+
+    public void setLx(final String lx) {
+        this.lx = lx;
+    }
 
     public Long getStrategyRlId() {
         return strategyRlId;
@@ -119,7 +175,7 @@ public class SdStrategy extends BaseEntity
     }
 
 
-    @Excel(name = "方向")
+    /*@Excel(name = "方向")*/
     @ApiModelProperty("方向")
     private String direction;
 
@@ -128,6 +184,17 @@ public class SdStrategy extends BaseEntity
 
     @ApiModelProperty("事件类型")
     private String eventType;
+
+    @ApiModelProperty("手动自动")
+    private String isAutomatic;
+
+    public String getIsAutomatic() {
+        return isAutomatic;
+    }
+
+    public void setIsAutomatic(String isAutomatic) {
+        this.isAutomatic = isAutomatic;
+    }
 
     public String getEventType() {
         return eventType;

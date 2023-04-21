@@ -2,6 +2,8 @@ package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.ruoyi.system.service.ISysDeptService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,9 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Autowired
     private ISysConfigService configService;
+
+    @Autowired
+    private ISysDeptService deptService;
 
     /**
      * 根据条件分页查询用户列表
@@ -518,7 +523,11 @@ public class SysUserServiceImpl implements ISysUserService
             {
                 // 验证是否存在这个用户
                 SysUser u = userMapper.selectUserByUserName(user.getUserName());
-                if (StringUtils.isNull(u))
+                if (user.getUserName() == null || "".equals(user.getUserName()))
+                {
+                    failureNum++;
+                    failureMsg.append("<br/>" + failureNum + "、账号 " + user.getUserName() + " 导入失败！名称不能为空");
+                }else if (StringUtils.isNull(u))
                 {
                     user.setPassword(SecurityUtils.encryptPassword(password));
                     user.setCreateBy(operName);
@@ -563,5 +572,28 @@ public class SysUserServiceImpl implements ISysUserService
     @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysUser> getUserDeptId(SysUser user) {
         return userMapper.getUserDeptId(user);
+    }
+
+    @Override
+    public List<SysUser> teamsUserList(SysUser user) {
+        return userMapper.teamsUserList(user);
+    }
+
+    @Override
+    public List<SysUser> unTeamsUserList(String userName,String phonenumber,String deptId,String depts) {
+        return userMapper.unTeamsUserList(userName,phonenumber,deptId,depts);
+    }
+
+    @Override
+    public int deleteTeamsUserCancel(SysUser user) {
+        //user.setDeptId(user.getDeptId().substring(0,user.getDeptId().length()-2));
+
+        return userMapper.updateUserDept(user);
+    }
+
+    @Override
+    public int deleteTeamsUserCancelAll(String deptId, Long[] userIds) {
+
+        return userMapper.updateUserDeptAll(deptId,userIds);
     }
 }

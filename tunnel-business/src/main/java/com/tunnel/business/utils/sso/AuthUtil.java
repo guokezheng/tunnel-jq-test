@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -146,21 +147,31 @@ public class AuthUtil {
     public static String getGeneralToken(){
         String token = "";
 
-        RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean("OkHttpRestTemplate");
+        /*RestTemplate restTemplate = (RestTemplate) SpringContextUtils.getBean("OkHttpRestTemplate");*/
+        try {
+            HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+            httpRequestFactory.setConnectionRequestTimeout(5 * 1000);
+            httpRequestFactory.setConnectTimeout(5 * 1000);
+            httpRequestFactory.setReadTimeout(5 * 1000);
+            RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 
-        //设置请求头
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        //设置请求体
-        HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(httpHeaders);
-        //发送请求
-        ResponseEntity<Map> responseEntity = restTemplate.postForEntity(AuthConfig.generalTokenUrl, httpEntity, Map.class);
+            //设置请求头
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            //设置请求体
+            HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(httpHeaders);
+            //发送请求
+            ResponseEntity<Map> responseEntity = restTemplate.postForEntity(AuthConfig.generalTokenUrl, httpEntity, Map.class);
 
-        Map body = responseEntity.getBody();
-        if (body != null) {
-            token = String.valueOf(body.get("access_token"));
+            Map body = responseEntity.getBody();
+            if (body != null) {
+                token = String.valueOf(body.get("access_token"));
+            }
+            return token;
+        }catch (Exception e){
+            return token;
         }
-        return token;
+
     }
 
 }

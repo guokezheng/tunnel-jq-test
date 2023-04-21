@@ -32,6 +32,13 @@ public interface SdEventHandleMapper
     public List<SdEventHandle> selectSdEventHandleList(SdEventHandle sdEventHandle);
 
     /**
+     * 查询事件处置信息留存为历史记录
+     * @param sdEventHandle
+     * @return
+     */
+    public List<SdEventHandle> selectHistoryHandleList(SdEventHandle sdEventHandle);
+
+    /**
      * 新增事件处置信息
      * 
      * @param sdEventHandle 事件处置信息

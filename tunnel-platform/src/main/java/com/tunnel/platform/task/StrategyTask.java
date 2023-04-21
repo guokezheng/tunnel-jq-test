@@ -6,6 +6,7 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TriggerEventTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.digitalmodel.WJEnum;
@@ -55,11 +56,47 @@ public class StrategyTask {
         for (String devId : split){
             Map<String,Object> map = new HashMap<>();
             SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+            if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
+                map.put("templateId",sdStrategyRl.getState());
+            }
             map.put("devId",devId);
             map.put("state",sdStrategyRl.getState());
+            map.put("stateNum",sdStrategyRl.getStateNum());
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
-            //map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
+            map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
+
+            SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
+        }
+    }
+
+    /**
+     * 定时、分时控制策略执行
+     * @param strategyRlId
+     * @Param type  分时控制   1  开始控制   2  结束控制
+     * @throws UnknownHostException
+     */
+    public void strategyParamsPlus(String strategyRlId,String type) throws UnknownHostException {
+        SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(strategyRlId));
+        String[] split = sdStrategyRl.getEquipments().split(",");
+        for (String devId : split){
+            Map<String,Object> map = new HashMap<>();
+            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+            if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
+                map.put("templateId",sdStrategyRl.getState());
+            }
+            map.put("devId",devId);
+            map.put("controlType",sdStrategy.getStrategyType());
+            map.put("operIp",InetAddress.getLocalHost().getHostAddress());
+            if(type.equals("1")){
+                map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerOpen());
+                map.put("state",sdStrategyRl.getState());
+                map.put("stateNum",sdStrategyRl.getStateNum());
+            }else{
+                map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategy.getTimerClose());
+                map.put("state",sdStrategyRl.getEndState());
+                map.put("stateNum",sdStrategyRl.getEndStateNum());
+            }
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }

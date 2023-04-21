@@ -65,4 +65,12 @@ public interface SdRadarDetectDataTemporaryMapper
     public int deleteSdRadarDetectDataByIds(String[] ids);
 
     int deleteData();
+
+
+    /**
+     * 查询雷达监测感知数据列表
+     * @return
+     */
+    public int getSdRadarDetectDataCount(@Param("tunnelId")String tunnelId,@Param("roadDir")String roadDir);
+
 }

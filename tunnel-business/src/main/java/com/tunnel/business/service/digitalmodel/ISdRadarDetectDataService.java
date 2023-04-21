@@ -72,4 +72,10 @@ public interface ISdRadarDetectDataService {
 
     List<Map<String, Object>> vehicleMonitoringInRecent24Hours(String tunnelId);
 
+    /**
+     * 统计当天24小时的重点车辆
+     * @param tunnelId
+     * @return
+     */
+    List<Map<String, Object>> specialVehicleMonitoringInRecent24Hours(String tunnelId);
 }

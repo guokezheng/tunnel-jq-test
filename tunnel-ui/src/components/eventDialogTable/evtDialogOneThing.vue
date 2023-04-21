@@ -21,7 +21,7 @@
       </div>
       <div class="blueLine"></div>
       <div class="listContent">
-        <div v-for="(item, index) of list" :key="index">
+        <div v-for="(item, index) of list" :key="index"  @click="handleSee(item.id)">
           <el-row style="color: white; font-size: 14px">
             <el-col :span="2">
               <img
@@ -32,13 +32,13 @@
             <el-col :span="3">
               <div>{{ item.eventType.eventType }}</div>
             </el-col>
-            <el-col :span="15">
+            <el-col :span="19">
               <div class="overflowText">{{ item.eventTitle }}</div>
               <div style="float: right; margin-right: 16px">
                 {{ item.startTime }}
               </div>
             </el-col>
-            <el-col :span="2">
+            <!-- <el-col :span="2">
               <el-button size="mini" type="text" @click="handleSee(item.id)"
                 >查看
               </el-button>
@@ -47,7 +47,7 @@
               <el-button size="mini" type="text" @click="handleIgnore(item.id)"
                 >忽略
               </el-button>
-            </el-col>
+            </el-col> -->
           </el-row>
           <div class="lineBT">
             <div></div>
@@ -59,7 +59,7 @@
     </div>
   </div>
 </template>
-  
+
   <script>
 import { mapState } from "vuex";
 import bus from "@/utils/bus";
@@ -209,9 +209,9 @@ export default {
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
-  
+
 .eventClass {
   position: absolute;
   top: 0;
@@ -230,7 +230,7 @@ export default {
   position: absolute;
   top: 0px;
   left: calc(100% - 600px);
-  background: rgba($color: #00152b, $alpha: 0.9);
+  background: #00152b;
   z-index: 2000;
   .el-dialog__body{
     padding: 0 !important;
@@ -254,6 +254,7 @@ export default {
     // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
     margin: 0 !important;
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
+    background-repeat: no-repeat;
   }
   .blueLine {
     width: 20%;
@@ -265,7 +266,7 @@ export default {
 .listContent {
   max-height: 290px;
   overflow: auto;
-  background: rgba($color: #6c8097, $alpha: 0.3);
+  background: #44576F;
   margin: 10px;
   > div {
     // margin-bottom: 6px;
@@ -319,4 +320,3 @@ export default {
   }
 }
 </style>
-  

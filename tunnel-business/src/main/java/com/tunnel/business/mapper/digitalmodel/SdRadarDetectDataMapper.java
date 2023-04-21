@@ -24,6 +24,14 @@ public interface SdRadarDetectDataMapper
     public SdRadarDetectData selectSdRadarDetectDataById(String id);
 
     /**
+     * 查询雷达监测感知数据
+     *
+     * @param vehicleLicens 雷达监测感知数据主键
+     * @return 雷达监测感知数据
+     */
+    public List<SdRadarDetectData> selectSdRadarDetectDataByVehicleLicense(String vehicleLicens);
+
+    /**
      * 查询雷达监测感知数据列表
      *
      * @param sdRadarDetectData 雷达监测感知数据
@@ -72,4 +80,11 @@ public interface SdRadarDetectDataMapper
     public List<Map<String, Object>> vehicleMonitoringInRecent24Hours(@Param("tunnelId") String tunnelId);
 
     public List<SdRadarDetectData> selectList(SdRadarDetectData sdRadarDetectData);
+
+    /**
+     * 统计当天24小时的重点车辆
+     * @param tunnelId
+     * @return
+     */
+    List<Map<String, Object>> specialVehicleMonitoringInRecent24Hours(@Param("tunnelId") String tunnelId);
 }

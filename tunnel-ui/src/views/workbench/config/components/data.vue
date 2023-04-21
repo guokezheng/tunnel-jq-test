@@ -9,28 +9,16 @@
         :visible="visible"
         :before-close="handleClosee"
       >
-        <div
-          style="
-            width: 100%;
-            height: 30px;
-            display: flex;
-            justify-content: space-between;
-          "
-        >
-          <div class="dialogLine"></div>
-          <img
-            :src="titleIcon"
-            style="height: 30px; transform: translateY(-30px); cursor: pointer"
-            @click="handleClosee"
-          />
-        </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
         <el-form
           ref="form"
           :model="stateForm"
           label-width="80px"
           label-position="left"
           size="mini"
-          style="padding: 15px; padding-top: 0px"
         >
           <el-row>
             <el-col :span="13">
@@ -93,36 +81,48 @@
               </el-form-item>
             </el-col>
           </el-row> -->
-          <div class="lineClass" v-if="eqInfo.clickEqType == 48" style="margin-bottom:10px"></div>
+          <div class="lineClass" v-if="eqInfo.clickEqType == 48|| eqInfo.clickEqType == 41" style="margin-bottom:10px"></div>
           <el-row v-if="eqInfo.clickEqType == 48">
             <el-col :span="13">
               <el-form-item label="振动速度值:" label-width="90px">
-                {{ stateForm2.shakeSpeed }}
+                {{ stateForm2.shakeSpeed }} <span v-show="stateForm2.shakeSpeed">mm/s</span>
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="振动幅度值:" label-width="90px">
-                {{ stateForm2.amplitude }}
+                {{ stateForm2.amplitude }} <span v-show="stateForm2.amplitude">μm</span>
               </el-form-item>
             </el-col>
             <el-col :span="13">
               <el-form-item label="沉降值:" label-width="90px">
-                {{ stateForm2.subside }}
+                {{ stateForm2.subside }} <span v-show="stateForm2.subside">mm</span>
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="倾斜值:" label-width="90px">
-                {{ stateForm2.slope }}
+                {{ stateForm2.slope }} <span v-show="stateForm2.slope">°</span>
               </el-form-item>
             </el-col>
             <el-col :span="13">
               <el-form-item label="振动告警:" label-width="90px">
-                {{ stateForm2.shakeAlaram }}
+                {{ getshakeAlaram(stateForm2.shakeAlaram) }}
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="沉降倾斜告警:" label-width="100px">
-                {{ stateForm2.subsideSlopeAlaram }}
+                {{ getsubsideSlopeAlaram(stateForm2.subsideSlopeAlaram) }}
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="eqInfo.clickEqType == 41">
+            <el-col :span="13">
+              <el-form-item label="温度:" label-width="90px">
+                {{ stateForm2.slope }} <span v-show="stateForm2.temperature">°</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="湿度:" label-width="90px">
+                {{ stateForm2.slope }} <span v-show="stateForm2.humidity">°</span>
               </el-form-item>
             </el-col>
           </el-row>
@@ -186,7 +186,7 @@
             // this.stateForm2.lampType = res.data.eqStatus
             console.log(this.stateForm, "stateForm");
           });
-          if(this.eqInfo.clickEqType == 10){
+          if(this.eqInfo.clickEqType ==48){
             await getFanSafeData(this.eqInfo.equipmentId).then((res) => {
               console.log(res,"风机")
               this.stateForm2 = res.data
@@ -194,6 +194,24 @@
           }
         } else {
           this.$modal.msgWarning("没有设备Id");
+        }
+      },
+      getshakeAlaram(type){
+        if(type == 0){
+          return '正常'
+        }else if(type == 1){
+          return '报警'
+        }else if(type == 2){
+          return '危险'
+        }
+      },
+      getsubsideSlopeAlaram(type){
+        if(type == 0){
+          return '正常'
+        }else if(type == 1){
+          return '低限位报警'
+        }else if(type == 2){
+          return '高限位报警'
         }
       },
       getDataType(){

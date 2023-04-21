@@ -17,6 +17,8 @@ export function listDevices(query) {
     params: query
   })
 }
+
+
 // new查询设备列表
 export function newListDevices(query) {
   return request({

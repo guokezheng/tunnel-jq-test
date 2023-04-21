@@ -13,15 +13,21 @@ import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.light.Light;
 import com.tunnel.platform.service.SdDeviceControlService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LightService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LightService.class);
+
     @Autowired
     private ISdOperationLogService sdOperationLogService;
     @Autowired
@@ -33,14 +39,13 @@ public class LightService {
     @Autowired
     private ISdDevicesProtocolService sdDevicesProtocolService;
 
-
     /**
-     * 从Spring容器中获取设备协议中配置的Class对象
+     * 获取该设备classname地址
      *
      * @param deviceId
      * @return
      */
-    public Light getBeanOfDeviceProtocol(String deviceId) {
+    public String getSdDevicesProtocolStrl(String deviceId){
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
 
         String brandId = device.getBrandId();
@@ -56,7 +61,16 @@ public class LightService {
 
         SdDevicesProtocol sdDevicesProtocol = protocolList.get(0);
         String className = sdDevicesProtocol.getClassName();
+        return className ;
+    }
 
+    /**
+     * 从Spring容器中获取设备协议中配置的Class对象
+     *
+     * @param className
+     * @return
+     */
+    public Light getBeanOfDeviceProtocol(String className) {
         Light light = null;
         try {
             Class<?> aClass = Class.forName(className);
@@ -79,8 +93,8 @@ public class LightService {
      */
     public int setBrightness(String deviceId, Integer bright, String controlType, String operIp) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
-
-        Light light = getBeanOfDeviceProtocol(deviceId);
+        String className = getSdDevicesProtocolStrl(deviceId);
+        Light light = getBeanOfDeviceProtocol(className);
         int resultStatus = light.setBrightness(deviceId, bright);
 
         // 如果控制成功
@@ -128,7 +142,7 @@ public class LightService {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
 
         Light light = getBeanOfDeviceProtocol(deviceId);
-        int resultStatus = light.lineControl(deviceId, openClose);
+        int resultStatus = light.lineControl(deviceId, openClose,null);
         // 如果控制成功
         if (resultStatus == 1) {
             //更新设备状态
@@ -172,13 +186,36 @@ public class LightService {
     /**
      * @param deviceId  设备ID
      * @param openClose 状态（1-开，0-关）
+     *   @param brightness 亮度
      * @return 控制结果 1-成功，0-失败
      */
-    public int lineControl(String deviceId, Integer openClose) {
-        Light light = getBeanOfDeviceProtocol(deviceId);
-        int resultStatus = light.lineControl(deviceId, openClose);
+    public int lineControl(String deviceId, Integer openClose,Integer brightness) {
+        //获取该设备classname地址
+        String className = getSdDevicesProtocolStrl(deviceId);
+        Light light = getBeanOfDeviceProtocol(className);
+        int resultStatus = light.lineControl(deviceId, openClose,brightness);
         return resultStatus;
     }
 
 
+    /**
+     * 批量控制车灯
+     * @param devices
+     * @param controlType
+     * @param operIp
+     * @return
+     */
+    public int setBrightnessList(List<Map<String,Object>> devices, String controlType, String operIp)  {
+        int flag = 1;
+        for (Map<String,Object> device: devices) {
+            String deviceId = device.get("deviceId").toString();
+            Integer openClose = Integer.parseInt(device.get("openClose").toString());
+            int result = setBrightness(deviceId,openClose,controlType,operIp);
+            if(result==0){
+                flag = 0;
+                logger.error("【{}】调整亮度请求响应失败。请联系管理员",deviceId);
+            }
+        }
+        return flag;
+    }
 }

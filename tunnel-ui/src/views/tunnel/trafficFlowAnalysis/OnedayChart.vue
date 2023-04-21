@@ -65,12 +65,31 @@ export default {
       // Y轴
       var yData = [];
       if(myData.length == 0){
-          xData = ['测试数据1','测试数据2','测试数据3','测试数据4']
-          yData = [0,0,0,0]
+          let dataInfo = [];
+          for (let index = 3; index >= 0; index--) {
+              let date = new Date();
+              let day = date.getDate();
+              date.setDate(day-index);
+              let startYear = date.getFullYear();
+              let startMonth = date.getMonth()+1;
+              let startDay = date.getDate();
+              dataInfo.push(startYear+"-"+startMonth+"-"+startDay);
+          }
+          for (let index = 1; index <= 3; index++) {
+              let date = new Date();
+              let day = date.getDate();
+              date.setDate(day+index);
+              let endYear = date.getFullYear();
+              let endMonth = date.getMonth()+1;
+              let endDay = date.getDate();
+              dataInfo.push(endYear+"-"+endMonth+"-"+endDay);
+          }
+          xData = dataInfo;
+          yData = [0,0,0,0,0,0,0]
       }else{
         for(var i=0;i<myData.length;i++){
           xData.push(myData[i].date);
-          yData.push(Number(myData[i].byVehicelNum) / 2);
+          yData.push(Number(myData[i].byVehicelNum));
         }
       }
       this.chart.setOption({
@@ -84,13 +103,13 @@ export default {
           },
           backgroundColor: 'rgba(255,255,255,1)',
           formatter: function(params) {
-            console.log(params,"params")
+            //console.log(params,"params")
               var str = ''
               str += params[0].marker
               str += params[0].name + '时：  ' + params[0].value + '辆'
               return str;
           }
-          
+
         },
         grid: {
           top: '30',

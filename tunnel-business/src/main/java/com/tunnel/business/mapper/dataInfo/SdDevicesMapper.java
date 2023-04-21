@@ -48,6 +48,15 @@ public interface SdDevicesMapper
 	 */
 	public List<SdDevices> selectDropSdDevicesList(SdDevices sdDevices);
 
+
+	/**
+	 * 根据隧道ID、设备类型获取设备列表
+	 * @param tunnelId 隧道ID
+	 * @param typeList 设备类型列表
+	 * @return
+	 */
+	List<SdDevices> selectDeviceList(@Param("tunnelId") String tunnelId,@Param("typeList") List<String> typeList);
+
 	/**
 	 * 新增设备
 	 *
@@ -293,5 +302,99 @@ public interface SdDevicesMapper
 
 
     List<SdDevices> selectDevicesLineList(@Param("deptId")String deptId,@Param("eqtype")String eqtype);
+
+	/**
+	 * 查询设备方向
+	 * @param sdDevices
+	 * @return
+	 */
+	List<String> getTunnelDirection(SdDevices sdDevices);
+
+	/**
+	 * 查询级联选择双向设备
+	 * @param sdDevices
+	 * @return
+	 */
+	List<Map<String, Object>> getTreeDevicesData(SdDevices sdDevices);
+
+	/**
+	 * 查询最近3km设备
+	 * @param eqType
+	 * @param direction
+	 * @param frontStakeNum
+	 * @param afterStakeNum
+	 * @return
+	 */
+	List<String> getRlDevice(@Param("eqType") int eqType,
+							 @Param("direction") String direction,
+							 @Param("frontStakeNum") int frontStakeNum,
+							 @Param("afterStakeNum") int afterStakeNum,
+							 @Param("tunnelId") String tunnelId,
+							 @Param("lane") String lane);
+
+	//前5个
+	List<String> getFrontLatelyFive(@Param("eqType") int eqType,
+									@Param("direction") String direction,
+									@Param("stakeNum") int stakeNum,
+									@Param("tunnelId") String tunnelId);
+
+	//后5个
+	List<String> getAfterLatelyFive(@Param("eqType") int eqType,
+									@Param("direction") String direction,
+									@Param("stakeNum") int stakeNum,
+									@Param("tunnelId") String tunnelId,
+									@Param("lane") String lane);
+
+	/**
+	 * 查询出入口视频
+	 * @param sdDevices
+	 * @return
+	 */
+	List<SdDevices> getEntranceExitVideo(SdDevices sdDevices);
+
+	/**
+	 * 批量查询设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectDevices(@Param("ids") String ids,
+											@Param("state") String state);
+
+	/**
+	 * 批量查询情报板设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectVmsDevices(@Param("ids") String ids,
+											@Param("state") String state);
+
+	/**
+	 * 批量查询扬声器设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectLsDevices(@Param("ids") String ids);
+
+	/**
+	 * 查询设备名称是否重复
+	 * @param eqName 设备名称
+	 * @return
+	 */
+	List<SdDevices> verifyEqNameOnly(@Param("eqId") String eqId,@Param("eqName") String eqName);
+	/**
+	 * 查询设备名称是否重复
+	 * @param eqTunnelId 所属隧道 ID
+	 * @param eqName 设备名称
+	 * @return
+	 */
+	List<SdDevices> tunnelEqNameOnly(@Param("eqTunnelId") String eqTunnelId,@Param("eqName") String eqName);
+
+
+	/**
+	 * 根据条件查询 当前设备 数据 状态
+	 * @param sdDevices
+	 * @return
+	 */
+	List<SdDevices> selectSdDevicesDataByParam(SdDevices sdDevices);
 
 }

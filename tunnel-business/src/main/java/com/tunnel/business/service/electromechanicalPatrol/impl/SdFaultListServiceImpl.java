@@ -86,7 +86,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             for(int i = 0;i<list.size();i++){
                 if(list.get(i).getFalltRemoveStatue()!=null&&!"null".equals(list.get(i).getFalltRemoveStatue())&&!"".equals(list.get(i).getFalltRemoveStatue())){
                     int removeflag =  Integer.valueOf(list.get(i).getFalltRemoveStatue());
-                    if(1==removeflag){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
+                    if("1".equals(removeflag)){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     if(list.get(i).getFaultFxtime()!=null){
                         String  fxtime = sdf.format(list.get(i).getFaultFxtime());
@@ -131,6 +131,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         int result = -1;
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
         try {
+            sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
             sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
             if (sdFaultList.getEqId() != null && !sdFaultList.getEqId().equals("")
@@ -205,7 +206,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
      * @return 结果
      */
     @Override
-    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,Long[] removeIds)
+    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,String[] removeIds)
     {
         int result = 0;
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
@@ -346,5 +347,10 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public List<SdFaultList> getFaultList(String tunnelId, String faultLevel) {
         return sdFaultListMapper.getFaultList1(tunnelId,faultLevel);
+    }
+
+    @Override
+    public String selectSdFaultEqById(String eqFaultId) {
+        return sdFaultListMapper.selectSdFaultEqById(eqFaultId);
     }
 }

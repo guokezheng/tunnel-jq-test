@@ -9,17 +9,46 @@
         align="center"
         allowfullscreen="true"
         allow="autoplay"
-        src="http://106.120.201.126:14712/trackPlayback"
+        :src="url"
       ></iframe>
     </div>
   </template>
   <script>
   import $ from "jquery";
+  import { configPage } from "@/api/map/config/api.js";
+  import { getUserDeptId } from "@/api/system/user";
   export default {
     data() {
-      return {};
+      return {
+        userQueryParams: {
+          userName: this.$store.state.user.name,
+        },
+        url:''
+      };
     },
-    created() {},
+    created() {
+      this.getDeptId()
+    },
+    methods: {
+      getDeptId(){
+        getUserDeptId(this.userQueryParams).then((response) => {
+          console.log(response, "管理站级联");
+          this.userDeptId = response.rows[0].deptId;
+          this.getConfigPage()
+        });
+      },
+      getConfigPage(){
+        const params = {
+          deptId:this.userDeptId,
+          code:'trackPlayback',
+        }
+        configPage(params).then((res)=>{
+          console.log(res,"trackPlayback")
+          this.url = res.data[0].url
+        })
+      }
+    },
+    
   };
   </script>
   <style scoped>

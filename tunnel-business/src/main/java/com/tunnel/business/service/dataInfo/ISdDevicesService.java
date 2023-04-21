@@ -1,6 +1,7 @@
 package com.tunnel.business.service.dataInfo;
 
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
 
@@ -37,6 +38,15 @@ public interface ISdDevicesService {
      * @return 设备集合
      */
     List<SdDevices> selectSdDevicesList(SdDevices sdDevices);
+
+
+    /**
+     * 根据隧道ID、设备类型获取设备列表
+     * @param tunnelId 隧道ID
+     * @param typeList 设备类型列表
+     * @return
+     */
+    List<SdDevices> selectDeviceList(String tunnelId,List<String> typeList);
 
     /**
      * 新增设备
@@ -247,4 +257,24 @@ public interface ISdDevicesService {
     SdDevices getDeviceByAssociationDeviceId(Long deviceId);
 
     List<SdDevices> selectDevicesLineList(String deptId,String eqtype);
+
+    /**
+     * 查询级联选择设备列表
+     * @param sdDevices
+     * @return
+     */
+    AjaxResult getTreeDeviceList(SdDevices sdDevices);
+
+    /**
+     *  查询指定设备名称是否重复
+     * @param eqName
+     * @return
+     */
+    List<SdDevices> verifyEqNameOnly(String eqId,String eqName);
+    /**
+     *  查询指定隧道下设备名称是否重复
+     * @param eqName
+     * @return
+     */
+    List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName);
 }

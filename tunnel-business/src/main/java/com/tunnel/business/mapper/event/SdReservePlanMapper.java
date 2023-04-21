@@ -98,4 +98,18 @@ public interface SdReservePlanMapper
      * @return
      */
     Long getReserveId(SdReservePlan sdReservePlan);
+
+    /**
+     * 查询当前预案是否被使用
+     * @param sdReservePlan
+     * @return
+     */
+    int checkCurrId(SdReservePlan sdReservePlan);
+
+    /**
+     * 校验预案名称
+     * @param sdReservePlan
+     * @return
+     */
+    int checkPlanName(SdReservePlan sdReservePlan);
 }

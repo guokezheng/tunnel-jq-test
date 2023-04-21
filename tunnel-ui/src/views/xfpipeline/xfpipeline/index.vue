@@ -149,7 +149,7 @@ export default {
             }else{
                 return time.getTime() > Date.now()+0 * 24 * 3600 * 1000
             }
-            
+
         },
       }
     };
@@ -168,14 +168,14 @@ export default {
           let times = moment(new Date()).format("YYYY-MM-DD")
           let yesTime = Date.parse(new Date())-172800000
           let yesTimes = moment(new Date(yesTime)).format("YYYY-MM-DD")
-         
+
           this.queryParams.params = {};
           this.queryParams.params["beginChangeTime"] = yesTimes
           this.forecastTime.push(yesTimes)
-         
+
           this.queryParams.params["endChangeTime"] = times
           this.forecastTime.push(times)
-         
+
           this.getList()
       },
       // formatState(state){
@@ -204,7 +204,7 @@ export default {
             this.queryParams.params["beginChangeTime"] = this.forecastTime[0] + " 00:00:00";
             this.queryParams.params["endChangeTime"] = this.forecastTime[1] + " 23:59:59";
           }
-          
+
         }
         record(this.queryParams).then(response => {
           this.xfpipelineList = response.rows;
@@ -212,7 +212,7 @@ export default {
           this.loading = false;
         });
       },
-      
+
       // 选中隧道后 获取该隧道内的压力表id
       getEquId(data){
           this.equipmentData = []
@@ -227,7 +227,7 @@ export default {
             this.equipmentData = response.rows
           });
       },
-      
+
       // 取消按钮
       cancel() {
         this.open = false;
@@ -326,7 +326,7 @@ export default {
       /** 导出按钮操作 */
       handleExport() {
         const queryParams = this.queryParams;
-        this.$confirm('是否确认导出所有消防管道监测数据项?', "警告", {
+        this.$confirm('是否确认导出消防管道监测数据项?', "警告", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"

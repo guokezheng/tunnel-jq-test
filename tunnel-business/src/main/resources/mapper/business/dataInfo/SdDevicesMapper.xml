@@ -38,6 +38,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="gatewayNetstatus"    column="gateway_netstatus"    />
         <result property="gatewayNetstatusTime"    column="gateway_netstatus_time"    />
         <result property="eqStatus"    column="eq_status"    />
+        <result property="eqState"    column="eqState"    />
+        <result property="runState"    column="runState"    />
         <result property="eqStatusTime"    column="eq_status_time"    />
         <result property="controlPointAddress"    column="control_point_address"    />
         <result property="queryPointAddress"    column="query_point_address"    />
@@ -56,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="externalDeviceId"    column="external_device_id"    />
         <result property="associatedDeviceId"    column="associated_device_id"    />
         <result property="brandName"    column="brand_name"    />
+        <result property="data"    column="data"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -82,7 +85,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_devices
     </sql>
 
+    <select id="verifyEqNameOnly" resultMap="SdDevicesResult">
+       <include refid="selectSdDevicesVo"></include>
+        <where>
+         <if test="eqName != null  and eqName != ''">and eq_name = #{eqName}</if>
+         <if test="eqId != null  and eqId != ''">and eq_id != #{eqId}</if>
+        </where>
+    </select>
 
+    <select id="tunnelEqNameOnly" resultMap="SdDevicesResult">
+        <include refid="selectSdDevicesVo"></include>
+        <where>
+            <if test="eqName != null  and eqName != ''">and eq_name = #{eqName}</if>
+            <if test="eqTunnelId != null  and eqTunnelId != ''">and eq_tunnel_id = #{eqTunnelId}</if>
+        </where>
+    </select>
 
     <select id="selectSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id, a.eq_name, a.eq_type, a.eq_model, a.brand_id,
@@ -245,7 +262,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
             <if test="isMonitor != null  ">and a.is_monitor = #{isMonitor}</if>
             <if test="pileNum != null  ">and a.pile_num = #{pileNum}</if>
-            <if test="searchValue != null and searchValue != ''">AND CONCAT(a.eq_name, a.pile) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="searchValue != null and searchValue != ''">AND CONCAT(a.eq_name, IFNULL(a.pile,'')) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="commProtocol != null and commProtocol !=''">
                 and a.comm_protocol = #{commProtocol}
             </if>
@@ -258,12 +275,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null ">
                 AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
+            <if test="exportIds != null and exportIds != ''">
+                AND FIND_IN_SET(a.eq_id,#{exportIds}) > 0
+            </if>
             ${params.dataScope}
         </where>
-        order by a.create_time desc, a.update_time desc
+        order by a.create_time desc, a.update_time desc ,a.eq_id desc
     </select>
 
 
+    <select id="selectDeviceList" resultMap="SdDevicesResult">
+        select eq_id, eq_tunnel_id, eq_name, eq_type, f_eq_type,external_system_id,
+        eq_direction, external_device_id
+        from sd_devices
+        where  eq_tunnel_id = #{tunnelId}
+        and eq_type in
+        <foreach collection="typeList" item="item" separator="," open="(" close=")">
+              #{item}
+        </foreach>
+    </select>
 
 
     <insert id="insertSdDevices" parameterType="SdDevices">
@@ -278,7 +308,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="brandId != null">brand_id,</if>
             <if test="externalSystemId != null">external_system_id,</if>
             <if test="fEqType != null">f_eq_type,</if>
+            <if test="FEqType != null">f_eq_type,</if>
             <if test="eqDirection != null">eq_direction,</if>
+            <if test="direction != null">eq_direction,</if>
             <if test="lane != null">lane,</if>
             <if test="pile != null">pile,</if>
             <if test="pileNum != null">pile_num,</if>
@@ -326,7 +358,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="brandId != null">#{brandId},</if>
             <if test="externalSystemId != null">#{externalSystemId},</if>
             <if test="fEqType != null">#{fEqType},</if>
+            <if test="FEqType != null">#{FEqType},</if>
             <if test="eqDirection != null">#{eqDirection},</if>
+            <if test="direction != null">#{direction},</if>
             <if test="lane != null">#{lane},</if>
             <if test="pile != null">#{pile},</if>
             <if test="pileNum != null">#{pileNum},</if>
@@ -624,12 +658,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getDevicesByTypeAndTunnel" parameterType="SdDevices" resultType="hashmap">
         select a.eq_id as eqId, a.eq_tunnel_id as eqTunnelId, a.eq_name as eqName, a.eq_type as eqType,
-              a.pile, a.associated_device_id
+              a.pile, a.associated_device_id, a.eq_direction AS eqDirection
         from sd_devices a
         left join sd_equipment_type b on a.eq_type = b.type_id
         <where>
             <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
+            <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
         </where>
         order by a.create_time desc, a.update_time desc
     </select>
@@ -687,6 +722,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="eqTunnelId != null ">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
+            <if test="eqTypes != null ">
+                and a.eq_type in
+                <foreach item="id" collection="eqTypes" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
             <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
         </where>
@@ -813,7 +854,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select t.eq_name,t.pile,u.tunnel_name eq_tunnel_id,q.icon_file_id  icon_file_id from sd_devices t
+        select t.eq_id,t.eq_name,t.pile,u.tunnel_name eq_tunnel_id,q.icon_file_id  icon_file_id from sd_devices t
         left join sd_device_data d on t.eq_id = d.device_id
         left join  sd_device_type_item i on i.id = d.item_id
         left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '1'
@@ -856,7 +897,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesStatus" parameterType="SdDevices" resultMap="SdDevicesResult">
-        SELECT t.eq_id,i.item_name,i.item_code,d.data,s.state_name runStatus,e.state_name eqStatus
+        SELECT t.eq_id,i.item_name,i.item_code,d.data,s.state_name runState,e.state_name eqState,d.update_time
         FROM `sd_device_type_item` i
         left join sd_device_data d on i.id = d.item_id
         left join sd_devices t on t.eq_id = d.device_id
@@ -966,5 +1007,173 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         )
     </select>
 
+    <select id="getTunnelDirection" resultType="java.lang.String" parameterType="sdDevices">
+        SELECT
+            d.eq_direction
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND d.eq_tunnel_id = #{eqTunnelId}
+          AND d.eq_type = #{eqType}
+        GROUP BY
+            d.eq_direction
+    </select>
+
+    <select id="getTreeDevicesData" parameterType="sdDevices" resultType="hashmap">
+        SELECT
+            d.eq_direction AS eqDirection,
+            d.eq_id AS value,
+            d.eq_name AS label
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND d.eq_tunnel_id = #{eqTunnelId}
+          AND d.eq_type = #{eqType}
+    </select>
+
+    <select id="getRlDevice" resultType="java.lang.String">
+        SELECT
+            d.eq_id
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+        <if test="eqType != null and eqType != ''">
+            AND d.eq_type = #{eqType}
+        </if>
+        <if test="direction != null and direction != ''">
+            AND d.eq_direction = #{direction}
+        </if>
+        <if test="frontStakeNum != null and frontStakeNum != 0">
+            AND d.pile_num <![CDATA[ >= ]]> #{frontStakeNum}
+        </if>
+        <if test="afterStakeNum != null and afterStakeNum != 0">
+            AND d.pile_num <![CDATA[ <= ]]> #{afterStakeNum}
+        </if>
+        <if test="tunnelId != null and tunnelId != ''">
+            AND d.eq_tunnel_id = #{tunnelId}
+        </if>
+        <if test="lane != null and lane != ''">
+            AND FIND_IN_SET(d.lane, #{lane}) > 0
+        </if>
+    </select>
+
+    <select id="getFrontLatelyFive" resultType="java.lang.String">
+        SELECT
+            GROUP_CONCAT( d.eq_id ) AS eq_id
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND d.eq_type = #{eqType}
+          AND d.eq_direction = #{direction}
+          AND d.pile_num <![CDATA[ <= ]]> #{stakeNum}
+          AND d.eq_tunnel_id = #{tunnelId}
+        GROUP BY
+            d.pile_num
+        ORDER BY
+            d.pile_num DESC
+            LIMIT 5
+    </select>
+
+    <select id="getAfterLatelyFive" resultType="java.lang.String">
+        SELECT
+            GROUP_CONCAT( d.eq_id ) AS eq_id
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND d.eq_type = #{eqType}
+          AND d.eq_direction = #{direction}
+          AND d.pile_num <![CDATA[ > ]]> #{stakeNum}
+          AND d.eq_tunnel_id = #{tunnelId}
+          <if test="lane != null and lane != ''">
+              AND FIND_IN_SET(d.lane, #{lane}) > 0
+          </if>
+        GROUP BY
+            d.pile_num
+            LIMIT 5
+    </select>
+
+    <select id="getEntranceExitVideo" parameterType="SdDevices" resultMap="SdDevicesResult">
+        SELECT
+            d.eq_id,
+            d.pile_num,
+            sdd.dict_label AS eq_direction
+        FROM
+            sd_devices d
+        LEFT JOIN sys_dict_data sdd ON d.eq_direction = sdd.dict_value
+            AND sdd.dict_type = 'sd_direction'
+        WHERE
+        1 = 1
+        <if test="eqTunnelId != null ">
+            AND d.eq_tunnel_id = #{eqTunnelId}
+        </if>
+        <if test="eqDirection != null  and eqDirection != ''">
+            AND d.eq_direction = #{eqDirection}
+        </if>
+        <if test="eqType != null and eqType != ''">
+            AND d.eq_type = #{eqType}
+        </if>
+    </select>
+
+    <select id="selectDevices" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            d.eq_name AS eqName,
+            d.pile,
+            es.state_name AS stateName
+        FROM
+            sd_devices d
+                LEFT JOIN sd_equipment_state es ON d.eq_type = es.state_type_id
+                AND es.state_type = '2'
+        WHERE
+            1 = 1
+          AND es.device_state = #{state}
+          AND FIND_IN_SET(d.eq_id,#{ids})
+    </select>
+
+    <select id="selectVmsDevices" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            d.eq_name AS eqName,
+            d.pile,
+            btc.content AS stateName
+        FROM
+            sd_devices d,
+            iot_board_template_content btc
+        WHERE
+            1 = 1
+          AND btc.template_id = #{state}
+          AND FIND_IN_SET(d.eq_id,#{ids})
+    </select>
+
+    <select id="selectLsDevices" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            d.eq_name AS eqName,
+            d.pile
+        FROM
+            sd_devices d
+        WHERE
+            1 = 1
+          AND FIND_IN_SET(d.eq_id,#{ids})
+    </select>
+
+
+    <!-- 通过参数查询设备数据 -->
+    <select id="selectSdDevicesDataByParam" parameterType="SdDevices" resultMap="SdDevicesResult">
+        SELECT
+        a.*,
+        b.data
+        FROM sd_devices a
+        LEFT JOIN sd_device_data b ON a.eq_id = b.device_id
+        <if test="itemId != null">and b.item_id = #{itemId}</if>
+        <where>
+            <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
+            <if test="eqType != null  and eqType != ''">and a.eq_type = #{eqType}</if>
+            <if test="eqDirection != null and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
+            <if test="externalDeviceId != null  and externalDeviceId != ''">and a.external_device_id = #{externalDeviceId}</if>
+        </where>
+    </select>
 
 </mapper>

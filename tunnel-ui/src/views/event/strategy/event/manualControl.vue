@@ -8,10 +8,10 @@
       label-width="100px"
     >
       <el-row>
-        <el-col>
+        <el-col :span="24">
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
-              style="width: 90%"
+              style="width: 100%"
               v-model="strategyForm.strategyName"
               placeholder="请输入策略名称"
             />
@@ -35,14 +35,14 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="12">
           <el-form-item label="隧道方向" prop="direction">
             <el-select
               clearable
               v-model="strategyForm.direction"
               placeholder="请选择隧道方向"
               @change="changeEvent"
-              style="width: 95%"
+              style="width: 100%"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -53,7 +53,9 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+      </el-row>
+      <el-row>
+        <el-col :span="8">
           <el-form-item label="事件类型" prop="eventType">
             <el-select
               clearable
@@ -63,6 +65,32 @@
             >
               <el-option
                 v-for="dict in eventTypeList"
+                :key="dict.id"
+                :label="dict.eventType"
+                :value="dict.id"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="有效时间" prop="effectiveTime">
+            <el-input
+              v-model="strategyForm.effectiveTime"
+              placeholder="请输入有效时间(单位：分钟)"
+              style="width: 100%"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="事件触发" prop="isAutomatic">
+            <el-select
+              clearable
+              v-model="strategyForm.isAutomatic"
+              placeholder="请选择事件触发"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="dict in triggerList"
                 :key="dict.dictCode"
                 :label="dict.dictLabel"
                 :value="dict.dictCode"
@@ -70,43 +98,42 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
-          <el-form-item label="有效时间" prop="effectiveTime">
-            <el-input
-              v-model="strategyForm.effectiveTime"
-              placeholder="请输入有效时间(单位：分钟)"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="22">
+      </el-row>
+      <el-row :gutter="20" style="clear:both;">
+        <el-col :span="24">
           <el-form-item label="执行操作">
             <div class="menu">
-              <span class="col4">处置名称</span>
-              <span class="col4">设备类型</span>
-              <span class="col6">指定设备</span>
-              <span class="col4">控制指令</span>
-              <span class="col4">操作</span>
+              <el-col :span="4">处置名称</el-col>
+              <el-col :span="6">设备类型</el-col>
+              <el-col :span="6">指定设备</el-col>
+              <el-col :span="6">控制指令</el-col>
+              <el-col :span="2">操作</el-col>
             </div>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="10">
-        <el-form-item v-for="(items, index) in strategyForm.manualControl">
+      <el-row class="planBox">
+        <el-form-item
+          v-for="(items, index) in strategyForm.manualControl"
+          :key="index"
+        >
           <el-col :span="4">
             <el-form-item prop="disposalName">
               <el-input
-                v-model="strategyForm.disposalName"
+                v-model="items.disposalName"
+                clearable
                 placeholder="处置名称"
+                style="width:100%;"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-select
               v-model="items.equipmentTypeId"
               placeholder="请选择设备类型"
               clearable
-              title="手动控制"
               @change="changeEquipmentType(index)"
+              style="width: 100%"
             >
               <el-option
                 v-for="item in items.equipmentTypeData"
@@ -124,6 +151,7 @@
               collapse-tags
               placeholder="请选择设备"
               @change="qbgChange(index, items.value)"
+              style="width: 100%"
             >
               <el-option
                 v-for="item in items.equipmentData"
@@ -135,13 +163,13 @@
             </el-select>
           </el-col>
           <el-col
-            :span="4"
+            :span="6"
             v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36"
           >
             <el-select
               style="width: 100%"
               v-model="items.state"
-              placeholder="请选择设备执行操作"
+              placeholder="请选择执行操作"
             >
               <el-option
                 v-for="item in items.manualControlStateList"
@@ -153,7 +181,7 @@
             </el-select>
           </el-col>
           <el-col
-            :span="4"
+            :span="6"
             v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36"
           >
             <el-cascader
@@ -164,37 +192,27 @@
               clearable
               collapse-tags
               @change="handleChange"
+              style="width:100%"
             ></el-cascader>
           </el-col>
-          <el-col :span="4" class="buttonBox">
+          <el-col :span="2" class="buttonBox">
             <el-button
-              type=""
-              icon="el-icon-delete"
-              circle
+              class="delete"
               @click="removeItem(index)"
-              style="margin-left: 2%"
             ></el-button>
-            <el-form-item
-              label=""
-              style=""
-              v-show="strategyForm.equipmentTypeId != 30"
-            >
               <el-button
-                type=""
-                icon="el-icon-plus"
-                circle
+                class="add"
                 @click="addItem"
-                style="margin-left: 2%"
+                v-show="strategyForm.equipmentTypeId != 30"
               ></el-button>
-            </el-form-item>
           </el-col>
         </el-form-item>
       </el-row>
       <el-form-item class="dialog-footer">
-        <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
+        <el-button class="submitButton" @click="submitStrategyForm"
           >提交</el-button
         >
-        <el-button style="width: 30%" @click="strategyFormClose"
+        <el-button class="closeButton" @click="strategyFormClose"
           >取 消</el-button
         >
       </el-form-item>
@@ -211,6 +229,7 @@ import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import { listType } from "@/api/equipment/type/api";
 import { listRl, addRl } from "@/api/event/strategyRl";
+import{listEventType}from "@/api/event/eventType";
 import {
   listStrategy,
   getStrategy,
@@ -225,6 +244,10 @@ import {
 export default {
   data() {
     return {
+      triggerList: [
+        { dictCode: "0", dictLabel: "手动" },
+        { dictCode: "1", dictLabel: "自动" },
+      ],
       checkStrictly: {
         multiple: false,
         emitPath: false,
@@ -241,6 +264,7 @@ export default {
         direction: "", //方向
         eventType: "",
         effectiveTime: "",
+        isAutomatic: "", //触发
         manualControl: [
           {
             disposalName: "",
@@ -278,6 +302,9 @@ export default {
         effectiveTime: [
           { required: true, message: "请输入有效时间", trigger: "change" },
         ],
+        isAutomatic: [
+          { required: true, message: "请选择事件触发", trigger: "change" },
+        ],
       },
       eventTypeList: [],
     };
@@ -288,10 +315,11 @@ export default {
         this.resetForm();
       }
       // 事件类型
-      this.getDicts("incident_type").then((response) => {
-        this.eventTypeList = response.data;
-      });
-      console.log("init");
+      let data = {prevControlType:"1"};
+      listEventType(data).then(res=>{
+        console.log(res.rows,']]]]]]]]]]]]]]]]]]')
+        this.eventTypeList = res.rows;
+      })
       this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
@@ -303,9 +331,11 @@ export default {
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
+        this.strategyForm.isAutomatic = data.isAutomatic;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
-        this.$set(this.strategyForm, "eventType", data.eventType);
+        this.strategyForm.eventType = Number(data.eventType);
+        // this.$set(this.strategyForm, "eventType", data.eventType);
 
         listRl({ strategyId: this.id }).then((response) => {
           console.log(response, "设备数据");
@@ -313,9 +343,8 @@ export default {
           for (let i = 0; i < response.rows.length; i++) {
             let attr = response.rows[i];
             let manualControl = this.strategyForm.manualControl[i];
-            this.strategyForm.manualControl[i].value =
-              attr.equipments.split(",");
-            console.log(this.strategyForm.manualControl[i].value, "选择的设备");
+            let value = attr.equipments.split(",");
+            this.$set(this.strategyForm.manualControl[i],"value",value);
             this.strategyForm.manualControl[i].state = attr.state;
             this.strategyForm.effectiveTime = attr.effectiveTime;
             this.strategyForm.manualControl[i].manualControlStateList =
@@ -338,6 +367,13 @@ export default {
                   res.data
                 );
               });
+            }
+            if (
+              this.strategyForm.manualControl[i].equipmentTypeId == 16 ||
+              this.strategyForm.manualControl[i].equipmentTypeId == 36
+            ) {
+              this.strategyForm.manualControl[i].state = +attr.state;
+              this.qbgChange(i,this.strategyForm.manualControl[i].value);
             }
             this.$set(
               manualControl,
@@ -364,6 +400,8 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.strategyForm.manualControl[index].state = null;
+      this.strategyForm.manualControl[index].value = null;
       let params = {
         eqType: this.strategyForm.manualControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -475,20 +513,31 @@ export default {
       this.$refs["manualControl"].validate((valid) => {
         if (valid) {
           console.log(this.strategyForm, "要提交数据");
-          var manualControl = this.strategyForm.manualControl;
+          var manualControl = JSON.parse(JSON.stringify(this.strategyForm.manualControl));
           //如果不是疏散标志则判断是否填写
-          if (this.strategyForm.equipmentTypeId != 30) {
-            if (
-              manualControl[0].value.length == 0 ||
-              manualControl[0].state == ""
-            ) {
-              return this.$modal.msgError("请选择设备并添加执行操作");
-            }
-          } else {
-            if (manualControl[0].state == "") {
-              return this.$modal.msgError("请选择疏散标志执行操作");
-            }
+          let result = manualControl.every(function (item) {
+            console.log(item.state,item.value);
+            return item.equipmentTypeId && item.state && item.value && item.disposalName
+          });
+          console.log(result);
+          if(!result){
+            return this.$modal.msgError("请填写完整");
           }
+          // manualControl.map(item=>{
+          //   if (item.equipmentTypeId != 30) {
+          //     if (
+          //       item.value.length == 0 ||
+          //       item.state == ""
+          //     ) {
+          //       return this.$modal.msgError("请选择设备并添加执行操作");
+          //     }
+          //   } else {
+          //     if (item.state == "") {
+          //       return this.$modal.msgError("请选择疏散标志执行操作");
+          //     }
+          //   }
+          // })
+
 
           // 判断是修改还是删除
           if (this.sink == "edit") {
@@ -663,22 +712,29 @@ export default {
   color: white;
   background-color: #74c5ff;
   height: 40px;
-  .col4 {
-    width: 16.66%;
-    float: left;
+  .el-col{
     text-align: center;
-    margin: 0 5px;
-  }
-  .col6 {
-    width: 25%;
-    float: left;
-    text-align: center;
-    margin: 0 5px;
   }
 }
 .buttonBox {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  height: 36px;
+  .delete,.add{
+    width:16px;
+    height: 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border:none;
+    background-color: transparent;
+  }
+  .delete{
+    background-image: url(../../../../assets/icons/delete.png);
+  }
+  .add{
+    background-image: url(../../../../assets/icons/add.png);
+  }
 }
 </style>

@@ -34,6 +34,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, tunnel_id,part_name, brand, model, unit, manufacturer, last_purchase_time, last_purchase_quantity, last_purchase_unit_price, current_inventory, keeper, phone, location, create_time, create_by, update_time, update_by, remake, remake1 from sd_spare_parts_warehouse
     </sql>
 
+
+    <select id="verifySparePartsWarehouseOnly" resultMap="SdSparePartsWarehouseResult">
+        <include refid="selectSdSparePartsWarehouseVo"/>
+        <where>
+            <if test="param.id != null  and param.id != ''"> and id != #{param.id}</if>
+            <if test="param.tunnelId != null  and param.tunnelId != ''"> and tunnel_id = #{param.tunnelId}</if>
+            <if test="param.partName != null  and param.partName != ''"> and part_name = #{param.partName}</if>
+            <if test="param.model != null  and param.model != ''"> and model = #{param.model}</if>
+            <if test="param.manufacturer != null  and param.manufacturer != ''"> and manufacturer = #{param.manufacturer}</if>
+        </where>
+    </select>
+
     <select id="selectSdSparePartsWarehouseList" parameterType="SdSparePartsWarehouse" resultMap="SdSparePartsWarehouseResult">
         select
         w.id,
@@ -73,7 +85,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="location != null  and location != ''"> and w.location = #{location}</if>
             <if test="remake != null  and remake != ''"> and w.remake = #{remake}</if>
             <if test="remake1 != null  and remake1 != ''"> and w.remake1 = #{remake1}</if>
-            <if test="searchValue != null  and searchValue != ''">and CONCAT(w.part_name,w.unit,w.brand) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="ids != null  and ids != ''"> and FIND_IN_SET(w.id,#{ids}) > 0</if>
+            <if test="searchValue != null  and searchValue != ''">and CONCAT(w.part_name,w.unit,w.brand,w.manufacturer) LIKE CONCAT('%',#{searchValue},'%')</if>
         </where>
     </select>
 

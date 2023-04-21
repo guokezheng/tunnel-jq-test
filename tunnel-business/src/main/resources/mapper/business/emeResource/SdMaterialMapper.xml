@@ -25,6 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="dateOfManufacture"    column="date_of_manufacture"  />
         <result property="tunnelId"    column="tunnel_id"  />
         <result property="tunnelName"    column="tunnel_name"  />
+        <result property="tName"    column="tName"  />
+        <result property="wzlx"    column="wzlx"  />
         <result property="qualityGuaranteePeriod" column="quality_guarantee_period" />
         <result property="deptId" column="dept_id" />
         <association property="sdMaterialType"  column="id" javaType="SdMaterialType" resultMap="materialTypeResult" />
@@ -44,14 +46,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
        select s.id, s.material_id, s.material_name, s.material_type,x.name,s.Inventory_quantity, s.company,
               s.position, s.warning_value, s.code, s.remark, s.state, s.create_time, s.update_time
             , t.tunnel_name, s.tunnel_id, s.station, s.direction, s.number, s.install_date, s.date_of_manufacture,
-              s.quality_guarantee_period, t.dept_id
+              s.quality_guarantee_period, t.dept_id,r.dict_label wzlx,t.tunnel_name tName
           from sd_material s
           left join sd_material_type x on s.material_type = x.id
           left join sd_tunnels t on t.tunnel_id = s.tunnel_id
+          left join sys_dict_data r on r.dict_value = s.material_type and r.dict_type ='sd_material_type'
         <where>
 
             <if test="materialId != null  and materialId != ''"> and s.material_id = #{materialId}</if>
-            <if test="materialName != null  and materialName != ''"> AND CONCAT(s.station, s.material_name) LIKE CONCAT('%',#{materialName},'%')</if>
+            <if test="materialName != null  and materialName != ''"> and concat(ifnull(s.station,'null'),ifnull(s.material_name,'null')) like concat('%',#{materialName},'%')</if>
             <if test="materialType != null  and materialType != ''"> and s.material_type = #{materialType}</if>
             <if test="inventoryQuantity != null "> and s.Inventory_quantity = #{inventoryQuantity}</if>
             <if test="company != null  and company != ''"> and s.company = #{company}</if>
@@ -64,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null ">
                 AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
+            <if test="ids != null  and ids != ''"> and FIND_IN_SET(s.id,#{ids}) > 0</if>
             ${params.dataScope}
         </where>
         ORDER BY s.create_time desc
@@ -183,5 +187,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+
+
+    <select id="selectMaterialList" parameterType="SdMaterial" resultMap="SdMaterialResult">
+        <include refid="selectSdMaterialVo"/>
+        <where>
+            <if test="materialName != null  and materialName != ''"> AND material_name = #{materialName}</if>
+            <if test="materialType != null  and materialType != ''"> and material_type = #{materialType}</if>
+            <if test="position != null  and position != ''"> and position = #{position}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="direction != null and direction != ''">and direction = #{direction}</if>
+            <if test="qualityGuaranteePeriod != null and qualityGuaranteePeriod != '' ">and quality_guarantee_period = #{qualityGuaranteePeriod}</if>
+        </where>
+    </select>
 
 </mapper>

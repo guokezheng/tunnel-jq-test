@@ -20,6 +20,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="controlDirection"    column="control_direction"    />
         <result property="direction"    column="direction"    />
+        <result property="eventGrade"    column="event_grade"    />
+        <result property="dj"    column="dj"    />
+        <result property="fx"    column="fx"    />
         <association property="eventType"  column="id" javaType="SdEventType" resultMap="eventTypeResult" />
         <association property="strategy"  column="id" javaType="SdStrategy" resultMap="strategyResult" />
         <association property="sdTunnelSubarea" column="subarea_id" javaType="sdTunnelSubarea" resultMap="subareaResult" />
@@ -54,18 +57,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectSdReservePlanVo">
-        select id,tunnel_id, plan_type_id, category, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time,control_direction,direction from sd_reserve_plan
+        select id,tunnel_id, plan_type_id, category, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time,control_direction,direction, event_grade from sd_reserve_plan
     </sql>
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
         select A.id, F.tunnel_id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id, A.category,
 #             --group_concat(DISTINCT E.strategy_id) strategy_id,
         B.event_type,
-        F.tunnel_name,A.control_direction,A.direction
+        F.tunnel_name,A.control_direction,A.direction,A.event_grade,d.dict_label fx,g.dict_label dj
         from sd_reserve_plan A
         left join sd_event_type B on A.plan_type_id = B.id
         left join sd_reserve_process E on A.id = E.reserve_id
         left join sd_tunnels F on A.tunnel_id = F.tunnel_id
+        left join sys_dict_data d on d.dict_value = A.direction and d.dict_type = 'sd_direction'
+        left join sys_dict_data g on g.dict_value = A.event_grade and g.dict_type = 'sd_event_grade'
         <where>
             1 = 1
             AND B.is_usable = '1'
@@ -76,6 +81,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="controlDirection != null "> and A.control_direction = #{controlDirection}</if>
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
             <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>
+            <if test="eventGrade != null  and eventGrade != ''"> and A.event_grade = #{eventGrade}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(A.id,#{ids}) > 0</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (F.dept_id = #{params.deptId} OR F.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
@@ -104,6 +111,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="controlDirection != null">control_direction,</if>
             <if test="direction != null">direction,</if>
+            <if test="eventGrade != null">event_grade,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -118,6 +126,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="controlDirection != null">#{controlDirection},</if>
             <if test="direction != null">#{direction},</if>
+            <if test="eventGrade != null">#{eventGrade},</if>
          </trim>
     </insert>
 
@@ -129,13 +138,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="category != null">category = #{category},</if>
             <if test="planDescription != null">plan_description = #{planDescription},</if>
             <if test="planName != null">plan_name = #{planName},</if>
-            <if test="planFileId != null">plan_file_id = #{planFileId},</if>
+            plan_file_id = #{planFileId},
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="controlDirection != null">control_direction = #{controlDirection},</if>
             <if test="direction != null">direction = #{direction},</if>
+            <if test="eventGrade != null">event_grade = #{eventGrade},</if>
         </trim>
         where id = #{id}
     </update>
@@ -161,8 +171,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdReservePlanVo"/>
         <where>
             <if test="planTypeId != null "> and plan_type_id = #{planTypeId}</if>
-            <if test="planName != null  and planName != ''"> and plan_name = #{planName}</if>
-            <if test="planDescription != null and planDescription != ''"> and plan_description = #{planDescription}</if>
+            <if test="tunnelId != null and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="direction != null and direction != ''"> and direction = #{direction}</if>
+            <if test="eventGrade != null and eventGrade != ''"> and event_grade = #{eventGrade}</if>
+            <if test="id != null and id != ''"> and <![CDATA[ id <> #{id} ]]></if>
         </where>
     </select>
 
@@ -229,6 +241,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="planTypeId != null and planTypeId != ''">
             AND rp.plan_type_id = #{planTypeId}
+        </if>
+    </select>
+
+    <select id="checkCurrId" resultType="int" parameterType="sdReservePlan">
+        SELECT
+            count(*)
+        FROM
+            sd_event e
+        WHERE
+            1 = 1
+          AND e.tunnel_id = #{tunnelId}
+          AND e.currency_id = #{id}
+          AND e.event_state = '0'
+    </select>
+
+    <select id="checkPlanName" parameterType="sdReservePlan" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            sd_reserve_plan rp
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND rp.tunnel_id = #{tunnelId}
+        </if>
+        <if test="planName != null and planName != ''">
+            AND rp.plan_name = #{planName}
+        </if>
+        <if test="id != null">
+            AND rp.id <![CDATA[ <> ]]> #{id}
         </if>
     </select>
 </mapper>

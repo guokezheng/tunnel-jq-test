@@ -8,8 +8,10 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import io.swagger.annotations.Api;
@@ -164,6 +166,20 @@ public class SdTunnelsController extends BaseController
             platformApiController.tunnelsPush(sdTunnelsList,"del");
         }
         return Result.toResult(i);
+    }
+
+    /**
+     * 导出
+     * @param sdTunnels
+     * @return
+     */
+    @Log(title = "隧道管理", businessType = BusinessType.EXPORT)
+    @GetMapping("/exportTunnels")
+    public AjaxResult exportTunnels(SdTunnels sdTunnels)
+    {
+        List<SdTunnels> list = sdTunnelsService.selectSdTunnelsList1(sdTunnels);
+        ExcelUtil<SdTunnels> util = new ExcelUtil<SdTunnels>(SdTunnels.class);
+        return util.exportExcel(list, "隧道管理");
     }
 
     /**

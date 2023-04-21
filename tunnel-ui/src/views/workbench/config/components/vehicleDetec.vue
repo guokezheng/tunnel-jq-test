@@ -9,28 +9,16 @@
       :visible="visible"
       :before-close="handleClosee"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
-      </div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <el-form
         ref="form"
         :model="stateForm"
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding: 15px; padding-top: 0px"
       >
         <el-row>
           <el-col :span="13">
@@ -78,7 +66,7 @@
         </el-row>
         <div class="lineClass"></div>
       </el-form>
-      <el-radio-group v-model="tab" style="margin-bottom: 10px" class="comCovi">
+      <el-radio-group v-model="tab" style="margin: 10px 0" class="comCovi">
         <el-radio-button label="data">车流量实时数据</el-radio-button>
         <el-radio-button label="trend">车流量实时趋势</el-radio-button>
       </el-radio-group>
@@ -119,7 +107,7 @@
         </el-table>
       </div>
       <div id="trend" v-show="tab == 'trend'" style="margin-bottom: 10px"></div>
-      <div slot="footer">
+      <div slot="footer" class="dialog-footer">
         <!-- <el-button
           type="primary"
           size="mini"
@@ -129,10 +117,8 @@
           >确 定</el-button
         > -->
         <el-button
-          type="primary"
-          size="mini"
+          class="closeButton"
           @click="handleClosee()"
-          style="width: 80px"
           >取 消</el-button
         >
       </div>
@@ -420,10 +406,9 @@ export default {
   flex-wrap: wrap;
 }
 #trend {
-  width: 90%;
+  width: 100%;
   height: 200px;
   background: #fff;
-  margin-left: 5%;
   div {
     width: 100%;
     height: 200px !important;
@@ -440,17 +425,16 @@ export default {
   border-radius: 20px !important;
 }
 ::v-deep .el-table {
-  width: 90%;
-  margin-left: 5%;
+  width: 100%;
 
   .el-table__header-wrapper {
     line-height: 28px;
     .cell {
       line-height: 14px;
     }
-    th {
-      background: #00adff !important;
-    }
+    // th {
+    //   background: #00adff !important;
+    // }
   }
   .el-table__body {
     width: 100% !important;

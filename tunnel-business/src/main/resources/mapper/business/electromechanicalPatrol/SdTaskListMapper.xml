@@ -11,6 +11,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="dispatcher"    column="dispatcher"    />
         <result property="dispatchTime"    column="dispatch_time"    />
         <result property="bzId"    column="bz_id"    />
+        <result property="bzName"    column="bzName"    />
+        <result property="userId"    column="userId"    />
+        <result property="task"    column="task"    />
+        <result property="sdName"    column="sdName"    />
+        <result property="publish"    column="publish"    />
         <result property="taskDescription"    column="task_description"    />
         <result property="publishStatus"    column="publish_status"    />
         <result property="taskStatus"    column="task_status"    />
@@ -24,6 +29,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="tunnelId"    column="tunnel_id"    />
         <result property="taskName"    column="task_name"    />
+        <result property="dictLabel"    column="dict_label"    />
+        <result property="dictValue"    column="dict_value"    />
+        <result property="taskName"    column="task_name"    />
+        <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
+    </resultMap>
+
+    <resultMap id="tunnelResult" type="SdTunnels">
+        <id  property="tunnelId" column="tunnel_id" />
+        <result property="tunnelName" column="tunnel_name"   />
     </resultMap>
 
     <sql id="selectSdTaskListVo">
@@ -31,32 +45,85 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
-        select t.id, d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bz_name,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time from sd_task_list t
-        left join sys_dept d on d.dept_id =  t.zzjg_id
+        select t.id, s.tunnel_name, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
         left join sys_user u on t.dispatcher = u.user_id
-        left join sys_dept b on b.dept_id =  t.bz_id
+        left join sd_teams b on b.dept_id =  t.bz_id
         left join sys_user w on t.walker_id = w.user_id
+        left join sd_tunnels s on s.tunnel_id = t.tunnel_id
+        left join sys_dict_data p on p.dict_value= t.publish_status and p.dict_type = 'publish_status'
+        left join sys_dict_data a on a.dict_value= t.task_status and a.dict_type = 'task_status'
         <where>
-          1=1
-            <if test="zzjgId != null  and zzjgId != ''"> and d.dept_name like concat('%', #{zzjgId}, '%')</if>
+          1=1 and t.task_status!= "3"
+            <if test="zzjgId != null  and zzjgId != ''"> and b.dept_name like concat('%', #{zzjgId}, '%')</if>
             <if test="endPlantime != null "> and t.end_plantime = #{endPlantime}</if>
             <if test="dispatcher != null  and dispatcher != ''"> and t.dispatcher = #{dispatcher}</if>
             <if test="dispatchTime != null "> and t.dispatch_time = #{dispatchTime}</if>
             <if test="bzId != null  and bzId != ''"> and t.bz_id = #{bzId}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
             <if test="taskDescription != null  and taskDescription != ''"> and t.task_description = #{taskDescription}</if>
             <if test="publishStatus != null "> and t.publish_status = #{publishStatus}</if>
-            <if test="taskStatus != null "> and t.task_status = #{taskStatus}</if>
+            <if test="taskStatus != null and taskStatus != '' and  taskStatus !='4'.toString"> and t.task_status = #{taskStatus} </if>
             <if test="walkerId != null  and walkerId != ''"> and t.walker_id = #{walkerId}</if>
             <if test="taskEndtime != null "> and t.task_endtime = #{taskEndtime}</if>
             <if test="taskCxtime != null "> and t.task_cxtime = #{taskCxtime}</if>
             <if test="siteDescription != null  and siteDescription != ''"> and t.site_description = #{siteDescription}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(t.id,#{ids}) > 0</if>
+            <if test="deptId != null and deptId != ''">
+                AND (s.dept_id = #{deptId} OR s.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+            </if>
+            <if test="taskStatus != null and taskStatus != '' and  taskStatus == '4'.toString()"> and t.end_plantime &lt; now() and t.task_status in(0,1)</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and t.end_plantime &gt;= #{params.beginTime}
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and t.end_plantime &lt;= #{params.endTime}
+            </if>
+
         </where>
-        order  by  t.create_time desc
+        order  by  t.create_time desc,t.update_time desc
+    </select>
+
+
+    <select id="selectChaoshiSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
+        select t.id, s.tunnel_name,t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+        left join sys_user u on t.dispatcher = u.user_id
+        left join sd_teams b on b.dept_id =  t.bz_id
+        left join sys_user w on t.walker_id = w.user_id
+        left join sd_tunnels s on s.tunnel_id = t.tunnel_id
+        left join sys_dict_data p on p.dict_value= t.publish_status and p.dict_type = 'publish_status'
+        left join sys_dict_data a on a.dict_value= t.task_status and a.dict_type = 'task_status'
+        <where>
+            1=1
+            <if test="zzjgId != null  and zzjgId != ''"> and b.dept_name like concat('%', #{zzjgId}, '%')</if>
+            <if test="endPlantime != null "> and t.end_plantime = #{endPlantime}</if>
+            <if test="dispatcher != null  and dispatcher != ''"> and t.dispatcher = #{dispatcher}</if>
+            <if test="dispatchTime != null and dispatchTime !=''"> and t.dispatch_time = #{dispatchTime}</if>
+            <if test="bzId != null  and bzId != ''"> and t.bz_id = #{bzId}</if>
+            <if test="taskDescription != null  and taskDescription != ''"> and t.task_description = #{taskDescription}</if>
+            <if test="publishStatus != null and publishStatus!=''"> and t.publish_status = #{publishStatus}</if>
+            <if test="taskStatus != null and taskStatus !=''"> and t.task_status in ('0','1')</if>
+            <if test="walkerId != null  and walkerId != ''"> and t.walker_id = #{walkerId}</if>
+            <if test="taskEndtime != null and taskEndtime !=''"> and t.task_endtime = #{taskEndtime}</if>
+            <if test="taskCxtime != null and taskCxtime!=''"> and t.task_cxtime = #{taskCxtime}</if>
+            <if test="siteDescription != null  and siteDescription != ''"> and t.site_description = #{siteDescription}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(t.id,#{ids}) > 0</if>
+            <if test="deptId != null and deptId != ''">
+                AND (s.dept_id = #{deptId} OR s.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+            </if>
+        </where>
+        order  by  t.create_time desc,t.update_time desc
     </select>
     
     <select id="selectSdTaskListById" parameterType="String" resultMap="SdTaskListResult">
-        <include refid="selectSdTaskListVo"/>
-        where id = #{id}
+       select t.id, s.tunnel_name,d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,b.dept_name  bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+        left join sys_dept d on d.dept_id =  t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        left join sd_teams b on b.dept_id =  t.bz_id
+        left join sys_user w on t.walker_id = w.user_id
+        left join sd_tunnels s on s.tunnel_id = t.tunnel_id
+        left join sys_dict_data p on p.dict_value= t.publish_status and p.dict_type = 'publish_status'
+        left join sys_dict_data a on a.dict_value= t.task_status and a.dict_type = 'task_status'
+        where t.id = #{id}
     </select>
         
     <insert id="insertSdTaskList" parameterType="SdTaskList">
@@ -139,10 +206,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
-        select e.tunnel_name,s.id,s.task_name,s.tunnel_id,s.end_plantime,y.dept_name bz_name,y.dept_id bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
+        select e.tunnel_name sdName,s.id,s.task_name,s.tunnel_id,s.end_plantime,y.dept_name bzName,y.dept_id bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
         from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
-        left join sys_dept d on s.zzjg_id = d.dept_id
-        left join sys_dept y on s.bz_id = y.dept_id
+        left join sd_teams y on s.bz_id = y.dept_id
         left join sd_tunnels e on s.tunnel_id = e.tunnel_id
         left join sys_dict_data t on t.dict_value = s.task_status and t.dict_type = 'task_status'
         left join sys_dict_data p on p.dict_value = s.publish_status and p.dict_type = 'publish_status'
@@ -151,13 +217,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectTableBzDataInfo" parameterType="String" resultType="com.ruoyi.common.core.domain.entity.SysDept">
         select *
-        from sys_dept
+        from sd_teams
         <where>
-            1=1
-           <!-- <if test="deptId != null and deptId != ''">
-                AND (dept_id = #{deptId} OR dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
-            </if>-->
-            AND dept_id like 'YG1%' or parent_id like 'YG1%'
+            1=1 and status = '0'
+            <if test="deptId != null and deptId != ''">
+                AND (parent_id = #{deptId} OR parent_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+
         </where>
     </select>
 
@@ -177,12 +243,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="taskName != null and taskName!=''"> AND CONCAT(t.task_name, e.tunnel_name) LIKE CONCAT('%',#{taskName},'%')</if>
         <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>
         <if test="startTime != null and startTime!=''and endTime!=null and endTime!=''"> and (t.end_plantime BETWEEN #{startTime} and #{endTime})</if>
+        <if test="deptId != null and deptId != ''">
+            AND (d.dept_id = #{deptId} OR d.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+        </if>
         order by t.create_time desc
     </select>
 
 
     <update id="acceptSdTaskList" parameterType="SdTaskList">
-        update sd_task_list set task_status = '1' where id = #{id}
+        update sd_task_list set task_status = '1' ,walker_id = #{userId} where id = #{id}
     </update>
 
 
@@ -250,7 +319,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getTaskToDo" parameterType="String" resultMap="SdTaskListResult">
-        select dispatch_time,task_name from sd_task_list where bz_id = #{deptId}
+        select dispatch_time,task_name from sd_task_list where bz_id = #{deptId} OR
+        bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors))
     </select>
 
 
@@ -258,5 +328,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectBzByTunnel" parameterType="String" resultType="String">
         select manager_id from sd_tunnels where tunnel_id = #{tunnelId}
     </select>
+
+
+    <select id="selectCurrentDayTask" parameterType="String" resultType="String">
+        select id from sd_task_list where id like  concat(#{pid}, '%') order by id desc limit 1
+    </select>
+
+
 
 </mapper>

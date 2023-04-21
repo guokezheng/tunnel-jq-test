@@ -9,13 +9,13 @@
           v-hasPermi="['device:brand:add']"
           >新增</el-button
         >
-        <el-button
+        <!--        <el-button
           size="small"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['device:brand:edit']"
           >修改</el-button
-        >
+        >-->
         <el-button
           size="small"
           :disabled="multiple"
@@ -28,29 +28,33 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['device:brand:export']"
-          >导出</el-button>
-          <el-button size="small" @click="resetQuery"
-          >刷新</el-button
+          >导出</el-button
         >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
-            <el-input
-              v-model="queryParams.supplierName"
-              placeholder="请输入设备厂商名称、简称,回车搜索"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery">
-              <el-button
+          <el-input
+            v-model="queryParams.supplierName"
+            placeholder="请输入设备厂商名称、简称,回车搜索"
+            clearable
+            size="small"
+            style="
+              border-right: #00c8ff solid 1px !important;
+              border-radius: 3px;
+            "
+            @keyup.enter.native="handleQuery"
+          >
+            <!--              <el-button
                 slot="append"
-                icon="icon-gym-Gsearch"
+                class="searchTable"
                 @click="boxShow = !boxShow"
-              ></el-button>
+              ></el-button>-->
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div ref="cc" class="searchBox searchBoxMini" v-show="boxShow">
+    <!--    <div ref="cc" class="searchBox searchBoxMini" v-show="boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
@@ -84,23 +88,35 @@
           >
         </el-form-item>
       </el-form>
-    </div>
-    <div class="tableTopHr" ></div>
+    </div>-->
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="brandList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
-      height="70vh"
+      height="62vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
 
-      <el-table-column label="序号" type="index" align="center" :index="indexMethod">
+      <el-table-column
+        label="序号"
+        type="index"
+        align="center"
+        :index="indexMethod"
+      >
         <!--<template slot-scope="scope">
           <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
         </template>-->
       </el-table-column>
-
 
       <!--<el-table-column label="设备厂商编号" align="center" prop="supplierId" />-->
       <el-table-column
@@ -143,7 +159,17 @@
     />
 
     <!-- 添加或修改物联设备厂商对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="设备厂商名称" prop="supplierName">
           <el-input
@@ -159,8 +185,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -223,21 +249,33 @@ export default {
   created() {
     this.getList();
   },
-  mounted(){
+  mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row) {
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.supplierId;
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
-        if (self.boxShow == true){
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
+        if (self.boxShow == true) {
           self.boxShow = false;
         }
       }
     },
     //翻页时不刷新序号
-    indexMethod(index){
-      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
     },
     /** 查询物联设备厂商列表 */
     getList() {
@@ -251,6 +289,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -270,11 +309,14 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.supplierName = '';
+      this.queryParams.ids = [];
+      this.queryParams.supplierName = "";
+      this.queryParams.ids = "";
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -308,6 +350,7 @@ export default {
             updateBrand(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -322,25 +365,31 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this;
       const supplierIds = row.supplierId || this.ids;
       this.$modal
-        .confirm(
-          '是否确认删除已经选择的物联设备厂商数据项？'
-        )
+        .confirm("是否确认删除？")
         .then(function () {
           return delBrand(supplierIds);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo = "是否确认导出所有的设备厂商数据项？";
+      if (this.ids.length > 0) {
+        confirmInfo = "是否确认导出所选的设备厂商数据项？";
+      }
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有设备厂商数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportBrand(queryParams);
@@ -348,6 +397,8 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = "";
         })
         .catch(() => {});
     },

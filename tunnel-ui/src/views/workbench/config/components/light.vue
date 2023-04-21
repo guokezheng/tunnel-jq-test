@@ -9,28 +9,17 @@
       :visible="visible"
       :before-close="handleClosee"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
-      </div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
+
       <el-form
         ref="form"
         :model="stateForm"
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding: 15px; padding-top: 0px"
       >
         <el-row>
           <el-col :span="13">
@@ -167,25 +156,20 @@
             </el-col>
             <el-col :span="9" v-if="stateForm.brightness">
               <span style="padding-left: 10px; line-height: 30px"
-                >{{ stateForm.brightness }} cd</span
+                >{{ stateForm.brightness }} %</span
               >
             </el-col>
           </el-row>
-          <div slot="footer" style="float: right; margin-bottom: 20px">
+          <div slot="footer" style=" margin-top: 10px" class="dialog-footer">
             <el-button
-              type="primary"
-              size="mini"
               @click="handleOK()"
-              style="width: 80px"
               class="submitButton"
               v-hasPermi="['workbench:dialog:save']"
-              >确 定</el-button
+              >执 行</el-button
             >
             <el-button
-              type="primary"
-              size="mini"
+              class="closeButton"
               @click="handleClosee()"
-              style="width: 80px"
               >取 消</el-button
             >
           </div>
@@ -215,13 +199,14 @@ export default {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       iconWidth: "",
       iconHeight: "",
+      clickEqType:''
       // stateForm2:{}
     };
   },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     console.log(this.eqInfo.clickEqType, "clickEqTypeclickEqTypeclickEqType");
-
+    this.clickEqType = JSON.parse(JSON.stringify(this.eqInfo.clickEqType))
     this.getMessage();
     // this.loadFlv();
   },
@@ -237,7 +222,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          // this.stateForm.brightness = Number(res.data.brightness);
+          this.stateForm.brightness = Number(res.data.brightness);
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
@@ -312,32 +297,36 @@ export default {
       }
     },
     handleOK() {
-      console.log(this.eqInfo.equipmentId,"this.eqInfo.equipmentId")
-      console.log(this.stateForm.state, "单选框点击绑定");
+      let that = this
+      console.log(this.eqInfo.clickEqType,"this.eqInfo.clickEqType")
       if(this.eqInfo.clickEqType != 45){
+
+        console.log(this.stateForm.brightness)
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state,
+          brightness: this.stateForm.brightness
         };
-
         controlDevice(param).then((response) => {
           if (response.data == 0) {
             this.$modal.msgError("控制失败");
           } else if (response.data == 1) {
-            if(this.eqInfo.clickEqType == 7){
-              const params = {
-                bright: this.stateForm.brightness,
-                controlType: "0",
-                deviceId: this.eqInfo.equipmentId,
-              };
-              setBrightness(params).then((res) => {
-                console.log(res, "亮度");
-                this.$modal.msgSuccess("控制成功");
-
-              });
-            }else{
+            console.log(that.clickEqType,"this.eqInfo.clickEqType")
+            // if(that.clickEqType == 7){
+              // const params = {
+              //   bright: this.stateForm.brightness,
+              //   controlType: "0",
+              //   deviceId: this.eqInfo.equipmentId,
+              // };
+              // console.log(params,"params")
+              // setBrightness(params).then((res) => {
+              //   console.log(res, "亮度");
+              //   this.$modal.msgSuccess("控制成功");
+              //
+              // });
+            // }else{
               this.$modal.msgSuccess("控制成功");
-            }
+            // }
           }
         });
       }else if(this.eqInfo.clickEqType == 45){
@@ -355,7 +344,7 @@ export default {
           }
         })
       }
-      
+
       this.$emit("dialogClose");
     },
     // 关闭弹窗

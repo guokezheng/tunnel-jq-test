@@ -57,7 +57,7 @@ public class SdJoinTypeFlowController extends BaseController
     {
         List<SdJoinTypeFlow> list = sdJoinTypeFlowService.selectSdJoinTypeFlowList(sdJoinTypeFlow);
         ExcelUtil<SdJoinTypeFlow> util = new ExcelUtil<SdJoinTypeFlow>(SdJoinTypeFlow.class);
-        return util.exportExcel(list, "事件类型预案流程关联数据");
+        return util.exportExcel(list, "预案流程");
     }
 
     /**

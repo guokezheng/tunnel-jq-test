@@ -2,20 +2,14 @@
   <div class="app-container">
     <!-- 全局搜索 -->
     <el-row :gutter="20" class="topFormRow">
-      <el-col :span="6">
+      <el-col :span="8">
         <el-button
           size="small"
           @click="handleAdd"
           v-hasPermi="['system:devices:add']"
           >新增
         </el-button>
-        <el-button
-          size="small"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:devices:edit']"
-          >修改
-        </el-button>
+
         <el-button
           size="small"
           :disabled="multiple"
@@ -23,21 +17,20 @@
           v-hasPermi="['system:devices:remove']"
           >删除
         </el-button>
-        <el-button
-          size="small"
-          @click="handleExport"
-          v-hasPermi="['system:devices:export']"
-          >导出
-        </el-button>
+
         <el-button
           size="small"
           @click="handleImport"
           v-hasPermi="['system:devices:import']"
           >导入
         </el-button>
-        <el-button size="small" @click="resetQuery" 
-          >刷新</el-button
-        >
+        <el-button
+          size="small"
+          @click="handleExport"
+          v-hasPermi="['system:devices:export']"
+          >导出
+        </el-button>
+        <el-button size="small" @click="resetQuery">刷新</el-button>
         <!--          <el-button-->
         <!--            type="info"-->
         <!--            icon="el-icon-s-help"-->
@@ -45,7 +38,7 @@
         <!--            @click="checkInstruction"-->
         <!--            >校验指令</el-button>-->
       </el-col>
-      <el-col :span="6" :offset="12">
+      <el-col :span="6" :offset="10">
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
@@ -56,7 +49,7 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="boxShow = !boxShow"
             ></el-button>
           </el-input>
@@ -71,7 +64,7 @@
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="设备方向" >
+        <el-form-item label="设备方向">
           <el-checkbox-group v-model="checkeBox" @change="handleCheckChange">
             <el-checkbox
               v-for="item in dict.type.sd_direction"
@@ -132,15 +125,23 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="devicesList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       class="allTable"
-      height="70vh"
+      height="62vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
       <el-table-column
         type="index"
         :index="indexMethod"
@@ -167,14 +168,14 @@
         label="设备名称"
         align="center"
         prop="eqName"
-        min-width="200"
+        width="120"
         show-overflow-tooltip
       />
       <el-table-column
         label="设备类型"
         align="center"
         prop="typeName.typeName"
-        min-width="150"
+        width="120"
         show-overflow-tooltip
       />
       <el-table-column
@@ -193,14 +194,12 @@
         label="设备型号"
         align="center"
         prop="eqModel"
-        min-width="100"
         show-overflow-tooltip
       />
       <el-table-column
         label="设备方向"
         align="center"
         prop="eqDirection"
-        min-width="100"
         show-overflow-tooltip
       >
         <template slot-scope="scope">
@@ -216,7 +215,7 @@
         label="桩号"
         align="center"
         prop="pile"
-        min-width="150"
+        width="100"
         show-overflow-tooltip
       />
       <el-table-column label="备注" align="center" prop="remark" />
@@ -233,6 +232,13 @@
             @click="updateCmd(scope.row)"
             v-hasPermi="['system:devices:edit']"
             >控制修改
+          </el-button>
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:devices:edit']"
+            >修改
           </el-button>
           <el-button
             size="mini"
@@ -253,7 +259,17 @@
     />
 
     <!-- 添加或修改设备对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="740px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="740px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="12">
@@ -341,7 +357,7 @@
               </el-select>
             </el-form-item>-->
 
-            <el-form-item label="设备大类" prop="eqType">
+            <el-form-item label="设备大类" prop="fEqType">
               <el-select
                 v-model="form.fEqType"
                 placeholder="请选择设备大类"
@@ -446,7 +462,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备桩号" prop="pile">
+            <el-form-item label="桩号" prop="pile">
               <el-input
                 v-model="form.pile"
                 maxlength="20"
@@ -527,20 +543,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="协议类型" prop="protocol">
+            <el-form-item label="协议类型" prop="commProtocol">
               <el-input
-                v-model="form.protocol"
+                v-model="form.commProtocol"
                 maxlength="50"
                 placeholder="请输入协议类型"
               />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="出场时间" prop="deliveryTime">
+            <el-form-item label="出厂时间" prop="deliveryTime">
               <el-date-picker
                 v-model="form.deliveryTime"
                 type="date"
-                placeholder="请选择出场时间"
+                placeholder="请选择出厂时间"
                 :picker-options="optionsDisable"
                 value-format="yyyy-MM-dd"
                 style="width: 100%"
@@ -669,14 +685,14 @@
           </el-col> -->
         </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer" slot="footer">
         <el-button
-          type="primary"
+          class="submitButton"
           :loading="submitFormLoading"
           @click="submitForm"
           >确 定</el-button
         >
-        <el-button @click="cancel">取 消</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
 
@@ -686,7 +702,13 @@
       :visible.sync="ctrlcmd"
       width="700px"
       append-to-body
+      :before-close="cancel"
+      :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-row>
         <el-col
           :span="23"
@@ -734,6 +756,7 @@
       :visible.sync="instructionDialog"
       width="400px"
       append-to-body
+      :close-on-click-modal="false"
     >
       <el-form
         ref="instructionForm"
@@ -796,7 +819,12 @@
       width="400px"
       append-to-body
       class="zxc"
+      :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-upload
         ref="upload"
         :limit="1"
@@ -817,7 +845,7 @@
         </div>
         <div class="el-upload__tip" slot="tip">
           <el-checkbox v-model="upload.updateSupport" />
-          是否更新已经存在的设备数据
+          更新已经存在的设备数据
           <el-link
             type="info"
             style="font-size: 12px; color: #39adff"
@@ -830,8 +858,12 @@
         </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFileForm">确 定</el-button>
-        <el-button @click="upload.open = false">取 消</el-button>
+        <el-button @click="submitFileForm" class="submitButton"
+          >确 定</el-button
+        >
+        <el-button @click="upload.open = false" class="closeButton"
+          >取 消</el-button
+        >
       </div>
     </el-dialog>
   </div>
@@ -869,6 +901,8 @@ import {
 import { getToken } from "@/utils/auth";
 import { listAllSystem } from "@/api/equipment/externalsystem/system";
 import { listCategory } from "@/api/equipment/bigType/category";
+import { treeSelectYG1 } from "@/api/system/dept";
+import { getTeams } from "@/api/electromechanicalPatrol/teamsManage/teams";
 
 export default {
   name: "Devices",
@@ -988,13 +1022,20 @@ export default {
           {
             required: true,
             message: "请选择所属隧道",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         eqType: [
           {
             required: true,
             message: "请选择设备类型",
+            trigger: "blur",
+          },
+        ],
+        fEqType: [
+          {
+            required: true,
+            message: "请选择设备大类",
             trigger: "blur",
           },
         ],
@@ -1122,6 +1163,13 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleRowClick(row) {
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.eqId;
+    },
     //翻页时不刷新序号
     indexMethod(index) {
       return (
@@ -1223,12 +1271,17 @@ export default {
     },
     /** 查询设备列表 */
     getList() {
+      console.log(this.ids, "ids");
+      console.log(this.queryParams.exportIds, "this.queryParams.exportIds");
+
       if (this.manageStatin == "1") {
         this.queryParams.eqTunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
       }
       this.loading = true;
+      this.boxShow = false;
+      this.queryParams.exportIds = "";
       listDevices(this.queryParams).then((response) => {
         this.devicesList = response.rows;
         this.total = response.total;
@@ -1270,6 +1323,8 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.ctrlcmd = false;
+      this.$refs.tableFile.clearSelection();
       this.submitFormLoading = false;
       this.reset();
     },
@@ -1342,6 +1397,7 @@ export default {
         this.queryParams.remark = "1,2";
       }
       this.queryParams.pageNum = 1;
+      this.$refs.tableFile.clearSelection();
       /* this.queryParams.eqDirection = 0; */
       this.getList();
     },
@@ -1355,12 +1411,35 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
+      console.log(selection, "selection");
       this.ids = selection.map((item) => item.eqId);
       if (this.ids.length > 0) {
         this.queryParams.exportIds = this.ids.join();
       }
       this.single = selection.length !== 1;
-      this.multiple = !selection.length;
+      this.multiple = !selection.length; //非多个禁用
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      let confirmInfo = "是否确认导出所有的设备管理数据项？";
+      if (this.ids.length > 0) {
+        confirmInfo = "是否确认导出所选的设备管理数据项？";
+      }
+      this.queryParams.exportIds = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$confirm(confirmInfo, "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(function () {
+          return exportDevices(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.exportIds = "";
+        });
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -1449,6 +1528,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      console.log(row, "row");
       this.reset();
       const eqId = row.eqId || this.ids;
       getDevices(eqId).then((response) => {
@@ -1468,6 +1548,7 @@ export default {
             await updateDevices(this.form).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
+                this.$refs.tableFile.clearSelection();
                 this.open = false;
                 this.getList();
               }
@@ -1487,6 +1568,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this;
       const eqIds = row.eqId || this.ids;
       this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
@@ -1497,24 +1579,11 @@ export default {
           return delDevices(eqIds);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(function () {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有设备管理数据项?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(function () {
-          return exportDevices(queryParams);
-        })
-        .then((response) => {
-          this.$download.name(response.msg);
+        .catch(function () {
+          that.$refs.tableFile.clearSelection();
         });
     },
 
@@ -1557,7 +1626,7 @@ export default {
     importTemplate() {
       /* exportDevicesTemplate()*/
       /*.then((response) => {*/
-      this.$download.name("sbsj.xlsx", false);
+      this.$download.nameXlsx("设备数据.xlsx", false);
       /*});*/
     },
     handleCheckChange(val) {

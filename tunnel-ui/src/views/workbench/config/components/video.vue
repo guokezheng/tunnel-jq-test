@@ -8,31 +8,16 @@
       append-to-body
       :visible="cameraVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
-      </div>
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <div style="width: 100%; height: 200px;padding:0 15px">
-
-        <videoPlayer
-            v-if="videoForm.liveUrl "
-            :rtsp="videoForm.liveUrl"
-            :open="cameraPlayer"
-          ></videoPlayer>
-       
-        <!-- <video
+        <video
+        v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
           class="h5video_"
           controls
@@ -41,7 +26,13 @@
           disablePictureInPicture="true"
           controlslist="nodownload noplaybackrate noremoteplayback"
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
-        ></video> -->
+        ></video>
+        <videoPlayer
+            v-if="videoForm.liveUrl "
+            :rtsp="videoForm.liveUrl"
+            :open="cameraPlayer"
+
+          ></videoPlayer>
       </div>
       <el-form
         ref="form"
@@ -49,7 +40,6 @@
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding: 0 15px 15px 15px"
       >
         <el-tabs class="videoTabs" v-model="videoActive">
           <el-tab-pane label="详细信息" name="information">
@@ -150,12 +140,9 @@
           </el-tab-pane>
         </el-tabs>
       </el-form>
-      <div slot="footer">
+      <div slot="footer" class="dialog-footer">
         <el-button
-          type="primary"
-          size="mini"
           @click="videoYunTai()"
-          style="width: 80px"
           class="submitButton"
           v-show="stateForm.eqType == 24"
           >云台控制</el-button
@@ -169,10 +156,8 @@
           >录像查看</el-button
         > -->
         <el-button
-          type="primary"
-          size="mini"
+          class="closeButton"
           @click="handleClosee()"
-          style="width: 80px"
           >取 消</el-button
         >
       </div>
@@ -185,7 +170,13 @@
       append-to-body
       :visible="historyVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <el-form
         ref="historyForm"
         :model="queryParams"
@@ -285,7 +276,13 @@
       append-to-body
       :visible="yunTaiVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
+    <div class="dialogStyleBox">
+      <div class="dialogLine"></div>
+      <div class="dialogCloseButton"></div>
+    </div>
       <el-row class="yuntaiBox">
         <el-col :span="18">
           <div class="yuntaiVideoBox">
@@ -475,7 +472,7 @@ export default {
           event: "事件: 道路拥堵",
           status: "正在进行",
         },
-        
+
         {
           pic: require("@/assets/images/warningPhoto.png"),
           time: "2022-03-11 14:47:13",
@@ -515,20 +512,39 @@ export default {
       },
       picPage:1,
       player: null,
+      tunnelId:''
+      // brandList:[],
+      // eqInfo:{},
+      // eqTypeDialogList:[],
+      // directionList:[],
     };
   },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getmessage();
-    if(this.videoList.length > 4){
-      this.picList = this.videoList.slice(0,4)
-    }
+
+    // if(this.videoList.length > 4){
+    //   this.picList = this.videoList.slice(0,4)
+    // }
     // getLocalIP().then((response) => {
     //   console.log(response,"responseresponse");
     //   this.hostIP = response;
     // });
   },
   methods: {
+    // init(eqInfo,eqTypeDialogList,brandList,directionList){
+    //   let that = this
+    //   console.log(eqInfo,eqTypeDialogList,brandList,directionList,"------------------")
+    //   console.log(this.cameraVisible,"this.cameraVisible")
+
+    //   that.eqInfo = eqInfo;
+    //   that.eqTypeDialogList = eqTypeDialogList;
+    //   that.brandList = brandList;
+    //   that.directionList = directionList
+    //   that.getmessage();
+
+    //   that.cameraVisible = true
+    // },
     // 点击云台方向
     changeYunTai(cmdType,type){
       if(type && cmdType == false){
@@ -544,22 +560,30 @@ export default {
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
-        videoStreaming(this.eqInfo.equipmentId).then((response) =>{
-          console.log(response,"视频流");
-          if(response.code == 200){
-            this.videoForm = response.data
-            this.cameraPlayer = true
-          }
-        }).catch((e)=>{
-          this.$modal.msgWarning("获取视频失败");
-        })
+
+
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          // displayH5sVideoAll(res.data.secureKey);
+          this.tunnelId = res.data.tunnelId
+          if(res.data.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS"){
+            displayH5sVideoAll(res.data.secureKey,"h5sVideo1");
+          }else{
+            videoStreaming(this.eqInfo.equipmentId).then((response) =>{
+              console.log(response,"视频流");
+              if(response.code == 200 && response.data){
+                this.videoForm = response.data
+                this.cameraPlayer = true
+              }else{
+                this.$modal.msgWarning("获取视频失败");
+              }
+            }).catch((e)=>{
+              this.$modal.msgWarning("获取视频失败");
+            })
+          }
         });
-        
+
         // await getInfo(this.eqInfo.clickEqType).then((response) => {
         //     console.log(response, "查询设备当前状态");
         //     this.stateForm.state = response.data.state;
@@ -596,12 +620,12 @@ export default {
     },
     // 录像查看
     videoViewing() {
-      this.cameraVisible = false;
+      // this.cameraVisible = false;
       this.historyVisible = true;
     },
     // 云台控制
     videoYunTai() {
-      this.cameraVisible = false;
+      // this.cameraVisible = false;
       this.yunTaiVisible = true;
     },
     // 历史记录表单查询
@@ -694,7 +718,7 @@ export default {
     .yunTaiVideo{
       width: 100%;
       height: 100%;
-      object-fit: cover; 
+      object-fit: cover;
       z-index: -100
     }
   }
@@ -858,7 +882,7 @@ export default {
       border-radius: 15px;
       text-align: center;
       font-size: 18px;
-      cursor: pointer;  
+      cursor: pointer;
       caret-color: rgba(0,0,0,0);
     }
     > div:nth-of-type(1):hover,
@@ -880,7 +904,7 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 15px;
-    
+
     > .el-slider {
       width: 50%;
     }
@@ -917,4 +941,11 @@ export default {
   bottom: 350px !important;
   height: 60px;
 }
+
+::v-deep .el-dialog__wrapper {
+    pointer-events: none !important;
+  }
+  ::v-deep .el-dialog {
+    pointer-events: auto !important;
+  }
 </style>

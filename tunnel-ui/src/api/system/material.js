@@ -60,3 +60,13 @@ export function delMaterial(id) {
     method: 'delete'
   })
 }
+
+
+// 导出应急物资
+export function exportList(query) {
+  return request({
+    url: '/material/export',
+    method: 'get',
+    params: query
+  })
+}

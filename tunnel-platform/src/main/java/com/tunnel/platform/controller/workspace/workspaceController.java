@@ -7,6 +7,7 @@ import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesHongTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -16,12 +17,15 @@ import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.domain.vehicle.SdVehicleData;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.service.vehicle.ISdVehicleDataService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
@@ -29,12 +33,14 @@ import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
 import com.tunnel.platform.service.deviceControl.LightService;
+import com.tunnel.platform.service.deviceFunctions.DeviceFunctionsService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -79,6 +85,11 @@ public class workspaceController extends BaseController {
     private ISdDeviceTypeItemService sdDeviceTypeItemService;
     @Autowired
     private LightService lightService;
+    @Autowired
+    private DeviceFunctionsService deviceFunctionsService;
+
+    @Autowired
+    private ISdVehicleDataService vehicleDataService;
 
     @Value("${authorize.name}")
     private String deploymentType;
@@ -120,6 +131,7 @@ public class workspaceController extends BaseController {
         //解析map 杭山东隧道下调用瑞华赢接口控制设备
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
+        String brightness = map.get("brightness").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
         if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
             Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
@@ -166,8 +178,19 @@ public class workspaceController extends BaseController {
             if (sdDeviceTypeItems.size() == 0) {
                 throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
             }
-            SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-            updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+                sdDeviceTypeItems.stream().forEach(item -> {
+                     if("brightness".equals(item.getItemCode())){
+                        updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));
+                    }
+                    if("state".equals(item.getItemCode())){
+                        updateDeviceData(sdDevices, state, Integer.parseInt(item.getId().toString()));
+                    }
+                });
+            }else {
+                SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
+                updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+            }
             //添加操作记录
             SdOperationLog sdOperationLog = new SdOperationLog();
             sdOperationLog.setEqTypeId(sdDevices.getEqType());
@@ -196,7 +219,7 @@ public class workspaceController extends BaseController {
                 //控制设备
                 controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
             } else if (eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || eqType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) {
-                controlState = lightService.lineControl(devId, Integer.parseInt(state));
+                controlState = lightService.lineControl(devId, Integer.parseInt(state), Integer.parseInt(brightness));
             }
         }
 
@@ -598,7 +621,44 @@ public class workspaceController extends BaseController {
         if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
         }
-        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(map.get("tunnelId").toString());
+        String tunnelId = String.valueOf(map.get("tunnelId"));
+        //避免数据量大时查询过慢超时，改为从单车数据中查询
+        SdVehicleData vehicleData = new SdVehicleData();
+        vehicleData.setTunnelId(tunnelId);
+        List<Map> list = vehicleDataService.getDayVehicleData(vehicleData);
+//        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(map.get("tunnelId").toString());
+        return AjaxResult.success(list);
+    }
+
+    /**
+     * 查询24小时客车、货车、重点车辆客流量
+     * @param map
+     * @return
+     */
+    @PostMapping("/vehicleMonitoringInRecent24HoursByVehicleType")
+    public AjaxResult vehicleMonitoringInRecent24HoursByVehicleType(@RequestBody Map<String, Object> map) {
+        if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
+            throw new RuntimeException("车辆监测查询条件中隧道不能为空");
+        }
+        String tunnelId = String.valueOf(map.get("tunnelId"));
+        //避免数据量大时查询过慢超时，改为从单车数据中查询
+        SdVehicleData vehicleData = new SdVehicleData();
+        vehicleData.setTunnelId(tunnelId);
+        List<Map> list = vehicleDataService.getDayVehicleDataByVehicleType(vehicleData);
+        return AjaxResult.success(list);
+    }
+
+    /**
+     * 统计当天24小时重点车辆
+     * @param map
+     * @return
+     */
+    @PostMapping("/specialVehicleMonitoringInRecent24Hours")
+    public AjaxResult specialVehicleMonitoringInRecent24Hours(@RequestBody Map<String, Object> map) {
+        if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
+            throw new RuntimeException("车辆监测查询条件中隧道不能为空");
+        }
+        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.specialVehicleMonitoringInRecent24Hours(map.get("tunnelId").toString());
         return AjaxResult.success(vehicleMonitoringInRecent24Hours);
     }
 
@@ -674,5 +734,32 @@ public class workspaceController extends BaseController {
         Assert.hasText(operIp, "操作方IP地址参数{operIp}必传");
         Integer controlState = sdDeviceControlService.controlDevices(params);
         return controlState;
+    }
+
+
+    /**
+     * Omron 消防水泵控制  (后期优化。所有控制走当前一个接口)
+     * @param params
+     * @return
+     */
+    @PostMapping("/controlDeviceByParam")
+    public AjaxResult controlDeviceByParam(@RequestBody Map<String, Object> params){
+        //参数校验
+        if (CollectionUtils.isEmpty(params)) {
+            return AjaxResult.error("控制设备参数为空");
+        }
+        //获取当前传输数据协议类型
+        if ( params.get("comType") == null ||  params.get("comType").toString().equals("")) {
+            return AjaxResult.error("未指定设备通讯类型");
+        } else if ( params.get("data") == null || params.get("data").toString().equals("")) {
+            return AjaxResult.error("未指定设备需要变更的状态信息");
+        } else if (params.get("eqId") == null || params.get("eqId").toString().equals("")) {
+            return AjaxResult.error("未指定设备id");
+        }
+        boolean  b = deviceFunctionsService.deviceControlByParam( params.get("comType").toString(), params.get("eqId").toString(), params.get("data").toString());
+        if(b){
+            return AjaxResult.success("控制成功");
+        }
+        return AjaxResult.error("控制失败");
     }
 }

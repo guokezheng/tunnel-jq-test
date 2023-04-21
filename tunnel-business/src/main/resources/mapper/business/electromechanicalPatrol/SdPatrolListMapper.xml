@@ -201,8 +201,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getPatrolListsInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
-    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.impression,p.network,p.power,p.eq_fault_code,p.xc_sort,
-    p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,f.tunnel_id,u.tunnel_name, t.bz_id,t.walker_id,s.state_name as run_status,a.state_name as eq_status
+    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,i.dict_label impression,n.dict_label network,o.dict_label power,p.eq_fault_code,p.xc_sort,
+    p.eq_fault_description,c.dict_label fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,f.tunnel_id,u.tunnel_name, t.bz_id,t.walker_id,s.state_name as run_status,a.state_name as eq_status
     from sd_patrol_list p
     left join sd_task_list t on t.id = p.task_id
     left join sd_fault_list f on f.id = p.eq_fault_id
@@ -212,7 +212,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     d.eq_type = s.state_type_id and  s.state_type = '2'
     left join sd_equipment_state a on a.device_state = p.eq_status  and
     d.eq_type = a.state_type_id and  a.state_type = '1'
+    left join sys_dict_data i on i.dict_value = p.impression and i.dict_type = 'impression'
+	left join sys_dict_data n on n.dict_value = p.impression and n.dict_type = 'network'
+	left join sys_dict_data o on o.dict_value = p.impression and o.dict_type = 'power'
+	left join sys_dict_data c on c.dict_value = p.fault_clstatus and c.dict_type = 'fault_clstatus'
     where p.task_id = #{task_id}
+    order by p.xc_sort
     </select>
 
 
@@ -245,14 +250,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getPatrolInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
-        select p.eq_name,p.position,p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,f.fallt_remove_statue,u.tunnel_name, d.pile,y.type_name
+        select p.id,p.eq_name,p.position,p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,f.fallt_remove_statue,u.tunnel_name, d.pile,y.type_name
         from sd_patrol_list p
         left join sd_task_list t on t.id = p.task_id
         left join sd_fault_list f on f.id = p.eq_fault_id
         left join sd_tunnels u on u.tunnel_id = f.tunnel_id
         left join sd_devices d on d.eq_id = p.eq_fault_id
         left join sd_equipment_type y  on y.type_id = d.eq_type
-        where p.task_id = #{task_id}
+        where p.task_id = #{taskId}
     </select>
 
 

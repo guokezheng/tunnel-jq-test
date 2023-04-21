@@ -16,7 +16,8 @@ const websocket = {
     radarDataList: {},
     deviceStatus: {},
     deviceStatusChangeLog: {},
-    eventFlow:{}
+    eventFlow:{},
+    eventUntreatedNum:0
   },
 
   mutations: {
@@ -44,6 +45,9 @@ const websocket = {
     EVENTFLOW: (state, data) => {
       state.eventFlow = data
     },
+    EVENTUNTREATEDNUM: (state ,data) =>{
+      state.eventUntreatedNum = data
+    }
   },
 
   actions: {

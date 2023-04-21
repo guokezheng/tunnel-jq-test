@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 操作日志Service业务层处理
@@ -38,6 +35,39 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
         return sdOperationLogMapper.selectSdOperationLogById(id);
     }
 
+    @Override
+    public int selectSdOperationLogCountList(SdOperationLog sdOperationLog) {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            List<String> tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+            sdOperationLog.getParams().put("tunnelArray", tunnelArray);
+        }
+        return sdOperationLogMapper.selectSdOperationLogCountList(sdOperationLog);
+    }
+
+    @Override
+    public int selectAppOperationLogCountList(String time, String deptId) {
+        List<String> tunnelArray = null;
+        String start = null;
+        String end = null;
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        if(time!=null&&!"".equals(time)){
+            start = String.valueOf(getTimeStamp(time).get(0));
+            end = String.valueOf(getTimeStamp(time).get(1));
+        }
+        return sdOperationLogMapper.selectAppOperationLogCountList(start,end,tunnelArray);
+    }
+
     /**
      * 查询操作日志列表
      *
@@ -50,7 +80,14 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
-        sdOperationLog.getParams().put("deptId", deptId);
+
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            List<String> tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+            sdOperationLog.getParams().put("tunnelArray", tunnelArray);
+        }
+
         return sdOperationLogMapper.selectSdOperationLogList(sdOperationLog);
     }
 
@@ -64,6 +101,11 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
     public int insertSdOperationLog(SdOperationLog sdOperationLog) {
         //sdOperationLog.setCreateTime(DateUtils.getNowDate());
         return sdOperationLogMapper.insertSdOperationLog(sdOperationLog);
+    }
+
+    @Override
+    public int insertBatchSdOperationLog(List<SdOperationLog> list) {
+        return sdOperationLogMapper.insertBatchSdOperationLog(list);
     }
 
     /**
@@ -141,7 +183,32 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
      * @return
      */
     @Override
-    public List<SdOperationLog> selectAppOperationLogList(String time) {
+    public List<SdOperationLog> selectAppOperationLogList(String time,String deptId,Integer pageSize,Integer pageNum) {
+        List<String> tunnelArray = null;
+        String start = null;
+        String end = null;
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        if(time!=null&&!"".equals(time)){
+            start = String.valueOf(getTimeStamp(time).get(0));
+            end = String.valueOf(getTimeStamp(time).get(1));
+        }
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.getParams().put("pageSize",pageSize);
+        sdOperationLog.getParams().put("pageNum", pageNum);
+        sdOperationLog.getParams().put("tunnelArray", tunnelArray);
+        sdOperationLog.getParams().put("start", start);
+        sdOperationLog.getParams().put("end", end);
+        /*SdOperationLog sdOperationLog = new SdOperationLog();
+        return sdOperationLogMapper.selectSdOperationLogList(sdOperationLog);*/
+        return sdOperationLogMapper.selectAppOperationLogList(sdOperationLog);
+    }
+
+    private List getTimeStamp(String time) {
+        List<String>timeStamp = new ArrayList<>();
         String start = "";
         String end = "";
         if("0".equals(time)){//最近一小时
@@ -175,10 +242,8 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
             Date m = c.getTime();
             start = format.format(m);
         }
-        String deptId = SecurityUtils.getDeptId();
-        if (deptId == null) {
-            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
-        }
-        return sdOperationLogMapper.selectAppOperationLogList(start,end,deptId);
+        timeStamp.add(start);
+        timeStamp.add(end);
+        return timeStamp;
     }
 }

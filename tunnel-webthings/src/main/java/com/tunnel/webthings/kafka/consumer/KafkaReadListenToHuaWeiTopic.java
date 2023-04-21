@@ -13,9 +13,11 @@ import com.ruoyi.common.utils.WindDirectionUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
+import com.tunnel.business.domain.vehicle.SdVehicleData;
 import com.tunnel.business.mapper.dataInfo.*;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper;
@@ -23,10 +25,13 @@ import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.digitalmodel.ISdSpecialVehicleService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
+import com.tunnel.business.service.vehicle.ISdVehicleDataService;
+import com.tunnel.platform.service.event.impl.SdStrategyServiceImpl;
 import com.zc.common.core.websocket.WebSocketService;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -40,9 +45,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 读取设备、隧道基础数据
@@ -80,6 +88,12 @@ public class KafkaReadListenToHuaWeiTopic {
 
     @Autowired
     private ISdEventTypeService sdEventTypeService;
+
+    @Autowired
+    private ISdSpecialVehicleService specialVehicleService;
+
+    @Autowired
+    private ISdVehicleDataService vehicleDataService;
 
     @Autowired
     private RadarEventServiceImpl radarEventServiceImpl;
@@ -394,6 +408,10 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
             //新增路段车辆行驶记录数据
             analysisRidTravel(jsonObject);
+            //新增重点车辆记录
+            addSpecialVehicle(jsonObject);
+            //保存单车数据
+            addVehicleData(jsonObject);
         }
         consumer.commitSync();
     }
@@ -653,6 +671,7 @@ public class KafkaReadListenToHuaWeiTopic {
             String deviceId = jsonObject1.getString("deviceId");
             String co = jsonObject1.getString("co");
             String vi = jsonObject1.getString("vi");
+            String collectTime = jsonObject1.getString("collectTime");
             //将数据重新定义新的参数名
             JSONObject objectCo = definitionParam(deviceId, co, coId);
             JSONObject objectVi = definitionParam(deviceId, vi, viId);
@@ -661,12 +680,12 @@ public class KafkaReadListenToHuaWeiTopic {
             if (numberCo == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
+                deviceData.setCreateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
             } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
+                deviceData.setUpdateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
             }
             //将co设备数据存入历史记录表
@@ -676,12 +695,12 @@ public class KafkaReadListenToHuaWeiTopic {
             if (numberVi == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, vi, viId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
+                deviceData.setCreateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
             } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, vi, viId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
+                deviceData.setUpdateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
             }
             //将vi设备数据存入历史记录表
@@ -709,18 +728,19 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String windSpeed = jsonObject1.getString("windSpeed");
+            String collectTime = jsonObject1.getString("collectTime");
             String windDirection = WindDirectionUtil.windDirectionSwitch(jsonObject1.getFloat("windDirection"));
             //校验数据库是否存在
             int numberFs = checkDeviceData(deviceId, fsId);
             if (numberFs == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
+                deviceData.setCreateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
             } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
+                deviceData.setUpdateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
             }
             //将风速数据存入历史记录表
@@ -730,12 +750,12 @@ public class KafkaReadListenToHuaWeiTopic {
             if (numberFx == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, windDirection, fxId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
+                deviceData.setCreateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
             } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, windDirection, fxId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
+                deviceData.setUpdateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
             }
             //将风向数据存入历史记录表
@@ -764,17 +784,18 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String illuminance = jsonObject1.getString("illuminance");
+            String collectTime = jsonObject1.getString("collectTime");
             //校验数据库是否存在
             int number = checkDeviceData(deviceId, itemId);
             if (number == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
+                deviceData.setCreateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
             } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
+                deviceData.setUpdateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
             }
             //将洞内亮度数据存入历史记录表
@@ -794,16 +815,17 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String brightness = jsonObject1.getString("brightness");
+            String collectTime = jsonObject1.getString("collectTime");
             int number = checkDeviceData(deviceId, itemId);
             if (number == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
+                deviceData.setCreateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
             } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
+                deviceData.setUpdateTime(DateUtils.parseDate(collectTime));
                 sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
             }
             //将洞外亮度数据存入历史记录表
@@ -822,10 +844,22 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String pressure = jsonObject1.getString("pressure");
-            //新增远传压力值数据
-            SdDeviceData deviceData = setDeviceData(deviceId, pressure, itemId);
-            deviceData.setCreateTime(DateUtils.getNowDate());
-            sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            String collectTime = jsonObject1.getString("collectTime");
+            //判断是否存在
+            int number = checkDeviceData(deviceId, itemId);
+            if(number > 0){
+                //更新远传压力值数据
+                SdDeviceData deviceData = setDeviceData(deviceId, pressure, itemId);
+                deviceData.setUpdateTime(DateUtils.parseDate(collectTime));
+                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
+            }else {
+                //新增远传压力值数据
+                SdDeviceData deviceData = setDeviceData(deviceId, pressure, itemId);
+                deviceData.setCreateTime(DateUtils.parseDate(collectTime));
+                sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            }
+            //将数据存入历史记录表
+            setDeviceDataRecord(deviceId,pressure,itemId);
         }
     }
 
@@ -855,9 +889,10 @@ public class KafkaReadListenToHuaWeiTopic {
             //倾斜值
             String slope = jsonObject1.getString("slope");
             //振动告警
-            String shakeAlaram = jsonObject1.getString("shakeAlaram");
+            String shakeAlaram = jsonObject1.getString("shakeAlarm");
             //沉降倾斜告警
-            String subsideSlopeAlaram = jsonObject1.getString("subsideSlopeAlaram");
+            String subsideSlopeAlaram = jsonObject1.getString("subsideSlopeAlarm");
+            String collectTime = jsonObject1.getString("collectTime");
             //校验数据库是否存在
             //振动速度值
             int zhenSuDuNum = checkDeviceData(deviceId, zhenSuDu);
@@ -869,17 +904,17 @@ public class KafkaReadListenToHuaWeiTopic {
 
             //新增or更新远传压力值数据
             //振动速度值
-            saveOrUpdateFanSafe(deviceId,shakeSpeed,zhenSuDu,zhenSuDuNum);
+            saveOrUpdateFanSafe(deviceId,shakeSpeed,zhenSuDu,zhenSuDuNum,collectTime);
             //振动幅度值
-            saveOrUpdateFanSafe(deviceId,amplitude,zhenFuDu,zhenFuDuNum);
+            saveOrUpdateFanSafe(deviceId,amplitude,zhenFuDu,zhenFuDuNum,collectTime);
             //沉降值
-            saveOrUpdateFanSafe(deviceId,subside,chenJiang,chenJiangNum);
+            saveOrUpdateFanSafe(deviceId,subside,chenJiang,chenJiangNum,collectTime);
             //倾斜值
-            saveOrUpdateFanSafe(deviceId,slope,qingXie,qingXieNum);
+            saveOrUpdateFanSafe(deviceId,slope,qingXie,qingXieNum,collectTime);
             //振动告警
-            saveOrUpdateFanSafe(deviceId,shakeAlaram,zhenGaoJing,zhenGaoJingNum);
+            saveOrUpdateFanSafe(deviceId,shakeAlaram.substring(1, shakeAlaram.length()),zhenGaoJing,zhenGaoJingNum,collectTime);
             //沉降倾斜告警
-            saveOrUpdateFanSafe(deviceId,subsideSlopeAlaram,chenQingGaoJing,chenQingGaoJingNum);
+            saveOrUpdateFanSafe(deviceId,subsideSlopeAlaram.substring(1, subsideSlopeAlaram.length()),chenQingGaoJing,chenQingGaoJingNum,collectTime);
         }
     }
 
@@ -942,21 +977,36 @@ public class KafkaReadListenToHuaWeiTopic {
      * @return
      */
     public SdMicrowavePeriodicStatistics setVdBizAttrData(JSONObject jsonObject1){
-        String deviceId = jsonObject1.getString("deviceId");//设备id
-        Long laneNum = jsonObject1.getLong("laneNum");//车道
-        String direction = jsonObject1.getString("direction");//方向
-        String flow = jsonObject1.getString("flow");//车流量总数
-        String flowS = jsonObject1.getString("flowS");//小型车交通量
-        String flowM = jsonObject1.getString("flowM");//中型车交通量
-        String flowL = jsonObject1.getString("flowL");//大型车交通量
-        String flowSpace = jsonObject1.getString("flowSpace");//车间距
-        String speed = jsonObject1.getString("speed");//平均速度
-        String speedS = jsonObject1.getString("speedS");//平均速度:小型车
-        String speedM = jsonObject1.getString("speedM");//平均速度:中型车
-        String speedL = jsonObject1.getString("speedL");//平均速度:小大型车
-        String occupancy = jsonObject1.getString("occupancy");//平均占有率
-        String carLength = jsonObject1.getString("carLength");//平均车长
-        String collectTime = jsonObject1.getString("collectTime");//采集时间
+        //设备id
+        String deviceId = jsonObject1.getString("deviceId");
+        //车道
+        Long laneNum = jsonObject1.getLong("laneNum");
+        //方向
+        String direction = jsonObject1.getString("direction");
+        //车流量总数
+        String flow = jsonObject1.getString("flow");
+        //小型车交通量
+        String flowS = jsonObject1.getString("flowS");
+        //中型车交通量
+        String flowM = jsonObject1.getString("flowM");
+        //大型车交通量
+        String flowL = jsonObject1.getString("flowL");
+        //车间距
+        String flowSpace = jsonObject1.getString("flowSpace");
+        //平均速度
+        String speed = jsonObject1.getString("speed");
+        //平均速度:小型车
+        String speedS = jsonObject1.getString("speedS");
+        //平均速度:中型车
+        String speedM = jsonObject1.getString("speedM");
+        //平均速度:小大型车
+        String speedL = jsonObject1.getString("speedL");
+        //平均占有率
+        String occupancy = jsonObject1.getString("occupancy");
+        //平均车长
+        String carLength = jsonObject1.getString("carLength");
+        //采集时间
+        String collectTime = jsonObject1.getString("collectTime");
         SdMicrowavePeriodicStatistics statistics = new SdMicrowavePeriodicStatistics();
         statistics.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
         statistics.setDeviceId(deviceId);
@@ -973,7 +1023,10 @@ public class KafkaReadListenToHuaWeiTopic {
         statistics.setSmallVehicleSpeed(speedS);
         statistics.setMidVehicleSpeed(speedM);
         statistics.setHeavyVehicleSpeed(speedL);
-        statistics.setCreateTime(DateUtils.parseDate(collectTime));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = DateUtils.parseDate(sdf.format(new Date(Long.valueOf(collectTime))));
+        statistics.setCreateTime(time);
         return statistics;
     }
 
@@ -1136,14 +1189,14 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param itemId
      * @param num
      */
-    public void saveOrUpdateFanSafe(String deviceId,String data, Long itemId, int num){
+    public void saveOrUpdateFanSafe(String deviceId,String data, Long itemId, int num,String collectTime){
         if(num == 0){
             SdDeviceData deviceData = setDeviceData(deviceId, data, itemId);
-            deviceData.setCreateTime(DateUtils.getNowDate());
+            deviceData.setCreateTime(DateUtils.parseDate(collectTime));
             sdDeviceDataMapper.insertSdDeviceData(deviceData);
         }else {
             SdDeviceData deviceData = setDeviceData(deviceId, data, itemId);
-            deviceData.setCreateTime(DateUtils.getNowDate());
+            deviceData.setUpdateTime(DateUtils.parseDate(collectTime));
             sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
         }
     }
@@ -1164,8 +1217,8 @@ public class KafkaReadListenToHuaWeiTopic {
         event.setEventLongitude(jsonObject.getString("eventLongitude"));
         event.setEventLatitude(jsonObject.getString("eventLatitude"));
         event.setEventTypeId(eventTypeId);
-        /*String eventLevel = jsonObject.getString("eventLevel");
-        event.setEventGrade(eventLevel.substring(eventLevel.length()-1,eventLevel.length()));*/
+        String eventLevel = jsonObject.getString("eventLevel");
+        event.setEventGrade(eventLevel.substring(eventLevel.length()-1,eventLevel.length()));
         String stakeNum = jsonObject.getString("eventStakeNo");
         if(StrUtil.isNotBlank(stakeNum)){
             event.setStakeNum(jsonObject.getString("eventStakeNo"));
@@ -1174,7 +1227,6 @@ public class KafkaReadListenToHuaWeiTopic {
         event.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
         event.setEventDescription(jsonObject.getString("eventDescribe"));
         event.setEventTime(DateUtils.parseDate(jsonObject.getString("foundTime")));
-        event.setVideoUrl(jsonObject.getString("eventVideoUrl"));
         event.setEndTime(jsonObject.getString("completeTime"));
         event.setLaneNo(jsonObject.getString("carLane"));
         //rhy 事件状态,1:待复核; 2:处置中; 3:已处置; 4:已确认; 5:已挂起; 6:误报; 7:关联
@@ -1184,7 +1236,9 @@ public class KafkaReadListenToHuaWeiTopic {
         switch (eventStatus){
             case 2 : ownStatus = "0"; break;
             case 3 : ownStatus = "1"; break;
+            case 4 : ownStatus = "4"; break;
             case 5 : ownStatus = "2"; break;
+            case 6 : ownStatus = "5"; break;
             default: ownStatus = "3"; break;
         }
         event.setEventState(ownStatus);
@@ -1194,20 +1248,13 @@ public class KafkaReadListenToHuaWeiTopic {
         Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
         event.setEventTitle(sdEventService.getDefaultEventTitle(event,tunnelMap,eventTypeMap));
         event.setEventImgUrl(jsonObject.getString("eventImgUrl"));
-        event.setStartTime(DateUtils.dateTimeNow(DateUtils.YYYY_MM_DD_HH_MM_SS));
-
-        String[] imgList = jsonObject.getString("eventImgUrl").split(";");
-        List<SdTrafficImage> imageList = new ArrayList<>();
-        for(String img:imgList){
-            SdTrafficImage image = new SdTrafficImage();
-            image.setImgUrl(img);
-            image.setBusinessId(eventId.toString());
-            imageList.add(image);
-        }
-        SpringUtil.getBean(SdTrafficImageMapper.class).brachInsertFaultIconFile(imageList);
+        event.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.parseDate(jsonObject.getString("foundTime"))));
+        SdTrafficImageMapper imageMapper = SpringUtil.getBean(SdTrafficImageMapper.class);
         int effectiveRows = 0;
         if(sdEventService.selectSdEventById(eventId) != null){
-            effectiveRows = sdEventService.updateSdEvent(event);
+            effectiveRows = sdEventService.updateSdEventHw(event);
+            //删除历史图片与视频
+            imageMapper.delImageByBusinessIds(new Long[]{eventId});
         }else{
             effectiveRows = sdEventService.insertSdEvent(event);
             //新增后再查询数据库，返回给前端事件图标等字段
@@ -1219,6 +1266,24 @@ public class KafkaReadListenToHuaWeiTopic {
             object.put("sdEventList", sdEventList);
             WebSocketService.broadcast("sdEventList",object.toString());
         }
+        //事件图片-视频
+        String[] imgList = jsonObject.getString("eventImgUrl").split(";");
+        List<SdTrafficImage> imageList = new ArrayList<>();
+        for(String img:imgList){
+            SdTrafficImage image = new SdTrafficImage();
+            image.setImgUrl(img);
+            image.setBusinessId(eventId.toString());
+            image.setImgType("0");
+            imageList.add(image);
+        }
+        //将图片存入
+        imageMapper.brachInsertFaultIconFile(imageList);
+        //将视频存入
+        SdTrafficImage image = new SdTrafficImage();
+        image.setImgUrl(jsonObject.getString("eventVideoUrl"));
+        image.setBusinessId(eventId.toString());
+        image.setImgType("1");
+        imageMapper.insertSdTrafficImage(image);
         //推送物联中台，事件类型过滤
         if(effectiveRows > 0 && mergeRhyEventTypeEnum.getPushOrNot() == 1){
             //如果是未处理状态改为处理中
@@ -1226,12 +1291,32 @@ public class KafkaReadListenToHuaWeiTopic {
                 event.setEventState(EventStateEnum.processing.getCode());
             }
             radarEventServiceImpl.sendDataToOtherSystem(null,event);
-//                jsonObject.clear();
-//                jsonObject.put("event", event);
-//                jsonObject.put("devNo", "S00063700001980001");
-//                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-            //kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
         }
+        //查询主动安全事件类型
+        SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
+        SdEventType sdEventType = new SdEventType();
+        sdEventType.setPrevControlType("1");
+        List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
+        /*//判断此事件是否是主动安全事件
+        List<SdEventType> collect = sdEventTypes.stream().filter(item -> item.getId() == eventTypeId).collect(Collectors.toList());
+        //优先级 0低，1中，2高，3紧急
+        int priorityNow = Integer.valueOf(sdEventTypeMapper.selectSdEventTypeById(eventTypeId).getPriority());
+        //查询是否有处置中的普通事件
+        SdEvent sdEvent = new SdEvent();
+        sdEvent.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        //处理中状态
+        sdEvent.setEventState("0");
+        //普通事件
+        sdEvent.setSearchValue("0");
+        List<Map<String, Object>> sdEventPt = sdEventMapper.selectAllEvent(sdEvent);
+
+        //查询是否有处置中的安全预警
+        sdEvent.setSearchValue("1");
+        List<Map<String, Object>> sdeventAq = sdEventMapper.selectAllEvent(sdEvent);
+        int priority = sdeventAq.stream().mapToInt(item -> new Integer(item.get("priority").toString())).max().orElse(0);
+        if(sdEventPt.size() == 0 && collect.size() > 0 && priorityNow >= priority){
+            control(event);
+        }*/
     }
 
     /**
@@ -1459,6 +1544,61 @@ public class KafkaReadListenToHuaWeiTopic {
         drivingMapper.insertSdVehicleDriving(sdVehicleDriving);
     }
 
+
+    /**
+     * 根据车辆类型筛选重点车辆记录
+     * @param jsonObject
+     */
+    public void addSpecialVehicle(JSONObject jsonObject){
+        //华为事件中车辆类型的4和23是重点车辆（两客一危）
+        String vehicleType = jsonObject.getString("vehicleType");
+        if("4".equals(vehicleType) || "23".equals(vehicleType)){
+            //根据trackID判断，记录存在，修改；不存在新增
+            String trackId = jsonObject.getString("trackID");
+            SdSpecialVehicles vehicle = specialVehicleService.selectSdSpecialVehicleById(trackId);
+            if(vehicle != null){
+                //存在记录，设置结束时间
+                vehicle.setEndTime(jsonObject.getString("startTime"));
+                specialVehicleService.updateSdSpecialVehicle(vehicle);
+            }else{
+                SdSpecialVehicles specialVehicles = new SdSpecialVehicles();
+                specialVehicles.setId(trackId);
+                specialVehicles.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+                specialVehicles.setVehicleType(getVehicleType(jsonObject.getString("vehicleType")));
+                specialVehicles.setVehicleColor(getVehicleColor(jsonObject.getString("vehicleColor")));
+                specialVehicles.setVehicleLicense(jsonObject.getString("plateNumber"));
+                specialVehicles.setLicenseColor(getPlateColor(jsonObject.getString("plateColor")));
+                specialVehicles.setStartTime(jsonObject.getString("startTime"));
+                specialVehicleService.insertSdSpecialVehicle(specialVehicles);
+            }
+        }
+    }
+
+
+    /**
+     * 根据trackId存储单车数据
+     * @param jsonObject
+     */
+    public void addVehicleData(JSONObject jsonObject){
+        String trackId = jsonObject.getString("trackID");
+        SdVehicleData vehicleData = new SdVehicleData();
+        vehicleData.setTrackId(Long.valueOf(trackId));
+        List<SdVehicleData> list = vehicleDataService.selectSdVehicleDataList(vehicleData);
+        if(list == null || list.size() == 0){
+            //根据trackID判断，没有数据，新增
+            vehicleData.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+            vehicleData.setPlateColor(getPlateColor(jsonObject.getString("plateColor")));
+            vehicleData.setPlateNumber(jsonObject.getString("plateNumber"));
+            vehicleData.setObjectType(jsonObject.getString("objectType"));
+            vehicleData.setVehicleType(getVehicleType(jsonObject.getString("vehicleType")));
+            vehicleData.setVehicleColor(getVehicleColor(jsonObject.getString("vehicleColor")));
+            vehicleData.setSpeed(jsonObject.getString("speed"));
+            vehicleData.setDirection(jsonObject.getString("roadDir"));
+            vehicleData.setCreateTime(DateUtils.getNowDate());
+            vehicleDataService.insertSdVehicleData(vehicleData);
+        }
+    }
+
     /**
      * 解析保存车辆快照数据
      *
@@ -1496,14 +1636,16 @@ public class KafkaReadListenToHuaWeiTopic {
         sdRadarDetectData.setLongitude(jsonObject.getString("lng"));
         sdRadarDetectData.setCourseAngle(jsonObject.getString("rriveAngle"));
         sdRadarDetectData.setSpeed(jsonObject.getString("speed"));
-        sdRadarDetectData.setDistance((950-jsonObject.getInteger("ridOffset"))+"");
+        //计算距离入口距离如果小于0则为0
+        int numDistance = 950-jsonObject.getInteger("ridOffset");
+        sdRadarDetectData.setDistance(numDistance < 0 ? "0" : numDistance +"");
         String matchLane = jsonObject.getString("matchLane");
         String laneNo = matchLane.substring(matchLane.length() - 1, matchLane.length());
         sdRadarDetectData.setLaneNum(laneNo);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
         //转换
-        Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
-        sdRadarDetectData.setDetectTime(time);
+//        Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
+        sdRadarDetectData.setDetectTime(new Date(jsonObject.getLong("time")));
         sdRadarDetectData.setRoadDir(jsonObject.getString("roadDir"));
         sdRadarDetectData.setVehicleId(jsonObject.getString("uniqId"));
         return sdRadarDetectData;
@@ -1526,7 +1668,9 @@ public class KafkaReadListenToHuaWeiTopic {
         sdRadarDetectData.setLongitude(jsonObject.getString("lng"));
         sdRadarDetectData.setCourseAngle(jsonObject.getString("rriveAngle"));
         sdRadarDetectData.setSpeed(jsonObject.getString("speed"));
-        sdRadarDetectData.setDistance((950-jsonObject.getInteger("ridOffset"))+"");
+        //计算距离入口距离如果小于0则为0
+        int numDistance = 950-jsonObject.getInteger("ridOffset");
+        sdRadarDetectData.setDistance(numDistance < 0 ? "0" : numDistance +"");
         String matchLane = jsonObject.getString("matchLane");
         String laneNo = matchLane.substring(matchLane.length() - 1, matchLane.length());
         sdRadarDetectData.setLaneNum(laneNo);
@@ -1580,33 +1724,10 @@ public class KafkaReadListenToHuaWeiTopic {
      * @return
      */
     public String getVehicleType(String vehicleType){
-        String type = "";
-        switch (vehicleType){
-            case "1":{type = "24"; break;}
-            case "2":{type = "17"; break;}
-            case "3":{type = "13"; break;}
-            case "4":{type = "16"; break;}
-            case "5":{type = "14"; break;}
-            case "6":{type = "4"; break;}
-            case "7":{type = "25"; break;}
-            case "9":{type = "4"; break;}
-            case "10":{type = "12"; break;}
-            case "11":{type = "19"; break;}
-            case "12":{type = "7"; break;}
-            case "13":{type = "18"; break;}
-            case "14":{type = "27"; break;}
-            case "15":{type = "4"; break;}
-            case "16":{type = "28"; break;}
-            case "17":{type = "4"; break;}
-            case "18":{type = "4"; break;}
-            case "19":{type = "4"; break;}
-            case "20":{type = "4"; break;}
-            case "21":{type = "4"; break;}
-            case "22":{type = "4"; break;}
-            case "23":{type = "40"; break;}
-            case "24":{type = "4"; break;}
-            case "25":{type = "28"; break;}
-            default:type = vehicleType;
+        String type = null;
+        type = HwVehicleTypeEnum.getValue(vehicleType);
+        if(type == null){
+            type = vehicleType;
         }
         return type;
     }
@@ -1618,23 +1739,10 @@ public class KafkaReadListenToHuaWeiTopic {
      * @return
      */
     public String getVehicleColor(String vehicleColor){
-        String color = "";
-        switch (vehicleColor){
-            case "0":{color = "2"; break;}
-            case "1":{color = "3"; break;}
-            case "2":{color = "6"; break;}
-            case "3":{color = "12"; break;}
-            case "5":{color = "9"; break;}
-            case "6":{color = "5"; break;}
-            case "7":{color = "8"; break;}
-            case "8":{color = "1"; break;}
-            case "9":{color = "99"; break;}
-            case "11":{color = "7"; break;}
-            case "12":{color = "99"; break;}
-            case "13":{color = "11"; break;}
-            case "14":{color = "99"; break;}
-            case "15":{color = "13"; break;}
-            default:color = vehicleColor;
+        String color = null;
+        color = HwVehicleColorEnum.getValue(vehicleColor);
+        if(color == null){
+            color = vehicleColor;
         }
         return color;
     }
@@ -1646,28 +1754,36 @@ public class KafkaReadListenToHuaWeiTopic {
      * @return
      */
     public String getPlateColor(String plateColor){
-        String color = "";
-        switch (plateColor){
-            case "0":{color = "3"; break;}
-            case "1":{color = "9"; break;}
-            case "2":{color = "1"; break;}
-            case "3":{color = "9"; break;}
-            case "4":{color = "12"; break;}
-            case "5":{color = "11"; break;}
-            case "6":{color = "0"; break;}
-            case "7":{color = "9"; break;}
-            case "8":{color = "2"; break;}
-            case "10":{color = "9"; break;}
-            case "11":{color = "9"; break;}
-            case "12":{color = "9"; break;}
-            case "13":{color = "9"; break;}
-            case "14":{color = "9"; break;}
-            case "15":{color = "9"; break;}
-            case "20":{color = "4"; break;}
-            case "21":{color = "5"; break;}
-            case "99":{color = "9"; break;}
-            default:color = plateColor;
+        String color = null;
+        color = HwPlateColorEnum.getValue(plateColor);
+        if(color == null){
+            color = plateColor;
         }
         return color;
+    }
+
+    /**
+     * 主动安全事件-事件触发策略为自动情况下执行
+     * @param sdEvent
+     */
+    public void control(SdEvent sdEvent) {
+        SdStrategyMapper sdStrategyMapper = SpringUtils.getBean(SdStrategyMapper.class);
+        //查询事件触发联控策略
+        SdStrategy strategy = new SdStrategy();
+        strategy.setEventType(sdEvent.getEventTypeId().toString());
+        strategy.setTunnelId(sdEvent.getTunnelId());
+        strategy.setDirection(sdEvent.getDirection());
+        List<Map<String, Object>> map = sdStrategyMapper.getEventStrategyData(strategy);
+        //如果事件触发策略为自动则执行
+        for(Map<String, Object> item : map){
+            SdStrategyRl sdStrategyRl = new SdStrategyRl();
+            sdStrategyRl.setId(Long.valueOf(item.get("id").toString()));
+            sdStrategyRl.setEquipments(item.get("equipments").toString());
+            sdStrategyRl.setState(item.get("state").toString());
+            sdStrategyRl.setEffectiveTime(item.get("effectiveFime").toString());
+            sdStrategyRl.setEqTypeId(item.get("eqTypeId").toString());
+            SdStrategyServiceImpl sdStrategyService = SpringUtils.getBean(SdStrategyServiceImpl.class);
+            sdStrategyService.issuedDevice(sdStrategyRl,sdEvent.getId(),item.get("strategyType").toString());
+        }
     }
 }

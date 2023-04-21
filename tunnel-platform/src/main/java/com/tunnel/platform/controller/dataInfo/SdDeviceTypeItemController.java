@@ -55,7 +55,7 @@ public class SdDeviceTypeItemController extends BaseController
     {
         List<SdDeviceTypeItem> list = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
         ExcelUtil<SdDeviceTypeItem> util = new ExcelUtil<SdDeviceTypeItem>(SdDeviceTypeItem.class);
-        return util.exportExcel(list, "设备类型数据项数据");
+        return util.exportExcel(list, "设备类型数据项");
     }
 
     /**

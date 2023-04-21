@@ -34,7 +34,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="postName != null and postName != ''">
 				AND post_name like concat('%', #{postName}, '%')
 			</if>
+			<if test="ids != null and ids != ''"> and FIND_IN_SET(post_id,#{ids}) > 0</if>
 		</where>
+		order by create_time desc,update_time desc
 	</select>
 	
 	<select id="selectPostAll" resultMap="SysPostResult">

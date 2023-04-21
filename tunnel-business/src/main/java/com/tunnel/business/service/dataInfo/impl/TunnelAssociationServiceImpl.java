@@ -103,11 +103,9 @@ public class TunnelAssociationServiceImpl implements ITunnelAssociationService {
 
     @Override
     public int deleteTunnelAssociationByTunnelIds(String[] tunnelIds) {
-        if (tunnelIds.length > 0) {
-            return tunnelAssociationMapper.deleteTunnelAssociationByTunnelIds(tunnelIds);
-        } else {
-            return 0;
-        }
+        tunnelAssociationMapper.deleteTunnelAssociationByTunnelIds(tunnelIds);
+
+        return 1;
     }
 
     /**

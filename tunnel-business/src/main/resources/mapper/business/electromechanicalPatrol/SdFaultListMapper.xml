@@ -15,51 +15,87 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="faultTbr"    column="fault_tbr"    />
         <result property="faultTbtime"    column="fault_tbtime"    />
         <result property="eqId"    column="eq_id"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="typeId"    column="type_id"    />
+        <result property="eqName"    column="eq_name"    />
         <result property="eqStatus"    column="eq_status"    />
         <result property="eqRunStatus"    column="eq_run_status"    />
         <result property="faultCode"    column="fault_code"    />
         <result property="faultLevel"    column="fault_level"    />
         <result property="falltRemoveStatue"    column="fallt_remove_statue"    />
+        <result property="faultRemoveTime"    column="fault_remove_time"    />
         <result property="faultDescription"    column="fault_description"    />
         <result property="faultStatus"    column="fault_status"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="fbState"    column="fbState"    />
         <result property="imgFileId"    column="img_file_id"    />
+        <result property="ftype"    column="ftype"    />
+        <result property="fremove"    column="fremove"    />
+        <result property="flevel"    column="flevel"    />
         <result property="faultEscalationType"    column="fault_escalation_type"    />
+        <result property="tunnel_name"    column="tunnelName"    />
     </resultMap>
 
     <sql id="selectSdFaultListVo">
-        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, eq_run_status, fault_code, fault_level, fallt_remove_statue, fault_description, fault_status,img_file_id, fault_escalation_type from sd_fault_list
+        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, eq_run_status, fault_code, fault_level, fallt_remove_statue,fault_remove_time, fault_description, fault_status,img_file_id, fault_escalation_type from sd_fault_list
     </sql>
 
     <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">
-        select s.id, s.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, s.fault_description, fault_status
-        from sd_fault_list s left join sd_devices a on a.eq_id = s.eq_id
+        select s.id, e.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, IFNULL(s.fault_description,"") fault_description, s.fault_escalation_type,s.fault_status,s.fault_status fbState,t.dict_label ftype,
+        r.dict_label fremove,
+        l.dict_label flevel,
+        u.dict_label fstatus,
+        b.dict_label fEscalationType,
+        e.tunnel_name
+        from sd_fault_list s
+        left join sd_devices a on a.eq_id = s.eq_id
+        left join sd_tunnels e on a.eq_tunnel_id = e.tunnel_id
+        left join sys_dict_data t on t.dict_value = s.fault_type and t.dict_type ='fault_type'
+        left join sys_dict_data r on r.dict_value = s.fallt_remove_statue and r.dict_type ='fault_remove_statue'
+        left join sys_dict_data l on l.dict_value = s.fault_level and l.dict_type ='fault_level'
+        left join sys_dict_data b on b.dict_value = s.fault_escalation_type and b.dict_type ='fault_escalation_type'
+        left join sys_dict_data u on u.dict_value = s.eq_status and u.dict_type ='sd_monitor_state'
         <where>
-            <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and e.tunnel_id = #{tunnelId}</if>
             <if test="faultLocation != null  and faultLocation != ''"> and s.fault_location = #{faultLocation}</if>
-            <if test="faultType != null "> and s.fault_type = #{faultType}</if>
+            <if test="paramFaultType != null and paramFaultType != ''"> and FIND_IN_SET(t.dict_label, #{paramFaultType}) > 0</if>
+            <if test="paramFaultRemoveState != null and paramFaultRemoveState != ''"> and FIND_IN_SET(r.dict_label, #{paramFaultRemoveState}) > 0</if>
+            <if test="paramFaultLevel != null and paramFaultLevel != ''"> and FIND_IN_SET(l.dict_label, #{paramFaultLevel}) > 0</if>
+            <if test="paramFaultEscalationType != null and paramFaultEscalationType != ''"> and FIND_IN_SET(b.dict_label, #{paramFaultEscalationType}) > 0</if>
             <if test="faultSource != null  and faultSource != ''"> and s.fault_source = #{faultSource}</if>
-            <if test="faultFxtime != null "> and s.fault_fxtime = #{faultFxtime}</if>
+            <if test="faultFxtime != null and faultFxtime != '' "> and s.fault_fxtime = #{faultFxtime}</if>
             <if test="faultCxtime != null  and faultCxtime != ''"> and s.fault_cxtime = #{faultCxtime}</if>
             <if test="faultTbr != null  and faultTbr != ''"> and s.fault_tbr = #{faultTbr}</if>
-            <if test="faultTbtime != null "> and s.fault_tbtime = #{faultTbtime}</if>
+            <if test="faultTbtime != null and faultTbtime != ''"> and s.fault_tbtime = #{faultTbtime}</if>
             <if test="eqId != null  and eqId != ''"> and s.eq_id = #{eqId}</if>
             <if test="eqStatus != null  and eqStatus != ''"> and s.eq_status = #{eqStatus}</if>
             <if test="faultCode != null  and faultCode != ''"> and s.fault_code = #{faultCode}</if>
-            <if test="faultLevel != null "> and s.fault_level = #{faultLevel}</if>
-            <if test="falltRemoveStatue != null "> and s.fallt_remove_statue = #{falltRemoveStatue}</if>
-            <if test="faultDescription != null  and faultDescription != ''"> and concat(s.fault_description,s.fault_location) like concat('%', #{faultDescription}, '%')</if>
-            <if test="faultStatus != null "> and s.fault_status = #{faultStatus}</if>
+            <if test="faultLevel != null and faultLevel != ''"> and s.fault_level = #{faultLevel}</if>
+            <if test="falltRemoveStatue != null and falltRemoveStatue != ''"> and s.fallt_remove_statue = #{falltRemoveStatue}</if>
+            <if test="faultDescription != null  and faultDescription != ''"> and concat(s.fault_description,s.fault_location,e.tunnel_name) like concat('%', #{faultDescription}, '%')</if>
+            <if test="faultStatus != null and faultStatus != ''"> and s.fault_status = #{faultStatus}</if>
+            <if test="ids != null  and ids != ''"> and FIND_IN_SET(s.id,#{ids}) > 0</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and s.fault_fxtime &gt;= #{params.beginTime}
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and s.fault_fxtime &lt;= #{params.endTime}
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND (e.dept_id = #{deptId} OR e.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+            </if>
         </where>
         order by s.create_time desc
     </select>
     
     <select id="selectSdFaultListById" parameterType="String" resultMap="SdFaultListResult">
-        <include refid="selectSdFaultListVo"/>
-        where id = #{id}
+        select f.*,t.type_name,t.type_id from sd_fault_list f
+        left join sd_devices d on f.eq_id = d.eq_id
+        left join sd_equipment_type t on d.eq_type = t.type_id
+        where f.id = #{id}
     </select>
         
     <insert id="insertSdFaultList" parameterType="SdFaultList">
@@ -190,16 +226,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getFaultList1"  resultType="hashmap">
-        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name
+        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name,f.fault_fxtime
         from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id
         left join sys_dict_data s on f.fault_type = s.dict_value
     <where>
-        1=1 and  s.dict_type= 'fault_type'
-        <if test="tunnelId != null and tunnelId != '' ">and f.tunnel_id = #{tunnelId}</if>
+        1=1 and  s.dict_type= 'fault_type' and f.fallt_remove_statue = '1' and f.fault_status = '0'
+        <if test="tunnelId != null and tunnelId != '' ">and t.tunnel_id = #{tunnelId}</if>
         <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
     </where>
+        order by f.create_time desc
     </select>
 
 
@@ -358,5 +395,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             1 = 1
           AND fl.fault_escalation_type = '1'
           AND fl.tunnel_id = "JQ-WeiFang-JiuLongYu-HSD"
+    </select>
+
+
+
+
+    <select id="selectSdFaultEqById" resultType="java.lang.String">
+        select eq_id from sd_fault_list where id = #{eqFaultId}
     </select>
 </mapper>

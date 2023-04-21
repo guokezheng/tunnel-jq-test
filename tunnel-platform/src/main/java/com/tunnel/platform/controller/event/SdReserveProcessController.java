@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +90,13 @@ public class SdReserveProcessController extends BaseController
     @ApiOperation("获取预案流程节点")
     public AjaxResult getReservePlanProcess(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(SpringUtils.getBean(SdReserveProcessMapper.class).getReservePlanProcess(id));
+        List<SdReserveProcess> processList = SpringUtils.getBean(SdReserveProcessMapper.class).getProcessList(id);
+        processList.stream().forEach(item -> {
+            item.getProcessesList().stream().forEach(temp -> {
+                temp.setEquipmentList(Arrays.asList(temp.getEquipments().split(",")));
+            });
+        });
+        return AjaxResult.success(processList);
     }
 
     /**

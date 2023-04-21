@@ -7,24 +7,22 @@
           v-hasPermi="['system:config:add']"
           size="small"
           @click="handleAdd()"
-        >新增参数
+          >新增参数
         </el-button>
         <el-button
-            size="small"
-            :loading="exportLoading"
-            @click="handleExport"
-            v-hasPermi="['system:config:export']"
+          size="small"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:config:export']"
           >导出</el-button
-          >
-          <el-button
-            size="small"
-            @click="handleRefreshCache"
-            v-hasPermi="['system:config:remove']"
+        >
+        <el-button
+          size="small"
+          @click="handleRefreshCache"
+          v-hasPermi="['system:config:remove']"
           >刷新缓存</el-button
-          >
-        <el-button size="small" @click="resetQuery" 
-          >刷新</el-button
-          >
+        >
+        <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
       <el-col :span="6" :offset="12">
         <div class="grid-content bg-purple" ref="main">
@@ -35,22 +33,21 @@
           >
             <el-button
               slot="append"
-              icon="icon-gym-Gsearch"
+              class="searchTable"
               @click="config_boxShow = !config_boxShow"
             ></el-button>
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="config_boxShow">
+    <div class="searchBox" v-show="config_boxShow" ref="cc">
       <el-form
         ref="queryForm"
         :inline="true"
         :model="queryParams"
         label-width="75px"
       >
-
-        <el-form-item label="系统内置" prop="configType" >
+        <el-form-item label="系统内置" prop="configType">
           <el-select
             style="width: 100%"
             v-model="queryParams.configType"
@@ -77,22 +74,21 @@
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            :picker-options="setDisabled"
           ></el-date-picker>
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
         </el-form-item>
       </el-form>
     </div>
 
-
-
-<!--    <el-form
+    <!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -199,13 +195,16 @@
       </el-form-item>
     </el-form>-->
 
-    <div class="tableTopHr" ></div>
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="configList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       height="62vh"
       class="allTable"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="参数主键" align="center" prop="configId" />
@@ -262,7 +261,7 @@
           >
           <el-button
             size="mini"
-            class="tableBlueButtton"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:config:remove']"
             >删除</el-button
@@ -280,7 +279,18 @@
     />
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+      :before-close="cancel"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="参数名称" prop="configName">
           <el-input v-model="form.configName" placeholder="请输入参数名称" />
@@ -310,8 +320,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="submitForm" class="submitButton">确 定</el-button>
+        <el-button @click="cancel" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -333,7 +343,7 @@ export default {
   dicts: ["sys_yes_no"],
   data() {
     return {
-      config_boxShow:false,
+      config_boxShow: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -378,6 +388,11 @@ export default {
           { required: true, message: "参数键值不能为空", trigger: "blur" },
         ],
       },
+      setDisabled: {
+        disabledDate(time) {
+          return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
+        },
+      },
     };
   },
   created() {
@@ -388,9 +403,19 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id;
+    },
+    handleRowClick(row) {
+      this.$refs.tableFile.toggleRowSelection(row);
+    },
     bodyCloseMenus(e) {
       let self = this;
-      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+      if (
+        !this.$refs.main.contains(e.target) &&
+        !this.$refs.cc.contains(e.target)
+      ) {
         if (self.config_boxShow == true) {
           self.config_boxShow = false;
         }
@@ -413,6 +438,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.$refs.tableFile.clearSelection();
       this.reset();
     },
     // 表单重置
@@ -429,6 +455,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      this.config_boxShow = false;
       this.queryParams.pageNum = 1;
       this.getList();
     },
@@ -476,6 +503,7 @@ export default {
             updateConfig(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.$refs.tableFile.clearSelection();
               this.getList();
             });
           } else {
@@ -490,9 +518,10 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this;
       const configIds = row.configId || this.ids;
       this.$modal
-        .confirm("是否确认删除选中数据项？")
+        .confirm("是否确认删除？")
         .then(function () {
           return delConfig(configIds);
         })
@@ -500,13 +529,20 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => {
+          that.$refs.tableFile.clearSelection();
+        });
     },
     /** 导出按钮操作 */
     handleExport() {
+      let confirmInfo = "是否确认导出所有的参数设置数据项？";
+      if (this.ids.length > 0) {
+        confirmInfo = "是否确认导出所选的参数设置数据项？";
+      }
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有参数数据项？")
+        .confirm(confirmInfo)
         .then(() => {
           this.exportLoading = true;
           return exportConfig(queryParams);
@@ -514,6 +550,7 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
         })
         .catch(() => {});
     },

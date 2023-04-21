@@ -8,6 +8,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysDeptService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -116,6 +117,25 @@ public class BoardController extends BaseController {
             JSONObject items = new JSONObject();
 
             JSONArray resultObj = JSONArray.parseArray(jsonResult);
+            for (int i = 0;i < resultObj.size();i++) {
+                JSONObject jsonObject = resultObj.getJSONObject(i);
+                int length = String.valueOf(i).length();
+                String num = "";
+                if (length < 3) {
+                    int size = 3-length;
+                    for (int j = 0;j < size;j++) {
+                        num = num + "0";
+                    }
+                    num = num + String.valueOf(i);
+                } else if (length == 3) {
+                    num = String.valueOf(i);
+                }
+                JSONObject object = jsonObject.getJSONArray("ITEM" + num).getJSONObject(0);
+                String content = object.getString("CONTENT");
+                if (content.startsWith("S0")) {
+                    object.put("CONTENT", content.substring(3));
+                }
+            }
             items.put("content", resultObj);
             IotDeviceAccess deviceAccess = iotDeviceAccessService.selectIotDeviceAccessById(deviceId);
             items.put("devicePixel", deviceAccess.getDevicePixel());
@@ -179,6 +199,25 @@ public class BoardController extends BaseController {
             releaseContentMap.put(deviceId.toString(), result);
             JSONArray contentObject = JSONArray.parseArray(jsonContent);
             JSONObject items = new JSONObject();
+            for (int i = 0;i < contentObject.size();i++) {
+                JSONObject jsonObject = contentObject.getJSONObject(i);
+                int length = String.valueOf(i).length();
+                String num = "";
+                if (length < 3) {
+                    int size = 3-length;
+                    for (int j = 0;j < size;j++) {
+                        num = num + "0";
+                    }
+                    num = num + String.valueOf(i);
+                } else if (length == 3) {
+                    num = String.valueOf(i);
+                }
+                JSONObject object = jsonObject.getJSONArray("ITEM" + num).getJSONObject(0);
+                String content = object.getString("CONTENT");
+                if (content.startsWith("S0")) {
+                    object.put("CONTENT", content.substring(3));
+                }
+            }
             items.put("content", contentObject);
             items.put("support", DataUtils.getSupport(String.valueOf(deviceId), protocolType));
             paramsList.add(items.toString());
@@ -210,16 +249,33 @@ public class BoardController extends BaseController {
         String[] devices = deviceIds.split(",");
         Boolean flag = false;
         List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyService.selectIotBoardVocabularyList(null);
-        Long deptId = Long.valueOf(SecurityUtils.getDeptId());
-        SysDept sysDept = sysDeptService.selectDeptById(deptId.toString());
+        String deptId = SecurityUtils.getDeptId();
+        SysDept sysDept = sysDeptService.selectDeptById(deptId);
         String userId = SecurityUtils.getUserId().toString();
         String username = SecurityUtils.getUsername();
+        //储存发布失败的设备
+        List<String> failDevList = new ArrayList<>();
         for (int i = 0;i < devices.length;i++) {
             String deviceId = devices[i];
+            SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(Long.parseLong(deviceId));
+            IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
+            iotBoardReleaseLog.setDeviceId(deviceId);
+            iotBoardReleaseLog.setReleaseTime(new Date());
+            iotBoardReleaseLog.setReleaseDeptId(deptId);
+            iotBoardReleaseLog.setReleaseDeptName(sysDept.getDeptName());
+            iotBoardReleaseLog.setReleaseUserId(userId);
+            iotBoardReleaseLog.setReleaseUserName(username);
+            String releaseOldContent = releaseContentMap.get(deviceId);
+            iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
+//            if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+//                flag = true;
+//                iotBoardReleaseLog.setReleaseStatus("1");
+//                iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+//                continue;
+//            }
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(Long.parseLong(deviceId));
             protocolType = sdIotDevice.getProtocolName();
             List<String> paramsList = new ArrayList<String>();
-            IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
             try {
                 parameters = URLDecoder.decode(parameters, "UTF-8");
                 if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
@@ -233,20 +289,38 @@ public class BoardController extends BaseController {
                 }
                 parameters = parameters.replaceAll("<r><n>","\r\n");
                 parameters = parameters.replaceAll("<br>","\\\\n");
+                String newContent = parameters;
+                if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+                    flag = true;
+                    newContent = newContent.replaceAll("\n", "<n>");
+                    newContent = newContent.replaceAll("\r", "<r>");
+                    iotBoardReleaseLog.setReleaseNewContent(newContent);
+                    iotBoardReleaseLog.setReleaseStatus("1");
+                    iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+                    //储存失败设备名称
+                    failDevList.add(device.getEqName());
+                    continue;
+                }
                 for (int g = 0;g < iotBoardVocabularies.size();g++) {
-                    String word = iotBoardVocabularies.get(i).getWord();
+                    String word = iotBoardVocabularies.get(g).getWord();
                     if (parameters.contains(word)) {
                         flag = true;
+                        //储存失败设备名称
+                        failDevList.add(device.getEqName());
                         break;
                     }
                 }
                 if (flag) {
+                    newContent = newContent.replaceAll("\n", "<n>");
+                    newContent = newContent.replaceAll("\r", "<r>");
+                    iotBoardReleaseLog.setReleaseNewContent(newContent);
+                    iotBoardReleaseLog.setReleaseStatus("1");
+                    iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                     throw new RuntimeException("发送的内容包含不恰当的关键字，请修改后重试！");
                 }
                 String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
                 Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
 //                Boolean result = false;
-                String releaseOldContent = releaseContentMap.get(deviceId);
                 if (result) {
                     if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
                         String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
@@ -264,26 +338,29 @@ public class BoardController extends BaseController {
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
                     iotBoardReleaseLog.setReleaseStatus("1");
                 }
-                iotBoardReleaseLog.setDeviceId(deviceId);
-                iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
                 parameters = parameters.replaceAll("\n", "<n>");
                 parameters = parameters.replaceAll("\r", "<r>");
                 iotBoardReleaseLog.setReleaseNewContent(parameters);
-                iotBoardReleaseLog.setReleaseTime(new Date());
-                iotBoardReleaseLog.setReleaseDeptId(deptId);
-                iotBoardReleaseLog.setReleaseDeptName(sysDept.getDeptName());
-                iotBoardReleaseLog.setReleaseUserId(userId);
-                iotBoardReleaseLog.setReleaseUserName(username);
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                 releaseContentMap.clear();
             } catch (Exception e) {
                 if (flag) {
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "发送的内容包含不恰当的关键字，请修改后重试！");
                 } else {
+                    parameters = parameters.replaceAll("\n", "<n>");
+                    parameters = parameters.replaceAll("\r", "<r>");
+                    iotBoardReleaseLog.setReleaseNewContent(parameters);
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
                 }
+                iotBoardReleaseLog.setReleaseStatus("1");
+                iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
             }
         }
+
+        if(flag){
+            ajaxResult = new AjaxResult(900, StringUtils.join(failDevList,","));
+        }
+
         return ajaxResult;
     }
 

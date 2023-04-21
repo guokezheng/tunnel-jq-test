@@ -157,6 +157,9 @@ public class SdEvent extends BaseEntity {
     @ApiModelProperty("车道号")
     private String laneNo;
 
+    @ApiModelProperty("拼接车道号")
+    private String laneNoName;
+
     @ApiModelProperty("事件位置经度")
     private String eventLongitude;
 
@@ -180,7 +183,7 @@ public class SdEvent extends BaseEntity {
     @ApiModelProperty("事件终点桩号")
     private String stakeEndNum;
 
-//    @ApiModelProperty("事件结束时间")
+    //    @ApiModelProperty("事件结束时间")
 //    private Date endTime;
     @ApiModelProperty("清障电话")
     public String wreckerPhone;
@@ -228,7 +231,7 @@ public class SdEvent extends BaseEntity {
     /**
      * 事件置信度集合
      */
-    private List<WjConfidence> confidenceList;
+    private String confidenceList;
 
     /**
      * 事件处置下发id
@@ -254,9 +257,95 @@ public class SdEvent extends BaseEntity {
     private String frameEventTitle;
 
     /**
+     * 复核描述
+     */
+    private String reviewRemark;
+
+    /**
+     * 通用id
+     */
+    private String currencyId;
+
+    /**
+     * 警情升级判断是否添加操作记录
+     */
+    private String handleModel;
+
+    /**
+     * 持续时间
+     */
+    private String continuedTime;
+
+    /**
+     * 事件名称
+     */
+    private String eventTypeName;
+
+    /**
      * 模糊搜索
      */
     private String fuzzySearch;
+
+    /**
+     * 防控类型
+     */
+    private String prevControlType;
+
+    public String getLaneNoName() {
+        return laneNoName;
+    }
+
+    public void setLaneNoName(String laneNoName) {
+        this.laneNoName = laneNoName;
+    }
+
+    public String getPrevControlType() {
+        return prevControlType;
+    }
+
+    public void setPrevControlType(String prevControlType) {
+        this.prevControlType = prevControlType;
+    }
+
+    public String getEventTypeName() {
+        return eventTypeName;
+    }
+
+    public void setEventTypeName(String eventTypeName) {
+        this.eventTypeName = eventTypeName;
+    }
+
+    public String getContinuedTime() {
+        return continuedTime;
+    }
+
+    public void setContinuedTime(String continuedTime) {
+        this.continuedTime = continuedTime;
+    }
+
+    public String getCurrencyId() {
+        return currencyId;
+    }
+
+    public void setCurrencyId(String currencyId) {
+        this.currencyId = currencyId;
+    }
+
+    public String getHandleModel() {
+        return handleModel;
+    }
+
+    public void setHandleModel(String handleModel) {
+        this.handleModel = handleModel;
+    }
+
+    public String getReviewRemark() {
+        return reviewRemark;
+    }
+
+    public void setReviewRemark(String reviewRemark) {
+        this.reviewRemark = reviewRemark;
+    }
 
     public String getFrameEventTitle() {
         return frameEventTitle;
@@ -300,11 +389,11 @@ public class SdEvent extends BaseEntity {
         this.ids = ids;
     }
 
-    public List<WjConfidence> getConfidenceList() {
+    public String getConfidenceList() {
         return confidenceList;
     }
 
-    public void setConfidenceList(List<WjConfidence> confidenceList) {
+    public void setConfidenceList(String confidenceList) {
         this.confidenceList = confidenceList;
     }
 

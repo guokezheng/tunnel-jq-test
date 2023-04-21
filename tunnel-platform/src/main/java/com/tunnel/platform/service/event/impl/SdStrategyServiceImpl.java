@@ -33,6 +33,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.platform.service.SdDeviceControlService;
+import com.tunnel.platform.service.deviceControl.LightService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
@@ -106,6 +107,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
     @Autowired
     private SdJoinReserveHandleMapper joinMapper;
+
+    @Autowired
+    private LightService lightService;
 
     /**
      * 查询控制策略
@@ -1208,6 +1212,13 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             }});
             AjaxResult result = SpringUtils.getBean(PhoneSpkService.class).playVoice(object);
             return Integer.valueOf(result.get("data").toString());
+        }else if (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)) {
+            String[] split = rl.getEquipments().split(",");
+            for (String devId : split){
+                issueResult = lightService.lineControl(devId,Integer.valueOf(controlStatus) > 0 ? 1 : 2,Integer.valueOf(controlStatus));
+                /*int lineCount = lightService.lineControl(devId, Integer.valueOf(controlStatus) > 0 ? 1 : 2, "4", InetAddress.getLocalHost().getHostAddress());
+                int brightCount = lightService.setBrightness(devId,Integer.valueOf(controlStatus),"4",InetAddress.getLocalHost().getHostAddress());*/
+            }
         } else{
             String[] split = rl.getEquipments().split(",");
             for (String devId : split){

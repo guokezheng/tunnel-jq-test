@@ -181,7 +181,7 @@ public class SanJingLight implements Light {
         Assert.hasText(eqTunnelId, "未配置该设备所属隧道");
         Assert.hasText(eqDirection, "未配置该设备所属方向");
         Assert.notNull(externalSystemId, "未配置该设备关联的外部系统");
-        Assert.hasText(step, "未配置该设备关联的段号");
+        Assert.hasText(step, device.getEqName() + "未配置该设备关联的段号");
 
         //确定隧道洞编号
         String externalSystemTunnelId = tunnelAssociationService.getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);

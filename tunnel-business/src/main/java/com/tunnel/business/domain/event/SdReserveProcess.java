@@ -77,6 +77,19 @@ public class SdReserveProcess extends BaseEntity
      */
     private String state;
 
+    /**
+     * 亮度值
+     */
+    private String brightness;
+
+    public String getBrightness() {
+        return brightness;
+    }
+
+    public void setBrightness(String brightness) {
+        this.brightness = brightness;
+    }
+
     public String getRetrievalRule() {
         return retrievalRule;
     }

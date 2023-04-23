@@ -169,7 +169,7 @@ public class SdEventServiceImpl implements ISdEventService {
             item.setLaneNoName(lane.size() == 0 ? "" : StringUtils.join(lane,"、"));
         }
         sdEvents.stream().forEach(item -> {
-            item.setPosition(item.getTunnelName().concat(DeviceDirectionEnum.getValue(item.getDirection())).concat(item.getStakeNum() == null ? "" : item.getStakeNum()));
+            item.setPosition(item.getTunnelName().concat(DeviceDirectionEnum.getValue(item.getDirection()) == null ? "" : DeviceDirectionEnum.getValue(item.getDirection())).concat(item.getStakeNum() == null ? "" : item.getStakeNum()));
             if(item.getVideoUrl()!=null){
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
@@ -1278,12 +1278,18 @@ public class SdEventServiceImpl implements ISdEventService {
             map.put("lsData",lsContent);
         }else {
             //查询普通设备状态
-            List<Map<String, Object>> maps = sdEventMapper.getManagementDeviceState(rpId);
+            List<Map<String, Object>> maps = new ArrayList<>();
+            if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
+                maps = sdEventMapper.getManagementJiaQiangState(rpId,Integer.valueOf(joinReserveHandle.getState()) > 0 ? "1" : "2");
+                map.put("deviceState",Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + "--亮度值：" + joinReserveHandle.getState() + "%" : maps.get(0).get("stateName"));
+            }else {
+                maps = sdEventMapper.getManagementDeviceState(rpId);
+                map.put("deviceState",maps.get(0).get("stateName"));
+            }
             List<String> deviceIconUrl = new ArrayList<>();
             maps.stream().forEach(item -> {
                 deviceIconUrl.add(item.get("url").toString());
             });
-            map.put("deviceState",maps.get(0).get("stateName"));
             map.put("deviceIconUrl",deviceIconUrl);
         }
         map.put("deviceList",deviceList);
@@ -1404,7 +1410,11 @@ public class SdEventServiceImpl implements ISdEventService {
                     temp.put("state",lsContent);
                 });
             }else {
-                maps = sdDevicesMapper.selectDevices(item.getEquipments(), item.getState());
+                if(eqTypeId == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
+                    maps = sdDevicesMapper.selectDevices(item.getEquipments(), Integer.valueOf(item.getState()) > 0 ? "1" : "2");
+                }else {
+                    maps = sdDevicesMapper.selectDevices(item.getEquipments(), item.getState());
+                }
             }
             deviceList.addAll(maps);
         }

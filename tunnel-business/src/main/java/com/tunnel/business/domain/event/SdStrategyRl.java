@@ -47,6 +47,20 @@ public class SdStrategyRl extends BaseEntity
     //处置名称
     private String disposalName;
 
+    /**
+     * 亮度值
+     */
+    private String brightness;
+
+    public String getBrightness() {
+        return brightness;
+    }
+
+    public void setBrightness(String brightness) {
+        this.brightness = brightness;
+    }
+
+
     public String getDisposalName() {
         return disposalName;
     }

@@ -359,6 +359,7 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.strategyForm.manualControl[index].stateNum = null;
       this.strategyForm.manualControl[index].state = "";
       this.strategyForm.manualControl[index].value = null;
       let params = {

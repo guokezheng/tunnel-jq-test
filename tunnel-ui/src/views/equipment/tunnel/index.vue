@@ -1051,7 +1051,7 @@ export default {
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id;
+      return row.tunnelId;
     },
     //翻页时不刷新序号
     indexMethod(index) {
@@ -1262,6 +1262,10 @@ export default {
       this.ids = selection.map((item) => item.tunnelId);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
+      console.log(selection,"selection")
+      console.log(this.ids,"this.ids")
+      console.log(this.single,"this.single")
+      console.log(this.multiple,"this.multiple")
     },
     /** 新增按钮操作 */
     handleAdd() {

@@ -287,7 +287,12 @@
       append-to-body
       :before-close="handleFileClose"
       :close-on-click-modal="false"
+      class="explain-table operationDiglog"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <!-- <el-drawer
       :before-close="handleFileClose"
       :direction="direction"
@@ -329,6 +334,10 @@
       width="60%"
       :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div style="width: 100%; height: 31.25rem; overflow: auto">
         <el-table
           ref="multipleTable"
@@ -376,6 +385,10 @@
       width="60%"
       :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div style="width: 100%; height: 31.25rem; overflow: auto">
         <el-table
           ref="addMultipleTable"

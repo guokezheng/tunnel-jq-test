@@ -6022,6 +6022,7 @@ export default {
       this.operationParam_xt.status = null;
       this.operationParam_xt.operIp = "";
       this.operationParam_xt.ipaddr = ''
+      this.queryParams.pageNum = 1;
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },

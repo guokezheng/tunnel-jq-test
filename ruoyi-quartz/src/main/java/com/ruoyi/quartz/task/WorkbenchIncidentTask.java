@@ -28,8 +28,5 @@ public class WorkbenchIncidentTask {
         }catch (Exception e){
             e.printStackTrace();
         }
-        long l1 = System.currentTimeMillis();
-        System.out.print(l1-l);
-
     }
 }

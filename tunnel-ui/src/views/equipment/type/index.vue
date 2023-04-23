@@ -170,6 +170,7 @@
       append-to-body
       class="eqTypeDialog"
       :close-on-click-modal="false"
+      :before-close="cancel"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -238,6 +239,10 @@
             style="width: 600px !important; margin: 0 auto"
             :close-on-click-modal="false"
           >
+            <div class="dialogStyleBox">
+              <div class="dialogLine"></div>
+              <div class="dialogCloseButton"></div>
+            </div>
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
@@ -618,6 +623,10 @@ export default {
       this.ids = selection.map((item) => item.typeId);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
+      console.log(selection,"selection")
+      console.log(this.ids,"this.ids")
+      console.log(this.single,"this.single")
+      console.log(this.multiple,"this.multiple")
     },
 
     /** 导出按钮操作 */

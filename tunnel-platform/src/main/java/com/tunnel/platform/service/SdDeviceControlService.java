@@ -274,7 +274,7 @@ public class SdDeviceControlService {
                 // 加强照明  开始（10）
                 if(brightness != null){
                     String operationStateStr = state.equals("1")?"开启":"关闭";
-                    operationStateStr += "，亮度："+brightness;
+                    operationStateStr += "，亮度："+brightness + "%";
                     sdOperationLog.setOperationState(operationStateStr);
                 }
                 sdOperationLog.setState(String.valueOf(controlState));

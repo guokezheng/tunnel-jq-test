@@ -80,6 +80,9 @@ public class IotBoardReleaseLog extends BaseEntity
     @Excel(name = "发布用户")
     private String releaseUserName;
 
+    @Excel(name = "发布IP")
+    private String releaseIp;
+
     /** 发布用户 */
 //    @Excel(name = "发布用户")
     private String releaseUserId;
@@ -88,6 +91,14 @@ public class IotBoardReleaseLog extends BaseEntity
 
     //批量导出单选id导出数据
     private Long[] ids;
+
+    public String getReleaseIp() {
+        return releaseIp;
+    }
+
+    public void setReleaseIp(String releaseIp) {
+        this.releaseIp = releaseIp;
+    }
 
     public String getTunnelId() {
         return this.tunnelId;

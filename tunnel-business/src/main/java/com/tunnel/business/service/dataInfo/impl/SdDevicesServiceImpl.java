@@ -930,6 +930,12 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.getAppDevicesInfo(eqId);
     }
 
+    @Override
+    public List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId) {
+        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByEqTypes(guidanceLampTypeId, lunKuoBiaoTypeId);
+        return devicesList;
+    }
+
     /**
      * app端查询设备状态
      * @param eqId
@@ -937,13 +943,18 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      */
     @Override
     public List<SdDevices> getAppDevicesStatus(String eqId) {
-       return  sdDevicesMapper.getAppDevicesStatus(eqId);
-    }
-
-    @Override
-    public List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId) {
-        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByEqTypes(guidanceLampTypeId, lunKuoBiaoTypeId);
-        return devicesList;
+        List<SdDevices>list = sdDevicesMapper.getAppDevicesStatus(eqId);
+        if(list!=null&&list.size()>0){
+            String iconFileId = list.get(0).getIconFileId();
+            if (iconFileId != null && !"".equals(iconFileId) && !"null".equals(iconFileId)) {
+                if (!"-1".equals(iconFileId)) {
+                    SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+                    sdEquipmentStateIconFile.setStateIconId(iconFileId);
+                    list.get(0).setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
+                }
+            }
+        }
+         return list;
     }
 
     /**

@@ -8,11 +8,13 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="form"
         :model="stateForm"
@@ -58,8 +60,17 @@
         </el-row>
         <el-row>
           <el-col :span="13">
-            <el-form-item label="设备状态:"
-            :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
+            <el-form-item
+              label="设备状态:"
+              :style="{
+                color:
+                  stateForm.eqStatus == '1'
+                    ? 'yellowgreen'
+                    : stateForm.eqStatus == '2'
+                    ? 'white'
+                    : 'red',
+              }"
+            >
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
@@ -71,10 +82,10 @@
         <el-radio-button label="trend">车流量实时趋势</el-radio-button>
       </el-radio-group>
       <div v-show="tab == 'data'" style="margin-bottom: 10px">
-        <el-table :data="dataList" min-height="150" empty-text="暂无操作日志" >
-          <el-table-column label="车道" align="center" prop="laneNo" width="76" >
+        <el-table :data="dataList" min-height="150" empty-text="暂无操作日志">
+          <el-table-column label="车道" align="center" prop="laneNo" width="76">
             <template slot-scope="scope">
-              <span>第{{scope.row.laneNo}}车道</span>
+              <span>第{{ scope.row.laneNo }}车道</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -90,7 +101,7 @@
             width="80"
           >
             <template slot-scope="scope">
-              <span>{{scope.row.avgSpeed}}km/h</span>
+              <span>{{ scope.row.avgSpeed }}km/h</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -100,7 +111,7 @@
             width="64"
           >
             <template slot-scope="scope">
-              <span>{{scope.row.avgOccupancy}}%</span>
+              <span>{{ scope.row.avgOccupancy }}%</span>
             </template>
           </el-table-column>
           <el-table-column label="上传时间" align="center" prop="createTime" />
@@ -116,11 +127,7 @@
           class="submitButton"
           >确 定</el-button
         > -->
-        <el-button
-          class="closeButton"
-          @click="handleClosee()"
-          >取 消</el-button
-        >
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -129,11 +136,15 @@
   <script>
 import * as echarts from "echarts";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
-import { getTodayCOVIData, getStatisticsNewList, getStatisticsRealList } from "@/api/workbench/config.js"; //查询弹窗信息
+import {
+  getTodayCOVIData,
+  getStatisticsNewList,
+  getStatisticsRealList,
+} from "@/api/workbench/config.js"; //查询弹窗信息
 import { ConsoleWriter } from "istanbul-lib-report";
 
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
@@ -152,200 +163,213 @@ export default {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       stateForm: {}, //弹窗表单
       title: "",
-      visible: true,
+      visible: false,
       tab: "data",
       mychart: null,
       dataList: [],
-      XData:[],
-      yData1:[],
-      yData2:[],
-      yData3:[]
+      XData: [],
+      yData1: [],
+      yData2: [],
+      yData3: [],
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
   created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    this.getMessage();
+    // console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
+    // this.getMessage();
   },
-  mounted() {
+  mounted() {},
 
-  },
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.visible = true;
+      this.getMessage();
+    },
     // 查设备详情
     async getMessage() {
       var that = this;
       if (this.eqInfo.equipmentId) {
-        var obj = {};
-        var state = "";
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          obj = res.data;
 
           getTodayCOVIData(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "covi数据");
           });
-          this.title = obj.eqName;
-          this.stateForm = obj
+          this.title = res.data.eqName;
+          this.stateForm = res.data;
           console.log(this.stateForm, "stateForm");
-          this.getMess()
+          this.getMess();
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
     },
-    getMess(){
+    getMess() {
       const params = {
-        deviceId:this.eqInfo.equipmentId,
-        eqDirection:this.stateForm.eqDirection
-      }
-      getStatisticsNewList(params).then((res)=>{
-        console.log(res,"微波车检表格")
-        this.dataList = res.data
-      })
-      getStatisticsRealList(params).then((res)=>{
-        console.log(res,"微波车检 echarts")
-        for(let item of res.data.laneNoOne){
-          this.XData.push(item.order_hour)
-          this.yData1.push(item.avgSpeed)
+        deviceId: this.eqInfo.equipmentId,
+        eqDirection: this.stateForm.eqDirection,
+      };
+      getStatisticsNewList(params).then((res) => {
+        console.log(res, "微波车检表格");
+        this.dataList = res.data;
+      });
+      getStatisticsRealList(params).then((res) => {
+        console.log(res, "微波车检 echarts");
+        for (let item of res.data.laneNoOne) {
+          this.XData.push(item.order_hour);
+          this.yData1.push(item.avgSpeed);
         }
-        for(let item of res.data.laneNoTwo){
-          this.yData2.push(item.avgSpeed)
+        for (let item of res.data.laneNoTwo) {
+          this.yData2.push(item.avgSpeed);
         }
-        for(let item of res.data.laneNoThree){
-          this.yData3.push(item.avgSpeed)
+        for (let item of res.data.laneNoThree) {
+          this.yData3.push(item.avgSpeed);
         }
-        setTimeout(()=>{
+        setTimeout(() => {
           this.$nextTick(() => {
             this.initChart();
           });
-        },500)
-
-      })
+        }, 500);
+      });
     },
     // 获取图表数据信息
     initChart() {
-      this.mychart = echarts.init(document.getElementById(this.tab));
-      var option = {
-        tooltip: {
-          trigger: "axis",
-        },
-        legend: {
-          show: true,
-          icon: "roundRect",
-          itemWidth: 14,
-          itemHeight: 8,
-          x: "center",
-          data: ["1车道", "2车道", "3车道"],
-          textStyle: {
-            //图例文字的样式
-            color: "#00AAF2",
-            fontSize: 12,
+      let newPromise = new Promise((resolve) => {
+        resolve();
+      });
+      //然后异步执行echarts的初始化函数
+      newPromise.then(() => {
+        this.mychart = echarts.init(document.getElementById(this.tab));
+        var option = {
+          tooltip: {
+            trigger: "axis",
           },
-          top: "20",
-        },
-        grid: {
-          top: "30%",
-          bottom: "18%",
-          left: "14%",
-          right: "12%",
-        },
-        xAxis: {
-          type: "category",
-          boundaryGap: true,
-          data: this.XData,
-          axisLabel: {
-            textStyle: {
-              color: "#00AAF2",
-              fontSize: 10,
-            },
-          },
-          axisLine: {
+          legend: {
             show: true,
-            lineStyle: {
-              color: "#386D88",
-            },
-          },
-        },
-        yAxis: {
-          type: "value",
-          name: "辆",
-          nameTextStyle: {
-            color: "#FFB500",
-            fontSize: 10,
-            // padding: [0, 20, 0, 0],
-          },
-          // minInterval: 1, //y轴的刻度只显示整数
-          axisLabel: {
+            icon: "roundRect",
+            itemWidth: 14,
+            itemHeight: 8,
+            x: "center",
+            data: ["1车道", "2车道", "3车道"],
             textStyle: {
+              //图例文字的样式
               color: "#00AAF2",
+              fontSize: 12,
+            },
+            top: "20",
+          },
+          grid: {
+            top: "30%",
+            bottom: "18%",
+            left: "14%",
+            right: "12%",
+          },
+          xAxis: {
+            type: "category",
+            boundaryGap: true,
+            data: this.XData,
+            axisLabel: {
+              textStyle: {
+                color: "#00AAF2",
+                fontSize: 10,
+              },
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: "#386D88",
+              },
+            },
+          },
+          yAxis: {
+            type: "value",
+            name: "辆",
+            nameTextStyle: {
+              color: "#FFB500",
               fontSize: 10,
+              // padding: [0, 20, 0, 0],
             },
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              //分割线的样式
-              color: ["rgba(0,0,0,0.3)"],
-              width: 1,
-              type: "dashed",
-            },
-          },
-        },
-        series: [
-          {
-            name: "1车道",
-            type: "line",
-            color: "#787FFE",
-            symbol: "circle",
-            symbolSize: [7, 7],
-            itemStyle: {
-              normal: {
-                borderColor: "white",
+            // minInterval: 1, //y轴的刻度只显示整数
+            axisLabel: {
+              textStyle: {
+                color: "#00AAF2",
+                fontSize: 10,
               },
             },
-            smooth: true,
-            data:this.yData1,
-          },
-          {
-            name: "2车道",
-            type: "line",
-            color: "#00DCA2",
-            symbol: "circle",
-            symbolSize: [7, 7],
-            itemStyle: {
-              normal: {
-                borderColor: "white",
+            axisLine: {
+              show: false,
+            },
+            axisTick: {
+              show: false,
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                //分割线的样式
+                color: ["rgba(0,0,0,0.3)"],
+                width: 1,
+                type: "dashed",
               },
             },
-            smooth: true,
-            data:this.yData2,
           },
-          {
-            name: "3车道",
-            type: "line",
-            color: "#FFB200",
-            symbol: "circle",
-            symbolSize: [7, 7],
-            itemStyle: {
-              normal: {
-                borderColor: "white",
+          series: [
+            {
+              name: "1车道",
+              type: "line",
+              color: "#787FFE",
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
               },
+              smooth: true,
+              data: this.yData1,
             },
-            smooth: true,
-            data:this.yData3,
-          },
-        ],
-      };
+            {
+              name: "2车道",
+              type: "line",
+              color: "#00DCA2",
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              smooth: true,
+              data: this.yData2,
+            },
+            {
+              name: "3车道",
+              type: "line",
+              color: "#FFB200",
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              smooth: true,
+              data: this.yData3,
+            },
+          ],
+        };
 
-      this.mychart.setOption(option);
-      window.addEventListener("resize", function () {
-        this.mychart.resize();
+        this.mychart.setOption(option);
+        window.addEventListener("resize", function () {
+          this.mychart.resize();
+        });
       });
     },
     getDirection(num) {
@@ -374,10 +398,12 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false;
+      // this.$emit("dialogClose");
     },
     handleOK() {
-      this.$emit("dialogClose");
+      // this.$emit("dialogClose");
+      this.visible = false;
     },
   },
 };
@@ -463,4 +489,7 @@ export default {
 //       height: 10px;
 //       // background-color: #304156;
 //     }
+::v-deep .el-dialog {
+  pointer-events: auto !important;
+}
 </style>

@@ -105,7 +105,7 @@
         <el-col :span="24">
           <el-form-item label="执行操作">
             <div class="menu">
-              <el-col :span="6">设备类型</el-col>
+              <el-col :span="6">设备资源类型</el-col>
               <el-col :span="8">指定设备</el-col>
               <el-col :span="8">控制指令</el-col>
               <el-col :span="2">操作</el-col>
@@ -120,7 +120,16 @@
             :key="index"
           >
             <el-col :span="6" style="padding-left:0">
-              <el-select
+
+              <el-cascader
+                v-model="items.equipmentTypeId"
+                :options="equipmentTypeData"
+                :props="equipmentTypeProps"
+                :show-all-levels="false"
+                @change="changeEquipmentType(index)"
+                style="width: 100%"
+              ></el-cascader>
+<!--              <el-select
                 v-model="items.equipmentTypeId"
                 placeholder="请选择设备类型"
                 clearable
@@ -133,7 +142,7 @@
                   :label="item.typeName"
                   :value="item.typeId"
                 />
-              </el-select>
+              </el-select>-->
             </el-col>
             <el-col :span="8">
               <el-select
@@ -267,7 +276,7 @@ import {
   addStrategyInfo,
   updateStrategyInfo,
   getGuid,
-  handleStrategy,
+  handleStrategy, getCategoryTree,
 } from "@/api/event/strategy";
 import { listRl, addRl } from "@/api/event/strategyRl";
 export default {
@@ -285,6 +294,12 @@ export default {
         multiple: false,
         emitPath: false,
         checkStrictly: true,
+      },
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
       },
       expression: "",
       paramsData: {
@@ -396,8 +411,8 @@ export default {
     async getStrategyData(row) {
 
       console.log(row, "当前策略数据");
-      await listType(this.queryEqTypeParams).then((response) => {
-        this.equipmentTypeData = response.rows;
+      await  getCategoryTree().then((data) => {
+        this.equipmentTypeData = data.data;
       });
       getStrategy(this.id).then((response) => {
         const loading = this.$loading({
@@ -437,7 +452,7 @@ export default {
             this.strategyForm.autoControl[i].state = attr.state;
             this.strategyForm.autoControl[i].stateNum = attr.stateNum;
             this.strategyForm.autoControl[i].type = attr.eqTypeId;
-            this.strategyForm.autoControl[i].equipmentTypeId = Number(
+            this.strategyForm.autoControl[i].equipmentTypeId = String(
               attr.eqTypeId
             );
 
@@ -831,10 +846,9 @@ export default {
     getEquipmentType() {
       let autoControl = this.strategyForm.autoControl;
       for (let i = 0; i < autoControl.length; i++) {
-        listType(this.queryEqTypeParams).then((data) => {
-          console.log(data.rows, "设备类型");
-          this.$set(autoControl[i], "equipmentTypeData", data.rows);
-          this.equipmentTypeData = data.rows;
+        getCategoryTree().then((data) => {
+          this.$set(autoControl[i], "equipmentTypeData", data.data);
+          this.equipmentTypeData = data.data;
         });
       }
     },

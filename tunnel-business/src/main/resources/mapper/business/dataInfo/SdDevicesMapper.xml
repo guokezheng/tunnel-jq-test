@@ -751,13 +751,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getEquipmentInfo" parameterType="String" resultType="hashmap">
-        SELECT concat(c.dict_label,t.pile) pile,s.state_name runStatus,e.device_state eqStatus
-        FROM `sd_device_type_item` i
-        left join sd_device_data d on i.id = d.item_id
-        left join sd_devices t on t.eq_id = d.device_id
+        SELECT concat(c.dict_label,t.pile) pile,s.state_name runStatus,e.dict_label eqStatus
+        from sd_devices t
         left join sys_dict_data c on t.eq_direction = c.dict_value and c.dict_type= 'sd_direction'
+        left join sd_device_data d on t.eq_id = d.device_id
+        left join sd_device_type_item i on i.id = d.item_id
         left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '2'
-        left join sd_equipment_state e on e.state_type_id = i.device_type_id and e.device_state = d.data and e.state_type = '1'
+        LEFT JOIN sys_dict_data e ON e.dict_value = t.eq_status
+        AND e.dict_type = 'sd_monitor_state'
         <where>
             <if test="eqId != null ">and t.eq_id = #{eqId}</if>
         </where>
@@ -897,14 +898,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesStatus" parameterType="SdDevices" resultMap="SdDevicesResult">
-        SELECT t.eq_id,i.item_name,i.item_code,d.data,s.state_name runState,e.state_name eqState,d.update_time
-        FROM `sd_device_type_item` i
-        left join sd_device_data d on i.id = d.item_id
-        left join sd_devices t on t.eq_id = d.device_id
-        left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '2'
-        left join sd_equipment_state e on e.state_type_id = i.device_type_id and e.device_state = d.data and e.state_type = '1'
-        where 1=1
-        and t.eq_id = #{eqId}
+        SELECT
+         t.eq_name ,
+         es.device_state,
+         es.state_name runState,
+         e.dict_label eqState,
+         sdd.update_time,
+         es.icon_file_id
+        FROM
+         sd_devices t
+         left join sd_device_data sdd  on t.eq_id = sdd.device_id
+         left join sd_equipment_state es on sdd.`data` = es.device_state and es.state_type = '2'
+         LEFT JOIN sys_dict_data e ON e.dict_value = t.eq_status
+        AND e.dict_type = 'sd_monitor_state'
+        WHERE
+         1 = 1
+         AND t.eq_id = #{eqId}
+         and t.eq_type = es.state_type_id
+
     </select>
 
     <select id="selectSdDevicesListByEqTypes" resultMap="SdDevicesResult">
@@ -1071,6 +1082,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND d.eq_direction = #{direction}
           AND d.pile_num <![CDATA[ <= ]]> #{stakeNum}
           AND d.eq_tunnel_id = #{tunnelId}
+          <if test="lane != null and lane != ''">
+              AND FIND_IN_SET(d.lane, #{lane}) > 0
+          </if>
         GROUP BY
             d.pile_num
         ORDER BY

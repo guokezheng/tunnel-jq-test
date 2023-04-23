@@ -134,6 +134,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
             sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
+            sdFaultList.setFaultTbr(SecurityUtils.getUsername());// 设置当前创建人
             if (sdFaultList.getEqId() != null && !sdFaultList.getEqId().equals("")
                     && (sdFaultList.getFaultLocation() == null || sdFaultList.getFaultLocation().equals(""))) {
                 SdDevices sdDevices = sdDevicesService.selectSdDevicesById(sdFaultList.getEqId());

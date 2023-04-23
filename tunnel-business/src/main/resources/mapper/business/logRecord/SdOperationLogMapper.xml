@@ -63,7 +63,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
             and a.create_time &gt;= #{params.beginTime}
         </if>
-
         <if test="operIp != null  and operIp != ''"> AND CONCAT(c.pile, c.eq_name,a.oper_ip) LIKE CONCAT('%',#{operIp},'%')</if>
 
         <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
@@ -387,6 +386,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 #{id}
             </foreach>
         </if>
+        <if test="params.eqId != null and params.eqId != ''"><!-- 开始时间检索 -->
+            and c.eq_id = #{params.eqId}
+        </if>
 
         order by a.create_time desc
         <if test="params.pageNum != null">
@@ -404,6 +406,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
         left join sd_devices c on a.eq_id = c.eq_id
         where 1 = 1
+        <if test="eqId!= null and eqId!= ''"><!-- 结束时间检索 -->
+            and c.eq_id = #{eqId}
+        </if>
         <if test="start!= null and start!= ''"><!-- 开始时间检索 -->
             and a.create_time &gt;= #{start}
         </if>

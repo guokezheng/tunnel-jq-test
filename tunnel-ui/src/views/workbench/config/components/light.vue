@@ -8,6 +8,8 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>
@@ -59,6 +61,11 @@
             <el-form-item label="设备状态:"
             :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
               {{ geteqType(stateForm.eqStatus) }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11" v-if="stateForm.eqType == 13">
+            <el-form-item label="消防泵状态:">
+              {{ stateForm.xfsStatus}}
             </el-form-item>
           </el-col>
         </el-row>
@@ -144,6 +151,7 @@
               </el-radio-group>
             </div>
           </el-form-item>
+          <!-- 加强照明：7  警示灯带：45 -->
           <el-row style="margin-top:10px" v-show="this.eqInfo.clickEqType == 7 || this.eqInfo.clickEqType == 45">
             <el-col :span="15">
               <el-form-item label="亮度调整" >
@@ -160,6 +168,7 @@
               >
             </el-col>
           </el-row>
+
           <div slot="footer" style=" margin-top: 10px" class="dialog-footer">
             <el-button
               @click="handleOK()"
@@ -184,10 +193,10 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
 import { getDevice, setBrightness } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
-import { controlDevice, controlWarningLightStripDevice } from "@/api/workbench/config.js"; //提交控制信息
+import { controlDevice, controlWarningLightStripDevice, setControlDeviceByParam } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       title: "",
@@ -199,24 +208,27 @@ export default {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       iconWidth: "",
       iconHeight: "",
-      clickEqType:''
+      clickEqType:'',
+      brandList:[],
+      eqInfo:{},
+      eqTypeDialogList:[],
+      directionList:[],
       // stateForm2:{}
     };
   },
-  created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    console.log(this.eqInfo.clickEqType, "clickEqTypeclickEqTypeclickEqType");
-    this.clickEqType = JSON.parse(JSON.stringify(this.eqInfo.clickEqType))
-    this.getMessage();
-    // this.loadFlv();
-  },
   methods: {
+    init(eqInfo,brandList,directionList,eqTypeDialogList){
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.clickEqType = JSON.parse(JSON.stringify(this.eqInfo.clickEqType))
+      this.getMessage();
+    },
     // 查设备详情
     async getMessage() {
       var that = this;
       if (this.eqInfo.equipmentId) {
-        var obj = {};
-        var state = "";
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
@@ -299,9 +311,38 @@ export default {
     handleOK() {
       let that = this
       console.log(this.eqInfo.clickEqType,"this.eqInfo.clickEqType")
-      if(this.eqInfo.clickEqType != 45){
-
-        console.log(this.stateForm.brightness)
+      // 警示灯带
+      if(this.eqInfo.clickEqType == 45){
+        const param = {
+          devId:this.eqInfo.equipmentId,
+          state:this.stateForm.state,
+          brightness: this.stateForm.brightness,
+        }
+        controlWarningLightStripDevice(param).then((res)=>{
+          console.log("警示灯带控制成功",res)
+          if(res.data == 1){
+            this.$modal.msgSuccess('操作成功');
+          }else{
+            this.$modal.msgError("操作失败");
+          }
+        })
+        // 消防水泵:13 潜水深井泵:45
+      }else if(this.eqInfo.clickEqType == 13 || this.eqInfo.clickEqType == 49){
+        const param = {
+          eqId: this.stateForm.eqId, //设备id
+          data: this.stateForm.state,
+          comType: "omron",
+        };
+        setControlDeviceByParam(param).then((res)=>{
+          console.log("消防栓控制成功",res)
+          let msg = res.msg;
+          if(res.data == 1){
+            this.$modal.msgSuccess(msg);
+          }else{
+            this.$modal.msgError(msg);
+          }
+        })
+      }else{
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state,
@@ -329,27 +370,12 @@ export default {
             // }
           }
         });
-      }else if(this.eqInfo.clickEqType == 45){
-        const param = {
-          devId:this.eqInfo.equipmentId,
-          state:this.stateForm.state,
-          brightness: this.stateForm.brightness,
-        }
-        controlWarningLightStripDevice(param).then((res)=>{
-          console.log("警示灯带控制成功",res)
-          if(res.data == 1){
-            this.$modal.msgSuccess('操作成功');
-          }else{
-            this.$modal.msgError("操作失败");
-          }
-        })
       }
-
-      this.$emit("dialogClose");
+      this.visible = false
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false
     },
   },
 };
@@ -406,4 +432,7 @@ export default {
     background-color: #ff9300;
   }
 }
+::v-deep .el-dialog {
+    pointer-events: auto !important;
+  }
 </style>

@@ -58,7 +58,7 @@
             <el-form-item label="执行操作">
               <div class="menu">
                 <el-col :span="6">处置名称</el-col>
-                <el-col :span="6">设备类型</el-col>
+                <el-col :span="6">设备资源类型</el-col>
                 <el-col :span="6">指定设备</el-col>
                 <el-col :span="4">控制指令</el-col>
                 <el-col :span="2">操作</el-col>
@@ -82,7 +82,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-select
+            <el-cascader
+              v-model="items.equipmentTypeId"
+              :options="equipmentTypeData"
+              :props="equipmentTypeProps"
+              :show-all-levels="false"
+              @change="changeEquipmentType(index)"
+              style="width: 100%"
+            ></el-cascader>
+<!--            <el-select
               v-model="items.equipmentTypeId"
               placeholder="请选择设备类型"
               clearable
@@ -95,7 +103,7 @@
                 :label="item.typeName"
                 :value="item.typeId"
               />
-            </el-select>
+            </el-select>-->
           </el-col>
           <el-col :span="6">
             <el-select
@@ -166,7 +174,7 @@
               >
               </el-option>
             </el-select>
-            <el-input-number v-if="items.state == 1" v-model="items.stateNum" style="width: 55%"   :min="1" :max="100" ></el-input-number>
+            <el-input-number @change="$forceUpdate()" v-if="items.state == 1" v-model="items.stateNum" style="width: 55%"   :min="1" :max="100" ></el-input-number>
           </el-col>
           <div class="buttonBox">
             <el-button class="delete" @click="removeItem(index)"></el-button>
@@ -210,7 +218,7 @@ import {
   addStrategyInfo,
   updateStrategyInfo,
   getGuid,
-  handleStrategy,
+  handleStrategy, getCategoryTree,
 } from "@/api/event/strategy";
 export default {
   data() {
@@ -221,6 +229,12 @@ export default {
         checkStrictly: true,
       },
       templatesList: [], //模板数据
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
       sink: "", //删除/修改
       id: "", //策略id
       strategyForm: {
@@ -319,7 +333,7 @@ export default {
             this.strategyForm.manualControl[i].manualControlStateList =
               attr.eqStateList;
 
-            this.strategyForm.manualControl[i].equipmentTypeId = Number(
+            this.strategyForm.manualControl[i].equipmentTypeId = String(
               attr.eqTypeId
             );
             // 情报板设备
@@ -670,10 +684,15 @@ export default {
     getEquipmentType() {
       let manualControl = this.strategyForm.manualControl;
       for (let i = 0; i < manualControl.length; i++) {
-        listType(this.queryEqTypeParams).then((data) => {
+    /*    listType(this.queryEqTypeParams).then((data) => {
           console.log(data.rows, "设备类型");
           this.$set(manualControl[i], "equipmentTypeData", data.rows);
           this.equipmentTypeData = data.rows;
+        });*/
+        getCategoryTree().then((data) => {
+          console.log(data.rows, "设备类型");
+          this.$set(manualControl[i], "equipmentTypeData", data.data);
+          this.equipmentTypeData = data.data;
         });
       }
     },

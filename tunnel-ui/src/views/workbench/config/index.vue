@@ -7,7 +7,7 @@
       <div class="header workbench-header">
         <el-row
           class="menu-b"
-          style="display: flex; align-items: center"
+          style="display: flex; align-items: center;z-index:8"
           :style="isManagementStation ? 'padding-left:100px;' : ''"
         >
           <el-cascader
@@ -192,7 +192,7 @@
           >
             操作日志
           </el-button>
-     
+
         </div>
       </div>
       <div class="vehicleLane">
@@ -634,6 +634,7 @@
             justify-content: space-between;
             flex-direction: column;
             height: 100%;
+            z-index:8;
           "
           :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
@@ -1331,6 +1332,7 @@
       append-to-body
       v-dialogDrag
       :close-on-click-modal="false"
+      :model="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -1343,7 +1345,7 @@
         style="width: 100%; margin-bottom: 10px !important"
         max-height="220"
         size="mini"
-        
+
         @row-click="handleRowClick"
       >
         <el-table-column
@@ -1626,7 +1628,7 @@
         <el-col :span="10" :offset="10">
           <div class="grid-content bg-purple" ref="main1">
             <el-input
-              placeholder="请输入操作地址，回车搜索"
+              placeholder="请输入设备名称、桩号、操作地址，回车搜索"
               v-model="operationParam.operIp"
               @keyup.enter.native="handleQueryOperationParam"
               size="small"
@@ -1888,6 +1890,7 @@
           prop="typeName.typeName"
         />
         <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
+        <el-table-column label="桩号" align="center" prop="pile" />
         <el-table-column
           label="操作状态"
           align="center"
@@ -2441,7 +2444,7 @@
       </div>
     </el-dialog> -->
     <!--批量管理对话框-->
-    <el-dialog
+    <!-- <el-dialog
       v-dialogDrag
       class="workbench-dialog batch-table batch-dialog"
       :title="title"
@@ -2472,16 +2475,9 @@
               :label="item.typeName"
               :value="item.typeId"
             />
-            <!--            <el-option
-                          v-if="boxTypeList.length > 0"
-                          v-for="item in boxTypeList"
-                          :key="item.typeId"
-                          :label="item.typeName"
-                          :value="item.typeId"
-                        /> -->
+
           </el-select>
         </el-form-item>
-        <!-- 如果选择项为"普通车道指示器，id = 1,则二级选项显示搜索条件，为车向和车道" -->
         <el-form-item label="方向">
           <el-select v-model="batchForm.eqDirection" size="mini" clearable>
             <el-option
@@ -2605,9 +2601,9 @@
         </el-button>
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <!--微波车检对话框-->
-    <el-dialog
+    <!-- <el-dialog
       v-dialogDrag
       class="workbench-dialog batch-table"
       :title="title"
@@ -2662,40 +2658,22 @@
       <div slot="footer">
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
+
     <com-video
       class="comClass"
-      v-if="[23, 24, 25].includes(this.eqInfo.clickEqType)"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="videoRef"
     ></com-video>
     <com-light
       class="comClass"
-      v-if="
-        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 45].includes(
-          this.eqInfo.clickEqType
-        )
-      "
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
+      ref="lightRef"
     ></com-light>
     <com-covi
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 19"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="coviRef"
     ></com-covi>
     <!--   消防泵  -->
-    <com-xfsb
+    <!-- <com-xfsb
       class="comClass"
       v-if="this.eqInfo.clickEqType == 13"
       :brandList="this.brandList"
@@ -2703,9 +2681,9 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-xfsb>
+    ></com-xfsb> -->
     <!--   潜水深井泵  -->
-    <com-sjb
+    <!-- <com-sjb
       class="comClass"
       v-if="this.eqInfo.clickEqType == 49"
       :brandList="this.brandList"
@@ -2713,9 +2691,9 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-sjb>
+    ></com-sjb> -->
     <!--    温湿传感器  -->
-    <com-temperatureHumidity
+    <!-- <com-temperatureHumidity
       class="comClass"
       v-if="this.eqInfo.clickEqType == 41"
       :brandList="this.brandList"
@@ -2723,9 +2701,9 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-temperatureHumidity>
+    ></com-temperatureHumidity> -->
     <!--    液位传感器  -->
-    <com-liquidLevel
+    <!-- <com-liquidLevel
       class="comClass"
       v-if="this.eqInfo.clickEqType == 42"
       :brandList="this.brandList"
@@ -2733,53 +2711,26 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-liquidLevel>
+    ></com-liquidLevel> -->
     <com-data
       class="comClass"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="
-        [14, 21, 32, 33, 15, 35, 40, 39, 48,41].includes(this.eqInfo.clickEqType)
-      "
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="dataRef"
     ></com-data>
     <com-wind
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 17"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="windRef"
     ></com-wind>
     <com-pressure
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 28"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="pressureRef"
     ></com-pressure>
     <com-vehicleDetec
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 20"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="vehicleDetecRef"
     ></com-vehicleDetec>
     <com-callPolice
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 34"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="callPoliceRef"
     ></com-callPolice>
     <!-- <com-robot
       class="comClass"
@@ -2793,39 +2744,19 @@
     <robot class="comClass robotHtmlBox" v-if="this.eqInfo.clickEqType == 29"></robot>
     <com-bright
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="brightRef"
     ></com-bright>
     <com-youdao
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 31 || this.eqInfo.clickEqType == 30"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="youdaoRef"
     ></com-youdao>
     <com-board
       class="comClass"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="this.eqInfo.clickEqType == 16 || this.eqInfo.clickEqType == 36"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="boardRef"
     ></com-board>
     <com-radio
       class="comClass"
-      :brandList="this.brandList"
-      :directionList="this.directionList"
-      :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="this.eqInfo.clickEqType == 22"
-      :eqInfo="this.eqInfo"
-      @dialogClose="dialogClose"
+      ref="radioRef"
     ></com-radio>
     <!--摄像机对话框-->
     <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
@@ -3887,6 +3818,7 @@ export default {
 
   data() {
     return {
+      dialogEqType:'',
       loginStatusOptions:[],
       timingStrategyDisabled:false,
       videoNoPic1:false,
@@ -5531,6 +5463,7 @@ export default {
     handleChangePhone(num) {},
     // 操作日志 搜索
     handleQueryOperationParam() {
+      this.operationList2 = [];
       this.syxt_boxShow = false
       this.sycz_boxShow1 = false
       this.operationParam.pageNum = 1;
@@ -5797,8 +5730,19 @@ export default {
     },
     // 关闭弹窗子组件
     dialogClose() {
-      this.eqInfo.clickEqType = 0;
       this.mouseoversImplement = true;
+      this.$refs.videoRef.handleClosee()
+      this.$refs.lightRef.handleClosee()
+      this.$refs.coviRef.handleClosee()
+      this.$refs.dataRef.handleClosee()
+      this.$refs.windRef.handleClosee()
+      this.$refs.pressureRef.handleClosee()
+      this.$refs.vehicleDetecRef.handleClosee()
+      this.$refs.callPoliceRef.handleClosee()
+      this.$refs.brightRef.handleClosee()
+      this.$refs.youdaoRef.handleClosee()
+      this.$refs.boardRef.handleClosee()
+      this.$refs.radioRef.handleClosee()
     },
     // 车辆监测数据
     vehicleEcharts() {
@@ -8232,30 +8176,57 @@ export default {
           clickEqType: item.eqType,
           equipmentId: item.eqId,
         };
-        // if(item.eqType == 23 || item.eqType == 24 || item.eqType == 25){
-        //   this.$refs.dialogVideo.init(this.eqInfo,this.eqTypeDialogList,this.brandList,this.directionList)
-        // }
 
-        let StateTypeId = {
-          StateTypeId: item.eqType,
-        };
-        // getStateByRun(StateTypeId).then(res => {
-        //   this.stateForm.stateName = res.rows[0].stateName
-        // })
-        // this.getTunnelData(this.currentTunnel.id);
+        if(this.dialogEqType != item.eqType){
+          this.dialogClose()
+        }else{
+          this.dialogEqType = item.eqType
+        }
+        this.$nextTick(()=>{
+          if([23, 24, 25].includes(item.eqType)){
+            this.$refs.videoRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if([1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 45, 49].includes(item.eqType)){
+            this.$refs.lightRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 19){
+            this.$refs.coviRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if([14, 21, 32, 33, 15, 35, 39, 40, 41, 42, 48 ].includes(item.eqType)){
+            this.$refs.dataRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 17){
+            this.$refs.windRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 28){
+            this.$refs.pressureRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 20){
+            this.$refs.vehicleDetecRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 34){
+            this.$refs.callPoliceRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 5 || item.eqType == 18){
+            this.$refs.brightRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 30 || item.eqType == 31){
+            this.$refs.youdaoRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 16 || item.eqType == 36){
+            this.$refs.boardRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }else if(item.eqType == 22){
+            this.$refs.radioRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
+          }
+
+        })
+
+
+
+
         // 防止 ‘暂未获取’ 和 配置状态单选同时出现
-        this.spanEqtypeDate = true;
-        let newPromise = new Promise((resolve) => {
-          resolve();
-        });
-        await newPromise.then(() => {
-          this.eqTypeStateList.forEach((val) => {
-            if (item.eqType == val.type && val.control == 1) {
-              this.itemEqTypeStateList.push(val);
-            }
-          });
-        });
-        if (this.itemEqTypeStateList != []) this.spanEqtypeDate = false;
+        // this.spanEqtypeDate = true;
+        // let newPromise = new Promise((resolve) => {
+        //   resolve();
+        // });
+        // await newPromise.then(() => {
+        //   this.eqTypeStateList.forEach((val) => {
+        //     if (item.eqType == val.type && val.control == 1) {
+        //       this.itemEqTypeStateList.push(val);
+        //     }
+        //   });
+        // });
+        // if (this.itemEqTypeStateList != []) this.spanEqtypeDate = false;
         // 传感器（模拟量）
         // let sensorDevice = [1, 2, 3, 4, 7, 8, 9, 10, 12, 13, 14, 15, 16];
         // if (sensorDevice.indexOf(item.eqType) != -1) {
@@ -8599,37 +8570,37 @@ export default {
     //   }
     // },
     /* 确认配置（单项）*/
-    submitState() {
-      this.stateSwitchVisible = false;
-      // this.stateForm ={}
-      let param = {
-        // devId: this.stateForm.eqId,
-        // devType: this.stateForm.eqType,
-        // hostId: this.stateForm.eqHostId,
-        // state: this.stateForm.state,
-        // tunnelId: this.currentTunnel.id,
-        deviceId: this.stateForm.eqId,
-        devType: this.stateForm.eqType,
-        hostId: this.stateForm.eqHostId,
-        state:
-          this.stateForm.eqType == 31
-            ? this.radioEqType31
-            : this.stateForm.state,
-        tunnelId: this.currentTunnel.id,
-        brightness: this.brightness,
-        frequency: this.frequency,
-      };
-      // 发送模拟指令
-      this.sendAnalogCommand(param);
-      // 发送正式指令
-      // this.sendDirective(param)
-      // if (await this.sendDirective(param)) {
-      //   // 非照明类（plc）提交
-      //   this.setConfigData(param);
-      // } else {
-      //   this.setWebsocket(param);
-      // }
-    },
+    // submitState() {
+    //   this.stateSwitchVisible = false;
+    //   // this.stateForm ={}
+    //   let param = {
+    //     // devId: this.stateForm.eqId,
+    //     // devType: this.stateForm.eqType,
+    //     // hostId: this.stateForm.eqHostId,
+    //     // state: this.stateForm.state,
+    //     // tunnelId: this.currentTunnel.id,
+    //     deviceId: this.stateForm.eqId,
+    //     devType: this.stateForm.eqType,
+    //     hostId: this.stateForm.eqHostId,
+    //     state:
+    //       this.stateForm.eqType == 31
+    //         ? this.radioEqType31
+    //         : this.stateForm.state,
+    //     tunnelId: this.currentTunnel.id,
+    //     brightness: this.brightness,
+    //     frequency: this.frequency,
+    //   };
+    //   // 发送模拟指令
+    //   this.sendAnalogCommand(param);
+    //   // 发送正式指令
+    //   // this.sendDirective(param)
+    //   // if (await this.sendDirective(param)) {
+    //   //   // 非照明类（plc）提交
+    //   //   this.setConfigData(param);
+    //   // } else {
+    //   //   this.setWebsocket(param);
+    //   // }
+    // },
     sendAnalogCommand(param) {
       sendAnalogCom(param).then((response) => {
         if (response.code == 200) {
@@ -8795,90 +8766,90 @@ export default {
       return number != 100;
     },
     /* 批量确认按钮*/
-    submitBatchState(formName) {
-      let that = this;
-      if (that.batchForm.eqList.length == 0) {
-        return that.$modal.msgWarning("请选择设备");
-      }
+    // submitBatchState(formName) {
+    //   let that = this;
+    //   if (that.batchForm.eqList.length == 0) {
+    //     return that.$modal.msgWarning("请选择设备");
+    //   }
 
-      // 批量情报板编辑
-      // 一 是否有选中情报板
-      // 二 选中是否全部为情报板
-      // 三 所有选中情报板分辨率是否一致
-      // 满足条件后执行批量编辑
-      // this.$refs.contentBatchEdit.vmsSize = list[0].vmsSize;
-      // this.$refs.contentBatchEdit.list = list;
-      // this.$refs.contentBatchEdit.radio1 = this.radio1;
-      // this.$refs.contentBatchEdit.init();
-      let IntelligenceBoard = that.batchForm.eqList;
-      for (let i = 0; i < IntelligenceBoard.length; i++) {
-        var arr = IntelligenceBoard[i].eqType;
-        if (IntelligenceBoard[0].eqType != arr) {
-          return that.$modal.msgWarning("设备类型不一致");
-        }
-      }
-      let brr = [];
-      that.batchForm.eqList.forEach((item) => {
-        brr.push(item.eqType);
-      });
-      if (brr.every(this.everyCheck) == false) {
-        //如果是情报板设备，则取消验证
-        this.rules.state = true;
-        // this.$refs.contentBatchEdit.init();
-        // 上面已经判断过是否一致，所以此处不再判断，直接传第一个设备的eqid
-        // 打开情报板编辑页面
-        getDeviceBase(that.batchForm.eqList[0].eqId).then((data) => {
-          this.$refs.vmsContentUpdate.vmsSize = data.data.devicePixel;
-        });
-        // console.log(item,'情报板信息');
-        this.dialogVisible = true;
-        let batchFormList = that.batchForm.eqList;
-        let deviceList = "";
-        batchFormList.forEach((item) => {
-          deviceList = deviceList.concat(item.eqId);
-        });
+    //   // 批量情报板编辑
+    //   // 一 是否有选中情报板
+    //   // 二 选中是否全部为情报板
+    //   // 三 所有选中情报板分辨率是否一致
+    //   // 满足条件后执行批量编辑
+    //   // this.$refs.contentBatchEdit.vmsSize = list[0].vmsSize;
+    //   // this.$refs.contentBatchEdit.list = list;
+    //   // this.$refs.contentBatchEdit.radio1 = this.radio1;
+    //   // this.$refs.contentBatchEdit.init();
+    //   let IntelligenceBoard = that.batchForm.eqList;
+    //   for (let i = 0; i < IntelligenceBoard.length; i++) {
+    //     var arr = IntelligenceBoard[i].eqType;
+    //     if (IntelligenceBoard[0].eqType != arr) {
+    //       return that.$modal.msgWarning("设备类型不一致");
+    //     }
+    //   }
+    //   let brr = [];
+    //   that.batchForm.eqList.forEach((item) => {
+    //     brr.push(item.eqType);
+    //   });
+    //   if (brr.every(this.everyCheck) == false) {
+    //     //如果是情报板设备，则取消验证
+    //     this.rules.state = true;
+    //     // this.$refs.contentBatchEdit.init();
+    //     // 上面已经判断过是否一致，所以此处不再判断，直接传第一个设备的eqid
+    //     // 打开情报板编辑页面
+    //     getDeviceBase(that.batchForm.eqList[0].eqId).then((data) => {
+    //       this.$refs.vmsContentUpdate.vmsSize = data.data.devicePixel;
+    //     });
+    //     // console.log(item,'情报板信息');
+    //     this.dialogVisible = true;
+    //     let batchFormList = that.batchForm.eqList;
+    //     let deviceList = "";
+    //     batchFormList.forEach((item) => {
+    //       deviceList = deviceList.concat(item.eqId);
+    //     });
 
-        this.$refs.vmsContentUpdate.deviceId = deviceList;
-        this.$refs.vmsContentUpdate.isAdd = false;
-        this.$refs.vmsContentUpdate.init();
-        return false;
-      }
+    //     this.$refs.vmsContentUpdate.deviceId = deviceList;
+    //     this.$refs.vmsContentUpdate.isAdd = false;
+    //     this.$refs.vmsContentUpdate.init();
+    //     return false;
+    //   }
 
-      // end
-      this.$refs[formName].validate((valid) => {
-        let eqIdList = [];
-        if (valid) {
-          for (let i = 0; i < that.batchForm.eqList.length; i++) {
-            eqIdList.push(that.batchForm.eqList[i].eqId);
-          }
-          if (eqIdList.length > 0) {
-            for (let i = 0; i < eqIdList.length; i++) {
-              let param = {
-                devId: eqIdList[i],
-                devType: that.batchForm.eqType,
-                state: that.batchForm.state,
-                tunnelId: that.currentTunnel.id,
-              };
-              that.setConfigData(param);
-              that.sendAnalogCommand({
-                deviceId: that.batchForm.eqList[i].eqId,
-                devType: that.batchForm.eqList[i].eqType,
-                hostId: that.batchForm.eqList[i].eqHostId,
-                state: that.batchForm.state,
-                tunnelId: that.currentTunnel.id,
-              });
+    //   // end
+    //   this.$refs[formName].validate((valid) => {
+    //     let eqIdList = [];
+    //     if (valid) {
+    //       for (let i = 0; i < that.batchForm.eqList.length; i++) {
+    //         eqIdList.push(that.batchForm.eqList[i].eqId);
+    //       }
+    //       if (eqIdList.length > 0) {
+    //         for (let i = 0; i < eqIdList.length; i++) {
+    //           let param = {
+    //             devId: eqIdList[i],
+    //             devType: that.batchForm.eqType,
+    //             state: that.batchForm.state,
+    //             tunnelId: that.currentTunnel.id,
+    //           };
+    //           that.setConfigData(param);
+    //           that.sendAnalogCommand({
+    //             deviceId: that.batchForm.eqList[i].eqId,
+    //             devType: that.batchForm.eqList[i].eqType,
+    //             hostId: that.batchForm.eqList[i].eqHostId,
+    //             state: that.batchForm.state,
+    //             tunnelId: that.currentTunnel.id,
+    //           });
 
-              that.$refs["batchForm"].clearValidate();
-              that.batchVisible = false;
-            }
-            // this.dialogVisible = true;
-            // this.$refs.intelligenceBoard.childerfunction(this.dialogVisible,eqIdList);
-          }
-        } else {
-          return false;
-        }
-      });
-    },
+    //           that.$refs["batchForm"].clearValidate();
+    //           that.batchVisible = false;
+    //         }
+    //         // this.dialogVisible = true;
+    //         // this.$refs.intelligenceBoard.childerfunction(this.dialogVisible,eqIdList);
+    //       }
+    //     } else {
+    //       return false;
+    //     }
+    //   });
+    // },
     // 点击某一行，将其选中
     handleRowClick(row, i, a) {
       this.$refs.multipleTable.toggleRowSelection(row);
@@ -9458,6 +9429,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    z-index:8;
   }
 
   //车道控制
@@ -9837,6 +9809,7 @@ export default {
   padding-bottom: 5px;
   justify-content: space-between;
   margin-top: 8px;
+  z-index:8;
   .fourBox {
     display: flex;
     justify-content: space-between;
@@ -10956,6 +10929,7 @@ input {
   position: absolute;
   top: 0;
   left: 0;
+  pointer-events: none;
 }
 .chezhiDrawerDirection {
   width: 100%;

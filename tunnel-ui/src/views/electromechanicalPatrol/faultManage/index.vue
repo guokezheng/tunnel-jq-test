@@ -296,14 +296,14 @@
           >
             检修记录
           </el-button>
-          <!-- <el-button
+           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="exportFaultReport(scope.row)"
             :style="{ display: scope.row.faultStatus==0?'':'none' }"
           >
             检修报告
-          </el-button> -->
+          </el-button>
           <el-button
             size="mini"
             class="tableBlueButtton"

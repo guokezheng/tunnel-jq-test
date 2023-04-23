@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-08 11:37:34
+ * @LastEditTime: 2023-04-21 14:32:58
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -743,7 +743,8 @@
                 v-if="
                   itemed.eqTypeId != 16 &&
                   itemed.eqTypeId != 36 &&
-                  itemed.eqTypeId != 22
+                  itemed.eqTypeId != 22 &&
+                  itemed.eqTypeId != 7
                 "
               >
                 <el-select v-model="itemed.state" placeholder="设备操作">
@@ -756,6 +757,23 @@
                   </el-option>
                 </el-select>
               </el-col>
+              <!-- 照明设备 -->
+              <el-col :span="itemed.lightCol" v-if="itemed.eqTypeId == 7">
+                <el-select v-model="itemed.state" placeholder="设备操作" 
+                  @change="lightStateChange(number, index,itemed.state)">
+                  <el-option
+                    v-for="(ite, idx) in itemed.eqStateList"
+                    :key="idx"
+                    :label="ite.stateName"
+                    :value="ite.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="2" v-show="itemed.eqTypeId == 7 && itemed.state == '1'">
+                <el-input-number style="width:100%;" v-model="itemed.brightness" @change="handleChange" :min="1" :max="100" label="亮度"></el-input-number>
+              </el-col>
+              <!-- 照明设备end -->
               <!-- 选择情报板模板 -->
               <el-col
                 :span="4"
@@ -926,6 +944,7 @@ export default {
               equipmentData: [],
               eqStateList: [],
               templatesList: [],
+              brightness:100,
             },
           ],
         },
@@ -1151,6 +1170,16 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    lightStateChange(number,index,state){
+      if(state == '1'){
+        this.$set(this.planTypeIdList[number].processesList[index],'lightCol','2');
+        this.$set(this.planTypeIdList[number].processesList[index],'brightness',100);
+      }else{
+        // 关闭状态下亮度值赋0
+        this.$set(this.planTypeIdList[number].processesList[index],'brightness',0);
+        this.$set(this.planTypeIdList[number].processesList[index],'lightCol','4');
+      }
+    },
     // 规则下拉显示或者隐藏触发
     ruleVisible(e){
       console.log(e)
@@ -1234,6 +1263,7 @@ export default {
             eqStateList: [],
             disabled: false,
             templatesList: [],
+            brightness:100,
           },
         ],
       };
@@ -1355,6 +1385,7 @@ export default {
             eqStateList: [],
             disabled: false,
             templatesList: [],
+            brightness:100,
           },
         ],
       };
@@ -1423,17 +1454,22 @@ export default {
             item.disabled = false;
           }
         }
-        // if (eqTypeId != "1" && eqTypeId != "2") {
-        //   for (let item of retrievalRuleList) {
-        //     if (item.dictValue == "6" || item.dictValue == "7") {
-        //       item.disabled = true;
-        //     }
-        //   }
-        // } else {
-        //   for (let item of retrievalRuleList) {
-        //     item.disabled = false;
-        //   }
-        // }
+        // 加强照明开启百分比选择
+        if(eqTypeId == '7'){
+          let light = this.planTypeIdList[number].processesList[index];
+          light.lightCol = 4;
+          //开启加强照明百分比
+          this.$set(
+            light,"lightShow",true
+          );
+          // 改变布局占比
+          if(light.state == '1'){
+            light.lightCol = 2;
+            light.brightness = 100;
+          }else{
+            light.lightCol = 4
+          }
+        }
         this.$set(
           this.planTypeIdList[number].processesList[index],
           "retrievalRuleList",
@@ -1544,7 +1580,9 @@ export default {
         if (this.planTypeIdList[i].processStageName == "") {
           return this.$modal.msgWarning("请填写阶段名称");
         }
+        
         let item = this.planTypeIdList[i].processesList;
+        //加强照明开启默认1不做判断
         let result = item.every((items) => {
           if (items.retrievalRule == 1) {
             return (
@@ -1614,6 +1652,7 @@ export default {
                   equipments: [],
                   disabled: false,
                   templatesList: [],
+                  brightness:'100',
                 },
               ],
             },
@@ -1643,7 +1682,7 @@ export default {
               }
               brr.eqTypeId = String(brr.deviceTypeId); //设备类型
               brr.equipments = brr.equipmentList; //设备列表
-
+              // brr.brightness = 
               // 渲染设备列表
               let params = {
                 eqType: brr.eqTypeId, //设备类型
@@ -1658,6 +1697,12 @@ export default {
               });
               // 渲染设备可控状态
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
+              // 设备类型为加强照明且状态为开启
+              if(brr.eqTypeId == 7 && brr.state == '1'){
+                this.$set(this.planTypeIdList[i].processesList[j],"lightCol",2);
+              }else{
+                this.$set(this.planTypeIdList[i].processesList[j],"lightCol",4);
+              }
               // 请求情报板数据
               if (brr.eqTypeId == 16 || brr.eqTypeId == 36) {
                 // 指定设备
@@ -2139,11 +2184,15 @@ export default {
 };
 </script>
 <style>
+.planBox .el-input-number__decrease{
+  border-right: 1px solid #00152B!important;
+}
 #cascader-menu-45-0 .el-radio {
   display: none !important;
 }
 </style>
 <style lang="scss" scoped>
+
 // ::v-deep .el-dialog .el-dialog__header{
 //     // background-image: url(../../../assets/cloudControl/dialogHeader.png);
 //     // background-repeat: no-repeat;

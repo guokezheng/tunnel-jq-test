@@ -715,7 +715,6 @@ export default {
     });
     this.getTunnel();
     this.getEventTypeList();
-    this.getTunnelLane();
     // 事件来源
     this.getDicts("sd_event_source").then((data) => {
       this.fromList = data.data;
@@ -725,6 +724,13 @@ export default {
     });
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
+    });
+    this.getDicts("sd_lane_one").then((data) => {
+      this.chezhiLaneList2 = data.data;
+    });
+    // 三车道
+    this.getDicts("sd_lane_two").then((data) => {
+      this.chezhiLaneList3 = data.data;
     });
   },
   beforeCreate() {

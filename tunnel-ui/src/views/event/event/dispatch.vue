@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-17 10:27:32
+ * @LastEditTime: 2023-04-21 09:35:12
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -813,7 +813,7 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="24" v-if="boxName == '下发指令11' || boxName == '执行文件' && GDeviceData.deviceList != undefined">
+          <el-col :span="24" v-if="boxName == '下发指令' || boxName == '执行文件' && GDeviceData.deviceList != undefined">
             <p style="padding:15px;">{{boxName}}:</p>
             <el-card v-show="GDeviceData && !GDeviceData.vmsData" shadow="always">
               <div style="display: flex;align-items: center;">

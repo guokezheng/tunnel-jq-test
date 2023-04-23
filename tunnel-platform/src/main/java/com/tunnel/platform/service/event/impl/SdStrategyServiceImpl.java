@@ -319,7 +319,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     IotBoardTemplateContent content = new IotBoardTemplateContent();
                     content.setTemplateId(templateId);
                     List<IotBoardTemplateContent> contentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
-                    sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
+                    if(contentList.size() > 0){
+                        sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
+                    }
                     continue;
                 }
 

@@ -24,6 +24,7 @@ import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
+import com.zc.common.core.kafka.kafkaTool;
 import com.zc.common.core.websocket.WebSocketService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -298,6 +299,8 @@ public class RadarEventServiceImpl implements RadarEventService {
         }
         List<WjParticipants> list = JSONUtil.toList(parse.toString(), WjParticipants.class);
         List<SdRadarDetectData> dataList = new ArrayList<>();
+        //存入websocket集合
+        List<Map> webSocketList = new ArrayList<>();
         list.forEach(
                 f -> {
                     SdRadarDetectData sdRadarDetectData = new SdRadarDetectData();
@@ -316,14 +319,21 @@ public class RadarEventServiceImpl implements RadarEventService {
                     sdRadarDetectData.setLicenseColor(f.getVehicleColor() + "");
                     sdRadarDetectData.setStakeNum(f.getStakeNum());
                     sdRadarDetectData.setDistance(f.getDistanceEntry());
+                    //感知数据转换map
+                    Map map1 = setCarsnapRedis(sdRadarDetectData);
+                    //判断不是空并且启示数据不是0米
+                    if(StringUtils.isNotEmpty(map1)&&!"0".equals(map1.get("distance"))){
+                        webSocketList.add(map1);
+                    }
 //                    System.out.println("ID："+sdRadarDetectData.getVehicleId()+",车牌："+sdRadarDetectData.getVehicleLicense()+",速度："+sdRadarDetectData.getSpeed()+",距离："+f.getDistanceEntry());
                     dataList.add(sdRadarDetectData);
                 });
         wjMapper.insertRadarDetect(dataList);
+        //传到前端实时展示
         JSONObject object = new JSONObject();
-        object.put("radarDataList", dataList);
-        //redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
-        WebSocketService.broadcast("radarDataList",object.toString());
+        object.put("radarDataList", webSocketList);
+        //给指定的客户端发送websocket请求
+        kafkaTool.sendAssignWebSocket(webSocketList,object);
     }
 
     @Override
@@ -788,5 +798,23 @@ public class RadarEventServiceImpl implements RadarEventService {
             e.printStackTrace();
         }
         return time;
+    }
+    /**
+     * 将车辆快照转map
+     *
+     * @param sdRadarDetectData
+     */
+    public Map setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",TunnelEnum.HANG_SHAN_DONG.getCode());
+        map.put("roadDir",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        return  map;
     }
 }

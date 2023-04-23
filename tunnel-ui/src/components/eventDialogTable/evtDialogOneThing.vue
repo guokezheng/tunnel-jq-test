@@ -98,6 +98,7 @@ export default {
     sdEventList: {
       immediate: true,
       handler: function (event) {
+        debugger
         console.log(event, "事件弹窗");
 
         this.list = event;

@@ -19,6 +19,7 @@ import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
+import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
@@ -27,6 +28,7 @@ import com.tunnel.business.mapper.digitalmodel.SdSpecialVehiclesMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.zc.common.core.websocket.WebSocketService;
@@ -67,6 +69,10 @@ public class RadarTask {
     private ISdDeviceDataService sdDeviceDataService;
     @Autowired
     private SdRadarDetectDataMapper sdRadarDetectDataMapper;
+    @Autowired
+    private ISdEventService sdEventService;
+
+
     public static  List<SdRadarDetectData> sdRadarDetectDatalist = null;
     public static  List<SdRadarDetectData> sdRadarDetectDatalist1 = null;
     public static  List<SdRadarDetectData> sdRadarDetectDatalist2 = null;
@@ -77,7 +83,7 @@ public class RadarTask {
 
 
 
-//    @Scheduled(fixedRate = 100)
+    @Scheduled(fixedRate = 100)
     public void radarTask1() throws InterruptedException {
         List<Map> list = new ArrayList<>();
         if(sdRadarDetectDatalist2==null){
@@ -132,7 +138,7 @@ public class RadarTask {
 
     }
 
-//    @Scheduled(fixedRate = 100)
+    @Scheduled(fixedRate = 100)
     public void radarTask3() throws InterruptedException {
         List<Map> list = new ArrayList<>();
         if(sdRadarDetectDatalist1==null){
@@ -185,57 +191,15 @@ public class RadarTask {
 
     }
 
-//    @Scheduled(fixedRate = 100)
+    @Scheduled(fixedRate = 2000)
     public void radarTask2() throws InterruptedException {
-        if(sdRadarDetectDatalist==null){
-            sdRadarDetectDatalist = sdRadarDetectDataMapper.selectSdRadarDetectDataByVehicleLicense("鲁GF06332");
-            if(sdRadarDetectDatalist!=null&&sdRadarDetectDatalist.size()>0){
-                sdRadarDetectDatalist = sdRadarDetectDatalist;
-            }
-        }
-
-
-//        for( SdRadarDetectData sdRadarDetectData:sdRadarDetectDatalist){
-        Map<String, Object> map = new HashMap<>();
-        map.put("tunnelId", TunnelEnum.HANG_SHAN_DONG.getCode());
-        map.put("roadDir",sdRadarDetectDatalist.get(num1).getRoadDir());
-        map.put("speed",sdRadarDetectDatalist.get(num1).getSpeed());
-        map.put("laneNo",sdRadarDetectDatalist.get(num1).getLaneNum());
-        map.put("vehicleType",sdRadarDetectDatalist.get(num1).getVehicleType());
-        map.put("lat",sdRadarDetectDatalist.get(num1).getLatitude());
-        map.put("lng",sdRadarDetectDatalist.get(num1).getLongitude());
-        map.put("distance",sdRadarDetectDatalist.get(num1).getDistance());
-        map.put("vehicleLicense",sdRadarDetectDatalist.get(num1).getVehicleLicense());
-        List<Map> list = new ArrayList<>();
-        list.add(map);
+        SdEvent sdEvent = new SdEvent();
+        sdEvent.setId(3260L);
+        List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
+        //新增事件后推送前端
         JSONObject object = new JSONObject();
-        object.put("radarDataList", list);
-        if(num1==sdRadarDetectDatalist.size()-3){
-            num1= 0;
-        }else{
-            num1=num1+1;
-        }
-
-        try {
-//            WebSocketService.broadcast("radarDataList", object.toString());
-            //通过redis获取需要推送的数据的key
-            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
-            for (String key :scanKey){
-                Map<String, Object> cacheMap = redisCache.getCacheMap(key);
-                String s = key.replaceAll(Constants.CAR_TOKEN, "");
-                String tunnelId = (String)map.get("tunnelId");
-                for(String keys : cacheMap.keySet()){
-                    if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
-                        WebSocketService.postEvent(s,"radarDataList",object.toString());
-                    }
-                }
-
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            System.out.println("111111"+e.getMessage());
-            System.out.println("222222"+e.getLocalizedMessage());
-        }
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
     }
 
     public void controlDevice(SdRadarDetectData cacheObject){

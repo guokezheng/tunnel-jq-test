@@ -13,6 +13,7 @@ const websocket = {
     carList: [],
     realTimeLaneTrajectory: {},
     sdEventList: {},
+    sdSvgEventList: {},
     radarDataList: {},
     deviceStatus: {},
     deviceStatusChangeLog: {},
@@ -35,6 +36,9 @@ const websocket = {
     },
     SDEVENTLIST: (state, data) => {
       state.sdEventList = data
+    },
+    SDSVGEVENTLIST: (state, data) => {
+      state.sdSvgEventList = data
     },
     RADARDATALIST: (state, data) => {
       state.radarDataList = data

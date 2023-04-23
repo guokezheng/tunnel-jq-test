@@ -192,7 +192,7 @@
           >
             操作日志
           </el-button>
-     
+
         </div>
       </div>
       <div class="vehicleLane">
@@ -1345,7 +1345,7 @@
         style="width: 100%; margin-bottom: 10px !important"
         max-height="220"
         size="mini"
-        
+
         @row-click="handleRowClick"
       >
         <el-table-column
@@ -1628,7 +1628,7 @@
         <el-col :span="10" :offset="10">
           <div class="grid-content bg-purple" ref="main1">
             <el-input
-              placeholder="请输入操作地址，回车搜索"
+              placeholder="请输入设备名称、桩号、操作地址，回车搜索"
               v-model="operationParam.operIp"
               @keyup.enter.native="handleQueryOperationParam"
               size="small"
@@ -1890,6 +1890,7 @@
           prop="typeName.typeName"
         />
         <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
+        <el-table-column label="桩号" align="center" prop="pile" />
         <el-table-column
           label="操作状态"
           align="center"
@@ -2474,7 +2475,7 @@
               :label="item.typeName"
               :value="item.typeId"
             />
-           
+
           </el-select>
         </el-form-item>
         <el-form-item label="方向">
@@ -5462,6 +5463,7 @@ export default {
     handleChangePhone(num) {},
     // 操作日志 搜索
     handleQueryOperationParam() {
+      this.operationList2 = [];
       this.syxt_boxShow = false
       this.sycz_boxShow1 = false
       this.operationParam.pageNum = 1;
@@ -8206,12 +8208,12 @@ export default {
           }else if(item.eqType == 22){
             this.$refs.radioRef.init(this.eqInfo,this.brandList,this.directionList,this.eqTypeDialogList)
           }
-          
-        })
-        
 
-  
-       
+        })
+
+
+
+
         // 防止 ‘暂未获取’ 和 配置状态单选同时出现
         // this.spanEqtypeDate = true;
         // let newPromise = new Promise((resolve) => {

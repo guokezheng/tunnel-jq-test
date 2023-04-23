@@ -130,4 +130,6 @@ public interface SdFaultListMapper
     List<SdPatrolList> getDevicesRepairInfo(String faultId);
 
     String selectSdFaultEqById(@Param("eqFaultId") String eqFaultId);
+
+    List<SdPatrolList> getFaultRepairReportInfo(@Param("faultId")String faultId);
 }

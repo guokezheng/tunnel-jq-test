@@ -188,31 +188,36 @@ public class SdFaultListController extends BaseController {
                 faultTbtime = format.format(DateUtil.parse(fault.getFaultTbtime().toString()));
             }
             AtomicInteger i = new AtomicInteger(1);
-            if (faultMap.get("imgFileId") != null) {
+            if (faultMap.get("imgFileId") != null&&!"".equals(faultMap.get("imgFileId"))) {
                 String faultImgId = faultMap.get("imgFileId").toString();
                 SdTrafficImage sdTrafficImage = new SdTrafficImage();
                 sdTrafficImage.setBusinessId(faultImgId);
                 List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(sdTrafficImage);
                 if (imageList.size() > 0) {
-                    // 图片的处理
-                    String imageBaseStr = imageList.get(0).getImgUrl();
-                    Base64.Decoder decoder = Base64.getDecoder();
-                    // 去掉base64前缀
-                    imageBaseStr = imageBaseStr.substring(imageBaseStr.indexOf(",", 1) + 1, imageBaseStr.length());
-                    byte[] b = decoder.decode(imageBaseStr);
-                    // 处理数据
-                    for (int a = 0; a < b.length; ++a) {
-                        if (b[a] < 0) {
-                            b[a] += 256;
+                    List<PictureRenderData>photoList = new ArrayList<>();
+                    for(int y = 0;y<imageList.size();y++) {
+                        String faultPhoto = "faultPhoto"+y;
+                        // 图片的处理
+                        String imageBaseStr = imageList.get(y).getImgUrl();
+                        Base64.Decoder decoder = Base64.getDecoder();
+                        // 去掉base64前缀
+                        imageBaseStr = imageBaseStr.substring(imageBaseStr.indexOf(",", 1) + 1, imageBaseStr.length());
+                        byte[] b = decoder.decode(imageBaseStr);
+                        // 处理数据
+                        for (int a = 0; a < b.length; ++a) {
+                            if (b[a] < 0) {
+                                b[a] += 256;
+                            }
                         }
+                        byte[] bytes = decoder.decode(imageBaseStr);
+                        PictureRenderData pictureRenderData = Pictures.ofStream(new ByteArrayInputStream(bytes), PictureType.PNG)
+                                .size(250, 160).create();
+                        photoList.add(pictureRenderData);
+                        faultMap.put(faultPhoto, pictureRenderData);
                     }
-                    byte[] bytes = decoder.decode(imageBaseStr);
-                    PictureRenderData pictureRenderData = Pictures.ofStream(new ByteArrayInputStream(bytes), PictureType.PNG)
-                            .size(250, 160).create();
-                    faultMap.put("faultPhoto", pictureRenderData);
                 }
             }
-            List<SdPatrolList> list = SpringUtils.getBean(SdFaultListMapper.class).getFaultRepairInfo(faultId);
+            List<SdPatrolList> list = SpringUtils.getBean(SdFaultListMapper.class).getFaultRepairReportInfo(faultId);
             List<Map<String, Object>> convertList = new ArrayList<>();
             //数据按巡查顺序排序
             //list.sort(Comparator.comparing(SdPatrolList::getXcSort));
@@ -230,19 +235,24 @@ public class SdFaultListController extends BaseController {
                     trafficImage.setBusinessId(imgFileId);
                     List<SdTrafficImage> imageLists = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(trafficImage);
                     if (imageLists.size() > 0) {
-                        String imageBaseStr = imageLists.get(0).getImgUrl();
-                        Base64.Decoder decoder = Base64.getDecoder();
-                        imageBaseStr = imageBaseStr.substring(imageBaseStr.indexOf(",", 1) + 1, imageBaseStr.length());
-                        byte[] b = decoder.decode(imageBaseStr);
-                        for (int a = 0; a < b.length; ++a) {
-                            if (b[a] < 0) {
-                                b[a] += 256;
+                        for(int x = 0;x<imageLists.size();x++){
+                            String photo = "photo"+x;
+                            String imageBaseStr = imageLists.get(x).getImgUrl();
+                            Base64.Decoder decoder = Base64.getDecoder();
+                            imageBaseStr = imageBaseStr.substring(imageBaseStr.indexOf(",", 1) + 1, imageBaseStr.length());
+                            byte[] b = decoder.decode(imageBaseStr);
+                            for (int a = 0; a < b.length; ++a) {
+                                if (b[a] < 0) {
+                                    b[a] += 256;
+                                }
                             }
+                            byte[] bytes = decoder.decode(imageBaseStr);
+                            PictureRenderData renderData = Pictures.ofStream(new ByteArrayInputStream(bytes), PictureType.PNG)
+                                    .size(250, 126).create();
+                            map.put(photo, renderData);
                         }
-                        byte[] bytes = decoder.decode(imageBaseStr);
-                        PictureRenderData renderData = Pictures.ofStream(new ByteArrayInputStream(bytes), PictureType.PNG)
-                                .size(250, 126).create();
-                        map.put("photo", renderData);
+
+
                     }
                 }
                 //序号
@@ -267,9 +277,21 @@ public class SdFaultListController extends BaseController {
                     put("Tbtime", finalFaultTbtime);
                     put("eqName", eqName);
                     put("typeName", typeName);
-                    if (faultMap.get("faultPhoto") != null) {
-                        put("faultPhoto", faultMap.get("faultPhoto"));
+                    List<String>photolist = new ArrayList<>();
+                    for (String key : faultMap.keySet()) {
+                        if(key.contains("faultPhoto")){
+                            photolist.add(key);
+                        }
                     }
+                    if(photolist!=null&&photolist.size()>0){
+                        for(int q=0;q<photolist.size();q++){
+                            put(photolist.get(q), faultMap.get(photolist.get(q)));
+                        }
+                    }
+                    /*if (faultMap.get("faultPhoto") != null) {
+
+                        put("faultPhoto", faultMap.get("faultPhoto"));
+                    }*/
                     Class<?> cClass = (Class<?>) SdFaultList.class;
                     Field[] fields = cClass.getDeclaredFields();
                     for (Field field : fields) {

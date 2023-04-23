@@ -97,7 +97,7 @@ public interface SdOperationLogMapper
 
     List<String> getTunnelArrayByDeptId(@Param("deptId")String deptId);
 
-    int selectAppOperationLogCountList(@Param("start")String start,@Param("end")String end, @Param("tunnelArray")List<String> tunnelArray);
+    int selectAppOperationLogCountList(@Param("eqId")String eqId,@Param("start")String start,@Param("end")String end, @Param("tunnelArray")List<String> tunnelArray);
 
     List<SdOperationLog> selectAppOperationLogList(SdOperationLog sdOperationLog);
 }

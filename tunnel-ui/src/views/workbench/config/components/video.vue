@@ -8,15 +8,16 @@
       append-to-body
       :visible="cameraVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
       :modal="false"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
-      <div style="width: 100%; height: 200px;">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <div style="width: 100%; height: 200px; padding: 0 15px">
         <video
-        v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
+          v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
           class="h5video_"
           controls
@@ -27,11 +28,10 @@
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
         ></video>
         <videoPlayer
-            v-if="videoForm.liveUrl "
-            :rtsp="videoForm.liveUrl"
-            :open="cameraPlayer"
-
-          ></videoPlayer>
+          v-if="videoForm.liveUrl"
+          :rtsp="videoForm.liveUrl"
+          :open="cameraPlayer"
+        ></videoPlayer>
       </div>
       <el-form
         ref="form"
@@ -68,8 +68,17 @@
             </el-row>
             <el-row>
               <el-col :span="13">
-                <el-form-item label="设备状态:"
-                :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
+                <el-form-item
+                  label="设备状态:"
+                  :style="{
+                    color:
+                      stateForm.eqStatus == '1'
+                        ? 'yellowgreen'
+                        : stateForm.eqStatus == '2'
+                        ? 'white'
+                        : 'red',
+                  }"
+                >
                   {{ geteqType(stateForm.eqStatus) }}
                 </el-form-item>
               </el-col>
@@ -154,11 +163,7 @@
           class="submitButton"
           >录像查看</el-button
         > -->
-        <el-button
-          class="closeButton"
-          @click="handleClosee()"
-          >取 消</el-button
-        >
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -169,12 +174,13 @@
       append-to-body
       :visible="historyVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
       :modal="false"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="historyForm"
         :model="queryParams"
@@ -227,7 +233,14 @@
           >重 置</el-button
         >
       </el-form>
-      <div style="width: 100%; height: 400px; overflow-y: auto; margin-bottom: 50px;">
+      <div
+        style="
+          width: 100%;
+          height: 400px;
+          overflow-y: auto;
+          margin-bottom: 50px;
+        "
+      >
         <div
           style="
             width: 19%;
@@ -274,37 +287,42 @@
       append-to-body
       :visible="yunTaiVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
       :modal="false"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-row class="yuntaiBox">
         <el-col :span="18">
           <div class="yuntaiVideoBox">
             <videoPlayer
-            v-if="videoForm.liveUrl "
-            :rtsp="videoForm.liveUrl"
-            :open="cameraPlayer"
-          ></videoPlayer>
+              v-if="videoForm.liveUrl"
+              :rtsp="videoForm.liveUrl"
+              :open="cameraPlayer"
+            ></videoPlayer>
           </div>
           <!-- <div class="yuntaiPic"> -->
-            <!-- <div @click="clickLeft()"><</div>
+          <!-- <div @click="clickLeft()"><</div>
             <div>
               <img :src="item.pic" v-for="(item,index) in picList" :key="index"></img>
             </div>
             <div @click="clickRight()">></div> -->
-            <!-- <img :src="videoIcon" v-for="(item,index) of 8" :key="index"/> -->
+          <!-- <img :src="videoIcon" v-for="(item,index) of 8" :key="index"/> -->
           <!-- </div> -->
         </el-col>
         <el-col :span="6">
           <div class="fangxiang">
             <div class="picBox">
-              <img :src="yuntai" v-for="(item,index) of yuntaiList" :key="index" @click="changeYunTai(item.cmdType)"/>
+              <img
+                :src="yuntai"
+                v-for="(item, index) of yuntaiList"
+                :key="index"
+                @click="changeYunTai(item.cmdType)"
+              />
             </div>
             <div class="yuzhiwei">预置位</div>
-
           </div>
           <div class="jiaJian">
             <div @click="changeYunTai(11)">-</div>
@@ -335,7 +353,7 @@
               inactive-color="#ddd"
               active-text="开"
               inactive-text="关"
-              @change="changeYunTai(yunTaiForm.yuShua,'yushua')"
+              @change="changeYunTai(yunTaiForm.yuShua, 'yushua')"
             >
             </el-switch>
           </div>
@@ -373,18 +391,16 @@
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { getDeviceById, videoStreaming } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
-import flvjs from 'flv.js'
+import flvjs from "flv.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 import { PTZContro } from "@/api/workbench/config.js"; //提交控制信息
 
 // import { getLocalIP } from "@/api/event/vedioRecord";
 
-
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
-  components:{
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  components: {
     videoPlayer,
-
   },
   data() {
     return {
@@ -395,7 +411,7 @@ export default {
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
       eventTypeData: [], //事件类型
-      yunTaiVisible:false,
+      yunTaiVisible: false,
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -403,39 +419,39 @@ export default {
       dateRange: [], //选择时间数组
       total: 0, // 总条数
       src: require("@/assets/images/warningPhoto.png"),
-      videoMoNi: '',
+      videoMoNi: "",
       // videoMoNi: require("../../../../assets/Example/d1.mp4"),
-      videoForm:{
-        liveUrl:'',
+      videoForm: {
+        liveUrl: "",
       },
       // hostIP: null,
-      cameraVisible:true,
-      videoIcon:require("@/assets/logo/equipment_log/固定摄像机-正常.png"),
-      yuntai:require("@/assets/cloudControl/yuntai.png"),
-      yuntaiList:[
+      cameraVisible: false,
+      videoIcon: require("@/assets/logo/equipment_log/固定摄像机-正常.png"),
+      yuntai: require("@/assets/cloudControl/yuntai.png"),
+      yuntaiList: [
         {
-          cmdType:21,//上
+          cmdType: 21, //上
         },
         {
-          cmdType:52,//右上
+          cmdType: 52, //右上
         },
         {
-          cmdType:24,//右
+          cmdType: 24, //右
         },
         {
-          cmdType:53,//右下
+          cmdType: 53, //右下
         },
         {
-          cmdType:22,//下
+          cmdType: 22, //下
         },
         {
-          cmdType:51,//左下
+          cmdType: 51, //左下
         },
         {
-          cmdType:23,//左
+          cmdType: 23, //左
         },
         {
-          cmdType:50,//左上
+          cmdType: 50, //左上
         },
       ],
       videoList: [
@@ -507,84 +523,61 @@ export default {
         dengGuang: false,
         chuXue: true,
       },
-      picPage:1,
+      picPage: 1,
       player: null,
-      tunnelId:''
-      // brandList:[],
-      // eqInfo:{},
-      // eqTypeDialogList:[],
-      // directionList:[],
+      tunnelId: "",
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
-  created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    this.getmessage();
-
-    // if(this.videoList.length > 4){
-    //   this.picList = this.videoList.slice(0,4)
-    // }
-    // getLocalIP().then((response) => {
-    //   console.log(response,"responseresponse");
-    //   this.hostIP = response;
-    // });
-  },
   methods: {
-    // init(eqInfo,eqTypeDialogList,brandList,directionList){
-    //   let that = this
-    //   console.log(eqInfo,eqTypeDialogList,brandList,directionList,"------------------")
-    //   console.log(this.cameraVisible,"this.cameraVisible")
-
-    //   that.eqInfo = eqInfo;
-    //   that.eqTypeDialogList = eqTypeDialogList;
-    //   that.brandList = brandList;
-    //   that.directionList = directionList
-    //   that.getmessage();
-
-    //   that.cameraVisible = true
-    // },
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.cameraVisible = true;
+      this.getmessage();
+    },
     // 点击云台方向
-    changeYunTai(cmdType,type){
-      if(type && cmdType == false){
-        cmdType = 48
-      }else if (type && cmdType == true){
-        cmdType = 49
+    changeYunTai(cmdType, type) {
+      if (type && cmdType == false) {
+        cmdType = 48;
+      } else if (type && cmdType == true) {
+        cmdType = 49;
       }
-      PTZContro(this.eqInfo.equipmentId,cmdType).then((res)=>{
-        console.log(res,"云台控制");
-      })
-
+      PTZContro(this.eqInfo.equipmentId, cmdType).then((res) => {
+        console.log(res, "云台控制");
+      });
     },
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
-
-
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          this.tunnelId = res.data.tunnelId
-          if(res.data.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS"){
-            displayH5sVideoAll(res.data.secureKey,"h5sVideo1");
-          }else{
-            videoStreaming(this.eqInfo.equipmentId).then((response) =>{
-              console.log(response,"视频流");
-              if(response.code == 200 && response.data){
-                this.videoForm = response.data
-                this.cameraPlayer = true
-              }else{
+          this.tunnelId = res.data.tunnelId;
+          if (res.data.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+            displayH5sVideoAll(res.data.secureKey, "h5sVideo1");
+          } else {
+            videoStreaming(this.eqInfo.equipmentId)
+              .then((response) => {
+                console.log(response, "视频流");
+                if (response.code == 200 && response.data) {
+                  this.videoForm = response.data;
+                  this.cameraPlayer = true;
+                } else {
+                  this.$modal.msgWarning("获取视频失败");
+                }
+              })
+              .catch((e) => {
                 this.$modal.msgWarning("获取视频失败");
-              }
-            }).catch((e)=>{
-              this.$modal.msgWarning("获取视频失败");
-            })
+              });
           }
         });
-
-        // await getInfo(this.eqInfo.clickEqType).then((response) => {
-        //     console.log(response, "查询设备当前状态");
-        //     this.stateForm.state = response.data.state;
-        //   });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -613,7 +606,8 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.cameraVisible = false;
+      this.yunTaiVisible = false;
     },
     // 录像查看
     videoViewing() {
@@ -631,30 +625,28 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
     },
-    clickLeft(){
-      if(this.videoList.length > 4){
-
-        if(this.picPage == 2){
-          this.picList = this.videoList.slice(0,4)
-          this.picPage = 1
-        }else if(this.picPage == 1){
-          this.picList = this.videoList.slice(4,8)
-          this.picPage = 2
+    clickLeft() {
+      if (this.videoList.length > 4) {
+        if (this.picPage == 2) {
+          this.picList = this.videoList.slice(0, 4);
+          this.picPage = 1;
+        } else if (this.picPage == 1) {
+          this.picList = this.videoList.slice(4, 8);
+          this.picPage = 2;
         }
-        this.$forceUpdate()
-
+        this.$forceUpdate();
       }
     },
-    clickRight(){
-      if(this.videoList.length > 4){
-        if(this.picPage == 2){
-          this.picList = this.videoList.slice(0,4)
-          this.picPage = 1
-        }else if(this.picPage == 1){
-          this.picList = this.videoList.slice(4,8)
-          this.picPage = 2
+    clickRight() {
+      if (this.videoList.length > 4) {
+        if (this.picPage == 2) {
+          this.picList = this.videoList.slice(0, 4);
+          this.picPage = 1;
+        } else if (this.picPage == 1) {
+          this.picList = this.videoList.slice(4, 8);
+          this.picPage = 2;
         }
-        this.$forceUpdate()
+        this.$forceUpdate();
       }
     },
   },
@@ -683,7 +675,7 @@ export default {
   background-color: #638ca6;
 }
 ::v-deep .el-pagination__total {
-  color: #01AAFD !important;
+  color: #01aafd !important;
 }
 .el-pagination.is-background .btn-prev,
 .el-pagination.is-background .btn-next,
@@ -712,11 +704,11 @@ export default {
   .yuntaiVideoBox {
     width: 100%;
     height: 400px;
-    .yunTaiVideo{
+    .yunTaiVideo {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: -100
+      z-index: -100;
     }
   }
   .yuntaiPic {
@@ -753,15 +745,14 @@ export default {
     //   height: 100%;
     //   padding-right: 5px;
     // }
-    img{
-      width:30px;
-      height:30px;
+    img {
+      width: 30px;
+      height: 30px;
       margin-left: 6px;
       cursor: pointer;
-      caret-color: rgba(0,0,0,0);
-
+      caret-color: rgba(0, 0, 0, 0);
     }
-    img:nth-of-type(1){
+    img:nth-of-type(1) {
       margin-left: 0;
     }
   }
@@ -771,96 +762,93 @@ export default {
     margin: 0 auto;
     transform: scale(0.8);
     position: relative;
-    .yuzhiwei{
+    .yuzhiwei {
       text-decoration: underline;
       color: #fff;
       font-size: 24px;
       position: absolute;
       left: 0;
       right: 0;
-      top:0;
+      top: 0;
       bottom: 0;
       margin: auto;
       height: 36px;
       width: 74px;
       cursor: pointer;
-      caret-color: rgba(0,0,0,0);
+      caret-color: rgba(0, 0, 0, 0);
     }
-    .picBox{
-      width:215px;
-      height:100%;
+    .picBox {
+      width: 215px;
+      height: 100%;
       margin: 0 auto;
       position: relative;
       transform: rotate(-23deg);
-      >div{
+      > div {
         text-decoration: underline;
         color: #fff;
         font-size: 24px;
         position: absolute;
         left: 0;
         right: 0;
-        top:0;
+        top: 0;
         bottom: 0;
         margin: auto;
         height: 36px;
         width: 74px;
         cursor: pointer;
-        caret-color: rgba(0,0,0,0);
+        caret-color: rgba(0, 0, 0, 0);
       }
-      >img{
+      > img {
         cursor: pointer;
-        caret-color: rgba(0,0,0,0);
+        caret-color: rgba(0, 0, 0, 0);
       }
-      >img:nth-of-type(1){
+      > img:nth-of-type(1) {
         position: absolute;
         top: -1px;
-        left:96px;
-        transform: rotate(0deg) scale(0.77)
+        left: 96px;
+        transform: rotate(0deg) scale(0.77);
       }
-      >img:nth-of-type(2){
+      > img:nth-of-type(2) {
         position: absolute;
         top: 45px;
-        left:137px;
+        left: 137px;
         transform: rotate(45deg) scale(0.77);
       }
-      >img:nth-of-type(3){
+      > img:nth-of-type(3) {
         position: absolute;
         top: 106px;
         left: 133px;
         transform: rotate(90deg) scale(0.77);
       }
-      >img:nth-of-type(4){
+      > img:nth-of-type(4) {
         position: absolute;
         top: 147px;
         left: 87px;
         transform: rotate(135deg) scale(0.77);
       }
-      >img:nth-of-type(5){
+      > img:nth-of-type(5) {
         position: absolute;
         top: 143px;
         left: 26px;
         transform: rotate(180deg) scale(0.77);
       }
-      >img:nth-of-type(6){
+      > img:nth-of-type(6) {
         position: absolute;
         top: 97px;
         left: -14px;
         transform: rotate(225deg) scale(0.77);
-
       }
-      >img:nth-of-type(7){
+      > img:nth-of-type(7) {
         position: absolute;
         top: 36px;
         left: -11px;
         transform: rotate(269deg) scale(0.77);
-
       }
-      >img:nth-of-type(8){
+      > img:nth-of-type(8) {
         position: absolute;
         top: -5px;
         left: 35px;
         transform: rotate(315deg) scale(0.77);
-
       }
     }
   }
@@ -880,10 +868,10 @@ export default {
       text-align: center;
       font-size: 18px;
       cursor: pointer;
-      caret-color: rgba(0,0,0,0);
+      caret-color: rgba(0, 0, 0, 0);
     }
     > div:nth-of-type(1):hover,
-    > div:nth-of-type(3):hover{
+    > div:nth-of-type(3):hover {
       background: #01aafd;
       color: #fff;
     }
@@ -916,33 +904,33 @@ export default {
     transform: translateY(-20px);
   }
 }
-::v-deep .el-switch__label{
-  color:#0A6591 !important;
+::v-deep .el-switch__label {
+  color: #0a6591 !important;
 }
-::v-deep .el-switch__label.is-active{
-  color:#FF9900 !important;
+::v-deep .el-switch__label.is-active {
+  color: #ff9900 !important;
 }
-::v-deep .el-switch__core{
+::v-deep .el-switch__core {
   height: 14px;
 }
-::v-deep .el-switch__core:after{
+::v-deep .el-switch__core:after {
   height: 12px;
   width: 12px;
   top: 0;
 }
-::v-deep .el-switch.is-checked .el-switch__core::after{
+::v-deep .el-switch.is-checked .el-switch__core::after {
   margin-left: -12px;
 }
-.paginationWorkbench{
+.paginationWorkbench {
   position: fixed;
   bottom: 350px !important;
   height: 60px;
 }
 
 ::v-deep .el-dialog__wrapper {
-    pointer-events: none !important;
-  }
-  ::v-deep .el-dialog {
-    pointer-events: auto !important;
-  }
+  pointer-events: none !important;
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
+}
 </style>

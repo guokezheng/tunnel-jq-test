@@ -178,16 +178,7 @@ import { setControlDeviceByParam } from "@/api/workbench/config.js"; //提交控
 
 export default {
   props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
-  watch: {
-    tab: {
-      handler(newValue) {
-        if (newValue) {
-          console.log(newValue, "newValue");
-          this.getChartMes(newValue);
-        }
-      },
-    },
-  },
+ 
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
@@ -204,7 +195,6 @@ export default {
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getMessage();
-    this.getChartMes();
   },
   methods: {
     // 查设备详情

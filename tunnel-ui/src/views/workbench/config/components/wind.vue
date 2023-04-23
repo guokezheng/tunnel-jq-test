@@ -8,11 +8,13 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="form"
         :model="stateForm"
@@ -58,21 +60,27 @@
         </el-row>
         <el-row>
           <el-col :span="13">
-            <el-form-item label="设备状态:"
-            :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
+            <el-form-item
+              label="设备状态:"
+              :style="{
+                color:
+                  stateForm.eqStatus == '1'
+                    ? 'yellowgreen'
+                    : stateForm.eqStatus == '2'
+                    ? 'white'
+                    : 'red',
+              }"
+            >
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
         </el-row>
         <div class="lineClass"></div>
         <el-row style="margin-top: 10px">
-          <el-col :span="13" >
-            <el-form-item label="风速:" >
-
-                {{ nowData }}
-                <span style="padding-left:5px"  v-if="nowData">m/s</span>
-
-
+          <el-col :span="13">
+            <el-form-item label="风速:">
+              {{ nowData }}
+              <span style="padding-left: 5px" v-if="nowData">m/s</span>
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -82,15 +90,12 @@
           </el-col>
         </el-row>
       </el-form>
-      <el-radio-group
-        v-model="tab"
-        style="margin: 0 0 10px;"
-      >
+      <el-radio-group v-model="tab" style="margin: 0 0 10px">
         <el-radio-button label="co">风速风向实时趋势</el-radio-button>
       </el-radio-group>
       <div id="feng" style="margin-bottom: 10px"></div>
       <!-- <div slot="footer" class="dialog-footer"> -->
-        <!-- <el-button
+      <!-- <el-button
           type="primary"
           size="mini"
           @click="handleClosee()"
@@ -98,7 +103,7 @@
           class="submitButton"
           >确 定</el-button
         > -->
-        <!-- <el-button
+      <!-- <el-button
           class="closeButton"
           @click="handleClosee()"
           >取 消</el-button
@@ -114,29 +119,41 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数
 import { getTodayFSFXData } from "@/api/workbench/config.js"; //查询弹窗图表信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       stateForm: {}, //弹窗表单
       title: "",
-      visible: true,
+      visible: false,
       tab: "co",
-      fengValue:'',
-      fengDirection:'',
-      nowData:''
+      fengValue: "",
+      fengDirection: "",
+      nowData: "",
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
-  created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    this.getMessage();
-  },
+  // created() {
+  //   console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
+  //   this.getMessage();
+  // },
   mounted() {
     // this.$nextTick(() => {
     //   this.initChart();
     // });
   },
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getMessage();
+      this.visible = true;
+    },
     // 查设备详情
     async getMessage() {
       var that = this;
@@ -149,9 +166,8 @@ export default {
         });
         await getTodayFSFXData(this.eqInfo.equipmentId).then((response) => {
           console.log(response, "风速风向数据");
-          if(response.data.nowData){
-            this.nowData = parseFloat(response.data.nowData).toFixed(2)
-
+          if (response.data.nowData) {
+            this.nowData = parseFloat(response.data.nowData).toFixed(2);
           }
 
           var xData = [];
@@ -161,7 +177,7 @@ export default {
             yData.push(item.count);
           }
           // this.fengValue = yData[yData.length-1]
-          this.fengDirection = response.data.windDirection
+          this.fengDirection = response.data.windDirection;
           this.$nextTick(() => {
             this.initChart(xData, yData);
           });
@@ -172,33 +188,6 @@ export default {
     },
     // 获取图表数据信息
     initChart(xData, yData) {
-      // var data = [
-      //   [0, 1, 0],
-      //   [280, 2, 2],
-      //   [260, 1, 4],
-      //   [290, 3, 6],
-      //   [240, 2, 8],
-      //   [270, 3, 10],
-      //   [0, 1, 12],
-      //   [280, 2, 14],
-      //   [260, 1, 16],
-      //   [290, 3, 18],
-      //   [240, 2, 20],
-      //   [270, 3, 22],
-      // ];
-      // var dateTime = [];
-      // var windSpeedList = [];
-      // var obj;
-      // console.log(data);
-      //   for (var i = 0; i < data.length; i++) {
-      //     var item = data[i];
-      //     obj = {
-      //       value: item[1],
-      //       symbolRotate: 180 - item[0],
-      //     };
-      //     windSpeedList.push(obj);
-      //     dateTime.push(item[2]);
-      //   }
       var mychart = echarts.init(document.getElementById("feng"));
 
       var option = {
@@ -211,19 +200,11 @@ export default {
             return res;
           },
         },
-        // dataZoom: [
-        //   {
-        //     type: "inside", //鼠标滑动缩放
-        //     realtime: false,
-        //     start: 30,
-        //     end: 70,
-        //   },
-        // ],
         grid: {
           left: "10%",
           right: "12%",
           bottom: "10%",
-          top:"24%",
+          top: "24%",
           containLabel: true,
         },
 
@@ -284,7 +265,7 @@ export default {
             // symbolOffset: [0, -3.5],
             // symbolSize: 8,
             // -----------------
-            smooth: true, //这句就是让曲线变平滑的
+            smooth: true, //让曲线变平滑
             // data: windSpeedList,
             data: yData,
             // 转折点为圆点 ------------
@@ -355,7 +336,7 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false
     },
   },
 };
@@ -383,5 +364,8 @@ export default {
 ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
   background: #00aaf2 !important;
   border-radius: 20px !important;
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
 }
 </style>

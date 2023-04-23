@@ -101,7 +101,26 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="发生时间" prop="eventTime">
+
+        <el-form-item label="隧道方向" prop="direction">
+          <el-select
+            v-model="queryParams.direction"
+            placeholder="请选择隧道方向"
+            clearable
+            size="small"
+            style="width: 325px"
+            @change="$forceUpdate()"
+          >
+            <el-option
+              v-for="item in directionList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="事件时间" prop="eventTime">
           <el-date-picker
             v-model="dateRange"
             size="small"
@@ -1014,7 +1033,7 @@
                       class="incHandContent"
                     >
                       <div class="classification">
-                        <el-tooltip v-if="items.flowContent" class="item" effect="dark" 
+                        <el-tooltip v-if="items.flowContent" class="item" effect="dark"
                         :content="items.flowContent" placement="right">
                           <div
                             class="type"
@@ -1763,7 +1782,7 @@ export default {
       // 点击查看按钮重置tab
       this.deviceIndexShow = 0;
       this.activeName = '0';
-      
+
       let lane = "";
       if (item.laneNo == null || item.laneNo.length == 0) {
         lane = "";
@@ -2681,6 +2700,7 @@ export default {
       this.queryParams.eventTypeId = "";
       this.queryParams.tunnelId = null;
       this.queryParams.prevControlType = null;
+      this.queryParams.direction = null;
       this.queryParams.fuzzySearch = "";
       this.fuzzySearch1 = "";
       this.checkBoxEventState = [];

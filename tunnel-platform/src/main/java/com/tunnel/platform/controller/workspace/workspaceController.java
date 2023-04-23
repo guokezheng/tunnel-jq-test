@@ -178,15 +178,21 @@ public class workspaceController extends BaseController {
             if (sdDeviceTypeItems.size() == 0) {
                 throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
             }
+            //加强照明状态拼接
+            String LinState = "";
             if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
                 sdDeviceTypeItems.stream().forEach(item -> {
-                     if("brightness".equals(item.getItemCode())){
+                    if("brightness".equals(item.getItemCode())){
                         updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));
                     }
                     if("state".equals(item.getItemCode())){
                         updateDeviceData(sdDevices, state, Integer.parseInt(item.getId().toString()));
                     }
                 });
+                if(brightness != null){
+                    LinState = state.equals("1")?"开启":"关闭";
+                    LinState += "，亮度："+brightness + "%";
+                }
             }else {
                 SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
                 updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
@@ -197,7 +203,11 @@ public class workspaceController extends BaseController {
             sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
             sdOperationLog.setEqId(sdDevices.getEqId());
             sdOperationLog.setCreateTime(new Date());
-            sdOperationLog.setOperationState(state);
+            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+                sdOperationLog.setOperationState(LinState);
+            }else {
+                sdOperationLog.setOperationState(state);
+            }
             sdOperationLog.setControlType("0");
             sdOperationLog.setState("1");
             sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));

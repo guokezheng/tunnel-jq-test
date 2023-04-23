@@ -319,8 +319,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getTaskToDo" parameterType="String" resultMap="SdTaskListResult">
-        select dispatch_time,task_name from sd_task_list where bz_id = #{deptId} OR
-        bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors))
+        select dispatch_time,task_name from sd_task_list
+        <if test="deptId != null and deptId != ''">
+            where bz_id = #{deptId} OR
+            bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors))
+        </if>
+
     </select>
 
 

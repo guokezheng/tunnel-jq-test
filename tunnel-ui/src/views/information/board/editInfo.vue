@@ -534,6 +534,7 @@ export default {
           this.boardEmitItem.CONTENT.replace("<br>", "\n").replace(/ /g, " ")
         )
       );
+      console.log(this.boardEmitItem.STAY,"this.boardEmitItem.STAY")
       this.dataForm.STAY = JSON.parse(
         JSON.stringify(Number(this.boardEmitItem.STAY) / 100)
       );
@@ -542,7 +543,8 @@ export default {
     getFontSizeList() {
       getFontSizeByDevicePixel(this.dataForm.screenSize).then((res) => {
         console.log(res, "根据分辨率筛字体大小");
-        this.fontSizeOpt = res.data;
+        this.fontSizeOpt = res.data.fontSizeList;
+        // this.dataForm.FONT_SIZE = res.data.defaultFont;
       });
     },
     changeFontSize() {
@@ -764,6 +766,10 @@ export default {
         return "SimHei";
       } else if (font == "楷体") {
         return "KaiTi";
+      } else if(font == "仿宋"){
+        return "FangSong";
+      } else if(font == "隶书"){
+        return 'LiSu';
       }
     },
     closeDialog() {

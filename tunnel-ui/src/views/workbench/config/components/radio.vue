@@ -8,6 +8,8 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>
@@ -140,7 +142,7 @@
 import { getDeviceById, playVoice, getAudioFileList } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       stateForm2: {
@@ -152,23 +154,44 @@ export default {
       stateForm:{},
       fileNamesList: [],
       title: "",
-      visible: true,
-      titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
-      tunnelId:''
+      visible: false,
+      tunnelId:'',
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
   created() {
-    this.getMessage();
-    const param ={
-      deviceId:this.eqInfo.equipmentId,
-    }
-    getAudioFileList(param).then((res) =>{
-      console.log(res,"文件列表");
-      this.fileNamesList = res.data
-    })
+    // this.getMessage();
+    // const param ={
+    //   deviceId:this.eqInfo.equipmentId,
+    // }
+    // getAudioFileList(param).then((res) =>{
+    //   console.log(res,"文件列表");
+    //   this.fileNamesList = res.data
+    // })
 
   },
   methods: {
+    init(eqInfo,brandList,directionList,eqTypeDialogList){
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getMessage();
+      this.getAudioFile()
+      this.visible = true
+    },
+    getAudioFile(){
+      const param ={
+        deviceId:this.eqInfo.equipmentId,
+      }
+      getAudioFileList(param).then((res) =>{
+        console.log(res,"文件列表");
+        this.fileNamesList = res.data
+      })
+    },
     // 查设备详情
     async getMessage() {
       var that = this;
@@ -181,9 +204,6 @@ export default {
           this.title = this.stateForm.eqName;
           this.tunnelId = res.data.tunnelId
         });
-        // await playVoice().then((response) =>{
-
-        // })
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -193,14 +213,9 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false
     },
     handleOK(){
-      // const items = []
-
-      // const divId = {}
-      // divId.deviceId = this.stateForm.externalDeviceId
-      // items.push(divId)
       const param ={
         lib:"YeastarHost",
         loop: this.stateForm2.loop,
@@ -216,7 +231,7 @@ export default {
       playVoice(param).then((res) =>{
         this.$modal.msgSuccess("控制成功");
       })
-        this.$emit("dialogClose");
+      this.visible = false
       },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -240,10 +255,6 @@ export default {
         }
       }
     },
-    // 关闭弹窗
-    handleClosee() {
-      this.$emit("dialogClose");
-    },
   },
 };
 </script>
@@ -263,5 +274,8 @@ export default {
     border: solid 1px #fff;
     background-color: #ff9300;
   }
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
 }
 </style>

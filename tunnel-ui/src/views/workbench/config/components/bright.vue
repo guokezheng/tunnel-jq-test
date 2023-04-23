@@ -8,6 +8,8 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>
@@ -116,7 +118,7 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数
 import { getTodayLDData } from "@/api/workbench/config.js"; //查询弹窗图表信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
@@ -131,18 +133,31 @@ export default {
     return {
       stateForm: {},
       title: "",
-      visible: true,
+      visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       tab: "Inside",
       nowData: "",
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
   created() {
-    this.getMessage();
-    this.getChartMes();
-    console.log(this.eqInfo,"eqInfo")
+    // this.getMessage();
+    // this.getChartMes();
+    // console.log(this.eqInfo,"eqInfo")
   },
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getMessage();
+      this.visible = true;
+      this.getChartMes();
+    },
     // 查设备详情
     async getMessage() {
       if (this.eqInfo.equipmentId) {
@@ -210,23 +225,9 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false
     },
     initChart(xData, yData) {
-      // var lincolor = [];
-      // var XData = [];
-      // var YData = [];
-
-      // if (this.tab == "Inside") {
-      // XData = inXdata;
-      // YData = inYdata;
-      // lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
-      // } else {
-      //   XData = outXdata;
-      //   YData = outYdata;
-      //   lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
-      // }
-
       this.mychart = echarts.init(document.getElementById("Inside"));
       var option = {
         tooltip: {
@@ -379,5 +380,8 @@ export default {
 
 ::v-deep .el-radio-button {
   margin: 0 10px;
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
 }
 </style>

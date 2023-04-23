@@ -1,74 +1,85 @@
 <template>
-    <div style="width: 100%; height: 100%">
-      <el-dialog
-        v-dialogDrag
-        class="workbench-dialog"
-        :title="title"
-        width="450px"
-        append-to-body
-        :visible="visible"
-        :before-close="handleClosee"
-      >
+  <div style="width: 100%; height: 100%">
+    <el-dialog
+      v-dialogDrag
+      class="workbench-dialog"
+      :title="title"
+      width="450px"
+      append-to-body
+      :visible="visible"
+      :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-        <el-form
-          ref="form"
-          :model="stateForm"
-          label-width="90px"
-          label-position="left"
-          size="mini"
-        >
-          <el-row>
-            <el-col :span="13">
-              <el-form-item label="设备类型:">
-                {{ stateForm.typeName }}
-              </el-form-item>
-            </el-col>
-            <el-col :span="11">
-              <el-form-item label="隧道名称:">
-                {{ stateForm.tunnelName }}
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="13">
-              <el-form-item label="位置桩号:">
-                {{ stateForm.pile }}
-              </el-form-item>
-            </el-col>
-            <el-col :span="11">
-              <el-form-item label="所属方向:">
-                {{ getDirection(stateForm.eqDirection) }}
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="13">
-              <el-form-item label="所属机构:">
-                {{ stateForm.deptName }}
-              </el-form-item>
-            </el-col>
-            <el-col :span="11">
-              <el-form-item label="设备厂商:">
-                {{ stateForm.supplierName }}
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="13">
-              <el-form-item label="设备状态:"
-              :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
-                {{ geteqType(stateForm.eqStatus) }}
-              </el-form-item>
-            </el-col>
-            <el-col :span="11">
-              <el-form-item label="当前压力值:">
-                {{ nowData }}
-              </el-form-item>
-            </el-col>
-          </el-row>
+      <el-form
+        ref="form"
+        :model="stateForm"
+        label-width="90px"
+        label-position="left"
+        size="mini"
+      >
+        <el-row>
+          <el-col :span="13">
+            <el-form-item label="设备类型:">
+              {{ stateForm.typeName }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="隧道名称:">
+              {{ stateForm.tunnelName }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="13">
+            <el-form-item label="位置桩号:">
+              {{ stateForm.pile }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="所属方向:">
+              {{ getDirection(stateForm.eqDirection) }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="13">
+            <el-form-item label="所属机构:">
+              {{ stateForm.deptName }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="设备厂商:">
+              {{ stateForm.supplierName }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="13">
+            <el-form-item
+              label="设备状态:"
+              :style="{
+                color:
+                  stateForm.eqStatus == '1'
+                    ? 'yellowgreen'
+                    : stateForm.eqStatus == '2'
+                    ? 'white'
+                    : 'red',
+              }"
+            >
+              {{ geteqType(stateForm.eqStatus) }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="当前压力值:">
+              {{ nowData }}
+            </el-form-item>
+          </el-col>
+        </el-row>
         <div class="lineClass"></div>
         <el-radio-group
           v-model="tab"
@@ -77,8 +88,8 @@
           <el-radio-button label="yali">压力表实时趋势</el-radio-button>
         </el-radio-group>
         <div id="yaliCharts" style="margin: 0px auto"></div>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
+      </el-form>
+      <div slot="footer" class="dialog-footer">
         <!-- <el-button
           type="primary"
           size="mini"
@@ -87,67 +98,72 @@
           class="submitButton"
           >确 定</el-button
         > -->
-        <el-button
-          class="closeButton"
-          @click="handleClosee()"
-          >取 消</el-button
-        >
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
-      </el-dialog>
-    </div>
-  </template>
+    </el-dialog>
+  </div>
+</template>
   <script>
-  import { getDeviceById, getTodayYcylData } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
-  import * as echarts from "echarts";
+import { getDeviceById, getTodayYcylData } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
+import * as echarts from "echarts";
 
-  export default {
-    props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
-    data() {
-      return {
-        stateForm: {},
-        title: "",
-        visible: true,
-        titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
-        nowData:'',
-        mychart:null,
-        tab:'yali',
-      };
-    },
-    created() {
+export default {
+  // props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
+  data() {
+    return {
+      stateForm: {},
+      title: "",
+      visible: false,
+      titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
+      nowData: "",
+      mychart: null,
+      tab: "yali",
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
+    };
+  },
+  created() {},
+  methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
       this.getMessage();
+      this.visible = true;
     },
-    methods: {
-      // 查设备详情
-      async getMessage() {
-        var that = this;
-        if (this.eqInfo.equipmentId) {
-          var obj = {};
-          // 查询单选框弹窗信息 -----------------------
-          await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-            console.log(res, "查询单选框弹窗信息");
-            this.stateForm = res.data;
-            this.title = res.data.eqName;
-            console.log(this.stateForm, "stateForm");
-          });
-          await getTodayYcylData(this.eqInfo.equipmentId).then((res) => {
-            console.log(res,"压力表折线图数据")
-            this.nowData = res.data.nowData
-            let xData = []
-            let yData = []
-            for(var item of res.data.todayYcylData){
-              xData.push(item.order_hour)
-              yData.push(item.count)
-
-            }
-            // console.log(xData,yData,"压力表echarts数据");
-            this.initChart(xData,yData)
-          })
-        } else {
-          this.$modal.msgWarning("没有设备Id");
-        }
-      },
-      initChart(xData, yData) {
-     console.log(xData, yData)
+    // 查设备详情
+    async getMessage() {
+      var that = this;
+      if (this.eqInfo.equipmentId) {
+        var obj = {};
+        // 查询单选框弹窗信息 -----------------------
+        await getDeviceById(this.eqInfo.equipmentId).then((res) => {
+          console.log(res, "查询单选框弹窗信息");
+          this.stateForm = res.data;
+          this.title = res.data.eqName;
+          console.log(this.stateForm, "stateForm");
+        });
+        await getTodayYcylData(this.eqInfo.equipmentId).then((res) => {
+          console.log(res, "压力表折线图数据");
+          this.nowData = res.data.nowData;
+          let xData = [];
+          let yData = [];
+          for (var item of res.data.todayYcylData) {
+            xData.push(item.order_hour);
+            yData.push(item.count);
+          }
+          // console.log(xData,yData,"压力表echarts数据");
+          this.initChart(xData, yData);
+        });
+      } else {
+        this.$modal.msgWarning("没有设备Id");
+      }
+    },
+    initChart(xData, yData) {
+      console.log(xData, yData);
       this.mychart = echarts.init(document.getElementById("yaliCharts"));
       var option = {
         tooltip: {
@@ -258,51 +274,51 @@
         this.mychart.resize();
       });
     },
-      getDirection(num) {
-        for (var item of this.directionList) {
-          if (item.dictValue == num) {
-            return item.dictLabel;
-          }
+    getDirection(num) {
+      for (var item of this.directionList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
         }
-      },
-      getBrandName(num) {
-        // 根据字典表查设备厂商--------------------------
-        for (var item of this.brandList) {
-          if (Number(item.dictValue) == num) {
-            return item.dictLabel;
-          }
+      }
+    },
+    getBrandName(num) {
+      // 根据字典表查设备厂商--------------------------
+      for (var item of this.brandList) {
+        if (Number(item.dictValue) == num) {
+          return item.dictLabel;
         }
-      },
-      geteqType(num) {
+      }
+    },
+    geteqType(num) {
       for (var item of this.eqTypeDialogList) {
         if (item.dictValue == num) {
           return item.dictLabel;
         }
       }
     },
-      handleOK(){
-        this.$emit("dialogClose");
-      },
-      // 关闭弹窗
-      handleClosee() {
-        this.$emit("dialogClose");
-      },
+    handleOK() {
+      this.$emit("dialogClose");
     },
-  };
-  </script>
+    // 关闭弹窗
+    handleClosee() {
+      this.visible = false;
+    },
+  },
+};
+</script>
   <style lang="scss" scoped>
-    .tunnelDialogButton{
-        width: 100px;
-        height: 26px;
-        border-radius: 13px;
-        background-color: #00AAF2;
-        color:#fff;
-        text-align: center;
-        line-height: 26px;
-        margin-top: 15px;
-        margin-bottom: 10px;
-    }
-    .el-row {
+.tunnelDialogButton {
+  width: 100px;
+  height: 26px;
+  border-radius: 13px;
+  background-color: #00aaf2;
+  color: #fff;
+  text-align: center;
+  line-height: 26px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+.el-row {
   margin-bottom: -10px;
   display: flex;
   flex-wrap: wrap;
@@ -326,4 +342,7 @@
     height: 150px !important;
   }
 }
-  </style>
+::v-deep .el-dialog {
+  pointer-events: auto !important;
+}
+</style>

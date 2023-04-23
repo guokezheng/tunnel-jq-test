@@ -2,18 +2,14 @@ package com.tunnel.business.datacenter.domain.enumeration;
 
 
 /**
- * 预案事件检索规则条件
+ * 情报板分辨率匹配默认字体大小
  *
  * @author zhai
  */
-public enum EventSearchRulesEnum {
+public enum InformationBoardFontEnum {
 
-    ONE("1", "指定设备资源"),
-    TWO("2", "最近3公里"),
-    THREE("3", "最近5个"),
-    FOUR("4", "事发上游所有"),
-    FIVE("5", "事发下游所有"),
-    SEVEN("6", "事件下游最近1个");
+    FOUR_EIGHT("144*48", "24px"),
+    ONE_TWO_EIGHT("768*128", "64px");
     private String code;
     private String name;
 
@@ -27,7 +23,7 @@ public enum EventSearchRulesEnum {
         if (null == code) {
             return false;
         }
-        for (EventSearchRulesEnum typeEnum : EventSearchRulesEnum.values()) {
+        for (InformationBoardFontEnum typeEnum : InformationBoardFontEnum.values()) {
 
             if (code.equals(typeEnum.code)) {
                 return true;
@@ -44,7 +40,7 @@ public enum EventSearchRulesEnum {
      */
     public static String getValue(String code) {
         // 遍历枚举
-        for (EventSearchRulesEnum value : EventSearchRulesEnum.values()) {
+        for (InformationBoardFontEnum value : InformationBoardFontEnum.values()) {
             String s = value.getCode() + "";
             if (s.equals(String.valueOf(code))) {
                 return value.getName();
@@ -62,7 +58,7 @@ public enum EventSearchRulesEnum {
         return name;
     }
 
-    EventSearchRulesEnum(String code, String name) {
+    InformationBoardFontEnum(String code, String name) {
         this.code = code;
         this.name = name;
     }

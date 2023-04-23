@@ -52,7 +52,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
     }
 
     @Override
-    public int selectAppOperationLogCountList(String time, String deptId) {
+    public int selectAppOperationLogCountList(String eqId,String time, String deptId) {
         List<String> tunnelArray = null;
         String start = null;
         String end = null;
@@ -65,7 +65,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
             start = String.valueOf(getTimeStamp(time).get(0));
             end = String.valueOf(getTimeStamp(time).get(1));
         }
-        return sdOperationLogMapper.selectAppOperationLogCountList(start,end,tunnelArray);
+        return sdOperationLogMapper.selectAppOperationLogCountList(eqId,start,end,tunnelArray);
     }
 
     /**
@@ -183,7 +183,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
      * @return
      */
     @Override
-    public List<SdOperationLog> selectAppOperationLogList(String time,String deptId,Integer pageSize,Integer pageNum) {
+    public List<SdOperationLog> selectAppOperationLogList(String eqId,String time,String deptId,Integer pageSize,Integer pageNum) {
         List<String> tunnelArray = null;
         String start = null;
         String end = null;
@@ -202,6 +202,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
         sdOperationLog.getParams().put("tunnelArray", tunnelArray);
         sdOperationLog.getParams().put("start", start);
         sdOperationLog.getParams().put("end", end);
+        sdOperationLog.getParams().put("eqId", eqId);
         /*SdOperationLog sdOperationLog = new SdOperationLog();
         return sdOperationLogMapper.selectSdOperationLogList(sdOperationLog);*/
         return sdOperationLogMapper.selectAppOperationLogList(sdOperationLog);

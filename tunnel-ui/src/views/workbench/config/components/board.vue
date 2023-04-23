@@ -1,12 +1,15 @@
 <template>
   <div style="width: 100%; height: 100%">
     <el-dialog
+      v-dialogDrag
       class="workbench-dialog boardDialog"
       :title="title"
       width="835px"
       append-to-body
-      :visible="cameraVisible"
+      :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -191,7 +194,11 @@
               @click="releaseInfo()"
               v-hasPermi="['workbench:dialog:save']"
               :disabled="contentList.length == 0"
-              :class="contentList.length == 0?'zancunButtonDisabled':'zancunButton'"
+              :class="
+                contentList.length == 0
+                  ? 'zancunButtonDisabled'
+                  : 'zancunButton'
+              "
               >信息发布</el-button
             >
           </div>
@@ -263,78 +270,7 @@
         </div>
       </div>
     </el-dialog>
-    <!-- <el-dialog
-      class="workbench-dialog mesModeDialog"
-      title="信息模板"
-      width="800px"
-      append-to-body
-      :visible="mesModeVisible"
-      :before-close="closeMesMode"
-    >
-      <div class="mesModeBg">
-        <div class="mesModeBox">
-          <el-collapse v-model="activeNames" @change="handleChange">
-            <el-collapse-item
-              v-for="(item, index) in iotTemplateCategoryList"
-              :key="index"
-              :title="item.dictLabel"
-              :name="item.dictValue"
-            >
-              <div
-                v-for="(itm, indx) in item.list"
-                :key="indx"
-                class="con"
-                :style="{
-                  'font-size': getFontSize(
-                    itm.tcontents[0].fontSize,
-                    itm.screenSize
-                  ),
-                  color: itm.tcontents[0].fontColor,
-                  fontFamily: itm.tcontents[0].fontType,
-                }"
-              >
-                <div class="templateTitle">
-                  <div
-                    :style="{
-                      width: getDevicePixel(itm.screenSize, 0) + 'px',
-                      height: getDevicePixel(itm.screenSize, 1) + 'px',
-                    }"
-                    style="background: black; position: relative"
-                  >
-                    <span
-                      :style="{
-                        left: getCoordinate(
-                          itm.tcontents[0].coordinate.substring(0, 3),
-                          'left',
-                          itm.screenSize
-                        ),
-                        top: getCoordinate(
-                          itm.tcontents[0].coordinate.substring(3, 6),
-                          'top',
-                          itm.screenSize
-                        ),
-                      }"
-                      class="boardTextStyle"
-                      v-html="
-                        itm.tcontents[0].content
-                          .replace(/\n|\r\n/g, '<br>')
-                          .replace(/ /g, ' &nbsp')
-                      "
-                    ></span>
-                  </div>
-                </div>
-                <div class="downIcon">
-                  <div
-                    class="el-icon-d-arrow-left"
-                    @click="arrowLeft(itm)"
-                  ></div>
-                </div>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-        </div>
-      </div>
-    </el-dialog> -->
+
     <editInfo
       :boardEmitItem="this.boardEmitItem"
       @receiveForm="receiveForm"
@@ -362,7 +298,7 @@ import addinfo from "@/views/information/board//addinfo";
 import Sortable from "sortablejs";
 import { getBoardEditInfo } from "@/api/information/api.js";
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   components: {
     editInfo,
     addinfo,
@@ -372,219 +308,87 @@ export default {
       loading: false,
       msgModeShow: false,
       associatedDeviceId: "",
-      titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
-      cameraVisible: true, //摄像机弹窗
+      visible: false, //情报板弹窗
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
       infoType: "info",
-      mesModeVisible: false,
       boardEmitItem: {},
       showEmit: false,
       index_: 0,
-      boardWidth: 400,
-      boardHeight: 40,
-
+      // boardWidth: 400,
+      // boardHeight: 40,
       addForm: {
-        category: "0",
-        screenSize: "400*40",
-        COORDINATE: "000000",
-        CONTENT: "山东高速欢迎你",
-        FONT: "黑体",
-        FONT_SIZE: "32px",
-        COLOR: "yellow",
-        ACTION: 1,
-        STAY: 500,
-        position: 1,
+        // category: "0",
+        // screenSize: "400*40",
+        // COORDINATE: "000000",
+        // CONTENT: "山东高速欢迎你",
+        // FONT: "黑体",
+        // FONT_SIZE: "32px",
+        // COLOR: "yellow",
+        // ACTION: 1,
+        // STAY: 500,
+        // position: 1,
       },
       iotTemplateCategoryList: [],
-      screenSizeOptions: [
-        {
-          type: "400*40",
-        },
-        {
-          type: "128*64",
-        },
-      ],
-      fontTypeOptions: [
-        // {
-        //   code: "KaiTi",
-        //   content: "楷体",
-        // },
-        // {
-        //   code: "SimSun",
-        //   content: "宋体",
-        // },
-        // {
-        //   code: "SimHei",
-        //   content: "黑体",
-        // },
-      ],
-      fontSizeOpt: [
-        {
-          value: "32px",
-          label: "32px",
-        },
-        {
-          value: "24px",
-          label: "24px",
-        },
-        {
-          value: "16px",
-          label: "16px",
-        },
-      ],
-      colorOptions: [
-        // {
-        //   code: "red",
-        //   content: "红色",
-        // },
-        // {
-        //   code: "yellow",
-        //   content: "黄色",
-        // },
-        // {
-        //   code: "blue",
-        //   content: "蓝色",
-        // },
-        // {
-        //   code: "#00FF00",
-        //   content: "绿色",
-        // },
-      ],
-      inScreenModeOptions: [
-        {
-          code: "0",
-          name: "清屏（全黑)",
-        },
-        {
-          code: "1",
-          name: "立即显示",
-        },
-        {
-          code: "2",
-          name: "上移",
-        },
-        {
-          code: "3",
-          name: "下移",
-        },
-        {
-          code: "4",
-          name: "左移",
-        },
-        {
-          code: "5",
-          name: "右移",
-        },
-        {
-          code: "6",
-          name: "横百叶窗",
-        },
-        {
-          code: "7",
-          name: "竖百叶窗",
-        },
-        {
-          code: "8",
-          name: "上下合拢",
-        },
-        {
-          code: "9",
-          name: "上下展开",
-        },
-        {
-          code: "10",
-          name: "左右合拢",
-        },
-        {
-          code: "11",
-          name: "左右展开",
-        },
-        {
-          code: "12",
-          name: "中心合拢",
-        },
-        {
-          code: "13",
-          name: "中心展开",
-        },
-        {
-          code: "14",
-          name: "向下马赛克",
-        },
-        {
-          code: "15",
-          name: "向右马赛克",
-        },
-        {
-          code: "16",
-          name: "淡入",
-        },
-        {
-          code: "17",
-          name: "淡出",
-        },
-        {
-          code: "18",
-          name: "字符闪烁（闪后消失）",
-        },
-        {
-          code: "19",
-          name: "字符闪烁（闪后停留）",
-        },
-        {
-          code: "20",
-          name: "区域闪烁（闪后复原）",
-        },
-        {
-          code: "21",
-          name: "区域闪烁（闪后区域为黑）",
-        },
-      ],
+      // fontTypeOptions: [],
+      // colorOptions: [],
       activeNames: [],
       templateList: [],
-      contentList: [
-        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
-        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
-        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
-      ],
+      contentList: [],
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
   watch: {
     contentList: function (newVal, oldVal) {
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.rowDrop();
-      })
+      });
     },
   },
   created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    this.getmessage();
+    // console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
+    // this.getmessage();
     // this.getAllVmsTemplate();
     // this.onSubmit();
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
-    this.getDicts("iot_devices_font_color").then((res) => {
-      this.colorOptions = res.data;
-      console.log(this.colorOptions, "字体颜色");
-    });
-    this.getDicts("iot_device_font_type").then((res) => {
-      this.fontTypeOptions = res.data;
-      console.log(this.fontTypeOptions, "字体类型");
-    });
+    // this.getDicts("iot_devices_font_color").then((res) => {
+    //   this.colorOptions = res.data;
+    //   console.log(this.colorOptions, "字体颜色");
+    // });
+    // this.getDicts("iot_device_font_type").then((res) => {
+    //   this.fontTypeOptions = res.data;
+    //   console.log(this.fontTypeOptions, "字体类型");
+    // });
   },
   mounted() {
     // this.rowDrop()
   },
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.contentList = [];
+      this.msgModeShow = true;
+      this.openMesMode();
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getmessage();
+      this.visible = true;
+    },
     // 行拖拽
     rowDrop() {
       if (JSON.parse(JSON.stringify(this.contentList)).length > 0) {
         // 要侦听拖拽响应的DOM对象
-        const tbody = document.querySelector(".infoBox .el-table__body-wrapper tbody");
+        const tbody = document.querySelector(
+          ".infoBox .el-table__body-wrapper tbody"
+        );
         const _this = this;
         Sortable.create(tbody, {
           // 结束拖拽后的回调函数
@@ -647,7 +451,7 @@ export default {
               this.$modal.msgSuccess("发布成功");
               console.log(response, "返回结果");
             }
-          )
+          );
         })
         .catch(() => {
           this.$message({
@@ -665,7 +469,8 @@ export default {
     },
     getColorValue(color) {
       if (color == "蓝色" || color == "blue") return "000000255000";
-      if (color == "绿色" || color == "#00FF00" ||  color == 'GreenYellow') return "000255000000";
+      if (color == "绿色" || color == "#00FF00" || color == "GreenYellow")
+        return "000255000000";
       if (color == "透明色" || color == "transparent") return "t";
       if (color == "红色" || color == "red") return "255000000000";
       return "255255000000"; //黄色
@@ -688,12 +493,12 @@ export default {
       this.$forceUpdate();
     },
     // 新增 修改分辨率
-    changeScreenSize(size) {
-      this.boardWidth = size.split("*")[0];
-      this.boardHeight = size.split("*")[1];
+    // changeScreenSize(size) {
+    //   this.boardWidth = size.split("*")[0];
+    //   this.boardHeight = size.split("*")[1];
 
-      this.$forceUpdate();
-    },
+    //   this.$forceUpdate();
+    // },
     // 接收子组件form表单 修改
     receiveForm(form) {
       console.log(form, "接收子组件form表单 修改");
@@ -945,19 +750,20 @@ export default {
     // 打开信息模板
     openMesMode() {
       let dialog = $(".boardDialog .el-dialog")[0];
-      console.log(dialog, "dialogdialogdialog");
       if (this.msgModeShow == false) {
         this.msgModeShow = true;
         dialog.style.width = "1600px";
+        dialog.style.left = "200px";
       } else {
         this.msgModeShow = false;
         dialog.style.width = "835px";
+        dialog.style.left = "28%";
       }
     },
-    // 关闭信息模板
-    closeMesMode() {
-      this.mesModeVisible = false;
-    },
+    // // 关闭信息模板
+    // closeMesMode() {
+    //   this.mesModeVisible = false;
+    // },
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
@@ -1011,18 +817,18 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      getBoardContent(this.associatedDeviceId)
-        .then((res) => {
-          console.log(res, "情报板内容查询");
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-      this.$emit("dialogClose");
+      if (this.associatedDeviceId) {
+        getBoardContent(this.associatedDeviceId)
+          .then((res) => {
+            console.log(res, "情报板内容查询");
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
+      this.visible = false;
     },
     dialogClose1() {
-      // this.getmessage()
-      // console.log(this.contentList,"contentListcontentList")
       this.showEmit = false;
     },
   },
@@ -1063,6 +869,9 @@ export default {
   background: white;
 }
 .boardDialog {
+  .el-dialog {
+    left: 28%;
+  }
   // left: 6%;
   // margin: unset;
   // width: 840px;
@@ -1320,5 +1129,8 @@ export default {
 }
 ::v-deep .el-loading-mask {
   background: transparent !important;
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
 }
 </style>

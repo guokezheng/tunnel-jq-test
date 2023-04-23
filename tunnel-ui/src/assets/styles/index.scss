@@ -318,6 +318,12 @@ p {
 //   overflow: auto;
 // }
 // 右上角搜索icon
+.workbench-dialog{
+  pointer-events: none;
+}
+.v-modal{
+  pointer-events: none;
+}
 .searchTable{
   width: 30px !important;
   height: 30px !important;

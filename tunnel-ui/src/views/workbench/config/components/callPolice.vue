@@ -8,11 +8,13 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="form"
         :model="stateForm"
@@ -59,8 +61,17 @@
         </el-row>
         <el-row>
           <el-col :span="13">
-            <el-form-item label="设备状态:"
-            :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
+            <el-form-item
+              label="设备状态:"
+              :style="{
+                color:
+                  stateForm.eqStatus == '1'
+                    ? 'yellowgreen'
+                    : stateForm.eqStatus == '2'
+                    ? 'white'
+                    : 'red',
+              }"
+            >
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
@@ -95,31 +106,35 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="白灯亮度:">
-                <el-slider v-model="whiteLight" :show-tooltip="false" class="sliderClass"></el-slider>
+              <el-slider
+                v-model="whiteLight"
+                :show-tooltip="false"
+                class="sliderClass"
+              ></el-slider>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="黄灯亮度:">
-                <el-slider v-model="yellowLight" :show-tooltip="false" class="sliderClass"></el-slider>
+              <el-slider
+                v-model="yellowLight"
+                :show-tooltip="false"
+                class="sliderClass"
+              ></el-slider>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-          <el-button
-            @click="handleOK()"
-            class="submitButton"
-            v-hasPermi="['workbench:dialog:save']"
-            >执 行</el-button
-          >
-          <el-button
-            class="closeButton"
-            @click="handleClosee()"
-            >取 消</el-button
-          >
-        </div>
+        <el-button
+          @click="handleOK()"
+          class="submitButton"
+          v-hasPermi="['workbench:dialog:save']"
+          >执 行</el-button
+        >
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -128,47 +143,43 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框
 import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       stateForm: {},
       title: "",
-      visible: true,
+      visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       radioManual: 1,
-      checkboxLane:['1'],
-      whiteLight:50,
-      yellowLight:50,
+      checkboxLane: ["1"],
+      whiteLight: 50,
+      yellowLight: 50,
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
   created() {
-    this.getMessage();
+    // this.getMessage();
   },
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getMessage();
+      this.visible = true;
+    },
     // 查设备详情
     async getMessage() {
-      var that = this;
       if (this.eqInfo.equipmentId) {
-        var obj = {};
-        var state = "";
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
-
           this.title = this.stateForm.eqName;
-          // this.stateForm = {
-          //   brandName: that.getBrandName(obj.brandId), //厂商
-          //   eqDirection: that.getDirection(obj.eqDirection),
-
-          //   pile: obj.pile, //桩号
-          //   eqTypeName: obj.typeName, //设备类型名称
-          //   tunnelName: obj.tunnelName, //隧道名称
-          //   deptName: obj.deptName, //所属机构
-          //   eqType: obj.eqType, //设备类型号
-          //   state: obj.state,
-          // };
-          // console.log(this.stateForm, "stateForm");
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
@@ -198,22 +209,23 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      // this.$emit("dialogClose");
+      this.visible = false;
     },
-    handleOK(){
+    handleOK() {
       const param = {
         devId: this.stateForm.eqId, //设备id
         devType: this.eqInfo.clickEqType,
-        radioManual: this.radioManual,//控制模式
-        checkboxLane: this.checkboxLane,//车道
-        whiteLight: this.whiteLight,//白灯亮度
-        yellowLight: this.yellowLight,//黄灯亮度
-      }
+        radioManual: this.radioManual, //控制模式
+        checkboxLane: this.checkboxLane, //车道
+        whiteLight: this.whiteLight, //白灯亮度
+        yellowLight: this.yellowLight, //黄灯亮度
+      };
       controlDevice(param).then((response) => {
         console.log(response, "提交控制");
-        this.$emit("dialogClose");
+        this.visible = false;
       });
-      },
+    },
   },
 };
 </script>
@@ -229,21 +241,23 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
-::v-deep.sliderClass{
-    .el-slider__runway{
-        width: 50%;
-        background-color: #006784;
-        margin:12px 0;
-    }
-    .el-slider__bar{
-        background: linear-gradient(90deg, #00ADED 0%, #007CDD 100%);
-    }
-    .el-slider__button{
-        width:10px;
-        height:10px;
-        border: solid 1px #fff;
-    background-color: #FF9300;
-    }
+::v-deep.sliderClass {
+  .el-slider__runway {
+    width: 50%;
+    background-color: #006784;
+    margin: 12px 0;
+  }
+  .el-slider__bar {
+    background: linear-gradient(90deg, #00aded 0%, #007cdd 100%);
+  }
+  .el-slider__button {
+    width: 10px;
+    height: 10px;
+    border: solid 1px #fff;
+    background-color: #ff9300;
+  }
 }
-
+::v-deep .el-dialog {
+  pointer-events: auto !important;
+}
 </style>

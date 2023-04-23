@@ -190,19 +190,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.impression,p.network,p.power,p.eq_fault_code,
     p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,t.bz_id,e.dept_name bzName,t.walker_id,
     u.user_id userName,
-    s.state_name as run_status,a.state_name as eq_status,p.create_time
+    s.state_name as run_status,a.dict_label as eq_status,p.create_time
     from sd_patrol_list p
     left join sd_fault_list f on f.id = p.eq_fault_id
     left join sd_task_list t on t.id = p.task_id
-    left join sys_dept e on e.dept_id = t.bz_id
+    left join sd_teams e on e.dept_id = t.bz_id
     left join sys_user u on u.user_id = t.walker_id
     left join sd_devices d on d.eq_id = f.eq_id
     left join sd_equipment_state s on s.device_state = p.run_status  and
     d.eq_type = s.state_type_id and  s.state_type = '2'
-    left join sd_equipment_state a on a.device_state = p.eq_status  and
-    d.eq_type = a.state_type_id and  a.state_type = '1'
+    LEFT JOIN sys_dict_data a ON a.dict_value = p.eq_status
+                AND a.dict_type = 'sd_monitor_state'
     where p.eq_fault_id = #{faultId}
     </select>
+
+    <select id="getFaultRepairReportInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
+    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,i.dict_label impression,n.dict_label network,o.dict_label power,p.eq_fault_code,
+    p.eq_fault_description,h.dict_label fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,t.bz_id,e.dept_name bzName,t.walker_id,
+    u.user_id userName,
+    s.state_name as run_status,a.dict_label as eq_status,p.create_time
+    from sd_patrol_list p
+    left join sd_fault_list f on f.id = p.eq_fault_id
+    left join sd_task_list t on t.id = p.task_id
+    left join sd_teams e on e.dept_id = t.bz_id
+    left join sys_user u on u.user_id = t.walker_id
+    left join sd_devices d on d.eq_id = f.eq_id
+    left join sys_dict_data i on i.dict_value = p.impression and i.dict_type = 'impression'
+	left join sys_dict_data n on n.dict_value = p.impression and n.dict_type = 'network'
+	left join sys_dict_data o on o.dict_value = p.impression and o.dict_type = 'power'
+	left join sys_dict_data h on h.dict_value = p.fault_clstatus and h.dict_type = 'fault_clstatus'
+    left join sd_equipment_state s on s.device_state = p.run_status  and
+    d.eq_type = s.state_type_id and  s.state_type = '2'
+    LEFT JOIN sys_dict_data a ON a.dict_value = p.eq_status
+                AND a.dict_type = 'sd_monitor_state'
+    where p.eq_fault_id = #{faultId}
+    </select>
+
 
 
 
@@ -210,17 +233,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.impression,p.network,p.power,p.eq_fault_code,
     p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,t.bz_id,e.dept_name bzName,t.walker_id,
     u.user_id userName,
-    s.state_name as run_status,a.state_name as eq_status,p.create_time
+    s.state_name as run_status,a.dict_label as eq_status,p.create_time
     from sd_patrol_list p
     left join sd_fault_list f on f.id = p.eq_fault_id
     left join sd_task_list t on t.id = p.task_id
-    left join sys_dept e on e.dept_id = t.bz_id
+    left join sd_teams e on e.dept_id = t.bz_id
     left join sys_user u on u.user_id = t.walker_id
     left join sd_devices d on d.eq_id = p.eq_fault_id
     left join sd_equipment_state s on s.device_state = p.run_status  and
     d.eq_type = s.state_type_id and  s.state_type = '2'
-    left join sd_equipment_state a on a.device_state = p.eq_status  and
-    d.eq_type = a.state_type_id and  a.state_type = '1'
+    LEFT JOIN sys_dict_data a ON a.dict_value = p.eq_status
+                AND a.dict_type = 'sd_monitor_state'
     where p.eq_fault_id = #{faultId}
     </select>
 
@@ -330,43 +353,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             tunnel.tunnel_name AS tunnel_id,
             fault_location,
             z.dict_label AS fault_type,
-            fault.fault_source,
+            a.dict_label fault_source,
             fault.fault_fxtime,
             fault.fault_cxtime,
             fault.fault_tbr,
             fault.fault_tbtime,
             fault.eq_id,
-            e.state_name AS eq_status,
-            s.state_name AS eq_run_status,
+            e.dict_label AS eq_status,
+            fault.eq_run_status,
             fault.fault_code,
             x.dict_label AS fault_level,
             c.dict_label AS fallt_remove_statue,
+            fault.fault_escalation_type,
+            fault.fault_escalation_type fEscalationType,
             CASE
                 WHEN fault.fault_status = '0' THEN
                     '未消除'
                 WHEN fault.fault_status = '1' THEN
                     '已消除'
                 END AS fault_status,
-            fault_description,
-            img_file_id
+            fault.fault_description,
+            fault.img_file_id
         FROM
             sd_fault_list fault
-                LEFT JOIN sd_device_data d ON fault.eq_id = d.device_id
-                LEFT JOIN sd_device_type_item i ON i.id = d.item_id
+                LEFT JOIN sd_tunnels tunnel ON tunnel.tunnel_id = fault.tunnel_id
                 LEFT JOIN sd_devices t ON t.eq_id = fault.eq_id
-                LEFT JOIN sd_equipment_state s ON s.state_type_id = i.device_type_id
-                AND s.device_state = d.DATA
-                AND s.state_type = '2'
-                LEFT JOIN sd_equipment_state e ON e.state_type_id = i.device_type_id
-                AND e.device_state = d.DATA
-                AND e.state_type = '1'
+                LEFT JOIN sys_dict_data e ON e.dict_value = fault.eq_status
+                AND e.dict_type = 'sd_monitor_state'
                 LEFT JOIN sys_dict_data z ON z.dict_value = fault.fault_type
                 AND z.dict_type = 'fault_type'
                 LEFT JOIN sys_dict_data x ON x.dict_value = fault.fault_level
                 AND x.dict_type = 'fault_level'
                 LEFT JOIN sys_dict_data c ON c.dict_value = fault.fallt_remove_statue
                 AND c.dict_type = 'fault_remove_statue'
-                LEFT JOIN sd_tunnels tunnel ON tunnel.tunnel_id = fault.tunnel_id
+                LEFT JOIN sys_dict_data a ON a.dict_value = fault.fault_escalation_type
+                AND a.dict_type = 'fault_escalation_type'
         WHERE
             fault.id = #{id}
     </select>

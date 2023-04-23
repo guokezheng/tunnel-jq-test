@@ -101,7 +101,26 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="发生时间" prop="eventTime">
+
+        <el-form-item label="隧道方向" prop="direction">
+          <el-select
+            v-model="queryParams.direction"
+            placeholder="请选择隧道方向"
+            clearable
+            size="small"
+            style="width: 325px"
+            @change="$forceUpdate()"
+          >
+            <el-option
+              v-for="item in directionList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="事件时间" prop="eventTime">
           <el-date-picker
             v-model="dateRange"
             size="small"
@@ -1014,32 +1033,35 @@
                       class="incHandContent"
                     >
                       <div class="classification">
-                        <div
-                          class="type"
-                          :style="{
-                            padding: items.flowContent
-                              ? items.flowContent.toString().length > 2
-                                ? '8px'
-                                : '15px 12px'
-                              : '',
-                            marginTop: items.children
-                              ? items.flowContent == '设备联控'
-                                ? (items.children.length * 40 +
-                                    4 * (items.children.length - 1)) /
-                                    2 -
-                                  35 +
-                                  'px'
-                                : (items.children.length * 40 +
-                                    4 * (items.children.length - 1)) /
-                                    2 -
-                                  25 +
-                                  'px'
-                              : '',
-                          }"
-                          v-if="items.flowContent"
-                        >
-                          {{ items.flowContent }}
-                        </div>
+                        <el-tooltip v-if="items.flowContent" class="item" effect="dark"
+                        :content="items.flowContent" placement="right">
+                          <div
+                            class="type"
+                            :style="{
+                              padding: items.flowContent
+                                ? items.flowContent.toString().length > 2
+                                  ? '8px'
+                                  : '15px 5px'
+                                : '',
+                              marginTop: items.children
+                                ? items.flowContent == '设备联控'
+                                  ? (items.children.length * 40 +
+                                      4 * (items.children.length - 1)) /
+                                      2 -
+                                    35 +
+                                    'px'
+                                  : (items.children.length * 40 +
+                                      4 * (items.children.length - 1)) /
+                                      2 -
+                                    25 +
+                                    'px'
+                                : '',
+                            }"
+                            v-if="items.flowContent"
+                          >
+                            {{ items.flowContent }}
+                          </div>
+                        </el-tooltip>
                         <!-- <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)"
                         :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">一键</div> -->
                       </div>
@@ -1064,7 +1086,7 @@
                         :style="{
                           height: items.children
                             ? items.children.length > 1
-                              ? items.children.length * 40 +
+                              ? items.children.length * 44 +
                                 4 * items.children.length -
                                 40 +
                                 'px'
@@ -1669,7 +1691,6 @@ export default {
     this.getTunnel();
     this.getEqType();
     this.getDevices();
-    // this.getTunnelLane();
     // 事件来源
     this.getDicts("sd_event_source").then((data) => {
       this.fromList = data.data;
@@ -1758,6 +1779,10 @@ export default {
     },
     // 打开复核内详情
     openDoor(item) {
+      // 点击查看按钮重置tab
+      this.deviceIndexShow = 0;
+      this.activeName = '0';
+
       let lane = "";
       if (item.laneNo == null || item.laneNo.length == 0) {
         lane = "";
@@ -2675,6 +2700,7 @@ export default {
       this.queryParams.eventTypeId = "";
       this.queryParams.tunnelId = null;
       this.queryParams.prevControlType = null;
+      this.queryParams.direction = null;
       this.queryParams.fuzzySearch = "";
       this.fuzzySearch1 = "";
       this.checkBoxEventState = [];
@@ -2806,9 +2832,10 @@ export default {
       .type {
         width: 50px;
         height: 50px;
-        // background: rgba($color: #084e84, $alpha: 0.6);
-        // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
         text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
       .yijian {
         color: white;

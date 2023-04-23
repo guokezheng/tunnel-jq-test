@@ -286,11 +286,11 @@ public class SdFaultList extends BaseEntity
     @ApiModelProperty("设备类型")
     private String eqType;
 
-    public String getfEscalationType() {
+    public String getFEscalationType() {
         return this.fEscalationType;
     }
 
-    public void setfEscalationType( String fEscalationType) {
+    public void setFEscalationType( String fEscalationType) {
         this.fEscalationType = fEscalationType;
     }
 

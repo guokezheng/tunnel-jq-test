@@ -8,6 +8,8 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
     <div class="dialogStyleBox">
       <div class="dialogLine"></div>
@@ -160,13 +162,13 @@ import { controlGuidanceLampDevice, controlEvacuationSignDevice } from "@/api/wo
 import { getDevice, fireMarkList } from "@/api/equipment/tunnel/api.js"; //查诱导灯亮度、频率等
 
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       fireMarkData: [],
       stateForm: {},
       title: "",
-      visible: true,
+      visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       show1: true,
       show2: false,
@@ -184,18 +186,27 @@ export default {
           label: "关闭",
         },
       ],
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
   created() {
-    this.getMessage();
+    // this.getMessage();
   },
   methods: {
+    init(eqInfo,brandList,directionList,eqTypeDialogList){
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getMessage();
+      this.visible = true
+    },
     // 查设备详情
     async getMessage() {
-      var that = this;
       if (this.eqInfo.equipmentId) {
-        var obj = {};
-        var state = "";
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
@@ -316,7 +327,7 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false
     },
     //  设备管控
     // handleControl() {
@@ -413,4 +424,7 @@ export default {
 // ::v-deep .el-select-dropdown__item.selected{
 //   color:white;
 // }
+::v-deep .el-dialog {
+  pointer-events: auto !important;
+}
 </style>

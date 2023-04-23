@@ -22,6 +22,7 @@
               @select="changeSite"
               style="width: 100%"
               size="small"
+              :beforeClearAll="beforeClearAll"
             />
           </el-form-item>
           <el-form-item>
@@ -427,7 +428,6 @@ export default {
       deptList: [], //分中心下拉框
       mechanismList: [], //管理机构下拉框
       tunnelData: [], //所属隧道下拉框
-      positionList: [], //位置信息下拉框
       devicessizeList: [], //分辨率下拉框
       deviceList: [], //分辨率
       checkedCities: [], //多选 选中项
@@ -454,15 +454,24 @@ export default {
         this.rowDrop();
       })
     },
+    // 清空部门
+    'form.deptId':function(newVal,oldVal){
+      this.form.tunnel = ''
+      this.tunnelData = []
+      this.boardDirectionList = [];
+      // this.changeMechanism(newVal.id);
+    },
+    // 清空隧道
     'form.tunnel':function(newVal,oldVal){
       this.form.eqDirection = ''
       this.boardDirectionList = []
       this.iotBoardList = []
     },
-    'form.eqDirection':function(newVal,oldVal){
-      console.log(newVal,"newVal")
-      this.iotBoardList = []
-    }
+    // // 改变方向
+    // 'form.eqDirection':function(newVal,oldVal){
+    //   console.log(newVal,"newVal")
+    //   this.iotBoardList = []
+    // }
   },
   created() {
     this.getUserDept();
@@ -544,30 +553,30 @@ export default {
         this.form.deptId = obj.id;
       }
     },
-
+    // 清空站点
+    beforeClearAll(){
+      console.log(111111)
+      this.form.deptId = null;
+    },
     // 改变站点
     changeSite(index) {
-      this.changeMechanism(index.id);
+      console.log(index,"changeSite")
       this.form.tunnel = "";
-      this.positionList = [];
       this.boardDirectionList = [];
-      
+      this.changeMechanism(index.id);
     },
 
     // 通过所属机构查隧道
     changeMechanism(val) {
       listTunnels(val).then((response) => {
-        // console.log(response.rows, "所属隧道列表");
         this.form.tunnel = response.rows[0].tunnelId;
         this.tunnelData = response.rows;
-        // this.getIotBoard();
         this.changeDirection();
       });
     },
 
     //改变方向
     changeDirection(val) {
-      // console.log(val,"val")
       this.getDicts("iot_board_direction").then((res) => {
         this.boardDirectionList = res.data;
         if (val) {
@@ -575,7 +584,6 @@ export default {
         } else {
           this.form.eqDirection = res.data[0].dictValue;
         }
-        // console.log(this.boardDirectionList, "板子方向");
         if(this.form.tunnel){
           this.getIotBoard();
         }
@@ -592,7 +600,6 @@ export default {
       this.form.tunnel = value;
       this.form.devicePixel = ''
       this.changeDirection()
-      // this.getIotBoard();
     },
     // 情报板设备 折叠面板
     getIotBoard() {

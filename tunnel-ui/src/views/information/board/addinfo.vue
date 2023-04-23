@@ -680,7 +680,6 @@ export default {
           this.dataForm = {
             CONTENT: "请输入内容",
             COLOR: "yellow",
-            FONT_SIZE: "24px",
             FONT: "黑体",
             SPEED: "1",
             ACTION: "1",
@@ -703,7 +702,9 @@ export default {
     getFontSizeList() {
       getFontSizeByDevicePixel(this.dataForm.screenSize).then((res) => {
         console.log(res, "根据分辨率筛字体大小");
-        this.fontSizeOpt = res.data;
+        this.fontSizeOpt = res.data.fontSizeList;
+        this.dataForm.FONT_SIZE = res.data.defaultFont;
+        
       });
     },
     // 查分辨率
@@ -904,6 +905,10 @@ export default {
         return "SimHei";
       } else if (font == "楷体") {
         return "KaiTi";
+      } else if(font == "仿宋"){
+        return "FangSong";
+      } else if(font == "隶书"){
+        return 'LiSu';
       }
     },
     getColorStyle(font) {

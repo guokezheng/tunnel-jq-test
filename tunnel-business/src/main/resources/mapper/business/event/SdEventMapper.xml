@@ -207,6 +207,7 @@
             <if test="eventState != null  and eventState != ''">and FIND_IN_SET(A.event_state, #{eventState}) > 0</if>
             <if test="eventGrade != null  and eventGrade != ''">and A.event_grade = #{eventGrade}</if>
             <if test="eventLocation != null  and eventLocation != ''">and A.event_location = #{eventLocation}</if>
+            <if test="direction != null  and direction != ''">and A.direction = #{direction}</if>
             <if test="eventDeath != null ">and A.event_death = #{eventDeath}</if>
             <if test="eventInjured != null ">and A.event_injured = #{eventInjured}</if>
             <if test="eventDescription != null  and eventDescription != ''">and A.event_description =

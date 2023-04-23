@@ -759,7 +759,7 @@
               </el-col>
               <!-- 照明设备 -->
               <el-col :span="itemed.lightCol" v-if="itemed.eqTypeId == 7">
-                <el-select v-model="itemed.state" placeholder="设备操作" 
+                <el-select v-model="itemed.state" placeholder="设备操作"
                   @change="lightStateChange(number, index,itemed.state)">
                   <el-option
                     v-for="(ite, idx) in itemed.eqStateList"
@@ -1445,7 +1445,7 @@ export default {
       if (eqTypeId) {
         // 不是车指，则67禁用
         let retrievalRuleList = JSON.parse(JSON.stringify(this.retrievalRuleList));
-          for (let item of retrievalRuleList) {
+          /*for (let item of retrievalRuleList) {
           if (eqTypeId != "1" && eqTypeId != "2") {
             if (item.dictValue == "6" || item.dictValue == "7") {
               item.disabled = true;
@@ -1453,7 +1453,7 @@ export default {
           }else{
             item.disabled = false;
           }
-        }
+        }*/
         // 加强照明开启百分比选择
         if(eqTypeId == '7'){
           let light = this.planTypeIdList[number].processesList[index];
@@ -1580,7 +1580,7 @@ export default {
         if (this.planTypeIdList[i].processStageName == "") {
           return this.$modal.msgWarning("请填写阶段名称");
         }
-        
+
         let item = this.planTypeIdList[i].processesList;
         //加强照明开启默认1不做判断
         let result = item.every((items) => {
@@ -1682,7 +1682,7 @@ export default {
               }
               brr.eqTypeId = String(brr.deviceTypeId); //设备类型
               brr.equipments = brr.equipmentList; //设备列表
-              // brr.brightness = 
+              // brr.brightness =
               // 渲染设备列表
               let params = {
                 eqType: brr.eqTypeId, //设备类型

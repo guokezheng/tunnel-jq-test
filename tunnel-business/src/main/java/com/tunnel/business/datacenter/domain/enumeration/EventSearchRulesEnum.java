@@ -13,8 +13,7 @@ public enum EventSearchRulesEnum {
     THREE("3", "最近5个"),
     FOUR("4", "事发上游所有"),
     FIVE("5", "事发下游所有"),
-    SIX("6", "按影响车道关闭上游所有"),
-    SEVEN("7", "按影响车道关闭下游最近1个");
+    SEVEN("6", "事件下游最近1个");
     private String code;
     private String name;
 

@@ -1095,52 +1095,133 @@ public class SdEventServiceImpl implements ISdEventService {
         String retrievalRule = sdStrategyRl.getRetrievalRule();
         //最近3公里
         if(EventSearchRulesEnum.TWO.getCode().equals(retrievalRule)){
-            //前3公里
-            Integer frontStakeNum = stakeNum - 3000;
-            //后3公里
-            Integer afterStakeNum = stakeNum + 3000;
-            //查询区间设备
-            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), frontStakeNum, afterStakeNum,sdEvent.getTunnelId(), null);
+            //获取设备信息
+            rlDeviceList = threeKm(stakeNum,sdStrategyRl,sdEvent,sdEventData);
         }
         //附近5个
         if(EventSearchRulesEnum.THREE.getCode().equals(retrievalRule)){
-            List<String> frontLatelyFive = sdDevicesMapper.getFrontLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId());
-            List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId(), null);
-            rlDeviceList = setLatelyFive(frontLatelyFive,afterLatelyFive);
+            //获取设备信息
+            rlDeviceList = latelyFive(stakeNum,sdStrategyRl,sdEvent,sdEventData);
         }
         //事发上游所有
         if(EventSearchRulesEnum.FOUR.getCode().equals(retrievalRule)){
-            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId(), null);
+            //获取设备信息
+            rlDeviceList = eventUpstreamAll(stakeNum,sdStrategyRl,sdEvent,sdEventData);
         }
         //事发下游所有
         if(EventSearchRulesEnum.FIVE.getCode().equals(retrievalRule)){
-            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, 0,sdEvent.getTunnelId(), null);
+            //获取设备信息
+            rlDeviceList = eventDownstreamAll(stakeNum,sdStrategyRl,sdEvent,sdEventData);
         }
-        //根据影响车道关闭上游所有
-        if(EventSearchRulesEnum.SIX.getCode().equals(retrievalRule)){
-            String lane = null;
-            if(sdEvent.getLaneNo() == null || "".equals(sdEvent.getLaneNo())){
-                lane = sdEventData.getLaneNo();
-            }else {
-                lane = sdEvent.getLaneNo();
-            }
-            rlDeviceList = sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId(), lane);
-        }
-        //根据影响车道关闭下游最近1个
+        //事件下游最近1个
         if(EventSearchRulesEnum.SEVEN.getCode().equals(retrievalRule)){
-            String lane = null;
-            if(sdEvent.getLaneNo() == null || "".equals(sdEvent.getLaneNo())){
-                lane = sdEventData.getLaneNo();
-            }else {
-                lane = sdEvent.getLaneNo();
-            }
-            List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, sdEvent.getTunnelId(), lane);
-            rlDeviceList = afterLatelyFive.size() == 0 ? new ArrayList<>() : afterLatelyFive.subList(0,1);
+            //获取设备信息
+            rlDeviceList = eventDownstreamOne(stakeNum,sdStrategyRl,sdEvent,sdEventData);
         }
         return StringUtils.join(rlDeviceList,",");
     }
 
-    //最近5条
+    /**
+     * 获取车道号
+     * @param sdStrategyRl
+     * @param sdEventData
+     * @return
+     */
+    public String getLaneData(SdStrategyRl sdStrategyRl, SdEvent sdEventData){
+        //车道
+        String lane = null;
+        //普通车指设备类型
+        String czTypeId = DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().toString();
+        String zczTypeId = DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode().toString();
+        if(sdEventData.getLaneNo() != null && !"".equals(sdEventData.getLaneNo()) && czTypeId.equals(sdStrategyRl.getEqTypeId()) || zczTypeId.equals(sdStrategyRl.getEqTypeId())){
+            lane = sdEventData.getLaneNo();
+        }
+        return lane;
+    }
+
+    /**
+     * 最近3公里
+     * @param stakeNum
+     * @param sdStrategyRl
+     * @param sdEvent
+     * @return
+     */
+    public List<String> threeKm(Integer stakeNum, SdStrategyRl sdStrategyRl, SdEvent sdEvent, SdEvent sdEventData){
+        //前3公里
+        Integer frontStakeNum = stakeNum - 3000;
+        //后3公里
+        Integer afterStakeNum = stakeNum + 3000;
+        //车道
+        String lane = getLaneData(sdStrategyRl,sdEventData);
+        //查询区间设备
+        return sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), frontStakeNum, afterStakeNum,sdEvent.getTunnelId(), lane);
+    }
+
+    /**
+     * 最近5个
+     * @param stakeNum
+     * @param sdStrategyRl
+     * @param sdEvent
+     * @param sdEventData
+     * @return
+     */
+    public List<String> latelyFive(Integer stakeNum, SdStrategyRl sdStrategyRl, SdEvent sdEvent, SdEvent sdEventData){
+        //车道
+        String lane = getLaneData(sdStrategyRl,sdEventData);
+        List<String> frontLatelyFive = sdDevicesMapper.getFrontLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId(), lane);
+        List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum,sdEvent.getTunnelId(), lane);
+        return setLatelyFive(frontLatelyFive,afterLatelyFive);
+    }
+
+    /**
+     * 事发上游所有
+     * @param stakeNum
+     * @param sdStrategyRl
+     * @param sdEvent
+     * @param sdEventData
+     * @return
+     */
+    public List<String> eventUpstreamAll(Integer stakeNum, SdStrategyRl sdStrategyRl, SdEvent sdEvent, SdEvent sdEventData){
+        //车道
+        String lane = getLaneData(sdStrategyRl,sdEventData);
+        return sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), 0, stakeNum,sdEvent.getTunnelId(), lane);
+    }
+
+    /**
+     * 事发下游所有
+     * @param stakeNum
+     * @param sdStrategyRl
+     * @param sdEvent
+     * @param sdEventData
+     * @return
+     */
+    public List<String> eventDownstreamAll(Integer stakeNum, SdStrategyRl sdStrategyRl, SdEvent sdEvent, SdEvent sdEventData){
+        //车道
+        String lane = getLaneData(sdStrategyRl,sdEventData);
+        return sdDevicesMapper.getRlDevice(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, 0,sdEvent.getTunnelId(), lane);
+    }
+
+    /**
+     * 事件下游最近1个
+     * @param stakeNum
+     * @param sdStrategyRl
+     * @param sdEvent
+     * @param sdEventData
+     * @return
+     */
+    public List<String> eventDownstreamOne(Integer stakeNum, SdStrategyRl sdStrategyRl, SdEvent sdEvent, SdEvent sdEventData){
+        //车道
+        String lane = getLaneData(sdStrategyRl,sdEventData);
+        List<String> afterLatelyFive = sdDevicesMapper.getAfterLatelyFive(Integer.valueOf(sdStrategyRl.getEqTypeId()), sdEvent.getDirection(), stakeNum, sdEvent.getTunnelId(), lane);
+        return afterLatelyFive.size() == 0 ? new ArrayList<>() : afterLatelyFive.subList(0,1);
+    }
+
+    /**
+     * 寻找最近5个
+     * @param frontLatelyFive
+     * @param afterLatelyFive
+     * @return
+     */
     public List<String> setLatelyFive(List<String> frontLatelyFive, List<String> afterLatelyFive){
         int listSize = frontLatelyFive.size() + afterLatelyFive.size();
         if(listSize == 5 || listSize > 0 && listSize < 5){

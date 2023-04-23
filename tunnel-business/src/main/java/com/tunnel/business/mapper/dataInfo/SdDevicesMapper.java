@@ -336,7 +336,8 @@ public interface SdDevicesMapper
 	List<String> getFrontLatelyFive(@Param("eqType") int eqType,
 									@Param("direction") String direction,
 									@Param("stakeNum") int stakeNum,
-									@Param("tunnelId") String tunnelId);
+									@Param("tunnelId") String tunnelId,
+									@Param("lane") String lane);
 
 	//后5个
 	List<String> getAfterLatelyFive(@Param("eqType") int eqType,

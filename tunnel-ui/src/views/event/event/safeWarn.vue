@@ -1014,32 +1014,35 @@
                       class="incHandContent"
                     >
                       <div class="classification">
-                        <div
-                          class="type"
-                          :style="{
-                            padding: items.flowContent
-                              ? items.flowContent.toString().length > 2
-                                ? '8px'
-                                : '15px 12px'
-                              : '',
-                            marginTop: items.children
-                              ? items.flowContent == '设备联控'
-                                ? (items.children.length * 40 +
-                                    4 * (items.children.length - 1)) /
-                                    2 -
-                                  35 +
-                                  'px'
-                                : (items.children.length * 40 +
-                                    4 * (items.children.length - 1)) /
-                                    2 -
-                                  25 +
-                                  'px'
-                              : '',
-                          }"
-                          v-if="items.flowContent"
-                        >
-                          {{ items.flowContent }}
-                        </div>
+                        <el-tooltip v-if="items.flowContent" class="item" effect="dark" 
+                        :content="items.flowContent" placement="right">
+                          <div
+                            class="type"
+                            :style="{
+                              padding: items.flowContent
+                                ? items.flowContent.toString().length > 2
+                                  ? '8px'
+                                  : '15px 5px'
+                                : '',
+                              marginTop: items.children
+                                ? items.flowContent == '设备联控'
+                                  ? (items.children.length * 40 +
+                                      4 * (items.children.length - 1)) /
+                                      2 -
+                                    35 +
+                                    'px'
+                                  : (items.children.length * 40 +
+                                      4 * (items.children.length - 1)) /
+                                      2 -
+                                    25 +
+                                    'px'
+                                : '',
+                            }"
+                            v-if="items.flowContent"
+                          >
+                            {{ items.flowContent }}
+                          </div>
+                        </el-tooltip>
                         <!-- <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)"
                         :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">一键</div> -->
                       </div>
@@ -1064,7 +1067,7 @@
                         :style="{
                           height: items.children
                             ? items.children.length > 1
-                              ? items.children.length * 40 +
+                              ? items.children.length * 44 +
                                 4 * items.children.length -
                                 40 +
                                 'px'
@@ -1669,7 +1672,6 @@ export default {
     this.getTunnel();
     this.getEqType();
     this.getDevices();
-    // this.getTunnelLane();
     // 事件来源
     this.getDicts("sd_event_source").then((data) => {
       this.fromList = data.data;
@@ -2806,9 +2808,10 @@ export default {
       .type {
         width: 50px;
         height: 50px;
-        // background: rgba($color: #084e84, $alpha: 0.6);
-        // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
         text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
       .yijian {
         color: white;

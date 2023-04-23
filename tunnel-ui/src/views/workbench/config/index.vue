@@ -5673,8 +5673,8 @@ export default {
       console.log(this.screenEqName);
       if (this.screenEqName) {
         for (var item of this.selectedIconList) {
-          if (item.eqName.indexOf(this.screenEqName) > -1) {
-            console.log(item.eqName);
+          if (item.screenEqName.indexOf(this.screenEqName) > -1) {
+            console.log(item.screenEqName);
             item.click = true;
           } else {
             item.click = false;

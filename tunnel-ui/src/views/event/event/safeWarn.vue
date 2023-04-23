@@ -1760,6 +1760,10 @@ export default {
     },
     // 打开复核内详情
     openDoor(item) {
+      // 点击查看按钮重置tab
+      this.deviceIndexShow = 0;
+      this.activeName = '0';
+      
       let lane = "";
       if (item.laneNo == null || item.laneNo.length == 0) {
         lane = "";

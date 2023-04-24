@@ -148,6 +148,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 
+    <select id="existInTeams" parameterType="Long" resultType="String">
+		select teams_id from sd_user_teams where user_id = #{userId}
+	</select>
+
 
 
 </mapper>

@@ -222,7 +222,7 @@ public interface ISdDevicesService {
      * app端获取设备列表
      * @return
      */
-    Map getAppDevicesList(String param, String eqType, String eqStatus);
+    List<SdDevices> getAppDevicesList(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum);
 
     /**
      * app端设备信息
@@ -248,7 +248,7 @@ public interface ISdDevicesService {
     List<SdDevices> getSpkList(SdDevices sdDevices);
 
     /**
-     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取设备
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
      * @param sdDevices
      * @return
      */
@@ -277,6 +277,10 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName);
+
+    int getAppDevicesCountList(String param, String eqType, String eqStatus, String deptId);
+
+    List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum);
 
     /**
      * 修改设备以及子设备状态在线

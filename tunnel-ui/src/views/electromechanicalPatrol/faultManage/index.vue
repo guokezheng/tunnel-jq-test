@@ -645,7 +645,7 @@
                   :on-exceed="handleExceed"
                   :on-change="handleChange"
                 >
-                  <i class="el-icon-plus" v-show ="uploadDisabled"></i>
+                  <i class="el-icon-plus" v-show ="uploadDisabled" ></i>
                 </el-upload>
                 <el-dialog
                   :visible.sync="dialogVisible"
@@ -653,8 +653,9 @@
                   :append-to-body="true"
                   style="width: 600px !important; margin: 0 auto"
                   :close-on-click-modal="false"
+
                 >
-                  <div class="dialogStyleBox">
+                  <div class="dialogStyleBox" >
                     <div class="dialogLine"></div>
                     <div class="dialogCloseButton"></div>
                   </div>

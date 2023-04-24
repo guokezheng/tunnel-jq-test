@@ -13,12 +13,15 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.*;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -900,7 +903,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      * app端获取设备列表
      * @return
      */
-    @Override
+    /*@Override
     public Map getAppDevicesList(String param, String eqType, String eqStatus) {
         Map<String, Object> map=new HashMap<String, Object>();
         List<SdDevices> sdDevicesList = sdDevicesMapper.getAppDevicesList(param,eqType,eqStatus);
@@ -918,7 +921,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         map.put("sdDevicesList",sdDevicesList);
         map.put("numList",num);
         return map;
-    }
+    }*/
 
     /**
      * app端设备信息
@@ -968,7 +971,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     /**
-     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取设备
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
      * @param sdDevices
      * @return
      */
@@ -1031,6 +1034,44 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName) {
         return sdDevicesMapper.tunnelEqNameOnly(eqTunnelId,eqName);
+    }
+
+    @Override
+    public int getAppDevicesCountList(String param, String eqType, String eqStatus, String deptId) {
+        List<String> tunnelArray = null;
+        String start = null;
+        String end = null;
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        return sdDevicesMapper.getAppDevicesCountList(sdDevices);
+    }
+
+    @Override
+    public List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum) {
+        List<String> tunnelArray = null;
+        String deptId = SecurityUtils.getDeptId();
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        pageNum = (pageNum-1)*pageSize ;
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        sdDevices.getParams().put("pageSize", pageSize);
+        sdDevices.getParams().put("pageNum", pageNum);
+        return sdDevicesMapper.getDevicesNum(sdDevices);
     }
 
 

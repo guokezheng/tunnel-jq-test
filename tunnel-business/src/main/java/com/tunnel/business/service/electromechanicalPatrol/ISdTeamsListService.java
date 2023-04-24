@@ -31,4 +31,6 @@ public interface ISdTeamsListService
     int teamsUserSelectAll(String deptId, Long[] userIds);
 
     boolean checkTeamsExistUser(String deptId);
+
+    String existInTeams(Long userId);
 }

@@ -247,7 +247,7 @@ public interface SdDevicesMapper
 	 * @param eqStatus
 	 * @return
 	 */
-    List<SdDevices> getAppDevicesList(@Param("param")String param,@Param("eqType") String eqType,@Param("eqStatus") String eqStatus);
+    List<SdDevices> getAppDevicesList(SdDevices sdDevices);
 
 	/**
 	 * 查询在线离线设备数量
@@ -256,7 +256,7 @@ public interface SdDevicesMapper
 	 * @param eqStatus
 	 * @return
 	 */
-	List<SdDevices> getDevicesNum(@Param("param")String param,@Param("eqType") String eqType,@Param("eqStatus") String eqStatus);
+	List<SdDevices> getDevicesNum(SdDevices sdDevices);
 
 	/**
 	 * app端设备信息
@@ -403,4 +403,5 @@ public interface SdDevicesMapper
 	 */
 	List<SdDevices> selectSdDevicesDataByParam(SdDevices sdDevices);
 
+	int getAppDevicesCountList(SdDevices sdDevices);
 }

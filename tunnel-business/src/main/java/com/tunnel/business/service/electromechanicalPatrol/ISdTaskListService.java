@@ -108,7 +108,7 @@ public interface ISdTaskListService
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId);
+    List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId,Integer pageSize,Integer pageNum,Long userId);
 
     /**
      * 查询任务关联的巡查点数量
@@ -177,7 +177,7 @@ public interface ISdTaskListService
      * @param deptId
      * @return
      */
-    List<SdTaskList> getTaskToDo(String deptId);
+    List<SdTaskList> getTaskToDo(String deptId,Long userId);
 
     /**
      * 根据隧道查询班组
@@ -185,4 +185,12 @@ public interface ISdTaskListService
      * @return
      */
     String selectBzByTunnel(String tunnelId);
+
+    List<SdTaskList> getTaskToDoTeams(String deptId,Long userId);
+
+    int getTaskCountList(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId);
+
+    int getTaskCountListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId);
+
+    List<SdTaskList> getTaskListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId, Integer pageSize, Integer pageNum,Long userId);
 }

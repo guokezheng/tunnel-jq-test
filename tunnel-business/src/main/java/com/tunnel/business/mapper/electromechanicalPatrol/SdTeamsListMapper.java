@@ -36,4 +36,5 @@ public interface SdTeamsListMapper
 
     int checkTeamsExistUser(@Param("deptId")String deptId);
 
+    String existInTeams(@Param("userId")Long userId);
 }

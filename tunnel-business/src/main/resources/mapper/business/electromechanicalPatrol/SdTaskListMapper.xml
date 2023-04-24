@@ -240,14 +240,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_user u on t.dispatcher = u.user_id
         left join sd_tunnels e on t.tunnel_id = e.tunnel_id
         where 1=1
-        <if test="taskName != null and taskName!=''"> AND CONCAT(t.task_name, e.tunnel_name) LIKE CONCAT('%',#{taskName},'%')</if>
-        <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>
-        <if test="startTime != null and startTime!=''and endTime!=null and endTime!=''"> and (t.end_plantime BETWEEN #{startTime} and #{endTime})</if>
-        <if test="deptId != null and deptId != ''">
-            AND (d.dept_id = #{deptId} OR d.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+        <if test="params.taskName != null and params.taskName!=''"> AND CONCAT(t.task_name, e.tunnel_name) LIKE CONCAT('%',#{params.taskName},'%')</if>
+        <if test="params.taskStatus != null and params.taskStatus!=''"> and t.task_status = #{params.taskStatus}</if>
+        <if test="params.startTime != null and params.startTime!=''and params.endTime!=null and params.endTime!=''"> and (t.end_plantime BETWEEN #{params.startTime} and #{params.endTime})</if>
+        <if test="params.deptId != null and params.deptId != ''">
+            AND (t.bz_id = #{params.deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{params.deptId},q.ancestors) ))
         </if>
+        and (t.task_status = '0' or t.walker_id = #{params.userId})
+        and ( t.task_status !='2' )
         order by t.create_time desc
+        <if test="params.pageNum != null">
+            limit #{params.pageNum},#{params.pageSize}
+        </if>
     </select>
+
+    <select id="getTaskListTeams" parameterType="String" resultMap="SdTaskListResult">
+        select t.task_name,e.tunnel_name,d.dept_name zzjg_id,t.end_plantime,u.user_name dispatcher,t.task_description,t.task_status,t.id from sd_task_list t
+        left join sys_dept d on d.dept_id = t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        left join sd_tunnels e on t.tunnel_id = e.tunnel_id
+        where 1=1
+        <if test="params.taskName != null and params.taskName!=''"> AND CONCAT(t.task_name, e.tunnel_name) LIKE CONCAT('%',#{params.taskName},'%')</if>
+        <if test="params.taskStatus != null and params.taskStatus!=''"> and t.task_status = #{params.taskStatus}</if>
+        <if test="params.startTime != null and params.startTime!=''and params.endTime!=null and params.endTime!=''"> and (t.end_plantime BETWEEN #{params.startTime} and #{params.endTime})</if>
+        <if test="params.deptId != null and params.deptId != ''">
+            AND (t.bz_id = #{params.deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{params.deptId},q.dept_id) ))
+        </if>
+        and (t.task_status = '0' or t.walker_id = #{params.userId})
+        and ( t.task_status !='2' )
+        order by t.create_time desc
+        <if test="params.pageNum != null">
+            limit #{params.pageNum},#{params.pageSize}
+        </if>
+    </select>
+
 
 
     <update id="acceptSdTaskList" parameterType="SdTaskList">
@@ -323,10 +349,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="deptId != null and deptId != ''">
             where bz_id = #{deptId} OR
             bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors))
+            and (task_status = '0' or walker_id = #{userId})
+            and ( task_status !='2' )
         </if>
 
     </select>
 
+    <select id="getTaskToDoTeams" parameterType="String" resultMap="SdTaskListResult">
+        select dispatch_time,task_name from sd_task_list
+        <if test="deptId != null and deptId != ''">
+            where bz_id = #{deptId} OR
+            bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.dept_id))
+            and (task_status = '0' or walker_id = #{userId})
+            and ( task_status !='2' )
+        </if>
+
+    </select>
 
 
     <select id="selectBzByTunnel" parameterType="String" resultType="String">
@@ -339,5 +377,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+    <select id="getTaskCountList" resultType="int">
+        select count(1) from sd_task_list t
+        left join sd_tunnels e on t.tunnel_id = e.tunnel_id
+        left join sys_dept d on d.dept_id = t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        where 1=1
+        <if test="taskName != null and taskName!=''"> AND CONCAT(t.task_name, e.tunnel_name) LIKE CONCAT('%',#{taskName},'%')</if>
+        <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>
+        <if test="startTime != null and startTime!=''and endTime!=null and endTime!=''"> and (t.end_plantime BETWEEN #{startTime} and #{endTime})</if>
+        <if test="deptId != null and deptId != ''">
+            AND (t.bz_id= #{deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+        </if>
+        and (t.task_status = '0' or t.walker_id = #{userId})
+        and ( t.task_status !='2' )
+    </select>
+
+
+    <select id="getTaskCountListTeams" resultType="int">
+        select count(1) from sd_task_list t
+        left join sd_tunnels e on t.tunnel_id = e.tunnel_id
+        left join sys_dept d on d.dept_id = t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        where 1=1
+        <if test="taskName != null and taskName!=''"> AND CONCAT(t.task_name, e.tunnel_name) LIKE CONCAT('%',#{taskName},'%')</if>
+        <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>
+        <if test="startTime != null and startTime!=''and endTime!=null and endTime!=''"> and (t.end_plantime BETWEEN #{startTime} and #{endTime})</if>
+        <if test="deptId != null and deptId != ''">
+            AND (t.bz_id= #{deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.dept_id) ))
+        </if>
+        and (t.task_status = '0' or t.walker_id = #{userId})
+        and ( t.task_status !='2' )
+    </select>
 
 </mapper>

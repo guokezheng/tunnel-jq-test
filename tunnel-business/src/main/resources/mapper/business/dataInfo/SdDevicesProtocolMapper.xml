@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.dataInfo.SdDevicesProtocolMapper">
-    
+
     <resultMap type="com.tunnel.business.domain.dataInfo.SdDevicesProtocol" id="SdDevicesProtocolResult">
         <result property="id"    column="id"    />
         <result property="brandId"    column="brand_id"    />
@@ -36,12 +36,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by create_time desc
     </select>
-    
-    <select id="selectSdDevicesProtocolById" parameterType="Integer" resultMap="SdDevicesProtocolResult">
+
+    <select id="selectSdDevicesProtocolById" parameterType="Long" resultMap="SdDevicesProtocolResult">
         <include refid="selectSdDevicesProtocolVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSdDevicesProtocol" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesProtocol" useGeneratedKeys="true" keyProperty="id">
         insert into sd_devices_protocol
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -90,7 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteSdDevicesProtocolById" parameterType="Integer">
+    <delete id="deleteSdDevicesProtocolById" parameterType="Long">
         delete from sd_devices_protocol where id = #{id}
     </delete>
 

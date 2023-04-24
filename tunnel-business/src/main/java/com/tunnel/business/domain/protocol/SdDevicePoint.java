@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 设备点位状态详情对象 sd_device_point
- * 
+ *
  * @author ruoyi
  * @date 2023-02-27
  */
@@ -35,6 +35,14 @@ public class SdDevicePoint extends BaseEntity
     /** 二进制点 */
     @Excel(name = "二进制点")
     private Long addressIndex;
+
+    /** 功能码 */
+    @Excel(name = "功能码")
+    private String functionCode;
+
+    /** 数据长度（字节数） */
+    @Excel(name = "数据长度（字节数）")
+    private String dataLength;
 
     /** 功能 */
     @Excel(name = "功能")
@@ -64,111 +72,127 @@ public class SdDevicePoint extends BaseEntity
     @Excel(name = "是否预留")
     private Long isReserved;
 
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setEqId(String eqId) 
+    public void setEqId(String eqId)
     {
         this.eqId = eqId;
     }
 
-    public String getEqId() 
+    public String getEqId()
     {
         return eqId;
     }
-    public void setEqType(Long eqType) 
+    public void setEqType(Long eqType)
     {
         this.eqType = eqType;
     }
 
-    public Long getEqType() 
+    public Long getEqType()
     {
         return eqType;
     }
-    public void setAddress(String address) 
+    public void setAddress(String address)
     {
         this.address = address;
     }
 
-    public String getAddress() 
+    public String getAddress()
     {
         return address;
     }
-    public void setAddressIndex(Long addressIndex) 
+    public void setAddressIndex(Long addressIndex)
     {
         this.addressIndex = addressIndex;
     }
 
-    public Long getAddressIndex() 
+    public Long getAddressIndex()
     {
         return addressIndex;
     }
-    public void setFunctionName(String functionName) 
+    public void setFunctionName(String functionName)
     {
         this.functionName = functionName;
     }
 
-    public String getFunctionName() 
+    public String getFunctionCode() {
+        return functionCode;
+    }
+
+    public void setFunctionCode(String functionCode) {
+        this.functionCode = functionCode;
+    }
+
+    public String getDataLength() {
+        return dataLength;
+    }
+
+    public void setDataLength(String dataLength) {
+        this.dataLength = dataLength;
+    }
+
+    public String getFunctionName()
     {
         return functionName;
     }
-    public void setDataType(String dataType) 
+    public void setDataType(String dataType)
     {
         this.dataType = dataType;
     }
 
-    public String getDataType() 
+    public String getDataType()
     {
         return dataType;
     }
-    public void setSignalName(String signalName) 
+    public void setSignalName(String signalName)
     {
         this.signalName = signalName;
     }
 
-    public String getSignalName() 
+    public String getSignalName()
     {
         return signalName;
     }
-    public void setStateId(Long stateId) 
+    public void setStateId(Long stateId)
     {
         this.stateId = stateId;
     }
 
-    public Long getStateId() 
+    public Long getStateId()
     {
         return stateId;
     }
-    public void setDataStatus(String dataStatus) 
+    public void setDataStatus(String dataStatus)
     {
         this.dataStatus = dataStatus;
     }
 
-    public String getDataStatus() 
+    public String getDataStatus()
     {
         return dataStatus;
     }
-    public void setFunctionDescription(String functionDescription) 
+    public void setFunctionDescription(String functionDescription)
     {
         this.functionDescription = functionDescription;
     }
 
-    public String getFunctionDescription() 
+    public String getFunctionDescription()
     {
         return functionDescription;
     }
-    public void setIsReserved(Long isReserved) 
+    public void setIsReserved(Long isReserved)
     {
         this.isReserved = isReserved;
     }
 
-    public Long getIsReserved() 
+    public Long getIsReserved()
     {
         return isReserved;
     }

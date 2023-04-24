@@ -61,6 +61,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Autowired
     private SdEquipmentIconFileMapper sdEquipmentIconFileMapper;
 
+    @Autowired
+    private SdOperationLogMapper sdOperationLogMapper;
+
 
     /**
      * 查询设备
@@ -899,6 +902,30 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.getDevBrandList();
     }
 
+    @Override
+    public List<SdDevices> getAppDevicesList(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum) {
+        List<String> tunnelArray = null;
+        String start = null;
+        String end = null;
+        String deptId = SecurityUtils.getDeptId();
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        pageNum = (pageNum-1)*pageSize;
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        sdDevices.getParams().put("pageSize", pageSize);
+        sdDevices.getParams().put("pageNum", pageNum);
+        return sdDevicesMapper.getAppDevicesList(sdDevices);
+    }
+
+
+
     /**
      * app端获取设备列表
      * @return
@@ -1064,7 +1091,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
         }
         SdDevices sdDevices = new SdDevices();
-        pageNum = (pageNum-1)*pageSize ;
         sdDevices.getParams().put("tunnelArray", tunnelArray);
         sdDevices.getParams().put("param", param);
         sdDevices.getParams().put("eqType", eqType);

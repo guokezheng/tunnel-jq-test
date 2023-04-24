@@ -145,7 +145,7 @@ public class LightTask {
           realStatus =  SanjingLightStateEnum.OPEN.getCode();
         }
         //修改实时数据
-        sdDeviceDataService.updateDeviceData(sdDevices, String.valueOf(realStatus), itemId);
+        sdDeviceDataService.updateDeviceData(sdDevices, String.valueOf(realStatus), Long.valueOf(itemId));
     }
 
 
@@ -194,7 +194,7 @@ public class LightTask {
                         //基本照明
                         itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
                     }
-                    sdDeviceDataService.updateDeviceData(device, String.valueOf(brightness), itemId);
+                    sdDeviceDataService.updateDeviceData(device, String.valueOf(brightness), Long.valueOf(itemId));
                 }
             }
         }

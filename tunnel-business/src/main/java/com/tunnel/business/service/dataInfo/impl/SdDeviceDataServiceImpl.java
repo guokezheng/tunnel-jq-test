@@ -2,7 +2,6 @@ package com.tunnel.business.service.dataInfo.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
@@ -549,6 +548,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     }
 
 
+    @Override
     public void updateDeviceData(String deviceId, String value, Integer itemId,boolean createLog) {
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(deviceId);
@@ -586,7 +586,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
      * @param itemId 数据项
      */
     @Override
-    public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
+    public void updateDeviceData(SdDevices sdDevices, String value, Long itemId) {
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(sdDevices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(itemId));

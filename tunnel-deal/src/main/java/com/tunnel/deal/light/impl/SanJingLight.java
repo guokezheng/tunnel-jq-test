@@ -289,7 +289,7 @@ public class SanJingLight implements Light {
                     device.setEqStatusTime(new Date());
                     sdDevicesService.updateSdDevices(device);
                     //更新设备实时数据
-                    updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+                    sdDeviceDataService.updateDeviceData(device, String.valueOf(bright), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
                 }
                 //添加操作日志
                 SdOperationLog sdOperationLog = new SdOperationLog();
@@ -411,7 +411,7 @@ public class SanJingLight implements Light {
                 device.setEqStatusTime(new Date());
                 sdDevicesService.updateSdDevices(device);
                 //更新设备实时数据
-                updateDeviceData(device, String.valueOf(luminanceRange), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+                sdDeviceDataService.updateDeviceData(device, String.valueOf(luminanceRange), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
                 redisCache.setCacheObject("control:"+device.getEqTunnelId()+"_"+device.getEqId()+"_LuminanceRange",luminanceRange);
             }else{
                 redisCache.deleteObject("control:"+device.getEqTunnelId()+"_"+device.getEqId()+"_LuminanceRange");

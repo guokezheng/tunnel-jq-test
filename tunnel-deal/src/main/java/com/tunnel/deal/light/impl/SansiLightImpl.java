@@ -263,7 +263,7 @@ public class SansiLightImpl implements Light {
                     device.setEqStatusTime(new Date());
                     sdDevicesService.updateSdDevices(device);
                     //更新设备实时数据
-                    updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+                   sdDeviceDataService.updateDeviceData(device, String.valueOf(bright), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
                 }
                 //添加操作日志
                 SdOperationLog sdOperationLog = new SdOperationLog();
@@ -288,26 +288,5 @@ public class SansiLightImpl implements Light {
         }
     }
 
-    /**
-     * 更新设备实时数据表
-     * @param sdDevices
-     * @param value
-     * @param itemId
-     */
-    public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
-        SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(sdDevices.getEqId());
-        sdDeviceData.setItemId(Long.valueOf(itemId));
-        List<SdDeviceData> deviceData = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-        if (deviceData.size() > 0) {
-            SdDeviceData data = deviceData.get(0);
-            data.setData(value);
-            data.setUpdateTime(new Date());
-            sdDeviceDataService.updateSdDeviceData(data);
-        } else {
-            sdDeviceData.setData(value);
-            sdDeviceData.setCreateTime(new Date());
-            sdDeviceDataService.insertSdDeviceData(sdDeviceData);
-        }
-    }
+
 }

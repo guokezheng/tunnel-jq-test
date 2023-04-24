@@ -124,5 +124,6 @@ public interface ISdDeviceDataService {
      * @param value 数据
      * @param itemId 数据项
      */
-   void updateDeviceData(SdDevices sdDevices, String value, Integer itemId);
+   void updateDeviceData(SdDevices sdDevices, String value, Long itemId);
+
 }

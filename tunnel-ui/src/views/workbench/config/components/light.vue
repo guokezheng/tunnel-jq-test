@@ -216,6 +216,13 @@ export default {
       // stateForm2:{}
     };
   },
+  watch:{
+    "stateForm.state":function(newVal,oldVal){
+      if(newVal == '1' && this.stateForm.brightness == 0){
+        this.stateForm.brightness = 1
+      }
+    }
+  },
   methods: {
     init(eqInfo,brandList,directionList,eqTypeDialogList){
       this.eqInfo = eqInfo;

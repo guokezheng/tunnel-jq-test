@@ -511,6 +511,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      console.log("===============")
       this.queryParams.pageNum = 1;
       this.$refs.tableFile.clearSelection();
       this.getList();
@@ -561,6 +562,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      let that = this
       if (this.fileList.length < 1) {
         return this.$modal.msgWarning("请上传图片");
       }
@@ -586,12 +588,13 @@ export default {
                 this.fileData.append("url", this.form.url);
                 this.fileData.append("removeIds", this.removeIds);
                 console.log(this.fileData, "this.fileData");
+                
                 updateConfiguration(this.fileData).then((response) => {
                   this.$modal.msgSuccess("修改成功");
                   this.open = false;
                   this.$refs.tableFile.clearSelection();
                   this.$refs.upload.clearFiles();
-                  this.getList();
+                  this.handleQuery();
                 });
               } else {
                 addConfiguration(this.fileData).then((response) => {
@@ -624,6 +627,7 @@ export default {
               updateConfiguration(this.fileData).then((response) => {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
+                this.$refs.tableFile.clearSelection();
                 this.$refs.upload.clearFiles();
                 this.getList();
               });
@@ -663,6 +667,7 @@ export default {
       if (this.ids.length > 0) {
         confirmInfo = "是否确认导出所选的环境配置数据项？";
       }
+      let that = this
       const queryParams = this.queryParams;
       this.$modal
         .confirm(confirmInfo)
@@ -673,7 +678,7 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
           this.exportLoading = false;
-          this.$refs.tableFile.clearSelection();
+          that.$refs.tableFile.clearSelection();
           this.queryParams.ids = "";
         })
         .catch(() => {});

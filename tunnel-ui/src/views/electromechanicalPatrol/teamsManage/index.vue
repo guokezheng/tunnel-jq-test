@@ -228,7 +228,7 @@
     <!-- 包含用户弹窗对话框 -->
     <el-dialog
       title="包含用户"
-      class="workbench-dialog batch-table operationDiglog explain-table"
+      class="batch-table operationDiglog explain-table"
       :visible.sync="teamsUserOpen"
       :before-close="teamsUserCancel"
       width="1000px"

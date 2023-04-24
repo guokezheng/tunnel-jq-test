@@ -1230,6 +1230,10 @@
       :before-close="handleCloseImg"
       :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <img :src="alongImgUrl" style="width: 100%" />
       <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleImg = false">取 消</el-button>

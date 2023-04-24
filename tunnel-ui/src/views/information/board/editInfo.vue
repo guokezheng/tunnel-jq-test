@@ -513,18 +513,12 @@ export default {
     if (this.boardEmitItem) {
       this.boardWidth = this.boardEmitItem.screenSize.split("*")[0];
       this.boardHeight = this.boardEmitItem.screenSize.split("*")[1];
-      console.log(
-        this.boardWidth,
-        this.boardHeight,
-        "this.boardHeightthis.boardHeight"
-      );
       this.init();
     }
   },
   methods: {
     init() {
       this.title = "修改";
-
       this.dialogVisible = true;
       this.itemPropertyMap = new HashMap();
 
@@ -534,7 +528,6 @@ export default {
           this.boardEmitItem.CONTENT.replace("<br>", "\n").replace(/ /g, " ")
         )
       );
-      console.log(this.boardEmitItem.STAY,"this.boardEmitItem.STAY")
       this.dataForm.STAY = JSON.parse(
         JSON.stringify(Number(this.boardEmitItem.STAY) / 100)
       );
@@ -560,31 +553,23 @@ export default {
       this.alignmentNum = alignmentNum;
       var divContent1 = document.getElementsByClassName("blackBoard1");
       var textBoard1 = document.getElementsByClassName("textBoard1");
-      // console.log(textBoard1, "textBoard1");
-      // console.log(divContent1, "divContent1");
-
-      // console.log(textBoard1[0].style, "textBoard1[i].style");
-      // console.log(textWidth,divWidth,"999999999999999");
       switch (alignmentNum) {
         // 左对齐
         case 1:
           textBoard1[0].style.position = "static";
           divContent1[0].style.justifyContent = "left";
           divContent1[0].style.alignItems = "center";
-          // textBoard1[0].style.textAlign = "left";
           break;
         // 左右居中
         case 2:
           textBoard1[0].style.position = "static";
           divContent1[0].style.justifyContent = "center";
           divContent1[0].style.alignItems = "center";
-          // textBoard1[0].style.textAlign = "center";
            break;
         // 右对齐
         case 3:
           divContent1[0].style.justifyContent = "right";
           divContent1[0].style.alignItems = "center";
-          // textBoard1[0].style.textAlign = "right";
           textBoard1[0].style.position = "static";
           break;
         // 上对齐
@@ -606,12 +591,13 @@ export default {
 
           break;
       }
+      if(!alignmentNum){
+        divContent1[0].style.alignItems = "center";
+        textBoard1[0].style.position = "static";
+      }
       var textLeft = this.addZero(textBoard1[0].offsetLeft);
       var textTop = this.addZero(textBoard1[0].offsetTop);
-      console.log(textLeft,textTop,"左右居中")
-      console.log(textBoard1[0].offsetTop,"9999999999");
       this.dataForm.COORDINATE = textLeft + textTop;
-      console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
     },
     addZero(num) {
       if(num<0){
@@ -639,25 +625,26 @@ export default {
       e.preventDefault(); //阻止默认行为
     },
     keyDown(ev) {
-      console.log(ev.keyCode, "ev.keyCode");
-      let arr = [];
-      let content = "";
-      const input = document.getElementById("textContent");
-      // console.log(input.selectionStart);
-      arr = this.dataForm.CONTENT.split("");
-      // console.log(arr, "arr");
-      content += "<div>";
-      for (var i = 0; i < arr.length; i++) {
-        content += arr[i];
-        if (i == input.selectionStart - 1) {
-          if (ev.keyCode == 13) {
-            content += "<br>";
-          } else if (ev.keyCode == 32) {
-            content += "&nbsp";
-          }
-        }
-      }
-      content += "</div>";
+      this.alignment()
+      // console.log(ev.keyCode, "ev.keyCode");
+      // let arr = [];
+      // let content = "";
+      // const input = document.getElementById("textContent");
+      // // console.log(input.selectionStart);
+      // arr = this.dataForm.CONTENT.split("");
+      // // console.log(arr, "arr");
+      // content += "<div>";
+      // for (var i = 0; i < arr.length; i++) {
+      //   content += arr[i];
+      //   if (i == input.selectionStart - 1) {
+      //     if (ev.keyCode == 13) {
+      //       content += "<br>";
+      //     } else if (ev.keyCode == 32) {
+      //       content += "&nbsp";
+      //     }
+      //   }
+      // }
+      // content += "</div>";
       // this.dataForm.content1 = content;
       // console.log( this.dataForm.content1," this.content");
     },
@@ -959,5 +946,6 @@ export default {
   margin: 0 auto;
   overflow: hidden;
   position: relative;
+  text-align: center;
 }
 </style>

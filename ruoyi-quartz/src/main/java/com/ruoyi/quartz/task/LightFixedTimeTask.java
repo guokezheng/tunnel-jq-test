@@ -61,10 +61,8 @@ public class LightFixedTimeTask {
             //查看当前隧道 照明配置文件中  模式类型是否为定时模式，如果为定时模式 则继续执行调光指令
             //查看当前隧道 照明配置文件中  是否开启调光模式  0关闭  1开启
             if(sdEnhancedLightingConfig.getModeType() == 0 && sdEnhancedLightingConfig.getIsStatus() == 1){
-                ThreadPool.executor.execute(() -> {
-                    //定时 开启上行隧道  TunnelDirectionEnum.UP_DIRECTION TunnelDirectionEnum.UP_DIRECTION.getCode(),
-                    adjustBrightnessByRunMode(sdEnhancedLightingConfig.getTunnelId(),sdEnhancedLightingConfig);
-                });
+                //定时 开启上行隧道  TunnelDirectionEnum.UP_DIRECTION TunnelDirectionEnum.UP_DIRECTION.getCode(),
+                adjustBrightnessByRunMode(sdEnhancedLightingConfig.getTunnelId(),sdEnhancedLightingConfig);
             }
         }
     }
@@ -145,30 +143,31 @@ public class LightFixedTimeTask {
                                     num = Integer.parseInt(sdDeviceDataInfo.getData());
                                 }
                             }
+
                             //推送状态值
                             Integer finalNum = num;
                             //获取 当前时间段内  亮度值
                             luminanceRange =  Integer.parseInt(map.get("value").toString());
-                            //如果当前时段调光值为 0   则关闭当前加强照明
-                            if( luminanceRange == 0){
-                                //状态（1-开，2-关）
-                                int flag  = sanJingLight.lineControlAddLog(devices.getEqId(),2,null);
-                                if(flag == 0){
-                                    log.error("关闭当前照明无效,请联系管理员");
-                                }
-                                continue;
-                            }
-                            //当前设备状态是否为关闭
-                            if("2".equals(status)){
+
+                            //首先查看  当前设备状态是否为关闭
+                            if("2".equals(status) && luminanceRange != 0){
                                 //如果当前状态为关闭 ，则开启当前设备
                                 int flag  = sanJingLight.lineControlAddLog(devices.getEqId(),1,null);
                                 if(flag == 0){
                                     log.error("当前加强照明为关闭状态，开启失败。请联系管理员");
                                     continue;
                                 }
+                            }else if(luminanceRange == 0){
+                                //如果当前时段调光值为 0   则关闭当前加强照明
+                                //状态（1-开，2-关）
+                                if(!"2".equals(status)){
+                                    int flag  = sanJingLight.lineControlAddLog(devices.getEqId(),2,null);
+                                    if(flag == 0){
+                                        log.error("关闭当前照明无效,请联系管理员");
+                                    }
+                                }
+                                continue;
                             }
-//                            //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
-//                            Integer num = Integer.parseInt(devices.getData());
                             //等待推送的亮度值
                             int nowLuminanceRange;
                             //查看是否开启车流量模式  0关闭  1开启
@@ -179,19 +178,17 @@ public class LightFixedTimeTask {
                                 nowLuminanceRange = luminanceRange;
                             }
                             if( num ==null || num != nowLuminanceRange || "2".equals(status)){
-                                ThreadPool.executor.execute(() -> {
-                                    //推送调光 指令。
-                                    try{
-                                        //推送指令时，判断当前灯是否 关闭。  如果关闭。 则开启当前灯  并且  调整 灯亮度。
-                                        log.info("当前亮度num：{} 根据车流量计算的亮度nowLuminanceRange:{}", finalNum,nowLuminanceRange);
-                                        int flag = sanJingLight.setBrightnessByDevice(devices, finalNum,nowLuminanceRange, DeviceControlTypeEnum.AUTO_EXEC.getCode());
-                                        if(flag == 0){
-                                            log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
-                                        }
-                                    }catch (Exception e){
+                                //推送调光 指令。
+                                try{
+                                    //推送指令时，判断当前灯是否 关闭。  如果关闭。 则开启当前灯  并且  调整 灯亮度。
+                                    log.info("当前亮度num：{} 根据车流量计算的亮度nowLuminanceRange:{}", finalNum,nowLuminanceRange);
+                                    int flag = sanJingLight.setBrightnessByDevice(devices, finalNum,nowLuminanceRange, DeviceControlTypeEnum.AUTO_EXEC.getCode());
+                                    if(flag == 0){
                                         log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
                                     }
-                                });
+                                }catch (Exception e){
+                                    log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
+                                }
                             }
                         }
                     }

@@ -142,7 +142,7 @@ public class SanJingLight implements Light {
                 redisCache.expire(tokenKey,15*60);
             }
         } catch (Exception e) {
-            logger.info("获取token异常，请联系管理员。");
+            logger.error("获取token异常，请联系管理员。");
             return 0;
         }
         OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -163,6 +163,7 @@ public class SanJingLight implements Light {
             Response response = client.newCall(request).execute();
             //包含“发送成功"就可以
             responseBody = response.body().string();
+            logger.info("responseBody：{}",responseBody);
         } catch (IOException e) {
             logger.error("加强照明调光功能异常，请联系管理员。");
             return 0;

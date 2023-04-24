@@ -146,7 +146,7 @@
     <el-dialog
       :title="title"
       :visible.sync="open"
-      width="30%"
+      width="60%"
       append-to-body
       :close-on-click-modal="false"
       :before-close="cancel"

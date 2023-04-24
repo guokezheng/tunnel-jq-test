@@ -93,7 +93,7 @@ public class SdDeviceControlService {
      * 控制诱导灯：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）
      * 控制疏散标志：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）、fireMark（设备地址标号，正常情况下为255,0为关灯）
      * 情报板控制：devId（设备ID）、state（情报板模板内容对应sdvmstemplatecontent中的content字段）、templateId（情报板模板ID）
-     * 控制方式controlType 根据字典sd_control_type
+     * 控制方式controlType 根据字典sd_control_type 0：手动控制 1：定时控制 2：自动触发 3：分时控制 4：预案执行 8：光强控制
      * */
     public Integer controlDevices(Map<String, Object> map) {
 

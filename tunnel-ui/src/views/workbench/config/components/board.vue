@@ -407,7 +407,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          console.log(this.contentList, "this.contentListthis.contentList");
+          // console.log(this.contentList, "this.contentListthis.contentList");
           var content = "";
           var playList = "[Playlist]<r><n>";
           var Item_Start = "ITEM_NO=";
@@ -829,7 +829,10 @@ export default {
       this.visible = false;
     },
     dialogClose1() {
+      
       this.showEmit = false;
+      this.$forceUpdate()
+      console.log(this.showEmit,"this.showEmit")
     },
   },
 };

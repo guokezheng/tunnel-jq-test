@@ -586,12 +586,12 @@ export default {
     },
   },
   watch: {
-    "dataForm.CONTENT": {
-      deep: true,
-      handler: function (newValue, oldValue) {
-        this.dataForm.content1 = newValue;
-      },
-    },
+    // "dataForm.CONTENT": {
+    //   deep: true,
+    //   handler: function (newValue, oldValue) {
+    //     this.dataForm.content1 = newValue;
+    //   },
+    // },
     //   templateContent: {
     //     deep: true,
     //     handler: function (newValue, oldValue) {
@@ -683,7 +683,7 @@ export default {
             FONT: "黑体",
             SPEED: "1",
             ACTION: "1",
-            COORDINATE: "000000",
+            COORDINATE: "",
             STATE: "true",
             STAY: "5",
             screenSize: devicePixel,
@@ -722,7 +722,7 @@ export default {
       this.$forceUpdate();
     },
     changeFontSize() {
-      this.dataForm.COORDINATE = "000000";
+      // this.dataForm.COORDINATE = "000000";
       var textBoard2 = document.getElementsByClassName("textBoard2");
       textBoard2[0].style.position = "absolute";
       this.alignment(this.alignmentNum)
@@ -731,26 +731,27 @@ export default {
       },100);
     },
     keyDown(ev) {
-      let arr = [];
-      let content = "";
-      const input = document.getElementById("textContent");
-      // console.log(input.selectionStart);
-      arr = this.dataForm.CONTENT.split("");
-      // console.log(arr, "arr");
+      this.alignment()
+      // let arr = [];
+      // let content = "";
+      // const input = document.getElementById("textContent");
+      // // console.log(input.selectionStart);
+      // arr = this.dataForm.CONTENT.split("");
+      // // console.log(arr, "arr");
 
-      content += "<div>";
-      for (var i = 0; i < arr.length; i++) {
-        content += arr[i];
-        if (i == input.selectionStart - 1) {
-          if (ev.keyCode == 13) {
-            content += "<br>";
-          } else if (ev.keyCode == 32) {
-            content += "&nbsp";
-          }
-        }
-      }
-      content += "</div>";
-      this.dataForm.content1 = content;
+      // content += "<div>";
+      // for (var i = 0; i < arr.length; i++) {
+      //   content += arr[i];
+      //   if (i == input.selectionStart - 1) {
+      //     if (ev.keyCode == 13) {
+      //       content += "<br>";
+      //     } else if (ev.keyCode == 32) {
+      //       content += "&nbsp";
+      //     }
+      //   }
+      // }
+      // content += "</div>";
+      // this.dataForm.content1 = content;
     },
 
     //选择图片弹框关闭事件
@@ -795,6 +796,7 @@ export default {
     // },
     // 表单提交
     async dataFormSubmitHandle() {
+      this.alignment()
       // let valid = await this.$refs.dataForm.validate().catch(() => {
       //   return this.$modal.msgError("校验错误");
       // });
@@ -985,6 +987,10 @@ export default {
 
           break;
       }
+      if(!alignmentNum){
+        divContent2[0].style.alignItems = "center";
+        textBoard2[0].style.position = "static";
+      }
       var textLeft = this.addZero(textBoard2[0].offsetLeft);
       var textTop = this.addZero(textBoard2[0].offsetTop);
       this.dataForm.COORDINATE = textLeft + textTop;
@@ -1113,7 +1119,7 @@ export default {
   overflow: hidden;
   position: relative;
   // justify-content: center;
-  // align-items: center;
+  align-items: center;
 }
 ::v-deep .el-card__body {
   padding: 10px 0;

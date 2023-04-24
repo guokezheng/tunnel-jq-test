@@ -8,7 +8,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
-import com.tunnel.business.datacenter.domain.enumeration.DeviceDirectionEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
@@ -968,7 +968,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     /**
-     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取设备
      * @param sdDevices
      * @return
      */
@@ -1032,4 +1032,62 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName) {
         return sdDevicesMapper.tunnelEqNameOnly(eqTunnelId,eqName);
     }
+
+
+    /**
+     * 修改设备以及子设备状态在线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateOnlineStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId, DevicesStatusEnum.DEVICE_ON_LINE.getCode(),cascade);
+    }
+
+    /**
+     * 修改设备以及子设备状态离线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateOfflineStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId,DevicesStatusEnum.DEVICE_OFF_LINE.getCode(),cascade);
+    }
+
+    /**
+     * 修改设备以及子设备状态故障
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateFaultStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId,DevicesStatusEnum.DEVICE_ERROR.getCode(),cascade);
+    }
+
+    /**
+     * 设置设备以及子设备状态
+     * @param deviceId 设备ID
+     * @param status 设备状态
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateDeviceStatus(String deviceId,String status,boolean cascade){
+        int result;
+
+        SdDevices sdDevices = new SdDevices();
+        //设置设备状态
+        sdDevices.setEqId(deviceId);
+        sdDevices.setEqStatus(status);
+        sdDevices.setEqStatusTime(new Date());
+        result = updateSdDevices(sdDevices);
+
+        //级联修改子设备状态
+        if(cascade){
+            //设置子设备状态
+            sdDevices.setFEqId(deviceId);
+           result = updateSdDevicesByFEqId(sdDevices);
+        }
+        return result;
+    }
+
 }

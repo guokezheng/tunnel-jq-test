@@ -248,7 +248,7 @@ public interface ISdDevicesService {
     List<SdDevices> getSpkList(SdDevices sdDevices);
 
     /**
-     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取设备
      * @param sdDevices
      * @return
      */
@@ -277,4 +277,36 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName);
+
+    /**
+     * 修改设备以及子设备状态在线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    int updateOnlineStatus(String deviceId,boolean cascade);
+
+    /**
+     * 修改设备以及子设备状态离线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateOfflineStatus(String deviceId,boolean cascade);
+
+
+    /**
+     * 修改设备以及子设备状态故障
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateFaultStatus(String deviceId,boolean cascade);
+
+
+    /**
+     * 设置设备以及子设备状态
+     * @param deviceId 设备ID
+     * @param status 设备状态
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateDeviceStatus(String deviceId,String status,boolean cascade);
+
 }

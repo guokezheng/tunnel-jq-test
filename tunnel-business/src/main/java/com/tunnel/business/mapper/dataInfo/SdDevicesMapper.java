@@ -193,6 +193,11 @@ public interface SdDevicesMapper
 
 	public List<Map> getReserveProcessDevices(String[] param);
 
+	/**
+	 * 根据父设备ID查询关联子设备信息
+	 * @param fEqId 父设备ID
+	 * @return
+	 */
 	public List<SdDevices> getDevicesListByFEqId(String fEqId);
 
 	/**
@@ -284,7 +289,7 @@ public interface SdDevicesMapper
     List<SdDevices> getSpkList(SdDevices sdDevices);
 
 	/**
-	 * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+	 * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取设备
 	 * @param sdDevices
 	 * @return
 	 */

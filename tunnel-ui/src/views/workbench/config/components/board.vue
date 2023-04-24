@@ -59,17 +59,17 @@
                         }"
                         class="boardTextStyle"
                         v-html="
-                          scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                          scope.row.CONTENT?scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                             / /g,
                             '&nbsp'
-                          )
+                          ):''
                         "
                       ></span>
                     </div>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column align="center">
+              <el-table-column align="center" width="135">
                 <template slot-scope="scope">
                   <div class="infoButton">
                     <div
@@ -297,6 +297,30 @@ import editInfo from "@/views/information/board/editInfo";
 import addinfo from "@/views/information/board//addinfo";
 import Sortable from "sortablejs";
 import { getBoardEditInfo } from "@/api/information/api.js";
+// 对象深拷贝
+export const deepClone = (data) => {
+  // 封装的判断数据类型的方法
+  var type = typeof data;
+  var obj;
+  if (type === "array") {
+    obj = [];
+  } else if (type === "object") {
+    obj = {};
+  } else {
+    // 不再具有下一层次
+    return data;
+  }
+  if (type === "array") {
+    for (var i = 0, len = data.length; i < len; i++) {
+      obj.push(deepClone(data[i]));
+    }
+  } else if (type === "object") {
+    for (var key in data) {
+      obj[key] = deepClone(data[key]);
+    }
+  }
+  return obj;
+};
 export default {
   // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   components: {
@@ -345,6 +369,7 @@ export default {
   watch: {
     contentList: function (newVal, oldVal) {
       this.$nextTick(() => {
+        console.log("大弹窗contentList")
         this.rowDrop();
       });
     },
@@ -372,6 +397,7 @@ export default {
   },
   methods: {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      console.log("进来了")
       this.contentList = [];
       this.msgModeShow = true;
       this.openMesMode();
@@ -405,8 +431,8 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
+      }).then(() => {
+        console.log( "确定发布情报板")
           // console.log(this.contentList, "this.contentListthis.contentList");
           var content = "";
           var playList = "[Playlist]<r><n>";
@@ -417,6 +443,7 @@ export default {
           var Item_No = Item_Start + length + "<r><n>";
           var value = "";
           content += Item_No;
+          console.log( "确定发布情报板111111")
           for (var i = 0; i < this.contentList.length; i++) {
             // console.log(this.contentList[i].COLOR,"this.contentList[i].COORDINATE")
             value = ("000" + i).slice(-3);
@@ -444,6 +471,7 @@ export default {
             }
             console.log(content, "content");
           }
+          console.log( "确定发布情报板22222222")
           let protocolType = "GUANGDIAN_V33";
           let deviceld = this.associatedDeviceId.toString();
           uploadBoardEditInfo(deviceld, protocolType, content).then(
@@ -451,9 +479,12 @@ export default {
               this.$modal.msgSuccess("发布成功");
               console.log(response, "返回结果");
             }
-          );
+          ).catch(()=>{
+
+          });
         })
         .catch(() => {
+          console.log( "已取消发布情报板")
           this.$message({
             type: "info",
             message: "已取消发布情报板",
@@ -489,7 +520,8 @@ export default {
     addInfo(form) {
       form.ID = this.contentList.length;
       console.log(form, "待发新增");
-      this.contentList.push(form);
+      this.contentList.push(deepClone(form));
+      console.log(this.contentList,"this.contentList")
       this.$forceUpdate();
     },
     // 新增 修改分辨率

@@ -638,7 +638,7 @@ export default {
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey(row) {
-      return row.id;
+      return row.userId;
     },
     bodyCloseMenus(e) {
       let self = this;

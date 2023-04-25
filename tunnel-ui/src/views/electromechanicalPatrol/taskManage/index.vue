@@ -2078,6 +2078,9 @@ h1 {
   // .el-dialog__body {
   //   padding: 15px 20px;
   // }
+  .el-table--group::after, .el-table--border::after{
+    width:0px;
+  }
 }
 img {
   width: 100px;

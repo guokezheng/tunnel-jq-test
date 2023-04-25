@@ -271,12 +271,16 @@ public class SdDeviceControlService {
                 //控制照明设备
                 controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices,brightness);
 
+                brightness = state.equals("1")?brightness:0;
+
                 // 加强照明  开始（10）
                 if(brightness != null){
                     String operationStateStr = state.equals("1")?"开启":"关闭";
                     operationStateStr += "，亮度："+brightness + "%";
                     sdOperationLog.setOperationState(operationStateStr);
                 }
+
+
                 sdOperationLog.setState(String.valueOf(controlState));
             } else if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.VMS.getCode().longValue()
                     || sdDevices.getEqType().longValue() == DevicesTypeEnum.MEN_JIA_VMS.getCode().longValue())) {

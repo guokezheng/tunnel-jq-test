@@ -1264,7 +1264,12 @@ public class KafkaReadListenToHuaWeiTopic {
             SdEvent sdEvent = new SdEvent();
             sdEvent.setId(eventId);
             List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
-            //新增事件后推送前端
+            //设置视频地址
+            sdEventList.stream().forEach(sdEventItem -> sdEventItem.setVideoUrl(
+                            StringUtils.isNotEmpty(jsonObject.getString("eventVideoUrl"))&&jsonObject.getString("eventVideoUrl").indexOf(";")!=-1
+                                    ? jsonObject.getString("eventVideoUrl").split(";")[0]
+                                    : jsonObject.getString("eventVideoUrl")));
+            //新增事件后推送前端  弹出
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
             WebSocketService.broadcast("sdEventList",object.toString());

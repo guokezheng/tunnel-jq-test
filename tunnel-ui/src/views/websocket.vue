@@ -67,8 +67,8 @@ export default {
           case "sdEventList":
             //弹窗
             this.$store.commit("SDEVENTLIST", contentList.sdEventList);
-            //画图  展现的svg图上
-            this.$store.commit("SDSVGEVENTLIST", contentList.sdEventList);
+            // //画图  展现的svg图上
+            // this.$store.commit("SDSVGEVENTLIST", contentList.sdEventList);
             break;
           case "radarDataList":
             this.$store.commit("RADARDATALIST", contentList.radarDataList);

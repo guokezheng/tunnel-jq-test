@@ -139,9 +139,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEventTypeId(Long.parseLong(eventType));
                 sdEvent.setTunnelId(tunnelId);
                 sdEvent.setStationId(f.getStationId() + "");
+                //事件桩号
                 sdEvent.setStakeNum(f.getStakeNum());
+                //车道号
                 sdEvent.setLaneNo(f.getLaneNo() + "");
+                //经度
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
+                //维度
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
                 sdEvent.setStartTime(dateZh(f.getEventTimeStampStart()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampStart())));
                 sdEvent.setEndTime(dateZh(f.getEventTimeStampEnd()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampEnd())));

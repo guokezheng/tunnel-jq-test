@@ -734,6 +734,7 @@ export default {
       // Object.keys(this.queryParams).forEach(key => {
       //   this.queryParams[key] = ""
       // })
+      this.deptName = ''
       this.queryParams.userName = "";
       this.queryParams.deptId = "";
       this.queryParams.ids = "";

@@ -1,5 +1,5 @@
 
-  <style media="screen">
+  <style media="screen" scoped>
     .con {
       width: 100%;
       height: 88%;

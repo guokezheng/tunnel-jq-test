@@ -158,11 +158,13 @@
                 <el-slider
                   v-model="stateForm.brightness"
                   :max="100"
+                  :min=min
                   class="sliderClass"
+                  :disabled = !stateForm.brightness
                 ></el-slider>
               </el-form-item>
             </el-col>
-            <el-col :span="9" v-if="stateForm.brightness">
+            <el-col :span="9">
               <span style="padding-left: 10px; line-height: 30px"
                 >{{ stateForm.brightness }} %</span
               >
@@ -213,6 +215,7 @@ export default {
       eqInfo:{},
       eqTypeDialogList:[],
       directionList:[],
+      min:0,
       // stateForm2:{}
     };
   },
@@ -220,6 +223,10 @@ export default {
     "stateForm.state":function(newVal,oldVal){
       if(newVal == '1' && this.stateForm.brightness == 0){
         this.stateForm.brightness = 1
+        this.min = 1
+      }else if(newVal == '2'){
+        this.stateForm.brightness = 0
+        this.min = 0
       }
     }
   },

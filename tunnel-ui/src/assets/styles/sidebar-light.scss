@@ -1348,7 +1348,7 @@
         white-space: nowrap !important;
         height: 7.6vh;
         line-height: 7.6vh;
-        font-size: 16px;
+        font-size: 0.8vw;
         border-radius: 10px;
 
         // background: #165BA2;
@@ -1624,10 +1624,10 @@
       color: #fff;
       border: none !important;
       // box-shadow: 0px 0px 10px #68B5FF;
-      width: 160px;
-      height: 32px;
-      line-height: 28px;
-      font-size: 15px;
+      width: 9vw;
+      height: 3vh;
+      line-height: 3vh;
+      font-size: 0.75vw;
   }
   .robotTabs .el-tabs__header .el-tabs__nav .el-tabs__item{
     color: #2c5ea2 !important;
@@ -1643,10 +1643,10 @@
   //   border: solid 1px #00ADFF;
   // }
   .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-    border: 1px solid #1581BA;
+    border: 1px solid #03659E;
   }
   .el-table__body-wrapper .el-table__cell{
-    border: 1px solid #1581BA;
+    border: 1px solid #03659E;
 
   }
   /*table滚动条背景色 */
@@ -2006,7 +2006,7 @@
       color: white;
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-      background-color: #1581BA;
+      background-color: #03659E;
       color: white;
     }
     .el-slider__runway {
@@ -2026,7 +2026,7 @@
   }
   .siteClass {
     line-height: unset;
-  	margin-left: 16px;
+  	margin-left: 1vw;
       .el-input__suffix{
         color: #e1feff;
       }
@@ -2366,14 +2366,16 @@
   .zoomClass{
     .input-with-select{
       .el-input__inner{
-        padding: 15px;
-        width: 150px;
+        padding: 0 15px;
+        width: 7vw;
       }
       .el-input-group__append{
         background-color: #00B0FF;
         border: 1px solid #00B0FF;
         padding: 0;
-        width: 30px;
+        width: 1.5vw;
+        height: 3vh;
+        line-height: 2vh;
         .el-button{
           width: 30px;
           margin: -10px -10px;
@@ -2390,20 +2392,22 @@
       background-color: transparent !important;
       border: none !important;
       width: 2vw;
-      font-size: 10px;
+      font-size: 0.5vw;
       :hover {
-        font-size: 15px;
+        font-size: 0.6vw;
       }
       .el-icon-minus,.el-icon-plus{
          color: #00c8ff;
       }
     }
     .el-input__inner {
-      height: 32px;
+      height: 3vh;
       padding: 0;
       color: #e1feff;
       background: linear-gradient(2deg, #00070D, #005AA8);
       border: solid 1px #00c8ff;
+      line-height: 3vh;
+      font-size: 0.5vw;
     }
     .switchStyle .el-switch__core:after{
       background: #0a88bd;

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <svg-icon :icon-class="isFullscreen?'exit-fullscreen':'fullscreen'" @click.native="click" :name="isFullscreen?'exit-fullscreen':'fullscreen'"/>
+    <svg-icon :icon-class="isFullscreen?'exit-fullscreen':'fullscreen'" 
+    @click.native="click" :name="isFullscreen?'exit-fullscreen':'fullscreen'"
+    />
   </div>
 </template>
 
@@ -92,8 +94,13 @@ export default {
   display: inline-block;
   cursor: pointer;
   fill: #5a5e66;;
-  width: 20px;
-  height: 20px;
+  width: 2vw;
+  height: 2vh;
   vertical-align: 10px;
+}
+::v-deep .svg-icon{
+  width: 2vw !important;
+  height: 2vh !important;
+  vertical-align: -2px !important;
 }
 </style>

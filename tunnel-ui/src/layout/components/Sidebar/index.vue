@@ -426,9 +426,9 @@ export default {
   // padding-left: 20px;
   a {
     height: 100%;
-    font-size: 16px;
+    font-size: 0.8vw;
     line-height: 7.6vh;
-    padding-left: 26px;
+    padding-left: 2vw;
   }
 }
 .selectNavbar,
@@ -467,10 +467,10 @@ export default {
   width: 10%;
   float: left;
   text-align: left;
-  margin-left: 100px;
+  margin-left: 5vw;
 
   span {
-    margin-left: 10px;
+    margin-left: 1vw;
     // padding-right: 30px;
   }
 }

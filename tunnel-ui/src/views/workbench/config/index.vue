@@ -2,8 +2,9 @@
   <div class="app-container">
     <div
       class="my-back"
-      :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }"
+  
     >
+    <!-- :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }" -->
       <div class="header workbench-header">
         <el-row
           class="menu-b"
@@ -44,9 +45,10 @@
                 style="
                   display: flex;
                   justify-content: center;
-                  height: 32px;
-                  line-height: 20px;
-                  font-size: 15px;
+                  height: 100%;
+                  line-height: 3vh;
+                  font-size: 0.75vw;
+                  padding: 0 1vw;
                 "
               >
                 <div>{{ item.tunnelName }}</div>
@@ -57,7 +59,7 @@
 
         <div class="flex-row" style="z-index: 8">
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 14px; margin-right: 10px">
+            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
               {{ carShow ? "实时车辆关" : "实时车辆开" }}
             </p>
             <el-switch
@@ -110,7 +112,7 @@
             </div>
           </div>
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 14px">缩放：</p>
+            <p class="zoom-title" style="font-size: 0.75vw">缩放：</p>
             <el-input-number
               v-model="zoom"
               :step="10"
@@ -129,7 +131,7 @@
             <el-switch v-model="displayNumb" class="switchStyle"></el-switch>
           </div> -->
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 14px">
+            <p class="zoom-title" style="font-size: 0.75vw">
               {{ zoomSwitch == 0 ? "缩放开" : "缩放关" }}
             </p>
             <el-switch
@@ -205,7 +207,7 @@
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          style="position: relative; left: 2%"
+          
         >
           <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
@@ -635,7 +637,6 @@
             :value="index"
             @click="displayControl(index, item.label)"
             class="leftButtonS"
-            :style="topNav ? 'width:100px' : 'width:100px'"
           >
             <div>{{ item.label }}</div>
           </div>
@@ -650,6 +651,7 @@
             flex-direction: column;
             height: 100%;
             z-index: 8;
+            width:1.6vw;
           "
           :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
@@ -1022,7 +1024,7 @@
               <div class="footTitleCont">
                 <img
                   :src="carIcon"
-                  style="width: 18px; margin-right: 5px"
+                  style="width: 0.9vw; margin-right: 5px"
                   v-show="sideTheme != 'theme-blue'"
                 />
                 <p>车辆监测</p>
@@ -1040,7 +1042,7 @@
               <div class="footTitleCont">
                 <img
                   :src="energyIcon"
-                  style="width: 18px; margin-right: 5px"
+                  style="width: 1vw; margin-right: 5px"
                   v-show="sideTheme != 'theme-blue'"
                 />
                 <p>能耗监测</p>
@@ -1058,7 +1060,7 @@
               <div class="footTitleCont">
                 <img
                   :src="keyVehiclesIcon"
-                  style="width: 17px; margin-right: 5px"
+                  style="width: 0.8vw; margin-right: 5px"
                   v-show="sideTheme != 'theme-blue'"
                 />
                 <p>重点车辆</p>
@@ -1075,7 +1077,7 @@
               <div class="footTitleCont">
                 <img
                   :src="warningIcon"
-                  style="width: 16px; margin-right: 5px"
+                  style="width: 0.8vw; margin-right: 5px"
                   v-show="sideTheme != 'theme-blue'"
                 />
                 <p>预警事件</p>
@@ -1498,6 +1500,24 @@
             </el-radio-group>
           </div>
         </el-form-item>
+        <el-row style="margin-top:10px" v-show="batchManageForm.eqType == 7">
+            <el-col :span="15">
+              <el-form-item label="亮度调整:">
+                <el-slider
+                  v-model="batchManageForm.brightness"
+                  :max="100"
+                  :min=min
+                  class="sliderClass"
+                  :disabled = !batchManageForm.brightness
+                ></el-slider>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9">
+              <span style="padding-left: 10px; line-height: 30px"
+                >{{ batchManageForm.brightness }} %</span
+              >
+            </el-col>
+          </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="batchManageOK()" class="submitButton"
@@ -4262,6 +4282,7 @@ export default {
       userQueryParams: {
         userName: this.$store.state.user.name,
       },
+      topNav: this.$store.state.settings.topNav,
       //验证
       rules: {
         state: [
@@ -4520,6 +4541,7 @@ export default {
       cameraPlayer2: false,
       cameraPlayer3: false,
       cameraPlayer4: false,
+      min:0,
     };
   },
 
@@ -4672,6 +4694,15 @@ export default {
   },
 
   watch: {
+    "batchManageForm.state":function(newVal,oldVal){
+      if(newVal == '1' && this.batchManageForm.brightness == 0){
+        this.batchManageForm.brightness = 1
+        this.min = 1
+      }else if(newVal == '2'){
+        this.batchManageForm.brightness = 0
+        this.min = 0
+      }
+    },
     // 工作台搜索关键词匹配
     screenEqName(val) {
       this.$refs.tree.filter(val);
@@ -5582,7 +5613,7 @@ export default {
           });
         }
       });
-      console.log(that.eqTypeStateList2, "that.eqTypeStateList");
+      console.log(that.eqTypeStateList2, "that.eqTypeStateList2");
     },
     // 关闭批量操作弹窗 / 批量操作取消
     closeBatchManageDialog() {
@@ -9472,10 +9503,10 @@ export default {
 }
 
 .siblings {
-  position: fixed;
-  top: 121px;
+  position: absolute;
+  top: 6%;
   width: 100%;
-  height: 61.8%;
+  height: 68%;
 
   .eqTypeListClass {
     float: left;
@@ -9489,7 +9520,7 @@ export default {
 
   //车道控制
   .indicatorLight {
-    width: 30px;
+    width: 100%;
     height: 33%;
     background: linear-gradient(
       90deg,
@@ -9499,7 +9530,7 @@ export default {
     color: white;
     writing-mode: vertical-lr;
     letter-spacing: 5px;
-    font-size: 16px;
+    font-size: 0.75vw;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -9508,7 +9539,7 @@ export default {
 
   //照明控制
   .brightnessControl {
-    width: 30px;
+    width: 100%;
     height: 33%;
     background: linear-gradient(
       90deg,
@@ -9521,7 +9552,7 @@ export default {
     text-align: center;
     //文字间隔
     letter-spacing: 5px;
-    font-size: 16px;
+    font-size: 0.75vw;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -9534,7 +9565,7 @@ export default {
 }
 // 触发控制模块
 .triggerControl {
-  width: 30px;
+  width: 100%;
   height: 33%;
   background: linear-gradient(
     90deg,
@@ -9547,7 +9578,7 @@ export default {
   text-align: center;
   //文字间隔
   letter-spacing: 5px;
-  font-size: 16px;
+  font-size: 0.75vw;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -9806,10 +9837,13 @@ export default {
 .vehicleLane {
   height: 68%;
   align-items: center;
-  width: 100%;
+  width: 90%;
   display: flex;
-  position: relative;
-  margin-top: 2px;
+  position: absolute;
+  // margin-top: 2px;
+  top: 6%;
+  left: 7.35%;
+  z-index: 10;
 }
 .contentTopNav {
   width: 85%;
@@ -9857,13 +9891,15 @@ export default {
 
 .footer {
   width: 100%;
-  height: 25%;
-  padding: 0px 0px 0px 16px;
+  height: 23%;
+  padding: 0px 0px 0px 1vw;
   // margin-top: 10px;
   display: flex;
   padding-bottom: 5px;
   justify-content: space-between;
-  margin-top: 8px;
+  // margin-top: 8px;
+  position: absolute;
+  bottom:0.5%;
   z-index: 8;
   .fourBox {
     display: flex;
@@ -9872,7 +9908,7 @@ export default {
     margin-right: 20px;
   }
   .footChangeButton {
-    width: 30px;
+    width: 1.6vw;
     height: 100%;
     ::v-deep .el-radio-group {
       width: 100%;
@@ -9887,10 +9923,10 @@ export default {
           text-align: center;
           width: 100%;
           height: 100%;
-          line-height: 26px;
+          line-height: 1.5vw;
           letter-spacing: 16px;
           border-radius: 0;
-          font-size: 16px;
+          font-size: 0.75vw;
         }
       }
     }
@@ -9900,13 +9936,13 @@ export default {
     }
   }
   .footTitle {
-    padding: 5px 20px;
+    padding: 0 1vw;
     // line-height: 25px;
-    font-size: 14px;
+    font-size: 0.7vw;
     display: flex;
     align-items: center;
     font-family: inherit;
-
+    height: 2.4vh;
     .footTriangle {
       width: 0;
       height: 0;
@@ -9917,8 +9953,8 @@ export default {
 
     .footTitleCont {
       width: 100%;
-      height: 24px;
-      margin-top: -4px;
+      height: 100%;
+      // margin-top: -4px;
       font-weight: bold;
       display: flex;
       align-items: center;
@@ -10007,14 +10043,14 @@ export default {
 .leftButtonS {
   position: relative;
   left: 0px;
-  font-size: 16px;
-  // width: 125px;
-  height: 46px;
-  line-height: 46px;
+  font-size: 0.75vw;
+  width: 90%;
+  height: 5vh;
+  line-height: 5vh;
   font-weight: 500;
   caret-color: rgba(0, 0, 0, 0);
   text-align: center;
-  margin-left: 16px;
+  margin-left: 1vw;
   border-radius: 2px;
   cursor: pointer;
   img {
@@ -10029,7 +10065,7 @@ export default {
   right: 0;
 }
 .openSidebar .leftNavRightDeawer {
-  right: 240px;
+  right: 0px;
 }
 .hideSidebar .leftNavRightDeawer {
   right: 0px;
@@ -10085,7 +10121,7 @@ export default {
   margin-top: 5px;
 }
 .menu-b .el-button-group > .el-button + .el-button {
-  margin-left: 10px;
+  margin-left: 3px;
 }
 
 // ::v-deep .menu-b .el-select--small{
@@ -10202,9 +10238,9 @@ export default {
 }
 
 .workbench-header {
-  padding-right: 20px;
-  height: 45px;
-  margin-top: 2px;
+  // padding-right: 20px;
+  height: 3vh;
+  margin-top: 1vh;
   display: flex;
   justify-content: space-between;
 }
@@ -10212,11 +10248,14 @@ export default {
 .flex-row {
   display: flex;
   // flex-direction: row;
-  height: 32px;
+  height: 3vh;
   align-items: center;
+  padding:0 1vw;
+  font-size:0.6vw;
 }
 
 .my-back {
+  height:100%;
   // background-color: #cdedfa;
   // background-image: url("../../../assets/image/bg.png");
   background-repeat: no-repeat;
@@ -10286,8 +10325,13 @@ export default {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 10px;
-  height: 32px;
+  padding-right: 0.8vw;
+  height: 3vh;
+  .switchStyle{
+    font-size: 0.75vw;
+    line-height: 2vh;
+    height: 2vh;
+  }
 }
 
 .menu-title {
@@ -10333,10 +10377,10 @@ export default {
 .menu-button-group {
   width: 90%;
   display: inline-block;
-
+  height:3vh;
   // transform: translateY(-6px);
   .el-button {
-    margin: 5px;
+    margin: 0 5px;
   }
 }
 
@@ -10344,7 +10388,7 @@ export default {
 .content {
   clear: both;
   text-align: center;
-  width: 90%;
+  width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -10359,7 +10403,7 @@ export default {
   // width: 90%;
   height: 100%;
 
-  position: absolute;
+  // position: absolute;
   // top: 7%;
   // -webkit-user-select: none;
   // user-select: none;
@@ -10367,7 +10411,7 @@ export default {
   // justify-content: center;
   // overflow-x: auto;
   > div {
-    width: 100%;
+    height: 100%;
   }
 }
 
@@ -10558,7 +10602,7 @@ export default {
   // display: flex;
   // justify-content: center;
   // align-items: center;
-  height: 580px;
+  height: 100%;
   width: 100%;
   background-size: cover;
   // 工作台加滚动条 居中后左侧超出部分会溢出 加下面三行
@@ -10568,7 +10612,7 @@ export default {
 }
 
 .back-img {
-  height: 580px;
+  height: 100%;
   // width: 1630px !important;
   position: absolute;
   display: block;
@@ -10897,6 +10941,10 @@ input {
 .icon-dialog {
   .el-dialog {
     pointer-events: auto !important;
+    .el-radio{
+      height:40px !important;
+      width: 240px;
+    }
   }
 }
 .popper-class-site {

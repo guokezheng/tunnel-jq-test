@@ -109,7 +109,11 @@ h6 {
     line-height: 4vh;
   }
 }
-
+.el-dialog{
+  .el-table .el-table__cell{
+    line-height: normal !important;
+  }
+}
 /** 表单布局 **/
 .form-header {
   font-size: 15px;

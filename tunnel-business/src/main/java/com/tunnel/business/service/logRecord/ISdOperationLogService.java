@@ -1,6 +1,7 @@
 package com.tunnel.business.service.logRecord;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 
 import java.util.List;
@@ -104,4 +105,6 @@ public interface ISdOperationLogService {
      * @return
      */
     int selectAppOperationLogCountList(String eqId,String time, String deptId);
+
+
 }

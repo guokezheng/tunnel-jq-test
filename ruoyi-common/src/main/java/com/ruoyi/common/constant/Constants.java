@@ -4,7 +4,7 @@ import io.jsonwebtoken.Claims;
 
 /**
  * 通用常量信息
- * 
+ *
  */
 public class Constants
 {
@@ -158,8 +158,8 @@ public class Constants
      */
     public static final String[] JOB_ERROR_STR = { "java.net.URL", "javax.naming.InitialContext", "org.yaml.snakeyaml",
             "org.springframework.jndi" };
-			
-			
+
+
     /**
      * payment 支付
      * 订单号绑定token
@@ -179,6 +179,12 @@ public class Constants
      * 小车token
      */
     public static final String CAR_TOKEN = "cat_token:";
+
+
+    /**
+     * 三晶照明token
+     */
+    public static final String SANJING_LIGHT_TOKEN = "control:sanJingLighttoken";
 
 
 

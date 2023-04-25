@@ -93,7 +93,7 @@ public class SdDeviceControlService {
      * 控制诱导灯：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）
      * 控制疏散标志：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）、fireMark（设备地址标号，正常情况下为255,0为关灯）
      * 情报板控制：devId（设备ID）、state（情报板模板内容对应sdvmstemplatecontent中的content字段）、templateId（情报板模板ID）
-     * 控制方式controlType 根据字典sd_control_type
+     * 控制方式controlType 根据字典sd_control_type 0：手动控制 1：定时控制 2：自动触发 3：分时控制 4：预案执行 8：光强控制
      * */
     public Integer controlDevices(Map<String, Object> map) {
 
@@ -256,7 +256,8 @@ public class SdDeviceControlService {
                 states[3] = fireMark;
                 sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
                 //控制照明 目前只有加强照明和基本照明
-            } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) {
+            } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue() ||
+                    sdDevices.getEqType().longValue() == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode() || sdDevices.getEqType().longValue() == DevicesTypeEnum.YING_JI_ZHAO_MING.getCode()) {
                 if (data.size() > 0) {
                     sdOperationLog.setBeforeState(data.get(0).getData());
                 }
@@ -271,12 +272,16 @@ public class SdDeviceControlService {
                 //控制照明设备
                 controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices,brightness);
 
+                brightness = state.equals("1")?brightness:0;
+
                 // 加强照明  开始（10）
                 if(brightness != null){
                     String operationStateStr = state.equals("1")?"开启":"关闭";
                     operationStateStr += "，亮度："+brightness + "%";
                     sdOperationLog.setOperationState(operationStateStr);
                 }
+
+
                 sdOperationLog.setState(String.valueOf(controlState));
             } else if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.VMS.getCode().longValue()
                     || sdDevices.getEqType().longValue() == DevicesTypeEnum.MEN_JIA_VMS.getCode().longValue())) {
@@ -339,8 +344,16 @@ public class SdDeviceControlService {
             if (sdDeviceTypeItems.size() == 0) {
                 throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
             }
-            SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-            updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+            sdDeviceTypeItems.stream().forEach(item -> {
+                if("brightness".equals(item.getItemCode()) && DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+                    updateDeviceData(sdDevices, brightness.toString(), Integer.parseInt(item.getId().toString()));
+                }
+                if("state".equals(item.getItemCode())){
+                    updateDeviceData(sdDevices, state, Integer.parseInt(item.getId().toString()));
+                }
+            });
+           /* SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
+            updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));*/
             controlState = 1;
         }
         return controlState;

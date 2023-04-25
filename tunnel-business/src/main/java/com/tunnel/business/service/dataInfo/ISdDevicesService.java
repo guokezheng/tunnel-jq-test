@@ -222,7 +222,7 @@ public interface ISdDevicesService {
      * app端获取设备列表
      * @return
      */
-    Map getAppDevicesList(String param, String eqType, String eqStatus);
+    List<SdDevices> getAppDevicesList(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum);
 
     /**
      * app端设备信息
@@ -277,4 +277,40 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName);
+
+    int getAppDevicesCountList(String param, String eqType, String eqStatus, String deptId);
+
+    List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum);
+
+    /**
+     * 修改设备以及子设备状态在线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    int updateOnlineStatus(String deviceId,boolean cascade);
+
+    /**
+     * 修改设备以及子设备状态离线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateOfflineStatus(String deviceId,boolean cascade);
+
+
+    /**
+     * 修改设备以及子设备状态故障
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateFaultStatus(String deviceId,boolean cascade);
+
+
+    /**
+     * 设置设备以及子设备状态
+     * @param deviceId 设备ID
+     * @param status 设备状态
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateDeviceStatus(String deviceId,String status,boolean cascade);
+
 }

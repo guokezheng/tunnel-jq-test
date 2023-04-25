@@ -66,10 +66,30 @@ public class SdAppDevicesController extends BaseController
      * @return
      */
     @PostMapping("/app/getAppDevicesList")
-    public Result getAppDevicesList(String param,String eqType,String eqStatus){
+    public Map<String,Object> getAppDevicesList(String param,String eqType,String eqStatus,Integer pageSize,Integer pageNum){
+        Map<String,Object>map = new HashMap();
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        int count = devicesService.getAppDevicesCountList(param,eqType,eqStatus,deptId);
+        if(count > 0){
+            List<SdDevices> list = devicesService.getAppDevicesList(param,eqType,eqStatus,pageSize,pageNum);
+            TableDataInfo devicesList = new TableDataInfo(list,count);
+            List<SdDevices> stateNum = devicesService.getDevicesNum(param,eqType,eqStatus,pageSize,pageNum);
+            map.put("devicesList",devicesList);
+            map.put("stateNum",stateNum);
+            return map;
+        }
 
-        Map<String,Object>map = devicesService.getAppDevicesList(param,eqType,eqStatus);
-        return Result.success(map);
+        return map;
+
+
+
+
+
+        //Map<String,Object>map = devicesService.getAppDevicesList(param,eqType,eqStatus);
+        //return Result.success(map);
     }
 
     /**
@@ -99,10 +119,7 @@ public class SdAppDevicesController extends BaseController
      */
     @PostMapping("/app/logList")
     public TableDataInfo getLogList(String eqId,String time,Integer pageSize,Integer pageNum){
-        pageSize = 20;
-        pageNum = 1;
         String deptId = SecurityUtils.getDeptId();
-        //String deptId = "YG11803";
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }

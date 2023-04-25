@@ -351,6 +351,7 @@ export default {
   left: 0 !important;
   margin: 0;
   box-shadow: none;
+  border-top:none;
   // background: rgba($color: #00152b, $alpha: 0.6);
   // background-image: linear-gradient(180deg, #3A4F6A 93%,#154489);
 }
@@ -471,7 +472,7 @@ export default {
 ::v-deep .eventBox {
   width: 570px;
   max-height: 430px;
-  border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
+  // border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
   position: absolute;
   top: 0px;
   left: calc(100% - 600px);

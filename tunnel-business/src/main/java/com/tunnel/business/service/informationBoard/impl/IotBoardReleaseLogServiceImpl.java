@@ -3,6 +3,8 @@ package com.tunnel.business.service.informationBoard.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.text.Convert;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
 import com.tunnel.business.domain.informationBoard.IotDeviceAccess;
 import com.tunnel.business.mapper.informationBoard.IotBoardReleaseLogMapper;
@@ -163,15 +165,8 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
     @Override
     public int insertIotBoardReleaseLog(IotBoardReleaseLog iotBoardReleaseLog) {
 
-        String ip = null;
-        try {
-             ip = InetAddress.getLocalHost().getHostAddress();
-
-        } catch (UnknownHostException e) {
-            logger.info("获取IP失败：",e.getMessage());
-        }
         // 记录服务ip
-        iotBoardReleaseLog.setReleaseIp(ip);
+        iotBoardReleaseLog.setReleaseIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
 
         return iotBoardReleaseLogMapper.insertIotBoardReleaseLog(iotBoardReleaseLog);
     }

@@ -233,7 +233,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 </select>
 
 
-<!-- 下拉查询 -->
+    <!-- 下拉查询 -->
     <select id="selectDropSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
         a.eq_direction,b.supplier_name brand_name,
@@ -242,7 +242,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.control_point_address, a.query_point_address, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name
+        ,c.tunnel_name, a.external_device_id
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
@@ -286,13 +286,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectDeviceList" resultMap="SdDevicesResult">
         select eq_id, eq_tunnel_id, eq_name, eq_type, f_eq_type,external_system_id,
-        eq_direction, external_device_id
+        eq_direction, external_device_id,ip,port
         from sd_devices
-        where  eq_tunnel_id = #{tunnelId}
+        <where>
+        <if test="tunnelId != null and tunnelId != ''">
+            and  eq_tunnel_id = #{tunnelId}
+        </if>
         and eq_type in
         <foreach collection="typeList" item="item" separator="," open="(" close=")">
               #{item}
         </foreach>
+        </where>
     </select>
 
 
@@ -856,32 +860,65 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getAppDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select t.eq_id,t.eq_name,t.pile,u.tunnel_name eq_tunnel_id,q.icon_file_id  icon_file_id from sd_devices t
-        left join sd_device_data d on t.eq_id = d.device_id
-        left join  sd_device_type_item i on i.id = d.item_id
-        left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '1'
         left join sd_tunnels u on u.tunnel_id = t.eq_tunnel_id
         left join sd_equipment_type q on t.eq_type = q.type_id
-        <where>
+        where
         1=1
-            <if test="param != null and param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{param},'%') </if>
-            <if test="eqType != null and eqType != ''">and t.eq_type = #{eqType}</if>
-            <if test="eqStatus != null and eqStatus != ''">and d.data = #{eqStatus}</if>
+            <if test="params.param != null and params.param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{params.param},'%') </if>
+            <if test="params.eqType != null and params.eqType != ''">and t.eq_type = #{params.eqType}</if>
+            <if test="params.eqStatus != null and params.eqStatus != ''">and t.eq_status = #{params.eqStatus}</if>
+            <if test="params.tunnelArray != null and params.tunnelArray.size > 0">
+                and u.tunnel_id  in
+                <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="params.pageNum != null">
+                limit #{params.pageNum},#{params.pageSize}
+            </if>
+    </select>
 
-        </where>
+
+
+
+    <select id="getAppDevicesCountList" resultType="int">
+        select count(1) from sd_devices t
+        left join sd_tunnels u on u.tunnel_id = t.eq_tunnel_id
+        left join sd_equipment_type q on t.eq_type = q.type_id
+        where 1 = 1
+        <if test="params.param != null and params.param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{params.param},'%') </if>
+        <if test="params.eqType != null and params.eqType != ''">and t.eq_type = #{params.eqType}</if>
+        <if test="params.eqStatus != null and params.eqStatus != ''">and t.eq_status = #{params.eqStatus}</if>
+        <if test="params.tunnelArray != null and params.tunnelArray.size > 0">
+            and u.tunnel_id  in
+            <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
     </select>
 
 
     <select id="getDevicesNum" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select count(if(d.data='1',1,null)) zxNum,count(if(d.data='2',1,null)) lxNum from sd_device_data d
-        left join  sd_device_type_item i on i.id = d.item_id
-        left join sd_devices t on t.eq_id = d.device_id
-        left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '1'
-        <where>
-            <if test="param != null and param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{param},'%') </if>
-            <if test="eqType != null and eqType != ''">and t.eq_type = #{eqType}</if>
-            <if test="eqStatus != null and eqStatus != ''">and d.data = #{eqStatus}</if>
-
-        </where>
+        select count(if(d.eq_status='1',1,null)) zxNum,count(if(d.eq_status='2',1,null)) lxNum from
+        (select t.eq_id,t.eq_name,t.pile,u.tunnel_name eq_tunnel_id,q.icon_file_id icon_file_id,t.eq_status from sd_devices t
+        left join sd_tunnels u on u.tunnel_id = t.eq_tunnel_id
+        left join sd_equipment_type q on t.eq_type = q.type_id
+        where
+        1=1
+        <if test="params.param != null and params.param != ''">and CONCAT(t.eq_name,t.pile) like
+            CONCAT('%',#{params.param},'%')
+        </if>
+        <if test="params.eqType != null and params.eqType != ''">and t.eq_type = #{params.eqType}</if>
+        <if test="params.eqStatus != null and params.eqStatus != ''">and t.eq_status = #{params.eqStatus}</if>
+        <if test="params.tunnelArray != null and params.tunnelArray.size > 0">
+            and u.tunnel_id in
+            <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="params.pageNum != null">
+            limit #{params.pageNum},#{params.pageSize}
+        </if>)d
     </select>
 
 
@@ -964,6 +1001,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_tunnel_id = #{eqTunnelId} and eq_direction = #{eqDirection} and eq_type = #{eqType}
     </select>
 
+    <!--根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取设备-->
     <select id="getLight" resultType="com.tunnel.business.domain.dataInfo.SdDevices">
         select eq_id,
             f_eq_id,

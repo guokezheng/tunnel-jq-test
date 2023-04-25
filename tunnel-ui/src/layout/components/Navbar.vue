@@ -168,7 +168,7 @@
         style="cursor: pointer;padding: 0 16px; vertical-align: text-bottom;
               color: white !important;caret-color: rgba(0,0,0,0);user-select: none;"
       >
-        <img src="../../assets/image/evtNum.png" style="width:30px;height:30px;transform: translateY(8px);" @click="bell()"></i>
+        <img src="../../assets/image/evtNum.png" style="height:3vh;transform: translateY(0.7vh);" @click="bell()"></i>
       </el-badge>
       <!-- </div> -->
       <el-dropdown class="right-menu-item bell">
@@ -183,7 +183,7 @@
               white_icon
             "
             @click="bigScreenfun"
-            style="height: 33px; font-size: 20px; padding: 13px 0px"
+            style="height: 7.6vh;line-height:7.6vh; font-size: 2.2vh;"
             title="监控一体化大屏"
           ></i>
         </el-tooltip>
@@ -1059,7 +1059,7 @@ export default {
       outline: none;
     }
     .bell {
-      margin-right: 15px;
+      // margin-right: 15px;
     }
     .right-menu-item {
       display: inline-block;
@@ -1090,13 +1090,13 @@ export default {
         align-items: center;
         height: 7.6vh;
         span {
-          font-size: 16px;
+          font-size: 0.8vw;
           margin-left: 10px;
         }
         .user-avatar {
           cursor: pointer;
-          width: 30px;
-          height: 30px;
+          // width: 30px;
+          height: 3vh;
           border-radius: 10px;
         }
         .el-icon-caret-bottom {

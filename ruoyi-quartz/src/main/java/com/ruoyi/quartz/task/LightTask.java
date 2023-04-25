@@ -54,7 +54,8 @@ public class LightTask {
         String password = system.getPassword();
         String systemUrl = system.getSystemUrl();
         //获取cookie
-        String jessionId = sanJingLight.login(username, password, systemUrl);
+        String jessionId = sanJingLight.getCacheToken(username,password,systemUrl);
+//        String jessionId = sanJingLight.login(username, password, systemUrl);
         if(StringUtils.isEmpty(jessionId)){
             log.error("照明定时任务报错：jessionId为空,jessionId=",jessionId);
             return;
@@ -145,7 +146,7 @@ public class LightTask {
           realStatus =  SanjingLightStateEnum.OPEN.getCode();
         }
         //修改实时数据
-        sdDeviceDataService.updateDeviceData(sdDevices, String.valueOf(realStatus), itemId);
+        sdDeviceDataService.updateDeviceData(sdDevices, String.valueOf(realStatus), Long.valueOf(itemId));
     }
 
 
@@ -194,7 +195,7 @@ public class LightTask {
                         //基本照明
                         itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
                     }
-                    sdDeviceDataService.updateDeviceData(device, String.valueOf(brightness), itemId);
+                    sdDeviceDataService.updateDeviceData(device, String.valueOf(brightness), Long.valueOf(itemId));
                 }
             }
         }

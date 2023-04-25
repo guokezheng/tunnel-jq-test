@@ -197,6 +197,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
             end = String.valueOf(getTimeStamp(time).get(1));
         }
         SdOperationLog sdOperationLog = new SdOperationLog();
+        pageNum = (pageNum-1)*pageSize;
         sdOperationLog.getParams().put("pageSize",pageSize);
         sdOperationLog.getParams().put("pageNum", pageNum);
         sdOperationLog.getParams().put("tunnelArray", tunnelArray);

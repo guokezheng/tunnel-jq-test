@@ -1,6 +1,7 @@
 package com.tunnel.deal.light.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
@@ -142,7 +143,7 @@ public class SanJingLight implements Light {
                 redisCache.expire(tokenKey,15*60);
             }
         } catch (Exception e) {
-            logger.info("获取token异常，请联系管理员。");
+            logger.error("获取token异常，请联系管理员。");
             return 0;
         }
         OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -163,6 +164,7 @@ public class SanJingLight implements Light {
             Response response = client.newCall(request).execute();
             //包含“发送成功"就可以
             responseBody = response.body().string();
+            logger.info("responseBody：{}",responseBody);
         } catch (IOException e) {
             logger.error("加强照明调光功能异常，请联系管理员。");
             return 0;
@@ -288,7 +290,7 @@ public class SanJingLight implements Light {
                     device.setEqStatusTime(new Date());
                     sdDevicesService.updateSdDevices(device);
                     //更新设备实时数据
-                    updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+                    sdDeviceDataService.updateDeviceData(device, String.valueOf(bright), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
                 }
                 //添加操作日志
                 SdOperationLog sdOperationLog = new SdOperationLog();
@@ -410,7 +412,7 @@ public class SanJingLight implements Light {
                 device.setEqStatusTime(new Date());
                 sdDevicesService.updateSdDevices(device);
                 //更新设备实时数据
-                updateDeviceData(device, String.valueOf(luminanceRange), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+                sdDeviceDataService.updateDeviceData(device, String.valueOf(luminanceRange), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
                 redisCache.setCacheObject("control:"+device.getEqTunnelId()+"_"+device.getEqId()+"_LuminanceRange",luminanceRange);
             }else{
                 redisCache.deleteObject("control:"+device.getEqTunnelId()+"_"+device.getEqId()+"_LuminanceRange");
@@ -543,5 +545,28 @@ public class SanJingLight implements Light {
             sdDeviceData.setCreateTime(new Date());
             sdDeviceDataService.insertSdDeviceData(sdDeviceData);
         }
+    }
+
+    /**
+     * 获取token
+     * @param username 用户名
+     * @param password 密码
+     * @param systemUrl 系统接口访问地址
+     * @return
+     */
+    public String getCacheToken(String username,String password,String systemUrl){
+
+        //token缓存key值
+        String key = Constants.SANJING_LIGHT_TOKEN;
+        //token有效时间15分钟
+        Integer expireTime = 15;
+        //获取缓存token
+        String token = redisCache.getCacheObject(key);
+        if(token == null || "".equals(token)){
+            //缓存中获取不到token，重新从接口中获取，更新缓存
+            token = login(username, password, systemUrl);
+            redisCache.setCacheObject( key, token, expireTime, TimeUnit.MINUTES);
+        }
+        return token;
     }
 }

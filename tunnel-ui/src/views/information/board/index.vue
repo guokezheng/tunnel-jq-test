@@ -173,13 +173,7 @@
                       }"
                       class="boardTextStyle"
                       v-html="
-                        scope.row.CONTENT
-                          ? scope.row.CONTENT.replace(
-                              /\n|\r\n/g,
-                              '<br>'
-                            ).replace(/ /g, '&nbsp')
-                          : ''
-                      "
+                        scope.row.CONTENT? scope.row.CONTENT.replace(/\n|\r\n/g,'<br>').replace(/ /g, '&nbsp'): ''"
                     ></span>
                   </div>
                 </div>
@@ -467,6 +461,13 @@ export default {
       this.boardDirectionList = []
       this.iotBoardList = []
     },
+    iotBoardList:function(newVal,oldVal){
+      console.log(newVal,"iotBoardActive")
+      if(newVal.length == 0){
+        this.form.devicePixel = ''
+        this.allVmsTemplate('no')
+      }
+    }
     // // 改变方向
     // 'form.eqDirection':function(newVal,oldVal){
     //   console.log(newVal,"newVal")

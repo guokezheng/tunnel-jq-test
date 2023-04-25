@@ -1217,7 +1217,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         }else if (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)) {
             String[] split = rl.getEquipments().split(",");
             for (String devId : split){
-                issueResult = lightService.lineControl(devId,Integer.valueOf(controlStatus) > 0 ? 1 : 2,Integer.valueOf(controlStatus));
+                Map<String, Object> map = new HashMap<>();
+                map.put("devId",devId);
+                map.put("state",Integer.valueOf(controlStatus) > 0 ? "1" : "2");
+                map.put("stateNum",controlStatus);
+                map.put("controlType","4");
+                try {
+                    map.put("operIp",InetAddress.getLocalHost().getHostAddress());
+                }catch (Exception e){
+                    e.getMessage();
+                }
+                issueResult = sdDeviceControlService.controlDevices(map);
+                //issueResult = lightService.lineControl(devId,Integer.valueOf(controlStatus) > 0 ? 1 : 2,Integer.valueOf(controlStatus));
                 /*int lineCount = lightService.lineControl(devId, Integer.valueOf(controlStatus) > 0 ? 1 : 2, "4", InetAddress.getLocalHost().getHostAddress());
                 int brightCount = lightService.setBrightness(devId,Integer.valueOf(controlStatus),"4",InetAddress.getLocalHost().getHostAddress());*/
             }
@@ -1343,7 +1354,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //查询普通设备状态
             if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
                 maps = sdEventMapper.getManagementJiaQiangState(joinReserveHandle.getId(),Integer.valueOf(joinReserveHandle.getState()) > 0 ? "1" : "2");
-                eqStateData = Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + "--亮度值：" + joinReserveHandle.getState() + "%".concat("    ------") : maps.get(0).get("stateName").toString().concat("    ------");
+                eqStateData = Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + "，亮度值：" + joinReserveHandle.getState() + "%".concat("    ------") : maps.get(0).get("stateName").toString().concat("    ------");
             }else {
                 maps = sdEventMapper.getManagementDeviceState(joinReserveHandle.getId());
                 eqStateData = maps.get(0).get("stateName").toString().concat("    ------");

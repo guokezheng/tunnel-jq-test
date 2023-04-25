@@ -19,7 +19,7 @@
           @click="closeDialogTable()"
         />
       </div>
-      <div class="blueLine"></div>
+      <!-- <div class="blueLine"></div> -->
       <div class="listContent">
         <div v-for="(item, index) of list" :key="index"  @click="handleSee(item.id)">
           <el-row style="color: white; font-size: 14px">
@@ -230,8 +230,13 @@ export default {
   position: absolute;
   top: 0px;
   left: calc(100% - 600px);
-  background: #00152b;
+  background-color: #00152b;
   z-index: 2000;
+  border-bottom: solid 2px white;
+  border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)1 10;
+  border-left: solid 1px rgba($color: #0198FF, $alpha: 0.8);
+  border-right: solid 1px rgba($color: #0198FF, $alpha: 0.8);
+  // border-top: solid 2px rgba($color: #0198FF, $alpha: 0.8);
   .el-dialog__body{
     padding: 0 !important;
     width: 100% !important;
@@ -243,18 +248,11 @@ export default {
     color: white;
     font-size: 14px;
     font-weight: bold;
-    // background: linear-gradient(
-    //   270deg,
-    //   rgba(1, 149, 251, 0) 0%,
-    //   rgba(1, 149, 251, 0.35) 100%
-    // );
-    // border-top: solid 2px white;
-    display: flex;
-    justify-content: space-between;
-    // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
-    margin: 0 !important;
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
     background-repeat: no-repeat;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 !important;
   }
   .blueLine {
     width: 20%;

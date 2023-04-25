@@ -588,9 +588,18 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId ) {
-
-        return sdTaskListMapper.getTaskList(taskStatus,taskName,startTime,endTime,deptId);
+    public List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId,Integer pageSize,Integer pageNum,Long userId ) {
+        SdTaskList sdTaskList  = new SdTaskList();
+        pageNum = (pageNum-1)*pageSize ;
+        sdTaskList.getParams().put("taskStatus",taskStatus);
+        sdTaskList.getParams().put("taskName",taskName);
+        sdTaskList.getParams().put("startTime",startTime);
+        sdTaskList.getParams().put("endTime",endTime);
+        sdTaskList.getParams().put("deptId",deptId);
+        sdTaskList.getParams().put("pageSize",pageSize);
+        sdTaskList.getParams().put("pageNum",pageNum);
+        sdTaskList.getParams().put("userId",userId);
+        return sdTaskListMapper.getTaskList(sdTaskList);
     }
 
     /**
@@ -816,13 +825,43 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SdTaskList> getTaskToDo(String deptId) {
-        return sdTaskListMapper.getTaskToDo(deptId);
+    public List<SdTaskList> getTaskToDo(String deptId,Long userId) {
+        return sdTaskListMapper.getTaskToDo(deptId,userId);
     }
 
     @Override
     public String selectBzByTunnel(String tunnelId) {
         return sdTaskListMapper.selectBzByTunnel(tunnelId);
+    }
+
+    @Override
+    public List<SdTaskList> getTaskToDoTeams(String deptId,Long userId) {
+        return sdTaskListMapper.getTaskToDoTeams(deptId,userId);
+    }
+
+    @Override
+    public int getTaskCountList(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId) {
+        return sdTaskListMapper.getTaskCountList(taskStatus,taskName,startTime,endTime,deptId,userId);
+    }
+
+    @Override
+    public int getTaskCountListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId) {
+        return sdTaskListMapper.getTaskCountListTeams(taskStatus,taskName,startTime,endTime,deptId,userId);
+    }
+
+    @Override
+    public List<SdTaskList> getTaskListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId, Integer pageSize, Integer pageNum,Long userId) {
+        SdTaskList sdTaskList  = new SdTaskList();
+        pageNum = (pageNum-1)*pageSize;
+        sdTaskList.getParams().put("taskStatus",taskStatus);
+        sdTaskList.getParams().put("taskName",taskName);
+        sdTaskList.getParams().put("startTime",startTime);
+        sdTaskList.getParams().put("endTime",endTime);
+        sdTaskList.getParams().put("deptId",deptId);
+        sdTaskList.getParams().put("pageSize",pageSize);
+        sdTaskList.getParams().put("pageNum",pageNum);
+        sdTaskList.getParams().put("userId",userId);
+        return sdTaskListMapper.getTaskListTeams(sdTaskList);
     }
 
 }

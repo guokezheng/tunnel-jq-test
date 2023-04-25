@@ -17,7 +17,7 @@ public interface ISdDevicesProtocolService {
      * @param id 设备协议主键
      * @return 设备协议
      */
-    public SdDevicesProtocol selectSdDevicesProtocolById(Integer id);
+    public SdDevicesProtocol selectSdDevicesProtocolById(Long id);
 
     /**
      * 查询设备协议列表
@@ -49,7 +49,7 @@ public interface ISdDevicesProtocolService {
      * @param ids 需要删除的设备协议主键集合
      * @return 结果
      */
-    public int deleteSdDevicesProtocolByIds(Integer[] ids);
+    public int deleteSdDevicesProtocolByIds(Long[] ids);
 
     /**
      * 删除设备协议信息
@@ -57,7 +57,7 @@ public interface ISdDevicesProtocolService {
      * @param id 设备协议主键
      * @return 结果
      */
-    public int deleteSdDevicesProtocolById(Integer id);
+    public int deleteSdDevicesProtocolById(Long id);
 
     /**
      * 修改时校验唯一

@@ -549,17 +549,20 @@
     <select id="getSituationUpgrade" parameterType="sdEvent" resultType="hashmap">
         SELECT
             sdd.dict_label AS eventGrade,
-            IFNULL(rp.plan_name,'') AS planName,
+            IFNULL( eh.reserve_name, '' ) AS planName,
             et.event_type AS eventTypeName
         FROM
             sd_event e
                 LEFT JOIN sys_dict_data sdd ON e.event_grade = sdd.dict_value
-                LEFT JOIN sd_reserve_plan rp ON e.currency_id = rp.id
-                LEFT JOIN sd_event_type et ON e.event_type_id = et.id
+                LEFT JOIN sd_event_handle eh ON e.id = eh.event_id
+                AND eh.reserve_name != ''
+                AND eh.reserve_name
+                IS NOT NULL LEFT JOIN sd_event_type et ON e.event_type_id = et.id
         WHERE
             1 = 1
           AND sdd.dict_type = 'sd_event_grade'
           AND e.id = #{id}
+            LIMIT 1
     </select>
 
     <select id="getManagementDevice" parameterType="sdReserveProcess" resultType="hashmap">

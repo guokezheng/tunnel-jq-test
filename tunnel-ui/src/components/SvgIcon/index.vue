@@ -22,14 +22,14 @@ export default {
   },
   computed: {
     isExternal() {
-      console.log(this.iconClass,"this.iconClass")
+      // console.log(this.iconClass,"this.iconClass")
       return isExternal(this.iconClass)
     },
     iconName() {
       return `#icon-${this.iconClass}`
     },
     svgClass() {
-      console.log(this.className,"this.className")
+      // console.log(this.className,"this.className")
       if (this.className) {
         return 'svg-icon ' + this.className
       } else {
@@ -44,9 +44,9 @@ export default {
     }
   },
   created() {
-    console.log(22222222222)
-    console.log(this.iconClass,"this.iconClass")
-    console.log(this.className,"this.className")
+    // console.log(22222222222)
+    // console.log(this.iconClass,"this.iconClass")
+    // console.log(this.className,"this.className")
     
   },
 }

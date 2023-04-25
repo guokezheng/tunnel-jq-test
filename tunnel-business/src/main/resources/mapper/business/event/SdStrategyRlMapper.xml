@@ -29,6 +29,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, strategy_id, eq_type_id, control_time,effective_time, equipments, state,end_state,state_num,end_state_num,retrieval_rule,plan_id,disposal_name from sd_strategy_rl
     </sql>
 
+
+
+    <select id="selectAllDirectionSdDevListByDevId" resultType="string">
+        SELECT
+            eq_id
+        FROM
+            sd_devices
+        WHERE
+          external_device_id IN (
+            SELECT external_device_id FROM sd_devices WHERE eq_id in
+            <foreach item="item" collection="devIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          )
+          AND eq_tunnel_id = #{tunnelId}
+          and eq_type = #{eqTypeId}
+    </select>
+
     <select id="selectSdStrategyRlList" parameterType="SdStrategyRl" resultMap="SdStrategyRlResult">
         select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name, A.control_time,A.effective_time,A.end_state,A.disposal_name,A.state_num,A.end_state_num
         from sd_strategy_rl A

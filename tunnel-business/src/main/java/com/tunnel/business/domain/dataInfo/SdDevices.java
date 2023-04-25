@@ -400,7 +400,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     /**
      * 协议ID
      * */
-    private String protocolId;
+    private Long protocolId;
 
     /**
      * road_id路段ID
@@ -494,7 +494,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
         this.roadId = roadId;
     }
 
-    public String getProtocolId() {
+    public Long getProtocolId() {
         return protocolId;
     }
     /**
@@ -589,7 +589,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
         this.lxNum = lxNum;
     }
 
-    public void setProtocolId(String protocolId) {
+    public void setProtocolId(Long protocolId) {
         this.protocolId = protocolId;
     }
 

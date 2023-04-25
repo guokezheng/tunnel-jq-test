@@ -131,7 +131,7 @@ public class workspaceController extends BaseController {
         //解析map 杭山东隧道下调用瑞华赢接口控制设备
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
-        String brightness = map.get("brightness").toString();
+        String brightness = map.get("brightness") == null ? "" : map.get("brightness").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
         if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
             Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
@@ -167,6 +167,8 @@ public class workspaceController extends BaseController {
         String isopen = sysDictData.getDictValue();
         long eqType = sdDevices.getEqType().longValue();
 
+        //加强照明状态拼接
+        String linState = "";
         if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
             sdDevices.setEqStatus("1");
@@ -178,11 +180,10 @@ public class workspaceController extends BaseController {
             if (sdDeviceTypeItems.size() == 0) {
                 throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
             }
-            //加强照明状态拼接
-            String LinState = "";
+
             if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
                 sdDeviceTypeItems.stream().forEach(item -> {
-                    if("brightness".equals(item.getItemCode())){
+                    if("brightness".equals(item.getItemCode()) && DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
                         updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));
                     }
                     if("state".equals(item.getItemCode())){
@@ -190,8 +191,8 @@ public class workspaceController extends BaseController {
                     }
                 });
                 if(brightness != null){
-                    LinState = state.equals("1")?"开启":"关闭";
-                    LinState += "，亮度："+brightness + "%";
+                    linState = state.equals("1")?"开启":"关闭";
+                    linState += "，亮度："+brightness + "%";
                 }
             }else {
                 SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
@@ -204,7 +205,7 @@ public class workspaceController extends BaseController {
             sdOperationLog.setEqId(sdDevices.getEqId());
             sdOperationLog.setCreateTime(new Date());
             if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-                sdOperationLog.setOperationState(LinState);
+                sdOperationLog.setOperationState(linState);
             }else {
                 sdOperationLog.setOperationState(state);
             }
@@ -229,6 +230,10 @@ public class workspaceController extends BaseController {
                 //控制设备
                 controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
             } else if (eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || eqType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) {
+                if(brightness != null){
+                    linState = state.equals("1")?"开启":"关闭";
+                    linState += "，亮度："+brightness + "%";
+                }
                 controlState = lightService.lineControl(devId, Integer.parseInt(state), Integer.parseInt(brightness));
             }
         }
@@ -242,7 +247,11 @@ public class workspaceController extends BaseController {
         if (data.size() > 0 && data.get(0) != null) {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }
-        sdOperationLog.setOperationState(state);
+        if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+            sdOperationLog.setOperationState(linState);
+        }else {
+            sdOperationLog.setOperationState(state);
+        }
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
         sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));

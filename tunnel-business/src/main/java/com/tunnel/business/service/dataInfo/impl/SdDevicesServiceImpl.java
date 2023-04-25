@@ -8,17 +8,20 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
-import com.tunnel.business.datacenter.domain.enumeration.DeviceDirectionEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.*;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +60,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
     @Autowired
     private SdEquipmentIconFileMapper sdEquipmentIconFileMapper;
+
+    @Autowired
+    private SdOperationLogMapper sdOperationLogMapper;
 
 
     /**
@@ -896,11 +902,35 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.getDevBrandList();
     }
 
+    @Override
+    public List<SdDevices> getAppDevicesList(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum) {
+        List<String> tunnelArray = null;
+        String start = null;
+        String end = null;
+        String deptId = SecurityUtils.getDeptId();
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        pageNum = (pageNum-1)*pageSize;
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        sdDevices.getParams().put("pageSize", pageSize);
+        sdDevices.getParams().put("pageNum", pageNum);
+        return sdDevicesMapper.getAppDevicesList(sdDevices);
+    }
+
+
+
     /**
      * app端获取设备列表
      * @return
      */
-    @Override
+    /*@Override
     public Map getAppDevicesList(String param, String eqType, String eqStatus) {
         Map<String, Object> map=new HashMap<String, Object>();
         List<SdDevices> sdDevicesList = sdDevicesMapper.getAppDevicesList(param,eqType,eqStatus);
@@ -918,7 +948,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         map.put("sdDevicesList",sdDevicesList);
         map.put("numList",num);
         return map;
-    }
+    }*/
 
     /**
      * app端设备信息
@@ -1032,4 +1062,99 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName) {
         return sdDevicesMapper.tunnelEqNameOnly(eqTunnelId,eqName);
     }
+
+    @Override
+    public int getAppDevicesCountList(String param, String eqType, String eqStatus, String deptId) {
+        List<String> tunnelArray = null;
+        String start = null;
+        String end = null;
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        return sdDevicesMapper.getAppDevicesCountList(sdDevices);
+    }
+
+    @Override
+    public List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum) {
+        List<String> tunnelArray = null;
+        String deptId = SecurityUtils.getDeptId();
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        sdDevices.getParams().put("pageSize", pageSize);
+        sdDevices.getParams().put("pageNum", pageNum);
+        return sdDevicesMapper.getDevicesNum(sdDevices);
+    }
+
+
+    /**
+     * 修改设备以及子设备状态在线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateOnlineStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId, DevicesStatusEnum.DEVICE_ON_LINE.getCode(),cascade);
+    }
+
+    /**
+     * 修改设备以及子设备状态离线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateOfflineStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId,DevicesStatusEnum.DEVICE_OFF_LINE.getCode(),cascade);
+    }
+
+    /**
+     * 修改设备以及子设备状态故障
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateFaultStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId,DevicesStatusEnum.DEVICE_ERROR.getCode(),cascade);
+    }
+
+    /**
+     * 设置设备以及子设备状态
+     * @param deviceId 设备ID
+     * @param status 设备状态
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateDeviceStatus(String deviceId,String status,boolean cascade){
+        int result;
+
+        SdDevices sdDevices = new SdDevices();
+        //设置设备状态
+        sdDevices.setEqId(deviceId);
+        sdDevices.setEqStatus(status);
+        sdDevices.setEqStatusTime(new Date());
+        result = updateSdDevices(sdDevices);
+
+        //级联修改子设备状态
+        if(cascade){
+            //设置子设备状态
+            sdDevices.setFEqId(deviceId);
+           result = updateSdDevicesByFEqId(sdDevices);
+        }
+        return result;
+    }
+
 }

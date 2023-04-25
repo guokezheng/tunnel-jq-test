@@ -3,7 +3,7 @@
     <!-- 授权用户 -->
     <el-dialog
       title="选择用户"
-      class="workbench-dialog operationDiglog"
+      class="operationDiglog"
       :visible.sync="visible"
       width="1000px"
       append-to-body

@@ -225,7 +225,7 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleAbolish(scope.row)"
-            :style="{ display: scope.row.publishStatus == 2 ? '' : 'none' }"
+            :style="{ display: scope.row.task1 == '已完结'? 'none': scope.row.publishStatus == 2 ? '' :'none' }"
             >废止任务</el-button
           >
           <el-button
@@ -240,7 +240,7 @@
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-            :style="{ display: scope.row.publishStatus != 0 ? 'none' : '' }"
+            :style="{ display: scope.row.publishStatus != 0 ? 'none' : scope.row.task1 == '已完结'? 'none':'' }"
             >修改</el-button
           >
           <el-button
@@ -248,7 +248,7 @@
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-            :style="{ display: scope.row.publishStatus != 0 ? 'none' : '' }"
+            :style="{ display: scope.row.publishStatus != 0 ? 'none' : scope.row.task1 == '已完结'? 'none':'' }"
             >删除</el-button
           >
         </template>
@@ -1011,18 +1011,18 @@ export default {
         pageNum: 1,
         pageSize: 10,
         zzjgId: null,
-        endPlantime: null,
+        endPlantime: "",
         dispatcher: null,
-        dispatchTime: null,
+        dispatchTime: "",
         bzId: null,
-        taskDescription: null,
+        taskDescription: "",
         publishStatus: null,
         taskStatus: null,
         tunnelId: null,
         walkerId: null,
-        taskEndtime: null,
-        taskCxtime: null,
-        siteDescription: null,
+        taskEndtime: "",
+        taskCxtime: "",
+        siteDescription: "",
         ids: "",
       },
       // 任务详情参数
@@ -1539,22 +1539,22 @@ export default {
       this.form = {
         id: null,
         zzjgId: null,
-        endPlantime: null,
-        dispatcher: null,
-        dispatchTime: null,
+        endPlantime: "",
+        dispatcher: "",
+        dispatchTime: "",
         bzId: null,
-        taskDescription: null,
+        taskDescription: "",
         publishStatus: 0,
         taskStatus: 0,
         walkerId: null,
-        taskEndtime: null,
-        taskCxtime: null,
+        taskEndtime: "",
+        taskCxtime: "",
         taskName: "",
-        siteDescription: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null,
+        siteDescription: "",
+        createBy: "",
+        createTime: "",
+        updateBy: "",
+        updateTime: "",
         devicesList: "",
       };
       this.boxList = [];
@@ -2078,6 +2078,9 @@ h1 {
   // .el-dialog__body {
   //   padding: 15px 20px;
   // }
+  .el-table--group::after, .el-table--border::after{
+    width:0px;
+  }
 }
 img {
   width: 100px;

@@ -904,17 +904,17 @@ export default {
         paramFaultLevel: "",
         paramFaultEscalationType: "",
         faultSource: null,
-        faultFxtime: null,
-        faultCxtime: null,
-        faultTbr: null,
-        faultTbtime: null,
+        faultFxtime: "",
+        faultCxtime: "",
+        faultTbr: "",
+        faultTbtime: "",
         eqId: null,
         eqStatus: null,
         eqRunStatus: null,
-        faultCode: null,
+        faultCode: "",
         //faultLevel: null,
         falltRemoveStatue: null,
-        faultDescription: null,
+        faultDescription: "",
         faultStatus: null,
       },
       // 表单参数
@@ -1253,19 +1253,20 @@ export default {
         faultLocation: null,
         faultSource: null,
         faultFxtime: null,
-        faultCxtime: null,
+        faultCxtime: "",
         faultStatus: null,
         eqTunnelId: null,
-        faultTbr: null,
-        faultTbtime: null,
+        faultTbr: "",
+        faultTbtime: "",
         eqId: null,
         eqStatus: null,
         eqRunStatus: "",
-        faultCode: null,
+        faultCode: "",
         faultLevel: null,
         falltRemoveStatue: null,
-        faultDescription: null,
+        faultDescription: "",
         faultEscalationType: "0",
+        imgFileId:"",
       };
       this.fileList = [];
       this.removeIds = [];
@@ -1933,6 +1934,12 @@ export default {
     width: 100%;
   }
 }
+
+/*.hitchDialog{
+  ::v-deep .el-upload--picture-card{
+    display: none;
+  }
+}*/
 .topTxt {
   margin-left: 7px;
   margin-top: -5px;

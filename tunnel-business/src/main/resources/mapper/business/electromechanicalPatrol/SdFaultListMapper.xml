@@ -373,7 +373,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                     '已消除'
                 END AS fault_status,
             fault.fault_description,
-            fault.img_file_id
+            fault.img_file_id,fault.fault_remove_time
         FROM
             sd_fault_list fault
                 LEFT JOIN sd_tunnels tunnel ON tunnel.tunnel_id = fault.tunnel_id

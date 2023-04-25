@@ -178,11 +178,15 @@ public class SdFaultListController extends BaseController {
         String typeName = SpringUtils.getBean(ISdEquipmentTypeService.class).selectSdEquipmentTypeById(Long.valueOf(devices.getEqType())).getTypeName();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String faultFxtime = "";
+        String faultRemovetime = "";
         String faultTbtime = "";
         try {
             Map<String, Object> faultMap = BeanUtils.describe(fault);
             if (fault.getFaultFxtime() != null) {
                 faultFxtime = format.format(DateUtil.parse(fault.getFaultFxtime().toString()));
+            }
+            if (fault.getFaultRemoveTime() != null) {
+                faultRemovetime = format.format(DateUtil.parse(fault.getFaultRemoveTime().toString()));
             }
             if (fault.getFaultTbtime() != null) {
                 faultTbtime = format.format(DateUtil.parse(fault.getFaultTbtime().toString()));
@@ -266,6 +270,7 @@ public class SdFaultListController extends BaseController {
             //绑定数据
             Configure config = Configure.newBuilder().bind("detailList", policy).build();
             String finalFaultFxtime = faultFxtime;
+            String finalFaultRemovetime = faultRemovetime;
             String finalFaultTbtime = faultTbtime;
             XWPFDocument document = new CustomXWPFDocument(new ClassPathResource("exporttemplate/faultReport.docx").getInputStream());
             XWPFTemplate template = XWPFTemplate.compile(document, config).render(
@@ -274,6 +279,7 @@ public class SdFaultListController extends BaseController {
                     put("currentTime", DateUtils.getTime());
                     put("task", fault);
                     put("Fxtime", finalFaultFxtime);
+                    put("RemoveTime", finalFaultRemovetime);
                     put("Tbtime", finalFaultTbtime);
                     put("eqName", eqName);
                     put("typeName", typeName);

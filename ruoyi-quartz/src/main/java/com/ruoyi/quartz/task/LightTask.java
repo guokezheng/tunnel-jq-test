@@ -54,7 +54,8 @@ public class LightTask {
         String password = system.getPassword();
         String systemUrl = system.getSystemUrl();
         //获取cookie
-        String jessionId = sanJingLight.login(username, password, systemUrl);
+        String jessionId = sanJingLight.getCacheToken(username,password,systemUrl);
+//        String jessionId = sanJingLight.login(username, password, systemUrl);
         if(StringUtils.isEmpty(jessionId)){
             log.error("照明定时任务报错：jessionId为空,jessionId=",jessionId);
             return;

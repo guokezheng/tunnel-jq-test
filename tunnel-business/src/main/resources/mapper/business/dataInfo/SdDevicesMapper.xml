@@ -233,7 +233,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 </select>
 
 
-<!-- 下拉查询 -->
+    <!-- 下拉查询 -->
     <select id="selectDropSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
         a.eq_direction,b.supplier_name brand_name,
@@ -242,7 +242,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.control_point_address, a.query_point_address, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name
+        ,c.tunnel_name, a.external_device_id
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id

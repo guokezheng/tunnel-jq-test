@@ -11,7 +11,7 @@ public enum DeviceDirectionEnum {
     JI_NAN("2", "济南方向"),
     WEI_FANG("1", "潍坊方向"),
 
-    ALl("2", "双向");
+    ALl("3", "双向");
     private String code;
     private String name;
 

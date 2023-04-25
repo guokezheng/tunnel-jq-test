@@ -6,6 +6,7 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DeviceDirectionEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TriggerEventTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -52,10 +53,25 @@ public class StrategyTask {
      */
     public void strategyParams(String strategyRlId) throws UnknownHostException {
         SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(strategyRlId));
+
+        SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
+        // 默认执行策略关联设备
         String[] split = sdStrategyRl.getEquipments().split(",");
+        // 加强照明 基本照明 支持双向执行
+        if (sdStrategy.getDirection().equals(DeviceDirectionEnum.ALl.getCode().toString()) &&
+                (
+                        sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                        sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())
+                )
+        ){
+            split = SpringUtils.getBean(SdStrategyRlMapper.class).selectAllDirectionSdDevListByDevId(split,sdStrategy.getTunnelId(),sdStrategyRl.getEqTypeId());
+
+        }
+
         for (String devId : split){
             Map<String,Object> map = new HashMap<>();
-            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
             if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
                 map.put("templateId",sdStrategyRl.getState());
             }
@@ -78,10 +94,25 @@ public class StrategyTask {
      */
     public void strategyParamsPlus(String strategyRlId,String type) throws UnknownHostException {
         SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(strategyRlId));
+
+        SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
+        // 默认执行策略关联设备
         String[] split = sdStrategyRl.getEquipments().split(",");
+        // 加强照明 基本照明 支持双向执行
+        if (sdStrategy.getDirection().equals(DeviceDirectionEnum.ALl.getCode().toString()) &&
+                (
+                        sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                        sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())
+                )
+        ){
+            split = SpringUtils.getBean(SdStrategyRlMapper.class).selectAllDirectionSdDevListByDevId(split,sdStrategy.getTunnelId(),sdStrategyRl.getEqTypeId());
+
+        }
+
         for (String devId : split){
             Map<String,Object> map = new HashMap<>();
-            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
             if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
                 map.put("templateId",sdStrategyRl.getState());
             }

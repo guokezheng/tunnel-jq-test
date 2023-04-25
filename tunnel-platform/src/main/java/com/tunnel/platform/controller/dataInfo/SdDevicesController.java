@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 设备Controller
@@ -82,6 +83,20 @@ public class SdDevicesController extends BaseController {
             startPage();
             list = sdDevicesService.selectSdDevicesList(sdDevices);
         }
+
+        // 如果当前设备是加强照明 基本照明，双向显示设备去重
+        if(sdDevices.getEqType() != null &&
+                (
+                        sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()
+                       || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()
+                )
+        ){
+            list = list.stream().collect(
+                    Collectors.collectingAndThen(
+                            Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(SdDevices::getExternalDeviceId))), ArrayList::new));
+        }
+
+
         return getDataTable(list);
     }
 

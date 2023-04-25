@@ -844,10 +844,10 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div class="GDeviceBox" style="overflow: scroll;overflow-x: hidden;height:60vh">
+      <div class="GDeviceBox" style="overflow-y:auto ;max-height:60vh">
         <p class="empty-text" v-show="oneKeyList.length < 1">暂无匹配设备</p>
-        <div v-for="(item,index) in oneKeyList" :key="index">
-          <el-card>
+        <div v-for="(item,index) in oneKeyList" :key="index" class="GDeviceCard">
+          <el-card >
             <el-table
               v-show="oneKeyList.length >= 1"
               :data="item.deviceList"
@@ -878,7 +878,7 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card>
+          <el-card >
             <div v-if="item.deviceType == '16' || item.deviceType == '36'">
               <!-- <p>情报板执行模板</p> -->
               <el-card shadow="always">
@@ -1948,6 +1948,12 @@ export default {
 ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__nav{
   border:0px;
 }
+::v-deep .el-tabs--card > .el-tabs__header{
+  border-bottom: none;
+  background: rgba(1,46,81,.7)!important;
+  padding: 10px 0;
+  margin: 0 0 5px;
+}
 .el-tabs--top .el-tabs__item.is-top:nth-child(2), .el-tabs--top .el-tabs__item.is-bottom:nth-child(2), .el-tabs--bottom .el-tabs__item.is-top:nth-child(2), .el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2){
   padding-left:0px!important;
 }
@@ -1955,7 +1961,7 @@ export default {
   background-color: transparent;
 }
 ::v-deep .el-table .el-table__header-wrapper th{
-  background-color: rgba(1, 46, 81, 0.7)!important;
+  background-color: #03659E !important;
   color:white;
 }
 .drawerBox:hover{
@@ -2221,114 +2227,121 @@ display: none;
           background-size: 100% 100%;
           background-color: rgba(1, 46, 81, 0.7);
         }
-        .planBox1 {
-          width: 100%;
-          height: calc(100% - 40px);
-          display: flex;
-          .planLeft {
-            width: 50%;
-            height: 100%;
-
-            .oneWayTraffic,
-            .twoWayTraffic {
-              width: 100%;
-              height: 50%;
-              font-size: 14px;
-              // color: #fff;
-              padding-left: 20px;
-              padding-top: 5px;
-              > div:nth-of-type(2) {
-                div {
-                  margin-right: 10px;
-                }
-              }
-              > div:nth-of-type(3) {
-                float: right;
-                width: 160px;
-                display: flex;
-                justify-content: space-between;
-                height: 22px;
-                color: white;
-                margin-top: 20px;
-                margin-right: 20px;
-                > div {
-                  text-align: center;
-                  padding: 0 15px;
-                  border-radius: 15px;
-                  line-height: 22px;
-                  cursor: pointer;
-                }
-                > div:nth-of-type(1) {
-                  background: #d8d8d8
-                    linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
-                }
-                > div:nth-of-type(2) {
-                  background: linear-gradient(180deg, #ffc506 0%, #ff8300 100%);
-                }
-              }
-            }
-            .twoWayTraffic {
-              border-top: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
-            }
-          }
-          .planRight {
-            width: 50%;
-            height: 100%;
-            // border-left: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
-            font-size: 14px;
-            // color: #fff;
-            padding: 5px 20px 0px;
-            > div:nth-of-type(2) {
-              display: flex;
-              justify-content: space-between;
-              width: 100%;
-              margin: 6px 0;
-              > div {
-                color: #008aff;
-              }
-              > div:nth-of-type(2n) {
-                color: #fff;
-              }
-            }
-            > div:nth-of-type(4) {
-              float: right;
-              width: 160px;
-              display: flex;
-              justify-content: space-between;
-              height: 22px;
-              color: white;
-              margin-top: 20px;
-              > div {
-                text-align: center;
-                padding: 0 15px;
-                border-radius: 15px;
-                line-height: 22px;
-              }
-              > div:nth-of-type(1) {
-                background: #d8d8d8
-                  linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
-              }
-              > div:nth-of-type(2) {
-                background: linear-gradient(180deg, #ffc506 0%, #ff8300 100%);
-              }
-            }
-          }
-          .el-radio--medium.is-bordered {
-            padding: 0px 10px;
-            border-radius: 4px;
-            height: 30px;
-            width: 106px;
-            margin-top: 4px;
-            line-height: 27px;
-            margin-right: 0px;
-            // background: linear-gradient(180deg, #002847 0%, #00325e 100%);
-            border-radius: 2px;
-            // border: 1px solid #005d89;
-          }
-          // .el-radio {
-          //   color: white;
-          // }
+        ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item.is-active{
+          border-bottom-color: transparent !important;
         }
+        ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item{
+          height: 18px;
+          line-height: 18px;
+        }
+        // .planBox1 {
+        //   width: 100%;
+        //   height: calc(100% - 40px);
+        //   display: flex;
+        //   .planLeft {
+        //     width: 50%;
+        //     height: 100%;
+
+        //     .oneWayTraffic,
+        //     .twoWayTraffic {
+        //       width: 100%;
+        //       height: 50%;
+        //       font-size: 14px;
+        //       // color: #fff;
+        //       padding-left: 20px;
+        //       padding-top: 5px;
+        //       > div:nth-of-type(2) {
+        //         div {
+        //           margin-right: 10px;
+        //         }
+        //       }
+        //       > div:nth-of-type(3) {
+        //         float: right;
+        //         width: 160px;
+        //         display: flex;
+        //         justify-content: space-between;
+        //         height: 22px;
+        //         color: white;
+        //         margin-top: 20px;
+        //         margin-right: 20px;
+        //         > div {
+        //           text-align: center;
+        //           padding: 0 15px;
+        //           border-radius: 15px;
+        //           line-height: 22px;
+        //           cursor: pointer;
+        //         }
+        //         > div:nth-of-type(1) {
+        //           background: #d8d8d8
+        //             linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+        //         }
+        //         > div:nth-of-type(2) {
+        //           background: linear-gradient(180deg, #ffc506 0%, #ff8300 100%);
+        //         }
+        //       }
+        //     }
+        //     .twoWayTraffic {
+        //       border-top: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
+        //     }
+        //   }
+        //   .planRight {
+        //     width: 50%;
+        //     height: 100%;
+        //     // border-left: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
+        //     font-size: 14px;
+        //     // color: #fff;
+        //     padding: 5px 20px 0px;
+        //     > div:nth-of-type(2) {
+        //       display: flex;
+        //       justify-content: space-between;
+        //       width: 100%;
+        //       margin: 6px 0;
+        //       > div {
+        //         color: #008aff;
+        //       }
+        //       > div:nth-of-type(2n) {
+        //         color: #fff;
+        //       }
+        //     }
+        //     > div:nth-of-type(4) {
+        //       float: right;
+        //       width: 160px;
+        //       display: flex;
+        //       justify-content: space-between;
+        //       height: 22px;
+        //       color: white;
+        //       margin-top: 20px;
+        //       > div {
+        //         text-align: center;
+        //         padding: 0 15px;
+        //         border-radius: 15px;
+        //         line-height: 22px;
+        //       }
+        //       > div:nth-of-type(1) {
+        //         background: #d8d8d8
+        //           linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+        //       }
+        //       > div:nth-of-type(2) {
+        //         background: linear-gradient(180deg, #ffc506 0%, #ff8300 100%);
+        //       }
+        //     }
+        //   }
+        //   .el-radio--medium.is-bordered {
+        //     padding: 0px 10px;
+        //     border-radius: 4px;
+        //     height: 30px;
+        //     width: 106px;
+        //     margin-top: 4px;
+        //     line-height: 27px;
+        //     margin-right: 0px;
+        //     // background: linear-gradient(180deg, #002847 0%, #00325e 100%);
+        //     border-radius: 2px;
+        //     // border: 1px solid #005d89;
+        //   }
+        //   // .el-radio {
+        //   //   color: white;
+        //   // }
+        // }
       }
     }
   }
@@ -2771,8 +2784,8 @@ display: none;
 ::v-deep .el-table::before{height:0px!important;}
 ::v-deep .el-table .el-table__cell {
   height: 35px !important;
-  border-bottom: 1px solid rgba(225, 228, 230, .16) !important;
-  border-left: 1px solid rgba(225, 228, 230, .16) !important;
+  border-bottom: 1px solid #03659E !important;
+  border-left: 1px solid #03659E !important;
 }
 ::v-deep ::-webkit-scrollbar {
   width: 0px;
@@ -2802,8 +2815,15 @@ display: none;
   ::v-deep .el-table__row td{
     padding:10px 0!important;
     color:white;
-    border-bottom: 1px solid rgba(225, 228, 230, .16) !important;
-    border-left: 1px solid rgba(225, 228, 230, .16) !important;
+    border-bottom: 1px solid #03659E !important;
+    border-left: 1px solid #03659E !important;
+  }
+  ::v-deep .el-table__row td:last-of-type{
+    border-right: 1px solid #03659E !important;
+  }
+  .GDeviceCard{
+    background-color: #05213E;
+    margin-bottom:10px;
   }
 }
 </style>

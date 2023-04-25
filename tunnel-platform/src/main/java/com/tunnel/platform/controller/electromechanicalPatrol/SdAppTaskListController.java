@@ -119,7 +119,7 @@ public class SdAppTaskListController extends BaseController
     @PostMapping("/app/getTaskList")
     public TableDataInfo getTaskList(SdTaskList sdTaskList,Integer pageSize,Integer pageNum){
         String deptId = SecurityUtils.getDeptId();
-        if (deptId == null) {
+         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
         String startTime = "";//开始时间

@@ -246,8 +246,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="params.deptId != null and params.deptId != ''">
             AND (t.bz_id = #{params.deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{params.deptId},q.ancestors) ))
         </if>
-        and (t.task_status = '0' or t.walker_id = #{params.userId})
-        and ( t.task_status !='2' )
+        and publish_status ='2'
         order by t.create_time desc
         <if test="params.pageNum != null">
             limit #{params.pageNum},#{params.pageSize}
@@ -266,8 +265,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="params.deptId != null and params.deptId != ''">
             AND (t.bz_id = #{params.deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{params.deptId},q.dept_id) ))
         </if>
-        and (t.task_status = '0' or t.walker_id = #{params.userId})
-        and ( t.task_status !='2' )
+        and t.publish_status ='2' and (ISNULL(walker_id) or t.walker_id = #{params.userId})
         order by t.create_time desc
         <if test="params.pageNum != null">
             limit #{params.pageNum},#{params.pageSize}
@@ -349,8 +347,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="deptId != null and deptId != ''">
             where bz_id = #{deptId} OR
             bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors))
-            and (task_status = '0' or walker_id = #{userId})
-            and ( task_status !='2' )
+            and task_status in('0','1','3','4') and publish_status ='2'
         </if>
 
     </select>
@@ -358,10 +355,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getTaskToDoTeams" parameterType="String" resultMap="SdTaskListResult">
         select dispatch_time,task_name from sd_task_list
         <if test="deptId != null and deptId != ''">
-            where bz_id = #{deptId} OR
-            bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.dept_id))
-            and (task_status = '0' or walker_id = #{userId})
-            and ( task_status !='2' )
+            where (bz_id = #{deptId} OR
+            bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.dept_id)))
+            and publish_status ='2'
+            and ((task_status in('0','1','3','4') and walker_id = #{userId})or(task_status ='0' and   ISNULL(walker_id)))
         </if>
 
     </select>
@@ -389,8 +386,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="deptId != null and deptId != ''">
             AND (t.bz_id= #{deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
         </if>
-        and (t.task_status = '0' or t.walker_id = #{userId})
-        and ( t.task_status !='2' )
+        and publish_status ='2'
     </select>
 
 
@@ -406,8 +402,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="deptId != null and deptId != ''">
             AND (t.bz_id= #{deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.dept_id) ))
         </if>
-        and (t.task_status = '0' or t.walker_id = #{userId})
-        and ( t.task_status !='2' )
+        and t.publish_status ='2' and (ISNULL(walker_id) or t.walker_id = #{userId})
+
     </select>
 
 </mapper>

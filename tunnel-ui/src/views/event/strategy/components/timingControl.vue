@@ -393,7 +393,9 @@ export default {
         this.$modal.msgWarning("执行时间不得早于当前时间");
         this.strategyForm.execDate = null;
         this.strategyForm.execTime = null;
+        return false;
       }
+      return  true;
     },
 
     init() {
@@ -611,6 +613,11 @@ export default {
           console.log(result);
           if(!result){
             return this.$modal.msgError("请填写完整策略信息！");
+          }
+
+          // 上报数据前，检查执行时期
+          if(!this.changeTime()){
+            return false;
           }
           // 判断是修改还是删除
           if (this.sink == "edit") {

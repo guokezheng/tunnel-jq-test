@@ -225,7 +225,7 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleAbolish(scope.row)"
-            :style="{ display: scope.row.publishStatus == 2 ? '' : 'none' }"
+            :style="{ display: scope.row.task1 == '已完结'? 'none': scope.row.publishStatus == 2 ? '' :'none' }"
             >废止任务</el-button
           >
           <el-button
@@ -240,7 +240,7 @@
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-            :style="{ display: scope.row.publishStatus != 0 ? 'none' : '' }"
+            :style="{ display: scope.row.publishStatus != 0 ? 'none' : scope.row.task1 == '已完结'? 'none':'' }"
             >修改</el-button
           >
           <el-button
@@ -248,7 +248,7 @@
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-            :style="{ display: scope.row.publishStatus != 0 ? 'none' : '' }"
+            :style="{ display: scope.row.publishStatus != 0 ? 'none' : scope.row.task1 == '已完结'? 'none':'' }"
             >删除</el-button
           >
         </template>

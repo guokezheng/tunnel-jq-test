@@ -131,7 +131,7 @@ public class workspaceController extends BaseController {
         //解析map 杭山东隧道下调用瑞华赢接口控制设备
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
-
+        String brightness = map.get("brightness") == null ? "" : map.get("brightness").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
         if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
             Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
@@ -182,9 +182,8 @@ public class workspaceController extends BaseController {
             }
 
             if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-                String brightness = map.get("brightness").toString();
                 sdDeviceTypeItems.stream().forEach(item -> {
-                    if("brightness".equals(item.getItemCode())){
+                    if("brightness".equals(item.getItemCode()) && DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
                         updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));
                     }
                     if("state".equals(item.getItemCode())){
@@ -231,7 +230,6 @@ public class workspaceController extends BaseController {
                 //控制设备
                 controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
             } else if (eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || eqType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) {
-                String brightness = map.get("brightness").toString();
                 if(brightness != null){
                     linState = state.equals("1")?"开启":"关闭";
                     linState += "，亮度："+brightness + "%";

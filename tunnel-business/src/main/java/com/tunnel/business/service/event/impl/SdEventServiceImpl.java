@@ -438,6 +438,7 @@ public class SdEventServiceImpl implements ISdEventService {
         sdEventHandle.setEventId(sdEvent.getId());
         sdEventHandleMapper.deleteRelation(sdEventHandle);
         //更新预案设备
+        sdEvent.setLaneNo(sdEventMapper.selectSdEventById(sdEvent.getId()).getLaneNo());
         setStrategyRlEquipment(sdEvent);
         //交通事件-添加流程树
         updateHandle(sdEvent,"update");
@@ -1492,7 +1493,11 @@ public class SdEventServiceImpl implements ISdEventService {
                 });
             }else {
                 if(eqTypeId == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
-                    maps = sdDevicesMapper.selectDevices(item.getEquipments(), Integer.valueOf(item.getState()) > 0 ? "1" : "2");
+                    List<Map<String, Object>> linkList = sdDevicesMapper.selectDevices(item.getEquipments(), Integer.valueOf(item.getState()) > 0 ? "1" : "2");
+                    linkList.stream().forEach(tem -> {
+                        tem.put("stateName",Integer.valueOf(item.getState()) > 0 ? tem.get("stateName") + "," + "亮度值：" + item.getState() + "%" : tem.get("stateName"));
+                    });
+                    maps = linkList;
                 }else {
                     maps = sdDevicesMapper.selectDevices(item.getEquipments(), item.getState());
                 }

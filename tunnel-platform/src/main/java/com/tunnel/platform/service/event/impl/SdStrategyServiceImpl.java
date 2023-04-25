@@ -1354,7 +1354,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //查询普通设备状态
             if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
                 maps = sdEventMapper.getManagementJiaQiangState(joinReserveHandle.getId(),Integer.valueOf(joinReserveHandle.getState()) > 0 ? "1" : "2");
-                eqStateData = Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + "--亮度值：" + joinReserveHandle.getState() + "%".concat("    ------") : maps.get(0).get("stateName").toString().concat("    ------");
+                eqStateData = Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + "，亮度值：" + joinReserveHandle.getState() + "%".concat("    ------") : maps.get(0).get("stateName").toString().concat("    ------");
             }else {
                 maps = sdEventMapper.getManagementDeviceState(joinReserveHandle.getId());
                 eqStateData = maps.get(0).get("stateName").toString().concat("    ------");

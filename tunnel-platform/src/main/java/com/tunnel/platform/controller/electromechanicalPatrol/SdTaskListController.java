@@ -111,18 +111,10 @@ public class SdTaskListController extends BaseController
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
         sdTaskList.setDeptId(deptId);
-        //String status = "0,1";
-        /*if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&& TaskStatus.YICHAOSHI.getCode().equals(sdTaskList.getTaskStatus())) {
-            sdTaskList.setTaskStatus(status);
-        }*/
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         return getDataTable(list);
     }
-
-
-
-
 
 
     /**
@@ -357,6 +349,11 @@ public class SdTaskListController extends BaseController
             }
             if (task.getTaskEndtime() != null) {
                 taskEndTime = format.format(DateUtil.parse(task.getTaskEndtime().toString()));
+            }
+            if (task.getTask() == null){//超时
+                task.setTask("超时");
+            }else{
+                task.setTask("无");
             }
             List<SdPatrolList> list = SpringUtils.getBean(SdPatrolListMapper.class).getPatrolListsInfo(taskNo);
 //            AtomicInteger i = new AtomicInteger(1);

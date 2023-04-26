@@ -1855,6 +1855,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/*::v-deep .el-upload--picture-card{
+  display: none;
+}*/
 .topTxt {
   font-size: 18px;
   font-weight: 500;
@@ -1922,7 +1925,9 @@ export default {
     margin-bottom: 10px !important;
     width: 100%;
   }
+
 }
+
 
 .hitchHistoryDialog {
   ::v-deep .el-dialog__body {
@@ -1935,11 +1940,6 @@ export default {
   }
 }
 
-/*.hitchDialog{
-  ::v-deep .el-upload--picture-card{
-    display: none;
-  }
-}*/
 .topTxt {
   margin-left: 7px;
   margin-top: -5px;

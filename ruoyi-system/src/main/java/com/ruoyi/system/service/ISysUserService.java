@@ -212,4 +212,6 @@ public interface ISysUserService
     int deleteTeamsUserCancel(SysUser user);
 
     int deleteTeamsUserCancelAll(String deptId, Long[] userIds);
+
+    List<SysUser> getCurrentUserInfo(Long userId);
 }

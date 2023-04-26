@@ -207,7 +207,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getFaultRepairReportInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
     select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,i.dict_label impression,n.dict_label network,o.dict_label power,p.eq_fault_code,
     p.eq_fault_description,h.dict_label fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,t.bz_id,e.dept_name bzName,t.walker_id,
-    u.user_id userName,
+    u.nick_name userName,
     s.state_name as run_status,a.dict_label as eq_status,p.create_time
     from sd_patrol_list p
     left join sd_fault_list f on f.id = p.eq_fault_id

@@ -136,4 +136,5 @@ public interface SysUserMapper
 
     int updateUserDeptAll(@Param("deptId") String deptId,@Param("userIds")Long[] userIds);
 
+    List<SysUser> getCurrentUserInfo(@Param("userId")Long userId);
 }

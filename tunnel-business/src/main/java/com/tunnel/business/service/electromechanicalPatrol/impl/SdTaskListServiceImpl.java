@@ -148,7 +148,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      */
     private SdTaskList taskListStatus(SdTaskList taskList){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if(taskList.getTask().equals(TaskStatus.DAIXUNCHA.getName())&&taskList.getEndPlantime()!=null){
+        if(taskList.getTask()== null){//完结，已超时的情况
+            taskList.setTask(TaskStatus.YIWANJIE.getName()+","+TaskStatus.YICHAOSHI.getName());
+        }else if(taskList.getTask().equals(TaskStatus.DAIXUNCHA.getName())&&taskList.getEndPlantime()!=null){
             String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
             long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
             long diff = System.currentTimeMillis() - time + 1000;
@@ -158,8 +160,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                 taskList.setTask(TaskStatus.DAIXUNCHA.getName());
             }
 
-        }
-        if(taskList.getTask().equals(TaskStatus.XUNCHAZHONG.getName())&&taskList.getEndPlantime()!=null){
+        }else if(taskList.getTask().equals(TaskStatus.XUNCHAZHONG.getName())&&taskList.getEndPlantime()!=null){
             String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
             long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
             long diff = System.currentTimeMillis() - time;
@@ -412,10 +413,12 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         //任务持续时间逻辑判断   task_status=2  已完结
         if(taskList!=null){
             //判断任务状态，已完结时保存任务持续时间
-            if(taskList.get(0).getTaskStatus()!=null&&!"".equals(taskList.get(0).getTaskStatus())){
-
+            if(taskList.get(0).getTaskStatus()==null){//已完结，超时
+                taskList.get(0).setTaskStatus(TaskStatus.YIWANJIE.getName());
+                taskList.get(0).setIfchaosgu(TaskStatus.YICHAOSHI.getName());//超时
+            }
+            else{
                 taskStatus(taskList.get(0));
-
                 if(taskList.get(0).getTaskCxtime()==null||"".equals(taskList.get(0).getTaskCxtime())){//没有持续时间
                     //任务持续时间为 当前时间-发布时间
                     if(taskList.get(0).getEndPlantime()!=null&&!"".equals(taskList.get(0).getEndPlantime())){

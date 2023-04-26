@@ -46,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
-        select t.id, s.tunnel_name, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+        select t.id, s.tunnel_name, t.end_plantime, u.nick_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.nick_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
         left join sys_user u on t.dispatcher = u.user_id
         left join sd_teams b on b.dept_id =  t.bz_id
         left join sys_user w on t.walker_id = w.user_id
@@ -63,7 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
             <if test="taskDescription != null  and taskDescription != ''"> and t.task_description = #{taskDescription}</if>
             <if test="publishStatus != null and publishStatus!=''"> and t.publish_status = #{publishStatus}</if>
-            <if test="taskStatus != null and taskStatus != '' and  taskStatus !='4'.toString"> and t.task_status = #{taskStatus} </if>
+            <if test="taskStatus != null and taskStatus != '' and  taskStatus !='4'.toString and taskStatus !='2'.toString"> and t.task_status = #{taskStatus} </if>
             <if test="walkerId != null  and walkerId != ''"> and t.walker_id = #{walkerId}</if>
             <if test="taskEndtime != null and taskEndtime!=''"> and t.task_endtime = #{taskEndtime}</if>
             <if test="taskCxtime != null and taskCxtime!=''"> and t.task_cxtime = #{taskCxtime}</if>
@@ -72,7 +72,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null and deptId != ''">
                 AND (s.dept_id = #{deptId} OR s.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
             </if>
-            <if test="taskStatus != null and taskStatus != '' and  taskStatus == '4'.toString()"> and t.end_plantime &lt; now() and t.task_status in(0,1)</if>
+            <if test="taskStatus != null and taskStatus != '' and  taskStatus == '4'.toString()"> and t.end_plantime &lt; now() and t.task_status in(0,1) or t.task_status = '2,4'</if>
+            <if test="taskStatus != null and taskStatus != '' and  taskStatus == '2'.toString()"> and t.task_status = '2,4' or t.task_status = '2'</if>
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
                 and t.end_plantime &gt;= #{params.beginTime}
             </if>
@@ -86,7 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectChaoshiSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
-        select t.id, s.tunnel_name,t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+        select t.id, s.tunnel_name,t.end_plantime, u.nick_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.nick_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
         left join sys_user u on t.dispatcher = u.user_id
         left join sd_teams b on b.dept_id =  t.bz_id
         left join sys_user w on t.walker_id = w.user_id
@@ -116,7 +117,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectSdTaskListById" parameterType="String" resultMap="SdTaskListResult">
-       select t.id, s.tunnel_name,d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bzName,b.dept_name  bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+       select t.id, s.tunnel_name,d.dept_name zzjg_id, t.end_plantime, u.nick_name dispatcher,t.dispatch_time, b.dept_name bzName,b.dept_name  bz_id, t.task_description, t.publish_status, t.task_status, w.nick_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
         left join sys_dept d on d.dept_id =  t.zzjg_id
         left join sys_user u on t.dispatcher = u.user_id
         left join sd_teams b on b.dept_id =  t.bz_id
@@ -207,7 +208,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
-        select e.tunnel_name sdName,s.id,s.task_name,s.tunnel_id,s.end_plantime,y.dept_name bzName,y.dept_id bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
+        select e.tunnel_name sdName,s.id,s.task_name,s.tunnel_id,s.end_plantime,y.dept_name bzName,y.dept_id bz_id,s.dispatch_time,s.task_description,u.nick_name dispatcher,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
         from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
         left join sd_teams y on s.bz_id = y.dept_id
         left join sd_tunnels e on s.tunnel_id = e.tunnel_id
@@ -236,7 +237,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getTaskList" parameterType="String" resultMap="SdTaskListResult">
-        select t.task_name,e.tunnel_name,d.dept_name zzjg_id,t.end_plantime,u.user_name dispatcher,t.task_description,t.task_status,t.id from sd_task_list t
+        select t.task_name,e.tunnel_name,d.dept_name zzjg_id,t.end_plantime,u.nick_name dispatcher,t.task_description,t.task_status,t.id from sd_task_list t
         left join sys_dept d on d.dept_id = t.zzjg_id
         left join sys_user u on t.dispatcher = u.user_id
         left join sd_tunnels e on t.tunnel_id = e.tunnel_id
@@ -255,7 +256,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getTaskListTeams" parameterType="String" resultMap="SdTaskListResult">
-        select t.task_name,e.tunnel_name,d.dept_name zzjg_id,t.end_plantime,u.user_name dispatcher,t.task_description,t.task_status,t.id from sd_task_list t
+        select t.task_name,e.tunnel_name,d.dept_name zzjg_id,t.end_plantime,u.nick_name dispatcher,t.task_description,t.task_status,t.id from sd_task_list t
         left join sys_dept d on d.dept_id = t.zzjg_id
         left join sys_user u on t.dispatcher = u.user_id
         left join sd_tunnels e on t.tunnel_id = e.tunnel_id

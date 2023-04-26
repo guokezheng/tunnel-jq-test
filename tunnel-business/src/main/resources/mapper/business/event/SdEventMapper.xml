@@ -77,7 +77,7 @@
         select e.id, e.tunnel_id, e.event_type_id, e.event_title, e.event_source, e.event_time, e.event_state, e.event_grade, e.event_location, e.event_death, e.event_injured, e.slight_injured, e.event_description, e.reserve_plan_id, e.flow_id, e.warning_id, e.station_id, e.lane_no, e.longitude, e.latitude, e.stake_num, stake_end_num,e.start_time, e.end_time, e.video_url, e.create_by, e.create_time, e.update_by, e.update_time, e.direction, e.small_car_num, e.truck_num, e.passenger_car_num, e.tanker_num, e.car_owner_phone, e.wrecker_phone, e.police_phone, e.remark, e.review_remark, e.currency_id
     </sql>
 
-    <select id ="eventPopAll" resultType="Map" parameterType="string">
+    <select id ="eventPopAll" resultType="hashmap" parameterType="sdEvent">
         SELECT
             id,
             frameEventTitle,
@@ -144,10 +144,33 @@
                     ) b
             ) AS MERGE
         ORDER BY MERGE.eventTime DESC
-            LIMIT ${subIndex}
     </select>
 
-    <select id="eventPopFault" resultType="hashmap" parameterType="string">
+    <select id="eventOrdinaryOrSecurity" parameterType="sdEvent" resultType="hashmap">
+        SELECT
+            A.id,
+            CONCAT( t.tunnel_name, ' ', IFNULL( sdd.dict_label, '' ), ',', b.simplify_name ) AS frameEventTitle,
+            B.icon_url AS iconUrl,
+            B.simplify_name AS simplifyName,
+            A.event_time AS eventTime,
+            B.prev_control_type AS prevControlType
+        FROM
+            sd_event A
+                LEFT JOIN sd_event_type B ON A.event_type_id = B.id
+                LEFT JOIN sd_tunnels t ON A.tunnel_id = t.tunnel_id
+                LEFT JOIN sys_dict_data sdd ON a.direction = sdd.dict_value
+                AND sdd.dict_type = 'sd_direction'
+        WHERE
+            1 = 1
+          AND A.event_state = '3'
+          AND B.is_usable = '1'
+          AND B.prev_control_type = #{prevControlType}
+          AND TO_DAYS( A.event_time ) = TO_DAYS(
+                NOW( )
+            )
+    </select>
+
+    <select id="eventPopFault" resultType="hashmap" parameterType="sdEvent">
         select fault.id,concat(ifnull(tunnel.tunnel_name, ''), ifnull(DATA.dict_label, ''), ifnull(devices.eq_name, ''), ifnull(type.dict_label, '')) AS frameEventTitle,fault.fault_fxtime as eventTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200' AND is_usable = '1') as iconUrl, '2' AS  prevControlType from sd_fault_list fault
                                                                                                                                                                                                                                                                          left join sd_tunnels tunnel on fault.tunnel_id = tunnel.tunnel_id
                                                                                                                                                                                                                                                                          left join sd_devices devices on devices.eq_id = fault.eq_id
@@ -155,7 +178,7 @@
                                                                                                                                                                                                                                                                          left join sys_dict_data type on type.dict_value = fault.fault_type and type.dict_type='fault_type'
         where fault.fault_status = '0' and fault.fallt_remove_statue = '1' and TO_DAYS(fault.fault_fxtime) = TO_DAYS(NOW())
         ORDER BY
-            fault.fault_fxtime DESC limit ${subIndex}
+            fault.fault_fxtime DESC
     </select>
 
     <select id = "getEventUntreatedNum" resultType="java.lang.Integer">

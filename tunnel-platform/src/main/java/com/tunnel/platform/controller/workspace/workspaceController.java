@@ -190,10 +190,9 @@ public class workspaceController extends BaseController {
                         updateDeviceData(sdDevices, state, Integer.parseInt(item.getId().toString()));
                     }
                 });
-                if(brightness != null){
-                    linState = state.equals("1")?"开启":"关闭";
-                    linState += "，亮度："+brightness + "%";
-                }
+                brightness = brightness == null || "".equals(brightness) ? "0" : brightness;
+                linState = state.equals("1")?"开启":"关闭";
+                linState += "，亮度："+brightness + "%";
             }else {
                 SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
                 updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));

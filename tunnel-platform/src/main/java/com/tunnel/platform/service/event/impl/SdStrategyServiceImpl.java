@@ -1214,13 +1214,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             }});
             AjaxResult result = SpringUtils.getBean(PhoneSpkService.class).playVoice(object);
             return Integer.valueOf(result.get("data").toString());
-        }else if (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)) {
+        }else if (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqTypeId) ||
+                DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.YING_JI_ZHAO_MING.getCode().toString().equals(eqTypeId)) {
             String[] split = rl.getEquipments().split(",");
             for (String devId : split){
                 Map<String, Object> map = new HashMap<>();
                 map.put("devId",devId);
-                map.put("state",Integer.valueOf(controlStatus) > 0 ? "1" : "2");
-                map.put("stateNum",controlStatus);
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)){
+                    map.put("state",Integer.valueOf(controlStatus) > 0 ? "1" : "2");
+                    map.put("stateNum",controlStatus);
+                }else {
+                    map.put("state",controlStatus);
+                }
                 map.put("controlType","4");
                 try {
                     map.put("operIp",InetAddress.getLocalHost().getHostAddress());

@@ -215,7 +215,7 @@ public class SdEventController extends BaseController
         return  Result.success(SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum());
     }
 
-    @GetMapping("/eventPopAll")
+    /*@GetMapping("/eventPopAll")
     @ApiOperation("事件弹窗当日事件")
     public Result eventPopAll(String subIndex) {
         Integer allNum = SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum();
@@ -223,9 +223,20 @@ public class SdEventController extends BaseController
         map.put("total",allNum);
         map.put("data",sdEventService.eventPopAll(subIndex));
         return Result.success(map);
+    }*/
+
+    /**
+     * 右上角事件弹窗数据
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/eventPopData")
+    public TableDataInfo eventPopData(SdEvent sdEvent){
+        startPage();
+        return getDataTable(sdEventService.eventPopData(sdEvent));
     }
 
-    @GetMapping("/eventPopFault")
+    /*@GetMapping("/eventPopFault")
     @ApiOperation("事件弹窗设备故障")
     public Result eventPopFault(String subIndex) {
         SdEventMapper mapper = SpringUtils.getBean(SdEventMapper.class);
@@ -234,7 +245,7 @@ public class SdEventController extends BaseController
         map.put("total",allNum);
         map.put("data",mapper.eventPopFault(subIndex));
         return Result.success(map);
-    }
+    }*/
 
     @GetMapping("/performRecovery")
     @ApiOperation("应急调度一键恢复")

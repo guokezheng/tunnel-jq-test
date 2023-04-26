@@ -262,17 +262,17 @@ public class SdDeviceControlService {
                 }
                 Integer brightness = 0;
                 // 加强照明，可设置照明亮度
-                if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()){
+                if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()
+                    || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()
+                ){
                     if(map.get("stateNum") != null){
                         brightness = Integer.parseInt(map.get("stateNum").toString());
                         sdOperationLog.setDescription(brightness+"");
                     }
-                    // 加强照明  开始（10）
-                    if(brightness != 0 ){
-                        String operationStateStr = state.equals("1")?"开启":"关闭";
-                        operationStateStr += "，亮度："+brightness + "%";
-                        sdOperationLog.setOperationState(operationStateStr);
-                    }
+
+                    String operationStateStr = state.equals("1")?"开启":"关闭";
+                    operationStateStr += "，亮度："+brightness + "%";
+                    sdOperationLog.setOperationState(operationStateStr);
                 }
                 //控制照明设备
                 controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices,brightness);

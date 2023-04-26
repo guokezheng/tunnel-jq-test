@@ -25,20 +25,34 @@
       <!-- <div class="blueLine"></div> -->
       <div class="contentBox">
         <div class="butBox">
-          <div :class="searchValue == 3 ? 'xz' : ''" @click="handleClick(3)">
-            全部
+          <div class="butLeftBox">
+            <div :class="searchValue == 3 ? 'xz' : ''" @click="handleClick(3)">
+              全部
+            </div>
+            <div>|</div>
+            <div :class="searchValue == 1 ? 'xz' : ''" @click="handleClick(1)">
+              安全预警
+            </div>
+            <div>|</div>
+            <div :class="searchValue == 0 ? 'xz' : ''" @click="handleClick(0)">
+              普通事件
+            </div>
+            <div>|</div>
+            <div :class="searchValue == 2 ? 'xz' : ''" @click="handleClick(2)">
+              设备故障
+            </div>
           </div>
-          <div>|</div>
-          <div :class="searchValue == 1 ? 'xz' : ''" @click="handleClick(1)">
-            安全预警
-          </div>
-          <div>|</div>
-          <div :class="searchValue == 0 ? 'xz' : ''" @click="handleClick(0)">
-            普通事件
-          </div>
-          <div>|</div>
-          <div :class="searchValue == 2 ? 'xz' : ''" @click="handleClick(2)">
-            设备故障
+          <el-button
+            class="butRightBox"
+            @click="handleBatch"
+            :disabled="searchValue == 2"
+            v-if="!batchManageType"
+          >
+            批量执行
+          </el-button>
+          <div v-if="batchManageType" class="batchManageButton">
+            <div @click="closeBatchManageDialog">取消</div>
+            <div @click="implementBatchManage">执行</div>
           </div>
         </div>
         <ul
@@ -50,50 +64,56 @@
             v-for="(item, index) of list"
             :key="index"
             @click="handleSee(item)"
-            :style="item.prevControlType != 2?'cursor: pointer':'cursor:default'"
+            :style="{
+              cursor: item.prevControlType != 2 ? 'pointer' : 'default',
+              background: item.click ? 'rgba(0, 0, 0, 0.1)' : '',
+            }"
           >
+          <div v-show="item.textFalse" class="textFalseBox">{{ textContent }}</div>
             <el-row style="color: white">
               <el-col :span="1">
                 <div class="iconBox">
-                  <img
-                    :src="item.iconUrl"
-                    v-if="searchValue == 2 || searchValue == 3 "
-                  />
-                  <img
-                    :src="item.eventType.iconUrl"
-                    v-else
-                  />
+                  <img :src="item.iconUrl" />
                 </div>
-
               </el-col>
               <!--:style="{color: item.prevControlType == 0?'red':'#F6AC10'}"-->
-              <el-col :span="4" style="display:flex">
-                <div v-if="searchValue == 2 || searchValue == 3"
-                     :style="{color: item.prevControlType == 0?'red':(item.prevControlType == 2?'#F6AC10':'rgb(11,146,254)')}"
-                      style="width:100%">
+              <el-col :span="4" style="display: flex">
+                <div
+                  :style="{
+                    color:
+                      item.prevControlType == 0
+                        ? 'red'
+                        : item.prevControlType == 2
+                        ? '#F6AC10'
+                        : 'rgb(11,146,254)',
+                  }"
+                  style="width: 100%"
+                >
                   {{ item.simplifyName }}
                 </div>
-                <div
-                v-else
-                style="width:100%"
-                :style="{color:searchValue == 0?'red':'rgb(11,146,254)'}"
+                <span
+                  class="icon-split"
+                  style="padding: 0 12px; color: #3cd3fe"
                 >
-                  {{ item.eventType.simplifyName }}
-                </div>
-                <span class="icon-split" style="padding: 0 12px;color: #3cd3fe;"> |</span>
+                  |</span
+                >
               </el-col>
               <el-col
                 :span="19"
                 style="display: flex; justify-content: space-between"
               >
-              <el-tooltip class="item" effect="dark" :content="item.frameEventTitle" placement="top">
-                <div class="overflowText">{{ item.frameEventTitle }}</div>
-              </el-tooltip>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.frameEventTitle"
+                  placement="top"
+                >
+                  <div class="overflowText">{{ item.frameEventTitle }}</div>
+                </el-tooltip>
                 <div style="float: right; margin-right: 10px">
-                  {{ parseTime(item.eventTime, "{yyyy}-{m}-{d} {h}:{i}:{s}" )}}
+                  {{ parseTime(item.eventTime, "{yyyy}-{m}-{d} {h}:{i}:{s}") }}
                 </div>
               </el-col>
-
             </el-row>
             <div class="lineBT">
               <div></div>
@@ -118,6 +138,7 @@
         </p>
       </div>
     </el-dialog>
+    <batchDialog ref="batchRef"></batchDialog>
   </div>
 </template>
 
@@ -130,43 +151,52 @@ import {
   eventList,
   eventPopFault,
   eventPopAll,
+  eventPopData,
 } from "@/api/event/event";
 import evtdialog from "@/components/eventDialogTable/eventDialog"; //只有数据的弹窗
+import batchDialog from "./batchDialog"; //只有数据的弹窗
 
 export default {
   name: "eventDialogTable",
   components: {
     evtdialog,
+    batchDialog
   },
   data() {
     return {
+      textContent:'',
       searchValue: 3,
       loading: false,
       // showTable:false,
       eventTableDialog: true,
       activeName: "0",
       pageNum: 1,
+      pageSize: 10,
       total: 0,
       list: [
         {
-          eventType:{
-            iconUrl:''
-          }
-        }
+          eventType: {
+            iconUrl: "",
+          },
+        },
       ],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
       eventTime: "",
+      batchManageType: false,
+      itemEvtIdList: [],
+      itemEqType: "",
+      simplifyName:'',
+      eqDirection:'',
+      batchDialog:false,
     };
   },
   computed: {
     noMore() {
       //当起始页数大于总页数时停止加载
-      // console.log(this.pageNum, parseInt(this.total/10));
       if (this.total % 10 == 0) {
         return this.pageNum >= parseInt(this.total / 10);
       } else {
-        // console.log(this.pageNum, parseInt(this.total / 10) + 1);
         return this.pageNum >= parseInt(this.total / 10) + 1;
       }
     },
@@ -176,20 +206,7 @@ export default {
   },
   created() {
     this.eventTime = moment().format("YYYY-MM-DD");
-    // console.log(this.startTime)
-    // eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
-    //   console.log(res, "事件弹窗分类数组");
-    //   this.list = res.rows;
-    //   this.total = res.total;
-    //   this.loading = false;
-    // });
-    var pageNum2 = 0;
-    eventPopAll(pageNum2).then((res) => {
-      console.log(res, "全部设备");
-      this.list = res.data.data;
-      this.total = res.data.total;
-      this.loading = false;
-    });
+    this.getList();
   },
   mounted() {
     bus.$on("forceUpdateTable", (id) => {
@@ -211,6 +228,88 @@ export default {
     // })
   },
   methods: {
+    getList(num) {
+      let prevControlType = "";
+      if (this.searchValue != 3) {
+        prevControlType = this.searchValue;
+      }
+      const params = {
+        prevControlType: prevControlType,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+      };
+      eventPopData(params).then((res) => {
+        if (num) {
+          this.list = this.list.concat(res.rows);
+        } else {
+          this.list = res.rows;
+        }
+        this.loading = false;
+        this.total = res.total;
+      });
+    },
+    // 执行批量 并弹窗
+    implementBatchManage() {
+      this.$refs.batchRef.init(this.itemEvtIdList)
+    },
+    // 取消批量执行
+    closeBatchManageDialog() {
+      this.itemEvtIdList = [];
+      this.batchManageType = false;
+    },
+    // 批量执行
+    handleBatch() {
+      this.batchManageType = true;
+    },
+    handleSee(item) {
+      console.log(item, "item");
+      // 不是批量时单独弹窗
+      if (item.prevControlType != 2 && !this.batchManageType) {
+        setTimeout(() => {
+          bus.$emit("getPicId", item.id);
+        }, 200);
+        bus.$emit("openPicDialog");
+        this.eventTableDialog = !this.eventTableDialog;
+      } else {
+        // 点击批量后 batchManageType == true 可多选弹窗
+        if (this.simplifyName) {
+          if(this.simplifyName == item.simplifyName){
+            const result = this.itemEvtIdList.findIndex(
+              (a) => a == item.id
+            );
+            if (result === -1) {
+              item.click = true;
+              this.itemEvtIdList.push(item.id);
+              this.$forceUpdate();
+            } else {
+              this.itemEvtIdList.splice(result, 1);
+              item.click = false;
+              this.$forceUpdate();
+              if (this.itemEvtIdList.length == 0) {
+                this.simplifyName = "";
+                this.$forceUpdate();
+              }
+            }
+          }else if(this.simplifyName != item.simplifyName){
+            item.textFalse = true;
+            this.textContent = '请选择同种事件类型'
+            this.$forceUpdate();
+          }else if(this.eqDirection != item.eqDirection){
+
+          }
+          
+        } else {
+          // 第一次点击时
+          if (item.prevControlType != 2) {
+            item.click = true;
+            this.itemEvtIdList.push(item.id);
+            this.simplifyName = item.simplifyName;
+            this.eqDirection = item.eqDirection;
+            this.$forceUpdate();
+          }
+        }
+      }
+    },
     getStartTime(time) {
       return moment(time).format("HH:mm:ss");
     },
@@ -218,44 +317,10 @@ export default {
       this.loading = true;
       setTimeout(() => {
         this.pageNum += 1;
-        var pageNum2 = (this.pageNum - 1) * 10;
-        console.log(pageNum2, "pageNum2");
-        console.log(this.searchValue, "this.searchValue");
-        if (this.searchValue == 3) {
-          // 全部设备
-          eventPopAll(pageNum2).then((res) => {
-            console.log(res, "全部设备滚动");
-            this.list = this.list.concat(res.data.data);
-          });
-        } else if (this.searchValue == 2) {
-          // 设备故障
-          eventPopFault(pageNum2).then((res) => {
-            console.log(res, "设备故障");
-            this.list = this.list.concat(res.data.data);
-          });
-        } else {
-          eventList(this.searchValue, this.pageNum, this.eventTime).then(
-            (res) => {
-              console.log(res, "事件弹窗分类数组");
-              // this.list.push(res.rows);
-              this.list = this.list.concat(res.rows);
-              this.$forceUpdate();
-            }
-          );
-        }
-        this.loading = false;
+        this.loadType = true;
+        this.getList("load");
       }, 2000);
     },
-    handleSee(item) {
-      if(item.prevControlType != 2){
-        setTimeout(() => {
-          bus.$emit("getPicId", item.id);
-        }, 200);
-        bus.$emit("openPicDialog");
-      this.eventTableDialog = !this.eventTableDialog;
-      }
-    },
-
     // 忽略事件
     handleIgnore(id) {
       if (id) {
@@ -279,26 +344,7 @@ export default {
         this.$modal.msgError("没有接收到事件id");
       }
     },
-
-    // 处理 跳转应急调度
-    // handleDispatch(event) {
-    //   const param = {
-    //     id: event.id,
-    //     eventState: "0",
-    //   };
-    //   updateEvent(param).then((response) => {
-    //     console.log(response, "修改状态");
-    //     this.$modal.msgSuccess("开始处理事件");
-    //   });
-    //   this.$router.push({
-    //     path: "/emergency/administration/dispatch",
-    //     query: { id: event.id },
-    //   });
-    //   bus.$emit("closeDialog");
-    //   // this.eventTableDialog = false
-    // },
     closeDialogTable() {
-      // this.eventTableDialog = false
       bus.$emit("closeDialog");
     },
 
@@ -307,43 +353,54 @@ export default {
       const pageNum = 1;
       const pageNum2 = 0;
 
-      if (searchValue == 2) {
-        // 设备故障
-        eventPopFault(pageNum2).then((res) => {
-          console.log(res, "设备故障");
-          this.list = res.data.data;
-          this.total = res.data.total;
-        });
-      } else if (searchValue == 3) {
-        // 全部设备
-        eventPopAll(pageNum2).then((res) => {
-          console.log(res, "全部设备");
-          this.list = res.data.data;
-          this.total = res.data.total;
-        });
-      } else {
-        // 主动安全 交通事件
-        eventList(searchValue, pageNum, this.eventTime).then((res) => {
-          console.log(res, "事件弹窗分类数组");
-          this.list = res.rows;
-          this.total = res.total;
-          this.loading = false;
-        });
+      let prevControlType = "";
+      if (searchValue != 3) {
+        prevControlType = searchValue;
       }
+      const params = {
+        prevControlType: prevControlType,
+        pageNum: 1,
+        pageSize: 10,
+      };
+      eventPopData(params).then((res) => {
+        this.list = res.rows;
+        this.loading = false;
+        this.total = res.total;
+      });
     },
-    // 表格的行样式
-    // tableRowClassName({ row, rowIndex }) {
-    //   if (rowIndex % 2 == 0) {
-    //     return "tableEvenRow";
-    //   } else {
-    //     return "tableOddRow";
-    //   }
-    // },
   },
 };
 </script>
 
-    <style lang="scss" scoped>
+<style lang="scss" scoped>
+.textFalseBox {
+  width: 120px;
+  height: 40px;
+  position: absolute;
+  top: -40px;
+  left: 30px;
+  line-height: 28px;
+  text-align: center;
+  font-size: 10px;
+  background-image: url(../../assets/cloudControl/screenEqName.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: #da4a64;
+  opacity: 0;
+  animation: fadenum 2s;
+  z-index: 100;
+}
+@keyframes fadenum {
+  0% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 ::v-deep .el-dialog {
   width: 100% !important;
   height: 100%;
@@ -351,7 +408,7 @@ export default {
   left: 0 !important;
   margin: 0;
   box-shadow: none;
-  border-top:none;
+  border-top: none;
   // background: rgba($color: #00152b, $alpha: 0.6);
   // background-image: linear-gradient(180deg, #3A4F6A 93%,#154489);
 }
@@ -391,27 +448,75 @@ export default {
   .butBox {
     width: 100%;
     display: flex;
+    justify-content: space-between;
     padding: 0px 4px;
-    background: #44576F;
+    background: #44576f;
     border-radius: 4px;
     margin-top: 20px;
     font-size: 14px;
     box-shadow: 0 0.125rem 0.25rem 0 #000;
-    div {
-      padding: 6px 10px;
-      color: #3cd3fe;
-      letter-spacing: 1px;
-      cursor: pointer;
+    align-items: center;
+    .butLeftBox {
+      display: flex;
+      div {
+        padding: 6px 10px;
+        color: #3cd3fe;
+        letter-spacing: 1px;
+        cursor: pointer;
+      }
+      .xz {
+        color: #ffffff !important;
+      }
     }
-    .xz {
-      color: #ffffff !important;
+    .butRightBox {
+      width: 80px;
+      height: 28px;
+      border: solid 1px #3cd3fe;
+      padding: 0px 10px;
+      border-radius: 3px;
+      line-height: 27px;
+      color: #3cd3fe;
+      background: transparent;
+    }
+    .butRightBox:hover {
+      background-color: #3cd3fe;
+      color: #fff;
+    }
+    .batchManageButton {
+      width: 120px;
+      display: flex;
+      justify-content: space-around;
+      padding: 0 5px;
+      color: #e1feff;
+      background: #44576f !important;
+      border: 1px solid #00c8ff;
+      font-size: 12px;
+      height: 32px;
+      align-items: center;
+      margin-right: 10px;
+      border-radius: 3px;
+      color: white;
+      text-align: center;
+      > div {
+        width: 50px;
+        height: 20px;
+        border-radius: 13px;
+        line-height: 20px;
+        cursor: pointer;
+      }
+      > div:nth-of-type(1) {
+        background: #c8c8c8;
+      }
+      > div:nth-of-type(2) {
+        background: #00b0ff;
+      }
     }
   }
   .listContent {
     max-height: 301px;
     overflow: auto;
     // background: rgba($color: #6c8097, $alpha: 0.3);
-    background: #44576F;
+    background: #44576f;
     box-shadow: 0 0.125rem 0.25rem 0 #000;
     padding: 4px 10px;
     > li {
@@ -420,9 +525,9 @@ export default {
       padding: 10px 4px;
       padding-bottom: 0px;
     }
-    >li:hover{
+    > li:hover {
       background-color: rgba(0, 0, 0, 0.2);
-      background:rgba($color: #000000, $alpha: 0.1);
+      background: rgba($color: #000000, $alpha: 0.1);
     }
   }
   /*table滚动条背景色 */
@@ -477,7 +582,7 @@ export default {
   top: 0px;
   left: calc(100% - 600px);
   // background-color: #071930;
-  .el-dialog__body{
+  .el-dialog__body {
     padding: 0 !important;
     width: 100% !important;
     margin: 0 !important;
@@ -503,7 +608,6 @@ export default {
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
     background-repeat: no-repeat;
     // background-color: rgba($color: #00152b, $alpha: 0.6) !important;
-
   }
   .blueLine {
     width: 20%;
@@ -562,19 +666,19 @@ export default {
     }
   }
 }
-.overflowText{
-  width:260px;
+.overflowText {
+  width: 260px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.iconBox{
+.iconBox {
   width: 16px;
   height: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  img{
+  img {
     height: 100%;
   }
 }

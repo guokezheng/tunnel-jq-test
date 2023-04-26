@@ -1500,7 +1500,7 @@
             </el-radio-group>
           </div>
         </el-form-item>
-        <el-row style="margin-top:10px" v-show="batchManageForm.eqType == 7">
+        <el-row style="margin-top:10px" v-show="batchManageForm.eqType == 7 || batchManageForm.eqType == 9">
             <el-col :span="15">
               <el-form-item label="亮度调整:">
                 <el-slider
@@ -9843,7 +9843,7 @@ export default {
   // margin-top: 2px;
   top: 6%;
   left: 7.35%;
-  z-index: 10;
+  // z-index: 10;
 }
 .contentTopNav {
   width: 85%;
@@ -10401,7 +10401,7 @@ export default {
 
 .workbench-content {
   // width: 90%;
-  height: 100%;
+  height: 580px;
 
   // position: absolute;
   // top: 7%;
@@ -10410,9 +10410,9 @@ export default {
   // display: flex;
   // justify-content: center;
   // overflow-x: auto;
-  > div {
-    height: 100%;
-  }
+  // > div {
+  //   height: 100%;
+  // }
 }
 
 // .content::-webkit-scrollbar-track-piece {

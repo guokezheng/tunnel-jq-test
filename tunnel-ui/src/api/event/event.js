@@ -130,6 +130,13 @@ export function eventList(searchValue, pageNum, eventTime) {
   })
 }
 
+export function eventPopData(query) {
+  return request({
+    url: '/event/eventPopData',
+    method: 'get',
+    params: query
+  })
+}
 // 事件弹窗分类数组 全部
 export function eventPopAll(pageNum) {
   return request({

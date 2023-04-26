@@ -384,6 +384,8 @@ export default {
     selectStateVal(index){
       if(this.strategyForm.autoControl[index].state == 1){
         this.$set(this.strategyForm.autoControl[index], "stateNum", 100);
+      }else{
+        this.$set(this.strategyForm.autoControl[index], "stateNum", 0);
       }
     },
     changeTime(){

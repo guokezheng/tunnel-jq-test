@@ -93,10 +93,17 @@ public interface SdEventMapper
 
     /**
      * 当日全部未处理事件
-     * @param subIndex
+     * @param sdEvent
      * @return
      */
-    List<Map> eventPopAll(String subIndex);
+    List<Map<String, Object>> eventPopAll(SdEvent sdEvent);
+
+    /**
+     * 右上角查询普通事件或安全预警
+     * @param sdEvent
+     * @return
+     */
+    List<Map<String, Object>> eventOrdinaryOrSecurity(SdEvent sdEvent);
 
     /**
      * 事件当日未处理总条数
@@ -108,7 +115,7 @@ public interface SdEventMapper
      * 事件弹窗设备故障
      * @return
      */
-    List<Map> eventPopFault(String subIndex);
+    List<Map<String, Object>> eventPopFault(SdEvent sdEvent);
 
     /**
      * 设备故障条数

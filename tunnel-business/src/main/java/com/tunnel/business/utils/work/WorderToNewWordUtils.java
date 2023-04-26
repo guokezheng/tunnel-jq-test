@@ -441,21 +441,45 @@ public class WorderToNewWordUtils {
     }
 
     public static List<Integer[]> startOrEnd(String key, String value, List<String> list){
-        Integer[] index = new Integer[2];
         List<Integer[]> indexList = new ArrayList<>();
         int count = 0;
         int flaseCount = 0;
+        int num = 0;
         for(int i = 0; i < list.size()-1; i++){
-            if(count != 0){
+            Integer[] index = new Integer[2];
+            if(key.equals(list.get(i))){
+                index[0] = i;
+                count++;
+                for(int j = i; j < list.size(); j++){
+                    if(!list.get(j).equals(key) || j+1 == list.size()){
+                        index[1] = (j + 1 == list.size()) ? j : j - 1;
+                        i = j;
+                        indexList.add(index);
+                        count++;
+                        break;
+                    }
+                }
+            }
+            /*if(count != 0){
                 flaseCount++;
             }
 
-            if(key.equals(list.get(i)) && key.equals(list.get(i+1))){
+            if(key.equals(list.get(i)) && key.equals(list.get(i+1)) && num != 1){
                 count++;
                 if(count == 1){
                     index[0] = i;
                 }
-                index[1] = i+1;
+                if(i+1 == list.size()){
+                    index[1] = i+1;
+                }else {
+                    for(int j = i; j < list.size(); j++){
+                        if(!list.get(j).equals(key) || j+1 == list.size()){
+                            index[1] = j;
+                            break;
+                        }
+                    }
+                }
+                num = 1;
                 flaseCount = 0;
             }
 
@@ -470,7 +494,7 @@ public class WorderToNewWordUtils {
                 index[0] = list.indexOf(key);
                 index[1] = list.indexOf(key);
                 indexList.add(index);
-            }
+            }*/
         }
         return indexList;
     }

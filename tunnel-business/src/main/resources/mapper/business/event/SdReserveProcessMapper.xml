@@ -170,7 +170,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             rp.process_name,
             rp.device_type_id,
             rp.strategy_id,
-            sr.equipments,
+            IFNULL( sr.equipments, '' ) AS equipments,
             sr.retrieval_rule,
             sr.state
         FROM

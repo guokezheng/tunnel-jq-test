@@ -596,4 +596,9 @@ public class SysUserServiceImpl implements ISysUserService
 
         return userMapper.updateUserDeptAll(deptId,userIds);
     }
+
+    @Override
+    public List<SysUser> getCurrentUserInfo(Long userId) {
+        return userMapper.getCurrentUserInfo(userId);
+    }
 }

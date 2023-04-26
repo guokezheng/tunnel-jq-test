@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.ruoyi.common.core.domain.entity.SysUserImport;
 import com.ruoyi.common.core.page.Result;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -275,4 +276,18 @@ public class SysUserController extends BaseController
         List<SysUser> list = userService.getUserDeptId(user);
         return getDataTable(list);
     }
+
+    /**
+     * 查询当前登录用户
+     * @return
+     */
+    @GetMapping("/getUserInfo")
+    public TableDataInfo<List<SysUser>>list()
+    {
+        Long userId = SecurityUtils.getUserId();
+        startPage();
+        List<SysUser> list = userService.getCurrentUserInfo(userId);
+        return getDataTable(list);
+    }
+
 }

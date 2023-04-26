@@ -294,6 +294,6 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
         //查询出相关设备id
         List<String> deviceIds = sdDevicesMapper.selectDropSdDevicesList(sdDevices).stream().map(SdDevices::getEqId).collect(Collectors.toList());
         //返回情报板模板信息
-        return AjaxResult.success(getVMSTemplatesByDevIdAndCategory(deviceIds));
+        return AjaxResult.success(getVMSTemplatesByDevIdAndCategory(deviceIds.size() > 0 ? deviceIds.subList(0,1) : new ArrayList<>()));
     }
 }

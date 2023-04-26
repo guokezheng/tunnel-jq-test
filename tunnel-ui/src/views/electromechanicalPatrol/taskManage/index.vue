@@ -232,7 +232,7 @@
             size="mini"
             class="tableBlueButtton"
             @click="exportTaskReport(scope.row)"
-            :style="{ display: scope.row.taskStatus == 2 ? '' : 'none' }"
+            :style="{ display: (scope.row.task).indexOf( '已完结')>=0 ? '' : 'none' }"
             >巡查报告</el-button
           >
           <el-button
@@ -290,13 +290,27 @@
             <el-row>
               <el-col :span="8">
                 <el-form-item label="派单人员" prop="dispatcher">
+                  <el-select
+                    v-model="form.dispatcher"
+                    disabled="disabled"
+                    placeholder="默认当前登录人"
+                  >
+                    <el-option
+                      v-for="item in userListData"
+                      :key="item.userId"
+                      :label="item.nickName"
+                      :value="item.userId"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+<!--                <el-form-item label="派单人员" prop="dispatcher">
                   <el-input
                     ref="dispatcher"
                     disabled="disabled"
                     v-model="form.dispatcher"
                     placeholder="（默认当前登录人）"
                   ></el-input>
-                </el-form-item>
+                </el-form-item>-->
               </el-col>
               <el-col :span="8">
                 <el-form-item label="派单时间" prop="dispatchTime">
@@ -882,7 +896,7 @@ import {
   addTask,
   getFaultList,
   updateTask,
-  selectBzByTunnel,
+  selectBzByTunnel, getUserInfo,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import {
   getEquipmentInfo,
@@ -891,6 +905,7 @@ import {
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { color } from "echarts";
 import { download } from "@/utils/request";
+import {getUser} from "@/api/system/user";
 
 export default {
   name: "List",
@@ -968,6 +983,7 @@ export default {
       tableData2: [],
       //所属隧道
       eqTunnelData: {},
+      userListData: {},
       options1value: "", //设备清单绑定
       options2value: "", //故障清单绑定
       boxList: [], //巡检点list
@@ -1125,7 +1141,7 @@ export default {
       this.optTypeOptions = response.data;
     });
     //获取当前登录人
-    this.userName = this.$store.state.user.name;
+    //this.userName = this.$store.state.user.name;
     this.currentTime = this.getCurrentTime();
   },
   //点击空白区域关闭全局搜索弹窗
@@ -1277,6 +1293,15 @@ export default {
         this.eqTunnelData = response.rows;
       });
     },
+    /*获取当前登录人*/
+    getLoginUser(){
+      getUserInfo().then((response) => {
+        this.userListData = response.rows;
+        this.form.dispatcher = this.userListData[0].userId;
+      });
+    },
+
+
     // 获取设备table
     getTable(deviceType) {
       if (deviceType) {
@@ -1668,6 +1693,7 @@ export default {
       this.tableData2 = null;
       this.form.dispatcher = this.userName;
       this.form.dispatchTime = this.currentTime;
+      this.getLoginUser();
     },
     /** 修改按钮操作 */
     handleUpdate(row) {

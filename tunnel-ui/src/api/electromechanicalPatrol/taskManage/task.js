@@ -135,11 +135,11 @@ export function selectBzByTunnel(data) {
   })
 }
 
-//查询操作记录
-/*export function getTaskOpt(taskId) {
+
+export function getUserInfo() {
   return request({
-    url: '/task/list/getTaskOpt',
-    method: 'post',
-    data: data
+    url: '/system/user/getUserInfo',
+    method: 'get',
   })
-}*/
+}
+

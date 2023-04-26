@@ -126,7 +126,7 @@ public interface ISdEventService {
 
     List<SdDevices> getEventCamera(String tunnelId,String stakeNum,String direction);
 
-    List<Map> eventPopAll(String subIndex);
+    //List<Map> eventPopAll(String subIndex);
 
     /**
      * 交通事件-复核-处置获取预案流程
@@ -225,4 +225,11 @@ public interface ISdEventService {
      * @return
      */
     AjaxResult examineDeviceDetail(SdEvent sdEvent);
+
+    /**
+     * 右上角事件数据
+     * @param sdEvent
+     * @return
+     */
+    List<Map<String, Object>> eventPopData(SdEvent sdEvent);
 }

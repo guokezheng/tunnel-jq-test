@@ -111,6 +111,8 @@ public class SdTaskList extends BaseEntity
     @Excel(name = "预完成时", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endPlantime;
+     /*任务完成情况*/
+    private String finishStatus;
 
 
     /** 任务描述 */
@@ -157,6 +159,14 @@ public class SdTaskList extends BaseEntity
 
 
     private String dictValue;
+
+    public String getFinishStatus() {
+        return this.finishStatus;
+    }
+
+    public void setFinishStatus( String finishStatus) {
+        this.finishStatus = finishStatus;
+    }
 
     public Long getUserId() {
         return this.userId;

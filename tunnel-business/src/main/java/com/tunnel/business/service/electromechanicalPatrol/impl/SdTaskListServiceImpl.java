@@ -17,6 +17,7 @@ import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.dataReport.FaultStatus;
 import com.tunnel.business.datacenter.domain.dataReport.TaskStatus;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.electromechanicalPatrol.*;
@@ -738,6 +739,11 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      */
     @Override
     public int saveLocal(SdTaskList sdTaskList) {
+        if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&&"4".equals(sdTaskList.getTaskStatus())){
+            sdTaskList.setTaskStatus("2,4");
+        }else{
+            sdTaskList.setTaskStatus("2");
+        }
         return sdTaskListMapper.saveLocal(sdTaskList);
     }
 
@@ -750,6 +756,25 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     public int savePatrol(MultipartFile[] file, SdPatrolList sdPatrolList) {
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
         int result = -1;
+        String falltRemoveStatue = null;
+        String  faultId  = null;
+        //先判断是故障点还是设备
+        SdPatrolList patrolInfo = sdPatrolListMapper.getPatroltype(sdPatrolList.getId());
+        if(patrolInfo.getPatrolType().equals("1")){//故障点
+            faultId = patrolInfo.getEqFaultId();
+        }
+        /*巡检点故障处理情况与故障消除状态情况对应*/
+        if(faultId!=null){
+            if(sdPatrolList.getFaultClstatus()!=null&&!"".equals(sdPatrolList)){
+                if(sdPatrolList.getFaultClstatus().equals(FaultStatus.PATROLNULL.getCode())){//无故障
+                    falltRemoveStatue = FaultStatus.FAULTNULL.getCode();
+                }else  if(sdPatrolList.getFaultClstatus().equals(FaultStatus.PATROLYIXIAOCHU.getCode())){//已消除
+                    falltRemoveStatue  = FaultStatus.FAULTYIXIAOCHU.getCode();
+                }else{
+                    falltRemoveStatue = FaultStatus.FAULTYIXIAOCHU.getCode();
+                }
+            }
+        }
         if(file!=null){
             String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
             sdPatrolList.setImgFileId(guid);// 文件关联ID
@@ -805,7 +830,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         }else{
             result = sdPatrolListMapper.savePatrol(sdPatrolList);
         }
-
+        if(result > -1&&falltRemoveStatue!=null){//是故障点则更新故障点的消除状态
+            result = sdFaultListMapper.updateFaultRemoveState(faultId,falltRemoveStatue);
+        }
 
         return result;
     }
@@ -862,6 +889,11 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         sdTaskList.getParams().put("pageNum",pageNum);
         sdTaskList.getParams().put("userId",userId);
         return sdTaskListMapper.getTaskListTeams(sdTaskList);
+    }
+
+    @Override
+    public List<SdTaskList> getSiteInfo(String taskId) {
+        return sdTaskListMapper.getSiteInfo(taskId);
     }
 
 }

@@ -162,4 +162,11 @@ public interface SdTaskListMapper
     int getTaskCountListTeams(@Param("taskStatus")String taskStatus, @Param("taskName")String taskName, @Param("startTime")String startTime, @Param("endTime")String endTime, @Param("deptId")String deptId,@Param("userId")Long userId);
 
     List<SdTaskList> getTaskListTeams( SdTaskList sdTaskList);
+
+    /**
+     * app端查看现场情况
+     * @param taskId
+     * @return
+     */
+    List<SdTaskList> getSiteInfo(@Param("taskId")String taskId);
 }

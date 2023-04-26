@@ -32,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="dictLabel"    column="dict_label"    />
         <result property="dictValue"    column="dict_value"    />
         <result property="taskName"    column="task_name"    />
+        <result property="finishStatus"    column="finish_status"    />
         <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
     </resultMap>
 
@@ -306,8 +307,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="bzId != null">bz_id = #{bzId},</if>
             <if test="taskDescription != null">task_description = #{taskDescription},</if>
             <if test="publishStatus != null">publish_status = #{publishStatus},</if>
-            <if test="taskStatus != null">task_status = #{taskStatus},</if>
-            <if test="walkerId != null">walker_id = #{walkerId},</if>
+            <if test="taskStatus != null">task_status =#{taskStatus},</if>
+            <if test="finishStatus != null">finish_status =#{finishStatus},</if>
             <if test="taskEndtime != null">task_endtime = #{taskEndtime},</if>
             <if test="taskCxtime != null">task_cxtime = #{taskCxtime},</if>
             <if test="siteDescription != null">site_description = #{siteDescription},</if>
@@ -404,6 +405,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         and t.publish_status ='2' and (ISNULL(walker_id) or t.walker_id = #{userId})
 
+    </select>
+
+
+
+    <select id="getSiteInfo" parameterType="String" resultMap="SdTaskListResult">
+        select stl.id,stl.finish_status,st.dept_name bz_id,su.nick_name walker_id,stl.task_endtime,stl.task_cxtime,stl.site_description,stl.task_status
+        from sd_task_list stl
+        left join sd_teams st on stl.bz_id = st.dept_id
+        left join sys_user su on stl.walker_id = su.user_id
+        where 1=1
+        <if test="taskId != null and taskId != ''">
+            and stl.id = #{taskId}
+        </if>
     </select>
 
 </mapper>

@@ -149,4 +149,11 @@ public interface SdPatrolListMapper
      * @return
      */
     SdPatrolList faultOrDevices(String faultId);
+
+    /**
+     * 判断巡检点时故障点、设备
+     * @param id
+     * @return
+     */
+    SdPatrolList getPatroltype(String id);
 }

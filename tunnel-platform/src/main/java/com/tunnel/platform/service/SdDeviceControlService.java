@@ -311,11 +311,11 @@ public class SdDeviceControlService {
                 controlState = controlWarningLightStripDevice(controlState, isopen, devId, state, sdDevices);
                 sdOperationLog.setState(String.valueOf(controlState));
             }
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             sdOperationLog.setState("0");
             // 异常信息最大支持vachar 2000. 实际记录1900
             String errorMsg = "task service error";
-            int index = 1900;
+            int index = errorMsg.length();
             if(null != e.getMessage()){
                 errorMsg = e.getMessage();
                 if(e.getMessage().length() < 1900){

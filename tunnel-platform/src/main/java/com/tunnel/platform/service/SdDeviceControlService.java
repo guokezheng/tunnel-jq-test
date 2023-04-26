@@ -314,7 +314,7 @@ public class SdDeviceControlService {
         } catch (RuntimeException e) {
             sdOperationLog.setState("0");
             // 异常信息最大支持vachar 2000. 实际记录1900
-            String errorMsg = null;
+            String errorMsg = "task service error";
             int index = 1900;
             if(null != e.getMessage()){
                 errorMsg = e.getMessage();

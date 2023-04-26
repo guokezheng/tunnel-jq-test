@@ -283,9 +283,25 @@
         <el-form-item label="系统地址" prop="systemUrl">
           <el-input v-model="form.systemUrl" placeholder="请输入系统地址" />
         </el-form-item>
+
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
+
+        <el-form-item label="开启网络检测" prop="remark">
+        <el-switch
+          v-model="form.openCheck"
+          inactive-text="">
+        </el-switch>
+        </el-form-item>
+        <el-form-item label="检测地址" prop="remark">
+          <el-input v-model="form.checkAddr" placeholder="请输入检测地址" />
+        </el-form-item>
+        <el-form-item label="检测间隔" prop="remark">
+          <el-input v-model="form.checkTimes" placeholder="请输入检测间隔（秒）" />
+        </el-form-item>
+
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="submitForm">确 定</el-button>

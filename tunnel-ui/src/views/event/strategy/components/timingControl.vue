@@ -163,7 +163,7 @@
               </el-select>
             </el-col>
             <el-col :span="8"
-              v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36 && items.equipmentTypeId != 7"
+              v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36 && items.equipmentTypeId != 7 && items.equipmentTypeId != 9"
             >
               <el-select v-model="items.state" placeholder="请选择设备执行操作" style="width:100%">
                 <el-option
@@ -191,7 +191,7 @@
             </el-col>
             <el-col
               :span="8"
-              v-show="items.equipmentTypeId == 7"
+              v-show="items.equipmentTypeId == 7 ||  items.equipmentTypeId == 9"
             >
               <el-select
                 :style="{'width':  items.state == 1 ? '45%' :'100%' }"

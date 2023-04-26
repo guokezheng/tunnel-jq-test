@@ -349,7 +349,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     fsControlData +="结束指令：" + endObject.get(0).getStateName();
 
                     // 附加数值的命令
-                    if(rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) && rlList.get(j).getEndState().equals("1") && rlList.get(j).getEndStateNum() != null && !"0".equals(rlList.get(j).getEndStateNum())){
+                    if((rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                            rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString()))&&
+                            rlList.get(j).getEndState().equals("1") &&
+                            rlList.get(j).getEndStateNum() != null &&
+                            !"0".equals(rlList.get(j).getEndStateNum())){
 
                         fsControlData += "，亮度："+rlList.get(j).getEndStateNum() + "%";
 
@@ -361,7 +365,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
                     String controlData = typeName + "控制执行：" + stateName + "；";
                     // 附加数值的命令
-                    if(rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) && rlList.get(j).getStateNum() != null && !"0".equals(rlList.get(j).getStateNum())){
+                    if((rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                            rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString()))&&
+                            rlList.get(j).getStateNum() != null &&
+                            !"0".equals(rlList.get(j).getStateNum())){
 
                         controlData = typeName + "控制执行：" + stateName + "，亮度："+rlList.get(j).getStateNum()+"%；";
                     }

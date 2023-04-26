@@ -91,6 +91,8 @@ public class SdDevicesController extends BaseController {
                        || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()
                 )
         ){
+
+            Collections.reverse(list);
             list = list.stream().collect(
                     Collectors.collectingAndThen(
                             Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(SdDevices::getExternalDeviceId))), ArrayList::new));

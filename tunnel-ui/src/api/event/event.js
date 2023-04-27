@@ -25,6 +25,15 @@ export function getEvent(id) {
   })
 }
 
+// 获取批量事件详情
+export function batchHandleEvent(query) {
+  return request({
+    url: '/event/batchHandleEvent',
+    method: 'get',
+    params: query
+  })
+}
+
 // �����¼�����
 export function addEvent(data) {
   return request({

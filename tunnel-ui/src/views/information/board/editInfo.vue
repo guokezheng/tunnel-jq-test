@@ -32,6 +32,7 @@
               zIndex: '1000',
               left: getCoordinate(dataForm.COORDINATE.substring(0, 3), 0),
               top: getCoordinate(dataForm.COORDINATE.substring(3, 6), 1),
+              maxHeight:getDevicePixel(boardHeight, 1),
             }"
             v-html="
               dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
@@ -409,7 +410,7 @@ export default {
   computed: {
     dataRule() {
       return {
-        alignmentNum:1,
+        alignmentNum:2,
         itemPropertyMap: null,
         CONTENT: [
           {
@@ -521,7 +522,7 @@ export default {
       this.title = "修改";
       this.dialogVisible = true;
       this.itemPropertyMap = new HashMap();
-
+      this.alignmentNum = 2
       this.dataForm = JSON.parse(JSON.stringify(this.boardEmitItem));
       this.dataForm.CONTENT = JSON.parse(
         JSON.stringify(
@@ -541,13 +542,14 @@ export default {
       });
     },
     changeFontSize() {
-      this.dataForm.COORDINATE = "000000";
-      var textBoard1 = document.getElementsByClassName("textBoard1");
-      textBoard1[0].style.position = "absolute";
+      console.log(this.alignmentNum,"this.alignmentNum")
+      // this.dataForm.COORDINATE = "000000";
+      // var textBoard1 = document.getElementsByClassName("textBoard1");
+      // textBoard1[0].style.position = "absolute";
       this.alignment(this.alignmentNum)
-      setTimeout(() => {
-        this.alignment(this.alignmentNum)
-      },100);
+      // setTimeout(() => {
+      //   this.alignment(this.alignmentNum)
+      // },100);
     },
     alignment(alignmentNum) {
       this.alignmentNum = alignmentNum;
@@ -625,7 +627,7 @@ export default {
       e.preventDefault(); //阻止默认行为
     },
     keyDown(ev) {
-      this.alignment()
+      this.alignment(this.alignmentNum)
       // console.log(ev.keyCode, "ev.keyCode");
       // let arr = [];
       // let content = "";
@@ -937,7 +939,7 @@ export default {
   caret-color: rgba(0, 0, 0, 0);
   user-select: none;
   position: absolute;
-  max-height: 128px;
+  // max-height: 128px;
   overflow: hidden;
 }
 .blackBoard1 {
@@ -946,6 +948,7 @@ export default {
   margin: 0 auto;
   overflow: hidden;
   position: relative;
-  text-align: center;
+  // text-align: center;
+  align-items: center;
 }
 </style>

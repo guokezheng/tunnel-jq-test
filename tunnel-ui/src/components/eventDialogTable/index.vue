@@ -66,17 +66,16 @@
             @click="handleSee(item)"
             :style="{
               cursor: item.prevControlType != 2 ? 'pointer' : 'default',
-              background: item.click ? 'rgba(0, 0, 0, 0.1)' : '',
+              background: item.click ? 'rgba(0, 0, 0, 0.1)' : 'transparent',
             }"
+            style="position:relative"
           >
-          <div v-show="item.textFalse" class="textFalseBox">{{ textContent }}</div>
             <el-row style="color: white">
               <el-col :span="1">
                 <div class="iconBox">
                   <img :src="item.iconUrl" />
                 </div>
               </el-col>
-              <!--:style="{color: item.prevControlType == 0?'red':'#F6AC10'}"-->
               <el-col :span="4" style="display: flex">
                 <div
                   :style="{
@@ -138,7 +137,7 @@
         </p>
       </div>
     </el-dialog>
-    <batchDialog ref="batchRef"></batchDialog>
+    <batchDialog ref="batchRef" @clearClick="clearClick"></batchDialog>
   </div>
 </template>
 
@@ -164,10 +163,8 @@ export default {
   },
   data() {
     return {
-      textContent:'',
       searchValue: 3,
       loading: false,
-      // showTable:false,
       eventTableDialog: true,
       activeName: "0",
       pageNum: 1,
@@ -228,6 +225,16 @@ export default {
     // })
   },
   methods: {
+    clearClick(type){
+      for(let item of this.list){
+        item.click = false
+      }
+      if(type){
+        this.batchManageType = false;
+        this.getList()
+      }
+      this.$forceUpdate()
+    },
     getList(num) {
       let prevControlType = "";
       if (this.searchValue != 3) {
@@ -250,19 +257,20 @@ export default {
     },
     // 执行批量 并弹窗
     implementBatchManage() {
-      this.$refs.batchRef.init(this.itemEvtIdList)
+      this.$refs.batchRef.init(this.itemEvtIdList,this.handleItem)
     },
     // 取消批量执行
     closeBatchManageDialog() {
       this.itemEvtIdList = [];
       this.batchManageType = false;
+      this.clearClick()
     },
     // 批量执行
     handleBatch() {
       this.batchManageType = true;
     },
     handleSee(item) {
-      console.log(item, "item");
+      // console.log(item, "item");
       // 不是批量时单独弹窗
       if (item.prevControlType != 2 && !this.batchManageType) {
         setTimeout(() => {
@@ -287,15 +295,15 @@ export default {
               this.$forceUpdate();
               if (this.itemEvtIdList.length == 0) {
                 this.simplifyName = "";
+                this.eqDirection = '';
+                this.tunnelId = '';
                 this.$forceUpdate();
               }
             }
           }else if(this.simplifyName != item.simplifyName){
-            item.textFalse = true;
-            this.textContent = '请选择同种事件类型'
-            this.$forceUpdate();
-          }else if(this.eqDirection != item.eqDirection){
-
+            this.$modal.msgWarning('请选择同种事件类型')
+          }else if(this.eqDirection != item.direction){
+            this.$modal.msgWarning('请选择同方向事件')
           }
           
         } else {
@@ -304,7 +312,9 @@ export default {
             item.click = true;
             this.itemEvtIdList.push(item.id);
             this.simplifyName = item.simplifyName;
-            this.eqDirection = item.eqDirection;
+            this.handleItem = item
+            this.eqDirection = item.direction;
+            this.tunnelId = item.tunnelId
             this.$forceUpdate();
           }
         }
@@ -373,34 +383,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.textFalseBox {
-  width: 120px;
-  height: 40px;
-  position: absolute;
-  top: -40px;
-  left: 30px;
-  line-height: 28px;
-  text-align: center;
-  font-size: 10px;
-  background-image: url(../../assets/cloudControl/screenEqName.png);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  color: #da4a64;
-  opacity: 0;
-  animation: fadenum 2s;
-  z-index: 100;
-}
-@keyframes fadenum {
-  0% {
-    opacity: 1;
-  }
-  99% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
 ::v-deep .el-dialog {
   width: 100% !important;
   height: 100%;
@@ -409,8 +391,6 @@ export default {
   margin: 0;
   box-shadow: none;
   border-top: none;
-  // background: rgba($color: #00152b, $alpha: 0.6);
-  // background-image: linear-gradient(180deg, #3A4F6A 93%,#154489);
 }
 ::v-deep .el-dialog:not(.is-fullscreen) {
   margin-top: 0vh !important;
@@ -420,13 +400,10 @@ export default {
 }
 ::v-deep .el-dialog__body {
   padding: 0;
-  // background-color: rgba($color: #00152B, $alpha: 0.6);
 }
 .lineBT {
   width: 100%;
   margin: 5px 0px auto;
-  // border-bottom: solid 1px white;
-  // transform: translateY(-30px);
   display: flex;
   > div:nth-of-type(1) {
     width: 3%;
@@ -515,7 +492,6 @@ export default {
   .listContent {
     max-height: 301px;
     overflow: auto;
-    // background: rgba($color: #6c8097, $alpha: 0.3);
     background: #44576f;
     box-shadow: 0 0.125rem 0.25rem 0 #000;
     padding: 4px 10px;
@@ -570,18 +546,14 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 100;
-  // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
   background-color: rgba($color: #000000, $alpha: 0.1);
-  // border-radius: 10px;
 }
 ::v-deep .eventBox {
   width: 570px;
   max-height: 430px;
-  // border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
   position: absolute;
   top: 0px;
   left: calc(100% - 600px);
-  // background-color: #071930;
   .el-dialog__body {
     padding: 0 !important;
     width: 100% !important;
@@ -595,19 +567,11 @@ export default {
     color: white;
     font-size: 14px;
     font-weight: bold;
-    // background: linear-gradient(
-    //   270deg,
-    //   rgba(1, 149, 251, 0) 0%,
-    //   rgba(1, 149, 251, 0.35) 100%
-    // );
-    // border-top: solid 2px white;
     display: flex;
     justify-content: space-between;
-    // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
     margin: 0 !important;
     background-image: url(../../assets/cloudControl/evtDialogTitle.png);
     background-repeat: no-repeat;
-    // background-color: rgba($color: #00152b, $alpha: 0.6) !important;
   }
   .blueLine {
     width: 20%;
@@ -634,9 +598,6 @@ export default {
     .el-table td.el-table__cell {
       border-bottom: 1px solid #00adff;
     }
-    // .el-table__header-wrapper{
-    //   display: none;
-    // }
     // 表头背景
     .el-table__header-wrapper th,
     .el-table .el-table__fixed-header-wrapper th {
@@ -658,7 +619,6 @@ export default {
       color: white;
     }
     .el-table__body-wrapper .el-table__cell {
-      // border: 1px solid rgba($color: #00c8fe, $alpha: 0.4);
       border-bottom: 1px solid rgba($color: #00c8fe, $alpha: 0.4);
     }
     .el-table__body-wrapper {

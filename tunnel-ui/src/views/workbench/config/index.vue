@@ -1954,20 +1954,22 @@
           label="设备类型"
           align="center"
           prop="typeName.typeName"
+          :show-overflow-tooltip="true"
         />
-        <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
+        <el-table-column label="设备名称" align="center" prop="eqName.eqName" width="120" :show-overflow-tooltip="true"/>
         <el-table-column label="桩号" align="center" prop="pile" />
         <el-table-column
           label="操作状态"
           align="center"
           prop="stateName.stateName"
-          width="80"
+          width="120"
+          :show-overflow-tooltip="true"
         />
         <el-table-column
           label="控制方式"
           align="center"
           prop="controlType"
-          width="80"
+          :show-overflow-tooltip="true"
           :formatter="controlTypeFormat"
         />
         <el-table-column label="操作结果" align="center" prop="state" />
@@ -1976,7 +1978,7 @@
           label="创建时间"
           align="center"
           prop="createTime"
-          width="180"
+          width="150"
           sortable
         >
           <template slot-scope="scope">

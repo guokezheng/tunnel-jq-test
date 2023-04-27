@@ -5557,14 +5557,21 @@ export default {
     },
     // 批量操作 弹窗确定
     batchManageOK() {
+      if(this.batchManageForm.brightness < 30 && this.itemEqType == 9){
+        this.$modal.msgWarning('基本照明亮度不得低于30')
+        return
+      }
       const param = {
         eqId: this.itemEqId.toString(),
         eqDirection: this.batchManageForm.eqDirection,
         state: this.batchManageForm.state,
+        brightness:this.batchManageForm.brightness,
+        eqType: this.itemEqType
       };
       batchControlDevice(param).then((res) => {
         this.$modal.msgSuccess("控制成功");
         this.batchManageDialog = false;
+        this.batchManageForm = {}
         this.closeBatchManageDialog();
       });
     },
@@ -8135,9 +8142,10 @@ export default {
     /* 打开配置界面*/
     async openStateSwitch(item) {
       console.log(item, "item");
+      console.log([16,22,36].includes(item.eqType),"[16,22,36].includes(item.eqType)")
       if (this.addBatchManage == true) {
         // 判断设备是否可控 不可控的不弹批量弹窗
-        if (item.isControl == "1") {
+        if (item.isControl == "1" && ![16,22,36].includes(item.eqType)) {
           // 判断是否有选中项 有的话 判断本次点击和上次点击 设备类型是否一样
           // 要求每次点击选中的设备类型相同
           if (this.itemEqType) {
@@ -8194,7 +8202,7 @@ export default {
               }
             }
           }
-        } else if (item.isControl == "0") {
+        } else if (item.isControl == "0" || [16,22,36].includes(item.eqType)) {
           item.textKKFalse = true;
           this.$forceUpdate();
         }

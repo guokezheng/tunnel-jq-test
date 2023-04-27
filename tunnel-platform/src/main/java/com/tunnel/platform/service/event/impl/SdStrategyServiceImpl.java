@@ -583,6 +583,23 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if(strNameCount > 0){
             throw new RuntimeException("策略名称已存在，请重新输入后保存");
         }
+
+        // 关联设备效验
+        for (Map map : model.getManualControl()) {
+
+            if(map.get("state") == null || map.get("state").equals("")){
+                throw new RuntimeException("请填写完整策略信息！");
+            }
+            String equipmentTypeId = map.get("equipmentTypeId") + "";
+
+            // 基本照明 亮度不得低于30
+            if(equipmentTypeId.equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())) {
+                if(map.get("stateNum") == null || Integer.parseInt(map.get("stateNum").toString()) < 30){
+                    throw new RuntimeException("基本照明亮度不得低于30");
+                }
+            }
+        }
+
         String strategyType = model.getStrategyType();
         //更新策略 主表
         int updatePrimary = sdStrategyMapper.updateSdStrategyById(sty);

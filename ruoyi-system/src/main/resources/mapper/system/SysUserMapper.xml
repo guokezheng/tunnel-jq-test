@@ -284,5 +284,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</delete>
 
 
+	<select id="getCurrentUserInfo" parameterType="Long" resultMap="SysUserResult">
+		select user_id,nick_name,user_name from sys_user where user_id =#{userId}
+	</select>
+
 
 </mapper>

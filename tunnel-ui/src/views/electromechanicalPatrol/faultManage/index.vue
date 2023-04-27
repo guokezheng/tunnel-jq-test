@@ -1195,14 +1195,14 @@ export default {
       }
     },
     eqStatusGet(e) {
-      getEquipmentInfo({ eqId: e }).then((response) => {
+      getEquipmentInfo(e).then((response) => {
         this.form.faultLocation = "";
         this.form.eqRunStatus = "";
         this.form.eqStatus = "";
         if (response.data.length != 0) {
           this.form.faultLocation = response.data[0].pile;
           this.form.eqRunStatus = response.data[0].runStatus;
-          this.form.eqStatus = response.data[0].eqStatus;
+          this.form.eqStatus = response.data[0].eq_status;
           //this.$refs(this.form, "eqStatus", 1);
         }
         // this.$modal.msgSuccess("修改成功");
@@ -1213,6 +1213,9 @@ export default {
     //隧道点击事件
     tunnelGet() {
       this.form.eqId = null;
+      this.form.faultLocation = "";
+      this.form.eqRunStatus = "";
+      this.form.eqStatus = null;
       this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
       if (
@@ -1227,6 +1230,9 @@ export default {
     //设备类型点击事件
     eqTypeGet() {
       this.form.eqId = null;
+      this.form.faultLocation = "";
+      this.form.eqRunStatus = "";
+      this.form.eqStatus = null;
       this.disstateDevice = true;
       $("#deviceSel").attr("pointer-events", "none");
       if (
@@ -1855,6 +1861,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/*::v-deep .el-upload--picture-card{
+  display: none;
+}*/
 .topTxt {
   font-size: 18px;
   font-weight: 500;
@@ -1922,7 +1931,9 @@ export default {
     margin-bottom: 10px !important;
     width: 100%;
   }
+
 }
+
 
 .hitchHistoryDialog {
   ::v-deep .el-dialog__body {
@@ -1935,11 +1946,6 @@ export default {
   }
 }
 
-/*.hitchDialog{
-  ::v-deep .el-upload--picture-card{
-    display: none;
-  }
-}*/
 .topTxt {
   margin-left: 7px;
   margin-top: -5px;

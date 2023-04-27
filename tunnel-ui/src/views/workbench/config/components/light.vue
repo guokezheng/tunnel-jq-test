@@ -152,7 +152,7 @@
             </div>
           </el-form-item>
           <!-- 加强照明：7  警示灯带：45 -->
-          <el-row style="margin-top:10px" v-show="this.eqInfo.clickEqType == 7 || this.eqInfo.clickEqType == 45">
+          <el-row style="margin-top:10px" v-show="[7,9,45].includes(this.clickEqType)">
             <el-col :span="15">
               <el-form-item label="亮度调整" >
                 <el-slider
@@ -357,10 +357,15 @@ export default {
           }
         })
       }else{
+        if(this.stateForm.eqType == 9 && this.stateForm.brightness<30){
+          this.$modal.msgWarning('基本照明亮度不得低于30')
+          return
+        }
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state,
-          brightness: this.stateForm.brightness
+          brightness: this.stateForm.brightness,
+          eqType: this.stateForm.eqType,
         };
         controlDevice(param).then((response) => {
           if (response.data == 0) {

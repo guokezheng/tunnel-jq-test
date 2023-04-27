@@ -1512,7 +1512,7 @@
             </el-radio-group>
           </div>
         </el-form-item>
-        <el-row style="margin-top:10px" v-show="batchManageForm.eqType == 7">
+        <el-row style="margin-top:10px" v-show="batchManageForm.eqType == 7 || batchManageForm.eqType == 9">
             <el-col :span="15">
               <el-form-item label="亮度调整:">
                 <el-slider
@@ -1966,20 +1966,22 @@
           label="设备类型"
           align="center"
           prop="typeName.typeName"
+          :show-overflow-tooltip="true"
         />
-        <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
+        <el-table-column label="设备名称" align="center" prop="eqName.eqName" width="120" :show-overflow-tooltip="true"/>
         <el-table-column label="桩号" align="center" prop="pile" />
         <el-table-column
           label="操作状态"
           align="center"
           prop="stateName.stateName"
-          width="80"
+          width="120"
+          :show-overflow-tooltip="true"
         />
         <el-table-column
           label="控制方式"
           align="center"
           prop="controlType"
-          width="80"
+          :show-overflow-tooltip="true"
           :formatter="controlTypeFormat"
         />
         <el-table-column label="操作结果" align="center" prop="state" />
@@ -1988,7 +1990,7 @@
           label="创建时间"
           align="center"
           prop="createTime"
-          width="180"
+          width="150"
           sortable
         >
           <template slot-scope="scope">
@@ -5510,14 +5512,21 @@ export default {
     },
     // 批量操作 弹窗确定
     batchManageOK() {
+      if(this.batchManageForm.brightness < 30 && this.itemEqType == 9){
+        this.$modal.msgWarning('基本照明亮度不得低于30')
+        return
+      }
       const param = {
         eqId: this.itemEqId.toString(),
         eqDirection: this.batchManageForm.eqDirection,
         state: this.batchManageForm.state,
+        brightness:this.batchManageForm.brightness,
+        eqType: this.itemEqType
       };
       batchControlDevice(param).then((res) => {
         this.$modal.msgSuccess("控制成功");
         this.batchManageDialog = false;
+        this.batchManageForm = {}
         this.closeBatchManageDialog();
       });
     },
@@ -8072,9 +8081,10 @@ export default {
     /* 打开配置界面*/
     async openStateSwitch(item) {
       console.log(item, "item");
+      console.log([16,22,36].includes(item.eqType),"[16,22,36].includes(item.eqType)")
       if (this.addBatchManage == true) {
         // 判断设备是否可控 不可控的不弹批量弹窗
-        if (item.isControl == "1") {
+        if (item.isControl == "1" && ![16,22,36].includes(item.eqType)) {
           // 判断是否有选中项 有的话 判断本次点击和上次点击 设备类型是否一样
           // 要求每次点击选中的设备类型相同
           if (this.itemEqType) {
@@ -8131,7 +8141,7 @@ export default {
               }
             }
           }
-        } else if (item.isControl == "0") {
+        } else if (item.isControl == "0" || [16,22,36].includes(item.eqType)) {
           item.textKKFalse = true;
           this.$forceUpdate();
         }
@@ -9790,7 +9800,7 @@ export default {
   // margin-top: 2px;
   top: 6%;
   left: 7.35%;
-  z-index: 10;
+  // z-index: 10;
 }
 .contentTopNav {
   width: 85%;
@@ -10344,22 +10354,23 @@ export default {
   overflow-x: auto;
   display: inline-block;
   margin: 0 auto;
+  position:relative;
 }
 
 .workbench-content {
   // width: 90%;
-  height: 100%;
+  height: 580px;
 
-  // position: absolute;
+  position: absolute;
   // top: 7%;
   // -webkit-user-select: none;
   // user-select: none;
   // display: flex;
   // justify-content: center;
   // overflow-x: auto;
-  > div {
-    height: 100%;
-  }
+  // > div {
+  //   height: 100%;
+  // }
 }
 
 // .content::-webkit-scrollbar-track-piece {

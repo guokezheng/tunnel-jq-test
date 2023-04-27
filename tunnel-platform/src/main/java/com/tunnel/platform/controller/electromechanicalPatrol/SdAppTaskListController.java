@@ -7,7 +7,6 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
-import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,70 +51,6 @@ public class SdAppTaskListController extends BaseController
      * @param sdTaskList
      * @return
      */
-    /*@PostMapping("/app/getTaskList")
-    public Result getTaskList(SdTaskList sdTaskList,){
-        String deptId = SecurityUtils.getDeptId();
-        if (deptId == null) {
-            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
-        }
-        String startTime = "";//开始时间
-        String endTime = "";//结束时间
-        if(sdTaskList.getTime()!=null&&!"".equals(sdTaskList.getTime())){//不为空
-            //  0：最近1周；1：最近3周；2：最近1月；3：最近3月
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Calendar c = Calendar.getInstance();
-            Date date = new Date();
-            endTime = format.format(date);//结束时间
-            if("0".equals(sdTaskList.getTime())){//最近一周
-                c.setTime(new Date());
-                c.add(Calendar.DATE, - 7);
-                Date d = c.getTime();
-                startTime = format.format(d);
-            }else if("1".equals(sdTaskList.getTime())){//最近3周
-                c.setTime(new Date());
-                c.add(Calendar.DATE, - 21);
-                Date d = c.getTime();
-                startTime = format.format(d);
-            }else if("2".equals(sdTaskList.getTime())){//最近1月
-                c.setTime(new Date());
-                c.add(Calendar.MONTH, -1);
-                Date m = c.getTime();
-                startTime = format.format(m);
-            }else if("3".equals(sdTaskList.getTime())){//最近3月
-                c.setTime(new Date());
-                c.add(Calendar.MONTH, -3);
-                Date m3 = c.getTime();
-                startTime = format.format(m3);
-            }else{
-
-                String [] s= sdTaskList.getTime().split(",",0);
-                startTime = s[0];
-                endTime = s[1];
-            }
-        }
-
-        Long userId = SecurityUtils.getUserId();
-        List<SdTaskList> taskList = new ArrayList<>();
-        //先判断在不在用户班组
-        String result = sdTeamsListService.existInTeams(userId);
-        if(result!=null&&!"".equals(result)){//存在班组中
-            deptId = result;
-            taskList = sdTaskListService.getTaskListTeams(sdTaskList.getTaskStatus(),sdTaskList.getTaskName(),startTime,endTime,deptId);
-        }else{
-            taskList = sdTaskListService.getTaskList(sdTaskList.getTaskStatus(),sdTaskList.getTaskName(),startTime,endTime,deptId);
-        }
-        if(taskList!=null&&taskList.size()>0){
-            for(int i=0;i<taskList.size();i++){
-                if(taskList.get(i).getId()!=null){
-                    SdTaskList task = sdTaskListService.countPatrolNum(taskList.get(i).getId());
-                    taskList.get(i).setTotalNum(task.getTotalNum());
-                }
-            }
-
-        }
-        return Result.success(taskList);
-    }*/
-
     @PostMapping("/app/getTaskList")
     public TableDataInfo getTaskList(SdTaskList sdTaskList,Integer pageSize,Integer pageNum){
         String deptId = SecurityUtils.getDeptId();
@@ -194,22 +129,6 @@ public class SdAppTaskListController extends BaseController
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      *  app 巡检任务基本信息
      * @param taskId
@@ -258,9 +177,8 @@ public class SdAppTaskListController extends BaseController
 
 
     /**
-     * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见
+     * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见(暂不用)
      *     提交上报    task_status 变为2 已完结
-     *     接收任务    task_status 从“待巡检”改为“巡检中”
      * @param  sdTaskList
      * @return
      */
@@ -304,6 +222,16 @@ public class SdAppTaskListController extends BaseController
         return Result.success(map);
     }
 
+    /**
+     * app端查看现场情况
+     * @param taskId
+     * @return
+     */
+    @PostMapping("/app/getSiteInfo")
+    public Result getSiteInfo(String taskId){
+        List<SdTaskList> taskList = sdTaskListService.getSiteInfo(taskId);
+        return Result.success(taskList);
+    }
 
 
 }

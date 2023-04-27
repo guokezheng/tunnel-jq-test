@@ -56,7 +56,7 @@ export function exportList(query) {
 // 故障运行状态
 export function getEquipmentInfo(query) {
   return request({
-    url: '/fault/list/getEquipmentInfo/',
+    url: '/fault/list/getEquipmentInfo',
     method: 'post',
     data: query
   })

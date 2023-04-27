@@ -132,4 +132,6 @@ public interface SdFaultListMapper
     String selectSdFaultEqById(@Param("eqFaultId") String eqFaultId);
 
     List<SdPatrolList> getFaultRepairReportInfo(@Param("faultId")String faultId);
+
+    int updateFaultRemoveState(@Param("faultId")String faultId,@Param("falltRemoveStatue")String falltRemoveStatue);
 }

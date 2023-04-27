@@ -35,6 +35,7 @@
               top: dataForm.COORDINATE
                 ? dataForm.COORDINATE.substring(3, 6) + 'px'
                 : '',
+              maxHeight:boardHeight + 'px',
             }"
             class="textBoard2 boardTextStyle"
             v-html="
@@ -48,27 +49,6 @@
           ></span>
         </div>
       </el-card>
-      <!-- <el-row class="infoBoardButton">
-          <el-button type="info" plain @click="alignment(6)" size="mini"
-          >下对齐</el-button
-        >
-        <el-button type="info" plain @click="alignment(5)" size="mini"
-          >上下居中</el-button
-        >
-        <el-button type="info" plain @click="alignment(4)" size="mini"
-          >上对齐</el-button
-        >
-        <el-button type="info" plain @click="alignment(3)" size="mini"
-          >右对齐</el-button
-        >
-        <el-button type="info" plain @click="alignment(2)" size="mini"
-          >左右居中</el-button
-        >
-        <el-button type="info" plain @click="alignment(1)" size="mini"
-          >左对齐</el-button
-        >
-
-      </el-row> -->
       <el-card>
         <el-form
           :model="dataForm"
@@ -108,15 +88,6 @@
               </el-form-item>
             </el-col>
             <el-col class="infoBoardButton" :span="16">
-              <!-- <el-button type="info" plain @click="alignment(6)" size="mini"
-                >下对齐</el-button
-              >
-              <el-button type="info" plain @click="alignment(5)" size="mini"
-                >上下居中</el-button
-              >
-              <el-button type="info" plain @click="alignment(4)" size="mini"
-                >上对齐</el-button
-              > -->
               <el-button type="primary" @click="alignment(1)" size="mini"
                 >左对齐</el-button
               >
@@ -126,64 +97,9 @@
               <el-button type="primary" @click="alignment(3)" size="mini"
                 >右对齐</el-button
               >
-              <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
             </el-col>
-            <!-- <el-col :span="2">
-              <el-button type="primary" @click="addTemplateContent">
-                新增
-              </el-button>
-            </el-col> -->
-            <!-- <el-col :span="2">
-              <el-button type="primary" @click="chooseImageEvent()"
-                >选择图片</el-button
-              >
-            </el-col> -->
           </el-row>
-          <!-- 选择图片弹出框开始 -->
-          <!-- <el-dialog
-            title="选择图片"
-            :visible.sync="dialogVisible1"
-            :before-close="close"
-            top="6vh"
-            width="1100px"
-            :modal="false"
-            append-to-body
-          >
-            <div class="changeImage">
-              <el-row style="padding-left: 60px">
-                <el-checkbox-group v-model="checkList">
-                  <el-col
-                    :span="8"
-                    v-for="(item, index) in imgUrl"
-                    :key="index"
-                    style="margin-top: 12px"
-                    v-if="item.pictureUrl"
-                  >
-                    <el-checkbox :label="item.pictureUrl">
-                      <div class="photo">
-                        <img
-                          :src="item.pictureUrl"
-                          @dblclick="dblEvent(item.pictureUrl)"
-                          draggable="true"
-                          v-on:dragstart="faceImagedragg($event, item)"
-                        />
-                      </div>
-                    </el-checkbox>
-                  </el-col>
-                </el-checkbox-group>
-              </el-row>
-              <span slot="footer" class="dialog-footer">
-                <el-button size="small" @click="close">取消</el-button>
-                <el-button
-                  size="small"
-                  @click="sendBtnEvent()"
-                  type="primary"
-                  v-loading="loading"
-                  >确认</el-button
-                >
-              </span>
-            </div>
-          </el-dialog> -->
+        
           <!-- 选择图片弹出框结束 -->
           <el-row :gutter="24">
             <el-col :span="24">
@@ -198,14 +114,6 @@
                 ></el-input>
               </el-form-item>
             </el-col>
-
-            <!-- <el-col :span="2">
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                @click="delTemplateContent(res)"
-              ></el-button>
-            </el-col> -->
             <el-col :span="8">
               <el-form-item prop="COLOR" label="字体颜色">
                 <el-select
@@ -257,30 +165,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="6">
-              <el-form-item prop="SPEED" label="字体间距">
-                <el-input-number
-                  :min="0"
-                  controls-position="right"
-                  v-model="dataForm.SPEED"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col> -->
-            <!-- <el-col :span="24" v-show="templateContent.length > 1">
-              <el-divider></el-divider>
-            </el-col> -->
-
-            <!-- <el-col :span="6">
-              <el-form-item prop="rollSpeed" label="滚动速度">
-                <el-input-number
-                  :min="0"
-                  controls-position="right"
-                  v-model="dataForm.rollSpeed"
-                  style="width: 100%"
-                />
-              </el-form-item>
-            </el-col> -->
+          
             <el-col :span="8">
               <el-form-item prop="STAY" label="停留时间(秒)">
                 <el-input-number
@@ -332,11 +217,7 @@
                 ></el-input>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="6">
-              <el-form-item prop="remark" label="备注">
-                <el-input v-model="dataForm.remark" style="width: 100%" />
-              </el-form-item>
-            </el-col> -->
+         
           </el-row>
         </el-form>
       </el-card>
@@ -373,7 +254,7 @@ import { checkIotBoardContent } from "@/api/board/vocabulary";
 export default {
   data() {
     return {
-      alignmentNum:1,
+      alignmentNum:2,
       content: "",
       boardWidth: "",
       boardHeight: "",
@@ -408,26 +289,7 @@ export default {
       url: "",
       previewContent: "", //预览内容
       ispreviewContent: -1,
-      dataForm: {
-        // id: "",
-        // category: "",
-        // inScreenMode: "1", //入屏方式
-        // rollSpeed: "1000",
-        // stopTime: "500",
-        // applyType: "", //适用类型
-        // vmsType: "", //情报板类型
-        // remark: "", //备注
-        // imgSizeFrom: "", //尺寸大小
-        // imageUrl: "",
-        // height: "",
-        // width: "",
-        // coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
-        // screenSize: "",
-        // COORDINATE: "000000",
-        // FONT_SIZE: "",
-        // CONTENT: "请输入内容",
-        // COLOR:'yellow',
-      },
+      dataForm: {},
       templateContent: [],
       templateDelContent: [],
       dataRule: {
@@ -445,13 +307,6 @@ export default {
             trigger: "blur",
           },
         ],
-        // category: [
-        //   {
-        //     required: true,
-        //     message: "请选择所属类别",
-        //     trigger: "blur",
-        //   },
-        // ],
         fontColor: [
           {
             required: true,
@@ -614,11 +469,6 @@ export default {
     //   },
   },
   mounted() {
-    // 屏幕尺寸字典数据
-    // this.getDicts("screenSize").then((res) => {
-    // this.screenSizeOptions = res.data;
-    // console.log(this.screenSizeOptions,'this.screenSizeOptions')
-    // });
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
@@ -633,10 +483,6 @@ export default {
       this.colorOptions = res.data;
       console.log(this.colorOptions, "字体颜色");
     });
-    // this.getDicts("iot_device_font_size").then((res) => {
-    //   this.fontSizeOpt = res.data;
-    //   console.log(this.fontSizeOpt, "字体大小");
-    // });
     this.getDicts("iot_device_font_inScreen_mode").then((res) => {
       this.inScreenModeOptions = res.data;
       console.log(this.inScreenModeOptions, "入屏方式");
@@ -648,7 +494,6 @@ export default {
       if (devicePixel) {
         this.devicePixelBoolean = true;
         this.dataForm.screenSize = devicePixel;
-
         this.boardWidth = devicePixel.split("*")[0];
         this.boardHeight = devicePixel.split("*")[1];
       } else {
@@ -683,7 +528,7 @@ export default {
             FONT: "黑体",
             SPEED: "1",
             ACTION: "1",
-            COORDINATE: "",
+            // COORDINATE: "",
             STATE: "true",
             STAY: "5",
             screenSize: devicePixel,
@@ -695,16 +540,18 @@ export default {
         }
       });
       if (this.dataForm.screenSize) {
-        this.getFontSizeList();
+        this.getFontSizeList(1);
       }
       this.$forceUpdate();
     },
-    getFontSizeList() {
+    getFontSizeList(type) {
       getFontSizeByDevicePixel(this.dataForm.screenSize).then((res) => {
         console.log(res, "根据分辨率筛字体大小");
         this.fontSizeOpt = res.data.fontSizeList;
         this.dataForm.FONT_SIZE = res.data.defaultFont;
-        
+        if(type){
+          this.alignment(2)
+        } 
       });
     },
     // 查分辨率
@@ -715,43 +562,18 @@ export default {
       });
     },
     changeScreenSize(size) {
-      console.log(size, "00000000000000000000");
       this.boardWidth = size.split("*")[0];
       this.boardHeight = size.split("*")[1];
       this.getFontSizeList();
       this.$forceUpdate();
     },
     changeFontSize() {
-      // this.dataForm.COORDINATE = "000000";
-      var textBoard2 = document.getElementsByClassName("textBoard2");
-      textBoard2[0].style.position = "absolute";
+      console.log(this.dataForm.FONT_SIZE)
       this.alignment(this.alignmentNum)
-      setTimeout(() => {
-        this.alignment(this.alignmentNum)
-      },100);
+      this.$forceUpdate()
     },
     keyDown(ev) {
-      this.alignment()
-      // let arr = [];
-      // let content = "";
-      // const input = document.getElementById("textContent");
-      // // console.log(input.selectionStart);
-      // arr = this.dataForm.CONTENT.split("");
-      // // console.log(arr, "arr");
-
-      // content += "<div>";
-      // for (var i = 0; i < arr.length; i++) {
-      //   content += arr[i];
-      //   if (i == input.selectionStart - 1) {
-      //     if (ev.keyCode == 13) {
-      //       content += "<br>";
-      //     } else if (ev.keyCode == 32) {
-      //       content += "&nbsp";
-      //     }
-      //   }
-      // }
-      // content += "</div>";
-      // this.dataForm.content1 = content;
+      this.alignment(this.alignmentNum)
     },
 
     //选择图片弹框关闭事件
@@ -928,6 +750,7 @@ export default {
     },
     // 文字对齐方式
     alignment(alignmentNum) {
+      console.log(alignmentNum,"alignmentNum")
       this.alignmentNum = alignmentNum;
       var divContent2 = document.getElementsByClassName("blackBoard2");
       var textBoard2 = document.getElementsByClassName("textBoard2");
@@ -941,7 +764,10 @@ export default {
       //   document.getElementsByClassName("textBoard2"),
       //   "document.getElementsByClassName('textBoard2')"
       // );
-      // console.log(textBoard2[0].style, "textBoard2[0].style");
+      // var args =  [...divContent2];
+      // console.log(divContent2, "divContent2");
+      // console.log(args, "divContent2");
+
       // console.log(textWidth, divWidth, "999999999999999");
       switch (alignmentNum) {
         // 左对齐
@@ -1109,7 +935,7 @@ export default {
   caret-color: rgba(0, 0, 0, 0);
   user-select: none;
   position: absolute;
-  max-height: 128px;
+  // max-height: 128px;
   overflow: hidden;
 }
 .blackBoard2 {

@@ -498,6 +498,22 @@ public class SdEventServiceImpl implements ISdEventService {
         return AjaxResult.success(list);
     }
 
+    @Override
+    public List<Map<String, Object>> eventPopData(SdEvent sdEvent) {
+        //事件数据集合
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        //事件防控类型
+        String prevControlType = sdEvent.getPrevControlType();
+        if(prevControlType == null || "".equals(prevControlType)){
+            mapList = sdEventMapper.eventPopAll(sdEvent);
+        }else if(PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(prevControlType) || PrevControlTypeEnum.ACTIVE_SAFETY.getCode().equals(prevControlType)){
+            mapList = sdEventMapper.eventOrdinaryOrSecurity(sdEvent);
+        }else {
+            mapList = sdEventMapper.eventPopFault(sdEvent);
+        }
+        return mapList;
+    }
+
     /**
      * 批量删除事件管理
      *
@@ -684,10 +700,10 @@ public class SdEventServiceImpl implements ISdEventService {
         return null;
     }
 
-    @Override
+    /*@Override
     public List<Map> eventPopAll(String subIndex) {
         return sdEventMapper.eventPopAll(subIndex);
-    }
+    }*/
 
     @Override
     public AjaxResult getHandle(SdEvent sdEvent) {

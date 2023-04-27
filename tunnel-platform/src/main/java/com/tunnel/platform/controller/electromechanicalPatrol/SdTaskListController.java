@@ -1,8 +1,6 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
-import cn.hutool.core.codec.Base64Decoder;
 import cn.hutool.core.date.DateUtil;
-
 import cn.hutool.core.util.StrUtil;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
@@ -10,49 +8,38 @@ import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.PictureType;
 import com.deepoove.poi.data.Pictures;
 import com.deepoove.poi.plugin.table.HackLoopTableRenderPolicy;
-import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
-import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
-import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.ruoyi.common.utils.sql.SqlUtil;
 import com.ruoyi.system.service.ISysDeptService;
-import com.tunnel.business.datacenter.domain.dataReport.TaskStatus;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
-import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdPatrolListMapper;
-import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
-import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficImageService;
-import com.tunnel.business.utils.util.UUIDUtil;
 import com.tunnel.business.utils.work.CustomXWPFDocument;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
@@ -60,18 +47,17 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import sun.misc.BASE64Encoder;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 巡查任务Controller
@@ -111,18 +97,10 @@ public class SdTaskListController extends BaseController
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
         sdTaskList.setDeptId(deptId);
-        //String status = "0,1";
-        /*if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&& TaskStatus.YICHAOSHI.getCode().equals(sdTaskList.getTaskStatus())) {
-            sdTaskList.setTaskStatus(status);
-        }*/
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         return getDataTable(list);
     }
-
-
-
-
 
 
     /**
@@ -202,7 +180,6 @@ public class SdTaskListController extends BaseController
     /**
      * 删除巡查任务
      */
-    /*@PreAuthorize("@ss.hasPermi('system:list:remove')")*/
     @Log(title = "巡查任务", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String ids)
@@ -222,7 +199,6 @@ public class SdTaskListController extends BaseController
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
-        //List<SysDept> depts = deptService.selectTunnelDeptList(deptId);
         String ssdw = tunnelsService.selectTunnelDept(tunnelId);
         List<SysDeptTunnel>deptTunnels = new ArrayList<>();
         List<SysDept> depts = new ArrayList<>();
@@ -357,6 +333,11 @@ public class SdTaskListController extends BaseController
             }
             if (task.getTaskEndtime() != null) {
                 taskEndTime = format.format(DateUtil.parse(task.getTaskEndtime().toString()));
+            }
+            if (task.getTask() == null){//超时
+                task.setTask("超时");
+            }else{
+                task.setTask("无");
             }
             List<SdPatrolList> list = SpringUtils.getBean(SdPatrolListMapper.class).getPatrolListsInfo(taskNo);
 //            AtomicInteger i = new AtomicInteger(1);

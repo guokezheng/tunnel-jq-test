@@ -193,4 +193,11 @@ public interface ISdTaskListService
     int getTaskCountListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId);
 
     List<SdTaskList> getTaskListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId, Integer pageSize, Integer pageNum,Long userId);
+
+    /**
+     * app端查看现场情况
+     * @param taskId
+     * @return
+     */
+    List<SdTaskList> getSiteInfo(String taskId);
 }

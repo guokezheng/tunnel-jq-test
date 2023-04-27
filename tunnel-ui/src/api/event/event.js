@@ -25,6 +25,15 @@ export function getEvent(id) {
   })
 }
 
+// 获取批量事件详情
+export function batchHandleEvent(query) {
+  return request({
+    url: '/event/batchHandleEvent',
+    method: 'get',
+    params: query
+  })
+}
+
 // �����¼�����
 export function addEvent(data) {
   return request({
@@ -130,6 +139,13 @@ export function eventList(searchValue, pageNum, eventTime) {
   })
 }
 
+export function eventPopData(query) {
+  return request({
+    url: '/event/eventPopData',
+    method: 'get',
+    params: query
+  })
+}
 // 事件弹窗分类数组 全部
 export function eventPopAll(pageNum) {
   return request({

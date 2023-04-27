@@ -349,7 +349,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     fsControlData +="结束指令：" + endObject.get(0).getStateName();
 
                     // 附加数值的命令
-                    if(rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) && rlList.get(j).getEndState().equals("1") && rlList.get(j).getEndStateNum() != null && !"0".equals(rlList.get(j).getEndStateNum())){
+                    if((rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                            rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString()))&&
+                            rlList.get(j).getEndState().equals("1") &&
+                            rlList.get(j).getEndStateNum() != null &&
+                            !"0".equals(rlList.get(j).getEndStateNum())){
 
                         fsControlData += "，亮度："+rlList.get(j).getEndStateNum() + "%";
 
@@ -361,7 +365,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
                     String controlData = typeName + "控制执行：" + stateName + "；";
                     // 附加数值的命令
-                    if(rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) && rlList.get(j).getStateNum() != null && !"0".equals(rlList.get(j).getStateNum())){
+                    if((rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                            rlList.get(j).getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString()))&&
+                            rlList.get(j).getStateNum() != null &&
+                            !"0".equals(rlList.get(j).getStateNum())){
 
                         controlData = typeName + "控制执行：" + stateName + "，亮度："+rlList.get(j).getStateNum()+"%；";
                     }
@@ -576,6 +583,23 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if(strNameCount > 0){
             throw new RuntimeException("策略名称已存在，请重新输入后保存");
         }
+
+        // 关联设备效验
+        for (Map map : model.getManualControl()) {
+
+            if(map.get("state") == null || map.get("state").equals("")){
+                throw new RuntimeException("请填写完整策略信息！");
+            }
+            String equipmentTypeId = map.get("equipmentTypeId") + "";
+
+            // 基本照明 亮度不得低于30
+            if(equipmentTypeId.equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())) {
+                if(map.get("stateNum") == null || Integer.parseInt(map.get("stateNum").toString()) < 30){
+                    throw new RuntimeException("基本照明亮度不得低于30");
+                }
+            }
+        }
+
         String strategyType = model.getStrategyType();
         //更新策略 主表
         int updatePrimary = sdStrategyMapper.updateSdStrategyById(sty);
@@ -1214,13 +1238,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             }});
             AjaxResult result = SpringUtils.getBean(PhoneSpkService.class).playVoice(object);
             return Integer.valueOf(result.get("data").toString());
-        }else if (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)) {
+        }else if (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqTypeId) ||
+                DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.YING_JI_ZHAO_MING.getCode().toString().equals(eqTypeId)) {
             String[] split = rl.getEquipments().split(",");
             for (String devId : split){
                 Map<String, Object> map = new HashMap<>();
                 map.put("devId",devId);
-                map.put("state",Integer.valueOf(controlStatus) > 0 ? "1" : "2");
-                map.put("stateNum",controlStatus);
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)){
+                    map.put("state",Integer.valueOf(controlStatus) > 0 ? "1" : "2");
+                    map.put("stateNum",controlStatus);
+                }else {
+                    map.put("state",controlStatus);
+                }
                 map.put("controlType","4");
                 try {
                     map.put("operIp",InetAddress.getLocalHost().getHostAddress());

@@ -180,8 +180,7 @@ public class SdDeviceControlService {
                     sdDevices.getEqType().longValue() == DevicesTypeEnum.FENG_JI.getCode().longValue() ||
                   //  sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
                     sdDevices.getEqType().longValue() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode().longValue() ||
-                    sdDevices.getEqType().longValue() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode().longValue() ||
-                    sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) ||
+                    sdDevices.getEqType().longValue() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode().longValue()) ||
                     sdDevices.getEqType().longValue() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode().longValue()) {
                 if (data.size() > 0) {
                     sdOperationLog.setBeforeState(data.get(0).getData());
@@ -261,26 +260,22 @@ public class SdDeviceControlService {
                 if (data.size() > 0) {
                     sdOperationLog.setBeforeState(data.get(0).getData());
                 }
-                Integer brightness = null;
+                Integer brightness = 0;
                 // 加强照明，可设置照明亮度
-                if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()){
+                if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()
+                    || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()
+                ){
                     if(map.get("stateNum") != null){
                         brightness = Integer.parseInt(map.get("stateNum").toString());
                         sdOperationLog.setDescription(brightness+"");
                     }
-                }
-                //控制照明设备
-                controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices,brightness);
 
-                brightness = state.equals("1")?brightness:0;
-
-                // 加强照明  开始（10）
-                if(brightness != null){
                     String operationStateStr = state.equals("1")?"开启":"关闭";
                     operationStateStr += "，亮度："+brightness + "%";
                     sdOperationLog.setOperationState(operationStateStr);
                 }
-
+                //控制照明设备
+                controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices,brightness);
 
                 sdOperationLog.setState(String.valueOf(controlState));
             } else if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.VMS.getCode().longValue()
@@ -311,11 +306,11 @@ public class SdDeviceControlService {
                 controlState = controlWarningLightStripDevice(controlState, isopen, devId, state, sdDevices);
                 sdOperationLog.setState(String.valueOf(controlState));
             }
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             sdOperationLog.setState("0");
             // 异常信息最大支持vachar 2000. 实际记录1900
-            String errorMsg = null;
-            int index = 1900;
+            String errorMsg = "task service error";
+            int index = errorMsg.length();
             if(null != e.getMessage()){
                 errorMsg = e.getMessage();
                 if(e.getMessage().length() < 1900){

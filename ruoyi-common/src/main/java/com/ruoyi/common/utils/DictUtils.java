@@ -180,4 +180,15 @@ public class DictUtils
     {
         return Constants.SYS_DICT_KEY + configKey;
     }
+
+    /**
+     * 设置cache key
+     *
+     * @param configKey 参数键
+     * @return 缓存键key
+     */
+    public static String getCacheEventKey(String configKey)
+    {
+        return Constants.EVENT_KEY + configKey;
+    }
 }

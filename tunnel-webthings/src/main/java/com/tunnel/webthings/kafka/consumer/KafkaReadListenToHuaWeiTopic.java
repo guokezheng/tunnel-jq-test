@@ -55,6 +55,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
+
 /**
  * 读取设备、隧道基础数据
  * 两级平台设备、隧道数据同步
@@ -1259,20 +1261,10 @@ public class KafkaReadListenToHuaWeiTopic {
             //删除历史图片与视频
             imageMapper.delImageByBusinessIds(new Long[]{eventId});
         }else{
+            //保存事件
             effectiveRows = sdEventService.insertSdEvent(event);
-            //新增后再查询数据库，返回给前端事件图标等字段
-            SdEvent sdEvent = new SdEvent();
-            sdEvent.setId(eventId);
-            List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
-            //设置视频地址
-            sdEventList.stream().forEach(sdEventItem -> sdEventItem.setVideoUrl(
-                            StringUtils.isNotEmpty(jsonObject.getString("eventVideoUrl"))&&jsonObject.getString("eventVideoUrl").indexOf(";")!=-1
-                                    ? jsonObject.getString("eventVideoUrl").split(";")[0]
-                                    : jsonObject.getString("eventVideoUrl")));
-            //新增事件后推送前端  弹出
-            JSONObject object = new JSONObject();
-            object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("sdEventList",object.toString());
+            //将事件推送到前端展示
+            eventSendWeb(jsonObject);
         }
         //事件图片-视频
         String[] imgList = jsonObject.getString("eventImgUrl").split(";");
@@ -1326,6 +1318,35 @@ public class KafkaReadListenToHuaWeiTopic {
             control(event);
         }*/
     }
+
+    /**
+     * 将事件推送到前端
+     *  @param jsonObject
+     */
+    public void eventSendWeb(JSONObject jsonObject){
+        //新增后再查询数据库，返回给前端事件图标等字段
+        SdEvent sdEvent = new SdEvent();
+        sdEvent.setId(jsonObject.getLong("eventId"));
+        List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
+
+        List<Map> SdEventMaps = new ArrayList<>();
+        sdEventList.stream().forEach( (sdEventItem)->{
+            //设置视频地址
+            sdEventItem.setVideoUrl(
+                    StringUtils.isNotEmpty(jsonObject.getString("eventVideoUrl"))&&jsonObject.getString("eventVideoUrl").indexOf(";")!=-1
+                            ? jsonObject.getString("eventVideoUrl").split(";")[0]
+                            : jsonObject.getString("eventVideoUrl"));
+            //事故只存 车祸 和 火灾  通过redis 加 定时任务 推送前端  展示爆炸
+            if("16".equals(sdEventItem.getEventType())||"20".equals(sdEventItem.getEventType())){
+                redisCache.setCacheObject(getCacheEventKey(sdEventItem.getId().toString()),sdEventItem);
+            }
+        });
+        //新增事件后推送前端  弹出视频
+        JSONObject object = new JSONObject();
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
+    }
+
 
     /**
      * 处理火灾报警信息
@@ -1803,4 +1824,5 @@ public class KafkaReadListenToHuaWeiTopic {
             sdStrategyService.issuedDevice(sdStrategyRl,sdEvent.getId(),item.get("strategyType").toString());
         }
     }
+
 }

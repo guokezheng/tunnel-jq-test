@@ -291,6 +291,16 @@ public class SdEvent extends BaseEntity {
      */
     private String prevControlType;
 
+    /**
+     * 前端字段  行车方向
+     */
+    private String roadDir;
+
+    /**
+     * 前端字段  距离
+     */
+    private String distance;
+
     public String getLaneNoName() {
         return laneNoName;
     }
@@ -784,4 +794,20 @@ public class SdEvent extends BaseEntity {
         this.eventType = eventType;
     }
 
+
+    public String getRoadDir() {
+        return roadDir;
+    }
+
+    public void setRoadDir(String roadDir) {
+        this.roadDir = roadDir;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 }

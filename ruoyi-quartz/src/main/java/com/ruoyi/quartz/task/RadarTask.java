@@ -47,6 +47,8 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
+
 /**
  * 小车跑数据
  *
@@ -80,8 +82,44 @@ public class RadarTask {
     public int num = 0;
     public int num1 = 0;
     public int num2 = 0;
+    public int num3 = 0;
+
+    /**
+     * 遍历redis传事故位置到前端显示
+     * @throws InterruptedException
+     */
+    @Scheduled(fixedRate = 10000)
+    public void radarEvent() throws InterruptedException {
+        num3 =num3+1;
+        SdEvent sdEventd = new SdEvent();
+        sdEventd.setId(3260L);
+        List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEventd);
+        sdEventList.stream().forEach(sd ->{
+            redisCache.setCacheObject(getCacheEventKey(sd.getId().toString()),sd);
+        });
+        List<String> scanKey = redisCache.getScanKey(Constants.EVENT_KEY + "*");
+        List<SdEvent> sdEventLists = new ArrayList<>();
+        for (String key :scanKey){
+            SdEvent sdEvent = redisCache.getCacheObject(key);
+            sdEvent.setDistance("120");
+            sdEvent.setRoadDir(sdEvent.getDirection());
+            sdEventLists.add(sdEvent);
+        }
+
+        if(num3 % 2 == 0) {
+            //事件后推送前端  弹出
+            JSONObject object = new JSONObject();
+            object.put("sdSvgEventList", sdEventLists);
+            WebSocketService.broadcast("sdSvgEventList",object.toString());
+        } else {
+            //事件后推送前端  弹出
+            JSONObject object = new JSONObject();
+            object.put("sdSvgEventList", new ArrayList<>());
+            WebSocketService.broadcast("sdSvgEventList",object.toString());
+        }
 
 
+    }
 
     @Scheduled(fixedRate = 100)
     public void radarTask1() throws InterruptedException {
@@ -127,8 +165,6 @@ public class RadarTask {
                         WebSocketService.postEvent(s,"radarDataList",object.toString());
                     }
                 }
-
-
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -191,7 +227,11 @@ public class RadarTask {
 
     }
 
-    @Scheduled(fixedRate = 2000)
+    /**
+     * 推送事件提醒以及视频  测试用
+     * @throws InterruptedException
+     */
+    @Scheduled(fixedRate = 5000)
     public void radarTask2() throws InterruptedException {
         SdEvent sdEvent = new SdEvent();
         sdEvent.setId(3260L);
@@ -202,29 +242,4 @@ public class RadarTask {
         WebSocketService.broadcast("sdEventList",object.toString());
     }
 
-    public void controlDevice(SdRadarDetectData cacheObject){
-        Integer distance = Integer.valueOf(cacheObject.getDistance());
-        String state = "";
-        long dataId = 0L;
-        if(distance >= 0 && distance <= 300){
-            state = "1";
-            dataId = 29L;
-        }else if(distance > 300 && distance < 600){
-            state = "2";
-            dataId = 29L;
-        }else if(distance >= 600 && distance <= 814){
-            state = "1";
-            dataId = 30L;
-        }else {
-            state = "2";
-            dataId = 30L;
-        }
-        if (!"GSY".equals(deploymentType)) {
-            SdDeviceData data = new SdDeviceData();
-            data.setId(dataId);
-            data.setData(state);
-            data.setUpdateTime(new Date());
-            sdDeviceDataService.updateSdDeviceData(data);
-        }
-    }
 }

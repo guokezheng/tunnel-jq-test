@@ -180,6 +180,11 @@ public class Constants
      */
     public static final String CAR_TOKEN = "cat_token:";
 
+    /**
+     * 事件key
+     */
+    public static final String EVENT_KEY = "event_key:";
+
 
     /**
      * 三晶照明token

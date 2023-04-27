@@ -1,7 +1,9 @@
 package com.tunnel.business.service.event.impl;
 
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.DictUtils;
@@ -40,6 +42,8 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
 
 /**
  * 事件管理Service业务层处理
@@ -111,6 +115,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private SdJoinReserveHandleMapper joinMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询事件管理
@@ -1519,5 +1526,8 @@ public class SdEventServiceImpl implements ISdEventService {
         eventFlow.setFlowDescription(content);
         eventFlow.setFlowHandler(SecurityUtils.getUsername());
         sdEventFlowMapper.insertSdEventFlow(eventFlow);
+        //事件完结删除redis事故信息 前端不在展示
+        redisCache.deleteObject(getCacheEventKey(eventId.toString()));
     }
+
 }

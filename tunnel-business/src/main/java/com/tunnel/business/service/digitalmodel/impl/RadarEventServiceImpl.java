@@ -40,6 +40,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
+import static com.ruoyi.common.utils.DictUtils.getCacheKey;
+
 /**
  * @author dzy
  * @date 2022/9/4 16:51
@@ -171,6 +174,11 @@ public class RadarEventServiceImpl implements RadarEventService {
                 List<WjConfidence> targetList = f.getTargetList();
                 targetList.forEach(s -> s.setEventIds(f.getEventId()));
                 wjMapper.insertEventConfidence(targetList);
+
+                //事故只存 车祸 和 火灾  通过redis 加 定时任务 推送前端  展示爆炸
+                if("16".equals(sdEvent.getEventType())||"20".equals(sdEvent.getEventType())){
+                    redisCache.setCacheObject(getCacheEventKey(sdEvent.getId().toString()),sdEvent);
+                }
             }
         });
         if (CollectionUtils.isNotEmpty(eventList)) {
@@ -182,6 +190,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 SdEvent sdEvent1 = new SdEvent();
                 sdEvent1.setId(sdEvent.getId());
                 List<SdEvent> sdEvents = sdEventService.querySdEventList(sdEvent1);
+                //新增事件后推送前端  弹出视频
                 JSONObject object = new JSONObject();
                 object.put("sdEventList", sdEvents);
                 WebSocketService.broadcast("sdEventList",object.toString());

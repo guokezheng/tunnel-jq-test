@@ -10407,13 +10407,14 @@ export default {
   overflow-x: auto;
   display: inline-block;
   margin: 0 auto;
+  position:relative;
 }
 
 .workbench-content {
   // width: 90%;
   height: 580px;
 
-  // position: absolute;
+  position: absolute;
   // top: 7%;
   // -webkit-user-select: none;
   // user-select: none;

@@ -153,7 +153,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         }else if(taskList.getTask().equals(TaskStatus.DAIXUNCHA.getName())&&taskList.getEndPlantime()!=null){
             String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
             long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
-            long diff = System.currentTimeMillis() - time + 1000;
+            long diff = System.currentTimeMillis() - time;
             if(diff>0){//当前时间与计划完成时间的差值
                 taskList.setTask(TaskStatus.DAIXUNCHA.getName()+","+TaskStatus.YICHAOSHI.getName());
             }else{
@@ -603,7 +603,18 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         sdTaskList.getParams().put("pageSize",pageSize);
         sdTaskList.getParams().put("pageNum",pageNum);
         sdTaskList.getParams().put("userId",userId);
-        return sdTaskListMapper.getTaskList(sdTaskList);
+        //return sdTaskListMapper.getTaskList(sdTaskList);
+        List<SdTaskList>list = sdTaskListMapper.getTaskList(sdTaskList);
+        if(list!=null&&list.size()>0){
+            for(int i=0;i<list.size();i++){
+                if(list.get(i).getTaskStatus()!=null&&!"".equals(list.get(i).getTaskStatus())){
+                    taskListAppStatus(list.get(i));
+                }
+            }
+        }
+
+
+        return list;
     }
 
     /**
@@ -891,7 +902,33 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         sdTaskList.getParams().put("pageSize",pageSize);
         sdTaskList.getParams().put("pageNum",pageNum);
         sdTaskList.getParams().put("userId",userId);
-        return sdTaskListMapper.getTaskListTeams(sdTaskList);
+        List<SdTaskList>list = sdTaskListMapper.getTaskListTeams(sdTaskList);
+        if(list!=null&&list.size()>0){
+            for(int i=0;i<list.size();i++){
+                if(list.get(i).getTaskStatus()!=null&&!"".equals(list.get(i).getTaskStatus())){
+                    taskListAppStatus(list.get(i));
+                }
+            }
+        }
+
+
+        return list;
+    }
+
+    private SdTaskList taskListAppStatus(SdTaskList taskList) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long diff = 0;
+        if(taskList.getEndPlantime()!=null&&!"".equals(taskList.getEndPlantime())){
+            String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
+            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+            diff = System.currentTimeMillis() - time;
+        }
+        if(taskList.getTaskStatus().equals(TaskStatus.DAIXUNCHA.getCode())||taskList.getTaskStatus().equals(TaskStatus.XUNCHAZHONG.getCode())){
+            if(diff>0){//当前时间与计划完成时间的差值
+                taskList.setTaskStatus(taskList.getTaskStatus()+","+TaskStatus.YICHAOSHI.getCode());
+            }
+        }
+        return taskList;
     }
 
     @Override

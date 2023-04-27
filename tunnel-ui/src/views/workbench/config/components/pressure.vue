@@ -90,14 +90,6 @@
         <div id="yaliCharts" style="margin: 0px auto"></div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button
-          type="primary"
-          size="mini"
-          @click="handleOK()"
-          style="width: 80px"
-          class="submitButton"
-          >确 定</el-button
-        > -->
         <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
@@ -108,7 +100,6 @@ import { getDeviceById, getTodayYcylData } from "@/api/equipment/eqlist/api.js";
 import * as echarts from "echarts";
 
 export default {
-  // props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       stateForm: {},
@@ -138,13 +129,11 @@ export default {
     async getMessage() {
       var that = this;
       if (this.eqInfo.equipmentId) {
-        var obj = {};
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = res.data.eqName;
-          console.log(this.stateForm, "stateForm");
         });
         await getTodayYcylData(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "压力表折线图数据");
@@ -155,7 +144,6 @@ export default {
             xData.push(item.order_hour);
             yData.push(item.count);
           }
-          // console.log(xData,yData,"压力表echarts数据");
           this.initChart(xData, yData);
         });
       } else {
@@ -207,7 +195,6 @@ export default {
             fontSize: 10,
             padding: [0, 30, 0, 0],
           },
-          // minInterval: 1, //y轴的刻度只显示整数
           axisLabel: {
             textStyle: {
               color: "#00AAF2",
@@ -329,9 +316,6 @@ export default {
 ::v-deep .el-radio-button--medium .el-radio-button__inner {
   border-radius: 20px !important;
 }
-// ::v-deep .el-radio-button {
-//   margin: 0 15px;
-// }
 #yaliCharts {
   width: 100%;
   height: 150px;

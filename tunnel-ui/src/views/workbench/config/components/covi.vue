@@ -99,14 +99,6 @@
       <div id="co" v-show="tab == 'co'" style="margin-bottom: 10px"></div>
       <div id="vi" v-show="tab == 'vi'" style="margin-bottom: 10px"></div>
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button
-          type="primary"
-          size="mini"
-          @click="handleClosee()"
-          style="width: 80px"
-          class="submitButton"
-          >确 定</el-button
-        > -->
         <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
@@ -119,16 +111,12 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信
 import { getTodayCOVIData } from "@/api/workbench/config.js"; //查询弹窗信息
 
 export default {
-  // props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
         if (newValue) {
           console.log(newValue, "newValue");
-          // this.mychart.dispose()
-          // this.$nextTick(() => {
           this.getChartMes(newValue);
-          // });
         }
       },
     },
@@ -155,7 +143,7 @@ export default {
       this.brandList = brandList;
       this.directionList = directionList;
       this.eqTypeDialogList = eqTypeDialogList;
-      this.tab = "co"; 
+      this.tab = "co";
       this.getMessage();
       this.visible = true;
       this.getChartMes();
@@ -267,9 +255,7 @@ export default {
             nameTextStyle: {
               color: "#FFB500",
               fontSize: 10,
-              // padding: [0, 20, 0, 0],
             },
-            // minInterval: 1, //y轴的刻度只显示整数
             axisLabel: {
               textStyle: {
                 color: "#00AAF2",

@@ -143,7 +143,6 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框
 import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
-  // props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       stateForm: {},
@@ -160,9 +159,7 @@ export default {
       directionList: [],
     };
   },
-  created() {
-    // this.getMessage();
-  },
+  created() {},
   methods: {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
       this.eqInfo = eqInfo;
@@ -209,7 +206,6 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      // this.$emit("dialogClose");
       this.visible = false;
     },
     handleOK() {

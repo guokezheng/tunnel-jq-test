@@ -119,14 +119,6 @@
       </div>
       <div id="trend" v-show="tab == 'trend'" style="margin-bottom: 10px"></div>
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button
-          type="primary"
-          size="mini"
-          @click="handleOK()"
-          style="width: 80px"
-          class="submitButton"
-          >确 定</el-button
-        > -->
         <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
@@ -144,13 +136,11 @@ import {
 import { ConsoleWriter } from "istanbul-lib-report";
 
 export default {
-  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
         if (newValue) {
           console.log(newValue, "newValue");
-          // this.mychart.dispose()
           this.$nextTick(() => {
             this.initChart();
           });
@@ -177,10 +167,7 @@ export default {
       directionList: [],
     };
   },
-  created() {
-    // console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    // this.getMessage();
-  },
+  created() {},
   mounted() {},
 
   methods: {
@@ -295,9 +282,7 @@ export default {
             nameTextStyle: {
               color: "#FFB500",
               fontSize: 10,
-              // padding: [0, 20, 0, 0],
             },
-            // minInterval: 1, //y轴的刻度只显示整数
             axisLabel: {
               textStyle: {
                 color: "#00AAF2",
@@ -399,10 +384,8 @@ export default {
     // 关闭弹窗
     handleClosee() {
       this.visible = false;
-      // this.$emit("dialogClose");
     },
     handleOK() {
-      // this.$emit("dialogClose");
       this.visible = false;
     },
   },
@@ -414,11 +397,7 @@ export default {
   padding: 5px 10px !important;
   background: transparent;
   border: 1px solid transparent;
-  // color: #fff;
 }
-// ::v-deep .el-radio-button--medium .el-radio-button__inner {
-
-// }
 ::v-deep .el-radio-group > .is-active {
   background: #00aaf2 !important;
   border-radius: 20px !important;
@@ -444,7 +423,6 @@ export default {
   padding: 5px 10px !important;
   background: transparent;
   border: 1px solid transparent;
-  // color: #fff;
 }
 ::v-deep .el-radio-group > .is-active {
   background: #00aaf2 !important;
@@ -458,9 +436,6 @@ export default {
     .cell {
       line-height: 14px;
     }
-    // th {
-    //   background: #00adff !important;
-    // }
   }
   .el-table__body {
     width: 100% !important;
@@ -473,7 +448,6 @@ export default {
   .el-table--enable-row-hover .el-table__body tr:hover > td {
     background-color: #4395c1 !important;
     color: black;
-    /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
   }
 }
 
@@ -484,11 +458,6 @@ export default {
   width: 100%;
   height: 0px;
 }
-// .el-table__body-wrapper::-webkit-scrollbar {
-//       width: 10px;
-//       height: 10px;
-//       // background-color: #304156;
-//     }
 ::v-deep .el-dialog {
   pointer-events: auto !important;
 }

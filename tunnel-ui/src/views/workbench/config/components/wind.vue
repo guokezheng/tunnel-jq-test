@@ -94,21 +94,6 @@
         <el-radio-button label="co">风速风向实时趋势</el-radio-button>
       </el-radio-group>
       <div id="feng" style="margin-bottom: 10px"></div>
-      <!-- <div slot="footer" class="dialog-footer"> -->
-      <!-- <el-button
-          type="primary"
-          size="mini"
-          @click="handleClosee()"
-          style="width: 80px"
-          class="submitButton"
-          >确 定</el-button
-        > -->
-      <!-- <el-button
-          class="closeButton"
-          @click="handleClosee()"
-          >取 消</el-button
-        > -->
-      <!-- </div> -->
     </el-dialog>
   </div>
 </template>
@@ -119,7 +104,6 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数
 import { getTodayFSFXData } from "@/api/workbench/config.js"; //查询弹窗图表信息
 
 export default {
-  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
@@ -136,15 +120,7 @@ export default {
       directionList: [],
     };
   },
-  // created() {
-  //   console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-  //   this.getMessage();
-  // },
-  mounted() {
-    // this.$nextTick(() => {
-    //   this.initChart();
-    // });
-  },
+  mounted() {},
   methods: {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
       this.eqInfo = eqInfo;
@@ -209,10 +185,8 @@ export default {
         },
 
         xAxis: {
-          // name: "时间",
           type: "category",
           boundaryGap: true,
-          // data: dateTime,
           data: xData,
 
           axisLabel: {
@@ -336,7 +310,7 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.visible = false
+      this.visible = false;
     },
   },
 };

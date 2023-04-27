@@ -22,7 +22,6 @@
           @click="closeDialogTable()"
         />
       </div>
-      <!-- <div class="blueLine"></div> -->
       <div class="contentBox">
         <div class="butBox">
           <div class="butLeftBox">
@@ -68,7 +67,7 @@
               cursor: item.prevControlType != 2 ? 'pointer' : 'default',
               background: item.click ? 'rgba(0, 0, 0, 0.1)' : 'transparent',
             }"
-            style="position:relative"
+            style="position: relative"
           >
             <el-row style="color: white">
               <el-col :span="1">
@@ -159,7 +158,7 @@ export default {
   name: "eventDialogTable",
   components: {
     evtdialog,
-    batchDialog
+    batchDialog,
   },
   data() {
     return {
@@ -183,9 +182,9 @@ export default {
       batchManageType: false,
       itemEvtIdList: [],
       itemEqType: "",
-      simplifyName:'',
-      eqDirection:'',
-      batchDialog:false,
+      simplifyName: "",
+      eqDirection: "",
+      batchDialog: false,
     };
   },
   computed: {
@@ -217,23 +216,17 @@ export default {
         bus.$emit("closeDialog");
       }
     });
-    // bus.$on('closeTableDialog', () => {
-    //  this.eventTableDialog = false
-    // })
-    // bus.$on('openTableDialog', () => {
-    //  this.eventTableDialog = true
-    // })
   },
   methods: {
-    clearClick(type){
-      for(let item of this.list){
-        item.click = false
+    clearClick(type) {
+      for (let item of this.list) {
+        item.click = false;
       }
-      if(type){
+      if (type) {
         this.batchManageType = false;
-        this.getList()
+        this.getList();
       }
-      this.$forceUpdate()
+      this.$forceUpdate();
     },
     getList(num) {
       let prevControlType = "";
@@ -257,13 +250,13 @@ export default {
     },
     // 执行批量 并弹窗
     implementBatchManage() {
-      this.$refs.batchRef.init(this.itemEvtIdList,this.handleItem)
+      this.$refs.batchRef.init(this.itemEvtIdList, this.handleItem);
     },
     // 取消批量执行
     closeBatchManageDialog() {
       this.itemEvtIdList = [];
       this.batchManageType = false;
-      this.clearClick()
+      this.clearClick();
     },
     // 批量执行
     handleBatch() {
@@ -281,10 +274,8 @@ export default {
       } else {
         // 点击批量后 batchManageType == true 可多选弹窗
         if (this.simplifyName) {
-          if(this.simplifyName == item.simplifyName){
-            const result = this.itemEvtIdList.findIndex(
-              (a) => a == item.id
-            );
+          if (this.simplifyName == item.simplifyName) {
+            const result = this.itemEvtIdList.findIndex((a) => a == item.id);
             if (result === -1) {
               item.click = true;
               this.itemEvtIdList.push(item.id);
@@ -295,26 +286,25 @@ export default {
               this.$forceUpdate();
               if (this.itemEvtIdList.length == 0) {
                 this.simplifyName = "";
-                this.eqDirection = '';
-                this.tunnelId = '';
+                this.eqDirection = "";
+                this.tunnelId = "";
                 this.$forceUpdate();
               }
             }
-          }else if(this.simplifyName != item.simplifyName){
-            this.$modal.msgWarning('请选择同种事件类型')
-          }else if(this.eqDirection != item.direction){
-            this.$modal.msgWarning('请选择同方向事件')
+          } else if (this.simplifyName != item.simplifyName) {
+            this.$modal.msgWarning("请选择同种事件类型");
+          } else if (this.eqDirection != item.direction) {
+            this.$modal.msgWarning("请选择同方向事件");
           }
-          
         } else {
           // 第一次点击时
           if (item.prevControlType != 2) {
             item.click = true;
             this.itemEvtIdList.push(item.id);
             this.simplifyName = item.simplifyName;
-            this.handleItem = item
+            this.handleItem = item;
             this.eqDirection = item.direction;
-            this.tunnelId = item.tunnelId
+            this.tunnelId = item.tunnelId;
             this.$forceUpdate();
           }
         }
@@ -360,9 +350,6 @@ export default {
 
     handleClick(searchValue) {
       this.searchValue = searchValue;
-      const pageNum = 1;
-      const pageNum2 = 0;
-
       let prevControlType = "";
       if (searchValue != 3) {
         prevControlType = searchValue;
@@ -420,7 +407,6 @@ export default {
 }
 .contentBox {
   width: 100%;
-  // height: 100%;
   padding: 0 15px;
   .butBox {
     width: 100%;
@@ -496,7 +482,6 @@ export default {
     box-shadow: 0 0.125rem 0.25rem 0 #000;
     padding: 4px 10px;
     > li {
-      // margin-bottom: 6px;
       list-style: none;
       padding: 10px 4px;
       padding-bottom: 0px;

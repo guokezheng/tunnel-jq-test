@@ -83,18 +83,6 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <!-- <el-row>
-              <el-col :span="13">
-                <el-form-item label="上行摄像机:">
-                  {{ "1000米" }}
-                </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item label="下行摄像机:">
-                  {{ "1000米" }}
-                </el-form-item>
-              </el-col>
-            </el-row> -->
           </el-tab-pane>
           <el-tab-pane label="摄像机参数" name="videoParams">
             <el-row>
@@ -713,9 +701,7 @@ export default {
   }
   .yuntaiPic {
     width: 100%;
-    // height: calc(100% - 450px);
     height: calc(100% - 440px);
-    // margin-top: 20px;
     margin-top: 10px;
     display: flex;
     align-items: center;
@@ -740,11 +726,6 @@ export default {
       margin-left: 5px;
       cursor: pointer;
     }
-    // img{
-    //   width: 25%;
-    //   height: 100%;
-    //   padding-right: 5px;
-    // }
     img {
       width: 30px;
       height: 30px;

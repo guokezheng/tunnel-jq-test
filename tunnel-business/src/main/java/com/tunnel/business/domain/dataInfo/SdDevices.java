@@ -471,6 +471,9 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     }
 
     public String getExternalDeviceId() {
+        if(externalDeviceId == null){
+            return "-1";
+        }
         return externalDeviceId;
     }
 

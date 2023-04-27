@@ -249,6 +249,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dept e on e.dept_id = c.dept_id
         left join sd_devices_brand b on b.supplier_id = a.brand_id
         <where>
+            and c.poll = 0
             <if test="fEqId != null and fEqId != ''">
                 and a.f_eq_id = #{fEqId}
             </if>

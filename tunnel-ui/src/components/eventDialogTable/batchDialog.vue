@@ -159,10 +159,7 @@
   </div>
 </template>
 <script>
-import {
-  getTunnelLane,
-  batchHandleEvent,
-} from "@/api/event/event";
+import { getTunnelLane, batchHandleEvent } from "@/api/event/event";
 import { listEventType } from "@/api/event/eventType";
 export default {
   data() {
@@ -211,7 +208,6 @@ export default {
     init(list, item) {
       this.getEventTypeList(item);
       this.list = list;
-      console.log(item);
       this.form.direction = item.direction;
       this.tunnelId = item.tunnelId;
       this.batchDialog = true;
@@ -239,13 +235,11 @@ export default {
       listEventType(prevControlType).then((response) => {
         this.eventTypeData = response.rows;
         this.form.eventTypeId = Number(item.eventTypeId);
-
-        console.log(this.eventTypeData, "this.eventTypeData");
       });
     },
     cancel() {
       this.batchDialog = false;
-      this.$emit("clearClick",1);
+      this.$emit("clearClick", 1);
     },
     // 预估等级 预估类型
     getReservePlanData() {},
@@ -268,14 +262,12 @@ export default {
     },
     submitDialog() {
       this.form.ids = this.list.toString();
-      this.form.laneNo = this.form.laneNo.toString()
-      this.form.reviewRemark = this.form.reviewRemark.toString()
+      this.form.laneNo = this.form.laneNo.toString();
+      this.form.reviewRemark = this.form.reviewRemark.toString();
 
       batchHandleEvent(this.form).then((res) => {
-        console.log(res);
         this.$modal.msgSuccess("批量执行成功");
-
-        this.cancel()
+        this.cancel();
       });
     },
   },

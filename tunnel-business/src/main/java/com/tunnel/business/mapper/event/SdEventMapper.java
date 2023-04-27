@@ -199,4 +199,11 @@ public interface SdEventMapper
      */
     public int updateSdEventStateIds(@Param("list") List<Long> list,
                                      @Param("eventState") String eventState);
+
+    /**
+     * 批量处理事件
+     * @param sdEvent
+     * @return
+     */
+    int batchUpdateSdEvent(SdEvent sdEvent);
 }

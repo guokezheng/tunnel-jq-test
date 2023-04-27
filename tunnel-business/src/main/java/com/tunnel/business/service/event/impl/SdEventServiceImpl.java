@@ -402,9 +402,6 @@ public class SdEventServiceImpl implements ISdEventService {
         for(String process : list1){
             //分别查询设备详情
             Map<String, Object> mapData = deviceDateiled(Long.valueOf(process),Long.valueOf(sdEventHandle.getEventId()));
-            if(mapData == null){
-                continue;
-            }
             //将设备详情整合
             list.add(mapData);
         }
@@ -512,6 +509,18 @@ public class SdEventServiceImpl implements ISdEventService {
             mapList = sdEventMapper.eventPopFault(sdEvent);
         }
         return mapList;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
+    public AjaxResult batchHandleEvent(SdEvent sdEvent) {
+        sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+        sdEvent.setUpdateTime(DateUtils.getNowDate());
+        int count = sdEventMapper.batchUpdateSdEvent(sdEvent);
+        if(count == 0){
+            return AjaxResult.error();
+        }
+        return AjaxResult.success();
     }
 
     /**
@@ -1363,9 +1372,6 @@ public class SdEventServiceImpl implements ISdEventService {
         SdReserveProcess sdReserveProcess = new SdReserveProcess();
         sdReserveProcess.setId(rpId);
         List<Map<String, Object>> deviceList = sdEventMapper.getManagementDevice(sdReserveProcess);
-        if(deviceList.size() == 0){
-            return null;
-        }
         SdJoinReserveHandle joinReserveHandle = joinMapper.selectSdJoinReserveHandleById(rpId);
         //获取设备类型
         Long eqType = joinReserveHandle.getEqTypeId();
@@ -1397,6 +1403,7 @@ public class SdEventServiceImpl implements ISdEventService {
             });
             map.put("deviceIconUrl",deviceIconUrl);
         }
+        map.put("processName",joinReserveHandle.getProcessName());
         map.put("deviceList",deviceList);
         map.put("deviceType",eqType);
         return map;

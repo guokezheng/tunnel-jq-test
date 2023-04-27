@@ -130,54 +130,36 @@
         <el-row v-if="eqInfo.clickEqType == 42">
           <el-col :span="13">
             <el-form-item label="电流Ia:">
-              {{ stateForm.ia}} <span style="padding-left:5px">I</span>
+              {{ stateForm.ia }} <span style="padding-left: 5px">I</span>
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="电流Ib:">
-              {{ stateForm.ib}} <span style="padding-left:5px" >I</span>
+              {{ stateForm.ib }} <span style="padding-left: 5px">I</span>
             </el-form-item>
           </el-col>
           <el-col :span="13">
             <el-form-item label="电流Ic:">
-              {{ stateForm.ic}} <span style="padding-left:5px">I</span>
+              {{ stateForm.ic }} <span style="padding-left: 5px">I</span>
             </el-form-item>
           </el-col>
           <el-col :span="13">
             <el-form-item label="电压Uab:">
-              {{ stateForm.va }}<span style="padding-left:5px">V</span>
+              {{ stateForm.va }}<span style="padding-left: 5px">V</span>
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="电压Ubc:">
-              {{ stateForm.vb}} <span style="padding-left:5px" >V</span>
+              {{ stateForm.vb }} <span style="padding-left: 5px">V</span>
             </el-form-item>
           </el-col>
           <el-col :span="13">
             <el-form-item label="电压Uac:">
-              {{ stateForm.vc}} <span style="padding-left:5px">V</span>
+              {{ stateForm.vc }} <span style="padding-left: 5px">V</span>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <!-- <div slot="footer" style="float: right; margin-bottom: 20px" v-if="eqInfo.clickEqType == 45">
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleOK()"
-            style="width: 80px"
-            class="submitButton"
-            v-hasPermi="['workbench:dialog:save']"
-            >确 定</el-button
-          >
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleClosee()"
-            style="width: 80px"
-            >取 消</el-button
-          >
-        </div> -->
     </el-dialog>
   </div>
 </template>
@@ -190,7 +172,6 @@ import {
 import { getStateByData } from "@/api/equipment/eqTypeState/api.js"; //查询单选框弹窗信息
 
 export default {
-  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       stateForm: {},
@@ -204,17 +185,15 @@ export default {
       directionList: [],
     };
   },
-  created() {
-    
-  },
+  created() {},
   methods: {
-    init(eqInfo,brandList,directionList,eqTypeDialogList){
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
       this.eqInfo = eqInfo;
       this.brandList = brandList;
       this.directionList = directionList;
       this.eqTypeDialogList = eqTypeDialogList;
       this.getMessage();
-      this.visible = true
+      this.visible = true;
     },
     // 查设备详情
     async getMessage() {
@@ -295,7 +274,7 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.visible = false
+      this.visible = false;
     },
   },
 };

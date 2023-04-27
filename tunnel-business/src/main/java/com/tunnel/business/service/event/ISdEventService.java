@@ -232,4 +232,11 @@ public interface ISdEventService {
      * @return
      */
     List<Map<String, Object>> eventPopData(SdEvent sdEvent);
+
+    /**
+     * 批量处理事件
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult batchHandleEvent(SdEvent sdEvent);
 }

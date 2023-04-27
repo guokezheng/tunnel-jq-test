@@ -11,10 +11,10 @@
       :close-on-click-modal="false"
       :modal="false"
     >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="form"
         :model="stateForm"
@@ -33,8 +33,6 @@
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
@@ -45,8 +43,6 @@
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
@@ -57,11 +53,18 @@
               {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
-            <el-form-item label="设备状态:"
-            :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
+            <el-form-item
+              label="设备状态:"
+              :style="{
+                color:
+                  stateForm.eqStatus == '1'
+                    ? 'yellowgreen'
+                    : stateForm.eqStatus == '2'
+                    ? 'white'
+                    : 'red',
+              }"
+            >
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
@@ -81,11 +84,7 @@
 
         <div class="lineClass"></div>
       </el-form>
-      <el-radio-group
-        v-model="tab"
-        style="margin: 10px 0;"
-        class="comCovi"
-      >
+      <el-radio-group v-model="tab" style="margin: 10px 0" class="comCovi">
         <el-radio-button label="Inside" v-if="this.eqInfo.clickEqType == 18"
           >洞内亮度</el-radio-button
         >
@@ -95,19 +94,7 @@
       </el-radio-group>
       <div id="Inside" style="margin-bottom: 10px"></div>
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button
-          type="primary"
-          size="mini"
-          @click="handleClosee()"
-          style="width: 80px"
-          class="submitButton"
-          >确 定</el-button
-        > -->
-        <el-button
-          class="closeButton"
-          @click="handleClosee()"
-          >取 消</el-button
-        >
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -118,7 +105,6 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数
 import { getTodayLDData } from "@/api/workbench/config.js"; //查询弹窗图表信息
 
 export default {
-  // props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
@@ -143,11 +129,7 @@ export default {
       directionList: [],
     };
   },
-  created() {
-    // this.getMessage();
-    // this.getChartMes();
-    // console.log(this.eqInfo,"eqInfo")
-  },
+  created() {},
   methods: {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
       this.eqInfo = eqInfo;
@@ -174,8 +156,8 @@ export default {
     getChartMes() {
       getTodayLDData(this.eqInfo.equipmentId).then((response) => {
         console.log(response, "亮度检测器数据");
-        if(response.data.nowData){
-          this.nowData = parseFloat(response.data.nowData).toFixed(2)
+        if (response.data.nowData) {
+          this.nowData = parseFloat(response.data.nowData).toFixed(2);
         }
         var xData = [];
         var yData = [];
@@ -189,12 +171,11 @@ export default {
           for (var item of response.data.todayLDInsideData) {
             xData.push(item.order_hour);
             yData.push(item.count);
-
           }
         }
         this.brightValue = yData[yData.length - 1];
-       console.log(xData,"xData")
-       console.log(yData,"yData")
+        console.log(xData, "xData");
+        console.log(yData, "yData");
 
         this.$nextTick(() => {
           this.initChart(xData, yData);
@@ -225,7 +206,7 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.visible = false
+      this.visible = false;
     },
     initChart(xData, yData) {
       this.mychart = echarts.init(document.getElementById("Inside"));

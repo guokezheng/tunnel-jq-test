@@ -81,28 +81,37 @@
         SELECT
             id,
             frameEventTitle,
+            tunnelId,
             iconUrl,
             simplifyName,
             eventTime,
-            prevControlType
+            prevControlType,
+            direction ,
+            eventTypeId
         FROM
             (
                 SELECT
                     id,
                     event_title AS frameEventTitle,
+                    tunnel_id AS tunnelId,
                     icon_url AS iconUrl,
                     simplify_name AS simplifyName,
                     DATE_FORMAT( event_time, '%Y-%m-%d %H:%i:%s' ) AS eventTime,
-                    prev_control_type AS prevControlType
+                    prev_control_type AS prevControlType,
+                    direction,
+                    event_type_id AS eventTypeId
                 FROM
                     (
                         SELECT
                             A.id,
-                            CONCAT( t.tunnel_name, ' ', IFNULL(sdd.dict_label,''), ',', b.simplify_name ) AS event_title,
+                            CONCAT( t.tunnel_name, ' ', IFNULL( sdd.dict_label, '' ), ',', b.simplify_name ) AS event_title,
+                            t.tunnel_id,
                             B.icon_url,
                             B.simplify_name,
                             A.event_time,
-                            B.prev_control_type
+                            B.prev_control_type,
+                            A.direction,
+                            A.event_type_id
                         FROM
                             sd_event A
                                 LEFT JOIN sd_event_type B ON A.event_type_id = B.id
@@ -113,23 +122,33 @@
                             A.event_state = '3'
                           AND TO_DAYS( A.event_time ) = TO_DAYS( NOW( ) )
                           AND B.is_usable = '1'
-                    ) a
-                UNION
+                    ) a UNION
                 SELECT
                     id,
                     frameEventTitle,
+                    tunnel_id AS tunnelId,
                     iconUrl,
                     simplifyName,
                     DATE_FORMAT( eventTime, '%Y-%m-%d %H:%i:%s' ) AS eventTime,
-                    2 AS prevControlType
+                    2 AS prevControlType,
+                    eq_direction AS direction,
+                    '' AS eventTypeId
                 FROM
                     (
                         SELECT
                             fault.id,
-                            concat( ifnull(tunnel.tunnel_name, ''), ifnull(DATA.dict_label, ''), ifnull(devices.eq_name, ''), ifnull(type.dict_label, '') ) AS frameEventTitle,
+                            concat(
+                                    ifnull( tunnel.tunnel_name, '' ),
+                                    ifnull( DATA.dict_label, '' ),
+                                    ifnull( devices.eq_name, '' ),
+                                    ifnull( type.dict_label, '' )
+                                ) AS frameEventTitle,
+                            tunnel.tunnel_id,
                             fault.fault_fxtime AS eventTime,
                             '故障' AS simplifyName,
-                            ( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl
+                            ( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl,
+                            devices.eq_direction ,
+                            '' as eventTypeId
                         FROM
                             sd_fault_list fault
                                 LEFT JOIN sd_tunnels tunnel ON fault.tunnel_id = tunnel.tunnel_id
@@ -139,11 +158,13 @@
                                 LEFT JOIN sys_dict_data type ON type.dict_value = fault.fault_type
                                 AND type.dict_type = 'fault_type'
                         WHERE
-                            fault.fault_status = '0' and fault.fallt_remove_statue = '1'
+                            fault.fault_status = '0'
+                          AND fault.fallt_remove_statue = '1'
                           AND TO_DAYS( fault.fault_fxtime ) = TO_DAYS( NOW( ) )
                     ) b
             ) AS MERGE
-        ORDER BY MERGE.eventTime DESC
+        ORDER BY
+            MERGE.eventTime DESC
     </select>
 
     <select id="eventOrdinaryOrSecurity" parameterType="sdEvent" resultType="hashmap">
@@ -153,7 +174,10 @@
             B.icon_url AS iconUrl,
             B.simplify_name AS simplifyName,
             A.event_time AS eventTime,
-            B.prev_control_type AS prevControlType
+            B.prev_control_type AS prevControlType,
+            t.tunnel_id AS tunnelId,
+            A.direction,
+            A.event_type_id AS eventTypeId
         FROM
             sd_event A
                 LEFT JOIN sd_event_type B ON A.event_type_id = B.id
@@ -414,6 +438,48 @@
             <if test="currencyId != null">currency_id = #{currencyId},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <update id="batchUpdateSdEvent" parameterType="SdEvent">
+        update sd_event
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="eventTypeId != null">event_type_id = #{eventTypeId},</if>
+            <if test="eventTitle != null">event_title = #{eventTitle},</if>
+            <if test="eventTime != null">event_time = #{eventTime},</if>
+            <if test="eventState != null">event_state = #{eventState},</if>
+            <if test="eventGrade != null">event_grade = #{eventGrade},</if>
+            <if test="eventLocation != null">event_location = #{eventLocation},</if>
+            <if test="eventDeath != null">event_death = #{eventDeath},</if>
+            <if test="eventInjured != null">event_injured = #{eventInjured},</if>
+            <if test="eventDescription != null">event_description = #{eventDescription},</if>
+            <if test="reservePlanId != null">reserve_plan_id = #{reservePlanId},</if>
+            <if test="flowId != null">flow_id = #{flowId},</if>
+            <if test="warningId != null">warning_id = #{warningId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="policePhone != null">police_phone = #{policePhone},</if>
+            <if test="wreckerPhone != null">wrecker_phone = #{wreckerPhone},</if>
+            <if test="carOwnerPhone != null">car_owner_phone = #{carOwnerPhone},</if>
+            <if test="tankerNum != null">tanker_num = #{tankerNum},</if>
+            <if test="passengerCarNum != null">passenger_car_num = #{passengerCarNum},</if>
+            <if test="truckNum != null">truck_num = #{truckNum},</if>
+            <if test="smallCarNum != null">small_car_num = #{smallCarNum},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="slightInjured != null">slight_injured = #{slightInjured},</if>
+            <if test="eventSource != null">event_source = #{eventSource},</if>
+            <if test="stakeNum != null">stake_num = #{stakeNum},</if>
+            <if test="stakeEndNum != null">stake_end_num = #{stakeEndNum},</if>
+            <if test="laneNo != null">lane_no = #{laneNo},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="reviewRemark != null">review_remark = #{reviewRemark},</if>
+            <if test="currencyId != null">currency_id = #{currencyId},</if>
+        </trim>
+        where FIND_IN_SET(id, #{ids}) > 0
     </update>
 
     <update id="updateVideoById">

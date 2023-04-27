@@ -107,6 +107,11 @@
               ></el-slider>
             </el-form-item>
           </el-col>
+          <el-col :span="9">
+            <span style="padding-left: 10px; line-height: 30px"
+                >{{ stateForm2.volume }} %</span
+              >
+          </el-col>
         </el-row>
         <el-row>
           <el-col>
@@ -174,8 +179,8 @@ export default {
       this.brandList = brandList;
       this.directionList = directionList;
       this.eqTypeDialogList = eqTypeDialogList;
-      this.getMessage();
       this.getAudioFile();
+      this.getMessage();
       this.visible = true;
     },
     getAudioFile() {
@@ -189,7 +194,6 @@ export default {
     },
     // 查设备详情
     async getMessage() {
-      var that = this;
       if (this.eqInfo.equipmentId) {
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {

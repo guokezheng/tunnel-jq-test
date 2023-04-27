@@ -33,8 +33,6 @@
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
@@ -45,8 +43,6 @@
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
@@ -57,8 +53,6 @@
               {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
             <el-form-item
               label="设备状态:"

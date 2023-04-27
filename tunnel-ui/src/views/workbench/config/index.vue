@@ -8142,7 +8142,6 @@ export default {
     /* 打开配置界面*/
     async openStateSwitch(item) {
       console.log(item, "item");
-      console.log([16,22,36].includes(item.eqType),"[16,22,36].includes(item.eqType)")
       if (this.addBatchManage == true) {
         // 判断设备是否可控 不可控的不弹批量弹窗
         if (item.isControl == "1" && ![16,22,36].includes(item.eqType)) {
@@ -8208,7 +8207,7 @@ export default {
         }
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
-        console.log(item, "点击的设备");
+        // console.log(item, "点击的设备");
         this.eqInfo = {
           clickEqType: item.eqType,
           equipmentId: item.eqId,
@@ -9901,7 +9900,7 @@ export default {
 
 .footer {
   width: 100%;
-  height: 23%;
+  height: 24%;
   padding: 0px 0px 0px 1vw;
   // margin-top: 10px;
   display: flex;

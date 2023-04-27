@@ -7,7 +7,6 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
-import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,9 +177,8 @@ public class SdAppTaskListController extends BaseController
 
 
     /**
-     * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见
+     * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见(暂不用)
      *     提交上报    task_status 变为2 已完结
-     *     接收任务    task_status 从“待巡检”改为“巡检中”
      * @param  sdTaskList
      * @return
      */

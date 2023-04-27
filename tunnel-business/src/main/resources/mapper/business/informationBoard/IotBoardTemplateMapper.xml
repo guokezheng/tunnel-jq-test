@@ -144,8 +144,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT
             bt.id,
             bt.screen_size,
-            bt.in_screen_mode,
-            bt.category,
             btc.content,
             btc.font_color,
             btc.font_size,

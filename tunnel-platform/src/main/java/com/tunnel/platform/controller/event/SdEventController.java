@@ -448,4 +448,14 @@ public class SdEventController extends BaseController
     public AjaxResult examineDeviceDetail(SdEvent sdEvent){
         return sdEventService.examineDeviceDetail(sdEvent);
     }
+
+    /**
+     * 批量处理事件
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/batchHandleEvent")
+    public AjaxResult batchHandleEvent(SdEvent sdEvent){
+        return sdEventService.batchHandleEvent(sdEvent);
+    }
 }

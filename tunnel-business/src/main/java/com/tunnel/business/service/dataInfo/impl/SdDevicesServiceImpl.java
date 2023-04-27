@@ -142,6 +142,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()))) {
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode())) {
                         devices.put("state", data.getData());
+                    }else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode())) {
+                        devices.put("brightness", data.getData());
                     }
                 //巡检机器人
                     // TODO 巡检代码暂不提交

@@ -133,6 +133,12 @@ public class workspaceController extends BaseController {
         String state = map.get("state").toString();
         String brightness = map.get("brightness") == null ? "" : map.get("brightness").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+
+        // 基本照明 亮度 不得小于30
+        if((map.get("brightness") == null || Integer.parseInt(brightness) < 30) && DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+            return AjaxResult.error("基本照明亮度不得低于30");
+        }
+
         if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
             Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
             Integer code = Integer.valueOf(hongMap.get("code"));
@@ -722,13 +728,29 @@ public class workspaceController extends BaseController {
     public AjaxResult batchControlDevice(@RequestBody Map<String, Object> deviceMap){
         List<String> eqIdList = Arrays.asList(deviceMap.get("eqId").toString().split(","));
         String state = deviceMap.get("state").toString();
+        // 附加值
+        // 基本照明  亮度 不得小于30
+        // 加强照明
+        String stateNum = deviceMap.get("brightness") == null ? null : deviceMap.get("brightness").toString();
+      //  String eqType = deviceMap.get("eqType") == null ? null : deviceMap.get("eqType").toString();
+
+
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(eqIdList.get(0));
+
+        // 基本照明 亮度 不得小于30
+        if((stateNum == null || Integer.parseInt(stateNum) < 30) && sdDevices.getEqType().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())){
+            return AjaxResult.error("基本照明亮度不得低于30");
+        }
+
         Map<String, Object> map = new HashMap<>();
         map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+
         int count = 0;
         for(String devId : eqIdList){
             map.put("devId", devId);
             map.put("state", state);
             map.put("controlType", "0");
+            map.put("stateNum", stateNum);
             count = sdDeviceControlService.controlDevices(map);
         }
         return AjaxResult.success(count);

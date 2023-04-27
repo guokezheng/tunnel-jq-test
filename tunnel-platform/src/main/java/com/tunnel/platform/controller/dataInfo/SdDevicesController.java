@@ -85,7 +85,7 @@ public class SdDevicesController extends BaseController {
         }
 
         // 如果当前设备是加强照明 基本照明，双向显示设备去重
-        if(sdDevices.getEqType() != null &&
+        if(list != null && list.size() > 0  && sdDevices.getEqType() != null &&
                 (
                         sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()
                        || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()

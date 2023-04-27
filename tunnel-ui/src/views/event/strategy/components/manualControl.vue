@@ -126,7 +126,7 @@
           </el-col>
           <el-col
             :span="4"
-            v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36 && items.equipmentTypeId != 7"
+            v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36 && items.equipmentTypeId != 7 && items.equipmentTypeId != 9"
           >
             <el-select
               style="width: 100%"
@@ -158,7 +158,7 @@
           </el-col>
           <el-col
             :span="4"
-            v-show="items.equipmentTypeId == 7"
+            v-show="items.equipmentTypeId == 7 ||  items.equipmentTypeId == 9"
           >
             <el-select
               :style="{'width':  items.state == 1 ? '45%' :'100%' }"
@@ -174,7 +174,7 @@
               >
               </el-option>
             </el-select>
-            <el-input-number @change="$forceUpdate()" v-if="items.state == 1" v-model="items.stateNum" style="width: 55%"   :min="1" :max="100" ></el-input-number>
+            <el-input-number @change="$forceUpdate()" v-if="items.state == 1" v-model="items.stateNum" style="width: 55%"   :min="items.limitMin" :max="100" ></el-input-number>
           </el-col>
           <div class="buttonBox">
             <el-button class="delete" @click="removeItem(index)"></el-button>
@@ -250,6 +250,7 @@ export default {
             state: "",
             stateNum: 100,
             value: "",
+            limitMin:1,
             equipmentTypeId: "",
             equipmentTypeData: [],
             equipmentData: [],
@@ -283,8 +284,16 @@ export default {
   methods: {
 
     selectStateVal(index){
+
       if(this.strategyForm.manualControl[index].state == 1){
         this.$set(this.strategyForm.manualControl[index], "stateNum", 100);
+        //基本照明限制 最低亮度为 30
+        if(this.strategyForm.manualControl[index].equipmentTypeId == 9){
+          this.$set(this.strategyForm.manualControl[index], "limitMin", 30);
+        }
+
+      }else{
+        this.$set(this.strategyForm.manualControl[index], "stateNum", 0);
       }
     },
     init() {
@@ -350,6 +359,12 @@ export default {
               "equipmentTypeData",
               this.equipmentTypeData
             );
+
+            //基本照明限制 最低亮度为 30
+            if(this.strategyForm.manualControl[i].equipmentTypeId == 9){
+              this.$set(this.strategyForm.manualControl[i], "limitMin", 30);
+            }
+
             let params = {
               eqType: attr.eqTypeId, //设备类型
               eqTunnelId: this.strategyForm.tunnelId, //隧道

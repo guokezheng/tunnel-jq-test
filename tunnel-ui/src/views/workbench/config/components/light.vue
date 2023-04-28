@@ -372,7 +372,7 @@ export default {
           }
         });
       } else {
-        if (this.stateForm.eqType == 9 && this.stateForm.brightness < 30) {
+        if (this.stateForm.eqType == 9 && this.stateForm.state == 1 && this.stateForm.brightness < 30) {
           this.$modal.msgWarning("基本照明亮度不得低于30");
           return;
         }

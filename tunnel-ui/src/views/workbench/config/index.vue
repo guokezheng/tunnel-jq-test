@@ -2,7 +2,7 @@
   <div class="app-container">
     <div
       class="my-back"
-  
+
     >
     <!-- :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }" -->
       <div class="header workbench-header">
@@ -207,7 +207,7 @@
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          
+
         >
           <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
@@ -5557,7 +5557,7 @@ export default {
     },
     // 批量操作 弹窗确定
     batchManageOK() {
-      if(this.batchManageForm.brightness < 30 && this.itemEqType == 9){
+      if(this.batchManageForm.brightness < 30 && this.batchManageForm.state == 1 && this.itemEqType == 9){
         this.$modal.msgWarning('基本照明亮度不得低于30')
         return
       }

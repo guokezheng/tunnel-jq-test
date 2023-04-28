@@ -2,7 +2,7 @@
   <div class="app-container">
     <div
       class="my-back"
-
+  
     >
     <!-- :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }" -->
       <div class="header workbench-header">
@@ -207,7 +207,7 @@
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-
+          
         >
           <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
@@ -1551,7 +1551,7 @@
       <!-- <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;"> -->
       <el-row
         :gutter="20"
-        style="margin: 0px 0 6px"
+        style="margin: 0px 0 10px"
         v-show="operationActive == 'xitong'"
       >
         <el-col :span="4">
@@ -1667,7 +1667,7 @@
     </el-form>-->
       <el-row
         :gutter="20"
-        style="margin: 0px 0 6px"
+        style="margin: 0px 0 10px"
         v-show="operationActive == 'caozuo'"
       >
         <el-col :span="4">
@@ -3134,7 +3134,7 @@
       </el-tabs>
       <el-row
         :gutter="20"
-        style="margin: 0px 0 6px"
+        style="margin: 0px 0 10px"
         v-show="strategyActive == 'richang'"
       >
         <el-col :span="4">
@@ -5983,8 +5983,8 @@ export default {
     // },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
-      this.dateRange1 = [];
+      this.dateRange = this.getPastTime();
+      this.dateRange1 = this.getPastTime();
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
 
@@ -8203,6 +8203,9 @@ export default {
           }
         } else if (item.isControl == "0" || [16,22,36].includes(item.eqType)) {
           item.textKKFalse = true;
+          setTimeout(() => {
+            item.textKKFalse = false;
+          }, 2000);
           this.$forceUpdate();
         }
       } else if (this.addBatchManage == false) {
@@ -9420,6 +9423,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .el-tabs__header{
+  margin: 0 0 10px!important;
+}
 .searchTable {
   margin: 0px;
   width: 100% !important;
@@ -9495,8 +9501,8 @@ export default {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   color: #da4a64;
-  opacity: 0;
-  animation: fadenum 2s;
+  // opacity: 0;
+  // animation: fadenum 2s;
   z-index: 100;
 }
 @keyframes fadenum {

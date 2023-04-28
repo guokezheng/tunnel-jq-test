@@ -25,7 +25,7 @@
         >
           <span
             :style="{
-              color: dataForm.COLOR,
+              color: getColorStyle(dataForm.COLOR),
               fontSize: dataForm.FONT_SIZE,
               fontFamily: dataForm.FONT,
               zIndex: '1000',
@@ -736,11 +736,11 @@ export default {
       }
     },
     getColorStyle(font) {
-      if (font == "黄色") {
+      if (font == "黄色" ) {
         return "yellow";
-      } else if (font == "红色") {
+      } else if (font == "红色" ) {
         return "red";
-      } else if (font == "绿色") {
+      } else if (font == "绿色" || font == 'GreenYellow') {
         return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";

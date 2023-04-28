@@ -170,6 +170,7 @@
                           scope.row.COORDINATE.substring(3, 6),
                           'top'
                         ),
+                        maxHeight:getScreenSize(form.devicePixel, 'height') + 'px',
                       }"
                       class="boardTextStyle"
                       v-html="
@@ -233,7 +234,7 @@
                     itm.tcontents[0].fontSize,
                     itm.screenSize
                   ),
-                  color: itm.tcontents[0].fontColor,
+                  color: getColorStyle(itm.tcontents[0].fontColor),
                   fontFamily: itm.tcontents[0].fontType,
                 }"
               >
@@ -258,6 +259,7 @@
                           'top',
                           itm.screenSize
                         ),
+                        maxHeight:getScreenSize(itm.screenSize, 'height') + 'px',
                       }"
                       class="boardTextStyle"
                       v-html="
@@ -1063,7 +1065,7 @@ export default {
         return "yellow";
       } else if (font == "红色") {
         return "red";
-      } else if (font == "绿色") {
+      } else if (font == "绿色" || font == 'GreenYellow') {
         return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
@@ -1418,6 +1420,7 @@ export default {
   user-select: none;
   white-space: normal;
   word-break: break-all;
+  overflow: hidden;
 }
 ::v-deep .sortable-chosen:not(th) {
   background-color: rgba(5, 175, 227, 0.1) !important;

@@ -26,7 +26,7 @@
           <span
             class="textBoard1 boardTextStyle"
             :style="{
-              color: dataForm.COLOR,
+              color: getColorStyle(dataForm.COLOR),
               fontSize: getFontSize(dataForm.FONT_SIZE),
               fontFamily: dataForm.FONT,
               zIndex: '1000',
@@ -52,8 +52,8 @@
           ref="dataForm"
           size="mini"
         >
-          <el-row :gutter="24">
-            <el-col :span="8">
+          <el-row :gutter="24" style="height: 45px">
+            <el-col :span="8" v-show="this.boardEmitItem.type == 2 || this.dataForm.category">
               <el-form-item prop="category" label="所属类别">
                 <el-select
                   v-model="dataForm.category"
@@ -520,10 +520,12 @@ export default {
   methods: {
     init() {
       this.title = "修改";
+      
       this.dialogVisible = true;
       this.itemPropertyMap = new HashMap();
       this.alignmentNum = 2
       this.dataForm = JSON.parse(JSON.stringify(this.boardEmitItem));
+      console.log(this.dataForm,"this.dataForm")
       this.dataForm.CONTENT = JSON.parse(
         JSON.stringify(
           this.boardEmitItem.CONTENT.replace("<br>", "\n").replace(/ /g, " ")
@@ -628,35 +630,10 @@ export default {
     },
     keyDown(ev) {
       this.alignment(this.alignmentNum)
-      // console.log(ev.keyCode, "ev.keyCode");
-      // let arr = [];
-      // let content = "";
-      // const input = document.getElementById("textContent");
-      // // console.log(input.selectionStart);
-      // arr = this.dataForm.CONTENT.split("");
-      // // console.log(arr, "arr");
-      // content += "<div>";
-      // for (var i = 0; i < arr.length; i++) {
-      //   content += arr[i];
-      //   if (i == input.selectionStart - 1) {
-      //     if (ev.keyCode == 13) {
-      //       content += "<br>";
-      //     } else if (ev.keyCode == 32) {
-      //       content += "&nbsp";
-      //     }
-      //   }
-      // }
-      // content += "</div>";
-      // this.dataForm.content1 = content;
-      // console.log( this.dataForm.content1," this.content");
     },
     // 表单确认
     dataFormSubmitHandle() {
       console.log(this.dataForm.type, "this.dataForm.type");
-      // let valid = this.$refs.dataForm.validate().catch(() => {
-      //   return this.$modal.msgError("校验错误");
-      // });
-      // if (!valid) return;
       if(!this.dataForm.CONTENT.trim()){
         return this.$modal.msgError("当前输入内容为空");
       }
@@ -761,6 +738,19 @@ export default {
         return 'LiSu';
       }
     },
+    getColorStyle(font) {
+      if (font == "黄色" ) {
+        return "yellow";
+      } else if (font == "红色" ) {
+        return "red";
+      } else if (font == "绿色" || font == 'GreenYellow') {
+        return "#00FF00";
+      } else if (font == "蓝色") {
+        return "blue";
+      } else {
+        return font;
+      }
+    },
     closeDialog() {
       this.dialogVisible = false;
       this.$emit("dialogClose");
@@ -800,116 +790,13 @@ export default {
       }
     },
     getFontSize(size) {
-      // console.log(size,"size")
       if (this.boardWidth > 768) {
         let i = this.boardWidth / 768;
-
         return size.substring(0, 2) / i - 2 + "px";
       } else {
         return size;
       }
     },
-    //将item属性存入Map
-    // addItemPropertyMap(itemId, addFlg, stay, action, speed, coordinate, font, font_size, color, content) {
-    //   if (!action) {
-    //     action = 0;
-    //   }
-    //   this.addPropertyMap(itemId + '_STAY', this.itemPropertyMap, addFlg, stay);
-    //   this.addPropertyMap(itemId + '_ACTION', this.itemPropertyMap, addFlg, action);
-    //   this.addPropertyMap(itemId + '_SPEED', this.itemPropertyMap, addFlg, speed);
-    //   this.addPropertyMap(itemId + '_COORDINATE', this.itemPropertyMap, addFlg, coordinate);
-    //   this.addPropertyMap(itemId + '_FONT', this.itemPropertyMap, addFlg, font);
-    //   this.addPropertyMap(itemId + '_FONT_SIZE', this.itemPropertyMap, addFlg, font_size);
-    //   this.addPropertyMap(itemId + '_COLOR', this.itemPropertyMap, addFlg, color);
-    //   this.addPropertyMap(itemId + '_CONTENT', this.itemPropertyMap, addFlg, content);
-    // },
-    // addPropertyMap(itemIdStr, map, addFlg, propertyStr) {
-    //   var array = map.get(itemIdStr);
-    //   if (array == null || addFlg) array = new Array();
-    //   array.push(propertyStr);
-    //   map.put(itemIdStr, array);
-    // },
-    /*********************************************业务代码***********************************************/
-
-    // /*增加新的内容*/
-    // addTemplateContent() {
-    //   if (this.templateContent.length >= 7) {
-    //     this.$modal.msgError("最多只能添加7条信息！");
-    //     return;
-    //   }
-    //   this.templateContent.push({
-    //     content: "请输入内容",
-    //     fontColor: "yellow",
-    //     fontSize: "24",
-    //     fontType: "KaiTi",
-    //     fontSpacing: 0,
-    //     coordinate: "000000",
-    //     img: "",
-    //   });
-    // },
-    /*删除内容*/
-    // delTemplateContent(data) {
-    //   for (let i = 0; i < this.templateContent.length; i++) {
-    //     if (
-    //       this.templateContent.indexOf(data) ==
-    //       this.templateContent.indexOf(this.templateContent[i])
-    //     ) {
-    //       if (this.templateContent.length == 1) {
-    //         this.$modal.msgError("至少保留一条数据");
-    //       } else {
-    //         if (data.id) {
-    //           this.templateDelContent.push(data);
-    //         }
-    //         this.templateContent.splice(this.templateContent.indexOf(data), 1);
-    //       }
-    //     }
-    //   }
-    // },
-    // cliTest(data) {
-    //   this.ispreviewContent = this.templateContent.indexOf(data);
-    // },
-    /********************图片上传*********************/
-    // handleRemove(file, fileList) {},
-    // handlePreview(file) {},
-    // handleExceed(files, fileList) {
-    //   this.$modal.msgError(
-    //     `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
-    //       files.length + fileList.length
-    //     } 个文件`
-    //   );
-    // },
-    // beforeRemove(file, fileList) {
-    //   return this.$confirm(`确定移除 ${file.name}？`);
-    // },
-
-    /**
-     * 获取图片信息
-     */
-    // getImageInfo() {
-    //   let params = {
-    //     vmsSize: this.dataForm.screenSize,
-    //   };
-    //   console.log(params, "params");
-    //   getGalleryList(params).then((data) => {
-    //     console.log(data, "data");
-
-    //     if (!data) {
-    //       return;
-    //     }
-    //     let list = data.rows.sort((dataA, dataB) => {
-    //       dataA.id - dataB.id;
-    //     });
-    //     this.imgUrl.push(...list);
-    //     console.log(this.imgUrl, "this.imgUrl");
-    //   });
-    // },
-    // handleClose(done) {
-    //   this.$confirm("确认关闭？")
-    //     .then((_) => {
-    //       done();
-    //     })
-    //     .catch((_) => {});
-    // },
   },
 };
 </script>

@@ -214,7 +214,7 @@
                         itm.tcontents[0].fontSize,
                         itm.screenSize
                       ),
-                      color: itm.tcontents[0].fontColor,
+                      color: getColorStyle(itm.tcontents[0].fontColor),
                       fontFamily: itm.tcontents[0].fontType,
                     }"
                   >

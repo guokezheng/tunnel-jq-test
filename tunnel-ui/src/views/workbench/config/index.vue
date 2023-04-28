@@ -5983,8 +5983,8 @@ export default {
     // },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = this.getPastTime();
-      this.dateRange1 = this.getPastTime();
+      this.dateRange = [];
+      this.dateRange1 = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
 

@@ -916,7 +916,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
         }
         SdDevices sdDevices = new SdDevices();
-        pageNum = (pageNum-1)*pageSize;
+        if(pageNum!=null&&pageSize!=null){
+            pageNum = (pageNum-1)*pageSize ;
+        }
         sdDevices.getParams().put("tunnelArray", tunnelArray);
         sdDevices.getParams().put("param", param);
         sdDevices.getParams().put("eqType", eqType);

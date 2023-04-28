@@ -69,6 +69,7 @@ public class SdAppDevicesController extends BaseController
     public Map<String,Object> getAppDevicesList(String param,String eqType,String eqStatus,Integer pageSize,Integer pageNum){
         Map<String,Object>map = new HashMap();
         String deptId = SecurityUtils.getDeptId();
+        List<SdDevices> stateNum = new ArrayList<>();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
@@ -76,12 +77,13 @@ public class SdAppDevicesController extends BaseController
         if(count > 0){
             List<SdDevices> list = devicesService.getAppDevicesList(param,eqType,eqStatus,pageSize,pageNum);
             TableDataInfo devicesList = new TableDataInfo(list,count);
-            List<SdDevices> stateNum = devicesService.getDevicesNum(param,eqType,eqStatus,pageSize,pageNum);
+            stateNum = devicesService.getDevicesNum(param,eqType,eqStatus,pageSize,pageNum);
             map.put("devicesList",devicesList);
             map.put("stateNum",stateNum);
             return map;
         }
-
+        map.put("devicesList", null);
+        map.put("stateNum",stateNum);
         return map;
 
 

@@ -135,7 +135,7 @@ public class workspaceController extends BaseController {
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
 
         // 基本照明 亮度 不得小于30
-        if((map.get("brightness") == null || Integer.parseInt(brightness) < 30) && DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+        if((map.get("brightness") == null || Integer.parseInt(brightness) < 30) && state.equals("1")  && DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
             return AjaxResult.error("基本照明亮度不得低于30");
         }
 
@@ -738,7 +738,7 @@ public class workspaceController extends BaseController {
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(eqIdList.get(0));
 
         // 基本照明 亮度 不得小于30
-        if((stateNum == null || Integer.parseInt(stateNum) < 30) && sdDevices.getEqType().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())){
+        if((stateNum == null || Integer.parseInt(stateNum) < 30) && state.equals("1") &&  sdDevices.getEqType().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())){
             return AjaxResult.error("基本照明亮度不得低于30");
         }
 

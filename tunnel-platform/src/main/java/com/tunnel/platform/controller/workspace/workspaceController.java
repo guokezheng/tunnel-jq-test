@@ -189,7 +189,12 @@ public class workspaceController extends BaseController {
 
             if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
                 sdDeviceTypeItems.stream().forEach(item -> {
-                    if("brightness".equals(item.getItemCode()) && DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+                    if("brightness".equals(item.getItemCode()) &&
+                            (
+                                    DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) ||
+                                    DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())
+                            )
+                    ){
                         updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));
                     }
                     if("state".equals(item.getItemCode())){

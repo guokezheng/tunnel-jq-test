@@ -55,12 +55,16 @@ export const singleCat = {
             math.add(math.multiply(+carKm * this.proportion) + 200) + "px";
           eventIndex.left =""
         }else{//通过桩号计算
-
+        //计算最终经度 右边距
+          eventIndex.right =
+            math.add(math.multiply(+this.accidentDistance * this.proportion) + 200) + "px";
+          eventIndex.left =""
         }
         //计算经度  上边距
         switch (eventIndex.laneNo) {
           case "3":
-            eventIndex.top = imgId.offsetHeight*topHigh+(imgId.offsetHeight*topHigh/3)+ "px";
+            //微调10个
+            eventIndex.top = imgId.offsetHeight*topHigh+(imgId.offsetHeight*topHigh/3)-10+ "px";
             break;
           case "2":
             eventIndex.top = imgId.offsetHeight*topHigh+imgId.offsetHeight*centreHighs+(imgId.offsetHeight*centreHighs/3)+ "px";
@@ -77,13 +81,16 @@ export const singleCat = {
             math.add(math.multiply(+carKm * this.proportion) + 190) + "px";
           eventIndex.right = ""
         }else{//通过桩号计算
-
+          //计算最终经度 左边距
+          eventIndex.left =
+            math.add(math.multiply(+this.accidentDistance * this.proportion) + 190) + "px";
         }
 
         //计算经度  上边距
         switch (eventIndex.laneNo) {
           case "1":
-            eventIndex.top = ( imgId.offsetHeight*topHigh + imgId.offsetHeight*centreHighs*3+imgId.offsetHeight*centreHigh)+(imgId.offsetHeight*topHigh/2)+ "px";
+            //微调10个
+            eventIndex.top = ( imgId.offsetHeight*topHigh + imgId.offsetHeight*centreHighs*3+imgId.offsetHeight*centreHigh)+(imgId.offsetHeight*topHigh/2) - 10+ "px";
             break;
           case "2":
             eventIndex.top = ( imgId.offsetHeight*topHigh + imgId.offsetHeight*centreHighs*4+imgId.offsetHeight*centreHigh)+(imgId.offsetHeight*topHigh/2)+ "px";
@@ -105,17 +112,34 @@ export const singleCat = {
             this.carShow = true
           }
           // this.$forceUpdate();
-        }, 300)
+        }, 500)
+      }
+    },
+    removeSpecialChars(str) {
+      return str.match(/\d+/g);
+     },
+    //车祸距离计算
+    async distanceCalculate(tunnelId,stakeNum){
+      debugger
+      console.log(tunnelId)
+      console.log(stakeNum)
+      console.log(this.startPileNum)
+      //计算事故桩号至起始桩号的距离   事故到起始位置的距离
+      if(!!stakeNum){
+        stakeNum = this.removeSpecialChars(stakeNum).join("")
+        this.accidentDistance = math.subtract(+stakeNum - +this.startPileNum)
+        console.log(this.accidentDistance)
       }
     },
     //计算公里数
-    carchange(tunnelId) {
+    carchange(tunnelId,stakeNum) {
       getTunnels(tunnelId).then((res) => {
         console.log(res.data, "当前隧道信息");
         const tunnel = res.data;
         // math.subtract(a-b)//减
         // math.multiply(a*b)//乘
         // math.divide(a/b)//除
+        this.startPileNum = tunnel.startPileNum
         // 计算公里数
         let Mileage = math.divide(
           math.subtract(+tunnel.endPileNum - +tunnel.startPileNum) / 1000
@@ -148,6 +172,7 @@ export const singleCat = {
   watch: {
     //车祸图片显示
     sdSvgEventList(event){
+      debugger
       console.log(event)
       //判断隧道是否和传来的相同  相同显示不同则return
       let tunnelItems = null;
@@ -160,28 +185,36 @@ export const singleCat = {
       console.log(event, "websockt工作台接收事件弹窗");
       this.carActionExplodeList = []
       for ( let i = 0; i < event.length; i++){
+        //计算车祸图片左右边距
+        this.distanceCalculate(event[i].tunnelId,event[i].stakeNum)
         this.trafficList.unshift(event[i]);
         if(tunnelItems.tunnelId!=event[0].tunnelId){
           continue;
         }
-        // switch(event[i].eventTypeId){
-        //   case "12": //车祸
-        //     // 存储数据
-        //     localStorage.setItem('username', 'John Doe');
-        //     //通过桩号  计算 事故在页面位置
-        //     event[i] = this.carBackCount(event[i],false)
-        //     //爆炸效果list
-        //     this.carActionExplodeList.push( event[i])
-        //     break
-        //   case "20"://火灾
-        //     break
-        //   default:
-        // }
-        //通过桩号  计算 事故在页面位置
-        event[i] = this.carBackCount(event[i],true)
-        console.log(event[i] )
-        this.carActionExplodeList.push( event[i])
-        console.log(this.carActionExplodeList )
+        switch(event[i].eventTypeId){
+          case 12: //车祸
+            //通过桩号  计算 事故在页面位置
+            event[i] = this.carBackCount(event[i],false)
+            console.log(event[i] )
+            //设置图片地址
+            this.pictureUrl = "1"
+            event[i].pictureUrl = "1"
+            this.carActionExplodeList.push( event[i])
+            console.log(this.carActionExplodeList )
+            break
+          case 20://火灾
+            //通过桩号  计算 事故在页面位置
+            event[i] = this.carBackCount(event[i],false)
+            console.log(event[i] )
+            //设置图片地址
+            this.pictureUrl = "2"
+            event[i].pictureUrl = "2"
+            this.carActionExplodeList.push( event[i])
+            console.log(this.carActionExplodeList )
+            break
+          default:
+        }
+
       }
     },
     //接收事件视频
@@ -191,11 +224,11 @@ export const singleCat = {
       for ( let i = 0; i < event.length; i++){
         this.trafficList.unshift(event[i]);
         //弹出 现场视频
-        event[i].videoUrl = "https://v2.kwaicdn.com/u|pic/2023/04/24/22/BMjAyMzA0MjQyMjQxMDNfMTQ3MjMxMzI2NF8xMDE0MTQwNzM1ODRfMF8z_b_Bc9e02bc05cd920fb6441b70018da5326.mp4?pkey=AAUTZcZyp0Ig_v4NtpvmOQz31SQkSH5yFlE-p1tJ0Y6q2uRhXFlG-1v94LqA9Qa_lWErv1zEg1EuB35H13zU-reSoKlEGr37ckxsnovw_2mQUq3OgFjGyIJhIqnWLjYjeR0&tag=1-1682478898-unknown-0-dq59nfp47w-da8615b8ba03f216&clientCacheKey=3xgnyc9upjzvdcm_b.mp4&di=3cd05065&bp=10004&tt=b&ss=vp"
+        // event[i].videoUrl = "https://v2.kwaicdn.com/u|pic/2023/04/24/22/BMjAyMzA0MjQyMjQxMDNfMTQ3MjMxMzI2NF8xMDE0MTQwNzM1ODRfMF8z_b_Bc9e02bc05cd920fb6441b70018da5326.mp4?pkey=AAUTZcZyp0Ig_v4NtpvmOQz31SQkSH5yFlE-p1tJ0Y6q2uRhXFlG-1v94LqA9Qa_lWErv1zEg1EuB35H13zU-reSoKlEGr37ckxsnovw_2mQUq3OgFjGyIJhIqnWLjYjeR0&tag=1-1682478898-unknown-0-dq59nfp47w-da8615b8ba03f216&clientCacheKey=3xgnyc9upjzvdcm_b.mp4&di=3cd05065&bp=10004&tt=b&ss=vp"
         this.accidentist.push(event[i])
       }
       //画爆炸效果视频
-      // this.accidentDialogVisible = true
+      this.accidentDialogVisible = true
     },
     //小车运行方法
     radarDataList(event) {
@@ -242,6 +275,8 @@ export const singleCat = {
         }else if(event[i].vehicleType == "26"||event[i].vehicleType == "14"||event[i].vehicleType == "17"){//货车
           event[i].background = "yellow";
         }else if(event[i].vehicleType == "16"||event[i].vehicleType == "25"||event[i].vehicleType == "15"){//客车
+          event[i].background = "blue";
+        }else{
           event[i].background = "blue";
         }
         this.carList.set(event[i].vehicleLicense, event[i]);

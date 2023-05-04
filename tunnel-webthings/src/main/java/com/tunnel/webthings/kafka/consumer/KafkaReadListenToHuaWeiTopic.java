@@ -1752,6 +1752,7 @@ public class KafkaReadListenToHuaWeiTopic {
         map.put("lng",sdRadarDetectData.getLongitude());
         map.put("distance",sdRadarDetectData.getDistance());
         map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.SECONDS);
         return  map;
     }
 

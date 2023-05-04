@@ -85,11 +85,11 @@ public class RadarTask {
     public int num3 = 0;
 
     /**
-     * 遍历redis传事故位置到前端显示
+     * 测试 遍历redis传事故位置到前端显示
      * @throws InterruptedException
      */
-    @Scheduled(fixedRate = 10000)
-    public void radarEvent() throws InterruptedException {
+//    @Scheduled(fixedRate = 10000)
+    public void radarEven2() throws InterruptedException {
         num3 =num3+1;
         SdEvent sdEventd = new SdEvent();
         sdEventd.setId(3260L);
@@ -121,7 +121,26 @@ public class RadarTask {
 
     }
 
-    @Scheduled(fixedRate = 100)
+    /**
+     * 遍历redis传事故位置到前端显示
+     * @throws InterruptedException
+     */
+//    @Scheduled(fixedRate = 10000)
+    public void radarEvent() throws InterruptedException {
+        List<String> scanKey = redisCache.getScanKey(Constants.EVENT_KEY + "*");
+        List<SdEvent> sdEventLists = new ArrayList<>();
+        for (String key :scanKey){
+            SdEvent sdEvent = redisCache.getCacheObject(key);
+            sdEvent.setRoadDir(sdEvent.getDirection());
+            sdEventLists.add(sdEvent);
+        }
+        //事件后推送前端  弹出
+        JSONObject object = new JSONObject();
+        object.put("sdSvgEventList", sdEventLists);
+        WebSocketService.broadcast("sdSvgEventList",object.toString());
+    }
+
+//    @Scheduled(fixedRate = 100)
     public void radarTask1() throws InterruptedException {
         List<Map> list = new ArrayList<>();
         if(sdRadarDetectDatalist2==null){
@@ -174,7 +193,7 @@ public class RadarTask {
 
     }
 
-    @Scheduled(fixedRate = 100)
+//    @Scheduled(fixedRate = 100)
     public void radarTask3() throws InterruptedException {
         List<Map> list = new ArrayList<>();
         if(sdRadarDetectDatalist1==null){
@@ -231,7 +250,7 @@ public class RadarTask {
      * 推送事件提醒以及视频  测试用
      * @throws InterruptedException
      */
-    @Scheduled(fixedRate = 5000)
+//    @Scheduled(fixedRate = 5000)
     public void radarTask2() throws InterruptedException {
         SdEvent sdEvent = new SdEvent();
         sdEvent.setId(3260L);

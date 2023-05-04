@@ -39,12 +39,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
 import static com.ruoyi.common.utils.DictUtils.getCacheKey;
 
 /**
- * @author dzy
+ * @author dzy 万集接口
  * @date 2022/9/4 16:51
  */
 @Service
@@ -828,6 +829,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         map.put("lng",sdRadarDetectData.getLongitude());
         map.put("distance",sdRadarDetectData.getDistance());
         map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+//        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.SECONDS);
         return  map;
     }
 }

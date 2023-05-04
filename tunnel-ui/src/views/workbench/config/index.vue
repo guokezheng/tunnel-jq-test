@@ -2,7 +2,7 @@
   <div class="app-container">
     <div
       class="my-back"
-  
+
     >
     <!-- :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }" -->
       <div class="header workbench-header">
@@ -207,7 +207,7 @@
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          
+
         >
           <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
@@ -5983,8 +5983,8 @@ export default {
     // },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = this.getPastTime();
-      this.dateRange1 = this.getPastTime();
+      this.dateRange = [];
+      this.dateRange1 = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
 

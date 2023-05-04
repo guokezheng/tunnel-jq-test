@@ -134,7 +134,11 @@ public class FileUploadUtils
     public static final String avoidSameName(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         //避免重名
-        return originalFilename.substring(0, originalFilename.lastIndexOf(".")) + "_" + System.currentTimeMillis() + originalFilename.substring(originalFilename.indexOf("."));
+        if(originalFilename.indexOf(".")>-1){
+            return originalFilename.substring(0, originalFilename.lastIndexOf(".")) + "_" + System.currentTimeMillis() + originalFilename.substring(originalFilename.indexOf("."));
+        }else{
+            return originalFilename;
+        }
     }
 
 

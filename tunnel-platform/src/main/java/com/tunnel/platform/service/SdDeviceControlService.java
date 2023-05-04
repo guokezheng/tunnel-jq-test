@@ -340,7 +340,11 @@ public class SdDeviceControlService {
                 throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
             }
             sdDeviceTypeItems.stream().forEach(item -> {
-                if("brightness".equals(item.getItemCode()) && DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+                if("brightness".equals(item.getItemCode()) &&
+                        (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) ||
+                                DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())
+                        )
+                ){
                     updateDeviceData(sdDevices, brightness.toString(), Integer.parseInt(item.getId().toString()));
                 }
                 if("state".equals(item.getItemCode())){

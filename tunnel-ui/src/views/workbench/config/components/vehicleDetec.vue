@@ -4,7 +4,7 @@
       v-dialogDrag
       class="workbench-dialog vehicle-dialog"
       :title="title"
-      width="450px"
+      width="500px"
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
@@ -86,7 +86,7 @@
             label="车流量(辆/分钟)"
             align="center"
             prop="trafficFlowTotal"
-            width="80"
+            width="100"
           />
           <el-table-column
             label="平均车速"

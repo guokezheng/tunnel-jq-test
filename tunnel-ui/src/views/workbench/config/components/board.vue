@@ -214,7 +214,7 @@
                         itm.tcontents[0].fontSize,
                         itm.screenSize
                       ),
-                      color: itm.tcontents[0].fontColor,
+                      color: getColorStyle(itm.tcontents[0].fontColor),
                       fontFamily: itm.tcontents[0].fontType,
                     }"
                   >
@@ -708,7 +708,7 @@ export default {
         return "yellow";
       } else if (font == "红色") {
         return "red";
-      } else if (font == "绿色") {
+      } else if (font == "绿色" || font == 'GreenYellow') {
         return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";

@@ -584,8 +584,15 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             throw new RuntimeException("策略名称已存在，请重新输入后保存");
         }
 
+        List<Map> mapList = model.getAutoControl();
+
+        // 手动控制
+        if(model.getStrategyType().equals("0")){
+            mapList = model.getManualControl();
+        }
+
         // 关联设备效验
-        for (Map map : model.getManualControl()) {
+        for (Map map : mapList) {
 
             if(map.get("state") == null || map.get("state").equals("")){
                 throw new RuntimeException("请填写完整策略信息！");
@@ -594,7 +601,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
             // 基本照明 亮度不得低于30
             if(equipmentTypeId.equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())) {
-                if(map.get("stateNum") == null || Integer.parseInt(map.get("stateNum").toString()) < 30){
+                if((map.get("stateNum") == null || Integer.parseInt(map.get("stateNum").toString()) < 30) && map.get("state").toString().equals("1")){
                     throw new RuntimeException("基本照明亮度不得低于30");
                 }
             }

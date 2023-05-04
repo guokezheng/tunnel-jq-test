@@ -286,7 +286,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getTaskOpt" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt">
-        select p.opt_type,u.user_name opt_person_id,p.opt_time,opt_description,e.tunnel_name
+        select p.opt_type,u.nick_name opt_person_id,p.opt_time,opt_description,e.tunnel_name
         from sd_task_opt p
         left join sys_user u on u.user_id = p.opt_person_id
         left join sd_task_list t on p.task_id = t.id

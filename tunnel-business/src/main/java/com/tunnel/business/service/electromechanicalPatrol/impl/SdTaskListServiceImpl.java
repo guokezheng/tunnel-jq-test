@@ -555,7 +555,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId,Integer pageSize,Integer pageNum,Long userId ) {
         SdTaskList sdTaskList  = new SdTaskList();
-        pageNum = (pageNum-1)*pageSize ;
+        if(pageNum!=null&&pageSize!=null){
+            pageNum = (pageNum-1)*pageSize ;
+        }
         sdTaskList.getParams().put("taskStatus",taskStatus);
         sdTaskList.getParams().put("taskName",taskName);
         sdTaskList.getParams().put("startTime",startTime);
@@ -861,7 +863,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public List<SdTaskList> getTaskListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId, Integer pageSize, Integer pageNum,Long userId) {
         SdTaskList sdTaskList  = new SdTaskList();
-        pageNum = (pageNum-1)*pageSize;
+        if(pageNum!=null&&pageSize!=null){
+            pageNum = (pageNum-1)*pageSize ;
+        }
         sdTaskList.getParams().put("taskStatus",taskStatus);
         sdTaskList.getParams().put("taskName",taskName);
         sdTaskList.getParams().put("startTime",startTime);

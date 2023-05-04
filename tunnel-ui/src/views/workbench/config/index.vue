@@ -306,7 +306,7 @@
                     <div v-if="pictureUrl=='2'">
                       <el-image
                         class="back-img  my-div"
-                        :src= "require('@/assets/image/accident/bz.svg')"
+                        :src= "require('@/assets/image/accident/hz.svg')"
                         fit="none"
                         :style="{
                           right: itme.right,

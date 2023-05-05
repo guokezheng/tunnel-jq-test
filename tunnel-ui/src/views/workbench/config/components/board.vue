@@ -797,6 +797,9 @@ export default {
 </script>
 
   <style lang="scss" scoped>
+  ::v-deep .el-table--medium .el-table__cell{
+    padding: 10px 0 !important;
+  }
 .el-row {
   margin-bottom: -10px;
   display: flex;

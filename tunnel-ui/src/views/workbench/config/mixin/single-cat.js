@@ -26,7 +26,6 @@ export const singleCat = {
         let that = this
         //小车展示秒表 定时清除不动的车辆
         this.catTime = setInterval(function(){
-          console.log( that.catNumber)
           that.catNumber = that.catNumber+1
         },1000)
       }else{
@@ -121,20 +120,15 @@ export const singleCat = {
     //车祸距离计算
     async distanceCalculate(tunnelId,stakeNum){
       debugger
-      console.log(tunnelId)
-      console.log(stakeNum)
-      console.log(this.startPileNum)
       //计算事故桩号至起始桩号的距离   事故到起始位置的距离
       if(!!stakeNum){
         stakeNum = this.removeSpecialChars(stakeNum).join("")
         this.accidentDistance = math.subtract(+stakeNum - +this.startPileNum)
-        console.log(this.accidentDistance)
       }
     },
     //计算公里数
     carchange(tunnelId,stakeNum) {
       getTunnels(tunnelId).then((res) => {
-        console.log(res.data, "当前隧道信息");
         const tunnel = res.data;
         // math.subtract(a-b)//减
         // math.multiply(a*b)//乘
@@ -161,7 +155,6 @@ export const singleCat = {
     //点击爆炸图片打开视频
     CatImageClick(itme){
       this.accidentist =[]
-      console.log(itme)
       itme.videoUrl = "https://v2.kwaicdn.com/u|pic/2023/04/24/22/BMjAyMzA0MjQyMjQxMDNfMTQ3MjMxMzI2NF8xMDE0MTQwNzM1ODRfMF8z_b_Bc9e02bc05cd920fb6441b70018da5326.mp4?pkey=AAUTZcZyp0Ig_v4NtpvmOQz31SQkSH5yFlE-p1tJ0Y6q2uRhXFlG-1v94LqA9Qa_lWErv1zEg1EuB35H13zU-reSoKlEGr37ckxsnovw_2mQUq3OgFjGyIJhIqnWLjYjeR0&tag=1-1682478898-unknown-0-dq59nfp47w-da8615b8ba03f216&clientCacheKey=3xgnyc9upjzvdcm_b.mp4&di=3cd05065&bp=10004&tt=b&ss=vp"
       this.accidentist.push(itme)
       //画事故效果视频
@@ -173,7 +166,6 @@ export const singleCat = {
     //车祸图片显示
     sdSvgEventList(event){
       debugger
-      console.log(event)
       //判断隧道是否和传来的相同  相同显示不同则return
       let tunnelItems = null;
       if(!!this.tunnelItem){
@@ -182,7 +174,6 @@ export const singleCat = {
         tunnelItems = this.tunnelList[0]
       }
 
-      console.log(event, "websockt工作台接收事件弹窗");
       this.carActionExplodeList = []
       for ( let i = 0; i < event.length; i++){
         //计算车祸图片左右边距
@@ -195,22 +186,18 @@ export const singleCat = {
           case 12: //车祸
             //通过桩号  计算 事故在页面位置
             event[i] = this.carBackCount(event[i],false)
-            console.log(event[i] )
             //设置图片地址
             this.pictureUrl = "1"
             event[i].pictureUrl = "1"
             this.carActionExplodeList.push( event[i])
-            console.log(this.carActionExplodeList )
             break
           case 20://火灾
             //通过桩号  计算 事故在页面位置
             event[i] = this.carBackCount(event[i],false)
-            console.log(event[i] )
             //设置图片地址
             this.pictureUrl = "2"
             event[i].pictureUrl = "2"
             this.carActionExplodeList.push( event[i])
-            console.log(this.carActionExplodeList )
             break
           default:
         }
@@ -232,7 +219,6 @@ export const singleCat = {
     },
     //小车运行方法
     radarDataList(event) {
-      console.log(event)
       //判断隧道是否和传来的相同  相同显示不同则return
       let tunnelItems = null;
       if(!!this.tunnelItem){
@@ -245,7 +231,7 @@ export const singleCat = {
       }
 
       //20秒清空一次不运行的小车
-      if(this.catNumber>20){
+      if(this.catNumber>300){
         this.carList.clear()
         this.catNumber=1
       }
@@ -280,7 +266,6 @@ export const singleCat = {
           event[i].background = "blue";
         }
         this.carList.set(event[i].vehicleLicense, event[i]);
-        console.log( this.carList)
       }
     },
       // 这里是关键，代表递归监听 demo 的变化

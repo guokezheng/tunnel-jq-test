@@ -422,6 +422,9 @@ export default {
   background: #00aaf2 !important;
   border-radius: 20px !important;
 }
+::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+  box-shadow: none;
+}
 ::v-deep .el-table {
   width: 100%;
 

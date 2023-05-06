@@ -5554,7 +5554,6 @@ export default {
       batchControlDevice(param).then((res) => {
         this.$modal.msgSuccess("控制成功");
         this.batchManageDialog = false;
-        this.batchManageForm = {}
         this.closeBatchManageDialog();
       });
     },
@@ -5569,6 +5568,7 @@ export default {
       var that = this;
       this.title = "批量操作";
       that.eqTypeStateList2 = [];
+      
       let eqType = "";
       for (var item of this.selectedIconList) {
         if (item.click) {
@@ -5611,6 +5611,7 @@ export default {
     closeBatchManageDialog() {
       this.batchManageDialog = false;
       this.batchManageType = 1;
+      this.batchManageForm.state = null;
       this.itemEqId = [];
       if(this.itemEqType == 7 || this.itemEqType == 9){
         this.batchManageForm.brightness = 0
@@ -5620,8 +5621,8 @@ export default {
       this.addBatchManage = false;
       for (var item of this.selectedIconList) {
         item.click = false;
-        this.$forceUpdate();
       }
+      this.$forceUpdate();
     },
     // 筛选设备名称
     screenEqNameButton() {
@@ -9485,8 +9486,8 @@ export default {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   color: #da4a64;
-  // opacity: 0;
-  // animation: fadenum 2s;
+  opacity: 0;
+  animation: fadenum 2s;
   z-index: 100;
 }
 @keyframes fadenum {

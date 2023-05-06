@@ -170,11 +170,11 @@ export default {
       pageSize: 10,
       total: 0,
       list: [
-        {
-          eventType: {
-            iconUrl: "",
-          },
-        },
+        // {
+        //   eventType: {
+        //     iconUrl: "",
+        //   },
+        // },
       ],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
@@ -226,6 +226,7 @@ export default {
         this.batchManageType = false;
         this.getList();
       }
+      this.simplifyName = ''
       this.$forceUpdate();
     },
     getList(num) {

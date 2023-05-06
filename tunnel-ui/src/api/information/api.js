@@ -60,4 +60,12 @@ export function getVmsTemplateList(query) {
     params: query
   })
 }
+// 查询当前情报板信息
 
+export function selectVmsContent(query) {
+  return request({
+    url: '/plan/process/selectVmsContent',
+    method: 'get',
+    params: query
+  })
+}

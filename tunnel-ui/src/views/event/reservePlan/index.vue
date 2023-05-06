@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-21 14:32:58
+ * @LastEditTime: 2023-05-05 16:55:21
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -693,20 +693,6 @@
                   @change="changeEquipmentType(itemed.eqTypeId, number, index)"
                   style="width: 100%"
                 ></el-cascader>
-
-                <!-- <el-select
-                  v-model="itemed.eqTypeId"
-                  placeholder="设备类型"
-                  clearable
-                  @change="changeEquipmentType(itemed.eqTypeId, number, index)"
-                >
-                  <el-option
-                    v-for="items in equipmentTypeData"
-                    :key="items.typeId"
-                    :label="items.typeName"
-                    :value="items.typeId"
-                  />
-                </el-select> -->
               </el-col>
               <el-col :span="4">
                 <el-select
@@ -744,7 +730,8 @@
                   itemed.eqTypeId != 16 &&
                   itemed.eqTypeId != 36 &&
                   itemed.eqTypeId != 22 &&
-                  itemed.eqTypeId != 7
+                  itemed.eqTypeId != 7  &&
+                  itemed.eqTypeId != 9
                 "
               >
                 <el-select v-model="itemed.state" placeholder="设备操作">
@@ -758,7 +745,7 @@
                 </el-select>
               </el-col>
               <!-- 照明设备 -->
-              <el-col :span="itemed.lightCol" v-if="itemed.eqTypeId == 7">
+              <el-col :span="itemed.lightCol" v-if="itemed.eqTypeId == 7 || itemed.eqTypeId == 9">
                 <el-select v-model="itemed.state" placeholder="设备操作"
                   @change="lightStateChange(number, index,itemed.state)">
                   <el-option
@@ -770,8 +757,8 @@
                   </el-option>
                 </el-select>
               </el-col>
-              <el-col :span="2" v-show="itemed.eqTypeId == 7 && itemed.state == '1'">
-                <el-input-number style="width:100%;" v-model="itemed.brightness" @change="handleChange" :min="1" :max="100" label="亮度"></el-input-number>
+              <el-col :span="2" v-show="itemed.eqTypeId == 7 || itemed.eqTypeId == 9 && itemed.state == '1'">
+                <el-input-number style="width:100%;" v-model="itemed.brightness" @change="handleChange" :min="itemed.minLight" :max="100" label="亮度"></el-input-number>
               </el-col>
               <!-- 照明设备end -->
               <!-- 选择情报板模板 -->
@@ -779,7 +766,7 @@
                 :span="4"
                 v-if="itemed.eqTypeId == '16' || itemed.eqTypeId == '36'"
               >
-                <el-cascader
+                <!-- <el-cascader
                   placeholder="请选择模板"
                   :props="checkStrictly"
                   v-model="itemed.state"
@@ -789,7 +776,10 @@
                   clearable
                   collapse-tags
                   style="width: 100%"
-                ></el-cascader>
+                ></el-cascader> -->
+                <el-input v-model="itemed.content" placeholder="请选择模板" disabled>
+                  <el-button slot="append" icon="el-icon-search" @click="templateClick(number, index,itemed)"></el-button>
+                </el-input>
               </el-col>
 
               <el-col :span="4" v-if="itemed.eqTypeId == '22'">
@@ -829,11 +819,12 @@
         <el-button @click="closeStrategy" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
+    <com-board class="comClass" ref="boardRef" @getVmsData="getMsgFormSon"></com-board>
   </div>
 </template>
 
 <script>
-// import workBench from "./workBench";
+import comBoard from "@/views/event/reservePlan/board";
 import {
   listEqTypeStateIsControl,
   getVMSTemplatesByDevIdAndCategory,
@@ -887,9 +878,9 @@ import { Loading } from "element-ui";
 
 export default {
   name: "Plan",
-  // components: {
-  //   workBench,
-  // },
+  components: {
+    comBoard,
+  },
   data() {
     return {
       dataLoading: false,
@@ -945,6 +936,7 @@ export default {
               eqStateList: [],
               templatesList: [],
               brightness:100,
+              minLight:'',
             },
           ],
         },
@@ -1170,14 +1162,27 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    getMsgFormSon(data){
+      console.log(data);
+      this.$set(this.planTypeIdList[data.number].processesList[data.index],'content',data.content);
+      this.$set(this.planTypeIdList[data.number].processesList[data.index],'state',data.id);
+    },
+    // 情报板选择模板点击事件
+    templateClick(number, index,item){
+        this.$refs.boardRef.init(
+          number, 
+          index,
+          item.eqTypeId,
+        );
+    },
     lightStateChange(number,index,state){
       if(state == '1'){
-        this.$set(this.planTypeIdList[number].processesList[index],'lightCol','2');
+        this.$set(this.planTypeIdList[number].processesList[index],'lightCol',2);
         this.$set(this.planTypeIdList[number].processesList[index],'brightness',100);
       }else{
         // 关闭状态下亮度值赋0
         this.$set(this.planTypeIdList[number].processesList[index],'brightness',0);
-        this.$set(this.planTypeIdList[number].processesList[index],'lightCol','4');
+        this.$set(this.planTypeIdList[number].processesList[index],'lightCol',4);
       }
     },
     // 规则下拉显示或者隐藏触发
@@ -1264,6 +1269,7 @@ export default {
             disabled: false,
             templatesList: [],
             brightness:100,
+            minLight:'',
           },
         ],
       };
@@ -1386,6 +1392,7 @@ export default {
             disabled: false,
             templatesList: [],
             brightness:100,
+            minLight:'',
           },
         ],
       };
@@ -1443,19 +1450,9 @@ export default {
     changeEquipmentType(eqTypeId, number, index) {
       console.log('设备类型:' + eqTypeId,'第'+ number+'阶段','第'+ index+ '个','设备类型改变')
       if (eqTypeId) {
-        // 不是车指，则67禁用
         let retrievalRuleList = JSON.parse(JSON.stringify(this.retrievalRuleList));
-          /*for (let item of retrievalRuleList) {
-          if (eqTypeId != "1" && eqTypeId != "2") {
-            if (item.dictValue == "6" || item.dictValue == "7") {
-              item.disabled = true;
-            }
-          }else{
-            item.disabled = false;
-          }
-        }*/
         // 加强照明开启百分比选择
-        if(eqTypeId == '7'){
+        if(eqTypeId == '7' || eqTypeId == '9'){
           let light = this.planTypeIdList[number].processesList[index];
           light.lightCol = 4;
           //开启加强照明百分比
@@ -1470,12 +1467,17 @@ export default {
             light.lightCol = 4
           }
         }
+        // 基本照明
+        if(eqTypeId == '9'){
+          let light = this.planTypeIdList[number].processesList[index];
+          light.brightness = 30;
+          light.minLight = 30;
+        }
         this.$set(
           this.planTypeIdList[number].processesList[index],
           "retrievalRuleList",
           retrievalRuleList
         );
-        console.log( this.planTypeIdList[number].processesList)
         // 更改设备类型后状态和设备重置
         this.$set(
           this.planTypeIdList[number].processesList[index],
@@ -1653,6 +1655,7 @@ export default {
                   disabled: false,
                   templatesList: [],
                   brightness:'100',
+                  minLight:'',
                 },
               ],
             },
@@ -1698,7 +1701,7 @@ export default {
               // 渲染设备可控状态
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
               // 设备类型为加强照明且状态为开启
-              if(brr.eqTypeId == 7 && brr.state == '1'){
+              if(brr.eqTypeId == 7 || brr.eqTypeId == 9 && brr.state == '1'){
                 this.$set(this.planTypeIdList[i].processesList[j],"lightCol",2);
               }else{
                 this.$set(this.planTypeIdList[i].processesList[j],"lightCol",4);

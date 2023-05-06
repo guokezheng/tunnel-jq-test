@@ -52,4 +52,12 @@ export function getIotBoardList(query) {
     params: query
   })
 }
+// 预案查询情报板模板
+export function getVmsTemplateList(query) {
+  return request({
+    url: '/system/template/getVmsTemplateList',
+    method: 'get',
+    params: query
+  })
+}
 

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-21 09:35:12
+ * @LastEditTime: 2023-04-27 15:28:10
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -848,6 +848,7 @@
         <p class="empty-text" v-show="oneKeyList.length < 1">暂无匹配设备</p>
         <div v-for="(item,index) in oneKeyList" :key="index" class="GDeviceCard">
           <el-card >
+            <p style="padding-bottom:15px;">{{item.processName}}</p>
             <el-table
               v-show="oneKeyList.length >= 1"
               :data="item.deviceList"
@@ -879,10 +880,12 @@
             </el-table>
           </el-card>
           <el-card >
-            <div v-if="item.deviceType == '16' || item.deviceType == '36'">
+            <!-- 情报板 -->
+            <p v-if="item.deviceType == '16' || item.deviceType == '36'" style="padding-bottom:15px;">执行模板:</p>
+            <div class="templateImg" v-if="item.deviceType == '16' || item.deviceType == '36'">
               <!-- <p>情报板执行模板</p> -->
               <el-card shadow="always">
-                <div style="display: flex;justify-content: center;align-items: center;">
+                <div style="display: flex;justify-content: flex-start;align-items: center;">
                   <div :style="{
                     'width':item.vmsData['width'] + 'px',
                     'height':item.vmsData['height'] + 'px',
@@ -906,6 +909,22 @@
                     </span>
                   </div>
                 </div>
+              </el-card>
+            </div>
+            <!-- 广播 -->
+            <p v-if="item.deviceType == '22'" style="padding-bottom:15px;">执行文件:</p>
+            <div class="templateImg" v-if="item.deviceType == '22'">
+              <el-card shadow="always" class="otherBox">
+                <img :src="item.deviceIconUrl" />
+                <p>{{item.deviceState}}</p>
+              </el-card>
+            </div>
+            <!-- 其他设备 -->
+            <p v-if="item.deviceType != '16' && item.deviceType != '36' && item.deviceType != '22'" style="padding-bottom:15px;">执行状态:</p>
+            <div class="templateImg" v-if="item.deviceType != '16' && item.deviceType != '36' && item.deviceType != '22'">
+              <el-card shadow="always" class="otherBox">
+                <img :src="item.deviceIconUrl" />
+                <p>{{item.deviceState}}</p>
               </el-card>
             </div>
           </el-card>
@@ -2826,6 +2845,11 @@ display: none;
     margin-bottom:10px;
   }
 }
+  ::v-deep .otherBox .el-card__body{
+    display:flex;
+    align-items: center;
+    p{padding:0 15px;}
+  }
 </style>
 <style lang="scss">
 .IssuedDialog {

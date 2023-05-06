@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-05-05 16:55:21
+ * @LastEditTime: 2023-05-06 16:51:00
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -777,8 +777,8 @@
                   collapse-tags
                   style="width: 100%"
                 ></el-cascader> -->
-                <el-input v-model="itemed.content" placeholder="请选择模板" disabled>
-                  <el-button slot="append" icon="el-icon-search" @click="templateClick(number, index,itemed)"></el-button>
+                <el-input v-model="itemed.content" placeholder="请选择模板" readonly @click.native="openTemDialog(itemed)">
+                  <el-button slot="append" icon="el-icon-search" @click.stop="templateClick(number, index,itemed)"></el-button>
                 </el-input>
               </el-col>
 
@@ -820,6 +820,36 @@
       </div>
     </el-dialog>
     <com-board class="comClass" ref="boardRef" @getVmsData="getMsgFormSon"></com-board>
+    <el-dialog
+      :title="templateData.processName"
+      :visible.sync="dialogVisibleTem"
+      width="45%"
+      :before-close="handleClose">
+      <div style="display: flex;justify-content: center;align-items: center;">
+        <!-- 'letter-spacing':templateData['font_spacing'] + 'px', -->
+        <div :style="{
+          'width':templateData['width'] + 'px',
+          'height':templateData['height'] + 'px',
+          'color':templateData['font_color'],
+          'font-size':templateData['font_size'] + 'px',
+          'font-family':templateData['font_type'],
+          'background-color':'#000',
+          'position':'relative',
+          }">
+          <span :style="{
+            'position':'absolute',
+            'top':templateData['top'] + 'px',
+            'left':templateData['left'] + 'px',
+          }"
+          style="line-height:1" v-html="templateData['content']">
+          </span>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleTem = false">取 消</el-button>
+        <!-- <el-button type="primary" @click="dialogVisible = false">确 定</el-button> -->
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -831,6 +861,7 @@ import {
   getAudioFileList,
 } from "@/api/equipment/eqTypeState/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
+import { selectVmsContent } from "@/api/information/api.js";
 import {
   listPlan,
   getPlan,
@@ -1119,6 +1150,8 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)',
         target:'.strategy-dialog',
       },
+      templateData:{},
+      dialogVisibleTem:false,
     };
   },
   created() {
@@ -1162,6 +1195,26 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    //查看情报板信息
+    openTemDialog(item){
+      let params = {id: item.id,state:item.state};
+      console.log(item);
+      selectVmsContent(params).then((res)=>{
+        this.templateData = Object.assign(res.data,item);
+        console.log(this.templateData)
+        let zxc = this.templateData['screen_size'].split('*');
+        this.templateData['width'] = zxc[0];
+        this.templateData['height'] = zxc[1];
+        let align = this.templateData['coordinate'];
+        this.templateData['left'] = align.substr(0,3);
+        this.templateData['top'] = align.substr(3,6);
+        let content = this.templateData['content'];
+        if(content.indexOf('/n') == '-1'){
+          this.templateData['content'] = content.replace(/\n|\r\n/g,'<br>').replace(/ /g, ' &nbsp');
+        }
+        this.dialogVisibleTem = true;
+      })
+    },
     getMsgFormSon(data){
       console.log(data);
       this.$set(this.planTypeIdList[data.number].processesList[data.index],'content',data.content);

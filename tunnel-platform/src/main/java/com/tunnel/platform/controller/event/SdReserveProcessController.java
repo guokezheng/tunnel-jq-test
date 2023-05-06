@@ -297,4 +297,14 @@ public class SdReserveProcessController extends BaseController
         }
         return AjaxResult.success(result);
     }
+
+    /**
+     * 预案策略中查看情报板信息
+     * @param sdReserveProcess
+     * @return
+     */
+    @GetMapping("/selectVmsContent")
+    public AjaxResult selectVmsContent(SdReserveProcess sdReserveProcess){
+        return sdReserveProcessService.selectVmsContent(sdReserveProcess);
+    }
 }

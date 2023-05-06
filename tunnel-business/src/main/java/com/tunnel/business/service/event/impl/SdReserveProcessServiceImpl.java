@@ -3,6 +3,7 @@ package com.tunnel.business.service.event.impl;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -479,6 +480,24 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         map.put("strategy",strategy);
         int result = sdEventFlowService.execPlanSaveEventFlow(eventId, map);
         return result;
+    }
+
+    @Override
+    public AjaxResult selectVmsContent(SdReserveProcess sdReserveProcess) {
+        Map<String, Object> map = new HashMap<>();
+        if(sdReserveProcess.getId() != null && sdReserveProcess.getId() != 0L){
+            SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+            planStrategy.setType("2");
+            planStrategy.setCurrentId(sdReserveProcess.getId());
+            planStrategy.setTemplateId(sdReserveProcess.getState());
+            map = planStrategyMapper.getTemplateContent(planStrategy);
+            if(map == null){
+                map = templateMapper.getSdVmsTemplateContent(Long.valueOf(sdReserveProcess.getState()));
+            }
+        }else {
+            map = templateMapper.getSdVmsTemplateContent(Long.valueOf(sdReserveProcess.getState()));
+        }
+        return AjaxResult.success(map);
     }
 
     public void setJoinVms(String tempId, Long id){

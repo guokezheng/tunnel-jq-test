@@ -174,7 +174,7 @@ export default {
     },
   },
   created(){
-    console.log(this.$store.state.settings.sideTheme,"this.$store.state.settings.sideTheme");
+    // console.log(this.$store.state.settings.sideTheme,"this.$store.state.settings.sideTheme");
   },
   methods: {
     themeChange(val) {

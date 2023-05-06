@@ -704,8 +704,7 @@ export default {
       this.getTunnelLane();
     },
   },
-  async created() {
-    console.log('createdcreatedcreatedcreated');
+  created() {
 
   },
   mounted() {

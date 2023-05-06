@@ -4631,7 +4631,7 @@ export default {
         "mousewheel",
 
         function (e) {
-          console.log(e);
+          // console.log(e);
           // 获取鼠标所在位置
 
           let { clientX, clientY } = e;
@@ -4695,7 +4695,7 @@ export default {
     },
   },
   created() {
-    debugger
+    // debugger
     //小车运行渲染定时任务
     clearInterval(this.timer)
     this.timer = null
@@ -4704,7 +4704,7 @@ export default {
     //关闭小车
     carSwitchType("destroyed", 1).then((res) =>{})
     this.getDicts("sd_strategy_direction").then((data) => {
-      console.log(data, "方向");
+      // console.log(data, "方向");
       this.directionList = data.data;
     });
     this.getDicts("sys_common_status").then((response) => {
@@ -4730,12 +4730,12 @@ export default {
     });
     // 策略类型
     this.getDicts("sd_strategy_type").then((response) => {
-      console.log("策略类型", response);
+      // console.log("策略类型", response);
       this.strategyTypeOptions = response.data;
     });
     this.getDicts("sys_common_event").then((response) => {
       this.strategyTypeEvent = response.data;
-      console.log(this.strategyTypeEvent, "this.strategyTypeEvent");
+      // console.log(this.strategyTypeEvent, "this.strategyTypeEvent");
     });
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
@@ -4743,19 +4743,19 @@ export default {
     // 策略组信息
     this.getDicts("sd_strategy_group").then((response) => {
       this.strategyTypeGroup = response.data;
-      console.log(this.strategyTypeGroup, "this.strategyTypeGroup");
+      // console.log(this.strategyTypeGroup, "this.strategyTypeGroup");
     });
     this.getDicts("sd_device_opt_state").then((response) => {
-      console.log(response.data, "操作结果");
+      // console.log(response.data, "操作结果");
       this.operationStateOptions = response.data;
     });
     this.getDicts("brand").then((data) => {
-      console.log(data, "设备厂商");
+      // console.log(data, "设备厂商");
       this.brandList = data.data;
     });
 
     this.getDicts("sd_monitor_state").then((data) => {
-      console.log(data, "设备类型");
+      // console.log(data, "设备类型");
       this.eqTypeDialogList = data.data;
     });
     /*this.getDicts("sd_wj_vehicle_type").then((data) => {
@@ -4763,7 +4763,7 @@ export default {
       this.vehicleTypeList = data.data;
     });*/
     getVehicleSelectList({}).then((response) => {
-      console.log(response, "车辆类型");
+      // console.log(response, "车辆类型");
       this.vehicleTypeList = response;
     });
 
@@ -4796,7 +4796,7 @@ export default {
     //   console.log(newVal, "8888888888888888");
     // },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
+      // console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
 
       if (this.manageStation == "1") {
         getJlyTunnel().then((res) => {
@@ -4812,7 +4812,6 @@ export default {
           }
         });
       }
-      console.log(11111111111111);
       this.getTunnelList();
     },
     deviceStatus(event) {
@@ -4820,8 +4819,6 @@ export default {
     },
     // 设备类型
     "batchForm.eqType"(val) {
-      console.log(val);
-      console.log(mode);
       if (mode == "buttonSelection") {
         let param = {
           eqTunnelId: this.currentTunnel.id,
@@ -4961,7 +4958,7 @@ export default {
     window.addEventListener("click", this.otherClose);
     $(document).on("click", function (e) {
       let dom = $(".treebox")[0]; // 自定义div的class
-      console.log(dom);
+      // console.log(dom);
       if (dom && that.treeShow) {
         // 如果点击的区域不在自定义dom范围
         if (!dom.contains(e.target) && that.treeShow == true) {
@@ -5075,14 +5072,14 @@ export default {
     },
 
     changeEndTime(start, end, index) {
-      console.log(start, end, "start,end");
+      // console.log(start, end, "start,end");
       let date = new Date();
       let a = start.split(":");
       let b = end.split(":");
       let bool = date.setHours(a[0], a[1]) > date.setHours(b[0], b[1]);
       if (bool) {
         this.$modal.msgWarning("结束时间必须大于开始时间");
-        console.log(this.timStrategyList, "this.timStrategyList");
+        // console.log(this.timStrategyList, "this.timStrategyList");
         for (let i = 0; i < this.timStrategyList.length; i++) {
           this.timStrategyList[index].arr[1] = "";
           this.timingStrategyDisabled = true;
@@ -5132,7 +5129,7 @@ export default {
           } else {
             this.videoTitle3 = res.data[0].inletName;
             this.videoTitle4 = res.data[0].outletName;
-            console.log(res, "后两个视频");
+            // console.log(res, "后两个视频");
             if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
               getDeviceById(res.data[0].inlet).then((response) => {
                 displayH5sVideoAll(response.data.secureKey, "h5sVideo4", 3);
@@ -5142,7 +5139,7 @@ export default {
               });
             } else {
               videoStreaming(res.data[0].inlet).then((res) => {
-                console.log(res, "入口视频");
+                // console.log(res, "入口视频");
                 if (res.code == 200 && res.data) {
                   this.liveUrl1 = res.data.liveUrl;
                   this.cameraPlayer1 = true;
@@ -5165,7 +5162,7 @@ export default {
       // 济南方向
       getEntranceExitVideo(this.tunnelId, this.directionList[1].dictValue).then(
         (res) => {
-          console.log(res, "前两个视频");
+          // console.log(res, "前两个视频");
           if (res.data.length == 0) {
             this.videoNoPic1 = true;
           } else {
@@ -5173,7 +5170,6 @@ export default {
             this.videoTitle2 = res.data[0].outletName;
             if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
               getDeviceById(res.data[0].inlet).then((response) => {
-                console.log(response, "0000000000000");
                 displayH5sVideoAll(response.data.secureKey, "h5sVideo2", 1);
               });
               getDeviceById(res.data[0].outlet).then((response) => {
@@ -5181,7 +5177,7 @@ export default {
               });
             } else {
               videoStreaming(res.data[0].inlet).then((res) => {
-                console.log(res, "入口视频");
+                // console.log(res, "入口视频");
                 if (res.code == 200 && res.data) {
                   this.liveUrl3 = res.data.liveUrl;
                   this.cameraPlayer3 = true;
@@ -5280,25 +5276,25 @@ export default {
     treeClear() {
       for (var item of this.selectedIconList) {
         if (item.eqName.indexOf(this.screenEqName) > -1) {
-          console.log(item.eqName);
+          // console.log(item.eqName);
           item.click = false;
         }
       }
     },
     // 模糊查询
     treeClick() {
-      console.log(this.screenEqName);
+      // console.log(this.screenEqName);
       this.treeShow = !this.treeShow;
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      console.log(data, "data");
+      // console.log(data, "data");
       // 如果存在children，则代表是父级
       if (data.children) {
         // 点击父级业务
       } else {
         this.treeShow = false;
-        console.log(data.label);
+        // console.log(data.label);
         this.screenEqName = data.label;
         this.screenEqNameButton(data.label);
       }
@@ -5342,7 +5338,7 @@ export default {
         direction: direction,
       };
       getAudioFileList(params).then((res) => {
-        console.log(res, "广播一键文件列表");
+        // console.log(res, "广播一键文件列表");
         this.fileNamesList = res.data;
       });
     },
@@ -5454,7 +5450,7 @@ export default {
           tunnelId: this.currentTunnel.id,
           controlType: "0",
         };
-        console.log(param, "param");
+        // console.log(param, "param");
         playVoiceGroup(param).then((res) => {});
       } else {
         const param = {
@@ -5467,7 +5463,7 @@ export default {
           tunnelId: this.currentTunnel.id,
           controlType: "0",
         };
-        console.log(param, "param");
+        // console.log(param, "param");
         playVoiceGroup(param).then((res) => {
           this.$modal.msgSuccess("控制成功");
         });
@@ -5572,12 +5568,11 @@ export default {
       let eqType = "";
       for (var item of this.selectedIconList) {
         if (item.click) {
-          console.log(item, "batchManageDialog");
           this.batchManageList.push(item);
-          this.batchManageDialog = true;
           eqType = item.eqType;
         }
       }
+      this.batchManageDialog = true;
       let list = [];
       const param = {
         stateTypeId: eqType,
@@ -5605,7 +5600,7 @@ export default {
           });
         }
       });
-      console.log(that.eqTypeStateList2, "that.eqTypeStateList2");
+      // console.log(that.eqTypeStateList2, "that.eqTypeStateList2");
     },
     // 关闭批量操作弹窗 / 批量操作取消
     closeBatchManageDialog() {
@@ -5626,11 +5621,11 @@ export default {
     },
     // 筛选设备名称
     screenEqNameButton() {
-      console.log(this.screenEqName);
+      // console.log(this.screenEqName);
       if (this.screenEqName) {
         for (var item of this.selectedIconList) {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
-            console.log(item.eqName);
+            // console.log(item.eqName);
             item.click = true;
           } else {
             item.click = false;
@@ -5683,7 +5678,7 @@ export default {
         lane: this["chezhiForm" + num].lane,
       };
       batchControlCarFinger(param).then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data == 0) {
           this.$modal.msgWarning("控制失败");
         } else if (res.data == 1) {
@@ -5705,7 +5700,7 @@ export default {
         strategyType: 3,
       };
       timingStrategyList(param).then((res) => {
-        console.log(res);
+        // console.log(res);
       });
     },
     timingStrategy(item) {
@@ -5807,7 +5802,7 @@ export default {
         tunnelId: this.tunnelId,
       };
       special(param).then((res) => {
-        console.log(res, "重点车辆监测数据");
+        // console.log(res, "重点车辆监测数据");
         this.keyVehiclesXData = res.data[0];
         this.keyVehiclesYData = res.data[1];
       });
@@ -5875,10 +5870,10 @@ export default {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
             item.arr = item.time.split("-");
-            console.log(item, "item");
+            // console.log(item, "item");
           }
           this.timStrategyList = res.data;
-          console.log(this.timStrategyList, "this.timStrategyList");
+          // console.log(this.timStrategyList, "this.timStrategyList");
         });
       }
     },
@@ -5888,12 +5883,12 @@ export default {
       this.drawerB = false;
 
       workTriggerInfo(this.currentTunnel.id).then((response) => {
-        console.log(response, "自动触发抽屉");
+        // console.log(response, "自动触发抽屉");
         this.isDrawerCList = response.data;
       });
     },
     zoomSwitchChange(val) {
-      console.log(val, "val");
+      // console.log(val, "val");
       if (val == false) {
         this.handleTableWheelSwithch = false;
       } else {
@@ -5903,7 +5898,7 @@ export default {
     async flvPlayer() {
       if (flvjs.isSupported()) {
         var video = document.getElementsByClassName("videoElement");
-        console.log(video[0], "video");
+        // console.log(video[0], "video");
         if (video) {
           //创建播放器实例
           var player = flvjs.createPlayer({
@@ -5917,7 +5912,7 @@ export default {
             player.load();
             player.play();
           } catch (error) {
-            console.log(error);
+            // console.log(error);
           }
         }
       }
@@ -5927,16 +5922,16 @@ export default {
       trafficFlowInformation().then((response) => {
         this.trafficJamList = response.data;
         for (var item of response.data) {
-          console.log(
-            item.left,
-            "left",
-            item.width,
-            "width",
-            item.color,
-            "color",
-            item.tunnelId,
-            item.type
-          );
+          // console.log(
+          //   item.left,
+          //   "left",
+          //   item.width,
+          //   "width",
+          //   item.color,
+          //   "color",
+          //   item.tunnelId,
+          //   item.type
+          // );
         }
       });
     },
@@ -6023,7 +6018,7 @@ export default {
       }
     },
     controlHeight(item) {
-      console.log(item, "item");
+      // console.log(item, "item");
     },
     getWarnList() {
       const param = {
@@ -6125,7 +6120,7 @@ export default {
             this.siteList = options[0].children;
           } else {
             this.siteList = childs;
-            console.log(this.siteList, "位置list");
+            // console.log(this.siteList, "位置list");
           }
           let arr = [];
           this.checkData(this.siteList[0], arr);
@@ -6328,7 +6323,7 @@ export default {
         footer[1].style.height = "0%";
       } else {
         vehicleLane[0].style.removeProperty("height");
-        this.initEharts();
+        // this.initEharts();
       }
     },
     // 初始化echart图
@@ -6337,7 +6332,7 @@ export default {
       proportionOfEquipment({
         tunnelId: that.currentTunnel.id,
       }).then((res) => {
-        console.log(res, "设备类型占比");
+        // console.log(res, "设备类型占比");
         // that.initechartsB(res.data)
       });
       // that.initeChartsEnd()
@@ -6914,7 +6909,7 @@ export default {
     },
     // 情报板编辑
     IntelligenceBoardEdit(item) {
-      console.log(item);
+      // console.log(item);
       this.dialogVisible = true;
       // this.$refs.contentBatchEdit.deviceId = item.id;
       this.$refs.contentBatchEdit.vmsSize = "1024*768"; //item.vmsSize
@@ -7110,7 +7105,7 @@ export default {
     },
     //右键拖动
     dragImg(e) {
-      console.log(e, "e");
+      // console.log(e, "e");
       if (e.button == 0) {
         return;
       }
@@ -7590,7 +7585,7 @@ export default {
       };
       this.carchange(tunnelId);
       getTunnels(tunnelId).then((res1) => {
-        console.log(res1, "获取隧道配置信息");
+        // console.log(res1, "获取隧道配置信息");
         that.loading = false;
         let res = res1.data.storeConfigure;
         //存在配置内容
@@ -7655,7 +7650,7 @@ export default {
               }
             })
             .then(() => {
-              that.initEharts();
+              // that.initEharts();
               // 切换隧道配置信息时，联动大类查询
               that.displayControl(
                 that.selectBigType.index.toString(),
@@ -7687,7 +7682,7 @@ export default {
           console.log("不存在");
           //不存在
           that.selectedIconList = [];
-          that.initEharts();
+          // that.initEharts();
           //工作台默认背景图
           // that.currentTunnel.lane = this.getLanUrl(response.data.lane);
           that.upList = [];
@@ -7698,7 +7693,7 @@ export default {
       });
       // 树状搜索
       getCategoryTree(tunnelId).then((res) => {
-        console.log(res, "-------------------------");
+        // console.log(res, "-------------------------");
         this.treeData = res.data;
       });
     },
@@ -7987,8 +7982,8 @@ export default {
     },
     /* 选择隧道*/
     setTunnel(item, index) {
-      console.log(item)
-      console.log(index)
+      // console.log(item)
+      // console.log(index)
       this.tunnelItem = item
       // if(this.manageStation == "0" && item.tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
       //   this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-HSD");
@@ -8774,10 +8769,10 @@ export default {
     setCorLight(param) {
       setCorLight(param)
         .then((response) => {
-          console.log(response);
+          // console.log(response);
         })
         .catch((err) => {
-          console.log("配置失败,后台报错：" + err);
+          // console.log("配置失败,后台报错：" + err);
         });
     },
     /**诱导弹窗-控制模式改变 */
@@ -9050,7 +9045,7 @@ export default {
       this.stateForm = {};
     },
     handleTableWheel(event) {
-      console.log(event, "event");
+      // console.log(event, "event");
       // let obj = document.getElementsByClassName('content')
       let obj = this.$refs.divRoller;
       if (this.handleTableWheelSwithch == true) {
@@ -9058,7 +9053,7 @@ export default {
       }
     },
     tableZoom(obj, event) {
-      console.log(obj, event, "obj, event");
+      // console.log(obj, event, "obj, event");
       // 一开始默认是100%
       let zoom = parseInt(obj.style.zoom, 10) || 100;
       // 滚轮滚一下wheelDelta的值增加或减少120
@@ -9076,7 +9071,7 @@ export default {
       return false;
     },
     setMoveTop(zoom) {
-      console.log(zoom, "zoom");
+      // console.log(zoom, "zoom");
       var ii = 0;
       // if(!zoom){
       //   zoom = 100
@@ -9126,7 +9121,7 @@ export default {
       } else {
         this.wheelFlag = false;
       }
-      console.log(this.$refs.divRoller, "this.$refs.divRoller");
+      // console.log(this.$refs.divRoller, "this.$refs.divRoller");
       this.oldWidth = this.$refs.divRoller.offsetWidth;
       this.oldHeight = this.$refs.divRoller.offsetHeight;
       this.mouseLeft = e.clientX - this.$refs.divRoller.offsetLeft;

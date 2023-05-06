@@ -1202,6 +1202,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND FIND_IN_SET(d.eq_id,#{ids})
     </select>
 
+    <select id="selectVmsDevicesOld" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            d.eq_name AS eqName,
+            d.pile,
+            jps.content AS stateName
+        FROM
+            sd_devices d,
+            sd_join_plan_strategy jps
+        WHERE
+            1 = 1
+          AND jps.template_id = #{state}
+          AND FIND_IN_SET(d.eq_id,#{ids})
+          AND jps.type = #{type}
+    </select>
+
     <select id="selectLsDevices" parameterType="java.lang.String" resultType="hashmap">
         SELECT
             d.eq_name AS eqName,
@@ -1230,4 +1245,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectDevicePixel" parameterType="sdDevices" resultType="java.lang.String">
+        SELECT
+            ba.device_pixel
+        FROM
+            sd_devices d
+                RIGHT JOIN iot_board_access ba ON d.associated_device_id = ba.device_id
+        WHERE
+            1 = 1
+          AND d.eq_type = #{eqType}
+            LIMIT 1
+    </select>
 </mapper>

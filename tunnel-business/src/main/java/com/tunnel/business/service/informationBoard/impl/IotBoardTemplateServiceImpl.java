@@ -50,6 +50,9 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
     @Autowired
     private SdDevicesMapper sdDevicesMapper;
 
+    @Autowired
+    private IIotBoardTemplateService iotBoardTemplateService;
+
     /**
      * 查询情报板模板
      *
@@ -295,5 +298,12 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
         List<String> deviceIds = sdDevicesMapper.selectDropSdDevicesList(sdDevices).stream().map(SdDevices::getEqId).collect(Collectors.toList());
         //返回情报板模板信息
         return AjaxResult.success(getVMSTemplatesByDevIdAndCategory(deviceIds.size() > 0 ? deviceIds.subList(0,1) : new ArrayList<>()));
+    }
+
+    @Override
+    public AjaxResult getVmsTemplateList(SdDevices sdDevices) {
+        String devicePixel = sdDevicesMapper.selectDevicePixel(sdDevices);
+        Map<String, List<IotBoardTemplate>> allVmsTemplate = iotBoardTemplateService.getAllVmsTemplate("", devicePixel);
+        return AjaxResult.success(allVmsTemplate);
     }
 }

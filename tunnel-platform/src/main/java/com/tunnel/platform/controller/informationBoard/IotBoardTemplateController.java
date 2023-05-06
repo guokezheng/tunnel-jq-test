@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 情报板模板Controller
@@ -134,5 +135,15 @@ public class IotBoardTemplateController extends BaseController
     @GetMapping("/getVmsDataList")
     public AjaxResult getVmsDataList(SdDevices sdDevices){
         return iotBoardTemplateService.getVmsDataList(sdDevices);
+    }
+
+    /**
+     * 应急预案情报板弹框
+     * @param sdDevices
+     * @return
+     */
+    @GetMapping("/getVmsTemplateList")
+    public AjaxResult getVmsTemplateList(SdDevices sdDevices){
+        return iotBoardTemplateService.getVmsTemplateList(sdDevices);
     }
 }

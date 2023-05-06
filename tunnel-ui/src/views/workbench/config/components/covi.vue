@@ -86,7 +86,8 @@
         </el-row>
         <div class="lineClass"></div>
       </el-form>
-      <el-radio-group v-model="tab" style="margin: 10px 0" class="comCovi">
+      <el-radio-group v-model="tab" style="margin: 10px 0;caret-color: rgba(0, 0, 0, 0);
+  user-select: none;" class="comCovi">
         <el-radio-button label="co">CO实时趋势</el-radio-button>
         <el-radio-button label="vi">VI实时趋势</el-radio-button>
       </el-radio-group>
@@ -365,6 +366,9 @@ export default {
 }
 ::v-deep .el-radio-button {
   margin: 0 10px;
+}
+::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+  box-shadow: none;
 }
 .el-row {
   margin-bottom: -10px;

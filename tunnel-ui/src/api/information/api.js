@@ -52,4 +52,20 @@ export function getIotBoardList(query) {
     params: query
   })
 }
+// 预案查询情报板模板
+export function getVmsTemplateList(query) {
+  return request({
+    url: '/system/template/getVmsTemplateList',
+    method: 'get',
+    params: query
+  })
+}
+// 查询当前情报板信息
 
+export function selectVmsContent(query) {
+  return request({
+    url: '/plan/process/selectVmsContent',
+    method: 'get',
+    params: query
+  })
+}

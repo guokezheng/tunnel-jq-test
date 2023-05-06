@@ -111,6 +111,13 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Autowired
     private LightService lightService;
 
+
+    @Autowired
+    private IotBoardTemplateMapper templateMapper;
+
+    @Autowired
+    private SdJoinPlanStrategyMapper planStrategyMapper;
+
     /**
      * 查询控制策略
      *
@@ -316,11 +323,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 state.setIsControl(1);
                 if(eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString())){
                     String templateId = rlList.get(j).getState();
+
+                    SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+                    planStrategy.setCurrentId(rlList.get(j).getId());
+                    planStrategy.setTemplateId(templateId);
+                    planStrategy.setType("1");
+                    List<SdJoinPlanStrategy> sdJoinPlanStrategyList = planStrategyMapper.selectSdJoinPlanStrategyList(planStrategy);
                     IotBoardTemplateContent content = new IotBoardTemplateContent();
                     content.setTemplateId(templateId);
                     List<IotBoardTemplateContent> contentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
+                    String resContent = sdJoinPlanStrategyList.size() == 0 ? contentList.size() == 0 ? "" : contentList.get(0).getContent() : sdJoinPlanStrategyList.get(0).getContent();
+
                     if(contentList.size() > 0){
-                        sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
+                        sList.add(typeName + "发布信息：" + resContent + "；");
                     }
                     continue;
                 }
@@ -607,11 +622,18 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             }
         }
 
+        //查询历史策略流程节点
+        List<SdStrategyRl> sdStrategyRlList =  sdStrategyRlMapper.selectSdStrategyRlByStrategyId(model.getId());
+        sdStrategyRlList.stream().forEach(item -> {
+            planStrategyMapper.deletePlanStrategyVms(item.getId(),"1");
+        });
+
         String strategyType = model.getStrategyType();
         //更新策略 主表
         int updatePrimary = sdStrategyMapper.updateSdStrategyById(sty);
         //删除关联子表相关信息
         int upStrRl = sdStrategyRlMapper.deleteSdStrategyRlByStrategyId(model.getId());
+
         //删除相关联的定时任务
         if (!"0".equals(model.getStrategyType())) {
             deleteRefJob(sty.getJobRelationId());
@@ -825,10 +847,21 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             sdStrategyRl.setEqTypeId(equipmentTypeId);
             sdStrategyRl.setStrategyId(sty.getId());
             addRows += sdStrategyRlMapper.insertSdStrategyRl(sdStrategyRl);
+            map.put("id",sdStrategyRl.getId());
         }
         if(addRows < 1){
             throw new RuntimeException("数据保存失败！");
         }
+
+        // 情报板增加历史记录
+        manualControl.stream().forEach(item -> {
+            if(DevicesTypeEnum.VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())
+                    || DevicesTypeEnum.MEN_JIA_VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())){
+                //储存情报板信息
+                setJoinVms(item.get("state").toString(),Long.parseLong(item.get("id").toString()));
+            }
+        });
+
         return 1;
     }
     /**
@@ -874,6 +907,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 //                e.printStackTrace();
 //            }
             sdStrategyRlMapper.insertSdStrategyRl(rl);
+            map.put("id",rl.getId());
             try{
                 Long refId = rl.getId();
                 //新增定时任务
@@ -903,6 +937,16 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         String jobIdStr = jobIdList.stream().collect(Collectors.joining(","));
         sty.setJobRelationId(jobIdStr);
         int updateRows = sdStrategyMapper.updateSdStrategyById(sty);
+
+        // 情报板增加历史记录
+        autoControl.stream().forEach(item -> {
+            if(DevicesTypeEnum.VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())
+                    || DevicesTypeEnum.MEN_JIA_VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())){
+                //储存情报板信息
+                setJoinVms(item.get("state").toString(),Long.parseLong(item.get("id").toString()));
+            }
+        });
+
         return updateRows;
     }
     /**
@@ -1286,6 +1330,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 //情报板
                 if(eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString())){
                     issuedParam.put("templateId",controlStatus);
+                    issuedParam.put("currentId",eventId);
+                    //0：预案 1：策略
+                    issuedParam.put("type","0");
                 }
                 issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
                 issueResult = sdDeviceControlService.controlDevices(issuedParam);
@@ -1377,7 +1424,13 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
             //查询情报板
             //String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
+            SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+            planStrategy.setCurrentId(joinReserveHandle.getEventId());
+            planStrategy.setTemplateId(joinReserveHandle.getState());
+            //0：预案 1：策略
+            planStrategy.setType("0");
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(SdJoinPlanStrategyMapper.class).getTemplateContent(planStrategy);
+            //Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
             eqStateData = sdVmsContent.get("content").toString().concat("    ------");
         }else if(eqType == DevicesTypeEnum.LS.getCode()){
             //截取广播文件名称
@@ -1388,7 +1441,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //查询普通设备状态
             List<Map<String, Object>> maps = new ArrayList<>();
             //查询普通设备状态
-            if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
+            if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || eqType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()){
                 maps = sdEventMapper.getManagementJiaQiangState(joinReserveHandle.getId(),Integer.valueOf(joinReserveHandle.getState()) > 0 ? "1" : "2");
                 eqStateData = Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + "，亮度值：" + joinReserveHandle.getState() + "%".concat("    ------") : maps.get(0).get("stateName").toString().concat("    ------");
             }else {
@@ -1470,5 +1523,27 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         strategy.setEventType(sty.getEventType());
         strategy.setIsAutomatic(sty.getIsAutomatic());
         return sdStrategyMapper.checkStrategy(strategy);
+    }
+
+    public void setJoinVms(String tempId, Long id){
+        Map<String, Object> vmsData = templateMapper.getSdVmsTemplateContent(Long.valueOf(tempId));
+        if(vmsData == null){
+            return;
+        }
+        SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+        planStrategy.setScreenSize(vmsData.get("screen_size").toString());
+        planStrategy.setContent(vmsData.get("content").toString());
+        planStrategy.setCoordinate(vmsData.get("coordinate").toString());
+        planStrategy.setCurrentId(id);
+        planStrategy.setFontColor(vmsData.get("font_color").toString());
+        planStrategy.setFontSize(Long.valueOf(vmsData.get("font_size").toString()));
+        planStrategy.setFontSpacing(Long.valueOf(vmsData.get("font_spacing").toString()));
+        planStrategy.setFontType(vmsData.get("font_type").toString());
+        planStrategy.setTemplateId(tempId);
+        //0：预案 1：策略 2:情报板
+        planStrategy.setType("1");
+        planStrategy.setCreateTime(DateUtils.getNowDate());
+        planStrategy.setStopTime(Long.valueOf(vmsData.get("stop_time").toString()));
+        planStrategyMapper.insertSdJoinPlanStrategy(planStrategy);
     }
 }

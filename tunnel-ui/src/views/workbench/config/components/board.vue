@@ -354,7 +354,7 @@ export default {
   created() {
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
-      console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
+      // console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
   mounted() {},
@@ -582,7 +582,7 @@ export default {
           this.activeNames.push(j.toString());
         }
         this.$forceUpdate();
-        console.log(this.iotTemplateCategoryList, "新模板");
+        // console.log(this.iotTemplateCategoryList, "新模板");
       });
     },
     //  上移

@@ -88,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="ids != null  and ids != ''"> and FIND_IN_SET(w.id,#{ids}) > 0</if>
             <if test="searchValue != null  and searchValue != ''">and CONCAT(w.part_name,w.unit,w.brand,w.manufacturer) LIKE CONCAT('%',#{searchValue},'%')</if>
         </where>
+        order by w.create_time desc,w.update_time desc
     </select>
 
     <select id="getHsdSparePartList" parameterType="com.tunnel.business.domain.dataInfo.SdSparePartsWarehouse"

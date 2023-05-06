@@ -160,14 +160,14 @@ export default {
   },
   watch: {
     "$store.state.manage.manageStation": function (newVal, oldVal) {
-      console.log(newVal, "监听到模式啦监听到模式啦监听到模式啦监听到模式啦");
+      // console.log(newVal, "监听到模式啦监听到模式啦监听到模式啦监听到模式啦");
       this.$cache.local.set("manageStation", newVal);
 
       this.manageStation = newVal;
       this.$forceUpdate();
     },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "监听到模式啦监听到模式啦监听到模式啦监听到模式啦");
+      // console.log(newVal, "监听到模式啦监听到模式啦监听到模式啦监听到模式啦");
 
       this.$cache.local.set("manageStationSelect", newVal);
 
@@ -179,14 +179,14 @@ export default {
   mounted() {
     // 当前导航栏子元素数量
     const childrenLength = this.$refs.currentNav.$el["childElementCount"];
-    console.log(childrenLength,"childrenLengthchildrenLength")
+    // console.log(childrenLength,"childrenLengthchildrenLength")
     // 导航栏菜单
     if (childrenLength > 6) {
       this.style = "width:147.77px;";
     } else {
       this.style = "width:20%;";
     }
-    console.log(this.sidebarRouters, "sidebarRouters");
+    // console.log(this.sidebarRouters, "sidebarRouters");
 
     // 初始化
 
@@ -197,10 +197,10 @@ export default {
     
   },
   async created() {
-    console.log(
-      this.$cache.local.get("manageStationSelect"),
-      "this.$cache.local.get('manageStationSelect')"
-    );
+    // console.log(
+    //   this.$cache.local.get("manageStationSelect"),
+    //   "this.$cache.local.get('manageStationSelect')"
+    // );
     await getJlyTunnel().then((res) => {
       this.manageStationList = res.data;
       var test = window.location.href;
@@ -215,7 +215,7 @@ export default {
         );
         this.manageStationSelect = "JQ-WeiFang-JiuLongYu-JJL";
       } else if (test.substr(test.length - 1, 1) == "2") {
-        console.log("马鞍山隧道");
+        // console.log("马鞍山隧道");
         this.changeNavSelect("JQ-WeiFang-JiuLongYu-MAS");
         this.manageStationSelect = "JQ-WeiFang-JiuLongYu-MAS";
       } else {

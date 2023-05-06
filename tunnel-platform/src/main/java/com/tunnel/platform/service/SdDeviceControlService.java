@@ -13,11 +13,13 @@ import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdDeviceNowState;
+import com.tunnel.business.domain.event.SdJoinPlanStrategy;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
+import com.tunnel.business.mapper.event.SdJoinPlanStrategyMapper;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
@@ -35,6 +37,7 @@ import com.tunnel.platform.service.deviceControl.LightService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -80,6 +83,9 @@ public class SdDeviceControlService {
 
     @Autowired
     private HongMengDevService hongMengDevService;
+
+    @Autowired
+    private SdJoinPlanStrategyMapper planStrategyMapper;
 
     /**
      * 高速云端是否可控
@@ -289,12 +295,23 @@ public class SdDeviceControlService {
                 }
                 Long templateId = Long.parseLong(map.get("templateId").toString());
                 //模板内容
-                IotBoardTemplateContent templateContent = new IotBoardTemplateContent();
-                templateContent.setTemplateId(templateId.toString());
-                List<IotBoardTemplateContent> templateContentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(templateContent);
-                sdOperationLog.setOperationState(templateContentList.size() == 0 ? "" : templateContentList.get(0).getContent());
+                if(map.get("currentId") == null && map.get("type") == null){
+                    IotBoardTemplateContent templateContent = new IotBoardTemplateContent();
+                    templateContent.setTemplateId(templateId.toString());
+                    List<IotBoardTemplateContent> templateContentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(templateContent);
+                    sdOperationLog.setOperationState(templateContentList.size() == 0 ? "" : templateContentList.get(0).getContent());
+                }else {
+                    SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+                    planStrategy.setCurrentId(Long.valueOf(map.get("currentId").toString()));
+                    planStrategy.setTemplateId(map.get("templateId").toString());
+                    //0：预案 1：策略
+                    planStrategy.setType(map.get("type").toString());
+                    Map<String, Object> sdVmsContent = planStrategyMapper.getTemplateContent(planStrategy);
+                    sdOperationLog.setOperationState(sdVmsContent == null ? "" : sdVmsContent.get("content").toString());
+                }
+
                 //控制情报板
-                controlState = controlInformationBoard(controlState, isopen, templateId, sdDevices, state);
+                controlState = controlInformationBoard(controlState, isopen, templateId, sdDevices, state, map);
 
                 sdOperationLog.setState(String.valueOf(controlState));
             } else if (sdDevices != null
@@ -358,14 +375,30 @@ public class SdDeviceControlService {
         return controlState;
     }
 
-    private int controlInformationBoard(int controlState, String isopen, Long templateId, SdDevices sdDevices, String state) {
+    private int controlInformationBoard(int controlState, String isopen, Long templateId, SdDevices sdDevices, String state, Map<String, Object> map) {
         IotBoardTemplate iotBoardTemplate = sdVmsTemplateService.selectSdVmsTemplateById(templateId);
+        SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+        planStrategy.setCurrentId(Long.valueOf(map.get("currentId").toString()));
+        planStrategy.setTemplateId(map.get("templateId").toString());
+        //0：预案 1：策略
+        planStrategy.setType(map.get("type").toString());
+        List<SdJoinPlanStrategy> vmsDataList = planStrategyMapper.selectSdJoinPlanStrategyList(planStrategy);
         String parameters = "[Playlist]<r><n>ITEM_NO=2<r><n>ITEM000=300,0,1,\\C000000\\fh2424\\c255255000000谨慎驾驶\\n注意安全<r><n>ITEM001=300,0,1,\\C000000\\fh2424\\c255255000000山东高速\\n欢迎您";
-        if (iotBoardTemplate != null) {
+        if (iotBoardTemplate != null || vmsDataList.size() > 0) {
             IotBoardTemplateContent iotBoardTemplateContent = new IotBoardTemplateContent();
             iotBoardTemplateContent.setTemplateId(templateId.toString());
             List<IotBoardTemplateContent> iotBoardTemplateContents = sdVmsTemplateContentService.selectSdVmsTemplateContentList(iotBoardTemplateContent);
-            IotBoardTemplateContent templateContent = iotBoardTemplateContents.get(0);
+            IotBoardTemplateContent templateContent = new IotBoardTemplateContent();
+            //如果有预案或策略留存的情报板则先使用
+            if(vmsDataList.size() > 0){
+                BeanUtils.copyProperties(vmsDataList.get(0),templateContent);
+                if(iotBoardTemplate == null){
+                    iotBoardTemplate = new IotBoardTemplate();
+                }
+                iotBoardTemplate.setStopTime(vmsDataList.get(0).getStopTime());
+            }else {
+                templateContent = iotBoardTemplateContents.get(0);
+            }
             String fontType = "s";
             if (templateContent.getFontType().equals("KaiTi")) {
                 fontType = "k";

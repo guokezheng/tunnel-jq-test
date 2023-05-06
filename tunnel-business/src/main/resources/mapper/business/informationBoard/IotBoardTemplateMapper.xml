@@ -149,7 +149,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             btc.font_size,
             btc.font_type,
             btc.font_spacing,
-            btc.coordinate
+            btc.coordinate,
+            bt.stop_time
         FROM
             iot_board_template bt
                 LEFT JOIN iot_board_template_content btc ON bt.id = btc.template_id

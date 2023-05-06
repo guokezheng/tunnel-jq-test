@@ -372,7 +372,18 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<Map<String, Object>> selectVmsDevices(@Param("ids") String ids,
-											@Param("state") String state);
+											   @Param("state") String state);
+
+	/**
+	 * 查询情报板留存信息
+	 * @param ids
+	 * @param state
+	 * @param type
+	 * @return
+	 */
+	List<Map<String, Object>> selectVmsDevicesOld(@Param("ids") String ids,
+											      @Param("state") String state,
+											      @Param("type") String type);
 
 	/**
 	 * 批量查询扬声器设备信息
@@ -404,4 +415,11 @@ public interface SdDevicesMapper
 	List<SdDevices> selectSdDevicesDataByParam(SdDevices sdDevices);
 
 	int getAppDevicesCountList(SdDevices sdDevices);
+
+	/**
+	 * 查询情报板分辨率
+	 * @param sdDevices
+	 * @return
+	 */
+	String selectDevicePixel(SdDevices sdDevices);
 }

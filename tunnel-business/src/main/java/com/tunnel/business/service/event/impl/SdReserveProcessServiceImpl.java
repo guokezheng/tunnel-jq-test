@@ -17,6 +17,7 @@ import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
@@ -51,6 +52,12 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
 
     @Autowired
     private SdReservePlanMapper sdReservePlanMapper;
+
+    @Autowired
+    private IotBoardTemplateMapper templateMapper;
+
+    @Autowired
+    private SdJoinPlanStrategyMapper planStrategyMapper;
 
     /**
      * 查询预案流程节点
@@ -120,6 +127,13 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         }
         List<SdReserveProcess> list = new ArrayList<>();
 
+        //查询历史预案流程节点
+        SdReserveProcess process1 = new SdReserveProcess();
+        process1.setReserveId(sdReserveProcesses.getReserveId());
+        List<SdReserveProcess> processesList = sdReserveProcessMapper.selectSdReserveProcessList(process1);
+        processesList.stream().forEach(item -> {
+            planStrategyMapper.deletePlanStrategyVms(item.getId(),"2");
+        });
         //删除预案流程节点
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
         SpringUtils.getBean(SdStrategyRlMapper.class).deleteSdStrategyRlByPlanId(Long.valueOf(planId));
@@ -146,7 +160,7 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                 rl.setEqTypeId(eqTypeId);
                 rl.setEquipments(StringUtils.join(equipments,","));
                 rl.setState(eqState);
-                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)){
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqTypeId)){
                     if(eqState.equals("1")){
                         rl.setState(item.get("brightness").toString());
                     }else {
@@ -165,11 +179,18 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                 reserveProcess.setReserveId(Long.valueOf(planId));
                 reserveProcess.setProcessStageName(processStageName);
                 reserveProcess.setCreateTime(DateUtils.getNowDate());
+                reserveProcess.setState(eqState);
                 list.add(reserveProcess);
             }
         }
         int result = -1;
         result = sdReserveProcessMapper.batchSdReserveProcess(list);
+        list.stream().forEach(item -> {
+            if(DevicesTypeEnum.VMS.getCode() == item.getDeviceTypeId() || DevicesTypeEnum.MEN_JIA_VMS.getCode() == item.getDeviceTypeId()){
+                //储存情报板信息
+                setJoinVms(item.getState(),item.getId());
+            }
+        });
         return result;
     }
 
@@ -458,5 +479,27 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         map.put("strategy",strategy);
         int result = sdEventFlowService.execPlanSaveEventFlow(eventId, map);
         return result;
+    }
+
+    public void setJoinVms(String tempId, Long id){
+        Map<String, Object> vmsData = templateMapper.getSdVmsTemplateContent(Long.valueOf(tempId));
+        if(vmsData == null){
+            return;
+        }
+        SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+        planStrategy.setScreenSize(vmsData.get("screen_size").toString());
+        planStrategy.setContent(vmsData.get("content").toString());
+        planStrategy.setCoordinate(vmsData.get("coordinate").toString());
+        planStrategy.setCurrentId(id);
+        planStrategy.setFontColor(vmsData.get("font_color").toString());
+        planStrategy.setFontSize(Long.valueOf(vmsData.get("font_size").toString()));
+        planStrategy.setFontSpacing(Long.valueOf(vmsData.get("font_spacing").toString()));
+        planStrategy.setFontType(vmsData.get("font_type").toString());
+        planStrategy.setTemplateId(tempId);
+        //0：预案 1：策略 2:情报板
+        planStrategy.setType("2");
+        planStrategy.setCreateTime(DateUtils.getNowDate());
+        planStrategy.setStopTime(Long.valueOf(vmsData.get("stop_time").toString()));
+        planStrategyMapper.insertSdJoinPlanStrategy(planStrategy);
     }
 }

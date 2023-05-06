@@ -8,10 +8,13 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.*;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.event.SdJoinPlanStrategyMapper;
 import com.tunnel.business.mapper.event.SdReserveProcessMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
 import com.tunnel.platform.service.SdDeviceControlService;
@@ -48,6 +51,12 @@ public class SdReserveProcessController extends BaseController
 
     @Autowired
     private ISdEventService sdEventService;
+
+    @Autowired
+    private SdJoinPlanStrategyMapper planStrategyMapper;
+
+    @Autowired
+    private IotBoardTemplateContentMapper contentMapper;
 
 
     /**
@@ -95,13 +104,24 @@ public class SdReserveProcessController extends BaseController
         processList.stream().forEach(item -> {
             item.getProcessesList().stream().forEach(temp -> {
                 temp.setEquipmentList(Arrays.asList(temp.getEquipments().split(",")));
-                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() == temp.getDeviceTypeId()){
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() == temp.getDeviceTypeId() || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode() == temp.getDeviceTypeId()){
                     temp.setBrightness(temp.getState());
                     if(Integer.valueOf(temp.getState()) > 0){
                         temp.setState("1");
                     }else {
                         temp.setState("2");
                     }
+                }
+                if(DevicesTypeEnum.VMS.getCode() == temp.getDeviceTypeId() || DevicesTypeEnum.MEN_JIA_VMS.getCode() == temp.getDeviceTypeId()){
+                    SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+                    planStrategy.setCurrentId(temp.getId());
+                    planStrategy.setTemplateId(temp.getState());
+                    planStrategy.setType("2");
+                    List<SdJoinPlanStrategy> list = planStrategyMapper.selectSdJoinPlanStrategyList(planStrategy);
+                    IotBoardTemplateContent content = new IotBoardTemplateContent();
+                    content.setTemplateId(temp.getState());
+                    List<IotBoardTemplateContent> contentList = contentMapper.selectSdVmsTemplateContentList(content);
+                    temp.setContent(list.size() == 0 ? contentList.size() == 0 ? "" : contentList.get(0).getContent() : list.get(0).getContent());
                 }
             });
         });

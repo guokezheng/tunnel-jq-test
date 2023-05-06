@@ -2,14 +2,19 @@ package com.tunnel.business.service.event.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
+import com.tunnel.business.domain.event.SdJoinPlanStrategy;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyRl;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
+import com.tunnel.business.mapper.event.SdJoinPlanStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.event.ISdStrategyRlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +37,12 @@ public class SdStrategyRlServiceImpl implements ISdStrategyRlService {
 
     @Autowired
     private SdEquipmentIconFileMapper sdEquipmentIconFileMapper;
+
+    @Autowired
+    private SdJoinPlanStrategyMapper planStrategyMapper;
+
+    @Autowired
+    private IotBoardTemplateContentMapper contentMapper;
 
     /**
      * 查询策略关联设备信息
@@ -76,6 +87,20 @@ public class SdStrategyRlServiceImpl implements ISdStrategyRlService {
             sdEquipmentState.setIsControl(1);
             List<SdEquipmentState> stateList = sdEquipmentStateMapper.selectDropSdEquipmentStateList(sdEquipmentState);
             rlList.get(i).setEqStateList(stateList);
+
+            // 获取情报板历史数据
+            if(DevicesTypeEnum.VMS.getCode() == Long.parseLong(rlList.get(i).getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode() == Long.parseLong(rlList.get(i).getEqTypeId())){
+                SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+                planStrategy.setCurrentId(rlList.get(i).getId());
+                planStrategy.setTemplateId(rlList.get(i).getState());
+                planStrategy.setType("1");
+                List<SdJoinPlanStrategy> list = planStrategyMapper.selectSdJoinPlanStrategyList(planStrategy);
+                IotBoardTemplateContent content = new IotBoardTemplateContent();
+                content.setTemplateId(rlList.get(i).getState());
+                List<IotBoardTemplateContent> contentList = contentMapper.selectSdVmsTemplateContentList(content);
+                rlList.get(i).setContent(list.size() == 0 ? contentList.size() == 0 ? "" : contentList.get(0).getContent() : list.get(0).getContent());
+            }
+
         }
         return rlList;
     }

@@ -47,6 +47,8 @@ public class SdStrategyRl extends BaseEntity
     //处置名称
     private String disposalName;
 
+
+    private String content;
     /**
      * 亮度值
      */
@@ -83,6 +85,15 @@ public class SdStrategyRl extends BaseEntity
 
     public void setPlanId(String planId) {
         this.planId = planId;
+    }
+
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getEndState() {

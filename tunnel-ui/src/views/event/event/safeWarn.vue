@@ -3584,7 +3584,7 @@ hr {
 }
 .detailsDialog {
   ::v-deep .el-dialog__body {
-    max-height: 86vh;
+    max-height: 88vh;
     overflow: auto;
   }
 }

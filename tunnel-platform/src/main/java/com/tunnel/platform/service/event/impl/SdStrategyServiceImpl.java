@@ -1286,6 +1286,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 //情报板
                 if(eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString())){
                     issuedParam.put("templateId",controlStatus);
+                    issuedParam.put("currentId",eventId);
+                    //0：预案 1：策略
+                    issuedParam.put("type","0");
                 }
                 issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
                 issueResult = sdDeviceControlService.controlDevices(issuedParam);
@@ -1377,7 +1380,13 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
             //查询情报板
             //String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
+            SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+            planStrategy.setCurrentId(joinReserveHandle.getEventId());
+            planStrategy.setTemplateId(joinReserveHandle.getState());
+            //0：预案 1：策略
+            planStrategy.setType("0");
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(SdJoinPlanStrategyMapper.class).getTemplateContent(planStrategy);
+            //Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
             eqStateData = sdVmsContent.get("content").toString().concat("    ------");
         }else if(eqType == DevicesTypeEnum.LS.getCode()){
             //截取广播文件名称
@@ -1388,7 +1397,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //查询普通设备状态
             List<Map<String, Object>> maps = new ArrayList<>();
             //查询普通设备状态
-            if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
+            if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || eqType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()){
                 maps = sdEventMapper.getManagementJiaQiangState(joinReserveHandle.getId(),Integer.valueOf(joinReserveHandle.getState()) > 0 ? "1" : "2");
                 eqStateData = Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + "，亮度值：" + joinReserveHandle.getState() + "%".concat("    ------") : maps.get(0).get("stateName").toString().concat("    ------");
             }else {

@@ -615,6 +615,14 @@
                         >
                           {{ item.num }}
                         </label>
+                        <!-- 加强照明 -->
+                        <label
+                          style="color: #f2a520"
+                          class="labelClass"
+                          v-if="item.eqType == 7"
+                        >
+                          {{ item.num }}
+                        </label>
                       </div>
                     </el-tooltip>
                     <!-- 桩号 -->
@@ -1539,6 +1547,7 @@
                   :min=min
                   class="sliderClass"
                   :disabled = !batchManageForm.brightness
+                  @change="$forceUpdate()"
                 ></el-slider>
               </el-form-item>
             </el-col>
@@ -3698,7 +3707,7 @@
           loop
           fluid
         ></video>
-      </div>
+  </div>
       <div class="clear-float"></div>
       <div slot="footer">
         <el-button type="primary" size="mini" @click="accidentDialogVisible = !accidentDialogVisible">关 闭</el-button>
@@ -4767,8 +4776,6 @@ export default {
     // this.carchange();
     //调取滚动条
     this.srollAuto();
-
-
   },
 
   watch: {
@@ -5605,6 +5612,10 @@ export default {
       this.batchManageDialog = false;
       this.batchManageType = 1;
       this.itemEqId = [];
+      if(this.itemEqType == 7 || this.itemEqType == 9){
+        this.batchManageForm.brightness = 0
+        this.min = 0
+      }
       this.itemEqType = "";
       this.addBatchManage = false;
       for (var item of this.selectedIconList) {
@@ -7885,7 +7896,12 @@ export default {
                           this.selectedIconList[j].num =
                             parseFloat(deviceData.DNLD).toFixed(2) + "lux";
                         }
-                      }
+                      } else if (deviceData.eqType == 7) {
+                        if (deviceData.DNLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                        }
+                      } 
                     }
                   }
                 } else {

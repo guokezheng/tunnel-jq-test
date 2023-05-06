@@ -516,6 +516,7 @@ public class SdEventServiceImpl implements ISdEventService {
     public AjaxResult batchHandleEvent(SdEvent sdEvent) {
         sdEvent.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
         sdEvent.setUpdateTime(DateUtils.getNowDate());
+        sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.batchUpdateSdEvent(sdEvent);
         if(count == 0){
             return AjaxResult.error();
@@ -961,6 +962,9 @@ public class SdEventServiceImpl implements ISdEventService {
                 joinReserveHandle.setEventId(sdEvent.getId());
                 joinReserveHandle.setStrategyRlId(temp.getStrategyId());
                 List<SdJoinReserveHandle> joinDevList = joinMapper.selectSdJoinReserveHandleList(joinReserveHandle);
+                if(joinDevList.size() == 0){
+                    continue;
+                }
                 sort++;
                 String flowId = id+"0";
                 SdEventHandle sdEventHandle1 = new SdEventHandle();
@@ -1097,6 +1101,7 @@ public class SdEventServiceImpl implements ISdEventService {
         List<SdReserveProcess> sdReserveProcesses = processMapper.selectSdReserveProcessList(sdReserveProcess);
         SdStrategyRlMapper rlMapper = SpringUtils.getBean(SdStrategyRlMapper.class);
         for(SdReserveProcess item : sdReserveProcesses){
+            //将设备分离储存
             SdStrategyRl sdStrategyRl = rlMapper.selectSdStrategyRlById(item.getStrategyId());
             SdJoinReserveHandle joinReserveHandle = new SdJoinReserveHandle();
             joinReserveHandle.setEquipments("".equals(sdStrategyRl.getEquipments()) || sdStrategyRl.getEquipments() == null ? getRlDevice(sdEvent,sdStrategyRl) : sdStrategyRl.getEquipments());
@@ -1106,6 +1111,38 @@ public class SdEventServiceImpl implements ISdEventService {
             joinReserveHandle.setEqTypeId(Long.valueOf(sdStrategyRl.getEqTypeId()));
             joinReserveHandle.setProcessName(item.getProcessName());
             joinReserveHandle.setCreateTime(DateUtils.getNowDate());
+            //将情报板内容分离储存
+            if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
+                //查询情报板信息
+                IotBoardTemplateMapper templateMapper = SpringUtils.getBean(IotBoardTemplateMapper.class);
+                SdJoinPlanStrategyMapper planStrategyMapper = SpringUtils.getBean(SdJoinPlanStrategyMapper.class);
+                Map<String, Object> vmsData = new HashMap<>();
+                //首先查询是否分离储存
+                SdJoinPlanStrategy planStrategy1 = new SdJoinPlanStrategy();
+                planStrategy1.setCurrentId(item.getId());
+                planStrategy1.setTemplateId(sdStrategyRl.getState());
+                planStrategy1.setType("2");
+                Map<String, Object> templateContent = planStrategyMapper.getTemplateContent(planStrategy1);
+                vmsData = templateContent == null ? templateMapper.getSdVmsTemplateContent(Long.valueOf(sdStrategyRl.getState())) : templateContent;
+                if(vmsData == null){
+                    continue;
+                }
+                SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+                planStrategy.setScreenSize(vmsData.get("screen_size").toString());
+                planStrategy.setContent(vmsData.get("content").toString());
+                planStrategy.setCoordinate(vmsData.get("coordinate").toString());
+                planStrategy.setCurrentId(sdEvent.getId());
+                planStrategy.setFontColor(vmsData.get("font_color").toString());
+                planStrategy.setFontSize(Long.valueOf(vmsData.get("font_size").toString()));
+                planStrategy.setFontSpacing(Long.valueOf(vmsData.get("font_spacing").toString()));
+                planStrategy.setFontType(vmsData.get("font_type").toString());
+                planStrategy.setTemplateId(sdStrategyRl.getState());
+                //0：预案 1：策略
+                planStrategy.setType("0");
+                planStrategy.setCreateTime(DateUtils.getNowDate());
+                planStrategy.setStopTime(Long.valueOf(vmsData.get("stop_time").toString()));
+                planStrategyMapper.insertSdJoinPlanStrategy(planStrategy);
+            }
             joinMapper.insertSdJoinReserveHandle(joinReserveHandle);
         }
     }
@@ -1379,7 +1416,13 @@ public class SdEventServiceImpl implements ISdEventService {
         if(eqType == DevicesTypeEnum.VMS.getCode() || eqType == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
             //查询情报板
             //String vmsData = sdEventMapper.getManagementVmsLs(sdReserveProcess);
-            Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
+            //Map<String, Object> sdVmsContent = SpringUtils.getBean(IotBoardTemplateMapper.class).getSdVmsTemplateContent(Long.valueOf(joinReserveHandle.getState()));
+            SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+            planStrategy.setCurrentId(joinReserveHandle.getEventId());
+            planStrategy.setTemplateId(joinReserveHandle.getState());
+            //0：预案 1：策略
+            planStrategy.setType("0");
+            Map<String, Object> sdVmsContent = SpringUtils.getBean(SdJoinPlanStrategyMapper.class).getTemplateContent(planStrategy);
             map.put("vmsData",sdVmsContent);
         }else if(eqType == DevicesTypeEnum.LS.getCode()){
             //截取广播文件名称
@@ -1390,9 +1433,9 @@ public class SdEventServiceImpl implements ISdEventService {
         }else {
             //查询普通设备状态
             List<Map<String, Object>> maps = new ArrayList<>();
-            if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
+            if(eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || eqType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()){
                 maps = sdEventMapper.getManagementJiaQiangState(rpId,Integer.valueOf(joinReserveHandle.getState()) > 0 ? "1" : "2");
-                map.put("deviceState",Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + "--亮度值：" + joinReserveHandle.getState() + "%" : maps.get(0).get("stateName"));
+                map.put("deviceState",Integer.valueOf(joinReserveHandle.getState()) > 0 ? maps.get(0).get("stateName") + ",亮度值：" + joinReserveHandle.getState() + "%" : maps.get(0).get("stateName"));
             }else {
                 maps = sdEventMapper.getManagementDeviceState(rpId);
                 map.put("deviceState",maps.get(0).get("stateName"));
@@ -1513,7 +1556,10 @@ public class SdEventServiceImpl implements ISdEventService {
             //查询设备信息以及状态
             List<Map<String, Object>> maps = new ArrayList<>();
             if(eqTypeId == DevicesTypeEnum.VMS.getCode() || eqTypeId == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
-                maps = sdDevicesMapper.selectVmsDevices(item.getEquipments(), item.getState());
+                maps = sdDevicesMapper.selectVmsDevicesOld(item.getEquipments(), item.getState(), "2");
+                if(maps.size() == 0){
+                    maps = sdDevicesMapper.selectVmsDevices(item.getEquipments(), item.getState());
+                }
             }else if(eqTypeId == DevicesTypeEnum.LS.getCode()){
                 maps = sdDevicesMapper.selectLsDevices(item.getEquipments());
                 maps.stream().forEach(temp -> {
@@ -1522,7 +1568,7 @@ public class SdEventServiceImpl implements ISdEventService {
                     temp.put("state",lsContent);
                 });
             }else {
-                if(eqTypeId == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()){
+                if(eqTypeId == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || eqTypeId == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()){
                     List<Map<String, Object>> linkList = sdDevicesMapper.selectDevices(item.getEquipments(), Integer.valueOf(item.getState()) > 0 ? "1" : "2");
                     linkList.stream().forEach(tem -> {
                         tem.put("stateName",Integer.valueOf(item.getState()) > 0 ? tem.get("stateName") + "," + "亮度值：" + item.getState() + "%" : tem.get("stateName"));

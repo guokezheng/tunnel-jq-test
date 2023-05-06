@@ -78,4 +78,11 @@ public interface IIotBoardTemplateService {
      * @return
      */
     AjaxResult getVmsDataList(SdDevices sdDevices);
+
+    /**
+     * 应急预案情报板弹框
+     * @param sdDevices
+     * @return
+     */
+    AjaxResult getVmsTemplateList(SdDevices sdDevices);
 }

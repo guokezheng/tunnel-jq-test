@@ -554,6 +554,7 @@ export default {
       // },100);
     },
     alignment(alignmentNum) {
+      console.log(alignmentNum,"alignmentNum")
       this.alignmentNum = alignmentNum;
       var divContent1 = document.getElementsByClassName("blackBoard1");
       var textBoard1 = document.getElementsByClassName("textBoard1");

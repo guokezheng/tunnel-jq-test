@@ -191,14 +191,14 @@ export const singleCat = {
             event[i].pictureUrl = "1"
             this.carActionExplodeList.push( event[i])
             break
-          case 20://火灾
-            //通过桩号  计算 事故在页面位置
-            event[i] = this.carBackCount(event[i],false)
-            //设置图片地址
-            this.pictureUrl = "2"
-            event[i].pictureUrl = "2"
-            this.carActionExplodeList.push( event[i])
-            break
+          // case 20://火灾
+          //   //通过桩号  计算 事故在页面位置
+          //   event[i] = this.carBackCount(event[i],false)
+          //   //设置图片地址
+          //   this.pictureUrl = "2"
+          //   event[i].pictureUrl = "2"
+          //   this.carActionExplodeList.push( event[i])
+          //   break
           default:
         }
 

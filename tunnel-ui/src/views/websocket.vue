@@ -25,9 +25,9 @@ export default {
   watch: {
     websocket({ password, path, port, interval }) {
       // debugger
-      console.log(path)
-      console.log(port)
-      console.log(location.hostname )
+      // console.log(path)
+      // console.log(port)
+      // console.log(location.hostname )
       // 建立 websocket 连接
       this.socket.initialize({
         // url: 'ws://' + location.hostname + ':' + port + path,

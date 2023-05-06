@@ -146,7 +146,9 @@
             :span="4"
             v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36"
           >
-            <el-cascader
+
+<!--            <el-input v-model="input" placeholder="请输入内容"></el-input>-->
+<!--            <el-cascader
               :props="checkStrictly"
               v-model="items.state"
               :options="items.templatesList"
@@ -154,7 +156,10 @@
               clearable
               collapse-tags
               @change="handleChange"
-            ></el-cascader>
+            ></el-cascader>-->
+            <el-input v-model="items.content" placeholder="请选择模板" disabled>
+              <el-button slot="append" icon="el-icon-search" @click="templateClick(index, index,items)"></el-button>
+            </el-input>
           </el-col>
           <el-col
             :span="4"
@@ -197,10 +202,12 @@
         >取 消</el-button
       >
     </div>
+    <com-board class="comClass" ref="boardRef" @getVmsData="getMsgFormSon"></com-board>
   </div>
 </template>
 
 <script>
+import comBoard from "@/views/event/reservePlan/board";
 import {
   listEqTypeStateIsControl,
   getVMSTemplatesByDevIdAndCategory,
@@ -221,6 +228,10 @@ import {
   handleStrategy, getCategoryTree,
 } from "@/api/event/strategy";
 export default {
+  name: "Plan",
+  components: {
+    comBoard,
+  },
   data() {
     return {
       checkStrictly: {
@@ -282,6 +293,18 @@ export default {
     };
   },
   methods: {
+    getMsgFormSon(data){
+      this.$set(this.strategyForm.manualControl[data.index],'content',data.content);
+      this.$set(this.strategyForm.manualControl[data.index],'state',data.id);
+    },
+    // 情报板选择模板点击事件
+    templateClick(number, index,item){
+      this.$refs.boardRef.init(
+        number,
+        index,
+        item.equipmentTypeId,
+      );
+    },
 
     selectStateVal(index){
 

@@ -178,7 +178,7 @@
             <el-col :span="8"
               v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36"
             >
-              <el-cascader
+<!--              <el-cascader
                 :props="checkStrictly"
                 v-model="items.state"
                 :options="items.templatesList"
@@ -187,7 +187,10 @@
                 collapse-tags
                 style="width:100%"
                 @change="handleChange"
-              ></el-cascader>
+              ></el-cascader>-->
+              <el-input v-model="items.content" placeholder="请选择模板" disabled>
+                <el-button slot="append" icon="el-icon-search" @click="templateClick(index, index,items)"></el-button>
+              </el-input>
             </el-col>
             <el-col
               :span="8"
@@ -244,6 +247,7 @@
         :expression="expression"
       ></crontab>
     </el-dialog>
+    <com-board class="comClass" ref="boardRef" @getVmsData="getMsgFormSon"></com-board>
   </div>
 </template>
 
@@ -259,7 +263,7 @@ import {
   changeJobStatus,
 } from "@/api/monitor/job";
 import Crontab from "@/components/Crontab";
-
+import comBoard from "@/views/event/reservePlan/board";
 import {
   listEqTypeStateIsControl,
   getVMSTemplatesByDevIdAndCategory,
@@ -286,6 +290,7 @@ export default {
   },
   components: {
     Crontab,
+    comBoard,
   },
   dicts: ["sys_job_group", "sys_job_status"],
   data() {
@@ -382,6 +387,18 @@ export default {
     };
   },
   methods: {
+    getMsgFormSon(data){
+      this.$set(this.strategyForm.autoControl[data.index],'content',data.content);
+      this.$set(this.strategyForm.autoControl[data.index],'state',data.id);
+    },
+    // 情报板选择模板点击事件
+    templateClick(number, index,item){
+      this.$refs.boardRef.init(
+        number,
+        index,
+        item.equipmentTypeId,
+      );
+    },
     selectStateVal(index){
       if(this.strategyForm.autoControl[index].state == 1){
         this.$set(this.strategyForm.autoControl[index], "stateNum", 100);

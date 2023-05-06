@@ -250,7 +250,7 @@ import {
   uploadBoardEditInfo,
 } from "@/api/board/template";
 import { devicessize } from "@/api/information/api.js";
-import { checkIotBoardContent } from "@/api/board/vocabulary";
+// import { checkIotBoardContent } from "@/api/board/vocabulary";
 export default {
   data() {
     return {
@@ -471,21 +471,21 @@ export default {
   mounted() {
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
-      console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
+      // console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
   created() {
     this.getDicts("iot_device_font_type").then((res) => {
       this.fontTypeOptions = res.data;
-      console.log(this.fontTypeOptions, "字体类型");
+      // console.log(this.fontTypeOptions, "字体类型");
     });
     this.getDicts("iot_devices_font_color").then((res) => {
       this.colorOptions = res.data;
-      console.log(this.colorOptions, "字体颜色");
+      // console.log(this.colorOptions, "字体颜色");
     });
     this.getDicts("iot_device_font_inScreen_mode").then((res) => {
       this.inScreenModeOptions = res.data;
-      console.log(this.inScreenModeOptions, "入屏方式");
+      // console.log(this.inScreenModeOptions, "入屏方式");
     });
     this.getdevicessize();
   },
@@ -640,8 +640,6 @@ export default {
           // let templateId = "";
           let method = "put";
           if (this.isAdd) {
-            console.log(this.dataForm, "this.dataForm新增组件");
-            console.log(this.devicePixelBoolean, "this.devicePixelBoolean");
             if (this.infoType == 1) {
               // 不走接口 存到待下发信息里
               this.dataForm.STAY = Number(this.dataForm.STAY) * 100;
@@ -681,7 +679,6 @@ export default {
                 };
                 addTemplateContent(params2)
                   .then((res) => {
-                    console.log("-----------------------");
                     if (res.code == 200) {
                       this.$emit("getActiveNames");
                       this.$message.success("添加成功");
@@ -694,23 +691,21 @@ export default {
               });
             }
           } else {
-            console.log(this.dataForm);
-            console.log(params);
-            // 修改
-            editTemplate(this.dataForm).then((data) => {});
+            // // 修改
+            // editTemplate(this.dataForm).then((data) => {});
 
-            this.templateContent.forEach((e) => {
-              e.img = e.imageName;
-            });
+            // this.templateContent.forEach((e) => {
+            //   e.img = e.imageName;
+            // });
 
-            var params = {
-              templateContent: this.templateContent,
-              templateId: this.dataForm.id,
-              templateDelContent: this.templateDelContent,
-            };
-            editTemplateContent(params).then((response) => {
-              console.log(response, "返回结果");
-            });
+            // var params = {
+            //   templateContent: this.templateContent,
+            //   templateId: this.dataForm.id,
+            //   templateDelContent: this.templateDelContent,
+            // };
+            // editTemplateContent(params).then((response) => {
+            //   // console.log(response, "返回结果");
+            // });
           }
           this.loading = false;
           this.dialogVisible = false;
@@ -750,7 +745,7 @@ export default {
     },
     // 文字对齐方式
     alignment(alignmentNum) {
-      console.log(alignmentNum,"alignmentNum")
+      // console.log(alignmentNum,"alignmentNum")
       this.alignmentNum = alignmentNum;
       var divContent2 = document.getElementsByClassName("blackBoard2");
       var textBoard2 = document.getElementsByClassName("textBoard2");
@@ -820,45 +815,31 @@ export default {
       var textLeft = this.addZero(textBoard2[0].offsetLeft);
       var textTop = this.addZero(textBoard2[0].offsetTop);
       this.dataForm.COORDINATE = textLeft + textTop;
-      console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
+      // console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
     },
     addZero(num) {
       return ("000" + num).slice(-3);
     },
     /*增加新的内容*/
-    addTemplateContent() {
-      if (this.templateContent.length >= 7) {
-        this.$modal.msgError("最多只能添加7条信息！");
-        return;
-      }
-      this.templateContent.push({
-        content: "请输入内容",
-        fontColor: "yellow",
-        fontSize: "24",
-        fontType: "KaiTi",
-        fontSpacing: 0,
-        coordinate: "000000",
-        img: "",
-      });
-    },
+
     /*删除内容*/
-    delTemplateContent(data) {
-      for (let i = 0; i < this.templateContent.length; i++) {
-        if (
-          this.templateContent.indexOf(data) ==
-          this.templateContent.indexOf(this.templateContent[i])
-        ) {
-          if (this.templateContent.length == 1) {
-            this.$modal.msgError("至少保留一条数据");
-          } else {
-            if (data.id) {
-              this.templateDelContent.push(data);
-            }
-            this.templateContent.splice(this.templateContent.indexOf(data), 1);
-          }
-        }
-      }
-    },
+    // delTemplateContent(data) {
+    //   for (let i = 0; i < this.templateContent.length; i++) {
+    //     if (
+    //       this.templateContent.indexOf(data) ==
+    //       this.templateContent.indexOf(this.templateContent[i])
+    //     ) {
+    //       if (this.templateContent.length == 1) {
+    //         this.$modal.msgError("至少保留一条数据");
+    //       } else {
+    //         if (data.id) {
+    //           this.templateDelContent.push(data);
+    //         }
+    //         this.templateContent.splice(this.templateContent.indexOf(data), 1);
+    //       }
+    //     }
+    //   }
+    // },
     cliTest(data) {
       this.ispreviewContent = this.templateContent.indexOf(data);
     },
@@ -876,38 +857,10 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
 
-    /**
-     * 获取图片信息
-     */
-    getImageInfo() {
-      let params = {
-        vmsSize: this.dataForm.screenSize,
-      };
-      console.log(params, "params");
-      getGalleryList(params).then((data) => {
-        console.log(data, "data");
-
-        if (!data) {
-          return;
-        }
-        let list = data.rows.sort((dataA, dataB) => {
-          dataA.id - dataB.id;
-        });
-        this.imgUrl.push(...list);
-        console.log(this.imgUrl, "this.imgUrl");
-      });
-    },
     handleClose(done) {
-      console.log(done, "done");
       var textBoard2 = document.getElementsByClassName("textBoard2");
       textBoard2[0].style.position = "absolute";
       this.dialogVisible = false;
-      // this.$confirm("确认关闭？")
-      //   .then((_) => {
-
-      //     done();
-      //   })
-      //   .catch((_) => {});
     },
   },
 };

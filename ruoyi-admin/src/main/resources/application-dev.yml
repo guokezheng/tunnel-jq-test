@@ -15,33 +15,33 @@ spring:
       producer:
         # 重试次数，设置大于0的值，则客户端会将发送失败的记录重新发送
         #        retries: 3
-        #        batch-size: 16384 #批量处理大小，16k
-        #        buffer-memory: 33554432 #缓冲存储大，32m
+        #        batch-size: 16384 #批量处理大小，16K
+        #        buffer-memory: 33554432 #缓冲存储大，32M
         #        acks: 1
         # 指定消息key和消息体的编解码方式
-        key-serializer: org.apache.kafka.common.serialization.stringserializer
-        value-serializer: org.apache.kafka.common.serialization.stringserializer
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
         security:
-          protocol: sasl_plaintext
+          protocol: SASL_PLAINTEXT
           properties:
             sasl:
-              mechanism: scram-sha-256
+              mechanism: SCRAM-SHA-256
               jaas:
-                config: org.apache.kafka.common.security.scram.scramloginmodule required username='admin' password='admin@123';
+                config: org.apache.kafka.common.security.scram.ScramLoginModule required username='admin' password='admin@123';
       consumer:
         group-id: test
         enable-auto-commit: false # 不自动签收
         auto-offset-reset: earliest  #kafka出现错误重启后，会找到未消费的offset继续消费
-        key-deserializer: org.apache.kafka.common.serialization.stringdeserializer
-        value-deserializer: org.apache.kafka.common.serialization.stringdeserializer
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         max-poll-records: 5
         security:
-          protocol: sasl_plaintext
+          protocol: SASL_PLAINTEXT
           properties:
             sasl:
-              mechanism: scram-sha-256
+              mechanism: SCRAM-SHA-256
               jaas:
-                config: org.apache.kafka.common.security.scram.scramloginmodule required username='admin' password='admin@123';
+                config: org.apache.kafka.common.security.scram.ScramLoginModule required username='admin' password='admin@123';
 
 
 

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-05-06 16:51:00
+ * @LastEditTime: 2023-05-08 09:07:31
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1197,6 +1197,10 @@ export default {
   methods: {
     //查看情报板信息
     openTemDialog(item){
+      console.log(item)
+      if(item.state == ''){
+        return this.$modal.msgWarning("请选择模板");
+      }
       let params = {id: item.id,state:item.state};
       console.log(item);
       selectVmsContent(params).then((res)=>{

@@ -4336,7 +4336,6 @@ export default {
           }
         }, */
 
-      timer: null,
 
       //车道列表
       laneUrlList: laneImage,
@@ -4624,7 +4623,6 @@ export default {
       cameraPlayer3: false,
       cameraPlayer4: false,
       tunnelItem:null,
-      timer: null,
       catNumber:1,//小车计数
       catTime:null,//小车计数定时器
       accidentDialogVisible:false,//视频视频弹窗
@@ -5579,7 +5577,7 @@ export default {
       var that = this;
       this.title = "批量操作";
       that.eqTypeStateList2 = [];
-      
+
       let eqType = "";
       for (var item of this.selectedIconList) {
         if (item.click) {

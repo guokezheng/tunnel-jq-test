@@ -748,6 +748,10 @@ export default {
       let data = false;
       this.$emit("dialogVisibleClose",data);
     },
+    // 关闭情报板窗口
+    closeBoard(){
+      this.$refs.boardRef.handleClosee();
+    }
   },
 };
 </script>

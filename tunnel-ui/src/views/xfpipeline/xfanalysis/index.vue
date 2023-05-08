@@ -537,7 +537,7 @@ export default {
                         }
                         params.yData1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
                         params.yData2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-                        debugger
+                        // debugger
                         if(response.data[0] && response.data[0].month.length>0){
                           params.xData1 = []
                           params.yData1 = []

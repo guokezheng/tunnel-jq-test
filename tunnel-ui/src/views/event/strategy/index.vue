@@ -869,12 +869,15 @@ export default {
         case '0':
           console.log(this.strategyForm.strategyType);
           this.$refs.manualControl.resetForm();
+          this.$refs.manualControl.closeBoard();
           break;
         case '1':
           this.$refs.timingControl.resetForm();
+          this.$refs.timingControl.closeBoard();
           break;
         case '3':
           this.$refs.timeControl.resetForm();
+          this.$refs.timeControl.closeBoard();
           break;
       }
       console.log(this.strategyForm.strategyType,"0000000000");

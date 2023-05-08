@@ -330,7 +330,12 @@ export default {
       this.getDirection();
     },
     // 组件调用方法;回显数据;
-    getStrategyData(row) {
+    async getStrategyData(row) {
+
+      console.log(row, "当前策略数据");
+      await  getCategoryTree().then((data) => {
+        this.equipmentTypeData = data.data;
+      });
 
       getStrategy(this.id).then((response) => {
         const loading = this.$loading({

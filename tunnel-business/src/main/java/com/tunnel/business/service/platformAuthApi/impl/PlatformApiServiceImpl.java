@@ -2,6 +2,7 @@ package com.tunnel.business.service.platformAuthApi.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.TopicEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.platformApi.SdPlatformApi;
 import com.tunnel.business.mapper.platformApi.SdPlatformApiMapper;
@@ -34,14 +35,14 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     /**
      * 高速云设备管理接收地址
      */
-    @Value("${tunnelDeviceBaseData}")
-    private String tunnelDeviceBaseData;
+    /*@Value("${tunnelDeviceBaseData}")
+    private String tunnelDeviceBaseData;*/
 
     /**
      * 高速云隧道管理接收地址
      */
-    @Value("${tunnelBaseData}")
-    private String tunnelBaseData;
+    /*@Value("${tunnelBaseData}")
+    private String tunnelBaseData;*/
 
     @Autowired
     private ISdDevicesService iSdDevicesService;
@@ -239,9 +240,9 @@ public class PlatformApiServiceImpl implements PlatformApiService {
         try {
             SendResult<String, String> sendResult = null;
             if("device".equals(dataType)){
-                sendResult = kafkaTemplate.send(tunnelDeviceBaseData, objects).get();
+                sendResult = kafkaTemplate.send(TopicEnum.TUNNEL_DEVICE_BASE_TOPIC.getCode(), objects).get();
             }else {
-                sendResult = kafkaTemplate.send(tunnelBaseData, objects).get();
+                sendResult = kafkaTemplate.send(TopicEnum.TUNNEL_BASE_TOPIC.getCode(), objects).get();
             }
             return sendResult;
         } catch (Exception e) {

@@ -333,11 +333,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     content.setTemplateId(templateId);
                     List<IotBoardTemplateContent> contentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
                     String resContent = sdJoinPlanStrategyList.size() == 0 ? contentList.size() == 0 ? "" : contentList.get(0).getContent() : sdJoinPlanStrategyList.get(0).getContent();
-
-                    if(contentList.size() > 0){
-                        sList.add(typeName + "发布信息：" + resContent + "；");
-                    }
-                    continue;
+                    sList.add(typeName + "发布信息：" + resContent + "；");
                 }
 
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
@@ -1295,7 +1291,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (String devId : split){
                 Map<String, Object> map = new HashMap<>();
                 map.put("devId",devId);
-                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)){
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqTypeId)){
                     map.put("state",Integer.valueOf(controlStatus) > 0 ? "1" : "2");
                     map.put("stateNum",controlStatus);
                 }else {

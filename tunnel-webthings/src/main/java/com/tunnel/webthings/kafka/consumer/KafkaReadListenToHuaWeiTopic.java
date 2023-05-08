@@ -532,7 +532,7 @@ public class KafkaReadListenToHuaWeiTopic {
                 SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
                 JSONObject jsonObject1 = devStatus(sdDevices1);
                 //将实时设备状态数据推送至高速云
-                kafkaTemplate.send("wq_devStatusTopic",jsonObject1.toString());
+                kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObject1.toString());
             }
         }
     }
@@ -658,7 +658,7 @@ public class KafkaReadListenToHuaWeiTopic {
             }
             JSONObject jsonObjectDev = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(itemId).getDeviceTypeId() : sdDevices1.getEqType(), objectDev);
             //将设备运行状态上传至高速云
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectDev.toString());
+            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectDev.toString());
         }
     }
 
@@ -713,10 +713,10 @@ public class KafkaReadListenToHuaWeiTopic {
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
             JSONObject jsonObjectCo = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(coId).getDeviceTypeId() : sdDevices1.getEqType(), objectCo);
             //将co数据上传至高速云
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectCo.toString());
+            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectCo.toString());
             //将vi数据上传至高速云
             JSONObject jsonObjectVi = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(viId).getDeviceTypeId() : sdDevices1.getEqType(), objectVi);
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectVi.toString());
+            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectVi.toString());
         }
     }
 
@@ -772,8 +772,8 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObjectFs = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(fsId).getDeviceTypeId() : sdDevices1.getEqType(), objectFs);
             JSONObject jsonObjectFx = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(fxId).getDeviceTypeId() : sdDevices1.getEqType(), objectFx);
             //将风速风向数据上传至高速云
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectFs.toString());
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectFx.toString());
+            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectFs.toString());
+            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(),jsonObjectFx.toString());
         }
     }
 

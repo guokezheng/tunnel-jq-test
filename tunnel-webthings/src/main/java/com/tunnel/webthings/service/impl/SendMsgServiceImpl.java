@@ -10,6 +10,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TopicEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
@@ -67,8 +68,8 @@ public class SendMsgServiceImpl implements SendMsgService {
     @Autowired
     private SdEventMapper sdEventMapper;
 
-    @Value("${devStatusTopic}")
-    private String devStatusTopic;
+    /*@Value("${devStatusTopic}")
+    private String devStatusTopic;*/
 
     @Autowired
     private ISdDevicesService sdDevicesService;
@@ -226,7 +227,7 @@ public class SendMsgServiceImpl implements SendMsgService {
                 devices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             }
             JSONObject jsonObject = devStatus(devices);
-            kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
         } else if (role.equals("2")) {
             List<SdDevices> devicesList = devicesMapper.selectFireComponentsList(sdDevices);
             for (int i = 0;i < devicesList.size();i++) {
@@ -237,7 +238,7 @@ public class SendMsgServiceImpl implements SendMsgService {
                     dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
                 }
                 JSONObject object = devStatus(dev);
-                kafkaTemplate.send(devStatusTopic, object.toString());
+                kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), object.toString());
             }
         }
         return 0;

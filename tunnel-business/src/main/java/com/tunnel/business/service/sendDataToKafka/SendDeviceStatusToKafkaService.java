@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TopicEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -33,8 +34,8 @@ public class SendDeviceStatusToKafkaService {
     @Qualifier("kafkaTwoTemplate")
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value("${devStatusTopic}")
-    private String devStatusTopic;
+    /*@Value("${devStatusTopic}")
+    private String devStatusTopic;*/
 
     @Autowired
     private SdDevicesMapper sdDevicesMapper;
@@ -54,7 +55,7 @@ public class SendDeviceStatusToKafkaService {
             //参数名定义
             JSONObject jsonObjectParam = definitionParam(data.getDeviceId(), data.getData(), data.getItemId());
             JSONObject jsonObject = devReaStatus(jsonObjectParam);
-            kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
             log.info("推送物联中台kafka内容：" + jsonObject);
         }
     }
@@ -66,7 +67,7 @@ public class SendDeviceStatusToKafkaService {
             jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
             jsonObject.put("deviceDataRecord", data);*/
             JSONObject jsonObject = devRecord(data);
-            kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+            kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
             log.info("推送物联中台kafka内容：" + jsonObject);
         }
     }
@@ -81,7 +82,7 @@ public class SendDeviceStatusToKafkaService {
                     devices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
                 }
                 JSONObject jsonObject = devStatus(devices);
-                kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
             } else if (role.equals("2")) {
                 List<SdDevices> devicesList = sdDevicesMapper.selectFireComponentsList(sdDevices);
                 for (int i = 0;i < devicesList.size();i++) {
@@ -92,7 +93,7 @@ public class SendDeviceStatusToKafkaService {
                         dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
                     }
                     JSONObject jsonObject = devStatus(dev);
-                    kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                    kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
                 }
             }
         }

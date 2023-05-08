@@ -1,0 +1,33 @@
+package com.tunnel.business.strategy.domain;
+
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.strategy.service.DeviceDataStrategyService;
+
+import java.util.Map;
+
+/**
+ * describe: 诱导灯类
+ *
+ * @author zs
+ * @date 2023/4/23
+ */
+public class InductionLamp implements DeviceDataStrategyService {
+    /**
+     * 获取实时数据
+     *
+     * @param devices
+     * @param data
+     */
+    @Override
+    public void getDeviceData(Map<String, String> devices, SdDeviceData data) {
+        if (data != null && data.getItemId() == (long) DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()) {
+            devices.put("state", data.getData());
+        } else if (data != null && data.getItemId() == (long) DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode()) {
+            devices.put("brightness", data.getData());
+        } else if (data != null && data.getItemId() == (long) DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()) {
+            devices.put("frequency", data.getData());
+        }
+
+    }
+}

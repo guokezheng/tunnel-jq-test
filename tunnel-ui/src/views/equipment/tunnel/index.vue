@@ -1432,7 +1432,6 @@ export default {
     },
 
     allNumber(value) {
-      debugger;
       value = value.replace(/[^\d]/g, ""); //只能输入数字
       this.form.levelCode = value; //注意这里是string，你要数字类型记得自己转一下
 

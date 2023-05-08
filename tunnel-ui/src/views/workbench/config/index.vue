@@ -7912,8 +7912,8 @@ export default {
                           this.selectedIconList[j].num =
                             parseFloat(deviceData.DNLD).toFixed(2) + "lux";
                         }
-                      }
                     }
+                  }
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
@@ -9398,7 +9398,7 @@ export default {
       }
     },
     pCatClick(e){
-      debugger
+      // debugger
     }
   },
   //实例销毁前清除定时器

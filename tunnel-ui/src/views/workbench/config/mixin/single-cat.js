@@ -119,7 +119,7 @@ export const singleCat = {
      },
     //车祸距离计算
     async distanceCalculate(tunnelId,stakeNum){
-      debugger
+      // debugger
       //计算事故桩号至起始桩号的距离   事故到起始位置的距离
       if(!!stakeNum){
         stakeNum = this.removeSpecialChars(stakeNum).join("")
@@ -159,13 +159,13 @@ export const singleCat = {
       this.accidentist.push(itme)
       //画事故效果视频
       this.accidentDialogVisible = true
-      debugger
+      // debugger
     }
   },
   watch: {
     //车祸图片显示
     sdSvgEventList(event){
-      debugger
+      // debugger
       //判断隧道是否和传来的相同  相同显示不同则return
       let tunnelItems = null;
       if(!!this.tunnelItem){

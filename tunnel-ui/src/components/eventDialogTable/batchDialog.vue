@@ -239,6 +239,9 @@ export default {
     },
     cancel() {
       this.batchDialog = false;
+      this.eventState = 4;
+      this.form.laneNo = [];
+      this.form.eventDescription = '';
       this.$emit("clearClick", 1);
     },
     // 预估等级 预估类型
@@ -256,6 +259,7 @@ export default {
         return false;
       }
     },
+    
     // 复核弹窗内单选改变事件
     eventStateChange() {
       this.form.reviewRemark = [];

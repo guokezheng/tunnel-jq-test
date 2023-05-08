@@ -891,7 +891,6 @@
                     'color':item.vmsData['font_color'],
                     'font-size':item.vmsData['font_size'] + 'px',
                     'font-family':item.vmsData['font_type'],
-                    'letter-spacing':item.vmsData['font_spacing'] + 'px',
                     'background-color':'#000',
                     'position':'relative',
                     }">

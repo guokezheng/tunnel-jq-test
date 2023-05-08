@@ -9,7 +9,6 @@
 <template>
   <div style="width: 100%; height: 100%">
     <el-dialog
-      v-dialogDrag
       class="workbench-dialog boardDialog"
       title="情报板模板选择"
       width="835px"

@@ -917,6 +917,10 @@ export default {
     crontabFill(value) {
       this.strategyForm.schedulerTime = value;
     },
+    // 关闭情报板窗口
+    closeBoard(){
+      this.$refs.boardRef.handleClosee();
+    }
   },
 };
 </script>

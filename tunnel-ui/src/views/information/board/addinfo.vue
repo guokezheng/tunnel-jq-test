@@ -250,7 +250,7 @@ import {
   uploadBoardEditInfo,
 } from "@/api/board/template";
 import { devicessize } from "@/api/information/api.js";
-// import { checkIotBoardContent } from "@/api/board/vocabulary";
+import { checkIotBoardContent } from "@/api/board/vocabulary";
 export default {
   data() {
     return {

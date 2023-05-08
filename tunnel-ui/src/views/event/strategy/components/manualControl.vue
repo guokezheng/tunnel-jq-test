@@ -325,7 +325,7 @@ export default {
         console.log("123");
       }
       console.log("init");
-      this.getEquipmentType();
+    //  this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
@@ -411,6 +411,8 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+
+
       this.strategyForm.manualControl[index].stateNum = null;
       this.strategyForm.manualControl[index].state = "";
       this.strategyForm.manualControl[index].value = null;
@@ -746,6 +748,10 @@ export default {
       let data = false;
       this.$emit("dialogVisibleClose",data);
     },
+    // 关闭情报板窗口
+    closeBoard(){
+      this.$refs.boardRef.handleClosee();
+    }
   },
 };
 </script>

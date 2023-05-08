@@ -1364,7 +1364,7 @@ export default {
     },
     // 辅助线
     auxiliaryLine() {
-      debugger
+      // debugger
       let that = this;
       if (!$("#svg g")) return;
       var MIN_DISTANCE = 1; //捕获的最小距离
@@ -1375,7 +1375,7 @@ export default {
 
       $("#svg g").draggable({
         start: function (event, ui) {
-          debugger
+          // debugger
           guides = $.map($("#svg g").not(this), computeGuidesForElement);
           //鼠标距离选中元素最左边和最上边的距离
           for (const k in event.target) {
@@ -1413,7 +1413,7 @@ export default {
 
         drag: function (event, ui) {
           console.log(event)
-          debugger
+          // debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1459,7 +1459,7 @@ export default {
                 var d = Math.abs(elemGuide[prop] - guide[prop]);
 
                 if (d < chosenGuides[prop].dist) {
-                  debugger
+                  // debugger
                   chosenGuides[prop].dist = d;
 
                   chosenGuides[prop].offset = elemGuide[prop] - pos[prop];
@@ -1506,7 +1506,7 @@ export default {
             //   .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           } else {
-            debugger
+            // debugger
             $("#guide-h").hide();
             $("#guide-h1").hide();
             // ui.position.top = pos.top - 104;
@@ -1530,7 +1530,7 @@ export default {
 
         stop: function (event, ui) {
           console.log(event)
-          debugger
+          // debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1576,7 +1576,7 @@ export default {
                 var d = Math.abs(elemGuide[prop] - guide[prop]);
 
                 if (d < chosenGuides[prop].dist) {
-                  debugger
+                  // debugger
                   chosenGuides[prop].dist = d;
 
                   chosenGuides[prop].offset = elemGuide[prop] - pos[prop];
@@ -1634,7 +1634,7 @@ export default {
             //   .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           } else {
-            debugger
+            // debugger
             $("#guide-h").hide();
             $("#guide-h1").hide();
             // ui.position.top = pos.top - 104;

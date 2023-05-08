@@ -79,7 +79,7 @@
         <el-table :data="dataList" min-height="150" empty-text="暂无操作日志">
           <el-table-column label="车道" align="center" prop="laneNo" width="76">
             <template slot-scope="scope">
-              <span>第{{ scope.row.laneNo }}车道</span>
+              <span>{{ getLaneNo(scope.row.laneNo) }}车道</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -192,6 +192,17 @@ export default {
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
+    },
+    getLaneNo(num){
+      switch (num){
+        case 1:
+          return "一";
+        case 2:
+          return "二";
+        case 3:
+          return "三";
+      }
+
     },
     getMess() {
       const params = {

@@ -14,7 +14,7 @@ export default {
       responseType: 'blob',
       headers: { 'Authorization': 'Bearer ' + getToken() }
     }).then(async (res) => {
-      debugger
+      // debugger
       const isLogin = await this.blobValidate(res.data);
       if (isLogin) {
         const blob = new Blob([res.data])
@@ -32,7 +32,7 @@ export default {
       responseType: 'blob',
       headers: { 'Authorization': 'Bearer ' + getToken() }
     }).then(async (res) => {
-      debugger
+      // debugger
       const isLogin = await this.blobValidate(res.data);
       if (isLogin) {
         const blob = new Blob([res.data])

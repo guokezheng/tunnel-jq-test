@@ -325,7 +325,7 @@ export default {
         console.log("123");
       }
       console.log("init");
-      this.getEquipmentType();
+    //  this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
@@ -411,6 +411,8 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+
+
       this.strategyForm.manualControl[index].stateNum = null;
       this.strategyForm.manualControl[index].state = "";
       this.strategyForm.manualControl[index].value = null;

@@ -1291,7 +1291,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (String devId : split){
                 Map<String, Object> map = new HashMap<>();
                 map.put("devId",devId);
-                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId)){
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqTypeId)){
                     map.put("state",Integer.valueOf(controlStatus) > 0 ? "1" : "2");
                     map.put("stateNum",controlStatus);
                 }else {

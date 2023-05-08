@@ -230,9 +230,9 @@
                 :ref="'incHandContent'+index"
               >
                 <div :class="item.reserveId?'classification classificationBox':'classification'">
-                  <div class="topDashed" v-show="index != 0" 
+                  <div class="topDashed" v-show="index != 0"
                     :style="{'top':circlePosition}">
-                    <p 
+                    <p
                       :style="{'height':lineHeight+'px'}">
                     </p>
                     <span class="topCircle"></span>
@@ -253,14 +253,14 @@
                         {{ item.flowContent }}
                       </div>
                     </el-tooltip>
-                    <div 
-                      v-show="getShow(item,index) == false && index != '0'" 
+                    <div
+                      v-show="getShow(item,index) == false && index != '0'"
                       class="yijian" @click="getYiJian(item)"
                       style="cursor: pointer">
                       一键
                     </div>
-                   
-                    <div class="yijian" 
+
+                    <div class="yijian"
                       v-show="getShow(item,index) == true && index != '0'"
                       @click="getYiJian(item)"
                       style="cursor: pointer;">
@@ -794,7 +794,6 @@
                   'color':GDeviceData.vmsData['font_color'],
                   'font-size':GDeviceData.vmsData['font_size'] + 'px',
                   'font-family':GDeviceData.vmsData['font_type'],
-                  'letter-spacing':GDeviceData.vmsData['font_spacing'] + 'px',
                   'background-color':'#000',
                   'position':'relative',
                   }">
@@ -1139,7 +1138,7 @@ export default {
     this.getListEvent();
     this.stateByData();
     this.getEventList();
-    
+
     //当前等级
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
@@ -1167,7 +1166,7 @@ export default {
     this.getDicts("sd_emergency_post").then((data) => {
       this.emergencyList = data.data;
     });
-    
+
   },
   mounted() {
     this.timer = setInterval(() => {

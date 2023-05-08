@@ -1223,7 +1223,7 @@ export default {
     // 情报板选择模板点击事件
     templateClick(number, index,item){
         this.$refs.boardRef.init(
-          number, 
+          number,
           index,
           item.eqTypeId,
         );
@@ -1625,6 +1625,7 @@ export default {
       // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
       this.handleQuery();
+      this.$refs.boardRef.handleClosee();
     },
     everyForeach(value) {
       return value != "";

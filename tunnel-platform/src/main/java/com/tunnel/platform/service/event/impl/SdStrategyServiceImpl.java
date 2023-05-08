@@ -333,11 +333,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     content.setTemplateId(templateId);
                     List<IotBoardTemplateContent> contentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
                     String resContent = sdJoinPlanStrategyList.size() == 0 ? contentList.size() == 0 ? "" : contentList.get(0).getContent() : sdJoinPlanStrategyList.get(0).getContent();
-
-                    if(contentList.size() > 0){
-                        sList.add(typeName + "发布信息：" + resContent + "；");
-                    }
-                    continue;
+                    sList.add(typeName + "发布信息：" + resContent + "；");
                 }
 
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));

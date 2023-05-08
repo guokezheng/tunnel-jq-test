@@ -181,8 +181,9 @@
         </foreach>
     </delete>
 
+    <!--修改原因：删除全部数据导致数据清除定时任务报错（Prohibition of full table deletion），数据量过大接口查询超时，数据库链接占用过多导致项目后台崩溃-->
     <delete id="deleteData">
-        delete from sd_radar_detect_data_temporary where 1=1
+        delete from sd_radar_detect_data_temporary where detect_time &lt; date_sub(sysdate(),interval 1 day)
     </delete>
 
 

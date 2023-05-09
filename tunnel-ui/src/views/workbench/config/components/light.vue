@@ -73,7 +73,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="11" v-if="stateForm.eqType == 13">
-            <el-form-item label="消防泵状态:">
+            <el-form-item label="消防栓状态:">
               {{ stateForm.xfsStatus }}
             </el-form-item>
           </el-col>

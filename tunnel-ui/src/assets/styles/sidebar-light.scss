@@ -1,12 +1,15 @@
 .theme-light {
-  // 多选框
-  .el-checkbox__inner{
-    border: 1px solid #05AAFD;
-    background-color: transparent;
+  // 表单内多选框
+  .el-form, .phoneBox1{
+    .el-checkbox__inner{
+      border: 1px solid #05AAFD;
+      background-color: transparent;
+    }
+    .el-checkbox.is-bordered{
+      border:solid 1px #2D69A5;
+    }
   }
-  .el-checkbox.is-bordered{
-    border:solid 1px #2D69A5;
-  }
+  
   // 级联
   .el-cascader__dropdown{
     background-color: #003D6C;

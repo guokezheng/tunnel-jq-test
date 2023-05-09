@@ -1,4 +1,16 @@
 .theme-light {
+  // 级联
+  .el-cascader__dropdown{
+    background-color: #003D6C;
+    border: solid 1px #093566;
+    .el-cascader-menu{
+      color:#fff;
+      border-right:solid 1px #004F8B;
+    }
+    .el-cascader-node:not(.is-disabled):hover, .el-cascader-node:not(.is-disabled):focus{
+      background-color: #004F8B;
+    }
+  }
   // 下拉框
   .el-select-dropdown{
     background-color: #003D6C;

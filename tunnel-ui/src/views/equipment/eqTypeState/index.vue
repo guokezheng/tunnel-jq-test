@@ -463,6 +463,7 @@ export default {
         ],
       },
       equipmentStates: [],
+      deleteEquipmentStates: [],
       // 表单校验
       rules: {
         stateTypeId: [
@@ -603,13 +604,16 @@ export default {
         this.equipmentStates[index].id,
         "this.equipmentStatesthis.equipmentStates"
       );
-      if (this.equipmentStates[index].id) {
-        deleteRow(rowid).then((res) => {
-          console.log(res, "shanchu");
-          if ((res.code = 200)) {
-            this.$modal.msgSuccess("删除成功");
-          }
-        });
+      if (!!this.equipmentStates[index].id) {
+        //需要删除的集合
+        debugger
+        this.deleteEquipmentStates.push(rowid)
+        // deleteRow(rowid).then((res) => {
+        //   console.log(res, "shanchu");
+        //   if ((res.code = 200)) {
+        //     this.$modal.msgSuccess("删除成功");
+        //   }
+        // });
       }
 
       this.equipmentStates.splice(index, 1);
@@ -650,6 +654,7 @@ export default {
       this.reset();
       console.log(this.iconFileIdAll, "this.iconFileIdAllthis.iconFileIdAll");
       this.currentDeleteFile = "";
+      this.deleteEquipmentStates=[]
       // if(this.iconFileIdAllz1!==''){
       //      deletePicture(this.iconFileIdAll).then(res=>{
       //      console.log(res,'取消按钮')
@@ -960,6 +965,17 @@ export default {
               }
               updatePic(this.equipmentStates).then((res) => {
                 if (res.code == 200) {
+                  if(this.deleteEquipmentStates.length>0){
+                    for (let i = 0; i < this.deleteEquipmentStates.length; i++) {
+                      deleteRow( this.deleteEquipmentStates[i]).then((res) => {
+                        console.log(res, "shanchu");
+                        if ((res.code = 200)) {
+                          // this.$modal.msgSuccess("删除成功");
+                        }
+                      });
+                    }
+                  }
+
                   if (this.currentDeleteFile != "") {
                     batchDeletePic(this.currentDeleteFile).then((res) => {
                       this.open = false;

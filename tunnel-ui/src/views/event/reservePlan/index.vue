@@ -1628,8 +1628,12 @@ export default {
     closeStrategy() {
       // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
-      this.handleQuery();
+      // this.handleQuery();
       this.$refs.boardRef.handleClosee();
+
+      this.$refs.planTable.clearSelection();
+      //this.handleQuery();
+      this.resetReservePlanDrawForm();
     },
     everyForeach(value) {
       return value != "";

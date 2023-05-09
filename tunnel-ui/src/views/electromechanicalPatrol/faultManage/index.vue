@@ -1732,6 +1732,12 @@ export default {
             this.fileData.append("removeIds", this.removeIds);
             if (this.isClick) {
               this.waiting = true;
+              if(this.fileData.get("imgFileId")=="undefined"||this.fileData.get("imgFileId")=="null"){
+                this.fileData.set("imgFileId","")
+              }
+              if(this.fileData.get("faultCxtime")=="undefined"||this.fileData.get("faultCxtime")=="null"){
+                this.fileData.set("faultCxtime","")
+              }
               updateList(this.fileData).then((response) => {
                 this.fileList = [];
                 this.isClick = false;
@@ -1790,6 +1796,12 @@ export default {
           if (this.form.id != null) {
             this.fileData.append("removeIds", this.removeIds);
             this.waiting = true;
+            if(this.fileData.get("imgFileId")=="undefined"||this.fileData.get("imgFileId")=="null"){
+              this.fileData.set("imgFileId","")
+            }
+            if(this.fileData.get("faultCxtime")=="undefined"||this.fileData.get("faultCxtime")=="null"){
+              this.fileData.set("faultCxtime","")
+            }
             updateList(this.fileData).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;

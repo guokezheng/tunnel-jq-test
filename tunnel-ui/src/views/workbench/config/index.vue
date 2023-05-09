@@ -9427,9 +9427,10 @@ export default {
 .robotHtmlBox {
   width: 770px;
   position: absolute;
-  left: 400px;
+  left: 30%;
   z-index: 96659;
   background: #071727;
+  pointer-events: auto;
 }
 .batchManageButton {
   width: 120px;

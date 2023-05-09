@@ -263,6 +263,30 @@ import {
 } from "@/api/board/template";
 import { checkIotBoardContent } from "@/api/board/vocabulary";
 import { HashMap } from "@/api/board/informationBoard";
+// 对象深拷贝
+export const deepClone = (data) => {
+  // 封装的判断数据类型的方法
+  var type = typeof data;
+  var obj;
+  if (type === "array") {
+    obj = [];
+  } else if (type === "object") {
+    obj = {};
+  } else {
+    // 不再具有下一层次
+    return data;
+  }
+  if (type === "array") {
+    for (var i = 0, len = data.length; i < len; i++) {
+      obj.push(deepClone(data[i]));
+    }
+  } else if (type === "object") {
+    for (var key in data) {
+      obj[key] = deepClone(data[key]);
+    }
+  }
+  return obj;
+};
 export default {
   props: {
     boardEmitItem: {
@@ -273,6 +297,7 @@ export default {
 
   data() {
     return {
+      alignmentNum:2,
       iotTemplateCategoryList: [],
       content: "",
 
@@ -410,7 +435,6 @@ export default {
   computed: {
     dataRule() {
       return {
-        alignmentNum:2,
         itemPropertyMap: null,
         CONTENT: [
           {
@@ -540,24 +564,17 @@ export default {
       getFontSizeByDevicePixel(this.dataForm.screenSize).then((res) => {
         console.log(res, "根据分辨率筛字体大小");
         this.fontSizeOpt = res.data.fontSizeList;
-        // this.dataForm.FONT_SIZE = res.data.defaultFont;
       });
     },
     changeFontSize() {
-      console.log(this.alignmentNum,"this.alignmentNum")
-      // this.dataForm.COORDINATE = "000000";
-      // var textBoard1 = document.getElementsByClassName("textBoard1");
-      // textBoard1[0].style.position = "absolute";
-      this.alignment(this.alignmentNum)
-      // setTimeout(() => {
-      //   this.alignment(this.alignmentNum)
-      // },100);
+      setTimeout(() => {
+        this.alignment(this.alignmentNum)
+      },100);
     },
     alignment(alignmentNum) {
-      console.log(alignmentNum,"alignmentNum")
-      this.alignmentNum = alignmentNum;
       var divContent1 = document.getElementsByClassName("blackBoard1");
       var textBoard1 = document.getElementsByClassName("textBoard1");
+
       switch (alignmentNum) {
         // 左对齐
         case 1:
@@ -570,6 +587,7 @@ export default {
           textBoard1[0].style.position = "static";
           divContent1[0].style.justifyContent = "center";
           divContent1[0].style.alignItems = "center";
+          // console.log(textBoard1,"111111alignmentNum")
            break;
         // 右对齐
         case 3:
@@ -596,12 +614,10 @@ export default {
 
           break;
       }
-      if(!alignmentNum){
-        divContent1[0].style.alignItems = "center";
-        textBoard1[0].style.position = "static";
-      }
-      var textLeft = this.addZero(textBoard1[0].offsetLeft);
+     
+      var textLeft = this.addZero(JSON.parse(JSON.stringify(textBoard1[0].offsetLeft)));
       var textTop = this.addZero(textBoard1[0].offsetTop);
+    
       this.dataForm.COORDINATE = textLeft + textTop;
     },
     addZero(num) {

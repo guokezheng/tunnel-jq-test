@@ -27,7 +27,7 @@
           预警处置
         </div>
         <div class="dialogBg">
-          <div style="padding:15px 0;">
+          <div style="padding:6px 0;">
             事发时抓图或录像
           </div>
           <!-- <video :src="eventForm.videoUrl" controls muted loop fluid></video> -->
@@ -69,7 +69,7 @@
           </div>
         </div>
         <div class="dialogBg dialogBg2">
-          <div style="padding:15px 0;">实时视频<span>(事发位置最近的监控视频)</span></div>
+          <div style="padding:6px 0;">实时视频<span>(事发位置最近的监控视频)</span></div>
           <div class="picBox">
             <el-carousel trigger="click" :autoplay="false" v-if="videoList.length >= 1">
               <el-carousel-item v-for="(item, index) in videoList" :key="index" v-if="item.liveUrl != null">
@@ -447,7 +447,12 @@
       title="设备详情"
       :visible.sync="dialogVisibleDevice"
       width="50%"
-      :before-close="handleClose">
+      :before-close="handleClose"
+      class="explain-table">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div>
         <el-tabs v-model="activeName" @tab-click="handleClickDevice">
           <el-tab-pane 
@@ -465,23 +470,27 @@
           <el-table-column
             prop="eqName"
             label="设备名称"
+            align="center"
           >
           </el-table-column>
           <el-table-column
             prop="pile"
             label="桩号"
+            align="center"
             >
           </el-table-column>
           <el-table-column
             prop="stateName"
-            label="修改后状态">
+            label="修改后状态"
+            align="center"
+            >
           </el-table-column>
         </el-table>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleDevice = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisibleDevice = false">确 定</el-button>
-      </span>
+      </span> -->
     </el-dialog>
   </div>
 </template>
@@ -1686,9 +1695,9 @@ export default {
     }
   }
   ::v-deep .detailsDialog .el-dialog {
-    height: calc(100% - 8vh) !important;
+    // height: calc(100% - 8vh) !important;
     .el-dialog__body {
-      height: calc(100% - 4vh - 30px);
+      // max-height: 88vh;
       padding: 0 !important;
     }
   }
@@ -2040,7 +2049,7 @@ export default {
   }
   .detailsDialog{
     ::v-deep .el-dialog__body{
-      max-height: 86vh;
+      max-height: 88vh;
       overflow: auto;
     }
   }

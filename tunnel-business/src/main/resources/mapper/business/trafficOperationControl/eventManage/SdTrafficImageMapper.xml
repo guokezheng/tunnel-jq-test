@@ -167,4 +167,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{removeIds}
         </foreach>
     </delete>
+
+    <delete id="deleteFaultIconFile" parameterType="String">
+        delete from sd_traffic_image where business_id in
+        (select img_file_id from sd_fault_list where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>)
+    </delete>
 </mapper>

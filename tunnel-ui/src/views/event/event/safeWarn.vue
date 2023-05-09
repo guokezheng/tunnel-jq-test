@@ -265,7 +265,7 @@
           预警处置
         </div>
         <div class="dialogBg">
-          <div style="padding: 15px 0">事发时抓图或录像</div>
+          <div style="padding: 6px 0">事发时抓图或录像</div>
           <!-- <video :src="eventForm.videoUrl" controls muted loop fluid></video> -->
           <div class="picBox">
             <swiper
@@ -341,7 +341,7 @@
           </div>
         </div>
         <div class="dialogBg dialogBg2">
-          <div style="padding: 15px 0">
+          <div style="padding: 6px 0">
             实时视频<span>(事发位置最近的监控视频)</span>
           </div>
           <div class="picBox">

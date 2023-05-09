@@ -10,18 +10,16 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
-import com.tunnel.business.domain.logRecord.SdOperationLog;
-import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.*;
-import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.factory.DeviceDataStrategyFactory;
+import com.tunnel.business.strategy.service.DeviceDataStrategyService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +62,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Autowired
     private SdOperationLogMapper sdOperationLogMapper;
 
+    @Autowired
+    private DeviceDataStrategyFactory deviceDataStrategyFactory;
+
 
     /**
      * 查询设备
@@ -85,134 +86,24 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public Map<String, String> queryDeviceById(String eqId) {
         Map<String, String> devices = sdDevicesMapper.queryDeviceById(eqId);
-        if (devices.get("eqStatus") == null || devices.get("eqStatus").equals("") || devices.get("eqStatus").equals("0")) {
+        if (devices.get("eqStatus") == null || "".equals(devices.get("eqStatus")) || "0".equals(devices.get("eqStatus"))) {
             devices.put("eqStatus","2");
         }
+        String eqType = String.valueOf(devices.get("eqType"));
         SdDeviceData sdDeviceData = new SdDeviceData();
-        if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
+        if (String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()).equals(eqType)) {
             sdDeviceData.setDeviceId(devices.get("fEqId"));
         } else {
             sdDeviceData.setDeviceId(eqId);
         }
         List<SdDeviceData> deviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
         if (!deviceDataList.isEmpty()) {
+            //匹配策略
+            DeviceDataStrategyService strategyService = deviceDataStrategyFactory.strategy(eqType);
+
             for (int i = 0;i < deviceDataList.size();i++) {
                 SdDeviceData data = deviceDataList.get(i);
-                //诱导灯
-                if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode())) {
-                        devices.put("state", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode())) {
-                        devices.put("brightness", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode())) {
-                        devices.put("frequency", data.getData());
-                    }
-                //疏散标志
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode())) {
-                        devices.put("state", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode())) {
-                        devices.put("brightness", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode())) {
-                        devices.put("frequency", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
-                        devices.put("fireMark", data.getData());
-                    }
-                    //车指
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
-                        devices.put("state", data.getData());
-                    }
-                //声光报警器
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode()))) {
-                    if (data != null && (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode())
-                            || data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode()))) {
-                        if (devices.get("eqState") != null && devices.get("eqState").equals("1")) {
-                            devices.put("state", data.getData());
-                        }
-                    }
-                //加强照明
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode())) {
-                        devices.put("state", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode())) {
-                        devices.put("brightness", data.getData());
-                    }
-                //基本照明
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode())) {
-                        devices.put("state", data.getData());
-                    }else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode())) {
-                        devices.put("brightness", data.getData());
-                    }
-                //巡检机器人
-                    // TODO 巡检代码暂不提交
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.ROBOT.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_IS_ONLINE.getCode())) {
-                        devices.put("isOnline", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CURRENT_DURATION.getCode())) {
-                        devices.put("currentDuration", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CURRENT_MILEAGE.getCode())) {
-                        devices.put("currentMileage", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_ELECTRICITY.getCode())) {
-                        devices.put("electricity", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CHARGE.getCode())) {
-                        devices.put("charge", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_VOLTAGE.getCode())) {
-                        devices.put("voltage", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CURRENT.getCode())) {
-                        devices.put("current", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_BATTERYTEMP.getCode())) {
-                        devices.put("batteryTemp", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_POSITION.getCode())) {
-                        devices.put("position", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_OXYGENDENSITY.getCode())) {
-                        devices.put("oxygenDensity", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_CARBON_MONOXIDE_DENSITY.getCode())) {
-                        devices.put("carbonMonoxideDensity", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_WORK_MODEL_TEXT.getCode())) {
-                        devices.put("workModelText", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_HD_VIDEO.getCode())) {
-                        devices.put("hd", data.getData());
-                    }
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.ROBOT_INFRARE_VIDEO.getCode())) {
-                        devices.put("infrared", data.getData());
-                    }
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHUI_BENG.getCode()))) {
-                    //消防水泵
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUI_BENG.getCode())) {
-                        devices.put("state", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_SHUAN_STATUS.getCode())) {
-                        devices.put("xfsStatus", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_LIU_IA.getCode())) {
-                        devices.put("ia", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_LIU_IB.getCode())) {
-                        devices.put("ib", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_LIU_IC.getCode())) {
-                        devices.put("ic", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_YA_IA.getCode())) {
-                        devices.put("va", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_YA_IB.getCode())) {
-                        devices.put("vb", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.XIAO_FANG_DIAN_YA_IC.getCode())) {
-                        devices.put("vc", data.getData());
-                    }
-                    //基本照明
-                } else if (data != null) {
-                    devices.put("state", data.getData());
-                }
+                strategyService.getDeviceData(devices,data);
             }
         }
         return devices;

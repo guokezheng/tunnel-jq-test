@@ -200,4 +200,17 @@ public interface ISdTaskListService
      * @return
      */
     List<SdTaskList> getSiteInfo(String taskId);
+
+    /**
+     * 判断高速云是否存在该条任务
+     * @param id
+     * @return
+     */
+    SdTaskList selectSdTaskById(String id);
+
+    /**
+     * 更新高速云的任务
+     * @param sdTaskList
+     */
+    int updateGsySdTaskList(SdTaskList sdTaskList);
 }

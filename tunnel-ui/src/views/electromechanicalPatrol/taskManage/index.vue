@@ -1982,6 +1982,7 @@ export default {
   .el-col {
     line-height: 40px;
     display: flex;
+    align-items: center;
     > div {
       width: 110px;
     }
@@ -1990,12 +1991,13 @@ export default {
   //margin-top: 10px;
   //display: flex;
   .active {
-    height: 36px;
+    height: 30px;
     padding: 0px 5px;
     color: #ffd69a;
     display: inline;
     margin-left: 10px;
     border: 1px solid #ffd69a;
+    line-height: 30px;
     // }
     // div {
     //   width: 33%;

@@ -169,4 +169,11 @@ public interface SdTaskListMapper
      * @return
      */
     List<SdTaskList> getSiteInfo(@Param("taskId")String taskId);
+
+    /**
+     * /判断高速云是否存在该条任务
+     * @param id
+     * @return
+     */
+    SdTaskList selectSdTaskById(@Param("id")String id);
 }

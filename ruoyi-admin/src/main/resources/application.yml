@@ -389,6 +389,14 @@ tunnelDeviceBaseData: "tunnelDeviceBaseData"
 #物联中台隧道基础数据topic
 tunnelBaseData: "tunnelBaseData"
 
+#巡检任务topic
+tunnelTaskList: "tunnelTaskList"
+#巡检点topic
+tunnelTaskPatrol: "tunnelTaskPatrol"
+#操作记录topic
+tunnelTaskOperation: "tunnelTaskOperation"
+#故障topic
+tunnelFaultList: "tunnelFaultList"
 
 
 #视频平台接口调用地址、组织机构ID

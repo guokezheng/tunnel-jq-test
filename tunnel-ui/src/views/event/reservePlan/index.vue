@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-05-08 09:07:31
+ * @LastEditTime: 2023-05-09 09:10:00
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -712,6 +712,7 @@
                 </el-select>
               </el-col>
               <el-col :span="5">
+                <!-- @change="qbgChange(number, index, itemed.equipments)" -->
                 <el-cascader
                   v-model="itemed.equipments"
                   :options="itemed.equipmentData"
@@ -719,7 +720,6 @@
                   :props="devicesProps"
                   :show-all-levels="false"
                   collapse-tags
-                  @change="qbgChange(number, index, itemed.equipments)"
                   style="width: 100%"
                 ></el-cascader>
               </el-col>
@@ -757,7 +757,7 @@
                   </el-option>
                 </el-select>
               </el-col>
-              <el-col :span="2" v-show="itemed.eqTypeId == 7 || itemed.eqTypeId == 9 && itemed.state == '1'">
+              <el-col :span="2" v-show="(itemed.eqTypeId == 7 || itemed.eqTypeId == 9) && itemed.state == '1'">
                 <el-input-number style="width:100%;" v-model="itemed.brightness" @change="handleChange" :min="itemed.minLight" :max="100" label="亮度"></el-input-number>
               </el-col>
               <!-- 照明设备end -->
@@ -1233,6 +1233,7 @@ export default {
         );
     },
     lightStateChange(number,index,state){
+      console.log(state,'当前状态');
       if(state == '1'){
         this.$set(this.planTypeIdList[number].processesList[index],'lightCol',2);
         this.$set(this.planTypeIdList[number].processesList[index],'brightness',100);
@@ -1556,6 +1557,11 @@ export default {
           "state",
           ""
         );
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "content",
+          ""
+        );
         let params = {
           eqType: eqTypeId, //设备类型
           eqTunnelId: this.currentClickData.tunnelId, //隧道
@@ -1608,22 +1614,22 @@ export default {
         );
       });
     },
-    qbgChange(number, index, value) {
-      let data = value;
-      if (
-        this.planTypeIdList[number].processesList[index].eqTypeId == 16 ||
-        this.planTypeIdList[number].processesList[index].eqTypeId == 36
-      ) {
-        getVMSTemplatesByDevIdAndCategory(data).then((res) => {
-          // this.templatesList = res.data;
-          this.$set(
-            this.planTypeIdList[number].processesList[index],
-            "templatesList",
-            res.data
-          );
-        });
-      }
-    },
+    // qbgChange(number, index, value) {
+    //   let data = value;
+    //   if (
+    //     this.planTypeIdList[number].processesList[index].eqTypeId == 16 ||
+    //     this.planTypeIdList[number].processesList[index].eqTypeId == 36
+    //   ) {
+    //     getVMSTemplatesByDevIdAndCategory(data).then((res) => {
+    //       // this.templatesList = res.data;
+    //       this.$set(
+    //         this.planTypeIdList[number].processesList[index],
+    //         "templatesList",
+    //         res.data
+    //       );
+    //     });
+    //   }
+    // },
     //关闭策略弹窗
     closeStrategy() {
       // this.getTunnelData(this.tunnelId);
@@ -1763,7 +1769,7 @@ export default {
               // 渲染设备可控状态
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
               // 设备类型为加强照明且状态为开启
-              if(brr.eqTypeId == 7 || brr.eqTypeId == 9 && brr.state == '1'){
+              if((brr.eqTypeId == 7  || brr.eqTypeId == 9) && brr.state == '1'){
                 this.$set(this.planTypeIdList[i].processesList[j],"lightCol",2);
               }else{
                 this.$set(this.planTypeIdList[i].processesList[j],"lightCol",4);

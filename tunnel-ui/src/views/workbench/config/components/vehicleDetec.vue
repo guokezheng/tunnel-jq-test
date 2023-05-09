@@ -213,6 +213,11 @@ export default {
         console.log(res, "微波车检表格");
         this.dataList = res.data;
       });
+      this.XData = []
+      this.yData1 = []
+      this.yData2 = []
+      this.yData3 = []
+
       getStatisticsRealList(params).then((res) => {
         console.log(res, "微波车检 echarts");
         for (let item of res.data.laneNoOne) {
@@ -250,7 +255,7 @@ export default {
             itemWidth: 14,
             itemHeight: 8,
             x: "center",
-            data: ["1车道", "2车道", "3车道"],
+            data: ["一车道", "二车道", "三车道"],
             textStyle: {
               //图例文字的样式
               color: "#00AAF2",
@@ -312,7 +317,7 @@ export default {
           },
           series: [
             {
-              name: "1车道",
+              name: "一车道",
               type: "line",
               color: "#787FFE",
               symbol: "circle",
@@ -326,7 +331,7 @@ export default {
               data: this.yData1,
             },
             {
-              name: "2车道",
+              name: "二车道",
               type: "line",
               color: "#00DCA2",
               symbol: "circle",
@@ -340,7 +345,7 @@ export default {
               data: this.yData2,
             },
             {
-              name: "3车道",
+              name: "三车道",
               type: "line",
               color: "#FFB200",
               symbol: "circle",

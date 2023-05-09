@@ -112,4 +112,11 @@ public interface SdTrafficImageMapper
      * @return
      */
     int deleteFaultIconFileByIds(String[] removeIds);
+
+    /**
+     * 删除图片
+     * @param ids
+     * @return
+     */
+    int deleteFaultIconFile(String[] ids);
 }

@@ -1,4 +1,27 @@
 .theme-light {
+  // 表单内多选框
+  .el-form, .phoneBox1{
+    .el-checkbox__inner{
+      border: 1px solid #05AAFD;
+      background-color: transparent;
+    }
+    .el-checkbox.is-bordered{
+      border:solid 1px #2D69A5;
+    }
+  }
+  
+  // 级联
+  .el-cascader__dropdown{
+    background-color: #003D6C;
+    border: solid 1px #093566;
+    .el-cascader-menu{
+      color:#fff;
+      border-right:solid 1px #004F8B;
+    }
+    .el-cascader-node:not(.is-disabled):hover, .el-cascader-node:not(.is-disabled):focus{
+      background-color: #004F8B;
+    }
+  }
   // 下拉框
   .el-select-dropdown{
     background-color: #003D6C;
@@ -1245,17 +1268,17 @@
       }
     }
     .phoneBox1{
-      .el-checkbox__input.is-checked .el-checkbox__inner{
-          border: solid 1px #fff;
-      }
-      .el-input-number__increase,
-      .el-input-number__decrease {
-        background: #2d69a5;
-        border-left: solid 1px #05afe3 !important;
-        color: #fff;
-      }
+      // .el-checkbox__input.is-checked .el-checkbox__inner{
+      //     // border: solid 1px #fff;
+      // }
+      // .el-input-number__increase,
+      // .el-input-number__decrease {
+      //   background: #2d69a5;
+      //   border-left: solid 1px #05afe3 !important;
+      //   color: #fff;
+      // }
       .el-input-number__increase {
-        border-bottom: solid 1px #05afe3 !important;
+        border-bottom: solid 1px #2D69A5 !important;
       }
     }
     // 深色版部分小细节需要白色字

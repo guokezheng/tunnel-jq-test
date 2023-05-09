@@ -84,4 +84,11 @@ public interface ISdFaultListService
      * @return
      */
     String selectSdFaultEqById(String eqFaultId);
+
+    /**
+     * 高速云监听   判断故障是否已存在
+     * @param id
+     * @return
+     */
+    SdFaultList selectSdFaultById(String id);
 }

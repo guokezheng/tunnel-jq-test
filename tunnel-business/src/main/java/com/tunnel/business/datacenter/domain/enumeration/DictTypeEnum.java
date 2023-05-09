@@ -81,7 +81,13 @@ public enum DictTypeEnum {
     /**
      * 设备系统
      */
-    eq_system("eq_system","设备系统");
+    eq_system("eq_system","设备系统"),
+
+
+    /**
+     * 是否开启设备模拟控制
+     */
+    sys_analog_control_isopen("sys_analog_control_isopen","是否开启设备模拟控制");
 
     DictTypeEnum(String code,String name){
         this.code = code;

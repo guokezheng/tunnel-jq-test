@@ -121,6 +121,8 @@ public class HongMengDevService {
             return map;
         } catch (Exception e) {
             log.error(IpUtils.getIpAddr(ServletUtils.getRequest()) + "设备控制失败！{}", e.getMessage());
+            map.put("code","500");
+            map.put("msg","设备控制失败");
         }
         return map;
     }

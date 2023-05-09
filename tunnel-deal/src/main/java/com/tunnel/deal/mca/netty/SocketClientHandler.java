@@ -76,7 +76,7 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception
     {
         Channel channel = ctx.channel();
-        log.error("handlerRemoved：handler从Pipeline中移除");
+//        log.error("handlerRemoved：handler从Pipeline中移除");
 
     }
 

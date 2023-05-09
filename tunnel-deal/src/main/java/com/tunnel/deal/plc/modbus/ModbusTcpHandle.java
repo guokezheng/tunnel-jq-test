@@ -35,7 +35,7 @@ public class ModbusTcpHandle {
         return instance;
     }
 
-    public int toControlDev(String deviceId,Integer ctrState,SdDevices sdDevices) {
+    public int toControlDev(Integer ctrState,SdDevices sdDevices) {
         if (sdDevices.getControlPointAddress() == null || sdDevices.getControlPointAddress().equals("")) {
             return 0;
         }

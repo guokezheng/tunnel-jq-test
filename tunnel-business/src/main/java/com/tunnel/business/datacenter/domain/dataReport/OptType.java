@@ -12,7 +12,8 @@ public enum OptType {
      */
     PAIDAN("0", "派单"),
     JEISHOU("1", "接收"),
-    TIJIAO("0", "提交");
+    TIJIAO("2", "提交"),
+    DELETE("3", "删除");
 
     OptType(String code, String name){
         this.code = code;

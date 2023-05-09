@@ -134,4 +134,11 @@ public interface SdFaultListMapper
     List<SdPatrolList> getFaultRepairReportInfo(@Param("faultId")String faultId);
 
     int updateFaultRemoveState(@Param("faultId")String faultId,@Param("falltRemoveStatue")String falltRemoveStatue);
+
+    /**
+     * 高速云监听判断故障是否已存在
+     * @param id
+     * @return
+     */
+    SdFaultList selectSdFaultById(@Param("id")String id);
 }

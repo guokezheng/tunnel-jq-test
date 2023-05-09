@@ -149,6 +149,7 @@ public class SdAppTaskListController extends BaseController
     public AjaxResult accept(String id)
     {
         Long userId  = SecurityUtils.getUserId();
+
         return toAjax(sdTaskListService.acceptSdTaskList(id,userId));
     }
 

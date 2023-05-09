@@ -1,9 +1,11 @@
 package com.tunnel.business.service.electromechanicalPatrol.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.datacenter.domain.dataReport.OptType;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
@@ -17,6 +19,9 @@ import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
@@ -50,6 +55,12 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Autowired
     private SdPatrolListMapper sdPatrolListService;
 
+//    @Autowired
+//    @Qualifier("kafkaTwoTemplate")
+//    private KafkaTemplate<String, String> kafkaTwoTemplate;
+
+//    @Value("${tunnelFaultList}")
+//    private String tunnelFaultList;
 
     /**
      * 查询故障清单
@@ -189,7 +200,6 @@ public class SdFaultListServiceImpl implements ISdFaultListService
                     result = sdFaultListMapper.insertSdFaultList(sdFaultList);
                 }
             }else {
-                sdFaultList.setImgFileId(null);// 图标文件ID
                 result = sdFaultListMapper.insertSdFaultList(sdFaultList);
             }
 
@@ -197,6 +207,13 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             e.printStackTrace();
             return 0;
         }
+
+//        JSONObject jsonObject = new JSONObject();
+//        //故障数据推送
+//        jsonObject.put("faultRecord",sdFaultList);
+//        jsonObject.put("faultImgRecord",list);
+//        jsonObject.put("optType", "1");//故障新增
+//        kafkaTwoTemplate.send(tunnelFaultList, jsonObject.toString());
         return result;
     }
 
@@ -216,7 +233,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             sdFaultList.setUpdateBy(SecurityUtils.getUsername());// 设置当前创建人
             if (file != null) {
                 String guid = sdFaultList.getImgFileId();// 关联ID--guid
-                if (guid == null || guid.equals("null") || guid.equals("")) {
+                if (guid == null || guid.equals("null") || guid.equals("")||guid.equals("undefined")) {
                     guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
                 }
                 sdFaultList.setImgFileId(guid);// 文件关联ID
@@ -275,7 +292,13 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             e.printStackTrace();
             return 0;
         }
-
+//        JSONObject jsonObject = new JSONObject();
+//        //故障数据推送
+//        jsonObject.put("faultRecord",sdFaultList);
+//        jsonObject.put("faultImgRecord",list);
+//        jsonObject.put("faultImgRemoveRecord",removeIds);
+//        jsonObject.put("optType", "1");//故障修改
+//        kafkaTwoTemplate.send(tunnelFaultList, jsonObject.toString());
 
         return result;
 
@@ -291,7 +314,19 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public int deleteSdFaultListByIds(String[] ids)
     {
-        return sdFaultListMapper.deleteSdFaultListByIds(ids);
+        //先删除图片
+        int result = -1;
+        result = sdTrafficImageMapper.deleteFaultIconFile(ids);
+        if(result>-1){
+            result = sdFaultListMapper.deleteSdFaultListByIds(ids);
+
+        }
+//        JSONObject jsonObject = new JSONObject();
+//        //故障数据推送
+//        jsonObject.put("faultRecord",ids);
+//        jsonObject.put("optType", "0");//故障删除
+//        kafkaTwoTemplate.send(tunnelFaultList, jsonObject.toString());
+        return result;
     }
 
     /**
@@ -353,5 +388,10 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public String selectSdFaultEqById(String eqFaultId) {
         return sdFaultListMapper.selectSdFaultEqById(eqFaultId);
+    }
+
+    @Override
+    public SdFaultList selectSdFaultById(String id) {
+        return sdFaultListMapper.selectSdFaultById(id);
     }
 }

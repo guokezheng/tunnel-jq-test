@@ -230,7 +230,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     left join sd_devices d on p.eq_fault_id = d.eq_id
     left join sd_tunnels t on d.eq_tunnel_id = t.tunnel_id
     left join sd_equipment_type q on q.type_id = d.eq_type
-    where p.task_id = #{task_id}  and p.patrol_type = '0'
+    where p.task_id = #{id}  and p.patrol_type = '0'
     </select>
 
 
@@ -241,7 +241,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     left join sd_fault_list f on p.eq_fault_id = f.id
     left join sd_tunnels t on f.tunnel_id = t.tunnel_id
     left join sys_dict_data y on y.dict_value = f.fault_type
-    where p.task_id = #{task_id} and p.patrol_type = '1' and y.dict_type = 'fault_type'
+    where p.task_id = #{id} and p.patrol_type = '1' and y.dict_type = 'fault_type'
     </select>
 
 
@@ -250,14 +250,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getPatrolInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
-        select p.id,p.eq_name,p.position,p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,f.fallt_remove_statue,u.tunnel_name, d.pile,y.type_name
+        select p.id,p.eq_name,p.position,p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,u.tunnel_name, d.pile,y.type_name
         from sd_patrol_list p
         left join sd_task_list t on t.id = p.task_id
         left join sd_fault_list f on f.id = p.eq_fault_id
         left join sd_tunnels u on u.tunnel_id = f.tunnel_id
-        left join sd_devices d on d.eq_id = p.eq_fault_id
+        left join sd_devices d on d.eq_id = f.eq_id
         left join sd_equipment_type y  on y.type_id = d.eq_type
-        where p.task_id = #{taskId}
+        where p.task_id = #{taskId} and p.patrol_type = '1'
+        union all
+        (select p.id,p.eq_name,p.position,p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,u.tunnel_name, d.pile,y.type_name
+        from sd_patrol_list p
+        left join sd_task_list t on t.id = p.task_id
+				left join sd_devices d on d.eq_id = p.eq_fault_id
+        left join sd_tunnels u on u.tunnel_id = d.eq_tunnel_id
+        left join sd_equipment_type y  on y.type_id = d.eq_type
+        where p.task_id = #{taskId} and p.patrol_type = '0')
     </select>
 
 
@@ -288,7 +296,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             xc_time = now(),
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="xcSort != null">xc_sort = #{xcSort},</if>
-            <if test="xcStatus != null">xc_status = #{xcStatus},</if>
+            <if test="xcStatus != null">xc_status = '1',</if>
             <if test="imgFileId != null">img_file_id = #{imgFileId},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

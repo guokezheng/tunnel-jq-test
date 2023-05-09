@@ -930,16 +930,28 @@ export default {
       });
     },
     // 打开复核内详情
-    openDoor(item){
-      let query = {
-        prevControlType:item.prevControlType,
-        currencyId:item.currencyId,
+    openDoor(item) {
+      // 点击查看按钮重置tab
+      this.deviceIndexShow = 0;
+      this.activeName = '0';
+
+      let lane = "";
+      if (item.laneNo == null || item.laneNo.length == 0) {
+        lane = "";
+      } else {
+        lane = item.laneNo.toString();
       }
-      examineDeviceDetail(query).then(res=>{
+      let query = {
+        prevControlType: item.prevControlType,
+        currencyId: item.currencyId,
+        id: item.id,
+        laneNo: lane,
+      };
+      examineDeviceDetail(query).then((res) => {
         console.log(res);
         this.DeviceDetail = res.data;
         this.dialogVisibleDevice = true;
-      })
+      });
     },
     openProcess(type, id) {
       if (type && id) {

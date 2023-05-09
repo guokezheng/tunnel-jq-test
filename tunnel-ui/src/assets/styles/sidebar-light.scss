@@ -1,4 +1,12 @@
 .theme-light {
+  // 多选框
+  .el-checkbox__inner{
+    border: 1px solid #05AAFD;
+    background-color: transparent;
+  }
+  .el-checkbox.is-bordered{
+    border:solid 1px #2D69A5;
+  }
   // 级联
   .el-cascader__dropdown{
     background-color: #003D6C;
@@ -1257,17 +1265,17 @@
       }
     }
     .phoneBox1{
-      .el-checkbox__input.is-checked .el-checkbox__inner{
-          border: solid 1px #fff;
-      }
-      .el-input-number__increase,
-      .el-input-number__decrease {
-        background: #2d69a5;
-        border-left: solid 1px #05afe3 !important;
-        color: #fff;
-      }
+      // .el-checkbox__input.is-checked .el-checkbox__inner{
+      //     // border: solid 1px #fff;
+      // }
+      // .el-input-number__increase,
+      // .el-input-number__decrease {
+      //   background: #2d69a5;
+      //   border-left: solid 1px #05afe3 !important;
+      //   color: #fff;
+      // }
       .el-input-number__increase {
-        border-bottom: solid 1px #05afe3 !important;
+        border-bottom: solid 1px #2D69A5 !important;
       }
     }
     // 深色版部分小细节需要白色字

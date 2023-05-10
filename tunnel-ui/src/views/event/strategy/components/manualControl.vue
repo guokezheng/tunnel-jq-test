@@ -421,6 +421,7 @@ export default {
       this.strategyForm.manualControl[index].stateNum = null;
       this.strategyForm.manualControl[index].state = "";
       this.strategyForm.manualControl[index].value = null;
+      this.strategyForm.manualControl[index].content = null;
       let params = {
         eqType: this.strategyForm.manualControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -467,6 +468,7 @@ export default {
       }
       if(!flag){
         this.strategyForm.manualControl[index].state = null;
+        this.strategyForm.manualControl[index].content = null;
       }
       this.$forceUpdate();
     },

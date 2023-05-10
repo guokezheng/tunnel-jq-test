@@ -525,6 +525,7 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.$set(this.strategyForm.autoControl[index], "content", null);
       this.$set(this.strategyForm.autoControl[index], "stateNum", null);
       this.$set(this.strategyForm.autoControl[index], "state", "");
       this.$set(this.strategyForm.autoControl[index], "equipments", null);
@@ -566,6 +567,7 @@ export default {
       if(!flag){
         // 设备联控，命令重置
         this.strategyForm.autoControl[index].state = null;
+        this.strategyForm.autoControl[index].content = null;
       }
     },
     handleChange(e) {

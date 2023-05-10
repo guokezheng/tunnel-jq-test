@@ -172,7 +172,7 @@ public class workspaceController extends BaseController {
             ajaxResult.put("data",controlState);
         }
         //添加操作日志
-        deviceControlService.addOperationLog(sdDevices,state,beforeState,controlState);
+        deviceControlService.addOperationLog(sdDevices,map,beforeState,controlState);
         return ajaxResult;
     }
 
@@ -208,19 +208,12 @@ public class workspaceController extends BaseController {
             }
         }
         if ("GSY".equals(deploymentType)) {
-            map.put("controlType", "0");
-            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
-            sdOptDeviceService.optSingleDevice(map);
-            return AjaxResult.success(1);
+            //高速云分发控制
+            return deviceControlService.cloudPlatformControl(map);
         }
 
         //控制设备之前获取设备状态
-        //获取当前设备状态
-        SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(devId);
-        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
-        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-//        String beforeState = deviceControlService.selectBeforeState(sdDevices);
+        String beforeState = deviceControlService.selectBeforeState(sdDevices);
         //控制设备
 //        int controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
         int controlState = 0;
@@ -228,59 +221,10 @@ public class workspaceController extends BaseController {
         boolean isopen = deviceControlService.queryAnalogControlConfig();
         long eqType = sdDevices.getEqType().longValue();
 
-        //加强照明状态拼接
-        String linState = "";
+
         if (isopen) {
             //设备模拟控制开启
-//            return deviceControlService.excecuteAnalogControl(sdDevices,map);
-            //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
-            sdDevices.setEqStatus("1");
-            sdDevices.setEqStatusTime(new Date());
-            sdDevicesService.updateSdDevices(sdDevices);
-            SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
-            sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
-            List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
-            if (sdDeviceTypeItems.size() == 0) {
-                throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
-            }
-
-            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-                sdDeviceTypeItems.stream().forEach(item -> {
-                    if("brightness".equals(item.getItemCode()) &&
-                            (
-                                    DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) ||
-                                    DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())
-                            )
-                    ){
-                        updateDeviceData(sdDevices, map.get("brightness").toString(), Integer.parseInt(item.getId().toString()));
-                    }
-                    if("state".equals(item.getItemCode())){
-                        updateDeviceData(sdDevices, state, Integer.parseInt(item.getId().toString()));
-                    }
-                });
-                brightness = brightness == null || "".equals(brightness) ? "0" : brightness;
-                linState = state.equals("1")?"开启":"关闭";
-                linState += "，亮度："+brightness + "%";
-            }else {
-                SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-                updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
-            }
-            //添加操作记录
-            SdOperationLog sdOperationLog = new SdOperationLog();
-            sdOperationLog.setEqTypeId(sdDevices.getEqType());
-            sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
-            sdOperationLog.setEqId(sdDevices.getEqId());
-            sdOperationLog.setCreateTime(new Date());
-            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-                sdOperationLog.setOperationState(linState);
-            }else {
-                sdOperationLog.setOperationState(state);
-            }
-            sdOperationLog.setControlType("0");
-            sdOperationLog.setState("1");
-            sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
-            sdOperationLogService.insertSdOperationLog(sdOperationLog);
-            return AjaxResult.success(1);
+            return deviceControlService.excecuteAnalogControl(sdDevices,map);
         } else {
             // eqType == DevicesTypeEnum.SHUI_BENG.getCode().longValue() ||
 //            if (
@@ -314,32 +258,7 @@ public class workspaceController extends BaseController {
             }
         }
 
-        //添加操作记录
-        SdOperationLog sdOperationLog = new SdOperationLog();
-        sdOperationLog.setEqTypeId(sdDevices.getEqType());
-        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
-        sdOperationLog.setEqId(sdDevices.getEqId());
-        sdOperationLog.setCreateTime(new Date());
-        if (data.size() > 0 && data.get(0) != null) {
-            sdOperationLog.setBeforeState(data.get(0).getData());
-        }
-//        sdOperationLog.setBeforeState(beforeState);
-        if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-            if(brightness != null){
-                linState = "1".equals(state) ?"开启":"关闭";
-                linState += "，亮度："+brightness + "%";
-            }
-            sdOperationLog.setOperationState(linState);
-        }else {
-            sdOperationLog.setOperationState(state);
-        }
-        sdOperationLog.setControlType("0");
-        sdOperationLog.setState(String.valueOf(controlState));
-        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
-        sdOperationLogService.insertSdOperationLog(sdOperationLog);
-
-
-//        deviceControlService.addOperationLog(sdDevices,state,beforeState,String.valueOf(controlState));
+        deviceControlService.addOperationLog(sdDevices,map,beforeState,String.valueOf(controlState));
         return AjaxResult.success(controlState);
     }
 

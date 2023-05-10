@@ -825,6 +825,10 @@
       :visible.sync="dialogVisibleTem"
       width="45%"
       :before-close="handleClose">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div style="display: flex;justify-content: center;align-items: center;">
         <!-- 'letter-spacing':templateData['font_spacing'] + 'px', -->
         <div :style="{
@@ -845,10 +849,10 @@
           </span>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleTem = false">取 消</el-button>
-        <!-- <el-button type="primary" @click="dialogVisible = false">确 定</el-button> -->
-      </span>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span> -->
     </el-dialog>
   </div>
 </template>

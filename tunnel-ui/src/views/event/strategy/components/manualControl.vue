@@ -157,8 +157,9 @@
               collapse-tags
               @change="handleChange"
             ></el-cascader>-->
-            <el-input v-model="items.content" placeholder="请选择模板" disabled>
-              <el-button slot="append" icon="el-icon-search" @click="templateClick(index, index,items)"></el-button>
+<!--            <el-input v-model="items.content" placeholder="请选择模板" disabled>-->
+            <el-input v-model="items.content" placeholder="请选择模板" readonly @click.native="openTemDialog(items)">
+              <el-button slot="append" icon="el-icon-search" @click.stop="templateClick(index, index,items)"></el-button>
             </el-input>
           </el-col>
           <el-col
@@ -203,6 +204,41 @@
       >
     </div>
     <com-board class="comClass" ref="boardRef" @getVmsData="getMsgFormSon"></com-board>
+    <el-dialog
+      :title="templateData.processName"
+      :visible.sync="dialogVisibleTem"
+      append-to-body
+      width="45%"
+      :before-close="handleClose">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <div style="display: flex;justify-content: center;align-items: center;">
+        <!-- 'letter-spacing':templateData['font_spacing'] + 'px', -->
+        <div :style="{
+          'width':templateData['width'] + 'px',
+          'height':templateData['height'] + 'px',
+          'color':templateData['font_color'],
+          'font-size':templateData['font_size'] + 'px',
+          'font-family':templateData['font_type'],
+          'background-color':'#000',
+          'position':'relative',
+          }">
+          <span :style="{
+            'position':'absolute',
+            'top':templateData['top'] + 'px',
+            'left':templateData['left'] + 'px',
+          }"
+                style="line-height:1" v-html="templateData['content']">
+          </span>
+        </div>
+      </div>
+<!--      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleTem = false">取 消</el-button>
+        &lt;!&ndash; <el-button type="primary" @click="dialogVisible = false">确 定</el-button> &ndash;&gt;
+      </span>-->
+    </el-dialog>
   </div>
 </template>
 
@@ -227,6 +263,7 @@ import {
   getGuid,
   handleStrategy, getCategoryTree,
 } from "@/api/event/strategy";
+import {selectVmsContent} from "@/api/information/api";
 export default {
   name: "Plan",
   components: {
@@ -290,9 +327,35 @@ export default {
           { required: true, message: "请选择设备类型", trigger: "change" },
         ],
       },
+      templateData:{},
+      dialogVisibleTem:false,
     };
   },
   methods: {
+    //查看情报板信息
+    openTemDialog(item){
+      let params = {id: item.id,state:item.state,type:'1'};
+      console.log(item);
+      console.log(item)
+      if(item.state == '' || item.state == null){
+        return this.$modal.msgWarning("请选择模板");
+      }
+      selectVmsContent(params).then((res)=>{
+        this.templateData = Object.assign(res.data,item);
+        console.log(this.templateData)
+        let zxc = this.templateData['screen_size'].split('*');
+        this.templateData['width'] = zxc[0];
+        this.templateData['height'] = zxc[1];
+        let align = this.templateData['coordinate'];
+        this.templateData['left'] = align.substr(0,3);
+        this.templateData['top'] = align.substr(3,6);
+        let content = this.templateData['content'];
+        if(content.indexOf('/n') == '-1'){
+          this.templateData['content'] = content.replace(/\n|\r\n/g,'<br>').replace(/ /g, ' &nbsp');
+        }
+        this.dialogVisibleTem = true;
+      })
+    },
     getMsgFormSon(data){
       this.$set(this.strategyForm.manualControl[data.index],'content',data.content);
       this.$set(this.strategyForm.manualControl[data.index],'state',data.id);
@@ -421,6 +484,7 @@ export default {
       this.strategyForm.manualControl[index].stateNum = null;
       this.strategyForm.manualControl[index].state = "";
       this.strategyForm.manualControl[index].value = null;
+      this.strategyForm.manualControl[index].content = null;
       let params = {
         eqType: this.strategyForm.manualControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -467,6 +531,7 @@ export default {
       }
       if(!flag){
         this.strategyForm.manualControl[index].state = null;
+        this.strategyForm.manualControl[index].content = null;
       }
       this.$forceUpdate();
     },
@@ -559,8 +624,8 @@ export default {
           );
           let result = manualControl.every(function (item) {
             return (
-              item.equipmentTypeId != "" && item.state != "" && item.value != "" &&
-            item.equipmentTypeId != null && item.state != null && item.value != null
+              item.disposalName != "" && item.equipmentTypeId != "" && item.state != "" && item.value != "" &&
+              item.disposalName != null && item.equipmentTypeId != null && item.state != null && item.value != null
             );
           });
           console.log(result);
@@ -618,6 +683,7 @@ export default {
     changeEvent(value) {
       console.log("当前选中了隧道："+this.strategyForm.tunnelId+"，方向：" + this.strategyForm.direction);
 
+      this.equipmentTypeData = [];
       // 重置设备列表
       this.strategyForm.manualControl = [
         { state: "", value: "", equipmentTypeId: "" },

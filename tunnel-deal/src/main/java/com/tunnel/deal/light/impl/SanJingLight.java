@@ -3,7 +3,9 @@ package com.tunnel.deal.light.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -17,6 +19,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.light.HttpUrlEscapeUtil;
 import com.tunnel.deal.light.Light;
 import com.tunnel.deal.light.enums.SanjingLightStateEnum;
@@ -31,13 +34,11 @@ import org.springframework.util.Assert;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class SanJingLight implements Light {
+public class SanJingLight implements Light, GeneralControlBean {
 
     private static final Logger logger = LoggerFactory.getLogger(SanJingLight.class);
 
@@ -568,5 +569,91 @@ public class SanJingLight implements Light {
             redisCache.setCacheObject( key, token, expireTime, TimeUnit.MINUTES);
         }
         return token;
+    }
+
+
+    /**
+     * 控制方法
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
+
+        //设备状态
+        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        //亮度
+        String brightnessStr = Optional.ofNullable(map.get("brightness")).orElse("").toString();
+        Integer brightness = Integer.valueOf(brightnessStr);
+        //所属隧道
+        String eqTunnelId = sdDevices.getEqTunnelId();
+        //所属方向
+        String eqDirection = sdDevices.getEqDirection();
+        //设备关联的外部系统
+        Long externalSystemId = sdDevices.getExternalSystemId();
+        //段号
+        String step = sdDevices.getExternalDeviceId();
+        if(StringUtils.isEmpty(eqTunnelId)){
+            return AjaxResult.error("未配置该设备所属隧道");
+        }
+        if(StringUtils.isEmpty(eqDirection)){
+            return AjaxResult.error("未配置该设备所属方向");
+        }
+        if(externalSystemId == null){
+            return AjaxResult.error("未配置该设备关联的外部系统");
+        }
+        if(StringUtils.isEmpty(step)){
+            return AjaxResult.error(sdDevices.getEqName() + "未配置该设备关联的段号");
+        }
+
+
+        //确定隧道洞编号
+        String externalSystemTunnelId = tunnelAssociationService.getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
+//        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号");
+        if(StringUtils.isEmpty(externalSystemTunnelId)){
+            return AjaxResult.error("未配置该设备关联的隧道洞编号");
+        }
+
+        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
+        String baseUrl = externalSystem.getSystemUrl();
+//        Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
+        if(StringUtils.isEmpty(baseUrl)){
+            return AjaxResult.error("未配置该设备所属的外部系统地址");
+        }
+
+//        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+        String jessionId;
+
+        String tokenKey = "control:sanJingLighttoken";
+
+        jessionId = redisCache.getCacheObject(tokenKey);
+
+        if(jessionId == null || "".equals(jessionId)){
+            jessionId =  login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+            redisCache.setCacheObject(tokenKey,jessionId);
+            redisCache.expire(tokenKey,15*60);
+        }
+
+        if(jessionId == null || "".equals(jessionId)){
+            return AjaxResult.error("三晶照明获取token失败",0);
+        }
+        //开关对应关系
+        Integer openClose = SanjingLightStateEnum.getValue(Integer.valueOf(state));
+
+        //开关
+        int switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
+        //亮度
+        int brightnessType = 1;
+        //如果亮度有值并且控制状态不是关，就控制亮度
+        if(!Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
+            brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
+        }
+        int result =  switchType==1 && brightnessType==1 ? 1 : 0;
+        if(result == 1){
+            return AjaxResult.success(1);
+        }else {
+            return AjaxResult.error("控制失败",0);
+        }
     }
 }

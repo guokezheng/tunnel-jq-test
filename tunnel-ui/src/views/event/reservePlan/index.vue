@@ -828,6 +828,10 @@
       :visible.sync="dialogVisibleTem"
       width="45%"
       :before-close="handleClose">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div style="display: flex;justify-content: center;align-items: center;">
         <!-- 'letter-spacing':templateData['font_spacing'] + 'px', -->
         <div :style="{
@@ -848,10 +852,10 @@
           </span>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleTem = false">取 消</el-button>
-        <!-- <el-button type="primary" @click="dialogVisible = false">确 定</el-button> -->
-      </span>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span> -->
     </el-dialog>
   </div>
 </template>
@@ -1771,6 +1775,10 @@ export default {
               });
               // 渲染设备可控状态
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
+              //加强和基本设置不同最小值
+              if(brr.eqTypeId == 9){
+                this.$set(this.planTypeIdList[i].processesList[j],"minLight",30);
+              }
               // 设备类型为加强照明且状态为开启
               if((brr.eqTypeId == 7  || brr.eqTypeId == 9) && brr.state == '1'){
                 this.$set(this.planTypeIdList[i].processesList[j],"lightCol",2);

@@ -488,6 +488,10 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         if(sdReserveProcess.getId() != null && sdReserveProcess.getId() != 0L){
             SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
             planStrategy.setType("2");
+            if(sdReserveProcess.getType() != null){
+                planStrategy.setType(sdReserveProcess.getType());
+            }
+
             planStrategy.setCurrentId(sdReserveProcess.getId());
             planStrategy.setTemplateId(sdReserveProcess.getState());
             map = planStrategyMapper.getTemplateContent(planStrategy);

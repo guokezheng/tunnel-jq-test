@@ -15,6 +15,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.*;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
+import com.tunnel.business.domain.wulian.KafkaRadar;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
@@ -333,6 +334,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                     sdRadarDetectData.setLicenseColor(f.getVehicleColor() + "");
                     sdRadarDetectData.setStakeNum(f.getStakeNum());
                     sdRadarDetectData.setDistance(f.getDistanceEntry());
+                    //将数据推送至物联
+                    sendKafka(sdRadarDetectData);
                     //感知数据转换map
                     Map map1 = setCarsnapRedis(sdRadarDetectData);
                     //判断不是空并且启示数据不是0米
@@ -820,7 +823,7 @@ public class RadarEventServiceImpl implements RadarEventService {
      */
     public Map setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
         Map<String, Object> map = new HashMap<>();
-        map.put("tunnelId",TunnelEnum.HANG_SHAN_DONG.getCode());
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
         map.put("roadDir",sdRadarDetectData.getRoadDir());
         map.put("speed",sdRadarDetectData.getSpeed());
         map.put("laneNo",sdRadarDetectData.getLaneNum());
@@ -831,5 +834,24 @@ public class RadarEventServiceImpl implements RadarEventService {
         map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
 //        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.SECONDS);
         return  map;
+    }
+
+    /**
+     * 将数据推送至物联
+     * @param sdRadarDetectData
+     */
+    public void sendKafka(SdRadarDetectData sdRadarDetectData){
+        KafkaRadar kafkaRadar = new KafkaRadar();
+        kafkaRadar.setTunnelId(sdRadarDetectData.getTunnelId());
+        kafkaRadar.setDirection(sdRadarDetectData.getRoadDir());
+        kafkaRadar.setSpeed(sdRadarDetectData.getSpeed());
+        kafkaRadar.setLaneNo(sdRadarDetectData.getLaneNum());
+        kafkaRadar.setVehicleType(sdRadarDetectData.getVehicleType());
+        kafkaRadar.setLat(sdRadarDetectData.getLatitude());
+        kafkaRadar.setLng(sdRadarDetectData.getLongitude());
+        kafkaRadar.setDistance(sdRadarDetectData.getDistance());
+        kafkaRadar.setVehicleLicense(sdRadarDetectData.getVehicleLicense());
+        JSONObject jsonObject = JSONObject.parseObject(kafkaRadar.toString());
+        kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }
 }

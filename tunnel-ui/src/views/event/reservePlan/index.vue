@@ -758,7 +758,7 @@
                 </el-select>
               </el-col>
               <el-col :span="2" v-show="(itemed.eqTypeId == 7 || itemed.eqTypeId == 9) && itemed.state == '1'">
-                <el-input-number style="width:100%;" v-model="itemed.brightness" @change="handleChange" :min="itemed.minLight" :max="100" label="亮度"></el-input-number>
+                <el-input-number style="width:100%;" v-model="itemed.brightness" :min="itemed.minLight" :max="100" label="亮度"></el-input-number>
               </el-col>
               <!-- 照明设备end -->
               <!-- 选择情报板模板 -->
@@ -1768,6 +1768,10 @@ export default {
               });
               // 渲染设备可控状态
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
+              //加强和基本设置不同最小值
+              if(brr.eqTypeId == 9){
+                this.$set(this.planTypeIdList[i].processesList[j],"minLight",30);
+              }
               // 设备类型为加强照明且状态为开启
               if((brr.eqTypeId == 7  || brr.eqTypeId == 9) && brr.state == '1'){
                 this.$set(this.planTypeIdList[i].processesList[j],"lightCol",2);

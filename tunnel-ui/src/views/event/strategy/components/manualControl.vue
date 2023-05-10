@@ -559,8 +559,8 @@ export default {
           );
           let result = manualControl.every(function (item) {
             return (
-              item.equipmentTypeId != "" && item.state != "" && item.value != "" &&
-            item.equipmentTypeId != null && item.state != null && item.value != null
+              item.disposalName != "" && item.equipmentTypeId != "" && item.state != "" && item.value != "" &&
+              item.disposalName != null && item.equipmentTypeId != null && item.state != null && item.value != null
             );
           });
           console.log(result);
@@ -618,6 +618,7 @@ export default {
     changeEvent(value) {
       console.log("当前选中了隧道："+this.strategyForm.tunnelId+"，方向：" + this.strategyForm.direction);
 
+      this.equipmentTypeData = [];
       // 重置设备列表
       this.strategyForm.manualControl = [
         { state: "", value: "", equipmentTypeId: "" },

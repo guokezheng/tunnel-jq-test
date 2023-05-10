@@ -700,6 +700,9 @@ export default {
     changeEvent(value) {
 
       console.log("当前选中了隧道："+this.strategyForm.tunnelId+"，方向：" + this.strategyForm.direction);
+
+      this.equipmentTypeData = [];
+
       // 重置设备列表
       this.strategyForm.autoControl = [
         { state: "", value: "", equipmentTypeId: "" },

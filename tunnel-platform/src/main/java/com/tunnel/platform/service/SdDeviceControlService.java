@@ -704,7 +704,7 @@ public class SdDeviceControlService {
             throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
         }
         //加强照明状态拼接
-        String LinState = "";
+        String linState = "";
         if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
             sdDeviceTypeItems.stream().forEach(item -> {
                 if("brightness".equals(item.getItemCode())){
@@ -714,10 +714,9 @@ public class SdDeviceControlService {
                     updateDeviceData(sdDevices, state, Integer.parseInt(item.getId().toString()));
                 }
             });
-            if(brightness != null){
-                LinState = "1".equals(state) ?"开启":"关闭";
-                LinState += "，亮度："+brightness + "%";
-            }
+            brightness = brightness == null || "".equals(brightness) ? "0" : brightness;
+            linState = "1".equals(state) ?"开启":"关闭";
+            linState += "，亮度："+brightness + "%";
         }else {
             SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
             updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
@@ -729,7 +728,7 @@ public class SdDeviceControlService {
         sdOperationLog.setEqId(sdDevices.getEqId());
         sdOperationLog.setCreateTime(new Date());
         if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-            sdOperationLog.setOperationState(LinState);
+            sdOperationLog.setOperationState(linState);
         }else {
             sdOperationLog.setOperationState(state);
         }
@@ -764,25 +763,34 @@ public class SdDeviceControlService {
     /**
      * 添加操作日志
      * @param sdDevices 设备信息
-     * @param state 控制状态
+     * @param map 控制参数
      * @param beforeState 控制前状态
      * @param controlState 操作是否成功 0 不成功；1成功
      */
-    public void addOperationLog(SdDevices sdDevices,String state,String beforeState,String controlState){
+    public void addOperationLog(SdDevices sdDevices,Map<String, Object> map,String beforeState,String controlState){
+        //设备状态
+        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        //亮度
+        String brightness = Optional.ofNullable(map.get("brightness")).orElse("").toString();
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();
         sdOperationLog.setEqTypeId(sdDevices.getEqType());
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
         sdOperationLog.setCreateTime(new Date());
-//        if (data.size() > 0 && data.get(0) != null) {
-//            sdOperationLog.setBeforeState(data.get(0).getData());
-//        }
-//        if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-//            sdOperationLog.setOperationState(linState);
-//        }else {
-//            sdOperationLog.setOperationState(state);
-//        }
+
+        sdOperationLog.setBeforeState(beforeState);
+        //加强照明状态拼接
+        String linState = "";
+        if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+            if(brightness != null){
+                linState = "1".equals(state) ?"开启":"关闭";
+                linState += "，亮度："+brightness + "%";
+            }
+            sdOperationLog.setOperationState(linState);
+        }else {
+            sdOperationLog.setOperationState(state);
+        }
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
         sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));

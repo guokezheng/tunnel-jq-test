@@ -4254,6 +4254,7 @@ export default {
       moveTop: 0.11,
       /* -------------------------*/
       timer: null, //定时器
+      timerCat: null, //小车定时器
       windowHeight: document.documentElement.clientHeight, //实时屏幕高度
       displayNumb: false, //显示编号
       zoomSwitch: false, //缩放
@@ -4710,8 +4711,9 @@ export default {
   created() {
     // debugger
     //小车运行渲染定时任务
-    clearInterval(this.timer)
+    clearInterval(this.timerCat)
     this.timer = null
+    this.timerCat = null
     this.carSetTimer()
     this.getUserDept();
     //关闭小车
@@ -6951,15 +6953,15 @@ export default {
     },
     // 跑车
     carMapSportCar() {
-      clearInterval(this.timer);
+      clearInterval(this.timerCat);
       const car = this.$refs["sportCar"];
       // item.position['left']  当前隧道灯的距离出口的距离
       // car.style.left    当前距离隧道出口的距离
       let speed = 200;
-      this.timer = setInterval(() => {
+      this.timerCat = setInterval(() => {
         if (parseInt(car.style.left) <= 30) {
           // 车辆停止运动
-          clearInterval(this.timer);
+          clearInterval(this.timerCat);
           for (let i = 0; i < this.selectedIconList.length; i++) {
             let item = this.selectedIconList[i];
             if (
@@ -7001,13 +7003,13 @@ export default {
     },
     // 下行车道
     carMapLeft() {
-      clearInterval(this.timer);
+      clearInterval(this.timerCat);
       const car = this.$refs["carLeft"];
       let speed = 210;
       this.timer = setInterval(() => {
         if (parseInt(car.style.left) >= 1130) {
           // 车辆停止运动
-          clearInterval(this.timer);
+          clearInterval(this.timerCat);
           for (let i = 0; i < this.selectedIconList.length; i++) {
             let item = this.selectedIconList[i];
             if (
@@ -7052,15 +7054,15 @@ export default {
     },
     // 上行车道
     carMapRight() {
-      clearInterval(this.timer);
+      clearInterval(this.timerCat);
       const car = this.$refs["carRight"];
       // item.position['left']  当前隧道灯的距离出口的距离
       // car.style.left    当前距离隧道出口的距离
       let speed = 200;
-      this.timer = setInterval(() => {
+      this.timerCat = setInterval(() => {
         if (parseInt(car.style.left) <= 30) {
           // 车辆停止运动
-          clearInterval(this.timer);
+          clearInterval(this.timerCat);
           for (let i = 0; i < this.selectedIconList.length; i++) {
             let item = this.selectedIconList[i];
             if (
@@ -9404,8 +9406,8 @@ export default {
     //修改小车redis状态
     this.destroyedDelete()
     // 每次离开当前界面时，小车清除定时器
-    clearInterval(this.timer)
-    this.timer = null
+    clearInterval(this.timerCat)
+    this.timerCat = null
     clearInterval(this.timer);
     this.timer = null;
     clearInterval(this.imageTimer);

@@ -921,7 +921,9 @@
             <p v-if="item.deviceType != '16' && item.deviceType != '36' && item.deviceType != '22'" style="padding-bottom:15px;">执行状态:</p>
             <div class="templateImg" v-if="item.deviceType != '16' && item.deviceType != '36' && item.deviceType != '22'">
               <el-card shadow="always" class="otherBox">
-                <img :src="item.deviceIconUrl" />
+                <img v-for="(items,idx) in item.deviceIconUrl" :key="idx"
+                     :src="items"
+                />
                 <p>{{item.deviceState}}</p>
               </el-card>
             </div>

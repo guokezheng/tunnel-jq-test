@@ -758,7 +758,10 @@
                 </el-select>
               </el-col>
               <el-col :span="2" v-show="(itemed.eqTypeId == 7 || itemed.eqTypeId == 9) && itemed.state == '1'">
-                <el-input-number style="width:100%;" v-model="itemed.brightness" @change="handleChange" :min="itemed.minLight" :max="100" label="亮度"></el-input-number>
+                <!--  加强照明   -->
+                <el-input-number v-if="itemed.eqTypeId == 7" style="width:100%;" v-model="itemed.brightness" @change="handleChange" :max="100" label="亮度"></el-input-number>
+                <!--  基础照明   -->
+                <el-input-number v-if=" itemed.eqTypeId == 9" style="width:100%;" v-model="itemed.brightness" @change="handleChange" :min="30" :max="100" label="亮度"></el-input-number>
               </el-col>
               <!-- 照明设备end -->
               <!-- 选择情报板模板 -->
@@ -2119,11 +2122,14 @@ export default {
           return delPlan(ids);
         })
         .then(() => {
-          this.handleQuery();
+          // this.handleQuery();
+          that.$refs.planTable.clearSelection();
+          this.getList();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function () {
           that.$refs.planTable.clearSelection();
+          this.getList();
         });
     },
     //移除文件
@@ -2140,6 +2146,7 @@ export default {
     },
     //监控上传文件列表
     handleChange(file, fileList) {
+      debugger
       let existFile = fileList
         .slice(0, fileList.length - 1)
         .find((f) => f.name === file.name);

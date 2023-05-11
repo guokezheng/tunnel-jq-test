@@ -1298,6 +1298,7 @@ public class KafkaReadListenToHuaWeiTopic {
             //如果是未处理状态改为处理中
             if(event.getEventState().equals(EventStateEnum.unprocessed.getCode())){
                 event.setEventState(EventStateEnum.processing.getCode());
+                event.setUpdateTime(DateUtils.getNowDate());
             }
             radarEventServiceImpl.sendDataToOtherSystem(null,event);
         }

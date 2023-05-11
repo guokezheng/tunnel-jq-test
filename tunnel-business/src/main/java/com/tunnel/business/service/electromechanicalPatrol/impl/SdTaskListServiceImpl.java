@@ -67,9 +67,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 //    @Qualifier("kafkaThreeTemplate")
 //    private KafkaTemplate<String, String> kafkaThreeTemplate;
 
-//    @Autowired
-//    @Qualifier("kafkaTwoTemplate")
-//    private KafkaTemplate<String, String> kafkaTwoTemplate;
+    @Autowired
+    @Qualifier("kafkaTwoTemplate")
+    private KafkaTemplate<String, String> kafkaTwoTemplate;
 //
 //    @Value("${tunnelTaskList}")
 //    private String tunnelTaskList;

@@ -124,6 +124,7 @@ export default {
     ...mapState(["settings"]),
     ...mapGetters(["sidebarRouters", "sidebar"]),
     activeMenu() {
+      debugger
       const route = this.$route;
       const { meta, path } = route;
       // if set path, the sidebar will highlight the path you set
@@ -175,6 +176,10 @@ export default {
         window.location = "http://10.7.187.28:82/WorkBench?userId=8";
       }
     },
+    $route() {
+      // this.addTags()
+      debugger
+    },
   },
   mounted() {
     // 当前导航栏子元素数量
@@ -194,7 +199,7 @@ export default {
     let wrap = this.$refs.scroll.$refs.wrap;
     let rollWidth = this.wrapWith  - Math.abs(wrap.scrollLeft);
     this.rightIcon = rollWidth - 147.77 < wrap.offsetWidth ? false : true;
-    
+
   },
   async created() {
     // console.log(
@@ -257,6 +262,14 @@ export default {
     changeScroll(e) {
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft - e.wheelDelta;
+    },
+    addTags() {
+      debugger
+      const { name } = this.$route
+      if (name) {
+        this.$store.dispatch('tagsView/addView', this.$route)
+      }
+      return false
     },
   },
 };

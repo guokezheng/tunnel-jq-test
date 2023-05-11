@@ -209,7 +209,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
         select e.tunnel_name sdName,s.id,s.task_name,s.tunnel_id,s.end_plantime,y.dept_name bzName,y.dept_id bz_id,s.dispatch_time,
-        s.task_description,u.nick_name dispatcher,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime,w.user_name walker_id
+        s.task_description,u.nick_name dispatcher,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime,w.nick_name walker_id
         from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
         left join sys_user w on w.user_id = s.walker_id
         left join sd_teams y on s.bz_id = y.dept_id

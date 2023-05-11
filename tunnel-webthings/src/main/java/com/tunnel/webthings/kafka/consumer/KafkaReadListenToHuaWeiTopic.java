@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
@@ -118,6 +119,9 @@ public class KafkaReadListenToHuaWeiTopic {
     @Autowired
     @Qualifier("kafkaTwoTemplate")
     private KafkaTemplate<String, String> kafkaTwoTemplate;
+
+    @Value("${authorize.name}")
+    private String authorizeName;
 
     /**
      * 监听风机实时运行状态
@@ -493,7 +497,7 @@ public class KafkaReadListenToHuaWeiTopic {
     @KafkaListener(topics = {"rhy_tunnel_merge_event"}, containerFactory = "kafkaThreeContainerFactory")
     public void receiveEvent(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
         log.info("监听到瑞华赢实时事件数据： --> {}", record.value());
-        if (record.value() != null && record.value() != "") {
+        if (record.value() != null && record.value() != "" && authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
             JSONObject objects =  JSON.parseObject(record.value().toString());
             joinEvent(objects);
         }
@@ -1768,17 +1772,17 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param sdRadarDetectData
      */
     public void sendKafka(SdRadarDetectData sdRadarDetectData){
-        KafkaRadar kafkaRadar = new KafkaRadar();
-        kafkaRadar.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
-        kafkaRadar.setDirection(sdRadarDetectData.getRoadDir());
-        kafkaRadar.setSpeed(sdRadarDetectData.getSpeed());
-        kafkaRadar.setLaneNo(sdRadarDetectData.getLaneNum());
-        kafkaRadar.setVehicleType(sdRadarDetectData.getVehicleType());
-        kafkaRadar.setLat(sdRadarDetectData.getLatitude());
-        kafkaRadar.setLng(sdRadarDetectData.getLongitude());
-        kafkaRadar.setDistance(sdRadarDetectData.getDistance());
-        kafkaRadar.setVehicleLicense(sdRadarDetectData.getVehicleLicense());
-        JSONObject jsonObject = JSONObject.parseObject(kafkaRadar.toString());
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",TunnelEnum.HANG_SHAN_DONG.getCode());
+        map.put("direction",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        JSONObject jsonObject = new JSONObject(map);
         kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }
 

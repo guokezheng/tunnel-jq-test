@@ -974,7 +974,7 @@ export default {
               eqStateList: [],
               templatesList: [],
               brightness:100,
-              minLight:'',
+              minLight:1,
             },
           ],
         },
@@ -1334,7 +1334,7 @@ export default {
             disabled: false,
             templatesList: [],
             brightness:100,
-            minLight:'',
+            minLight:1,
           },
         ],
       };
@@ -1457,7 +1457,7 @@ export default {
             disabled: false,
             templatesList: [],
             brightness:100,
-            minLight:'',
+            minLight:1,
           },
         ],
       };
@@ -1520,6 +1520,8 @@ export default {
         if(eqTypeId == '7' || eqTypeId == '9'){
           let light = this.planTypeIdList[number].processesList[index];
           light.lightCol = 4;
+          light.state = "";
+          light.minLight = 1;
           //开启加强照明百分比
           this.$set(
             light,"lightShow",true
@@ -1778,6 +1780,8 @@ export default {
               //加强和基本设置不同最小值
               if(brr.eqTypeId == 9){
                 this.$set(this.planTypeIdList[i].processesList[j],"minLight",30);
+              }else if(brr.eqTypeId == 7){
+                this.$set(this.planTypeIdList[i].processesList[j],"minLight",1);
               }
               // 设备类型为加强照明且状态为开启
               if((brr.eqTypeId == 7  || brr.eqTypeId == 9) && brr.state == '1'){

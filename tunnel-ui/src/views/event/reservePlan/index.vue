@@ -15,10 +15,10 @@
           v-hasPermi="['business:plan:add']"
           size="small"
           @click="handleAdd()"
-          >新增
+        >新增
         </el-button>
         <el-button size="small" :loading="exportLoading" @click="handleExport"
-          >导出
+        >导出
         </el-button>
         <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
@@ -133,10 +133,10 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
+          >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-            >重置</el-button
+          >重置</el-button
           >
         </el-form-item>
       </el-form>
@@ -210,7 +210,7 @@
             style="cursor: pointer; color: #39adff"
             type="text"
             @click="openFileDrawer(scope.row)"
-            >点击查看
+          >点击查看
           </el-button>
           <div v-show="!scope.row.planFileId || scope.row.planFileId == 'null'">
             无
@@ -253,21 +253,21 @@
             class="tableBlueButtton"
             size="mini"
             @click="handleUpdate(scope.row)"
-            >修改
+          >修改
           </el-button>
           <el-button
             v-hasPermi="['business:plan:remove']"
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
-            >删除
+          >删除
           </el-button>
           <el-button
             v-hasPermi="['business:plan:add']"
             size="mini"
             class="tableBlueButtton"
             @click="chooseStrategyInfo(scope.row)"
-            >配置策略
+          >配置策略
           </el-button>
         </template>
       </el-table-column>
@@ -319,7 +319,7 @@
               size="mini"
               type="text"
               @click="loadFile(scope.row)"
-              >下载
+            >下载
             </el-button>
           </template>
         </el-table-column>
@@ -575,7 +575,7 @@
             style="width: 100%"
           >
             <el-button slot="trigger" size="small" type="primary"
-              >选取文件</el-button
+            >选取文件</el-button
             >
             <!-- <el-button size="small" style="margin-left: 133px;" type="success" @click="submitUpload">上传到服务器
             </el-button> -->
@@ -583,7 +583,7 @@
               slot="tip"
               class="el-upload__tip"
               style="font-style: italic; color: red; padding-left: 5%"
-              >{{ text }}</span
+            >{{ text }}</span
             >
           </el-upload>
         </el-form-item>
@@ -591,7 +591,7 @@
       <div class="dialog-footer" slot="footer">
         <el-button @click="submitUpload" class="submitButton">保 存</el-button>
         <el-button @click="cancelsubmitUpload" class="closeButton"
-          >取 消</el-button
+        >取 消</el-button
         >
       </div>
     </el-dialog>
@@ -747,7 +747,7 @@
               <!-- 照明设备 -->
               <el-col :span="itemed.lightCol" v-if="itemed.eqTypeId == 7 || itemed.eqTypeId == 9">
                 <el-select v-model="itemed.state" placeholder="设备操作"
-                  @change="lightStateChange(number, index,itemed.state)">
+                           @change="lightStateChange(number, index,itemed.state)">
                   <el-option
                     v-for="(ite, idx) in itemed.eqStateList"
                     :key="idx"
@@ -758,10 +758,7 @@
                 </el-select>
               </el-col>
               <el-col :span="2" v-show="(itemed.eqTypeId == 7 || itemed.eqTypeId == 9) && itemed.state == '1'">
-                <!--  加强照明   -->
-                <el-input-number v-if="itemed.eqTypeId == 7" style="width:100%;" v-model="itemed.brightness" @change="handleChange" :max="100" label="亮度"></el-input-number>
-                <!--  基础照明   -->
-                <el-input-number v-if=" itemed.eqTypeId == 9" style="width:100%;" v-model="itemed.brightness" @change="handleChange" :min="30" :max="100" label="亮度"></el-input-number>
+                <el-input-number style="width:100%;" v-model="itemed.brightness" :min="itemed.minLight" :max="100" label="亮度"></el-input-number>
               </el-col>
               <!-- 照明设备end -->
               <!-- 选择情报板模板 -->
@@ -817,7 +814,7 @@
           class="submitButton"
           v-hasPermi="['plan:process:add']"
           @click="submitStrategy"
-          >保存</el-button
+        >保存</el-button
         >
         <el-button @click="closeStrategy" class="closeButton">取 消</el-button>
       </div>
@@ -848,7 +845,7 @@
             'top':templateData['top'] + 'px',
             'left':templateData['left'] + 'px',
           }"
-          style="line-height:1" v-html="templateData['content']">
+                style="line-height:1" v-html="templateData['content']">
           </span>
         </div>
       </div>
@@ -1233,11 +1230,11 @@ export default {
     },
     // 情报板选择模板点击事件
     templateClick(number, index,item){
-        this.$refs.boardRef.init(
-          number,
-          index,
-          item.eqTypeId,
-        );
+      this.$refs.boardRef.init(
+        number,
+        index,
+        item.eqTypeId,
+      );
     },
     lightStateChange(number,index,state){
       console.log(state,'当前状态');
@@ -1334,7 +1331,7 @@ export default {
             disabled: false,
             templatesList: [],
             brightness:100,
-            minLight:1,
+            minLight:'',
           },
         ],
       };
@@ -1534,6 +1531,7 @@ export default {
             light.lightCol = 4
           }
         }
+
         // 基本照明
         if(eqTypeId == '9'){
           let light = this.planTypeIdList[number].processesList[index];
@@ -2134,7 +2132,7 @@ export default {
           return delPlan(ids);
         })
         .then(() => {
-          // this.handleQuery();
+          /*this.handleQuery();*/
           that.$refs.planTable.clearSelection();
           this.getList();
           this.$modal.msgSuccess("删除成功");
@@ -2158,7 +2156,6 @@ export default {
     },
     //监控上传文件列表
     handleChange(file, fileList) {
-      debugger
       let existFile = fileList
         .slice(0, fileList.length - 1)
         .find((f) => f.name === file.name);

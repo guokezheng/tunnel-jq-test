@@ -841,17 +841,17 @@ public class RadarEventServiceImpl implements RadarEventService {
      * @param sdRadarDetectData
      */
     public void sendKafka(SdRadarDetectData sdRadarDetectData){
-        KafkaRadar kafkaRadar = new KafkaRadar();
-        kafkaRadar.setTunnelId(sdRadarDetectData.getTunnelId());
-        kafkaRadar.setDirection(sdRadarDetectData.getRoadDir());
-        kafkaRadar.setSpeed(sdRadarDetectData.getSpeed());
-        kafkaRadar.setLaneNo(sdRadarDetectData.getLaneNum());
-        kafkaRadar.setVehicleType(sdRadarDetectData.getVehicleType());
-        kafkaRadar.setLat(sdRadarDetectData.getLatitude());
-        kafkaRadar.setLng(sdRadarDetectData.getLongitude());
-        kafkaRadar.setDistance(sdRadarDetectData.getDistance());
-        kafkaRadar.setVehicleLicense(sdRadarDetectData.getVehicleLicense());
-        JSONObject jsonObject = JSONObject.parseObject(kafkaRadar.toString());
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("direction",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        JSONObject jsonObject = new JSONObject(map);
         kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }
 }

@@ -276,9 +276,9 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.updateSdEvent(sdEvent);
-        /*if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
+        if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
             radarEventServiceImpl.sendDataToOtherSystem(null, sdEventMapper.selectSdEventById(sdEvent.getId()));
-        }*/
+        }
         return count;
     }
 

@@ -1,13 +1,18 @@
 package com.tunnel.platform.service.deviceControl;
 
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
+import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * describe: 鸿蒙控制器控制-杭山东
@@ -22,42 +27,33 @@ public class HongMengHttpControl implements GeneralControlBean {
     @Autowired
     private HongMengDevService hongMengDevService;
 
+    @Autowired
+    private CommonControlService commonControlService;
 
-//    /**
-//     * 控制方法
-//     *
-//     * @param sdDevices 设备信息
-//     * @param state     控制状态
-//     * @return
-//     */
-//    @Override
-//    public AjaxResult control(SdDevices sdDevices, String state) {
-//        String devId = sdDevices.getEqId();
-//        Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
-//        Integer code = Integer.valueOf(hongMap.get("code"));
-//        String msg = hongMap.get("msg");
-//        if(code == 200){
-//            return AjaxResult.success(1);
-//        }else {
-//            return AjaxResult.success(msg,0);
-//        }
-//    }
+    @Autowired
+    private ISdDevicesService sdDevicesService;
 
-//    @Override
+
+    @Autowired
+    private ISdOperationLogService sdOperationLogService;
+
+
+    /**
+     * 设备控制+操作日志
+     * @param map
+     * @return
+     */
     public AjaxResult control(Map<String, Object> map) {
-        //设备ID
-        String devId = Optional.ofNullable(map.get("devId")).orElse("").toString();
-
-//        if (devId == null || "".equals(devId)) {
-//            AjaxResult.error("未指定设备");
-//        }
-        //设备状态
-        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+//        //设备ID
+//        String devId = Optional.ofNullable(map.get("devId")).orElse("").toString();
+//
+//        //设备状态
+//        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
         //设备控制
-        Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
+        Map<String, String> hongMap = hongMengDevService.hongMengHttpControl(map);
         Integer code = Integer.valueOf(hongMap.get("code"));
         String msg = hongMap.get("msg");
-        if(code == 200){
+        if(code == HttpStatus.SUCCESS){
             return AjaxResult.success(1);
         }else {
             return AjaxResult.error(msg,0);
@@ -68,4 +64,53 @@ public class HongMengHttpControl implements GeneralControlBean {
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
         return control(map);
     }
+
+
+    /**
+     * 设备控制+模拟控制
+     * @param map
+     * @return
+     */
+    @Override
+    public Integer controlDevices(Map<String, Object> map){
+        int controlState = 0;
+
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+
+        String devId = map.get("devId").toString();
+//        String state = map.get("state").toString();
+
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+
+        if (!isopen) {
+            //设备控制，并生成操作日志
+            AjaxResult ajaxResult = control(map);
+            Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+            if( code == HttpStatus.SUCCESS){
+                controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+            }
+        } else {
+            //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+            controlState = analogControl(map,sdDevices);
+
+            //生成日志
+            SdOperationLog sdOperationLog = commonControlService.getOperationLog(map,sdDevices,controlState);
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        }
+
+        return controlState;
+    }
+
+    /**
+     * 模拟控制方法
+     *
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public Integer analogControl(Map<String, Object> map,SdDevices sdDevices) {
+        return commonControlService.analogControl(map,sdDevices);
+    }
+
 }

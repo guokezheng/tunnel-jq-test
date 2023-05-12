@@ -1,5 +1,6 @@
 package com.tunnel.deal.generalcontrol.service;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 
@@ -66,4 +67,13 @@ public interface CommonControlService {
      * @param controlState 操作是否成功 0 不成功；1成功
      */
     void addOperationLog(SdDevices sdDevices,Map<String, Object> map,String beforeState,String controlState);
+
+
+    /**
+     * 设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+     * @param sdDevices 设备信息
+     * @param map 控制参数
+     * @return
+     */
+     AjaxResult excecuteAnalogControl(SdDevices sdDevices, Map<String, Object> map);
 }

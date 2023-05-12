@@ -151,7 +151,7 @@ public class workspaceController extends BaseController {
         boolean isopen = commonControlService.queryAnalogControlConfig();
         if (isopen) {
             //设备模拟控制开启
-            return deviceControlService.excecuteAnalogControl(sdDevices,map);
+            return commonControlService.excecuteAnalogControl(sdDevices,map);
         }
 
         if ("GSY".equals(deploymentType)) {
@@ -221,7 +221,7 @@ public class workspaceController extends BaseController {
 
         if (isopen) {
             //设备模拟控制开启
-            return deviceControlService.excecuteAnalogControl(sdDevices,map);
+            return commonControlService.excecuteAnalogControl(sdDevices,map);
         } else {
             // eqType == DevicesTypeEnum.SHUI_BENG.getCode().longValue() ||
 //            if (

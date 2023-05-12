@@ -443,8 +443,12 @@ device:
     #正式环境部署地址
     #    url: http://10.7.187.28:60400/qxsd-iot
     dev:
+      #风机控制
       fan: ${device.hongmeng.url}/deviceCtrl/fan/alterFanRunStatus
+      #交通信号灯控制
       trafficLight: ${device.hongmeng.url}/deviceCtrl/trafficLight/alterTrafficLightRunStatus
+      #车道指示器控制
       laneIndicator: ${device.hongmeng.url}/deviceCtrl/laneIndicator/alterLaneIndicatorRunStatus
+      #卷帘门控制
       rollDoor: ${device.hongmeng.url}/deviceCtrl/rollDoor/alterRollDoorRunStatus
 

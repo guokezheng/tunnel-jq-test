@@ -1,6 +1,7 @@
 package com.tunnel.deal.generalcontrol.service.impl;
 
 import cn.hutool.json.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ServletUtils;
@@ -102,7 +103,7 @@ public class CommonControlServiceImpl implements CommonControlService {
             throw new RuntimeException("当前设备没有设备类型数据项数据");
         }
         SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-        sdDeviceDataService.updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+        sdDeviceDataService.updateDeviceData(sdDevices, state, typeItem.getId());
         Integer controlState = 1;
         return controlState;
     }
@@ -264,4 +265,62 @@ public class CommonControlServiceImpl implements CommonControlService {
 //        return AjaxResult.success(controlState);
     }
 
+
+    /**
+     * 设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+     * @param sdDevices 设备信息
+     * @param map 控制参数
+     * @return
+     */
+    @Override
+    public AjaxResult excecuteAnalogControl(SdDevices sdDevices, Map<String, Object> map){
+        //设备状态
+        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        //亮度
+        String brightness = Optional.ofNullable(map.get("brightness")).orElse("").toString();
+        //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+        sdDevices.setEqStatus("1");
+        sdDevices.setEqStatusTime(new Date());
+        sdDevicesService.updateSdDevices(sdDevices);
+        SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+        sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
+        List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+        if (sdDeviceTypeItems.size() == 0) {
+            throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
+        }
+        //加强照明状态拼接
+        String linState = "";
+        if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+            sdDeviceTypeItems.stream().forEach(item -> {
+                if("brightness".equals(item.getItemCode())){
+                    sdDeviceDataService.updateDeviceData(sdDevices, map.get("brightness").toString(), item.getId());
+                }
+                if("state".equals(item.getItemCode())){
+                    sdDeviceDataService.updateDeviceData(sdDevices, state, item.getId());
+                }
+            });
+            brightness = brightness == null || "".equals(brightness) ? "0" : brightness;
+            linState = "1".equals(state) ?"开启":"关闭";
+            linState += "，亮度："+brightness + "%";
+        }else {
+            SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
+            sdDeviceDataService.updateDeviceData(sdDevices, state, typeItem.getId());
+        }
+        //添加操作记录
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+        sdOperationLog.setEqId(sdDevices.getEqId());
+        sdOperationLog.setCreateTime(new Date());
+        if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+            sdOperationLog.setOperationState(linState);
+        }else {
+            sdOperationLog.setOperationState(state);
+        }
+        sdOperationLog.setControlType("0");
+        sdOperationLog.setState("1");
+        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        return AjaxResult.success(1);
+    }
 }

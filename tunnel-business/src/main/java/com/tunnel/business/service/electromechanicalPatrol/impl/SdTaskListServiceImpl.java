@@ -821,6 +821,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         String  faultId  = null;
         //先判断是故障点还是设备
         SdPatrolList patrolInfo = sdPatrolListMapper.getPatroltype(sdPatrolList.getId());
+        sdPatrolList.setXcStatus("1");//巡查状态为已巡查
         if(patrolInfo.getPatrolType().equals("1")){//故障点
             faultId = patrolInfo.getEqFaultId();
         }

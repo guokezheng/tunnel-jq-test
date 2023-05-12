@@ -190,13 +190,21 @@ public class SdAppTaskListController extends BaseController
 
     /**
      * 巡查点检修情况保存
-     * @param sdPatrolList
+     * @param uploadPicture
      * @return
      */
-    @GetMapping("/app/savePatrol")
-    public AjaxResult savePatrol(@RequestParam(name = "file", required = false) MultipartFile[] file, SdPatrolList sdPatrolList)
+    @PostMapping("/app/uploadPicture")
+    public AjaxResult uploadPicture(@RequestParam(name = "file", required = false) MultipartFile[] file)
     {
-        return toAjax(sdTaskListService.savePatrol(file,sdPatrolList));
+        return AjaxResult.success(sdTaskListService.uploadPicture(file));
+    }
+
+
+
+    @PostMapping("/app/savePatrol")
+    public AjaxResult savePatrolInfo(@RequestBody SdPatrolList sdPatrolList)
+    {
+        return toAjax(sdTaskListService.savePatrol(sdPatrolList));
     }
 
     /**

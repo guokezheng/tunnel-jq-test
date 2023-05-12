@@ -8,15 +8,12 @@ import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
-import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.domain.vehicle.SdVehicleData;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.*;
@@ -27,8 +24,8 @@ import com.tunnel.business.service.vehicle.ISdVehicleDataService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
-import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
+import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
@@ -42,7 +39,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -115,6 +111,9 @@ public class workspaceController extends BaseController {
     @Autowired
     private GeneralControlService generalControlService;
 
+    @Autowired
+    private CommonControlService commonControlService;
+
 
     //3d测试
     @PostMapping("/test")
@@ -149,7 +148,7 @@ public class workspaceController extends BaseController {
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
 
         //查询配置状态是否是模拟控制
-        boolean isopen = deviceControlService.queryAnalogControlConfig();
+        boolean isopen = commonControlService.queryAnalogControlConfig();
         if (isopen) {
             //设备模拟控制开启
             return deviceControlService.excecuteAnalogControl(sdDevices,map);
@@ -161,7 +160,7 @@ public class workspaceController extends BaseController {
         }
 
         //控制设备之前获取设备状态
-        String beforeState = deviceControlService.selectBeforeState(sdDevices);
+        String beforeState = commonControlService.selectBeforeState(sdDevices);
         String controlState = OperationLogEnum.STATE_ERROR.getCode();
         //设备控制
         GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
@@ -172,7 +171,7 @@ public class workspaceController extends BaseController {
             ajaxResult.put("data",controlState);
         }
         //添加操作日志
-        deviceControlService.addOperationLog(sdDevices,map,beforeState,controlState);
+        commonControlService.addOperationLog(sdDevices,map,beforeState,controlState);
         return ajaxResult;
     }
 
@@ -212,13 +211,11 @@ public class workspaceController extends BaseController {
             return deviceControlService.cloudPlatformControl(map);
         }
 
-        //控制设备之前获取设备状态
-        String beforeState = deviceControlService.selectBeforeState(sdDevices);
         //控制设备
 //        int controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
         int controlState = 0;
         //查询配置状态是否是模拟控制
-        boolean isopen = deviceControlService.queryAnalogControlConfig();
+        boolean isopen = commonControlService.queryAnalogControlConfig();
         long eqType = sdDevices.getEqType().longValue();
 
 
@@ -258,7 +255,6 @@ public class workspaceController extends BaseController {
             }
         }
 
-        deviceControlService.addOperationLog(sdDevices,map,beforeState,String.valueOf(controlState));
         return AjaxResult.success(controlState);
     }
 

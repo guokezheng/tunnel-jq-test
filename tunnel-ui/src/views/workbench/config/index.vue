@@ -1189,7 +1189,7 @@
                         </div>
                       </el-col>
                       <el-col :span="18" style="display: flex">
-                   
+
                         <div
                           style="
                             width: 210px;
@@ -1590,7 +1590,7 @@
       </div>
       <el-tabs v-model="operationActive" @tab-click="handleTabClick">
         <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
-        <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
+        <el-tab-pane label="操作日志1" name="caozuo"></el-tab-pane>
       </el-tabs>
 
       <!-- <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;"> -->

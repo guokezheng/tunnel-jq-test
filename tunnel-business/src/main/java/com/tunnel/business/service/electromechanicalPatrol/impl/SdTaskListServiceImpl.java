@@ -299,6 +299,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                             sdPatrolList.setPosition(devices.get(j).getEqDirection()+devices.get(j).getPile());//position
                             sdPatrolList.setXcSort(entry.getValue());
                             sdPatrolList.setXcStatus("0");//未巡查
+                            sdPatrolList.setFaultClstatus("2");//未消除
                             patrolList.add(sdPatrolList);
                         }
                     }
@@ -324,6 +325,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                             sdPatrolList.setPosition(fault.get(j).getFaultLocation());//position
                             sdPatrolList.setXcSort(entry.getValue());
                             sdPatrolList.setXcStatus("0");//未巡查
+                            sdPatrolList.setFaultClstatus("2");//未消除
                             patrolList1.add(sdPatrolList);
                         }
                     }
@@ -838,7 +840,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                 }else  if(sdPatrolList.getFaultClstatus().equals(FaultStatus.PATROLYIXIAOCHU.getCode())){//已消除
                     falltRemoveStatue  = FaultStatus.FAULTYIXIAOCHU.getCode();
                 }else{
-                    falltRemoveStatue = FaultStatus.FAULTYIXIAOCHU.getCode();
+                    falltRemoveStatue = FaultStatus.FAULTWEIXIAOCHU.getCode();
                 }
             }
         }

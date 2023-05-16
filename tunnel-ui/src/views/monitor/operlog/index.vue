@@ -192,7 +192,8 @@
     <el-table
       ref="tables"
       v-loading="loading"
-      height="62vh"
+      style=" overflow-y: auto;"
+      max-height="62vh"
       :data="list"
       @selection-change="handleSelectionChange"
       @row-click="handleRowClick"

@@ -296,7 +296,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             xc_time = now(),
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="xcSort != null">xc_sort = #{xcSort},</if>
-            <if test="xcStatus != null">xc_status = '1',</if>
+            <if test="xcStatus != null">xc_status = #{xcStatus},</if>
             <if test="imgFileId != null">img_file_id = #{imgFileId},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

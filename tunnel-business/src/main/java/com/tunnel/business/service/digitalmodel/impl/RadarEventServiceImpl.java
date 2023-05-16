@@ -215,13 +215,13 @@ public class RadarEventServiceImpl implements RadarEventService {
             if (eventList != null && eventList.size() > 0) {
                 for (int i = 0;i < eventList.size();i++) {
                     SdEvent event = eventList.get(i);
-                    event.setEventState("1");
+                    //event.setEventState("1");
                     event.setStakeNum(event.getStakeNum().replaceAll("-",""));
                     jsonObject.put("event", event);
 //                    kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
                 }
             } else if (sdEvent != null) {
-                sdEvent.setEventState("1");
+                //sdEvent.setEventState("1");
                 if(sdEvent.getStakeNum()!=null){
                     sdEvent.setStakeNum(sdEvent.getStakeNum().replaceAll("-",""));
                 }
@@ -841,17 +841,17 @@ public class RadarEventServiceImpl implements RadarEventService {
      * @param sdRadarDetectData
      */
     public void sendKafka(SdRadarDetectData sdRadarDetectData){
-        KafkaRadar kafkaRadar = new KafkaRadar();
-        kafkaRadar.setTunnelId(sdRadarDetectData.getTunnelId());
-        kafkaRadar.setDirection(sdRadarDetectData.getRoadDir());
-        kafkaRadar.setSpeed(sdRadarDetectData.getSpeed());
-        kafkaRadar.setLaneNo(sdRadarDetectData.getLaneNum());
-        kafkaRadar.setVehicleType(sdRadarDetectData.getVehicleType());
-        kafkaRadar.setLat(sdRadarDetectData.getLatitude());
-        kafkaRadar.setLng(sdRadarDetectData.getLongitude());
-        kafkaRadar.setDistance(sdRadarDetectData.getDistance());
-        kafkaRadar.setVehicleLicense(sdRadarDetectData.getVehicleLicense());
-        JSONObject jsonObject = JSONObject.parseObject(kafkaRadar.toString());
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("direction",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        JSONObject jsonObject = new JSONObject(map);
         kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }
 }

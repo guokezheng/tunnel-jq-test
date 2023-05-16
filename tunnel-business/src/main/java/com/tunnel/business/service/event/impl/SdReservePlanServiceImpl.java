@@ -292,6 +292,12 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             }
         }
         if (result >= 0) {
+            SdReservePlan sdReservePlan1 = sdReservePlanMapper.selectSdReservePlanById(sdReservePlan.getId());
+            //判断当前传入的隧道id和数据库落地的是否相同
+            if(!sdReservePlan.getTunnelId().equals(sdReservePlan1.getTunnelId())){
+                //如果不相同则删除原有的配置策略
+                sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReservePlan.getId());
+            }
             result = sdReservePlanMapper.updateSdReservePlan(sdReservePlan);
         }
         if(result > 0){

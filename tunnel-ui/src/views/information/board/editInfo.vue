@@ -735,6 +735,7 @@ export default {
             console.log(params,"params")
             editTemplateContent(params).then((response) => {
               console.log(response, "返回结果");
+              this.$modal.msgSuccess("修改成功");
             });
             this.$forceUpdate();
           }

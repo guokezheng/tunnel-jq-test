@@ -164,7 +164,7 @@ public interface ISdTaskListService
      * @param sdPatrolList
      * @return
      */
-    int savePatrol(MultipartFile[] file, SdPatrolList sdPatrolList);
+    int savePatrol(SdPatrolList sdPatrolList);
 
     /**
      * 获取任务状态
@@ -213,4 +213,11 @@ public interface ISdTaskListService
      * @param sdTaskList
      */
     int updateGsySdTaskList(SdTaskList sdTaskList);
+
+    /**
+     * app端上传图片
+     * @param file
+     * @return
+     */
+    String uploadPicture(MultipartFile[] file);
 }

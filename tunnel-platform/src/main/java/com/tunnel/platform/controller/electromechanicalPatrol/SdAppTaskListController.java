@@ -61,7 +61,7 @@ public class SdAppTaskListController extends BaseController
         String endTime = "";//结束时间
         if(sdTaskList.getTime()!=null&&!"".equals(sdTaskList.getTime())){//不为空
             //  0：最近1周；1：最近3周；2：最近1月；3：最近3月
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+           /* SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Calendar c = Calendar.getInstance();
             Date date = new Date();
             endTime = format.format(date);//结束时间
@@ -85,12 +85,11 @@ public class SdAppTaskListController extends BaseController
                 c.add(Calendar.MONTH, -3);
                 Date m3 = c.getTime();
                 startTime = format.format(m3);
-            }else{
-
+            }else{*/
                 String [] s= sdTaskList.getTime().split(",",0);
                 startTime = s[0];
                 endTime = s[1];
-            }
+            //}
         }
 
         Long userId = SecurityUtils.getUserId();
@@ -191,13 +190,21 @@ public class SdAppTaskListController extends BaseController
 
     /**
      * 巡查点检修情况保存
-     * @param sdPatrolList
+     * @param uploadPicture
      * @return
      */
-    @GetMapping("/app/savePatrol")
-    public AjaxResult savePatrol(@RequestParam(name = "file", required = false) MultipartFile[] file, SdPatrolList sdPatrolList)
+    @PostMapping("/app/uploadPicture")
+    public AjaxResult uploadPicture(@RequestParam(name = "file", required = false) MultipartFile[] file)
     {
-        return toAjax(sdTaskListService.savePatrol(file,sdPatrolList));
+        return AjaxResult.success(sdTaskListService.uploadPicture(file));
+    }
+
+
+
+    @PostMapping("/app/savePatrol")
+    public AjaxResult savePatrolInfo(@RequestBody SdPatrolList sdPatrolList)
+    {
+        return toAjax(sdTaskListService.savePatrol(sdPatrolList));
     }
 
     /**

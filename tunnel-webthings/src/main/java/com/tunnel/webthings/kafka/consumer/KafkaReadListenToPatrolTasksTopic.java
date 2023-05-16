@@ -73,7 +73,7 @@ public class KafkaReadListenToPatrolTasksTopic {
      * @param record
      * @param consumer
      */
-    @KafkaListener(topics = {"tunnelTaskList"}, containerFactory = "kafkaTwoContainerFactory")
+    /*@KafkaListener(topics = {"tunnelTaskList"}, containerFactory = "kafkaTwoContainerFactory")
     public void taskListAccept(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
         log.info("高速云端监听到平台数据： --> {}",record.value());
         if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
@@ -118,7 +118,7 @@ public class KafkaReadListenToPatrolTasksTopic {
             }
         }
         consumer.commitSync();
-    }
+    }*/
 
 
     /**
@@ -127,7 +127,7 @@ public class KafkaReadListenToPatrolTasksTopic {
      * @param record
      * @param consumer
      */
-    @KafkaListener(topics = {"tunnelTaskPatrol"}, containerFactory = "kafkaTwoContainerFactory")
+   /* @KafkaListener(topics = {"tunnelTaskPatrol"}, containerFactory = "kafkaTwoContainerFactory")
     public void taskPatrolAccept(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
         log.info("高速云端监听到平台数据： --> {}",record.value());
         if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
@@ -171,7 +171,7 @@ public class KafkaReadListenToPatrolTasksTopic {
             }
         }
         consumer.commitSync();
-    }
+    }*/
 
 
     /**
@@ -180,7 +180,7 @@ public class KafkaReadListenToPatrolTasksTopic {
      * @param record
      * @param consumer
      */
-    @KafkaListener(topics = {"tunnelTaskOperation"}, containerFactory = "kafkaTwoContainerFactory")
+    /*@KafkaListener(topics = {"tunnelTaskOperation"}, containerFactory = "kafkaTwoContainerFactory")
     public void taskOperationAccept(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
         log.info("高速云端监听到平台数据： --> {}",record.value());
         if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
@@ -198,7 +198,7 @@ public class KafkaReadListenToPatrolTasksTopic {
             }
         }
         consumer.commitSync();
-    }
+    }*/
 
 
     /**
@@ -207,7 +207,7 @@ public class KafkaReadListenToPatrolTasksTopic {
      * @param record
      * @param consumer
      */
-    @KafkaListener(topics = {"tunnelFaultList"}, containerFactory = "kafkaTwoContainerFactory")
+   /* @KafkaListener(topics = {"tunnelFaultList"}, containerFactory = "kafkaTwoContainerFactory")
     public void faultListAccept(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
         log.info("高速云端监听到平台数据： --> {}",record.value());
         if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
@@ -275,7 +275,7 @@ public class KafkaReadListenToPatrolTasksTopic {
             }
         }
         consumer.commitSync();
-    }
+    }*/
 
 
 }

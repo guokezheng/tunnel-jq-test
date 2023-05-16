@@ -5,21 +5,18 @@ import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
-import com.tunnel.business.service.dataInfo.IExternalSystemService;
-import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
-import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
+import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
+import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.deal.light.HttpUrlEscapeUtil;
 import com.tunnel.deal.light.Light;
 import com.tunnel.deal.light.enums.SanjingLightStateEnum;
@@ -56,6 +53,12 @@ public class SanJingLight implements Light, GeneralControlBean {
 
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
+
+    @Autowired
+    private CommonControlService commonControlService;
+
+    @Autowired
+    private ISdDeviceTypeItemService sdDeviceTypeItemService;
 
     @Autowired
     private RedisCache redisCache;
@@ -236,7 +239,7 @@ public class SanJingLight implements Light, GeneralControlBean {
             device.setEqStatusTime(new Date());
             sdDevicesService.updateSdDevices(device);
             //更新设备实时数据
-            updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+            sdDeviceDataService.updateDeviceData(device, String.valueOf(openClose), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode()));
         }
 
         //添加操作日志
@@ -459,7 +462,7 @@ public class SanJingLight implements Light, GeneralControlBean {
             device.setEqStatusTime(new Date());
             sdDevicesService.updateSdDevices(device);
             //更新设备实时数据
-            updateDeviceData(device, String.valueOf(luminanceRange), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+            sdDeviceDataService.updateDeviceData(device, String.valueOf(luminanceRange), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
             //更新redis缓存
             String redisLuminanceRangeKey = "control:"+device.getEqId()+"_LuminanceRange";
             redisCache.setCacheObject(redisLuminanceRangeKey,luminanceRange);
@@ -507,7 +510,7 @@ public class SanJingLight implements Light, GeneralControlBean {
             device.setEqStatusTime(new Date());
             sdDevicesService.updateSdDevices(device);
             //更新设备实时数据
-            updateDeviceData(device, String.valueOf(luminanceRange), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+            sdDeviceDataService.updateDeviceData(device, String.valueOf(luminanceRange), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
             //更新redis缓存
             String redisLuminanceRangeKey = "control:"+device.getEqId()+"_LuminanceRange";
             redisCache.setCacheObject(redisLuminanceRangeKey,luminanceRange);
@@ -531,22 +534,7 @@ public class SanJingLight implements Light, GeneralControlBean {
         return resultStatus;
     }
 
-    public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
-        SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(sdDevices.getEqId());
-        sdDeviceData.setItemId(Long.valueOf(itemId));
-        List<SdDeviceData> deviceData = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-        if (deviceData.size() > 0) {
-            SdDeviceData data = deviceData.get(0);
-            data.setData(value);
-            data.setUpdateTime(new Date());
-            sdDeviceDataService.updateSdDeviceData(data);
-        } else {
-            sdDeviceData.setData(value);
-            sdDeviceData.setCreateTime(new Date());
-            sdDeviceDataService.insertSdDeviceData(sdDeviceData);
-        }
-    }
+
 
     /**
      * 获取token
@@ -578,8 +566,7 @@ public class SanJingLight implements Light, GeneralControlBean {
      * @param sdDevices
      * @return
      */
-    @Override
-    public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
+    public AjaxResult controlLight(Map<String, Object> map, SdDevices sdDevices) {
 
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
@@ -656,4 +643,175 @@ public class SanJingLight implements Light, GeneralControlBean {
             return AjaxResult.error("控制失败",0);
         }
     }
+
+
+    /**
+     * 控制方法
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public AjaxResult control(Map<String, Object> map, SdDevices sdDevices){
+        Integer controlState = 0;
+
+//        //控制设备之前获取设备状态
+        //基本照明、加强照明多个设备类型数据项，暂时不存储控制前状态beforeState todo
+//        String beforeState = commonControlService.selectBeforeState(sdDevices);
+
+        AjaxResult ajaxResult = controlLight(map,sdDevices);
+        Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+        if( code == HttpStatus.SUCCESS){
+            controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+        }
+        commonControlService.addOperationLog(sdDevices,map,"",String.valueOf(controlState));
+        return ajaxResult;
+    }
+
+
+    /**
+     * 设备控制
+     *
+     * @param map
+     * @return
+     */
+    @Override
+    public Integer controlDevices(Map<String, Object> map){
+
+        int controlState = 0;
+
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+
+        String devId = map.get("devId").toString();
+//        String state = map.get("state").toString();
+//        String controlType = map.get("controlType").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+
+        //控制照明设备
+        if (!isopen) {
+//            controlState = lightService.lineControl(devId, Integer.parseInt(state),brightness);
+            //设备控制
+            AjaxResult ajaxResult = controlLight(map,sdDevices);
+            Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+            if( code == HttpStatus.SUCCESS){
+                controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+            }
+        } else {
+            //模拟控制
+            controlState = analogControl(map,sdDevices);
+        }
+
+        addOperationLog(map,sdDevices,controlState);
+
+        return controlState;
+    }
+
+
+    /**
+     * 模拟控制方法
+     *
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
+        //设备状态
+        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        //亮度
+        String brightnessStr = Optional.ofNullable(map.get("brightness")).orElse("").toString();
+        Integer brightness = Integer.valueOf(brightnessStr);
+
+        //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+        sdDevices.setEqStatus("1");
+        sdDevices.setEqStatusTime(new Date());
+        sdDevicesService.updateSdDevices(sdDevices);
+        SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+        sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
+        List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+        if (sdDeviceTypeItems.size() == 0) {
+            throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
+        }
+        sdDeviceTypeItems.stream().forEach(item -> {
+            if("brightness".equals(item.getItemCode()) &&
+                    (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) ||
+                            DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())
+                    )
+            ){
+                sdDeviceDataService.updateDeviceData(sdDevices, brightness.toString(), item.getId());
+            }
+            if("state".equals(item.getItemCode())){
+                sdDeviceDataService.updateDeviceData(sdDevices, state, item.getId());
+            }
+        });
+
+        Integer controlState = 1;
+        return controlState;
+    }
+
+    public void addOperationLog(Map<String, Object> map, SdDevices sdDevices,Integer controlState){
+
+        String state = map.get("state").toString();
+        String controlType = map.get("controlType").toString();
+
+        //获取当前设备状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+
+        //添加操作记录
+        SdOperationLog sdOperationLog = new SdOperationLog();
+
+        //部份设备未接入，无法正确获取设备控制结果，默认失败
+        sdOperationLog.setState("0");
+
+        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+        sdOperationLog.setEqId(sdDevices.getEqId());
+        sdOperationLog.setOperationState(state);
+        sdOperationLog.setControlType(controlType);
+        if (null != map.get("operIp")) {
+            sdOperationLog.setOperIp(map.get("operIp").toString());
+        }
+        if (null != map.get("controlTime")) {
+            sdOperationLog.setCreateTime(DateUtils.parseDate(map.get("controlTime")));
+        }else{
+            sdOperationLog.setCreateTime(new Date());
+        }
+        if (null != map.get("eventId")) {
+            sdOperationLog.setEventId(map.get("eventId").toString());
+        }
+
+//        照明有多个设备数据项，获取列表中第一个可能会有bug
+        if (data.size() > 0) {
+            sdOperationLog.setBeforeState(data.get(0).getData());
+        }
+
+        Integer brightness = 0;
+        // 加强照明，可设置照明亮度
+        if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()
+                || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()
+        ){
+            //todo ???? 属性值前后不一致
+            if(map.get("stateNum") != null){
+                brightness = Integer.parseInt(map.get("stateNum").toString());
+                sdOperationLog.setDescription(brightness+"");
+            }
+
+            String operationStateStr = "1".equals(state) ?"开启":"关闭";
+            operationStateStr += "，亮度："+brightness + "%";
+            sdOperationLog.setOperationState(operationStateStr);
+        }else{
+            sdOperationLog.setOperationState(state);
+        }
+
+        sdOperationLog.setState(String.valueOf(controlState));
+
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+
+    }
+
+
+
+
 }

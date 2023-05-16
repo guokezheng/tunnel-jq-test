@@ -15,10 +15,10 @@
           v-hasPermi="['business:plan:add']"
           size="small"
           @click="handleAdd()"
-          >新增
+        >新增
         </el-button>
         <el-button size="small" :loading="exportLoading" @click="handleExport"
-          >导出
+        >导出
         </el-button>
         <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
@@ -133,10 +133,10 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
+          >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-            >重置</el-button
+          >重置</el-button
           >
         </el-form-item>
       </el-form>
@@ -210,7 +210,7 @@
             style="cursor: pointer; color: #39adff"
             type="text"
             @click="openFileDrawer(scope.row)"
-            >点击查看
+          >点击查看
           </el-button>
           <div v-show="!scope.row.planFileId || scope.row.planFileId == 'null'">
             无
@@ -253,21 +253,21 @@
             class="tableBlueButtton"
             size="mini"
             @click="handleUpdate(scope.row)"
-            >修改
+          >修改
           </el-button>
           <el-button
             v-hasPermi="['business:plan:remove']"
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
-            >删除
+          >删除
           </el-button>
           <el-button
             v-hasPermi="['business:plan:add']"
             size="mini"
             class="tableBlueButtton"
             @click="chooseStrategyInfo(scope.row)"
-            >配置策略
+          >配置策略
           </el-button>
         </template>
       </el-table-column>
@@ -319,7 +319,7 @@
               size="mini"
               type="text"
               @click="loadFile(scope.row)"
-              >下载
+            >下载
             </el-button>
           </template>
         </el-table-column>
@@ -575,7 +575,7 @@
             style="width: 100%"
           >
             <el-button slot="trigger" size="small" type="primary"
-              >选取文件</el-button
+            >选取文件</el-button
             >
             <!-- <el-button size="small" style="margin-left: 133px;" type="success" @click="submitUpload">上传到服务器
             </el-button> -->
@@ -583,7 +583,7 @@
               slot="tip"
               class="el-upload__tip"
               style="font-style: italic; color: red; padding-left: 5%"
-              >{{ text }}</span
+            >{{ text }}</span
             >
           </el-upload>
         </el-form-item>
@@ -591,7 +591,7 @@
       <div class="dialog-footer" slot="footer">
         <el-button @click="submitUpload" class="submitButton">保 存</el-button>
         <el-button @click="cancelsubmitUpload" class="closeButton"
-          >取 消</el-button
+        >取 消</el-button
         >
       </div>
     </el-dialog>
@@ -747,7 +747,7 @@
               <!-- 照明设备 -->
               <el-col :span="itemed.lightCol" v-if="itemed.eqTypeId == 7 || itemed.eqTypeId == 9">
                 <el-select v-model="itemed.state" placeholder="设备操作"
-                  @change="lightStateChange(number, index,itemed.state)">
+                           @change="lightStateChange(number, index,itemed.state)">
                   <el-option
                     v-for="(ite, idx) in itemed.eqStateList"
                     :key="idx"
@@ -814,7 +814,7 @@
           class="submitButton"
           v-hasPermi="['plan:process:add']"
           @click="submitStrategy"
-          >保存</el-button
+        >保存</el-button
         >
         <el-button @click="closeStrategy" class="closeButton">取 消</el-button>
       </div>
@@ -825,6 +825,10 @@
       :visible.sync="dialogVisibleTem"
       width="45%"
       :before-close="handleClose">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div style="display: flex;justify-content: center;align-items: center;">
         <!-- 'letter-spacing':templateData['font_spacing'] + 'px', -->
         <div :style="{
@@ -841,14 +845,14 @@
             'top':templateData['top'] + 'px',
             'left':templateData['left'] + 'px',
           }"
-          style="line-height:1" v-html="templateData['content']">
+                style="line-height:1" v-html="templateData['content']">
           </span>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleTem = false">取 消</el-button>
-        <!-- <el-button type="primary" @click="dialogVisible = false">确 定</el-button> -->
-      </span>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span> -->
     </el-dialog>
   </div>
 </template>
@@ -967,7 +971,7 @@ export default {
               eqStateList: [],
               templatesList: [],
               brightness:100,
-              minLight:'',
+              minLight:1,
             },
           ],
         },
@@ -1226,11 +1230,11 @@ export default {
     },
     // 情报板选择模板点击事件
     templateClick(number, index,item){
-        this.$refs.boardRef.init(
-          number,
-          index,
-          item.eqTypeId,
-        );
+      this.$refs.boardRef.init(
+        number,
+        index,
+        item.eqTypeId,
+      );
     },
     lightStateChange(number,index,state){
       console.log(state,'当前状态');
@@ -1450,7 +1454,7 @@ export default {
             disabled: false,
             templatesList: [],
             brightness:100,
-            minLight:'',
+            minLight:1,
           },
         ],
       };
@@ -1513,6 +1517,8 @@ export default {
         if(eqTypeId == '7' || eqTypeId == '9'){
           let light = this.planTypeIdList[number].processesList[index];
           light.lightCol = 4;
+          light.state = "";
+          light.minLight = 1;
           //开启加强照明百分比
           this.$set(
             light,"lightShow",true
@@ -1525,6 +1531,7 @@ export default {
             light.lightCol = 4
           }
         }
+
         // 基本照明
         if(eqTypeId == '9'){
           let light = this.planTypeIdList[number].processesList[index];
@@ -1770,6 +1777,8 @@ export default {
               //加强和基本设置不同最小值
               if(brr.eqTypeId == 9){
                 this.$set(this.planTypeIdList[i].processesList[j],"minLight",30);
+              }else if(brr.eqTypeId == 7){
+                this.$set(this.planTypeIdList[i].processesList[j],"minLight",1);
               }
               // 设备类型为加强照明且状态为开启
               if((brr.eqTypeId == 7  || brr.eqTypeId == 9) && brr.state == '1'){
@@ -2122,11 +2131,14 @@ export default {
           return delPlan(ids);
         })
         .then(() => {
-          this.handleQuery();
+          /*this.handleQuery();*/
+          that.$refs.planTable.clearSelection();
+          this.getList();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(function () {
           that.$refs.planTable.clearSelection();
+          this.getList();
         });
     },
     //移除文件

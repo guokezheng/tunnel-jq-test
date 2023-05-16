@@ -2,7 +2,7 @@ package com.tunnel.business.datacenter.domain.enumeration;
 
 
 /**
- * 隧道
+ * 控制方式 sd_control_type
  *
  * @author zhai
  */

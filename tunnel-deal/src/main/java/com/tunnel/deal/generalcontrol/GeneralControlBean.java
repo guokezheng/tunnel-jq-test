@@ -15,16 +15,31 @@ import java.util.Map;
  */
 public interface GeneralControlBean {
 
-//    /**
-//     * 控制方法
-//     * @param sdDevices 设备信息
-//     * @param state 控制状态
-//     * @return
-//     */
-//    AjaxResult control(SdDevices sdDevices, String state);
-//
-//
-//    AjaxResult control(Map<String, Object> map);
 
+    /**
+     * 设备控制--工作台单个设备控制
+     * @param map
+     * @param sdDevices
+     * @return
+     */
     AjaxResult control(Map<String, Object> map,SdDevices sdDevices);
+
+
+    /**
+     * 设备控制+模拟控制--其他模块调用的统一控制方法
+     * @param map
+     * @return
+     */
+    Integer controlDevices(Map<String, Object> map);
+
+
+    /**
+     * 模拟控制方法
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    Integer analogControl(Map<String, Object> map, SdDevices sdDevices);
+
+
 }

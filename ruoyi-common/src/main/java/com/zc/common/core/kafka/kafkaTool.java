@@ -27,7 +27,7 @@ public class kafkaTool {
     public static void sendAssignWebSocket(List<Map> list, JSONObject object){
         try {
             //获取所有需要发送消息客服端的token
-            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
+            List<String> scanKey = redisCache.getCacheList("caKokenList");
             for (String key :scanKey){
                 //获取隧道以及是否推送
                 Map<String, Object> cacheMap = redisCache.getCacheMap(key);

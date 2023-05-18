@@ -344,11 +344,11 @@ p {
   // 列表页表格 滚动条宽12  给表头gutter同样设置12px 不然表头会错位
   th.el-table__cell.gutter {
     display: table-cell;
-    width:12px !important;
+    width:12px;
   }
   colgroup col[name="gutter"]  {
     display: table-cell;
-    width:12px !important;
+    width:12px;
   }
 }
 .el-table th.el-table__cell > .cell{

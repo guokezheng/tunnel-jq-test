@@ -8161,7 +8161,8 @@ export default {
           equipmentId: item.eqId,
         };
 
-        if (this.dialogEqType != item.eqType) {
+        if (this.dialogEqType && this.dialogEqType != item.eqType) {
+          this.dialogEqType = item.eqType;
           this.dialogClose();
         } else {
           this.dialogEqType = item.eqType;

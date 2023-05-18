@@ -438,4 +438,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+    <select id="checkTaskList" resultType="int" parameterType="SdTaskList">
+        select
+        count(*)
+        from
+        sd_task_list
+        where
+        1=1
+        <if test="taskName != null and taskName != ''">
+            and task_name =  #{taskName}
+        </if>
+    </select>
+
+
+
 </mapper>

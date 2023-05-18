@@ -220,4 +220,11 @@ public interface ISdTaskListService
      * @return
      */
     String uploadPicture(MultipartFile[] file);
+
+    /**
+     * 检验任务名称是否存在
+     * @param sdTaskList
+     * @return
+     */
+    int checkTaskList(SdTaskList sdTaskList);
 }

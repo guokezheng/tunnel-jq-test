@@ -910,7 +910,7 @@ export default {
         faultTbtime: "",
         eqId: null,
         eqStatus: null,
-        eqRunStatus: null,
+        eqRunStatus: "",
         faultCode: "",
         //faultLevel: null,
         falltRemoveStatue: null,
@@ -1201,7 +1201,7 @@ export default {
         this.form.eqStatus = "";
         if (response.data.length != 0) {
           this.form.faultLocation = response.data[0].pile;
-          this.form.eqRunStatus = response.data[0].runStatus;
+          this.form.eqRunStatus = typeof response.data[0].runStatus=="undefined"?"":response.data[0].runStatus;
           this.form.eqStatus = response.data[0].eq_status;
           //this.$refs(this.form, "eqStatus", 1);
         }

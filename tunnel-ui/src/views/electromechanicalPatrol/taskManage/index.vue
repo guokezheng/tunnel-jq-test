@@ -9,13 +9,13 @@
           type="primary"
           plain
           @click="handleAdd"
-          >新增
+        >新增
         </el-button>
         <el-button size="small" :loading="exportLoading" @click="handleExport"
-          >导出
+        >导出
         </el-button>
         <el-button size="small" @click="resetQuery" type="primary" plain
-          >刷新</el-button
+        >刷新</el-button
         >
       </el-col>
       <el-col :span="6" :offset="14">
@@ -105,10 +105,10 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
+          >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-            >重置</el-button
+          >重置</el-button
           >
         </el-form-item>
       </el-form>
@@ -183,7 +183,7 @@
                   ? 'yellow'
                   : '#00FF00',
             }"
-            >{{ scope.row.publish }}</span
+          >{{ scope.row.publish }}</span
           >
         </template>
       </el-table-column>
@@ -202,11 +202,11 @@
                   ? '#00FF00'
                   : '#60BCFD',
             }"
-            >{{ scope.row.task1 }}</span
+          >{{ scope.row.task1 }}</span
           >
           <span v-show="scope.row.task2" class="chaoshi">{{
-            scope.row.task2
-          }}</span>
+              scope.row.task2
+            }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -219,21 +219,21 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleRecordy(scope.row)"
-            >任务详情</el-button
+          >任务详情</el-button
           >
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="handleAbolish(scope.row)"
             :style="{ display: scope.row.task1 == '已完结'? 'none': scope.row.publishStatus == 2 ? '' :'none' }"
-            >废止任务</el-button
+          >废止任务</el-button
           >
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="exportTaskReport(scope.row)"
             :style="{ display: (scope.row.task).indexOf( '已完结')>=0 ? '' : 'none' }"
-            >巡查报告</el-button
+          >巡查报告</el-button
           >
           <el-button
             size="mini"
@@ -241,7 +241,7 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
             :style="{ display: scope.row.publishStatus != 0 ? 'none' : scope.row.task1 == '已完结'? 'none':'' }"
-            >修改</el-button
+          >修改</el-button
           >
           <el-button
             size="mini"
@@ -249,7 +249,7 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
             :style="{ display: scope.row.publishStatus != 0 ? 'none' : scope.row.task1 == '已完结'? 'none':'' }"
-            >删除</el-button
+          >删除</el-button
           >
         </template>
       </el-table-column>
@@ -303,14 +303,14 @@
                     ></el-option>
                   </el-select>
                 </el-form-item>
-<!--                <el-form-item label="派单人员" prop="dispatcher">
-                  <el-input
-                    ref="dispatcher"
-                    disabled="disabled"
-                    v-model="form.dispatcher"
-                    placeholder="（默认当前登录人）"
-                  ></el-input>
-                </el-form-item>-->
+                <!--                <el-form-item label="派单人员" prop="dispatcher">
+                                  <el-input
+                                    ref="dispatcher"
+                                    disabled="disabled"
+                                    v-model="form.dispatcher"
+                                    placeholder="（默认当前登录人）"
+                                  ></el-input>
+                                </el-form-item>-->
               </el-col>
               <el-col :span="8">
                 <el-form-item label="派单时间" prop="dispatchTime">
@@ -403,10 +403,10 @@
           <div class="tableTopHr" style="display: none"></div>
           <div class="button-father">
             <el-button type="primary" style="height: 15%" @click="show1"
-              >选择巡检点</el-button
+            >选择巡检点</el-button
             >
             <el-button type="primary" style="height: 15%" @click="show2"
-              >选择故障点</el-button
+            >选择故障点</el-button
             >
             <!--          <el-button type="primary" style="height: 15%" disabled
             >导入巡查计划</el-button
@@ -474,7 +474,7 @@
               style="display: none"
               class="closeButton"
               @click="abolish"
-              >废止</el-button
+            >废止</el-button
             >
             <el-button class="submitButton" @click="release">发布</el-button>
           </div>
@@ -667,12 +667,12 @@
             <el-table-column prop="fault_fxtime" label="发现时间">
               <template slot-scope="scope">
                 <span>{{
-                  !!scope.row.fault_fxtime
-                    ? scope.row.fault_fxtime
+                    !!scope.row.fault_fxtime
+                      ? scope.row.fault_fxtime
                         .replace(/T/g, " ")
                         .replace(/.[\d]{3}Z/, " ")
-                    : ""
-                }}</span>
+                      : ""
+                  }}</span>
               </template></el-table-column
             >
             <el-table-column prop="dict_label" label="故障描述">
@@ -740,8 +740,8 @@
           <el-col :span="8">
             <div>任务描述：</div>
             <span>{{
-              item.taskDescription == "null" ? "" : item.taskDescription
-            }}</span>
+                item.taskDescription == "null" ? "" : item.taskDescription
+              }}</span>
           </el-col>
         </el-row>
       </div>
@@ -777,11 +777,11 @@
             <span>{{ pat.impression }}</span>
           </el-col>
           <el-col :span="8">
-            <div>网络情况：</div>
+            <div style="width: auto;">通信和网络情况：</div>
             <span>{{ pat.network }}</span>
           </el-col>
           <el-col :span="8">
-            <div>配电情况：</div>
+            <div>供配电情况：</div>
             <span>{{ pat.power }}</span>
           </el-col>
           <el-col :span="8">
@@ -793,7 +793,7 @@
             <span>{{ pat.runStatus }}</span>
           </el-col>
           <el-col :span="8">
-            <div>现场照片：</div>
+            <div style="width:auto;padding-right: 10%">现场情况照片：</div>
             <div v-for="(pic, index) in pat.iFileList" :key="index">
               <img :src="pic.imgUrl" :title="pic.imgName" />
             </div>
@@ -825,10 +825,10 @@
             <span :class="{ active: isActive }">{{ tas.ifchaosgu }}</span>
           </el-col>
           <el-col :span="8">
-            <div>任务描述：</div>
+            <div>现场情况描述：</div>
             <span>{{
-              tas.taskDescription == "null" ? "" : tas.taskDescription
-            }}</span>
+                tas.siteDescription == "null" ? "" : tas.siteDescription
+              }}</span>
           </el-col>
         </el-row>
       </div>
@@ -2401,8 +2401,8 @@ img {
     color: #fff;
   }
   .el-tree--highlight-current
-    .el-tree-node.is-current
-    > .el-tree-node__content {
+  .el-tree-node.is-current
+  > .el-tree-node__content {
     background-color: #89c2f7;
     color: #fff;
   }

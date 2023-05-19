@@ -2,6 +2,7 @@ package com.tunnel.business.service.electromechanicalPatrol.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.config.RuoYiConfig;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.DeptTunnelTreeSelect;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
@@ -1023,6 +1024,26 @@ public class SdTaskListServiceImpl implements ISdTaskListService
             }*/
         }
         return guid;
+    }
+
+    /**
+     * 检验任务名称是否存在
+     * @param sdTaskList
+     * @return
+     */
+    @Override
+    public int checkTaskList(SdTaskList sdTaskList) {
+        return sdTaskListMapper.checkTaskList(sdTaskList);
+    }
+
+    /**
+     * 删除现场图片
+     * @param id
+     * @return
+     */
+    @Override
+    public int deleteSitePhoto(String id) {
+        return sdTrafficImageMapper.deleteSitePhoto(id);
     }
 
 }

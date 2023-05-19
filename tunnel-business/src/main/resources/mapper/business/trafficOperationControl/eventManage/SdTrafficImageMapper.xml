@@ -175,4 +175,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>)
     </delete>
+
+    <delete id="deleteSitePhoto" parameterType="String">
+        delete from sd_traffic_image where business_id  = #{id}
+    </delete>
+
 </mapper>

@@ -150,6 +150,11 @@ public class SdTaskListController extends BaseController
     @PostMapping("/addTask")
     public AjaxResult addTask(SdTaskList sdTaskList)
     {
+        //校验是否存在
+        int count = sdTaskListService.checkTaskList(sdTaskList);
+        if(count > 0){
+            return AjaxResult.error("任务名称已存在");
+        }
         return toAjax(sdTaskListService.insertSdTaskList(sdTaskList));
     }
 

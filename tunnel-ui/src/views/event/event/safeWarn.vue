@@ -140,7 +140,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="contentListBox">
+    <div class="contentListBox container"  v-loading="isLoading">
       <div
         class="contentBox"
         :style="topNav ? 'width:24.6%' : 'width:24.5%'"
@@ -1290,7 +1290,7 @@
 <script>
 import $ from "jquery";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-
+import { Loading } from 'element-ui';
 import {
   listEvent,
   getEvent,
@@ -1664,6 +1664,8 @@ export default {
       fuzzySearch1: "",
       // 表单校验
       rules: {},
+      isLoading: false,
+      loadingText: "加载中..."
     };
   },
   computed: {
@@ -1933,7 +1935,7 @@ export default {
     },
     eventIsShow(value, state) {
       if (value != null) {
-        if (state != "0" && value.includes("其他")) {
+        if (state != "0" &&(!!value ? value.includes("其他"):false)) {
           return true;
         }
       } else {
@@ -2457,7 +2459,9 @@ export default {
     getList() {
       this.eventForm.currencyId = "";
       this.ReservePlanList = [];
-      this.loading = true;
+      this.isLoading = true;
+      // let options ={}
+      // let loadingInstances = Loading.service(options);
       this.eventList = [];
       this.eventLists = [];
       if (this.manageStation == "1") {
@@ -2490,6 +2494,7 @@ export default {
           }
         }
         this.eventList = response.rows;
+        this.isLoading = false;
         console.log(this.eventList, "this.eventListthis.eventList");
         this.total = response.total;
         this.loading = false;
@@ -2697,6 +2702,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.isLoading = true;
       // this.queryParams.pageSize bug:857
       this.queryParams.pageNum = 1;
       this.dateRange = [];

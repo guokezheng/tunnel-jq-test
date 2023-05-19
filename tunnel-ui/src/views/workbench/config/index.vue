@@ -7711,6 +7711,7 @@ export default {
     },
     /* 获取实时数据PLC*/
     getRealTimeData() {
+      debugger
       // 真实
       //getConfigData(this.currentTunnel.id)
       // 模拟

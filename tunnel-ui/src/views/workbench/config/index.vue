@@ -1583,6 +1583,7 @@
       append-to-body
       v-dialogDrag
       :close-on-click-modal="false"
+      @close="resetQuery"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -1590,7 +1591,7 @@
       </div>
       <el-tabs v-model="operationActive" @tab-click="handleTabClick">
         <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
-        <el-tab-pane label="操作日志1" name="caozuo"></el-tab-pane>
+        <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
       </el-tabs>
 
       <!-- <div ref="main" style = "margin-left: 60%;margin-bottom: -2%;"> -->
@@ -5928,6 +5929,7 @@ export default {
     //     }
     //   );
     // },
+
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];

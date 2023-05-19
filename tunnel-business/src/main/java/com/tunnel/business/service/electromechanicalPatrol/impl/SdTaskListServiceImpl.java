@@ -1036,4 +1036,14 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         return sdTaskListMapper.checkTaskList(sdTaskList);
     }
 
+    /**
+     * 删除现场图片
+     * @param id
+     * @return
+     */
+    @Override
+    public int deleteSitePhoto(String id) {
+        return sdTrafficImageMapper.deleteSitePhoto(id);
+    }
+
 }

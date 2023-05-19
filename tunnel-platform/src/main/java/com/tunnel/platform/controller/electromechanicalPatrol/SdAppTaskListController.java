@@ -1,9 +1,11 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
@@ -240,6 +242,15 @@ public class SdAppTaskListController extends BaseController
         List<SdTaskList> taskList = sdTaskListService.getSiteInfo(taskId);
         return Result.success(taskList);
     }
+
+    /**
+     * app端删除图片
+     */
+    @DeleteMapping("/app/{id}")
+    public AjaxResult remove(@PathVariable String id) {
+        return toAjax(sdTaskListService.deleteSitePhoto(id));
+    }
+
 
 
 }

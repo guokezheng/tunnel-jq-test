@@ -21,6 +21,7 @@ import java.util.Map;
 @RequestMapping("/controlRecord")
 public class SdControlRecordController extends BaseController {
 
+
     @Autowired
     private ISdControlRecordService iSdControlRecordService;
 

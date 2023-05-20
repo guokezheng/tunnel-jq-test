@@ -160,13 +160,14 @@
                 v-model="form.parentId"
                 :disable-branch-nodes="true"
                 :options="deptOptions"
+                noResultsText="暂无数据"
                 placeholder="选择上级部门"
               />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="班组名称" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入班组名称" />
+              <el-input v-model="form.deptName" plac eholder="请输入班组名称" />
             </el-form-item>
           </el-col>
           <!--          <el-col :span="12">

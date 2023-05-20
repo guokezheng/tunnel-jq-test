@@ -745,6 +745,7 @@
                 :options="deptOptions"
                 :disable-branch-nodes="true"
                 :show-count="true"
+                noResultsText="暂无数据"
                 placeholder="请选择归属部门"
                 :disabled="disabledInfo"
               />

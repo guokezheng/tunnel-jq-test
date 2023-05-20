@@ -299,6 +299,7 @@
                   v-model="form.deptId"
                   :options="deptOptions"
                   :show-count="true"
+                  noResultsText="暂无数据"
                   placeholder="请选择归属部门"
                 />
               </el-form-item>

@@ -227,4 +227,10 @@ public interface ISdTaskListService
      * @return
      */
     int checkTaskList(SdTaskList sdTaskList);
+    /**
+     * 删除现场图片
+     * @param id
+     * @return
+     */
+    int deleteSitePhoto(String id);
 }

@@ -38,4 +38,18 @@ public class RadarTemporaryTask {
         SdRadarDetectDataTemporaryMapper mapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
         mapper.deleteData();
     }
+
+    /**
+     * 定时小车数据表
+     */
+    public void catClearData(){
+        SdRadarDetectDataTemporaryMapper mapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
+        int countDevicesNum = mapper.countDevices();
+        //计算循环次数
+        int forNum = countDevicesNum/10000;
+        for(int i =0 ; i<forNum ; i++){
+            mapper.deleteCatData();
+        }
+
+    }
 }

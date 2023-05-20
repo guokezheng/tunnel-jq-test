@@ -66,6 +66,18 @@ public interface SdRadarDetectDataTemporaryMapper
 
     int deleteData();
 
+    /**
+     * 删除小车数据
+     * @return
+     */
+    int deleteCatData();
+
+    /**
+     * 查询小车数据
+     * @return
+     */
+    int countDevices();
+
 
     /**
      * 查询雷达监测感知数据列表

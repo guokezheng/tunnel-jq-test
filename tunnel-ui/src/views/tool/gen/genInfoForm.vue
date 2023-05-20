@@ -74,6 +74,7 @@
             :options="menus"
             :normalizer="normalizer"
             :show-count="true"
+            noResultsText="暂无数据"
             placeholder="请选择系统菜单"
           />
         </el-form-item>

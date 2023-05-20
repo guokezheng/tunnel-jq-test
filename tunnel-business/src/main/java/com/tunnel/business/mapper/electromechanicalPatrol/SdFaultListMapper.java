@@ -141,4 +141,12 @@ public interface SdFaultListMapper
      * @return
      */
     SdFaultList selectSdFaultById(@Param("id")String id);
+
+    /**
+     * 故障未消除
+     * @param faultId
+     * @param falltRemoveStatue
+     * @return
+     */
+    int updateFaultUnRemoveState(@Param("faultId")String faultId,@Param("falltRemoveStatue")String falltRemoveStatue);
 }

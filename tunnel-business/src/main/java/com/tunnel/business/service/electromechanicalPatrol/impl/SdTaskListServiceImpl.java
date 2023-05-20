@@ -442,9 +442,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                 taskStatus(taskList.get(0));
                 if(taskList.get(0).getTaskCxtime()==null||"".equals(taskList.get(0).getTaskCxtime())){//没有持续时间
                     //任务持续时间为 当前时间-发布时间
-                    if(taskList.get(0).getEndPlantime()!=null&&!"".equals(taskList.get(0).getEndPlantime())){
+                    //if(taskList.get(0).getEndPlantime()!=null&&!"".equals(taskList.get(0).getEndPlantime())){
                         taskList.get(0).setTaskCxtime(lengthTime(taskList.get(0).getDispatchTime()));
-                    }
+                    //}
                 }
 
             }
@@ -505,7 +505,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         // 计算差多少秒//输出结果
         long sec = diff % nd % nh % nm / ns;
         System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
-        return day + "天" + hour + "小时";
+        return day + "天" + hour + "小时" + min + "分钟";
 
     }
 
@@ -847,7 +847,12 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         }
         result = sdPatrolListMapper.savePatrol(sdPatrolList);
         if(result > -1&&falltRemoveStatue!=null){//是故障点则更新故障点的消除状态
-            result = sdFaultListMapper.updateFaultRemoveState(faultId,falltRemoveStatue);
+            if(falltRemoveStatue.equals(FaultStatus.FAULTYIXIAOCHU)||falltRemoveStatue.equals(FaultStatus.FAULTNULL)){//已消除或者无故障
+                result = sdFaultListMapper.updateFaultRemoveState(faultId,falltRemoveStatue);
+            }else{
+                result = sdFaultListMapper.updateFaultUnRemoveState(faultId,falltRemoveStatue);
+            }
+
 //            JSONObject  jsonObjectFault = new JSONObject();
 //            //故障状态数据推送
 //            jsonObjectFault.put("faultRecord",faultId);

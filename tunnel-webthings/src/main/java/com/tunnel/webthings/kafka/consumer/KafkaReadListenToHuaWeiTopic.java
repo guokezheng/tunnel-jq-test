@@ -1691,7 +1691,7 @@ public class KafkaReadListenToHuaWeiTopic {
         int numDistance = 950-jsonObject.getInteger("ridOffset");
         sdRadarDetectData.setDistance(numDistance < 0 ? "0" : numDistance +"");
         String matchLane = jsonObject.getString("matchLane");
-        String laneNo = matchLane.substring(matchLane.length() - 1, matchLane.length());
+        String laneNo = (matchLane == null || "".equals(matchLane)) ? null : matchLane.substring(matchLane.length() - 1, matchLane.length());
         sdRadarDetectData.setLaneNum(laneNo);
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
         //转换

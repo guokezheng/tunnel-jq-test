@@ -662,12 +662,18 @@
                 style="width: 100%"
                 :disabled="disabledInfo"
               >
+<!--                <el-option-->
+<!--                  v-for="dict in laneAmountList"-->
+<!--                  :key="dict.label"-->
+<!--                  :label="dict.label"-->
+<!--                  :value="dict.value"-->
+<!--                ></el-option>-->
                 <el-option
-                  v-for="dict in laneAmountList"
-                  :key="dict.label"
+                  v-for="dict in dict.type.sd_lane"
+                  :key="dict.value"
                   :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
+                  :value="parseInt(dict.value)"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -854,7 +860,7 @@ import { color } from "echarts";
 
 export default {
   name: "Tunnels",
-  dicts: ["sd_direction"],
+  dicts: ["sd_direction","sd_lane"],
   components: { Treeselect },
   data() {
     const validateLongitude = (rule, value, callback) => {
@@ -914,10 +920,10 @@ export default {
       // 是否使用字典
       pollOptions: [],
       laneAmountList:[
-        {label :"1车道" ,value :1},
-        {label :"2车道" ,value :2},
-        {label :"3车道" ,value :3},
-        {label :"4车道" ,value :4},
+        {label :"一车道" ,value :1},
+        {label :"二车道" ,value :2},
+        {label :"三车道" ,value :3},
+        {label :"四车道" ,value :4},
       ],
       // 查询参数
       queryParams: {

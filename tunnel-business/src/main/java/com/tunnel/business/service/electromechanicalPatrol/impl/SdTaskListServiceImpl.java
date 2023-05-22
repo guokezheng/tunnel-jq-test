@@ -847,7 +847,12 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         }
         result = sdPatrolListMapper.savePatrol(sdPatrolList);
         if(result > -1&&falltRemoveStatue!=null){//是故障点则更新故障点的消除状态
-            result = sdFaultListMapper.updateFaultRemoveState(faultId,falltRemoveStatue);
+            if(falltRemoveStatue.equals(FaultStatus.FAULTYIXIAOCHU)||falltRemoveStatue.equals(FaultStatus.FAULTNULL)){//已消除或者无故障
+                result = sdFaultListMapper.updateFaultRemoveState(faultId,falltRemoveStatue);
+            }else{
+                result = sdFaultListMapper.updateFaultUnRemoveState(faultId,falltRemoveStatue);
+            }
+
 //            JSONObject  jsonObjectFault = new JSONObject();
 //            //故障状态数据推送
 //            jsonObjectFault.put("faultRecord",faultId);

@@ -1580,9 +1580,9 @@
       :visible.sync="operationLogDialog"
       :before-close="cancel"
       width="1000px"
+      :destroy-on-close="true"
       append-to-body
       v-dialogDrag
-      :close-on-click-modal="false"
       @close="resetQuery"
     >
       <div class="dialogStyleBox">
@@ -3167,6 +3167,7 @@
       width="1000px"
       append-to-body
       :close-on-click-modal="false"
+      @close="strategyResetQuery"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -5536,15 +5537,20 @@ export default {
     // 批量操作 执行
     implementBatchManage() {
       var that = this;
+      console.log(this.selectedIconList)
+
       this.title = "批量操作";
       that.eqTypeStateList2 = [];
-
       let eqType = "";
       for (var item of this.selectedIconList) {
         if (item.click) {
           this.batchManageList.push(item);
           eqType = item.eqType;
         }
+      }
+      if(this.batchManageList.length==0){
+        this.$modal.msgWarning("请选择至少一个设备进行控制！");
+        return;
       }
       this.batchManageDialog = true;
       let list = [];
@@ -5929,9 +5935,17 @@ export default {
     //     }
     //   );
     // },
+    /*控制策略关闭*/
+    strategyResetQuery(){
+      this.resetQuery()
+      this.queryParams.pageSize = 10
+    },
 
     /** 重置按钮操作 */
     resetQuery() {
+      console.log(this.operationParam)
+      console.log(this.operationParam_xt)
+      debugger
       this.dateRange = [];
       this.dateRange1 = [];
       this.resetForm("queryForm");
@@ -5947,9 +5961,11 @@ export default {
       this.operationParam.eqTypeId = null;
       this.operationParam.tunnelId = null;
       this.operationParam.controlType = null;
+      this.operationParam.pageSize = 10;
       this.operationParam_xt.status = null;
       this.operationParam_xt.operIp = "";
       this.operationParam_xt.ipaddr = "";
+      this.operationParam_xt.pageSize = 10;
       this.queryParams.pageNum = 1;
       this.handleQueryOperationParam();
       this.handlestrategyQuery();

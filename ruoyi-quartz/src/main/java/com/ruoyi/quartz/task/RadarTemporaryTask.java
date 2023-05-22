@@ -1,5 +1,6 @@
 package com.ruoyi.quartz.task;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -40,7 +41,7 @@ public class RadarTemporaryTask {
     }
 
     /**
-     * 定时小车数据表
+     * 定时清空小车数据表
      */
     public void catClearData(){
         SdRadarDetectDataTemporaryMapper mapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);

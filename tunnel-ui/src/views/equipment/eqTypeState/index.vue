@@ -606,7 +606,7 @@ export default {
       );
       if (!!this.equipmentStates[index].id) {
         //需要删除的集合
-        debugger
+        // debugger
         this.deleteEquipmentStates.push(rowid)
         // deleteRow(rowid).then((res) => {
         //   console.log(res, "shanchu");

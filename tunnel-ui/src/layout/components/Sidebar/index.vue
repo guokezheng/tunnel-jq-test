@@ -124,7 +124,7 @@ export default {
     ...mapState(["settings"]),
     ...mapGetters(["sidebarRouters", "sidebar"]),
     activeMenu() {
-      debugger
+      // debugger
       const route = this.$route;
       const { meta, path } = route;
       // if set path, the sidebar will highlight the path you set
@@ -178,7 +178,7 @@ export default {
     },
     $route() {
       // this.addTags()
-      debugger
+      // debugger
     },
   },
   mounted() {
@@ -264,7 +264,7 @@ export default {
       wrap.scrollLeft = wrap.scrollLeft - e.wheelDelta;
     },
     addTags() {
-      debugger
+      // debugger
       const { name } = this.$route
       if (name) {
         this.$store.dispatch('tagsView/addView', this.$route)

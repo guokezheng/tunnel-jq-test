@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     cachedViews() {
-      debugger
+      // debugger
       console.log(this.$store.state.tagsView.cachedViews)
       return this.$store.state.tagsView.cachedViews;
     },
@@ -40,7 +40,7 @@ export default {
     },
     topNav: {
       get() {
-        debugger
+        // debugger
         console.log(this.$store.state.settings.topNav)
         return this.$store.state.settings.topNav;
       },

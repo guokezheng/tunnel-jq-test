@@ -157,6 +157,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectFaultImgFileList" parameterType="SdTrafficImage" resultMap="SdTrafficImageResult">
         <include refid="selectSdTrafficImageVo"/>
         <where>
+        1=1
             <if test="businessId != null  and businessId != ''"> and business_id = #{businessId}</if>
         </where>
     </select>
@@ -179,5 +180,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <delete id="deleteSitePhoto" parameterType="String">
         delete from sd_traffic_image where business_id  = #{id}
     </delete>
+
+
+    <select id="selectPatrolFaultImgFileList" parameterType="String" resultMap="SdTrafficImageResult">
+        select * from sd_traffic_image where business_id in
+        <foreach item="businessId" collection="array" open="(" separator="," close=")">
+            #{businessId}
+        </foreach>
+    </select>
 
 </mapper>

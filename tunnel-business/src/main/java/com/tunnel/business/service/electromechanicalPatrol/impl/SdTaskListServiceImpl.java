@@ -519,12 +519,11 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 
         List<SdPatrolList> sdPatrolList = sdPatrolListMapper.getPatrolListsInfo(task_id);
         if(sdPatrolList!=null && sdPatrolList.size()>=0){
-            for(int i =0;i<sdPatrolList.size();i++){
-                String fileId = sdPatrolList.get(i).getImgFileId();
+            for (SdPatrolList patrolList : sdPatrolList) {
+                String fileId = patrolList.getImgFileId();
                 if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
-                    SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                    sdTrafficImage.setBusinessId(fileId);
-                    sdPatrolList.get(i).setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
+                    String[] businessId = fileId.split(",");
+                    patrolList.setiFileList(sdTrafficImageMapper.selectPatrolFaultImgFileList(businessId));
                 }
             }
         }

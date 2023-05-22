@@ -125,4 +125,11 @@ public interface SdTrafficImageMapper
      * @return
      */
     int deleteSitePhoto(String id);
+
+    /**
+     * 查询故障现场照片
+     * @param businessId
+     * @return
+     */
+    List selectPatrolFaultImgFileList(String[] businessId);
 }

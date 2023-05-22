@@ -370,9 +370,14 @@ public class SdTaskListController extends BaseController
                     }
                     String imgFileId = obj.getImgFileId();
                     if(StrUtil.isNotEmpty(imgFileId)){
-                        SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                        sdTrafficImage.setBusinessId(imgFileId);
-                        List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(sdTrafficImage);
+                        List<SdTrafficImage> imageList = new ArrayList<>();
+                        if (imgFileId != null && !"".equals(imgFileId) && !"null".equals(imgFileId)) {
+                            String[] businessId = imgFileId.split(",");
+                            imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectPatrolFaultImgFileList(businessId);
+                        }
+                        /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
+                        sdTrafficImage.setBusinessId(imgFileId);*/
+                        //List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(sdTrafficImage);
                         if(imageList.size()>0){
                             for(int x = 0;x<imageList.size();x++){
                                 String photo = "photo"+x;

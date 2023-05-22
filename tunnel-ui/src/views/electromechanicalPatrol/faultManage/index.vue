@@ -724,28 +724,24 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 15px; color: #05aafd">
-          <div>
+        <div class="card-cols" style="font-size: 15px; color: #05aafd;">
+          <div style  ="width:60%;">
             设备运行状态:
             <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
-          <div class="col-test" style="font-size: 15px; color: #05aafd">
-            (检修时检测情况)
-          </div>
+
         </div>
         <div class="card-cols" style="font-size: 15px; color: #05aafd">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>
           </div>
-          <div class="col-test" style="font-size: 15px; color: #05aafd">
-            (检修时检测情况)
-          </div>
+
         </div>
-        <div class="card-cols" style="font-size: 15px; color: #05aafd">
+        <div class="card-cols" style="font-size: 15px; color: #05aafd" >
           现场情况照片:
-          <div v-for="pic in item.iFileList">
+          <div v-for="pic in item.iFileList" >
             <img :src="pic.imgUrl" :title="pic.imgName" />
           </div>
         </div>
@@ -1916,9 +1912,9 @@ export default {
   .card-cols {
     margin-top: 10px;
     display: flex;
-    div {
+   /* div {
       width: 50%;
-    }
+    }*/
     .col-test {
       text-align: right;
       color: #79949c;

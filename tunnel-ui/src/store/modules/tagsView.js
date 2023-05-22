@@ -5,7 +5,7 @@ const state = {
 
 const mutations = {
   ADD_VISITED_VIEW: (state, view) => {
-    debugger
+    // debugger
     if (state.visitedViews.some(v => v.path === view.path)) return
     state.visitedViews.push(
       Object.assign({}, view, {
@@ -14,7 +14,7 @@ const mutations = {
     )
   },
   ADD_CACHED_VIEW: (state, view) => {
-    debugger
+    // debugger
     if (state.cachedViews.includes(view.name)) return
     if (!view.meta.noCache) {
       state.cachedViews.push(view.name)

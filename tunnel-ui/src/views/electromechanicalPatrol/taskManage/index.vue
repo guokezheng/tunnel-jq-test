@@ -792,9 +792,9 @@
             <div>设备运行状态：</div>
             <span>{{ pat.runStatus }}</span>
           </el-col>
-          <el-col :span="8">
-            <div style="width:auto;padding-right: 10%">现场情况照片：</div>
-            <div v-for="(pic, index) in pat.iFileList" :key="index">
+          <el-col>
+            <div style="width:12%">现场情况照片：</div>
+            <div v-for="(pic, index) in pat.iFileList" :key="index" style = "padding-right: 30px;">
               <img :src="pic.imgUrl" :title="pic.imgName" />
             </div>
           </el-col>

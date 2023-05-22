@@ -361,12 +361,14 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             patrolList = sdFaultListMapper.getDevicesRepairInfo(faultId);
         }
         if(patrolList!=null&&patrolList.size()>0){
-            String fileId = patrolList.get(0).getImgFileId();
-            if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
-                SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                sdTrafficImage.setBusinessId(fileId);
-                patrolList.get(0).setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
+            for(int i  = 0;i<patrolList.size();i++){
+                String fileId = patrolList.get(i).getImgFileId();
+                if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
+                    String[] businessId = fileId.split(",");
+                    patrolList.get(i).setiFileList(sdTrafficImageMapper.selectPatrolFaultImgFileList(businessId));
+                }
             }
+
         }
 
 

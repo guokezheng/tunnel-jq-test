@@ -25,7 +25,7 @@ public class CacheController
 
     @PreAuthorize("@ss.hasPermi('monitor:cache:list')")
     @GetMapping()
-    public AjaxResult getInfo() throws Exception
+    public AjaxResult getInfo()
     {
         Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());
         Properties commandStats = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
@@ -36,13 +36,16 @@ public class CacheController
         result.put("dbSize", dbSize);
 
         List<Map<String, String>> pieList = new ArrayList<>();
-        commandStats.stringPropertyNames().forEach(key -> {
-            Map<String, String> data = new HashMap<>(2);
-            String property = commandStats.getProperty(key);
-            data.put("name", StringUtils.removeStart(key, "cmdstat_"));
-            data.put("value", StringUtils.substringBetween(property, "calls=", ",usec"));
-            pieList.add(data);
-        });
+        if(commandStats!=null){
+            commandStats.stringPropertyNames().forEach(key -> {
+                Map<String, String> data = new HashMap<>(2);
+                String property = commandStats.getProperty(key);
+                data.put("name", org.apache.commons.lang3.StringUtils.removeStart(key, "cmdstat_"));
+                data.put("value", org.apache.commons.lang3.StringUtils.substringBetween(property, "calls=", ",usec"));
+                pieList.add(data);
+            });
+        }
+
         result.put("commandStats", pieList);
         return AjaxResult.success(result);
     }

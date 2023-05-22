@@ -196,11 +196,11 @@ export default {
     getLaneNo(num){
       switch (num){
         case 1:
-          return "一";
+          return "1";
         case 2:
-          return "二";
+          return "2";
         case 3:
-          return "三";
+          return "3";
       }
 
     },
@@ -255,7 +255,7 @@ export default {
             itemWidth: 14,
             itemHeight: 8,
             x: "center",
-            data: ["一车道", "二车道", "三车道"],
+            data: ["1车道", "2车道", "3车道"],
             textStyle: {
               //图例文字的样式
               color: "#00AAF2",
@@ -317,7 +317,7 @@ export default {
           },
           series: [
             {
-              name: "一车道",
+              name: "1车道",
               type: "line",
               color: "#787FFE",
               symbol: "circle",
@@ -331,7 +331,7 @@ export default {
               data: this.yData1,
             },
             {
-              name: "二车道",
+              name: "2车道",
               type: "line",
               color: "#00DCA2",
               symbol: "circle",
@@ -345,7 +345,7 @@ export default {
               data: this.yData2,
             },
             {
-              name: "三车道",
+              name: "3车道",
               type: "line",
               color: "#FFB200",
               symbol: "circle",

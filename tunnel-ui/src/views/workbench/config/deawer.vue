@@ -400,40 +400,40 @@ export default {
       chezhiLaneOptionList: [
         {
           laneId: 1,
-          laneName: "一车道",
+          laneName: "1车道",
         },
         {
           laneId: 2,
-          laneName: "二车道",
+          laneName: "2车道",
         },
         {
           laneId: 3,
-          laneName: "三车道",
+          laneName: "3车道",
         },
         {
           laneId: 4,
-          laneName: "四车道",
+          laneName: "4车道",
         },
         {
           laneId: 5,
-          laneName: "五车道",
+          laneName: "5车道",
         },
         {
           laneId: 6,
-          laneName: "六车道",
+          laneName: "6车道",
         },
         {
           laneId: 7,
-          laneName: "七车道",
+          laneName: "7车道",
         },
         ,
         {
           laneId: 8,
-          laneName: "八车道",
+          laneName: "8车道",
         },
         {
           laneId: 9,
-          laneName: "九车道",
+          laneName: "9车道",
         },
       ],
       tunnelId:'',
@@ -441,7 +441,7 @@ export default {
     };
   },
   created() {
-    
+
     this.getDicts("sd_strategy_direction").then((data) => {
       this.directionList = data.data;
     });

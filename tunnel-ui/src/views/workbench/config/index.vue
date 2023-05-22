@@ -5945,7 +5945,6 @@ export default {
     resetQuery() {
       console.log(this.operationParam)
       console.log(this.operationParam_xt)
-      debugger
       this.dateRange = [];
       this.dateRange1 = [];
       this.resetForm("queryForm");
@@ -7729,7 +7728,6 @@ export default {
     },
     /* 获取实时数据PLC*/
     getRealTimeData() {
-      debugger
       // 真实
       //getConfigData(this.currentTunnel.id)
       // 模拟
@@ -7969,6 +7967,8 @@ export default {
     /* 选择隧道*/
     setTunnel(item, index) {
       console.log(item,"item")
+      debugger
+      this.tunnelItem = item;
       this.$refs.deawerRef.init(item.tunnelId,item.lane)
       this.$refs.footerRef.init(item.tunnelId)
 
@@ -7995,11 +7995,12 @@ export default {
       this.currentTunnel.name = item.tunnelName;
       // this.selectEquipmentType(this.currentTunnel.id);
       this.getTunnelData(this.currentTunnel.id);
+
+      //小车显示控制
+      carSwitchType(item.tunnelId, this.carShow ? 0 : 1).then((res) => {});
       //先删除
       this.carList = [];
       this.carList = new Map();
-      //小车显示控制
-      carSwitchType(item.tunnelId, this.carShow ? 0 : 1).then((res) => {});
       // this.$nextTick(() => {
       //   this.getEnergyConsumption(this.currentTunnel.id);
       // });

@@ -76,7 +76,7 @@ export default {
           textStyle: {
             align: 'center',
             fontSize: 16,
-            color: this.sideTheme == "theme-light" ? "#fff" : "#000"
+            color: this.sideTheme == "theme-dark" ? "#fff" : "#000"
           },
           top: '5%',
           left: '6%',
@@ -91,7 +91,7 @@ export default {
           itemWidth: 6,
           itemGap: 20,
           textStyle: {
-            color: this.sideTheme == "theme-light" ? "#fff" : "#000"
+            color: this.sideTheme == "theme-dark" ? "#fff" : "#000"
           },
           data: ['最大值', '最小值', '平均值']
         },
@@ -131,7 +131,7 @@ export default {
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
+                color: this.sideTheme == "theme-dark" ? "#fff" : "#000"
               }
             },
             axisTick: {
@@ -140,7 +140,7 @@ export default {
             axisLabel: {
               interval: 0,
               textStyle: {
-                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
+                color: this.sideTheme == "theme-dark" ? "#fff" : "#000"
               },
               // 默认x轴字体大小
               fontSize: 12,
@@ -204,7 +204,7 @@ export default {
             type: 'value',
             name: '',
             nameTextStyle: {
-              color: this.sideTheme == "theme-light" ? "#fff" : "#000"
+              color: this.sideTheme == "theme-dark" ? "#fff" : "#000"
             },
             axisTick: {
               show: true
@@ -212,12 +212,12 @@ export default {
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
+                color: this.sideTheme == "theme-dark" ? "#fff" : "#000"
               }
             },
             axisLabel: {
               textStyle: {
-                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
+                color: this.sideTheme == "theme-dark" ? "#fff" : "#000"
               }
             },
             splitLine: {

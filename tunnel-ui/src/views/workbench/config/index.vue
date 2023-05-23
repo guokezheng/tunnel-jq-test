@@ -7740,7 +7740,7 @@ export default {
       getDeviceData({
         tunnelId: this.currentTunnel.id,
       }).then((response) => {
-
+   
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
@@ -7764,7 +7764,7 @@ export default {
                   ) {
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-
+                  
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =
@@ -7884,7 +7884,7 @@ export default {
     /* 选择隧道*/
     setTunnel(item, index) {
       console.log(item,"item")
-      debugger
+  
       this.tunnelItem = item;
       this.$refs.deawerRef.init(item.tunnelId,item.lane)
       this.$refs.footerRef.init(item.tunnelId)
@@ -10849,10 +10849,10 @@ input {
   font-weight: bold;
 }
 .labelClass7 {
-  transform: translate(60px, 0px) !important;
+  transform: translate(60px, -2px) !important;
 }
 .labelClass9{
-  transform: translate(32px, 0px)  !important;
+  transform: translate(32px, -2px)  !important;
 
 }
 </style>

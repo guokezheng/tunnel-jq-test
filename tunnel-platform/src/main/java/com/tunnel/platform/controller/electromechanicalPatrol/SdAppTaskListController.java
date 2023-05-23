@@ -121,7 +121,7 @@ public class SdAppTaskListController extends BaseController
                 }
 
             }
-            return new TableDataInfo(taskList,0);
+            return new TableDataInfo(taskList,count);
         }
 
 

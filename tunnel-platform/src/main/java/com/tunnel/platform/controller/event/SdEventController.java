@@ -458,4 +458,36 @@ public class SdEventController extends BaseController
     public AjaxResult batchHandleEvent(SdEvent sdEvent){
         return sdEventService.batchHandleEvent(sdEvent);
     }
+
+    /**
+     * 查看历史录像
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/vedioData")
+    public AjaxResult vedioData(SdEvent sdEvent){
+        return sdEventService.vedioData(sdEvent);
+    }
+
+    /**
+     * 关闭相机录像视频流
+     * @param camId
+     * @param playId
+     * @return
+     */
+    @GetMapping("/closeVedio")
+    public AjaxResult closeVedio(@RequestParam("camId") String camId, @RequestParam("playId") String playId){
+        return sdEventService.closeVedio(camId,playId);
+    }
+
+    /**
+     * 下载历史录像视频
+     * @param camId
+     * @param downLoadTime
+     * @return
+     */
+    @GetMapping("/downLoadVedio")
+    public void downLoadVedio(@RequestParam("camId") String camId, @RequestParam("downLoadTime") String downLoadTime,HttpServletResponse response){
+        sdEventService.downLoadVedio(camId,downLoadTime,response);
+    }
 }

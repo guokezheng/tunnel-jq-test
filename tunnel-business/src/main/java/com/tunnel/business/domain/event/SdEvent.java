@@ -224,6 +224,11 @@ public class SdEvent extends BaseEntity {
     private List<SdTrafficImage> iconUrlList;
 
     /**
+     * 历史录像
+     */
+    private List<SdTrafficImage> historyUrlList;
+
+    /**
      * 类型简称
      */
     private String simplifyName;
@@ -300,6 +305,27 @@ public class SdEvent extends BaseEntity {
      * 前端字段  距离
      */
     private String distance;
+
+    /**
+     * 下载时间
+     */
+    private String downLoadTime;
+
+    public String getDownLoadTime() {
+        return downLoadTime;
+    }
+
+    public void setDownLoadTime(String downLoadTime) {
+        this.downLoadTime = downLoadTime;
+    }
+
+    public List<SdTrafficImage> getHistoryUrlList() {
+        return historyUrlList;
+    }
+
+    public void setHistoryUrlList(List<SdTrafficImage> historyUrlList) {
+        this.historyUrlList = historyUrlList;
+    }
 
     public String getLaneNoName() {
         return laneNoName;

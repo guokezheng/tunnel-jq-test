@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2023-02-14 14:26:29
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-04-27 15:28:10
+ * @LastEditTime: 2023-05-16 15:02:51
  * @FilePath: \tunnel-ui\src\views\event\event\dispatch.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -940,9 +940,13 @@
         <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
+    <!-- <el-dialog> -->
+        <robot class="comClass robotHtmlBox" v-if="this.clickEqType == 29"></robot>
+    <!-- </el-dialog> -->
   </div>
 </template>
 <script>
+import robot from "@/views/workbench/config/components/robotManagement";
 import {intervalTime} from "../../../utils/index.js"
 import { mapState } from "vuex";
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
@@ -960,8 +964,7 @@ import comBright from "@/views/workbench/config/components/bright"; //亮度检�
 import comWind from "@/views/workbench/config/components/wind"; //风速风向弹窗
 import comPressure from "@/views/workbench/config/components/pressure"; //压力表弹窗
 import comVehicleDetec from "@/views/workbench/config/components/vehicleDetec"; //微波车检弹窗
-import comCallPolice from "@/views/workbench/config/components/callPolice"; //声光报警弹窗
-import comRobot from "@/views/workbench/config/components/robot"; //机器人弹窗
+import comCallPolice from "@/views/workbench/config/components/callPolice"; //声光报警弹窗 //机器人弹窗
 import comData from "@/views/workbench/config/components/data"; //只有数据的弹窗
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
 import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
@@ -1003,7 +1006,7 @@ export default {
     comPressure,
     comVehicleDetec,
     comCallPolice,
-    comRobot,
+    robot,
     comData,
     comYoudao,
     comBoard,
@@ -1012,6 +1015,7 @@ export default {
   },
   data() {
     return {
+      clickEqType:'',
       yjShow:true,
       emergencyList:[],
       activeName:'1',
@@ -1246,7 +1250,12 @@ export default {
       })
     },
     getManagementDevice(item){
-      console.log(item.eventState,item.processId);
+      console.log(item);
+      if(item.eqTypeId == 29){
+        this.clickEqType = item.eqTypeId;
+        console.log(this.clickEqType)
+        return;
+      }
       if(item.eventState != '0' && item.processId){
         this.buttonDisable = false;
       }else{
@@ -1577,6 +1586,18 @@ export default {
           }
         }
         this.incHandList = list;
+        this.incHandList.map(item=>{
+          if(item.children){
+            item.children.map(res=>{
+              console.log(res)
+              if(res.eqTypeId == 29){
+                this.clickEqType = 29;
+              }
+            })
+          }
+          console.log(item);
+          
+        })
         this.$nextTick(()=>{
           const incHandContentBox = document.querySelector('.incHandContentBox').offsetHeight
           const classificationBox = document.querySelector('.classificationBox').offsetHeight;
@@ -1976,7 +1997,7 @@ export default {
 .el-tabs--top .el-tabs__item.is-top:nth-child(2), .el-tabs--top .el-tabs__item.is-bottom:nth-child(2), .el-tabs--bottom .el-tabs__item.is-top:nth-child(2), .el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2){
   padding-left:0px!important;
 }
-.theme-light #app .el-table{
+.theme-dark #app .el-table{
   background-color: transparent;
 }
 ::v-deep .el-table .el-table__header-wrapper th{
@@ -2888,5 +2909,19 @@ display: none;
     color:#93a8b9;
     padding-left:15px;
   }
+}
+.robotHtmlBox {
+  width: 770px!important;
+  position: absolute;
+  left: 30%;
+  z-index: 96659;
+  background: #071727;
+  pointer-events: auto;
+}
+.comClass {
+  position: absolute;
+  top: 1.4%;
+  left: 38.8%;
+  pointer-events: none;
 }
 </style>

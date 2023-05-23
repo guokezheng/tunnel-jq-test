@@ -345,3 +345,28 @@ export function getAllManagementDevices(query) {
     params: query
   })
 }
+
+//查看相机录像视频流
+export function getVedioData(query) {
+  return request({
+    url: '/event/vedioData',
+    method: 'get',
+    params: query
+  })
+}
+
+//关闭相机录像视频流
+export function closeVedio(camId,playId) {
+  return request({
+    url: '/event/closeVedio?camId='+camId+'&playId='+playId,
+    method: 'get'
+  })
+}
+
+//下载历史录像视频
+export function downloadVedio(camId,downLoadTime) {
+  return request({
+    url: '/event/downLoadVedio?camId='+camId+'&downLoadTime='+downLoadTime,
+    method: 'get'
+  })
+}

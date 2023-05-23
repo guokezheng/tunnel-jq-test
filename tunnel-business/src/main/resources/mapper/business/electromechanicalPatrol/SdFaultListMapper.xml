@@ -427,12 +427,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <update id="updateFaultRemoveState" parameterType="String">
-        update sd_fault_list set fallt_remove_statue = #{falltRemoveStatue},fault_remove_time = Now() where id = #{faultId}
+        update sd_fault_list set fallt_remove_statue = #{falltRemoveStatue},fault_remove_time = Now(),update_time = Now() where id = #{faultId}
     </update>
 
 
     <update id="updateFaultUnRemoveState" parameterType="String">
-        update sd_fault_list set fallt_remove_statue = #{falltRemoveStatue} where id = #{faultId}
+        update sd_fault_list set fallt_remove_statue = #{falltRemoveStatue} ,update_time = Now() where id = #{faultId}
     </update>
 
 

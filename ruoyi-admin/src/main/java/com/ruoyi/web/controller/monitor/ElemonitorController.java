@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.monitor;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
@@ -21,7 +22,7 @@ public class ElemonitorController {
     private ISElemonitorService elemonitorService;
 
     @GetMapping("/getToken")
-    public Result getToken()
+    public Result<String> getToken()
     {
         String token = "";
         String url = "http://10.7.187.220:8000/ruoyi-admin/login";
@@ -30,14 +31,14 @@ public class ElemonitorController {
         map.put("password", "HSD123!@#");
         String result = "";
         try {
-            result = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));
+            result = HttpUtils.sendPostByApplicationJson(url, JSON.toJSONString(map));
         } catch (Exception e) {
             return null;
         }
-        if (result == "" || result.equals("")) {
+        if ("".equals(result)) {
             return null;
         }
-        JSONObject json = JSONObject.parseObject(result);
+        JSONObject json = JSON.parseObject(result);
         if (json == null || json.isEmpty()) {
             return null;
         }

@@ -60,7 +60,7 @@ public class SysDeptController extends BaseController {
         while (it.hasNext()) {
             SysDept d = (SysDept) it.next();
             if (d.getDeptId().equals(deptId)
-                    || ArrayUtils.contains(StringUtils.split(d.getAncestors(), ","), deptId + "")) {
+                    || ArrayUtils.contains(org.apache.commons.lang3.StringUtils.split(d.getAncestors(), ","), deptId + "")) {
                 it.remove();
             }
         }

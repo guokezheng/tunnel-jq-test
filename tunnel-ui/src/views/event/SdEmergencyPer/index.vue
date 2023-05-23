@@ -199,6 +199,7 @@
               :options="deptOptions"
               :disable-branch-nodes="true"
               placeholder="请选择归属部门"
+              noResultsText="暂无数据"
               @input="changeParentDept"
             />
           </el-form-item>

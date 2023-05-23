@@ -191,6 +191,7 @@
                 :options="deptOptions"
                 :disabled="disstate"
                 :normalizer="normalizer"
+                noResultsText="暂无数据"
                 placeholder="选择上级部门"
               />
             </el-form-item>

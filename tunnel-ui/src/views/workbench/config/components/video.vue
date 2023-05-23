@@ -650,7 +650,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
-.theme-light .pagination-container {
+.theme-dark .pagination-container {
   background: #00152b;
 }
 .historyMiniBox {

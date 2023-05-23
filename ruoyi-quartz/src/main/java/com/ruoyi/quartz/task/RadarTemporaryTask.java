@@ -1,5 +1,6 @@
 package com.ruoyi.quartz.task;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -37,5 +38,19 @@ public class RadarTemporaryTask {
     public void clearData(){
         SdRadarDetectDataTemporaryMapper mapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
         mapper.deleteData();
+    }
+
+    /**
+     * 定时清空小车数据表
+     */
+    public void catClearData(){
+        SdRadarDetectDataTemporaryMapper mapper = SpringUtils.getBean(SdRadarDetectDataTemporaryMapper.class);
+        int countDevicesNum = mapper.countDevices();
+        //计算循环次数
+        int forNum = countDevicesNum/10000;
+        for(int i =0 ; i<forNum ; i++){
+            mapper.deleteCatData();
+        }
+
     }
 }

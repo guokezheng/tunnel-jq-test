@@ -1997,7 +1997,7 @@ export default {
 .el-tabs--top .el-tabs__item.is-top:nth-child(2), .el-tabs--top .el-tabs__item.is-bottom:nth-child(2), .el-tabs--bottom .el-tabs__item.is-top:nth-child(2), .el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2){
   padding-left:0px!important;
 }
-.theme-light #app .el-table{
+.theme-dark #app .el-table{
   background-color: transparent;
 }
 ::v-deep .el-table .el-table__header-wrapper th{

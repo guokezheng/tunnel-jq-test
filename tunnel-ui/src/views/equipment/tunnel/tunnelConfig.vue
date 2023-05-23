@@ -60,6 +60,10 @@
     <!--车道 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" :title="title" :visible.sync="laneVisible" width="723px"
       append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="dialog-content">
         <el-tabs type="border-card" class="laneTabs" v-model="activeTab">
           <el-tab-pane label="车道逆向" name="direction0">
@@ -77,13 +81,17 @@
         </el-tabs>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitLane">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary"class="submitButton"  @click="submitLane">确 定</el-button>
+        <el-button @click="cancel" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
     <!--设备 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" :title="title" :visible.sync="equipmentVisible" width="560px"
       append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="dialog-content">
         <div v-for="item in equipmentList" :key="item.id">
           <div class="equipment-img-box">
@@ -107,12 +115,16 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">关 闭</el-button>
+        <el-button @click="cancel" class="closeButton">关 闭</el-button>
       </div>
     </el-dialog>
     <!--环境配置 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" title="环境配置" :visible.sync="EnvironmentVisible" width="560px"
       append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="dialog-content">
         <div v-for="(items,index) in EnvironmentList[Environmentflag]" :key="index">
           <div class="equipment-img-box">
@@ -136,12 +148,16 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">关 闭</el-button>
+        <el-button @click="cancel" class="closeButton">关 闭</el-button>
       </div>
     </el-dialog>
     <!--风向等设备选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog batch-table" :title="title" :visible.sync="paramVisible"
       width="560px" append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="paramFrom" :rules="rules" :model="paramFrom" label-width="80px" label-position="left" size="mini"
         hide-required-asterisk>
         <el-table ref="multipleTable" :data="equipmentList" tooltip-effect="dark" style="width: 100%" max-height="400"
@@ -167,7 +183,7 @@
       </el-form>
       <div slot="footer">
         <el-button type="primary" size="mini" @click="submitParam('paramFrom')">确 定</el-button>
-        <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
+        <el-button type="primary" size="mini"  class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
 

@@ -238,6 +238,7 @@
                 :options="menuOptions"
                 :normalizer="normalizer"
                 :show-count="true"
+                noResultsText="暂无数据"
                 placeholder="选择上级菜单"
               />
             </el-form-item>

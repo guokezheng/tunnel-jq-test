@@ -185,6 +185,12 @@
     <delete id="deleteData">
         delete from sd_radar_detect_data_temporary where detect_time &lt; date_sub(sysdate(),interval 1 day)
     </delete>
+    <delete id="deleteCatData">
+        delete from sd_radar_detect_data where id  LIMIT  10000
+    </delete>
+    <select id="countDevices"  resultType="Integer">
+        select count(*) from sd_radar_detect_data
+    </select>
 
 
     <select id="getSdRadarDetectDataCount" parameterType="String" resultType="int">

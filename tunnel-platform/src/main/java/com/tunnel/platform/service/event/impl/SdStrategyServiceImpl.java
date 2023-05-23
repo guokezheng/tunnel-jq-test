@@ -1246,7 +1246,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 return 0;
             }
             //报警点位设备ID
-            String alarmPointEqId = list.get(0).getEqId();
+            //String alarmPointEqId = list.get(0).getEqId();
+            String alarmPointEqId = rl.getEquipments();
             //fireMark标号位置信息
             String fireMark = "0";
             //1关闭 2常亮 5报警

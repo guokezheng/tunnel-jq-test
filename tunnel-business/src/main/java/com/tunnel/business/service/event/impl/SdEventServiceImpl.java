@@ -1,5 +1,7 @@
 package com.tunnel.business.service.event.impl;
 
+import cn.hutool.extra.spring.SpringUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
@@ -9,6 +11,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.oss.OssUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.business.datacenter.domain.enumeration.*;
@@ -32,14 +35,22 @@ import com.tunnel.business.utils.work.WorderToNewWordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import scala.annotation.meta.param;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -118,6 +129,12 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private RedisCache redisCache;
+
+    @Value("${video-platform.address}")
+    private String address;
+
+    @Resource(name = "HttpTemplate")
+    private RestTemplate template;
 
     /**
      * 查询事件管理
@@ -256,7 +273,7 @@ public class SdEventServiceImpl implements ISdEventService {
             //更新预案设备
             setStrategyRlEquipment(sdEvent);
             //如有处置中的普通事件则将处理中的安全预警状态改为已处理
-            SdEvent aqSdevent = new SdEvent();
+            /*SdEvent aqSdevent = new SdEvent();
             aqSdevent.setEventState(EventStateEnum.processing.getCode());
             aqSdevent.setSearchValue(PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
             aqSdevent.setTunnelId(sdEvent.getTunnelId());
@@ -266,7 +283,7 @@ public class SdEventServiceImpl implements ISdEventService {
                 item.setEndTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
                 sdEventMapper.updateSdEvent(item);
                 instreEventFlowData(item.getId(),"事件因处理普通事件执行中断！");
-            }
+            }*/
             sdEvent.setUpdateTime(DateUtils.getNowDate());
         }else {
             sdEvent.setUpdateTime(DateUtils.getNowDate());
@@ -277,7 +294,30 @@ public class SdEventServiceImpl implements ISdEventService {
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.updateSdEvent(sdEvent);
         if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
-            radarEventServiceImpl.sendDataToOtherSystem(null, sdEventMapper.selectSdEventById(sdEvent.getId()));
+            Executor executor = Executors.newSingleThreadExecutor();
+            CompletionService<Object> completionService = new ExecutorCompletionService<>(executor);
+            Future<?> future = completionService.submit(new Callable<Object>() {
+                public Object call() throws Exception {
+                    // 这里是要执行的方法
+                    radarEventServiceImpl.sendDataToOtherSystem(null, sdEventMapper.selectSdEventById(sdEvent.getId()));
+                    return 1;
+                }
+            });
+
+            // 获取执行结果
+            try {
+                Object result = completionService.poll(3000L, TimeUnit.MILLISECONDS);
+                if (result == null) {
+                    System.out.println("超时了，结束该方法的执行");
+                    future.cancel(true);
+                } else {
+                // 方法执行完毕，处理执行结果
+                    System.out.println("方法执行完毕，结果：" + result.toString());
+                }
+            } catch (InterruptedException e) {
+                System.out.println("出现异常，结束该方法的执行");
+                future.cancel(true);
+            }
         }
         return count;
     }
@@ -522,6 +562,83 @@ public class SdEventServiceImpl implements ISdEventService {
             return AjaxResult.error();
         }
         return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult closeVedio(String camId, String playId) {
+        Map<String, Object> vedioData = getVedioData(camId, null, playId);
+        if(vedioData != null && "0".equals(vedioData.get("recCode"))){
+            return AjaxResult.success();
+        }
+        return AjaxResult.error();
+    }
+
+    @Override
+    public void downLoadVedio(String camId, String downLoadTime, HttpServletResponse response) {
+        Map<String, Object> map = downloadVedio(camId, downLoadTime);
+        HttpURLConnection connection = null;
+        InputStream inputStream = null;
+        RandomAccessFile randomAccessFile = null;
+        try {
+            // 1.获取连接对象
+            URL url = new URL(map.get("fileUrl").toString());
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("Range", "bytes=0-");
+            connection.connect();
+            if(connection.getResponseCode() / 100 != 2) {
+                System.out.println("连接失败...");
+                return;
+            }
+            // 2.获取连接对象的流
+            inputStream = connection.getInputStream();
+            //已下载的大小
+            int downloaded = 0;
+            //总文件的大小
+            int fileSize = connection.getContentLength();
+            String fileName = url.getFile();
+            fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+            // 3.把资源写入文件
+            randomAccessFile = new RandomAccessFile(fileName,"rw");
+            while(downloaded < fileSize) {
+                // 3.1设置缓存流的大小
+                byte[] buffer = null;
+                if(fileSize - downloaded >= 1000000) {
+                    buffer = new byte[1000000];
+                }else {
+                    buffer = new byte[fileSize - downloaded];
+                }
+                // 3.2把每一次缓存的数据写入文件
+                int read = -1;
+                int currentDownload = 0;
+                long startTime = System.currentTimeMillis();
+                while(currentDownload < buffer.length) {
+                    read = inputStream.read();
+                    buffer[currentDownload ++] = (byte) read;
+                }
+                long endTime = System.currentTimeMillis();
+                double speed = 0.0;
+                if(endTime - startTime > 0) {
+                    speed = currentDownload / 1024.0 / ((double)(endTime - startTime)/1000);
+                }
+                randomAccessFile.write(buffer);
+                downloaded += currentDownload;
+                randomAccessFile.seek(downloaded);
+                System.out.printf("下载了进度:%.2f%%,下载速度：%.1fkb/s(%.1fM/s)%n",downloaded * 1.0 / fileSize * 10000 / 100,speed,speed/1000);
+            }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                connection.disconnect();
+                inputStream.close();
+                randomAccessFile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -940,7 +1057,6 @@ public class SdEventServiceImpl implements ISdEventService {
         //插入预警信息
         int sort = setWaring(sdEvent1, sdEventType, model);
         setEventHandleData(sort,sort,sdEvent);
-
     }
 
     public void setEventHandleData(int sort, int id, SdEvent sdEvent){
@@ -1599,4 +1715,198 @@ public class SdEventServiceImpl implements ISdEventService {
         redisCache.deleteObject(getCacheEventKey(eventId.toString()));
     }
 
+    /**
+     * 获取事件详情录像信息
+     * @param sdEvent
+     * @return
+     */
+    @Override
+    public AjaxResult vedioData(SdEvent sdEvent){
+        Map<String, Object> map = new HashMap<>();
+        //查询事件信息
+        SdEvent sdEvent1 = sdEventMapper.selectSdEventById(sdEvent.getId());
+        //查询事件桩号附近摄像机
+        List<SdDevices> eventCamera = getEventCamera(sdEvent1.getTunnelId(), sdEvent1.getStakeNum(), sdEvent1.getDirection());
+        if(eventCamera.size() > 0){
+            SdDevices sdDevices = eventCamera.get(0);
+            if(sdDevices.getExternalDeviceId() == null || "".equals(sdDevices.getExternalDeviceId())){
+                return AjaxResult.success(map);
+            }
+            //获取录像视频流
+            Map<String, Object> vedioData = getVedioData(sdDevices.getExternalDeviceId(), sdEvent.getStartTime(), null);
+            if(vedioData != null && !"".equals(vedioData) && vedioData.get("recCode") != null){
+                List<SdTrafficImage> list = new ArrayList<>();
+                SdTrafficImage image = new SdTrafficImage();
+                image.setImgType("2");
+                image.setImgUrl(vedioData.get("liveUrl").toString());
+                list.add(image);
+                sdEvent.setHistoryUrlList(list);
+                map.put("vedioList",sdEvent.getHistoryUrlList());
+                map.put("vedioData",vedioData);
+                /*map.put("camId", vedioData.get("camID"));
+                map.put("playId", vedioData.get("playId"));
+                map.put("liveUrl", vedioData.get("liveUrl"));*/
+            }else {
+                return AjaxResult.success(map);
+            }
+        }
+        return AjaxResult.success(map);
+    }
+
+    /**
+     * 获取相机token
+     *
+     * @return
+     */
+    public String getToken(){
+        String url = address+"/apiLogin";
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("username", "hsdsdVideo");
+        requestBody.put("password", "hsdsdVideo");
+
+        HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
+        /*UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("username","hsdsdVideo")
+                .queryParam("password","hsdsdVideo");
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);*/
+        try{
+            //ResponseEntity<Map> exchange = template.exchange(builder.build().toUri(), HttpMethod.POST, requestEntity, Map.class);
+            ResponseEntity<Map> exchange = template.exchange(url, HttpMethod.POST, httpEntity, Map.class);
+            Map body = exchange.getBody();
+            return Optional.ofNullable(body.get("token")).orElseGet(()->"").toString();
+        }catch(Exception ex){
+            logger.info("获取相继录像失败：{}",ex.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 获取缓存token
+     * @return
+     */
+    public String getCacheToken(){
+        //token缓存key值
+        String key = "video_platform_token";
+        //token有效时间15分钟
+        Integer expireTime = 15;
+        //获取缓存token
+        String token = redisCache.getCacheObject(key);
+        if(token == null || "".equals(token)){
+            //缓存中获取不到token，重新从接口中获取，更新缓存
+            token = getToken();
+            redisCache.setCacheObject( key, token, expireTime, TimeUnit.MINUTES);
+        }
+        return token;
+    }
+
+    /**
+     * 下载事件录像
+     * @return
+     */
+    public Map<String, Object> downloadVedio(String camId, String startTime){
+        HttpEntity<String> requestEntity = setHttpEntity();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(address + "/videoInfo/api/downloadVideotape")
+                //.queryParam("camId", camId)
+                .queryParam("camId", "52054")
+                .queryParam("startTime", startTime)
+                .queryParam("duration", 5);
+        try {
+            ResponseEntity<String> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, String.class);
+            JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
+            return Optional.ofNullable(object).orElseGet(() -> JSONObject.parseObject(exchange.getBody()));
+        }catch (Exception e){
+            logger.error("下载事件录像发生异常：{}",e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 获取事件录像
+     * @param camId
+     * @param startTime
+     * @param playId
+     * @return
+     */
+    public Map<String, Object> getVedioData(String camId, String startTime, String playId) {
+        HttpEntity<String> requestEntity = setHttpEntity();
+
+        UriComponentsBuilder builder = null;
+        if(playId == null || "".equals(playId)){
+            builder = UriComponentsBuilder.fromHttpUrl(address + "/videoInfo/api/openVideotape")
+                    //.queryParam("camId", camId)
+                    .queryParam("camId", "52054")
+                    .queryParam("startTime", startTime);
+        }else {
+            builder = UriComponentsBuilder.fromHttpUrl(address + "/videoInfo/api/closeVideotape")
+                    //.queryParam("camId", camId)
+                    .queryParam("camId", "52054")
+                    .queryParam("playId", playId);
+        }
+        try {
+            ResponseEntity<String> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, String.class);
+            JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
+            return Optional.ofNullable(object).orElseGet(() -> JSONObject.parseObject(exchange.getBody()));
+        }catch (Exception e){
+            logger.error("打开相机录像发生异常：{}",e.getMessage());
+            return null;
+        }
+
+        /*Map<String, Object> map = new HashMap<>();
+        map.put("camID","111");
+        map.put("playId","222");
+        map.put("liveUrl","http://10.7.187.37:8002/videoRep/2023-03-04/50013_intrusion2023-03-04-13-07-30.mp4");
+        map.put("recCode","0");
+        return map;*/
+    }
+
+    /**
+     * 下载事件录像视频
+     * @param camId
+     * @param startTime
+     * @param playId
+     * @return
+     */
+    public Map<String, Object> getDownloadVedio(String camId, String startTime, String playId) {
+        HttpEntity<String> requestEntity = setHttpEntity();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(address + "/videoInfo/api/downloadVideotape")
+                .queryParam("camId", camId)
+                .queryParam("startTime", startTime)
+                .queryParam("duration",5);
+        try {
+            ResponseEntity<String> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, String.class);
+            JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
+            return Optional.ofNullable(object).orElseGet(() -> JSONObject.parseObject(exchange.getBody()));
+        }catch (Exception e){
+            logger.error("打开相机录像发生异常：{}",e.getMessage());
+            return null;
+        }
+
+        /*Map<String, Object> map = new HashMap<>();
+        map.put("camID","111");
+        map.put("playId","222");
+        map.put("liveUrl","http://10.7.187.37:8002/videoRep/2023-03-04/50013_intrusion2023-03-04-13-07-30.mp4");
+        map.put("recCode","0");
+        return map;*/
+    }
+
+    /**
+     * 添加http头部
+     * @return
+     */
+    public HttpEntity<String> setHttpEntity(){
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        if(getCacheToken() == null){
+            return null;
+        }
+        headers.add("Authorization", getCacheToken());
+        headers.setContentType(type);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        return requestEntity;
+    }
 }

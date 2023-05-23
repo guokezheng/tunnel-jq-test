@@ -6,10 +6,10 @@
           size="small"
           @click="handleAdd"
           v-hasPermi="['system:list:add']"
-          >新增</el-button
+        >新增</el-button
         >
         <el-button size="small" :loading="exportLoading" @click="handleExport"
-          >导出
+        >导出
         </el-button>
         <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
@@ -81,7 +81,7 @@
               <el-checkbox
                 :label="dict.dictLabel"
                 v-model="resultFaultEscalationType"
-                >{{ dict.dictLabel }}</el-checkbox
+              >{{ dict.dictLabel }}</el-checkbox
               >
             </el-col>
           </el-row>
@@ -100,7 +100,7 @@
               <el-checkbox
                 :label="dict.dictLabel"
                 v-model="resultFaultRemoveState"
-                >{{ dict.dictLabel }}</el-checkbox
+              >{{ dict.dictLabel }}</el-checkbox
               >
             </el-col>
           </el-row>
@@ -117,8 +117,8 @@
               :key="dict.dictValue"
             >
               <el-checkbox :label="dict.dictLabel" v-model="resultFaultType">{{
-                dict.dictLabel
-              }}</el-checkbox>
+                  dict.dictLabel
+                }}</el-checkbox>
             </el-col>
           </el-row>
         </el-form-item>
@@ -135,8 +135,8 @@
               :key="dict.dictValue"
             >
               <el-checkbox :label="dict.dictLabel" v-model="resultFaultLevel">{{
-                dict.dictLabel
-              }}</el-checkbox>
+                  dict.dictLabel
+                }}</el-checkbox>
             </el-col>
           </el-row>
         </el-form-item>
@@ -158,10 +158,10 @@
 
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-            >搜索</el-button
+          >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-            >重置</el-button
+          >重置</el-button
           >
         </el-form-item>
       </el-form>
@@ -230,8 +230,8 @@
       >
         <template slot-scope="scope">
           <span>{{
-            getFaultEscalationType(scope.row.faultEscalationType)
-          }}</span>
+              getFaultEscalationType(scope.row.faultEscalationType)
+            }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -254,7 +254,7 @@
                   ? 'yellow'
                   : '#00FF00',
             }"
-            >{{ getFaultStatue(scope.row.fbState) }}</span
+          >{{ getFaultStatue(scope.row.fbState) }}</span
           >
 
           <!--          <span>{{ getFaultStatue(scope.row.fbState) }}</span>-->
@@ -270,7 +270,7 @@
                   ? 'yellow'
                   : '#00FF00',
             }"
-            >{{ getFalltRemoveStatue(scope.row.falltRemoveStatue) }}</span
+          >{{ getFalltRemoveStatue(scope.row.falltRemoveStatue) }}</span
           >
         </template>
       </el-table-column>
@@ -286,7 +286,7 @@
             class="tableBlueButtton"
             @click="handleCheckDetail(scope.row)"
             v-hasPermi="['system:list:edit']"
-            >故障详情</el-button
+          >故障详情</el-button
           >
           <el-button
             size="mini"
@@ -296,7 +296,7 @@
           >
             检修记录
           </el-button>
-           <el-button
+          <el-button
             size="mini"
             class="tableBlueButtton"
             @click="exportFaultReport(scope.row)"
@@ -310,7 +310,7 @@
             @click="handleUpdate(scope.row)"
             :style="{ display: scope.row.faultStatus == 0 ? 'none' : '' }"
             v-hasPermi="['system:list:edit']"
-            >修改</el-button
+          >修改</el-button
           >
           <el-button
             size="mini"
@@ -318,7 +318,7 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
             :style="{ display: scope.row.faultStatus == 0 ? 'none' : '' }"
-            >删除</el-button
+          >删除</el-button
           >
         </template>
       </el-table-column>
@@ -443,7 +443,7 @@
                   :disabled="disstate"
                   v-model="form.faultCxtime"
                   style="width: 100%"
-                  placeholder="请按照天/小时/分格式填写"
+                  :placeholder= holderFaultCxtime
                 />
               </el-form-item>
             </el-col>
@@ -548,7 +548,7 @@
                 <el-input
                   v-model="form.eqRunStatus"
                   :disabled="disstate"
-                  placeholder="请输入设备运行状态"
+                  :placeholder = holderRunStatus
                   style="width: 100%"
                 />
               </el-form-item>
@@ -566,7 +566,7 @@
                 <el-input
                   v-model="form.faultCode"
                   :disabled="disstate"
-                  placeholder="请输入故障代码"
+                  :placeholder = holderFaultCode
                 />
               </el-form-item>
             </el-col>
@@ -668,10 +668,10 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button v-if="isWritable" @click="submitForm" class="submitButton" :loading="waiting"
-          >仅保存</el-button
+        >仅保存</el-button
         >
         <el-button v-if="isWritable" @click="publishForm" class="zancunButton" :loading="waiting"
-          >保存并发布</el-button
+        >保存并发布</el-button
         >
         <el-button @click="cancel" class="closeButton">取 消</el-button>
       </div>
@@ -716,36 +716,32 @@
             <span>{{ item.impression }}</span>
           </div>
           <div>
-            网络情况:
+            通信和网络情况:
             <span>{{ item.network }}</span>
           </div>
           <div>
-            配电情况:
+            供配电情况:
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 15px; color: #05aafd">
-          <div>
+        <div class="card-cols" style="font-size: 15px; color: #05aafd;">
+          <div style  ="width:60%;">
             设备运行状态:
             <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
-          <div class="col-test" style="font-size: 15px; color: #05aafd">
-            (检修时检测情况)
-          </div>
+
         </div>
         <div class="card-cols" style="font-size: 15px; color: #05aafd">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>
           </div>
-          <div class="col-test" style="font-size: 15px; color: #05aafd">
-            (检修时检测情况)
-          </div>
+
         </div>
-        <div class="card-cols" style="font-size: 15px; color: #05aafd">
-          现场图片:
-          <div v-for="pic in item.iFileList">
+        <div class="card-cols" style="font-size: 15px; color: #05aafd" >
+          现场情况照片:
+          <div v-for="pic in item.iFileList" >
             <img :src="pic.imgUrl" :title="pic.imgName" />
           </div>
         </div>
@@ -806,6 +802,9 @@ export default {
   ],
   data() {
     return {
+      holderRunStatus:"",
+      holderFaultCode:"",
+      holderFaultCxtime:"",
       uploadDisabled:true,
       waiting:false,
       removeStata: false,
@@ -910,7 +909,7 @@ export default {
         faultTbtime: "",
         eqId: null,
         eqStatus: null,
-        eqRunStatus: null,
+        eqRunStatus: "",
         faultCode: "",
         //faultLevel: null,
         falltRemoveStatue: null,
@@ -1201,7 +1200,7 @@ export default {
         this.form.eqStatus = "";
         if (response.data.length != 0) {
           this.form.faultLocation = response.data[0].pile;
-          this.form.eqRunStatus = response.data[0].runStatus;
+          this.form.eqRunStatus = typeof response.data[0].runStatus=="undefined"?"":response.data[0].runStatus;
           this.form.eqStatus = response.data[0].eq_status;
           //this.$refs(this.form, "eqStatus", 1);
         }
@@ -1498,6 +1497,9 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.holderRunStatus = '请输入设备运行状态';
+      this.holderFaultCode = "请输入故障代码";
+      this.holderFaultCxtime = "请按照天/小时/分格式填写";
       this.uploadDisabled = true;
       this.removeStata = false;
       this.isWritable = true;
@@ -1593,6 +1595,9 @@ export default {
     async handleCheckDetail(row) {
       this.uploadDisabled = false;
       this.openDialogScreen();
+      this.holderRunStatus = "";
+      this.holderFaultCode = "";
+      this.holderFaultCxtime = "";
       let that = this;
       this.removeStata = true;
       this.isWritable = false;
@@ -1907,9 +1912,9 @@ export default {
   .card-cols {
     margin-top: 10px;
     display: flex;
-    div {
+   /* div {
       width: 50%;
-    }
+    }*/
     .col-test {
       text-align: right;
       color: #79949c;

@@ -442,6 +442,7 @@
     <!-- 新增弹窗 -->
     <el-dialog
       :title="title"
+      :destroy-on-close="true"
       :visible.sync="dialogFormVisible"
       width="500px"
       :before-close="cancelsubmitUpload"
@@ -1479,7 +1480,7 @@ export default {
       this.dialogFormVisible = false;
       this.$refs.planTable.clearSelection();
       //this.handleQuery();
-      this.resetReservePlanDrawForm();
+      // this.resetReservePlanDrawForm();
     },
     //form表单置空
     resetReservePlanDrawForm() {

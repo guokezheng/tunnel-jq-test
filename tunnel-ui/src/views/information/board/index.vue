@@ -18,6 +18,7 @@
               :options="siteList"
               :props="siteProps"
               :show-count="true"
+              noResultsText="暂无数据"
               placeholder="请选择归属部门"
               @select="changeSite"
               style="width: 100%"
@@ -243,7 +244,7 @@
                     :style="{
                       width: getScreenSize(itm.screenSize, 'width') + 'px',
                       height: getScreenSize(itm.screenSize, 'height') + 'px',
-                      
+
                     }"
                     style="background: black; position: relative;overflow: hidden;"
                   >
@@ -510,7 +511,7 @@ export default {
           },
         });
       }
-      
+
     },
 
     // 级联 管理站
@@ -821,7 +822,7 @@ export default {
 
     // 发布信息
     publishInfo() {
-      
+
       this.$confirm("是否确定发布情报板?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -876,7 +877,7 @@ export default {
               console.log(response, "返回结果");
               loading.close();
               this.$modal.msgSuccess("发布成功");
-                
+
           }).catch(() => {
               loading.close();
           })

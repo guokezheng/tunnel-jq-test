@@ -431,6 +431,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
 
+    <update id="updateFaultUnRemoveState" parameterType="String">
+        update sd_fault_list set fallt_remove_statue = #{falltRemoveStatue} where id = #{faultId}
+    </update>
+
+
     <select id="selectSdFaultById" parameterType="String" resultMap="SdFaultListResult">
         select * from sd_fault_list f where f.id = #{id}
     </select>

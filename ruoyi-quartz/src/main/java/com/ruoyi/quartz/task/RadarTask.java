@@ -140,6 +140,19 @@ public class RadarTask {
         WebSocketService.broadcast("sdSvgEventList",object.toString());
     }
 
+    /**
+     * 每天凌晨执行一次 删除小车数据推送的tocken
+     */
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void task() {
+        // 每天凌晨执行的任务
+        List<String> scanKeyList = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
+        scanKeyList.forEach((tocken)->{
+            redisCache.deleteObject(tocken);
+        });
+        //删除需要推送前端的tocken
+        redisCache.deleteObject("caKokenList");
+    }
 //    @Scheduled(fixedRate = 100)
     public void radarTask1() throws InterruptedException {
         List<Map> list = new ArrayList<>();

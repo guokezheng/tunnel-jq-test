@@ -140,7 +140,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="contentListBox">
+    <div class="contentListBox container"  v-loading="isLoading">
       <div
         class="contentBox"
         :style="topNav ? 'width:24.6%' : 'width:24.5%'"
@@ -874,7 +874,7 @@
                         :key="index"
                       >
                         <video
-                          v-if="index == 0"
+                          v-if="item.imgType == '1'"
                           :src="item.imgUrl"
                           muted
                           loop
@@ -883,7 +883,7 @@
                           @click="openPicDialog(item)"
                         ></video>
                         <el-image
-                          v-if="index != 0"
+                          v-if="item.imgType == '0'"
                           :src="item.imgUrl"
                           @click="clickImg(item.imgUrl)"
                         >
@@ -893,6 +893,49 @@
                   </el-form-item>
                 </el-col>
               </el-row>
+              <!-- <el-row :gutter="20">
+                <el-col :span="8">
+                  <el-form-item label="历史时间">
+                    <el-date-picker
+                      v-model="eventDiscovery.startTime"
+                      type="datetime"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="请选择历史时间">
+                    </el-date-picker>
+                    <el-button size="small" @click="viewVedio" style="margin-left: 7px;">查看</el-button>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="下载时间">
+                    <el-date-picker
+                      v-model="eventDiscovery.downLoadTime"
+                      type="datetime"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="请选择下载时间">
+                    </el-date-picker>
+                    <el-button size="small" @click="downloadVedio" style="margin-left: 7px;">下载</el-button>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-form-item label="历史录像" prop="historyUrlList">
+                    <el-scrollbar wrap-class="scrollbar-wrapper">
+                      <div
+                        class="scrollbar_li"
+                        v-for="(item, index) in eventDiscovery.historyUrlList"
+                        :key="index"
+                      >
+                        <videoPlayer
+                          v-if="item.imgType == '2'"
+                          :rtsp="item.imgUrl"
+                          :open="vedioPlayer"
+                        ></videoPlayer>
+                      </div>
+                    </el-scrollbar>
+                  </el-form-item>
+                </el-col>
+              </el-row> -->
             </el-form>
           </el-card>
         </el-timeline-item>
@@ -1290,7 +1333,7 @@
 <script>
 import $ from "jquery";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-
+import { Loading } from 'element-ui';
 import {
   listEvent,
   getEvent,
@@ -1310,6 +1353,9 @@ import {
   implementDisposalStrategyRl,
   getReservePlanData,
   detailExport,
+  closeVedio,
+  getVedioData,
+  downloadVedio,
 } from "@/api/event/event";
 import {
   addList,
@@ -1414,6 +1460,7 @@ export default {
       planDisposal: [], //历史预案
       manualReview: {}, //人工复核
       eventDiscovery: {}, //发现数据
+      vedioData:{}, //视频录像数据
       tacticsList: {}, //表单数据
       dialogTableVisible: false,
       radioList: [
@@ -1664,6 +1711,9 @@ export default {
       fuzzySearch1: "",
       // 表单校验
       rules: {},
+      isLoading: false,
+      loadingText: "加载中...",
+      vedioPlayer:false,
     };
   },
   computed: {
@@ -1746,6 +1796,58 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
+    //下载录像
+    // downloadVedio(){
+    //   console.log(this.eventDiscovery,"22223333")
+    //   if(this.eventDiscovery.downLoadTime == null){
+    //     this.$modal.msgError("请选择下载时间！");
+    //   }else {
+    //     if(this.vedioData.camID == undefined || this.vedioData.camID == undefined == null || this.vedioData.camID == ''){
+    //       this.$modal.msgError("请先查看视频后下载！");
+    //     }
+    //     downloadVedio(this.vedioData.camID,this.eventDiscovery.downLoadTime).then((res) => {
+    //       console.log(res,"下载下载下载");
+    //       window.open(res.data.fileUrl)
+    //     })
+    //   }
+
+    // },
+
+    //查看录像
+    // viewVedio(){
+    //   console.log(this.eventDiscovery,"111222")
+    //   if(this.eventDiscovery.startTime == null){
+    //     this.$modal.msgError("请选择历史时间！");
+    //   }else {
+    //     //请求前先关闭
+    //     console.log(this.vedioData,"hhjjhhjj");
+    //     if(this.vedioData != {} && this.vedioData != undefined){
+    //       this.closeDialog();
+    //     }
+    //     let param = {
+    //       id: this.eventDiscovery.id,
+    //       tunnelId: this.eventDiscovery.tunnelId,
+    //       startTime: this.eventDiscovery.startTime
+    //     }
+    //     getVedioData(param).then((res) => {
+    //       console.log(res,"sssssssssssssssss");
+    //       this.vedioData = res.data.vedioData;
+    //       this.eventDiscovery.historyUrlList = res.data.vedioList
+    //       this.vedioPlayer = true;
+    //       console.log(this.eventDiscovery,"111222")
+    //     })
+    //   }
+
+    // },
+    // closeDialog(){
+    //   console.log("关闭了关闭了")
+    //   console.log(this.vedioData)
+    //   if(this.vedioData.camID != undefined){
+    //     closeVedio(this.vedioData.camID,this.vedioData.playId).then((res) => {
+    //       this.vedioPlayer = false;
+    //     })
+    //   }
+    // },
     closeDetail(){
       this.deviceIndexShow = 0;
       this.activeName = '0';
@@ -1933,7 +2035,7 @@ export default {
     },
     eventIsShow(value, state) {
       if (value != null) {
-        if (state != "0" && value.includes("其他")) {
+        if (state != "0" &&(!!value ? value.includes("其他"):false)) {
           return true;
         }
       } else {
@@ -2457,7 +2559,9 @@ export default {
     getList() {
       this.eventForm.currencyId = "";
       this.ReservePlanList = [];
-      this.loading = true;
+      this.isLoading = true;
+      // let options ={}
+      // let loadingInstances = Loading.service(options);
       this.eventList = [];
       this.eventLists = [];
       if (this.manageStation == "1") {
@@ -2490,6 +2594,7 @@ export default {
           }
         }
         this.eventList = response.rows;
+        this.isLoading = false;
         console.log(this.eventList, "this.eventListthis.eventList");
         this.total = response.total;
         this.loading = false;
@@ -2697,6 +2802,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.isLoading = true;
       // this.queryParams.pageSize bug:857
       this.queryParams.pageNum = 1;
       this.dateRange = [];

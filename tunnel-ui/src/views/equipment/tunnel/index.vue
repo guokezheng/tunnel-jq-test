@@ -662,10 +662,18 @@
                 style="width: 100%"
                 :disabled="disabledInfo"
               >
-                <el-option label="1车道" value="1"></el-option>
-                <el-option label="2车道" value="2"></el-option>
-                <el-option label="3车道" value="3"></el-option>
-                <el-option label="4车道" value="4"></el-option>
+<!--                <el-option-->
+<!--                  v-for="dict in laneAmountList"-->
+<!--                  :key="dict.label"-->
+<!--                  :label="dict.label"-->
+<!--                  :value="dict.value"-->
+<!--                ></el-option>-->
+                <el-option
+                  v-for="dict in dict.type.sd_lane"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="parseInt(dict.value)"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -743,6 +751,7 @@
                 :options="deptOptions"
                 :disable-branch-nodes="true"
                 :show-count="true"
+                noResultsText="暂无数据"
                 placeholder="请选择归属部门"
                 :disabled="disabledInfo"
               />
@@ -851,7 +860,7 @@ import { color } from "echarts";
 
 export default {
   name: "Tunnels",
-  dicts: ["sd_direction"],
+  dicts: ["sd_direction","sd_lane"],
   components: { Treeselect },
   data() {
     const validateLongitude = (rule, value, callback) => {
@@ -910,6 +919,12 @@ export default {
       opens: false,
       // 是否使用字典
       pollOptions: [],
+      laneAmountList:[
+        {label :"一车道" ,value :1},
+        {label :"二车道" ,value :2},
+        {label :"三车道" ,value :3},
+        {label :"四车道" ,value :4},
+      ],
       // 查询参数
       queryParams: {
         searchValue: null,

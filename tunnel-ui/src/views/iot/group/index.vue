@@ -70,7 +70,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="父组" prop="parentId">
-          <treeselect :disabled="parentDisabled" v-model="form.parentId" :options="groupOptions" :normalizer="normalizer" placeholder="请选择父组" />
+          <treeselect :disabled="parentDisabled" v-model="form.parentId" :options="groupOptions" :normalizer="normalizer" noResultsText="暂无数据" placeholder="请选择父组" />
         </el-form-item>
         <el-form-item label="分组名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入分组名称" />

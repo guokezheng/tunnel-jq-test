@@ -589,6 +589,15 @@ public class SdDevicesController extends BaseController {
         //修改  先删除在新增
         redisCache.deleteObject(getCacheKey(token));
         redisCache.setCacheMap(getCacheKey(token),cacheMap);
+        //获取所有需要发送消息客服端的token
+        if("0".equals(switchType)){
+            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
+            redisCache.deleteObject("caKokenList");
+            redisCache.setCacheList("caKokenList",scanKey);
+        }else{
+            redisCache.deleteObject("caKokenList");
+        }
+
     }
     /**
      * 设置cache key

@@ -235,9 +235,14 @@ public class SdFaultListController extends BaseController {
                 }
                 String imgFileId = obj.getImgFileId();
                 if (StrUtil.isNotEmpty(imgFileId)) {
-                    SdTrafficImage trafficImage = new SdTrafficImage();
-                    trafficImage.setBusinessId(imgFileId);
-                    List<SdTrafficImage> imageLists = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(trafficImage);
+                    List<SdTrafficImage> imageLists = new ArrayList<>();
+                    /*SdTrafficImage trafficImage = new SdTrafficImage();
+                    trafficImage.setBusinessId(imgFileId);*/
+                    if (imgFileId != null && !"".equals(imgFileId) && !"null".equals(imgFileId)) {
+                        String[] businessId = imgFileId.split(",");
+                        imageLists = SpringUtils.getBean(SdTrafficImageMapper.class).selectPatrolFaultImgFileList(businessId);
+                    }
+
                     if (imageLists.size() > 0) {
                         for(int x = 0;x<imageLists.size();x++){
                             String photo = "photo"+x;

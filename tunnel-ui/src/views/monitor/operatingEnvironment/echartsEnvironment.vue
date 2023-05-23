@@ -153,7 +153,7 @@ export default {
           data: ['温度℃', '湿度%'],
           textStyle: {
             //图例文字的样式
-            color: this.sideTheme == 'theme-light'?'#fff':'#000',
+            color: this.sideTheme == 'theme-dark'?'#fff':'#000',
             fontSize: 12
           }
         },
@@ -163,7 +163,7 @@ export default {
           axisLine: {
             lineStyle: {
               type: 'solid',
-              color: this.sideTheme == 'theme-light'?'#fff':'#000', //x坐标轴线的颜色
+              color: this.sideTheme == 'theme-dark'?'#fff':'#000', //x坐标轴线的颜色
               width: '1' //坐标线的宽度
             }
           },
@@ -171,7 +171,7 @@ export default {
             // interval: 0, // 设置刻度 0表示显示所有
             textStyle: {
               fontsize: '11px',
-              color: this.sideTheme == 'theme-light'?'#fff':'#000',
+              color: this.sideTheme == 'theme-dark'?'#fff':'#000',
               fontWeight: 400
             }
             // interval:'auto',
@@ -184,7 +184,7 @@ export default {
           axisLabel: {
             textStyle: {
               fontsize: '13px',
-              color: this.sideTheme == 'theme-light'?'#fff':'#000',
+              color: this.sideTheme == 'theme-dark'?'#fff':'#000',
               fontWeight: 400
             }
           },

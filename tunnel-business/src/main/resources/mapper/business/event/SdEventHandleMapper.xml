@@ -14,23 +14,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="reserveName"    column="reserve_name"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="eqTypeId"    column="eq_type_id"    />
     </resultMap>
 
     <sql id="selectSdEventHandleVo">
         select id, event_id, flow_id, flow_pid, flow_content, event_state, reserve_id, process_id, flow_sort, reserve_name, create_time, update_time from sd_event_handle
     </sql>
+    <sql id="selectSdEventHandle">
+        select eh.id, eh.event_id, eh.flow_id, eh.flow_pid, eh.flow_content, eh.event_state, eh.reserve_id, eh.process_id, eh.flow_sort, eh.reserve_name, eh.create_time, eh.update_time
+    </sql>
 
     <select id="selectSdEventHandleList" parameterType="SdEventHandle" resultMap="SdEventHandleResult">
-        <include refid="selectSdEventHandleVo"/>
+        <include refid="selectSdEventHandle"/>,
+        rh.eq_type_id
+        from sd_event_handle eh
+        LEFT JOIN sd_join_reserve_handle rh ON eh.process_id = rh.id
         <where>  
-            <if test="eventId != null "> and event_id = #{eventId}</if>
-            <if test="flowId != null "> and flow_id = #{flowId}</if>
-            <if test="flowPid != null "> and flow_pid = #{flowPid}</if>
-            <if test="processId != null "> and process_id = #{processId}</if>
-            <if test="flowContent != null  and flowContent != ''"> and flow_content = #{flowContent}</if>
-            <if test="eventState != null  and eventState != ''"> and event_state = #{eventState}</if>
+            <if test="eventId != null "> and eh.event_id = #{eventId}</if>
+            <if test="flowId != null "> and eh.flow_id = #{flowId}</if>
+            <if test="flowPid != null "> and eh.flow_pid = #{flowPid}</if>
+            <if test="processId != null "> and eh.process_id = #{processId}</if>
+            <if test="flowContent != null  and flowContent != ''"> and eh.flow_content = #{flowContent}</if>
+            <if test="eventState != null  and eventState != ''"> and eh.event_state = #{eventState}</if>
         </where>
-        ORDER BY flow_sort+0 ASC
+        ORDER BY eh.flow_sort+0 ASC
     </select>
 
     <select id="selectHistoryHandleList" parameterType="SdEventHandle" resultMap="SdEventHandleResult">

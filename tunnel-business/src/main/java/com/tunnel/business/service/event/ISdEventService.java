@@ -239,4 +239,27 @@ public interface ISdEventService {
      * @return
      */
     AjaxResult batchHandleEvent(SdEvent sdEvent);
+
+    /**
+     * 查看历史录像
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult vedioData(SdEvent sdEvent);
+
+    /**
+     * 关闭相机录像视频流
+     * @param camId
+     * @param playId
+     * @return
+     */
+    AjaxResult closeVedio(String camId, String playId);
+
+    /**
+     * 下载视频录像
+     * @param camId
+     * @param downLoadTime
+     * @return
+     */
+    void downLoadVedio(String camId, String downLoadTime,HttpServletResponse response);
 }

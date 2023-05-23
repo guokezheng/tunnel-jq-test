@@ -562,6 +562,7 @@
         SELECT
             e.id,
             sdd1.dict_label AS eventSource,
+            e.tunnel_id AS tunnelId,
             e.event_time AS eventTime,
             t.tunnel_name AS tunnelName,
             e.stake_num AS stakeNum,

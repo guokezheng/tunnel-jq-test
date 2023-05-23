@@ -68,6 +68,19 @@ public class SdEventHandle extends BaseEntity
      */
     private String reserveName;
 
+    /**
+     * 设备类型id
+     */
+    private Long eqTypeId;
+
+    public Long getEqTypeId() {
+        return eqTypeId;
+    }
+
+    public void setEqTypeId(Long eqTypeId) {
+        this.eqTypeId = eqTypeId;
+    }
+
     public String getReserveName() {
         return reserveName;
     }

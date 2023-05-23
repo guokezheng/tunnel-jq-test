@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-05-16 09:48:58
+ * @LastEditTime: 2023-05-18 15:16:41
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -721,6 +721,9 @@
                   :show-all-levels="false"
                   collapse-tags
                   style="width: 100%"
+                  node-key="label"
+                  @check-change="treeChange"
+                  ref="tree"
                 ></el-cascader>
               </el-col>
 
@@ -1199,6 +1202,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    treeChange(data,checked, node){
+      console.log(data,checked, node)
+      this.$refs.tree.setCheckedKeys([data]);
+    },
     //查看情报板信息
     openTemDialog(item){
       console.log(item)
@@ -1531,7 +1538,16 @@ export default {
             light.lightCol = 4
           }
         }
-
+        // 疏散标志只能选择最近1个，同时无法选择具体设备
+        if(eqTypeId == 30){
+          let retrievalRuleList = this.planTypeIdList[number].processesList[index].retrievalRuleList;
+          retrievalRuleList.map(item=>{
+            if(item.dictValue != 6){
+              item.disabled = true;
+            }
+          })
+          this.planTypeIdList[number].processesList[index].disabled = true;
+        }
         // 基本照明
         if(eqTypeId == '9'){
           let light = this.planTypeIdList[number].processesList[index];
@@ -1766,6 +1782,7 @@ export default {
                 eqTunnelId: this.currentClickData.tunnelId, //隧道
               };
               getTreeDeviceList(params).then((res) => {
+                console.log(res.data)
                 this.$set(
                   this.planTypeIdList[i].processesList[j],
                   "equipmentData",

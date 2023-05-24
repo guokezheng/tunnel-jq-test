@@ -1697,6 +1697,29 @@
   position: absolute;
   top: 0;
  }
+ .el-time-panel{
+  background: #003D6C !important;
+  color: #fff !important;
+  border: .0625rem solid #003D6C !important;
+  border-radius: 0.1875rem !important;
+  transform:translateX(-25px) !important;
+  .el-time-spinner__item{
+    color: #fff !important;
+  }
+  .el-time-spinner__item.active:not(.disabled){
+    color:#00ACED !important;
+  }
+  .el-time-spinner__item:hover:not(.disabled):not(.active){
+    color:#00ACED !important;
+    background: transparent !important;
+  }
+  .el-time-panel__btn{
+    color: #fff !important;
+  }
+  ::-webkit-scrollbar{
+    width:0px !important;
+  }
+ }
 //  时间日期选择器
 .el-picker-panel{
   background: #012E51 !important;

@@ -237,10 +237,16 @@ export const constantRoutes = [
       }
     ]
   },
+  // {
+  //   path: '/bigscreen/index.html',
+  //   name: '数据可视化大屏',
+  //   component: (resolve) => require(['@/views/bigscreen/index2'], resolve),
+  //   hidden: true
+  // },
   {
-    path: '/bigscreen/index.html',
+    path: '/bigScreen2/index.html',
     name: '数据可视化大屏',
-    component: (resolve) => require(['@/views/bigscreen/index2'], resolve),
+    component: (resolve) => require(['@/views/bigScreen2/index'], resolve),
     hidden: true
   },
   //诱导灯参数配置

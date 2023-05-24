@@ -573,6 +573,9 @@ public class SdDevicesController extends BaseController {
             objectHashMap.put(eqId,switchType);
             // 缓存到redis中
             redisCache.setCacheMap(getCacheKey(token),objectHashMap);
+            List<String> scanKey = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
+            redisCache.deleteObject("caKokenList");
+            redisCache.setCacheList("caKokenList",scanKey);
             return;
         }
 

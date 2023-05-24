@@ -40,6 +40,7 @@ import io.netty.channel.Channel;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
+import org.apache.logging.log4j.util.StringBuilderFormattable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -446,6 +447,36 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONArray track = JSONObject.parseArray(jsonObject.getString("track"));
             //新增车辆快照数据
             saveAnalysisCarsnap(track);
+        }
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取车辆快照数据
+     *
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"analysis.carsnap"}, containerFactory = "kafkaThreeContainerFactoryTwo")
+    public void analysisCarsnapTwo(List<ConsumerRecord<String,Object>> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        for(ConsumerRecord<String,Object> item : record){
+            if(item.value() != null & item.value() != ""){
+                //解析车辆快照数据
+                JSONObject jsonObject = JSONObject.parseObject(item.value().toString());
+                JSONArray track = JSONObject.parseArray(jsonObject.getString("track"));
+                Long time = jsonObject.getLong("dataTime");
+                Date date = new Date();
+                long time1 = date.getTime();
+                long time2 = time1 - time;
+                //转分钟
+                Long minutes = (time2 / 1000) / 60;
+                if(minutes>3){
+                    continue;
+                }
+                //新增车辆快照数据
+                saveAnalysisCarsnapTwo(track,time);
+            }
         }
         consumer.commitSync();
     }
@@ -1481,11 +1512,20 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param jsonArray
      */
     public void saveAnalysisCarsnap(JSONArray jsonArray){
-        List<Map> list = new ArrayList<>();
         for(int i = 0; i < jsonArray.size(); i++){
             JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
             //保存车辆快照数据
             Map map = analysisAnalysisCarsnap(jsonObject);
+        }
+    }
+
+    public void saveAnalysisCarsnapTwo(JSONArray jsonArray,Long time){
+        List<Map> list = new ArrayList<>();
+        for(int i = 0; i < jsonArray.size(); i++){
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            jsonObject.put("time",time);
+            //保存车辆快照数据
+            Map map = analysisAnalysisCarsnapTwo(jsonObject);
             if(StringUtils.isNotEmpty(map)&&!"0".equals(map.get("distance"))){
                 list.add(map);
             }
@@ -1664,7 +1704,18 @@ public class KafkaReadListenToHuaWeiTopic {
         temporaryMapper.insertSdRadarDetectData(sdRadarDetectDataTemporary);
         if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){
             //将数据推送至物联
-            sendKafka(sdRadarDetectData);
+            //sendKafka(sdRadarDetectData);
+            return setCarsnapRedis(sdRadarDetectData);
+        }
+        return null;
+    }
+
+    public Map analysisAnalysisCarsnapTwo(JSONObject jsonObject){
+        //车辆快照数据赋值
+        SdRadarDetectData sdRadarDetectData = setRadarData(jsonObject);
+        if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){
+            //将数据推送至物联
+            //sendKafka(sdRadarDetectData);
             return setCarsnapRedis(sdRadarDetectData);
         }
         return null;
@@ -1764,6 +1815,7 @@ public class KafkaReadListenToHuaWeiTopic {
         map.put("lng",sdRadarDetectData.getLongitude());
         map.put("distance",sdRadarDetectData.getDistance());
         map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        map.put("detectTime",sdRadarDetectData.getDetectTime());
         redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.SECONDS);
         return  map;
     }

@@ -231,10 +231,10 @@ export const singleCat = {
       }
 
       //20秒清空一次不运行的小车
-      // if(this.catNumber>300){
-      //   this.carList.clear()
-      //   this.catNumber=1
-      // }
+      if(this.catNumber>10){
+        this.carList.clear()
+        this.catNumber=1
+      }
       for (let i = 0; i < event.length; i++) {
 
         //车辆实际距离入口距离

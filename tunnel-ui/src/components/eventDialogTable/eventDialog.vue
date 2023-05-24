@@ -1274,7 +1274,7 @@ export default {
   ::v-deep .dialogForm .el-checkbox-button{
     background: #052C4D;
   }
-  .theme-light .el-dialog .el-dialog__body .dialogForm .checkBox{
+  .theme-dark .el-dialog .el-dialog__body .dialogForm .checkBox{
     display: unset!important;
     width: unset!important;
   }

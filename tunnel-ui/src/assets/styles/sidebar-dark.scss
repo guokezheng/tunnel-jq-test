@@ -385,27 +385,9 @@
     ::-webkit-scrollbar-thumb {
       background-color: #0090D8;
     }
-    // .el-dialog__footer{
-    //   .dialog-footer{
-    //     .submitButton{
-    //       background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
-    //     }
-    //     .closeButton{
-    //       background: linear-gradient(180deg, #C2C2C3 0%, #A1A1A1 100%);
-    //     }
-    //     .zancunButton{
-    //       background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
-    //     }
-    //     .zancunButtonDisabled{
-    //       background: linear-gradient(180deg, #e6bf7c 0%, #ffd792 100%);
-    //     }
-    //   }
-    // }
+  
     .el-dialog__body,.el-dialog__footer{
-      
-      // background: #012E51;
-      // width: calc(100% - 30px);
-      // margin: 20px auto;
+   
       padding: 20px;
       color: #fff;
       .el-radio__inner{
@@ -870,6 +852,14 @@
   }
   
   #app {
+    .login {
+      // 下拉框背景色
+      .el-input--medium .el-input__inner{
+        background-color: #E8F0FE !important;
+        border: solid 1px #fff !important;
+        color: #fff;
+      }
+    }
     // 所有树形级联（部门）手动输入时文字颜色
     .vue-treeselect__input{
       color: #fff;

@@ -31,7 +31,7 @@ public class SysOperlogController extends BaseController
 
     @PreAuthorize("@ss.hasPermi('monitor:operlog:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysOperLog operLog)
+    public TableDataInfo<List<SysOperLog>> list(SysOperLog operLog)
     {
         startPage();
         List<SysOperLog> list = operLogService.selectOperLogList(operLog);

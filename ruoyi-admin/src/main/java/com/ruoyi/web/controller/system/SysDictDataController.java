@@ -35,7 +35,7 @@ public class SysDictDataController extends BaseController
 
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysDictData dictData)
+    public TableDataInfo<List<SysDictData>> list(SysDictData dictData)
     {
         startPage();
         List<SysDictData> list = dictDataService.selectDictDataList(dictData);

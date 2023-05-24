@@ -53,7 +53,7 @@ public class SysLoginController
     @PostMapping("/login")
     public AjaxResult login(@RequestBody LoginBody loginBody, HttpServletRequest request)
     {
-        String xxx = request.getHeader("Authorization");
+        request.getHeader("Authorization");
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode());
@@ -71,7 +71,7 @@ public class SysLoginController
     @PostMapping("/app/login")
     public AjaxResult loginAPP(@RequestBody LoginBody loginBody, HttpServletRequest request)
     {
-        String xxx = request.getHeader("Authorization");
+        request.getHeader("Authorization");
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode());

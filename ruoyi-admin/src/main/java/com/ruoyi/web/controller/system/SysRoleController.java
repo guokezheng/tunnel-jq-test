@@ -45,6 +45,8 @@ import com.ruoyi.system.service.ISysUserService;
 @Api(tags = "角色管理")
 public class SysRoleController extends BaseController
 {
+    private static String updateRole = "修改角色'";
+
     @Autowired
     private ISysRoleService roleService;
 
@@ -84,7 +86,7 @@ public class SysRoleController extends BaseController
     @GetMapping(value = "/{roleId}")
     @ApiOperation("根据角色编号获取详细信息")
     @ApiImplicitParam(name = "roleId", value = "角色ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result getInfo(@PathVariable Long roleId)
+    public Result<SysRole> getInfo(@PathVariable Long roleId)
     {
         roleService.checkRoleDataScope(roleId);
         return Result.success(roleService.selectRoleById(roleId));
@@ -124,11 +126,11 @@ public class SysRoleController extends BaseController
         roleService.checkRoleAllowed(role);
         if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleNameUnique(role)))
         {
-            return Result.error("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
+            return Result.error(updateRole + role.getRoleName() + "'失败，角色名称已存在");
         }
         else if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleKeyUnique(role)))
         {
-            return Result.error("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
+            return Result.error(updateRole + role.getRoleName() + "'失败，角色权限已存在");
         }
         role.setUpdateBy(getUsername());
 
@@ -144,7 +146,7 @@ public class SysRoleController extends BaseController
             }
             return Result.success();
         }
-        return Result.error("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
+        return Result.error(updateRole + role.getRoleName() + "'失败，请联系管理员");
     }
 
     /**

@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.monitor;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ruoyi.common.core.domain.DeptTunnelTreeSelect;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.page.Result;
@@ -48,7 +49,7 @@ public class SysLogininforController extends BaseController
 
 //    @PreAuthorize("@ss.hasPermi('monitor:logininfor:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysLogininfor logininfor)
+    public TableDataInfo<List<SysLogininfor>> list(SysLogininfor logininfor)
     {
         startPage();
         List<SysLogininfor> list = logininforService.selectLogininforList(logininfor);
@@ -85,7 +86,7 @@ public class SysLogininforController extends BaseController
 
     @PostMapping("/getDeviceTreeselect")
     @ApiOperation("获取隧道树形结构")
-    public Result getDeviceTreeselect(@RequestBody String type)
+    public Result<List<DeptTunnelTreeSelect>> getDeviceTreeselect(@RequestBody String type)
     {
         String eqtype = "";
         if(type !=null&&!"".equals(type)) {
@@ -101,11 +102,11 @@ public class SysLogininforController extends BaseController
         }
         String deptId = String.valueOf(SecurityUtils.getDeptId());
         if (deptId == null) {
-            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            throw new NullPointerException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
         List<SysDeptTunnel>tunnelsDevices = new ArrayList<>();
         List<SdTunnels> tunnels = tunnelsService.selectTunnelLineList(deptId);
-        List<SdDevices>devices = sdDevicesService.selectDevicesLineList(deptId,eqtype);
+        List<SdDevices> devices = sdDevicesService.selectDevicesLineList(deptId,eqtype);
 
         if(tunnels!=null&&tunnels.size()>0){
             for(int i = 0;i<tunnels.size();i++){

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-05-18 15:16:41
+ * @LastEditTime: 2023-05-24 16:42:34
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -761,7 +761,7 @@
                   </el-option>
                 </el-select>
               </el-col>
-              <el-col :span="2" v-show="(itemed.eqTypeId == 7 || itemed.eqTypeId == 9) && itemed.state == '1'">
+              <el-col :span="2" v-if="(itemed.eqTypeId == 7 || itemed.eqTypeId == 9) && itemed.state == '1'">
                 <el-input-number style="width:100%;" v-model="itemed.brightness" :min="itemed.minLight" :max="100" label="亮度"></el-input-number>
               </el-col>
               <!-- 照明设备end -->
@@ -1541,13 +1541,13 @@ export default {
         }
         // 疏散标志只能选择最近1个，同时无法选择具体设备
         if(eqTypeId == 30){
-          let retrievalRuleList = this.planTypeIdList[number].processesList[index].retrievalRuleList;
+          console.log(retrievalRuleList,"12312312");
           retrievalRuleList.map(item=>{
-            if(item.dictValue != 6){
+            if(item.dictValue != "6"){
               item.disabled = true;
             }
           })
-          this.planTypeIdList[number].processesList[index].disabled = true;
+          this.$set(this.planTypeIdList[number].processesList[index],'retrievalRuleList',retrievalRuleList)
         }
         // 基本照明
         if(eqTypeId == '9'){

@@ -40,6 +40,7 @@ public class kafkaTool {
                     if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
                         // 给指定客户端发送消息
                         WebSocketService.postEvent(s,"radarDataList",object.toString());
+//                        WebSocketService.broadcast("radarDataList",object.toString());
                     }
                 }
             }

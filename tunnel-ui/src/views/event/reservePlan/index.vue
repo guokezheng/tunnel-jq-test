@@ -2035,7 +2035,8 @@ export default {
                   this.dialogFormVisible = false;
                   this.resetReservePlanDrawForm(); //重置表单
                   //this.open = false;
-                  this.handleQuery();
+                  //this.handleQuery();
+                  this.getList();
                 } else {
                   this.$modal.msgError("修改失败");
                 }

@@ -9,12 +9,13 @@ import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.vo.SysDeptUserTreeVO;
 import com.ruoyi.system.service.ISysDeptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +34,9 @@ import java.util.List;
 @RequestMapping("/system/dept")
 @Api(tags = "部门管理")
 public class SysDeptController extends BaseController {
+
+    private static String jurisdictionStr = "当前账号没有配置所属部门，请联系管理员进行配置！";
+
     @Autowired
     private ISysDeptService deptService;
 
@@ -42,7 +46,7 @@ public class SysDeptController extends BaseController {
 //    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     @GetMapping("/list")
     @ApiOperation("获取部门列表")
-    public Result list(SysDept dept) {
+    public Result<List<SysDept>> list(SysDept dept) {
         List<SysDept> depts = deptService.selectDeptList(dept);
         return Result.success(depts);
     }
@@ -54,11 +58,11 @@ public class SysDeptController extends BaseController {
     @GetMapping("/list/exclude/{deptId}")
     @ApiOperation("查询部门列表（排除节点）")
     @ApiImplicitParam(name = "deptId", value = "部门ID", required = false, dataType = "String", paramType = "path", dataTypeClass = Long.class)
-    public Result excludeChild(@PathVariable(value = "deptId", required = false) String deptId) {
+    public Result<List<SysDept>> excludeChild(@PathVariable(value = "deptId", required = false) String deptId) {
         List<SysDept> depts = deptService.selectDeptList(new SysDept());
         Iterator<SysDept> it = depts.iterator();
         while (it.hasNext()) {
-            SysDept d = (SysDept) it.next();
+            SysDept d = it.next();
             if (d.getDeptId().equals(deptId)
                     || ArrayUtils.contains(org.apache.commons.lang3.StringUtils.split(d.getAncestors(), ","), deptId + "")) {
                 it.remove();
@@ -84,7 +88,7 @@ public class SysDeptController extends BaseController {
      */
     @GetMapping("/treeselect")
     @ApiOperation("获取部门下拉树列表")
-    public Result treeselect(SysDept dept) {
+    public Result<List<TreeDeptSelect>> treeselect(SysDept dept) {
         List<SysDept> depts = deptService.selectDeptList(dept);
         List<TreeDeptSelect> treeDept = deptService.buildDeptTreeSelect(depts);
         return Result.success(treeDept);
@@ -92,11 +96,11 @@ public class SysDeptController extends BaseController {
 
     @GetMapping("/getTreeByDeptId")
     @ApiOperation("获取部门及其祖先树")
-    public Result getTreeByDeptId(SysDept dept) {
+    public Result<List<TreeDeptSelect>> getTreeByDeptId(SysDept dept) {
         List<SysDept> depts = deptService.selectDeptList(dept);
         String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
-            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            throw new NullPointerException(jurisdictionStr);
         }
 
 
@@ -107,7 +111,6 @@ public class SysDeptController extends BaseController {
         }else{
             List<SysDept> target = new ArrayList<>();
             getTreeListByDeptId(depts, deptId, target);
-            System.out.println(target);
             treeDept = deptService.buildDeptTreeSelect(target);
         }
 
@@ -135,16 +138,15 @@ public class SysDeptController extends BaseController {
      */
     @GetMapping("/treeselectExcYG1")
     @ApiOperation("获取部门下拉树列表")
-    public Result treeselectExcYG1(SysDept dept) {
+    public Result<List<TreeDeptSelect>> treeselectExcYG1(SysDept dept) {
         String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
-            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            throw new NullPointerException(jurisdictionStr);
         }
         List<SysDept> source = deptService.listDeptExcYG1(dept);
 
         List<SysDept> target = new ArrayList<>();
 
-        List<TreeDeptSelect> treeDept = null;
         boolean hasChildren = deptService.hasChildByDeptId(deptId);
         if (hasChildren) {
             target = deptService.selectChildrenIncludeSelfById(deptId);
@@ -166,16 +168,15 @@ public class SysDeptController extends BaseController {
      */
     @GetMapping("/treeSelectYG1")
     @ApiOperation("应急人员获取部门下拉树列表")
-    public Result treeSelectYG1(SysDept dept) {
+    public Result<List<TreeDeptSelect>> treeSelectYG1(SysDept dept) {
         String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
-            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            throw new NullPointerException(jurisdictionStr);
         }
         List<SysDept> source = deptService.listDeptYG1(dept);
 
         List<SysDept> target = new ArrayList<>();
 
-        List<TreeDeptSelect> treeDept = null;
         boolean hasChildren = deptService.hasChildByDeptId(deptId);
         if (hasChildren) {
             target = deptService.selectChildrenIncludeSelfByIdNormal(deptId);
@@ -219,7 +220,7 @@ public class SysDeptController extends BaseController {
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping
     @ApiOperation("新增部门")
-    public Result add(@Validated @RequestBody SysDept dept) {
+    public Result<T> add(@Validated @RequestBody SysDept dept) {
         if (UserConstants.NOT_UNIQUE.equals(deptService.checkDeptNameUnique(dept))) {
             return Result.error("新增部门'" + dept.getDeptName() + "'失败，部门名称已存在");
         }
@@ -234,12 +235,12 @@ public class SysDeptController extends BaseController {
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
     @PutMapping
     @ApiOperation("修改部门")
-    public Result edit(@Validated @RequestBody SysDept dept) {
+    public Result<T> edit(@Validated @RequestBody SysDept dept) {
         if (UserConstants.NOT_UNIQUE.equals(deptService.checkDeptNameUnique(dept))) {
             return Result.error("修改部门'" + dept.getDeptName() + "'失败，部门名称已存在");
         } else if (dept.getParentId().equals(dept.getDeptId())) {
             return Result.error("修改部门'" + dept.getDeptName() + "'失败，上级部门不能是自己");
-        } else if (StringUtils.equals(UserConstants.DEPT_DISABLE, dept.getStatus())
+        } else if (org.apache.commons.lang3.StringUtils.equals(UserConstants.DEPT_DISABLE, dept.getStatus())
                 && deptService.selectNormalChildrenDeptById(dept.getDeptId()) > 0) {
             return Result.error("该部门包含未停用的子部门！");
         }
@@ -255,7 +256,7 @@ public class SysDeptController extends BaseController {
     @DeleteMapping("/{deptId}")
     @ApiOperation("删除部门")
     @ApiImplicitParam(name = "deptId", value = "部门ID", required = true, dataType = "String", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable String deptId) {
+    public Result<T> remove(@PathVariable String deptId) {
         if (deptService.hasChildByDeptId(deptId)) {
             return Result.error("存在下级部门,不允许删除");
         }
@@ -272,7 +273,7 @@ public class SysDeptController extends BaseController {
     @Log(title = "获取部门用户树")
     @GetMapping("/treeDeptUser")
     @ApiOperation("获取部门用户树")
-    public Result treeDeptUser() {
+    public Result<List<SysDeptUserTreeVO>> treeDeptUser() {
         return Result.success(deptService.treeDeptUser());
     }
 

@@ -327,9 +327,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getEquipmentFaultStatistics" parameterType="java.lang.String" resultType="hashmap">
         SELECT
-            sdd.dict_label AS eqSystemName,
+            IFNULL(sdd.dict_label,'') AS eqSystemName,
             count(*) AS eqFaultNum,
-            sdd.dict_value AS eqSystemCode
+            IFNULL(sdd.dict_value,'') AS eqSystemCode
         FROM
             sd_fault_list sfl
         LEFT JOIN sd_devices sd ON sfl.eq_id = sd.eq_id

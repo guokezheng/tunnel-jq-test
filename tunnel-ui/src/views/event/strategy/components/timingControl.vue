@@ -521,10 +521,18 @@ export default {
         this.strategyForm.execTime = data.execTime;
         listRl({ strategyId: row.id }).then((response) => {
           this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
-          listDevices({
+          let params = {
             eqType: response.rows[0].eqTypeId,
             eqTunnelId: this.strategyForm.tunnelId,
-          }).then((res) => {
+            eqDirection: this.strategyForm.direction, //方向
+            params:{
+              orderBy : 'eqName'
+            }
+          }
+          if(this.strategyForm.direction == 3){
+            params.eqDirection = null;
+          }
+          listDevices(params).then((res) => {
             this.equipmentData = res.rows;
           });
           console.log(response.rows, "设备列表");
@@ -561,6 +569,9 @@ export default {
               eqType: attr.eqTypeId,
               eqTunnelId: this.strategyForm.tunnelId,
               eqDirection: this.strategyForm.direction, //方向
+              params:{
+                orderBy : 'eqName'
+              }
             };
             if(this.strategyForm.direction == 3){
               params.eqDirection = null;
@@ -591,6 +602,9 @@ export default {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
         eqDirection: this.strategyForm.direction, //方向
+        params:{
+          orderBy : 'eqName'
+        }
       };
       if(this.strategyForm.direction == 3){
         params.eqDirection = null;
@@ -658,6 +672,9 @@ export default {
         eqType: eqType,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+        params:{
+          orderBy : 'eqName'
+        }
       };
       if(this.strategyForm.direction == 3){
         params.eqDirection = null;
@@ -839,6 +856,9 @@ export default {
         eqType: eqType,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+        params:{
+          orderBy : 'eqName'
+        }
       }
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){
@@ -876,6 +896,9 @@ export default {
         eqType: this.strategyForm.equipmentTypeId,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+        params:{
+          orderBy : 'eqName'
+        }
       };
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){

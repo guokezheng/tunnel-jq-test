@@ -460,6 +460,9 @@ export default {
               eqType: attr.eqTypeId, //设备类型
               eqTunnelId: this.strategyForm.tunnelId, //隧道
               eqDirection: this.strategyForm.direction, //方向
+              params:{
+                orderBy : 'eqName'
+              }
             };
             // 选择双向，则不进行接口过滤条件
             if(this.strategyForm.direction == 3){
@@ -489,6 +492,9 @@ export default {
         eqType: this.strategyForm.manualControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
         eqDirection: this.strategyForm.direction, //方向
+        params:{
+          orderBy : 'eqName'
+        }
       };
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){
@@ -564,6 +570,9 @@ export default {
         eqType: eqType,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+        params:{
+          orderBy : 'eqName'
+        }
       };
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){
@@ -747,6 +756,9 @@ export default {
         eqType: this.strategyForm.equipmentTypeId,
         eqTunnelId: this.strategyForm.tunnelId,
         eqDirection: this.strategyForm.direction,
+        params:{
+          orderBy : 'eqName'
+        }
       };
       // 选择双向，则不进行接口过滤条件
       if(this.strategyForm.direction == 3){

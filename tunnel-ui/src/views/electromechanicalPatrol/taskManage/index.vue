@@ -789,6 +789,10 @@
             <span>{{ pat.eqFaultCode }}</span>
           </el-col>
           <el-col :span="8">
+            <div>设备状态：</div>
+            <span>{{ pat.eqStatus }}</span>
+          </el-col>
+          <el-col :span="8">
             <div>设备运行状态：</div>
             <span>{{ pat.runStatus }}</span>
           </el-col>

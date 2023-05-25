@@ -8,7 +8,7 @@
       <div>总车流量</div>
       <div>
         <span class="yellow">{{ thisYearCount }}</span
-        ><span>万辆</span>
+        ><span>辆</span>
       </div>
       <div>
         <span>同比</span><span class="green">{{ yearPercent }}%</span>
@@ -69,7 +69,6 @@ export default {
   },
   watch: {
     tabModel: function (newValue, oldValue) {
-      console.log(newValue, "newValue");
       this.getList();
     },
   },
@@ -117,7 +116,7 @@ export default {
       this.hourArr = laneArray.slice(0, 1 + hour / 4);
     },
     initEchats2(xData, yData) {
-      this.$nextTick(function () {
+      // this.$nextTick(function () {
         if (
           this.myChart2 != null &&
           this.myChart2 != "" &&
@@ -126,7 +125,11 @@ export default {
           // 销毁
           this.myChart2.dispose();
         }
-        this.myChart2 = echarts.init(this.$refs.top10);
+        let myChart2 = this.$refs.top10;
+        if(!myChart2){
+          return 
+        }
+        this.myChart2 = echarts.init(myChart2);
 
         let option = {
           tooltip: {
@@ -337,7 +340,7 @@ export default {
         window.addEventListener("resize", function () {
           this.myChart2.resize();
         });
-      });
+      // });
     },
     getEnergyConsumption(weekList, lastYearList, fourHoursList) {
       let xDataN = this.dayArr;
@@ -457,7 +460,11 @@ export default {
           // 销毁
           this.energyConsumption.dispose();
         }
-        this.energyConsumption = echarts.init(this.$refs.zong);
+        let zong = this.$refs.zong;
+        if(!zong){
+          return 
+        }
+        this.energyConsumption = echarts.init(zong);
 
         var option = {
           tooltip: {

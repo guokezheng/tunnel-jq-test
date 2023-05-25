@@ -1,5 +1,5 @@
 <template>
-  <div id="charts3"></div>
+  <div id="perceivedEvent"></div>
 </template>
   <script>
 import * as echarts from "echarts";
@@ -44,7 +44,7 @@ export default {
           // 销毁
           this.myChart1.dispose();
         }
-        this.myChart1 = echarts.init(document.getElementById("charts3"));
+        this.myChart1 = echarts.init(document.getElementById("perceivedEvent"));
 
         const option = {
           // color: [
@@ -281,7 +281,7 @@ export default {
 };
 </script>
   <style scoped>
-#charts3 {
+#perceivedEvent {
   height: 240px;
 }
 </style>

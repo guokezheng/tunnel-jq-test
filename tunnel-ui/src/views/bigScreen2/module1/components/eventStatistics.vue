@@ -53,7 +53,11 @@ export default {
           // 销毁
           this.myChart2.dispose();
         }
-        this.myChart2 = echarts.init(document.getElementById("chart2"));
+        let e = document.getElementById("chart2")
+        if(!e){
+          return
+        }
+        this.myChart2 = echarts.init(e);
 
         const option = {
           // color: [

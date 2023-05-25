@@ -726,8 +726,7 @@
         </div>
         <div class="card-cols" style="font-size: 15px; color: #05aafd;">
           <div style  ="width:60%;">
-            设备运行状态:
-            <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
+            <span style="margin-right: 46%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
 

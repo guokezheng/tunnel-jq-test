@@ -1584,6 +1584,7 @@
     <el-dialog
       class="explain-table operationDiglog"
       :title="title"
+      :close-on-click-modal="false"
       :visible.sync="operationLogDialog"
       :before-close="cancel"
       width="1000px"
@@ -7740,7 +7741,7 @@ export default {
       getDeviceData({
         tunnelId: this.currentTunnel.id,
       }).then((response) => {
-   
+
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
@@ -7764,7 +7765,7 @@ export default {
                   ) {
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                  
+
                     if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =
@@ -7884,7 +7885,7 @@ export default {
     /* 选择隧道*/
     setTunnel(item, index) {
       console.log(item,"item")
-  
+
       this.tunnelItem = item;
       this.$refs.deawerRef.init(item.tunnelId,item.lane)
       this.$refs.footerRef.init(item.tunnelId)

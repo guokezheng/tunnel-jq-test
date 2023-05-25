@@ -2019,12 +2019,14 @@ export default {
     },
     //打开详情弹窗
     detailsOpen(item) {
+      debugger
       this.prevControlType = item.prevControlType;
       let data = { id: item.id };
       getEventDetail(data).then((res) => {
         console.log(res, "详情数据");
         this.eventDiscovery = res.data.eventDiscovery;
-        this.manualReview = res.data.manualReview;
+        console.log(res.data.manualReview)
+        this.manualReview = !!res.data.manualReview ? res.data.manualReview :{};
         this.planDisposal = res.data.planDisposal;
         this.disposalRecord = res.data.disposalRecord;
         this.eventStateCurrent = res.data.eventState;

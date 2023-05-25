@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -75,7 +76,7 @@ public class SysRoleController extends BaseController
     public AjaxResult export(SysRole role)
     {
         List<SysRole> list = roleService.selectRoleList(role);
-        ExcelUtil<SysRole> util = new ExcelUtil<SysRole>(SysRole.class);
+        ExcelUtil<SysRole> util = new ExcelUtil<>(SysRole.class);
         return util.exportExcel(list, "角色管理");
     }
 
@@ -99,7 +100,7 @@ public class SysRoleController extends BaseController
     @Log(title = "角色管理", businessType = BusinessType.INSERT)
     @PostMapping
     @ApiOperation("新增角色")
-    public Result add(@Validated @RequestBody SysRole role)
+    public Result<T> add(@Validated @RequestBody SysRole role)
     {
         if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleNameUnique(role)))
         {
@@ -121,7 +122,7 @@ public class SysRoleController extends BaseController
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping
     @ApiOperation("修改保存角色")
-    public Result edit(@Validated @RequestBody SysRole role)
+    public Result<T> edit(@Validated @RequestBody SysRole role)
     {
         roleService.checkRoleAllowed(role);
         if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleNameUnique(role)))
@@ -156,7 +157,7 @@ public class SysRoleController extends BaseController
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping("/dataScope")
     @ApiOperation("修改保存数据权限")
-    public Result dataScope(@RequestBody SysRole role)
+    public Result<T> dataScope(@RequestBody SysRole role)
     {
         roleService.checkRoleAllowed(role);
         return Result.toResult(roleService.authDataScope(role));
@@ -169,7 +170,7 @@ public class SysRoleController extends BaseController
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     @ApiOperation("状态修改")
-    public Result changeStatus(@RequestBody SysRole role)
+    public Result<T> changeStatus(@RequestBody SysRole role)
     {
         roleService.checkRoleAllowed(role);
         role.setUpdateBy(getUsername());
@@ -184,7 +185,7 @@ public class SysRoleController extends BaseController
     @DeleteMapping("/{roleIds}")
     @ApiOperation("删除角色")
     @ApiImplicitParam(name = "roleIds", value = "角色ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable Long[] roleIds)
+    public Result<T> remove(@PathVariable Long[] roleIds)
     {
         return Result.toResult(roleService.deleteRoleByIds(roleIds));
     }
@@ -195,7 +196,7 @@ public class SysRoleController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:role:query')")
     @GetMapping("/optionselect")
     @ApiOperation("获取角色选择框列表")
-    public Result optionselect()
+    public Result<List<SysRole>> optionselect()
     {
         return Result.success(roleService.selectRoleAll());
     }
@@ -233,7 +234,7 @@ public class SysRoleController extends BaseController
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @PutMapping("/authUser/cancel")
     @ApiOperation("取消授权用户")
-    public Result cancelAuthUser(@RequestBody SysUserRole userRole)
+    public Result<T> cancelAuthUser(@RequestBody SysUserRole userRole)
     {
         return Result.toResult(roleService.deleteAuthUser(userRole));
     }
@@ -249,7 +250,7 @@ public class SysRoleController extends BaseController
             @ApiImplicitParam(name = "roleId", value = "角色ID", dataType = "Long", dataTypeClass = Long.class),
             @ApiImplicitParam(name = "userIds", value = "用户数据ID", dataType = "Long", dataTypeClass = Long.class)
     })
-    public Result cancelAuthUserAll(Long roleId, Long[] userIds)
+    public Result<T> cancelAuthUserAll(Long roleId, Long[] userIds)
     {
         return Result.toResult(roleService.deleteAuthUsers(roleId, userIds));
     }
@@ -265,7 +266,7 @@ public class SysRoleController extends BaseController
             @ApiImplicitParam(name = "roleId", value = "角色ID", dataType = "Long", dataTypeClass = Long.class),
             @ApiImplicitParam(name = "userIds", value = "用户数据ID", dataType = "Long", dataTypeClass = Long.class)
     })
-    public Result selectAuthUserAll(Long roleId, Long[] userIds)
+    public Result<T> selectAuthUserAll(Long roleId, Long[] userIds)
     {
         return Result.toResult(roleService.insertAuthUsers(roleId, userIds));
     }

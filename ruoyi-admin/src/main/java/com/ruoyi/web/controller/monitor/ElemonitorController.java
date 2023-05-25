@@ -2,11 +2,9 @@ package com.ruoyi.web.controller.monitor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.system.service.ISElemonitorService;
-import com.ruoyi.system.service.ISysLogininforService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +24,7 @@ public class ElemonitorController {
     {
         String token = "";
         String url = "http://10.7.187.220:8000/ruoyi-admin/login";
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("username", "admin");
         map.put("password", "HSD123!@#");
         String result = "";

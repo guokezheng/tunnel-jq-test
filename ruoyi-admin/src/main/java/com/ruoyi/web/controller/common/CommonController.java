@@ -55,7 +55,7 @@ public class CommonController
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             FileUtils.setAttachmentResponseHeader(response, realFileName);
             FileUtils.writeBytes(filePath, response.getOutputStream());
-            if (delete)
+            if (delete!=null ? delete :false)
             {
                 FileUtils.deleteFile(filePath);
             }
@@ -144,7 +144,7 @@ public class CommonController
             String url = serverConfig.getUrl() + fileName;
             AjaxResult ajax = AjaxResult.success();
             ajax.put("fileName", fileName);
-            ajax.put("url", url);
+            ajax.put("url",a url);
             return ajax;
         }
         catch (Exception e)

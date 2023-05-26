@@ -80,7 +80,11 @@ export default {
           // 销毁
           this.brandFaultChart.dispose();
         }
-        this.brandFaultChart = echarts.init(this.$refs.brandFaultChart);
+        let e = this.$refs.brandFaultChart;
+        if(!e){
+          return
+        }
+        this.brandFaultChart = echarts.init(e);
 
         // let chartData = {
         //   bingValue: [200, 160, 120, 110, 100, 110, 90, 80, 70, 60],

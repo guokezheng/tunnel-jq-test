@@ -14,8 +14,8 @@
       @mapCreated="mapCreated"
       style="height: 100% !important; z-index: 2"
     ></gisMap> -->
-    <gisMap style="height: 100% !important;z-index: 2;"></gisMap>
-    <!-- <div style="background: #000;width: 100%;height: 100%;"></div> -->
+    <!-- <gisMap style="height: 100% !important;z-index: 2;"></gisMap> -->
+    <div style="background: #000;width: 100%;height: 100%;"></div>
     <bigScreen v-if="bigScreenList[0].type" class="charts" />
     <bigScreen2 v-if="bigScreenList[1].type" class="charts" />
     <bigScreen3 v-if="bigScreenList[2].type" class="charts" />

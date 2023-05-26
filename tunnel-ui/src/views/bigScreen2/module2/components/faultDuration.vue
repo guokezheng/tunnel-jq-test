@@ -1,6 +1,6 @@
 <template>
   <div class="barQyEchart">
-    <div id="charts3"></div>
+    <div id="faultDurationCharts"></div>
   </div>
 </template>
   
@@ -26,7 +26,11 @@ export default {
       });
     },
     initCharts() {
-      this.myChart = echarts.init(document.getElementById("charts3"));
+      let e = document.getElementById("faultDurationCharts");
+      if(!e){
+        return
+      }
+      this.myChart = echarts.init(e);
       var option = {
         tooltip: {
           trigger: "item",
@@ -216,7 +220,7 @@ export default {
   <style scoped lang="less">
 .barQyEchart {
   height: calc(100% - 30px);
-  #charts3 {
+  #faultDurationCharts {
     height: 100%;
   }
 }

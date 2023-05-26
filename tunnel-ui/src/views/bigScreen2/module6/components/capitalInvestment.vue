@@ -64,25 +64,13 @@ import * as echarts from "echarts";
 export default {
   data() {
     return {
-      // miniCharts1: null,
+      miniCharts1: null,
       miniCharts2: null,
       miniCharts3: null,
       miniCharts4: null,
     };
   },
   mounted() {
-    var that = this; //防止this指向问题
-    // var timer = setInterval(function () {
-      // 判断页面所有资源已加载完毕
-      // if (document.readyState === "complete") {
-        // that.openChart1();
-        // that.openChart2();
-        // that.openChart3();
-        // that.openChart4();
-        // window.clearInterval(timer);
-      // }
-    // }, 800);
-
     this.$nextTick(() => {
       this.openChart1();
       this.openChart2();
@@ -98,10 +86,12 @@ export default {
         });
         //然后异步执行echarts的初始化函数
         newPromise.then(() => {
+          let e = document.getElementById("miniCharts1")
+          if(!e){
+            return 
+          }
           //	此dom为echarts图标展示dom
-          let miniCharts1 = echarts.init(
-            this.$refs.miniCharts1
-          );
+          let miniCharts1 = echarts.init(e);
           let xaxisData = ["艾洪蕾", "李明涛", "赵薇", "化工"];
           let yaxisData = [94, 94, 94, 94];
 
@@ -259,9 +249,13 @@ export default {
         });
         //然后异步执行echarts的初始化函数
         newPromise.then(() => {
-          let miniCharts2 = echarts.init(
-            document.getElementById("miniCharts2")
-          );
+          let e = document.getElementById("miniCharts2")
+          if(!e){
+            return 
+          }
+          //	此dom为echarts图标展示dom
+          let miniCharts2 = echarts.init(e);
+         
           var option = {
             title: {
               show: false,
@@ -360,9 +354,13 @@ export default {
         });
         //然后异步执行echarts的初始化函数
         newPromise.then(() => {
-          let miniCharts3 = echarts.init(
-            document.getElementById("miniCharts3")
-          );
+          let e = document.getElementById("miniCharts3")
+          if(!e){
+            return 
+          }
+          //	此dom为echarts图标展示dom
+          let miniCharts3 = echarts.init(e);
+         
           var option = {
             title: {
               show: false,
@@ -494,9 +492,12 @@ export default {
         });
         //然后异步执行echarts的初始化函数
         newPromise.then(() => {
-          let miniCharts4 = echarts.init(
-            document.getElementById("miniCharts4")
-          );
+          let e = document.getElementById("miniCharts4")
+          if(!e){
+            return 
+          }
+          //	此dom为echarts图标展示dom
+          let miniCharts4 = echarts.init(e);
           var option = {
             title: {
               show: false,

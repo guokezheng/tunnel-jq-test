@@ -83,8 +83,8 @@ export default {
   methods: {
     getList() {
       faultCategory().then((res) => {
-        this.monthList = res.data.monthList;
-        this.sixMonthsList = res.data.sixMonthsList
+        this.monthList = res.data.monthList.splice(0, 8);
+        this.sixMonthsList = res.data.sixMonthsList.splice(0, 8)
         this.openChart();
       });
     },
@@ -103,7 +103,11 @@ export default {
         // 销毁
         this.myChart3.dispose();
       }
-      this.myChart3 = echarts.init(document.getElementById(this.tabModel));
+      let e = document.getElementById(this.tabModel)
+      if(!e){
+        return
+      }
+      this.myChart3 = echarts.init(e);
       let echartData = []
       list.map((item, index) => {
         echartData.push({

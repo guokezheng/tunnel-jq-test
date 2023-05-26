@@ -32,7 +32,6 @@ export default {
   methods: {
     getList() {
       eventStat().then((res) => {
-        console.log(res, "分隧道事件统计");
         let list = res.data;
         // 到当月月份数组
         // let month = new Date().getMonth() + 1
@@ -53,7 +52,11 @@ export default {
           // 销毁
           this.myChart2.dispose();
         }
-        this.myChart2 = echarts.init(document.getElementById("chart2"));
+        let e = document.getElementById("chart2")
+        if(!e){
+          return
+        }
+        this.myChart2 = echarts.init(e);
 
         const option = {
           // color: [

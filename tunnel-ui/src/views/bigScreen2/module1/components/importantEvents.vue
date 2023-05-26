@@ -37,33 +37,6 @@ import {majorEvent} from "@/api/bigScreen/model1"
 export default {
   data() {
     return {
-      tableList: [
-        {
-          eventType: "车辆故障",
-          content: "杭山东隧道 潍坊方向 发生车辆故障",
-          eventState: "0",
-          createTime: "11:14:00",
-          tunnelName:'杭山东隧道',
-          simplifyName:'行人',
-          direction:'1',
-        },
-        {
-          eventType: "交通事故",
-          content: "杭山东隧道 潍坊方向 发生交通事故",
-          eventState: "0",
-          createTime: "11:10:00",
-          tunnelName:'杭山东隧道',
-          simplifyName:'行人',
-          direction:'2',
-        },
-        {
-          eventType: "车辆故障",
-          content: "杭山东隧道 济南方向 发生车辆故障",
-          eventState: "0",
-          createTime: "10:55:00",
-        },
-        
-      ],
       eventStateList:[],
       directionList:[],
       list:{}

@@ -1,6 +1,6 @@
 <template>
   <div class="barQyEchart">
-    <div id="charts3"></div>
+    <div id="itemizedEnergy"></div>
     <div class="right-text">
       <el-row class="row">
         <div class="left-span">
@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     initCharts() {
-      this.myChart = echarts.init(document.getElementById("charts3"));
+      this.myChart = echarts.init(document.getElementById("itemizedEnergy"));
       const pieData = [
         {
           name: "楼宇负荷",
@@ -303,7 +303,7 @@ export default {
 .barQyEchart {
   height: calc(100% - 30px);
   display: flex;
-  #charts3 {
+  #itemizedEnergy {
     height: 100%;
     width: 38%;
   }

@@ -39,7 +39,7 @@ export default {
       });
     },
     openChart(errorList, normalList, xData, arrMin, arrMax) {
-      this.$nextTick(function () {
+      // this.$nextTick(function () {
         if (
           this.myChart2 != null &&
           this.myChart2 != "" &&
@@ -48,7 +48,11 @@ export default {
           // 销毁
           this.myChart2.dispose();
         }
-        this.myChart2 = echarts.init(document.getElementById("chart2"));
+        let e = document.getElementById("chart2")
+        if(!e){
+          return
+        }
+        this.myChart2 = echarts.init(e);
         // var newchartName = ["路测设备", "门架设备", "车道设备"],
         //   newchartValue1 = ["91", "51", "29"],
         //   newchartValue2 = ["9", "8", "7"];
@@ -408,7 +412,7 @@ export default {
           }, 4000);
         }
         this.myChart2.setOption(option);
-      });
+      // });
     },
   },
 };

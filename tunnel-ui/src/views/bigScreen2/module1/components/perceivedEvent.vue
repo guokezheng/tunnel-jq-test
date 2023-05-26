@@ -1,5 +1,5 @@
 <template>
-  <div id="charts3"></div>
+  <div id="perceivedEvent"></div>
 </template>
   <script>
 import * as echarts from "echarts";
@@ -27,7 +27,6 @@ export default {
     },
     getList() {
       findEventStat().then((res) => {
-        console.log(res, "感知事件类型统计");
         let list = res.data;
         this.$nextTick(() => {
           this.initEchats1(list);
@@ -44,7 +43,11 @@ export default {
           // 销毁
           this.myChart1.dispose();
         }
-        this.myChart1 = echarts.init(document.getElementById("charts3"));
+        let e = document.getElementById("perceivedEvent")
+        if(!e){
+          return
+        }
+        this.myChart1 = echarts.init(e);
 
         const option = {
           // color: [
@@ -281,7 +284,7 @@ export default {
 };
 </script>
   <style scoped>
-#charts3 {
+#perceivedEvent {
   height: 240px;
 }
 </style>

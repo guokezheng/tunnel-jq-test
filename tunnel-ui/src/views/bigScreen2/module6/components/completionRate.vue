@@ -54,8 +54,11 @@ export default {
           // 销毁
           this.myChart2.dispose();
         }
-
-        this.myChart = echarts.init(document.getElementById("charts3"));
+        let e = document.getElementById("charts3");
+        if(!e){
+          return
+        }
+        this.myChart = echarts.init(e);
         let xData = [
           "8:00",
           "10:00",

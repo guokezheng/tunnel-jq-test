@@ -1,8 +1,6 @@
 package com.ruoyi.common.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ruoyi.common.core.domain.entity.SysDept;
-import com.ruoyi.common.core.domain.entity.SysMenu;
 
 import java.io.Serializable;
 import java.util.List;

@@ -32,7 +32,6 @@ export default {
   methods: {
     getList() {
       eventStat().then((res) => {
-        console.log(res, "分隧道事件统计");
         let list = res.data;
         // 到当月月份数组
         // let month = new Date().getMonth() + 1

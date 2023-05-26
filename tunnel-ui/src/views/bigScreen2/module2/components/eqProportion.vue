@@ -75,7 +75,11 @@ export default {
       });
     },
     initCharts() {
-      this.myChart = echarts.init(document.getElementById("pie"));
+      let e = document.getElementById("pie")
+      if(!e){
+        return
+      }
+      this.myChart = echarts.init(e);
       var option = {
         tooltip: {
           trigger: "item",

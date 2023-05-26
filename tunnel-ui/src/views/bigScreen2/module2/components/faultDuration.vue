@@ -26,7 +26,11 @@ export default {
       });
     },
     initCharts() {
-      this.myChart = echarts.init(document.getElementById("faultDurationCharts"));
+      let e = document.getElementById("faultDurationCharts");
+      if(!e){
+        return
+      }
+      this.myChart = echarts.init(e);
       var option = {
         tooltip: {
           trigger: "item",

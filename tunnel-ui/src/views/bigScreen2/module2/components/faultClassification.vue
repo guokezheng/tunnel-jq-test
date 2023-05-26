@@ -83,8 +83,8 @@ export default {
   methods: {
     getList() {
       faultCategory().then((res) => {
-        this.monthList = res.data.monthList;
-        this.sixMonthsList = res.data.sixMonthsList
+        this.monthList = res.data.monthList.splice(0, 8);
+        this.sixMonthsList = res.data.sixMonthsList.splice(0, 8)
         this.openChart();
       });
     },

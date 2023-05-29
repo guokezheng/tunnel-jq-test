@@ -681,7 +681,7 @@
           </div>
         </div>
       </div>
-      <div class="siblings">
+      <!-- <div class="siblings"> -->
         <div class="eqTypeListClass">
           <div
             type="info"
@@ -1061,7 +1061,7 @@
             </div>
           </div>
         </el-drawer> -->
-      </div>
+      <!-- </div> -->
 
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
@@ -9413,20 +9413,22 @@ export default {
   }
 }
 
-.siblings {
-  position: absolute;
-  top: 6%;
-  width: 100%;
-  height: 68%;
+// .siblings {
+//   position: absolute;
+//   top: 6%;
+//   width: 100%;
+//   height: 68%;
 
   .eqTypeListClass {
     float: left;
     width: 6%;
-    height: 100%;
+    height: 68%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     z-index: 8;
+    position: absolute;
+    top: 6%;
   }
 
   //车道控制
@@ -9473,7 +9475,7 @@ export default {
   .el-icon-close:before {
     content: "\e6d9" !important;
   }
-}
+// }
 // 触发控制模块
 .triggerControl {
   width: 100%;
@@ -9975,10 +9977,10 @@ export default {
 .topNavRightDeawer {
   right: 0;
   position: absolute;
-
-  height: 100%;
+  height: 68%;
   z-index: 8;
   width: 1.6vw;
+  top:6%;
 }
 // .openSidebar .leftNavRightDeawer {
 //   right: 0px;

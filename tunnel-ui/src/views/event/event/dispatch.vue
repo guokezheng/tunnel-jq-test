@@ -9,7 +9,7 @@
 <template>
   <div class="app-container dispatchAss">
     <div class="tunnelBox3">
-      <!-- <iframe
+      <iframe
         name="tuniframe"
         id="miframe"
         class="map3D"
@@ -18,7 +18,7 @@
         allowfullscreen="true"
         allow="autoplay"
         src="http://106.120.201.126:14712/dashboard"
-      ></iframe> -->
+      ></iframe>
     </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>

@@ -947,15 +947,15 @@
 </template>
 <script>
 import robot from "@/views/workbench/config/components/robotManagement";
-import {intervalTime} from "../../../utils/index.js"
+import { intervalTime } from "../../../utils/index.js";
 import { mapState } from "vuex";
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
-import { getEventCamera, getEntranceExitVideo} from "@/api/eventDialog/api.js";
+import { getEventCamera, getEntranceExitVideo } from "@/api/eventDialog/api.js";
 import { videoStreaming } from "@/api/equipment/eqlist/api";
-import {listSdEmergencyPer} from "@/api/event/SdEmergencyPer";
+import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 import workBench from "@/views/event/reservePlan/workBench";
 import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
 import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
@@ -970,7 +970,11 @@ import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯�
 import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 
-import { listEventType,getDisposalRecord,getManagementDevice } from "@/api/event/eventType";
+import {
+  listEventType,
+  getDisposalRecord,
+  getManagementDevice,
+} from "@/api/event/eventType";
 import {
   listEqTypeState,
   getStateByData,
@@ -992,7 +996,7 @@ import {
   updateEvent,
   updateSituationUpgrade,
   getEventInif,
-  getAllManagementDevices
+  getAllManagementDevices,
 } from "@/api/event/event";
 // import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
@@ -1015,46 +1019,46 @@ export default {
   },
   data() {
     return {
-      clickEqType:'',
-      yjShow:true,
-      emergencyList:[],
-      activeName:'1',
-      buttonDisable:true,
-      deviceStateName:'',
-      oneKeyList:[],
-      oneKeyDialogVisible:false,
-      eventInfo:{},
-      fontAlign:'',//情报板对齐方式
-      boxName:'',
-      nowData:Date.now(),
-      timeData:"",
+      clickEqType: "",
+      yjShow: true,
+      emergencyList: [],
+      activeName: "1",
+      buttonDisable: true,
+      deviceStateName: "",
+      oneKeyList: [],
+      oneKeyDialogVisible: false,
+      eventInfo: {},
+      fontAlign: "", //情报板对齐方式
+      boxName: "",
+      nowData: Date.now(),
+      timeData: "",
       deadline4: "",
-      processId:'',
-      GDeviceData:{},
-      rules:{
+      processId: "",
+      GDeviceData: {},
+      rules: {
         remark: [
-            { required: true, message: '请输入升级原因', trigger: 'blur' },
-          ],
+          { required: true, message: "请输入升级原因", trigger: "blur" },
+        ],
         currencyId: [
-          { required: true, message: '请选择预案', trigger: 'blur' }
+          { required: true, message: "请选择预案", trigger: "blur" },
         ],
         eventGrade: [
-          { required: true, message: '请选择等级', trigger: 'blur' }
+          { required: true, message: "请选择等级", trigger: "blur" },
         ],
       },
-      reverse:true,
-      disposalRecord:[],//记录
+      reverse: true,
+      disposalRecord: [], //记录
       drawer: false,
-      eventGradeList:null,
-      dialogVisible:false,
+      eventGradeList: null,
+      dialogVisible: false,
       // 警情升级
-      levelForm:{
-        typeName:'',
-        currencyId:'',
-        remark:'',
-        eventGrade:'',
-        dengji:'',
-        yaName:'',
+      levelForm: {
+        typeName: "",
+        currencyId: "",
+        remark: "",
+        eventGrade: "",
+        dengji: "",
+        yaName: "",
       },
       iconDisabled: false,
       disabledRadio: false,
@@ -1088,10 +1092,10 @@ export default {
       imgUrl: require("@/assets/Example/pic1.jpg"),
       planType: [],
       videoList: [],
-      videoForm1:{},
-      videoForm2:{},
-      videoForm3:{},
-      videoForm4:{},
+      videoForm1: {},
+      videoForm2: {},
+      videoForm3: {},
+      videoForm4: {},
 
       fromList: [],
       reservePlan: {
@@ -1109,11 +1113,11 @@ export default {
       mouseTop: 0,
       curX: 0,
       curY: 0,
-      ReservePlanList:null,//预案列表
-      reserveId:'',
-      lineHeight:0,
-      circlePosition:'',
-      deviceIconUrl:[],
+      ReservePlanList: null, //预案列表
+      reserveId: "",
+      lineHeight: 0,
+      circlePosition: "",
+      deviceIconUrl: [],
     };
   },
   computed: {
@@ -1171,7 +1175,6 @@ export default {
     this.getDicts("sd_emergency_post").then((data) => {
       this.emergencyList = data.data;
     });
-
   },
   mounted() {
     this.timer = setInterval(() => {
@@ -1183,28 +1186,28 @@ export default {
   //   clearInterval(this.deadline4);
   // },
   methods: {
-    getShow(item,index){
-      if(item.children != undefined){
-        let isShow = item.children.every(items=>{
-          return items.eventState == '1'
-        })
-        return isShow
+    getShow(item, index) {
+      if (item.children != undefined) {
+        let isShow = item.children.every((items) => {
+          return items.eventState == "1";
+        });
+        return isShow;
       }
     },
-    handleClick(tab, event){
+    handleClick(tab, event) {
       this.getImplementList(tab.name);
     },
     //请求应急人员数据
-    getImplementList(username){
-      let params = {'groupName':username,'tunnelId':this.eventForm.tunnelId};
-      listSdEmergencyPer(params).then(res=>{
-        this.implementList = res.rows
-      })
+    getImplementList(username) {
+      let params = { groupName: username, tunnelId: this.eventForm.tunnelId };
+      listSdEmergencyPer(params).then((res) => {
+        this.implementList = res.rows;
+      });
     },
-    oneKeyExecute(){
+    oneKeyExecute() {
       let planId = this.reserveId;
       let eventId = this.$route.query.id;
-      implementPlan(planId,eventId).then(res=>{
+      implementPlan(planId, eventId).then((res) => {
         this.$modal.msgSuccess(res.msg);
         this.oneKeyDialogVisible = false;
         this.evtHandle();
@@ -1212,9 +1215,9 @@ export default {
     },
     // 事件处置 一键
     getYiJian(item) {
-      let show = item.children.every(items=>{
-        return items.eventState == '1'
-      })
+      let show = item.children.every((items) => {
+        return items.eventState == "1";
+      });
       this.yjShow = show;
       var that = this;
       let arr = [];
@@ -1222,170 +1225,176 @@ export default {
         arr.push(itm.id);
       }
       this.reserveId = item.reserveId;
-      let data = {reserveId:item.reserveId,eventId:that.$route.query.id};
-      getAllManagementDevices(data).then(res=>{
+      let data = { reserveId: item.reserveId, eventId: that.$route.query.id };
+      getAllManagementDevices(data).then((res) => {
         this.oneKeyList = res.data;
-        for(let i = 0;i < this.oneKeyList.length;i++){
+        for (let i = 0; i < this.oneKeyList.length; i++) {
           let item = this.oneKeyList[i];
-          if(item.deviceType == 16 || item.deviceType == 36){//情报板
-            let zxc = item.vmsData['screen_size'].split('*');
-            item.vmsData['width'] = zxc[0];
-            item.vmsData['height'] = zxc[1];
-            let align = item.vmsData['coordinate'];
-            item.vmsData['left'] = align.substr(0,3);
-            item.vmsData['top'] = align.substr(3,6);
+          if (item.deviceType == 16 || item.deviceType == 36) {
+            //情报板
+            let zxc = item.vmsData["screen_size"].split("*");
+            item.vmsData["width"] = zxc[0];
+            item.vmsData["height"] = zxc[1];
+            let align = item.vmsData["coordinate"];
+            item.vmsData["left"] = align.substr(0, 3);
+            item.vmsData["top"] = align.substr(3, 6);
           }
         }
-        console.log(this.oneKeyList,"this.oneKeyListthis.oneKeyList");
+        console.log(this.oneKeyList, "this.oneKeyListthis.oneKeyList");
         this.oneKeyDialogVisible = true;
-      })
+      });
     },
-    oneKeyHandleClose(){
-      this.oneKeyDialogVisible = false
+    oneKeyHandleClose() {
+      this.oneKeyDialogVisible = false;
     },
-    getEventInfo(){
-      let data = {id:this.$route.query.id};
-      getEventInif(data).then(res=>{
+    getEventInfo() {
+      let data = { id: this.$route.query.id };
+      getEventInif(data).then((res) => {
         this.eventInfo = res.data;
-      })
+      });
     },
-    getManagementDevice(item){
+    getManagementDevice(item) {
       console.log(item);
-      if(item.eqTypeId == 29){
+      if (item.eqTypeId == 29) {
         this.clickEqType = item.eqTypeId;
-        console.log(this.clickEqType)
+        console.log(this.clickEqType);
         return;
       }
-      if(item.eventState != '0' && item.processId){
+      if (item.eventState != "0" && item.processId) {
         this.buttonDisable = false;
-      }else{
+      } else {
         this.buttonDisable = true;
       }
       console.log(this.buttonDisable);
       this.GDeviceData.deviceIconUrl = null;
       this.processId = item.processId;
       this.IssuedItem.id = item.id;
-      let params = {id:item.processId};
-      item.eventState == '0'?this.deviceStateName = '未执行':this.deviceStateName = '已执行';
+      let params = { id: item.processId };
+      item.eventState == "0"
+        ? (this.deviceStateName = "未执行")
+        : (this.deviceStateName = "已执行");
       //请求详情
-      getManagementDevice(params).then(res=>{
+      getManagementDevice(params).then((res) => {
         console.log(res);
         let data = res.data;
         // 广播
-        if(data.deviceType == 22){
+        if (data.deviceType == 22) {
           this.boxName = "执行文件";
           this.GDeviceData.deviceList = data.deviceList;
           this.GDeviceData.deviceState = data.lsData;
-        }else if(data.deviceType == 16 || data.deviceType == 36){//情报板
+        } else if (data.deviceType == 16 || data.deviceType == 36) {
+          //情报板
           this.boxName = "执行模板";
           this.GDeviceData.deviceList = data.deviceList;
           this.GDeviceData.vmsData = data.vmsData;
-          let zxc = data.vmsData['screen_size'].split('*');
-          this.GDeviceData.vmsData['width'] = zxc[0];
-          this.GDeviceData.vmsData['height'] = zxc[1];
-          let align = data.vmsData['coordinate'];
-          this.GDeviceData.vmsData['left'] = align.substr(0,3);
-          this.GDeviceData.vmsData['top'] = align.substr(3,6);
-        }else{
+          let zxc = data.vmsData["screen_size"].split("*");
+          this.GDeviceData.vmsData["width"] = zxc[0];
+          this.GDeviceData.vmsData["height"] = zxc[1];
+          let align = data.vmsData["coordinate"];
+          this.GDeviceData.vmsData["left"] = align.substr(0, 3);
+          this.GDeviceData.vmsData["top"] = align.substr(3, 6);
+        } else {
           this.boxName = "下发指令";
           this.GDeviceData = data;
           console.log(this.GDeviceData.deviceList);
           // this.deviceIconUrl = this.GDeviceData.deviceIconUrl;
         }
         this.IssuedDialog = true;
-      })
+      });
     },
-    drawerHandleOpen(){
-      let data = {eventId:this.$route.query.id};
-      getDisposalRecord(data).then(res=>{
+    drawerHandleOpen() {
+      let data = { eventId: this.$route.query.id };
+      getDisposalRecord(data).then((res) => {
         this.disposalRecord = res.rows;
-      })
-      this.drawer = !this.drawer
+      });
+      this.drawer = !this.drawer;
     },
     // 抽屉
     drawerHandleClose(done) {
       this.drawer = false;
     },
-    closeDialog(){
+    closeDialog() {
       this.dialogVisible = false;
-      this.$refs['levelForm'].resetFields();
+      this.$refs["levelForm"].resetFields();
     },
     // 警情升级根据等级查询预案
-    levelChange(value){
+    levelChange(value) {
       this.ReservePlanList = [];
-      this.levelForm.currencyId = '';
+      this.levelForm.currencyId = "";
       const param = {
-        tunnelId:this.eventForm.tunnelId,
-        planTypeId:this.eventForm.eventTypeId,
-        direction:this.eventForm.direction,
-        eventGrade:value,
+        tunnelId: this.eventForm.tunnelId,
+        planTypeId: this.eventForm.eventTypeId,
+        direction: this.eventForm.direction,
+        eventGrade: value,
       };
-      getReservePlanData(param).then(res=>{
-        if(res.data.length  == 0){
+      getReservePlanData(param).then((res) => {
+        if (res.data.length == 0) {
           this.$modal.msgWarning("该等级下暂无预案");
         }
         this.ReservePlanList = res.data;
-      })
+      });
     },
     // 警情升级确定按钮
-    changeLevel(){
-      this.$refs['levelForm'].validate((valid) => {
+    changeLevel() {
+      this.$refs["levelForm"].validate((valid) => {
         if (valid) {
           this.levelForm.id = this.$route.query.id;
-          this.levelForm.eventState = '0';
+          this.levelForm.eventState = "0";
           this.levelForm.eventTypeId = this.eventForm.eventTypeId;
           const param = this.levelForm;
           updateSituationUpgrade(param).then((response) => {
             //调用事件处置接口，刷新数据
             this.evtHandle();
-            this.$refs['levelForm'].resetFields();
-            this.dialogVisible  = false;
+            this.$refs["levelForm"].resetFields();
+            this.dialogVisible = false;
             this.$modal.msgSuccess("修改成功");
             this.getListEvent();
           });
         }
-      })
-    },
-    //完结
-    over(){
-      this.$confirm('此操作将立即完结该事件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        const param = {
-          id: this.eventForm.id,
-          eventState: 1,
-        };
-        updateEvent(param).then((response) => {
-          this.$message({
-            type: 'success',
-            message: '操作成功!'
-          });
-          this.backSafeWarn();
-          //回跳列表页
-        });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消操作'
-        });
       });
     },
+    //完结
+    over() {
+      this.$confirm("此操作将立即完结该事件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          const param = {
+            id: this.eventForm.id,
+            eventState: 1,
+          };
+          updateEvent(param).then((response) => {
+            this.$message({
+              type: "success",
+              message: "操作成功!",
+            });
+            this.backSafeWarn();
+            //回跳列表页
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消操作",
+          });
+        });
+    },
     // 警情升级
-    levelTop(){
-      this.dialogVisible  = true;
+    levelTop() {
+      this.dialogVisible = true;
       const param = {
         id: this.eventForm.id,
       };
-      getSituationUpgrade(param).then(res=>{
+      getSituationUpgrade(param).then((res) => {
         let data = res.data;
         this.levelForm.dengji = data.eventGrade;
         this.levelForm.typeName = data.eventTypeName;
         this.levelForm.yaName = data.planName;
-      })
+      });
     },
-    handleClose(done){
+    handleClose(done) {
       done();
     },
     //右键拖动
@@ -1503,22 +1512,22 @@ export default {
     // 关闭下发事件弹窗
     cancelIssuedDialog() {
       this.IssuedDialog = false;
-      this.boxName = '';
+      this.boxName = "";
       this.GDeviceData.deviceIconUrl = null;
     },
     changeIncHand() {
       var that = this;
       // if (this.IssuedItem.flowPid == "7") {
-        let processId = that.processId;
-        let eventId = that.$route.query.id;
-        implementProcess(processId, eventId).then((response) => {
-          that.$modal.msgSuccess("执行成功");
-          this.IssuedDialog = false;
-          this.getDispatchExecuted();
-          that.evtHandle();
-          that.getEventList();
-          this.processId = '';
-        });
+      let processId = that.processId;
+      let eventId = that.$route.query.id;
+      implementProcess(processId, eventId).then((response) => {
+        that.$modal.msgSuccess("执行成功");
+        this.IssuedDialog = false;
+        this.getDispatchExecuted();
+        that.evtHandle();
+        that.getEventList();
+        this.processId = "";
+      });
       // } else if (this.IssuedItem.flowId == "17") {
       //   let eventId = that.$route.query.id;
       //   let handleId = this.IssuedItem.id;
@@ -1586,25 +1595,26 @@ export default {
           }
         }
         this.incHandList = list;
-        this.incHandList.map(item=>{
-          if(item.children){
-            item.children.map(res=>{
-              console.log(res)
-              if(res.eqTypeId == 29){
+        this.incHandList.map((item) => {
+          if (item.children) {
+            item.children.map((res) => {
+              console.log(res);
+              if (res.eqTypeId == 29) {
                 this.clickEqType = 29;
               }
-            })
+            });
           }
           console.log(item);
-          
-        })
-        this.$nextTick(()=>{
-          const incHandContentBox = document.querySelector('.incHandContentBox').offsetHeight
-          const classificationBox = document.querySelector('.classificationBox').offsetHeight;
+        });
+        this.$nextTick(() => {
+          const incHandContentBox =
+            document.querySelector(".incHandContentBox").offsetHeight;
+          const classificationBox =
+            document.querySelector(".classificationBox").offsetHeight;
           // 线的高度
           this.lineHeight = (incHandContentBox - classificationBox) / 2;
-          this.circlePosition = '-' + (this.lineHeight + 10) + 'px';
-        })
+          this.circlePosition = "-" + (this.lineHeight + 10) + "px";
+        });
         for (let item of this.incHandList) {
           for (let itm of item.children) {
             if (itm.flowId == 18 && itm.eventState == "1") {
@@ -1636,10 +1646,13 @@ export default {
         };
         await listEvent(param).then((response) => {
           this.eventForm = response.rows[0];
-          this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(0,4);
-          setInterval(()=>{
+          this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(
+            0,
+            4
+          );
+          setInterval(() => {
             this.deadline4 = intervalTime(this.eventForm.eventTime);
-          },1000)
+          }, 1000);
           this.getVideoList();
           this.getpersonnelList();
           this.evtHandle();
@@ -1651,67 +1664,63 @@ export default {
       }
     },
     // 左上角视频
-    getVideoList(){
-      this.videoForm1.cameraPlayer = false
-      this.videoForm2.cameraPlayer = false
-      this.videoForm3.cameraPlayer = false
-      this.videoForm4.cameraPlayer = false
+    getVideoList() {
+      this.videoForm1.cameraPlayer = false;
+      this.videoForm2.cameraPlayer = false;
+      this.videoForm3.cameraPlayer = false;
+      this.videoForm4.cameraPlayer = false;
 
-      console.log(this.eventForm,"this.eventForm")
+      console.log(this.eventForm, "this.eventForm");
       // this.videoList = []
       getEntranceExitVideo(
         this.eventForm.tunnelId,
         this.eventForm.direction
-        ).then((response)=>{
-          videoStreaming(response.data[0].inlet).then((response) =>{
-            if(response.data){
-              response.data.title = '入口';
-              if(response.code == 200){
-                this.videoForm1 = response.data
-                this.videoForm1.cameraPlayer = true
+      ).then((response) => {
+        videoStreaming(response.data[0].inlet).then((response) => {
+          if (response.data) {
+            response.data.title = "入口";
+            if (response.code == 200) {
+              this.videoForm1 = response.data;
+              this.videoForm1.cameraPlayer = true;
+            }
+          }
+        });
+        videoStreaming(response.data[0].outlet).then((response) => {
+          if (response.data) {
+            response.data.title = "出口";
+            if (response.code == 200) {
+              this.videoForm2 = response.data;
+              this.videoForm2.cameraPlayer = true;
+            }
+          }
+        });
+      });
+      setTimeout(() => {
+        getEventCamera(
+          this.eventForm.tunnelId,
+          this.eventForm.stakeNum,
+          this.eventForm.direction
+        ).then((res) => {
+          videoStreaming(res.data[0].eqId).then((response) => {
+            if (response.data) {
+              response.data.title = "现场1";
+              if (response.code == 200) {
+                this.videoForm3 = response.data;
+                this.videoForm3.cameraPlayer = true;
               }
             }
-          })
-          videoStreaming(response.data[0].outlet).then((response) =>{
-            if(response.data){
-              response.data.title = '出口';
-              if(response.code == 200){
-                this.videoForm2 = response.data
-                this.videoForm2.cameraPlayer = true
+          });
+          videoStreaming(res.data[1].eqId).then((response) => {
+            if (response.data) {
+              response.data.title = "现场2";
+              if (response.code == 200) {
+                this.videoForm4 = response.data;
+                this.videoForm4.cameraPlayer = true;
               }
             }
-
-
-          })
-        })
-        setTimeout(()=>{
-          getEventCamera(
-            this.eventForm.tunnelId,
-            this.eventForm.stakeNum,
-            this.eventForm.direction
-            ).then((res)=>{
-              videoStreaming(res.data[0].eqId).then((response) =>{
-                if(response.data){
-                  response.data.title = '现场1';
-                  if(response.code == 200){
-                    this.videoForm3 = response.data
-                    this.videoForm3.cameraPlayer = true
-                  }
-                }
-
-              })
-              videoStreaming(res.data[1].eqId).then((response) =>{
-                if(response.data) {
-                  response.data.title = '现场2';
-                  if (response.code == 200) {
-                    this.videoForm4 = response.data
-                    this.videoForm4.cameraPlayer = true
-                  }
-                }
-              })
-          })
-        },500)
-
+          });
+        });
+      }, 500);
     },
     /** 查询应急人员信息列表 */
     async getpersonnelList() {
@@ -1746,7 +1755,7 @@ export default {
       }
     },
     // 查询方向
-    getDirection(num,item) {
+    getDirection(num, item) {
       for (var item of this.directionList) {
         if (item.dictValue == num) {
           return item.dictLabel;
@@ -1827,7 +1836,9 @@ export default {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
                   // 5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39, 48, 45
+                  5,
+                  14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
+                  40, 39, 48, 45,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -1973,85 +1984,98 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.empty-text{text-align: center;padding:35px;}
-::v-deep .plan .el-table__body-wrapper{
-  width: 104%!important;
+.empty-text {
+  text-align: center;
+  padding: 35px;
+}
+::v-deep .plan .el-table__body-wrapper {
+  width: 104% !important;
 }
 
-::v-deep .yjBox .is-always-shadow .el-card{
+::v-deep .yjBox .is-always-shadow .el-card {
   background-color: #012b4e;
 }
-.dispatchAss .GDeviceBox .el-row .el-col{
+.dispatchAss .GDeviceBox .el-row .el-col {
   background: #012646;
   margin-bottom: 20px;
 }
-::v-deep .el-tabs--card > .el-tabs__header .el-tabs__nav{
-  border:0px;
+::v-deep .el-tabs--card > .el-tabs__header .el-tabs__nav {
+  border: 0px;
 }
-::v-deep .el-tabs--card > .el-tabs__header{
+::v-deep .el-tabs--card > .el-tabs__header {
   border-bottom: none;
-  background: rgba(1,46,81,.7)!important;
+  background: rgba(1, 46, 81, 0.7) !important;
   padding: 10px 0;
   margin: 0 0 5px;
 }
-.el-tabs--top .el-tabs__item.is-top:nth-child(2), .el-tabs--top .el-tabs__item.is-bottom:nth-child(2), .el-tabs--bottom .el-tabs__item.is-top:nth-child(2), .el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2){
-  padding-left:0px!important;
+.el-tabs--top .el-tabs__item.is-top:nth-child(2),
+.el-tabs--top .el-tabs__item.is-bottom:nth-child(2),
+.el-tabs--bottom .el-tabs__item.is-top:nth-child(2),
+.el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2) {
+  padding-left: 0px !important;
 }
-.theme-dark #app .el-table{
+.theme-dark #app .el-table {
   background-color: transparent;
 }
-::v-deep .el-table .el-table__header-wrapper th{
-  background-color: #03659E !important;
-  color:white;
+::v-deep .el-table .el-table__header-wrapper th {
+  background-color: #03659e !important;
+  color: white;
 }
-.drawerBox:hover{
+.drawerBox:hover {
   cursor: pointer;
 }
-::v-deep .el-drawer.ltr, .el-drawer.rtl{
+::v-deep .el-drawer.ltr,
+.el-drawer.rtl {
   height: 87%;
   top: 9%;
   bottom: unset;
   border: 1px solid #0661ae;
 }
 .dieBox::-webkit-scrollbar {
-display: none;
+  display: none;
 }
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper::-webkit-scrollbar {
-display: none;
+  display: none;
 }
 // ::v-deep .drawerLog .el-drawer.ltr{left: 25%!important;}
-::v-deep .el-dialog__title{padding-left:20px;}
-::v-deep .contentList .el-button--success.is-plain{
+::v-deep .el-dialog__title {
+  padding-left: 20px;
+}
+::v-deep .contentList .el-button--success.is-plain {
   background: transparent;
 }
 
-::v-deep .drawerLog .el-drawer__header{
-  background-color: #012039!important;
+::v-deep .drawerLog .el-drawer__header {
+  background-color: #012039 !important;
   background-image: url(../../../assets/cloudControl/dialogHeader.png);
   background-repeat: no-repeat;
   background-position-x: right;
-  font-size:14px;
+  font-size: 14px;
 }
-::v-deep .drawerLog .el-drawer__container{left:-10%!important;}
-::v-deep .drawerLog .el-drawer.ltr{
+::v-deep .drawerLog .el-drawer__container {
+  left: -10% !important;
+}
+::v-deep .drawerLog .el-drawer.ltr {
   height: 65%;
   left: 10%;
   top: 9%;
 }
-::v-deep .el-statistic .number{
-  color:white;
+::v-deep .el-statistic .number {
+  color: white;
 }
-::v-deep .drawerLog .el-drawer__body{
-  background:rgba(1, 46, 81, 0.7) !important;
+::v-deep .drawerLog .el-drawer__body {
+  background: rgba(1, 46, 81, 0.7) !important;
 }
-.sendMsg{
+.sendMsg {
   // width: 60px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   // background-color: #007aff;
 }
-::v-deep .el-table--scrollable-x .el-table__body-wrapper{overflow-x: hidden;}
+::v-deep .el-table--scrollable-x .el-table__body-wrapper {
+  overflow-x: hidden;
+}
 ::v-deep .el-drawer__body::-webkit-scrollbar {
   display: none;
 }
@@ -2062,32 +2086,36 @@ display: none;
 //   overflow-y: unset;
 //   overflow:unset;
 // }
-::v-deep .el-drawer__header{
-  color:white;
-  margin-bottom:0px;
+::v-deep .el-drawer__header {
+  color: white;
+  margin-bottom: 0px;
   background-image: url(../../../assets/cloudControl/distitlebg.png);
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  height:4vh;
-  font-size:14px;
+  height: 4vh;
+  font-size: 14px;
 }
 // ::v-deep .el-table{
 //   background-color: rgba(1, 46, 81, 0.7)!important;
 // }
-::v-deep .el-table tr{
-  background:rgba(1, 46, 81, 0.7);
+::v-deep .el-table tr {
+  background: rgba(1, 46, 81, 0.7);
 }
-::v-deep .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell{
-  background:rgba(1, 46, 81, 0.7);
+::v-deep
+  .el-table--striped
+  .el-table__body
+  tr.el-table__row--striped
+  td.el-table__cell {
+  background: rgba(1, 46, 81, 0.7);
 }
-.heightBox{
+.heightBox {
   padding-bottom: 2%;
 }
-.disRightBox > div{
-  background-color: rgba(1, 46, 81, 0.7)!important;
+.disRightBox > div {
+  background-color: rgba(1, 46, 81, 0.7) !important;
 }
-.videoBox1{
-  background-color: rgba(1, 46, 81, 0.7)!important;
+.videoBox1 {
+  background-color: rgba(1, 46, 81, 0.7) !important;
 }
 .dispatchAss {
   .tunnelBox3 {
@@ -2098,30 +2126,30 @@ display: none;
       height: 100%;
     }
   }
-  .drawerBox{
+  .drawerBox {
     position: fixed;
     top: 9.1%;
     left: 24%;
     z-index: 619;
-    color:white;
+    color: white;
     height: 120px;
     width: 35px;
     background-color: rgba(1, 46, 81, 0.7);
     padding: 8px 8px;
-    font-size:14px;
+    font-size: 14px;
   }
-  .disRightBox{
+  .disRightBox {
     position: fixed;
-    top:9vh;
-    right:1px;
+    top: 9vh;
+    right: 1px;
     width: 400px;
     height: 87%;
-    .dispatchLeft{
+    .dispatchLeft {
       .video {
         height: 33.3%;
         margin-top: 0px !important;
         border-radius: 0px !important;
-        .title{
+        .title {
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
@@ -2136,8 +2164,8 @@ display: none;
           padding: 15px;
           box-sizing: border-box;
           display: grid;
-          grid-template-rows: repeat(2,50%);
-          grid-template-columns: repeat(2,48%);
+          grid-template-rows: repeat(2, 50%);
+          grid-template-columns: repeat(2, 48%);
           grid-column-gap: 4%;
           .videoContent {
             background-image: url(../../../assets/image/videoBg.png);
@@ -2156,7 +2184,7 @@ display: none;
               height: 90px;
               width: 100%;
               object-fit: fill;
-              margin:0 auto;
+              margin: 0 auto;
             }
             .videoListTitle {
               background-color: rgba(107, 115, 123, 0.4);
@@ -2175,7 +2203,7 @@ display: none;
       .evtMessage {
         height: 33.3%;
         margin-top: 10px;
-        .title{
+        .title {
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
@@ -2218,8 +2246,8 @@ display: none;
                 background-image: url(../../../assets/image/videoBg.png);
                 background-repeat: no-repeat;
                 background-size: 100% 100%;
-                ::v-deep .el-image__error{
-                  font-size:12px;
+                ::v-deep .el-image__error {
+                  font-size: 12px;
                 }
               }
             }
@@ -2261,16 +2289,16 @@ display: none;
       .plan {
         height: 33.3%;
         margin-top: 10px;
-        .title{
+        .title {
           background-image: url(../../../assets/cloudControl/distitlebg.png);
           background-repeat: no-repeat;
           background-size: 100% 100%;
           background-color: rgba(1, 46, 81, 0.7);
         }
-        ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item.is-active{
+        ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
           border-bottom-color: transparent !important;
         }
-        ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item{
+        ::v-deep .el-tabs--card > .el-tabs__header .el-tabs__item {
           height: 18px;
           line-height: 18px;
         }
@@ -2396,78 +2424,82 @@ display: none;
   //   background-size: 100% 100%!important;
   // }
   // ::v-deep .jingqing{
-    // .el-dialog__header{
-    //   background-image: url(../../../assets/cloudControl/distitlebg.png);
-    //   background-repeat: no-repeat;
-    //   background-size: 100% 100%;
-    // }
+  // .el-dialog__header{
+  //   background-image: url(../../../assets/cloudControl/distitlebg.png);
+  //   background-repeat: no-repeat;
+  //   background-size: 100% 100%;
   // }
   // }
-  .disLeftBox{
+  // }
+  .disLeftBox {
     position: fixed;
-    top:9vh;
-    left:1vh;
+    top: 9vh;
+    left: 1vh;
     width: 450px;
     height: 87%;
 
     background-repeat: no-repeat;
-    background-size:100% 100%;
-    .IncHand{
-      background-color: rgba(1, 46, 81,0.7);
+    background-size: 100% 100%;
+    .IncHand {
+      background-color: rgba(1, 46, 81, 0.7);
       height: 100%;
       box-sizing: border-box;
       border: 1px solid #0661ae;
-      .title{
-        font-size:16px;
+      .title {
+        font-size: 16px;
         background-image: url(../../../assets/cloudControl/distitlebg.png);
         background-repeat: no-repeat;
         background-size: 100% 100%;
-        span{font-size:13px;color:#93a8b9;padding-left:15px;}
+        span {
+          font-size: 13px;
+          color: #93a8b9;
+          padding-left: 15px;
+        }
       }
       .incHandBox {
         height: calc(100% - 40px);
         // overflow: hidden;
-        padding:15px;
-        .GTop{
-          display:flex;
+        padding: 15px;
+        .GTop {
+          display: flex;
           justify-content: space-around;
           align-items: center;
-          margin-bottom:20px;
-          .GT_one{
+          margin-bottom: 20px;
+          .GT_one {
             background-image: url(../../../assets/image/leftBg.png);
             // border-top: 4px solid #0175a9;
             // border-bottom: 1px solid #0175a9;
             background-color: #013143;
-            color:white;
+            color: white;
             width: 41%;
             height: 40px;
             background-size: 100% 100%;
             background-repeat: no-repeat;
           }
-          .one_box{
-            display:flex;
+          .one_box {
+            display: flex;
             justify-content: space-around;
             align-items: center;
-            p{
-              text-align:center;
+            p {
+              text-align: center;
               font-size: 12px;
             }
-            span{
-              display:block;
-              width:30%;
-              font-size:12px;
-              text-align:center;
-              background-color:#063f39;
-              color:#01c30b;
-              padding:4px 0;
-              box-sizing:border-box;
+            span {
+              display: block;
+              width: 30%;
+              font-size: 12px;
+              text-align: center;
+              background-color: #063f39;
+              color: #01c30b;
+              padding: 4px 0;
+              box-sizing: border-box;
             }
           }
-          .two_box{
-            display:flex;
+          .two_box {
+            display: flex;
             justify-content: space-evenly;
             align-items: center;
-            font-size:12px;
+            font-size: 12px;
           }
         }
         .incHandContent {
@@ -2477,26 +2509,29 @@ display: none;
           padding: 0 10px;
           color: white;
           align-items: center;
-          margin-bottom:35px;
+          margin-bottom: 35px;
           .classification {
             position: relative;
-            .menuBox{
+            .menuBox {
               border: 1px solid rgba(57, 173, 255, 0.6);
               display: flex;
               flex-flow: column;
               justify-content: center;
               align-items: center;
             }
-            .dashed{
+            .dashed {
               position: absolute;
               display: flex;
               justify-content: center;
               align-items: center;
               flex-flow: column;
               width: 50px;
-              top:80px;
-              p{height: 30px; border-left: 1px dashed #39adff;}
-              .circle{
+              top: 80px;
+              p {
+                height: 30px;
+                border-left: 1px dashed #39adff;
+              }
+              .circle {
                 display: block;
                 width: 10px;
                 height: 10px;
@@ -2504,7 +2539,7 @@ display: none;
                 border-radius: 6px;
               }
             }
-            .topDashed{
+            .topDashed {
               position: absolute;
               display: flex;
               justify-content: center;
@@ -2512,8 +2547,11 @@ display: none;
               flex-flow: column;
               width: 50px;
               top: -40px;
-              p{height: 30px; border-left: 1px dashed #39adff;}
-              .topCircle{
+              p {
+                height: 30px;
+                border-left: 1px dashed #39adff;
+              }
+              .topCircle {
                 display: block;
                 width: 10px;
                 height: 10px;
@@ -2533,12 +2571,12 @@ display: none;
               color: white;
               width: 40px;
               background-color: #df8600;
-              border-radius:3px;
+              border-radius: 3px;
               // background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
               // border: 1px solid #39adff;
               // padding: 10px;
               text-align: center;
-              margin-bottom:5px;
+              margin-bottom: 5px;
             }
           }
 
@@ -2575,8 +2613,8 @@ display: none;
             margin-top: 0;
           }
         }
-        .rightButton{
-          border-top: 2px solid #0083FF;
+        .rightButton {
+          border-top: 2px solid #0083ff;
           display: flex;
           justify-content: space-around;
           margin-top: 5%;
@@ -2612,8 +2650,6 @@ display: none;
     width: 100%;
     background-color: transparent;
   }
-
-
 }
 .dispatchRight {
   margin-left: 10px;
@@ -2697,7 +2733,6 @@ display: none;
         height: 150px;
       }
     }
-
   }
   .rightBottom {
     width: 100%;
@@ -2712,7 +2747,6 @@ display: none;
       .IncHand {
         width: 60%;
         height: 100%;
-
       }
       .DisRecords {
         width: 40%;
@@ -2821,11 +2855,13 @@ display: none;
     }
   }
 }
-::v-deep .el-table::before{height:0px!important;}
+::v-deep .el-table::before {
+  height: 0px !important;
+}
 ::v-deep .el-table .el-table__cell {
   height: 35px !important;
-  border-bottom: 1px solid #03659E !important;
-  border-left: 1px solid #03659E !important;
+  border-bottom: 1px solid #03659e !important;
+  border-left: 1px solid #03659e !important;
 }
 ::v-deep ::-webkit-scrollbar {
   width: 0px;
@@ -2849,28 +2885,32 @@ display: none;
     padding: 0 !important;
   }
 }
-.GDeviceBox{
+.GDeviceBox {
   // p{padding:0 15px 15px;}
-  .el-row{padding:10px 0px;}
-  ::v-deep .el-table__row td{
-    padding:10px 0!important;
-    color:white;
-    border-bottom: 1px solid #03659E !important;
-    border-left: 1px solid #03659E !important;
+  .el-row {
+    padding: 10px 0px;
   }
-  ::v-deep .el-table__row td:last-of-type{
-    border-right: 1px solid #03659E !important;
+  ::v-deep .el-table__row td {
+    padding: 10px 0 !important;
+    color: white;
+    border-bottom: 1px solid #03659e !important;
+    border-left: 1px solid #03659e !important;
   }
-  .GDeviceCard{
-    background-color: #05213E;
-    margin-bottom:10px;
+  ::v-deep .el-table__row td:last-of-type {
+    border-right: 1px solid #03659e !important;
+  }
+  .GDeviceCard {
+    background-color: #05213e;
+    margin-bottom: 10px;
   }
 }
-  ::v-deep .otherBox .el-card__body{
-    display:flex;
-    align-items: center;
-    p{padding:0 15px;}
+::v-deep .otherBox .el-card__body {
+  display: flex;
+  align-items: center;
+  p {
+    padding: 0 15px;
   }
+}
 </style>
 <style lang="scss">
 .IssuedDialog {
@@ -2903,20 +2943,23 @@ display: none;
     cursor: pointer;
   }
 }
-.disRightBox{
-  .title span{
-    font-size:13px;
-    color:#93a8b9;
-    padding-left:15px;
+.disRightBox {
+  .title span {
+    font-size: 13px;
+    color: #93a8b9;
+    padding-left: 15px;
   }
 }
 .robotHtmlBox {
-  width: 770px!important;
+  width: 770px !important;
   position: absolute;
   left: 30%;
   z-index: 96659;
   background: #071727;
   pointer-events: auto;
+  border-left: 1px solid rgba(1, 152, 255, 0.8);
+  border-right: 1px solid rgba(1, 152, 255, 0.8);
+  border-bottom: 2px solid rgba(1, 152, 255, 0.8);
 }
 .comClass {
   position: absolute;

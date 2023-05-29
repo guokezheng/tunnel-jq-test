@@ -9330,6 +9330,9 @@ export default {
   z-index: 96659;
   background: #071727;
   pointer-events: auto;
+  border-left: 1px solid rgba(1,152,255,.8);
+  border-right: 1px solid rgba(1,152,255,.8);
+  border-bottom: 2px solid rgba(1,152,255,.8);
 }
 .batchManageButton {
   width: 120px;

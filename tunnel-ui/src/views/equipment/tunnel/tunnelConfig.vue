@@ -1380,7 +1380,7 @@ export default {
     },
     // 辅助线
     auxiliaryLine() {
-      // debugger
+      debugger
       let that = this;
       if (!$("#svg g")) return;
       var MIN_DISTANCE = 1; //捕获的最小距离
@@ -1429,7 +1429,7 @@ export default {
 
         drag: function (event, ui) {
           console.log(event)
-          // debugger
+          debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1513,7 +1513,7 @@ export default {
           // 画布与窗口的距离
           let left = event.pageX - event.offsetX;
           let top = event.pageY - event.offsetY + 3; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
-          if (chosenGuides.top.dist <= MIN_DISTANCE) {
+          // if (chosenGuides.top.dist <= MIN_DISTANCE) {
             $("#guide-h")
               .css("top", chosenGuides.top.guide.top - top)
               .show();
@@ -1521,14 +1521,14 @@ export default {
             //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
             //   .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
-          } else {
-            // debugger
-            $("#guide-h").hide();
-            $("#guide-h1").hide();
-            // ui.position.top = pos.top - 104;
-          }
+          // } else {
+          //   // debugger
+          //   $("#guide-h").hide();
+          //   $("#guide-h1").hide();
+          //   // ui.position.top = pos.top - 104;
+          // }
 
-          if (chosenGuides.left.dist <= MIN_DISTANCE) {
+          // if (chosenGuides.left.dist <= MIN_DISTANCE) {
             $("#guide-v")
               .css("left", chosenGuides.left.guide.left - left)
               .show();
@@ -1537,16 +1537,16 @@ export default {
             //   .show();
             /* ui.position.left =
 				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
-          } else {
-            $("#guide-v").hide();
-            $("#guide-v1").hide();
-            /* ui.position.left = pos.left; */
-          }
+          // } else {
+          //   $("#guide-v").hide();
+          //   $("#guide-v1").hide();
+          //   /* ui.position.left = pos.left; */
+          // }
         },
 
         stop: function (event, ui) {
           console.log(event)
-          // debugger
+          debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1645,9 +1645,9 @@ export default {
             $("#guide-h")
               .css("top", chosenGuides.top.guide.top)
               .show();
-            // $("#guide-h1")
-            //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
-            //   .show();
+            $("#guide-h1")
+              .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
+              .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           } else {
             // debugger
@@ -1660,9 +1660,9 @@ export default {
             $("#guide-v")
               .css("left", chosenGuides.left.guide.left )
               .show();
-            // $("#guide-v1")
-            //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
-            //   .show();
+            $("#guide-v1")
+              .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
+              .show();
             /* ui.position.left =
 				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
           } else {

@@ -63,7 +63,7 @@ public class SdAppFaultListController extends BaseController
     /**
      *  查询隧道列表
      */
-    @GetMapping("app/tunnelList")
+    @GetMapping("/app/tunnelList")
     public TableDataInfo<List<SdTunnels>> list(SdTunnels sdTunnels)
     {
         startPage();
@@ -176,10 +176,11 @@ public class SdAppFaultListController extends BaseController
     /**
      * 根据设备名称点击事件
      */
-    @PostMapping(value = "/app/getEquipmentInfo")
+    @PostMapping("/app/getEquipmentInfo")
     public Result getEquipmentInfo(String eqId) {
         return Result.success(isdDevicesService.getEquipmentInfo(eqId));
     }
+
 
 
     /**

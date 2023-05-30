@@ -414,6 +414,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public int saveFault(SdFaultList sdFaultList) {
         int result = -1;
+        sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
         if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
             sdFaultList.setImgFileId(sdFaultList.getImgFileId().substring(0,sdFaultList.getImgFileId().length()-1));
         }

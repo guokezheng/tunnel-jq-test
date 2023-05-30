@@ -27,7 +27,6 @@ public interface SdEnhancedLightingConfigMapper
     public List<SdEnhancedLightingConfig> selectSdEnhancedLightingConfigList(SdEnhancedLightingConfig sdEnhancedLightingConfig);
 
 
-
     /**
      * 查询【加强照明配置】列表
      *

@@ -168,6 +168,15 @@
             class="flex-row"
             type="primary"
             size="mini"
+            icon="el-icon-s-operation"
+            @click="iconLighting"
+          >
+            照明配置
+          </el-button>
+          <el-button
+            class="flex-row"
+            type="primary"
+            size="mini"
             icon="el-icon-files"
             @click="batchManage"
             v-if="batchManageType == 1"
@@ -3166,6 +3175,111 @@
         <el-button class="closeButton" @click="cancel">关 闭</el-button>
       </div>
     </el-dialog>
+    <!-- 照明配置对话框 -->
+    <el-dialog
+      v-dialogDrag
+      class="workbench-dialog explain-table icon-dialog"
+      :title="title"
+      :visible.sync="lightingVisible"
+      width="45%"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <el-form ref="form" :model="lightingForm" label-width="120px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="隧道名称" prop="tunnelId">
+              <el-select v-model="lightingForm.tunnelId" placeholder="请选择隧道" disabled>
+                <el-option
+                  v-for="item in eqTunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="模式类型" prop="modeType">
+              <el-select v-model="lightingForm.modeType" placeholder="请选择模式类型">
+                <el-option
+                  v-for="item in modeTypeList"
+                  :key="item.value"
+                  :label="item.name"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="开启调光模式" prop="isStatus" v-if="lightingForm.modeType != 0">
+              <el-tooltip
+                :content="lightingForm.isStatus == 1 ? '开启' : '关闭'"
+                placement="top"
+              >
+                <el-switch
+                  v-model="lightingForm.isStatus"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="1"
+                  :inactive-value="0"
+                >
+                </el-switch>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="当前亮度值"
+              prop="beforeLuminance"
+              v-if="lightingForm.modeType == 1"
+            >
+              <el-input
+                v-model="lightingForm.beforeLuminance"
+                placeholder="请输入当前亮度值(0-100)"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              label="最小亮度值"
+              prop="minLuminance"
+              v-if="lightingForm.modeType != 0"
+            >
+              <el-input
+                v-model="lightingForm.minLuminance"
+                placeholder="请输入最小亮度值(0-100)"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="响应时长(毫秒)"
+              prop="respondTime"
+              v-if="lightingForm.modeType != 0"
+            >
+              <el-input
+                v-model="lightingForm.respondTime"
+                placeholder="请输入响应时长 单位：秒s"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button class="submitButton" @click="submitLightingForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">关 闭</el-button>
+      </div>
+    </el-dialog>
+
     <!--查看控制策略对话框-->
     <el-dialog
       v-dialogDrag
@@ -3845,6 +3959,13 @@ import { getVehicleSelectList } from "@/api/surveyType/api"; //车辆类型
 import { list } from "@/api/monitor/logininfor";
 //混入小车js
 import { singleCat } from "@/views/workbench/config/mixin/single-cat";
+//照明配置
+import {
+  getLightingConfigByParam,
+  addConfig,
+  updateConfig,
+} from "@/api/business/enhancedLighting/app.js";
+
 let configData = {}; //配置信息
 let wrapperClientX = 0;
 let wrapperClientY = 0;
@@ -4247,6 +4368,7 @@ export default {
       youdaoVisible: false,
       cameraErrorInfo: "",
       explainVisible: false,
+      lightingVisible: false,
       eqTypeList: [], //设备类型
       eqBigTypeList: [], //设备类型
       selectBigType: {
@@ -4600,6 +4722,23 @@ export default {
       min: 0,
       accidentDistance: "", //隧道px长度
       startPileNum: "", //隧道最后桩号
+      //照明模式类型
+      modeTypeList:[
+        {
+          name: "定时模式",
+          value: 0,
+        },
+        {
+          name: "自动模式",
+          value: 1,
+        },
+        {
+          name: "节能模式",
+          value: 2,
+        },
+      ],
+      // 表单参数
+      lightingForm: {},
     };
   },
 
@@ -5589,6 +5728,33 @@ export default {
         }
       });
       // console.log(that.eqTypeStateList2, "that.eqTypeStateList2");
+    },
+    /** 加强照明提交按钮 */
+    submitLightingForm(){
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if (this.lightingForm.id != null) {
+            updateConfig(this.lightingForm).then((response) => {
+              if(response.code == 200){
+                this.$modal.msgSuccess("修改成功");
+                this.lightingVisible = false;
+                this.$refs.tableFile.clearSelection();
+              }else{
+                this.$modal.msgError(response.msg);
+              }
+            });
+          } else {
+            addConfig(this.lightingForm).then((response) => {
+              if(response.code == 200){
+                this.$modal.msgSuccess("新增成功");
+                this.lightingVisible = false;
+              }else{
+                this.$modal.msgError(response.msg);
+              }
+            });
+          }
+        }
+      });
     },
     // 关闭批量操作弹窗 / 批量操作取消
     closeBatchManageDialog() {
@@ -8932,6 +9098,20 @@ export default {
       this.explainVisible = true;
       this.title = "图标含义";
     },
+    /* 打开照明配置选项 */
+    iconLighting() {
+      //获取照明配置信息
+      let param = {tunnelId:this.currentTunnel.id}
+      getLightingConfigByParam(param).then(response => {
+        this.lightingVisible = true;
+        this.title = "照明配置";
+        if(response.data == null){
+          this.lightingForm = {tunnelId:this.currentTunnel.id,modeType:0};
+        }else{
+          this.lightingForm = response.data;
+        }
+      });
+    },
     /* 关闭所有对话框*/
     cancel() {
       this.operationParam.pageNum = 1;
@@ -8940,6 +9120,7 @@ export default {
       // this.tunnelVisible = false;
       this.stateSwitchVisible = false;
       this.explainVisible = false;
+      this.lightingVisible = false;
       this.batchVisible = false;
       this.shuibengVisible = false;
       this.lumianVisible = false;

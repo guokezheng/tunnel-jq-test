@@ -61,8 +61,8 @@ public class MicrowaveNettyConfig {
 
                     // device from db
                     SdDevices sdDevices = new SdDevices();
-                    sdDevices.setEqType(DevicesTypeEnum.WEI_BO_CHE_JIAN.getCode());
-                    List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
+                    sdDevices.setEqTypes(new Long[]{DevicesTypeEnum.WEI_BO_CHE_JIAN.getCode()});
+                    List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByParam(sdDevices);
 //                    List<DeviceEntity> list = deviceRepository.getIps();
                     for(SdDevices it : devicesList) {
                         //隧道入口微波车检  可用。   仅用来测试使用。后期优化。

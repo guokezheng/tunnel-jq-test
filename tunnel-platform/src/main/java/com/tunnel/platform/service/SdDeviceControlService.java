@@ -3,6 +3,7 @@ package com.tunnel.platform.service;
 import cn.hutool.json.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
@@ -86,6 +87,9 @@ public class SdDeviceControlService {
 
     @Autowired
     private SdJoinPlanStrategyMapper planStrategyMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 高速云端是否可控
@@ -343,8 +347,17 @@ public class SdDeviceControlService {
     }
 
     private int controlLightingDevices(int controlState, String isopen, String devId, String state, SdDevices sdDevices,Integer brightness) {
+        //将当前设备亮度存储redis缓存。
+        String redisLuminanceRangeKey = "control_regular:"+sdDevices.getEqId()+"_LuminanceRange";
+        redisCache.setCacheObject(redisLuminanceRangeKey,brightness);
+        //将当前设备亮度存储redis缓存。
+        String redisStateLuminanceRangeKey = "control_regular:"+sdDevices.getEqId()+"_state";
+        redisCache.setCacheObject(redisStateLuminanceRangeKey,state);
+
+        redisCache.setCacheObject(redisLuminanceRangeKey,brightness);
         if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
             controlState = lightService.lineControl(devId, Integer.parseInt(state),brightness);
+
         } else if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
             sdDevices.setEqStatus("1");

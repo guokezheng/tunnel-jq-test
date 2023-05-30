@@ -101,6 +101,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+
+    <select id="selectSdDevicesListByParam" parameterType="SdDevices" resultMap="SdDevicesResult">
+        <include refid="selectSdDevicesVo"></include>
+        <where>
+            <if test="eqName != null  and eqName != ''">and eq_name = #{eqName}</if>
+            <if test="eqTunnelId != null  and eqTunnelId != ''">and eq_tunnel_id = #{eqTunnelId}</if>
+            <if test="eqDirection != null  and eqDirection != ''">and eq_direction = #{eqDirection}</if>
+            <if test="ip != null  and ip != ''">and ip = #{ip}</if>
+            <if test="eqTypes != null">
+                AND eq_type in
+                <foreach collection="eqTypes" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
     <select id="selectSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id, a.eq_name, a.eq_type, a.eq_model, a.brand_id,
         a.eq_direction,
@@ -129,7 +146,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="ip != null  and ip != ''">and a.ip = #{ip}</if>
             <if test="secureKey != null  and secureKey != ''">and a.secure_key = #{secureKey}</if>
             <if test="externalSystemId != null  and externalSystemId != ''">and a.external_system_id = #{externalSystemId}</if>
-            <if test="externalDeviceId != null  and externalDeviceId != ''">and a.external_device_id = #{externalDeviceId}</if>
+            <if test="externalDeviceId != null  and externalDeviceId != '-1'">and a.external_device_id = #{externalDeviceId}</if>
             <if test="deptId != null ">
                 AND (b.dept_id = #{deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>

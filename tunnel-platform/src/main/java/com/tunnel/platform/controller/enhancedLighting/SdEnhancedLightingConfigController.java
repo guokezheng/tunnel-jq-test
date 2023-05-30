@@ -44,6 +44,17 @@ public class SdEnhancedLightingConfigController extends BaseController
         return getDataTable(list);
     }
 
+
+    /**
+     * 查询【加强照明配置】列表
+     */
+    @GetMapping("/getLightingConfigByParam")
+    public AjaxResult getLightingConfigByParam(SdEnhancedLightingConfig sdEnhancedLightingConfig)
+    {
+        return AjaxResult.success(sdEnhancedLightingConfigService.selectSdEnhancedLightingConfigListByParam(sdEnhancedLightingConfig));
+    }
+
+
     /**
      * 导出【加强照明配置】列表
      */

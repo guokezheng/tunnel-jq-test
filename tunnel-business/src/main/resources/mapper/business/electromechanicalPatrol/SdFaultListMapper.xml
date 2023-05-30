@@ -32,6 +32,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="fbState"    column="fbState"    />
         <result property="imgFileId"    column="img_file_id"    />
+        <result property="dictLabel"    column="dict_label"    />
+        <result property="dictValue"    column="dict_value"    />
         <result property="ftype"    column="ftype"    />
         <result property="fremove"    column="fremove"    />
         <result property="flevel"    column="flevel"    />
@@ -438,6 +440,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdFaultById" parameterType="String" resultMap="SdFaultListResult">
         select * from sd_fault_list f where f.id = #{id}
+    </select>
+
+
+    <select id="getFaultDictValue" parameterType="String" resultMap="SdFaultListResult">
+        select dict_label,dict_value from sys_dict_data where dict_type = #{dictType}
     </select>
 
 

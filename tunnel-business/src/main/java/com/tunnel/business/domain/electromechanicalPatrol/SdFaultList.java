@@ -133,6 +133,27 @@ public class SdFaultList extends BaseEntity
 
     private String ids;
 
+    private String dictLabel;
+
+
+    private String dictValue;
+
+    public String getDictLabel() {
+        return dictLabel;
+    }
+
+    public void setDictLabel(String dictLabel) {
+        this.dictLabel = dictLabel;
+    }
+
+    public String getDictValue() {
+        return dictValue;
+    }
+
+    public void setDictValue(String dictValue) {
+        this.dictValue = dictValue;
+    }
+
     public Integer getFbState() {
         return this.fbState;
     }

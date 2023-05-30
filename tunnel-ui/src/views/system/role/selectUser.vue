@@ -8,6 +8,8 @@
       width="1000px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
+      :modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

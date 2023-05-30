@@ -177,7 +177,6 @@ export default {
       stateForm: {},
       title: "",
       visible: false,
-      titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       stateForm2: {},
       brandList: [],
       eqInfo: {},

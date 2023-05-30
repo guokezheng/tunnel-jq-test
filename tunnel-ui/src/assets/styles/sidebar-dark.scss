@@ -21,6 +21,9 @@
     .el-cascader-node:not(.is-disabled):hover, .el-cascader-node:not(.is-disabled):focus{
       background-color: #004F8B;
     }
+    ::-webkit-scrollbar{
+      width: 0px !important;
+    }
   }
   // 下拉框
   .el-select-dropdown{
@@ -215,7 +218,7 @@
     }
 
     ::-webkit-scrollbar {
-      width: 12px !important;
+      width: 12px;
       background-color: #022A54;
     }
 

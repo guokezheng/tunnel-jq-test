@@ -1,5 +1,21 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <title></title> -->
   <style media="screen" scoped>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background-color: #071727;
+    }
+
     .con {
       width: 100%;
       height: 88%;
@@ -29,11 +45,11 @@
     }
 
     .close {
-      /* font-size: 3rem; */
-      font-size: 14px;
-      height: 50%;
+      width: 13px;
+      height: 14px;
+      right: 20px;
+      top: 14px;
       cursor: pointer;
-      right: 5%;
     }
 
     .info {
@@ -135,6 +151,7 @@
       width: 10%;
       top: 46%;
       position: absolute;
+      cursor: pointer;
     }
 
     .jia {
@@ -155,6 +172,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      cursor: pointer;
     }
 
     .ytop {
@@ -237,6 +255,7 @@
       margin-left: 24%;
       margin-top: 5%;
       font-size: 14px;
+      cursor: pointer;
     }
 
     .xian {
@@ -283,17 +302,6 @@
     progress::-webkit-progress-value {
       background: linear-gradient(90deg, #00ADED 0%, #007CDD 100%);
       border-radius: 0.2rem;
-    }
-
-    /* .progress {
-      width: 70%;
-      margin-left: 10%;
-      margin-right: 5%;
-    } */
-
-    .jqr {
-      margin-top: -3%;
-      margin-left: 27.5%;
     }
 
     .btnCon {
@@ -470,17 +478,63 @@
       position: absolute;
       left: 34%;
     }
-  </style>
 
+    .lineDiv {
+      position: relative;
+      height: 10px;
+      background-color: #006784;
+      width: 300px;
+      margin: 30px;
+      margin-left: 70px;
+      border-radius: 10px;
+    }
+
+    .lineDiv .minDiv {
+      position: absolute;
+      left: 0;
+      width: 9px;
+      height: 8px;
+      cursor: pointer;
+      background-color: #FF9300;
+      border: 1px solid #fff;
+      border-radius: 50%;
+    }
+
+    .lineDiv .minDiv .vals {
+      position: absolute;
+      font-size: 20px;
+      top: 15px;
+      left: -13px;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      text-align: center;
+    }
+
+    #msg {
+      width: 50px;
+    }
+
+    .light {
+      position: absolute;
+      width: 0px;
+      height: 10px;
+      background: linear-gradient(90deg, #00ADED 0%, #007CDD 100%);
+      left: 70px;
+      z-index: 1;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+  </style>
+<!-- </head> -->
 
 <template>
-
   <div class="con">
     <!-- 头部 -->
     <div class="title">
       巡检机器人-K478+700
       <img src="./robot/topr.png" alt="" class="topr">
-      <span class="close">×</span>
+      <img class="close" src="./robot/close.png" alt="">
     </div>
 
     <!-- 状态信息 -->
@@ -539,28 +593,33 @@
         <button class="xiafa">下 发</button>
       </div>
 
-      <div class="xian"></div>
-
       <div class="bRight">
         <div class="rtop">
-          <progress min="0" max="100" value="33" class="progress"></progress>
-          <div class="ball"></div>
-          <span>50cd</span>
+          <div class="light"></div>
+          <div id="lineDiv" class="lineDiv">
+            <div id="minDiv" class="minDiv">
+              <div id="vals" class="vals">
+                <img src="./robot/jqr.png" alt="" class="jqr">
+              </div>
+            </div>
+          </div>
+          <span id="msg">0cd</span>
+          <!-- <progress min="0" max="100" value="33" class="progress"></progress>
+          <span>50cd</span> -->
           <!-- <meter min="0" max="100" value="50" class="meter"></meter> -->
         </div>
-        <img src="./robot/jqr.png" alt="" class="jqr">
 
         <div class="btnCon">
           <ul class="btnConUl">
             <li><label><input type="radio" name="radioa" checked="checked">充电桩A</label></li>
             <li><label><input type="radio" name="radioa">充电桩B</label></li>
-            <li><button> <img src="./robot/chong.png" alt=""> 一键充电</button></li>
+            <li><button style="cursor: pointer;"> <img src="./robot/chong.png" alt=""> 一键充电</button></li>
           </ul>
 
           <ul class="btnConUl">
             <li><label><input type="radio" name="radiob" checked="checked">预置点A</label></li>
             <li><label><input type="radio" name="radiob">预置点B</label></li>
-            <li><button> <img src="./robot/hang.png" alt=""> 一键导航</button></li>
+            <li><button style="cursor: pointer;"> <img src="./robot/hang.png" alt=""> 一键导航</button></li>
           </ul>
         </div>
 
@@ -611,10 +670,85 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script>
+  window.onload = function () {
+
+    var lineDiv = document.getElementById('lineDiv'); //长线条
+    var minDiv = document.getElementById('minDiv'); //小方块
+    var msg = document.getElementById("msg");
+    var vals = document.getElementById("vals");
+    var light = document.querySelector('.light');
+    var ifBool = false; //判断鼠标是否按下
+    //事件
+    var start = function (e) {
+      e.stopPropagation();
+      ifBool = true;
+    }
+    var move = function (e) {
+      if (ifBool) {
+        if (!e.touches) {    //兼容移动端
+          var x = e.clientX;
+        } else {     //兼容PC端
+          var x = e.touches[0].pageX;
+        }
+        //var x = e.touches[0].pageX || e.clientX; //鼠标横坐标var x
+        var lineDiv_left = getPosition(lineDiv).left; //长线条的横坐标
+        var minDiv_left = x - lineDiv_left; //小方块相对于父元素（长线条）的left值
+        if (minDiv_left >= lineDiv.offsetWidth - 15) {
+          minDiv_left = lineDiv.offsetWidth - 15;
+        }
+        if (minDiv_left < 0) {
+          minDiv_left = 0;
+        }
+
+        var num;
+        if (minDiv_left == 0) {
+          num = 0;
+        } else {
+          num = 3
+        }
+
+        //设置拖动后小方块的left值
+        minDiv.style.left = minDiv_left + num + "px";
+        light.style.width = minDiv_left + num + 'px'
+        msg.innerText = parseInt((minDiv_left / (lineDiv.offsetWidth - 15)) * 100) + "cd";
+        // vals.innerText = parseInt((minDiv_left / (lineDiv.offsetWidth - 15)) * 100);
+      }
+    }
+    var end = function (e) {
+      // console.log("鼠标弹起")
+      ifBool = false;
+    }
+    //鼠标按下方块
+    minDiv.addEventListener("touchstart", start);
+    minDiv.addEventListener("mousedown", start);
+    //拖动
+    window.addEventListener("touchmove", move);
+    window.addEventListener("mousemove", move);
+    //鼠标松开
+    window.addEventListener("touchend", end);
+    window.addEventListener("mouseup", end);
+    //获取元素的绝对位置
+    function getPosition (node) {
+      var left = node.offsetLeft; //获取元素相对于其父元素的left值var left
+      var top = node.offsetTop;
+      current = node.offsetParent; // 取得元素的offsetParent
+      // 一直循环直到根元素
+
+      while (current != null) {
+        left += current.offsetLeft;
+        top += current.offsetTop;
+        current = current.offsetParent;
+      }
+      return {
+        "left": left,
+        "top": top
+      };
+    }
+  }
+
   // 自动巡航开关
   var type = false;
   function on_off (e) {

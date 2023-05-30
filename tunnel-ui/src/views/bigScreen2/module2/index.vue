@@ -114,7 +114,7 @@ export default {
   position: absolute;
   top: 87px;
   width: 100%;
-  font-size: 0.7rem;
+  font-size: 0.7vw;
   .leftEcharts,
   .rightEcharts {
     width: 18.5vw;
@@ -147,7 +147,7 @@ export default {
         text-transform: uppercase;
         padding-left: 8px;
         color: rgba(255, 255, 255, 0.35);
-        font-size: 0.6rem;
+        font-size: 0.6vw;
       }
     }
     .echartsBox1 {

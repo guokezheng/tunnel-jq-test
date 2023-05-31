@@ -189,4 +189,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
 
+
+
+    <select id="selectFaultImgFileLists" parameterType="String" resultMap="SdTrafficImageResult">
+        select * from sd_traffic_image where business_id in
+        <foreach item="businessId" collection="array" open="(" separator="," close=")">
+            #{businessId}
+        </foreach>
+    </select>
+
+
 </mapper>

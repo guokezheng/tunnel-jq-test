@@ -204,6 +204,16 @@ public class SdAppFaultListController extends BaseController
     }
 
 
+    /**
+     * app端删除故障图片
+     */
+    @DeleteMapping("/app/{id}")
+    public AjaxResult remove(@PathVariable String id) {
+        return toAjax(sdTaskListService.deleteSitePhoto(id));
+    }
+
+
+
 
 
 

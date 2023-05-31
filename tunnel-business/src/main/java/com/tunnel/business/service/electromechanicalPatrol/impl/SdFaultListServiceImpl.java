@@ -74,9 +74,11 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         SdFaultList sdFaultList = sdFaultListMapper.selectSdFaultListById(id);
         if(sdFaultList!=null){
             if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
-                SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());
-                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
+                /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
+                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());*/
+                String[] businessId = sdFaultList.getImgFileId().split(",");
+                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileLists(businessId));
+                //sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
             }
         }
         return sdFaultList;

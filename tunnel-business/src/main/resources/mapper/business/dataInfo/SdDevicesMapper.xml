@@ -1119,7 +1119,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getFrontLatelyFive" resultType="java.lang.String">
         SELECT
-            GROUP_CONCAT( d.eq_id ) AS eq_id
+            CASE
+                WHEN
+                ( d.eq_type = 10 OR d.eq_type = 1 OR d.eq_type = 2 ) THEN
+                    GROUP_CONCAT( d.eq_id )
+                ELSE d.eq_id
+            END eq_id
         FROM
             sd_devices d
         WHERE
@@ -1140,7 +1145,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getAfterLatelyFive" resultType="java.lang.String">
         SELECT
-            GROUP_CONCAT( d.eq_id ) AS eq_id
+            CASE
+                WHEN
+                ( d.eq_type = 10 OR d.eq_type = 1 OR d.eq_type = 2 ) THEN
+                    GROUP_CONCAT( d.eq_id )
+                ELSE d.eq_id
+            END eq_id
         FROM
             sd_devices d
         WHERE

@@ -7614,8 +7614,8 @@ export default {
               listDevices().then((data) => {
                 console.log(data, "设备表");
                 for (let item of that.selectedIconList) {
-                  if(item.eqName == "鸿蒙控制器"){
-                    console.log(item,"鸿蒙控制器")
+                  if(item.eqType == 30){
+                    console.log(item,"疏散标志")
                   }
                   for (let itm of data.rows) {
                     if (item.eqId == itm.eqId) {
@@ -8127,7 +8127,7 @@ export default {
               this.eqTypeDialogList
             );
           } else if (
-            [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 45, 49].includes(item.eqType)
+            [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 30, 45, 49].includes(item.eqType)
           ) {
             this.$refs.lightRef.init(
               this.eqInfo,
@@ -8186,7 +8186,7 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          } else if (item.eqType == 30 || item.eqType == 31) {
+          } else if (item.eqType == 31) {
             this.$refs.youdaoRef.init(
               this.eqInfo,
               this.brandList,

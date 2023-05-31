@@ -91,7 +91,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="11">
             <el-form-item
               v-show="stateForm2.eqType == 30 && showTipe == true"
               label-width="10px"
@@ -99,8 +99,8 @@
               <span style="color: red; font-weight: bold"
                 >当前地址为报警点位</span
               >
-            </el-form-item></el-col
-          >
+            </el-form-item>
+          </el-col> -->
         </el-row>
         <el-row>
           <el-col :span="15">

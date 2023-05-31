@@ -163,9 +163,36 @@
             </div>
           </el-form-item>
           <!-- 加强照明：7  警示灯带：45 -->
+          <el-row v-show="clickEqType == 30">
+            <el-col :span="11">
+              <el-form-item v-show="showTipe == true" label-width="10px">
+                <span style="color: red; font-weight: bold"
+                  >当前地址为报警点位</span
+                >
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-show="clickEqType == 30" style="margin-top: 10px">
+            <el-col :span="15">
+              <el-form-item label="闪烁频率:">
+                <el-slider
+                  v-model="stateForm.frequency"
+                  :max="100"
+                  :min="min"
+                  class="sliderClass"
+                  :disabled="!stateForm.brightness"
+                ></el-slider>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9" v-if="stateForm.frequency">
+              <span style="padding-left: 10px; line-height: 30px"
+                >{{ stateForm.frequency }} m/s</span
+              >
+            </el-col>
+          </el-row>
           <el-row
             style="margin-top: 10px"
-            v-show="[7, 9, 45].includes(this.clickEqType)"
+            v-show="[7, 9, 30, 45].includes(this.clickEqType)"
           >
             <el-col :span="15">
               <el-form-item label="亮度调整">
@@ -211,6 +238,7 @@ import {
   controlDevice,
   controlWarningLightStripDevice,
   setControlDeviceByParam,
+  controlEvacuationSignDevice,
 } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
@@ -231,16 +259,35 @@ export default {
       eqTypeDialogList: [],
       directionList: [],
       min: 0,
+      fireMarkData: [],
+      showTipe: false,
     };
   },
   watch: {
     "stateForm.state": function (newVal, oldVal) {
-      if (newVal == "1" && this.stateForm.brightness == 0) {
+      console.log(newVal, "newVal");
+      if (
+        newVal == "1" &&
+        this.stateForm.brightness == 0 &&
+        [7, 9, 45].includes(this.clickEqType)
+      ) {
         this.stateForm.brightness = 1;
         this.min = 1;
-      } else if (newVal == "2") {
+      } else if (newVal == "2" && [7, 9, 45].includes(this.clickEqType)) {
         this.stateForm.brightness = 0;
         this.min = 0;
+      } else if (newVal == "1" && this.clickEqType == 30) {
+        this.stateForm.brightness = 0;
+        this.stateForm.frequency = 0;
+        this.min = 0;
+      } else if (
+        newVal != "1" &&
+        this.stateForm.brightness == 0 &&
+        this.clickEqType == 30
+      ) {
+        this.stateForm.brightness = 1;
+        this.stateForm.frequency = 1;
+        this.min = 1;
       }
     },
   },
@@ -262,12 +309,28 @@ export default {
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
           this.stateForm.brightness = Number(res.data.brightness);
+          this.stateForm.frequency = Number(res.data.frequency);
+
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
             this.stateForm.state = response.data.state;
             this.getEqTypeStateIcon();
           });
+          if (this.eqInfo.clickEqType == 30) {
+            this.fireMarkData = [
+              {
+                label: "设置为报警点位",
+                value: this.stateForm.query_point_address,
+              },
+            ];
+            if (this.stateForm.query_point_address == this.stateForm.fireMark) {
+              this.fireMarkData.push({ label: "清除报警点位", value: "255" });
+              this.showTipe = true;
+            } else {
+              this.showTipe = false;
+            }
+          }
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
@@ -371,8 +434,25 @@ export default {
             this.$modal.msgError(msg);
           }
         });
+      } else if (this.stateForm.eqType == 30) {
+        const param = {
+          devId: this.stateForm.eqId, //设备id
+          state: this.stateForm.state, //设备状态
+          brightness: this.stateForm.brightness, //诱导灯亮度
+          frequency: this.stateForm.frequency, //诱导灯频率
+          fireMark: this.stateForm.state == "1"?"0":this.stateForm.state == "2"?"255":"3",
+        };
+        this.$modal.msgSuccess("指令下发中，请稍后。");
+        controlEvacuationSignDevice(param).then((response) => {
+          console.log(response, "提交控制");
+          this.$modal.msgSuccess("操作成功");
+        });
       } else {
-        if (this.stateForm.eqType == 9 && this.stateForm.state == 1 && this.stateForm.brightness < 30) {
+        if (
+          this.stateForm.eqType == 9 &&
+          this.stateForm.state == 1 &&
+          this.stateForm.brightness < 30
+        ) {
           this.$modal.msgWarning("基本照明亮度不得低于30");
           return;
         }

@@ -240,7 +240,30 @@ import {
   setControlDeviceByParam,
   controlEvacuationSignDevice,
 } from "@/api/workbench/config.js"; //提交控制信息
-
+// 对象深拷贝
+export const deepClone = (data) => {
+  // 封装的判断数据类型的方法
+  var type = typeof data;
+  var obj;
+  if (type === "array") {
+    obj = [];
+  } else if (type === "object") {
+    obj = {};
+  } else {
+    // 不再具有下一层次
+    return data;
+  }
+  if (type === "array") {
+    for (var i = 0, len = data.length; i < len; i++) {
+      obj.push(deepClone(data[i]));
+    }
+  } else if (type === "object") {
+    for (var key in data) {
+      obj[key] = deepClone(data[key]);
+    }
+  }
+  return obj;
+};
 export default {
   data() {
     return {
@@ -273,7 +296,7 @@ export default {
       ) {
         this.stateForm.brightness = 1;
         this.min = 1;
-      } else if (newVal == "2" && [7, 9, 45].includes(this.clickEqType)) {
+      } else if (newVal == "2" && [7, 9].includes(this.clickEqType)) {
         this.stateForm.brightness = 0;
         this.min = 0;
       } else if (newVal == "1" && this.clickEqType == 30) {
@@ -287,6 +310,8 @@ export default {
       ) {
         this.stateForm.brightness = 1;
         this.stateForm.frequency = 1;
+        this.min = 1;
+      } else{
         this.min = 1;
       }
     },
@@ -306,10 +331,13 @@ export default {
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          this.stateForm = res.data;
+          this.stateForm = deepClone(res.data);
+          this.$set(this,'stateForm',deepClone(res.data))
           this.title = this.stateForm.eqName;
-          this.stateForm.brightness = Number(res.data.brightness);
-          this.stateForm.frequency = Number(res.data.frequency);
+          this.stateForm.brightness = Number(this.stateForm.brightness);
+          if(this.stateForm.frequency){
+            this.stateForm.frequency = Number(this.stateForm.frequency);
+          }
 
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
@@ -440,7 +468,12 @@ export default {
           state: this.stateForm.state, //设备状态
           brightness: this.stateForm.brightness, //诱导灯亮度
           frequency: this.stateForm.frequency, //诱导灯频率
-          fireMark: this.stateForm.state == "1"?"0":this.stateForm.state == "2"?"255":"3",
+          fireMark:
+            this.stateForm.state == "1"
+              ? "0"
+              : this.stateForm.state == "2"
+              ? "255"
+              : "3",
         };
         this.$modal.msgSuccess("指令下发中，请稍后。");
         controlEvacuationSignDevice(param).then((response) => {

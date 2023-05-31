@@ -249,6 +249,12 @@ export const constantRoutes = [
     component: (resolve) => require(['@/views/bigScreen2/index'], resolve),
     hidden: true
   },
+  {
+    path: '/tunnelDialog',
+    name: '隧道大屏弹窗',
+    component: (resolve) => require(['@/views/bigScreen2/tunnelDialog'], resolve),
+    hidden: true
+  },
   //诱导灯参数配置
   {
     path: '/inductionLamp',

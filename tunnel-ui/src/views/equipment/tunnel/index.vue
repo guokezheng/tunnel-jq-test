@@ -30,7 +30,7 @@
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
-            placeholder="请输入隧道名称、桩号,回车搜索"
+            placeholder="请输入隧道名称、桩号，回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -696,7 +696,6 @@
             <el-form-item label="三维坐标" prop="coordinates">
               <el-input
                 v-model="form.coordinates"
-                placeholder="请输入三维坐标"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -795,7 +794,6 @@
             <el-form-item label="备注" prop="remake">
               <el-input
                 v-model="form.remake"
-                placeholder="请输入备注"
                 :disabled="disabledInfo"
               />
             </el-form-item>

@@ -1,4 +1,4 @@
-package com.tunnel.deal.mqtt;
+package com.tunnel.deal.mqtt.config;
 
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.mqtt.support.MqttHeaders;

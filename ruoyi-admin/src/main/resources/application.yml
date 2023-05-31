@@ -461,7 +461,8 @@ mqtt:
   clientInId: matt_test_in
   clientOutId: matt_test_out
 #  clientId: matt_test
-  topics: topic01,topic02,rhy/iot/control/fan/alterRunStatus
+  #rhy/iot/#通配符监听所有的鸿蒙控制器topic
+  topics: topic01,topic02,rhy/iot/#
   qoslevel: 1
   #MQTT 认证
   username:  admin

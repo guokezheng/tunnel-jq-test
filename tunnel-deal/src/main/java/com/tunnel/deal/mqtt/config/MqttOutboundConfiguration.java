@@ -1,4 +1,4 @@
-package com.tunnel.deal.mqtt;
+package com.tunnel.deal.mqtt.config;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;

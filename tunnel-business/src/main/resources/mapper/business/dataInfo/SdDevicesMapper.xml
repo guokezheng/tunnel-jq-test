@@ -1272,4 +1272,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND d.eq_type = #{eqType}
             LIMIT 1
     </select>
+
+    <!--根据协议Id查询设备列表-->
+    <select id="selectDevicesByProtocol" parameterType="sdDevices" resultMap="SdDevicesResult">
+        select eq_id,f_eq_id,eq_type,protocol_id,external_device_id
+        from sd_devices
+        where protocol_id = #{protocolId}
+    </select>
 </mapper>

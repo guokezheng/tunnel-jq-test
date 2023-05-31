@@ -60,6 +60,11 @@ public class SdDevicesProtocol extends BaseEntity {
      */
     private Integer isDel;
 
+    /**
+     * 协议唯一标识
+     */
+    private String protocolCode;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -122,6 +127,14 @@ public class SdDevicesProtocol extends BaseEntity {
 
     public void setIsDel(Integer isDel) {
         this.isDel = isDel;
+    }
+
+    public String getProtocolCode() {
+        return protocolCode;
+    }
+
+    public void setProtocolCode(String protocolCode) {
+        this.protocolCode = protocolCode;
     }
 
     @Override

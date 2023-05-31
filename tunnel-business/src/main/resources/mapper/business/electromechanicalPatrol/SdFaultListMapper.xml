@@ -163,8 +163,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultTbtime != null">fault_tbtime = #{faultTbtime},</if>
             <if test="eqId != null">eq_id = #{eqId},</if>
             <if test="eqStatus != null">eq_status = #{eqStatus},</if>
-            <if test="eqRunStatus != null">eq_run_status = #{eqRunStatus},</if>
-            <if test="faultCode != null">fault_code = #{faultCode},</if>
+            <if test="eqRunStatus != null and eqRunStatus!='undefined'">eq_run_status = #{eqRunStatus},</if>
+            <if test="faultCode != null and faultCode!='undefined'">fault_code = #{faultCode},</if>
             <if test="faultLevel != null">fault_level = #{faultLevel},</if>
             <if test="falltRemoveStatue != null">fallt_remove_statue = #{falltRemoveStatue},</if>
             <if test="faultDescription != null">fault_description = #{faultDescription},</if>

@@ -1,5 +1,11 @@
-package com.tunnel.deal.mqtt;
+package com.tunnel.deal.mqtt.config;
 
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.deal.mqtt.service.HongMengMqttService;
+import com.tunnel.deal.mqtt.strategy.HongMengMqttStrategyFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +30,20 @@ import org.springframework.messaging.MessageHandler;
 @IntegrationComponentScan
 public class MqttInboundConfiguration {
 
+    private static final Logger log = LoggerFactory.getLogger(MqttInboundConfiguration.class);
+
 
     @Autowired
     private MqttProperties mqttProperties;
 
     @Autowired
     private MqttPahoClientFactory mqttClientFactory;
+
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+
+    @Autowired
+    private HongMengMqttStrategyFactory hongMengMqttStrategyFactory;
 
 
     /**
@@ -72,7 +86,25 @@ public class MqttInboundConfiguration {
             System.out.println("Qos:"+message.getHeaders().get(MqttHeaders.QOS));
 
             String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
+            String payload = String.valueOf(message.getPayload());
             System.out.println("topic:"+topic);
+            if(topic != null){
+                int start = topic.indexOf("{");
+                int end = topic.indexOf("}");
+                String externalId = topic.substring(start+1,end);
+                SdDevices sdDevices = sdDevicesService.getDevicesListByExternalId(externalId);
+                if(sdDevices != null){
+//                    String eqId = sdDevices.getEqId();
+                    String eqType = String.valueOf(sdDevices.getEqType());
+                    HongMengMqttService hongMengMqttService = hongMengMqttStrategyFactory.strategy(eqType);
+                    //解析数据
+                    hongMengMqttService.handleReceiveData(topic,sdDevices,payload);
+                }else{
+                    log.error("入站监听数据异常：监听到的数据没有匹配到设备");
+                }
+
+            }
+
         };
     }
 

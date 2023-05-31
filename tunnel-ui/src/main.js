@@ -53,7 +53,8 @@ import evtDialogVideo from '@/components/eventDialogTable/video.vue'
 import $ from 'jquery'
 import preventClick from './api/clickOnceAtime'
 // gisMap
-import gisMap from 'gis-map-tunnel'
+// import gisMap from 'gis-map-tunnel'
+import gisMap from 'gis-map-admin'
 import config from '../public/config'
 
 
@@ -87,6 +88,7 @@ Vue.prototype.socket = Socket
 
 // gis 
 Vue.prototype.$GlobalConfig = config.GlobalConfig
+
 Vue.use(preventClick)
 Vue.use(VueAwesomeSwiper)
 // 全局组件挂载

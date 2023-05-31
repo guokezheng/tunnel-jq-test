@@ -777,17 +777,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getEquipmentInfo" parameterType="String" resultType="hashmap">
-        SELECT concat(c.dict_label,t.pile) pile,s.state_name runStatus,t.eq_status
-        from sd_devices t
+        SELECT
+        concat(c.dict_label,t.pile) pile ,
+        es.state_name runStatus,
+        t.eq_status
+        FROM
+        sd_devices t
         left join sys_dict_data c on t.eq_direction = c.dict_value and c.dict_type= 'sd_direction'
-        left join sd_device_data d on t.eq_id = d.device_id
-        left join sd_device_type_item i on i.id = d.item_id
-        left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '2'
-        LEFT JOIN sys_dict_data e ON e.dict_value = t.eq_status
-        AND e.dict_type = 'sd_monitor_state'
+        left join sd_device_data sdd  on t.eq_id = sdd.device_id
+        left join sd_equipment_state es on sdd.data = es.device_state and es.state_type = '2'
         <where>
         1=1
-            <if test="eqId != null ">and t.eq_id = #{eqId}</if>
+            <if test="eqId != null and eqId != ''">and t.eq_id = #{eqId}</if>
+            and t.eq_type = es.state_type_id
         </where>
     </select>
 
@@ -1134,7 +1136,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getFrontLatelyFive" resultType="java.lang.String">
         SELECT
-            GROUP_CONCAT( d.eq_id ) AS eq_id
+            CASE
+                WHEN
+                ( d.eq_type = 10 OR d.eq_type = 1 OR d.eq_type = 2 ) THEN
+                    GROUP_CONCAT( d.eq_id )
+                ELSE d.eq_id
+            END eq_id
         FROM
             sd_devices d
         WHERE
@@ -1155,7 +1162,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getAfterLatelyFive" resultType="java.lang.String">
         SELECT
-            GROUP_CONCAT( d.eq_id ) AS eq_id
+            CASE
+                WHEN
+                ( d.eq_type = 10 OR d.eq_type = 1 OR d.eq_type = 2 ) THEN
+                    GROUP_CONCAT( d.eq_id )
+                ELSE d.eq_id
+            END eq_id
         FROM
             sd_devices d
         WHERE
@@ -1276,5 +1288,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             1 = 1
           AND d.eq_type = #{eqType}
             LIMIT 1
+    </select>
+
+    <!--根据协议Id查询设备列表-->
+    <select id="selectDevicesByProtocol" parameterType="sdDevices" resultMap="SdDevicesResult">
+        select eq_id,f_eq_id,eq_type,protocol_id,external_device_id
+        from sd_devices
+        where protocol_id = #{protocolId}
     </select>
 </mapper>

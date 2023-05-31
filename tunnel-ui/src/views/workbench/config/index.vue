@@ -2860,14 +2860,20 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-robot> -->
-    <robot
-      class="comClass robotHtmlBox"
-      v-if="this.eqInfo.clickEqType == 29"
-    ></robot>
+    <div v-if="eqInfo.clickEqType == 29">
+      <robot
+        class="comClass robotHtmlBox"
+        ref="robotRef"
+      ></robot>
+    </div>
+
     <com-bright class="comClass" ref="brightRef"></com-bright>
     <com-youdao class="comClass" ref="youdaoRef"></com-youdao>
     <com-board class="comClass" ref="boardRef"></com-board>
     <com-radio class="comClass" ref="radioRef"></com-radio>
+    <com-kzq class="comClass" ref="kzqRef"></com-kzq>
+    
+      
     <!--摄像机对话框-->
     <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
@@ -3906,7 +3912,10 @@ import comBoard from "@/views/workbench/config/components/board"; //情报板弹
 import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
 import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵弹窗
 import comSjb from "@/views/workbench/config/components/sjb"; //潜水深水泵
-import robot from "@/views/workbench/config/components/robotManagement"; //消防水泵弹窗
+import robot from "@/views/workbench/config/components/robotManagement"; //机器人弹窗
+import comKzq from "@/views/workbench/config/components/kzq"; //鸿蒙控制器
+
+
 import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
 import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
 import comDeawer from "@/views/workbench/config/deawer"; //右侧抽屉组件
@@ -3996,6 +4005,7 @@ export default {
     comYoudao,
     comBoard,
     comRadio,
+    comKzq,
     comXfsb,
     comSjb, //深水泵
     robot,
@@ -7770,6 +7780,9 @@ export default {
               listDevices().then((data) => {
                 console.log(data, "设备表");
                 for (let item of that.selectedIconList) {
+                  if(item.eqType == 30){
+                    console.log(item,"疏散标志")
+                  }
                   for (let itm of data.rows) {
                     if (item.eqId == itm.eqId) {
                       item.eqDirection = itm.eqDirection;
@@ -8280,7 +8293,7 @@ export default {
               this.eqTypeDialogList
             );
           } else if (
-            [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 45, 49].includes(item.eqType)
+            [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 30, 45, 49].includes(item.eqType)
           ) {
             this.$refs.lightRef.init(
               this.eqInfo,
@@ -8339,7 +8352,7 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          } else if (item.eqType == 30 || item.eqType == 31) {
+          } else if (item.eqType == 31) {
             this.$refs.youdaoRef.init(
               this.eqInfo,
               this.brandList,
@@ -8360,7 +8373,15 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          }
+          } else if (item.eqType == 1067) {
+            // 鸿蒙控制器
+            this.$refs.kzqRef.init(
+              this.eqInfo,
+              this.brandList,
+              this.directionList,
+              this.eqTypeDialogList
+            );
+          } 
         });
 
         // 防止 ‘暂未获取’ 和 配置状态单选同时出现

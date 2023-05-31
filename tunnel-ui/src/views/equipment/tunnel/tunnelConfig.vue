@@ -22,7 +22,7 @@
 
         <div class="display-box">
           <p class="menu-title title-wrap">显示设备编号：</p>
-          <el-switch class="title-wrap" v-model="displayNumb" active-color="#46a6ff" inactive-color="#46a6ff">
+          <el-switch class="title-wrap" v-model="displayNumb" active-color="#46a6ff" inactive-color="#ccc">
           </el-switch>
         </div>
       </el-row>

@@ -74,9 +74,11 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         SdFaultList sdFaultList = sdFaultListMapper.selectSdFaultListById(id);
         if(sdFaultList!=null){
             if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
-                SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());
-                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
+                /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
+                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());*/
+                String[] businessId = sdFaultList.getImgFileId().split(",");
+                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileLists(businessId));
+                //sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
             }
         }
         return sdFaultList;
@@ -414,6 +416,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public int saveFault(SdFaultList sdFaultList) {
         int result = -1;
+        sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
         if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
             sdFaultList.setImgFileId(sdFaultList.getImgFileId().substring(0,sdFaultList.getImgFileId().length()-1));
         }

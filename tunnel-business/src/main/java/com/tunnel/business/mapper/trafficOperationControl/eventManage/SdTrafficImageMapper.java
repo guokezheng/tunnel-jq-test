@@ -132,4 +132,6 @@ public interface SdTrafficImageMapper
      * @return
      */
     List selectPatrolFaultImgFileList(String[] businessId);
+
+    List selectFaultImgFileLists(String[] businessId);
 }

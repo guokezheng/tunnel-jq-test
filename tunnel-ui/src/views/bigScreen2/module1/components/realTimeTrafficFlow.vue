@@ -282,9 +282,9 @@ export default {
         };
 
         this.myChart2.setOption(option);
-        window.addEventListener("resize", function () {
-          this.myChart2.resize();
-        });
+        // window.addEventListener("resize", function () {
+        //   this.myChart2.resize();
+        // });
       });
     },
   },

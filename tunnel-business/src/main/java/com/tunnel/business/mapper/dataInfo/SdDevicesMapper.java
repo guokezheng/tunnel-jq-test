@@ -424,4 +424,11 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	String selectDevicePixel(SdDevices sdDevices);
+
+	/**
+	 * 根据协议Id查询设备列表
+	 * @param sdDevices 设备信息
+	 * @return
+	 */
+	List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices);
 }

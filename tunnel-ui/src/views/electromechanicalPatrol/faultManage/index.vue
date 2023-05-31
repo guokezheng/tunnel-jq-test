@@ -1200,7 +1200,7 @@ export default {
         if (response.data.length != 0) {
           this.form.faultLocation = response.data[0].pile;
           this.form.eqRunStatus = typeof response.data[0].runStatus=="undefined"?"":response.data[0].runStatus;
-          this.form.eqStatus = response.data[0].eq_status;
+          this.form.eqStatus = response.data[0].eq_status=="undefined"?"":response.data[0].eq_status;;
           //this.$refs(this.form, "eqStatus", 1);
         }
         // this.$modal.msgSuccess("修改成功");
@@ -1346,7 +1346,7 @@ export default {
       listList(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
           this.listList = response.rows;
-          this.listList.forEach((item) => {
+          /*this.listList.forEach((item) => {
             if (item.faultLocation == "null") {
               item.faultLocation = "";
             }
@@ -1359,7 +1359,7 @@ export default {
             if (item.faultDescription == "null") {
               item.faultDescription = "";
             }
-          });
+          });*/
           this.total = response.total;
           this.loading = false;
         }
@@ -1525,54 +1525,7 @@ export default {
         this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
-        if (
-          this.form.faultSource == "null" ||
-          this.form.faultSource == "undefined"
-        ) {
-          this.form.faultSource = "";
-        }
-        if (
-          this.form.eqRunStatus == "undefined" ||
-          this.form.eqRunStatus == "null"
-        ) {
-          this.form.eqRunStatus = "";
-        }
-        if (
-          this.form.faultCode == "null" ||
-          this.form.faultCode == "undefined"
-        ) {
-          this.form.faultCode = "";
-        }
-        if (
-          this.form.faultDescription == "null" ||
-          this.form.faultDescription == "undefined"
-        ) {
-          this.form.faultDescription = "";
-        }
-        if (
-          this.form.faultCxtime == "null" ||
-          this.form.faultCxtime == "undefined"
-        ) {
-          this.form.faultCxtime = "";
-        }
-        if (
-          this.form.faultLevel == "null" ||
-          this.form.faultLevel == "undefined"
-        ) {
-          this.form.faultLevel = "";
-        }
-        if (
-          this.form.falltRemoveStatue == "null" ||
-          this.form.falltRemoveStatue == "undefined"
-        ) {
-          this.form.falltRemoveStatue = "";
-        }
-        if (
-          this.form.faultLocation == "null" ||
-          this.form.faultLocation == "undefined"
-        ) {
-          this.form.faultLocation = "";
-        }
+
 
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
@@ -1610,48 +1563,7 @@ export default {
         this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
-        if (
-          this.form.faultSource == "null" ||
-          this.form.faultSource == "undefined"
-        ) {
-          this.form.faultSource = "";
-        }
-        if (
-          this.form.eqRunStatus == "undefined" ||
-          this.form.eqRunStatus == "null"
-        ) {
-          this.form.eqRunStatus = "";
-        }
-        if (
-          this.form.faultCode == "null" ||
-          this.form.faultCode == "undefined"
-        ) {
-          this.form.faultCode = "";
-        }
-        if (
-          this.form.faultDescription == "null" ||
-          this.form.faultDescription == "undefined"
-        ) {
-          this.form.faultDescription = "";
-        }
-        if (
-          this.form.faultCxtime == "undefined" ||
-          this.form.faultCxtime == "null"
-        ) {
-          this.form.faultCxtime = "";
-        }
-        if (
-          this.form.faultLevel == "undefined" ||
-          this.form.faultLevel == "null"
-        ) {
-          this.form.faultLevel = "";
-        }
-        if (
-          this.form.falltRemoveStatue == "undefined" ||
-          this.form.falltRemoveStatue == "null"
-        ) {
-          this.form.falltRemoveStatue = "";
-        }
+        
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = true;
         this.disstateDevice = true;
@@ -1772,6 +1684,7 @@ export default {
     },
 
     publishForm() {
+      debugger
       this.isClick = true;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
@@ -1789,7 +1702,7 @@ export default {
       this.fileData.append("eqId", this.form.eqId);
       this.fileData.append("eqStatus", this.form.eqStatus);
       this.fileData.append("faultLocation", this.form.faultLocation);
-      this.fileData.append("eqRunStatus", this.form.eqRunStatus);
+      this.fileData.append("eqRunStatus", this.form.eqRunStatus );
       this.fileData.append("faultCode", this.form.faultCode);
       this.fileData.append("faultLevel", this.form.faultLevel);
       this.fileData.append("falltRemoveStatue", "1");

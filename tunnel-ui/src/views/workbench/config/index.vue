@@ -5750,6 +5750,8 @@ export default {
       this.$refs.youdaoRef.handleClosee();
       this.$refs.boardRef.handleClosee();
       this.$refs.radioRef.handleClosee();
+      this.$refs.kzqRef.handleClosee();
+      
     },
     // 车辆监测数据
     // vehicleEcharts() {

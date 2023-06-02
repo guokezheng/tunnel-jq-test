@@ -4132,7 +4132,7 @@ export default {
         },
       ],
       percentage: 70,
-      tunnelNameEarlyWarn: "",
+      // tunnelNameEarlyWarn: "",
       tunnelId: "",
       displayThumbnail: true,
       SysEarlyWarning: [],
@@ -4336,6 +4336,7 @@ export default {
         deptId: "",
         // deptName: "",
       },
+      deptId:'',
       userQueryParams: {
         userName: this.$store.state.user.name,
       },
@@ -4501,15 +4502,15 @@ export default {
       //   lane: [],
       //   state: "",
       // },
-      lightControForm: {
-        index: 0,
-        lCDirection: "",
-        radioLightControlTop: [],
-        radioLightControlBottom: [],
-        state: "",
-        lane: "",
-        name: "",
-      },
+      // lightControForm: {
+      //   index: 0,
+      //   lCDirection: "",
+      //   radioLightControlTop: [],
+      //   radioLightControlBottom: [],
+      //   state: "",
+      //   lane: "",
+      //   name: "",
+      // },
       lCTop: false,
       lCBottom: false,
 
@@ -4599,7 +4600,7 @@ export default {
       // cameraPlayer2: false,
       // cameraPlayer3: false,
       // cameraPlayer4: false,
-      tunnelItem: null,
+      // tunnelItem: null,
       catNumber: 1, //小车计数
       catTime: null, //小车计数定时器
       // accidentDialogVisible: false, //视频视频弹窗
@@ -4787,7 +4788,7 @@ export default {
     //   console.log(newVal, "8888888888888888");
     // },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      // console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
+      console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
 
       if (this.manageStation == "1") {
         getJlyTunnel().then((res) => {
@@ -5100,7 +5101,7 @@ export default {
       );
     },
     // videoRadioChange() {
-    //   if (this.footChangeRadio == "视频" && this.tunnelId) {
+    //   if (this.footChangeRadio == "视频" && this.currentTunnel.id) {
     //     this.getFooterVideo();
     //   } else {
     //     this.cameraPlayer1 = false;
@@ -5111,7 +5112,7 @@ export default {
     // },
     // getFooterVideo() {
     //   // 潍坊方向
-    //   getEntranceExitVideo(this.tunnelId, this.directionList[0].dictValue).then(
+    //   getEntranceExitVideo(this.currentTunnel.id, this.directionList[0].dictValue).then(
     //     (res) => {
     //       if (res.data.length == 0) {
     //         this.videoNoPic2 = true;
@@ -5119,7 +5120,7 @@ export default {
     //         this.videoTitle3 = res.data[0].inletName;
     //         this.videoTitle4 = res.data[0].outletName;
     //         // console.log(res, "后两个视频");
-    //         if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+    //         if (this.currentTunnel.id == "WLJD-JiNan-YanJiuYuan-FHS") {
     //           getDeviceById(res.data[0].inlet).then((response) => {
     //             displayH5sVideoAll(response.data.secureKey, "h5sVideo4", 3);
     //           });
@@ -5149,7 +5150,7 @@ export default {
     //     }
     //   );
     //   // 济南方向
-    //   getEntranceExitVideo(this.tunnelId, this.directionList[1].dictValue).then(
+    //   getEntranceExitVideo(this.currentTunnel.id, this.directionList[1].dictValue).then(
     //     (res) => {
     //       // console.log(res, "前两个视频");
     //       if (res.data.length == 0) {
@@ -5157,7 +5158,7 @@ export default {
     //       } else {
     //         this.videoTitle1 = res.data[0].inletName;
     //         this.videoTitle2 = res.data[0].outletName;
-    //         if (this.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+    //         if (this.currentTunnel.id == "WLJD-JiNan-YanJiuYuan-FHS") {
     //           getDeviceById(res.data[0].inlet).then((response) => {
     //             displayH5sVideoAll(response.data.secureKey, "h5sVideo2", 1);
     //           });
@@ -5323,7 +5324,7 @@ export default {
     // 点击侧边栏文件列表下拉框
     clickFileNames(direction) {
       const params = {
-        tunnelId: this.tunnelId,
+        tunnelId: this.currentTunnel.id,
         direction: direction,
       };
       getAudioFileList(params).then((res) => {
@@ -5670,7 +5671,7 @@ export default {
     // chezhiControl(num) {
     //   this.chezhiDisabled = true;
     //   const param = {
-    //     tunnelId: this.tunnelId,
+    //     tunnelId: this.currentTunnel.id,
     //     direction: num,
     //     state: this["chezhiForm" + num].state,
     //     lane: this["chezhiForm" + num].lane,
@@ -5686,7 +5687,7 @@ export default {
     //   this.chezhiDisabled = false;
     // },
     // getDeviceDataAndStateData() {
-    //   getDeviceDataAndState(this.tunnelId).then((result) => {
+    //   getDeviceDataAndState(this.currentTunnel.id).then((result) => {
     //     console.log(result, "批量控制");
     //     this.BulkData = result.data;
     //   });
@@ -5753,9 +5754,9 @@ export default {
     },
     // 车辆监测数据
     // vehicleEcharts() {
-    //   // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
+    //   // console.log(this.currentTunnel.id,"this.currentTunnel.idthis.currentTunnel.idthis.currentTunnel.id")
     //   const param = {
-    //     tunnelId: this.tunnelId,
+    //     tunnelId: this.currentTunnel.id,
     //   };
     //   vehicleMonitoringInRecent24Hours(param).then((res) => {
     //     console.log(res, "车辆监测数据");
@@ -5770,9 +5771,9 @@ export default {
     // },
     // // 重点车辆监测数据
     // specialVehicleEcharts() {
-    //   // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
+    //   // console.log(this.currentTunnel.id,"this.currentTunnel.idthis.currentTunnel.idthis.currentTunnel.id")
     //   const param = {
-    //     tunnelId: this.tunnelId,
+    //     tunnelId: this.currentTunnel.id,
     //   };
     //   specialVehicleMonitoringInRecent24Hours(param).then((res) => {
     //     console.log(res, "重点车辆监测数据");
@@ -5788,7 +5789,7 @@ export default {
     // 重点车辆监测数据
     // specialEcharts() {
     //   const param = {
-    //     tunnelId: this.tunnelId,
+    //     tunnelId: this.currentTunnel.id,
     //   };
     //   special(param).then((res) => {
     //     // console.log(res, "重点车辆监测数据");
@@ -5855,8 +5856,8 @@ export default {
     //   this.drawerA = false;
     //   this.drawerCVisible = false;
     //   this.timingStrategyDisabled = false;
-    //   if (this.tunnelId) {
-    //     timeSharing(this.tunnelId).then((res) => {
+    //   if (this.currentTunnel.id) {
+    //     timeSharing(this.currentTunnel.id).then((res) => {
     //       for (var item of res.data) {
     //         item.arr = item.time.split("-");
     //         // console.log(item, "item");
@@ -6129,6 +6130,7 @@ export default {
           // this.getTunnelList();
           // console.log(222222222)
           if (this.manageStation == "1") {
+            console.log("this.deptId3333")
             //let arr = ["6266", "5555", "555503"];
             let arr = ["YG118", "YG11801", "YG1180103"];
             this.changeSite(arr);
@@ -6182,13 +6184,29 @@ export default {
     },
     // 改变站点
     changeSite(index) {
-      // console.log(index, "index------------------------1");
       if (index) {
-        this.tunnelQueryParams.deptId = index[index.length - 1];
+        // 判断是否有缓存的管理站id 
+        // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
+        // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
+        // 3. get到管理站id this.tunnelQueryParams.deptId为空 是刷新 get管理站id 并赋值
+        // 4. get到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
+        if(!this.$cache.local.get("deptId")){
+          if(!this.tunnelQueryParams.deptId){
+            this.tunnelQueryParams.deptId = index[index.length - 1];
+          }else{
+            this.tunnelQueryParams.deptId = index[index.length - 1];
+            this.$cache.local.set("deptId", this.tunnelQueryParams.deptId);
+          }
+        }else{
+          if(!this.tunnelQueryParams.deptId){
+            this.tunnelQueryParams.deptId = this.$cache.local.get("deptId")
+          }else{
+            this.tunnelQueryParams.deptId = index[index.length - 1];
+            this.$cache.local.set("deptId", index[index.length - 1]);
+          }
+        }
         this.$forceUpdate();
-
         this.getTunnelList();
-        // this.srollAuto()
       }
     },
     // 机器人tabs页
@@ -7366,24 +7384,23 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
-      // console.log(this.tunnelQueryParams, "44444444444");
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
           this.tunnelList = [];
           return false;
         }
-        this.tunnelNameEarlyWarn = response.rows[0].tunnelName;
-        this.tunnelId = response.rows[0].tunnelId;
-        // this.specialEcharts(this.tunnelId)
+        // this.tunnelNameEarlyWarn = response.rows[0].tunnelName;
+        this.currentTunnel.id = response.rows[0].tunnelId;
+        // this.specialEcharts(this.currentTunnel.id)
         // this.vehicleEcharts();
         // this.specialVehicleEcharts();
         // this.getDeviceDataAndStateData();
         var newDict = this.dict.type.sd_sys_name;
-        if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
+        if (this.currentTunnel.id != "JQ-JiNan-WenZuBei-MJY") {
           // this.robotShow = false;
           this.dictList = newDict.slice(0, 8);
-        } else if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
+        } else if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY") {
           this.dictList = this.dict.type.sd_sys_name;
           // this.robotShow = true;
         }
@@ -7399,15 +7416,17 @@ export default {
           }
           // this.buttonIndex = 0;
           if (this.manageStation == "0") {
+
             this.tunnelList = [];
             this.tunnelList = list;
             this.checkboxTunnel.push(list[0]);
-            this.currentTunnel.id = list[0].tunnelId;
-            this.currentTunnel.name = list[0].tunnelName;
+            // this.currentTunnel.id = list[0].tunnelId;
+            // this.currentTunnel.name = list[0].tunnelName;
             this.selectEquipmentType(this.currentTunnel.id);
-            this.getTunnelData(this.currentTunnel.id);
-            this.$refs.deawerRef.init(list[0].tunnelId,list[0].lane)
-            this.$refs.footerRef.init(list[0].tunnelId)
+            this.setTunnel(list[0], 0);
+            // this.getTunnelData(this.currentTunnel.id);
+            // this.$refs.deawerRef.init(list[0].tunnelId,list[0].lane)
+            // this.$refs.footerRef.init(list[0].tunnelId)
 
             // this.$nextTick(()=>{
             //   this.initEnergyConsumption(this.currentTunnel.id)
@@ -7646,7 +7665,7 @@ export default {
                 // console.log(item,"警示灯带")
                 // }
                 if (
-                  this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
+                  this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29
                 ) {
                   this.robotShow = true;
@@ -7890,42 +7909,64 @@ export default {
         });
       }
     },
-    /* 选择隧道*/
-    // switchTunnel() {
-    //   this.title = "切换隧道";
-    //   this.tunnelVisible = true;
-    // },
+ 
     /* 选择隧道*/
     setTunnel(item, index) {
       console.log(item,"item")
+      let obj = {
+        "tunnelName":item.tunnelName,
+        "tunnelId":item.tunnelId,
+        "lane":item.lane,
+        "index":index,
+      }
 
-      this.tunnelItem = item;
-      this.$refs.deawerRef.init(item.tunnelId,item.lane)
-      this.$refs.footerRef.init(item.tunnelId)
+       // 判断是否有缓存的currentTunnel对象
+        // 1. get不到currentTunnel对象 this.currentTunnel.name为空 是第一次进入 默认在第一个隧道 正常赋值
+        // 2. get不到currentTunnel对象 this.currentTunnel.name有 是切换隧道 set到缓存 并赋值
+        // 3. get到currentTunnel对象 this.currentTunnel.name为空 是刷新 get管理站id 并赋值
+        // 4. get到currentTunnel对象 this.currentTunnel.name有 是切换隧道 set到缓存 并赋值
+        if(!this.$cache.local.get("currentTunnel")){
+          if(this.currentTunnel.name){
+            this.$cache.local.set("currentTunnel", JSON.stringify(obj));
+          }
+          this.$refs.deawerRef.init(item.tunnelId,item.lane)
+          this.$refs.footerRef.init(item.tunnelId)
+          this.currentTunnel.id = item.tunnelId;
+          this.currentTunnel.name = item.tunnelName;
+          this.buttonIndex = index;
+        }else{
+          if(!this.currentTunnel.name){
+            let aa = JSON.parse(this.$cache.local.get("currentTunnel"))
+            this.$refs.deawerRef.init(aa.tunnelId,aa.lane)
+            this.$refs.footerRef.init(aa.tunnelId)
+            this.currentTunnel.id = aa.tunnelId;
+            this.currentTunnel.name = aa.tunnelName;
+            this.buttonIndex = aa.index;
+          }else{
+            this.$cache.local.set("currentTunnel", JSON.stringify(obj));
+            this.$refs.deawerRef.init(item.tunnelId,item.lane)
+            this.$refs.footerRef.init(item.tunnelId)
+            this.currentTunnel.id = item.tunnelId;
+            this.currentTunnel.name = item.tunnelName;
+            this.buttonIndex = index;
 
-      // console.log(index)
-      // this.tunnelItem = item;
-      // if(this.manageStation == "0" && item.tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
-      //   this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-HSD");
-      //   return;
-      // }
-      // this.getTunnelLane(item.lane);
-      this.buttonIndex = index;
-      this.tunnelNameEarlyWarn = item.tunnelName;
-      this.tunnelId = item.tunnelId;
-      this.lightControForm.index = index;
-      this.lightControForm.name = item.tunnelName;
-      // this.tunnelBtnStyle = []
-      // this.tunnelBtnStyle[index] = {
-      //   "border-color": "#ffbf1d",
-      //   // "box-shadow": "0px 0px 10px #68B5FF inset",
-      //   "color": "0a88bd",
-      //   "background-color": "#e2f3fa !important",
-      // };
-      this.currentTunnel.id = item.tunnelId;
-      this.currentTunnel.name = item.tunnelName;
-      // this.selectEquipmentType(this.currentTunnel.id);
+          }
+        }
+      // this.$refs.deawerRef.init(item.tunnelId,item.lane)
+      // this.$refs.footerRef.init(item.tunnelId)
+      // this.currentTunnel.id = item.tunnelId;
+      // this.currentTunnel.name = item.tunnelName;
+
       this.getTunnelData(this.currentTunnel.id);
+      
+
+      // this.tunnelItem = item;
+
+      // this.tunnelNameEarlyWarn = item.tunnelName;
+      // this.lightControForm.index = index;
+      // this.lightControForm.name = item.tunnelName;
+    
+      // this.currentTunnel.id = item.tunnelId;
 
       //小车显示控制
       carSwitchType(item.tunnelId, this.carShow ? 0 : 1).then((res) => {});
@@ -7945,7 +7986,7 @@ export default {
     displayControl(value, lable) {
       // carShow
       for (var item of this.selectedIconList) {
-        if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
+        if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
           this.robotShow = true;
         } else {
           this.robotShow = false;
@@ -8395,7 +8436,7 @@ export default {
         // } else if (item.eqType == "111") {
         //   const eqId = {
         //     equipmentId: item.eqId,
-        //     tunnelId: this.tunnelId
+        //     tunnelId: this.currentTunnel.id
         //   }
         //   this.spanEqtypeDate = false
         //   var pressureData = {}

@@ -338,9 +338,8 @@ export default {
       saveLoading: false,
       //环境变量临时扩大数组
       Clist: [],
-      pageXimage :0,
-      pageYimage :0,
-
+      pageXimage: 0,
+      pageYimage: 0,
     };
   },
   created: function () {
@@ -368,6 +367,7 @@ export default {
       }
     },
     displayNumb(value) {
+      console.log(value, "value");
       this.displayControl(value);
     },
   },
@@ -391,29 +391,37 @@ export default {
         that.top = e.y - 90;
         that.deleteVisible = true;
         that.deleteObj = e.target.parentElement.snap;
-        console.log(e)
+        console.log(e);
       }
     };
     //鼠标拖动
     window.ondrag = function (e) {
-      let oDiv=  document.getElementById("imageId")
-      this.pageXimage = e.pageX
-      this.pageYimage = e.pageY
-      if(e.pageY-oDiv.getBoundingClientRect().top <5||e.pageX-oDiv.getBoundingClientRect().left <5||oDiv.clientWidth+oDiv.getBoundingClientRect().left-e.pageX<5
-        ||oDiv.clientHeight+oDiv.getBoundingClientRect().top-e.pageY<5){
+      let oDiv = document.getElementById("imageId");
+      this.pageXimage = e.pageX;
+      this.pageYimage = e.pageY;
+      if (
+        e.pageY - oDiv.getBoundingClientRect().top < 5 ||
+        e.pageX - oDiv.getBoundingClientRect().left < 5 ||
+        oDiv.clientWidth + oDiv.getBoundingClientRect().left - e.pageX < 5 ||
+        oDiv.clientHeight + oDiv.getBoundingClientRect().top - e.pageY < 5
+      ) {
         let num = "";
-        let selectedIconLists = JSON.parse(JSON.stringify(that.selectedIconList))
+        let selectedIconLists = JSON.parse(
+          JSON.stringify(that.selectedIconList)
+        );
         that.deleteObjs = e.target.snap;
         for (let i = 0; i < img.length; i++) {
           if (img[i].id == that.deleteObjs) {
             img[i].remove();
             img.splice(i, 1);
             that.selectedIconList.splice(i, 1);
-            num = i
+            num = i;
           }
         }
-        let selectedIcon = that.eqTypeList.find(item=> item.typeId ==selectedIconLists[num].eqType);
-        that.getEquipment(selectedIconLists[num],selectedIcon)
+        let selectedIcon = that.eqTypeList.find(
+          (item) => item.typeId == selectedIconLists[num].eqType
+        );
+        that.getEquipment(selectedIconLists[num], selectedIcon);
       }
     };
   },
@@ -546,6 +554,7 @@ export default {
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
           this.selectedIconList = res.eqList;
+          console.log(this.selectedIconList, "this.selectedIconList");
           listType("").then((response) => {
             this.drawSvg(response.rows);
           });
@@ -580,10 +589,10 @@ export default {
     drawSvg(eqTypeList) {
       var that = this;
       let list = that.selectedIconList;
-      console.log('that.selectedIconList',that.selectedIconList)
+      console.log("that.selectedIconList", that.selectedIconList);
       // debugger;
       for (let i = 0; i < list.length; i++) {
-        console.log('list.length',list.length)
+        console.log("list.length", list.length);
         var iconWidth = 0;
         var iconHeight = 0;
         if (list[i].width != "") {
@@ -597,7 +606,7 @@ export default {
             break;
           }
         }
-        console.log('list[i]',list[i])
+        console.log("list[i]", list[i]);
         //矩形框
         if (list[i].url.length > 1) {
           // console.log('矩形框')
@@ -618,7 +627,7 @@ export default {
           );
           // console.log(list[i].pile, 'list[i].pile')
           if (list[i].pile != "" && list[i].pile) {
-            console.log('list[i].pile')
+            console.log("list[i].pile");
             let r = that.svg.paper
               .rect(
                 list[i].position.left - 20,
@@ -726,21 +735,20 @@ export default {
             img[i] = that.svg.paper.g(r, t, img3).attr({
               class: "mydrags",
             });
-            console.log('正常',img[i]);
+            console.log("正常", img[i]);
             // if(list[i].eqType == 5){
             //   img[i] = that.svg.paper.g(r - 10, t, img3).attr({
             //     class: "mydrags",
             //   });
             // }
           } else {
-
             img[i] = that.svg.paper.g(img3).attr({
               class: "mydrags",
             });
-            console.log('错误',img[i]);
+            console.log("错误", img[i]);
           }
         }
-        console.log('所有',img[i]);
+        console.log("所有", img[i]);
         img[i].drag();
       }
 
@@ -762,17 +770,19 @@ export default {
       this.saveLoading = true;
       let eqList = [];
       //遍历设备，获取位置
-      console.log(this.selectedIconList,'this.selectedIconList',img)
+      console.log(this.selectedIconList, "this.selectedIconList", img);
       for (let i = 0; i < this.selectedIconList.length; i++) {
         if (this.selectedIconList[i].eqType == 12) {
-          console.log(this.selectedIconList[i],'111111111w')
-          this.selectedIconList[i].pileNum = this.selectedIconList[i].pile.replace(/[^\d.]/g, "");
+          console.log(this.selectedIconList[i], "111111111w");
+          this.selectedIconList[i].pileNum = this.selectedIconList[
+            i
+          ].pile.replace(/[^\d.]/g, "");
           console.log(this.selectedIconList[i].pileNum);
         }
         if (JSON.stringify(this.selectedIconList[i]) != "{}") {
-          console.log(2222222)
+          console.log(2222222);
           if (img[i]) {
-            console.log(3333333333)
+            console.log(3333333333);
             this.selectedIconList[i].position = {
               left:
                 img[i].attr("transform").localMatrix.e +
@@ -782,7 +792,7 @@ export default {
                 this.selectedIconList[i].position.top,
             };
             eqList.push(this.selectedIconList[i]);
-          }else{
+          } else {
             eqList.push(this.selectedIconList[i]);
           }
         }
@@ -856,7 +866,6 @@ export default {
     },
     /* 控制桩号显示*/
     displayControl(value) {
-      console.log(value, "value");
       let list = this.selectedIconList;
       //不显示
       if (value == false) {
@@ -865,9 +874,11 @@ export default {
             width: 0,
             height: 0,
           });
-          img[i][1].attr({
-            text: "",
-          });
+          if (img[i][1]) {
+            img[i][1].attr({
+              text: "",
+            });
+          }
         }
       } else {
         //显示
@@ -905,13 +916,12 @@ export default {
     /* 点击删除*/
     deleteImage() {
       // debugger
-      console.log("我右键删除了",this.direction,img);
+      console.log("我右键删除了", this.direction, img);
       if (this.direction == 1) {
         this.upList.splice(this.deleteIndex, 1, {});
       } else if (this.direction == 2) {
         this.downList.splice(this.deleteIndex, 1, {});
       } else {
-
         for (let i = 0; i < img.length; i++) {
           if (img[i].id == this.deleteObj) {
             img[i].remove();
@@ -921,7 +931,7 @@ export default {
         }
         // this.equipmentList = this.addMask(response.rows)
       }
-      console.log("我右键删除了11",img,this.selectedIconList);
+      console.log("我右键删除了11", img, this.selectedIconList);
       this.deleteVisible = false;
       this.direction = 0;
     },
@@ -1008,7 +1018,7 @@ export default {
     /* 选择设备*/
     getEquipment(item, eqType) {
       console.log(item, eqType, "选择设备");
-      console.log(this.selectedIconList)
+      console.log(this.selectedIconList);
       // debugger
       var url = eqType.url;
       var iconWidth = Number(eqType.iconWidth);
@@ -1107,7 +1117,6 @@ export default {
             //       id: item.eqId,
             //     });
             // }
-
 
             img3 = this.svg.paper.image(url, 0, 0, iconWidth, iconHeight).attr({
               id: item.eqId,
@@ -1373,14 +1382,14 @@ export default {
       this.laneVisible = false;
       this.paramVisible = false;
     },
-    handleBack(){
+    handleBack() {
       this.$router.push({
         path: "/dev/sd/tunnel",
       });
     },
     // 辅助线
     auxiliaryLine() {
-      debugger
+      // debugger;
       let that = this;
       if (!$("#svg g")) return;
       var MIN_DISTANCE = 1; //捕获的最小距离
@@ -1428,8 +1437,8 @@ export default {
 		            */
 
         drag: function (event, ui) {
-          console.log(event)
-          debugger
+          console.log(event);
+          // debugger;
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1453,7 +1462,7 @@ export default {
           //pageX、pageY：文档坐标x、y ;
           var pos = {
             top: event.pageY,
-            left: event.pageX ,
+            left: event.pageX,
           };
 
           //outerHeight、outerWidth：整个浏览器的高度、宽度
@@ -1479,31 +1488,40 @@ export default {
                   chosenGuides[prop].dist = d;
 
                   chosenGuides[prop].offset = elemGuide[prop] - pos[prop];
-                  let guide1= {
-                    left:event.pageX+32,
-                    top: event.pageY+35,
-                    type:"h"
-                  }
-                  event.toElement.parentNode
-                  console.log(  event.toElement.parentNode)
+                  let guide1 = {
+                    left: event.pageX + 32,
+                    top: event.pageY + 35,
+                    type: "h",
+                  };
+                  event.toElement.parentNode;
+                  console.log(event.toElement.parentNode);
 
-                  let style = window.getComputedStyle(event.toElement.parentNode, null);
-                  let paddingL = parseFloat(style.getPropertyValue('left')); //获取左侧内边距
-                  let paddingtop = parseFloat(style.getPropertyValue('top')); //获取左侧内边距
+                  let style = window.getComputedStyle(
+                    event.toElement.parentNode,
+                    null
+                  );
+                  let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
+                  let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
 
-                  let svgs=  document.getElementById("svgRow")
-                  let svgss=  document.querySelector(".config-content")
-                  let svgeimage=  document.querySelector(".el-image")
+                  let svgs = document.getElementById("svgRow");
+                  let svgss = document.querySelector(".config-content");
+                  let svgeimage = document.querySelector(".el-image");
                   let stylea = window.getComputedStyle(svgs, null);
                   let styleas = window.getComputedStyle(svgss, null);
                   let styleas1 = window.getComputedStyle(svgeimage, null);
 
-                  let paddingLa = parseFloat(stylea.getPropertyValue('padding-top')); //获取左侧内边距
-                  let paddingLa1 = parseFloat(styleas.getPropertyValue('width')); //获取左侧内边距
-                  let paddingLa2 = parseFloat(styleas1.getPropertyValue('width')); //获取左侧内边距
+                  let paddingLa = parseFloat(
+                    stylea.getPropertyValue("padding-top")
+                  ); //获取左侧内边距
+                  let paddingLa1 = parseFloat(
+                    styleas.getPropertyValue("width")
+                  ); //获取左侧内边距
+                  let paddingLa2 = parseFloat(
+                    styleas1.getPropertyValue("width")
+                  ); //获取左侧内边距
 
-                  guide1.left = paddingL+(paddingLa1-paddingLa2)/2-16
-                  guide1.top = paddingtop+paddingLa
+                  guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
+                  guide1.top = paddingtop + paddingLa;
                   chosenGuides[prop].guide = guide1;
                 }
               }
@@ -1514,13 +1532,13 @@ export default {
           let left = event.pageX - event.offsetX;
           let top = event.pageY - event.offsetY + 3; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
           // if (chosenGuides.top.dist <= MIN_DISTANCE) {
-            $("#guide-h")
-              .css("top", chosenGuides.top.guide.top - top)
-              .show();
-            // $("#guide-h1")
-            //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
-            //   .show();
-            // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
+          $("#guide-h")
+            .css("top", chosenGuides.top.guide.top - top)
+            .show();
+          // $("#guide-h1")
+          //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
+          //   .show();
+          // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           // } else {
           //   // debugger
           //   $("#guide-h").hide();
@@ -1529,13 +1547,13 @@ export default {
           // }
 
           // if (chosenGuides.left.dist <= MIN_DISTANCE) {
-            $("#guide-v")
-              .css("left", chosenGuides.left.guide.left - left)
-              .show();
-            // $("#guide-v1")
-            //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
-            //   .show();
-            /* ui.position.left =
+          $("#guide-v")
+            .css("left", chosenGuides.left.guide.left - left)
+            .show();
+          // $("#guide-v1")
+          //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
+          //   .show();
+          /* ui.position.left =
 				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
           // } else {
           //   $("#guide-v").hide();
@@ -1545,8 +1563,8 @@ export default {
         },
 
         stop: function (event, ui) {
-          console.log(event)
-          debugger
+          console.log(event);
+          // debugger;
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1570,7 +1588,7 @@ export default {
           //pageX、pageY：文档坐标x、y ;
           var pos = {
             top: event.pageY,
-            left: event.pageX ,
+            left: event.pageX,
           };
 
           //outerHeight、outerWidth：整个浏览器的高度、宽度
@@ -1596,42 +1614,51 @@ export default {
                   chosenGuides[prop].dist = d;
 
                   chosenGuides[prop].offset = elemGuide[prop] - pos[prop];
-                  let guide1= {
-                    left:event.pageX+32,
-                    top: event.pageY+35,
-                    type:"h"
-                  }
-                  event.toElement.parentNode
-                  console.log(  event.toElement.parentNode)
+                  let guide1 = {
+                    left: event.pageX + 32,
+                    top: event.pageY + 35,
+                    type: "h",
+                  };
+                  event.toElement.parentNode;
+                  console.log(event.toElement.parentNode);
 
-                  let style = window.getComputedStyle(event.toElement.parentNode, null);
-                  let paddingL = parseFloat(style.getPropertyValue('left')); //获取左侧内边距
-                  let paddingtop = parseFloat(style.getPropertyValue('top')); //获取左侧内边距
-                  console.log(paddingL)
-                  console.log(paddingtop)
-                  console.log("ddddddddddddddddddddddddddddddd")
+                  let style = window.getComputedStyle(
+                    event.toElement.parentNode,
+                    null
+                  );
+                  let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
+                  let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
+                  console.log(paddingL);
+                  console.log(paddingtop);
+                  console.log("ddddddddddddddddddddddddddddddd");
                   // let ds = getElementPosition(event.toElement.parentNode)
                   // console.log(ds)
-                  let oDiv=  document.getElementById("imageId")
+                  let oDiv = document.getElementById("imageId");
 
-                  let svgs=  document.getElementById("svgRow")
-                  let svgss=  document.querySelector(".config-content")
-                  let svgeimage=  document.querySelector(".el-image")
-                  console.log(svgss)
+                  let svgs = document.getElementById("svgRow");
+                  let svgss = document.querySelector(".config-content");
+                  let svgeimage = document.querySelector(".el-image");
+                  console.log(svgss);
 
                   let stylea = window.getComputedStyle(svgs, null);
                   let styleas = window.getComputedStyle(svgss, null);
                   let styleas1 = window.getComputedStyle(svgeimage, null);
-                  console.log(styleas)
+                  console.log(styleas);
 
-                  let paddingLa = parseFloat(stylea.getPropertyValue('padding-top')); //获取左侧内边距
-                  let paddingLa1 = parseFloat(styleas.getPropertyValue('width')); //获取左侧内边距
-                  let paddingLa2 = parseFloat(styleas1.getPropertyValue('width')); //获取左侧内边距
-                  console.log(paddingLa1-paddingLa2)
-                  console.log(44444444444444444444444444444444444)
-                  console.log(event.toElement.width.animVal.value)
-                  guide1.left = paddingL+(paddingLa1-paddingLa2)/2-16
-                  guide1.top = paddingtop+paddingLa
+                  let paddingLa = parseFloat(
+                    stylea.getPropertyValue("padding-top")
+                  ); //获取左侧内边距
+                  let paddingLa1 = parseFloat(
+                    styleas.getPropertyValue("width")
+                  ); //获取左侧内边距
+                  let paddingLa2 = parseFloat(
+                    styleas1.getPropertyValue("width")
+                  ); //获取左侧内边距
+                  console.log(paddingLa1 - paddingLa2);
+                  console.log(44444444444444444444444444444444444);
+                  console.log(event.toElement.width.animVal.value);
+                  guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
+                  guide1.top = paddingtop + paddingLa;
                   chosenGuides[prop].guide = guide1;
                 }
               }
@@ -1640,13 +1667,17 @@ export default {
 
           // 画布与窗口的距离
           let left = event.pageX - event.offsetX;
-          let top = event.pageY - event.offsetY ; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
+          let top = event.pageY - event.offsetY; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
           if (chosenGuides.top.dist <= MIN_DISTANCE) {
-            $("#guide-h")
-              .css("top", chosenGuides.top.guide.top)
-              .show();
+            $("#guide-h").css("top", chosenGuides.top.guide.top).show();
             $("#guide-h1")
-              .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
+              .css(
+                "top",
+                chosenGuides.top.guide.top -
+                  top +
+                  event.toElement.height.animVal.value +
+                  1
+              )
               .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           } else {
@@ -1657,11 +1688,15 @@ export default {
           }
 
           if (chosenGuides.left.dist <= MIN_DISTANCE) {
-            $("#guide-v")
-              .css("left", chosenGuides.left.guide.left )
-              .show();
+            $("#guide-v").css("left", chosenGuides.left.guide.left).show();
             $("#guide-v1")
-              .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
+              .css(
+                "left",
+                chosenGuides.left.guide.left -
+                  left +
+                  event.toElement.height.animVal.value +
+                  1
+              )
               .show();
             /* ui.position.left =
 				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
@@ -1675,19 +1710,19 @@ export default {
       });
 
       function getElementPosition(element) {
-        let top = element.offsetTop //这是获取元素距父元素顶部的距离
-        let left = element.offsetLeft
-        var current = element.offsetParent //这是获取父元素
+        let top = element.offsetTop; //这是获取元素距父元素顶部的距离
+        let left = element.offsetLeft;
+        var current = element.offsetParent; //这是获取父元素
         while (current !== null) {
           //当它上面有元素时就继续执行
-          top += current.offsetTop //这是获取父元素距它的父元素顶部的距离累加起来
-          left += current.offsetLeft
-          current = current.offsetParent //继续找父元素
+          top += current.offsetTop; //这是获取父元素距它的父元素顶部的距离累加起来
+          left += current.offsetLeft;
+          current = current.offsetParent; //继续找父元素
         }
         return {
           top,
           left,
-        }
+        };
       }
 
       function computeGuidesForElement(elem, pos, w, h) {

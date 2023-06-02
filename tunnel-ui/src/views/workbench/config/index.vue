@@ -5556,10 +5556,9 @@ export default {
     // 批量操作 执行
     implementBatchManage() {
       var that = this;
-      console.log(this.selectedIconList)
-
       this.title = "批量操作";
-      that.eqTypeStateList2 = [];
+      this.eqTypeStateList2 = [];
+      this.batchManageList = []
       let eqType = "";
       for (var item of this.selectedIconList) {
         if (item.click) {

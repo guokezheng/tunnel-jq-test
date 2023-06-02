@@ -180,7 +180,7 @@
                   :max="100"
                   :min="min"
                   class="sliderClass"
-                  :disabled="!stateForm.brightness"
+                  :disabled="!stateForm.frequency"
                 ></el-slider>
               </el-form-item>
             </el-col>
@@ -240,30 +240,7 @@ import {
   setControlDeviceByParam,
   controlEvacuationSignDevice,
 } from "@/api/workbench/config.js"; //提交控制信息
-// 对象深拷贝
-export const deepClone = (data) => {
-  // 封装的判断数据类型的方法
-  var type = typeof data;
-  var obj;
-  if (type === "array") {
-    obj = [];
-  } else if (type === "object") {
-    obj = {};
-  } else {
-    // 不再具有下一层次
-    return data;
-  }
-  if (type === "array") {
-    for (var i = 0, len = data.length; i < len; i++) {
-      obj.push(deepClone(data[i]));
-    }
-  } else if (type === "object") {
-    for (var key in data) {
-      obj[key] = deepClone(data[key]);
-    }
-  }
-  return obj;
-};
+
 export default {
   data() {
     return {
@@ -289,30 +266,26 @@ export default {
   watch: {
     "stateForm.state": function (newVal, oldVal) {
       console.log(newVal, "newVal");
-      if (
-        newVal == "1" &&
-        this.stateForm.brightness == 0 &&
-        [7, 9, 45].includes(this.clickEqType)
-      ) {
-        this.stateForm.brightness = 1;
-        this.min = 1;
-      } else if (newVal == "2" && [7, 9].includes(this.clickEqType)) {
-        this.stateForm.brightness = 0;
-        this.min = 0;
-      } else if (newVal == "1" && this.clickEqType == 30) {
-        this.stateForm.brightness = 0;
-        this.stateForm.frequency = 0;
-        this.min = 0;
-      } else if (
-        newVal != "1" &&
-        this.stateForm.brightness == 0 &&
-        this.clickEqType == 30
-      ) {
-        this.stateForm.brightness = 1;
-        this.stateForm.frequency = 1;
-        this.min = 1;
-      } else{
-        this.min = 1;
+      if([7, 9].includes(this.clickEqType)){
+      // 基础照明、加强照明  state == 1 开启  state == 2  关闭
+        if(newVal == "1" && this.stateForm.brightness == 0){
+          this.stateForm.brightness = 1;
+          this.min = 1;
+        }else if(newVal == "2"){
+          this.stateForm.brightness = 0;
+          this.min = 0;
+        } 
+      }else if(this.clickEqType == 30){
+         // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
+        if(newVal == "1"){
+          this.stateForm.brightness = 0;
+          this.stateForm.frequency = 0;
+          this.min = 0;
+        }else if(newVal != "1" && this.stateForm.brightness == 0){
+          this.stateForm.brightness = 1;
+          this.stateForm.frequency = 1;
+          this.min = 1;
+        }
       }
     },
   },
@@ -328,17 +301,15 @@ export default {
     // 查设备详情
     async getMessage() {
       if (this.eqInfo.equipmentId) {
+        let form = {}
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          this.stateForm = deepClone(res.data);
-          this.$set(this,'stateForm',deepClone(res.data))
-          this.title = this.stateForm.eqName;
-          this.stateForm.brightness = Number(this.stateForm.brightness);
-          if(this.stateForm.frequency){
-            this.stateForm.frequency = Number(this.stateForm.frequency);
-          }
-
+          form = JSON.parse(JSON.stringify(res.data));
+          this.title = form.eqName;
+          form.frequency = typeof(form.frequency) == "string"?Number(form.frequency):form.frequency;
+          form.brightness = typeof(form.brightness) == "string"? Number(form.brightness):form.brightness;
+          this.stateForm = form
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");

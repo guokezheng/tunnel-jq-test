@@ -7614,9 +7614,9 @@ export default {
               listDevices().then((data) => {
                 console.log(data, "设备表");
                 for (let item of that.selectedIconList) {
-                  if(item.eqType == 30){
-                    console.log(item,"疏散标志")
-                  }
+                  // if(item.eqType == 30){
+                  //   console.log(item,"疏散标志")
+                  // }
                   for (let itm of data.rows) {
                     if (item.eqId == itm.eqId) {
                       item.eqDirection = itm.eqDirection;

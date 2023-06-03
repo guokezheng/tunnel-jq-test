@@ -142,14 +142,14 @@
 
   }
   .popup-result {
-    border: solid 1px #05AFE3 !important;
+    border: solid 1px #326CA9 !important;
     .title{
       background: #012E51 !important;
       color: #fff;
     }
     table{
       span{
-    border: solid 1px #05AFE3 !important;
+    border: solid 1px #326CA9 !important;
 
       }
     }
@@ -224,6 +224,20 @@
 
     ::-webkit-scrollbar-thumb {
       background-color: #0090D8;
+    }
+    .jobDialog{
+      .el-radio-button__inner{
+        background: #034A77;
+        border: 1px solid #034A77;
+      }
+      // .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+      //   background: #39ADFF;
+      // }
+      .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+        background-color: #39ADFF !important;
+        box-shadow: none !important;
+      }
+      
     }
     .addUserDialog{
       .el-dialog__body{
@@ -428,7 +442,7 @@
         background-color: #0064B0 !important;
       }
       .el-tabs--border-card > .el-tabs__header{
-        background: #326CA9 !important;
+        background: #034A77  !important;
         border-bottom: solid 1px #05AFE3;
         .el-tabs__item{
           color: #fff;

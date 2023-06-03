@@ -366,7 +366,7 @@ export default {
 <style scoped>
 .pop_btn {
   text-align: center;
-  margin-top: 20px;
+  margin: 20px auto;
 }
 .popup-main {
   position: relative;

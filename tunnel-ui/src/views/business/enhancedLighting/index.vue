@@ -25,30 +25,31 @@
             v-model="queryParams.tunnelName"
             @keyup.enter.native="handleQuery"
             size="small"
+            style="border-right: solid 1px #00c8ff; border-radius: 3px"
           >
-            <el-button
+            <!-- <el-button
               slot="append"
               class="searchTable"
               @click="lx_boxShow = !lx_boxShow"
-            ></el-button>
+            ></el-button> -->
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="lx_boxShow">
+    <!-- <div class="searchBox" v-show="lx_boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="所属隧道" prop="eqTunnelId">
+        <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
-            v-model="queryParams.eqTunnelId"
+            v-model="queryParams.tunnelId"
             placeholder="请选择所属隧道"
             clearable
             size="small"
-            @change="selectTunnel"
+            @change="$forceUpdate()"
           >
             <el-option
               v-for="item in eqTunnelData"
@@ -58,8 +59,16 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+          >
+        </el-form-item>
       </el-form>
-    </div>
+    </div> -->
 
     <div class="tableTopHr"></div>
     <el-table
@@ -562,14 +571,11 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      console.log(this.queryParams, "queryParams");
       this.$refs.tableFile.clearSelection();
-      console.log(this.queryParams, "queryParams");
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
       this.queryParams.tunnelName = "";
       this.handleQuery();
     },
@@ -741,9 +747,6 @@ export default {
         }
       }
       return resultName;
-    },
-    selectTunnel(data) {
-      this.queryParams.tunnelId = data;
     },
     addTimeSlot() {
       this.timeSlotList.push({

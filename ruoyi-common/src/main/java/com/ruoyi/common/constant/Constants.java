@@ -192,7 +192,7 @@ public class Constants
     public static final String SANJING_LIGHT_TOKEN = "control:sanJingLighttoken";
 
 
-
+    private Constants(){}
 
 
 

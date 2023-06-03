@@ -105,7 +105,7 @@ public class LightService {
             sdDevicesService.updateSdDevices(device);
 
             //更新设备实时数据
-            sdDeviceControlService.updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+            //sdDeviceControlService.updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
         }
 
         //添加操作日志
@@ -151,7 +151,7 @@ public class LightService {
             sdDevicesService.updateSdDevices(device);
 
             //更新设备实时数据
-            sdDeviceControlService.updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+            //sdDeviceControlService.updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
         }
 
         //添加操作日志

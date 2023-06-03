@@ -262,6 +262,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.form.pageNum = 1;
+      this.queryParams.searchValue = ''
       this.resetForm("queryForm");
       this.handleQuery();
     },

@@ -269,6 +269,8 @@ spring:
         max-poll-records: 500
       properties:
         max.poll.interval.ms: 1000000
+  main:
+    allow-bean-definition-overriding: true
 
 
 # token配置
@@ -376,7 +378,7 @@ authorize:
   #control_device_url:
 #高速云端可控权限
 platform:
-  #control: AGREE #同意
+#  control: AGREE #同意
   control: DISAGREE #不同意
 
 #物联中台事件topic
@@ -451,4 +453,22 @@ device:
       laneIndicator: ${device.hongmeng.url}/deviceCtrl/laneIndicator/alterLaneIndicatorRunStatus
       #卷帘门控制
       rollDoor: ${device.hongmeng.url}/deviceCtrl/rollDoor/alterRollDoorRunStatus
+
+
+mqtt:
+  #emqx地址+ MQTT协议端⼝ 1883
+  url: tcp://10.168.56.206:1883
+  clientInId: matt_test_in
+  clientOutId: matt_test_out
+#  clientId: matt_test
+  #rhy/iot/#通配符监听所有的鸿蒙控制器topic
+  topics: topic01,topic02,rhy/iot/#
+  qoslevel: 1
+  #MQTT 认证
+  username:  admin
+  password: 123456
+  # 10s
+  timeout: 10000
+  #20s
+  keepalive: 20
 

@@ -74,9 +74,11 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         SdFaultList sdFaultList = sdFaultListMapper.selectSdFaultListById(id);
         if(sdFaultList!=null){
             if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
-                SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());
-                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
+                /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
+                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());*/
+                String[] businessId = sdFaultList.getImgFileId().split(",");
+                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileLists(businessId));
+                //sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
             }
         }
         return sdFaultList;
@@ -395,5 +397,40 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public SdFaultList selectSdFaultById(String id) {
         return sdFaultListMapper.selectSdFaultById(id);
+    }
+
+    /**
+     * app端查询故障类型
+     * @return
+     */
+    @Override
+    public List<SdFaultList> getFaultDictValue(String dictType) {
+        return sdFaultListMapper.getFaultDictValue(dictType);
+    }
+
+    /**
+     * app添加故障信息
+     * @param sdFaultList
+     * @return
+     */
+    @Override
+    public int saveFault(SdFaultList sdFaultList) {
+        int result = -1;
+        sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
+        if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
+            sdFaultList.setImgFileId(sdFaultList.getImgFileId().substring(0,sdFaultList.getImgFileId().length()-1));
+        }
+        sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
+        sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
+        sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
+        sdFaultList.setFaultTbr(SecurityUtils.getUsername());// 设置当前创建人
+        /*if (sdFaultList.getEqId() != null && !sdFaultList.getEqId().equals("")
+                && (sdFaultList.getFaultLocation() == null || sdFaultList.getFaultLocation().equals(""))) {
+            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(sdFaultList.getEqId());
+            sdFaultList.setFaultLocation(sdDevices.getPile());
+        }*/
+        result = sdFaultListMapper.insertSdFaultList(sdFaultList);
+
+        return result;
     }
 }

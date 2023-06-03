@@ -36,17 +36,9 @@ public class OmronTask {
     private static final Logger log = LoggerFactory.getLogger(OmronTask.class);
 
 
-//    @Value("${omron.service.ip}")
-//    private String serviceIp;
-//    @Value("${omron.service.prot}")
-//    private Integer serviceProt;
-//    @Value("${omron.host.ip}")
-//    private String hostIp;
-
-
-    private String serviceIp = "10.7.187.87";
-    private Integer serviceProt = 9600;
-    private String hostIp = "127.0.0.1";
+//    private String serviceIp = "10.7.187.87";
+//    private Integer serviceProt = 9600;
+//    private String hostIp = "127.0.0.1";
 
     public static OmronTcpClient omronTcpClient;
 
@@ -70,13 +62,23 @@ public class OmronTask {
         SdDevicePoint sdDevicePoint = new SdDevicePoint();
         //获取可读点位信息   状态为 1
         sdDevicePoint.setIsReserved(1L);
-        //筛选条件。   (当前为测试  默认筛选所有。后期根据设备类型  以及  协议ID进行筛选)
+        //筛选条件。   默认筛选所有。 后期根据设备类型  以及  协议ID进行筛选
         List<SdDevicePoint> sdDeviceIdList = sdDevicePointMapper.selectSdDeviceIdList(sdDevicePoint);
+        //查看是否有数据信息需要解析
+        if(sdDeviceIdList.size()<=0){
+            return;
+        }
         if(omronTcpClient == null){
             try {
-                omronTcpClient = new OmronTcpClient(getOmronConnectProperties());
+                //plc获取ip协议比较特殊。 通过 sd_devices 表中获取 plc ip  端口号
+                //欧姆龙服务器链接信息  通过当前设备上级ip获取
+                SdDevices sdDevices = sdDevicesService.selectSdDevicesById(sdDeviceIdList.get(0).getEqId());
+                //获取当前父级  用户信息 获取ip  port
+                SdDevices fSdDevices = sdDevicesService.selectSdDevicesById(sdDevices.getFEqId());
+                //初始化 OmronTcpClient
+                omronTcpClient = new OmronTcpClient(getOmronConnectProperties(fSdDevices.getIp(),Integer.parseInt(fSdDevices.getPort())));
                 //初始化链接     服务器地址
-                omronTcpClient.init(serviceIp,serviceProt);
+                omronTcpClient.init(fSdDevices.getIp(),Integer.parseInt(fSdDevices.getPort()));
                 //获取ChannelFuture
                 ChannelFuture channelFuture = omronTcpClient.channelFuture;
                 //推送握手协议
@@ -86,6 +88,8 @@ public class OmronTask {
                 omronTcpClient = null;
             }
         }
+
+
         if(omronTcpClient!=null){
             //设备在线状态
             for (SdDevicePoint devicePoint:sdDeviceIdList) {
@@ -148,10 +152,10 @@ public class OmronTask {
      * 初始化欧姆龙配置信息  (当前为测试数据  后期整理为线上链接)
      * @return
      */
-    public OmronConnectProperties getOmronConnectProperties(){
+    public OmronConnectProperties getOmronConnectProperties(String serviceIp,Integer serviceProt){
         OmronConnectProperties conf = new OmronConnectProperties();
         //SA1地址：电脑 ip
-        conf.setLocalHost(hostIp);
+        conf.setLocalHost("127.0.0.1");
         //DA1地址： 服务器 ip
         conf.setHost(serviceIp);
         //服务器port

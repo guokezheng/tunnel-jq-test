@@ -149,4 +149,11 @@ public interface SdFaultListMapper
      * @return
      */
     int updateFaultUnRemoveState(@Param("faultId")String faultId,@Param("falltRemoveStatue")String falltRemoveStatue);
+
+    /**
+     * app查询故障相关字典值
+     * @return
+     */
+    List<SdFaultList> getFaultDictValue(@Param("dictType")String dictType);
+
 }

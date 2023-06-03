@@ -1052,4 +1052,26 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return result;
     }
 
+    /**
+     * 根据外部设备ID查询设备信息
+     *
+     * @param externalId 外部设备ID
+     * @return
+     */
+    @Override
+    public SdDevices getDevicesListByExternalId(String externalId) {
+        return sdDevicesMapper.getDevicesListByExternalId(externalId);
+    }
+
+    /**
+     * 根据协议Id查询设备列表
+     *
+     * @param sdDevices 设备信息
+     * @return
+     */
+    @Override
+    public List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices) {
+        return sdDevicesMapper.selectDevicesByProtocol(sdDevices);
+    }
+
 }

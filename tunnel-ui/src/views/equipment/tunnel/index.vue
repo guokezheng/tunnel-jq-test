@@ -30,7 +30,7 @@
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.searchValue"
-            placeholder="请输入隧道名称、桩号,回车搜索"
+            placeholder="请输入隧道名称、桩号，回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -492,7 +492,7 @@
             <el-form-item label="隧道ID" prop="tunnelId">
               <el-input
                 v-model="form.tunnelId"
-                placeholder="请输入隧道ID"
+                :placeholder="disabledInfo ? '' : '请输入隧道ID'"
                 id="aaa"
                 name="aaa"
                 readonly="readonly"
@@ -504,7 +504,7 @@
             <el-form-item label="隧道名称" prop="tunnelName">
               <el-input
                 v-model="form.tunnelName"
-                placeholder="请输入隧道名称"
+                :placeholder="disabledInfo?'':'请输入隧道名称'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -514,7 +514,7 @@
             <el-form-item label="隧道地址" prop="tunnelAddress">
               <el-input
                 v-model="form.tunnelAddress"
-                placeholder="请输入隧道地址"
+                :placeholder="disabledInfo ? '' : '请输入隧道地址'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -523,7 +523,7 @@
             <el-form-item label="路段ID" prop="roadId">
               <el-input
                 v-model="form.roadId"
-                placeholder="请输入路段ID"
+                :placeholder="disabledInfo ? '' : '请输入路段ID'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -532,7 +532,7 @@
             <el-form-item label="道路编码" prop="roadCode">
               <el-input
                 v-model="form.roadCode"
-                placeholder="请输入道路编码"
+                :placeholder="disabledInfo ? '' : '请输入道路编码'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -541,7 +541,7 @@
             <el-form-item label="道路名称" prop="roadCode">
               <el-input
                 v-model="form.roadName"
-                placeholder="请输入道路名称"
+                :placeholder="disabledInfo ? '' : '请输入道路名称'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -550,7 +550,7 @@
             <el-form-item label="等级编码" prop="levelCode">
               <el-input
                 v-model="form.levelCode"
-                placeholder="请输入等级编码"
+                :placeholder="disabledInfo ? '' : '请输入等级编码'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -559,7 +559,7 @@
             <el-form-item label="等级名称" prop="levelName">
               <el-input
                 v-model="form.levelName"
-                placeholder="请输入等级名称"
+                :placeholder="disabledInfo ? '' : '请输入等级名称'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -568,7 +568,7 @@
             <el-form-item label="长度编码" prop="lengthCode">
               <el-input
                 v-model="form.lengthCode"
-                placeholder="请输入长度编码"
+                :placeholder="disabledInfo ? '' : '请输入长度编码'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -577,7 +577,7 @@
             <el-form-item label="长度名称" prop="lengthName">
               <el-input
                 v-model="form.lengthName"
-                placeholder="请输入长度名称"
+                :placeholder="disabledInfo ? '' : '请输入长度名称'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -586,7 +586,7 @@
             <el-form-item label="修建年度" prop="constructYear">
               <el-input
                 v-model="form.constructYear"
-                placeholder="请输入修建年度"
+                :placeholder="disabledInfo ? '' : '请输入修建年度'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -601,7 +601,7 @@
                 type="date"
                 style="width: 100%"
                 value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="请输入建成通车日期"
+                :placeholder="disabledInfo ? '' : '请输入建成通车日期'"
               />
             </el-form-item>
           </el-col>
@@ -609,7 +609,7 @@
             <el-form-item label="管养单位ID" prop="managerId">
               <el-input
                 v-model="form.managerId"
-                placeholder="请输入管养单位ID"
+                :placeholder="disabledInfo ? '' : '请输入管养单位ID'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -618,7 +618,7 @@
             <el-form-item label="区划编码" prop="orgCode">
               <el-input
                 v-model="form.orgCode"
-                placeholder="请输入区划编码"
+                :placeholder="disabledInfo ? '' : '请输入区划编码'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -627,7 +627,7 @@
             <el-form-item label="区划名称" prop="orgName">
               <el-input
                 v-model="form.orgName"
-                placeholder="请输入区划名称"
+                :placeholder="disabledInfo ? '' : '请输入区划名称'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -636,7 +636,7 @@
             <el-form-item label="经度" prop="longitude">
               <el-input
                 v-model="form.longitude"
-                placeholder="请输入经度"
+                :placeholder="disabledInfo ? '' : '请输入经度'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -646,7 +646,7 @@
             <el-form-item label="纬度" prop="latitude">
               <el-input
                 v-model="form.latitude"
-                placeholder="请输入纬度"
+                :placeholder="disabledInfo ? '' : '请输入纬度'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -658,16 +658,16 @@
             <el-form-item label="车道数目" prop="lane">
               <el-select
                 v-model="form.lane"
-                placeholder="请选择车道数目"
+                :placeholder="disabledInfo ? '' : '请选择车道数目'"
                 style="width: 100%"
                 :disabled="disabledInfo"
               >
-<!--                <el-option-->
-<!--                  v-for="dict in laneAmountList"-->
-<!--                  :key="dict.label"-->
-<!--                  :label="dict.label"-->
-<!--                  :value="dict.value"-->
-<!--                ></el-option>-->
+                <!--                <el-option-->
+                <!--                  v-for="dict in laneAmountList"-->
+                <!--                  :key="dict.label"-->
+                <!--                  :label="dict.label"-->
+                <!--                  :value="dict.value"-->
+                <!--                ></el-option>-->
                 <el-option
                   v-for="dict in dict.type.sd_lane"
                   :key="dict.value"
@@ -683,7 +683,7 @@
               <el-col :span="24">
                 <el-input
                   v-model="form.tunnelLength"
-                  placeholder="请输入隧道长度"
+                  :placeholder="disabledInfo ? '' : '请输入隧道长度'"
                   :disabled="disabledInfo"
                 />
               </el-col>
@@ -696,7 +696,7 @@
             <el-form-item label="三维坐标" prop="coordinates">
               <el-input
                 v-model="form.coordinates"
-                placeholder="请输入三维坐标"
+                :placeholder="disabledInfo ? '' : '请输入三维坐标'"
                 :disabled="disabledInfo"
               />
             </el-form-item>
@@ -708,7 +708,7 @@
                 <el-input
                   v-model="form.startPile"
                   @blur="setPileInt('start')"
-                  placeholder="请输入开始桩号"
+                  :placeholder="disabledInfo ? '' : '请输入开始桩号'"
                   :disabled="disabledInfo"
                 />
               </el-col>
@@ -729,7 +729,7 @@
                 <el-input
                   v-model="form.endPile"
                   @blur="setPileInt('end')"
-                  placeholder="请输入结束桩号"
+                  :placeholder="disabledInfo ? '' : '请输入结束桩号'"
                   :disabled="disabledInfo"
                 />
               </el-col>
@@ -752,24 +752,9 @@
                 :disable-branch-nodes="true"
                 :show-count="true"
                 noResultsText="暂无数据"
-                placeholder="请选择归属部门"
+                :placeholder="disabledInfo ? '' : '请选择归属部门'"
                 :disabled="disabledInfo"
               />
-
-              <!--<el-select
-                v-model="form.deptId"
-                placeholder="请选择所属部门"
-                clearable
-                size="small"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in deptsData"
-                  :key="item.deptId"
-                  :label="item.deptName"
-                  :value="item.deptId"
-                />
-              </el-select>-->
             </el-form-item>
           </el-col>
 
@@ -777,7 +762,7 @@
             <el-form-item label="是否启用" prop="poll">
               <el-select
                 v-model="form.poll"
-                placeholder="请选择是否启用"
+                :placeholder="disabledInfo ? '' : '请选择是否启用'"
                 style="width: 100%"
                 :disabled="disabledInfo"
               >
@@ -795,8 +780,8 @@
             <el-form-item label="备注" prop="remake">
               <el-input
                 v-model="form.remake"
-                placeholder="请输入备注"
                 :disabled="disabledInfo"
+                :placeholder="disabledInfo ? '' : '请输入备注'"
               />
             </el-form-item>
           </el-col>
@@ -860,7 +845,7 @@ import { color } from "echarts";
 
 export default {
   name: "Tunnels",
-  dicts: ["sd_direction","sd_lane"],
+  dicts: ["sd_direction", "sd_lane"],
   components: { Treeselect },
   data() {
     const validateLongitude = (rule, value, callback) => {
@@ -919,11 +904,11 @@ export default {
       opens: false,
       // 是否使用字典
       pollOptions: [],
-      laneAmountList:[
-        {label :"一车道" ,value :1},
-        {label :"二车道" ,value :2},
-        {label :"三车道" ,value :3},
-        {label :"四车道" ,value :4},
+      laneAmountList: [
+        { label: "一车道", value: 1 },
+        { label: "二车道", value: 2 },
+        { label: "三车道", value: 3 },
+        { label: "四车道", value: 4 },
       ],
       // 查询参数
       queryParams: {
@@ -1277,10 +1262,10 @@ export default {
       this.ids = selection.map((item) => item.tunnelId);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
-      console.log(selection,"selection")
-      console.log(this.ids,"this.ids")
-      console.log(this.single,"this.single")
-      console.log(this.multiple,"this.multiple")
+      console.log(selection, "selection");
+      console.log(this.ids, "this.ids");
+      console.log(this.single, "this.single");
+      console.log(this.multiple, "this.multiple");
     },
     /** 新增按钮操作 */
     handleAdd() {

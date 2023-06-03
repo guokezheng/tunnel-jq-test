@@ -84,7 +84,7 @@ public class DictUtils
         StringBuilder propertyString = new StringBuilder();
         List<SysDictData> datas = getDictCache(dictType);
 
-        if (StringUtils.containsAny(separator, dictValue) && StringUtils.isNotEmpty(datas))
+        if (org.apache.commons.lang3.StringUtils.containsAny(separator, dictValue) && StringUtils.isNotEmpty(datas))
         {
             for (SysDictData dict : datas)
             {
@@ -108,7 +108,7 @@ public class DictUtils
                 }
             }
         }
-        return StringUtils.stripEnd(propertyString.toString(), separator);
+        return org.apache.commons.lang3.StringUtils.stripEnd(propertyString.toString(), separator);
     }
 
     /**
@@ -124,7 +124,7 @@ public class DictUtils
         StringBuilder propertyString = new StringBuilder();
         List<SysDictData> datas = getDictCache(dictType);
 
-        if (StringUtils.containsAny(separator, dictLabel) && StringUtils.isNotEmpty(datas))
+        if (org.apache.commons.lang3.StringUtils.containsAny(separator, dictLabel) && StringUtils.isNotEmpty(datas))
         {
             for (SysDictData dict : datas)
             {
@@ -148,7 +148,7 @@ public class DictUtils
                 }
             }
         }
-        return StringUtils.stripEnd(propertyString.toString(), separator);
+        return org.apache.commons.lang3.StringUtils.stripEnd(propertyString.toString(), separator);
     }
 
     /**

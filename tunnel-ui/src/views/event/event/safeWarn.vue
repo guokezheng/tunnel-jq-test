@@ -2019,12 +2019,14 @@ export default {
     },
     //打开详情弹窗
     detailsOpen(item) {
+      debugger
       this.prevControlType = item.prevControlType;
       let data = { id: item.id };
       getEventDetail(data).then((res) => {
         console.log(res, "详情数据");
         this.eventDiscovery = res.data.eventDiscovery;
-        this.manualReview = res.data.manualReview;
+        console.log(res.data.manualReview)
+        this.manualReview = !!res.data.manualReview ? res.data.manualReview :{};
         this.planDisposal = res.data.planDisposal;
         this.disposalRecord = res.data.disposalRecord;
         this.eventStateCurrent = res.data.eventState;
@@ -3062,7 +3064,7 @@ export default {
         margin: 0 10px;
         .eventType {
           background: rgba(228, 14, 14, 0.4);
-          font-size: 0.675rem;
+          font-size: 0.7vw;
           font-weight: 600;
           color: #fff;
 
@@ -3076,7 +3078,7 @@ export default {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          font-size: 0.675rem;
+          font-size: 0.7vw;
           font-weight: 400;
           color: #fff;
           padding: 2px 0px;
@@ -3099,7 +3101,7 @@ export default {
           align-items: center;
           cursor: pointer;
           margin-left: 10px;
-          font-size: 0.675rem;
+          font-size: 0.7vw;
         }
         div:nth-of-type(1) {
           background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);

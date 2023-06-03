@@ -91,4 +91,17 @@ public interface ISdFaultListService
      * @return
      */
     SdFaultList selectSdFaultById(String id);
+
+    /**
+     * app端查询故障类型
+     * @return
+     */
+    List<SdFaultList> getFaultDictValue(String dictType);
+
+    /**
+     * App添加故障信息
+     * @param sdFaultList
+     * @return
+     */
+    int saveFault(SdFaultList sdFaultList);
 }

@@ -32,6 +32,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="fbState"    column="fbState"    />
         <result property="imgFileId"    column="img_file_id"    />
+        <result property="dictLabel"    column="dict_label"    />
+        <result property="dictValue"    column="dict_value"    />
         <result property="ftype"    column="ftype"    />
         <result property="fremove"    column="fremove"    />
         <result property="flevel"    column="flevel"    />
@@ -161,8 +163,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultTbtime != null">fault_tbtime = #{faultTbtime},</if>
             <if test="eqId != null">eq_id = #{eqId},</if>
             <if test="eqStatus != null">eq_status = #{eqStatus},</if>
-            <if test="eqRunStatus != null">eq_run_status = #{eqRunStatus},</if>
-            <if test="faultCode != null">fault_code = #{faultCode},</if>
+            <if test="eqRunStatus != null and eqRunStatus!='undefined'">eq_run_status = #{eqRunStatus},</if>
+            <if test="faultCode != null and faultCode!='undefined'">fault_code = #{faultCode},</if>
             <if test="faultLevel != null">fault_level = #{faultLevel},</if>
             <if test="falltRemoveStatue != null">fallt_remove_statue = #{falltRemoveStatue},</if>
             <if test="faultDescription != null">fault_description = #{faultDescription},</if>
@@ -327,9 +329,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getEquipmentFaultStatistics" parameterType="java.lang.String" resultType="hashmap">
         SELECT
-            sdd.dict_label AS eqSystemName,
+            IFNULL(sdd.dict_label,'') AS eqSystemName,
             count(*) AS eqFaultNum,
-            sdd.dict_value AS eqSystemCode
+            IFNULL(sdd.dict_value,'') AS eqSystemCode
         FROM
             sd_fault_list sfl
         LEFT JOIN sd_devices sd ON sfl.eq_id = sd.eq_id
@@ -438,6 +440,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdFaultById" parameterType="String" resultMap="SdFaultListResult">
         select * from sd_fault_list f where f.id = #{id}
+    </select>
+
+
+    <select id="getFaultDictValue" parameterType="String" resultMap="SdFaultListResult">
+        select dict_label,dict_value from sys_dict_data where dict_type = #{dictType}
     </select>
 
 

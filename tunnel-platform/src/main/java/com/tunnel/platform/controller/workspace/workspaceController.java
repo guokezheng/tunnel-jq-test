@@ -729,7 +729,7 @@ public class workspaceController extends BaseController {
             map.put("devId", devId);
             map.put("state", state);
             map.put("controlType", "0");
-            map.put("stateNum", stateNum);
+            map.put("brightness", stateNum);
             count = sdDeviceControlService.controlDevices(map);
         }
         return AjaxResult.success(count);

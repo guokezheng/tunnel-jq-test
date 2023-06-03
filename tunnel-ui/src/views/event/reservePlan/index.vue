@@ -1174,11 +1174,6 @@ export default {
     }
     listTunnels().then((res) => {
       this.eqTunnelData = res.rows;
-      this.eqTunnelData.forEach((item) => {
-        item.sdTunnelSubareas.forEach((item, index) => {
-          this.eqTunnelDataList.push(item);
-        });
-      });
     });
     this.getDicts("sd_emergency_plan_type").then((response) => {
       this.planCategory = response.data;
@@ -2111,13 +2106,9 @@ export default {
       // this.resetReservePlanDrawForm();
       this.planChangeSink = "edit";
       const id = row.id || this.ids;
-      tunnelNames().then((res) => {
+      listTunnels().then((res) => {
+        console.log(res,"resresres")
         this.eqTunnelData = res.rows;
-        this.eqTunnelData.forEach((item) => {
-          item.sdTunnelSubareas.forEach((item, index) => {
-            this.eqTunnelDataList.push(item);
-          });
-        });
       });
       this.getDicts("sd_emergency_plan_type").then((response) => {
         this.planCategory = response.data;
@@ -2298,13 +2289,8 @@ export default {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       this.getList();
       this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
-      tunnelNames(this.paramsData).then((res) => {
+      listTunnels(this.paramsData).then((res) => {
         this.eqTunnelData = res.rows;
-        this.eqTunnelData.forEach((item) => {
-          item.sdTunnelSubareas.forEach((item, index) => {
-            this.eqTunnelDataList.push(item);
-          });
-        });
       });
     },
   },

@@ -17,10 +17,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="note"    column="note"    />
+        <result property="protocolCode" column="protocol_code"></result>
     </resultMap>
 
     <sql id="selectSdDevicesProtocolVo">
-        select id, brand_id, eq_type, protocol_name, protocol_type, class_name, is_del,create_by, create_time, update_by, update_time, note from sd_devices_protocol
+        select id, brand_id, eq_type, protocol_name, protocol_type, class_name, is_del,create_by, create_time, update_by, update_time, note,protocol_code from sd_devices_protocol
     </sql>
 
     <select id="selectSdDevicesProtocolList" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesProtocol" resultMap="SdDevicesProtocolResult">
@@ -33,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="protocolType != null  and protocolType != ''"> and protocol_type = #{protocolType}</if>
             <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
             <if test="note != null  and note != ''"> and note = #{note}</if>
+            <if test="protocolCode != null  and protocolCode != ''"> and protocol_code = #{protocolCode}</if>
         </where>
         order by create_time desc
     </select>
@@ -56,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="note != null">note,</if>
+            <if test="protocolCode != null">protocol_code,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="brandId != null">#{brandId},</if>
@@ -69,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="note != null">#{note},</if>
+            <if test="protocolCode != null">#{protocolCode},</if>
          </trim>
     </insert>
 
@@ -86,6 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="note != null">note = #{note},</if>
+            <if test="protocolCode != null">protocol_code = #{protocolCode},</if>
         </trim>
         where id = #{id}
     </update>

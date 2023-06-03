@@ -8,6 +8,8 @@
       width="1000px"
       append-to-body
       v-dialogDrag
+      :close-on-click-modal="false"
+      :modal="false"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -48,20 +50,24 @@
           <el-table-column
             label="用户名称"
             prop="userName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="用户昵称"
             prop="nickName"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="邮箱"
             prop="email"
+            align="center"
             :show-overflow-tooltip="true"
           />
           <el-table-column
             label="手机"
+            align="center"
             prop="phonenumber"
             :show-overflow-tooltip="true"
           />

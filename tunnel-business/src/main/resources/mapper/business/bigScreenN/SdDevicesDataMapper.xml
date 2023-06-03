@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tunnel.business.mapper.bigScreenApiN.SdDevicesDataMapper">
+
+    <select id="getIndexDataCount" resultType="int">
+        select count(1) from sd_devices
+    </select>
+
+    <select id="getIndexDataWarnCount" resultType="int">
+        select count(1) from sd_fault_list where fallt_remove_statue = 1
+    </select>
+
+    <select id="getIndexDataRepairCount" resultType="int">
+        select count(DISTINCT eq_fault_id) from sd_patrol_list A left join sd_task_list B on A.task_id = B.id where patrol_type = 1 and fault_clstatus = 2 and B.task_status = 2
+    </select>
+
+    <select id="getFaultWarnDataList" resultType="map">
+        select  B.eq_name as eqName, fault_location as faultLocation,fault_description as faultDescription,fault_cxtime as faultCxtime,fault_fxtime as faultFxtime,fault_level as faultLevel from sd_fault_list A
+
+        left join sd_devices B  on A.eq_id = B.eq_id
+
+        where fallt_remove_statue = 0
+
+        order by A.create_time desc  limit 30
+    </select>
+
+    <select id="getMonthFaultDataDevices" resultType="int">
+        select
+        (
+        select count(1) from sd_devices aa where  (YEAR(aa.create_time) = YEAR(NOW()) and DATE_FORMAT(aa.create_time,'%m')  &lt;= A.`mon`) or YEAR(aa.create_time) &lt; YEAR(NOW())
+
+        order by DATE_FORMAT(aa.create_time,'%m')
+        ) as  `count`
+        from (
+        SELECT '01' AS mon UNION ALL
+        SELECT '02' AS mon UNION ALL SELECT '03' AS mon UNION ALL
+        SELECT '04' AS mon UNION ALL SELECT '05' AS mon UNION ALL
+        SELECT '06' AS mon UNION ALL SELECT '07' AS mon UNION ALL
+        SELECT '08' AS mon UNION ALL SELECT '09' AS mon UNION ALL
+        SELECT '10' AS mon UNION ALL SELECT '11' AS mon UNION ALL
+        SELECT '12' AS mon
+        ) as A left join sd_devices B on A.mon = DATE_FORMAT(B.create_time,'%m') and YEAR(B.create_time) = YEAR(NOW())
+
+        GROUP BY A.`mon`
+        order by A.`mon`
+    </select>
+
+    <select id="getMonthFaultDataFaults" resultType="int">
+        select count(b.eq_id) as `count` from (
+           SELECT '01' AS mon UNION ALL
+           SELECT '02' AS mon UNION ALL SELECT '03' AS mon UNION ALL
+           SELECT '04' AS mon UNION ALL SELECT '05' AS mon UNION ALL
+           SELECT '06' AS mon UNION ALL SELECT '07' AS mon UNION ALL
+           SELECT '08' AS mon UNION ALL SELECT '09' AS mon UNION ALL
+           SELECT '10' AS mon UNION ALL SELECT '11' AS mon UNION ALL
+           SELECT '12' AS mon
+       ) as A left join sd_fault_list B on A.mon = DATE_FORMAT(B.fault_fxtime,'%m') and YEAR(B.fault_fxtime) = YEAR(NOW())
+        GROUP BY A.`mon`
+        order by A.`mon`
+    </select>
+
+    <select id="getRealTimeStatDataNormalList" resultType="int">
+        SELECT count(B.eq_id) as `count` FROM  sd_equipment_type A left join `sd_devices` B on A.type_id = B.eq_type and B.eq_status = 1
+
+        GROUP BY A.type_id
+
+        order by A.type_id
+
+    </select>
+
+    <select id="getRealTimeStatDataErrorList" resultType="int">
+        SELECT count(B.eq_id) as `count` FROM  sd_equipment_type A left join `sd_devices` B on A.type_id = B.eq_type and B.eq_status != 1
+
+        GROUP BY A.type_id
+
+        order by A.type_id
+    </select>
+
+    <select id="getRealTimeStatDataEquipments" resultType="string">
+        select type_name as typeName from sd_equipment_type
+
+        order by type_id
+    </select>
+
+    <select id="getFaultTimeTopDataList" resultType="int">
+        SELECT
+            TIMESTAMPDIFF( HOUR, fault_fxtime, now() ) as times
+        FROM
+            sd_fault_list A
+            LEFT JOIN sd_devices B ON A.eq_id = B.eq_id
+            LEFT JOIN sd_equipment_type C ON B.eq_type = C.type_id
+        WHERE
+            fallt_remove_statue = 1
+        ORDER BY
+            TIMESTAMPDIFF( HOUR, fault_fxtime, now() ) DESC  ,A.id
+            LIMIT 10
+    </select>
+
+    <select id="getFaultTimeTopDataEqList" resultType="string">
+        SELECT
+            IFNULL(C.type_name ,'未知设备') as name
+        FROM
+            sd_fault_list A
+                LEFT JOIN sd_devices B ON A.eq_id = B.eq_id
+                LEFT JOIN sd_equipment_type C ON B.eq_type = C.type_id
+        WHERE
+            fallt_remove_statue = 1
+        ORDER BY
+            TIMESTAMPDIFF( HOUR, fault_fxtime, now() ) DESC  ,A.id
+            LIMIT 10
+    </select>
+
+    <select id="getEqPercentData" resultType="map">
+
+        select   A.typeAbbr as id, A.typeName,A.typeCount, round(A.typeCount / B.count  * 100,2) as percent from
+
+          (select A.type_abbr as typeAbbr,A.type_name as typeName, count(b.eq_id) as typeCount from sd_equipment_type A left join sd_devices B on A.type_id = B.eq_type
+
+
+           group by A.type_id ) A,
+          (
+
+              select count(1) as count from sd_devices
+          ) B
+
+    </select>
+
+    <select id="getFaultCategoryMonthData" resultType="map">
+        select typeName,round(A.count / B.count  * 100,2) as percent from (
+          SELECT
+              IFNULL(C.type_name,'未知设备') as typeName,count(1) as `count`
+          FROM
+              sd_fault_list A
+                  LEFT JOIN sd_devices B ON A.eq_id = B.eq_id
+                  LEFT JOIN sd_equipment_type C ON B.eq_type = C.type_id
+          where A.create_time between date_sub(now(),interval 1 month) and now()
+          GROUP BY C.type_name
+      ) A ,
+
+      (select count(1) as `count` from sd_fault_list where create_time between date_sub(now(),interval 1 month) and now()) B
+    </select>
+
+
+    <select id="getFaultCategorySixMonthsData" resultType="map">
+        select typeName,round(A.count / B.count  * 100,2) as percent from (
+              SELECT
+                  IFNULL(C.type_name,'未知设备') as typeName,count(1) as `count`
+              FROM
+                  sd_fault_list A
+                      LEFT JOIN sd_devices B ON A.eq_id = B.eq_id
+                      LEFT JOIN sd_equipment_type C ON B.eq_type = C.type_id
+              where A.create_time between date_sub(now(),interval 6 month) and now()
+              GROUP BY C.type_name
+          ) A ,
+
+        (select count(1) as `count` from sd_fault_list where create_time between date_sub(now(),interval 1 month) and now()) B
+    </select>
+</mapper>

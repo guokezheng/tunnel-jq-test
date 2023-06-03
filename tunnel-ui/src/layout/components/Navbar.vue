@@ -182,7 +182,7 @@
               hover-effect
               white_icon
             "
-            @click="bigScreenfun"
+            @click="bigScreenfun2"
             style="height: 7.6vh;line-height:7.6vh; font-size: 2.2vh;"
             title="监控一体化大屏"
           ></i>
@@ -755,6 +755,17 @@ export default {
         this.$modal.msgWarning("您的账号没有查看此功能的权限");
       }
     },
+    bigScreenfun2() {
+      if (checkPermi(["fullViewShow"])) {
+        let routeUrl = this.$router.resolve({
+          path: "/bigScreen2/index.html",
+          query: {},
+        });
+        window.open(routeUrl.href, "_blank");
+      } else {
+        this.$modal.msgWarning("您的账号没有查看此功能的权限");
+      }
+    },
     async logout() {
       this.$confirm("确定注销并退出系统吗？", "提示", {
         confirmButtonText: "确定",
@@ -976,7 +987,7 @@ export default {
   position: absolute;
   right: 0;
 }
-.theme-light .navbar {
+.theme-dark .navbar {
   background-color: unset;
 }
 .theme-dark .right-menu #screenfull {
@@ -991,7 +1002,7 @@ export default {
 .el-dropdown-menu_theme-light {
   background-color: rgba(255, 255, 255, 0.9);
   .el-tabs__content {
-    .theme-light .el-scrollbar__wrap {
+    .theme-dark .el-scrollbar__wrap {
       background-color: rgba(255, 255, 255, 0.8);
     }
     .el-scrollbar__view {

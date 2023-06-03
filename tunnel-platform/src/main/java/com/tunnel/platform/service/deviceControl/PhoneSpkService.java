@@ -171,7 +171,7 @@ public class PhoneSpkService {
 
             if (null != device) {
                 String data = PhoneSpkEnum.getValue(attribute);
-                sdDeviceControlService.updateDeviceData(device, data, itemId);
+                //sdDeviceControlService.updateDeviceData(device, data, itemId);
 
                 //接收杭山东隧道的华为推送的紧急电话事件数据，此处对于接收到的报警信息不做处理。
                 /*SdEventType sdEventType = new SdEventType();

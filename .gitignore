@@ -33,3 +33,4 @@ tunnel-ui/vue.config.js
 tunnel-ui/vue.config.js
 ruoyi-admin/src/main/resources/application-druid.yml
 tunnel-business/src/main/java/com/tunnel/business/service/informationBoard/impl/SdVmsTemplateServiceImpl.java
+tunnel-ui/vue.config.js

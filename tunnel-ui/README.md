@@ -55,4 +55,7 @@ npm run build:stage
 
 # 构建生产环境
 npm run build:prod
+
+# 新版gis地图
+npm install gis-map-admin@0.9.2
 ```

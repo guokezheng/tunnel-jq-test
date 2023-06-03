@@ -19,9 +19,9 @@ export const singleCat = {
         tunnelItems = this.tunnelList[0]
       }
       carSwitchType(tunnelItems.tunnelId, this.carShow ? 0:1).then((res) =>{})
-      this.$nextTick(() => {
-        this.getEnergyConsumption(this.currentTunnel.id);
-      });
+      // this.$nextTick(() => {
+      //   this.getEnergyConsumption(this.currentTunnel.id);
+      // });
       if(this.carShow){
         let that = this
         //小车展示秒表 定时清除不动的车辆

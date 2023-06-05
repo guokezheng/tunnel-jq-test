@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="SdEnhancedLightingConfig" id="SdEnhancedLightingConfigResult">
         <result property="id"    column="id"    />
         <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelName"    column="tunnel_name"    />
         <result property="modeType"    column="mode_type"    />
         <result property="timeSlot"    column="time_slot"    />
         <result property="beforeLuminance"    column="before_luminance"    />
@@ -24,19 +25,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdEnhancedLightingConfigList" parameterType="SdEnhancedLightingConfig" resultMap="SdEnhancedLightingConfigResult">
-        <include refid="selectSdEnhancedLightingConfigVo"/>
+        select selc.id, selc.tunnel_id, selc.mode_type, selc.time_slot, selc.before_luminance, selc.min_luminance, selc.respond_time, selc.max_luminance_range, selc.min_luminance_range, selc.max_traffic_flow, selc.is_status, selc.is_traffic_volume
+        from sd_enhanced_lighting_config selc left join sd_tunnels st on selc.tunnel_id = st.tunnel_id
         <where>
-            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
-            <if test="modeType != null "> and mode_type = #{modeType}</if>
-            <if test="timeSlot != null  and timeSlot != ''"> and time_slot = #{timeSlot}</if>
-            <if test="beforeLuminance != null "> and before_luminance = #{beforeLuminance}</if>
-            <if test="minLuminance != null "> and min_luminance = #{minLuminance}</if>
-            <if test="respondTime != null "> and respond_time = #{respondTime}</if>
-            <if test="maxLuminanceRange != null "> and max_luminance_range = #{maxLuminanceRange}</if>
-            <if test="minLuminanceRange != null "> and min_luminance_range = #{minLuminanceRange}</if>
-            <if test="maxTrafficFlow != null "> and max_traffic_flow = #{maxTrafficFlow}</if>
-            <if test="isStatus != null "> and is_status = #{isStatus}</if>
-            <if test="isTrafficVolume != null "> and is_traffic_volume = #{isTrafficVolume}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and selc.tunnel_id = #{tunnelId}</if>
+            <if test="modeType != null "> and selc.mode_type = #{modeType}</if>
+            <if test="timeSlot != null  and timeSlot != ''"> and selc.time_slot = #{timeSlot}</if>
+            <if test="beforeLuminance != null "> and selc.before_luminance = #{beforeLuminance}</if>
+            <if test="minLuminance != null "> and selc.min_luminance = #{minLuminance}</if>
+            <if test="respondTime != null "> and selc.respond_time = #{respondTime}</if>
+            <if test="maxLuminanceRange != null "> and selc.max_luminance_range = #{maxLuminanceRange}</if>
+            <if test="minLuminanceRange != null "> and selc.min_luminance_range = #{minLuminanceRange}</if>
+            <if test="maxTrafficFlow != null "> and selc.max_traffic_flow = #{maxTrafficFlow}</if>
+            <if test="isStatus != null "> and selc.is_status = #{isStatus}</if>
+            <if test="isTrafficVolume != null "> and selc.is_traffic_volume = #{isTrafficVolume}</if>
+            <if test="tunnelName != null and tunnelName != ''">
+                AND st.tunnel_name like lower(concat('%', #{tunnelName}, '%'))
+            </if>
         </where>
     </select>
     

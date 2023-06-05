@@ -22,6 +22,10 @@ public class SdEnhancedLightingConfig extends BaseEntity
     @Excel(name = "隧道id")
     private String tunnelId;
 
+    /** 所属隧道 */
+    @Excel(name = "所属隧道")
+    private String tunnelName;
+
     /** 模式类型： 0定时模式  1  自动模式  2 节能模式 */
     @Excel(name = "模式类型： 0定时模式  1  自动模式  2 节能模式")
     private Integer modeType;
@@ -61,6 +65,14 @@ public class SdEnhancedLightingConfig extends BaseEntity
     /** 是否开启车流量模式 0 关闭  1开启 */
     @Excel(name = "是否开启车流量模式 0 关闭  1开启")
     private Integer isTrafficVolume;
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
 
     public void setId(Long id)
     {

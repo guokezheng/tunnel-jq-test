@@ -160,6 +160,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     @ApiModelProperty("设备方向")
     private String eqDirection;
 
+
     @Excel(name = "设备方向：1-潍坊方向 2-济南方向",type= Excel.Type.IMPORT)
     @ApiModelProperty("设备方向：1-潍坊方向 2-济南方向")
     private String direction;

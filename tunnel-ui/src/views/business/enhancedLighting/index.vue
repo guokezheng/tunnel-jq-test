@@ -403,6 +403,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
+        tunnelName: "",
         modeType: null,
         timeSlot: null,
         beforeLuminance: null,

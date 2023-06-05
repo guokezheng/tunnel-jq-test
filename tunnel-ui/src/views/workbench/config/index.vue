@@ -2863,8 +2863,8 @@
     <com-board class="comClass" ref="boardRef"></com-board>
     <com-radio class="comClass" ref="radioRef"></com-radio>
     <com-kzq class="comClass" ref="kzqRef"></com-kzq>
-    
-      
+
+
     <!--摄像机对话框-->
     <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
@@ -5542,7 +5542,12 @@ export default {
         eqType: this.itemEqType,
       };
       batchControlDevice(param).then((res) => {
+        // this.$modal.msgSuccess("控制成功");
+        if (res.data == 0) {
+        this.$modal.msgError("控制失败");
+      } else if (res.data == 1) {
         this.$modal.msgSuccess("控制成功");
+      }
         this.batchManageDialog = false;
         this.closeBatchManageDialog();
       });
@@ -5751,7 +5756,7 @@ export default {
       this.$refs.boardRef.handleClosee();
       this.$refs.radioRef.handleClosee();
       this.$refs.kzqRef.handleClosee();
-      
+
     },
     // 车辆监测数据
     // vehicleEcharts() {
@@ -6186,7 +6191,7 @@ export default {
     // 改变站点
     changeSite(index) {
       if (index) {
-        // 判断是否有缓存的管理站id 
+        // 判断是否有缓存的管理站id
         // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
         // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
         // 3. get到管理站id this.tunnelQueryParams.deptId为空 是刷新 get管理站id 并赋值
@@ -7910,7 +7915,7 @@ export default {
         });
       }
     },
- 
+
     /* 选择隧道*/
     setTunnel(item, index) {
       console.log(item,"item")
@@ -7959,14 +7964,14 @@ export default {
       // this.currentTunnel.name = item.tunnelName;
 
       this.getTunnelData(this.currentTunnel.id);
-      
+
 
       // this.tunnelItem = item;
 
       // this.tunnelNameEarlyWarn = item.tunnelName;
       // this.lightControForm.index = index;
       // this.lightControForm.name = item.tunnelName;
-    
+
       // this.currentTunnel.id = item.tunnelId;
 
       //小车显示控制
@@ -8257,7 +8262,7 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          } 
+          }
         });
 
         // 防止 ‘暂未获取’ 和 配置状态单选同时出现

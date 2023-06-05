@@ -176,15 +176,15 @@ export function getJlyTunnel() {
   })
 }
 
-// 加强照明 弹窗
-export function setBrightness(query) {
-  return request({
-    url: '/light/setBrightness',
-    method: 'get',
-    params: query
-
-  })
-}
+// // 加强照明 弹窗
+// export function setBrightness(query) {
+//   return request({
+//     url: '/light/setBrightness',
+//     method: 'get',
+//     params: query
+//
+//   })
+// }
 
 // 工作台 能耗图表
 export function energyConsumptionDetection(tunneld) {

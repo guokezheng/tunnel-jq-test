@@ -77,7 +77,7 @@ public class StrategyTask {
             }
             map.put("devId",devId);
             map.put("state",sdStrategyRl.getState());
-            map.put("stateNum",sdStrategyRl.getStateNum());
+            map.put("brightness",sdStrategyRl.getStateNum());
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
             map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());

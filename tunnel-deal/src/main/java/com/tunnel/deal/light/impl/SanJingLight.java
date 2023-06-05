@@ -823,9 +823,9 @@ public class SanJingLight implements Light, GeneralControlBean {
         if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()
                 || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()
         ){
-            //todo ???? 属性值前后不一致
-            if(map.get("stateNum") != null){
-                brightness = Integer.parseInt(map.get("stateNum").toString());
+            //亮度值
+            if(map.get("brightness") != null){
+                brightness = Integer.parseInt(map.get("brightness").toString());
                 sdOperationLog.setDescription(brightness+"");
             }
 

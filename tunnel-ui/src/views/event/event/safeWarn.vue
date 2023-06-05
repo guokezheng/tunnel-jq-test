@@ -3064,7 +3064,7 @@ export default {
         margin: 0 10px;
         .eventType {
           background: rgba(228, 14, 14, 0.4);
-          font-size: 0.675rem;
+          font-size: 0.7vw;
           font-weight: 600;
           color: #fff;
 
@@ -3078,7 +3078,7 @@ export default {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          font-size: 0.675rem;
+          font-size: 0.7vw;
           font-weight: 400;
           color: #fff;
           padding: 2px 0px;
@@ -3101,7 +3101,7 @@ export default {
           align-items: center;
           cursor: pointer;
           margin-left: 10px;
-          font-size: 0.675rem;
+          font-size: 0.7vw;
         }
         div:nth-of-type(1) {
           background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);

@@ -235,7 +235,12 @@
       append-to-body
       :before-close="cancel"
       :close-on-click-modal="false"
+      class="jobDialog"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-row>
           <el-col :span="12">
@@ -338,6 +343,10 @@
       class="scrollbar"
       :close-on-click-modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <crontab
         @hide="openCron = false"
         @fill="crontabFill"

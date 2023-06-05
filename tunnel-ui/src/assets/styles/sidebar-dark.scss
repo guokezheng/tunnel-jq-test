@@ -142,14 +142,14 @@
 
   }
   .popup-result {
-    border: solid 1px #05AFE3 !important;
+    border: solid 1px #326CA9 !important;
     .title{
       background: #012E51 !important;
       color: #fff;
     }
     table{
       span{
-    border: solid 1px #05AFE3 !important;
+    border: solid 1px #326CA9 !important;
 
       }
     }
@@ -224,6 +224,20 @@
 
     ::-webkit-scrollbar-thumb {
       background-color: #0090D8;
+    }
+    .jobDialog{
+      .el-radio-button__inner{
+        background: #034A77;
+        border: 1px solid #034A77;
+      }
+      // .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+      //   background: #39ADFF;
+      // }
+      .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+        background-color: #39ADFF !important;
+        box-shadow: none !important;
+      }
+      
     }
     .addUserDialog{
       .el-dialog__body{
@@ -428,7 +442,7 @@
         background-color: #0064B0 !important;
       }
       .el-tabs--border-card > .el-tabs__header{
-        background: #326CA9 !important;
+        background: #034A77  !important;
         border-bottom: solid 1px #05AFE3;
         .el-tabs__item{
           color: #fff;
@@ -1704,8 +1718,8 @@
  .el-time-panel{
   background: #003D6C !important;
   color: #fff !important;
-  border: .0625rem solid #003D6C !important;
-  border-radius: 0.1875rem !important;
+  border: 1px solid #003D6C !important;
+  border-radius: 3px !important;
   transform:translateX(-25px) !important;
   .el-time-spinner__item{
     color: #fff !important;
@@ -1728,8 +1742,8 @@
 .el-picker-panel{
   background: #012E51 !important;
   color: #C0C4CC;
-  border: .0625rem solid #004375 !important;
-  border-radius: 0.1875rem !important;
+  border: solid 1px #004375 !important;
+  border-radius: 1px !important;
   transform:translateX(-25px) !important;
   // 时间选择器箭头
   .el-picker-panel__icon-btn{
@@ -1739,10 +1753,10 @@
     background: transparent;
   }
   .el-date-range-picker__content.is-left{
-    border-right: .0625rem solid #004375 !important;
+    border-right: 1px solid #004375 !important;
   }
   .el-date-range-picker__time-header,.el-date-picker__time-header{
-    border-bottom: .0625rem solid #004375 !important;
+    border-bottom: 1px solid #004375 !important;
     .el-input__inner{
       background: transparent;
       color: #FFF;
@@ -1769,8 +1783,8 @@
   }
   .available{
     div span{
-      box-shadow: inset 0 0 0.1875rem 0 #6ff;
-      border: 0.0625rem solid #0292ac;
+      box-shadow: inset 0 0 1px 0 #6ff;
+      border: 1px solid #0292ac;
       color: #00fff4;
       border-radius: 50%;
     }
@@ -1778,14 +1792,14 @@
   .prev-month,.next-month,.disabled{
     div span{
       color: #999 !important;
-      box-shadow: inset 0 0 .1875rem 0 #999 !important;
-      border: 0.0625rem solid #666 !important;
+      box-shadow: inset 0 0 1px 0 #999 !important;
+      border: 1px solid #666 !important;
       border-radius: 50%;
     }
   }
   .el-picker-panel__footer{
     background: #012E51 !important;
-    border-top:.0625rem solid #004375 !important;
+    border-top:1px solid #004375 !important;
   }
   .el-button{
     background: linear-gradient(172deg, #00ACED, #0079DB);

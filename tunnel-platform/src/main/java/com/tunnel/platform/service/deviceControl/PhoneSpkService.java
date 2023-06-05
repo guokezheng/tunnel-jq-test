@@ -15,14 +15,10 @@ import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
-import com.tunnel.business.service.dataInfo.IExternalSystemService;
-import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
-import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.phone.PhoneSpeak;
-import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -50,7 +46,7 @@ public class PhoneSpkService {
     @Autowired
     private SdDevicesMapper sdDevicesMapper;
     @Autowired
-    private SdDeviceControlService sdDeviceControlService;
+    private ISdDeviceDataService deviceDataService;
     @Autowired
     private IExternalSystemService externalSystemService;
     @Autowired
@@ -171,7 +167,7 @@ public class PhoneSpkService {
 
             if (null != device) {
                 String data = PhoneSpkEnum.getValue(attribute);
-                sdDeviceControlService.updateDeviceData(device, data, itemId);
+                deviceDataService.updateDeviceData(device, data, Long.valueOf(itemId));
 
                 //接收杭山东隧道的华为推送的紧急电话事件数据，此处对于接收到的报警信息不做处理。
                 /*SdEventType sdEventType = new SdEventType();
@@ -400,7 +396,10 @@ public class PhoneSpkService {
 
         sdOperationLogService.insertBatchSdOperationLog(list);
 
-        return AjaxResult.success(status);
+        if(status > 0){
+            return AjaxResult.success(status);
+        }
+        return AjaxResult.error();
     }
 
 

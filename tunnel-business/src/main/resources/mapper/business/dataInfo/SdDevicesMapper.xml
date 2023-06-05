@@ -786,10 +786,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data c on t.eq_direction = c.dict_value and c.dict_type= 'sd_direction'
         left join sd_device_data sdd  on t.eq_id = sdd.device_id
         left join sd_equipment_state es on sdd.data = es.device_state and es.state_type = '2'
+        and t.eq_type = es.state_type_id
         <where>
         1=1
             <if test="eqId != null and eqId != ''">and t.eq_id = #{eqId}</if>
-            and t.eq_type = es.state_type_id
         </where>
     </select>
 

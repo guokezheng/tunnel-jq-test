@@ -534,7 +534,7 @@
     <div class="title">
       巡检机器人-K478+700
       <img src="./robot/topr.png" alt="" class="topr">
-      <img class="close" src="./robot/close.png" alt="">
+      <!-- <img class="close" src="./robot/close.png" alt=""> -->
     </div>
 
     <!-- 状态信息 -->
@@ -603,7 +603,7 @@
               </div>
             </div>
           </div>
-          <span id="msg">0cd</span>
+          <span id="msg">0米</span>
           <!-- <progress min="0" max="100" value="33" class="progress"></progress>
           <span>50cd</span> -->
           <!-- <meter min="0" max="100" value="50" class="meter"></meter> -->

@@ -28,7 +28,7 @@ let laneImage = [
     id: "4",
     name: "马家峪隧道",
     url: require('@/assets/image/lane/mjy.jpg'),
-    width: 2270,
+    width: 2378,
     num: 3,
     direction: 0
   },
@@ -60,13 +60,63 @@ let laneImage = [
     id: "8",
     name: "马鞍山隧道",
     url: require('@/assets/image/lane/mas.png'),
-    width: 2270,
+    width: 2378,
     num: 3,
     direction: 0
   },
-  // 小于1300米的隧道 用1300px小车跑的长度加320光伏棚洞的px
-  // 大于1300小于2600的隧道 用1300*1.5+320 等于2270
-  // 大于2600的隧道 用1300*2+320 等于2920
+  {
+    id: "9",
+    name: "北甲峪隧道",
+    url: require('@/assets/image/lane/bjy.png'),
+    width: 2378,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "10",
+    name: "盘顶山隧道",
+    url: require('@/assets/image/lane/pds.png'),
+    width: 3678,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "11",
+    name: "青风岭隧道",
+    url: require('@/assets/image/lane/pds.png'),
+    width: 2378,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "12",
+    name: "双子山隧道",
+    url: require('@/assets/image/lane/szs.png'),
+    width: 2378,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "13",
+    name: "万昌溜隧道",
+    url: require('@/assets/image/lane/wcl.png'),
+    width: 3028,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "14",
+    name: "仰天山隧道",
+    url: require('@/assets/image/lane/yts.png'),
+    width: 1728,
+    num: 3,
+    direction: 0
+  },
+  
+  // 小于1300米的隧道 用1300px小车跑的长度加214*2光伏棚洞的px 等于1728
+  // 大于1300小于2600的隧道 用1300*1.5+214*2 等于2378
+  // 大于2600小于2900的隧道 用1300*2+214*2 等于3028
+  // 大于3900的隧道 用1300*2.5+214*2 等于3678
 ]
 
 export {

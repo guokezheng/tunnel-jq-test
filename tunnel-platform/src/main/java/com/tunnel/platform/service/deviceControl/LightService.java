@@ -84,104 +84,105 @@ public class LightService {
         return light;
     }
 
-    /**
-     * @param deviceId    设备ID
-     * @param bright      亮度
-     * @param controlType 控制类型
-     * @param operIp      操作者IP地址
-     * @return
-     */
-    public int setBrightness(String deviceId, Integer bright, String controlType, String operIp) {
-        SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
-        String className = getSdDevicesProtocolStrl(deviceId);
-        Light light = getBeanOfDeviceProtocol(className);
-        int resultStatus = light.setBrightness(deviceId, bright);
-
-        // 如果控制成功
-        if (resultStatus == 1) {
-            // 更新设备在线状态
-            device.setEqStatus("1");
-            device.setEqStatusTime(new Date());
-            sdDevicesService.updateSdDevices(device);
-
-            //更新设备实时数据
-            sdDeviceControlService.updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
-        }
-
-        //添加操作日志
-        SdOperationLog sdOperationLog = new SdOperationLog();
-        sdOperationLog.setEqTypeId(device.getEqType());
-        sdOperationLog.setTunnelId(device.getEqTunnelId());
-        sdOperationLog.setEqId(device.getEqId());
-        sdOperationLog.setOperationState(String.valueOf(bright));
-        sdOperationLog.setControlType(controlType);
-        sdOperationLog.setCreateTime(new Date());
-        sdOperationLog.setOperIp(operIp);
-        sdOperationLog.setState(String.valueOf(resultStatus));
-        // 确定设备之前亮度值
-        SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(deviceId);
-        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
-        List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-        if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
-            sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
-        }
-        sdOperationLogService.insertSdOperationLog(sdOperationLog);
-
-        return resultStatus;
-    }
-
-
-    /**
-     * @param deviceId    设备ID
-     * @param openClose   状态（1-开，0-关）
-     * @param controlType 控制类型（0-手动控制,1-定时控制,4-预案执行）
-     * @return 控制结果 1-成功，0-失败
-     */
-    public int lineControl(String deviceId, Integer openClose, String controlType, String operIp) {
-        SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
-
-        Light light = getBeanOfDeviceProtocol(deviceId);
-        int resultStatus = light.lineControl(deviceId, openClose,null);
-        // 如果控制成功
-        if (resultStatus == 1) {
-            //更新设备状态
-            device.setEqStatus("1");
-            device.setEqStatusTime(new Date());
-            sdDevicesService.updateSdDevices(device);
-
-            //更新设备实时数据
-            sdDeviceControlService.updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
-        }
-
-        //添加操作日志
-        SdOperationLog sdOperationLog = new SdOperationLog();
-        sdOperationLog.setEqTypeId(device.getEqType());
-        sdOperationLog.setTunnelId(device.getEqTunnelId());
-        sdOperationLog.setEqId(device.getEqId());
-        sdOperationLog.setOperationState(String.valueOf(openClose));
-        sdOperationLog.setControlType(controlType);
-        sdOperationLog.setCreateTime(new Date());
-        sdOperationLog.setOperIp(operIp);
-        sdOperationLog.setState(String.valueOf(resultStatus));
-        // 确定设备之前的开关状态
-        SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(deviceId);
+//    /**
+//     * @param deviceId    设备ID
+//     * @param bright      亮度
+//     * @param controlType 控制类型
+//     * @param operIp      操作者IP地址
+//     * @return
+//     */
+//    public int setBrightness(String deviceId, Integer bright, String controlType, String operIp) {
+//        SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
+//        String className = getSdDevicesProtocolStrl(deviceId);
+//        Light light = getBeanOfDeviceProtocol(className);
+//        int resultStatus = light.setBrightness(deviceId, bright);
+//
+//        // 如果控制成功
+//        if (resultStatus == 1) {
+//            // 更新设备在线状态
+//            device.setEqStatus("1");
+//            device.setEqStatusTime(new Date());
+//            sdDevicesService.updateSdDevices(device);
+//
+//            //更新设备实时数据
+//            sdDeviceDataService.updateDeviceData(device, String.valueOf(bright), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
+//        }
+//
+//        //添加操作日志
+//        SdOperationLog sdOperationLog = new SdOperationLog();
+//        sdOperationLog.setEqTypeId(device.getEqType());
+//        sdOperationLog.setTunnelId(device.getEqTunnelId());
+//        sdOperationLog.setEqId(device.getEqId());
+//        sdOperationLog.setOperationState(String.valueOf(bright));
+//        sdOperationLog.setControlType(controlType);
+//        sdOperationLog.setCreateTime(new Date());
+//        sdOperationLog.setOperIp(operIp);
+//        sdOperationLog.setState(String.valueOf(resultStatus));
+//        // 确定设备之前亮度值
+//        SdDeviceData sdDeviceData = new SdDeviceData();
+//        sdDeviceData.setDeviceId(deviceId);
+//        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
+//        List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+//        if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+//            sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+//        }
+//        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+//
+//        return resultStatus;
+//    }
 
 
-        if (String.valueOf(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()).equals(device.getEqType())) {
-            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode()));
-        } else if (String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()).equals(device.getEqType())) {
-            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode()));
-        }
-        List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-        if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
-            sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
-        }
-        sdOperationLogService.insertSdOperationLog(sdOperationLog);
-
-        return resultStatus;
-    }
+//    /**
+//     * @param deviceId    设备ID
+//     * @param openClose   状态（1-开，0-关）
+//     * @param controlType 控制类型（0-手动控制,1-定时控制,4-预案执行）
+//     * @return 控制结果 1-成功，0-失败
+//     */
+//    public int lineControl(String deviceId, Integer openClose, String controlType, String operIp) {
+//        SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
+//
+//        Light light = getBeanOfDeviceProtocol(deviceId);
+//        int resultStatus = light.lineControl(deviceId, openClose,null);
+//        // 如果控制成功
+//        if (resultStatus == 1) {
+//            //更新设备状态
+//            device.setEqStatus("1");
+//            device.setEqStatusTime(new Date());
+//            sdDevicesService.updateSdDevices(device);
+//
+//            //更新设备实时数据
+//            //sdDeviceControlService.updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+//            sdDeviceDataService.updateDeviceData(device, String.valueOf(openClose), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode()));
+//        }
+//
+//        //添加操作日志
+//        SdOperationLog sdOperationLog = new SdOperationLog();
+//        sdOperationLog.setEqTypeId(device.getEqType());
+//        sdOperationLog.setTunnelId(device.getEqTunnelId());
+//        sdOperationLog.setEqId(device.getEqId());
+//        sdOperationLog.setOperationState(String.valueOf(openClose));
+//        sdOperationLog.setControlType(controlType);
+//        sdOperationLog.setCreateTime(new Date());
+//        sdOperationLog.setOperIp(operIp);
+//        sdOperationLog.setState(String.valueOf(resultStatus));
+//        // 确定设备之前的开关状态
+//        SdDeviceData sdDeviceData = new SdDeviceData();
+//        sdDeviceData.setDeviceId(deviceId);
+//
+//
+//        if (String.valueOf(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()).equals(device.getEqType())) {
+//            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode()));
+//        } else if (String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()).equals(device.getEqType())) {
+//            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode()));
+//        }
+//        List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+//        if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
+//            sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+//        }
+//        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+//
+//        return resultStatus;
+//    }
 
     /**
      * @param deviceId  设备ID
@@ -198,24 +199,24 @@ public class LightService {
     }
 
 
-    /**
-     * 批量控制车灯
-     * @param devices
-     * @param controlType
-     * @param operIp
-     * @return
-     */
-    public int setBrightnessList(List<Map<String,Object>> devices, String controlType, String operIp)  {
-        int flag = 1;
-        for (Map<String,Object> device: devices) {
-            String deviceId = device.get("deviceId").toString();
-            Integer openClose = Integer.parseInt(device.get("openClose").toString());
-            int result = setBrightness(deviceId,openClose,controlType,operIp);
-            if(result==0){
-                flag = 0;
-                logger.error("【{}】调整亮度请求响应失败。请联系管理员",deviceId);
-            }
-        }
-        return flag;
-    }
+//    /**
+//     * 批量控制车灯
+//     * @param devices
+//     * @param controlType
+//     * @param operIp
+//     * @return
+//     */
+//    public int setBrightnessList(List<Map<String,Object>> devices, String controlType, String operIp)  {
+//        int flag = 1;
+//        for (Map<String,Object> device: devices) {
+//            String deviceId = device.get("deviceId").toString();
+//            Integer openClose = Integer.parseInt(device.get("openClose").toString());
+//            int result = setBrightness(deviceId,openClose,controlType,operIp);
+//            if(result==0){
+//                flag = 0;
+//                logger.error("【{}】调整亮度请求响应失败。请联系管理员",deviceId);
+//            }
+//        }
+//        return flag;
+//    }
 }

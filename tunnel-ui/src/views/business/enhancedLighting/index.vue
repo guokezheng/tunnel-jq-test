@@ -25,30 +25,32 @@
             v-model="queryParams.tunnelName"
             @keyup.enter.native="handleQuery"
             size="small"
+            style="border-right: solid 1px #00c8ff; border-radius: 3px"
+            @click="$forceUpdate()"
           >
-            <el-button
+            <!-- <el-button
               slot="append"
               class="searchTable"
               @click="lx_boxShow = !lx_boxShow"
-            ></el-button>
+            ></el-button> -->
           </el-input>
         </div>
       </el-col>
     </el-row>
-    <div class="searchBox" v-show="lx_boxShow">
+    <!-- <div class="searchBox" v-show="lx_boxShow">
       <el-form
         ref="queryForm"
         :inline="true"
         :model="queryParams"
         label-width="75px"
       >
-        <el-form-item label="所属隧道" prop="eqTunnelId">
+        <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
-            v-model="queryParams.eqTunnelId"
+            v-model="queryParams.tunnelId"
             placeholder="请选择所属隧道"
             clearable
             size="small"
-            @change="selectTunnel"
+            @change="$forceUpdate()"
           >
             <el-option
               v-for="item in eqTunnelData"
@@ -58,8 +60,16 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+          >
+        </el-form-item>
       </el-form>
-    </div>
+    </div> -->
 
     <div class="tableTopHr"></div>
     <el-table
@@ -159,7 +169,11 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="隧道名称" prop="tunnelId">
-              <el-select v-model="form.tunnelId" placeholder="请选择隧道">
+              <el-select
+                v-model="form.tunnelId"
+                placeholder="请选择隧道"
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in eqTunnelData"
                   :key="item.tunnelId"
@@ -171,7 +185,11 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="模式类型" prop="modeType">
-              <el-select v-model="form.modeType" placeholder="请选择模式类型">
+              <el-select
+                v-model="form.modeType"
+                placeholder="请选择模式类型"
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in modeTypeList"
                   :key="item.value"
@@ -183,7 +201,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="开启调光模式" prop="isStatus">
               <el-tooltip
                 :content="form.isStatus == 1 ? '开启' : '关闭'"
@@ -200,7 +218,7 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="开启车流量模式" prop="isTrafficVolume">
               <el-tooltip
                 :content="form.isTrafficVolume == 1 ? '开启' : '关闭'"
@@ -217,8 +235,6 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item
               label="最小亮度值"
@@ -284,39 +300,54 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div v-if="form.modeType != 1">
+        <div v-if="form.modeType != 1" style="max-height:40vh;overflow-y: auto;overflow-x: hidden;">
           <el-form-item
             v-for="(item, index) in timeSlotList"
             :key="item.key"
-            :label="'定时区间' + index"
+            :label="'定时区间' + (index+1)"
           >
             <el-row :gutter="15">
-              <el-col :span="4" >
-                  <el-select v-model="item.eqIds"  placeholder="请选择控制段" width="80px">
-                    <el-option
-                      v-for="eqInfo in eqIdList"
-                      :key="eqInfo.value"
-                      :label="eqInfo.name"
-                      :value="eqInfo.value"
-                      >
-                    </el-option>
-                  </el-select>
+              <el-col :span="4" style="padding-left:0px">
+                <el-select
+                  v-model="item.eqIds"
+                  placeholder="请选择控制段"
+                  width="80px"
+                >
+                  <el-option
+                    v-for="eqInfo in eqIdList"
+                    :key="eqInfo.value"
+                    :label="eqInfo.name"
+                    :value="eqInfo.value"
+                  >
+                  </el-option>
+                </el-select>
               </el-col>
-              <el-col :span="4" >
-                  <el-select v-model="item.direction" placeholder="请选择路段方向" >
-                    <el-option
-                      v-for="dict in directionOptions"
-                      :key="dict.value"
-                      :label="dict.dictLabel"
-                      :value="dict.dictValue"
-                    />
-                  </el-select>
+              <el-col :span="4">
+                <el-select
+                  v-model="item.direction"
+                  placeholder="请选择路段方向"
+                >
+                  <el-option
+                    v-for="dict in directionOptions"
+                    :key="dict.value"
+                    :label="dict.dictLabel"
+                    :value="dict.dictValue"
+                  />
+                </el-select>
               </el-col>
-              <el-col :span="4" >
-                <el-time-picker placeholder="选择时间" v-model="item.startTime" style="width: 100%;"></el-time-picker>
+              <el-col :span="4">
+                <el-time-picker
+                  placeholder="选择时间"
+                  v-model="item.startTime"
+                  style="width: 100%"
+                ></el-time-picker>
               </el-col>
-              <el-col :span="4" >
-                <el-time-picker placeholder="选择时间" v-model="item.endTime" style="width: 100%;"></el-time-picker>
+              <el-col :span="4">
+                <el-time-picker
+                  placeholder="选择时间"
+                  v-model="item.endTime"
+                  style="width: 100%"
+                ></el-time-picker>
               </el-col>
               <el-col :span="4">
                 <el-input placeholder="亮度" v-model="item.value"></el-input>
@@ -325,8 +356,9 @@
                 <el-button
                   type="primary"
                   @click="addTimeSlot"
+                  icon="el-icon-plus"
                   v-if="index != timeSlotList.length - 1 || index == 0"
-                  >+</el-button
+                  ></el-button
                 >
                 <el-button
                   type="danger"
@@ -357,9 +389,7 @@ import {
   exportConfig,
 } from "@/api/business/enhancedLighting/app.js";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import {
-  newListDevices,
-} from "@/api/equipment/eqlist/api";
+import { newListDevices } from "@/api/equipment/eqlist/api";
 
 export default {
   name: "Type",
@@ -394,6 +424,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
+        tunnelName: "",
         modeType: null,
         timeSlot: null,
         beforeLuminance: null,
@@ -419,39 +450,39 @@ export default {
       timeSlotList: [],
       nowTimeSlotList: [
         {
-          startTime:null,
-          endTime:null,
-          value:null,
-          direction:"3",
-          eqIds:null,
-        }
+          startTime: null,
+          endTime: null,
+          value: null,
+          direction: "3",
+          eqIds: null,
+        },
       ],
       //获取当前隧道下全部加强照明
-      eqIdList:[
+      eqIdList: [
         {
-          name:"棚洞段加强照明",
-          value: "0"
+          name: "棚洞段加强照明",
+          value: "0",
         },
         {
-          name:"入口段加强照明",
-          value: "1"
+          name: "入口段加强照明",
+          value: "1",
         },
         {
-          name:"过渡段加强照明",
-          value: "2"
+          name: "过渡段加强照明",
+          value: "2",
         },
         {
-          name:"基本段",
-          value: "4"
+          name: "基本段",
+          value: "4",
         },
         {
-          name:"出口段加强照明",
-          value: "5"
+          name: "出口段加强照明",
+          value: "5",
         },
       ],
       //根据隧道
-      directionEqList:[],
-      modeTypeList:[
+      directionEqList: [],
+      modeTypeList: [
         {
           name: "定时模式",
           value: 0,
@@ -507,7 +538,7 @@ export default {
         this.directionOptions = response.data;
       });
     },
-    clearEqIds(item){
+    clearEqIds(item) {
       item.eqIds = [];
     },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
@@ -562,14 +593,11 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      console.log(this.queryParams, "queryParams");
       this.$refs.tableFile.clearSelection();
-      console.log(this.queryParams, "queryParams");
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
       this.queryParams.tunnelName = "";
       this.handleQuery();
     },
@@ -586,20 +614,20 @@ export default {
       this.form.iskeyVehicle = "0";
       this.timeSlotList = [
         {
-          startTime:null,
-          endTime:null,
-          value:null,
-          direction:"3",
-          eqIds:null,
-        }
+          startTime: null,
+          endTime: null,
+          value: null,
+          direction: "3",
+          eqIds: null,
+        },
       ];
       this.title = "添加加强照明配置信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getConfig(id).then(response => {
+      const id = row.id || this.ids;
+      getConfig(id).then((response) => {
         this.form = response.data;
         this.timeSlotList = JSON.parse(response.data.timeSlot);
         for (let index = 0; index < this.timeSlotList.length; index++) {
@@ -620,8 +648,8 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      if(this.form.modeType != 1){
-        console.log(this.timeSlotList,"this.timeSlotList");
+      if (this.form.modeType != 1) {
+        console.log(this.timeSlotList, "this.timeSlotList");
         //timeSlotList 校验
         for (let index = 0; index < this.timeSlotList.length; index++) {
           const element = this.timeSlotList[index];
@@ -742,9 +770,6 @@ export default {
       }
       return resultName;
     },
-    selectTunnel(data) {
-      this.queryParams.tunnelId = data;
-    },
     addTimeSlot() {
       this.timeSlotList.push({
         startTime: null,
@@ -761,5 +786,10 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+// ::v-deep .el-dialog__body{
+//   max-height: 70vh !important;
+// }
+</style>
 
 

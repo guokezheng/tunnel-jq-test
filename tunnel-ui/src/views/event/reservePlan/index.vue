@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-12-08 15:17:28
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2023-05-24 16:42:34
+ * @LastEditTime: 2023-06-03 11:47:24
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -1174,11 +1174,6 @@ export default {
     }
     listTunnels().then((res) => {
       this.eqTunnelData = res.rows;
-      this.eqTunnelData.forEach((item) => {
-        item.sdTunnelSubareas.forEach((item, index) => {
-          this.eqTunnelDataList.push(item);
-        });
-      });
     });
     this.getDicts("sd_emergency_plan_type").then((response) => {
       this.planCategory = response.data;
@@ -1468,6 +1463,7 @@ export default {
       };
       this.planTypeIdList[number].processesList.splice(index + 1, 0, data);
       this.getEquipmentType();
+      this.getRules();
     },
     //获得预案类别
     // selectPlanType() {
@@ -1541,7 +1537,6 @@ export default {
         }
         // 疏散标志只能选择最近1个，同时无法选择具体设备
         if(eqTypeId == 30){
-          console.log(retrievalRuleList,"12312312");
           retrievalRuleList.map(item=>{
             if(item.dictValue != "6"){
               item.disabled = true;
@@ -1729,9 +1724,10 @@ export default {
       });
       getReservePlanProcess(this.reserveId).then((res) => {
         this.planTypeIdList = res.data;
-        this.getRules();
+        // this.getRules();
         this.openFullScreen2();
         if (this.planTypeIdList.length == 0) {
+          this.getRules();
           this.planTypeIdList = [
             {
               stageName: "",
@@ -1753,8 +1749,8 @@ export default {
             },
           ];
         } else {
+          // this.getRules();
           let data = res.data;
-          this.getRules();
           for (let i = 0; i < data.length; i++) {
             let arr = data[i];
             //阶段名称
@@ -1792,6 +1788,7 @@ export default {
               });
               // 渲染设备可控状态
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
+              // 疏散标志
               //加强和基本设置不同最小值
               if(brr.eqTypeId == 9){
                 this.$set(this.planTypeIdList[i].processesList[j],"minLight",30);
@@ -1831,6 +1828,26 @@ export default {
                 brr.state = brr.state;
                 this.getAudioFileListData(brr.equipments, i, j);
               }
+              this.getDicts("sd_device_retrieval_rule").then((response) => {
+                console.log(response.data)
+                var retrievalRuleList = response.data;
+                if(brr.eqTypeId == 30){
+                  console.log(retrievalRuleList);
+                  for(let items of retrievalRuleList){
+                    console.log(items)
+                    if(items.dictValue != "6"){
+                      items.disabled = true;
+                    }
+                  }
+                  this.$set(this.planTypeIdList[i].processesList[j],'retrievalRuleList',retrievalRuleList)
+                }else{
+                    for (let item of this.planTypeIdList) {
+                      for (let itemed of item.processesList) {
+                        itemed.retrievalRuleList = retrievalRuleList;
+                      }
+                    }
+                }
+              });
             }
           }
         }
@@ -2089,13 +2106,9 @@ export default {
       // this.resetReservePlanDrawForm();
       this.planChangeSink = "edit";
       const id = row.id || this.ids;
-      tunnelNames().then((res) => {
+      listTunnels().then((res) => {
+        console.log(res,"resresres")
         this.eqTunnelData = res.rows;
-        this.eqTunnelData.forEach((item) => {
-          item.sdTunnelSubareas.forEach((item, index) => {
-            this.eqTunnelDataList.push(item);
-          });
-        });
       });
       this.getDicts("sd_emergency_plan_type").then((response) => {
         this.planCategory = response.data;
@@ -2276,13 +2289,8 @@ export default {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       this.getList();
       this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
-      tunnelNames(this.paramsData).then((res) => {
+      listTunnels(this.paramsData).then((res) => {
         this.eqTunnelData = res.rows;
-        this.eqTunnelData.forEach((item) => {
-          item.sdTunnelSubareas.forEach((item, index) => {
-            this.eqTunnelDataList.push(item);
-          });
-        });
       });
     },
   },

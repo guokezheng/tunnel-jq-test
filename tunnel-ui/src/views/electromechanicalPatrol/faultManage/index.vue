@@ -1563,7 +1563,7 @@ export default {
         this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
-        
+
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = true;
         this.disstateDevice = true;

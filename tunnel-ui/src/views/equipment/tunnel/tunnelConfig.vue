@@ -1,6 +1,6 @@
 <template>
   <div class="app-container configurePage" v-loading="saveLoading" style="position: relative;background-color: #D3EBFF;"
-    element-loading-background="rgba(0, 0, 0, 0.8)">
+       element-loading-background="rgba(0, 0, 0, 0.8)">
     <div class="header config-header">
     </div>
     <div class="menu config-menu">
@@ -15,9 +15,9 @@
         </el-button>
         <el-button type="info" size="small" icon="el-icon-refresh-left" class="tunnelNameButton" @click="handleBack">返回</el-button>
         <el-popconfirm popper-class="reset-confirm" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
-          icon-color="red" title="重置后该隧道的配置信息将被清空,确定清空吗？" @confirm="reset">
+                       icon-color="red" title="重置后该隧道的配置信息将被清空,确定清空吗？" @confirm="reset">
           <el-button type="info" size="small" slot="reference" icon="el-icon-refresh" class="tunnelNameButton"
-            style="margin-left: 10px;">重置</el-button>
+                     style="margin-left: 10px;">重置</el-button>
         </el-popconfirm>
 
         <div class="display-box">
@@ -30,7 +30,7 @@
         <b class="menu-title title-wrap">设备类型：</b>
         <el-button-group class="menu-button-group">
           <el-button type="info" size="mini" v-for="(item,index) in eqTypeList" :key="index"
-            @click="openEquipmentDialog(item.typeId,index,'type')">{{item.typeName}}</el-button>
+                     @click="openEquipmentDialog(item.typeId,index,'type')">{{item.typeName}}</el-button>
         </el-button-group>
 
       </el-row>
@@ -38,7 +38,7 @@
         <b class="menu-title title-wrap">环境配置：</b>
         <el-button-group class="menu-button-group">
           <el-button type="info" size="mini" v-for="(item,index) in  dict.type.environment" :key="index"
-            @click="openEquipmentDialog(item.value,index,'configuration')">{{item.label}}</el-button>
+                     @click="openEquipmentDialog(item.value,index,'configuration')">{{item.label}}</el-button>
         </el-button-group>
       </el-row>
     </div>
@@ -59,7 +59,7 @@
     </div>
     <!--车道 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" :title="title" :visible.sync="laneVisible" width="723px"
-      append-to-body>
+               append-to-body>
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -87,7 +87,7 @@
     </el-dialog>
     <!--设备 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" :title="title" :visible.sync="equipmentVisible" width="560px"
-      append-to-body>
+               append-to-body>
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -98,8 +98,8 @@
             <el-row v-if="eqTypeList[equipmentTypeflag].url.length>0">
               <!-- 此处将el-image更换为img、动态更换图片尺寸 -->
               <img :width="eqTypeList[equipmentTypeflag].iconWidth" :height="eqTypeList[equipmentTypeflag].iconHeight"
-                :class="[item.exist == true ? 'eq-exist' : '']" v-for="(url,index) in eqTypeList[equipmentTypeflag].url"
-                :key="index" :src="url" @click="getEquipment(item,eqTypeList[equipmentTypeflag])">
+                   :class="[item.exist == true ? 'eq-exist' : '']" v-for="(url,index) in eqTypeList[equipmentTypeflag].url"
+                   :key="index" :src="url" @click="getEquipment(item,eqTypeList[equipmentTypeflag])">
             </el-row>
             <el-row v-else>
               <el-image>
@@ -120,7 +120,7 @@
     </el-dialog>
     <!--环境配置 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" title="环境配置" :visible.sync="EnvironmentVisible" width="560px"
-      append-to-body>
+               append-to-body>
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -131,7 +131,7 @@
             <el-row v-if="items.url.length>0">
               <!-- 此处将el-image更换为img、动态更换图片尺寸 -->
               <img :width="items.iconWidth" :height="items.iconHeight" v-for="(url,index) in items.url" :key="index"
-                :src="url" @click="getEquipment(items,items)">
+                   :src="url" @click="getEquipment(items,items)">
               </img>
             </el-row>
             <el-row v-else>
@@ -153,16 +153,16 @@
     </el-dialog>
     <!--风向等设备选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog batch-table" :title="title" :visible.sync="paramVisible"
-      width="560px" append-to-body>
+               width="560px" append-to-body>
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="paramFrom" :rules="rules" :model="paramFrom" label-width="80px" label-position="left" size="mini"
-        hide-required-asterisk>
+               hide-required-asterisk>
         <el-table ref="multipleTable" :data="equipmentList" tooltip-effect="dark" style="width: 100%" max-height="400"
-          size="mini" @selection-change="equipmentSelectionChange" :row-style="rowStyle" :header-cell-style="rowStyle"
-          empty-text="暂无设备">
+                  size="mini" @selection-change="equipmentSelectionChange" :row-style="rowStyle" :header-cell-style="rowStyle"
+                  empty-text="暂无设备">
           <el-table-column type="selection" width="55">
           </el-table-column>
           <el-table-column prop="eqName" label="名称" width="150" show-overflow-tooltip>
@@ -1380,7 +1380,7 @@ export default {
     },
     // 辅助线
     auxiliaryLine() {
-      debugger
+      // debugger
       let that = this;
       if (!$("#svg g")) return;
       var MIN_DISTANCE = 1; //捕获的最小距离
@@ -1409,27 +1409,27 @@ export default {
 
         /**
 
-		            * 参数说明
+         * 参数说明
 
-		            * @param event
+         * @param event
 
-		            * @param ui
+         * @param ui
 
-		            *
+         *
 
-		            *  event事件的
+         *  event事件的
 
-		            * offsetX：
+         * offsetX：
 
-		            * outerwidth： 属性是一个只读的整数，声明了整个窗口的宽度。
+         * outerwidth： 属性是一个只读的整数，声明了整个窗口的宽度。
 
-		            *  outerheight： 属性是一个只读的整数，声明了整个窗口的高度。
+         *  outerheight： 属性是一个只读的整数，声明了整个窗口的高度。
 
-		            */
+         */
 
         drag: function (event, ui) {
           console.log(event)
-          debugger
+          // debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1513,7 +1513,7 @@ export default {
           // 画布与窗口的距离
           let left = event.pageX - event.offsetX;
           let top = event.pageY - event.offsetY + 3; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
-          // if (chosenGuides.top.dist <= MIN_DISTANCE) {
+          if (chosenGuides.top.dist <= MIN_DISTANCE) {
             $("#guide-h")
               .css("top", chosenGuides.top.guide.top - top)
               .show();
@@ -1521,14 +1521,14 @@ export default {
             //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
             //   .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
-          // } else {
-          //   // debugger
-          //   $("#guide-h").hide();
-          //   $("#guide-h1").hide();
-          //   // ui.position.top = pos.top - 104;
-          // }
+          } else {
+            // debugger
+            $("#guide-h").hide();
+            $("#guide-h1").hide();
+            // ui.position.top = pos.top - 104;
+          }
 
-          // if (chosenGuides.left.dist <= MIN_DISTANCE) {
+          if (chosenGuides.left.dist <= MIN_DISTANCE) {
             $("#guide-v")
               .css("left", chosenGuides.left.guide.left - left)
               .show();
@@ -1537,16 +1537,16 @@ export default {
             //   .show();
             /* ui.position.left =
 				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
-          // } else {
-          //   $("#guide-v").hide();
-          //   $("#guide-v1").hide();
-          //   /* ui.position.left = pos.left; */
-          // }
+          } else {
+            $("#guide-v").hide();
+            $("#guide-v1").hide();
+            /* ui.position.left = pos.left; */
+          }
         },
 
         stop: function (event, ui) {
           console.log(event)
-          debugger
+          // debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1645,9 +1645,9 @@ export default {
             $("#guide-h")
               .css("top", chosenGuides.top.guide.top)
               .show();
-            $("#guide-h1")
-              .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
-              .show();
+            // $("#guide-h1")
+            //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
+            //   .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           } else {
             // debugger
@@ -1660,9 +1660,9 @@ export default {
             $("#guide-v")
               .css("left", chosenGuides.left.guide.left )
               .show();
-            $("#guide-v1")
-              .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
-              .show();
+            // $("#guide-v1")
+            //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
+            //   .show();
             /* ui.position.left =
 				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
           } else {

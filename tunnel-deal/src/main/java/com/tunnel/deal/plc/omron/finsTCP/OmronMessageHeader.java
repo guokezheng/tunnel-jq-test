@@ -1,6 +1,7 @@
 package com.tunnel.deal.plc.omron.finsTCP;
 
 
+import com.ruoyi.framework.web.domain.server.Sys;
 import com.tunnel.deal.plc.omron.util.ByteUtil;
 
 public class OmronMessageHeader {
@@ -65,7 +66,9 @@ public class OmronMessageHeader {
                 ICF, RSV, GCT, DNA, DA1,
                 DA2, SNA, SA1, SA2, SID
         };
+        System.out.print(length);
         System.arraycopy(length, 0, message, 4, 4);
+        System.out.print(message);
     }
 
     public byte[] getMessage() {

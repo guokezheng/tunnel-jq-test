@@ -236,56 +236,56 @@ public class OmronTcpClient{
 
     //欧姆龙测试
     public static void main(String[] args) throws InterruptedException, PlcException {
-//        OmronConnectProperties conf = new OmronConnectProperties();
-//        //DA1地址： 服务器 ip
-//        conf.setHost("10.7.187.87");
-//        //SA1地址：电脑 ip
-//        conf.setLocalHost("127.0.0.1");
-//        //服务器port
-//        conf.setPort(9600);
-//        //创建 client
-//        OmronTcpClient omronTcpClient = new OmronTcpClient(conf);
-//        //初始化链接     服务器地址
-//        omronTcpClient.init("10.7.187.87",9600);
-//
-//        ChannelFuture channelFuture = omronTcpClient.channelFuture;
-//        //推送握手协议
-//        omronTcpClient.send(omronTcpClient.successCallback(channelFuture).array());
-//
-//        //写入数据
-////        byte[] writeData = ByteUtil.getBytes(1);
-//        boolean isBit = false;
-////        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"W101.01",true);
-//////        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"D2000",isBit);
-////        OmronMessageHeader  omronMessageHeaderw = new OmronMessageHeader();
-////        byte[] dataBodyw = omronTcpClient.getMessageBody(omronMessageHeaderw,dataInfow.length);
-////        System.out.println("写入数据："+ByteUtil.bytesToHex(byteMerger(dataBodyw,dataInfow)));
-////        byte[] data = omronTcpClient.send(byteMerger(dataBodyw,dataInfow));
-////        System.out.println(ByteUtil.bytesToHex(data));
-////        System.out.println(omronTcpClient.doBuildResponseMessage(data));
-//
+        OmronConnectProperties conf = new OmronConnectProperties();
+        //DA1地址： 服务器 ip
+        conf.setHost("127.0.0.1");
+        //SA1地址：电脑 ip
+        conf.setLocalHost("192.168.1.200");
+        //服务器port
+        conf.setPort(9600);
+        //创建 client
+        OmronTcpClient omronTcpClient = new OmronTcpClient(conf);
+        //初始化链接     服务器地址
+        omronTcpClient.init("127.0.0.1",9600);
+
+        ChannelFuture channelFuture = omronTcpClient.channelFuture;
+        //推送握手协议
+        omronTcpClient.send(omronTcpClient.successCallback(channelFuture).array());
+
+        //写入数据
+//        byte[] writeData = ByteUtil.getBytes(1);
+        boolean isBit = false;
+//        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"W101.01",true);
+////        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"D2000",isBit);
+//        OmronMessageHeader  omronMessageHeaderw = new OmronMessageHeader();
+//        byte[] dataBodyw = omronTcpClient.getMessageBody(omronMessageHeaderw,dataInfow.length);
+//        System.out.println("写入数据："+ByteUtil.bytesToHex(byteMerger(dataBodyw,dataInfow)));
+//        byte[] data = omronTcpClient.send(byteMerger(dataBodyw,dataInfow));
+//        System.out.println(ByteUtil.bytesToHex(data));
+//        System.out.println(omronTcpClient.doBuildResponseMessage(data));
+
 //        //读取数据
-//        OmronMessageHeader  omronMessageHeader = new OmronMessageHeader();
-//        byte[] dataInfo = omronTcpClient.buildReadRequestBody("D512",isBit);
-////        byte[] dataInfo = omronTcpClient.buildReadRequestBody("D2000",isBit);
-//        byte[] dataBody = omronTcpClient.getMessageBody(omronMessageHeader,dataInfo.length);
-//        byte[] dataR = omronTcpClient.send(ByteUtil.byteMerger(dataBody,dataInfo));
-//        System.out.println("读取数据："+ByteUtil.bytesToHex(dataR));
-//        String num;
-//        if(omronTcpClient.doBuildResponseMessage(dataR)){
-//            //解析当前数据  根据设备点位信息解析
-//            if(isBit){
-//                //获取结尾2字节  结果集
-//                num = ByteUtil.bytesToIntOfReverse2Byte(dataR,dataR.length-2)+"";
+        OmronMessageHeader  omronMessageHeader = new OmronMessageHeader();
+        byte[] dataInfo = omronTcpClient.buildReadRequestBody("D512",isBit);
+//        byte[] dataInfo = omronTcpClient.buildReadRequestBody("D2000",isBit);
+        byte[] dataBody = omronTcpClient.getMessageBody(omronMessageHeader,dataInfo.length);
+        byte[] dataR = omronTcpClient.send(ByteUtil.byteMerger(dataBody,dataInfo));
+        System.out.println("读取数据："+ByteUtil.bytesToHex(dataR));
+        String num;
+        if(omronTcpClient.doBuildResponseMessage(dataR)){
+            //解析当前数据  根据设备点位信息解析
+            if(isBit){
+                //获取结尾2字节  结果集
+                num = ByteUtil.bytesToIntOfReverse2Byte(dataR,dataR.length-2)+"";
+                System.out.println("解析数据为:"+num);
+            }else{
+                //获取结尾4字节  结果集
+//                num =  ByteUtil.bytesToFloatOfReverseToChar(dataR,dataR.length-4)+"";
 //                System.out.println("解析数据为:"+num);
-//            }else{
-//                //获取结尾4字节  结果集
-////                num =  ByteUtil.bytesToFloatOfReverseToChar(dataR,dataR.length-4)+"";
-////                System.out.println("解析数据为:"+num);
-//                num =  ByteUtil.bytesToIntByChar(dataR,dataR.length-4)+"";
-//                System.out.println("解析数据为:"+num);
-//            }
-//        }
+                num =  ByteUtil.bytesToIntByChar(dataR,dataR.length-4)+"";
+                System.out.println("解析数据为:"+num);
+            }
+        }
     }
 
 

@@ -27,7 +27,7 @@ let laneImage = [
   {
     id: "4",
     name: "马家峪隧道",
-    url: require('@/assets/image/lane/mjy.jpg'),
+    url: require('@/assets/image/lane/mjy.png'),
     width: 2378,
     num: 3,
     direction: 0
@@ -83,7 +83,7 @@ let laneImage = [
   {
     id: "11",
     name: "青风岭隧道",
-    url: require('@/assets/image/lane/pds.png'),
+    url: require('@/assets/image/lane/qfl.png'),
     width: 2378,
     num: 3,
     direction: 0

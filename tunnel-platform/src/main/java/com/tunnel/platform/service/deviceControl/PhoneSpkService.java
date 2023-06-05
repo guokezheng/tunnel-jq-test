@@ -396,7 +396,10 @@ public class PhoneSpkService {
 
         sdOperationLogService.insertBatchSdOperationLog(list);
 
-        return AjaxResult.success(status);
+        if(status > 0){
+            return AjaxResult.success(status);
+        }
+        return AjaxResult.error();
     }
 
 

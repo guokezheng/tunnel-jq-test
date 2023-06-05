@@ -534,7 +534,7 @@
     <div class="title">
       巡检机器人-K478+700
       <img src="./robot/topr.png" alt="" class="topr">
-      <img class="close" src="./robot/close.png" alt="">
+      <!-- <img class="close" src="./robot/close.png" alt=""> -->
     </div>
 
     <!-- 状态信息 -->

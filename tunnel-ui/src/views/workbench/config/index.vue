@@ -2854,11 +2854,12 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-robot> -->
-    <div v-if="eqInfo.clickEqType == 29">
+    <div v-if="robotShow">
       <robot
         class="comClass robotHtmlBox"
         ref="robotRef"
       ></robot>
+      <img @click="dialogClose" src="../../../assets/cloudControl/closeIcon.png" class="closeRobot"></img>
     </div>
 
     <com-bright class="comClass" ref="brightRef"></com-bright>
@@ -3899,6 +3900,7 @@ export default {
 
   data() {
     return {
+      robotShow:false,
       dialogEqType: "",
       loginStatusOptions: [],
       // timingStrategyDisabled: false,
@@ -5759,7 +5761,8 @@ export default {
       this.$refs.boardRef.handleClosee();
       this.$refs.radioRef.handleClosee();
       this.$refs.kzqRef.handleClosee();
-      
+      this.robotShow = false
+
     },
     // 车辆监测数据
     // vehicleEcharts() {
@@ -8265,6 +8268,9 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
+          } else if (item.eqType == 29) {
+            // 巡检机器人
+            this.robotShow = true
           } 
         });
 
@@ -9387,6 +9393,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.closeRobot{
+  position:absolute;
+  top: 15px;
+  left: 68%;
+  z-index: 96659;
+  cursor: pointer;
+}
 ::v-deep .el-tabs__header {
   margin: 0 0 10px !important;
 }

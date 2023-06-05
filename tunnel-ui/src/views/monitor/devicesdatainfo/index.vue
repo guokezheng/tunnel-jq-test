@@ -1038,7 +1038,16 @@ export default {
 
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
+      this.dateRange = this.getPastTime(24);
+      this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+      this.queryParams1.pageNum = 1;
+      this.queryParams1.pageSize = 10;
+      this.queryParams2.pageNum = 1;
+      this.queryParams2.pageSize = 10;
+      this.queryParams3.pageNum = 1;
+      this.queryParams3.pageSize = 10;
+
       this.resetForm("queryForms");
       //待写
       if (this.echartShow)

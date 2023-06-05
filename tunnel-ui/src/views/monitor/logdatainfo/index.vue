@@ -713,14 +713,19 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
+      this.queryParam.pageNum = 1;
+      this.queryParam.pageSize = 10;
+
       this.$refs.tables.clearSelection();
       this.$refs.tableFile.clearSelection();
       this.getList(this.activeName);
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRangeDl = [];
-      this.dateRangeCz = [];
+      this.dateRangeDl = this.getPastTime();
+      this.dateRangeCz = this.getPastTime();
       this.resetForm("queryForm");
       this.resetForm("queryForms");
       this.queryParam.ipaddr = "";
@@ -728,6 +733,7 @@ export default {
       this.queryParam.ids = [];
       this.queryParams.operIp = "";
       this.queryParams.ids = [];
+
       // if (this.searchValue == '1') {
       //   this.$refs.tables.sort('loginTime', 'descending')
       // } else if (this.searchValue == '2') {

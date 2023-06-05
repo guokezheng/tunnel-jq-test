@@ -715,8 +715,24 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal
-        .confirm('是否确认删除加强照明配置信息编号为"' + ids + '"的数据项？')
+      // this.$modal
+      //   .confirm('是否确认删除加强照明配置信息编号为"' + ids + '"的数据项？')
+      //   .then(function () {
+      //     return delConfig(ids);
+      //   })
+      //   .then(() => {
+      //     this.getList();
+      //     this.$modal.msgSuccess("删除成功");
+      //   })
+      //   .catch(() => {
+      //     this.$refs.tableFile.clearSelection();
+      //   });
+
+        this.$confirm("是否确认删除?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(function () {
           return delConfig(ids);
         })
@@ -724,8 +740,9 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {
-          this.$refs.tableFile.clearSelection();
+        .catch(function () {
+          that.$refs.tableFile.clearSelection();
+          this.getList();
         });
     },
     /** 导出按钮操作 */

@@ -1562,7 +1562,7 @@
         </el-form-item>
         <el-row
           style="margin-top: 10px"
-          v-show="batchManageForm.eqType == 7 || batchManageForm.eqType == 9"
+          v-show="[7, 9, 30, 45].includes(batchManageForm.eqType)"
         >
           <el-col :span="15">
             <el-form-item label="亮度调整:">
@@ -1579,6 +1579,28 @@
           <el-col :span="9">
             <span style="padding-left: 10px; line-height: 30px"
               >{{ batchManageForm.brightness }} %</span
+            >
+          </el-col>
+        </el-row>
+        <el-row
+          style="margin-top: 10px"
+          v-show="batchManageForm.eqType == 30"
+        >
+          <el-col :span="15">
+            <el-form-item label="闪烁频率:">
+              <el-slider
+                v-model="batchManageForm.frequency"
+                :max="100"
+                :min="min"
+                class="sliderClass"
+                :disabled="!batchManageForm.frequency"
+                @change="$forceUpdate()"
+              ></el-slider>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9">
+            <span style="padding-left: 10px; line-height: 30px"
+              >{{ batchManageForm.frequency }} %</span
             >
           </el-col>
         </el-row>
@@ -2876,8 +2898,8 @@
     <com-board class="comClass" ref="boardRef"></com-board>
     <com-radio class="comClass" ref="radioRef"></com-radio>
     <com-kzq class="comClass" ref="kzqRef"></com-kzq>
-
-
+    
+      
     <!--摄像机对话框-->
     <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
@@ -4919,12 +4941,36 @@ export default {
 
   watch: {
     "batchManageForm.state": function (newVal, oldVal) {
-      if (newVal == "1" && this.batchManageForm.brightness == 0) {
-        this.batchManageForm.brightness = 1;
+      // if (newVal == "1" && this.batchManageForm.brightness == 0) {
+      //   this.batchManageForm.brightness = 1;
+      //   this.min = 1;
+      // } else if (newVal == "2") {
+      //   this.batchManageForm.brightness = 0;
+      //   this.min = 0;
+      // }
+      if([7, 9].includes(this.itemEqType)){
+      // 基础照明、加强照明  state == 1 开启  state == 2  关闭
+        if(newVal == "1" && this.batchManageForm.brightness == 0){
+          this.batchManageForm.brightness = 1;
+          this.min = 1;
+        }else if(newVal == "2"){
+          this.batchManageForm.brightness = 0;
+          this.min = 0;
+        } 
+      }else if(this.itemEqType == 30){
+         // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
+        if(newVal == "1"){
+          this.batchManageForm.brightness = 0;
+          this.batchManageForm.frequency = 0;
+          this.min = 0;
+        }else if(newVal != "1" && this.batchManageForm.brightness == 0){
+          this.batchManageForm.brightness = 1;
+          this.batchManageForm.frequency = 1;
+          this.min = 1;
+        }
+      }else{
         this.min = 1;
-      } else if (newVal == "2") {
-        this.batchManageForm.brightness = 0;
-        this.min = 0;
+        this.batchManageForm.brightness = 1;
       }
     },
     // 工作台搜索关键词匹配
@@ -5687,6 +5733,7 @@ export default {
         state: this.batchManageForm.state,
         brightness: this.batchManageForm.brightness,
         eqType: this.itemEqType,
+        frequency:this.batchManageForm.frequency,
       };
       batchControlDevice(param).then((res) => {
         // this.$modal.msgSuccess("控制成功");
@@ -6366,7 +6413,7 @@ export default {
     // 改变站点
     changeSite(index) {
       if (index) {
-        // 判断是否有缓存的管理站id
+        // 判断是否有缓存的管理站id 
         // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
         // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
         // 3. get到管理站id this.tunnelQueryParams.deptId为空 是刷新 get管理站id 并赋值
@@ -8090,7 +8137,7 @@ export default {
         });
       }
     },
-
+ 
     /* 选择隧道*/
     setTunnel(item, index) {
       console.log(item,"item")
@@ -8140,13 +8187,12 @@ export default {
 
       this.getTunnelData(this.currentTunnel.id);
 
-
       // this.tunnelItem = item;
 
       // this.tunnelNameEarlyWarn = item.tunnelName;
       // this.lightControForm.index = index;
       // this.lightControForm.name = item.tunnelName;
-
+    
       // this.currentTunnel.id = item.tunnelId;
 
       //小车显示控制
@@ -8349,7 +8395,7 @@ export default {
               this.eqTypeDialogList
             );
           } else if (
-            [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 30, 45, 49].includes(item.eqType)
+            [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 30, 31, 45, 49].includes(item.eqType)
           ) {
             this.$refs.lightRef.init(
               this.eqInfo,
@@ -8408,14 +8454,16 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          } else if (item.eqType == 31) {
-            this.$refs.youdaoRef.init(
-              this.eqInfo,
-              this.brandList,
-              this.directionList,
-              this.eqTypeDialogList
-            );
-          } else if (item.eqType == 16 || item.eqType == 36) {
+          } 
+          // else if (item.eqType == 31) {
+          //   this.$refs.youdaoRef.init(
+          //     this.eqInfo,
+          //     this.brandList,
+          //     this.directionList,
+          //     this.eqTypeDialogList
+          //   );
+          // } 
+          else if (item.eqType == 16 || item.eqType == 36) {
             this.$refs.boardRef.init(
               this.eqInfo,
               this.brandList,
@@ -8440,7 +8488,7 @@ export default {
           } else if (item.eqType == 29) {
             // 巡检机器人
             this.robotShow = true
-          }
+          } 
         });
 
         // 防止 ‘暂未获取’ 和 配置状态单选同时出现

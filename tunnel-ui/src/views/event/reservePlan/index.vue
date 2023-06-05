@@ -2049,6 +2049,7 @@ export default {
               updatePlanFile(this.fileData).then((response) => {
                 if (response.code === 200) {
                   this.$modal.msgSuccess("修改成功");
+                  this.$refs.planTable.clearSelection();
                   this.dialogFormVisible = false;
                   this.resetReservePlanDrawForm(); //重置表单
                   //this.open = false;

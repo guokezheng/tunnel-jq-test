@@ -375,11 +375,13 @@
                     @mouseleave="closeTooltip(item)"
                   >
                     <!-- 设备图标上提示文字 -->
+                    <!-- v-if="item.eqName == screenEqName" -->
+
                     <div
-                      v-if="item.eqName == screenEqName"
+                      v-if="item.click"
                       class="screenEqNameBox"
                     >
-                      {{ screenEqName }}
+                      {{ item.eqName }}
                     </div>
                     <div v-if="item.textFalse" class="textFalseBox">
                       请选择同种设备
@@ -394,6 +396,7 @@
                       placement="right"
                       style="position: relative; top: 0px; left: 0px"
                       popper-class="tipCase"
+                      manual
                     >
                       <div slot="content">
                         <span>名称：{{item.eqName}}</span><br/>
@@ -4970,8 +4973,10 @@ export default {
           this.min = 1;
         }
       }else{
-        this.min = 1;
-        this.batchManageForm.brightness = 1;
+        if(this.batchManageForm.brightness == 0){
+          this.min = 1;
+          this.batchManageForm.brightness = 1;
+        }
       }
     },
     // 工作台搜索关键词匹配
@@ -5752,6 +5757,7 @@ export default {
       this.batchManageType = 2;
       this.batchManageList = [];
       this.addBatchManage = true;
+      this.screenEqName = ''
     },
     // 批量操作 执行
     implementBatchManage() {
@@ -6060,7 +6066,7 @@ export default {
     },
 
     mouseoversImage() {
-       console.log(this.imageTimer,'清定时器')
+      //  console.log(this.imageTimer,'清定时器')
       clearInterval(this.imageTimer);
       this.imageTimer = null;
     },
@@ -8135,7 +8141,7 @@ export default {
       });
       if (this.currentTunnel.id != null && this.currentTunnel.id != "") {
         addBoardContent(this.currentTunnel.id).then((res) => {
-          console.log(res,"情报板显示内容查询");
+          // console.log(res,"情报板显示内容查询");
           this.boardObj = res;
         });
       }
@@ -8280,12 +8286,12 @@ export default {
     },
     sensorDisabled(item) {
       // 需要显示那类设备，直接把设备的eqType值放入就可以
-      let sensorDevice = [5, 17, 19];
-      if (sensorDevice.indexOf(item.eqType) == -1) {
-        this.showTooltip = false;
-      } else {
+      // let sensorDevice = [5, 17, 19];
+      // if (sensorDevice.indexOf(item.eqType) == -1) {
+        // this.showTooltip = false;
+      // } else {
         this.showTooltip = true;
-      }
+      // }
     },
     sensorDisabledTwo(item) {
       let sensorDevice = [];
@@ -9631,6 +9637,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .zoomClass  .el-input__suffix{
+  transform: translate(-30px,-4px) !important;
+}
 .closeRobot{
   position:absolute;
   top: 15px;

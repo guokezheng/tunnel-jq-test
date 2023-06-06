@@ -240,6 +240,7 @@ import {
   controlWarningLightStripDevice,
   setControlDeviceByParam,
   controlEvacuationSignDevice,
+  controlGuidanceLampDevice
 } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
@@ -259,7 +260,7 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
-      min: 0,
+      min: 1,
       fireMarkData: [],
       showTipe: false,
     };
@@ -415,7 +416,7 @@ export default {
             this.$modal.msgError("操作失败");
           }
         });
-        // 消防水泵:13 潜水深井泵:45
+        // 消防水泵:13 潜水深井泵:49
       } else if (
         this.eqInfo.clickEqType == 13 ||
         this.eqInfo.clickEqType == 49
@@ -438,8 +439,8 @@ export default {
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state, //设备状态
-          brightness: this.stateForm.brightness, //诱导灯亮度
-          frequency: this.stateForm.frequency, //诱导灯频率
+          brightness: this.stateForm.brightness, //疏散标志亮度
+          frequency: this.stateForm.frequency, //疏散标志频率
           fireMark:
             this.stateForm.state == "1"
               ? "0"
@@ -449,6 +450,20 @@ export default {
         };
         this.$modal.msgSuccess("指令下发中，请稍后。");
         controlEvacuationSignDevice(param).then((response) => {
+          console.log(response, "提交控制");
+          this.$modal.msgSuccess("操作成功");
+        });
+      } else if (this.stateForm.eqType == 31) {
+        const param = {
+          devId: this.stateForm.eqId, //设备id
+          state: this.stateForm.state, //设备状态
+          brightness: this.stateForm.brightness, //诱导灯亮度
+          frequency: this.stateForm.frequency, //诱导灯频率
+          eqType: this.stateForm.eqType,
+
+        };
+        this.$modal.msgSuccess("指令下发中，请稍后。");
+        controlGuidanceLampDevice(param).then((response) => {
           console.log(response, "提交控制");
           this.$modal.msgSuccess("操作成功");
         });

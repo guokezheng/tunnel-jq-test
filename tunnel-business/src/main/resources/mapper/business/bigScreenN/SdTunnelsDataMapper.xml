@@ -73,11 +73,22 @@
     </select>
 
     <select id="getCarFlowDataTopList" resultType="map">
-        select B.tunnel_id as tunnelId,B.tunnel_name as tunnelName,count(DISTINCT A.vehicle_id) as `count` from sd_tunnels B  left join sd_radar_detect_data A on A.tunnel_id = B.tunnel_id and  YEAR(A.detect_time) = YEAR(NOW())
 
-        group by B.tunnel_id
+        select
+            b.tunnel_id AS tunnelId,
+            b.tunnel_name AS tunnelName,
+            count(A.vehicle_id) AS `count`
+        from
+            sd_tunnels B
 
-        order by count(DISTINCT A.vehicle_id) desc
+                left join
+            (select DISTINCT vehicle_id,tunnel_id  from sd_radar_detect_data where  YEAR (detect_time) = YEAR (NOW()))  A
+
+            ON A.tunnel_id = B.tunnel_id
+        GROUP BY
+            B.tunnel_id
+        ORDER BY
+            A.vehicle_id DESC
     </select>
 
     <select id="getCarFlowDataWeekList" resultType="int">

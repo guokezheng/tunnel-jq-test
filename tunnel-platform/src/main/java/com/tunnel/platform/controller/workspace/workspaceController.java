@@ -713,6 +713,7 @@ public class workspaceController extends BaseController {
         String stateNum = deviceMap.get("brightness") == null ? null : deviceMap.get("brightness").toString();
       //  String eqType = deviceMap.get("eqType") == null ? null : deviceMap.get("eqType").toString();
 
+        String frequency = deviceMap.get("frequency") == null ? null : deviceMap.get("frequency").toString();
 
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(eqIdList.get(0));
 
@@ -720,6 +721,8 @@ public class workspaceController extends BaseController {
         if((stateNum == null || Integer.parseInt(stateNum) < 30) && state.equals("1") &&  sdDevices.getEqType().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())){
             return AjaxResult.error("基本照明亮度不得低于30");
         }
+
+        boolean isopen = commonControlService.queryAnalogControlConfig();
 
         Map<String, Object> map = new HashMap<>();
         map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
@@ -729,8 +732,17 @@ public class workspaceController extends BaseController {
             map.put("devId", devId);
             map.put("state", state);
             map.put("controlType", "0");
+            map.put("frequency", frequency);
             map.put("brightness", stateNum);
-            count = sdDeviceControlService.controlDevices(map);
+
+            if (!isopen) {
+                count = sdDeviceControlService.controlDevices(map);
+            } else {
+                count = commonControlService.analogControl(map,sdDevices);
+
+                SdOperationLog sdOperationLog = commonControlService.getOperationLog(map,sdDevices,count);
+                sdOperationLogService.insertSdOperationLog(sdOperationLog);
+            }
         }
         return AjaxResult.success(count);
     }

@@ -8,6 +8,7 @@ import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -104,6 +105,30 @@ public class CommonControlServiceImpl implements CommonControlService {
         }
         SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
         sdDeviceDataService.updateDeviceData(sdDevices, state, typeItem.getId());
+        // 亮度
+        String brightness = map.get("brightness") == null ? null :map.get("brightness").toString();
+        // 频率
+        String frequency = map.get("frequency") == null ? null :map.get("frequency").toString();
+        // 标号位置信息
+        String fireMark = map.get("fireMark") == null ? null : map.get("fireMark").toString();
+
+        //疏散标志
+        if(sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()){
+            if(brightness != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode()));
+            }
+
+            if(frequency != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, frequency, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()));
+            }
+
+            if(fireMark != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, fireMark, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()));
+            }
+        }
+
+
+
         Integer controlState = 1;
         return controlState;
     }

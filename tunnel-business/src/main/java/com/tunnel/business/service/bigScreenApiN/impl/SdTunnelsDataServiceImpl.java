@@ -109,7 +109,7 @@ public class SdTunnelsDataServiceImpl implements ISdTunnelsDataService {
         String yearPercent = thisYearCount + "";
         if(lastYearCount != 0){
             // 同比 增长率
-             yearPercent = new BigDecimal(thisYearCount).divide(new BigDecimal((lastYearCount)), 2, RoundingMode.HALF_UP).toString();
+             yearPercent = new BigDecimal(thisYearCount - lastYearCount).divide(new BigDecimal((lastYearCount)), 2, RoundingMode.HALF_UP).toString();
         }
 
         resMap.put("thisYearCount",thisYearCount);

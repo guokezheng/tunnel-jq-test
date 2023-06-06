@@ -52,6 +52,9 @@ public class McaTask {
 
         //父设备ID列表
         List<String> fEqIdList = new ArrayList<>(deviceMap.keySet());
+        if(fEqIdList.size() == 0){
+            return;
+        }
         //根据父设备ID、点位类型筛选最小点位、最大点位
         List<Map> pointList = devicePointService.selectDevicePointByGroup(fEqIdList,String.valueOf(pointType));
 

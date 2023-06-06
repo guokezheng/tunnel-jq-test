@@ -404,6 +404,7 @@ public class workspaceController extends BaseController {
         }
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
+        String brightness = (map.get("brightness") != null || map.get("brightness") != "") ? map.get("brightness").toString() : "0";
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
         //获取当前设备状态
         SdDeviceData sdDeviceData = new SdDeviceData();
@@ -425,6 +426,7 @@ public class workspaceController extends BaseController {
             sdDevicesService.updateSdDevices(sdDevices);
             if (sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()) {
                 sdDeviceDataService.updateDeviceData(sdDevices, state, Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode()));
+                sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI_STATUS.getCode()));
             }
             //添加操作记录
             SdOperationLog sdOperationLog = new SdOperationLog();

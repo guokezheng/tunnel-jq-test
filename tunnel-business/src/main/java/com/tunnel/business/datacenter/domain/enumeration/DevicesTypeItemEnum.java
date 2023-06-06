@@ -90,6 +90,8 @@ public enum DevicesTypeItemEnum {
     XIAO_FANG_DIAN_YA_IC(97, "电压C"),    //电压Uac
     XIAO_FANG_SHUAN_STATUS(98, "水泵消防栓状态"),    //水泵消防栓状态   手动D502=184;自动D502=377
 
+    JING_SHI_DENG_DAI_STATUS(100, "警示灯带亮度"),    //警示灯带亮度状态
+
 
     // 1000000 前四位设备类型 后三位设备属性  最大可支持9999个设备类型  999个设备属性
     // 1000 巡检机器人  对应devicesType 29

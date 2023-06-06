@@ -35,6 +35,7 @@ public class DeviceDataStrategyFactory {
         MAP.put(DevicesTypeEnum.ROBOT.getCode(), new PatrolRobot());
         MAP.put(DevicesTypeEnum.SHUI_BENG.getCode(), new FirePump());
         MAP.put(DevicesTypeEnum.WEN_SHI_DU_CHUAN_GAN_QI.getCode(), new RHTempSensor());
+        MAP.put(DevicesTypeEnum.JING_SHI_DENG_DAI.getCode(), new WarningLight());
     }
 
     /**

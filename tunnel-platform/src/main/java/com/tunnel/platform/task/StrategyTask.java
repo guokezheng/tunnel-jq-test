@@ -84,6 +84,21 @@ public class StrategyTask {
             map.put("type","1");
             map.put("currentId",sdStrategyRl.getId());
 
+            //按照设备初始化默认值
+           //疏散标志
+           if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().toString())) {
+               map.put("brightness","50");
+               map.put("frequency","60");
+               map.put("fireMark","255");
+           }
+            //诱导灯
+            if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
+                map.put("brightness","50");
+                map.put("frequency","60");
+            }
+
+
+
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }
@@ -112,6 +127,8 @@ public class StrategyTask {
 
         }
 
+
+
         for (String devId : split){
             Map<String,Object> map = new HashMap<>();
 
@@ -132,6 +149,21 @@ public class StrategyTask {
             }
             map.put("type","1");
             map.put("currentId",sdStrategyRl.getId());
+
+
+            //按照设备初始化默认值
+            //疏散标志
+            if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().toString())) {
+                map.put("brightness","50");
+                map.put("frequency","60");
+                map.put("fireMark","255");
+            }
+            //诱导灯
+            if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
+                map.put("brightness","50");
+                map.put("frequency","60");
+            }
+
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }

@@ -122,16 +122,27 @@ public class CommonControlServiceImpl implements CommonControlService {
             if(brightness != null){
                 sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode()));
             }
-
             if(frequency != null){
                 sdDeviceDataService.updateDeviceData(sdDevices, frequency, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()));
             }
-
             if(fireMark != null){
                 sdDeviceDataService.updateDeviceData(sdDevices, fireMark, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()));
             }
         }else if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()){
             sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI_STATUS.getCode()));
+        }
+
+        //智能诱导灯
+        if(sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()){
+            if(brightness != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode()));
+            }
+            if(frequency != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, frequency, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()));
+            }
+            if(state != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, state, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
+            }
         }
 
 
@@ -310,6 +321,10 @@ public class CommonControlServiceImpl implements CommonControlService {
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
         //亮度
         String brightness = Optional.ofNullable(map.get("brightness")).orElse("").toString();
+        // 频率
+        String frequency = map.get("frequency") == null ? null :map.get("frequency").toString();
+        // 标号位置信息
+        String fireMark = map.get("fireMark") == null ? null : map.get("fireMark").toString();
         //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
         sdDevices.setEqStatus("1");
         sdDevices.setEqStatusTime(new Date());
@@ -334,7 +349,30 @@ public class CommonControlServiceImpl implements CommonControlService {
             brightness = brightness == null || "".equals(brightness) ? "0" : brightness;
             linState = "1".equals(state) ?"开启":"关闭";
             linState += "，亮度："+brightness + "%";
-        }else {
+        } else if(sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()){
+            if(brightness != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode()));
+            }
+            if(frequency != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, frequency, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()));
+            }
+            if(fireMark != null){
+                sdDeviceDataService.updateDeviceData(sdDevices, fireMark, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()));
+            }
+        }else //智能诱导灯
+            if(sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()){
+                if(brightness != null){
+                    sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode()));
+                }
+                if(frequency != null){
+                    sdDeviceDataService.updateDeviceData(sdDevices, frequency, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()));
+                }
+                if(state != null){
+                    sdDeviceDataService.updateDeviceData(sdDevices, state, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
+                }
+            }
+
+        else {
             SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
             sdDeviceDataService.updateDeviceData(sdDevices, state, typeItem.getId());
         }

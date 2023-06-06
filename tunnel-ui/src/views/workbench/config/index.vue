@@ -168,6 +168,15 @@
             class="flex-row"
             type="primary"
             size="mini"
+            icon="el-icon-s-operation"
+            @click="iconLighting"
+          >
+            照明配置
+          </el-button>
+          <el-button
+            class="flex-row"
+            type="primary"
+            size="mini"
             icon="el-icon-files"
             @click="batchManage"
             v-if="batchManageType == 1"
@@ -1553,7 +1562,7 @@
         </el-form-item>
         <el-row
           style="margin-top: 10px"
-          v-show="batchManageForm.eqType == 7 || batchManageForm.eqType == 9"
+          v-show="[7, 9, 30, 45].includes(batchManageForm.eqType)"
         >
           <el-col :span="15">
             <el-form-item label="亮度调整:">
@@ -1570,6 +1579,28 @@
           <el-col :span="9">
             <span style="padding-left: 10px; line-height: 30px"
               >{{ batchManageForm.brightness }} %</span
+            >
+          </el-col>
+        </el-row>
+        <el-row
+          style="margin-top: 10px"
+          v-show="batchManageForm.eqType == 30"
+        >
+          <el-col :span="15">
+            <el-form-item label="闪烁频率:">
+              <el-slider
+                v-model="batchManageForm.frequency"
+                :max="100"
+                :min="min"
+                class="sliderClass"
+                :disabled="!batchManageForm.frequency"
+                @change="$forceUpdate()"
+              ></el-slider>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9">
+            <span style="padding-left: 10px; line-height: 30px"
+              >{{ batchManageForm.frequency }} %</span
             >
           </el-col>
         </el-row>
@@ -3176,6 +3207,111 @@
         <el-button class="closeButton" @click="cancel">关 闭</el-button>
       </div>
     </el-dialog>
+    <!-- 照明配置对话框 -->
+    <el-dialog
+      v-dialogDrag
+      class="workbench-dialog explain-table icon-dialog"
+      :title="title"
+      :visible.sync="lightingVisible"
+      width="45%"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <el-form ref="form" :model="lightingForm" label-width="120px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="隧道名称" prop="tunnelId">
+              <el-select v-model="lightingForm.tunnelId" placeholder="请选择隧道" disabled>
+                <el-option
+                  v-for="item in eqTunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="模式类型" prop="modeType">
+              <el-select v-model="lightingForm.modeType" placeholder="请选择模式类型">
+                <el-option
+                  v-for="item in modeTypeList"
+                  :key="item.value"
+                  :label="item.name"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="开启调光模式" prop="isStatus" v-if="lightingForm.modeType != 0">
+              <el-tooltip
+                :content="lightingForm.isStatus == 1 ? '开启' : '关闭'"
+                placement="top"
+              >
+                <el-switch
+                  v-model="lightingForm.isStatus"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="1"
+                  :inactive-value="0"
+                >
+                </el-switch>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="当前亮度值"
+              prop="beforeLuminance"
+              v-if="lightingForm.modeType == 1"
+            >
+              <el-input
+                v-model="lightingForm.beforeLuminance"
+                placeholder="请输入当前亮度值(0-100)"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              label="最小亮度值"
+              prop="minLuminance"
+              v-if="lightingForm.modeType != 0"
+            >
+              <el-input
+                v-model="lightingForm.minLuminance"
+                placeholder="请输入最小亮度值(0-100)"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="响应时长(毫秒)"
+              prop="respondTime"
+              v-if="lightingForm.modeType != 0"
+            >
+              <el-input
+                v-model="lightingForm.respondTime"
+                placeholder="请输入响应时长 单位：秒s"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button class="submitButton" @click="submitLightingForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">关 闭</el-button>
+      </div>
+    </el-dialog>
+
     <!--查看控制策略对话框-->
     <el-dialog
       v-dialogDrag
@@ -3861,6 +3997,16 @@ import { singleCat } from "@/views/workbench/config/mixin/single-cat";
 // let configData = {}; //配置信息
 // let wrapperClientX = 0;
 // let wrapperClientY = 0;
+//照明配置
+import {
+  getLightingConfigByParam,
+  addConfig,
+  updateConfig,
+} from "@/api/business/enhancedLighting/app.js";
+
+let configData = {}; //配置信息
+let wrapperClientX = 0;
+let wrapperClientY = 0;
 let boxEqList = [];
 let mode = "";
 export default {
@@ -4262,6 +4408,7 @@ export default {
       youdaoVisible: false,
       cameraErrorInfo: "",
       explainVisible: false,
+      lightingVisible: false,
       eqTypeList: [], //设备类型
       eqBigTypeList: [], //设备类型
       selectBigType: {
@@ -4616,6 +4763,23 @@ export default {
       min: 0,
       accidentDistance: "", //隧道px长度
       startPileNum: "", //隧道最后桩号
+      //照明模式类型
+      modeTypeList:[
+        {
+          name: "定时模式",
+          value: 0,
+        },
+        {
+          name: "自动模式",
+          value: 1,
+        },
+        {
+          name: "节能模式",
+          value: 2,
+        },
+      ],
+      // 表单参数
+      lightingForm: {},
     };
   },
 
@@ -4777,12 +4941,36 @@ export default {
 
   watch: {
     "batchManageForm.state": function (newVal, oldVal) {
-      if (newVal == "1" && this.batchManageForm.brightness == 0) {
-        this.batchManageForm.brightness = 1;
+      // if (newVal == "1" && this.batchManageForm.brightness == 0) {
+      //   this.batchManageForm.brightness = 1;
+      //   this.min = 1;
+      // } else if (newVal == "2") {
+      //   this.batchManageForm.brightness = 0;
+      //   this.min = 0;
+      // }
+      if([7, 9].includes(this.itemEqType)){
+      // 基础照明、加强照明  state == 1 开启  state == 2  关闭
+        if(newVal == "1" && this.batchManageForm.brightness == 0){
+          this.batchManageForm.brightness = 1;
+          this.min = 1;
+        }else if(newVal == "2"){
+          this.batchManageForm.brightness = 0;
+          this.min = 0;
+        } 
+      }else if(this.itemEqType == 30){
+         // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
+        if(newVal == "1"){
+          this.batchManageForm.brightness = 0;
+          this.batchManageForm.frequency = 0;
+          this.min = 0;
+        }else if(newVal != "1" && this.batchManageForm.brightness == 0){
+          this.batchManageForm.brightness = 1;
+          this.batchManageForm.frequency = 1;
+          this.min = 1;
+        }
+      }else{
         this.min = 1;
-      } else if (newVal == "2") {
-        this.batchManageForm.brightness = 0;
-        this.min = 0;
+        this.batchManageForm.brightness = 1;
       }
     },
     // 工作台搜索关键词匹配
@@ -5545,6 +5733,7 @@ export default {
         state: this.batchManageForm.state,
         brightness: this.batchManageForm.brightness,
         eqType: this.itemEqType,
+        frequency:this.batchManageForm.frequency,
       };
       batchControlDevice(param).then((res) => {
         // this.$modal.msgSuccess("控制成功");
@@ -5609,6 +5798,33 @@ export default {
         }
       });
       // console.log(that.eqTypeStateList2, "that.eqTypeStateList2");
+    },
+    /** 加强照明提交按钮 */
+    submitLightingForm(){
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if (this.lightingForm.id != null) {
+            updateConfig(this.lightingForm).then((response) => {
+              if(response.code == 200){
+                this.$modal.msgSuccess("修改成功");
+                this.lightingVisible = false;
+                this.$refs.tableFile.clearSelection();
+              }else{
+                this.$modal.msgError(response.msg);
+              }
+            });
+          } else {
+            addConfig(this.lightingForm).then((response) => {
+              if(response.code == 200){
+                this.$modal.msgSuccess("新增成功");
+                this.lightingVisible = false;
+              }else{
+                this.$modal.msgError(response.msg);
+              }
+            });
+          }
+        }
+      });
     },
     // 关闭批量操作弹窗 / 批量操作取消
     closeBatchManageDialog() {
@@ -7970,7 +8186,6 @@ export default {
       // this.currentTunnel.name = item.tunnelName;
 
       this.getTunnelData(this.currentTunnel.id);
-      
 
       // this.tunnelItem = item;
 
@@ -8180,7 +8395,7 @@ export default {
               this.eqTypeDialogList
             );
           } else if (
-            [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 30, 45, 49].includes(item.eqType)
+            [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 30, 31, 45, 49].includes(item.eqType)
           ) {
             this.$refs.lightRef.init(
               this.eqInfo,
@@ -8239,14 +8454,16 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          } else if (item.eqType == 31) {
-            this.$refs.youdaoRef.init(
-              this.eqInfo,
-              this.brandList,
-              this.directionList,
-              this.eqTypeDialogList
-            );
-          } else if (item.eqType == 16 || item.eqType == 36) {
+          } 
+          // else if (item.eqType == 31) {
+          //   this.$refs.youdaoRef.init(
+          //     this.eqInfo,
+          //     this.brandList,
+          //     this.directionList,
+          //     this.eqTypeDialogList
+          //   );
+          // } 
+          else if (item.eqType == 16 || item.eqType == 36) {
             this.$refs.boardRef.init(
               this.eqInfo,
               this.brandList,
@@ -9009,6 +9226,20 @@ export default {
       this.explainVisible = true;
       this.title = "图标含义";
     },
+    /* 打开照明配置选项 */
+    iconLighting() {
+      //获取照明配置信息
+      let param = {tunnelId:this.currentTunnel.id}
+      getLightingConfigByParam(param).then(response => {
+        this.lightingVisible = true;
+        this.title = "照明配置";
+        if(response.data == null){
+          this.lightingForm = {tunnelId:this.currentTunnel.id,modeType:0};
+        }else{
+          this.lightingForm = response.data;
+        }
+      });
+    },
     /* 关闭所有对话框*/
     cancel() {
       this.operationParam.pageNum = 1;
@@ -9018,6 +9249,8 @@ export default {
       // this.stateSwitchVisible = false;
       this.explainVisible = false;
       // this.batchVisible = false;
+      this.lightingVisible = false;
+      this.batchVisible = false;
       this.shuibengVisible = false;
       this.lumianVisible = false;
       this.weiboVisible = false;

@@ -27,6 +27,14 @@ public interface ISdEnhancedLightingConfigService
     public List<SdEnhancedLightingConfig> selectSdEnhancedLightingConfigList(SdEnhancedLightingConfig sdEnhancedLightingConfig);
 
     /**
+     * 查询【加强照明配置】列表
+     *
+     * @param sdEnhancedLightingConfig 【加强照明配置】
+     * @return 【加强照明配置】集合
+     */
+    public SdEnhancedLightingConfig selectSdEnhancedLightingConfigListByParam(SdEnhancedLightingConfig sdEnhancedLightingConfig);
+
+    /**
      * 新增【加强照明配置】
      * 
      * @param sdEnhancedLightingConfig 【加强照明配置】

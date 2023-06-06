@@ -674,7 +674,7 @@
 
 <script>
   window.onload = function () {
-
+    console.log("dddddd")
     var lineDiv = document.getElementById('lineDiv'); //长线条
     var minDiv = document.getElementById('minDiv'); //小方块
     var msg = document.getElementById("msg");

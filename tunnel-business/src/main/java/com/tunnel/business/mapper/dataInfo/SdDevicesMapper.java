@@ -308,6 +308,8 @@ public interface SdDevicesMapper
 
     List<SdDevices> selectDevicesLineList(@Param("deptId")String deptId,@Param("eqtype")String eqtype);
 
+
+	List<SdDevices> selectSdDevicesListByParam(SdDevices sdDevices);
 	/**
 	 * 查询设备方向
 	 * @param sdDevices

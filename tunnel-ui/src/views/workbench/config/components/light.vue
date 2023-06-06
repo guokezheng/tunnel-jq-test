@@ -152,6 +152,7 @@
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[0]"
+                      :style="{width:clickEqType == 31?'110px':'auto'}"
                     />
 
                     <div style="margin: 0 0 0 10px; display: inline-block">
@@ -162,7 +163,7 @@
               </el-radio-group>
             </div>
           </el-form-item>
-          <!-- 加强照明：7  警示灯带：45 -->
+          <!-- 加强照明：7  基本照明：9 疏散标志：30 诱导灯：31 警示灯带：45 -->
           <el-row v-show="clickEqType == 30">
             <el-col :span="11">
               <el-form-item v-show="showTipe == true" label-width="10px">
@@ -172,7 +173,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="clickEqType == 30" style="margin-top: 10px">
+          <el-row v-show="[30, 31].includes(this.clickEqType)" style="margin-top: 10px">
             <el-col :span="15">
               <el-form-item label="闪烁频率:">
                 <el-slider
@@ -184,7 +185,7 @@
                 ></el-slider>
               </el-form-item>
             </el-col>
-            <el-col :span="9" v-if="stateForm.frequency">
+            <el-col :span="9" >
               <span style="padding-left: 10px; line-height: 30px"
                 >{{ stateForm.frequency }} m/s</span
               >
@@ -192,7 +193,7 @@
           </el-row>
           <el-row
             style="margin-top: 10px"
-            v-show="[7, 9, 30, 45].includes(this.clickEqType)"
+            v-show="[7, 9, 30, 31, 45].includes(this.clickEqType)"
           >
             <el-col :span="15">
               <el-form-item label="亮度调整">
@@ -205,7 +206,7 @@
                 ></el-slider>
               </el-form-item>
             </el-col>
-            <el-col :span="9">
+            <el-col :span="9" >
               <span style="padding-left: 10px; line-height: 30px"
                 >{{ stateForm.brightness }} %</span
               >
@@ -275,7 +276,7 @@ export default {
           this.stateForm.brightness = 0;
           this.min = 0;
         } 
-      }else if(this.clickEqType == 30){
+      }else if([30, 31].includes(this.clickEqType)){
          // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
         if(newVal == "1"){
           this.stateForm.brightness = 0;

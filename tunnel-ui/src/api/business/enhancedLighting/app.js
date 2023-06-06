@@ -17,6 +17,15 @@ export function getConfig(id) {
   })
 }
 
+// 查询【加强照明配置】详细
+export function getLightingConfigByParam(query) {
+  return request({
+    url: '/enhancedLighting/config/getLightingConfigByParam',
+    method: 'get',
+    params: query
+  })
+}
+
 // 新增【加强照明配置】
 export function addConfig(data) {
   return request({

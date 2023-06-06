@@ -231,15 +231,23 @@ public class SanJingLight implements Light, GeneralControlBean {
 
     public int lineControlAddLog(String deviceId, Integer openClose, Integer brightness) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
-        int resultStatus = lineControl(deviceId, openClose,brightness);
+        //推送照明指令
+//        int resultStatus = lineControl(deviceId, openClose,brightness);
+        int resultStatus = 1;
         // 如果控制成功
         if (resultStatus == 1) {
             //更新设备状态
             device.setEqStatus("1");
             device.setEqStatusTime(new Date());
             sdDevicesService.updateSdDevices(device);
+            Integer deviceStatus = null;
+            if( DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(device.getEqType())){
+                deviceStatus = DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode();
+            }else if( DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(device.getEqType())){
+                deviceStatus = DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode();
+            }
             //更新设备实时数据
-            sdDeviceDataService.updateDeviceData(device, String.valueOf(openClose), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode()));
+            updateDeviceData(device, String.valueOf(openClose), deviceStatus);
         }
 
         //添加操作日志
@@ -498,19 +506,27 @@ public class SanJingLight implements Light, GeneralControlBean {
     public int setBrightnessByDevice(SdDevices device,Integer nowLuminanceRange ,Integer luminanceRange, String controlType) {
         int resultStatus;
         try{
-            resultStatus = setBrightness(device.getEqId(),luminanceRange);
+//            resultStatus = setBrightness(device.getEqId(),luminanceRange);
+            resultStatus = 1;
         }catch (Exception e){
             e.printStackTrace();
             resultStatus = 0;
         }
         // 如果控制成功
         if (resultStatus == 1) {
+            //设备类型
+            Integer typeItem = null;
+            if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(device.getEqType())){
+                typeItem = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
+            }else if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(device.getEqType())){
+                typeItem = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+            }
             // 更新设备在线状态
             device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             device.setEqStatusTime(new Date());
             sdDevicesService.updateSdDevices(device);
             //更新设备实时数据
-            sdDeviceDataService.updateDeviceData(device, String.valueOf(luminanceRange), Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
+            updateDeviceData(device, String.valueOf(luminanceRange), typeItem);
             //更新redis缓存
             String redisLuminanceRangeKey = "control:"+device.getEqId()+"_LuminanceRange";
             redisCache.setCacheObject(redisLuminanceRangeKey,luminanceRange);
@@ -534,7 +550,22 @@ public class SanJingLight implements Light, GeneralControlBean {
         return resultStatus;
     }
 
-
+    public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            sdDeviceDataService.updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            sdDeviceDataService.insertSdDeviceData(sdDeviceData);
+        }
+    }
 
     /**
      * 获取token

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时任务模式
@@ -195,6 +196,68 @@ public class LightFixedTimeTask {
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * 车来灯亮，定时查看隧道 是否有车。
+     */
+    public void dimmingTask(){
+        List<SdEnhancedLightingConfig> sdEnhancedLightingConfigList;
+        sdEnhancedLightingConfigList = redisCache.getCacheObject("control:lightFixedTimeTask");
+        if(sdEnhancedLightingConfigList == null){
+            //根据隧道id获取对应隧道  加强照明策略 配置信息
+            sdEnhancedLightingConfigList =  sdEnhancedLightingConfigService.selectSdEnhancedLightingConfigList(new SdEnhancedLightingConfig());
+            redisCache.setCacheObject("control:lightFixedTimeTask",sdEnhancedLightingConfigList,60, TimeUnit.SECONDS);//每分钟，重新请求一次
+        }
+        for (SdEnhancedLightingConfig sdEnhancedLightingConfig:sdEnhancedLightingConfigList) {
+            //放入redis缓存
+            //查找所有加强照明与基本照明
+            SdDevices sdDevices = new SdDevices();
+            sdDevices.setEqTunnelId(sdEnhancedLightingConfig.getTunnelId());
+            sdDevices.setEqDirection(TunnelDirectionEnum.UP_DIRECTION.getCode());
+            sdDevices.setEqTypes(new Long[]{DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode(),DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()});
+            List<SdDevices> deviceIds = sdDevicesMapper.selectSdDevicesListByParam(sdDevices);
+            if(sdEnhancedLightingConfig.getModeType() == 2){
+                //判断当前隧道是否有车辆信息
+                Set<String> keys = redisCache.redisTemplate.keys("vehicleSnap:"+sdEnhancedLightingConfig.getTunnelId()+":"+TunnelDirectionEnum.UP_DIRECTION.getCode()+":*");
+                if(keys != null && keys.size() == 0){
+                    for (SdDevices devices:deviceIds) {
+                        //亮度值计算:
+                        // 后期修改为 根据洞外亮度计算当前亮度值
+                        // 当前亮度值 根据定时模式获取当前路段亮度。
+                        //当前亮度值
+                        String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
+                        //缓存获取亮度值  与当前亮度值   与当前亮度值比对。如果相同 忽略当前操作。
+                        Integer nowLuminanceRange = redisCache.getCacheObject(redisLuminanceRangeKey);
+                        //最小亮度值
+                        int minLuminance = sdEnhancedLightingConfig.getMinLuminance();
+
+                        if(nowLuminanceRange != null && minLuminance != nowLuminanceRange){
+                            log.info("结束亮光值:["+ sdEnhancedLightingConfig.getTunnelId() +"]当前亮度nowLuminanceRange："+nowLuminanceRange+" 结束推送亮度值" +minLuminance);
+                            int flag = sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange,minLuminance,"2");
+                            if(flag == 0){
+                                log.error(Thread.currentThread().getName()+"推送调光指令异常，未能成功发送调光指令");
+                            }
+                        }
+                    }
+                }
+            }else if(sdEnhancedLightingConfig.getModeType() == 1){
+                for (SdDevices devices:deviceIds) {
+                    //查看两个亮度值是否一致
+                    //定时原有亮度值
+                    String redisRegularLuminanceRangeKey = "control_regular:"+devices.getEqId()+"_LuminanceRange";
+                    Integer nowLuminanceRange1 = redisCache.getCacheObject(redisRegularLuminanceRangeKey);
+                    //当前亮度值
+                    String redisLuminanceRangeKey = "control:"+devices.getEqId()+"_LuminanceRange";
+                    Integer nowLuminanceRange2 = redisCache.getCacheObject(redisLuminanceRangeKey);
+                    //如果亮度值不同，则重新调整亮度值
+                    if(nowLuminanceRange1!=null && !nowLuminanceRange1.equals(nowLuminanceRange2)){
+                        sanJingLight.setBrightnessByDevice(devices,nowLuminanceRange2,nowLuminanceRange1,"2");
+                    }
+                }
             }
         }
     }

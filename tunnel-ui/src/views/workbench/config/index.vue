@@ -1550,6 +1550,7 @@
                     :width="iconWidth"
                     :height="iconHeight"
                     :src="item.url[0]"
+                    :style="{width:itemEqType == 31?'110px':'auto'}"
                   />
 
                   <div style="margin: 0 0 0 10px; display: inline-block">
@@ -1562,7 +1563,7 @@
         </el-form-item>
         <el-row
           style="margin-top: 10px"
-          v-show="[7, 9, 30, 45].includes(batchManageForm.eqType)"
+          v-show="[7, 9, 30, 31, 45].includes(batchManageForm.eqType)"
         >
           <el-col :span="15">
             <el-form-item label="亮度调整:">
@@ -1584,7 +1585,7 @@
         </el-row>
         <el-row
           style="margin-top: 10px"
-          v-show="batchManageForm.eqType == 30"
+          v-show="[30, 31].includes(batchManageForm.eqType)"
         >
           <el-col :span="15">
             <el-form-item label="闪烁频率:">
@@ -5860,6 +5861,8 @@ export default {
           item.click = false;
         }
       }
+      this.$forceUpdate()
+
     },
     // 抽屉车指批量控制 车道下拉框
     // getTunnelLane(tunnelLane) {
@@ -6057,7 +6060,7 @@ export default {
     },
 
     mouseoversImage() {
-      //  console.log(this.imageTimer,'清定时器')
+       console.log(this.imageTimer,'清定时器')
       clearInterval(this.imageTimer);
       this.imageTimer = null;
     },
@@ -8132,7 +8135,7 @@ export default {
       });
       if (this.currentTunnel.id != null && this.currentTunnel.id != "") {
         addBoardContent(this.currentTunnel.id).then((res) => {
-          // console.log(res,"情报板显示内容查询");
+          console.log(res,"情报板显示内容查询");
           this.boardObj = res;
         });
       }
@@ -8140,7 +8143,9 @@ export default {
  
     /* 选择隧道*/
     setTunnel(item, index) {
-      console.log(item,"item")
+      // console.log(item,"item")
+      this.closeBatchManageDialog()
+      this.screenEqName = ''
       let obj = {
         "tunnelName":item.tunnelName,
         "tunnelId":item.tunnelId,

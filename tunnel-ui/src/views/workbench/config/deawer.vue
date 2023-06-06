@@ -448,7 +448,7 @@ export default {
   },
   methods: {
     init(tunnelId,lane){
-      console.log(tunnelId,lane,"tunnelId,lane")
+      // console.log(tunnelId,lane,"tunnelId,lane")
       this.tunnelId = tunnelId;
       this.tunnelLane = lane
       this.getTunnelState();
@@ -460,7 +460,7 @@ export default {
         isControl: 1,
       };
       getStateByData(param).then((response) => {
-        console.log(response, "查询设备状态图标");
+        // console.log(response, "查询设备状态图标");
         // this.chezhiStateList = response.rows;
         this.chezhiStateList = [];
         for (let i = 0; i < response.rows.length; i++) {
@@ -502,7 +502,7 @@ export default {
     getTunnelLane() {
       let laneArray = JSON.parse(JSON.stringify(this.chezhiLaneOptionList));
       this.chezhiLaneList = laneArray.slice(0, this.tunnelLane);
-      console.log(this.chezhiLaneList,"this.chezhiLaneList")
+      // console.log(this.chezhiLaneList,"this.chezhiLaneList")
     },
     timingStrategy(item) {
       var time = item.arr.join("-");

@@ -362,7 +362,6 @@ export default {
     },
   },
   created() {
-    console.log(this.tunnelId, "tunnelIdtunnelIdtunnelIdtunnelId");
     this.getDicts("sd_strategy_direction").then((data) => {
       this.directionList = data.data;
     });
@@ -380,7 +379,7 @@ export default {
         tunnelId: this.tunnelId,
       };
       vehicleMonitoringInRecent24Hours(param).then((res) => {
-        console.log(res, "车辆监测数据");
+        // console.log(res, "车辆监测数据");
         var vehicleXData = [];
         var vehicleYData = [];
         for (var item of res.data) {
@@ -397,7 +396,7 @@ export default {
         tunnelId: this.tunnelId,
       };
       specialVehicleMonitoringInRecent24Hours(param).then((res) => {
-        console.log(res, "重点车辆监测数据");
+        // console.log(res, "重点车辆监测数据");
         var specialVehicleXData = [];
         var specialVehicleYData = [];
         for (var item of res.data) {
@@ -409,7 +408,7 @@ export default {
     },
     getEnergyConsumption() {
       energyConsumptionDetection(this.tunnelId).then((res) => {
-        console.log(res, "能耗监测");
+        // console.log(res, "能耗监测");
         let xDataN = [];
         let xDataY = [];
         let xDataR = [];
@@ -538,7 +537,7 @@ export default {
         eventState: "3",
       };
       getWarnEvent(param).then((response) => {
-        console.log(response.data, "预警事件");
+        // console.log(response.data, "预警事件");
         this.trafficList = response.data;
       });
     },

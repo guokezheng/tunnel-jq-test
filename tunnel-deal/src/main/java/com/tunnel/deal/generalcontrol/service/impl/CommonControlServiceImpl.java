@@ -103,8 +103,13 @@ public class CommonControlServiceImpl implements CommonControlService {
         if (sdDeviceTypeItems.size() == 0) {
             throw new RuntimeException("当前设备没有设备类型数据项数据");
         }
-        SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-        sdDeviceDataService.updateDeviceData(sdDevices, state, typeItem.getId());
+        for(SdDeviceTypeItem item : sdDeviceTypeItems){
+            if("state".equals(item.getItemCode())){
+                sdDeviceDataService.updateDeviceData(sdDevices, state, item.getId());
+                break;
+            }
+        }
+
         // 亮度
         String brightness = map.get("brightness") == null ? null :map.get("brightness").toString();
         // 频率
@@ -125,6 +130,8 @@ public class CommonControlServiceImpl implements CommonControlService {
             if(fireMark != null){
                 sdDeviceDataService.updateDeviceData(sdDevices, fireMark, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()));
             }
+        }else if(sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()){
+            sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI_STATUS.getCode()));
         }
 
 

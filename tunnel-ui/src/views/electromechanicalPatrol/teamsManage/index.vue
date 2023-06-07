@@ -654,18 +654,24 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
       this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 搜索按钮操作 */
     handleQueryUser() {
       this.queryParamsUser.pageNum = 1;
+      this.queryParamsUser.pageSize = 10;
+
       this.getUserList();
     },
 
     /** 搜索按钮操作 */
     handleQueryUnUser() {
       this.queryParamsUnuser.pageNum = 1;
+      this.queryParamsUnuser.pageSize = 10;
+
       this.getListUnuser();
     },
     /** 重置按钮操作 */

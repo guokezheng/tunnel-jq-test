@@ -451,7 +451,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      console.log(this.queryParams);
+      this.queryParams.pageSize = 10;
       this.$refs.peopleTable.clearSelection();
       this.getList();
     },

@@ -1592,6 +1592,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
       this.task_boxShow = false;
       this.$refs.tableFile.clearSelection();
       this.getList();

@@ -133,6 +133,7 @@
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       height="62vh"
       class="menuAdministration allTable"
+      ref="tableFile"
     >
       <el-table-column
         prop="menuName"
@@ -591,6 +592,12 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.queryParams.menuName = "";
+      this.$refs.tableFile.bodyWrapper.scrollTop = 0;
+      this.refreshTable = false;
+      this.isExpandAll = false
+      this.$nextTick(() => {
+        this.refreshTable = true;
+      });
       this.handleQuery();
     },
     /** 新增按钮操作 */

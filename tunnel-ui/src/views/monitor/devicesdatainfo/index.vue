@@ -1032,6 +1032,8 @@ export default {
     /*table搜索*/
     handleQueryTab() {
       this.querysParamsTab.pageNum = 1;
+      this.querysParamsTab.pageSize = 10;
+
       this.$refs.tableFile.clearSelection();
       this.getListTab();
     },

@@ -485,12 +485,14 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.boxShow == true) {
-          self.boxShow = false;
+      if (self.boxShow) {
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.boxShow == true) {
+            self.boxShow = false;
+          }
         }
       }
     },
@@ -609,6 +611,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
       this.$refs.tableFile.clearSelection();
       this.getList();
     },
@@ -623,10 +627,10 @@ export default {
       this.ids = selection.map((item) => item.typeId);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
-      console.log(selection,"selection")
-      console.log(this.ids,"this.ids")
-      console.log(this.single,"this.single")
-      console.log(this.multiple,"this.multiple")
+      console.log(selection, "selection");
+      console.log(this.ids, "this.ids");
+      console.log(this.single, "this.single");
+      console.log(this.multiple, "this.multiple");
     },
 
     /** 导出按钮操作 */

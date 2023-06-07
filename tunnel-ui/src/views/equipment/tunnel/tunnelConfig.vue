@@ -47,7 +47,7 @@
       <div class="config-content">
         <!--画布区域-->
         <el-row class="config-img-box"  id ='svgRow' v-loading="loading" >
-          <el-image class="config-img" id="imageId":src="selectedTunnel.lane.url" :style="{width:selectedTunnel.lane.width + 'px'}" lazy></el-image>
+          <el-image class="config-img" id="imageId" :src="selectedTunnel.lane.url" :style="{width:selectedTunnel.lane.width + 'px'}" lazy></el-image>
           <svg id="svg" class="tunnelSvg" height="580" :style="{width:selectedTunnel.lane.width + 'px'}" style="position: relative;z-index: 3;" ></svg>
           <!-- 辅助线 -->
           <div id="guide-h" class="guide"></div>
@@ -187,7 +187,7 @@
       </div>
     </el-dialog>
 
-    <ul v-show="deleteVisible" :style="{left:left+'px',top:top + 40 +'px'}" class="contextmenu">
+    <ul v-show="deleteVisible" :style="{left:left - svgScrollLeft +'px',top:top + 40 +'px'}" class="contextmenu">
       <li @click="deleteImage"><i class="el-icon-delete"></i>删除</li>
     </ul>
 
@@ -242,7 +242,6 @@ import { defaultIcon, laneImage } from "../../../utils/configData.js";
 
 var selectedIconIndex = ""; //删除索引
 var img = [];
-
 export default {
   name: "TunnelConfig",
   dicts: ["environment"],
@@ -340,10 +339,12 @@ export default {
       Clist: [],
       pageXimage: 0,
       pageYimage: 0,
+      scroll:'',
+      svgScrollLeft:0,
     };
   },
   created: function () {
-    console.log("我被穿件了");
+    // console.log("我被穿件了");
     this.saveLoading = true;
     img = [];
     let lane = this.getLanUrl(this.$route.query.lane);
@@ -352,10 +353,11 @@ export default {
       name: this.$route.query.name,
       lane: lane,
     };
-    console.log(this.selectedTunnel, "this.selectedTunnel");
+    // console.log(this.selectedTunnel, "this.selectedTunnel");
     this.selectEquipmentType();
     this.selectEnvironment();
     this.getTunnels(this.selectedTunnel.id);
+
   },
   watch: {
     deleteVisible(value) {
@@ -367,7 +369,7 @@ export default {
       }
     },
     displayNumb(value) {
-      console.log(value, "value");
+      // console.log(value, "value");
       this.displayControl(value);
     },
   },
@@ -380,6 +382,9 @@ export default {
         this.windowHeight = document.documentElement.clientHeight;
       })();
     };
+    // 横向滚动 获取滚动的长度 好定位删除提示的位置
+    let params = document.getElementById("svgRow")
+    params.addEventListener("scroll",this.dataScroll);
     //鼠标右键
     window.oncontextmenu = function (e) {
       // debugger
@@ -387,15 +392,16 @@ export default {
       if (e.target.localName == "image") {
         // debugger
         let letftWidth = 105;
-        that.left = e.offsetX + letftWidth + 30;
+        that.left = e.offsetX + 30;
         that.top = e.y - 90;
+
         that.deleteVisible = true;
         that.deleteObj = e.target.parentElement.snap;
-        console.log(e);
       }
     };
     //鼠标拖动
     window.ondrag = function (e) {
+      console.log(e)
       let oDiv = document.getElementById("imageId");
       this.pageXimage = e.pageX;
       this.pageYimage = e.pageY;
@@ -424,15 +430,20 @@ export default {
         that.getEquipment(selectedIconLists[num], selectedIcon);
       }
     };
+    
   },
 
   methods: {
+    // 获取滚动条横向滚动的长度
+    dataScroll(){
+      this.svgScrollLeft = document.getElementById("svgRow").scrollLeft
+    },
     /* 查询设备类型*/
     selectEquipmentType() {
       var that = this;
       listType("").then((response) => {
         that.planRoadmapUrl(response.rows);
-        console.log(response.rows, "response");
+        // console.log(response.rows, "response");
       });
     },
     /* 查询环境配置*/
@@ -445,10 +456,10 @@ export default {
           e.eqId = e.id + e.sdName;
           e.pile = "";
         });
-        console.log(response.rows, "接口返回数据");
-        console.log(response.rows.length, "接口返回数据");
-        console.log(that.dict.type.environment, "字典数据");
-        console.log(that.dict.type.environment.length, "字典数据长度");
+        // console.log(response.rows, "接口返回数据");
+        // console.log(response.rows.length, "接口返回数据");
+        // console.log(that.dict.type.environment, "字典数据");
+        // console.log(that.dict.type.environment.length, "字典数据长度");
         if (that.dict.type.environment.length != response.rows.length) {
           for (
             let index = 0;
@@ -459,9 +470,9 @@ export default {
               (e) =>
                 e.environmentType == that.dict.type.environment[index].value
             );
-            console.log(obj, "符合条件的obj");
+            // console.log(obj, "符合条件的obj");
             if (obj == undefined) {
-              console.log(obj, "666666");
+              // console.log(obj, "666666");
               let one = [
                 {
                   url: [],
@@ -473,7 +484,7 @@ export default {
             }
           }
         }
-        console.log(that.Clist, "that.Clist");
+        // console.log(that.Clist, "that.Clist");
         that.planRoadmapEnvironmentUrl(that.Clist);
       });
     },
@@ -495,13 +506,13 @@ export default {
         }
       }
       that.EnvironmentList = list;
-      console.log(that.EnvironmentList, "that.EnvironmentList");
+      // console.log(that.EnvironmentList, "that.EnvironmentList");
       this.saveLoading = false;
     },
     async planRoadmapUrl(list) {
       // debugger
       var that = this;
-      console.log(list, "接口返回数据");
+      // console.log(list, "接口返回数据");
       for (let i = 0; i < list.length; i++) {
         if (list[i].iFileList != null) {
           let imgUrl = [];
@@ -516,7 +527,7 @@ export default {
         }
       }
       that.eqTypeList = list;
-      console.log(list, "list");
+      // console.log(list, "list");
       this.saveLoading = false;
     },
     /* 请求图片base64地址*/
@@ -554,7 +565,7 @@ export default {
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
           this.selectedIconList = res.eqList;
-          console.log(this.selectedIconList, "this.selectedIconList");
+          // console.log(this.selectedIconList, "this.selectedIconList");
           listType("").then((response) => {
             this.drawSvg(response.rows);
           });
@@ -589,10 +600,10 @@ export default {
     drawSvg(eqTypeList) {
       var that = this;
       let list = that.selectedIconList;
-      console.log("that.selectedIconList", that.selectedIconList);
+      // console.log("that.selectedIconList", that.selectedIconList);
       // debugger;
       for (let i = 0; i < list.length; i++) {
-        console.log("list.length", list.length);
+        // console.log("list.length", list.length);
         var iconWidth = 0;
         var iconHeight = 0;
         if (list[i].width != "") {
@@ -606,7 +617,7 @@ export default {
             break;
           }
         }
-        console.log("list[i]", list[i]);
+        // console.log("list[i]", list[i]);
         //矩形框
         if (list[i].url.length > 1) {
           // console.log('矩形框')
@@ -627,7 +638,7 @@ export default {
           );
           // console.log(list[i].pile, 'list[i].pile')
           if (list[i].pile != "" && list[i].pile) {
-            console.log("list[i].pile");
+            // console.log("list[i].pile");
             let r = that.svg.paper
               .rect(
                 list[i].position.left - 20,
@@ -641,12 +652,12 @@ export default {
               });
 
             //桩号
-            console.log(
-              list[i],
-              list[i].pile.length,
-              list[i].position.left - (2 * list[i].pile.length - 20),
-              "list[i].pile"
-            );
+            // console.log(
+            //   list[i],
+            //   list[i].pile.length,
+            //   list[i].position.left - (2 * list[i].pile.length - 20),
+            //   "list[i].pile"
+            // );
             let t = "";
             if (list[i].pile) {
               if (list[i].pile.length > 10) {
@@ -683,7 +694,7 @@ export default {
             });
           }
         } else {
-          console.log(iconWidth, iconWidth < 20, "iconWidth");
+          // console.log(iconWidth, iconWidth < 20, "iconWidth");
           // let num = iconWidth<30?(iconWidth<25?10:2):-8;
           // let num = 0;
           var img3 = that.svg.paper.image(
@@ -731,11 +742,11 @@ export default {
             t.attr({
               x: list[i].position.left - list[i].pile.length - 4,
             });
-            console.log(list[i], r, "list[i]");
+            // console.log(list[i], r, "list[i]");
             img[i] = that.svg.paper.g(r, t, img3).attr({
               class: "mydrags",
             });
-            console.log("正常", img[i]);
+            // console.log("正常", img[i]);
             // if(list[i].eqType == 5){
             //   img[i] = that.svg.paper.g(r - 10, t, img3).attr({
             //     class: "mydrags",
@@ -745,10 +756,10 @@ export default {
             img[i] = that.svg.paper.g(img3).attr({
               class: "mydrags",
             });
-            console.log("错误", img[i]);
+            // console.log("错误", img[i]);
           }
         }
-        console.log("所有", img[i]);
+        // console.log("所有", img[i]);
         img[i].drag();
       }
 
@@ -770,19 +781,19 @@ export default {
       this.saveLoading = true;
       let eqList = [];
       //遍历设备，获取位置
-      console.log(this.selectedIconList, "this.selectedIconList", img);
+      // console.log(this.selectedIconList, "this.selectedIconList", img);
       for (let i = 0; i < this.selectedIconList.length; i++) {
         if (this.selectedIconList[i].eqType == 12) {
-          console.log(this.selectedIconList[i], "111111111w");
+          // console.log(this.selectedIconList[i], "111111111w");
           this.selectedIconList[i].pileNum = this.selectedIconList[
             i
           ].pile.replace(/[^\d.]/g, "");
-          console.log(this.selectedIconList[i].pileNum);
+          // console.log(this.selectedIconList[i].pileNum);
         }
         if (JSON.stringify(this.selectedIconList[i]) != "{}") {
-          console.log(2222222);
+          // console.log(2222222);
           if (img[i]) {
-            console.log(3333333333);
+            // console.log(3333333333);
             this.selectedIconList[i].position = {
               left:
                 img[i].attr("transform").localMatrix.e +
@@ -839,7 +850,7 @@ export default {
       // console.log(param, configData, "configData");
       configData.eqList.forEach((v) => {
         if (v.eqType == 3) {
-          console.log(v, "交通信号灯");
+          // console.log(v, "交通信号灯");
         }
       });
       updateTunnels(param).then((response) => {
@@ -916,7 +927,7 @@ export default {
     /* 点击删除*/
     deleteImage() {
       // debugger
-      console.log("我右键删除了", this.direction, img);
+      // console.log("我右键删除了", this.direction, img);
       if (this.direction == 1) {
         this.upList.splice(this.deleteIndex, 1, {});
       } else if (this.direction == 2) {
@@ -931,7 +942,7 @@ export default {
         }
         // this.equipmentList = this.addMask(response.rows)
       }
-      console.log("我右键删除了11", img, this.selectedIconList);
+      // console.log("我右键删除了11", img, this.selectedIconList);
       this.deleteVisible = false;
       this.direction = 0;
     },
@@ -953,7 +964,7 @@ export default {
     },
     /* 打开设备弹框*/
     openEquipmentDialog(id, index, type) {
-      console.log(id, index, type, "id, index, type");
+      // console.log(id, index, type, "id, index, type");
       this.title = "选择设备";
       this.equipmentList = [];
       if (type == "type") {
@@ -978,7 +989,7 @@ export default {
       that.EnvironmentList.forEach((e) => {
         e = that.addMask(e);
       });
-      console.log(this.EnvironmentList, "处理后的数组");
+      // console.log(this.EnvironmentList, "处理后的数组");
       // console.log(this.EnvironmentLis.length,'判断的长度')
       if (this.EnvironmentList.length > 0) {
         this.EnvironmentVisible = true;
@@ -1017,8 +1028,8 @@ export default {
     },
     /* 选择设备*/
     getEquipment(item, eqType) {
-      console.log(item, eqType, "选择设备");
-      console.log(this.selectedIconList);
+      // console.log(item, eqType, "选择设备");
+      // console.log(this.selectedIconList);
       // debugger
       var url = eqType.url;
       var iconWidth = Number(eqType.iconWidth);
@@ -1033,7 +1044,7 @@ export default {
             top: 0,
           });
         this.selectedIconList.push(item);
-        console.log(this.selectedIconList, "this.selectedIconList");
+        // console.log(this.selectedIconList, "this.selectedIconList");
         that.equipmentList = that.addMask(that.equipmentList);
         if (item.pile != "" && item.pile) {
           // 桩号框以及框内汉字的位置是由设备位置决定的
@@ -1243,7 +1254,7 @@ export default {
           break;
         }
       }
-      console.log(exist, "exist");
+      // console.log(exist, "exist");
       return exist;
     },
     /* 选过的设备加遮罩*/
@@ -1438,7 +1449,7 @@ export default {
          */
 
         drag: function (event, ui) {
-          console.log(event)
+          // console.log(event)
           // debugger
           //迭代所有的guids，记住最近的h和v guids
 
@@ -1495,7 +1506,7 @@ export default {
                     type: "h",
                   };
                   event.toElement.parentNode;
-                  console.log(event.toElement.parentNode);
+                  // console.log(event.toElement.parentNode);
 
                   let style = window.getComputedStyle(
                     event.toElement.parentNode,
@@ -1564,7 +1575,7 @@ export default {
         },
 
         stop: function (event, ui) {
-          console.log(event)
+          // console.log(event)
           // debugger
           //迭代所有的guids，记住最近的h和v guids
 
@@ -1621,7 +1632,7 @@ export default {
                     type: "h",
                   };
                   event.toElement.parentNode;
-                  console.log(event.toElement.parentNode);
+                  // console.log(event.toElement.parentNode);
 
                   let style = window.getComputedStyle(
                     event.toElement.parentNode,
@@ -1629,9 +1640,9 @@ export default {
                   );
                   let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
                   let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
-                  console.log(paddingL);
-                  console.log(paddingtop);
-                  console.log("ddddddddddddddddddddddddddddddd");
+                  // console.log(paddingL);
+                  // console.log(paddingtop);
+                  // console.log("ddddddddddddddddddddddddddddddd");
                   // let ds = getElementPosition(event.toElement.parentNode)
                   // console.log(ds)
                   let oDiv = document.getElementById("imageId");
@@ -1639,12 +1650,12 @@ export default {
                   let svgs = document.getElementById("svgRow");
                   let svgss = document.querySelector(".config-content");
                   let svgeimage = document.querySelector(".el-image");
-                  console.log(svgss);
+                  // console.log(svgss);
 
                   let stylea = window.getComputedStyle(svgs, null);
                   let styleas = window.getComputedStyle(svgss, null);
                   let styleas1 = window.getComputedStyle(svgeimage, null);
-                  console.log(styleas);
+                  // console.log(styleas);
 
                   let paddingLa = parseFloat(
                     stylea.getPropertyValue("padding-top")
@@ -1655,9 +1666,9 @@ export default {
                   let paddingLa2 = parseFloat(
                     styleas1.getPropertyValue("width")
                   ); //获取左侧内边距
-                  console.log(paddingLa1 - paddingLa2);
-                  console.log(44444444444444444444444444444444444);
-                  console.log(event.toElement.width.animVal.value);
+                  // console.log(paddingLa1 - paddingLa2);
+                  // console.log(44444444444444444444444444444444444);
+                  // console.log(event.toElement.width.animVal.value);
                   guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
                   guide1.top = paddingtop + paddingLa;
                   chosenGuides[prop].guide = guide1;

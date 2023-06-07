@@ -300,14 +300,17 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div v-if="form.modeType != 1" style="max-height:40vh;overflow-y: auto;overflow-x: hidden;">
+        <div
+          v-if="form.modeType != 1"
+          style="max-height: 40vh; overflow-y: auto; overflow-x: hidden"
+        >
           <el-form-item
             v-for="(item, index) in timeSlotList"
             :key="item.key"
-            :label="'定时区间' + (index+1)"
+            :label="'定时区间' + (index + 1)"
           >
             <el-row :gutter="15">
-              <el-col :span="4" style="padding-left:0px">
+              <el-col :span="4" style="padding-left: 0px">
                 <el-select
                   v-model="item.eqIds"
                   placeholder="请选择控制段"
@@ -358,8 +361,7 @@
                   @click="addTimeSlot"
                   icon="el-icon-plus"
                   v-if="index != timeSlotList.length - 1 || index == 0"
-                  ></el-button
-                >
+                ></el-button>
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
@@ -593,6 +595,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
       this.$refs.tableFile.clearSelection();
       this.getList();
     },
@@ -715,34 +719,19 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      // this.$modal
-      //   .confirm('是否确认删除加强照明配置信息编号为"' + ids + '"的数据项？')
-      //   .then(function () {
-      //     return delConfig(ids);
-      //   })
-      //   .then(() => {
-      //     this.getList();
-      //     this.$modal.msgSuccess("删除成功");
-      //   })
-      //   .catch(() => {
-      //     this.$refs.tableFile.clearSelection();
-      //   });
 
-        this.$confirm("是否确认删除?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
+      let that = this;
+      this.$modal
+        .confirm("是否确认删除？")
         .then(function () {
           return delConfig(ids);
         })
         .then(() => {
-          this.getList();
+          this.handleQuery();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(function () {
+        .catch(() => {
           that.$refs.tableFile.clearSelection();
-          this.getList();
         });
     },
     /** 导出按钮操作 */

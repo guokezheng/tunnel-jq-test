@@ -175,7 +175,7 @@
               key="phonenumber"
               prop="phonenumber"
               v-if="columns[4].visible"
-              width="120"
+              width="140"
             />
             <el-table-column
               label="状态"
@@ -197,7 +197,7 @@
               align="center"
               prop="createTime"
               v-if="columns[6].visible"
-              width="160"
+              width="200"
               sortable
             >
               <template slot-scope="scope">
@@ -207,7 +207,7 @@
             <el-table-column
               label="操作"
               align="center"
-              width="160"
+              width="180"
               class-name="small-padding fixed-width"
             >
               <template slot-scope="scope" v-if="scope.row.userId !== 1">
@@ -726,6 +726,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
       this.getList();
     },
     /** 重置按钮操作 */

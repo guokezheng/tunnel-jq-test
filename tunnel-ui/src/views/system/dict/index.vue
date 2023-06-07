@@ -506,6 +506,8 @@ export default {
     handleQuery() {
       this.dict_boxShow = false;
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
       this.getList();
     },
     /** 重置按钮操作 */

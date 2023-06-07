@@ -179,7 +179,7 @@
                 <el-slider
                   v-model="stateForm.frequency"
                   :max="100"
-                  :min="min"
+                  :min="frequencyMin"
                   class="sliderClass"
                   :disabled="!stateForm.frequency"
                 ></el-slider>
@@ -200,7 +200,7 @@
                 <el-slider
                   v-model="stateForm.brightness"
                   :max="100"
-                  :min="min"
+                  :min="brightnessMin"
                   class="sliderClass"
                   :disabled="!stateForm.brightness"
                 ></el-slider>
@@ -260,7 +260,8 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
-      min: 1,
+      brightnessMin: 1,
+      frequencyMin: 1,
       fireMarkData: [],
       showTipe: false,
     };
@@ -272,21 +273,36 @@ export default {
       // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if(newVal == "1" && this.stateForm.brightness == 0){
           this.stateForm.brightness = 1;
-          this.min = 1;
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
         }else if(newVal == "2"){
           this.stateForm.brightness = 0;
-          this.min = 0;
+          this.brightnessMin = 0;
         } 
       }else if([30, 31].includes(this.clickEqType)){
          // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
         if(newVal == "1"){
           this.stateForm.brightness = 0;
           this.stateForm.frequency = 0;
-          this.min = 0;
+          this.brightnessMin = 0;
+          this.frequencyMin = 0;
         }else if(newVal != "1" && this.stateForm.brightness == 0){
           this.stateForm.brightness = 1;
+          if(newVal != "2"){
+            this.stateForm.frequency = 1;
+          }else {
+            this.stateForm.frequency = 0;
+          }
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
+        }else if(newVal == "2"){
+          this.stateForm.frequency = 0;
+          this.frequencyMin = 0;
+          this.brightnessMin = 1;
+        }else if(newVal == "5"){
           this.stateForm.frequency = 1;
-          this.min = 1;
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
         }
       }
     },

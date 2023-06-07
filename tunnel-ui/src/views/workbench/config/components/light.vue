@@ -173,24 +173,6 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="[30, 31].includes(this.clickEqType)" style="margin-top: 10px">
-            <el-col :span="15">
-              <el-form-item label="闪烁频率:">
-                <el-slider
-                  v-model="stateForm.frequency"
-                  :max="100"
-                  :min="frequencyMin"
-                  class="sliderClass"
-                  :disabled="!stateForm.frequency"
-                ></el-slider>
-              </el-form-item>
-            </el-col>
-            <el-col :span="9" >
-              <span style="padding-left: 10px; line-height: 30px"
-                >{{ stateForm.frequency }} m/s</span
-              >
-            </el-col>
-          </el-row>
           <el-row
             style="margin-top: 10px"
             v-show="[7, 9, 30, 31, 45].includes(this.clickEqType)"
@@ -212,7 +194,24 @@
               >
             </el-col>
           </el-row>
-
+          <el-row v-show="(this.clickEqType == 30 && stateForm.state == 5) || (this.clickEqType == 31)" style="margin-top: 10px" >
+            <el-col :span="15">
+              <el-form-item label="闪烁频率:">
+                <el-slider
+                  v-model="stateForm.frequency"
+                  :max="100"
+                  :min="frequencyMin"
+                  class="sliderClass"
+                  :disabled="!stateForm.frequency"
+                ></el-slider>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9" >
+              <span style="padding-left: 10px; line-height: 30px"
+                >{{ stateForm.frequency }} m/s</span
+              >
+            </el-col>
+          </el-row>
           <div slot="footer" style="margin-top: 10px" class="dialog-footer">
             <el-button
               @click="handleOK()"

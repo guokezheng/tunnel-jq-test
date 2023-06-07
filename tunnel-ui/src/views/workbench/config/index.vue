@@ -1588,7 +1588,7 @@
         </el-row>
         <el-row
           style="margin-top: 10px"
-          v-show="[30, 31].includes(batchManageForm.eqType)"
+          v-show="[30, 31].includes(batchManageForm.eqType) && batchManageForm.state == 5"
         >
           <el-col :span="15">
             <el-form-item label="闪烁频率:">
@@ -1604,7 +1604,7 @@
           </el-col>
           <el-col :span="9">
             <span style="padding-left: 10px; line-height: 30px"
-              >{{ batchManageForm.frequency }} %</span
+              >{{ batchManageForm.frequency }} m/s</span
             >
           </el-col>
         </el-row>

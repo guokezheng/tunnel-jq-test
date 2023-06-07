@@ -2,6 +2,10 @@ package com.tunnel.platform.service.deviceControl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -45,9 +49,97 @@ public class WarningLightStripControl implements GeneralControlBean {
     @Autowired
     private CommonControlService commonControlService;
 
+    /**
+     * 设备控制--工作台单个设备控制
+     * @param map
+     * @param sdDevices
+     * @return
+     */
     @Override
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
-        return null;
+        int controlState;
+        String devId = map.get("devId").toString();
+        String state = map.get("state").toString();
+
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+        String beforeState = selectBeforeState(sdDevices);
+        if (isopen) {
+            //模拟控制
+            analogControlDevice(map,sdDevices);
+            controlState = 1;
+        }else{
+            //控制设备
+            controlState = WarningLightStripHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+        }
+        addOperationLog(map,sdDevices,beforeState,controlState,"0");
+        return AjaxResult.success(controlState);
+    }
+
+
+
+    /**
+     * 添加操作日志
+     * @param map
+     * @param sdDevices
+     * @param beforeState
+     * @param controlState
+     * @param controlType
+     */
+    private void addOperationLog(Map<String, Object> map, SdDevices sdDevices,String beforeState,int controlState,String controlType){
+        String state = map.get("state").toString();
+        //添加操作记录
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+        sdOperationLog.setEqId(sdDevices.getEqId());
+        sdOperationLog.setCreateTime(new Date());
+        sdOperationLog.setBeforeState(beforeState);
+        sdOperationLog.setOperationState(state);
+        sdOperationLog.setControlType(controlType);
+        sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+    }
+
+    /**
+     * 控制设备之前获取设备状态
+     *
+     * @param sdDevices 设备信息
+     * @return
+     */
+    private String selectBeforeState(SdDevices sdDevices){
+        String beforeState = "";
+        //获取当前设备状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode()));
+        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        if (data.size() > 0 && data.get(0) != null) {
+            beforeState = data.get(0).getData();
+        }
+        return beforeState;
+    }
+
+    /**
+     * 模拟控制方法
+     *
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    public void analogControlDevice(Map<String, Object> map, SdDevices sdDevices) {
+        String state = map.get("state").toString();
+        String brightness = (map.get("brightness") != null || map.get("brightness") != "") ? map.get("brightness").toString() : "0";
+
+        //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+        sdDevices.setEqStatus("1");
+        sdDevices.setEqStatusTime(new Date());
+        sdDevicesService.updateSdDevices(sdDevices);
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()) {
+            sdDeviceDataService.updateDeviceData(sdDevices, state, Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode()));
+            sdDeviceDataService.updateDeviceData(sdDevices, brightness, Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI_STATUS.getCode()));
+        }
+
     }
 
     /**

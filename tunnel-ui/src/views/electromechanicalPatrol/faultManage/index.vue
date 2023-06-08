@@ -1465,6 +1465,8 @@ export default {
       this.queryParams.paramFaultEscalationType =
         this.resultFaultEscalationType.join();
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
       this.$refs.tableFile.clearSelection();
       this.device_boxShow = false;
       this.getList();

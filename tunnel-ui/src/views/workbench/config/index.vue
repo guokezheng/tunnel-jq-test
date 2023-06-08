@@ -1588,7 +1588,7 @@
         </el-row>
         <el-row
           style="margin-top: 10px"
-          v-show="[30, 31].includes(batchManageForm.eqType)"
+          v-show="[30, 31].includes(batchManageForm.eqType) && batchManageForm.state == 5"
         >
           <el-col :span="15">
             <el-form-item label="闪烁频率:">
@@ -1604,7 +1604,7 @@
           </el-col>
           <el-col :span="9">
             <span style="padding-left: 10px; line-height: 30px"
-              >{{ batchManageForm.frequency }} %</span
+              >{{ batchManageForm.frequency }} m/s</span
             >
           </el-col>
         </el-row>
@@ -2889,12 +2889,11 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-robot> -->
-    <div v-if="robotShow">
+    <div v-if="robotIframeShow">
       <robot
         class="comClass robotHtmlBox"
-        ref="robotRef"
       ></robot>
-      <img @click="dialogClose" src="../../../assets/cloudControl/closeIcon.png" class="closeRobot"></img>
+      <img @click="dialogClose" src="../../../assets/cloudControl/closeIcon.png" class="closeRobot" />
     </div>
 
     <com-bright class="comClass" ref="brightRef"></com-bright>
@@ -4050,7 +4049,7 @@ export default {
 
   data() {
     return {
-      robotShow:false,
+      robotIframeShow:false,
       dialogEqType: "",
       loginStatusOptions: [],
       // timingStrategyDisabled: false,
@@ -4131,7 +4130,7 @@ export default {
         pageSize: 10,
       },
 
-      dateRange: [],
+      dateRange: this.getPastTime(),
       operationActive: "xitong",
       manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
@@ -4225,7 +4224,7 @@ export default {
         selectableRange: "00:00:00 - 23:59:59",
       },
       // 日期范围
-      dateRange1: [],
+      dateRange1: this.getPastTime(),
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -4945,13 +4944,6 @@ export default {
 
   watch: {
     "batchManageForm.state": function (newVal, oldVal) {
-      // if (newVal == "1" && this.batchManageForm.brightness == 0) {
-      //   this.batchManageForm.brightness = 1;
-      //   this.min = 1;
-      // } else if (newVal == "2") {
-      //   this.batchManageForm.brightness = 0;
-      //   this.min = 0;
-      // }
       if([7, 9].includes(this.itemEqType)){
       // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if(newVal == "1" && this.batchManageForm.brightness == 0){
@@ -5986,7 +5978,7 @@ export default {
       this.$refs.boardRef.handleClosee();
       this.$refs.radioRef.handleClosee();
       this.$refs.kzqRef.handleClosee();
-      this.robotShow = false
+      this.robotIframeShow = false
 
     },
     // 车辆监测数据
@@ -6202,8 +6194,8 @@ export default {
       console.log(this.operationParam)
       console.log(this.operationParam_xt)
       debugger
-      this.dateRange = [];
-      this.dateRange1 = [];
+      this.dateRange = this.getPastTime();
+      this.dateRange1 = this.getPastTime();
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
 
@@ -8498,7 +8490,7 @@ export default {
             );
           } else if (item.eqType == 29) {
             // 巡检机器人
-            this.robotShow = true
+            this.robotIframeShow = true
           } 
         });
 
@@ -9642,10 +9634,11 @@ export default {
 }
 .closeRobot{
   position:absolute;
-  top: 15px;
+  top: 12px;
   left: 68%;
   z-index: 96659;
   cursor: pointer;
+  width:13px;
 }
 ::v-deep .el-tabs__header {
   margin: 0 0 10px !important;
@@ -9657,6 +9650,7 @@ export default {
 }
 .robotHtmlBox {
   width: 770px;
+  height:90% !important;
   position: absolute;
   left: 30%;
   z-index: 96659;

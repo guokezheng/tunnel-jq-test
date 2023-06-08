@@ -173,24 +173,6 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="[30, 31].includes(this.clickEqType)" style="margin-top: 10px">
-            <el-col :span="15">
-              <el-form-item label="闪烁频率:">
-                <el-slider
-                  v-model="stateForm.frequency"
-                  :max="100"
-                  :min="min"
-                  class="sliderClass"
-                  :disabled="!stateForm.frequency"
-                ></el-slider>
-              </el-form-item>
-            </el-col>
-            <el-col :span="9" >
-              <span style="padding-left: 10px; line-height: 30px"
-                >{{ stateForm.frequency }} m/s</span
-              >
-            </el-col>
-          </el-row>
           <el-row
             style="margin-top: 10px"
             v-show="[7, 9, 30, 31, 45].includes(this.clickEqType)"
@@ -200,7 +182,7 @@
                 <el-slider
                   v-model="stateForm.brightness"
                   :max="100"
-                  :min="min"
+                  :min="brightnessMin"
                   class="sliderClass"
                   :disabled="!stateForm.brightness"
                 ></el-slider>
@@ -212,7 +194,24 @@
               >
             </el-col>
           </el-row>
-
+          <el-row v-show="(this.clickEqType == 30 && stateForm.state == 5) || (this.clickEqType == 31)" style="margin-top: 10px" >
+            <el-col :span="15">
+              <el-form-item label="闪烁频率:">
+                <el-slider
+                  v-model="stateForm.frequency"
+                  :max="100"
+                  :min="frequencyMin"
+                  class="sliderClass"
+                  :disabled="!stateForm.frequency"
+                ></el-slider>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9" >
+              <span style="padding-left: 10px; line-height: 30px"
+                >{{ stateForm.frequency }} m/s</span
+              >
+            </el-col>
+          </el-row>
           <div slot="footer" style="margin-top: 10px" class="dialog-footer">
             <el-button
               @click="handleOK()"
@@ -260,7 +259,8 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
-      min: 1,
+      brightnessMin: 1,
+      frequencyMin: 1,
       fireMarkData: [],
       showTipe: false,
     };
@@ -272,21 +272,36 @@ export default {
       // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if(newVal == "1" && this.stateForm.brightness == 0){
           this.stateForm.brightness = 1;
-          this.min = 1;
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
         }else if(newVal == "2"){
           this.stateForm.brightness = 0;
-          this.min = 0;
+          this.brightnessMin = 0;
         } 
       }else if([30, 31].includes(this.clickEqType)){
          // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
         if(newVal == "1"){
           this.stateForm.brightness = 0;
           this.stateForm.frequency = 0;
-          this.min = 0;
+          this.brightnessMin = 0;
+          this.frequencyMin = 0;
         }else if(newVal != "1" && this.stateForm.brightness == 0){
           this.stateForm.brightness = 1;
+          if(newVal != "2"){
+            this.stateForm.frequency = 1;
+          }else {
+            this.stateForm.frequency = 0;
+          }
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
+        }else if(newVal == "2"){
+          this.stateForm.frequency = 0;
+          this.frequencyMin = 0;
+          this.brightnessMin = 1;
+        }else if(newVal == "5"){
           this.stateForm.frequency = 1;
-          this.min = 1;
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
         }
       }
     },

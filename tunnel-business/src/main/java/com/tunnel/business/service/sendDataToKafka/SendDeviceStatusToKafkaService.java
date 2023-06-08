@@ -107,7 +107,7 @@ public class SendDeviceStatusToKafkaService {
      */
     public JSONObject devRecord(SdDeviceDataRecord data){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("devNo", "S00063700001980001");
+        jsonObject.put("devNo", "SDEV00063700001980003");
         jsonObject.put("devType","");
         jsonObject.put("loginTime", DateUtils.getNowDate());
         jsonObject.put("devStatus","1");
@@ -144,7 +144,7 @@ public class SendDeviceStatusToKafkaService {
      */
     public JSONObject devReaStatus(JSONObject object){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("devNo", "S00063700001980001");
+        jsonObject.put("devNo", "SDEV00063700001980003");
         jsonObject.put("devType", "");
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus","1");

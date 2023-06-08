@@ -483,6 +483,11 @@ export default {
       currentData: "",
     };
   },
+  watch:{
+    "queryParams.pageSize":function (newVal,oldVal) {
+        console.log(newVal,"newVal")
+    }
+  },
   created() {
     this.dateRange = this.getPastTime(24);
     this.getListTab();
@@ -500,7 +505,7 @@ export default {
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
-    this.watchSize();
+    // this.watchSize();
   },
 
   methods: {
@@ -684,8 +689,8 @@ export default {
       this.record = true;
       this.dateRange = this.getPastTime(24);
       //this.resetForm("queryForms");
-      this.queryParams.pageNum = "1";
-      this.queryParams.pageSize = "10";
+      this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
       if (row.eqType == "19") {
         this.searchValue = "1";
       } else if (row.eqType == "17") {
@@ -709,18 +714,22 @@ export default {
       this.echartShow = !this.echartShow;
       if (this.echartShow)
         //echart
-        this.getEchartsData();
+        this.watchSize()
+        // this.getEchartsData();
       else this.getList();
       //this.initChart();
     },
     watchSize() {
       let that = this;
       let erd = elementResizeDetectorMaker();
-      let Dom = that.$refs.echartsBox; //拿dom元素
+      // let Dom = that.$refs.echartsBox; //拿dom元素
+      let Dom = document.getElementById("echarts-Box")
+      console.log(Dom,"Dom")
       //监听盒子的变化
       erd.listenTo(Dom, function (element) {
         let myChart = echarts.init(Dom);
         myChart.resize(); //echarts自带的方法可以使图表重新加载
+        that.getEchartsData()
       });
     },
     initChart() {
@@ -1026,12 +1035,15 @@ export default {
       //先判断当前弹窗展示的列表还是图表
       if (this.echartShow)
         //echart
-        this.getEchartsData();
+        this.watchSize()
+        // this.getEchartsData();
       else this.getList();
     },
     /*table搜索*/
     handleQueryTab() {
       this.querysParamsTab.pageNum = 1;
+      this.querysParamsTab.pageSize = 10;
+
       this.$refs.tableFile.clearSelection();
       this.getListTab();
     },
@@ -1052,7 +1064,8 @@ export default {
       //待写
       if (this.echartShow)
         //echart
-        this.getEchartsData();
+        // this.getEchartsData();
+        this.watchSize()
       else this.getList();
     },
     //table重置按钮

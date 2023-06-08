@@ -1398,6 +1398,8 @@ export default {
         this.queryParams.remark = "1,2";
       }
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
+
       this.$refs.tableFile.clearSelection();
       /* this.queryParams.eqDirection = 0; */
       this.getList();

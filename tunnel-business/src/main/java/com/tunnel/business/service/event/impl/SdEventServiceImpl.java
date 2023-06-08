@@ -299,7 +299,7 @@ public class SdEventServiceImpl implements ISdEventService {
             Future<?> future = completionService.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     // 这里是要执行的方法
-                    radarEventServiceImpl.sendDataToOtherSystem(null, sdEventMapper.selectSdEventById(sdEvent.getId()));
+                    radarEventServiceImpl.sendDataToOtherSystem(null, sdEvent);
                     return 1;
                 }
             });

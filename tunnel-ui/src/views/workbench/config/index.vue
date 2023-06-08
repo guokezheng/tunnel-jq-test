@@ -4416,6 +4416,7 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
+      this .tunnelItem = item//勿动
       this.closeBatchManageDialog();
       this.screenEqName = "";
       let obj = {

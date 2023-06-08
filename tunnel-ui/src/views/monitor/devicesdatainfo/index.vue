@@ -483,11 +483,6 @@ export default {
       currentData: "",
     };
   },
-  watch:{
-    "queryParams.pageSize":function (newVal,oldVal) {
-        console.log(newVal,"newVal")
-    }
-  },
   created() {
     this.dateRange = this.getPastTime(24);
     this.getListTab();
@@ -724,7 +719,6 @@ export default {
       let erd = elementResizeDetectorMaker();
       // let Dom = that.$refs.echartsBox; //拿dom元素
       let Dom = document.getElementById("echarts-Box")
-      console.log(Dom,"Dom")
       //监听盒子的变化
       erd.listenTo(Dom, function (element) {
         let myChart = echarts.init(Dom);

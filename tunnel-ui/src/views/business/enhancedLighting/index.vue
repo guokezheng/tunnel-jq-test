@@ -632,17 +632,22 @@ export default {
       this.reset();
       const id = row.id || this.ids;
       getConfig(id).then((response) => {
+        console.log(response,"response")
         this.form = response.data;
         this.timeSlotList = JSON.parse(response.data.timeSlot);
-        for (let index = 0; index < this.timeSlotList.length; index++) {
-          const param = this.timeSlotList[index];
-          param.startTime = new Date(
-            ("1970-01-01 " + param.startTime).replace(/-/g, "/")
-          );
-          param.endTime = new Date(
-            ("1970-01-01 " + param.endTime).replace(/-/g, "/")
-          );
+        console.log(this.timeSlotList,"this.timeSlotList")
+        if(this.timeSlotList){
+          for (let index = 0; index < this.timeSlotList.length; index++) {
+            const param = this.timeSlotList[index];
+            param.startTime = new Date(
+              ("1970-01-01 " + param.startTime).replace(/-/g, "/")
+            );
+            param.endTime = new Date(
+              ("1970-01-01 " + param.endTime).replace(/-/g, "/")
+            );
+          }
         }
+       
         this.nowTimeSlotList = this.timeSlotList;
         //获取 HH:mm:ss;
         this.open = true;

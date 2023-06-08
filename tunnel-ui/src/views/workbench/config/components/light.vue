@@ -456,7 +456,7 @@ export default {
           state: this.stateForm.state, //设备状态
           brightness: this.stateForm.brightness, //疏散标志亮度
           frequency: this.stateForm.frequency, //疏散标志频率
-          fireMark:
+          fireMark: // 关闭传0 常亮传255 报警传3
             this.stateForm.state == "1"
               ? "0"
               : this.stateForm.state == "2"

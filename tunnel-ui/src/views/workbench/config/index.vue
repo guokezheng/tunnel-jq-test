@@ -383,7 +383,6 @@
                       placement="right"
                       style="position: relative; top: 0px; left: 0px"
                       popper-class="tipCase"
-                      manual
                     >
                       <div slot="content">
                         <span>名称：{{ item.eqName }}</span
@@ -1612,7 +1611,7 @@
         :data="strategyList"
         tooltip-effect="dark"
         style="width: 100%"
-        :max-height="400"
+        :max-height="420"
         size="mini"
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
@@ -2659,7 +2658,7 @@ export default {
     ...mapState({
       radarDataList: (state) => state.websocket.radarDataList,
       sdEventList: (state) => state.websocket.sdEventList,
-      sdSvgEventList: (state) => state.websocket.sdSvgEventList,
+      // sdSvgEventList: (state) => state.websocket.sdSvgEventList,
     }),
     sideTheme: {
       get() {
@@ -3279,12 +3278,10 @@ export default {
     /*控制策略关闭*/
     strategyResetQuery() {
       this.resetQuery();
-      this.queryParams.pageSize = 10;
     },
 
     /** 重置按钮操作 */
     resetQuery() {
-      debugger;
       this.dateRange = this.getPastTime();
       this.dateRange1 = this.getPastTime();
       this.resetForm("queryForm");
@@ -3304,6 +3301,7 @@ export default {
       this.operationParam_xt.operIp = "";
       this.operationParam_xt.ipaddr = "";
       this.operationParam_xt.pageSize = 10;
+      this.queryParams.pageSize = 10;
       this.queryParams.pageNum = 1;
       this.handleQueryOperationParam();
       this.handlestrategyQuery();

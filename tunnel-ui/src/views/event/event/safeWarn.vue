@@ -800,6 +800,7 @@
       title="事件详情报告"
       :visible.sync="dialogTableVisible"
       :close-on-click-modal="false"
+      :destroy-on-close="true"
       width="70%"
       class="evtInfo"
     >
@@ -2019,7 +2020,6 @@ export default {
     },
     //打开详情弹窗
     detailsOpen(item) {
-      debugger
       this.prevControlType = item.prevControlType;
       let data = { id: item.id };
       getEventDetail(data).then((res) => {

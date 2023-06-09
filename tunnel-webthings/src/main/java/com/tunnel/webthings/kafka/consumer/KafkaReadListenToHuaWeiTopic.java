@@ -51,6 +51,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -1331,7 +1332,12 @@ public class KafkaReadListenToHuaWeiTopic {
                 event.setEventState(EventStateEnum.processing.getCode());
                 event.setUpdateTime(DateUtils.getNowDate());
             }
-            radarEventServiceImpl.sendDataToOtherSystem(null,event);
+            //定义数据结构
+            event.setEventImgUrl(jsonObject.getString("eventImgUrl"));
+            event.setVideoUrl(jsonObject.getString("eventVideoUrl"));
+            noNullStringAttr(event);
+            Map<String, Object> map = setEventData(event);
+            radarEventServiceImpl.sendDataToOtherSystem(map);
         }
         //查询主动安全事件类型
         SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
@@ -1910,4 +1916,64 @@ public class KafkaReadListenToHuaWeiTopic {
         }
     }
 
+    //组装event数据
+    public Map<String, Object> setEventData(SdEvent sdEvent){
+        Map<String, Object> map = new HashMap<>();
+        map.put("endTime",sdEvent.getEndTime());
+        map.put("id",sdEvent.getId());
+        map.put("eventSource",sdEvent.getEventSource());
+        map.put("eventState",sdEvent.getEventState());
+        map.put("eventLongitude",sdEvent.getEventLongitude());
+        map.put("eventLatitude",sdEvent.getEventLatitude());
+        map.put("eventTypeId",sdEvent.getEventTypeId());
+        map.put("laneNo",sdEvent.getLaneNo());
+        map.put("passengerCarNum",sdEvent.getPassengerCarNum());
+        map.put("slightInjured",sdEvent.getSlightInjured());
+        map.put("smallCarNum",sdEvent.getSmallCarNum());
+        map.put("stakeNum",sdEvent.getStakeNum());
+        map.put("startTime",sdEvent.getStartTime());
+        map.put("tankerNum",sdEvent.getTankerNum());
+        map.put("truckNum",sdEvent.getTankerNum());
+        map.put("tunnelId",sdEvent.getTunnelId());
+        map.put("eventTitle",sdEvent.getEventTitle());
+        map.put("eventTime",sdEvent.getEventTime());
+        map.put("eventGrade",sdEvent.getEventGrade());
+        map.put("direction",sdEvent.getDirection());
+        map.put("eventDescription",sdEvent.getEventDescription());
+        map.put("currencyId",sdEvent.getCurrencyId());
+        map.put("flowId",sdEvent.getFlowId());
+        map.put("stakeEndNum",sdEvent.getStakeEndNum());
+        map.put("videoUrl",sdEvent.getVideoUrl());
+        map.put("createTime",sdEvent.getCreateTime());
+        map.put("updateBy",sdEvent.getUpdateBy());
+        map.put("updateTime",sdEvent.getUpdateTime());
+        map.put("remark",sdEvent.getRemark());
+        map.put("eventImgUrl",sdEvent.getEventImgUrl());
+        map.put("reviewRemark",sdEvent.getReviewRemark());
+        map.put("simplifyName",sdEvent.getSimplifyName());
+        map.put("tunnelName",sdEvent.getTunnelName());
+        return map;
+    }
+
+    //将类对象里面的null数据以及date等进行转换
+    public static <T> T noNullStringAttr(T cls) {
+        Field[] fields = cls.getClass().getDeclaredFields();
+        if (fields == null || fields.length == 0) {
+            return cls;
+        }
+        for (Field field : fields) {
+            if ("String".equals(field.getType().getSimpleName()) || "Date".equals(field.getType().getSimpleName()) || "Long".equals(field.getType().getSimpleName())) {
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(cls);
+                    if (value == null) {
+                        field.set(cls, "");
+                    }
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return cls;
+    }
 }

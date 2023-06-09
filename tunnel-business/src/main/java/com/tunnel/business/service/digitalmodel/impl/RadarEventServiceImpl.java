@@ -231,6 +231,23 @@ public class RadarEventServiceImpl implements RadarEventService {
         }
     }
 
+    //重写管理站推送事件数据到物联中台kafka
+    public void sendDataToOtherSystem(Map<String,Object> sdEventDataMap) {
+        if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("devNo", "S00063700001980001");
+            jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+            if(sdEventDataMap.get("stakeNum") != null){
+                sdEventDataMap.put("stakeNum",sdEventDataMap.get("stakeNum").toString().replaceAll("-",""));
+            }
+            jsonObject.put("event", sdEventDataMap);
+            JSONObject jsonObject1 = JSONObject.parseObject(jsonObject.toString());
+            Object o = jsonObject1.get("event");
+            SdEvent sdEvent = JSONUtil.toBean(o.toString(), SdEvent.class);
+            kafkaTwoTemplate.send(TopicEnum.EVENT_TOPIC.getCode(), jsonObject.toString());
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult uploadPic(Map<String, Object> map) {

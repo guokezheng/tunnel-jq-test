@@ -212,6 +212,10 @@ public class CommonControlServiceImpl implements CommonControlService {
             sdOperationLog.setEventId(map.get("eventId").toString());
         }
 
+        if (null != map.get("description")) {
+            sdOperationLog.setDescription(map.get("description").toString());
+        }
+
         if (data.size() > 0) {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }

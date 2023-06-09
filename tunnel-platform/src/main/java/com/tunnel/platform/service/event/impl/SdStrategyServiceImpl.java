@@ -602,7 +602,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             mapList = model.getManualControl();
         }
 
-        // 关联设备效验
+        // 关联设备效验  判断基本照明不可低于30代码块
         for (Map map : mapList) {
 
             if(map.get("state") == null || map.get("state").equals("")){

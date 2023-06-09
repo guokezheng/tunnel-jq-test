@@ -44,7 +44,7 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("策略名称")
     private String strategyName;
 
-    /** 策略类型 */
+    /** 策略类型 策略类型 0：手动执行、事件触发 1：定时控制 2：自动触发（阈值）3：分时*/
     @Excel(name = "策略类型")
     @ApiModelProperty("策略类型")
     private String strategyType;

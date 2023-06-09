@@ -423,14 +423,17 @@ export default {
     },
     bodyCloseMenus(e) {
       let self = this;
-      if (
-        !this.$refs.main.contains(e.target) &&
-        !this.$refs.cc.contains(e.target)
-      ) {
-        if (self.boxShow == true) {
-          self.boxShow = false;
+      if(self.boxShow){
+        if (
+          !this.$refs.main.contains(e.target) &&
+          !this.$refs.cc.contains(e.target)
+        ) {
+          if (self.boxShow == true) {
+            self.boxShow = false;
+          }
         }
       }
+      
     },
     /** 查询发布记录列表 */
     getList() {
@@ -620,7 +623,9 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
       this.$refs.tableFile.clearSelection();
+      this.$refs.tableFile.bodyWrapper.scrollTop = 0;
       this.getList();
     },
     /** 重置按钮操作 */

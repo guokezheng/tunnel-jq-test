@@ -129,7 +129,7 @@ public class EvacuationSignControl implements GeneralControlBean {
         sdDeviceDataService.updateDeviceData(sdDevices, fireMark, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()));
         //子级设备变更
         SdDevices dev = new SdDevices();
-        dev.setFEqId(devId);
+        dev.setFEqId(sdDevices.getEqId());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
         if (!list.isEmpty()) {
             //疏散标志关灯

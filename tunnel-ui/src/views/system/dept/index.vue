@@ -421,6 +421,11 @@ export default {
       this.resetForm("queryForm");
       this.queryParams.deptName = "";
       this.handleQuery();
+      this.refreshTable = false;
+      this.isExpandAll = false;
+      this.$nextTick(() => {
+        this.refreshTable = true;
+      });
     },
     /** 新增按钮操作 */
     handleAdd(row) {

@@ -800,6 +800,7 @@
       title="事件详情报告"
       :visible.sync="dialogTableVisible"
       :close-on-click-modal="false"
+      :destroy-on-close="true"
       width="70%"
       class="evtInfo"
     >
@@ -2019,7 +2020,6 @@ export default {
     },
     //打开详情弹窗
     detailsOpen(item) {
-      debugger
       this.prevControlType = item.prevControlType;
       let data = { id: item.id };
       getEventDetail(data).then((res) => {
@@ -2799,6 +2799,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 16;
       this.zd_boxShow = false;
       this.getList();
     },
@@ -2806,7 +2807,6 @@ export default {
     resetQuery() {
       this.isLoading = true;
       // this.queryParams.pageSize bug:857
-      this.queryParams.pageNum = 1;
       this.dateRange = [];
       // this.tunnelList = [];
       this.queryParams.eventTypeId = "";

@@ -2251,6 +2251,8 @@ export default {
       // this.queryParams.pageNum = 1;
       this.$refs.planTable.clearSelection();
       this.queryParams.pageNum = 1
+      this.queryParams.pageSize = 10
+      this.$refs.planTable.bodyWrapper.scrollTop = 0;
       this.getList();
     },
     /** 重置按钮操作 */

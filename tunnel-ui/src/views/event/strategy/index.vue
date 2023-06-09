@@ -1258,7 +1258,7 @@ export default {
 
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
+      // this.queryParams.pageNum = 1;
       this.$refs.tableFile1.clearSelection();
       //this.$refs.tableFile2.clearSelection();
       this.getList();
@@ -1267,7 +1267,7 @@ export default {
     resetQuery() {
       this.queryParams = {
         pageNum: 1,
-        pageSize: this.queryParams.pageSize,
+        pageSize: 10,
         tunnelId: null,
         strategyName: null,
         strategyType: null,

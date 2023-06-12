@@ -112,30 +112,39 @@ public class SdDeviceControlService {
      * */
     public Integer controlDevices(Map<String, Object> map) {
         int controlState = 0;
+        SdDevices sdDevices = null;
+        try {
+            //控制车指
+            if (map.get("devId") == null || map.get("devId").toString().equals("")) {
+                throw new RuntimeException("未指定设备");
+            } else if (map.get("state") == null || map.get("state").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的状态信息");
+            } else if (map.get("controlType") == null || map.get("controlType").toString().equals("")) {
+                throw new RuntimeException("未指定控制方式");
+            }
+            if ("GSY".equals(deploymentType)) {
+                return sdOptDeviceService.optSingleDevice(map);
+            }
+            String devId = map.get("devId").toString();
+            sdDevices = sdDevicesService.selectSdDevicesById(devId);
 
-        //控制车指
-        if (map.get("devId") == null || map.get("devId").toString().equals("")) {
-            throw new RuntimeException("未指定设备");
-        } else if (map.get("state") == null || map.get("state").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息");
-        } else if (map.get("controlType") == null || map.get("controlType").toString().equals("")) {
-            throw new RuntimeException("未指定控制方式");
+            //设备控制
+            GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
+            if(generalControlBean == null){
+                throw new RuntimeException("设备协议配置为空");
+            }else{
+                controlState = generalControlBean.controlDevices(map);
+            }
+        }catch (Exception e){
+            // 异常信息最大支持vachar 2000
+            int index = e.getMessage().length() <= 2000 ? e.getMessage().length() : 2000;
+            map.put("description",e.getMessage().substring(0,index));
+            //生成日志
+            SdOperationLog sdOperationLog = commonControlService.getOperationLog(map,sdDevices,controlState);
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+            throw new RuntimeException(e.getMessage());
         }
 
-        if ("GSY".equals(deploymentType)) {
-            return sdOptDeviceService.optSingleDevice(map);
-        }
-
-        String devId = map.get("devId").toString();
-        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-
-        //设备控制
-        GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
-        if(generalControlBean == null){
-            throw new RuntimeException("设备协议配置为空");
-        }else{
-            controlState = generalControlBean.controlDevices(map);
-        }
       return controlState;
     }
 

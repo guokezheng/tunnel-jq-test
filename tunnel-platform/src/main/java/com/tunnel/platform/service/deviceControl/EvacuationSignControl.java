@@ -115,12 +115,12 @@ public class EvacuationSignControl implements GeneralControlBean {
         sdDevices.setEqStatus("1");
         sdDevices.setEqStatusTime(new Date());
         sdDevicesService.updateSdDevices(sdDevices);
-        if (devId != null && !"".equals(devId)) {
+        if (sdDevices.getEqId() != null && !"".equals(sdDevices.getEqId())) {
             SdDevices devices = new SdDevices();
             devices.setEqStatus("1");
             devices.setEqStatusTime(new Date());
-            devices.setFEqId(devId);
-            sdDevicesService.updateSdDevicesByFEqId(sdDevices);
+            devices.setFEqId(sdDevices.getEqId());
+            sdDevicesService.updateSdDevicesByFEqId(devices);
         }
         //父级设备变更
         sdDeviceDataService.updateDeviceData(sdDevices, state, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()));

@@ -1249,6 +1249,7 @@ export default {
         this.$set(this.planTypeIdList[number].processesList[index],'brightness',0);
         this.$set(this.planTypeIdList[number].processesList[index],'lightCol',4);
       }
+      this.$forceUpdate()
     },
     // 规则下拉显示或者隐藏触发
     ruleVisible(e){
@@ -1423,6 +1424,7 @@ export default {
           false
         );
       }
+      this.$forceUpdate()
     },
     addStrategy(index) {
       let obj = {

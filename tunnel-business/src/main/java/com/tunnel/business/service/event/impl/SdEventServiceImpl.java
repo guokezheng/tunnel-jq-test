@@ -47,6 +47,7 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.*;
 import java.util.*;
@@ -265,8 +266,26 @@ public class SdEventServiceImpl implements ISdEventService {
      * @return 结果
      */
     @Override
-    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEvent(SdEvent sdEvent) {
+        //更新事件信息
+        int count = upEvent(sdEvent);
+        if(EventStateEnum.processed.getCode().equals(sdEvent.getEventState())){
+            sdEvent = sdEventMapper.selectSdEventById(sdEvent.getId());
+        }
+        //查询图片视频
+        List<SdTrafficImage> list = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
+        Object[] objects = list.stream().filter(item -> "0".equals(item.getImgType())).map(SdTrafficImage::getImgUrl).toArray();
+        List<SdTrafficImage> videoList = list.stream().filter(item -> "1".equals(item.getImgType())).collect(Collectors.toList());
+        //图片
+        sdEvent.setEventImgUrl(StringUtils.join(objects,","));
+        sdEvent.setVideoUrl(videoList.get(0).getImgUrl().split(";")[0]);
+        //推送至物联
+        sendGsy(sdEvent);
+        return count;
+    }
+
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
+    public int upEvent(SdEvent sdEvent){
         if (EventStateEnum.processed.getCode().equals(sdEvent.getEventState())) {
             instreEventFlowData(sdEvent.getId(),"事件已完结");
         }else if(EventStateEnum.processing.getCode().equals(sdEvent.getEventState()) && PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(sdEvent.getPrevControlType())){
@@ -293,13 +312,20 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         sdEvent.setUpdateBy(SecurityUtils.getUsername());
         int count = sdEventMapper.updateSdEvent(sdEvent);
-        if(!EventStateEnum.processing.equals(sdEvent.getEventState())){
+        return count;
+    }
+
+    //推送至高速云
+    public void sendGsy(SdEvent sdEvent){
+        if(!EventStateEnum.processing.getCode().equals(sdEvent.getEventState())){
             Executor executor = Executors.newSingleThreadExecutor();
             CompletionService<Object> completionService = new ExecutorCompletionService<>(executor);
             Future<?> future = completionService.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     // 这里是要执行的方法
-                    radarEventServiceImpl.sendDataToOtherSystem(null, sdEvent);
+                    noNullStringAttr(sdEvent);
+                    Map<String, Object> map = setEventData(sdEvent);
+                    radarEventServiceImpl.sendDataToOtherSystem(map);
                     return 1;
                 }
             });
@@ -311,7 +337,7 @@ public class SdEventServiceImpl implements ISdEventService {
                     System.out.println("超时了，结束该方法的执行");
                     future.cancel(true);
                 } else {
-                // 方法执行完毕，处理执行结果
+                    // 方法执行完毕，处理执行结果
                     System.out.println("方法执行完毕，结果：" + result.toString());
                 }
             } catch (InterruptedException e) {
@@ -319,7 +345,6 @@ public class SdEventServiceImpl implements ISdEventService {
                 future.cancel(true);
             }
         }
-        return count;
     }
 
     /**
@@ -1908,5 +1933,66 @@ public class SdEventServiceImpl implements ISdEventService {
         headers.setContentType(type);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         return requestEntity;
+    }
+
+    //组装event数据
+    public Map<String, Object> setEventData(SdEvent sdEvent){
+        Map<String, Object> map = new HashMap<>();
+        map.put("endTime",sdEvent.getEndTime());
+        map.put("id",sdEvent.getId());
+        map.put("eventSource",sdEvent.getEventSource());
+        map.put("eventState",sdEvent.getEventState());
+        map.put("eventLongitude",sdEvent.getEventLongitude());
+        map.put("eventLatitude",sdEvent.getEventLatitude());
+        map.put("eventTypeId",sdEvent.getEventTypeId());
+        map.put("laneNo",sdEvent.getLaneNo());
+        map.put("passengerCarNum",sdEvent.getPassengerCarNum());
+        map.put("slightInjured",sdEvent.getSlightInjured());
+        map.put("smallCarNum",sdEvent.getSmallCarNum());
+        map.put("stakeNum",sdEvent.getStakeNum());
+        map.put("startTime",sdEvent.getStartTime());
+        map.put("tankerNum",sdEvent.getTankerNum());
+        map.put("truckNum",sdEvent.getTankerNum());
+        map.put("tunnelId",sdEvent.getTunnelId());
+        map.put("eventTitle",sdEvent.getEventTitle());
+        map.put("eventTime",sdEvent.getEventTime());
+        map.put("eventGrade",sdEvent.getEventGrade());
+        map.put("direction",sdEvent.getDirection());
+        map.put("eventDescription",sdEvent.getEventDescription());
+        map.put("currencyId",sdEvent.getCurrencyId());
+        map.put("flowId",sdEvent.getFlowId());
+        map.put("stakeEndNum",sdEvent.getStakeEndNum());
+        map.put("videoUrl",sdEvent.getVideoUrl());
+        map.put("createTime",sdEvent.getCreateTime());
+        map.put("updateBy",sdEvent.getUpdateBy());
+        map.put("updateTime",sdEvent.getUpdateTime());
+        map.put("remark",sdEvent.getRemark());
+        map.put("eventImgUrl",sdEvent.getEventImgUrl());
+        map.put("reviewRemark",sdEvent.getReviewRemark());
+        map.put("simplifyName",sdEvent.getSimplifyName());
+        map.put("tunnelName",sdEvent.getTunnelName());
+        return map;
+    }
+
+    //将类对象里面的null数据以及date等进行转换
+    public static <T> T noNullStringAttr(T cls) {
+        Field[] fields = cls.getClass().getDeclaredFields();
+        if (fields == null || fields.length == 0) {
+            return cls;
+        }
+        for (Field field : fields) {
+            if ("String".equals(field.getType().getSimpleName()) || "Date".equals(field.getType().getSimpleName()) || "Long".equals(field.getType().getSimpleName())) {
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(cls);
+                    if (value == null) {
+                        field.set(cls, "");
+                    }
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return cls;
     }
 }

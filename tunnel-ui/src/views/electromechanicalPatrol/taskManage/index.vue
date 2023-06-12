@@ -698,6 +698,7 @@
       title="巡检任务及执行记录单"
       class="xjDialog"
       :close-on-click-modal="false"
+      :destroy-on-close ="true"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

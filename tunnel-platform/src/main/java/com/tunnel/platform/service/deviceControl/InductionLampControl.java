@@ -115,7 +115,7 @@ public class InductionLampControl implements GeneralControlBean {
             devices.setEqStatus("1");
             devices.setEqStatusTime(new Date());
             devices.setFEqId(devId);
-            sdDevicesService.updateSdDevicesByFEqId(sdDevices);
+            sdDevicesService.updateSdDevicesByFEqId(devices);
         }
         //父级设备变更
         sdDeviceDataService.updateDeviceData(sdDevices, state, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));

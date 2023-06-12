@@ -233,6 +233,7 @@ public class SdEventController extends BaseController
     @GetMapping("/eventPopData")
     public TableDataInfo eventPopData(SdEvent sdEvent){
         startPage();
+        sdEvent.setDept(SecurityUtils.getDeptId());
         return getDataTable(sdEventService.eventPopData(sdEvent));
     }
 

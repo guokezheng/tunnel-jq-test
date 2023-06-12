@@ -213,6 +213,8 @@ public class SdEvent extends BaseEntity {
 
     private Long deptId;
 
+    private String dept;
+
     /**
      * 隧道名称
      */
@@ -310,6 +312,14 @@ public class SdEvent extends BaseEntity {
      * 下载时间
      */
     private String downLoadTime;
+
+    public String getDept() {
+        return dept;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
 
     public String getDownLoadTime() {
         return downLoadTime;

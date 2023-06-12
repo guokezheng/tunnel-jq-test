@@ -1,4 +1,7 @@
 #------网联基地测试环境配置-----
+ruoyi:
+  profile: /opt/project/uploadPath
+
 server:
   # 服务器的HTTP端口，默认为8080
   port: 8888
@@ -13,20 +16,20 @@ spring:
 #        url: jdbc:mysql://localhost:3306/tunnel-jq?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true
         url: jdbc:mysql://10.3.16.40:3306/tunnel-jq?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true
         username: root
-        password: Sdplatform123!@#
+        password: energySql123!@#
 #        password: 123456
   # redis 配置
   redis:
     # 地址
-    host: 127.0.0.1
-#    host: 10.3.16.40
+    #host: 127.0.0.1
+    host: 10.3.16.40
     # 端口，默认为6379
     port: 6379
     # 数据库索引
     database: 6
     # 密码
 #    password: QWER1234
-    password: Sdredis123!@#
+    password: energyRedis123!@#
 
 zc:
   # websocket 配置项

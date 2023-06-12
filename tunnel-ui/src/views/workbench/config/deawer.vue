@@ -548,6 +548,14 @@ export default {
       this.phoneForm2 = {
         loopCount: "1",
       };
+      this.chezhiForm1 = {
+        lane: [],
+        state: "",
+      },
+      this.chezhiForm2= {
+        lane: [],
+        state: "",
+      },
       this.getTunnelLane()
       this.$forceUpdate();
     },

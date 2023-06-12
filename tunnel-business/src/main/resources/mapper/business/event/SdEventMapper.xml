@@ -160,10 +160,10 @@
                         WHERE
                             fault.fault_status = '0'
                           AND fault.fallt_remove_statue = '1'
-                          AND TO_DAYS( fault.fault_fxtime ) = TO_DAYS( NOW( )
+                          AND TO_DAYS( fault.fault_fxtime ) = TO_DAYS( NOW( ))
                           <if test="dept != null and dept != ''">
                             AND (tunnel.dept_id = #{dept} OR tunnel.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
-                          </if>)
+                          </if>
                     ) b
             ) AS MERGE
         ORDER BY

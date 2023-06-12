@@ -1,19 +1,25 @@
 package com.tunnel.deal.light.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
-import com.tunnel.business.service.dataInfo.IExternalSystemService;
-import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
-import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
+import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.deal.generalcontrol.GeneralControlBean;
+import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.deal.light.Light;
+import com.tunnel.deal.light.enums.SanjingLightStateEnum;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +30,11 @@ import org.springframework.util.Assert;
 import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class SansiLightImpl implements Light {
+public class SansiLightImpl implements Light , GeneralControlBean {
 
     @Autowired
     private ISdDevicesService sdDevicesService;
@@ -48,6 +53,15 @@ public class SansiLightImpl implements Light {
 
     @Autowired
     public RedisTemplate redisTemplate;
+
+    @Autowired
+    private CommonControlService commonControlService;
+
+    @Autowired
+    private RedisCache redisCache;
+
+    @Autowired
+    private ISdDeviceTypeItemService sdDeviceTypeItemService;
 
     /**
      * 登录获取会话ID
@@ -144,7 +158,7 @@ public class SansiLightImpl implements Light {
         int brightnessType = 0;
         //2表示关
         if(openClose!=2){
-            brightnessType = updateBrightness(jessionId, baseUrl, baseUrl, openClose);
+            brightnessType = updateBrightness(jessionId, baseUrl, step, openClose);
         }
         return switchType==1 && brightnessType==1 ? 1 : 0;
     }
@@ -288,5 +302,189 @@ public class SansiLightImpl implements Light {
         }
     }
 
+    /**
+     * 控制方法
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
+        Integer controlState = 0;
 
+//        //控制设备之前获取设备状态
+        //基本照明、加强照明多个设备类型数据项，暂时不存储控制前状态beforeState todo
+//        String beforeState = commonControlService.selectBeforeState(sdDevices);
+
+        AjaxResult ajaxResult = controlLight(map,sdDevices);
+        Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+        if( code == HttpStatus.SUCCESS){
+            controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+        }
+        commonControlService.addOperationLog(sdDevices,map,"",String.valueOf(controlState));
+        return ajaxResult;
+    }
+    /**
+     * 设备控制+模拟控制--其他模块调用的统一控制方法
+     * @param map
+     * @return
+     */
+    @Override
+    public Integer controlDevices(Map<String, Object> map) {
+        int controlState = 0;
+
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+        //根据字典中配置的设备模拟控制值进行模拟状态展示
+        String devId = map.get("devId").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+
+        //控制照明设备
+        if (!isopen) {
+            //设备控制
+            AjaxResult ajaxResult = controlLight(map,sdDevices);
+            Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+            if( code == HttpStatus.SUCCESS){
+                controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+            }
+        } else {
+            //模拟控制
+            controlState = analogControl(map,sdDevices);
+        }
+
+
+        return controlState;
+    }
+    /**
+     * 模拟控制方法
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
+        //设备状态
+        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        //亮度
+        String brightnessStr = Optional.ofNullable(map.get("brightness")).orElse("").toString();
+        Integer brightness = Integer.valueOf(brightnessStr);
+
+        //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+        sdDevices.setEqStatus("1");
+        sdDevices.setEqStatusTime(new Date());
+        sdDevicesService.updateSdDevices(sdDevices);
+        SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+        sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
+        List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+        if (sdDeviceTypeItems.size() == 0) {
+            throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
+        }
+        sdDeviceTypeItems.stream().forEach(item -> {
+            if("brightness".equals(item.getItemCode()) &&
+                    (DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().equals(sdDevices.getEqType()) ||
+                            DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())
+                    )
+            ){
+                sdDeviceDataService.updateDeviceData(sdDevices, brightness.toString(), item.getId());
+            }
+            if("state".equals(item.getItemCode())){
+                sdDeviceDataService.updateDeviceData(sdDevices, state, item.getId());
+            }
+        });
+
+        Integer controlState = 1;
+        return controlState;
+    }
+    /**
+     * 控制方法
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    public AjaxResult controlLight(Map<String, Object> map, SdDevices sdDevices) {
+
+        //设备状态
+        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+        //亮度
+        String brightnessStr = Optional.ofNullable(map.get("brightness")).orElse("").toString();
+        Integer brightness = Integer.valueOf(brightnessStr);
+        //所属隧道
+        String eqTunnelId = sdDevices.getEqTunnelId();
+        //所属方向
+        String eqDirection = sdDevices.getEqDirection();
+        //设备关联的外部系统
+        Long externalSystemId = sdDevices.getExternalSystemId();
+        //段号
+        String step = sdDevices.getExternalDeviceId();
+        if(StringUtils.isEmpty(eqTunnelId)){
+            return AjaxResult.error("未配置该设备所属隧道");
+        }
+        if(StringUtils.isEmpty(eqDirection)){
+            return AjaxResult.error("未配置该设备所属方向");
+        }
+        if(externalSystemId == null){
+            return AjaxResult.error("未配置该设备关联的外部系统");
+        }
+        if(StringUtils.isEmpty(step)){
+            return AjaxResult.error(sdDevices.getEqName() + "未配置该设备关联的段号");
+        }
+
+
+        //确定隧道洞编号  不确定虚报也需要
+//        String externalSystemTunnelId = tunnelAssociationService.getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
+//        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号");
+//        if(StringUtils.isEmpty(externalSystemTunnelId)){
+//            return AjaxResult.error("未配置该设备关联的隧道洞编号");
+//        }
+        //查询外部系统信息
+        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
+        String baseUrl = externalSystem.getSystemUrl();
+//        Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
+        if(StringUtils.isEmpty(baseUrl)){
+            return AjaxResult.error("未配置该设备所属的外部系统地址");
+        }
+
+//        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+        String jessionId;
+
+        String tokenKey = "sanSiToken";
+
+        jessionId = redisCache.getCacheObject(tokenKey);
+
+        if(jessionId == null || "".equals(jessionId)){
+            jessionId =  login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+            redisCache.setCacheObject(tokenKey,jessionId);
+            redisCache.expire(tokenKey,15*60);
+        }
+
+        if(jessionId == null || "".equals(jessionId)){
+            return AjaxResult.error("三思照明获取token失败",0);
+        }
+        //开关对应关系 三晶的
+//        Integer openClose = SanjingLightStateEnum.getValue(Integer.valueOf(state));、
+
+        Integer openClose = Integer.valueOf(state);
+        //开关
+        int switchType = updateSwitch(jessionId, baseUrl, step, Integer.valueOf(state));
+
+        //三晶
+        //亮度
+//        int brightnessType = 1;
+        //如果亮度有值并且控制状态不是关，就控制亮度
+//        if(!Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
+//            brightnessType = updateBrightness(jessionId, baseUrl, step ,brightness);
+//        }
+
+        //亮度
+        int brightnessType = 0;
+        //2表示关
+        if(openClose!=2){
+            brightnessType = updateBrightness(jessionId, baseUrl, step, openClose);
+        }
+        int result =  switchType==1 && brightnessType==1 ? 1 : 0;
+        if(result == 1){
+            return AjaxResult.success(1);
+        }else {
+            return AjaxResult.error("控制失败",0);
+        }
+    }
 }

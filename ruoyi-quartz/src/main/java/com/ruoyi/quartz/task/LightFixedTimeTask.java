@@ -60,7 +60,7 @@ public class LightFixedTimeTask {
         }
         for (SdEnhancedLightingConfig sdEnhancedLightingConfig:sdEnhancedLightingConfigList) {
             //查看当前隧道 照明配置文件中  模式类型是否为定时模式，如果为定时模式 则继续执行调光指令
-            //查看当前隧道 照明配置文件中  是否开启调光模式  0关闭  1开启
+            //查看当前隧道 照明配置文件中/**getModeType 模式类型： 0定时模式  1  自动模式  2 节能模式 */  getIsStatus是否开启调光模式  0关闭  1开启
             if(sdEnhancedLightingConfig.getModeType() == 0 && sdEnhancedLightingConfig.getIsStatus() == 1){
                 //定时 开启上行隧道  TunnelDirectionEnum.UP_DIRECTION TunnelDirectionEnum.UP_DIRECTION.getCode(),
                 adjustBrightnessByRunMode(sdEnhancedLightingConfig.getTunnelId(),sdEnhancedLightingConfig);

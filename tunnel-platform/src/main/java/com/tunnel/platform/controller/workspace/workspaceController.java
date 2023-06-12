@@ -805,10 +805,17 @@ public class workspaceController extends BaseController {
         } else if (params.get("eqId") == null || params.get("eqId").toString().equals("")) {
             return AjaxResult.error("未指定设备id");
         }
-        boolean  b = deviceFunctionsService.deviceControlByParam( params.get("comType").toString(), params.get("eqId").toString(), params.get("data").toString());
-        if(b){
-            return AjaxResult.success("控制成功");
+
+        String devId = params.get("eqId").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        Integer  controlState = 0;
+        //设备控制
+        GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
+        if(generalControlBean == null){
+            throw new RuntimeException("设备协议配置为空");
+        }else{
+            controlState = generalControlBean.controlDevices(params);
         }
-        return AjaxResult.error("控制失败");
+        return controlState==1 ?  AjaxResult.success("控制成功") : AjaxResult.error("控制失败");
     }
 }

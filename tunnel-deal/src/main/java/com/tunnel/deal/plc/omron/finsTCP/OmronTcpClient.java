@@ -26,6 +26,8 @@ import io.netty.channel.Channel;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.tunnel.deal.plc.omron.util.ByteUtil.byteMerger;
+
 
 /**
  * 欧姆龙PLC基于tcp实现的客户端
@@ -242,34 +244,34 @@ public class OmronTcpClient{
         //SA1地址：电脑 ip
         conf.setLocalHost("192.168.1.200");
         //服务器port
-        conf.setPort(9600);
+        conf.setPort(9700);
         //创建 client
         OmronTcpClient omronTcpClient = new OmronTcpClient(conf);
         //初始化链接     服务器地址
-        omronTcpClient.init("127.0.0.1",9600);
+        omronTcpClient.init("127.0.0.1",9700);
 
         ChannelFuture channelFuture = omronTcpClient.channelFuture;
         //推送握手协议
         omronTcpClient.send(omronTcpClient.successCallback(channelFuture).array());
 
         //写入数据
-//        byte[] writeData = ByteUtil.getBytes(1);
+        byte[] writeData = ByteUtil.getBytes(1);
         boolean isBit = false;
 //        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"W101.01",true);
-////        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"D2000",isBit);
-//        OmronMessageHeader  omronMessageHeaderw = new OmronMessageHeader();
-//        byte[] dataBodyw = omronTcpClient.getMessageBody(omronMessageHeaderw,dataInfow.length);
-//        System.out.println("写入数据："+ByteUtil.bytesToHex(byteMerger(dataBodyw,dataInfow)));
-//        byte[] data = omronTcpClient.send(byteMerger(dataBodyw,dataInfow));
-//        System.out.println(ByteUtil.bytesToHex(data));
-//        System.out.println(omronTcpClient.doBuildResponseMessage(data));
+        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"D2000",isBit);
+        OmronMessageHeader  omronMessageHeaderw = new OmronMessageHeader();
+        byte[] dataBodyw = omronTcpClient.getMessageBody(omronMessageHeaderw,dataInfow.length);
+        System.out.println("写入数据："+ByteUtil.bytesToHex(byteMerger(dataBodyw,dataInfow)));
+        byte[] data = omronTcpClient.send(byteMerger(dataBodyw,dataInfow));
+        System.out.println(ByteUtil.bytesToHex(data));
+        System.out.println(omronTcpClient.doBuildResponseMessage(data));
 
 //        //读取数据
         OmronMessageHeader  omronMessageHeader = new OmronMessageHeader();
         byte[] dataInfo = omronTcpClient.buildReadRequestBody("D512",isBit);
 //        byte[] dataInfo = omronTcpClient.buildReadRequestBody("D2000",isBit);
         byte[] dataBody = omronTcpClient.getMessageBody(omronMessageHeader,dataInfo.length);
-        byte[] dataR = omronTcpClient.send(ByteUtil.byteMerger(dataBody,dataInfo));
+        byte[] dataR = omronTcpClient.send(byteMerger(dataBody,dataInfo));
         System.out.println("读取数据："+ByteUtil.bytesToHex(dataR));
         String num;
         if(omronTcpClient.doBuildResponseMessage(dataR)){

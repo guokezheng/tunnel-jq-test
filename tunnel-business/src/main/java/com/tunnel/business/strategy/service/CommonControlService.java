@@ -1,4 +1,4 @@
-package com.tunnel.deal.generalcontrol.service;
+package com.tunnel.business.strategy.service;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -51,22 +51,32 @@ public interface CommonControlService {
      */
      String selectBeforeState(SdDevices sdDevices);
 
-//    /**
-//     * 控制设备之前获取设备状态
-//     * @param sdDevices 设备信息
-//     * @param itemId 设备类型数据项
-//     * @return
-//     */
-//     String selectBeforeState(SdDevices sdDevices,String itemId);
+    /**
+     * 控制设备之前获取设备状态
+     * @param deviceId 设备Id
+     * @param itemCode 设备类型数据项
+     * @return
+     */
+    String selectBeforeState(String deviceId,Long itemCode);
 
     /**
      * 添加操作日志
      * @param sdDevices 设备信息
-     * @param map 控制参数
      * @param beforeState 控制前状态
+     * @param map 控制参数
      * @param controlState 操作是否成功 0 不成功；1成功
      */
-    void addOperationLog(SdDevices sdDevices,Map<String, Object> map,String beforeState,String controlState);
+    void addOperationLog(Map<String, Object> map,SdDevices sdDevices,String beforeState,int controlState);
+
+//    /**
+//     * 添加操作日志
+//     * @param map 控制参数
+//     * @param sdDevices 设备信息
+//     * @param beforeState 控制前状态
+//     * @param controlState 操作是否成功 0 不成功；1成功
+//     * @param controlType 控制方式
+//     */
+//    void addOperationLog(Map<String, Object> map, SdDevices sdDevices, String beforeState, int controlState, String controlType);
 
 
     /**

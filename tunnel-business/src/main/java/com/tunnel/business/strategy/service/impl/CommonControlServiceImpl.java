@@ -1,4 +1,4 @@
-package com.tunnel.deal.generalcontrol.service.impl;
+package com.tunnel.business.strategy.service.impl;
 
 import cn.hutool.json.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -7,6 +7,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.system.service.ISysDictDataService;
+import com.tunnel.business.datacenter.domain.enumeration.DeviceControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -18,7 +19,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -247,51 +248,54 @@ public class CommonControlServiceImpl implements CommonControlService {
         return beforeState;
     }
 
-//    /**
-//     * @param sdDevices
-//     * @param itemId
-//     * @return
-//     */
-//    @Override
-//    public String selectBeforeState(SdDevices sdDevices, String itemId) {
-//        String beforeState = "";
-//        //获取当前设备状态
-//        SdDeviceData sdDeviceData = new SdDeviceData();
-//        sdDeviceData.setDeviceId(sdDevices.getEqId());
-//        //原代码：固定取车指的itemId,会导致其他设备类型取不到实时数据
-////        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
-//        //车指、交通信号灯、风机、卷帘门的设备类型数据项只有一个，只有一条实时数据,可以不传itemId
-//        //基本照明、加强照明有多个数据项,必须传值
-//        if(itemId != null && !"".equals(itemId)){
-//            sdDeviceData.setItemId(Long.valueOf(itemId));
-//        }
-//        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
-//        if (data.size() > 0 && data.get(0) != null) {
-//            beforeState = data.get(0).getData();
-//        }
-//        return beforeState;
-//    }
+    /**
+     * 控制设备之前获取设备状态
+     * @param deviceId 设备Id
+     * @param itemCode 设备类型数据项
+     * @return
+     */
+    @Override
+    public String selectBeforeState(String deviceId,Long itemCode){
+        String beforeState = "";
+        //获取当前设备状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
+        sdDeviceData.setItemId(itemCode);
+        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        if (data.size() > 0 && data.get(0) != null) {
+            beforeState = data.get(0).getData();
+        }
+        return beforeState;
+    }
 
 
     /**
      * 添加操作日志
      * @param sdDevices 设备信息
-     * @param map 控制参数
      * @param beforeState 控制前状态
+     * @param map 控制参数
      * @param controlState 操作是否成功 0 不成功；1成功
      */
     @Override
-    public void addOperationLog(SdDevices sdDevices,Map<String, Object> map,String beforeState,String controlState){
+    public void addOperationLog(Map<String, Object> map,SdDevices sdDevices,String beforeState,int controlState){
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
         //亮度
         String brightness = Optional.ofNullable(map.get("brightness")).orElse("").toString();
+        //控制方式
+        String controlType = Optional.ofNullable(map.get("controlType")).orElse("").toString();
+
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();
         sdOperationLog.setEqTypeId(sdDevices.getEqType());
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
-        sdOperationLog.setCreateTime(new Date());
+        if (map.get("controlTime") != null) {
+            //控制时间
+            sdOperationLog.setCreateTime(DateUtils.parseDate(map.get("controlTime")));
+        }else{
+            sdOperationLog.setCreateTime(new Date());
+        }
 
         sdOperationLog.setBeforeState(beforeState);
         //加强照明状态拼接
@@ -305,12 +309,73 @@ public class CommonControlServiceImpl implements CommonControlService {
         }else {
             sdOperationLog.setOperationState(state);
         }
-        sdOperationLog.setControlType("0");
+        if(controlType != null && !"".equals(controlType)){
+            sdOperationLog.setControlType(controlType);
+        }else{
+            //默认手动控制
+            sdOperationLog.setControlType(DeviceControlTypeEnum.AUTO_CONTROL.getCode());
+        }
         sdOperationLog.setState(String.valueOf(controlState));
-        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+        if (map.get("operIp") != null) {
+            //控制IP
+            sdOperationLog.setOperIp(map.get("operIp").toString());
+        }else{
+            sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+        }
+        if (map.get("eventId") != null) {
+            //事件ID
+            sdOperationLog.setEventId(map.get("eventId").toString());
+        }
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
 //        return AjaxResult.success(controlState);
     }
+
+
+//    /**
+//     * 添加操作日志
+//     * @param map 控制参数
+//     * @param sdDevices 设备信息
+//     * @param beforeState 控制前状态
+//     * @param controlState 操作是否成功 0 不成功；1成功
+//     * @param controlType 控制方式
+//     */
+//    @Override
+//    public void addOperationLog(Map<String, Object> map, SdDevices sdDevices, String beforeState, int controlState, String controlType){
+//        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+//        //添加操作记录
+//        SdOperationLog sdOperationLog = new SdOperationLog();
+//        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+//        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+//        sdOperationLog.setEqId(sdDevices.getEqId());
+//        sdOperationLog.setBeforeState(beforeState);
+//        sdOperationLog.setOperationState(state);
+//        if(controlType != null && !"".equals(controlType)){
+//            sdOperationLog.setControlType(controlType);
+//        }else{
+//            //默认手动控制
+//            sdOperationLog.setControlType(DeviceControlTypeEnum.AUTO_CONTROL.getCode());
+//        }
+//
+//        sdOperationLog.setState(String.valueOf(controlState));
+//
+//        if (map.get("operIp") != null) {
+//            //控制IP
+//            sdOperationLog.setOperIp(map.get("operIp").toString());
+//        }else{
+//            sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+//        }
+//        if (map.get("controlTime") != null) {
+//            //控制时间
+//            sdOperationLog.setCreateTime(DateUtils.parseDate(map.get("controlTime")));
+//        }else{
+//            sdOperationLog.setCreateTime(new Date());
+//        }
+//        if (map.get("eventId") != null) {
+//            //事件ID
+//            sdOperationLog.setEventId(map.get("eventId").toString());
+//        }
+//        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+//    }
 
 
     /**

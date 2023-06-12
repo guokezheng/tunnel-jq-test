@@ -26,7 +26,12 @@ public class DeviceDataStrategyFactory {
 
     // 版本升级或新增模块、插件（添加枚举，定好具体实现类）
     static {
-        MAP.put(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode(), new LaneIndicator());
+//        //车指
+//        MAP.put(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode(), new LaneIndicator());
+//        //左转车指
+//        MAP.put(DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode(),new LaneIndicator());
+//        //射流风机
+//        MAP.put(DevicesTypeEnum.FENG_JI.getCode(), new JetFan());
         MAP.put(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode(), new EvacuationSign());
         MAP.put(DevicesTypeEnum.YOU_DAO_DENG.getCode(), new InductionLamp());
         MAP.put(DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode(), new AuralVisualAlarm());
@@ -35,6 +40,7 @@ public class DeviceDataStrategyFactory {
         MAP.put(DevicesTypeEnum.ROBOT.getCode(), new PatrolRobot());
         MAP.put(DevicesTypeEnum.SHUI_BENG.getCode(), new FirePump());
         MAP.put(DevicesTypeEnum.WEN_SHI_DU_CHUAN_GAN_QI.getCode(), new RHTempSensor());
+        //警示灯带
         MAP.put(DevicesTypeEnum.JING_SHI_DENG_DAI.getCode(), new WarningLight());
     }
 

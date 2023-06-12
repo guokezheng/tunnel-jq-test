@@ -160,7 +160,10 @@
                         WHERE
                             fault.fault_status = '0'
                           AND fault.fallt_remove_statue = '1'
-                          AND TO_DAYS( fault.fault_fxtime ) = TO_DAYS( NOW( ) )
+                          AND TO_DAYS( fault.fault_fxtime ) = TO_DAYS( NOW( )
+                          <if test="dept != null and dept != ''">
+                            AND (tunnel.dept_id = #{dept} OR tunnel.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
+                          </if>)
                     ) b
             ) AS MERGE
         ORDER BY
@@ -201,6 +204,9 @@
                                                                                                                                                                                                                                                                          left join sys_dict_data data on data.dict_value = devices.eq_direction and data.dict_type='sd_direction'
                                                                                                                                                                                                                                                                          left join sys_dict_data type on type.dict_value = fault.fault_type and type.dict_type='fault_type'
         where fault.fault_status = '0' and fault.fallt_remove_statue = '1' and TO_DAYS(fault.fault_fxtime) = TO_DAYS(NOW())
+        <if test="dept != null and dept != ''">
+            AND (tunnel.dept_id = #{dept} OR tunnel.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
+        </if>
         ORDER BY
             fault.fault_fxtime DESC
     </select>

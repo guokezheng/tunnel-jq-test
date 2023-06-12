@@ -1,13 +1,16 @@
 package com.tunnel.deal.mqtt.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.mqtt.config.MqttGateway;
 import com.tunnel.deal.mqtt.service.HongMengMqttCommonService;
 import com.tunnel.deal.mqtt.service.HongMengMqttService;
@@ -32,6 +35,8 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
 
     private HongMengMqttCommonService hongMengMqttCommonService = SpringUtils.getBean(HongMengMqttCommonService.class);
 
+    private CommonControlService commonControlService = SpringUtils.getBean(CommonControlService.class);
+
     /**
      * 设备控制方法
      *
@@ -40,7 +45,34 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
      */
     @Override
     public AjaxResult deviceControl(Map<String, Object> map, SdDevices sdDevices) {
-//        {
+        String deviceId = sdDevices.getEqId();
+        Long eqType = sdDevices.getEqType();
+        Integer controlState = 0;
+        //控制设备之前获取设备状态
+        Long itemCode = getItemCode(eqType);
+        String beforeState = commonControlService.selectBeforeState(deviceId,itemCode);
+        //控制设备
+        AjaxResult ajaxResult = sendMqtt(map,sdDevices);
+        Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+        if( code == HttpStatus.SUCCESS){
+            controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+        }
+
+        //操作日志
+        commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
+
+        return AjaxResult.success(controlState);
+    }
+
+
+    /**
+     * 控制设备
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    private AjaxResult sendMqtt(Map<String, Object> map, SdDevices sdDevices){
+        //        {
 //            "sn": "1",
 //                "tlRunStatus": "trafficLight_00",
 //                "actionId": "1"
@@ -226,5 +258,23 @@ public class TrafficLightsMqttServiceImpl implements HongMengMqttService {
         return mappingStatus;
     }
 
+
+    /**
+     * 获取设备类型数据项
+     * @param eqType
+     * @return
+     */
+    private Long getItemCode(Long eqType){
+        //状态设备类型数据项
+        long statusItemCode;
+        if(DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode().equals(eqType)){
+            //交通信号灯
+            statusItemCode = DevicesTypeItemEnum.XIN_HAO_DENG.getCode();
+        }else{
+            //带左转交通信号灯
+            statusItemCode = DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode();
+        }
+        return statusItemCode;
+    }
 
 }

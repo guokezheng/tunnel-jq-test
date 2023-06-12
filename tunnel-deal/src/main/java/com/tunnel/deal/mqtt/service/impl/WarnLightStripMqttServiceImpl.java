@@ -2,12 +2,15 @@ package com.tunnel.deal.mqtt.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.mqtt.config.MqttGateway;
 import com.tunnel.deal.mqtt.service.HongMengMqttCommonService;
 import com.tunnel.deal.mqtt.service.HongMengMqttService;
@@ -32,6 +35,8 @@ public class WarnLightStripMqttServiceImpl implements HongMengMqttService {
 
     private HongMengMqttCommonService hongMengMqttCommonService = SpringUtils.getBean(HongMengMqttCommonService.class);
 
+    private CommonControlService commonControlService = SpringUtils.getBean(CommonControlService.class);
+
     /**
      * 设备控制方法
      *
@@ -40,7 +45,33 @@ public class WarnLightStripMqttServiceImpl implements HongMengMqttService {
      */
     @Override
     public AjaxResult deviceControl(Map<String, Object> map, SdDevices sdDevices) {
-//        TODO 警示灯带业务逻辑
+        String devId = Optional.ofNullable(map.get("devId")).orElse("").toString();
+
+        Integer controlState = 0;
+        //控制设备之前获取设备状态
+        String beforeState = commonControlService.selectBeforeState(devId, (long) DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode());
+        //控制设备
+        AjaxResult ajaxResult = sendMqtt(map,sdDevices);
+        Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+        if( code == HttpStatus.SUCCESS){
+            controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+        }
+
+        //操作日志
+        commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
+
+        return AjaxResult.success(controlState);
+    }
+
+
+    /**
+     * 控制设备
+     * @param map
+     * @param sdDevices
+     * @return
+     */
+    private AjaxResult sendMqtt(Map<String, Object> map, SdDevices sdDevices){
+        //        TODO 警示灯带业务逻辑
 
         //{
         //  "sn": "1",

@@ -28,10 +28,7 @@ public class OmoLongTcpControl implements GeneralControlBean {
     @Override
     public Integer controlDevices(Map<String, Object> map) {
         boolean  b = deviceFunctionsService.deviceControlByParam( map.get("comType").toString(), map.get("eqId").toString(), map.get("data").toString());
-        if(b){
-            return 1;
-        }
-        return 0;
+        return b ? 1 : 0;
     }
 
     @Override

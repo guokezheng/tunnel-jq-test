@@ -244,11 +244,11 @@ public class OmronTcpClient{
         //SA1地址：电脑 ip
         conf.setLocalHost("192.168.1.200");
         //服务器port
-        conf.setPort(9600);
+        conf.setPort(9700);
         //创建 client
         OmronTcpClient omronTcpClient = new OmronTcpClient(conf);
         //初始化链接     服务器地址
-        omronTcpClient.init("127.0.0.1",9600);
+        omronTcpClient.init("127.0.0.1",9700);
 
         ChannelFuture channelFuture = omronTcpClient.channelFuture;
         //推送握手协议
@@ -257,8 +257,8 @@ public class OmronTcpClient{
         //写入数据
         byte[] writeData = ByteUtil.getBytes(1);
         boolean isBit = false;
-        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"W101.01",true);
-//        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"D2000",isBit);
+//        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"W101.01",true);
+        byte[] dataInfow =omronTcpClient.buildWriteRequestBody(writeData,"D2000",isBit);
         OmronMessageHeader  omronMessageHeaderw = new OmronMessageHeader();
         byte[] dataBodyw = omronTcpClient.getMessageBody(omronMessageHeaderw,dataInfow.length);
         System.out.println("写入数据："+ByteUtil.bytesToHex(byteMerger(dataBodyw,dataInfow)));

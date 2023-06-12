@@ -15,8 +15,8 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.deal.light.HttpUrlEscapeUtil;
 import com.tunnel.deal.light.Light;
 import com.tunnel.deal.light.enums.SanjingLightStateEnum;
@@ -684,6 +684,11 @@ public class SanJingLight implements Light, GeneralControlBean {
      */
     @Override
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices){
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+        if (isopen) {
+            //设备模拟控制开启
+            return commonControlService.excecuteAnalogControl(sdDevices,map);
+        }
         Integer controlState = 0;
 
 //        //控制设备之前获取设备状态
@@ -695,8 +700,9 @@ public class SanJingLight implements Light, GeneralControlBean {
         if( code == HttpStatus.SUCCESS){
             controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
         }
-        commonControlService.addOperationLog(sdDevices,map,"",String.valueOf(controlState));
-        return ajaxResult;
+
+        commonControlService.addOperationLog(map,sdDevices,"",controlState);
+        return AjaxResult.success(controlState);
     }
 
 
@@ -745,7 +751,7 @@ public class SanJingLight implements Light, GeneralControlBean {
      * @param sdDevices
      * @return
      */
-    @Override
+//    @Override
     public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();

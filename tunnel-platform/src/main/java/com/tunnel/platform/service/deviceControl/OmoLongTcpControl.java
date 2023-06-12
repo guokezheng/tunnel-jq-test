@@ -31,7 +31,7 @@ public class OmoLongTcpControl implements GeneralControlBean {
         return b ? 1 : 0;
     }
 
-    @Override
+//    @Override
     public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
         return null;
     }

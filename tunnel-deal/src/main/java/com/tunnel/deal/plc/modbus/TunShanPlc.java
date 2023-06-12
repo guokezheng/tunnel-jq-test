@@ -5,8 +5,8 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +35,12 @@ public class TunShanPlc implements GeneralControlBean {
 
     @Override
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+        if (isopen) {
+            //设备模拟控制开启
+            return commonControlService.excecuteAnalogControl(sdDevices,map);
+        }
+
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
 
@@ -43,13 +49,11 @@ public class TunShanPlc implements GeneralControlBean {
 
         Integer controlState = ModbusTcpHandle.getInstance().toControlDev(Integer.parseInt(state), sdDevices);
 
-        commonControlService.addOperationLog(sdDevices,map,beforeState,String.valueOf(controlState));
+        //手动控制
+//        String controlType = DeviceControlTypeEnum.AUTO_CONTROL.getCode();
+        commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
 
-        if(controlState == 1){
-            return AjaxResult.success(1);
-        }else {
-            return AjaxResult.error("",0);
-        }
+      return AjaxResult.success(controlState);
     }
 
     /**
@@ -76,7 +80,7 @@ public class TunShanPlc implements GeneralControlBean {
 //            controlState = controlDevice(map,sdDevices);
         } else {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
-            controlState = analogControl(map,sdDevices);
+            controlState = commonControlService.analogControl(map,sdDevices);
         }
 
 //        //车指控制方法
@@ -94,16 +98,6 @@ public class TunShanPlc implements GeneralControlBean {
     }
 
 
-    /**
-     * 模拟控制方法
-     *
-     * @param map
-     * @param sdDevices
-     * @return
-     */
-    @Override
-    public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
-        return commonControlService.analogControl(map,sdDevices);
-    }
+
 
 }

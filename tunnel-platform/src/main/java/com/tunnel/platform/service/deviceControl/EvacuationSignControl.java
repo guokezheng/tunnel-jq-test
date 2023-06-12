@@ -9,8 +9,8 @@ import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -103,7 +103,7 @@ public class EvacuationSignControl implements GeneralControlBean {
      * @param sdDevices
      * @return
      */
-    @Override
+//    @Override
     public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();

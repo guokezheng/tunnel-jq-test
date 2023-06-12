@@ -15,8 +15,8 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.deal.light.Light;
 import com.tunnel.deal.light.enums.SanjingLightStateEnum;
@@ -321,7 +321,7 @@ public class SansiLightImpl implements Light , GeneralControlBean {
         if( code == HttpStatus.SUCCESS){
             controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
         }
-        commonControlService.addOperationLog(sdDevices,map,"",String.valueOf(controlState));
+        commonControlService.addOperationLog(map,sdDevices,"",controlState);
         return ajaxResult;
     }
     /**
@@ -360,7 +360,7 @@ public class SansiLightImpl implements Light , GeneralControlBean {
      * @param sdDevices
      * @return
      */
-    @Override
+//    @Override
     public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();

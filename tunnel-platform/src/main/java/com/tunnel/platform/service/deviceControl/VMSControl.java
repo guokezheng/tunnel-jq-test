@@ -18,8 +18,8 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.informationBoard.IIotBoardTemplateContentService;
 import com.tunnel.business.service.informationBoard.IIotBoardTemplateService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import org.slf4j.Logger;
@@ -120,17 +120,17 @@ public class VMSControl implements GeneralControlBean {
         return controlState;
     }
 
-    /**
-     * 模拟控制方法
-     *
-     * @param map
-     * @param sdDevices
-     * @return
-     */
-    @Override
-    public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
-        return null;
-    }
+//    /**
+//     * 模拟控制方法
+//     *
+//     * @param map
+//     * @param sdDevices
+//     * @return
+//     */
+////    @Override
+//    public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
+//        return null;
+//    }
 
     /**
      * 模拟控制方法

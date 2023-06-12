@@ -7,8 +7,8 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +62,11 @@ public class HongMengHttpControl implements GeneralControlBean {
 
     @Override
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+        if (isopen) {
+            //设备模拟控制开启
+            return commonControlService.excecuteAnalogControl(sdDevices,map);
+        }
         return control(map);
     }
 
@@ -91,7 +96,7 @@ public class HongMengHttpControl implements GeneralControlBean {
             }
         } else {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
-            controlState = analogControl(map,sdDevices);
+            controlState = commonControlService.analogControl(map,sdDevices);
 
             //生成日志
             SdOperationLog sdOperationLog = commonControlService.getOperationLog(map,sdDevices,controlState);
@@ -101,16 +106,6 @@ public class HongMengHttpControl implements GeneralControlBean {
         return controlState;
     }
 
-    /**
-     * 模拟控制方法
-     *
-     * @param map
-     * @param sdDevices
-     * @return
-     */
-    @Override
-    public Integer analogControl(Map<String, Object> map,SdDevices sdDevices) {
-        return commonControlService.analogControl(map,sdDevices);
-    }
+
 
 }

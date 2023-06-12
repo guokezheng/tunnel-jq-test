@@ -1,7 +1,6 @@
 package com.tunnel.platform.controller.workspace;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
@@ -21,11 +20,10 @@ import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.service.vehicle.ISdVehicleDataService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
-import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
@@ -124,56 +122,56 @@ public class workspaceController extends BaseController {
         return "get 3d info";
     }
 
-    //todo 所有走这个接口的设备类型
 
-    /**
-     * 设备控制接口
-     * @param map
-     * @return
-     */
-    @PostMapping("/generalControlDevice")
-    public AjaxResult generalControlDevice(@RequestBody Map<String, Object> map) {
-        //设备ID
-        String devId = Optional.ofNullable(map.get("devId")).orElse("").toString();
 
-        if (devId == null || "".equals(devId)) {
-            AjaxResult.error("未指定设备");
-        }
-        //设备状态
-        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
-        if (state == null || "".equals(state)) {
-            AjaxResult.error("未指定设备需要变更的状态信息");
-        }
-        //设备信息
-        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-
-        //查询配置状态是否是模拟控制
-        boolean isopen = commonControlService.queryAnalogControlConfig();
-        if (isopen) {
-            //设备模拟控制开启
-            return commonControlService.excecuteAnalogControl(sdDevices,map);
-        }
-
-        if ("GSY".equals(deploymentType)) {
-            //高速云分发控制
-         return deviceControlService.cloudPlatformControl(map);
-        }
-
-        //控制设备之前获取设备状态
-        String beforeState = commonControlService.selectBeforeState(sdDevices);
-        String controlState = OperationLogEnum.STATE_ERROR.getCode();
-        //设备控制
-        GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
-        AjaxResult ajaxResult = generalControlBean.control(map,sdDevices);
-        Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
-        if( code == HttpStatus.SUCCESS){
-            controlState = OperationLogEnum.STATE_SUCCESS.getCode();
-            ajaxResult.put("data",controlState);
-        }
-        //添加操作日志
-        commonControlService.addOperationLog(sdDevices,map,beforeState,controlState);
-        return ajaxResult;
-    }
+//    /**
+//     * 设备控制接口
+//     * @param map
+//     * @return
+//     */
+//    @PostMapping("/generalControlDevice")
+//    public AjaxResult generalControlDevice(@RequestBody Map<String, Object> map) {
+//        //设备ID
+//        String devId = Optional.ofNullable(map.get("devId")).orElse("").toString();
+//
+//        if (devId == null || "".equals(devId)) {
+//            AjaxResult.error("未指定设备");
+//        }
+//        //设备状态
+//        String state = Optional.ofNullable(map.get("state")).orElse("").toString();
+//        if (state == null || "".equals(state)) {
+//            AjaxResult.error("未指定设备需要变更的状态信息");
+//        }
+//        //设备信息
+//        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+//
+//        //查询配置状态是否是模拟控制
+//        boolean isopen = commonControlService.queryAnalogControlConfig();
+//        if (isopen) {
+//            //设备模拟控制开启
+//            return commonControlService.excecuteAnalogControl(sdDevices,map);
+//        }
+//
+//        if ("GSY".equals(deploymentType)) {
+//            //高速云分发控制
+//         return deviceControlService.cloudPlatformControl(map);
+//        }
+//
+//        //控制设备之前获取设备状态
+//        String beforeState = commonControlService.selectBeforeState(sdDevices);
+//        String controlState = OperationLogEnum.STATE_ERROR.getCode();
+//        //设备控制
+//        GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
+//        AjaxResult ajaxResult = generalControlBean.control(map,sdDevices);
+//        Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+//        if( code == HttpStatus.SUCCESS){
+//            controlState = OperationLogEnum.STATE_SUCCESS.getCode();
+//            ajaxResult.put("data",controlState);
+//        }
+//        //添加操作日志
+//        commonControlService.addOperationLog(sdDevices,map,beforeState,controlState);
+//        return ajaxResult;
+//    }
 
 
     //PLC车指控制接口
@@ -196,16 +194,16 @@ public class workspaceController extends BaseController {
             return AjaxResult.error("基本照明亮度不得低于30");
         }
 
-        if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
-            Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
-            Integer code = Integer.valueOf(hongMap.get("code"));
-            String msg = hongMap.get("msg").toString();
-            if(code == 200){
-                return AjaxResult.success(1);
-            }else {
-                return AjaxResult.success(msg,0);
-            }
-        }
+//        if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
+//            Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
+//            Integer code = Integer.valueOf(hongMap.get("code"));
+//            String msg = hongMap.get("msg").toString();
+//            if(code == 200){
+//                return AjaxResult.success(1);
+//            }else {
+//                return AjaxResult.success(msg,0);
+//            }
+//        }
         if ("GSY".equals(deploymentType)) {
             //高速云分发控制
             return deviceControlService.cloudPlatformControl(map);
@@ -215,14 +213,14 @@ public class workspaceController extends BaseController {
 //        int controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
         int controlState = 0;
         //查询配置状态是否是模拟控制
-        boolean isopen = commonControlService.queryAnalogControlConfig();
-        long eqType = sdDevices.getEqType().longValue();
+//        boolean isopen = commonControlService.queryAnalogControlConfig();
+//        long eqType = sdDevices.getEqType().longValue();
 
-
-        if (isopen) {
-            //设备模拟控制开启
-            return commonControlService.excecuteAnalogControl(sdDevices,map);
-        } else {
+//
+//        if (isopen) {
+//            //设备模拟控制开启
+//            return commonControlService.excecuteAnalogControl(sdDevices,map);
+//        } else {
             // eqType == DevicesTypeEnum.SHUI_BENG.getCode().longValue() ||
 //            if (
 //                    eqType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue() ||
@@ -248,14 +246,13 @@ public class workspaceController extends BaseController {
                 return AjaxResult.error("设备协议配置为空");
             }
             AjaxResult ajaxResult = generalControlBean.control(map,sdDevices);
-            Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
-            if( code == HttpStatus.SUCCESS){
-                controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
-//                ajaxResult.put("data",controlState);
-            }
-        }
+//            Integer code = Integer.valueOf(String.valueOf(ajaxResult.get("code")));
+//            if( code == HttpStatus.SUCCESS){
+//                controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
+//            }
+//        }
 
-        return AjaxResult.success(controlState);
+        return ajaxResult;
     }
 
     //诱导灯控制接口
@@ -351,6 +348,7 @@ public class workspaceController extends BaseController {
         //控制设备
         int controlState = 0;
         if (sdDevices.getBrandId() != null && sdDevices.getBrandId().equals("0057")) {
+            //正晨诱导灯控制
             controlState = GuidanceLampHandle.getInstance().toControlDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
         } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue() && !sdDevices.getBrandId().equals("0057")) {
             //显科的设备一个路段可能会有多个控制器，都需要下发同样的指令
@@ -359,6 +357,7 @@ public class workspaceController extends BaseController {
             xiankeDevices.setEqType(sdDevices.getEqType());
             xiankeDevices.setEqDirection(sdDevices.getEqDirection());
             List<SdDevices> xiankeDeviceList = sdDevicesService.selectSdDevicesList(xiankeDevices);
+            //深圳显科诱导灯没有逆向流水模式
             if (state.equals("3")) {
                 state = "2";
             }
@@ -404,7 +403,7 @@ public class workspaceController extends BaseController {
         }
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
-        String brightness = (map.get("brightness") != null || map.get("brightness") != "") ? map.get("brightness").toString() : "0";
+        String brightness = (map.get("brightness") != null && map.get("brightness") != "") ? map.get("brightness").toString() : "0";
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
 
         //设备控制

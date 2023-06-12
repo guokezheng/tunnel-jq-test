@@ -7,8 +7,8 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
-import com.tunnel.deal.generalcontrol.service.CommonControlService;
 import com.tunnel.deal.mca.service.McaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,13 +40,20 @@ public class McaControl implements GeneralControlBean {
 
     @Override
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
+        String deviceId = sdDevices.getEqId();
+
+        boolean isopen = commonControlService.queryAnalogControlConfig();
+        if (isopen) {
+            //设备模拟控制开启
+            return commonControlService.excecuteAnalogControl(sdDevices,map);
+        }
 
         Integer controlState = 0;
 
         //控制设备之前获取设备状态
         String beforeState = commonControlService.selectBeforeState(sdDevices);
 
-        String deviceId = sdDevices.getEqId();
+
         //设备状态
         String state = Optional.ofNullable(map.get("state")).orElse("").toString();
         AjaxResult ajaxResult = mcaService.control(deviceId,state);
@@ -55,9 +62,9 @@ public class McaControl implements GeneralControlBean {
             controlState = Integer.valueOf(OperationLogEnum.STATE_SUCCESS.getCode());
         }
         //操作日志
-        commonControlService.addOperationLog(sdDevices,map,beforeState,String.valueOf(controlState));
+        commonControlService.addOperationLog(map,sdDevices,beforeState,controlState);
 
-        return ajaxResult;
+        return AjaxResult.success(controlState);
     }
 
     /**
@@ -86,7 +93,7 @@ public class McaControl implements GeneralControlBean {
             }
         } else {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
-            controlState = analogControl(map,sdDevices);
+            controlState = commonControlService.analogControl(map,sdDevices);
         }
 
         SdOperationLog sdOperationLog = commonControlService.getOperationLog(map,sdDevices,controlState);
@@ -95,16 +102,6 @@ public class McaControl implements GeneralControlBean {
         return controlState;
     }
 
-    /**
-     * 模拟控制方法
-     *
-     * @param map
-     * @param sdDevices
-     * @return
-     */
-    @Override
-    public Integer analogControl(Map<String, Object> map, SdDevices sdDevices) {
-        return commonControlService.analogControl(map,sdDevices);
-    }
+
 
 }

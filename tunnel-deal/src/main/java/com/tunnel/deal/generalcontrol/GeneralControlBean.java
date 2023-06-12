@@ -33,13 +33,13 @@ public interface GeneralControlBean {
     Integer controlDevices(Map<String, Object> map);
 
 
-    /**
-     * 模拟控制方法
-     * @param map
-     * @param sdDevices
-     * @return
-     */
-    Integer analogControl(Map<String, Object> map, SdDevices sdDevices);
+//    /**
+//     * 模拟控制方法
+//     * @param map
+//     * @param sdDevices
+//     * @return
+//     */
+//    Integer analogControl(Map<String, Object> map, SdDevices sdDevices);
 
 
 }

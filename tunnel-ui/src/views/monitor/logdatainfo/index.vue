@@ -286,7 +286,7 @@
       @sort-change="handleSortChange"
       class="allTable"
       height="62vh"
-      :row-key="getRowKey"
+      :row-key="getRowKey1"
     >
       <el-table-column type="selection" width="55" align="center" reserve-selection/>
       <!--      <el-table-column label="访问编号" align="center" prop="infoId" />-->
@@ -355,6 +355,8 @@
       v-show="activeName == '2'"
       @sort-change="handleSortChange2"
       ref="tableFile"
+      :row-key="getRowKey2"
+
     >
       <el-table-column type="selection" width="55" align="center" reserve-selection />
       <el-table-column type="index" :index="indexMethod1" label="序号" width="68" align="center"></el-table-column>
@@ -590,8 +592,11 @@ export default {
     },
 
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
-    getRowKey(row) {
+    getRowKey1(row) {
       return row.infoId
+    },
+    getRowKey2(row) {
+      return row.id
     },
     bodyCloseMenus(e) {
       let self = this;
@@ -689,6 +694,8 @@ export default {
         console.log(this.queryParam, "this.queryParam");
         list(this.addDateRange(this.queryParam, this.dateRangeDl)).then(
           (response) => {
+            console.log(response, "系统日志");
+
             this.list = response.rows;
             this.total = response.total;
             this.loading = false;
@@ -702,7 +709,7 @@ export default {
         }
         listLog(this.addDateRange(this.queryParams, this.dateRangeCz)).then(
           (response) => {
-            console.log(response, "000000");
+            console.log(response, "操作日志");
             this.logList = response.rows;
             this.total = response.total;
             this.loading = false;

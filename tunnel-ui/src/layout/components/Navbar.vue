@@ -168,7 +168,7 @@
         style="cursor: pointer;padding: 0 16px; vertical-align: text-bottom;
               color: white !important;caret-color: rgba(0,0,0,0);user-select: none;"
       >
-        <img src="../../assets/image/evtNum.png" style="height:3vh;transform: translateY(0.7vh);" @click="bell()"></i>
+        <img src="../../assets/image/evtNum.png" style="height:3vh;transform: translateY(0.7vh);" @click="bell()"/>
       </el-badge>
       <!-- </div> -->
       <el-dropdown class="right-menu-item bell">

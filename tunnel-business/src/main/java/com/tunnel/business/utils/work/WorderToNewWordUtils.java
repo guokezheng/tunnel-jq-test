@@ -434,25 +434,31 @@ public class WorderToNewWordUtils {
                 /*Integer[] index = new Integer[2];
                 index[0] = list.indexOf(key);
                 index[1] = list.lastIndexOf(key);*/
-                indexList.addAll(startOrEnd(key, value, list));
+                indexList.addAll(startOrEnd(key, value, daList));
             }
         }
         return indexList;
     }
 
-    public static List<Integer[]> startOrEnd(String key, String value, List<String> list){
+    public static List<Integer[]> startOrEnd(String key, String value, List <String[]> list){
         List<Integer[]> indexList = new ArrayList<>();
         int count = 0;
         int flaseCount = 0;
         int num = 0;
         for(int i = 0; i < list.size()-1; i++){
             Integer[] index = new Integer[2];
-            if(key.equals(list.get(i))){
+            if(key.equals(list.get(i)[0]) && !"".equals(list.get(i)[1])){
                 index[0] = i;
                 count++;
                 for(int j = i; j < list.size(); j++){
-                    if(!list.get(j).equals(key) || j+1 == list.size()){
-                        index[1] = (j + 1 == list.size()) ? j : j - 1;
+                    if(!list.get(j)[0].equals(key) || j+1 == list.size()){
+                        if("".equals(list.get(j - 1)[1])){
+                           index[1] = index[0];
+                           indexList.add(index);
+                           count++;
+                           break;
+                        }
+                        index[1] = j - 1;
                         i = j;
                         indexList.add(index);
                         count++;

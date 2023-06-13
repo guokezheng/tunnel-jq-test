@@ -154,12 +154,12 @@ public class MCASocketClient
         bootstrap.channel(NioSocketChannel.class);
         //指定客户端初始化处理
 //        bootstrap.handler(new SocketClientChannelInitializer(){
-        bootstrap.handler(new ChannelInitializer<SocketChannel>(){
+        /*bootstrap.handler(new ChannelInitializer<SocketChannel>(){
             @Override
             protected void initChannel(SocketChannel ch) {
                 ch.pipeline().addLast(new SocketClientHandlerss());
             }
-        });
+        });*/
         //连接服务
         ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 9700).sync();
         channelFuture.channel().writeAndFlush(ByteBufUtil.convertStringToByteBuf("04E20000000601010000000A"));;

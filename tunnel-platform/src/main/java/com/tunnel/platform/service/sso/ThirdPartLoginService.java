@@ -11,6 +11,7 @@ import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.framework.web.service.TokenService;
 import com.ruoyi.system.service.ISysUserService;
+import com.tunnel.business.utils.sso.AuthConfig;
 import com.tunnel.business.utils.sso.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -104,8 +105,15 @@ public class ThirdPartLoginService {
                 String thirdUserName = (String) userInfo.get("username");
                 //查询己方系统中是否存在此用户
                 SysUser sysUser = sysUserService.selectUserByUserName(thirdUserName);
-                if (null != sysUser) {
-                    String username = sysUser.getUserName();
+                String username;
+                if (sysUser != null) {
+                    username = sysUser.getUserName();
+                }else{
+                    //应高速云登录要求，没有对应的用户也可以跳转到隧道平台，特此修改
+                    username = AuthConfig.defaultUser;
+                    //查询默认用户的信息
+                    sysUser = sysUserService.selectUserByUserName(username);
+                }
                     Authentication authentication = null;
                     try {
                         authentication = authenticationManager.authenticate(new PreAuthenticatedAuthenticationToken(username, sysUser.getPassword()));
@@ -122,9 +130,9 @@ public class ThirdPartLoginService {
                     LoginUser loginUser = (LoginUser) authentication.getPrincipal();
 
                     ajaxResult = AjaxResult.success().put(Constants.TOKEN, tokenService.createToken(loginUser));
-                } else {
-                    ajaxResult = AjaxResult.error("系统中无此用户！");
-                }
+//                } else {
+//                    ajaxResult = AjaxResult.error("系统中无此用户！");
+//                }
 
             }
         }

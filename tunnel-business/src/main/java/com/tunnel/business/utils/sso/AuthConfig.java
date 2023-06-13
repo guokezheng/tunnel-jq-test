@@ -27,6 +27,8 @@ public class AuthConfig {
 
     public static String generalTokenUrl;
 
+    public static String defaultUser;
+
 
     public String getAuthCodeUrl() {
         return authCodeUrl;
@@ -89,6 +91,11 @@ public class AuthConfig {
     @Value("${sso.generalTokenUrl}")
     public void setGeneralTokenUrl(String generalToken) {
         generalTokenUrl = generalToken;
+    }
+
+    @Value("${sso.defaultUser}")
+    public void setDefaultUser(String defaultUserSso) {
+        defaultUser = defaultUserSso;
     }
 
 

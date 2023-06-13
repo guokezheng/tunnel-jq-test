@@ -436,7 +436,8 @@ sso:
   clientSecret: qz_opm
   # 请求接口时获取token；使用单点登录方式获取token请求接口，如果系统中没有对应用户，获取token报错“账号或密码错误”
   generalTokenUrl: ${sso.url}/auth/client/token?appId=${sso.appId}&clientSecret=${sso.clientSecret}
-
+  #智慧大脑单点登录跳转高速云级平台时，如果没有对应的用户，仍然可以进入隧道平台，使用此默认账号登录隧道平台
+  defaultUser: jlyadmin
 
 device:
   hongmeng:

@@ -15,10 +15,10 @@
           v-hasPermi="['business:plan:add']"
           size="small"
           @click="handleAdd()"
-        >新增
+          >新增
         </el-button>
         <el-button size="small" :loading="exportLoading" @click="handleExport"
-        >导出
+          >导出
         </el-button>
         <el-button size="small" @click="resetQuery">刷新</el-button>
       </el-col>
@@ -85,7 +85,6 @@
           </el-select>
         </el-form-item>
 
-
         <!-- <el-form-item label="预案类型" prop="category" >
           <el-select
             v-model="queryParams.category"
@@ -133,10 +132,10 @@
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
         </el-form-item>
       </el-form>
@@ -210,7 +209,7 @@
             style="cursor: pointer; color: #39adff"
             type="text"
             @click="openFileDrawer(scope.row)"
-          >点击查看
+            >点击查看
           </el-button>
           <div v-show="!scope.row.planFileId || scope.row.planFileId == 'null'">
             无
@@ -253,21 +252,21 @@
             class="tableBlueButtton"
             size="mini"
             @click="handleUpdate(scope.row)"
-          >修改
+            >修改
           </el-button>
           <el-button
             v-hasPermi="['business:plan:remove']"
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
-          >删除
+            >删除
           </el-button>
           <el-button
             v-hasPermi="['business:plan:add']"
             size="mini"
             class="tableBlueButtton"
             @click="chooseStrategyInfo(scope.row)"
-          >配置策略
+            >配置策略
           </el-button>
         </template>
       </el-table-column>
@@ -319,7 +318,7 @@
               size="mini"
               type="text"
               @click="loadFile(scope.row)"
-            >下载
+              >下载
             </el-button>
           </template>
         </el-table-column>
@@ -427,7 +426,12 @@
         <el-button @click="addStrategyCancel">关 闭</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="strategyDialog" title="相关策略" width="30%" :close-on-click-modal="false">
+    <el-dialog
+      :visible.sync="strategyDialog"
+      title="相关策略"
+      width="30%"
+      :close-on-click-modal="false"
+    >
       <div
         v-for="(item, index) of str_arr"
         :key="index"
@@ -576,7 +580,7 @@
             style="width: 100%"
           >
             <el-button slot="trigger" size="small" type="primary"
-            >选取文件</el-button
+              >选取文件</el-button
             >
             <!-- <el-button size="small" style="margin-left: 133px;" type="success" @click="submitUpload">上传到服务器
             </el-button> -->
@@ -584,7 +588,7 @@
               slot="tip"
               class="el-upload__tip"
               style="font-style: italic; color: red; padding-left: 5%"
-            >{{ text }}</span
+              >{{ text }}</span
             >
           </el-upload>
         </el-form-item>
@@ -592,7 +596,7 @@
       <div class="dialog-footer" slot="footer">
         <el-button @click="submitUpload" class="submitButton">保 存</el-button>
         <el-button @click="cancelsubmitUpload" class="closeButton"
-        >取 消</el-button
+          >取 消</el-button
         >
       </div>
     </el-dialog>
@@ -704,7 +708,7 @@
                   @visible-change="ruleVisible"
                 >
                   <el-option
-                    v-for="(tag,inx) in itemed.retrievalRuleList"
+                    v-for="(tag, inx) in itemed.retrievalRuleList"
                     :key="inx"
                     :label="tag.dictLabel"
                     :value="tag.dictValue"
@@ -734,7 +738,7 @@
                   itemed.eqTypeId != 16 &&
                   itemed.eqTypeId != 36 &&
                   itemed.eqTypeId != 22 &&
-                  itemed.eqTypeId != 7  &&
+                  itemed.eqTypeId != 7 &&
                   itemed.eqTypeId != 9
                 "
               >
@@ -749,9 +753,15 @@
                 </el-select>
               </el-col>
               <!-- 照明设备 -->
-              <el-col :span="itemed.lightCol" v-if="itemed.eqTypeId == 7 || itemed.eqTypeId == 9">
-                <el-select v-model="itemed.state" placeholder="设备操作"
-                           @change="lightStateChange(number, index,itemed.state)">
+              <el-col
+                :span="itemed.lightCol"
+                v-if="itemed.eqTypeId == 7 || itemed.eqTypeId == 9"
+              >
+                <el-select
+                  v-model="itemed.state"
+                  placeholder="设备操作"
+                  @change="lightStateChange(number, index, itemed.state)"
+                >
                   <el-option
                     v-for="(ite, idx) in itemed.eqStateList"
                     :key="idx"
@@ -761,8 +771,20 @@
                   </el-option>
                 </el-select>
               </el-col>
-              <el-col :span="2" v-if="(itemed.eqTypeId == 7 || itemed.eqTypeId == 9) && itemed.state == '1'">
-                <el-input-number style="width:100%;" v-model="itemed.brightness" :min="itemed.minLight" :max="100" label="亮度"></el-input-number>
+              <el-col
+                :span="2"
+                v-if="
+                  (itemed.eqTypeId == 7 || itemed.eqTypeId == 9) &&
+                  itemed.state == '1'
+                "
+              >
+                <el-input-number
+                  style="width: 100%"
+                  v-model="itemed.brightness"
+                  :min="itemed.minLight"
+                  :max="100"
+                  label="亮度"
+                ></el-input-number>
               </el-col>
               <!-- 照明设备end -->
               <!-- 选择情报板模板 -->
@@ -781,8 +803,17 @@
                   collapse-tags
                   style="width: 100%"
                 ></el-cascader> -->
-                <el-input v-model="itemed.content" placeholder="请选择模板" readonly @click.native="openTemDialog(itemed)">
-                  <el-button slot="append" icon="el-icon-search" @click.stop="templateClick(number, index,itemed)"></el-button>
+                <el-input
+                  v-model="itemed.content"
+                  placeholder="请选择模板"
+                  readonly
+                  @click.native="openTemDialog(itemed)"
+                >
+                  <el-button
+                    slot="append"
+                    icon="el-icon-search"
+                    @click.stop="templateClick(number, index, itemed)"
+                  ></el-button>
                 </el-input>
               </el-col>
 
@@ -818,38 +849,48 @@
           class="submitButton"
           v-hasPermi="['plan:process:add']"
           @click="submitStrategy"
-        >保存</el-button
+          >保存</el-button
         >
         <el-button @click="closeStrategy" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
-    <com-board class="comClass" ref="boardRef" @getVmsData="getMsgFormSon"></com-board>
+    <com-board
+      class="comClass"
+      ref="boardRef"
+      @getVmsData="getMsgFormSon"
+    ></com-board>
     <el-dialog
       :title="templateData.processName"
       :visible.sync="dialogVisibleTem"
       width="45%"
-      :before-close="handleClose">
+      :before-close="handleClose"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div style="display: flex;justify-content: center;align-items: center;">
+      <div style="display: flex; justify-content: center; align-items: center">
         <!-- 'letter-spacing':templateData['font_spacing'] + 'px', -->
-        <div :style="{
-          'width':templateData['width'] + 'px',
-          'height':templateData['height'] + 'px',
-          'color':templateData['font_color'],
-          'font-size':templateData['font_size'] + 'px',
-          'font-family':templateData['font_type'],
-          'background-color':'#000',
-          'position':'relative',
-          }">
-          <span :style="{
-            'position':'absolute',
-            'top':templateData['top'] + 'px',
-            'left':templateData['left'] + 'px',
+        <div
+          :style="{
+            width: templateData['width'] + 'px',
+            height: templateData['height'] + 'px',
+            color: templateData['font_color'],
+            'font-size': templateData['font_size'] + 'px',
+            'font-family': templateData['font_type'],
+            'background-color': '#000',
+            position: 'relative',
           }"
-                style="line-height:1" v-html="templateData['content']">
+        >
+          <span
+            :style="{
+              position: 'absolute',
+              top: templateData['top'] + 'px',
+              left: templateData['left'] + 'px',
+            }"
+            style="line-height: 1"
+            v-html="templateData['content']"
+          >
           </span>
         </div>
       </div>
@@ -974,8 +1015,8 @@ export default {
               equipmentData: [],
               eqStateList: [],
               templatesList: [],
-              brightness:100,
-              minLight:1,
+              brightness: 100,
+              minLight: 1,
             },
           ],
         },
@@ -1024,8 +1065,8 @@ export default {
         strategyId: null,
         tunnelId: null,
         category: null,
-        direction:null,
-        eventGrade:null,
+        direction: null,
+        eventGrade: null,
       },
       // 表单校验
       rules: {
@@ -1151,15 +1192,15 @@ export default {
         isControl: 1,
       },
       retrievalRuleList: [],
-      maskOptions : {
+      maskOptions: {
         lock: true,
         // text: 'Loading',
         // spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        target:'.strategy-dialog',
+        background: "rgba(0, 0, 0, 0.7)",
+        target: ".strategy-dialog",
       },
-      templateData:{},
-      dialogVisibleTem:false,
+      templateData: {},
+      dialogVisibleTem: false,
     };
   },
   created() {
@@ -1198,68 +1239,90 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
-    treeChange(data,checked, node){
-      console.log(data,checked, node)
+    treeChange(data, checked, node) {
+      console.log(data, checked, node);
       this.$refs.tree.setCheckedKeys([data]);
     },
     //查看情报板信息
-    openTemDialog(item){
-      console.log(item)
-      if(item.state == ''){
+    openTemDialog(item) {
+      console.log(item);
+      if (item.state == "") {
         return this.$modal.msgWarning("请选择模板");
       }
-      let params = {id: item.id,state:item.state};
+      let params = { id: item.id, state: item.state };
       console.log(item);
-      selectVmsContent(params).then((res)=>{
-        this.templateData = Object.assign(res.data,item);
-        console.log(this.templateData)
-        let zxc = this.templateData['screen_size'].split('*');
-        this.templateData['width'] = zxc[0];
-        this.templateData['height'] = zxc[1];
-        let align = this.templateData['coordinate'];
-        this.templateData['left'] = align.substr(0,3);
-        this.templateData['top'] = align.substr(3,6);
-        let content = this.templateData['content'];
-        if(content.indexOf('/n') == '-1'){
-          this.templateData['content'] = content.replace(/\n|\r\n/g,'<br>').replace(/ /g, ' &nbsp');
+      selectVmsContent(params).then((res) => {
+        this.templateData = Object.assign(res.data, item);
+        console.log(this.templateData);
+        let zxc = this.templateData["screen_size"].split("*");
+        this.templateData["width"] = zxc[0];
+        this.templateData["height"] = zxc[1];
+        let align = this.templateData["coordinate"];
+        this.templateData["left"] = align.substr(0, 3);
+        this.templateData["top"] = align.substr(3, 6);
+        let content = this.templateData["content"];
+        if (content.indexOf("/n") == "-1") {
+          this.templateData["content"] = content
+            .replace(/\n|\r\n/g, "<br>")
+            .replace(/ /g, " &nbsp");
         }
         this.dialogVisibleTem = true;
-      })
+      });
     },
-    getMsgFormSon(data){
+    getMsgFormSon(data) {
       console.log(data);
-      this.$set(this.planTypeIdList[data.number].processesList[data.index],'content',data.content);
-      this.$set(this.planTypeIdList[data.number].processesList[data.index],'state',data.id);
-    },
-    // 情报板选择模板点击事件
-    templateClick(number, index,item){
-      this.$refs.boardRef.init(
-        number,
-        index,
-        item.eqTypeId,
+      this.$set(
+        this.planTypeIdList[data.number].processesList[data.index],
+        "content",
+        data.content
+      );
+      this.$set(
+        this.planTypeIdList[data.number].processesList[data.index],
+        "state",
+        data.id
       );
     },
-    lightStateChange(number,index,state){
-      console.log(state,'当前状态');
-      if(state == '1'){
-        this.$set(this.planTypeIdList[number].processesList[index],'lightCol',2);
-        this.$set(this.planTypeIdList[number].processesList[index],'brightness',100);
-      }else{
+    // 情报板选择模板点击事件
+    templateClick(number, index, item) {
+      this.$refs.boardRef.init(number, index, item.eqTypeId);
+    },
+    lightStateChange(number, index, state) {
+      console.log(state, "当前状态");
+      if (state == "1") {
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "lightCol",
+          2
+        );
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "brightness",
+          100
+        );
+      } else {
         // 关闭状态下亮度值赋0
-        this.$set(this.planTypeIdList[number].processesList[index],'brightness',0);
-        this.$set(this.planTypeIdList[number].processesList[index],'lightCol',4);
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "brightness",
+          0
+        );
+        this.$set(
+          this.planTypeIdList[number].processesList[index],
+          "lightCol",
+          4
+        );
       }
-      this.$forceUpdate()
+      this.$forceUpdate();
     },
     // 规则下拉显示或者隐藏触发
-    ruleVisible(e){
-      console.log(e)
+    ruleVisible(e) {
+      console.log(e);
     },
     openFullScreen2() {
       const Loading = this.$loading(this.maskOptions);
-      setTimeout(()=>{
+      setTimeout(() => {
         Loading.close();
-      },1000)
+      }, 1000);
     },
     getRules() {
       this.getDicts("sd_device_retrieval_rule").then((response) => {
@@ -1334,8 +1397,8 @@ export default {
             eqStateList: [],
             disabled: false,
             templatesList: [],
-            brightness:100,
-            minLight:'',
+            brightness: 100,
+            minLight: "",
           },
         ],
       };
@@ -1424,7 +1487,7 @@ export default {
           false
         );
       }
-      this.$forceUpdate()
+      this.$forceUpdate();
     },
     addStrategy(index) {
       let obj = {
@@ -1458,8 +1521,8 @@ export default {
             eqStateList: [],
             disabled: false,
             templatesList: [],
-            brightness:100,
-            minLight:1,
+            brightness: 100,
+            minLight: 1,
           },
         ],
       };
@@ -1516,38 +1579,47 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(eqTypeId, number, index) {
-      console.log('设备类型:' + eqTypeId,'第'+ number+'阶段','第'+ index+ '个','设备类型改变')
+      console.log(
+        "设备类型:" + eqTypeId,
+        "第" + number + "阶段",
+        "第" + index + "个",
+        "设备类型改变"
+      );
       if (eqTypeId) {
-        let retrievalRuleList = JSON.parse(JSON.stringify(this.retrievalRuleList));
+        let retrievalRuleList = JSON.parse(
+          JSON.stringify(this.retrievalRuleList)
+        );
         // 加强照明开启百分比选择
-        if(eqTypeId == '7' || eqTypeId == '9'){
+        if (eqTypeId == "7" || eqTypeId == "9") {
           let light = this.planTypeIdList[number].processesList[index];
           light.lightCol = 4;
           light.state = "";
           light.minLight = 1;
           //开启加强照明百分比
-          this.$set(
-            light,"lightShow",true
-          );
+          this.$set(light, "lightShow", true);
           // 改变布局占比
-          if(light.state == '1'){
+          if (light.state == "1") {
             light.lightCol = 2;
             light.brightness = 100;
-          }else{
-            light.lightCol = 4
+          } else {
+            light.lightCol = 4;
           }
         }
         // 疏散标志只能选择最近1个，同时无法选择具体设备
-        if(eqTypeId == 30){
-          retrievalRuleList.map(item=>{
-            if(item.dictValue != "6"){
+        if (eqTypeId == 30) {
+          retrievalRuleList.map((item) => {
+            if (item.dictValue != "6") {
               item.disabled = true;
             }
-          })
-          this.$set(this.planTypeIdList[number].processesList[index],'retrievalRuleList',retrievalRuleList)
+          });
+          this.$set(
+            this.planTypeIdList[number].processesList[index],
+            "retrievalRuleList",
+            retrievalRuleList
+          );
         }
         // 基本照明
-        if(eqTypeId == '9'){
+        if (eqTypeId == "9") {
           let light = this.planTypeIdList[number].processesList[index];
           light.brightness = 30;
           light.minLight = 30;
@@ -1589,8 +1661,18 @@ export default {
         };
         getTreeDeviceList(params).then((res) => {
           if (res.data.length == 0) {
+            this.$set(
+              this.planTypeIdList[number].processesList[index],
+              "equipmentData",
+              ''
+            );
             return this.$modal.msgWarning("暂无设备");
           }
+          this.$set(
+            this.planTypeIdList[number].processesList[index],
+            "equipments",
+            ""
+          );
           this.$set(
             this.planTypeIdList[number].processesList[index],
             "equipmentData",
@@ -1744,8 +1826,8 @@ export default {
                   equipments: [],
                   disabled: false,
                   templatesList: [],
-                  brightness:'100',
-                  minLight:'',
+                  brightness: "100",
+                  minLight: "",
                 },
               ],
             },
@@ -1781,7 +1863,7 @@ export default {
                 eqTunnelId: this.currentClickData.tunnelId, //隧道
               };
               getTreeDeviceList(params).then((res) => {
-                console.log(res.data)
+                console.log(res.data);
                 this.$set(
                   this.planTypeIdList[i].processesList[j],
                   "equipmentData",
@@ -1792,16 +1874,35 @@ export default {
               this.listEqTypeStateIsControl(brr.deviceTypeId, i, j);
               // 疏散标志
               //加强和基本设置不同最小值
-              if(brr.eqTypeId == 9){
-                this.$set(this.planTypeIdList[i].processesList[j],"minLight",30);
-              }else if(brr.eqTypeId == 7){
-                this.$set(this.planTypeIdList[i].processesList[j],"minLight",1);
+              if (brr.eqTypeId == 9) {
+                this.$set(
+                  this.planTypeIdList[i].processesList[j],
+                  "minLight",
+                  30
+                );
+              } else if (brr.eqTypeId == 7) {
+                this.$set(
+                  this.planTypeIdList[i].processesList[j],
+                  "minLight",
+                  1
+                );
               }
               // 设备类型为加强照明且状态为开启
-              if((brr.eqTypeId == 7  || brr.eqTypeId == 9) && brr.state == '1'){
-                this.$set(this.planTypeIdList[i].processesList[j],"lightCol",2);
-              }else{
-                this.$set(this.planTypeIdList[i].processesList[j],"lightCol",4);
+              if (
+                (brr.eqTypeId == 7 || brr.eqTypeId == 9) &&
+                brr.state == "1"
+              ) {
+                this.$set(
+                  this.planTypeIdList[i].processesList[j],
+                  "lightCol",
+                  2
+                );
+              } else {
+                this.$set(
+                  this.planTypeIdList[i].processesList[j],
+                  "lightCol",
+                  4
+                );
               }
               // 请求情报板数据
               if (brr.eqTypeId == 16 || brr.eqTypeId == 36) {
@@ -1831,23 +1932,27 @@ export default {
                 this.getAudioFileListData(brr.equipments, i, j);
               }
               this.getDicts("sd_device_retrieval_rule").then((response) => {
-                console.log(response.data)
+                console.log(response.data);
                 var retrievalRuleList = response.data;
-                if(brr.eqTypeId == 30){
+                if (brr.eqTypeId == 30) {
                   console.log(retrievalRuleList);
-                  for(let items of retrievalRuleList){
-                    console.log(items)
-                    if(items.dictValue != "6"){
+                  for (let items of retrievalRuleList) {
+                    console.log(items);
+                    if (items.dictValue != "6") {
                       items.disabled = true;
                     }
                   }
-                  this.$set(this.planTypeIdList[i].processesList[j],'retrievalRuleList',retrievalRuleList)
-                }else{
-                    for (let item of this.planTypeIdList) {
-                      for (let itemed of item.processesList) {
-                        itemed.retrievalRuleList = retrievalRuleList;
-                      }
+                  this.$set(
+                    this.planTypeIdList[i].processesList[j],
+                    "retrievalRuleList",
+                    retrievalRuleList
+                  );
+                } else {
+                  for (let item of this.planTypeIdList) {
+                    for (let itemed of item.processesList) {
+                      itemed.retrievalRuleList = retrievalRuleList;
                     }
+                  }
                 }
               });
             }
@@ -2110,7 +2215,7 @@ export default {
       this.planChangeSink = "edit";
       const id = row.id || this.ids;
       listTunnels().then((res) => {
-        console.log(res,"resresres")
+        console.log(res, "resresres");
         this.eqTunnelData = res.rows;
       });
       this.getDicts("sd_emergency_plan_type").then((response) => {
@@ -2154,7 +2259,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       /* debugger */
-      let that = this
+      let that = this;
       const ids = row.id || this.ids;
       //  const rlIds = row.id || this.rlIds;
       this.$confirm("是否确认删除?", "警告", {
@@ -2252,8 +2357,8 @@ export default {
     handleQuery() {
       // this.queryParams.pageNum = 1;
       this.$refs.planTable.clearSelection();
-      this.queryParams.pageNum = 1
-      this.queryParams.pageSize = 10
+      this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 10;
       this.$refs.planTable.bodyWrapper.scrollTop = 0;
       this.getList();
     },
@@ -2302,15 +2407,21 @@ export default {
 };
 </script>
 <style>
-.planBox .el-input-number__decrease{
-  border-right: 1px solid #00152B!important;
+
+.planBox .el-input-number__decrease {
+  border-right: 1px solid #00152b !important;
 }
 #cascader-menu-45-0 .el-radio {
   display: none !important;
 }
 </style>
 <style lang="scss" scoped>
-
+::v-deep .el-scrollbar__wrap{
+  overflow: hidden !important;
+}
+::v-deep .el-scrollbar__wrap {
+    overflow-x: hidden;
+  }
 // ::v-deep .el-dialog .el-dialog__header{
 //     // background-image: url(../../../assets/cloudControl/dialogHeader.png);
 //     // background-repeat: no-repeat;

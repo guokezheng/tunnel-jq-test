@@ -1,6 +1,6 @@
 <template>
     <!-- 设备检测 -->
-    <div style="height: calc(100% + 38px)">
+    <div style="height: calc(100% + 4vh)">
       <iframe
         name="tuniframe"
         id="miframe"

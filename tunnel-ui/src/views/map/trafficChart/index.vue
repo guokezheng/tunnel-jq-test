@@ -1,6 +1,6 @@
 <template>
     <!-- 交通监测 -->
-    <div style="height: calc(100% + 38px)">
+    <div style="height: calc(100% + 4vh)">
       <iframe
         name="tuniframe"
         id="miframe"

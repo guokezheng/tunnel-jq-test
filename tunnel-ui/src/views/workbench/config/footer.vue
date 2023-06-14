@@ -310,6 +310,9 @@ import {
   specialVehicleMonitoringInRecent24Hours,
 } from "@/api/workbench/config.js";
 import {
+  energyConsumptionDetection,
+} from "@/api/equipment/tunnel/api.js";
+import {
   getWarnEvent,
 } from "@/api/event/event";
 export default {

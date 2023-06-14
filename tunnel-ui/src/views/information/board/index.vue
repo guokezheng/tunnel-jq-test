@@ -567,7 +567,11 @@ export default {
       console.log(index,"changeSite")
       this.form.tunnel = "";
       this.boardDirectionList = [];
-      this.changeMechanism(index.id);
+      if(index.children != undefined && index.children.length == 1){
+        this.changeMechanism(index.children[0].id);
+      }else {
+        this.changeMechanism(index.id);
+      }
     },
 
     // 通过所属机构查隧道

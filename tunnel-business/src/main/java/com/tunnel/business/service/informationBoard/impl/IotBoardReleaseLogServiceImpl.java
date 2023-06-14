@@ -219,6 +219,13 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
 
     @Override
     public List<IotBoardReleaseLog> selectIotBoardReleaseLogListToExport(IotBoardReleaseLog iotBoardReleaseLog) {
+        if (SecurityUtils.getDeptId() != null && !"".equals(SecurityUtils.getDeptId())) {
+            String deptId = SecurityUtils.getDeptId();
+            if (deptId == null) {
+                throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            }
+            iotBoardReleaseLog.getParams().put("deptId", deptId);
+        }
         List<IotBoardReleaseLog> iotBoardReleaseLogs = iotBoardReleaseLogMapper.selectIotBoardReleaseLogList(iotBoardReleaseLog);
         List<IotDeviceAccess> iotDeviceAccesses = iotDeviceAccessMapper.selectIotDeviceAccessList(null);
         for (int i = 0;i < iotBoardReleaseLogs.size();i++) {

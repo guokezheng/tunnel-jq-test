@@ -87,6 +87,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remake1 != null  and remake1 != ''"> and w.remake1 = #{remake1}</if>
             <if test="ids != null  and ids != ''"> and FIND_IN_SET(w.id,#{ids}) > 0</if>
             <if test="searchValue != null  and searchValue != ''">and CONCAT(w.part_name,w.unit,w.brand,w.manufacturer) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (c.dept_id = #{params.deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
         </where>
         order by w.create_time desc,w.update_time desc
     </select>

@@ -155,7 +155,11 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEvent.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl().split(";")[0] : "");
             //查询视频图片
             List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
-            sdEvent.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
+            List<SdTrafficImage> collect = image1.stream().filter(item -> !"1".equals(item.getImgType())).collect(Collectors.toList());
+            if(sdTrafficImages.size() > 0){
+                collect.add(0,sdTrafficImages.get(0));
+            }
+            sdEvent.setIconUrlList(collect.subList(0,image1.size() > 10 ? 10 : image1.size()));
             sdEvent.setConfidenceList(radarEventMapper.selectConfidence(sdEvent.getId()));
         }
         return sdEvent;
@@ -206,7 +210,13 @@ public class SdEventServiceImpl implements ISdEventService {
             item.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl().split(";")[0] : "");
             //查询视频图片
             List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString());
-            item.setIconUrlList(image1.subList(0,image1.size() > 10 ? 10 : image1.size()));
+            List<SdTrafficImage> collect = image1.stream().filter(age -> !"1".equals(age.getImgType())).collect(Collectors.toList());
+            if(sdTrafficImages.size() > 0){
+                SdTrafficImage image2 = sdTrafficImages.get(0);
+                image2.setImgUrl(image2.getImgUrl().split(";")[0]);
+                collect.add(0,image2);
+            }
+            item.setIconUrlList(collect.subList(0,image1.size() > 10 ? 10 : image1.size()));
             item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
             for(SdTrafficImage temp : image1){
                 if("0".equals(temp.getImgType())){

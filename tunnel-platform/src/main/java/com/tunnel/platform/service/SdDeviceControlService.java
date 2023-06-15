@@ -138,6 +138,30 @@ public class SdDeviceControlService {
             // 异常信息最大支持vachar 2000
             int index = e.getMessage().length() <= 2000 ? e.getMessage().length() : 2000;
             map.put("description",e.getMessage().substring(0,index));
+
+            if (map.get("templateId") != null &&  !map.get("templateId").toString().equals("")) {
+                Long templateId = Long.parseLong(map.get("templateId").toString());
+                String operationState = null;
+                //模板内容
+                if(map.get("currentId") == null && map.get("type") == null){
+                    IotBoardTemplateContent templateContent = new IotBoardTemplateContent();
+                    templateContent.setTemplateId(templateId.toString());
+                    List<IotBoardTemplateContent> templateContentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(templateContent);
+//            sdOperationLog.setOperationState(templateContentList.size() == 0 ? "" : templateContentList.get(0).getContent());
+                    operationState = templateContentList.size() == 0 ? "" : templateContentList.get(0).getContent();
+                }else {
+                    SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+                    planStrategy.setCurrentId(Long.valueOf(map.get("currentId").toString()));
+                    planStrategy.setTemplateId(map.get("templateId").toString());
+                    //0：预案 1：策略
+                    planStrategy.setType(map.get("type").toString());
+                    Map<String, Object> sdVmsContent = planStrategyMapper.getTemplateContent(planStrategy);
+//            sdOperationLog.setOperationState(sdVmsContent == null ? "" : sdVmsContent.get("content").toString());
+                    operationState = sdVmsContent == null ? "" : sdVmsContent.get("content").toString();
+                }
+                map.put("state",operationState);
+            }
+
             //生成日志
             SdOperationLog sdOperationLog = commonControlService.getOperationLog(map,sdDevices,controlState);
             sdOperationLogService.insertSdOperationLog(sdOperationLog);

@@ -280,8 +280,8 @@ export default {
         require("@/assets/image/lane/3blue_duan.png"),
         require("@/assets/image/lane/3blue_chang.png"),
         require("@/assets/image/lane/fenghuangshan.png"),
-        require("@/assets/image/lane/mjy.jpg"),
-        require("@/assets/image/lane/fhs.jpg"),
+        require("@/assets/image/lane/mjy.png"),
+        require("@/assets/image/lane/fhs.png"),
       ],
       //当前隧道
       selectedTunnel: {

@@ -3185,18 +3185,18 @@ export default {
       this.$forceUpdate();
     },
     // 预警事件点击跳转应急调度
-    jumpYingJi(e) {
-      const item = e.target.closest(".listRow");
-      if (item) {
-        // 是否是滚动组件的某一行/列
-        const { index } = item.dataset;
-        let id = JSON.parse(index).id;
-        setTimeout(() => {
-          bus.$emit("getPicId", id);
-        }, 200);
-        bus.$emit("openPicDialog");
-      }
-    },
+    // jumpYingJi(e) {
+    //   const item = e.target.closest(".listRow");
+    //   if (item) {
+    //     // 是否是滚动组件的某一行/列
+    //     const { index } = item.dataset;
+    //     let id = JSON.parse(index).id;
+    //     setTimeout(() => {
+    //       bus.$emit("getPicId", id);
+    //     }, 200);
+    //     bus.$emit("openPicDialog");
+    //   }
+    // },
     // 关闭弹窗子组件
     dialogClose() {
       this.mouseoversImplement = true;
@@ -5229,16 +5229,7 @@ export default {
     //   monthCharts.setOption(option);
     // },
     // 跳转页面
-    jumpLink(url) {
-      if (url == "/15/status") {
-        this.$modal.msgWarning("跳转页面暂未完成");
-        return;
-      }
-      this.$router.push({
-        path: url,
-        query: {},
-      });
-    },
+    
     // 监听缩放比例变化
     zoomChange(val) {
       val < 70 ? (val = this.zoom) : "";

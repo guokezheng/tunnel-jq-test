@@ -297,6 +297,7 @@
   </div>
 </template>
 <script>
+import bus from "@/utils/bus";
 import * as echarts from "echarts";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
@@ -535,6 +536,16 @@ export default {
         });
       });
     },
+    // jumpLink(url) {
+    //   if (url == "/15/status") {
+    //     this.$modal.msgWarning("跳转页面暂未完成");
+    //     return;
+    //   }
+    //   this.$router.push({
+    //     path: url,
+    //     query: {},
+    //   });
+    // },
     // 预警事件列表
     getWarnList() {
       const param = {

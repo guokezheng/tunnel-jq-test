@@ -4640,7 +4640,7 @@ export default {
           this.dialogEqType = item.eqType;
         }
         this.$nextTick(() => {
-          if ([23, 24, 25].includes(item.eqType)) {
+          if ([23, 24, 25, 33].includes(item.eqType)) {
             this.$refs.videoRef.init(
               this.eqInfo,
               this.brandList,
@@ -4666,7 +4666,7 @@ export default {
               this.eqTypeDialogList
             );
           } else if (
-            [14, 21, 32, 33, 15, 35, 39, 40, 41, 42, 48].includes(item.eqType)
+            [14, 21, 32, 15, 35, 39, 40, 41, 42, 48].includes(item.eqType)
           ) {
             this.$refs.dataRef.init(
               this.eqInfo,

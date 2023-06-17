@@ -113,4 +113,11 @@ public interface SdDeviceDataMapper
     List<SdDeviceDNData> selectDNExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
 
     List<SdDeviceDWData> selectDWExportDataList(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("deviceId")String deviceId, @Param("ids")String ids);
+
+
+    List<SdDeviceData> selectSdDeviceDataInfo(SdDeviceData sdDeviceData);
+
+    int updateFireMonitorData(SdDeviceData sdDeviceData);
+
+    int insertFireMonitorData(SdDeviceData sdDeviceData);
 }

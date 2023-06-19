@@ -116,7 +116,7 @@ public class StrategyTask {
         Random random = new Random();
 
         // 生成30-180的随机数字
-        int randomNumberInRange = random.nextInt(100) + 30;
+        int randomNumberInRange = random.nextInt(30) + 1;
         executor.schedule(() -> {
             // 在执行要延迟的代码
             try {
@@ -147,7 +147,7 @@ public class StrategyTask {
             //根据设备id查询现场 设备数值信息
             List<SdDeviceData> otoDeviceData = sdTunnelZtMapper.getOtoDeviceData(sdDevices.getEqId(), sdDevices.getEqType().toString());
 
-            if((otoDeviceData.size()>0 && otoDeviceData.get(0).getData()!= currentMap.get("brightness"))||(otoDeviceData.size()==0)){//不为空说明有数据 对比控制照明亮度是否相同 下面对比数据和最近定时任务 控制数值是否相同
+            if((otoDeviceData.size()>0 && !otoDeviceData.get(0).getData().equals(currentMap.get("brightness").toString()))||(otoDeviceData.size()==0)){//不为空说明有数据 对比控制照明亮度是否相同 下面对比数据和最近定时任务 控制数值是否相同
                 //控制判断 方法主要判断是否需要重发
                 controlJacklight(sdStrategyRls,currentMap,key,sdDevices);
             }else{//说明 设备控制成功删除定时任务
@@ -190,18 +190,18 @@ public class StrategyTask {
                         && sd.getEquipments().indexOf(sdDevices.getEqId())!=-1)
                         .sorted(Comparator.comparingLong(SdStrategyRl::getId).reversed()).collect(Collectors.toList());
 
-                StrategyTask.getInstance().strategyParams(SdStrategyRlCollect.get(0).getId().toString());
+//                StrategyTask.getInstance().strategyParams(SdStrategyRlCollect.get(0).getId().toString());
                 //延迟方法
-//                ScheduledExecutor(SdStrategyRlCollect);
+                ScheduledExecutor(SdStrategyRlCollect);
 
             }
         } else {//说明后面没有次设备的定时任务了所以可以重发
             List<SdStrategyRl> SdStrategyRlCollect = sdStrategyRls.stream().filter(sd -> sd.getEquipments().indexOf(sdDevices.getEqId())!=-1)
                     .sorted(Comparator.comparingLong(SdStrategyRl::getId).reversed()).collect(Collectors.toList());
 
-            StrategyTask.getInstance().strategyParams(SdStrategyRlCollect.get(0).getId().toString());
+//            StrategyTask.getInstance().strategyParams(SdStrategyRlCollect.get(0).getId().toString());
             //延迟方法
-//            ScheduledExecutor(SdStrategyRlCollect);
+            ScheduledExecutor(SdStrategyRlCollect);
         }
     }
     /**
@@ -265,7 +265,9 @@ public class StrategyTask {
             }
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+            //查询设备协议表
             SdDevicesProtocol devicesProtocol = sdDevicesProtocolService.selectSdDevicesProtocolById( sdDevices.getProtocolId());
+            //大类为照明的才进行检测 17设备大类为照明
             if("17".equals(devicesProtocol.getEqType().toString())){
                 redisCache.setCacheObject("ERROREQUIPMENT_"+map.get("devId").toString(),map);
             }

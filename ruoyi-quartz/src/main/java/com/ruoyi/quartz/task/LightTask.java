@@ -11,6 +11,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.deal.light.enums.SanjingLightStateEnum;
 import com.tunnel.deal.light.impl.SanJingLight;
+import com.zc.common.core.httpclient.OkHttpClientUtil;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -68,7 +69,7 @@ public class LightTask {
         //同步左洞亮度，济南方向
         getLatestDeviceData(tunnelId, systemUrl, leftTunnelId, jessionId, TunnelDirectionEnum.DOWN_DIRECTION.getCode());
         //同步右洞亮度,潍坊方向
-        getLatestDeviceData(tunnelId, systemUrl, rightTunnelId, jessionId,TunnelDirectionEnum.UP_DIRECTION.getCode());
+        getLatestDeviceData(tunnelId, systemUrl, rightTunnelId, jessionId, TunnelDirectionEnum.UP_DIRECTION.getCode());
 
 
         //获取开关状态
@@ -115,7 +116,7 @@ public class LightTask {
      * @param jessionId
      * @param step
      */
-    public JSONObject getSwitchStatus(String systemUrl, String eSystemTunnelId, String jessionId,String step){
+    public JSONObject getSwitchStatus(String systemUrl, String eSystemTunnelId, String jessionId, String step){
         StringBuffer urlStr = new StringBuffer(systemUrl);
         urlStr.append("/api/getSwitchStatus?tunnelId=").append(eSystemTunnelId).append("&step=").append(step);
         String url = urlStr.toString();
@@ -140,13 +141,19 @@ public class LightTask {
         //关
         Integer realStatus = SanjingLightStateEnum.CLOSE.getCode();
         //开关实时状态
-        String switchStatus = data.getString("switch");
-        if(openStatus.equals(switchStatus)){
-            //开
-          realStatus =  SanjingLightStateEnum.OPEN.getCode();
+        if(data != null && data.getString("switch") != null){
+            String switchStatus = data.getString("switch");
+            if(openStatus.equals(switchStatus)){
+                //开
+                realStatus =  SanjingLightStateEnum.OPEN.getCode();
+            }
+            //修改实时数据
+            sdDeviceDataService.updateDeviceData(sdDevices, String.valueOf(realStatus), Long.valueOf(itemId));
+        }else{
+            log.error("updateSwitchStatus--数据问题--data="+data);
+            System.out.println("updateSwitchStatus--数据问题--data="+data);
         }
-        //修改实时数据
-        sdDeviceDataService.updateDeviceData(sdDevices, String.valueOf(realStatus), Long.valueOf(itemId));
+
     }
 
 
@@ -171,7 +178,7 @@ public class LightTask {
      * @param eqTunnelId 隧道ID
      * @param direction 隧道方向
      */
-    private void getLightDeviceData(JSONObject data,String eqTunnelId,String direction){
+    private void getLightDeviceData(JSONObject data, String eqTunnelId, String direction){
         SdDevices sdDevices = new SdDevices();
         //隧道Id
         sdDevices.setEqTunnelId(eqTunnelId);
@@ -231,34 +238,41 @@ public class LightTask {
      * @param cookie cookie
      * @return
      */
-    public JSONObject okHttpGetWithCookie(String url,String cookie){
-
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .build();
+    public JSONObject okHttpGetWithCookie(String url, String cookie){
+        JSONObject data = null;
+        OkHttpClient client = OkHttpClientUtil.client;
+//        OkHttpClient client = new OkHttpClient().newBuilder()
+//                .connectTimeout(5, TimeUnit.SECONDS)
+//                .readTimeout(5, TimeUnit.SECONDS)
+//                .build();
         Request request = new Request.Builder()
                 .url(url)
                 .method("GET", null)
                 .addHeader("Cookie", cookie)
                 .build();
-
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+             response = client.newCall(request).execute();
             String result = null;
             if (response.body() != null) {
                 result = response.body().string();
                 if (result.contains("操作成功")) {
-                    JSONObject data = JSONObject.parseObject(result).getJSONObject("data");
-                    return data;
+                    data = JSONObject.parseObject(result).getJSONObject("data");
+//                    return data;
                 }
             }
+            response.close();
 
         } catch (IOException e) {
-            log.error("请求报错：",e.getMessage());
+            log.error("照明控制请求报错：",e.getMessage());
+            System.err.println("照明控制请求报错："+e.getMessage());
             e.printStackTrace();
+        }finally {
+            if(response != null){
+                response.close();
+            }
         }
-        return null;
+        return data;
     }
 
 }

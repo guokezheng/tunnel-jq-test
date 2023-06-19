@@ -431,4 +431,20 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices);
+
+	int updateFireMonitorStatus(SdDevices sdDevices);
+
+	/**
+	 * 查询消防设备id
+	 * @param deviceAddress
+	 * @return
+	 */
+	String getFireMonitorId(String deviceAddress);
+
+	/**
+	 * 查询消防设备类型数据项
+	 * @param fireMonitorType
+	 * @return
+	 */
+	Long getFireMonitorTypeItem(String fireMonitorType);
 }

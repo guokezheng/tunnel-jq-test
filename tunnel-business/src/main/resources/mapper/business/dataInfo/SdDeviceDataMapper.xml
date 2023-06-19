@@ -95,6 +95,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
+
+
+    <insert id="insertFireMonitorData" parameterType="SdDeviceData" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_device_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">device_id,</if>
+            <if test="itemId != null">item_id,</if>
+            <if test="data != null">data,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="itemId != null">#{itemId},</if>
+            <if test="data != null">#{data},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+
     <update id="updateSdDeviceData" parameterType="SdDeviceData">
         update sd_device_data
         <trim prefix="SET" suffixOverrides=",">
@@ -109,7 +134,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+
+
+
     <update id="updateKafkaDeviceData" parameterType="SdDeviceData">
+        update sd_device_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="data != null">data = #{data},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where device_id = #{deviceId} AND item_id = #{itemId}
+    </update>
+
+
+    <update id="updateFireMonitorData" parameterType="SdDeviceData">
         update sd_device_data
         <trim prefix="SET" suffixOverrides=",">
             <if test="data != null">data = #{data},</if>
@@ -437,6 +478,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i'),#{ids}) > 0</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
+    </select>
+
+    <select id="selectSdDeviceDataInfo" parameterType="SdDeviceData" resultMap="SdDeviceDataResult">
+        select * from sd_device_data where device_id =#{deviceId} and item_id = #{itemId}
     </select>
 
 

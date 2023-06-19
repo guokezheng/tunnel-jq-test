@@ -362,6 +362,7 @@ export default {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
       console.log("进来了");
       this.contentList = [];
+      this.videoActive = "information", // tab页
       this.msgModeShow = true;
       this.openMesMode();
       this.eqInfo = eqInfo;

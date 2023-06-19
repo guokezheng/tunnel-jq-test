@@ -59,6 +59,7 @@
               <i class="el-icon-video-camera" style="margin-right:15px;"></i>
               实时视频
               <span>VIDEO MONITORING</span>
+              <div class="touping" @click="handleTouping">投屏</div>
             </div>
             <div class="videoBox1">
               <div class="videoContent">
@@ -1186,6 +1187,22 @@ export default {
   //   clearInterval(this.deadline4);
   // },
   methods: {
+    handleTouping(){
+      this.$confirm("即将投屏, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+         
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消操作",
+          });
+        });
+    },
     getShow(item, index) {
       if (item.children != undefined) {
         let isShow = item.children.every((items) => {
@@ -2154,6 +2171,19 @@ export default {
           background-repeat: no-repeat;
           background-size: 100% 100%;
           background-color: rgba(1, 46, 81, 0.7);
+          .touping{
+            float:right;
+            display:inline-block;
+            margin-right: 10px;
+            border-radius:3px;
+            padding: 2px 12px;
+            line-height: 20px;
+            margin-top: 8px;
+            color:#fff;
+            background: #39ADFF;
+            cursor: pointer;
+            font-size:0.68vw;
+          }
         }
         .videoBox1 {
           background-color: rgba(1, 46, 81, 0.7);

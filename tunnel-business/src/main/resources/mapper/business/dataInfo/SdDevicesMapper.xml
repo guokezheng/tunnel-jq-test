@@ -1296,4 +1296,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_devices
         where protocol_id = #{protocolId}
     </select>
+
+
+    <update id="updateFireMonitorStatus" parameterType="SdDevices">
+        update sd_devices
+        set eq_status = #{eqStatus},
+        eq_status_time = #{updateTime},
+        update_time = #{updateTime}
+        where ip = #{ip}
+    </update>
+
+
+    <select id="getFireMonitorId" parameterType="java.lang.String" resultType="java.lang.String">
+        select eq_id
+        from sd_devices
+        where ip = #{deviceAddress}
+    </select>
+
+
+    <select id="getFireMonitorTypeItem" parameterType="java.lang.String" resultType="java.lang.Long">
+        select id
+        from sd_device_type_item
+        where device_type_id = #{fireMonitorType}
+    </select>
 </mapper>

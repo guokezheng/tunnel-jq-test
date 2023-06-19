@@ -2033,6 +2033,7 @@ export default {
         this.endReport = res.data.endReport;
         this.tacticsList = res.data.tacticsList;
       });
+      this.historyIndex = "first0",
       this.dialogTableVisible = true;
     },
     eventIsShow(value, state) {

@@ -23,6 +23,20 @@
         <if test="tunnelId != null  and tunnelId != ''"> and t.eq_tunnel_id = #{tunnelId}</if>
     </select>
 
+    <select id="getOtoDeviceData" parameterType="String"  resultType="com.tunnel.business.domain.dataInfo.SdDeviceData">
+        SELECT
+        d.device_id,
+        d.DATA
+        FROM
+        sd_devices t
+        inner JOIN `sd_device_data` d ON t.eq_id = d.device_id
+        inner JOIN sd_device_type_item i ON i.id = d.item_id
+        WHERE
+        1 = 1 AND i.item_code = 'brightness'
+        <if test="deviceTypeTd != null  and deviceTypeTd != ''"> and i.device_type_id = #{deviceTypeTd}</if>
+        <if test="eqId != null  and eqId != ''"> and t.eq_id = #{eqId}</if>
+    </select>
+
 
 
     <select id="getCOPotency" parameterType="String" resultType="Map">

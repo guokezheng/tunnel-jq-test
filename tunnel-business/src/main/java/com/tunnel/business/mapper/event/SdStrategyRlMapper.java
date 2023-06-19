@@ -102,4 +102,6 @@ public interface SdStrategyRlMapper
     public List<SdStrategyRl> selectSdStrategyRlByPlanId(Long planId);
 
     String[] selectAllDirectionSdDevListByDevId(@Param("devIds")String[] split, @Param("tunnelId")String tunnelId, @Param("eqTypeId") String eqTypeId);
+
+    List<SdStrategyRl> selectSdStrategyREquipments(@Param("equipments")String equipments);
 }

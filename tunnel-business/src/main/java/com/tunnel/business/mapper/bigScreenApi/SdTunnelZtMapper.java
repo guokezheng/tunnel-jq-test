@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.bigScreenApi;
 
 
 
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,6 +24,13 @@ public interface SdTunnelZtMapper {
      * @return
      */
     List<Map> getWindPowerDirection(@Param("tunnelId")String tunnelId);
+    /**
+     * 根据设备id查询现场设备数值信息
+     * @param eqId
+     * @param deviceTypeTd
+     * @return
+     */
+    List<SdDeviceData> getOtoDeviceData(@Param("eqId")String eqId, @Param("deviceTypeTd")String deviceTypeTd);
 
     /**
      * 大屏-环境监测CO浓度

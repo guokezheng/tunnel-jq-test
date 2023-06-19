@@ -170,4 +170,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <select id="selectSdStrategyREquipments" parameterType="Long" resultMap="SdStrategyRlResult">
+        SELECT
+        strategy_id,
+        control_time,
+        state_num,
+        sd_strategy_rl.id,
+        equipments
+        FROM
+        sd_strategy_rl
+        LEFT JOIN sd_strategy st ON sd_strategy_rl.strategy_id = st.id
+        WHERE
+        1 = 1 AND st.strategy_state =0
+        <if test="equipments != null and equipments != ''">
+            AND sd_strategy_rl.equipments like concat('%', #{equipments}, '%')
+        </if>
+
+    </select>
+
 </mapper>

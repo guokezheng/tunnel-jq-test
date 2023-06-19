@@ -21,6 +21,7 @@ import com.tunnel.deal.light.HttpUrlEscapeUtil;
 import com.tunnel.deal.light.Light;
 import com.tunnel.deal.light.enums.SanjingLightStateEnum;
 import com.zc.common.core.ThreadPool.ThreadPool;
+import com.zc.common.core.httpclient.OkHttpClientUtil;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,12 +75,12 @@ public class SanJingLight implements Light, GeneralControlBean {
     public String login(String username, String password, String baseUrl) {
 //        OkHttpClient client = new OkHttpClient().newBuilder().build();
         //设置超时时间
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS)
-                .writeTimeout(3, TimeUnit.SECONDS)
-                .readTimeout(3, TimeUnit.SECONDS)
-                .build();
-
+//        OkHttpClient client = new OkHttpClient.Builder()
+//                .connectTimeout(3, TimeUnit.SECONDS)
+//                .writeTimeout(3, TimeUnit.SECONDS)
+//                .readTimeout(3, TimeUnit.SECONDS)
+//                .build();
+        OkHttpClient client = OkHttpClientUtil.client;
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
         //特殊字符转义
@@ -150,7 +151,8 @@ public class SanJingLight implements Light, GeneralControlBean {
             logger.error("获取token异常，请联系管理员。");
             return 0;
         }
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        OkHttpClient client = OkHttpClientUtil.client;
+//        OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         // 示例 "tunnelId=2&step=0&bright=98"
         String url = baseUrl + "/api/adjustBrightness";
@@ -337,7 +339,8 @@ public class SanJingLight implements Light, GeneralControlBean {
      * @return
      */
     public int updateSwitch(String jessionId ,String baseUrl ,String externalSystemTunnelId, String step , Integer openClose) {
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        OkHttpClient client = OkHttpClientUtil.client;
+//        OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
 //        if (openClose == 2) {
@@ -359,7 +362,11 @@ public class SanJingLight implements Light, GeneralControlBean {
             Response response = client.newCall(request).execute();
             //包含“发送成功"就可以
             responseBody = response.body().string();
+            logger.error("照明开关控制updateSwitch打印信息:responseBody="+responseBody);
+            System.out.println("照明开关控制updateSwitch打印信息:responseBody="+responseBody);
         } catch (IOException e) {
+            logger.error("照明开关控制updateSwitch打印报错日志:"+e.getMessage());
+            System.err.println("照明开关控制updateSwitch打印报错日志:"+e.getMessage());
             return 0;
         }
         return responseBody.contains("发送成功") ? 1 : 0;
@@ -375,8 +382,8 @@ public class SanJingLight implements Light, GeneralControlBean {
      * @return
      */
     public int updateBrightness(String jessionId ,String baseUrl ,String deviceId,String step , Integer bright) {
-
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        OkHttpClient client = OkHttpClientUtil.client;
+//        OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         // 示例 "tunnelId=2&step=0&bright=98"
         String url = baseUrl + "/api/adjustBrightness";
@@ -390,12 +397,26 @@ public class SanJingLight implements Light, GeneralControlBean {
                 .build();
 
         String responseBody = "";
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
+             response = client.newCall(request).execute();
             //包含“发送成功"就可以
             responseBody = response.body().string();
+            logger.error("照明亮度控制updateBrightness打印信息:responseBody="+responseBody);
+            System.out.println("照明亮度控制updateBrightness打印信息:responseBody="+responseBody);
         } catch (IOException e) {
+            if(response != null){
+                response.close();
+            }
+            logger.error("照明亮度控制updateBrightness打印信息catch:",e.getMessage());
+            System.out.println("照明亮度控制updateBrightness打印信息catch:"+e.getMessage());
+            logger.error("照明亮度控制updateBrightness打印信息catch:responseBody="+responseBody);
+            System.out.println("照明亮度控制updateBrightness打印信息catch:responseBody="+responseBody);
             return 0;
+        }finally {
+            if(response != null){
+                response.close();
+            }
         }
         return responseBody.contains("发送成功") ? 1 : 0;
     }
@@ -656,23 +677,78 @@ public class SanJingLight implements Light, GeneralControlBean {
         if(jessionId == null || "".equals(jessionId)){
             return AjaxResult.error("三晶照明获取token失败",0);
         }
+
+        //开关
+        int switchType = 1;
+        //亮度
+        int brightnessType = 1;
         //开关对应关系
         Integer openClose = SanjingLightStateEnum.getValue(Integer.valueOf(state));
 
-        //开关
-        int switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
-        //亮度
-        int brightnessType = 1;
-        //如果亮度有值并且控制状态不是关，就控制亮度
-        if(!Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
+        //如果实时状态和控制状态都为开，不控制开关，只控制亮度
+        Integer switchStatus = Integer.valueOf(state);
+        Integer currentSwitchStatus = getLightSwitchStatus(sdDevices);
+        if(switchStatus.equals(currentSwitchStatus) && Objects.equals(SanjingLightStateEnum.OPEN.getState(), openClose)){
             brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
+        }else{
+            //开关
+            switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
+
+            //如果亮度有值并且控制状态不是关，就控制亮度
+            if(!Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
+                brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
+            }
         }
+
+        logger.error("照明开关控制打印信息:switchType="+switchType+",brightnessType="+brightnessType);
+        System.out.println("照明开关控制打印信息:switchType="+switchType+",brightnessType="+brightnessType);
         int result =  switchType==1 && brightnessType==1 ? 1 : 0;
+        logger.error("照明开关控制打印信息:result="+result);
+        System.out.println("照明开关控制打印信息:result="+result);
         if(result == 1){
             return AjaxResult.success(1);
         }else {
             return AjaxResult.error("控制失败",0);
         }
+    }
+
+
+    /**
+     * 获取开关实时状态
+     * @param sdDevices
+     * @return
+     */
+    public Integer getLightSwitchStatus(SdDevices sdDevices){
+        Integer switchStatus = null;
+        String eqId = sdDevices.getEqId();
+        Long eqType = sdDevices.getEqType();
+        Long itemCode = getItemCode(eqType);
+        SdDeviceData deviceData = new SdDeviceData();
+        deviceData.setDeviceId(eqId);
+        deviceData.setItemId(itemCode);
+        List<SdDeviceData> deviceDataList = sdDeviceDataService.selectSdDeviceDataList(deviceData);
+        if (!deviceDataList.isEmpty()) {
+         switchStatus = Integer.valueOf(deviceDataList.get(0).getData());
+        }
+        return switchStatus;
+    }
+
+    /**
+     * 获取设备类型数据项
+     * @param eqType
+     * @return
+     */
+    private Long getItemCode(Long eqType){
+        //状态设备类型数据项
+        long statusItemCode;
+        if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(eqType)){
+            //基本照明
+            statusItemCode = DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode();
+        }else{
+            //加强照明
+            statusItemCode = DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode();
+        }
+        return statusItemCode;
     }
 
 

@@ -22,7 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -159,8 +162,9 @@ public class OmronTask {
      */
     public OmronConnectProperties getOmronConnectProperties(String serviceIp,Integer serviceProt){
         OmronConnectProperties conf = new OmronConnectProperties();
+        log.info("Linux 本机地址为: " + getHostAddress());
         //SA1地址：电脑 ip
-        conf.setLocalHost("127.0.0.1");
+        conf.setLocalHost(getHostAddress());
         //DA1地址： 服务器 ip
         conf.setHost(serviceIp);
         //服务器port
@@ -170,7 +174,27 @@ public class OmronTask {
 
 
 
-
+    public static String getHostAddress(){
+        String hostAddress = "";
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress address = addresses.nextElement();
+                    if (!address.isLinkLocalAddress() && !address.isLoopbackAddress() && address.getAddress().length == 4&&!address.getHostAddress().split("[.]")[3].equals("1")) {
+                        hostAddress = address.getHostAddress();
+                        log.info("Linux 本机地址为: " + hostAddress);
+                        return hostAddress;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
     /**
      * 持久化操作
      * @param sdDevicePoint

@@ -18,8 +18,9 @@ public class SendConfig {
     public RestTemplate restTemplate() {
         // 创建 RestTemplate 实例
         OkHttp3ClientHttpRequestFactory okHttp3ClientHttpRequestFactory = new OkHttp3ClientHttpRequestFactory();
-        okHttp3ClientHttpRequestFactory.setConnectTimeout(20 * 1000);
-        okHttp3ClientHttpRequestFactory.setReadTimeout(20 * 1000);
+        okHttp3ClientHttpRequestFactory.setConnectTimeout(3 * 1000);
+        okHttp3ClientHttpRequestFactory.setReadTimeout(3 * 1000);
+        okHttp3ClientHttpRequestFactory.setWriteTimeout(3 * 1000);
         RestTemplate restTemplate = new RestTemplate(okHttp3ClientHttpRequestFactory);
         return restTemplate;
     }

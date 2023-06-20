@@ -1295,6 +1295,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqTypeId)){
                     map.put("state",Integer.valueOf(controlStatus) > 0 ? "1" : "2");
                     map.put("stateNum",controlStatus);
+                    map.put("brightness",controlStatus);
                 }else {
                     map.put("state",controlStatus);
                 }

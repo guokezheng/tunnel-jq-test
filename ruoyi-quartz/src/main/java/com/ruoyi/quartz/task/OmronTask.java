@@ -172,7 +172,9 @@ public class OmronTask {
         return conf;
     }
 
-
+    public static void main(String[] args) {
+        getHostAddress();
+    }
 
     public static String getHostAddress(){
         String hostAddress = "";
@@ -183,7 +185,8 @@ public class OmronTask {
                 Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
                 while (addresses.hasMoreElements()) {
                     InetAddress address = addresses.nextElement();
-                    if (!address.isLinkLocalAddress() && !address.isLoopbackAddress() && address.getAddress().length == 4&&!address.getHostAddress().split("[.]")[3].equals("1")) {
+                    if (!address.isLinkLocalAddress() && !address.isLoopbackAddress() && address.getAddress().length == 4
+                            &&!address.getHostAddress().split("[.]")[3].equals("1")&&!networkInterface.isVirtual()) {
                         hostAddress = address.getHostAddress();
                         log.info("Linux 本机地址为: " + hostAddress);
                         return hostAddress;

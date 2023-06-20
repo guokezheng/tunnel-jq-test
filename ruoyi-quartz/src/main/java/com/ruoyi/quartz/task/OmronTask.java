@@ -68,6 +68,8 @@ public class OmronTask {
         if(sdDeviceIdList.size()<=0){
             return;
         }
+        log.info("omron测试----------------");
+        log.info(sdDeviceIdList.toString());
         if(omronTcpClient == null){
             try {
                 //plc获取ip协议比较特殊。 通过 sd_devices 表中获取 plc ip  端口号
@@ -78,6 +80,9 @@ public class OmronTask {
                 //初始化 OmronTcpClient
                 omronTcpClient = new OmronTcpClient(getOmronConnectProperties(fSdDevices.getIp(),Integer.parseInt(fSdDevices.getPort())));
                 //初始化链接     服务器地址
+                log.info("账号"+fSdDevices.getIp());
+                log.info("密码"+fSdDevices.getPort());
+                log.info("密码"+Integer.parseInt(fSdDevices.getPort()));
                 omronTcpClient.init(fSdDevices.getIp(),Integer.parseInt(fSdDevices.getPort()));
                 //获取ChannelFuture
                 ChannelFuture channelFuture = omronTcpClient.channelFuture;

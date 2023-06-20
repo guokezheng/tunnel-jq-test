@@ -23,6 +23,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +36,7 @@ import static com.tunnel.deal.plc.omron.util.ByteUtil.byteMerger;
  * 欧姆龙PLC基于tcp实现的客户端
  */
 public class OmronTcpClient{
+    private static final Logger log = LoggerFactory.getLogger(OmronTcpClient.class);
 
     public static Map<Channel,OmronConnectProperties> channelsGroup = new HashMap<>();
 
@@ -84,9 +88,13 @@ public class OmronTcpClient{
                         ch.pipeline().addLast(new OmronClientHandler());
                     }
                 });
+        log.info("连接服务端开始--------------");
         //连接服务端
         channelFuture = bootstrap.connect(ip, port).sync();
+        log.info("连接服务端结束--------------");
         channelsGroup.put(channelFuture.channel(),omronConnectProperties);
+        log.info("连接服务端结束--------------"+channelFuture.channel());
+        log.info("连接服务端结束--------------"+omronConnectProperties.toString());
     }
 
     /**

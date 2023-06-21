@@ -209,6 +209,12 @@ export default {
       this.visible = false;
     },
     handleOK() {
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       const param = {
         devId: this.stateForm.eqId, //设备id
         devType: this.eqInfo.clickEqType,
@@ -220,6 +226,7 @@ export default {
       controlDevice(param).then((response) => {
         console.log(response, "提交控制");
         this.visible = false;
+        loading.close();
       });
     },
   },

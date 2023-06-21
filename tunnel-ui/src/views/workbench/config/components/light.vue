@@ -416,6 +416,12 @@ export default {
     },
     handleOK() {
       let that = this;
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       // 警示灯带
       if (this.eqInfo.clickEqType == 45) {
         const param = {
@@ -430,6 +436,9 @@ export default {
           } else {
             this.$modal.msgError("操作失败");
           }
+          loading.close();
+        }).catch(()=>{
+          loading.close();
         });
         // 消防水泵:13 潜水深井泵:49
       } else if (
@@ -449,6 +458,9 @@ export default {
           } else {
             this.$modal.msgError(msg);
           }
+          loading.close();
+        }).catch(()=>{
+          loading.close();
         });
       } else if (this.stateForm.eqType == 30) {
         const param = {
@@ -466,7 +478,10 @@ export default {
         this.$modal.msgSuccess("指令下发中，请稍后。");
         controlEvacuationSignDevice(param).then((response) => {
           console.log(response, "提交控制");
+          loading.close();
           this.$modal.msgSuccess("操作成功");
+        }).catch(()=>{
+          loading.close();
         });
       } else if (this.stateForm.eqType == 31) {
         const param = {
@@ -480,7 +495,10 @@ export default {
         this.$modal.msgSuccess("指令下发中，请稍后。");
         controlGuidanceLampDevice(param).then((response) => {
           console.log(response, "提交控制");
+          loading.close();
           this.$modal.msgSuccess("操作成功");
+        }).catch(()=>{
+          loading.close();
         });
       } else {
         if (
@@ -503,6 +521,10 @@ export default {
           } else if (response.data == 1) {
             this.$modal.msgSuccess("控制成功");
           }
+          loading.close();
+        }).catch(()=>{
+          loading.close();
+
         });
       }
       this.visible = false;

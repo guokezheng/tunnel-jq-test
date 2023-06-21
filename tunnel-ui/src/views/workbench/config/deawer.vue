@@ -481,6 +481,12 @@ export default {
     },
     // 控制按钮
     chezhiControl(num) {
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       this.chezhiDisabled = true;
       const param = {
         tunnelId: this.tunnelId,
@@ -490,12 +496,17 @@ export default {
       };
       batchControlCarFinger(param).then((res) => {
         // console.log(res);
+        loading.close();
+
         if (res.data == 0) {
           this.$modal.msgWarning("控制失败");
         } else if (res.data == 1) {
           this.$modal.msgSuccess("控制成功");
         }
-      });
+
+      }).catch(()=>{
+          loading.close();
+        });
       this.chezhiDisabled = false;
     },
     // 抽屉车指批量控制 车道下拉框
@@ -584,6 +595,12 @@ export default {
       });
     },
     phoneControl(direction) {
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       if (direction == 1) {
         const param = {
           lib: "YeastarHost",
@@ -596,7 +613,12 @@ export default {
           controlType: "0",
         };
         // console.log(param, "param");
-        playVoiceGroup(param).then((res) => {});
+        playVoiceGroup(param).then((res) => {
+          loading.close();
+          this.$modal.msgSuccess("控制成功");
+        }).catch(()=>{
+          loading.close();
+        });
       } else {
         const param = {
           lib: "YeastarHost",
@@ -610,7 +632,10 @@ export default {
         };
         // console.log(param, "param");
         playVoiceGroup(param).then((res) => {
+          loading.close();
           this.$modal.msgSuccess("控制成功");
+        }).catch(()=>{
+          loading.close();
         });
       }
       // console.log(direction,"广播一键控制方向");

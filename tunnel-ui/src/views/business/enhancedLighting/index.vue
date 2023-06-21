@@ -448,6 +448,42 @@ export default {
             trigger: "blur",
           },
         ],
+        beforeLuminance:[
+        {
+            pattern: /^([0-9][0-9]{0,1}|100)$/,
+            message: "请输入0-100的整数",
+          },
+        ],
+        minLuminance:[
+        {
+            pattern: /^([0-9][0-9]{0,1}|100)$/,
+            message: "请输入0-100的整数",
+          },
+        ],
+        respondTime:[
+        {
+            pattern: /^[1-9]\d*$/,
+            message: "只能输入整数",
+          },
+        ],
+        maxTrafficFlow:[
+        {
+            pattern: /^[1-9]\d*$/,
+            message: "只能输入整数",
+          },
+        ],
+        maxLuminanceRange:[
+        {
+            pattern: /^[1-9]\d*$/,
+            message: "只能输入整数",
+          },
+        ],
+        minLuminanceRange:[
+        {
+            pattern: /^[1-9]\d*$/,
+            message: "只能输入整数",
+          },
+        ],
       },
       timeSlotList: [],
       nowTimeSlotList: [

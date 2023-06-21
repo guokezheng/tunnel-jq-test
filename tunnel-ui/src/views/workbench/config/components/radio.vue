@@ -215,6 +215,12 @@ export default {
       this.visible = false;
     },
     handleOK() {
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       const param = {
         lib: "YeastarHost",
         loop: this.stateForm2.loop,
@@ -227,8 +233,11 @@ export default {
       };
       console.log(param, "param");
       playVoice(param).then((res) => {
+        loading.close();
         this.$modal.msgSuccess("控制成功");
-      });
+      }).catch(()=>{
+          loading.close();
+        });
       this.visible = false;
     },
     getDirection(num) {

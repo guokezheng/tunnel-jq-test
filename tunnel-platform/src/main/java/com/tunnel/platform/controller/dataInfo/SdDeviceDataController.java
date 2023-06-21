@@ -135,7 +135,7 @@ public class SdDeviceDataController extends BaseController
                 Map<String,String> itemMap = map.get(eqId);
                 String itemCode = deviceMap.get("itemCode");
                 String data = deviceMap.get("dataUnit");
-                if(itemCode != null){
+                if(itemCode != null && data != null){
                     itemMap.put(itemCode,data);
                 }
             }

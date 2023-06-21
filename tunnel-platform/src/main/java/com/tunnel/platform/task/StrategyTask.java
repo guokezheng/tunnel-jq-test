@@ -134,6 +134,7 @@ public class StrategyTask {
         //获取所有照明并且已经执行的定时任务
         List<String> scanKey = redisCache.getScanKey("ERROREQUIPMENT"+ "*");
 
+        Set<String> strategyIdList = new HashSet<>();
         for (String key :scanKey){
             //获取照明定时任务的详细控制数据
             Map currentMap = redisCache.getCacheObject(key);
@@ -149,14 +150,55 @@ public class StrategyTask {
 
             if((otoDeviceData.size()>0 && !otoDeviceData.get(0).getData().equals(currentMap.get("brightness").toString()))||(otoDeviceData.size()==0)){//不为空说明有数据 对比控制照明亮度是否相同 下面对比数据和最近定时任务 控制数值是否相同
                 //控制判断 方法主要判断是否需要重发
-                controlJacklight(sdStrategyRls,currentMap,key,sdDevices);
+//                controlJacklight(sdStrategyRls,currentMap,key,sdDevices);
+                String currentId = String.valueOf(currentMap.get("currentId"));
+                List<Long> idList = sdStrategyRls.stream().map(SdStrategyRl::getId).collect(Collectors.toList());
+                if(idList.contains(Long.valueOf(currentId))){
+                    //redis缓存的定时任务ID在数据库中存在（运行中的定时任务），允许执行
+                    strategyIdList.add(currentId);
+                }else{
+                    //任务被删除或者禁用
+                    redisCache.deleteObject(key);
+                }
+
             }else{//说明 设备控制成功删除定时任务
                 //删除不需要的定时任务
                 redisCache.deleteObject(key);
             }
 
         }
+
+        //重发失败的定时照明策略
+        repeatControl(strategyIdList);
+
     }
+
+    /**
+     * 重发失败的定时照明策略
+     * @param strategyIdList
+     */
+    public void repeatControl(Set<String> strategyIdList){
+        for(String strategyId : strategyIdList){
+            executor.schedule(() -> {
+                // 在执行要延迟的代码
+                try {
+                    StrategyTask.getInstance().strategyParams(strategyId);
+                    log.info("repeatControl重发失败的定时照明策略：strategyId="+strategyId);
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    log.error("repeatControl重发失败的定时照明策略报错：strategyId="+strategyId,e.getCause());
+                }
+            }, 10, TimeUnit.SECONDS);
+        }
+
+//        String currentId = String.valueOf(currentMap.get("currentId"));
+//        try {
+//            StrategyTask.getInstance().strategyParams(currentId);
+//        } catch (UnknownHostException e) {
+//            e.printStackTrace();
+//        }
+    }
+
 
     public static void main(String[] args) {
         // 创建Random实例

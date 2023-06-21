@@ -691,11 +691,23 @@ public class SanJingLight implements Light, GeneralControlBean {
         if(switchStatus.equals(currentSwitchStatus) && Objects.equals(SanjingLightStateEnum.OPEN.getState(), openClose)){
             brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
         }else{
-            //开关
-            switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
 
-            //如果亮度有值并且控制状态不是关，就控制亮度
-            if(!Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
+            //三晶照明：已关灯不能调光，请先开灯
+            //如果是控制状态为关，先调光亮度为0，再关灯
+            if(Objects.equals(SanjingLightStateEnum.CLOSE.getState(), openClose)){
+                if(SanjingLightStateEnum.OPEN.getCode().equals(currentSwitchStatus)){
+                    //如果实际状态为开，控制亮度值（如果实际状态为关，控制亮度值返回失败）
+                    //如果控制状态是关，下发亮度值为0
+                    brightness = 0;
+                    brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
+                }
+
+                //控制开关
+                switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
+            }else{
+                //先开灯，再调光
+                //控制开关
+                switchType = updateSwitch(jessionId, baseUrl, externalSystemTunnelId, step, openClose);
                 brightnessType = updateBrightness(jessionId, baseUrl, externalSystemTunnelId, step ,brightness);
             }
         }

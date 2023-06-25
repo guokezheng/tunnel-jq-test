@@ -7,10 +7,7 @@ import com.tunnel.deal.guidancelamp.protocol.decoder.DynamicDecoderDec;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelInitializer;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringEncoder;
@@ -66,6 +63,8 @@ public class NettyClient {
     private void init() {
         //设置线程池
         bootstrap.group(group);
+        //设置超时
+        bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,3000);
         //设置socket工厂
         bootstrap.channel(NioSocketChannel.class);
         switch (type){

@@ -189,6 +189,8 @@
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
+          @mouseover="mouseoversImage"
+          @mouseleave="mouseleaveImage"
         >
           <div
             class="workbench-content"
@@ -211,8 +213,7 @@
                 <div
                   class="wrapper"
                   id="eq-wrapper"
-                  @mouseover="mouseoversImage"
-                  @mouseleave="mouseleaveImage"
+                  
                 >
                   <!-- <div
                   class="wrapper"

@@ -3065,6 +3065,12 @@ export default {
     },
     // 批量操作 弹窗确定
     batchManageOK() {
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       if (
         this.batchManageForm.brightness < 30 &&
         this.batchManageForm.state == 1 &&
@@ -3087,9 +3093,12 @@ export default {
         } else if (res.data == 1) {
           this.$modal.msgSuccess("控制成功");
         }
+        loading.close();
         this.batchManageDialog = false;
         this.closeBatchManageDialog();
-      });
+      }).catch(()=>{
+          loading.close();
+        });
     },
     // 新版批量操作 点击变俩按钮
     batchManage() {

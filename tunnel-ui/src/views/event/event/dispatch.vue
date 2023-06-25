@@ -1534,17 +1534,26 @@ export default {
     },
     changeIncHand() {
       var that = this;
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       // if (this.IssuedItem.flowPid == "7") {
       let processId = that.processId;
       let eventId = that.$route.query.id;
       implementProcess(processId, eventId).then((response) => {
+        loading.close();
         that.$modal.msgSuccess("执行成功");
         this.IssuedDialog = false;
         this.getDispatchExecuted();
         that.evtHandle();
         that.getEventList();
         this.processId = "";
-      });
+      }).catch(()=>{
+          loading.close();
+        });
       // } else if (this.IssuedItem.flowId == "17") {
       //   let eventId = that.$route.query.id;
       //   let handleId = this.IssuedItem.id;

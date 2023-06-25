@@ -279,10 +279,10 @@ public class SdDevicesController extends BaseController {
             return Result.error("当前设备ID重复，请重新输入");
         }
 
-        List<SdDevices> list1 = sdDevicesService.tunnelEqNameOnly(sdDevices.getEqTunnelId(), sdDevices.getEqName());
+        /*List<SdDevices> list1 = sdDevicesService.tunnelEqNameOnly(sdDevices.getEqTunnelId(), sdDevices.getEqName());
         if (list1.size() > 0) {
             return Result.error("当前设备名称已经存在，请核对后重试！");
-        }
+        }*/
 
         int i = sdDevicesService.insertSdDevices(sdDevices);
         if (sdDevices.getEqType() != 31L) {

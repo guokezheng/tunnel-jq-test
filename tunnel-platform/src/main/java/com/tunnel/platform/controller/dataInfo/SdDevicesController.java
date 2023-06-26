@@ -7,6 +7,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
@@ -99,7 +100,7 @@ public class SdDevicesController extends BaseController {
         }
 
         // 如果当前设备是加强照明 基本照明，双向显示设备去重
-        if(list != null && list.size() > 0  && sdDevices.getEqType() != null &&
+        if(StringUtils.isNull(TableSupport.buildPageRequest().getPageNum()) && list != null && list.size() > 0  && sdDevices.getEqType() != null &&
                 (
                         sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue()
                        || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()
@@ -109,7 +110,7 @@ public class SdDevicesController extends BaseController {
             Collections.reverse(list);
             list = list.stream().collect(
                     Collectors.collectingAndThen(
-                            Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(SdDevices::getExternalDeviceId))), ArrayList::new));
+                            Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(SdDevices::getEqId))), ArrayList::new));
         }
 
 

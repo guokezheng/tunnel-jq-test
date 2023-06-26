@@ -527,6 +527,8 @@ export default {
       this.directionList = directionList;
       this.eqTypeDialogList = eqTypeDialogList;
       this.cameraVisible = true;
+      this.videoActive = "information", // tab页
+
       this.getmessage();
     },
     // 点击云台方向
@@ -558,6 +560,9 @@ export default {
                   this.videoForm = response.data;
                   this.cameraPlayer = true;
                 } else {
+                  // this.videoForm.liveUrl = "rtsp://admin:12345@192.168.1.64:554/ch1/sub/av_stream"
+                  // this.cameraPlayer = true;
+
                   this.$modal.msgWarning("获取视频失败");
                 }
               })

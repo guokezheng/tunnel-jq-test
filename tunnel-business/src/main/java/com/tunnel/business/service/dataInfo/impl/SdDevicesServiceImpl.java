@@ -497,8 +497,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         String fEqId = devices.getFEqId();
         //所属隧道
         SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(devices.getEqTunnelId());
-        //根据隧道id和设备名称查询
-        List<SdDevices> sdDevicesList = sdDevicesMapper.tunnelEqNameOnly(devices.getEqTunnelId(), devices.getEqName());
+        /*//根据隧道id和设备名称查询
+        List<SdDevices> sdDevicesList = sdDevicesMapper.tunnelEqNameOnly(devices.getEqTunnelId(), devices.getEqName());*/
         //设备类型
         SdEquipmentType sdEquipmentType = equipmentTypeService.selectSdEquipmentTypeById(eqType);
 //        SdEquipmentState sdEquipmentState = sdEquipmentStateService.selectSdEquipmentStateById(devices.getEqType());
@@ -531,12 +531,13 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             map.put("flag", false);
             map.put("failureMsg", failureMsg);
             return map;
-        } else if (sdDevicesList!=null&&sdDevicesList.size()>0&&!sdDevicesList.get(0).getEqId().equals(devices.getEqId())) {
+        }
+        /*else if (sdDevicesList!=null&&sdDevicesList.size()>0&&!sdDevicesList.get(0).getEqId().equals(devices.getEqId())) {
             failureMsg.append("、设备ID " + devices.getEqId() + "该隧道下设备名称重复");
             map.put("flag", false);
             map.put("failureMsg", failureMsg);
             return map;
-        }
+        }*/
         //设备方向
         //devices.getEqDirection();
         //控制模式+机位

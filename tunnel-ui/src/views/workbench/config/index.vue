@@ -189,6 +189,8 @@
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
+          @mouseover="mouseoversImage"
+          @mouseleave="mouseleaveImage"
         >
           <div
             class="workbench-content"
@@ -211,8 +213,7 @@
                 <div
                   class="wrapper"
                   id="eq-wrapper"
-                  @mouseover="mouseoversImage"
-                  @mouseleave="mouseleaveImage"
+                  
                 >
                   <!-- <div
                   class="wrapper"
@@ -1328,7 +1329,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <el-form ref="form" :model="lightingForm" label-width="120px">
+      <el-form ref="form" :model="lightingForm" label-width="120px" :rules="lightingFormRules">
         <el-row>
           <el-col :span="12">
             <el-form-item label="隧道名称" prop="tunnelId">
@@ -1895,6 +1896,26 @@ export default {
 
   data() {
     return {
+      lightingFormRules:{
+        beforeLuminance:[
+        {
+            pattern: /^([0-9][0-9]{0,1}|100)$/,
+            message: "请输入0-100的整数",
+          },
+        ],
+        minLuminance:[
+        {
+            pattern: /^([0-9][0-9]{0,1}|100)$/,
+            message: "请输入0-100的整数",
+          },
+        ],
+        respondTime:[
+        {
+            pattern: /^[1-9]\d*$/,
+            message: "只能输入整数",
+          },
+        ]
+      },
       robotIframeShow: false,
       dialogEqType: "",
       loginStatusOptions: [],
@@ -3045,6 +3066,12 @@ export default {
     },
     // 批量操作 弹窗确定
     batchManageOK() {
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       if (
         this.batchManageForm.brightness < 30 &&
         this.batchManageForm.state == 1 &&
@@ -3067,9 +3094,12 @@ export default {
         } else if (res.data == 1) {
           this.$modal.msgSuccess("控制成功");
         }
+        loading.close();
         this.batchManageDialog = false;
         this.closeBatchManageDialog();
-      });
+      }).catch(()=>{
+          loading.close();
+        });
     },
     // 新版批量操作 点击变俩按钮
     batchManage() {
@@ -4364,9 +4394,11 @@ export default {
                       // 车指之类的包括正红反绿之类的图标 == 2
                       this.eqTypeStateList[k].stateType == "2"
                     ) {
+                      
                       if (this.eqTypeStateList[k].state == deviceData.state) {
                         // 照明图标后加数据
                         if (deviceData.eqType == 7 || deviceData.eqType == 9) {
+                          console.log(deviceData,"deviceData")
                           this.selectedIconList[j].num =
                             deviceData.brightness + "%";
                         }
@@ -4666,7 +4698,7 @@ export default {
               this.eqTypeDialogList
             );
           } else if (
-            [14, 21, 32, 15, 35, 39, 40, 41, 42, 48].includes(item.eqType)
+            [14, 21, 32, 15, 35, 39, 40, 41, 42, 47, 48].includes(item.eqType)
           ) {
             this.$refs.dataRef.init(
               this.eqInfo,
@@ -4910,6 +4942,8 @@ export default {
       this.loading = true;
       this.syxt_boxShow2 = false;
       this.sycz_boxShow3 = false;
+      this.$refs.multipleTable.bodyWrapper.scrollTop = 0;
+
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;

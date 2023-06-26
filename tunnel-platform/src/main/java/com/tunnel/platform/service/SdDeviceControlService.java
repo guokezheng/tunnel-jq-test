@@ -1,5 +1,6 @@
 package com.tunnel.platform.service;
 
+import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -136,8 +137,10 @@ public class SdDeviceControlService {
             }
         }catch (Exception e){
             // 异常信息最大支持vachar 2000
-            int index = e.getMessage().length() <= 2000 ? e.getMessage().length() : 2000;
-            map.put("description",e.getMessage().substring(0,index));
+            String message = JSON.toJSONString(e.getMessage());
+            int index = message.length() <= 2000 ? message.length() : 2000;
+
+            map.put("description",message.substring(0,index));
 
             if (map.get("templateId") != null &&  !map.get("templateId").toString().equals("")) {
                 Long templateId = Long.parseLong(map.get("templateId").toString());

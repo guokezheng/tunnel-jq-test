@@ -17,6 +17,7 @@
             placeholder="请输入发布设备、发布内容，回车搜索"
             clearable
             size="small"
+            @input="handleInput"
             @keyup.enter.native="handleQuery"
           >
             <el-button
@@ -387,6 +388,8 @@ export default {
       form: {},
       // 表单校验
       rules: {},
+      //特殊字符验证
+      regExp: "/[^\w]/g"
     };
   },
   created() {
@@ -433,7 +436,7 @@ export default {
           }
         }
       }
-      
+
     },
     /** 查询发布记录列表 */
     getList() {
@@ -627,6 +630,9 @@ export default {
       this.$refs.tableFile.clearSelection();
       this.$refs.tableFile.bodyWrapper.scrollTop = 0;
       this.getList();
+    },
+    handleInput() {
+      this.queryParams.searchValue = this.queryParams.searchValue.replace(this.regExp, '');
     },
     /** 重置按钮操作 */
     resetQuery() {

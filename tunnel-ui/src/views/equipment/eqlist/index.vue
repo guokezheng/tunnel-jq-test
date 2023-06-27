@@ -152,7 +152,7 @@
 
       <el-table-column
         label="设备ID"
-        min-width="220"
+        min-width="210"
         align="center"
         prop="eqId"
         show-overflow-tooltip
@@ -161,14 +161,14 @@
         label="所属隧道"
         align="center"
         prop="tunnelName.tunnelName"
-        min-width="100"
+        min-width="90"
         show-overflow-tooltip
       />
       <el-table-column
         label="设备名称"
         align="center"
         prop="eqName"
-        width="120"
+        width="150"
         show-overflow-tooltip
       />
       <el-table-column
@@ -223,7 +223,7 @@
         label="操作"
         align="center"
         class-name="small-padding fixed-width"
-        width="180"
+        width="210"
       >
         <template slot-scope="scope">
           <el-button
@@ -1053,6 +1053,7 @@ export default {
             message: "请填写设备ID",
             trigger: "blur",
           },
+          { max: 100, message: '最长输入100个字符', trigger: 'blur' }
           /*{
             pattern: /^[0-9a-zA-Z_-]{1,}$/,
             message: "请输入数字字母或1横线",

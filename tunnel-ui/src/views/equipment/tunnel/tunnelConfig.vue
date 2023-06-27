@@ -506,7 +506,7 @@ export default {
         }
       }
       that.EnvironmentList = list;
-      // console.log(that.EnvironmentList, "that.EnvironmentList");
+      console.log(that.EnvironmentList, "that.EnvironmentList");
       this.saveLoading = false;
     },
     async planRoadmapUrl(list) {
@@ -1000,6 +1000,7 @@ export default {
       var that = this;
       newListDevices(param).then((response) => {
         that.equipmentList = that.addMask(response.rows);
+        // console.log(that.equipmentList,"that.equipmentList")
         if (this.equipmentList.length > 0) {
           this.equipmentVisible = true;
         }

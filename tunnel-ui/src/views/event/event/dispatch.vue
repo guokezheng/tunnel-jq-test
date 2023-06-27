@@ -1222,12 +1222,21 @@ export default {
       });
     },
     oneKeyExecute() {
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       let planId = this.reserveId;
       let eventId = this.$route.query.id;
       implementPlan(planId, eventId).then((res) => {
+        loading.close();
         this.$modal.msgSuccess(res.msg);
         this.oneKeyDialogVisible = false;
         this.evtHandle();
+      }).catch(()=>{
+        loading.close();
       });
     },
     // 事件处置 一键
@@ -1552,8 +1561,8 @@ export default {
         that.getEventList();
         this.processId = "";
       }).catch(()=>{
-          loading.close();
-        });
+        loading.close();
+      });
       // } else if (this.IssuedItem.flowId == "17") {
       //   let eventId = that.$route.query.id;
       //   let handleId = this.IssuedItem.id;

@@ -932,6 +932,9 @@ export default {
       forms: {},
       // 表单校验
       rules: {
+        remake:[
+          { max: 100, message: '最长输入100个字符', trigger: 'blur' }
+        ],
         tunnelName: [
           { required: true, message: "请填写隧道名称", trigger: "blur" },
         ],

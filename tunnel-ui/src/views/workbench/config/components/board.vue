@@ -745,7 +745,9 @@ export default {
             };
             listDevice(param).then((response) => {
               console.log(response, "查询设备信息");
-              this.addForm = response.rows[0];
+              if(response.rows.length>0){
+                this.addForm = response.rows[0];
+              }
               this.allVmsTemplate();
             });
           }

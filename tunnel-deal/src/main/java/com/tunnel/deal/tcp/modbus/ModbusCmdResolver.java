@@ -1,8 +1,8 @@
-package com.tunnel.deal.mca.modbus;
+package com.tunnel.deal.tcp.modbus;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tunnel.deal.tcp.client.config.MessageType;
-import com.tunnel.deal.mca.util.NumberSystemConvert;
+import com.tunnel.deal.tcp.util.NumberSystemConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

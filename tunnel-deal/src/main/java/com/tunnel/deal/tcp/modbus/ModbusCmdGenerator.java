@@ -1,6 +1,6 @@
-package com.tunnel.deal.mca.modbus;
+package com.tunnel.deal.tcp.modbus;
 
-import com.tunnel.deal.mca.util.StringUtil;
+import com.tunnel.deal.tcp.util.StringUtil;
 
 /**
  * describe: 命令组装工具类

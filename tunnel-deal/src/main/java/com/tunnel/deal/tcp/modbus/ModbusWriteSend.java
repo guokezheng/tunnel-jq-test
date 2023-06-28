@@ -1,13 +1,12 @@
-package com.tunnel.deal.mca.modbus;
+package com.tunnel.deal.tcp.modbus;
 
 /**
- * describe: modbus读取命令格式类
+ * describe: modbus写入指令类
+ *
  * @author zs
- * @date 2021/2/6
+ * @date 2023/4/11
  */
-public class ModbusReadSend {
-    //示例：04 E2 00 00 00 06 01 01 00 00 00 0A
-
+public class ModbusWriteSend {
     /**
      * 此次通信事务处理标识符，一般每次通信之后将被要求加1以区别不同的通信数据报文
      * 2个字节
@@ -39,16 +38,16 @@ public class ModbusReadSend {
     private String functionCode;
 
     /**
-     * 读取寄存器或线圈的起始地址
+     * 写入寄存器地址
      * 2个字节
      */
-    private String startAddress;
+    private String writeAddress;
 
     /**
-     * 读取寄存器长度（字节数），16进制
+     * 写入数据
      * 2个字节
      */
-    private String addressNum;
+    private String writeData;
 
     public String getSerial() {
         return serial;
@@ -86,31 +85,31 @@ public class ModbusReadSend {
         this.functionCode = functionCode;
     }
 
-    public String getStartAddress() {
-        return startAddress;
+    public String getWriteAddress() {
+        return writeAddress;
     }
 
-    public void setStartAddress(String startAddress) {
-        this.startAddress = startAddress;
+    public void setWriteAddress(String swriteAddress) {
+        this.writeAddress = swriteAddress;
     }
 
-    public String getAddressNum() {
-        return addressNum;
+    public String getWriteData() {
+        return writeData;
     }
 
-    public void setAddressNum(String addressNum) {
-        this.addressNum = addressNum;
+    public void setWriteData(String writeData) {
+        this.writeData = writeData;
     }
 
     /**
      * 获取完整的命令
      * @return
      */
-    public String getReadRecv(){
+    public String getWriteSend(){
         StringBuffer s = new StringBuffer();
         s.append(serial).append(protocolSign).append(remainLength)
                 .append(deviceAddress).append(functionCode)
-                .append(startAddress).append(addressNum);
+                .append(writeAddress).append(writeData);
         String result = s.toString().replace(" ","");
         return result;
     }

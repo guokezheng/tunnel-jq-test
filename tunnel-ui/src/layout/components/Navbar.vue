@@ -775,6 +775,7 @@ export default {
         .then(() => {
           this.$store.dispatch("LogOut").then(() => {
             location.href = "";
+            this.$cache.local.remove("deptId")
             // location.href = '/#/login';
           });
         })

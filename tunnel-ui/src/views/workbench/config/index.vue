@@ -210,11 +210,7 @@
                   :src="currentTunnel.lane.url"
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
-                <div
-                  class="wrapper"
-                  id="eq-wrapper"
-                  
-                >
+                <div class="wrapper" id="eq-wrapper">
                   <!-- <div
                   class="wrapper"
                   id="eq-wrapper"
@@ -382,7 +378,6 @@
                     <el-tooltip
                       effect="dark"
                       placement="right"
-                      style="position: relative; top: 0px; left: 0px"
                       popper-class="tipCase"
                     >
                       <div slot="content">
@@ -1329,7 +1324,12 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <el-form ref="form" :model="lightingForm" label-width="120px" :rules="lightingFormRules">
+      <el-form
+        ref="form"
+        :model="lightingForm"
+        label-width="120px"
+        :rules="lightingFormRules"
+      >
         <el-row>
           <el-col :span="12">
             <el-form-item label="隧道名称" prop="tunnelId">
@@ -1537,7 +1537,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <el-row
+      <!-- <el-row
         :gutter="20"
         style="margin: 0px 0 6px; padding: 0px 5px"
         v-show="strategyActive == 'yujing'"
@@ -1561,8 +1561,8 @@
             </el-input>
           </div>
         </el-col>
-      </el-row>
-      <div class="syxt_searchBox" v-show="sycz_boxShow3" ref="cc3">
+      </el-row> -->
+      <!-- <div class="syxt_searchBox" v-show="sycz_boxShow3" ref="cc3">
         <el-form
           ref="operationParam"
           :inline="true"
@@ -1606,7 +1606,7 @@
             <el-button size="small" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
-      </div>
+      </div> -->
       <el-table
         ref="multipleTable"
         :data="strategyList"
@@ -1896,25 +1896,26 @@ export default {
 
   data() {
     return {
-      lightingFormRules:{
-        beforeLuminance:[
-        {
+      phoneList: [],
+      lightingFormRules: {
+        beforeLuminance: [
+          {
             pattern: /^([0-9][0-9]{0,1}|100)$/,
             message: "请输入0-100的整数",
           },
         ],
-        minLuminance:[
-        {
+        minLuminance: [
+          {
             pattern: /^([0-9][0-9]{0,1}|100)$/,
             message: "请输入0-100的整数",
           },
         ],
-        respondTime:[
-        {
+        respondTime: [
+          {
             pattern: /^[1-9]\d*$/,
             message: "只能输入整数",
           },
-        ]
+        ],
       },
       robotIframeShow: false,
       dialogEqType: "",
@@ -2679,6 +2680,7 @@ export default {
     ...mapState({
       radarDataList: (state) => state.websocket.radarDataList,
       sdEventList: (state) => state.websocket.sdEventList,
+
       // sdSvgEventList: (state) => state.websocket.sdSvgEventList,
     }),
     sideTheme: {
@@ -3067,11 +3069,11 @@ export default {
     // 批量操作 弹窗确定
     batchManageOK() {
       const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
       if (
         this.batchManageForm.brightness < 30 &&
         this.batchManageForm.state == 1 &&
@@ -3088,16 +3090,18 @@ export default {
         eqType: this.itemEqType,
         frequency: this.batchManageForm.frequency,
       };
-      batchControlDevice(param).then((res) => {
-        if (res.data == 0) {
-          this.$modal.msgError("控制失败");
-        } else if (res.data == 1) {
-          this.$modal.msgSuccess("控制成功");
-        }
-        loading.close();
-        this.batchManageDialog = false;
-        this.closeBatchManageDialog();
-      }).catch(()=>{
+      batchControlDevice(param)
+        .then((res) => {
+          if (res.data == 0) {
+            this.$modal.msgError("控制失败");
+          } else if (res.data == 1) {
+            this.$modal.msgSuccess("控制成功");
+          }
+          loading.close();
+          this.batchManageDialog = false;
+          this.closeBatchManageDialog();
+        })
+        .catch(() => {
           loading.close();
         });
     },
@@ -3402,7 +3406,9 @@ export default {
 
     // 改变站点
     changeSite(index) {
+      console.log(index,"index")
       if (index) {
+        console.log(this.$cache.local.get("deptId"),"this.$cache.local.get('deptId')")
         // 判断是否有缓存的管理站id
         // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
         // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
@@ -4146,6 +4152,7 @@ export default {
           name: list[i].stateName,
           control: list[i].isControl,
           url: iconUrl,
+          id: list[i].id,
         });
       }
       console.log(that.eqTypeStateList, "设备图标eqTypeStateList");
@@ -4184,6 +4191,7 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
+
           listType("")
             .then((response) => {
               for (let i = 0; i < res.eqList.length; i++) {
@@ -4394,11 +4402,10 @@ export default {
                       // 车指之类的包括正红反绿之类的图标 == 2
                       this.eqTypeStateList[k].stateType == "2"
                     ) {
-                      
                       if (this.eqTypeStateList[k].state == deviceData.state) {
                         // 照明图标后加数据
                         if (deviceData.eqType == 7 || deviceData.eqType == 9) {
-                          console.log(deviceData,"deviceData")
+                          // console.log(deviceData,"deviceData")
                           this.selectedIconList[j].num =
                             deviceData.brightness + "%";
                         }
@@ -4446,7 +4453,7 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
-      this.tunnelItem = item//勿动
+      this.tunnelItem = item; //勿动
       this.closeBatchManageDialog();
       this.screenEqName = "";
       let obj = {
@@ -4914,7 +4921,7 @@ export default {
       this.strategyVisible = true;
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
-      this.handlestrategyQuery();
+      this.getStrategyQuery();
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;
@@ -4939,11 +4946,13 @@ export default {
       this.strategyVisible = false;
     },
     handlestrategyQuery() {
-      this.loading = true;
       this.syxt_boxShow2 = false;
       this.sycz_boxShow3 = false;
       this.$refs.multipleTable.bodyWrapper.scrollTop = 0;
-
+      this.getStrategyQuery();
+    },
+    getStrategyQuery() {
+      this.loading = true;
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;
@@ -5263,7 +5272,7 @@ export default {
     //   monthCharts.setOption(option);
     // },
     // 跳转页面
-    
+
     // 监听缩放比例变化
     zoomChange(val) {
       val < 70 ? (val = this.zoom) : "";

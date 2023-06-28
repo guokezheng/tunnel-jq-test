@@ -623,7 +623,7 @@ public class workspaceController extends BaseController {
         sdOperationLog.setState(String.valueOf(controlState));
         sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
-        return AjaxResult.success(controlState);
+        return controlState == 0 ? AjaxResult.error("操作失败",controlState) : AjaxResult.success(controlState);
     }
 
 

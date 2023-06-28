@@ -1,28 +1,22 @@
 package com.tunnel.deal.mca.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DeviceStateTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.protocol.SdDevicePoint;
-import com.tunnel.business.domain.protocol.SdDevicePointState;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdEquipmentStateService;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
 import com.tunnel.business.service.protocol.ISdDevicePointStateService;
-import com.tunnel.deal.mca.config.DeviceManager;
+import com.tunnel.deal.tcp.modbus.ModbusCmd;
 import com.tunnel.deal.mca.service.McaService;
-import com.tunnel.deal.mca.service.McaCmd;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * describe: MCA控制类的实现类
@@ -47,7 +41,7 @@ public class McaServiceImpl implements McaService {
     private ISdDevicePointStateService devicePointStateService;
 
     @Autowired
-    private McaCmd mcaCmd;
+    private ModbusCmd mcaCmd;
 
     /**
      * 控制设备
@@ -65,16 +59,16 @@ public class McaServiceImpl implements McaService {
         //设备信息
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
 
-        //查询设备状态
-        SdEquipmentState sdEquipmentState = new SdEquipmentState();
-        sdEquipmentState.setStateTypeId(sdDevices.getEqType());
-        sdEquipmentState.setStateType(runState);
-        sdEquipmentState.setDeviceState(state);
-        List<SdEquipmentState> stateList = equipmentStateService.selectSdEquipmentStateList(sdEquipmentState);
-        if(stateList == null || stateList.size() == 0){
-           return AjaxResult.error("未配置设备状态");
-        }
-        sdEquipmentState = stateList.get(0);
+//        //查询设备状态
+//        SdEquipmentState sdEquipmentState = new SdEquipmentState();
+//        sdEquipmentState.setStateTypeId(sdDevices.getEqType());
+//        sdEquipmentState.setStateType(runState);
+//        sdEquipmentState.setDeviceState(state);
+//        List<SdEquipmentState> stateList = equipmentStateService.selectSdEquipmentStateList(sdEquipmentState);
+//        if(stateList == null || stateList.size() == 0){
+//           return AjaxResult.error("未配置设备状态");
+//        }
+//        sdEquipmentState = stateList.get(0);
 
         //查询设备点位
         SdDevicePoint devicePoint = new SdDevicePoint();
@@ -85,18 +79,40 @@ public class McaServiceImpl implements McaService {
             return AjaxResult.error("未配置设备点位");
         }
         devicePoint = devicePointList.get(0);
-        //查询对应的设备控制状态
-        SdDevicePointState sdDevicePointState = new SdDevicePointState();
-        sdDevicePointState.setDevicePointId(devicePoint.getId());
-        sdDevicePointState.setDeviceStateId(sdEquipmentState.getId());
-        List<SdDevicePointState> pointStateList = devicePointStateService.selectSdDevicePointStateList(sdDevicePointState);
-        if(pointStateList == null || pointStateList.size() == 0){
-            return AjaxResult.error("未配置设备点位");
+
+        String pointConfig = devicePoint.getPointConfig();
+        JSONArray jsonArray = JSONArray.parseArray(pointConfig);
+        JSONObject jsonConfig = new JSONObject();
+        for(Object obj : jsonArray){
+           JSONObject jsonObject = (JSONObject) obj;
+           String stateConfig = jsonObject.getString("state");
+           if(state.equals(stateConfig)){
+               jsonConfig = jsonObject;
+               break;
+           }
         }
 
-        sdDevicePointState = pointStateList.get(0);
-        //下发状态
-        String controlState = sdDevicePointState.getControlState();
+//        //查询对应的设备控制状态
+//        SdDevicePointState sdDevicePointState = new SdDevicePointState();
+//        sdDevicePointState.setDevicePointId(devicePoint.getId());
+//        sdDevicePointState.setDeviceStateId(sdEquipmentState.getId());
+//        List<SdDevicePointState> pointStateList = devicePointStateService.selectSdDevicePointStateList(sdDevicePointState);
+//        if(pointStateList == null || pointStateList.size() == 0){
+//            return AjaxResult.error("未配置设备点位");
+//        }
+
+//        sdDevicePointState = pointStateList.get(0);
+//        //下发状态
+//        String controlState = sdDevicePointState.getControlState();
+        String controlState = jsonConfig.getString("pointValue");
+        if(controlState == null){
+            return AjaxResult.error("设备点位配置不完整");
+        }
+        //写入长度
+        String writeLength = jsonConfig.getString("bit");
+        if(writeLength == null){
+            return AjaxResult.error("设备点位配置不完整");
+        }
         //控制点位
         String address = devicePoint.getAddress();
         //功能码
@@ -109,29 +125,8 @@ public class McaServiceImpl implements McaService {
         }
 
         //发送指令
-      return mcaCmd.sendControlCommand(fEqId,functionCode,address,controlState);
+      return mcaCmd.sendControlCommand(fEqId,functionCode,address,writeLength,controlState);
     }
 
 
-    /**
-     * 缓存测控执行器设备信息
-     */
-    @Override
-    public void getDeviceList() {
-        SdDevices sdDevices = new SdDevices();
-        sdDevices.setEqType(DevicesTypeEnum.CE_KONG_ZHI_XING_QI.getCode());
-        List<String> typeList = new ArrayList<>();
-        //todo 测试暂时指定隧道
-        String tunnelId = TunnelEnum.JIN_JIA_LOU.getCode();
-        typeList.add(String.valueOf(DevicesTypeEnum.CE_KONG_ZHI_XING_QI.getCode()));
-        List<SdDevices> devicesList = sdDevicesService.selectDeviceList(tunnelId,typeList);
-        for(SdDevices device : devicesList){
-            String deviceId = device.getEqId();
-            Map map = new HashMap();
-            map.put("deviceId",deviceId);
-            map.put("ip",device.getIp());
-            map.put("port",device.getPort());
-            DeviceManager.deviceMap.put(deviceId,map);
-        }
-    }
 }

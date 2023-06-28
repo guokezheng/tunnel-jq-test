@@ -310,7 +310,7 @@
           </el-col>
           <el-col :span="21">
             <el-form-item label="设备ID" prop="eqId" v-if="submitMode == 1">
-              <el-input v-model="form.eqId" placeholder="请输入设备ID" />
+              <el-input v-model="form.eqId"   @input="handleInput" placeholder="请输入设备ID" />
             </el-form-item>
           </el-col>
           <el-col :span="1" style="margin: 5px" v-if="submitMode == 1">
@@ -1235,6 +1235,9 @@ export default {
       } else {
         this.showPlc = true;
       }
+    },
+    handleInput() {
+      this.form.eqId = this.form.eqId.replace(/[\u4e00-\u9fa5]/g, '');
     },
     // 新增弹窗 自动生成id
     automaticGenerationID(form) {

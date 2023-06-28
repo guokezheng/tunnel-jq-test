@@ -20,10 +20,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="dataStatus"    column="data_status"    />
         <result property="functionDescription"    column="function_description"    />
         <result property="isReserved"    column="is_reserved"    />
+        <result property="pointConfig" column="point_config"/>
     </resultMap>
 
     <sql id="selectSdDevicePointVo">
-        select id, eq_id, eq_type, item_id, address, address_index, function_code,data_length,function_name, data_type, signal_name, state_id, data_status, function_description, is_reserved from sd_device_point
+        select id, eq_id, eq_type, item_id, address, address_index, function_code,data_length,function_name, data_type, signal_name, state_id, data_status, function_description, is_reserved,point_config from sd_device_point
     </sql>
 
     <select id="selectSdDevicePointList" parameterType="SdDevicePoint" resultMap="SdDevicePointResult">
@@ -95,16 +96,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach collection="list" item="item" separator="," open="(" close=")">
             #{item}
         </foreach>
+        <if test="codeList != null and codeList.size() > 0">
+            and p.function_code in
+            <foreach collection="codeList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
         group by d.f_eq_id ,p.function_code,p.data_length
     </select>
 
+    <select id="selectPointMapByFEqId" resultType="java.util.Map">
+        SELECT d.f_eq_id fEqId,p.eq_id,p.function_code functionCode,p.data_length dataLength,p.address
+        FROM sd_device_point p
+        left join sd_devices  d on p.eq_id = d.eq_id
+        where p.is_reserved = #{pointType}
+        and f_eq_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        <if test="codeList != null and codeList.size() > 0">
+            and p.function_code in
+            <foreach collection="codeList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </select>
+
+
     <select id="selectDevicePointByFEqId" resultMap="SdDevicePointResult">
         select p.id, p.eq_id, p.eq_type, p.item_id, p.address, p.address_index, p.function_code,p.data_length,
-        p.function_name, p.data_type, p.signal_name, p.state_id, p.data_status, p.function_description, p.is_reserved
+        p.function_name, p.data_type, p.signal_name, p.state_id, p.data_status, p.function_description, p.is_reserved,p.point_config
         from sd_device_point p
         left join sd_devices  d on p.eq_id = d.eq_id
         where p.is_reserved = #{pointType}
-        and p.function_code = #{functionCode}
+        <if test="functionCode !=null and functionCode != ''">
+            and p.function_code = #{functionCode}
+        </if>
         and f_eq_id in
         <foreach collection="list" item="item" separator="," open="(" close=")">
             #{item}
@@ -130,6 +158,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="dataStatus != null">data_status,</if>
             <if test="functionDescription != null">function_description,</if>
             <if test="isReserved != null">is_reserved,</if>
+            <if test="pointConfig != null">point_config,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqId != null">#{eqId},</if>
@@ -146,6 +175,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="dataStatus != null">#{dataStatus},</if>
             <if test="functionDescription != null">#{functionDescription},</if>
             <if test="isReserved != null">#{isReserved},</if>
+            <if test="pointConfig != null">#{pointConfig},</if>
          </trim>
     </insert>
 
@@ -166,6 +196,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="dataStatus != null">data_status = #{dataStatus},</if>
             <if test="functionDescription != null">function_description = #{functionDescription},</if>
             <if test="isReserved != null">is_reserved = #{isReserved},</if>
+            <if test="pointConfig != null"> point_config = #{pointConfig},</if>
         </trim>
         where id = #{id}
     </update>

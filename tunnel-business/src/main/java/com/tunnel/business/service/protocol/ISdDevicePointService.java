@@ -41,10 +41,21 @@ public interface ISdDevicePointService
     /**
      * 根据父设备ID、点位类型筛选最小点位、最大点位
      * @param list 父设备ID列表
+     * @param codeList 功能码列表
      * @param pointType 点位类型
      * @return
      */
-    List<Map> selectDevicePointByGroup(List<String> list,String pointType);
+    List<Map> selectDevicePointByGroup(List<String> list,List<String> codeList,String pointType);
+
+
+    /**
+     * 根据父设备ID、点位类型查询点位信息
+     * @param list 父设备ID列表
+     * @param codeList 功能码列表
+     * @param pointType 点位类型
+     * @return
+     */
+    List<Map> selectPointMapByFEqId(List<String> list,List<String> codeList,String pointType);
 
 
     /**

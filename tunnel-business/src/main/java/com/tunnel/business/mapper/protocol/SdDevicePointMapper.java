@@ -43,10 +43,22 @@ public interface SdDevicePointMapper
     /**
      * 根据父设备ID、点位类型筛选最小点位、最大点位
      * @param list 父设备ID列表
+     * @param codeList 功能码列表
      * @param pointType 点位类型
      * @return
      */
-    List<Map> selectDevicePointByGroup(@Param("list") List<String> list, @Param("pointType") String pointType);
+    List<Map> selectDevicePointByGroup(@Param("list") List<String> list,@Param("codeList") List<String> codeList,@Param("pointType") String pointType);
+
+
+    /**
+     * 根据父设备ID、点位类型查询点位信息
+     * @param list 父设备ID列表
+     * @param codeList 功能码列表
+     * @param pointType 点位类型
+     * @return
+     */
+    List<Map> selectPointMapByFEqId(@Param("list") List<String> list,@Param("codeList") List<String> codeList, @Param("pointType") String pointType);
+
 
 
     /**

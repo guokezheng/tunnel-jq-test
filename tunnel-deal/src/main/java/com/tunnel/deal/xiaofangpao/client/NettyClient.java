@@ -1,6 +1,6 @@
 package com.tunnel.deal.xiaofangpao.client;
 
-import com.tunnel.deal.mca.util.ByteBufUtil;
+import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.xiaofangpao.msgEnum.SendMsgCodeEnum;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

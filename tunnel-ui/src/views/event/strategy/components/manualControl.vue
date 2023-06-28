@@ -12,6 +12,7 @@
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
               style="width: 100%"
+              :maxlength="50"
               v-model="strategyForm.strategyName"
               placeholder="请输入策略名称"
             />
@@ -75,6 +76,7 @@
           <el-col :span="6" style="padding-left: 0">
             <el-form-item prop="disposalName">
               <el-input
+                :maxlength="50"
                 v-model="items.disposalName"
                 placeholder="处置名称"
                 style="width: 100%"

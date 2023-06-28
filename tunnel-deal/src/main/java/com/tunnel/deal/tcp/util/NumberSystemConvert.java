@@ -1,4 +1,4 @@
-package com.tunnel.deal.mca.util;
+package com.tunnel.deal.tcp.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

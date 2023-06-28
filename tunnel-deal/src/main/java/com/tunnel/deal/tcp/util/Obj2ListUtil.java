@@ -1,4 +1,4 @@
-package com.tunnel.deal.mca.util;
+package com.tunnel.deal.tcp.util;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.tunnel.deal.mca.config;
+package com.tunnel.deal.tcp.client.config;
 
 /**
  * describe: 通道channel缓存key管理

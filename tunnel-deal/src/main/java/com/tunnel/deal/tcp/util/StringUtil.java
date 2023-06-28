@@ -1,4 +1,4 @@
-package com.tunnel.deal.mca.util;
+package com.tunnel.deal.tcp.util;
 
 /**
  * describe: 字符串特殊处理类

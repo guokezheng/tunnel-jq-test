@@ -1,4 +1,4 @@
-package com.tunnel.deal.mca.config;
+package com.tunnel.deal.tcp.client.config;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

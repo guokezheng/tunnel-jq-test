@@ -1,7 +1,7 @@
-package com.tunnel.deal.mca.config;
+package com.tunnel.deal.tcp.client.config;
 
-import com.tunnel.deal.mca.netty.MCASocketClient;
-import com.tunnel.deal.mca.service.McaService;
+import com.tunnel.deal.mca.task.McaTask;
+import com.tunnel.deal.tcp.client.netty.MCASocketClient;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class ClientApplicationRunner implements ApplicationRunner {
 
     @Autowired
-    private McaService mcaService;
+    private McaTask mcaTask;
 
 
 
@@ -27,17 +27,9 @@ public class ClientApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-//        Map map = new HashMap<>();
-//        map.put("ip","192.168.1.131");
-//        map.put("port","502");
-//        DeviceManager.deviceMap.put("131",map);
-//        map.put("ip","192.168.1.127");
-//        map.put("port","502");
-//        DeviceManager.deviceMap.put("127",map);
 
-        //项目启动时缓存测控执行器设备信息,待优化 todo
-        mcaService.getDeviceList();
-        //缓存测控执行器点位信息 todo
+        //项目启动时缓存设备信息
+        addDeviceInfoCache();
 
         ThreadPool.executor.execute(() -> {
             try {
@@ -47,5 +39,11 @@ public class ClientApplicationRunner implements ApplicationRunner {
                 e.printStackTrace();
             }
         });
+    }
+
+
+    public void addDeviceInfoCache(){
+        //缓存测控执行器设备信息
+        mcaTask.macInfoCache();
     }
 }

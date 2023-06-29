@@ -133,10 +133,19 @@ public class SdAppDevicesController extends BaseController
 
         return new TableDataInfo(null,0);
 
+    }
+
+
+    /**
+     * app端  查询控制执行器关联设备列表
+     * @return
+     */
+    @GetMapping("/app/getMcaList")
+    public Result getMcaList(){
 
 
 
-
+        return Result.success(devicesService.getMcaList());
     }
 
 }

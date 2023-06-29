@@ -1322,4 +1322,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_device_type_item
         where device_type_id = #{fireMonitorType}
     </select>
+
+
+    <select id="getMcaList" resultType="map">
+        SELECT
+            B.eq_tunnel_id as tuunel_id,
+            C.tunnel_name as tuunel_name,
+            B.eq_id as device_id,
+            -- B.eq_type as eq_type,
+            B.eq_name as device_name,
+            A.eq_id as f_devId,
+            A.mac as mac,
+            B.protocol_id as protocolId
+        FROM
+            sd_devices A
+                LEFT JOIN sd_devices B ON A.eq_id = B.f_eq_id
+                LEFT JOIN sd_tunnels C ON B.eq_tunnel_id = C.tunnel_id
+        WHERE
+            A.eq_type = 47
+    </select>
+
+    <select id="getMacItem" resultType="map">
+        SELECT
+            B.item_id as type_item,
+            D.item_name,
+            D.unit,
+            B.function_json as equipment_state,
+            C.`data` as state,
+            A.is_control as control
+        FROM
+            sd_device_point B
+                LEFT JOIN sd_equipment_type A ON A.type_id = B.eq_type
+                LEFT JOIN sd_device_data C ON B.eq_id = C.device_id  and B.item_id = C.item_id
+                left join sd_device_type_item D on B.item_id = D.id
+                AND B.item_id = C.item_id
+        WHERE
+            B.eq_id = #{devId} and B.is_reserved = 1
+    </select>
 </mapper>

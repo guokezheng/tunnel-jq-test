@@ -125,8 +125,15 @@ public class RadarTask {
      * 遍历redis传事故位置到前端显示
      * @throws InterruptedException
      */
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 5000)
     public void radarEvent() throws InterruptedException {
+//        num3 =num3+1;
+//        SdEvent sdEventd = new SdEvent();
+//        sdEventd.setId(3260L);
+//        List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEventd);
+//        sdEventList.stream().forEach(sd ->{
+//            redisCache.setCacheObject(getCacheEventKey(sd.getId().toString()),sd);
+//        });
         List<String> scanKey = redisCache.getScanKey(Constants.EVENT_KEY + "*");
         List<SdEvent> sdEventLists = new ArrayList<>();
         for (String key :scanKey){

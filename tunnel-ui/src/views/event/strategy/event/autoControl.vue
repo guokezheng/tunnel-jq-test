@@ -189,7 +189,8 @@
         </el-row>
       </el-row>
       <div v-show="strategyForm.triggers.warningType == 1">
-        <el-row class="planBox">
+        <el-row :gutter="20" style="clear:both;">
+          <el-col :span="24">
             <el-form-item
               v-for="(dain, index) in strategyForm.autoControl"
               :key="index"
@@ -211,7 +212,7 @@
                   />
                 </el-select>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="6">
                 <el-select
                   v-model="dain.equipments"
                   multiple
@@ -230,7 +231,7 @@
                 </el-select>
               </el-col>
               <el-col
-                :span="6"
+                :span="4"
                 v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
               >
                 <el-select v-model="dain.state" placeholder="请选择设备执行操作" style="width:100%;">
@@ -244,8 +245,28 @@
                 </el-select>
               </el-col>
               <el-col
-                :span="6"
-                v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
+                :span="4"
+                v-show="dain.equipmentTypeId == 7 ||  dain.equipmentTypeId == 9"
+              >
+<!--                <el-select-->
+<!--                  :style="{'width':  dain.state == 1 ? '45%' :'100%' }"-->
+<!--                  v-model="items.state"-->
+<!--                  placeholder="请选择执行操作"-->
+<!--                  @change="selectStateVal(index)"-->
+<!--                >-->
+<!--                  <el-option-->
+<!--                    v-for="item in dain.eqStateList"-->
+<!--                    :key="item.deviceState + 1"-->
+<!--                    :label="item.stateName"-->
+<!--                    :value="item.deviceState"-->
+<!--                  >-->
+<!--                  </el-option>-->
+<!--                </el-select>-->
+                <el-input-number v-if="dain.state == 1" v-model="dain.stateNum"   :min="dain.limitMin" :max="100" ></el-input-number>
+              </el-col>
+              <el-col
+                :span="4"
+                v-if="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
               >
                 <el-cascader
                   :props="checkStrictly"
@@ -270,6 +291,7 @@
                   ></el-button>
               </el-col>
             </el-form-item>
+          </el-col>
         </el-row>
       </div>
       <el-form-item class="dialog-footer">
@@ -369,7 +391,7 @@ export default {
       eventTypeList: [], //事件类型
       showCronBox: false,
       strategyForm: {
-        strategyGroup: 2,
+        strategyGroup: 1,
         strategyType: "2", //策略类型
         tunnelId: null, //隧道id
         strategyName: null, //策略名称
@@ -1020,5 +1042,21 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  height: 36px;
+  .delete,.add{
+    width:16px;
+    height: 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border:none;
+    background-color: transparent;
+  }
+  .delete{
+    background-image: url(../../../../assets/icons/delete.png);
+  }
+  .add{
+    background-image: url(../../../../assets/icons/add.png);
+  }
 }
 </style>

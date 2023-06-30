@@ -52,6 +52,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.tunnel.business.datacenter.util.CronUtil.CronConvertDate;
+import static com.tunnel.business.datacenter.util.CronUtil.CronConvertDateTime;
+
 /**
  * 控制策略Service业务层处理
  *
@@ -128,11 +131,17 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public SdStrategy selectSdStrategyById(Long id) {
 
         SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(id);
-        if(StringUtils.isNotBlank(sdStrategy.getSchedulerTime())){
-            sdStrategy.setExecDate(CronUtil.CronConvertDate(sdStrategy.getSchedulerTime()));
-        }
-        if(StringUtils.isNotBlank(sdStrategy.getSchedulerTime())) {
-            sdStrategy.setExecTime(CronUtil.CronConvertDateTime(sdStrategy.getSchedulerTime()));
+
+        //自动触发不需要设置 定时策略-执行时间 定时策略-执行日期
+        if(!"2".equals(sdStrategy.getStrategyType())){
+            //定时策略-执行时间
+            if(StringUtils.isNotBlank(sdStrategy.getSchedulerTime())){
+                sdStrategy.setExecDate(CronUtil.CronConvertDate(sdStrategy.getSchedulerTime()));
+            }
+            //定时策略-执行日期
+            if(StringUtils.isNotBlank(sdStrategy.getSchedulerTime())) {
+                sdStrategy.setExecTime(CronUtil.CronConvertDateTime(sdStrategy.getSchedulerTime()));
+            }
         }
 
         return sdStrategy;
@@ -144,7 +153,21 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      */
     @Override
     public List<Map> getTimeSharingInfo(String tunnelId) {
-        return sdStrategyMapper.getTimeSharingInfo(tunnelId);
+        List<Map> timeSharingMap = sdStrategyMapper.getTimeSharingInfo(tunnelId);
+        //便利list
+        timeSharingMap.forEach(item ->{
+            //取到corn时间代码
+            String scheduler_time = item.get("scheduler_time").toString();
+            if(StringUtils.isNotEmpty(scheduler_time)){
+                //解析代码 获得 分时秒
+                String minuteStr = CronConvertDateTime(scheduler_time);
+                //解析代码 获得 年月日
+                String skyStr = CronConvertDate(scheduler_time);
+                item.put("minuteStr",minuteStr);
+                item.put("sky",skyStr);
+            }
+        });
+        return timeSharingMap;
     }
 
     /**

@@ -47,7 +47,8 @@ export const singleCat = {
       let centreHigh = 57/580
       //下道
       let nextHigh = 73/580
-      if(eventIndex.roadDir == 1){//上行
+      console.log(eventIndex)
+      if(eventIndex.roadDir == 2){//上行
         if(leftCount==true){ //通过距离计算桩号
           //计算最终经度 右边距
           eventIndex.right =
@@ -73,7 +74,7 @@ export const singleCat = {
             break;
           default:
         }
-      }else if(eventIndex.roadDir==2){//下行
+      }else if(eventIndex.roadDir==1){//下行
         if(leftCount==true){
           //计算最终经度 左边距
           eventIndex.left =
@@ -165,7 +166,6 @@ export const singleCat = {
   watch: {
     //车祸图片显示
     sdSvgEventList(event){
-      // debugger
       //判断隧道是否和传来的相同  相同显示不同则return
       let tunnelItems = null;
       if(!!this.tunnelItem){
@@ -178,7 +178,7 @@ export const singleCat = {
       for ( let i = 0; i < event.length; i++){
         //计算车祸图片左右边距
         this.distanceCalculate(event[i].tunnelId,event[i].stakeNum)
-        this.trafficList.unshift(event[i]);
+        // this.trafficList.unshift(event[i]);
         if(tunnelItems.tunnelId!=event[0].tunnelId){
           continue;
         }

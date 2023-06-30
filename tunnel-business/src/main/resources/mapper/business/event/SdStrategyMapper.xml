@@ -245,8 +245,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getTimeSharingInfo"  parameterType="String" resultType="hashmap" >
-        SELECT id as strategy_id,strategy_name,strategy_state,concat(timer_open,'-',timer_close) as time FROM sd_strategy
-            where strategy_type = '3' and strategy_group = '1' and tunnel_id = #{tunnelId}
+        SELECT id as strategy_id,strategy_name,strategy_state,concat(timer_open,'-',timer_close) as time,scheduler_time FROM sd_strategy
+            where strategy_type = '1' and strategy_group = '1' and tunnel_id = #{tunnelId}
     </select>
 
     <select id="getSafetyHandle" parameterType="sdStrategy" resultType="sdStrategy">

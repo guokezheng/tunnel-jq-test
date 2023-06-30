@@ -288,7 +288,7 @@ public class SdEventServiceImpl implements ISdEventService {
         List<SdTrafficImage> videoList = list.stream().filter(item -> "1".equals(item.getImgType())).collect(Collectors.toList());
         //图片
         sdEvent.setEventImgUrl(StringUtils.join(objects,","));
-        sdEvent.setVideoUrl(videoList.get(0).getImgUrl().split(";")[0]);
+        sdEvent.setVideoUrl(videoList.size()>0 ? videoList.get(0).getImgUrl().split(";")[0]:"");
         //推送至物联
         sendGsy(sdEvent);
         return count;

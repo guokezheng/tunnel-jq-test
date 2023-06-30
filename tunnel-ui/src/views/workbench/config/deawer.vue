@@ -8,7 +8,7 @@
       <!-- 定时控制模块 -->
       <div class="brightnessControl" @click="isDrawerB()">
         <i :class="[drawerB ? 'el-icon-caret-right' : 'el-icon-caret-left']"></i
-        >分时控制模块
+        >定时控制模块
       </div>
       <div class="triggerControl" @click="isDrawerC()">
         <i
@@ -245,7 +245,7 @@
       </div>
     </el-drawer>
     <el-drawer
-      title="分时控制模块"
+      title="定时控制模块"
       :visible.sync="drawerB"
       :modal="false"
       :append-to-body="true"
@@ -268,35 +268,42 @@
         </div>
         <div class="Time">
           <div class="timeStart">
-            <span class="setTime">起始时间：</span>
-            <el-time-picker
+            <span class="setTime">执行日期：</span>
+<!--            <el-time-picker-->
+<!--              v-model="item.arr[0]"-->
+<!--              size="mini"-->
+<!--              :clearable="false"-->
+<!--              value-format="yyyy-MM-dd"-->
+<!--            >-->
+<!--            </el-time-picker>-->
+            <el-date-picker
               v-model="item.arr[0]"
+              type="date"
               size="mini"
-              :clearable="false"
-              value-format="HH:mm:ss"
+              value-format="yyyy-MM-dd"
+              placeholder="请选择日期"
             >
-            </el-time-picker>
+            </el-date-picker>
           </div>
           <div class="timeEnd">
-            <span class="setTime">结束时间：</span>
+            <span class="setTime">执行时间：</span>
             <el-time-picker
               v-model="item.arr[1]"
               size="mini"
               :clearable="false"
               value-format="HH:mm:ss"
-              @change="changeEndTime(item.arr[0], item.arr[1], index)"
             >
             </el-time-picker>
           </div>
-          <el-button
-            type="primary"
-            size="mini"
-            class="handleLightClass"
-            @click="timingStrategy(item)"
-            v-hasPermi="['workbench:dialog:save']"
-            :disabled="timingStrategyDisabled"
-            >确定
-          </el-button>
+<!--          <el-button-->
+<!--            type="primary"-->
+<!--            size="mini"-->
+<!--            class="handleLightClass"-->
+<!--            @click="timingStrategy(item)"-->
+<!--            v-hasPermi="['workbench:dialog:save']"-->
+<!--            :disabled="timingStrategyDisabled"-->
+<!--            >确定-->
+<!--          </el-button>-->
         </div>
       </div>
     </el-drawer>
@@ -575,10 +582,14 @@ export default {
       this.drawerA = false;
       this.drawerCVisible = false;
       this.timingStrategyDisabled = false;
+      debugger
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
-            item.arr = item.time.split("-");
+            let itemData = []
+            itemData.push(item.sky)
+            itemData.push(item.minuteStr)
+            item.arr = itemData
           }
           this.timStrategyList = res.data;
         });

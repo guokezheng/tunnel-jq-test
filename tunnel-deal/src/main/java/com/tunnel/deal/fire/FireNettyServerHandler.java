@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -130,10 +131,11 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             }
 
             Long systemId = system.getId();
+            String address = data.substring(0, data.indexOf("号"));
             data = data.substring(data.indexOf("机") + 1);
             String loop = data.substring(0, data.indexOf("回"));
             data = data.substring(data.indexOf("路") + 1);
-            String address = data.substring(0, data.indexOf("号"));
+
             data = data.substring(data.indexOf("址") + 2);
             String sourceDevice = data.substring(0, data.indexOf(" "));
             //剩层号后的内容
@@ -215,9 +217,20 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
             }
             sdEvent.setEventSource("1");
-            sdEvent.setEventState("0");
+            //要改
+            sdEvent.setEventState("3");
+            //事件描述
+            sdEvent.setEventDescription(alarmType);
             sdEvent.setStakeNum(sdDevices.getPile());
-            sdEvent.setStartTime(now.toString());
+            if(sdEvent.getStakeNum().contains("ZK")){
+                sdEvent.setDirection("2");
+            }else{
+                sdEvent.setDirection("1");
+            }
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = formatter.format(new Date());
+            sdEvent.setEventTime(dateZh(time));
+            sdEvent.setCreateTime(dateZh(time));
             sdEventMapper.insertSdEvent(sdEvent);
         } else {
             log.error("当前报文格式异常，请检查设备！");
@@ -403,5 +416,19 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
     public <T> String writeAsString(T t) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(t);
+    }
+    public static Date dateZh(String timeData){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = null;
+        try {
+            if(timeData != null && !"".equals(timeData)){
+                time = sdf.parse(timeData);
+                return time;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
     }
 }

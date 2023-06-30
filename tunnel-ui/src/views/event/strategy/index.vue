@@ -280,201 +280,201 @@
         />
         <!--        结束-->
       </el-tab-pane>
-<!--      <el-tab-pane :label="strategyTypeGroup[1]?strategyTypeGroup[1].dictLabel:''" name="two">
-        &lt;!&ndash; 全局搜索 &ndash;&gt;
-        <el-row :gutter="20" class="tabTopFormRow">
-          <el-col :span="6">
-            <el-button
-              size="small"
-              @click="openInsertStrategy('event')"
-              v-hasPermi="['system:strategy:add']"
-            >新增
-            </el-button
-            >
-            <el-button
-              size="small"
-              @click="handleExport('2')"
-            >导出
-            </el-button
-            >
-            <el-button size="small" @click="resetQuery"
-            >刷新
-            </el-button
-            >
-          </el-col>
-          <el-col :span="6" :offset="12">
-            <div class="grid-content bg-purple" ref="main1">
-              <el-input
-                v-model="queryParams.strategyName"
-                placeholder="请输入策略名称，回车搜索"
-                clearable
-                size="small"
-                @keyup.enter.native="handleQuery"
-              >
-                <el-button
-                  slot="append"
-                  class="searchTable"
-                  @click="boxShow1 = !boxShow1"
-                ></el-button>
-              </el-input>
-            </div>
-          </el-col>
-        </el-row>
-        <div class="searchBoxTab" v-show="boxShow1">
-          <el-form
-            ref="queryForm"
-            :inline="true"
-            :model="queryParams"
-            label-width="75px"
-          >
-            <el-form-item label="隧道名称" prop="tunnelId">
-              <el-select
-                v-model="queryParams.tunnelId"
-                placeholder="请选择隧道"
-                clearable
-                size="small"
-              >
-                <el-option
-                  v-for="item in tunnelData"
-                  :key="item.tunnelId"
-                  :label="item.tunnelName"
-                  :value="item.tunnelId"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="策略类型" prop="strategyType">
-              <el-select
-                v-model="queryParams.strategyType"
-                placeholder="请选择策略类型"
-                clearable
-                size="small"
-              >
-                <el-option
-                  v-for="dict in strategyTypeEvent"
-                  :key="dict.dictValue"
-                  :label="dict.dictLabel"
-                  :value="dict.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item class="bottomBox">
-              <el-button size="small" type="primary" @click="handleQuery"
-              >搜索
-              </el-button
-              >
-              <el-button size="small" @click="resetQuery" type="primary" plain
-              >重置
-              </el-button
-              >
-            </el-form-item>
-          </el-form>
-        </div>
-        <el-table
-          v-loading="loading"
-          :data="strategyList"
-          @selection-change="handleSelectionChange"
-          :header-cell-style="{ 'text-align': 'center' }"
-          height="62vh"
-          class="allTable"
-          :row-key="getRowKey"
-          ref="tableFile2"
-          :key="Math.random()"
-        >
-          <el-table-column type="selection" width="55" align="center" reserve-selection/>
-          <el-table-column
-            type="index"
-            width="70"
-            align="center"
-            label="序号">
-          </el-table-column>
-          <el-table-column
-            label="隧道名称"
-            align="center"
-            prop="tunnels.tunnelName"
-          />
-          <el-table-column
-            label="事件类型"
-            align="center"
-            prop="eventType"
-            :formatter="eventTypeFormatEvent"
-          />
-          <el-table-column
-            label="策略名称"
-            align="center"
-            prop="strategyName"
-          />
-          <el-table-column
-            label="方向"
-            align="center"
-            prop="direction"
-            :formatter="directionFormat"
-          />
-          <el-table-column
-            label="策略类型"
-            align="center"
-            prop="strategyType"
-            :formatter="strategyTypeFormatEvent"
-          />
-          <el-table-column
-            label="策略信息"
-            align="left"
-            prop="slist"
-            :show-overflow-tooltip="true"
-          >
-            <template slot-scope="scope">
-              <div v-for="(item, index) in scope.row.slist" :key="index">
-                {{ item }}
+      <!--      <el-tab-pane :label="strategyTypeGroup[1]?strategyTypeGroup[1].dictLabel:''" name="two">
+              &lt;!&ndash; 全局搜索 &ndash;&gt;
+              <el-row :gutter="20" class="tabTopFormRow">
+                <el-col :span="6">
+                  <el-button
+                    size="small"
+                    @click="openInsertStrategy('event')"
+                    v-hasPermi="['system:strategy:add']"
+                  >新增
+                  </el-button
+                  >
+                  <el-button
+                    size="small"
+                    @click="handleExport('2')"
+                  >导出
+                  </el-button
+                  >
+                  <el-button size="small" @click="resetQuery"
+                  >刷新
+                  </el-button
+                  >
+                </el-col>
+                <el-col :span="6" :offset="12">
+                  <div class="grid-content bg-purple" ref="main1">
+                    <el-input
+                      v-model="queryParams.strategyName"
+                      placeholder="请输入策略名称，回车搜索"
+                      clearable
+                      size="small"
+                      @keyup.enter.native="handleQuery"
+                    >
+                      <el-button
+                        slot="append"
+                        class="searchTable"
+                        @click="boxShow1 = !boxShow1"
+                      ></el-button>
+                    </el-input>
+                  </div>
+                </el-col>
+              </el-row>
+              <div class="searchBoxTab" v-show="boxShow1">
+                <el-form
+                  ref="queryForm"
+                  :inline="true"
+                  :model="queryParams"
+                  label-width="75px"
+                >
+                  <el-form-item label="隧道名称" prop="tunnelId">
+                    <el-select
+                      v-model="queryParams.tunnelId"
+                      placeholder="请选择隧道"
+                      clearable
+                      size="small"
+                    >
+                      <el-option
+                        v-for="item in tunnelData"
+                        :key="item.tunnelId"
+                        :label="item.tunnelName"
+                        :value="item.tunnelId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="策略类型" prop="strategyType">
+                    <el-select
+                      v-model="queryParams.strategyType"
+                      placeholder="请选择策略类型"
+                      clearable
+                      size="small"
+                    >
+                      <el-option
+                        v-for="dict in strategyTypeEvent"
+                        :key="dict.dictValue"
+                        :label="dict.dictLabel"
+                        :value="dict.dictValue"
+                      />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item class="bottomBox">
+                    <el-button size="small" type="primary" @click="handleQuery"
+                    >搜索
+                    </el-button
+                    >
+                    <el-button size="small" @click="resetQuery" type="primary" plain
+                    >重置
+                    </el-button
+                    >
+                  </el-form-item>
+                </el-form>
               </div>
-            </template>
-          </el-table-column>
+              <el-table
+                v-loading="loading"
+                :data="strategyList"
+                @selection-change="handleSelectionChange"
+                :header-cell-style="{ 'text-align': 'center' }"
+                height="62vh"
+                class="allTable"
+                :row-key="getRowKey"
+                ref="tableFile2"
+                :key="Math.random()"
+              >
+                <el-table-column type="selection" width="55" align="center" reserve-selection/>
+                <el-table-column
+                  type="index"
+                  width="70"
+                  align="center"
+                  label="序号">
+                </el-table-column>
+                <el-table-column
+                  label="隧道名称"
+                  align="center"
+                  prop="tunnels.tunnelName"
+                />
+                <el-table-column
+                  label="事件类型"
+                  align="center"
+                  prop="eventType"
+                  :formatter="eventTypeFormatEvent"
+                />
+                <el-table-column
+                  label="策略名称"
+                  align="center"
+                  prop="strategyName"
+                />
+                <el-table-column
+                  label="方向"
+                  align="center"
+                  prop="direction"
+                  :formatter="directionFormat"
+                />
+                <el-table-column
+                  label="策略类型"
+                  align="center"
+                  prop="strategyType"
+                  :formatter="strategyTypeFormatEvent"
+                />
+                <el-table-column
+                  label="策略信息"
+                  align="left"
+                  prop="slist"
+                  :show-overflow-tooltip="true"
+                >
+                  <template slot-scope="scope">
+                    <div v-for="(item, index) in scope.row.slist" :key="index">
+                      {{ item }}
+                    </div>
+                  </template>
+                </el-table-column>
 
-          <el-table-column label="状态" align="center" prop="schedulerTime">
-            <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.strategyState"
-                active-color="#39ADFF"
-                inactive-color="#ccc"
-                active-value="0"
-                inactive-value="1"
-                @change="changeStrategyState(scope.row)"
-              >
-              </el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            align="center"
-            class-name="small-padding fixed-width"
-          >
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                class="tableBlueButtton"
-                @click="handleUpdate(scope.row)"
-                v-hasPermi="['system:strategy:edit']"
-              >编辑
-              </el-button
-              >
-              <el-button
-                size="mini"
-                class="tableDelButtton"
-                @click="handleDelete(scope.row)"
-                v-hasPermi="['system:strategy:remove']"
-              >删除
-              </el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+                <el-table-column label="状态" align="center" prop="schedulerTime">
+                  <template slot-scope="scope">
+                    <el-switch
+                      v-model="scope.row.strategyState"
+                      active-color="#39ADFF"
+                      inactive-color="#ccc"
+                      active-value="0"
+                      inactive-value="1"
+                      @change="changeStrategyState(scope.row)"
+                    >
+                    </el-switch>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="操作"
+                  align="center"
+                  class-name="small-padding fixed-width"
+                >
+                  <template slot-scope="scope">
+                    <el-button
+                      size="mini"
+                      class="tableBlueButtton"
+                      @click="handleUpdate(scope.row)"
+                      v-hasPermi="['system:strategy:edit']"
+                    >编辑
+                    </el-button
+                    >
+                    <el-button
+                      size="mini"
+                      class="tableDelButtton"
+                      @click="handleDelete(scope.row)"
+                      v-hasPermi="['system:strategy:remove']"
+                    >删除
+                    </el-button
+                    >
+                  </template>
+                </el-table-column>
+              </el-table>
 
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-        />
-      </el-tab-pane>-->
+              <pagination
+                v-show="total > 0"
+                :total="total"
+                :page.sync="queryParams.pageNum"
+                :limit.sync="queryParams.pageSize"
+                @pagination="getList"
+              />
+            </el-tab-pane>-->
     </el-tabs>
 
     <!-- 选择策略类型弹窗 -->
@@ -506,6 +506,13 @@
           </el-radio-group>
         </el-form-item>
       </el-form>
+      <!--自动触发      -->
+      <auto-control-event
+        v-show="strategyForm.strategyType == '2'"
+        ref="autoControl"
+        @dialogVisibleClose="closeDialog"
+        @refreshList = "getList"
+      ></auto-control-event>
       <!-- 手动控制 -->
       <manual-control
         v-show="strategyForm.strategyType == '0'"
@@ -529,43 +536,43 @@
     </el-dialog>
     <!-- end -->
     <!--    预警事件弹窗-->
-<!--    <el-dialog
-      :title="title"
-      :visible.sync="dialogVisibleEvent"
-      :before-close="handleCloseEvent"
-      :append-to-body="true"
-      width="75%"
-      class="strategyDialog"
-    >
-      <div class="dialogCloseButton"></div>
-      <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
-        <el-form-item label="策略类型" prop="strategyType">
-          <el-radio-group v-model="strategyForm.strategyType">
-            <el-radio
-              border
-              v-for="dict in strategyTypeEvent"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-              @change.native="strategyTypeEventClose()"
-            >{{ dict.dictLabel }}
-            </el-radio
-            >
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      &lt;!&ndash; 手动控制 &ndash;&gt;
-      <manual-control-event
-        v-show="strategyForm.strategyType == '0'"
-        ref="manualControlEvent"
-        @dialogVisibleCloseEvent="closeDialogEvent"
-      ></manual-control-event>
-      &lt;!&ndash; 自动触发 &ndash;&gt;
-      <autoControl-event
-        v-show="strategyForm.strategyType == '2'"
-        @dialogVisibleCloseEvent="closeDialogEvent"
-        ref="autoControlEvent"
-      ></autoControl-event>
-    </el-dialog>-->
+    <!--    <el-dialog
+          :title="title"
+          :visible.sync="dialogVisibleEvent"
+          :before-close="handleCloseEvent"
+          :append-to-body="true"
+          width="75%"
+          class="strategyDialog"
+        >
+          <div class="dialogCloseButton"></div>
+          <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
+            <el-form-item label="策略类型" prop="strategyType">
+              <el-radio-group v-model="strategyForm.strategyType">
+                <el-radio
+                  border
+                  v-for="dict in strategyTypeEvent"
+                  :key="dict.dictValue"
+                  :label="dict.dictValue"
+                  @change.native="strategyTypeEventClose()"
+                >{{ dict.dictLabel }}
+                </el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+          &lt;!&ndash; 手动控制 &ndash;&gt;
+          <manual-control-event
+            v-show="strategyForm.strategyType == '0'"
+            ref="manualControlEvent"
+            @dialogVisibleCloseEvent="closeDialogEvent"
+          ></manual-control-event>
+          &lt;!&ndash; 自动触发 &ndash;&gt;
+          <autoControl-event
+            v-show="strategyForm.strategyType == '2'"
+            @dialogVisibleCloseEvent="closeDialogEvent"
+            ref="autoControlEvent"
+          ></autoControl-event>
+        </el-dialog>-->
   </div>
 </template>
 <script src="../../../cronStrue/dist/cronstrue.min.js" type="text/javascript"></script>
@@ -610,7 +617,7 @@ import timeControl from "./components/timeControl"; //分时控制
 import cron from "@/components/cron/cron.vue";
 
 import manualControlEvent from "./event/manualControl"; //手动控制
-import autoControlEvent from "./event/autoControl";
+import autoControlEvent from "./event/autoControl.vue";
 
 export default {
   components: {
@@ -843,7 +850,7 @@ export default {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.$refs.tableFile1.clearSelection();
-    //  this.$refs.tableFile2.clearSelection();
+      //  this.$refs.tableFile2.clearSelection();
       this.getList();
     },
     closeDialogEvent() {

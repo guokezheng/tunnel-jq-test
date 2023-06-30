@@ -2680,8 +2680,7 @@ export default {
     ...mapState({
       radarDataList: (state) => state.websocket.radarDataList,
       sdEventList: (state) => state.websocket.sdEventList,
-
-      // sdSvgEventList: (state) => state.websocket.sdSvgEventList,
+      sdSvgEventList: (state) => state.websocket.sdSvgEventList,
     }),
     sideTheme: {
       get() {

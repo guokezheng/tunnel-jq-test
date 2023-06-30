@@ -1,7 +1,7 @@
-package com.tunnel.deal.mca.netty;
+package com.tunnel.deal.tcp.client.netty;
 
-import com.tunnel.deal.mca.config.ChannelKey;
-import com.tunnel.deal.mca.config.ReconnectManager;
+import com.tunnel.deal.tcp.client.config.ChannelKey;
+import com.tunnel.deal.tcp.client.config.ReconnectManager;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;

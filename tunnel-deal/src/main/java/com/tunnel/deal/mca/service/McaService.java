@@ -18,9 +18,5 @@ public interface McaService {
     AjaxResult control(String deviceId, String state);
 
 
-    /**
-     * 缓存测控执行器设备信息
-     */
-    void getDeviceList();
 
 }

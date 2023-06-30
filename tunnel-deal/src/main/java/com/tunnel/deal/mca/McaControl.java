@@ -1,5 +1,6 @@
 package com.tunnel.deal.mca;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
@@ -9,7 +10,9 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.strategy.service.CommonControlService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
+import com.tunnel.deal.mca.service.McaDataParse;
 import com.tunnel.deal.mca.service.McaService;
+import com.tunnel.deal.tcp.client.general.TcpClientGeneralBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +26,7 @@ import java.util.Optional;
  * @date 2023/4/4
  */
 @Component
-public class McaControl implements GeneralControlBean {
+public class McaControl implements GeneralControlBean, TcpClientGeneralBean {
 
     @Autowired
     private McaService mcaService;
@@ -37,6 +40,8 @@ public class McaControl implements GeneralControlBean {
     @Autowired
     private ISdOperationLogService sdOperationLogService;
 
+    @Autowired
+    private McaDataParse mcaDataParse;
 
     @Override
     public AjaxResult control(Map<String, Object> map, SdDevices sdDevices) {
@@ -103,5 +108,14 @@ public class McaControl implements GeneralControlBean {
     }
 
 
-
+    /**
+     * 解析读取的数据
+     * @param ip 网关设备IP
+     * @param deviceId 网关设备ID
+     * @param jsonObject 读取的数据
+     */
+    @Override
+    public void handleReadData(String ip, String deviceId, JSONObject jsonObject) {
+        mcaDataParse.readDataParse(ip,deviceId,jsonObject);
+    }
 }

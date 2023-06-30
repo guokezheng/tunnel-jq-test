@@ -1,4 +1,4 @@
-package com.tunnel.deal.mca.util;
+package com.tunnel.deal.tcp.util;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

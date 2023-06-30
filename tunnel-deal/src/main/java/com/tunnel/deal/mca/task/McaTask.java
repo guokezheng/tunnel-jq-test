@@ -1,10 +1,14 @@
 package com.tunnel.deal.mca.task;
 
 import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
-import com.tunnel.deal.mca.config.DeviceManager;
-import com.tunnel.deal.mca.netty.MCASocketClient;
-import com.tunnel.deal.mca.service.McaCmd;
+import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
+import com.tunnel.deal.tcp.client.config.DeviceManager;
+import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
+import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
+import com.tunnel.deal.tcp.client.netty.MCASocketClient;
+import com.tunnel.deal.tcp.modbus.ModbusCmd;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,17 +28,30 @@ public class McaTask {
     @Autowired
     private ISdDevicePointService devicePointService;
 
+    @Autowired
+    private TcpClientGeneralService tcpClientGeneralService;
+
 
     @Autowired
-    private McaCmd mcaCmd;
+    private ModbusCmd mcaCmd;
 
 
     /**
-     * 定时重新连接MCA
+     * 固定时间间隔更新测控执行器设备信息缓存,定时重新连接MCA
      */
     public void connect(){
+        macInfoCache();
         MCASocketClient.getInstance().deviceConnect();
     }
+
+    /**
+     * 测控执行器设备信息缓存
+     *
+     */
+    public void macInfoCache(){
+        tcpClientGeneralService.deviceInfoCache(DeviceProtocolCodeEnum.TUNSHAN_MCA_PROTOCOL_CODE.getCode(),DevicesTypeEnum.CE_KONG_ZHI_XING_QI.getCode());
+    }
+
 
 
     /**
@@ -42,7 +59,7 @@ public class McaTask {
      */
     public void getMcaDeviceData(){
         //拿到缓存设备数据-测控执行器
-      Map<String, Map> deviceMap = DeviceManager.deviceMap;
+        Map<String, Map> deviceMap = DeviceManager.deviceMap;
         //点位类型：只读点位
         Long pointType = DevicePointControlTypeEnum.only_read.getCode();
 
@@ -55,8 +72,27 @@ public class McaTask {
         if(fEqIdList.size() == 0){
             return;
         }
+
+        sendMultiplePointCmd(fEqIdList,pointType);
+
+        sendSinglePointCmd(fEqIdList,pointType);
+
+    }
+
+    /**
+     * 多个点位下发一条指令
+     * @param fEqIdList
+     * @param pointType
+     */
+    public void sendMultiplePointCmd(List<String> fEqIdList,Long pointType){
+        //功能码02的线圈状态多个点位同时查询，无法从返回数据中确定是哪些地址的数据，此方法只适用于03/04功能码发送指令
+
+        List<String> functionCodeList = new ArrayList<>();
+        functionCodeList.add(ModbusFunctionCode.CODE_THREE);
+        functionCodeList.add(ModbusFunctionCode.CODE_FOUR);
+
         //根据父设备ID、点位类型筛选最小点位、最大点位
-        List<Map> pointList = devicePointService.selectDevicePointByGroup(fEqIdList,String.valueOf(pointType));
+        List<Map> pointList = devicePointService.selectDevicePointByGroup(fEqIdList,functionCodeList,String.valueOf(pointType));
 
         for (Map map : pointList){
             //测控执行器ID
@@ -70,36 +106,59 @@ public class McaTask {
             //地址长度
             String dataLength = map.get("dataLength") == null ? "" : map.get("dataLength").toString();
             //计算读取指令的地址长度, 最大 + 地址长度 - 最小
-            //比如：最大30026，地址长度=2，最小=30024，实际读取指令长度= （30026 + 2 - 1） - （30024 - 1） = 4
+            //比如：最大0026，地址长度=2，最小=0024，实际读取指令长度= （0026 + 2 - 1） - （0024 - 1） = 4
             Integer cmdLength = Integer.valueOf(maxAddress) + Integer.valueOf(dataLength) - Integer.valueOf(minAddress);
 //            log.info("读取数据：设备ID="+fEqId+",功能码="+functionCode+",最小点位="+minAddress+",读取长度="+cmdLength);
+
+            sleep(2);
             mcaCmd.sendQueryCommand(fEqId,functionCode,minAddress,String.valueOf(cmdLength));
         }
+    }
 
-
-//        //所有子设备列表
-//        List<SdDevices> deviceList =  sdDevicesService.selectDevicesByFEqId(fEqIdList);
-//        //子设备ID列表
-//        List<String> deviceIdList = deviceList.stream().map(SdDevices::getEqId).collect(Collectors.toList());
-
+    /**
+     * 单个点位下发一条指令
+     * 功能码：0F、02
+     * @param fEqIdList
+     * @param pointType
+     */
+    public void sendSinglePointCmd(List<String> fEqIdList,Long pointType){
 //        //查询设备点位
-//        List<SdDevicePoint> devicePointList = devicePointService.selectDevicePointByList(deviceIdList,String.valueOf(pointType));
-//
-//        //子设备ID、父设备ID映射
-//        Map<String,String> idMap = deviceList.stream().collect(Collectors.toMap(SdDevices::getEqId,SdDevices::getFEqId));
+//        SdDevicePoint devicePoint = new SdDevicePoint();
+//        devicePoint.setIsReserved(pointType);
 
-//        //拼接指令
-//        for(SdDevicePoint devicePoint : devicePointList){
-//            //子设备ID
-//            String deviceId = devicePoint.getEqId();
-//            //父设备ID
-//            String fEqId = idMap.get(deviceId);
-//            String functionCode = devicePoint.getFunctionCode();
-//            String address = devicePoint.getAddress();
-//            String dataLength = devicePoint.getDataLength();
-//            mcaCmd.sendQueryCommand(fEqId,functionCode,address,dataLength);
-//        }
+        List<String> functionCodeList = new ArrayList<>();
+        functionCodeList.add(ModbusFunctionCode.CODE_TWO);
+        functionCodeList.add(ModbusFunctionCode.CODE_FIFTEEN);
 
+        List<Map> devicePointList = devicePointService.selectPointMapByFEqId(fEqIdList, functionCodeList,String.valueOf(pointType));
 
+        for(Map  map : devicePointList){
+            //测控执行器ID
+            String fEqId = map.get("fEqId") == null ? "" : map.get("fEqId").toString();
+            //功能码
+            String functionCode = map.get("functionCode") == null ? "" : map.get("functionCode").toString();
+            //点位
+            String address = map.get("address") == null ? "" : map.get("address").toString();
+            //地址长度
+            String dataLength = map.get("dataLength") == null ? "" : map.get("dataLength").toString();
+
+            //2毫秒间隔，如果定时任务执行周期是2秒钟，支持1000个指令循环下发，大概可以支持1000个设备的查询指令
+            //最长的盘顶山隧道按照200个设备计算，3个隧道，600个设备
+            sleep(2);
+            mcaCmd.sendQueryCommand(fEqId,functionCode,address,String.valueOf(dataLength));
+        }
+    }
+
+    /**
+     * 线程休眠固定时间
+     * @param ms 毫秒
+     */
+    public void sleep(int ms){
+        //间隔固定时间（毫秒）发送指令，避免同一个设备连续多次发送指令无回复
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.tunnel.deal.xiaofangpao.service;
 
-import com.tunnel.deal.mca.util.ByteBufUtil;
+import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.xiaofangpao.msgEnum.DataTypeCodeEnum;
 import com.tunnel.deal.xiaofangpao.msgEnum.SystemStatusResponseCodeEnum;
 import io.netty.channel.ChannelHandlerContext;

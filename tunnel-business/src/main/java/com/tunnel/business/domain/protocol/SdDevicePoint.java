@@ -72,6 +72,11 @@ public class SdDevicePoint extends BaseEntity
     @Excel(name = "是否预留")
     private Long isReserved;
 
+    /**
+     * 点位配置json
+     */
+    private String pointConfig;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -195,6 +200,14 @@ public class SdDevicePoint extends BaseEntity
     public Long getIsReserved()
     {
         return isReserved;
+    }
+
+    public String getPointConfig() {
+        return pointConfig;
+    }
+
+    public void setPointConfig(String pointConfig) {
+        this.pointConfig = pointConfig;
     }
 
     public Long getItemId() {

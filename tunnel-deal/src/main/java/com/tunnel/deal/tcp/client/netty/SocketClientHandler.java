@@ -1,11 +1,13 @@
-package com.tunnel.deal.mca.netty;
+package com.tunnel.deal.tcp.client.netty;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.deal.mca.modbus.ModbusCmdResolver;
-import com.tunnel.deal.mca.service.McaDataParse;
-import com.tunnel.deal.mca.util.ByteBufUtil;
+import com.tunnel.deal.tcp.modbus.ModbusCmdResolver;
+import com.tunnel.deal.tcp.util.ByteBufUtil;
+import com.tunnel.deal.tcp.client.general.TcpClientGeneralBean;
+import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,9 +28,9 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
 
     private static final Logger log = LoggerFactory.getLogger(SocketClientHandler.class);
 
-    private McaDataParse mcaDataParse = SpringUtils.getBean(McaDataParse.class);
-
     private ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
+
+    private TcpClientGeneralService tcpClientGeneralService = SpringUtils.getBean(TcpClientGeneralService.class);
 
 
     @Override
@@ -41,9 +43,21 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
             String strMsg = ByteBufUtil.convertByteBufToString(msg);
 //            String strMsg = "9c73000000050103020004";
 //            log.info("回复指令：ip="+ip+",msg="+strMsg);
+//            System.out.println("回复指令：ip="+ip+",msg="+strMsg);
             JSONObject jsonObject = ModbusCmdResolver.commandParse(strMsg);
-            //数据解析
-            mcaDataParse.dataParse(ip,jsonObject);
+
+           String deviceId = tcpClientGeneralService.getDeviceIdByIp(ip);
+            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
+            //设备解析类
+            TcpClientGeneralBean tcpClientGeneralBean = tcpClientGeneralService.getProtocolBean(sdDevices);
+            if(tcpClientGeneralBean != null){
+                tcpClientGeneralBean.handleReadData(ip,deviceId,jsonObject);
+            }else{
+                log.error("设备协议配置为空");
+            }
+
+//            //数据解析
+//            mcaDataParse.dataParse(ip,jsonObject);
 
             ctx.flush();
         }catch (Exception e){
@@ -92,7 +106,7 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
         InetSocketAddress ipSocket = (InetSocketAddress)channel.remoteAddress();
         String ip = ipSocket.getAddress().getHostAddress();
         int port = ipSocket.getPort();
-        String deviceId =  mcaDataParse.getMcaDeviceId(ip);
+        String deviceId =  tcpClientGeneralService.getDeviceIdByIp(ip);
         //设置设备及子设备在线
         sdDevicesService.updateOnlineStatus(deviceId,true);
 
@@ -112,7 +126,7 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
         InetSocketAddress ipSocket = (InetSocketAddress)channel.remoteAddress();
         String ip = ipSocket.getAddress().getHostAddress();
         int port = ipSocket.getPort();
-        String deviceId =  mcaDataParse.getMcaDeviceId(ip);
+        String deviceId =  tcpClientGeneralService.getDeviceIdByIp(ip);
         //设置设备及子设备离线
         sdDevicesService.updateOfflineStatus(deviceId,true);
         log.error("channelInactive:访问地址="+ip+":"+port);

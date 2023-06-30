@@ -253,7 +253,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <!-- <el-col :span="24">
             <el-form-item v-if="form.menuType != 'F'" label="菜单图标">
               <el-popover
                 placement="bottom-start"
@@ -283,7 +283,7 @@
                 </el-input>
               </el-popover>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="12">
             <el-form-item label="菜单名称" prop="menuName">
               <el-input v-model="form.menuName" placeholder="请输入菜单名称" />

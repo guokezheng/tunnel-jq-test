@@ -1,4 +1,4 @@
-package com.tunnel.deal.mca.modbus;
+package com.tunnel.deal.tcp.modbus;
 
 /**
  * describe: modbus功能码常量类
@@ -41,11 +41,11 @@ public class ModbusFunctionCode {
     /**
      * 写多个线圈	WRITE MULTIPLE COIL	位操作	多个
      */
-    public static final String CODE_FIFTEEN = "15";
+    public static final String CODE_FIFTEEN = "0F";
 
     /**
      * 写多个保持寄存器	WRITE MULTIPLE REGISTER	字操作	多个
      */
-    public static final String CODE_SIXTEEN = "16";
+    public static final String CODE_SIXTEEN = "10";
 
 }

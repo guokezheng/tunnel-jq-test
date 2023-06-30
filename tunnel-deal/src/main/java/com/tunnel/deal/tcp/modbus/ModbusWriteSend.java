@@ -1,4 +1,4 @@
-package com.tunnel.deal.mca.modbus;
+package com.tunnel.deal.tcp.modbus;
 
 /**
  * describe: modbus写入指令类

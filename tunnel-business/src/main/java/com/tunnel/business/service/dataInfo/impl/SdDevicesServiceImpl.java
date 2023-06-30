@@ -1075,4 +1075,27 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.selectDevicesByProtocol(sdDevices);
     }
 
+    /**
+     * 获取测控执行器设备
+     * @return
+     */
+    @Override
+    public List<Map> getMcaList() {
+
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+
+        List<Map> list = sdDevicesMapper.getMcaList();
+
+        for(Map map : list){
+
+            String devId = map.get("device_id") != null ? map.get("device_id").toString() : null ;
+            if(devId != null){
+                map.put("function",sdDevicesMapper.getMacItem(devId));
+            }
+        }
+        return list;
+    }
 }

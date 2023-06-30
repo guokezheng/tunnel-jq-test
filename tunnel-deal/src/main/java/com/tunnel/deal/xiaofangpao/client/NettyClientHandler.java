@@ -1,7 +1,7 @@
 package com.tunnel.deal.xiaofangpao.client;
 
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.deal.mca.util.ByteBufUtil;
+import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.xiaofangpao.msgEnum.SendMsgCodeEnum;
 import com.tunnel.deal.xiaofangpao.service.FireMonitorDataParse;
 import io.netty.buffer.ByteBuf;
@@ -28,7 +28,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf>{
             Channel channel = ctx.channel();
             InetSocketAddress ipSocket = (InetSocketAddress)channel.remoteAddress();
             String ip = ipSocket.getAddress().getHostAddress();
-            String strMsg = com.tunnel.deal.mca.util.ByteBufUtil.convertByteBufToString(msg);
+            String strMsg = com.tunnel.deal.tcp.util.ByteBufUtil.convertByteBufToString(msg);
             //JSONObject jsonObject = ModbusCmdResolver.commandParse(strMsg);
             //数据解析
             fireMonitorDataParse.dataParse(ctx,strMsg);

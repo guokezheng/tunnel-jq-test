@@ -1,8 +1,8 @@
-package com.tunnel.deal.mca.modbus;
+package com.tunnel.deal.tcp.modbus;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tunnel.deal.mca.config.MessageType;
-import com.tunnel.deal.mca.util.NumberSystemConvert;
+import com.tunnel.deal.tcp.client.config.MessageType;
+import com.tunnel.deal.tcp.util.NumberSystemConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +28,9 @@ public class ModbusCmdResolver {
             return jsonObject;
         }
         String serial = msg.substring(0,4);
-        Integer serialInt = NumberSystemConvert.convertHexToInteger(serial);
+//        Integer serialInt = NumberSystemConvert.convertHexToInteger(serial);
         //返回指令中的起始地址
-        jsonObject.put("address",serialInt);
+        jsonObject.put("address",serial);
         String remainLength = msg.substring(8,12);
         String deviceAddress = msg.substring(12,14);
         String functionCode = msg.substring(14,16);
@@ -41,29 +41,9 @@ public class ModbusCmdResolver {
             //分析错误码
             log.error("查询指令返回错误结果："+msg+",功能码为："+functionCode);
         }else{
-           if(ModbusFunctionCode.CODE_THREE.equals(functionCode) || ModbusFunctionCode.CODE_FOUR.equals(functionCode)){
-               String dataLength = msg.substring(16,18);
-               String readData = msg.substring(18);
-               Integer length = readData.length();
-               //按照功能码分析
-               if(ModbusFunctionCode.CODE_THREE.equals(functionCode)){
-                   //todo 改成两个字节一个数字
-                   if(length % 4 == 0){
-                       List<String> list = handleTwoBytesData(readData);
-                       jsonObject.put("data",list);
-                   }
-               }
-               if(ModbusFunctionCode.CODE_FOUR.equals(functionCode)){
-                   if(length % 8 == 0){
-                       List<String> list = handleFourBytesData(readData);
-                       jsonObject.put("data",list);
-                   }
-               }
-           }
-           if(ModbusFunctionCode.CODE_SIX.equals(functionCode)){
-               //控制指令的返回指令，不需要解析 todo
-           }
-
+            String dataLength = msg.substring(16,18);
+            String readData = msg.substring(18);
+            jsonObject.put("readData",readData);
         }
         return jsonObject;
     }

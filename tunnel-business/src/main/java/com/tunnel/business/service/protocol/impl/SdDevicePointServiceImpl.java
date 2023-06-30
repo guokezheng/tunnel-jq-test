@@ -61,12 +61,26 @@ public class SdDevicePointServiceImpl implements ISdDevicePointService
      * 根据父设备ID、点位类型筛选最小点位、最大点位
      *
      * @param list      父设备ID列表
+     * @param codeList 功能码列表
      * @param pointType 点位类型
      * @return
      */
     @Override
-    public List<Map> selectDevicePointByGroup(List<String> list, String pointType) {
-        return sdDevicePointMapper.selectDevicePointByGroup(list,pointType);
+    public List<Map> selectDevicePointByGroup(List<String> list,List<String> codeList,String pointType) {
+        return sdDevicePointMapper.selectDevicePointByGroup(list,codeList,pointType);
+    }
+
+    /**
+     * 根据父设备ID、点位类型查询点位信息
+     *
+     * @param list      父设备ID列表
+     * @param codeList 功能码列表
+     * @param pointType 点位类型
+     * @return
+     */
+    @Override
+    public List<Map> selectPointMapByFEqId(List<String> list,List<String> codeList, String pointType) {
+        return sdDevicePointMapper.selectPointMapByFEqId(list,codeList,pointType);
     }
 
     /**

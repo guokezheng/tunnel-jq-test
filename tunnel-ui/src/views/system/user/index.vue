@@ -435,6 +435,10 @@
         append-to-body
         :close-on-click-modal="false"
       >
+        <div class="dialogStyleBox">
+          <div class="dialogLine"></div>
+          <div class="dialogCloseButton"></div>
+        </div>
         <el-upload
           ref="upload"
           :limit="1"
@@ -465,8 +469,8 @@
           </div>
         </el-upload>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="submitFileForm">确 定</el-button>
-          <el-button @click="upload.open = false">取 消</el-button>
+          <el-button class="submitButton" @click="submitFileForm">确 定</el-button>
+          <el-button class="closeButton" @click="upload.open = false">取 消</el-button>
         </div>
       </el-dialog>
     </el-row>

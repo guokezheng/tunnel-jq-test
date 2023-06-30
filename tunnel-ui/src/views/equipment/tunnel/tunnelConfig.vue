@@ -565,7 +565,7 @@ export default {
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
           this.selectedIconList = res.eqList;
-          // console.log(this.selectedIconList, "this.selectedIconList");
+          console.log(this.selectedIconList, "this.selectedIconList");
           listType("").then((response) => {
             this.drawSvg(response.rows);
           });
@@ -881,15 +881,18 @@ export default {
       //不显示
       if (value == false) {
         for (let i = 0; i < list.length; i++) {
-          img[i][0].attr({
-            width: 0,
-            height: 0,
-          });
-          if (img[i][1]) {
-            img[i][1].attr({
-              text: "",
+          if(img[i][0].node.nodeName != 'image'){
+            img[i][0].attr({
+              width: 0,
+              height: 0,
             });
+            if (img[i][1]) {
+              img[i][1].attr({
+                text: "",
+              });
+            }
           }
+          
         }
       } else {
         //显示

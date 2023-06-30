@@ -329,4 +329,5 @@ public interface ISdDevicesService {
      */
     List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices);
 
+    List<Map> getMcaList();
 }

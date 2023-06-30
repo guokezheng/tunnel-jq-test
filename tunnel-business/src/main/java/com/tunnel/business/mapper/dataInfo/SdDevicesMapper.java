@@ -442,9 +442,23 @@ public interface SdDevicesMapper
 	String getFireMonitorId(String deviceAddress);
 
 	/**
-	 * 查询消防设备类型数据项
+	 * 查询消防设备类型数据项 r
 	 * @param fireMonitorType
 	 * @return
 	 */
 	Long getFireMonitorTypeItem(String fireMonitorType);
+
+
+
+	/**
+	 *  查询控制执行器关联设备列表
+	 * @return
+	 */
+	List<Map> getMcaList();
+
+	/**
+	 *  查询控制执行器设备数据项
+	 * @return
+	 */
+	List<Map> getMacItem(String devId);
 }

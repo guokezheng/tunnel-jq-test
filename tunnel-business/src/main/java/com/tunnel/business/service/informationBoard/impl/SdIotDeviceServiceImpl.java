@@ -223,8 +223,8 @@ public class SdIotDeviceServiceImpl implements ISdIotDeviceService {
                 List<SdIotDevice> list = new ArrayList<>();
                 for (int y = 0;y < sdIotDevices.size();y++) {
                     SdIotDevice sdIotDevice = sdIotDevices.get(y);
-                    if (sdIotDevice.getLocalInfo().toString().equals(localInfo)
-                            && sdIotDevice.getDevicePixel().equals(device_pixel)) {
+                    if (localInfo.equals(sdIotDevice.getLocalInfo().toString())
+                            && device_pixel.equals(sdIotDevice.getDevicePixel())) {
                         list.add(sdIotDevice);
                     }
                 }

@@ -57,7 +57,17 @@
         <div class="flex-row" style="z-index: 8">
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
-              {{ carShow ? "实时车辆关" : "实时车辆开" }}
+              {{ srollSwitch ? "滚动关" : "滚动开" }}
+            </p>
+            <el-switch
+              v-model="srollSwitch"
+              class="switchStyle"
+              @change="srollSwitchChange"
+            ></el-switch>
+          </div>
+          <div class="display-box zoomClass">
+            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
+              {{ srollAuto ? "实时车辆关" : "实时车辆开" }}
             </p>
             <el-switch
               v-model="carShow"
@@ -1896,6 +1906,7 @@ export default {
 
   data() {
     return {
+      srollSwitch:false,
       phoneList: [],
       lightingFormRules: {
         beforeLuminance: [
@@ -2563,8 +2574,7 @@ export default {
         this.directionOptions.push(item);
       });
     });
-    //调取滚动条
-    this.srollAuto();
+    
   },
 
   watch: {
@@ -2718,6 +2728,14 @@ export default {
   },
 
   methods: {
+    srollSwitchChange(){
+      if(this.srollSwitch){
+        //调取滚动条
+        this.mouseleaveImage();
+      }else{
+        this.mouseoversImage()
+      }
+    },
     async destroyedDelete() {
       await carSwitchType("destroyed", 1).then((res) => {});
     },
@@ -3280,10 +3298,12 @@ export default {
 
     mouseoversImage() {
       clearInterval(this.imageTimer);
+      this.srollSwitch = false
       this.imageTimer = null;
     },
     mouseleaveImage() {
       this.srollAuto();
+      this.srollSwitch = true
     },
 
     zoomSwitchChange(val) {

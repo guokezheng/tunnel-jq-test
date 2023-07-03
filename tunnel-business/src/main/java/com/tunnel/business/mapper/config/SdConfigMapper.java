@@ -61,5 +61,5 @@ public interface SdConfigMapper
      */
     public int deleteSdConfigByIds(Long[] ids);
 
-    List<SdConfig> selectSdConfigByDeptId(@Param("deptId") String deptId, @Param("code")String code);
+    List<SdConfig> selectSdConfigByDeptId(SdConfig sdConfig);
 }

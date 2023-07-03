@@ -22,9 +22,14 @@ public class SdConfig extends BaseEntity
     @Excel(name = "所属部门名称")
     private String deptId;
 
+
+    @Excel(name = "页面配置模板", dictType = "sd_config_module")
+    private String configModule;
+
     /** 页面名称 */
     @Excel(name = "页面名称")
     private String name;
+
 
     /** 页面编码 */
     @Excel(name = "页面编码")
@@ -34,7 +39,16 @@ public class SdConfig extends BaseEntity
     @Excel(name = "页面地址")
     private String url;
 
-    public void setId(Long id) 
+
+    public String getConfigModule() {
+        return configModule;
+    }
+
+    public void setConfigModule(String configModule) {
+        this.configModule = configModule;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

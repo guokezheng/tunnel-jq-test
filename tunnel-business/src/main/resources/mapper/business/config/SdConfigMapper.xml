@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="SdConfig" id="SdConfigResult">
         <result property="id"    column="id"    />
         <result property="deptId"    column="dept_id"    />
+        <result property="configModule"    column="config_module"    />
         <result property="name"    column="name"    />
         <result property="code"    column="code"    />
         <result property="url"    column="url"    />
@@ -17,21 +18,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdConfigVo">
-        select id, dept_id, name, code, url, create_by, create_time, update_by, update_time from sd_config
+        select id, dept_id,config_module, name, code, url, create_by, create_time, update_by, update_time from sd_config
     </sql>
 
     <select id="selectSdConfigList" parameterType="SdConfig" resultMap="SdConfigResult">
-        select A.id, B.dept_name as dept_id, A.name, A.code, A.url, A.create_by, A.create_time, A.update_by, A.update_time
+        select A.id, B.dept_name as dept_id, A.name, A.code, A.url, A.create_by, A.create_time, A.update_by, A.update_time,A.config_module
         from sd_config A left join sys_dept B on A.dept_id = B.dept_id
         <where>
             b.del_flag = '0'
             <if test="searchValue != null  and searchValue != ''"> and CONCAT(A.name,A.code) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="deptId != null  and deptId != ''"> and A.dept_id = #{deptId}</if>
+            <if test="configModule != null  and configModule != ''"> and A.config_module = #{configModule}</if>
             <if test="name != null  and name != ''"> and A.name like concat('%', #{name}, '%')</if>
             <if test="code != null  and code != ''"> and A.code = #{code}</if>
             <if test="url != null  and url != ''"> and A.url = #{url}</if>
         </where>
-        order by id
+        order by id desc
     </select>
 
 
@@ -40,6 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="deptId != null  and deptId != ''"> and dept_id = #{deptId}</if>
             <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="configModule != null  and configModule != ''"> and config_module = #{configModule}</if>
         </where>
     </select>
     
@@ -53,6 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="deptId != null and deptId != ''">dept_id,</if>
+            <if test="configModule != null and configModule != ''">config_module,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="code != null and code != ''">code,</if>
             <if test="url != null and url != ''">url,</if>
@@ -64,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="deptId != null and deptId != ''">#{deptId},</if>
+            <if test="configModule != null and configModule != ''">#{configModule},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="code != null and code != ''">#{code},</if>
             <if test="url != null and url != ''">#{url},</if>
@@ -78,6 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update sd_config
         <trim prefix="SET" suffixOverrides=",">
             <if test="deptId != null and deptId != ''">dept_id = #{deptId},</if>
+            <if test="configModule != null and configModule != ''">config_module = #{configModule},</if>
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="code != null and code != ''">code = #{code},</if>
             <if test="url != null and url != ''">url = #{url},</if>

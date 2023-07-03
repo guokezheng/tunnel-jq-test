@@ -96,7 +96,7 @@ public class SdConfigServiceImpl implements ISdConfigService
 
 
     @Override
-    public List<SdConfig> selectSdConfigByDeptId(String deptId,String code) {
-        return sdConfigMapper.selectSdConfigByDeptId(deptId,code);
+    public List<SdConfig> selectSdConfigByDeptId(SdConfig sdConfig) {
+        return sdConfigMapper.selectSdConfigByDeptId(sdConfig);
     }
 }

@@ -84,8 +84,11 @@
         // this.initWebSocket();
       },
       websocketonmessage(message){ //数据接收
-        if (this.isJson(message)) {
-          onMessage(message).then(response => {
+        if (this.isJson(message.data)) {
+          let data = {
+            data : message.data
+          }
+          onMessage(data).then(response => {
             console.log(response)
         });
         }

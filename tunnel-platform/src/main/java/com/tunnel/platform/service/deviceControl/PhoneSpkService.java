@@ -144,14 +144,15 @@ public class PhoneSpkService {
      */
     public void onMessage(@RequestBody JSONObject jsonObject) {
         // System.out.println("电话广播websocket>>>>>>>>>>>" + jsonObject);
+        String data1 = jsonObject.getString("data");
+        JSONObject jsonObject1 = JSONObject.parseObject(data1);
+        if (jsonObject1.containsKey("attribute") && jsonObject1.containsKey("ext")) {
+            String attribute = jsonObject1.getString("attribute");
+            String id = jsonObject1.getJSONObject("ext").getString("id");
 
-        if (jsonObject.containsKey("attribute") && jsonObject.containsKey("ext")) {
-            String attribute = jsonObject.getString("attribute");
-            String id = jsonObject.getJSONObject("ext").getString("id");
-
-            String deviceType = jsonObject.getJSONObject("ext").getString("deviceType");
-            if (StringUtils.isBlank(deviceType) && jsonObject.containsKey("device")) {
-                deviceType = jsonObject.getJSONObject("device").getString("type");
+            String deviceType = jsonObject1.getJSONObject("ext").getString("deviceType");
+            if (StringUtils.isBlank(deviceType) && jsonObject1.containsKey("device")) {
+                deviceType = jsonObject1.getJSONObject("device").getString("type");
             }
             Integer itemId = null;
             SdDevices devices = new SdDevices();
@@ -167,6 +168,13 @@ public class PhoneSpkService {
 
             if (null != device) {
                 String data = PhoneSpkEnum.getValue(attribute);
+                if(data == null || "".equals(data)){
+                    return;
+                }
+                SdDevices sdDevices = new SdDevices();
+                sdDevices.setEqStatus(data);
+                sdDevices.setEqId(device.getEqId());
+                sdDevicesMapper.updateSdDevices(sdDevices);
                 deviceDataService.updateDeviceData(device, data, Long.valueOf(itemId));
 
                 //接收杭山东隧道的华为推送的紧急电话事件数据，此处对于接收到的报警信息不做处理。

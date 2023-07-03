@@ -458,7 +458,7 @@ public class WorderToNewWordUtils {
                            count++;
                            break;
                         }
-                        index[1] = j - 1;
+                        index[1] = j;
                         i = j;
                         indexList.add(index);
                         count++;

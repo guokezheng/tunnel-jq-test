@@ -207,4 +207,9 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
     public List<SdTunnels> selectTunnelLineList(String deptId) {
         return sdTunnelsMapper.selectTunnelLineList(deptId);
     }
+
+    @Override
+    public List<SdTunnels> selectTunnels(String deptId) {
+        return sdTunnelsMapper.selectTunnels(deptId);
+    }
 }

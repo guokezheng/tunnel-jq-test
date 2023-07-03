@@ -26,6 +26,7 @@
             @keyup.enter.native="handleQuery"
             size="small"
             style="border-right: solid 1px #00c8ff; border-radius: 3px"
+            @click="$forceUpdate()"
           >
           </el-input>
         </div>

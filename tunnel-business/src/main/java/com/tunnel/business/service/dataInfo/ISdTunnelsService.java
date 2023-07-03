@@ -127,4 +127,11 @@ public interface ISdTunnelsService {
      * @return
      */
     List<SdTunnels> selectTunnelLineList(String deptId);
+
+    /**
+     * 获取部门下的所有隧道
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> selectTunnels(String deptId);
 }

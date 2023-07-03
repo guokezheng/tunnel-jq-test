@@ -132,4 +132,6 @@ public interface SdTunnelsMapper
     List<SdTunnels> selectTunnelLineList(String deptId);
 
     String isTunnel(@Param("deviceId") String deviceId);
+
+    List<SdTunnels> selectTunnels(@Param("deptId") String deptId);
 }

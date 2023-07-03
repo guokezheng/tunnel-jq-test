@@ -502,6 +502,21 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         //设备类型
         SdEquipmentType sdEquipmentType = equipmentTypeService.selectSdEquipmentTypeById(eqType);
 //        SdEquipmentState sdEquipmentState = sdEquipmentStateService.selectSdEquipmentStateById(devices.getEqType());
+        String deptId = SecurityUtils.getDeptId();
+        List<SdTunnels>tunnelList = sdTunnelsService.selectTunnels(deptId);
+        String tunnels = "";
+        if(tunnelList.size()>0){
+            for(SdTunnels sdTunnel : tunnelList){
+                tunnels += sdTunnel.getTunnelId()+',';
+            }
+
+        }
+        if(tunnels.indexOf(devices.getEqTunnelId())==-1){//不包含改隧道
+            failureMsg.append("、设备ID " + devices.getEqId() + " 所属隧道ID有误,请检查");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
+        }
         if (!StringUtil.isEmpty(fEqId)) {
             //有些设备不需要关联PLC，只有当录入PLC主机ID时，才校验PLC
             SdDevices plc = sdDevicesMapper.selectSdDevicesById(fEqId);

@@ -3298,12 +3298,14 @@ export default {
 
     mouseoversImage() {
       clearInterval(this.imageTimer);
-      this.srollSwitch = false
+      // this.srollSwitch = false
       this.imageTimer = null;
     },
     mouseleaveImage() {
-      this.srollAuto();
-      this.srollSwitch = true
+      if(this.srollSwitch){
+        this.srollAuto();
+      }
+      // this.srollSwitch = true
     },
 
     zoomSwitchChange(val) {

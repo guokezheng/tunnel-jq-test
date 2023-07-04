@@ -49,7 +49,7 @@ public class McaTask {
      *
      */
     public void macInfoCache(){
-        tcpClientGeneralService.deviceInfoCache(DeviceProtocolCodeEnum.TUNSHAN_MCA_PROTOCOL_CODE.getCode(),DevicesTypeEnum.CE_KONG_ZHI_XING_QI.getCode());
+        tcpClientGeneralService.deviceInfoCache(DeviceProtocolCodeEnum.ZHENGCHEN_MCA_PROTOCOL_CODE.getCode(),DevicesTypeEnum.CE_KONG_ZHI_XING_QI.getCode());
     }
 
 

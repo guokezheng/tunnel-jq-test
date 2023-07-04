@@ -1,7 +1,17 @@
 package com.tunnel.deal.xiaofangpao.service;
 
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
+import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.utils.util.UUIDUtil;
 import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.xiaofangpao.msgEnum.DataTypeCodeEnum;
+import com.tunnel.deal.xiaofangpao.msgEnum.DevicesDirectionCodeEnum;
 import com.tunnel.deal.xiaofangpao.msgEnum.SystemStatusResponseCodeEnum;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.codec.DecoderException;
@@ -25,6 +35,15 @@ public class FireMonitorDataParse {
 
     @Autowired
     private FireMonitorService fireMonitorService;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
+
+    @Autowired
+    private SdFaultListMapper sdFaultListMapper;
+
+    @Autowired
+    private SdEventMapper sdEventMapper;
 
 
     /**
@@ -85,6 +104,14 @@ public class FireMonitorDataParse {
                 String deviceState = deviceStatusMsg.substring(14,18);//部件状态
                 String deviceStateLow = hex6To2(deviceState.substring(0,2));//低字节
                 String deviceStateHigh = hex6To2(deviceState.substring(2));//高字节
+                //根据ip查询消防炮设备信息
+                SdDevices sdDevices = sdDevicesMapper.getXfpDevicesInfo(deviceAddress);
+                String direction="";
+                if(sdDevices.getEqDirection().equals(DevicesDirectionCodeEnum.JINANFANGXIANG.getCode())){
+                    direction = DevicesDirectionCodeEnum.JINANFANGXIANG.getName()+sdDevices.getPile();
+                }else{
+                    direction = DevicesDirectionCodeEnum.WEIFANGFANGXIANG.getName()+sdDevices.getPile();
+                }
                 //部件状态 ----todo 待完善
                 String eqStatus = null,dataStatus = null;
                 //低字节状态解析
@@ -95,10 +122,40 @@ public class FireMonitorDataParse {
                 if(deviceStateLow.substring(5,6).equals("1")){//故障
                     eqStatus = "3";
                     log.info("设备状态为故障");
+                    //故障位置处理
+                    //存 故障清单表sd_fault_list
+                    SdFaultList sdFaultList = new SdFaultList();
+                    sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
+                    sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
+                    sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
+                    sdFaultList.setTunnelId(sdDevices.getEqTunnelId());//隧道
+                    sdFaultList.setFaultLocation(direction);//设备位置   方向+桩号拼接
+                    sdFaultList.setFaultType("6");//故障类型  其他
+                    sdFaultList.setFaultEscalationType("1");//故障来源  系统上报
+                    sdFaultList.setFaultFxtime(DateUtils.getNowDate());//故障发现时间
+                    sdFaultList.setEqId(sdDevices.getEqId());//设备id
+                    sdFaultList.setEqStatus("3");//设备状态  故障
+                    sdFaultList.setFaultLevel("0");//故障等级  一般
+                    sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
+                    sdFaultList.setFaultStatus("0");//故障状态  已发布
+                    sdFaultListMapper.insertSdFaultList(sdFaultList);
                 }
                 if(deviceStateLow.substring(6,7).equals("1")){//火警
                     eqStatus = "4";
                     log.info("设备状态为火警");
+                    //存 故障清单表sd_event
+                    SdEvent sdEvent = new SdEvent();
+                    sdEvent.setTunnelId(sdDevices.getEqTunnelId());//隧道
+                    sdEvent.setEventSource("5");//事件来源  消防炮
+                    sdEvent.setEventTypeId((long) 20);//事件类型
+                    sdEvent.setEventTitle(sdDevices.getTunnel()+direction+"发生火警");//事件标题  隧道+方向+桩号+发生火警
+                    sdEvent.setEventTime(DateUtils.getNowDate());//时间
+                    sdEvent.setEventState("3");//状态  待确认
+                    sdEvent.setEventGrade("1");//事件等级 一般
+                    sdEvent.setStakeNum(sdDevices.getPile());//事件桩号
+                    sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
+                    sdEvent.setDirection(sdDevices.getDirection());//方向
+                    sdEventMapper.insertSdEvent(sdEvent);
                 }
                 //高字节状态解析
                 if(deviceStateHigh.substring(4,5).equals("1")){//阀开

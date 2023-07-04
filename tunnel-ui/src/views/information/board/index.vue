@@ -1167,7 +1167,7 @@ export default {
     getFont(font) {
       if (font == "KaiTi") {
         return "楷体";
-      } else if (font == "SimSun") {
+      } else if (font == "Simsun") {
         return "宋体";
       } else if (font == "SimHei") {
         return "黑体";

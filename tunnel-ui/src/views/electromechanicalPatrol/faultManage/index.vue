@@ -731,7 +731,7 @@
           </div>
 
         </div>
-        <div class="card-cols" style="font-size: 15px; color: #05aafd">
+        <div class="card-col" style="font-size: 15px; color: #05aafd">
           <div>
             现场故障情况:
             <span>{{ item.eqFaultDescription }}</span>

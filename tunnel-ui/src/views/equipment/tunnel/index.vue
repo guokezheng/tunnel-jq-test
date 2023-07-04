@@ -189,7 +189,7 @@
         label="隧道地址"
         align="center"
         prop="tunnelAddress"
-        width="160"
+        width="130"
       />
       <el-table-column label="经度" align="center" prop="longitude" />
       <el-table-column label="纬度" align="center" prop="latitude" />
@@ -198,24 +198,24 @@
       <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="修改者" align="center" prop="updateBy" />
       <el-table-column label="修改时间" align="center" prop="updateTime" /> -->
-      <el-table-column label="车道数量" align="center" prop="lane" />
+      <el-table-column label="车道数量" align="center" prop="lane" width="60"/>
       <el-table-column
         label="隧道长度(米)"
         align="center"
         prop="tunnelLength"
-        width="180"
+        width="250"
       />
       <el-table-column
         label="隧道开始桩号"
         align="center"
         prop="startPile"
-        width="150"
+        width="110"
       />
       <el-table-column
         label="隧道结束桩号"
         align="center"
         prop="endPile"
-        width="150"
+        width="110"
       />
       <el-table-column label="三维坐标" align="center" prop="coordinates" />
       <el-table-column
@@ -225,7 +225,7 @@
         width="140"
       />
       <!--      <el-table-column label="备注" align="center" prop="remake" />-->
-      <el-table-column label="是否启用" align="center" prop="poll">
+      <el-table-column label="是否启用" align="center" prop="poll" width="60">
         <template slot-scope="scope">
           <span
             :style="{

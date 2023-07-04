@@ -662,7 +662,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         });
         //设备类型名称简称
         String typeAbbr = collect.get(typeId.longValue());
-        String ss = tunnelId + "-" + typeAbbr;
+        String ss = tunnelId + "-" + typeAbbr + "-";
         List<String> list = sdDevicesMapper.selectID(ss);
         log.info("当前设备类型名称简称-->>>>>>>>>>>>>>>>>>{}", typeAbbr);
         StringBuilder sb = new StringBuilder();

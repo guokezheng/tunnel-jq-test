@@ -1,7 +1,7 @@
 <template>
   <div class="pieQyEchart">
-    <div id="pie" style="height: 240px; width: 50%"></div>
-    <div class="list" style="width: 50%; padding: 0px 10px 0 0px">
+    <div id="pie" style="height: 100%; width: 50%"></div>
+    <div class="list">
       <div class="list_item" v-for="(item, index) in zdPie" :key="item.id">
         <div class="block" :style="{ backgroundColor: colorArr[index] }"></div>
         <span style="width: 65%">{{ item.typeName }}</span>
@@ -270,8 +270,15 @@ export default {
 .pieQyEchart {
   display: flex;
   align-items: center;
-
+  height: calc(100% - 30px);
   .list {
+    width: 50%; 
+    padding: 0px 10px 0 0px;
+    height: 100%;
+    overflow-y: auto;
+    ::-webkit-scrollbar{
+      width:0px !important;
+    }
     .list_item {
       font-size: 10px;
       width: 100%;

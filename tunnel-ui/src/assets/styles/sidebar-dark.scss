@@ -875,7 +875,22 @@
       }
     }
   }
+  .el-dropdown-menu{
+    background:rgba(0,56,89,.8);
+    border:none;
+    .el-dropdown-menu__item{
+      color:#fff;
+    }
+  }
+  .el-dropdown-menu__item:not(.is-disabled):hover, .el-dropdown-menu__item:focus{
+    background: transparent;
+    color:#3e7deb;
+  }
   #app {
+    .charts ::-webkit-scrollbar {
+      width: 0px !important;
+      background-color: #022A54;
+    }
     .login {
       // 下拉框背景色
       .el-input--medium .el-input__inner{

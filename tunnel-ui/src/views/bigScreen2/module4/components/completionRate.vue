@@ -210,6 +210,6 @@ export default {
   }
 }
 #charts3 {
-  height: 220px;
+  height: calc(100% - 30px);
 }
 </style>

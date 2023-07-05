@@ -293,7 +293,7 @@ export default {
   <style scoped lang="scss">
 #charts6 {
   width: 100%;
-  height: 250px;
+  height: calc(100% - 30px);
   div {
     width: 100% !important;
   }

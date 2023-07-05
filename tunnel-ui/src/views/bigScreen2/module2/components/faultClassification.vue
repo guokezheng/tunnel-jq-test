@@ -19,7 +19,7 @@
         </div> -->
       <div>单位:tCO₂e</div>
     </div>
-    <div style="width: 100%; height: 86%; display: flex">
+    <div style="width: 100%; height: 88%; display: flex">
       <!-- 图表 -->
       <div
         id="chart3"
@@ -28,7 +28,7 @@
       ></div>
       <div
         id="chart4"
-        style="width: 50%; height: 100%"
+        style="width: 50%; height: 100%;overflow-y: auto;"
         v-if="tabModel == 'chart4'"
       ></div>
       <!-- 右侧 -->
@@ -670,13 +670,16 @@ div {
       display: inline-block;
       width: 7px;
       height: 7px;
-      margin: 0 8px;
+      margin: 0 4px;
     }
     .left-span {
-      width: 65%;
+      width: 74%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .right-span {
-      width: 35%;
+      width: 26%;
       text-align: right;
       span {
         width: 50%;

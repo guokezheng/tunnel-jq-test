@@ -164,7 +164,7 @@ export default {
       }
       .content{
           width:100%;
-          height:calc(100% - 30px);
+          height:100%;
           display: flex;
           .left{
               width: 30%;

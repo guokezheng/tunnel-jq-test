@@ -1,5 +1,37 @@
 <template>
   <div>
+    <div style="height: 72px">
+      <img
+        :src="src"
+        class="headerLinearBg"
+      />
+      <div class="bpp-topNav">
+        <div class="leftNav">
+          <div
+            v-for="(item, index) in tabList.slice(0, 4)"
+            :key="index"
+            class="navButton"
+            @click="changeNavButton(item.inx)"
+          >
+            {{ item.title }}
+          </div>
+        </div>
+        <div class="leftNav rightNav">
+          <div
+            v-for="(item, index) in tabList.slice(4, 8)"
+            :key="index"
+            class="navButton"
+            @click="changeNavButton(item.inx)"
+          >
+            {{ item.title }}
+          </div>
+        </div>
+        <div class="diaodu">
+          <i class="el-icon-bell"></i>
+          集团调度
+        </div>
+      </div>
+    </div>
     <gisMap
       id="gisMap"
       ref="gisMap"
@@ -8,8 +40,11 @@
       :roadName="roadName"
       :organizationId="organizationId"
       :mapZoom="mapZoom"
+      :checkBoxBottom="checkBoxBottom"
+      :checkBoxLeft="checkBoxLeft"
       @mapCreated="mapCreated"
-      style="height: 100% !important; z-index: 2"
+      @openTunnelInfo="openTunnelInfo"
+      style="height: calc(100% - 72px) !important; z-index: 2;position: absolute;top: 72px;"
     ></gisMap>
     <!-- <div style="width:100%;height:100%;background-color: #000;"></div> -->
     <bigScreen v-if="bigScreenList[0].type" class="charts" />
@@ -18,6 +53,24 @@
     <bigScreen4 v-if="bigScreenList[3].type" class="charts" />
     <!-- <bigScreen5  v-if="bigScreenList[0].type" class="charts"/> -->
     <bigScreen6 v-if="bigScreenList[4].type" class="charts" />
+    <div class="bottomRoad">
+      <div class="bottomRoad-main">
+        <div class="box">
+          <div class="imgBox">
+            <img :src="logo"/>
+          </div>
+          <el-dropdown placement="top" @command="handleCommand"  :hide-on-click="false">
+            <el-button type="primary">
+              {{ roadName }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item :command="1">全省</el-dropdown-item>
+              <el-dropdown-item :command="2">济青中线</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+      </div>
+    </div>
     <div class="bottomBox">
       <el-radio-group v-model="radio1">
         <el-radio-button
@@ -39,13 +92,26 @@ import bigScreen6 from "./module6/index";
 export default {
   data() {
     return {
-      typeName: "jiqing",
+      typeName: "danao",
       themeName: "darkTheme",
-      roadName: "济青中线",
+      roadName: "全省",
       organizationId: "",
       gisMap: null,
       mapZoom: 10.5,
-
+      checkBoxBottom: "2%",
+      checkBoxLeft: "25%",
+      logo:require("@/assets/logo/zclogo.png"),
+      src:require("@/assets/Example/bigScreen/header.png"),
+      tabList:[
+        {title:'路网管理',inx:0},
+        {title:'收费运营',inx:1},
+        {title:'服务区',inx:2},
+        {title:'智能养护',inx:3},
+        {title:'工程建设',inx:4},
+        {title:'智慧决策',inx:5},
+        {title:'智慧隧道',inx:6},
+        {title:'系统管理',inx:7},
+      ],
       bigScreenList: [
         {
           label: "综合态势",
@@ -188,6 +254,32 @@ export default {
   },
   mounted() {},
   methods: {
+    openTunnelInfo(){
+      console.log(11111)
+    },
+    changeNavButton(index){
+      // $(".navButton")
+      //   .eq(index)
+      //   .addClass("button_hover")
+      //   .siblings()
+      //   .removeClass("button_hover");
+    },
+    // 切换底部左侧 全省/济青中线
+    handleCommand(command){
+      console.log(command,"command")
+      if(command == 2){
+        this.roadName = "济青中线"
+        this.typeName = "jiqing"
+        this.logo = require("@/assets/logo/jiqing.png")
+      }else{
+        this.roadName = "全省"
+        this.typeName = "danao"
+        this.logo = require("@/assets/logo/zclogo.png")
+
+      }
+      this.$forceUpdate()
+    },
+    
     /**
      * 地图加载完成
      */
@@ -239,7 +331,13 @@ export default {
             tooltip: {
               show: true,
               showHtml:
-                "<div>"+item.tunnelName+"<br>经度："+ item.longitude +"<br>纬度："+item.latitude+"</div>", // 如果有html优先使用自定义html的内容
+                "<div>" +
+                item.tunnelName +
+                "<br>经度：" +
+                item.longitude +
+                "<br>纬度：" +
+                item.latitude +
+                "</div>", // 如果有html优先使用自定义html的内容
               height: 80, //弹窗高度
               width: 160, //弹窗宽度
               title: {
@@ -273,7 +371,7 @@ export default {
         noviewIn: true,
         xyArr,
       };
-      if (!this.gisMap){
+      if (!this.gisMap) {
         this.gisMap = this.$refs.gisMap || document.getElementByid("gisMap");
       }
       this.gisMap.addPointArr(opts, layerId);
@@ -282,6 +380,116 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.button_hover{
+  color: rgb(255, 211, 113) !important;
+  border-bottom:solid 1px rgb(255, 211, 113) !important;
+  
+}
+.bottomRoad{
+  display: inline-block;
+  position: absolute;
+  z-index: 999;
+  left: 20%;
+  width: 4.9%;
+  overflow: hidden;
+  bottom: 2%;
+  .bottomRoad-main{
+    width: 100%;
+    color: #fff;
+    .box{
+      height: 95px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      flex-direction: column;
+      text-align: center;
+      background: #00152b;
+      border: 0.0052rem solid #1897e7;
+      border-top: 0.0156rem solid #1897e7;
+      box-sizing: border-box;
+      .imgBox{
+        height: 64px;
+        flex:1;
+        display: flex;
+        align-items: center;
+        img{
+          width:30px;
+        }
+      }
+      .el-dropdown{
+        width:100%;
+        .el-button{
+          width:100%;
+          height:.1458rem;
+          padding:0;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          border-radius:0px;
+        }
+      }
+    }
+  }
+}
+.diaodu{
+    position: absolute;
+    top: 3.3vh;
+    right: 0;
+    width:120px;
+    color: #fff;
+    font-size: 14px;
+    i{
+      padding-right: 10px;
+    }
+  }
+.bpp-topNav{
+    height: 72px;
+    background: url(../../assets/Example/bigScreen/topNav.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    top: 0;
+    background-size: 100%;
+    .leftNav{
+      width:32vw;
+      height: 72px;
+      display: flex;
+      justify-content: space-around;
+      .navButton{
+        margin-top:3vh;
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+        caret-color: rgba(0,0,0,0);
+        user-select: none; 
+        height: 35px;
+      }
+      .navButton:first-of-type{
+        margin-left: 8vw;
+      }
+    }
+    .rightNav{
+      position: absolute;
+      right: 0;
+      top: 0;
+      .navButton:last-of-type{
+        margin-right: 8vw;
+      }
+      .navButton:first-of-type{
+        margin-left: 0vw;
+      }
+    }
+    
+  }
+.headerLinearBg{
+  height:18vh;
+  width:100%;
+  position:absolute;
+  z-index: 3;
+}
 ::v-deep .esri-view-surface--inset-outline:focus::after {
   outline: none !important;
 }
@@ -289,41 +497,49 @@ export default {
 .charts {
   position: absolute;
   left: 0;
-  top: 20px;
+  top: 72px;
   width: 100%;
-  height: calc(100% - 20px);
+  height: calc(100% - 72px);
 }
 .bottomBox {
-  height: 40px;
+  height: .12rem;
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 00px;
-  margin: 0px auto 30px auto;
+  left: 20%;
+  // transform: translateX(-50%);
+  top: 72px;
+  // margin: 0px auto 30px auto;
   display: flex;
   justify-content: space-between;
-  z-index: 2;
+  z-index: 3;
   ::v-deep .el-radio-group {
     display: flex;
     .el-radio-button {
-      margin-left: 20px;
+      margin-left: .052rem;
+    }
+    .el-radio-button:first-of-type{
+      margin-left: 0px;
+    }
+    .el-radio-button:last-of-type,.el-radio-button:first-of-type{
+      .el-radio-button__inner{
+        border-radius:0px !important;
+      }
     }
   }
   ::v-deep .el-radio-button--medium .el-radio-button__inner {
     padding: 0 !important;
     width: 130px;
-    height: 40px;
-    line-height: 40px;
+    height: .12rem;
+    line-height: .12rem;
     border: none;
-    background: url(../../assets/cloudControl/cardTitle.png);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    color: #a7c9fb;
-    opacity: 0.6;
+    background: linear-gradient(180deg,#1eace8,#0074d4);
+    // background: url(../../assets/cloudControl/cardTitle.png);
+    // background-repeat: no-repeat;
+    // background-size: 100% 100%;
+    color: #fff;
+    // opacity: 0.6;
   }
   ::v-deep .is-active .el-radio-button__inner {
-    color: #fff;
-    opacity: 1;
+    background: linear-gradient(180deg,#ffcd48,#fe861e);
   }
 }
 </style>

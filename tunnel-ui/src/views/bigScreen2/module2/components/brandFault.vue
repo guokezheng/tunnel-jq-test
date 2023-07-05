@@ -15,7 +15,7 @@
       </div>
       <div>单位:MWh</div>
     </div>
-    <div id="chart6" style="width: 100%; height: 98%" ref="brandFaultChart"></div>
+    <div id="chart6" style="width: 100%; height: 100%;" ref="brandFaultChart"></div>
   </div>
 </template>
     <script>

@@ -45,6 +45,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <!--      <el-table-column label="页面配置ID" align="center" prop="id"/>-->
       <el-table-column label="所属部门" align="center" prop="deptId" />
+      <el-table-column label="所属模块" align="center" prop="configModule"  :formatter="configModuleFormat"/>
       <el-table-column label="页面名称" align="center" prop="name" />
       <el-table-column label="页面标识符" align="center" prop="code" />
       <el-table-column label="页面路径" align="center" prop="url" />
@@ -80,7 +81,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改数字孪生页面配置对话框 -->
+    <!-- 添加或修改嵌入页面配置对话框 -->
     <el-dialog
       :title="title"
       :visible.sync="open"
@@ -104,6 +105,19 @@
             placeholder="请选择归属部门"
             @input="changeParentDept"
           />
+        </el-form-item>
+        <el-form-item label="所属模块" prop="configModule">
+          <el-select
+            v-model="form.configModule"
+            placeholder="请选择所属模块"
+          >
+            <el-option
+              v-for="item in configModuleList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="页面名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入页面名称" />
@@ -158,8 +172,10 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 数字孪生页面配置表格数据
+      // 嵌入页面配置表格数据
       configList: [],
+      // 配置模块列表
+      configModuleList:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -184,6 +200,9 @@ export default {
             trigger: "change",
           },
         ],
+        configModule: [
+          { required: true, message: "页面配置模块不能为空", trigger: "blur" },
+        ],
         name: [
           { required: true, message: "页面名称不能为空", trigger: "blur" },
         ],
@@ -197,8 +216,14 @@ export default {
   created() {
     this.getList();
     this.getTreeselect();
+    this.getDicts("sd_config_module").then((response) => {
+      this.configModuleList = response.data;
+    });
   },
   methods: {
+    configModuleFormat(row, column) {
+      return this.selectDictLabel(this.configModuleList, row.configModule);
+    },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
@@ -224,7 +249,7 @@ export default {
     changeParentDept() {
       this.$refs.form.validateField("deptId");
     },
-    /** 查询数字孪生页面配置列表 */
+    /** 查询嵌入页面配置列表 */
     getList() {
       this.loading = true;
       listConfig(this.queryParams).then((response) => {
@@ -279,7 +304,7 @@ export default {
       this.reset();
       this.getTreeselect();
       this.open = true;
-      this.title = "添加数字孪生页面配置";
+      this.title = "添加嵌入页面配置";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -288,7 +313,7 @@ export default {
       getConfig(id).then((response) => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改数字孪生页面配置";
+        this.title = "修改嵌入页面配置";
       });
     },
     /** 提交按钮 */
@@ -317,7 +342,7 @@ export default {
       let that = this;
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除数字孪生页面配置编号为"' + ids + '"的数据项？')
+        .confirm('是否确认删除嵌入页面配置编号为"' + ids + '"的数据项？')
         .then(function () {
           return delConfig(ids);
         })
@@ -333,7 +358,7 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有数字孪生页面配置数据项？")
+        .confirm("是否确认导出所有嵌入页面配置数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportConfig(queryParams);

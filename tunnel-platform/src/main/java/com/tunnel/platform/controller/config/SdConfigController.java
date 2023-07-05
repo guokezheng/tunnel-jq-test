@@ -39,7 +39,7 @@ public class SdConfigController extends BaseController
             throw new RuntimeException("部门信息为空");
         }
 
-        return AjaxResult.success(sdConfigService.selectSdConfigByDeptId(sdConfig.getDeptId(),sdConfig.getCode()));
+        return AjaxResult.success(sdConfigService.selectSdConfigByDeptId(sdConfig));
     }
 
 

@@ -461,4 +461,11 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<Map> getMacItem(String devId);
+
+	/**
+	 * 根据ip消防炮信息
+	 * @param deviceAddress
+	 * @return
+	 */
+	SdDevices getXfpDevicesInfo(String deviceAddress);
 }

@@ -377,6 +377,16 @@
     </select>
 
 
+    <select id="selectTunnels" resultMap="SdTunnelsResult">
+        select t.tunnel_id from sd_tunnels t
+        <where>
+            <if test="deptId != null and deptId != ''">
+                AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+
     <select id="isTunnel" resultType="String">
         select tunnel_name
         from sd_tunnels where tunnel_id  = #{deviceId}

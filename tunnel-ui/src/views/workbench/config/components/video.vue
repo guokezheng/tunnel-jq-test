@@ -528,7 +528,7 @@ export default {
       this.eqTypeDialogList = eqTypeDialogList;
       this.cameraVisible = true;
       this.videoActive = "information", // tab页
-
+      this.cameraPlayer = false;
       this.getmessage();
     },
     // 点击云台方向
@@ -600,6 +600,7 @@ export default {
     // 关闭弹窗
     handleClosee() {
       this.cameraVisible = false;
+      this.cameraPlayer = false;
       this.yunTaiVisible = false;
     },
     // 录像查看

@@ -175,7 +175,7 @@
         label="设备类型"
         align="center"
         prop="typeName.typeName"
-        width="120"
+        width="130"
         show-overflow-tooltip
       />
       <el-table-column

@@ -9,12 +9,17 @@ import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PhoneSpkEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.event.SdEventType;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
@@ -59,6 +64,12 @@ public class PhoneSpkService {
     private SdOptDeviceService sdOptDeviceService;
     @Autowired
     private ISdOperationLogService sdOperationLogService;
+
+    @Autowired
+    private SdEventTypeMapper sdEventTypeMapper;
+
+    @Autowired
+    private SdEventMapper sdEventMapper;
 
     /**
      * 从Spring容器中获取设备协议中配置的Class对象
@@ -144,14 +155,15 @@ public class PhoneSpkService {
      */
     public void onMessage(@RequestBody JSONObject jsonObject) {
         // System.out.println("电话广播websocket>>>>>>>>>>>" + jsonObject);
+        String data1 = jsonObject.getString("data");
+        JSONObject jsonObject1 = JSONObject.parseObject(data1);
+        if (jsonObject1.containsKey("attribute") && jsonObject1.containsKey("ext")) {
+            String attribute = jsonObject1.getString("attribute");
+            String id = jsonObject1.getJSONObject("ext").getString("id");
 
-        if (jsonObject.containsKey("attribute") && jsonObject.containsKey("ext")) {
-            String attribute = jsonObject.getString("attribute");
-            String id = jsonObject.getJSONObject("ext").getString("id");
-
-            String deviceType = jsonObject.getJSONObject("ext").getString("deviceType");
-            if (StringUtils.isBlank(deviceType) && jsonObject.containsKey("device")) {
-                deviceType = jsonObject.getJSONObject("device").getString("type");
+            String deviceType = jsonObject1.getJSONObject("ext").getString("deviceType");
+            if (StringUtils.isBlank(deviceType) && jsonObject1.containsKey("device")) {
+                deviceType = jsonObject1.getJSONObject("device").getString("type");
             }
             Integer itemId = null;
             SdDevices devices = new SdDevices();
@@ -167,24 +179,33 @@ public class PhoneSpkService {
 
             if (null != device) {
                 String data = PhoneSpkEnum.getValue(attribute);
+                if(data == null || "".equals(data)){
+                    return;
+                }
+                SdDevices sdDevices = new SdDevices();
+                sdDevices.setEqStatus(data);
+                sdDevices.setEqId(device.getEqId());
+                sdDevicesMapper.updateSdDevices(sdDevices);
                 deviceDataService.updateDeviceData(device, data, Long.valueOf(itemId));
 
-                //接收杭山东隧道的华为推送的紧急电话事件数据，此处对于接收到的报警信息不做处理。
-                /*SdEventType sdEventType = new SdEventType();
-                sdEventType.setEventType("紧急电话");
-                List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
-                Long eventTypeId = sdEventTypes.get(0).getId();
-                //存储事件到事件表
-                SdEvent sdEvent = new SdEvent();
-                sdEvent.setTunnelId(device.getEqTunnelId());
-                sdEvent.setEventTypeId(eventTypeId);
+                //判断设备如果数据杭山东隧道，此处对于接收到的报警信息不做处理。
+                if(!TunnelEnum.HANG_SHAN_DONG.getCode().equals(device.getEqTunnelId()) && PhoneSpkEnum.ANSWERED.equals(data)){
+                    SdEventType sdEventType = new SdEventType();
+                    sdEventType.setEventType("紧急电话");
+                    List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
+                    Long eventTypeId = sdEventTypes.get(0).getId();
+                    //存储事件到事件表
+                    SdEvent sdEvent = new SdEvent();
+                    sdEvent.setTunnelId(device.getEqTunnelId());
+                    sdEvent.setEventTypeId(eventTypeId);
 
-                sdEvent.setEventTitle("紧急电话告警事件");
-                sdEvent.setEventSource("2");
-                sdEvent.setEventState("0");
-                sdEvent.setStakeNum(device.getPile());
-                sdEvent.setStartTime(new Date().toString());
-                sdEventMapper.insertSdEvent(sdEvent);*/
+                    sdEvent.setEventTitle("紧急电话告警事件");
+                    sdEvent.setEventSource("2");
+                    sdEvent.setEventState("0");
+                    sdEvent.setStakeNum(device.getPile());
+                    sdEvent.setStartTime(new Date().toString());
+                    sdEventMapper.insertSdEvent(sdEvent);
+                }
             }
         }
     }

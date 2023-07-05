@@ -144,9 +144,9 @@
                 >
                   <el-option
                     v-for="item in fontTypeOptions"
-                    :key="item.dictLabel"
+                    :key="item.cssClass"
                     :label="item.dictLabel"
-                    :value="item.dictLabel"
+                    :value="item.cssClass"
                   >
                   </el-option>
                 </el-select>
@@ -337,6 +337,11 @@ export default {
       previewContent: "", //预览内容
       ispreviewContent: -1,
       dataForm: {
+        CONTENT:'',
+        STAY:'',
+        FONT:'',
+        COORDINATE:'',
+
         // id: "",
         // screenSize: "400*40", //屏幕尺寸
         // inScreenMode: "1", //入屏方式
@@ -520,9 +525,9 @@ export default {
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
     this.getDicts("iot_device_font_type").then((res) => {
-      this.fontTypeOptions = res.data;
-      console.log(this.fontTypeOptions, "字体类型");
-    });
+        this.fontTypeOptions = res.data;
+        console.log(this.fontTypeOptions, "字体类型");
+      });
     this.getDicts("iot_devices_font_color").then((res) => {
       this.colorOptions = res.data;
       console.log(this.colorOptions, "字体颜色");
@@ -550,6 +555,7 @@ export default {
       this.alignmentNum = 2
       this.dataForm = JSON.parse(JSON.stringify(this.boardEmitItem));
       console.log(this.dataForm,"this.dataForm")
+      // this.dataForm.FONT = this.getFont(this.boardEmitItem.FONT)
       this.dataForm.CONTENT = JSON.parse(
         JSON.stringify(
           this.boardEmitItem.CONTENT.replace("<br>", "\n").replace(/ /g, " ")

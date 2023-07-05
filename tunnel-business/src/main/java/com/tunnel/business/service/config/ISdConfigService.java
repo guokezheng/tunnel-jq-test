@@ -60,5 +60,5 @@ public interface ISdConfigService
      */
     public int deleteSdConfigById(Long id);
 
-    List<SdConfig> selectSdConfigByDeptId(String deptId,String code);
+    List<SdConfig> selectSdConfigByDeptId(SdConfig sdConfig);
 }

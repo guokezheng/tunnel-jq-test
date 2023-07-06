@@ -231,8 +231,8 @@
                 </el-select>
               </el-col>
               <el-col
-                :span="4"
-                v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36"
+                :span="8"
+                v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36 && dain.equipmentTypeId != 7 && dain.equipmentTypeId != 9"
               >
                 <el-select v-model="dain.state" placeholder="请选择设备执行操作" style="width:100%;">
                   <el-option
@@ -245,30 +245,30 @@
                 </el-select>
               </el-col>
               <el-col
-                :span="4"
+                :span="8"
                 v-show="dain.equipmentTypeId == 7 ||  dain.equipmentTypeId == 9"
               >
-<!--                <el-select-->
-<!--                  :style="{'width':  dain.state == 1 ? '45%' :'100%' }"-->
-<!--                  v-model="items.state"-->
-<!--                  placeholder="请选择执行操作"-->
-<!--                  @change="selectStateVal(index)"-->
-<!--                >-->
-<!--                  <el-option-->
-<!--                    v-for="item in dain.eqStateList"-->
-<!--                    :key="item.deviceState + 1"-->
-<!--                    :label="item.stateName"-->
-<!--                    :value="item.deviceState"-->
-<!--                  >-->
-<!--                  </el-option>-->
-<!--                </el-select>-->
-                <el-input-number v-if="dain.state == 1" v-model="dain.stateNum"   :min="dain.limitMin" :max="100" ></el-input-number>
+              <el-select
+                :style="{'width':  dain.state == 1 ? '45%' :'100%' }"
+                v-model="dain.state"
+                placeholder="请选择执行操作"
+                @change="selectStateVal(index)"
+              >
+                <el-option
+                  v-for="item in dain.eqStateList"
+                  :key="item.deviceState + 1"
+                  :label="item.stateName"
+                  :value="item.deviceState"
+                >
+                </el-option>
+              </el-select>
+                <el-input-number v-if="dain.state == 1" v-model="dain.stateNum" style="width: 55%"  :min="dain.limitMin" :max="100" ></el-input-number>
               </el-col>
               <el-col
-                :span="4"
+                :span="8"
                 v-if="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
               >
-                <el-cascader
+                <!-- <el-cascader
                   :props="checkStrictly"
                   v-model="dain.state"
                   :options="dain.templatesList"
@@ -277,7 +277,10 @@
                   collapse-tags
                   @change="handleChange"
                   style="width:100%;"
-                ></el-cascader>
+                ></el-cascader> -->
+                <el-input v-model="dain.content" placeholder="请选择模板" readonly @click.native="openTemDialog(dain)">
+                <el-button slot="append" icon="el-icon-search" @click.stop="templateClick(index, index,dain)"></el-button>
+              </el-input>
               </el-col>
               <el-col :span="2" class="buttonBox">
                 <el-button
@@ -310,16 +313,54 @@
       destroy-on-close
       class="scrollbar"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <crontab
         @hide="openCron = false"
         @fill="crontabFill"
         :expression="expression"
       ></crontab>
     </el-dialog>
+    <el-dialog
+      :title="templateData.processName"
+      :visible.sync="dialogVisibleTem"
+      append-to-body
+      width="45%"
+      :before-close="handleClose">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <div style="display: flex;justify-content: center;align-items: center;">
+        <!-- 'letter-spacing':templateData['font_spacing'] + 'px', -->
+        <div :style="{
+          'width':templateData['width'] + 'px',
+          'height':templateData['height'] + 'px',
+          'color':templateData['font_color'],
+          'font-size':templateData['font_size'] + 'px',
+          'font-family':templateData['font_type'],
+          'background-color':'#000',
+          'position':'relative',
+          }">
+          <span :style="{
+            'position':'absolute',
+            'top':templateData['top'] + 'px',
+            'left':templateData['left'] + 'px',
+          }"
+                style="line-height:1" v-html="templateData['content']">
+          </span>
+        </div>
+      </div>
+    </el-dialog>
+    <com-board class="comClass" ref="boardRef" @getVmsData="getMsgFormSon"></com-board>
+
   </div>
 </template>
 
     <script>
+    import {selectVmsContent} from "@/api/information/api";
 import {
   listEqTypeStateIsControl,
   getVMSTemplatesByDevIdAndCategory,
@@ -348,12 +389,17 @@ import {
 } from "@/api/event/strategy";
 import Crontab from "@/components/Crontab";
 import{listEventType}from "@/api/event/eventType";
+import comBoard from "@/views/event/reservePlan/board";
+
 export default {
   components: {
     Crontab,
+    comBoard
   },
   data() {
     return {
+      templateData:{},
+      dialogVisibleTem:false,
       checkStrictly: {
         multiple: false,
         emitPath: false,
@@ -479,6 +525,58 @@ export default {
       this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
+    },
+    selectStateVal(index){
+      if(this.strategyForm.autoControl[index].state == 1){
+        this.$set(this.strategyForm.autoControl[index], "stateNum", 100);
+        //基本照明限制 最低亮度为 30
+        if(this.strategyForm.autoControl[index].equipmentTypeId == 9){
+          this.$set(this.strategyForm.autoControl[index], "limitMin", 30);
+        }
+
+      }else{
+        this.$set(this.strategyForm.autoControl[index], "stateNum", 0);
+      }
+    },
+    handleClose(){
+      this.dialogVisibleTem = false
+    },
+    // 情报板选择模板点击事件
+    templateClick(number, index,item){
+      this.$refs.boardRef.init(
+        number,
+        index,
+        item.equipmentTypeId,
+      );
+    },
+    getMsgFormSon(data){
+      console.log(data,"data")
+      this.$set(this.strategyForm.autoControl[data.index],'content',data.content);
+      this.$set(this.strategyForm.autoControl[data.index],'state',data.id);
+    },
+    //查看情报板信息
+    openTemDialog(item){
+      let params = {id: item.id,state:item.state,type:'1'};
+      console.log(item);
+      console.log(item)
+      if(item.state == '' || item.state == null){
+        return this.$modal.msgWarning("请选择模板");
+      }
+      selectVmsContent(params).then((res)=>{
+        this.templateData = Object.assign(res.data,item);
+        console.log(this.templateData)
+        let zxc = this.templateData['screen_size'].split('*');
+        this.templateData['width'] = zxc[0];
+        this.templateData['height'] = zxc[1];
+        let align = this.templateData['coordinate'];
+        this.templateData['left'] = align.substr(0,3);
+        this.templateData['top'] = align.substr(3,6);
+        let content = this.templateData['content'];
+        if(content.indexOf('/n') == '-1'){
+          this.templateData['content'] = content.replace(/\n|\r\n/g,'<br>').replace(/ /g, ' &nbsp');
+        }
+        this.dialogVisibleTem = true;
+      })
     },
     getListEventType(){
       let data = {prevControlType:"1"};
@@ -1002,7 +1100,9 @@ export default {
     },
     // 取消按钮
     strategyFormClose() {
-      this.$emit("dialogVisibleCloseEvent");
+      let data = false;
+      this.$emit("dialogVisibleClose",data);
+      // this.$emit("dialogVisibleCloseEvent");
     },
     /** cron表达式按钮操作 */
     handleShowCron() {

@@ -137,7 +137,7 @@
             />
           </el-form-item> -->
         <!-- 日常 -->
-        <el-form-item label="策略类型" prop="strategyType">
+        <!-- <el-form-item label="策略类型" prop="strategyType">
           <el-select
             v-model="queryParams.strategyType"
             placeholder="请选择策略类型"
@@ -170,7 +170,7 @@
           >新增
           </el-button
           >
-        </el-form-item>
+        </el-form-item> -->
         <el-table
           v-loading="loading"
           :data="strategyList"

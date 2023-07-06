@@ -267,7 +267,7 @@ export default {
   },
   watch: {
     "stateForm.state": function (newVal, oldVal) {
-      console.log(newVal, "newVal");
+      // console.log(newVal, "newVal");
       if([7, 9].includes(this.clickEqType)){
       // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if(newVal == "1" && this.stateForm.brightness == 0){
@@ -506,6 +506,7 @@ export default {
           this.stateForm.state == 1 &&
           this.stateForm.brightness < 30
         ) {
+          loading.close();
           this.$modal.msgWarning("基本照明亮度不得低于30");
           return;
         }

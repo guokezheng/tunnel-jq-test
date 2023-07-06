@@ -67,7 +67,7 @@
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
-              {{ srollAuto ? "实时车辆关" : "实时车辆开" }}
+              {{ srollAuto ? "实时车辆开" : "实时车辆关" }}
             </p>
             <el-switch
               v-model="carShow"
@@ -2690,7 +2690,7 @@ export default {
     ...mapState({
       radarDataList: (state) => state.websocket.radarDataList,
       sdEventList: (state) => state.websocket.sdEventList,
-      sdSvgEventList: (state) => state.websocket.sdSvgEventList,
+      // sdSvgEventList: (state) => state.websocket.sdSvgEventList,
     }),
     sideTheme: {
       get() {
@@ -2733,7 +2733,7 @@ export default {
       item = item.replace(/\s*/g,"");
       let ago = item.substring(0,item.indexOf("右"));
       let after = item.substring(item.indexOf("右"),item.length);
-      console.log((ago + "<br/>" + after),"hahahahhahah")
+      // console.log((ago + "<br/>" + after),"hahahahhahah")
       return ago + '<br/>' + after;
     },
     srollSwitchChange(){

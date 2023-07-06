@@ -415,6 +415,10 @@ export default {
     getEnergyConsumption() {
       energyConsumptionDetection(this.tunnelId).then((res) => {
         console.log(res, "能耗监测");
+        if(!res.data.year && !res.data.month && !res.data.day){
+          return
+        }
+        console.log(res.data.year,"0000")
         let xDataN = [];
         let xDataY = [];
         let xDataR = [];
@@ -449,7 +453,7 @@ export default {
               ]),
             },
           },
-          data: res.data.year?res.data.year.map((item) => item.value):[],
+          data: res.data.year.map((item) => item.value),
         });
         yData.push({
           name: "月",
@@ -483,7 +487,7 @@ export default {
               ]),
             },
           },
-          data: res.data.month?res.data.month.map((item) => item.value):[],
+          data: res.data.month.map((item) => item.value),
         });
         yData.push({
           name: "日",
@@ -513,7 +517,7 @@ export default {
               ]),
             },
           },
-          data: res.data.day?res.data.day.map((item) => item.value):[],
+          data: res.data.day.map((item) => item.value),
         });
         for (let item of res.data.year) {
           xData.push(item.rt);

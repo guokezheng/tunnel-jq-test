@@ -170,14 +170,14 @@
         :index="indexMethod"
         label="序号"
         align="center"
-        width="60"
+        width="55"
       ></el-table-column>
       <!-- <el-table-column label="隧道ID" align="center" prop="tunnelId" /> -->
       <el-table-column
         label="隧道ID"
         align="center"
         prop="tunnelId"
-        width="210"
+        width="220"
       />
       <el-table-column
         label="隧道名称"

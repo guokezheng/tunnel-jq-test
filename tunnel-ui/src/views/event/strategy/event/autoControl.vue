@@ -574,8 +574,7 @@ export default {
     //查看情报板信息
     openTemDialog(item){
       let params = {id: item.id,state:item.state,type:'1'};
-      console.log(item);
-      console.log(item)
+   
       if(item.state == '' || item.state == null){
         return this.$modal.msgWarning("请选择模板");
       }
@@ -799,13 +798,13 @@ export default {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
           let response = JSON.parse(JSON.stringify(autoControl))
-          console.log(response,"response");
+          // console.log(response,"response");
           // 如果为预警联动则判断是否填写完整
           if(this.strategyForm.triggers.warningType == '1'){
             let result = response.every(function (item) {
                 return item.equipmentTypeId && item.state && item.equipments
             });
-            console.log(result);
+            // console.log(result);
             if(!result){
               return this.$modal.msgError("请填写完整");
             }
@@ -855,7 +854,8 @@ export default {
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();
-        this.$emit("dialogVisibleCloseEvent");
+        let data = true;
+        this.$emit("dialogVisibleClose",data);
         this.$modal.msgSuccess("新增策略成功");
       });
     },

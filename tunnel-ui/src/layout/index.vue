@@ -464,9 +464,9 @@ export default {
   width: 100%;
   z-index: 999;
 }
-.theme-light-navbar {
-  background-color: white;
-}
+// .theme-light-navbar {
+//   background-color: white;
+// }
 .app-wrapper {
   @include clearfix;
   position: relative;

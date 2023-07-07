@@ -870,7 +870,6 @@ export default {
     },
     // 每次点击取消按钮，策略类型赋空
     closeDialog(flag) {
-
       let index = this.strategyForm.strategyType;
       switch (index) {
         case '0':
@@ -891,7 +890,7 @@ export default {
           this.$refs.timeControl.closeBoard();
           break;
       }
-      console.log(this.strategyForm.strategyType,"0000000000");
+      // console.log(this.strategyForm.strategyType,"0000000000");
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
       this.$refs.tableFile1.clearSelection();

@@ -116,6 +116,7 @@
         .el-radio-button__inner{
           color:#fff;
           border:solid 0.1px #0067B2;
+          background: transparent;
         }
         .is-active .el-radio-button__inner{
           border:none !important;
@@ -143,9 +144,10 @@
     }
     // 输入框自带搜索按钮
     .el-input-group__append, .el-input-group__prepend{
-      background-color: #39ADFF;
+      background: #05669D !important;
+      color: #00C8FF;
       border: solid 1px #00C8FF;
-      color: #fff;
+      border-left: transparent;
     }
     .vue-treeselect__control{
       background-color: #F2F8FF;
@@ -657,14 +659,14 @@
     color: #fff;
     border: none !important;
     // box-shadow: 0px 0px 10px #68B5FF;
-    width: 160px;
-    height: 32px;
-    line-height: 28px;
-    font-size: 15px;
+    width: 9vw;
+    height: 3vh;
+    line-height: 3vh;
+    font-size: 0.75vw;
   }
   .siteClass {
     line-height: unset;
-  	margin-left: 16px;
+  	margin-left: 1vw;
       .el-input__suffix{
         color: #e1feff;
       }
@@ -700,14 +702,16 @@
   .zoomClass{
     .input-with-select{
       .el-input__inner{
-        padding: 15px;
-        width: 150px;
+        padding: 0 15px;
+        width: 7vw;
       }
       .el-input-group__append{
         background-color: #00B0FF;
         border: 1px solid #00B0FF;
         padding: 0;
-        width: 30px;
+        width: 1.5vw;
+        height: 3vh;
+        line-height: 2vh;
         .el-button{
           width: 30px;
           margin: -10px -10px;
@@ -734,11 +738,13 @@
       }
     }
     .el-input__inner {
-      height: 32px;
+      height: 3vh;
       padding: 0;
       color: #e1feff;
       background: linear-gradient(2deg, #00070D, #005AA8);
       border: solid 1px #00c8ff;
+      line-height: 3vh;
+      font-size: 0.5vw;
     }
     .switchStyle .el-switch__core:after{
       background: #0a88bd;

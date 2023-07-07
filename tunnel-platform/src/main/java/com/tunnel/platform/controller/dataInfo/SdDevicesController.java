@@ -324,10 +324,10 @@ public class SdDevicesController extends BaseController {
             throw new RuntimeException("出厂时间不能晚于设备安装时间");
         }
 
-        List<SdDevices> list1 = sdDevicesService.tunnelEqNameOnly(sdDevices.getEqTunnelId(), sdDevices.getEqName());
+        /*List<SdDevices> list1 = sdDevicesService.tunnelEqNameOnly(sdDevices.getEqTunnelId(), sdDevices.getEqName());
         if (list1.size() > 0 && !sdDevices.getEqId().equals(list1.get(0).getEqId())) {
             return Result.error("当前设备名称已经存在，请核对后重试！");
-        }
+        }*/
 
         int i = sdDevicesService.updateSdDevices(sdDevices);
         if (sdDevices.getEqType() != 31L) {

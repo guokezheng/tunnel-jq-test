@@ -1,17 +1,17 @@
 const GlobalConfig = {
   jiqing: { //济青配置
-    eventTopicsShow: false, //交通事件 是否显示
-    perceptionEventShow: false, //感知事件 是否显示
-    roadTestEquipmentShow: false, //路测设备 是否显示
-    equipmentFacilitiesShow: false,//设备设施
+    eventTopicsShow: true, //交通事件 是否显示
+    perceptionEventShow: true, //感知事件 是否显示
+    roadTestEquipmentShow: true, //路测设备 是否显示
+    equipmentFacilitiesShow: true,//设备设施
     otherClassShow: false,//其他
-    roadNetworkFacilitiesShow: false, //路网设施 是否显示
+    roadNetworkFacilitiesShow: true, //路网设施 是否显示
     maintenanceShow: false, //建设养护 是否显示
     mapTreeShow: false,  //设备树 是否显示
-    toolbarShow: false,  //工具栏 是否显示
-    legendShow: false, //图例 是否显示
+    toolbarShow: true,  //工具栏 是否显示
+    legendShow: true, //图例 是否显示
     roadIDs: ['S000637'],//'S000637' 道路id配置   S000637--济青
-    roadAndBridgeTunnelShow: false,
+    roadAndBridgeTunnelShow: true,
     /*
       roadIdKey 值为对应图层属性中的道路id字段 用来根据道路id查询
       opmaManageIdKey 用来配置运管机构树 进行图层筛选 只根据两个值进行筛选 opmaManagerCorpIds、opmaManagerIds两个值是固定的 只需要改键 opmaManagerCorpIds对应的是树中一级发展公司 opmaManagerIds对应的是二级运管中心 
@@ -152,7 +152,7 @@ const GlobalConfig = {
     ],
     roadNetworkFacilities: [//路网设施配置
       { label: '服务区', layerName: 'serviceLayerJQ', serviceLayerJQ: true, id: '003', roadIdKey: 'road_id', opmaManageIdKey: { 'opma_manag': 'opmaManagerCorpIds', 'opma_man_2': 'opmaManagerIds' } },
-      { label: '收费站', layerName: 'stationLayerJQ', stationLayerJQ: true, id: '004', roadIdKey: 'road_id', opmaManageIdKey: { 'opma_manag': 'opmaManagerCorpIds', 'opma_man_2': 'opmaManagerIds' } },
+      { label: '收费站', layerName: 'stationLayerJQ', stationLayerJQ: false, id: '004', roadIdKey: 'road_id', opmaManageIdKey: { 'opma_manag': 'opmaManagerCorpIds', 'opma_man_2': 'opmaManagerIds' } },
       { label: '枢纽立交', layerName: 'pivotLayerJQ', pivotLayerJQ: true, id: '005', roadIdKey: 'road_id', opmaManageIdKey: { 'opma_manag': 'opmaManagerCorpIds', 'opma_man_2': 'opmaManagerIds' } },
       { label: '互通立交', layerName: 'interchangeLayerJQ', interchangeLayerJQ: true, id: '011', roadIdKey: 'road_id', opmaManageIdKey: { 'opma_manag': 'opmaManagerCorpIds', 'opma_man_2': 'opmaManagerIds' } },
       { label: '路管机构', layerName: 'organizationLayer', organizationLayer: false, id: '109', roadIdKey: 'road_id', opmaManageIdKey: { 'opma_manag': 'opmaManagerCorpIds', 'opma_man_2': 'opmaManagerIds' } },
@@ -179,16 +179,16 @@ const GlobalConfig = {
     ],
   },
   danao: { //大脑配置 跟济青一样
-    eventTopicsShow: true,
-    perceptionEventShow: true,
-    roadTestEquipmentShow: false,
+    eventTopicsShow: true, //交通事件 是否显示
+    perceptionEventShow: true, //感知事件 是否显示
+    roadTestEquipmentShow: true, //路测设备 是否显示
     equipmentFacilitiesShow: true,//设备设施
-    otherClassShow: true,
-    roadNetworkFacilitiesShow: false,
-    maintenanceShow: true,
+    otherClassShow: true, //其他
+    roadNetworkFacilitiesShow: true, //路网设施 是否显示
+    maintenanceShow: true, //建设养护 是否显示
     roadAndBridgeTunnelShow: true,
-    mapTreeShow: true,
-    toolbarShow: true,
+    mapTreeShow: false, //设备树 是否显示
+    toolbarShow: true, //工具栏 是否显示
     legendShow: true, //图例是否显示
     roadIDs: [],//'G002237' 道路id配置
     //路桥隧道
@@ -456,7 +456,7 @@ const GlobalConfig = {
   // trafficFlowLayer: false,//交通流量
   trafficSituationLayer: true,//交通态势
   patrolAccidentLayer: true,//应急车辆（安装定位设备）
-  gaodeTrafficLayer: false,//高德路况
+  gaodeTrafficLayer: true,//高德路况
   congestionSectionLayer: false,// 自有交通路况
   trafficSafetyLayer: true,//交安标识图层
   meteorologicaldataLayer: true,//气象数据图层

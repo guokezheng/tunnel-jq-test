@@ -51,7 +51,8 @@ export default {
         grid: {
           top: "50",
           bottom: "10",
-          left: "10",
+          left: "20",
+          right:"20",
           containLabel: true,
         },
         xAxis: {

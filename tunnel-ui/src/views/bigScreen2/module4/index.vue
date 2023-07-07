@@ -214,7 +214,7 @@
     }
     .topBox2{
       width: calc(100% - 40vw + 1px) !important;
-      top: 0px !important;
+      top: 0.12rem !important;
       border: solid 1px #455B77;
       background: #000001;
       border-radius: 2px;
@@ -244,7 +244,7 @@
       width: calc(100% - 40vw);
       height: 80px !important;
       position: absolute;
-      top: 82px;
+      top: 0.54rem;
       left: 20vw;
       z-index: 4;
       display: flex;

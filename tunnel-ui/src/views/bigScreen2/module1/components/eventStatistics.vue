@@ -294,6 +294,6 @@ export default {
 </script>
   <style scoped>
 #chart2 {
-  height: 26vh;
+  height: calc(100% - 30px);
 }
 </style>

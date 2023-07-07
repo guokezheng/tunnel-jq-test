@@ -421,6 +421,9 @@ export default {
     };
   },
   methods: {
+    handleClose(){
+      this.dialogVisibleTem = false
+    },
     //查看情报板信息
     openTemDialog(item){
       let params = {id: item.id,state:item.state,type:'1'};

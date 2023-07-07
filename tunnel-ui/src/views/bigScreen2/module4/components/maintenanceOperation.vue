@@ -355,7 +355,7 @@ export default {
   }
   .content {
     width: 100%;
-    height: calc(100% - 64px);
+    height: calc(100% - 72px);
     display: flex;
     .left {
       width: 45%;

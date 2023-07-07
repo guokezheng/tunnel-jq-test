@@ -182,11 +182,11 @@ export default {
     background: linear-gradient(to left, rgba(0, 0, 0), rgb(0 0 0 / 25%));
   }
   .topBox {
-    width: calc(100% - 40vw);
-    height: 80px;
+    width: 60%;
+    height: 60px;
     position: absolute;
-    top: 0;
-    left: 20vw;
+    top: 0.12rem;
+    left: 20%;
     z-index: 4;
     display: flex;
     justify-content: space-between;
@@ -194,20 +194,22 @@ export default {
     .topMiniBox {
       width: 33%;
       height: 100%;
-      --borderWidth: 1px;
-      background: #000001;
+      background: rgba(0,21,43,.6);
+      border: 1px solid rgba(1,152,255,.6);
+      // --borderWidth: 1px;
+      // background: #000001;
       position: relative;
-      border-radius: var(--borderWidth);
+      // border-radius: var(--borderWidth);
       > div {
         width: 100%;
         height: 50%;
         text-align: center;
-        line-height: 40px;
+        line-height: 30px;
         .title {
           font-size: 14px;
-          font-weight: bold;
+          // font-weight: bold;
           padding-right: 10px;
-          color: #9ba0bc;
+          color: #fff;
         }
         .num1 {
           color: #fbd750;

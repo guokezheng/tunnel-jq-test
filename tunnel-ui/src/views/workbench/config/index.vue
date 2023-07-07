@@ -25,15 +25,15 @@
             style="margin-left: 3px"
             :style="isManagementStation ? 'display: flex;' : ''"
           >
-            <el-tooltip
+          <el-tooltip
               class="item"
               popper-class="wb-tip"
               v-for="(item, index) in tunnelList"
               :key="item.tunnelId"
               effect="dark"
-              :content="item.tunnelLength"
               placement="top-start"
             >
+              <div slot="content" v-html="splitData(item.tunnelLength)"></div>
               <el-button
                 type="info"
                 size="mini"
@@ -67,7 +67,7 @@
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
-              {{ srollAuto ? "实时车辆关" : "实时车辆开" }}
+              {{ srollAuto ? "实时车辆开" : "实时车辆关" }}
             </p>
             <el-switch
               v-model="carShow"
@@ -2690,7 +2690,7 @@ export default {
     ...mapState({
       radarDataList: (state) => state.websocket.radarDataList,
       sdEventList: (state) => state.websocket.sdEventList,
-      sdSvgEventList: (state) => state.websocket.sdSvgEventList,
+      // sdSvgEventList: (state) => state.websocket.sdSvgEventList,
     }),
     sideTheme: {
       get() {
@@ -2728,6 +2728,14 @@ export default {
   },
 
   methods: {
+    //拆分拼接数据
+    splitData(item){
+      item = item.replace(/\s*/g,"");
+      let ago = item.substring(0,item.indexOf("右"));
+      let after = item.substring(item.indexOf("右"),item.length);
+      // console.log((ago + "<br/>" + after),"hahahahhahah")
+      return ago + '<br/>' + after;
+    },
     srollSwitchChange(){
       if(this.srollSwitch){
         //调取滚动条

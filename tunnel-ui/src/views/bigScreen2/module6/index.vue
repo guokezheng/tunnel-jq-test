@@ -173,7 +173,7 @@ export default {
     width: calc(100% - 40vw);
     height: 80px;
     position: absolute;
-    top: 0;
+    top: 0.12rem;
     left: 20vw;
     z-index: 4;
     display: flex;

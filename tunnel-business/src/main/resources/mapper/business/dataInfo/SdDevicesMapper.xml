@@ -1359,4 +1359,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
             B.eq_id = #{devId} and B.is_reserved = 1
     </select>
+
+
+
+    <select id="getXfpDevicesInfo" parameterType="java.lang.String" resultMap="SdDevicesResult">
+        select sd.*,st.tunnel_name tunnel from sd_devices sd left join
+        sd_tunnels st on sd.eq_tunnel_id = st.tunnel_id
+        where ip = #{deviceAddress}
+   </select>
 </mapper>

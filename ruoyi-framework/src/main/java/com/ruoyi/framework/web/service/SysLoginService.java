@@ -97,7 +97,8 @@ public class SysLoginService
             else
             {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
-                throw new ServiceException(e.getMessage());
+                //throw new ServiceException(e.getMessage());
+                throw new RuntimeException("用户名或密码错误");
             }
         }
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
@@ -125,6 +126,7 @@ public class SysLoginService
             throw new CaptchaExpireException();
         }
         if (!code.equalsIgnoreCase(captcha))
+
         {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
             throw new CaptchaException();

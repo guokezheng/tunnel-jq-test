@@ -285,6 +285,6 @@ export default {
 </script>
   <style scoped>
 #perceivedEvent {
-  height: 240px;
+  height: calc(100% - 30px);
 }
 </style>

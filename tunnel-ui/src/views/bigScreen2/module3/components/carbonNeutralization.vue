@@ -1,9 +1,9 @@
 <template>
-  <div style="width: 100%; height: calc(100% - 30px); padding-top: 2%;">
+  <div style="width: 100%; height: calc(100% - 30px); padding-top: 8px;">
     <!-- 按钮 -->
     <div style="
         display: flex;
-        height: 10%;
+        height: 22px;
         justify-content: space-between;
         padding-right: 5px;">
       <!-- <div style="display: flex">
@@ -39,7 +39,7 @@ export default {
     },
     height: {
       type: String,
-      default: '88%'
+      default: 'calc(100% - 22px)'
     }
   },
   data () {

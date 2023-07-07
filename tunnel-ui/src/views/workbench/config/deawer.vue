@@ -282,6 +282,8 @@
               size="mini"
               value-format="yyyy-MM-dd"
               placeholder="请选择日期"
+              :picker-options="setDisabled"
+              disabled
             >
             </el-date-picker>
           </div>
@@ -292,6 +294,7 @@
               size="mini"
               :clearable="false"
               value-format="HH:mm:ss"
+              disabled
             >
             </el-time-picker>
           </div>
@@ -404,6 +407,11 @@ export default {
       chezhiDisabled: false, //车指按钮 返回接口结果前禁用
       fileNamesList: [],
       isDrawerCList: [],
+      setDisabled: {
+        disabledDate(time) {
+          return time.getTime() < Date.now()-86400000; // 可选历史天、可选当前天、不可选未来天
+        },
+      },
       chezhiLaneOptionList: [
         {
           laneId: 1,
@@ -448,7 +456,6 @@ export default {
     };
   },
   created() {
-
     this.getDicts("sd_strategy_direction").then((data) => {
       this.directionList = data.data;
     });
@@ -582,7 +589,7 @@ export default {
       this.drawerA = false;
       this.drawerCVisible = false;
       this.timingStrategyDisabled = false;
-      debugger
+      // debugger
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {

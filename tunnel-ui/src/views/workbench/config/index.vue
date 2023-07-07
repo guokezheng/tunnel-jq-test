@@ -67,7 +67,7 @@
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
-              {{ srollAuto ? "实时车辆开" : "实时车辆关" }}
+              {{ carShow ? "实时车辆关" : "实时车辆开" }}
             </p>
             <el-switch
               v-model="carShow"

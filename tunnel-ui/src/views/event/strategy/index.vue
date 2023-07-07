@@ -882,6 +882,10 @@ export default {
           this.$refs.timingControl.resetForm();
           this.$refs.timingControl.closeBoard();
           break;
+        case '2':
+          this.$refs.autoControl.resetForm();
+          this.$refs.autoControl.closeBoard();
+          break;
         case '3':
           this.$refs.timeControl.resetForm();
           this.$refs.timeControl.closeBoard();
@@ -1161,6 +1165,7 @@ export default {
     //关闭drawer
     handleClose(done) {
       let index = this.strategyForm.strategyType;
+      console.log(index,"index")
       switch (index) {
         case '0':
           this.$refs.manualControl.resetForm();
@@ -1169,6 +1174,10 @@ export default {
         case '1':
           this.$refs.timingControl.resetForm();
           this.$refs.timingControl.closeBoard();
+          break;
+        case '2':
+          this.$refs.autoControl.resetForm();
+          this.$refs.autoControl.closeBoard();
           break;
         case '3':
           this.$refs.timeControl.resetForm();

@@ -179,9 +179,9 @@
           <el-col :span="24">
             <el-form-item label="执行操作">
               <div class="menu">
-                <el-col :span="8">设备类型</el-col>
+                <el-col :span="6">设备资源类型</el-col>
                 <el-col :span="8">指定设备</el-col>
-                <el-col :span="6">控制指令</el-col>
+                <el-col :span="8">控制指令</el-col>
                 <el-col :span="2">操作</el-col>
               </div>
             </el-form-item>
@@ -195,8 +195,16 @@
               v-for="(dain, index) in strategyForm.autoControl"
               :key="index"
             >
-              <el-col :span="8">
-                <el-select
+              <el-col :span="6" style="padding-left:0">
+                <el-cascader
+                  v-model="dain.equipmentTypeId"
+                  :options="equipmentTypeData"
+                  :props="equipmentTypeProps"
+                  :show-all-levels="false"
+                  @change="changeEquipmentType(index)"
+                  style="width: 100%"
+                ></el-cascader>
+                <!-- <el-select
                   v-model="dain.equipmentTypeId"
                   placeholder="请选择设备类型"
                   clearable
@@ -210,9 +218,9 @@
                     :label="item.typeName"
                     :value="item.typeId"
                   />
-                </el-select>
+                </el-select> -->
               </el-col>
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-select
                   v-model="dain.equipments"
                   multiple
@@ -386,6 +394,7 @@ import {
   updateStrategyInfo,
   getGuid,
   handleStrategy,
+  getCategoryTree
 } from "@/api/event/strategy";
 import Crontab from "@/components/Crontab";
 import{listEventType}from "@/api/event/eventType";
@@ -398,6 +407,12 @@ export default {
   },
   data() {
     return {
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
       templateData:{},
       dialogVisibleTem:false,
       checkStrictly: {
@@ -522,10 +537,11 @@ export default {
       }
       // 获取事件类型
       this.getListEventType();
-      this.getEquipmentType();
+      // this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
     },
+    // 请选择设备 照明
     selectStateVal(index){
       if(this.strategyForm.autoControl[index].state == 1){
         this.$set(this.strategyForm.autoControl[index], "stateNum", 100);
@@ -549,6 +565,7 @@ export default {
         item.equipmentTypeId,
       );
     },
+    // 情报板弹窗
     getMsgFormSon(data){
       console.log(data,"data")
       this.$set(this.strategyForm.autoControl[data.index],'content',data.content);
@@ -592,9 +609,9 @@ export default {
       autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
       });
-      await listType(this.queryEqTypeParams).then((response) => {
-        this.equipmentTypeData = response.rows;
-      });
+      // await listType(this.queryEqTypeParams).then((response) => {
+      //   this.equipmentTypeData = response.rows;
+      // });
       getStrategy(this.id).then((response) => {
         let data = response.data;
         this.strategyForm.id = data.id;
@@ -635,6 +652,7 @@ export default {
             this.strategyForm.triggers.deviceId = res.data.deviceId.split(",");
           });
           listRl({ strategyId: row.id }).then((response) => {
+            console.log(response,"response")
             this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
             listDevices({
               eqType: response.rows[0].eqTypeId,
@@ -681,13 +699,21 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
-      this.$set(this.strategyForm.autoControl[index],"state",null);
-      this.$set(this.strategyForm.autoControl[index],"equipments",null);
+      this.$set(this.strategyForm.autoControl[index], "content", null);
+      this.$set(this.strategyForm.autoControl[index], "stateNum", null);
+      this.$set(this.strategyForm.autoControl[index], "state", "");
+      this.$set(this.strategyForm.autoControl[index], "equipments", null);
       let params = {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
         eqDirection: this.strategyForm.direction, //方向
+        params:{
+          orderBy : 'eqName'
+        }
       };
+      if(this.strategyForm.direction == 3){
+        params.eqDirection = null;
+      }
       listDevices(params).then((res) => {
         this.$set(
           this.strategyForm.autoControl[index],
@@ -860,6 +886,16 @@ export default {
     },
     // 改变隧道或者方向
     changeEvent(value) {
+      console.log(value,"value")
+      this.equipmentTypeData = [];
+      // 重置设备列表
+      this.strategyForm.autoControl = [
+        { state: "", value: "", equipmentTypeId: "" },
+      ];
+      if(this.strategyForm.tunnelId.length !=0 && this.strategyForm.direction.length !=0){
+        //this.listEqTypeStateIsControl();
+        this.getEquipmentType();
+      }
       //给设备名称重新赋值
       let params = {
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -878,14 +914,24 @@ export default {
       // }
       // 查询设备类型并赋值
       let autoControl = this.strategyForm.autoControl;
-      for (let i = 0; i < autoControl.length; i++) {
-        listType(this.queryEqTypeParams).then((data) => {
-          this.$set(autoControl[i], "equipmentTypeData", data.rows);
-          // this.strategyForm.manualControl[i].equipmentTypeData = data.rows;
-        });
-      }
+      // for (let i = 0; i < autoControl.length; i++) {
+      //   listType(this.queryEqTypeParams).then((data) => {
+      //     this.$set(autoControl[i], "equipmentTypeData", data.rows);
+      //     // this.strategyForm.manualControl[i].equipmentTypeData = data.rows;
+      //   });
+      // }
       if (value == "1") {
         this.listEqTypeStateIsControl();
+      }
+    },
+     /** 查询设备类型列表 */
+     getEquipmentType() {
+      let autoControl = this.strategyForm.autoControl;
+      for (let i = 0; i < autoControl.length; i++) {
+        getCategoryTree().then((data) => {
+          this.$set(autoControl[i], "equipmentTypeData", data.data);
+          this.equipmentTypeData = data.data;
+        });
       }
     },
     selectEqName() {
@@ -1064,16 +1110,16 @@ export default {
       });
     },
     /** 查询设备类型列表 */
-    getEquipmentType() {
-      let autoControl = this.strategyForm.autoControl;
-      for (let i = 0; i < autoControl.length; i++) {
-        listType(this.queryEqTypeParams).then((data) => {
-          console.log(data.rows, "设备类型");
-          this.$set(autoControl[i], "equipmentTypeData", data.rows);
-          this.equipmentTypeData = data.rows;
-        });
-      }
-    },
+    // getEquipmentType() {
+    //   let autoControl = this.strategyForm.autoControl;
+    //   for (let i = 0; i < autoControl.length; i++) {
+    //     listType(this.queryEqTypeParams).then((data) => {
+    //       console.log(data.rows, "设备类型");
+    //       this.$set(autoControl[i], "equipmentTypeData", data.rows);
+    //       this.equipmentTypeData = data.rows;
+    //     });
+    //   }
+    // },
     changeValue(value) {
       this.changeVal = value;
     },
@@ -1113,6 +1159,10 @@ export default {
     crontabFill(value) {
       this.strategyForm.schedulerTime = value;
     },
+    // 关闭情报板窗口
+    closeBoard(){
+      this.$refs.boardRef.handleClosee();
+    }
   },
 };
 </script>

@@ -113,7 +113,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20" style="clear:both;">
         <el-col :span="24">
           <el-form-item
             v-for="(items, index) in strategyForm.autoControl"

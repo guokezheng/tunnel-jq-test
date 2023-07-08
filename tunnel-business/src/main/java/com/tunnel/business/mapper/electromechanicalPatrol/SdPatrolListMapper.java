@@ -140,4 +140,20 @@ public interface SdPatrolListMapper
      * @return
      */
     int savePatrol(SdPatrolList sdPatrolList);
+
+
+
+    /**
+     * 故障检修记录--判断是故障点还是巡检点
+     * @param faultId
+     * @return
+     */
+    SdPatrolList faultOrDevices(String faultId);
+
+    /**
+     * 判断巡检点时故障点、设备
+     * @param id
+     * @return
+     */
+    SdPatrolList getPatroltype(String id);
 }

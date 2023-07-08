@@ -102,13 +102,13 @@
             icon="el-icon-edit"
             @click="handleSign(scope.row)"
             v-hasPermi="['trafficEmergencies:emergencies:edit']"
-            
+
           >{{ scope.row.vehicleSign == '0' ? '标记' : '取消标记' }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -118,7 +118,7 @@
     />
     <el-dialog title="事件发布" :visible.sync="openPic" width="500px" append-to-body class="picDialog">
         <!-- <img :src=""/> -->
-        
+
     </el-dialog>
   </div>
 </template>
@@ -130,7 +130,7 @@ export default {
   dicts: ['sd_control_level', 'sd_control_type','sd_control_level_status'],
   data() {
     return {
-        
+
         // 隧道名称
         tunnelData:[],
         // 方向
@@ -274,8 +274,8 @@ export default {
           label: '开放应急车道',
           value: 'emergencyLine'
         },],
-      
-      
+
+
       // 表单参数
       form: {},
       // 表单校验
@@ -322,9 +322,9 @@ export default {
             row.vehicleSign = "0"
         }
         // 将row传给后台 然后刷新
-        
+
     },
-   
+
     // 取消按钮
     cancel() {
       this.openBoard = false;
@@ -378,7 +378,7 @@ export default {
         this.title = "修改管控等级配置";
       });
     },
-    
+
     /** 提交按钮 */
     submitForm(type) {
         if(type == 'board'){
@@ -393,7 +393,7 @@ export default {
             });
         }
     },
-      
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
@@ -407,7 +407,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有管控等级配置数据项？').then(() => {
+      this.$modal.confirm('是否确认导出管控等级配置数据项？').then(() => {
         this.exportLoading = true;
         return exportConfig(queryParams);
       }).then(response => {

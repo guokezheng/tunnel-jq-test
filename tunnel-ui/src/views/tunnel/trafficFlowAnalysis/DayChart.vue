@@ -26,6 +26,9 @@ export default {
     },
     dayData: {
       type: null
+    },
+    datePickerDay: {
+      type: null,
     }
   },
   watch: {
@@ -59,18 +62,43 @@ export default {
       this.setOptions();
     },
     setOptions() {
+      let dataTime;
       var myData = this.dayData;
       // X轴
       var xData = [];
       // Y轴
       var yData = [];
       if(myData.length == 0){
-          xData = ['测试数据1','测试数据2','测试数据3','测试数据4']
-          yData = [0,0,0,0]
+          if(this.datePickerDay!=null){
+            if (this.datePickerDay instanceof Date){
+              dataTime = this.datePickerDay;
+            }else{
+              dataTime = new Date(this.datePickerDay);
+            }
+          }else{
+              dataTime = new Date();
+          }
+          let dataInfo = [];
+          let dataInfoY = [];
+          //获取当前月数
+          let tempDate = dataTime;
+          tempDate.setMonth(tempDate.getMonth() + 1); // 先设置为下个月
+          tempDate.setDate(0); // 再置0，变成当前月最后一天
+          let indexLength = tempDate.getDate(); // 当前月最后一天即当前月拥有的天数
+          //模拟数据
+          for (let index = 1; index <= indexLength; index++) {
+              let startYear = dataTime.getFullYear();
+              let startMonth = dataTime.getMonth()+1;
+              let startDay = index;
+              dataInfo.push(startYear+"-"+startMonth+"-"+startDay);
+              dataInfoY.push(0);
+          }
+          xData = dataInfo;
+          yData = dataInfoY
       }else{
         for(var i=0;i<myData.length;i++){
           xData.push(myData[i].date);
-          yData.push(Number(myData[i].byVehicelNum) / 2);
+          yData.push(Number(myData[i].byVehicelNum));
         }
       }
       this.chart.setOption({

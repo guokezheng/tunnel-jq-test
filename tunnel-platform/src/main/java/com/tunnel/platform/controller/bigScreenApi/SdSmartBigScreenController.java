@@ -150,4 +150,59 @@ public class SdSmartBigScreenController extends BaseController {
     public AjaxResult getAlarmInformation(String tunnelId){
         return sdSmartBigScreenService.getAlarmInformation(tunnelId);
     }
+
+    /**
+     * 查询风险指标
+     *
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getRiskIndicators")
+    public AjaxResult getRiskIndicators(String tunnelId){
+        return sdSmartBigScreenService.getRiskIndicators(tunnelId);
+    }
+
+    /**
+     * 查询隧道内车辆数、车辆均速
+     *
+     * @param tunnelId
+     * @param roadDir
+     * @return
+     */
+    @GetMapping("/getTunnelVehicles")
+    public AjaxResult getTunnelVehicles(String tunnelId, String roadDir){
+        return sdSmartBigScreenService.getTunnelVehicles(tunnelId,roadDir);
+    }
+
+    /**
+     * 查询实时车辆
+     *
+     * @param tunnelId
+     * @param vehicleLicense
+     * @return
+     */
+    @GetMapping("/getRealCars")
+    public AjaxResult getRealCars(String tunnelId, String vehicleLicense){
+        return sdSmartBigScreenService.getRealCars(tunnelId,vehicleLicense);
+    }
+
+    /**
+     * 查询当日累计车辆
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getCumulativeCar")
+    public AjaxResult getCumulativeCar(String tunnelId){
+        return sdSmartBigScreenService.getCumulativeCar(tunnelId);
+    }
+
+    /**
+     * 查询车辆在途数
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getTransitCar")
+    public AjaxResult getTransitCar(String tunnelId){
+        return sdSmartBigScreenService.getTransitCar(tunnelId);
+    }
 }

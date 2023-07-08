@@ -2,10 +2,7 @@ package com.zc.common.core.foreignkeyservice;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 被关联服务抽象类
@@ -33,12 +30,9 @@ public abstract class AssociatedService
             return true;
         }
 
-        for (ForeignKeyService foreignKeyService : serviceForeignKeyMap.keySet())
+        for (Map.Entry<ForeignKeyService, String> foreignKeyService : serviceForeignKeyMap.entrySet())
         {
-
-            String foreignKey = serviceForeignKeyMap.get(foreignKeyService);
-
-            if (foreignKeyService.countByForeignKey(foreignKey, id) > 0)
+            if (foreignKeyService.getKey().countByForeignKey(foreignKeyService.getValue(), id) > 0)
             {
                 return false;
             }
@@ -62,12 +56,9 @@ public abstract class AssociatedService
 
         for (Long id : ids)
         {
-            for (ForeignKeyService foreignKeyService : serviceForeignKeyMap.keySet())
+            for (Map.Entry<ForeignKeyService, String> foreignKeyService : serviceForeignKeyMap.entrySet())
             {
-
-                String foreignKey = serviceForeignKeyMap.get(foreignKeyService);
-
-                if (foreignKeyService.countByForeignKey(foreignKey, id) > 0)
+                if (foreignKeyService.getKey().countByForeignKey(foreignKeyService.getValue(), id) > 0)
                 {
                     return false;
                 }
@@ -91,12 +82,9 @@ public abstract class AssociatedService
         {
             return null;
         }
-
-        for (ForeignKeyService foreignKeyService : serviceForeignKeyMap.keySet())
+        for (Map.Entry<ForeignKeyService, String> foreignKeyService : serviceForeignKeyMap.entrySet())
         {
-            String foreignKey = serviceForeignKeyMap.get(foreignKeyService);
-
-            LinkModel model = foreignKeyService.findByForeignKey(foreignKey, id);
+            LinkModel model = foreignKeyService.getKey().findByForeignKey(foreignKeyService.getValue(), id);
 
             if (model != null)
             {
@@ -124,11 +112,10 @@ public abstract class AssociatedService
 
         for (Long id : ids)
         {
-            for (ForeignKeyService foreignKeyService : serviceForeignKeyMap.keySet())
+            for (Map.Entry<ForeignKeyService, String> foreignKeyService : serviceForeignKeyMap.entrySet())
             {
-                String foreignKey = serviceForeignKeyMap.get(foreignKeyService);
 
-                LinkModel model = foreignKeyService.findByForeignKey(foreignKey, id);
+                LinkModel model = foreignKeyService.getKey().findByForeignKey(foreignKeyService.getValue(), id);
 
                 if (model != null)
                 {
@@ -159,15 +146,12 @@ public abstract class AssociatedService
             return true;
         }
 
-        for (ForeignKeyService foreignKeyService : serviceForeignKeyMap.keySet())
+        for (Map.Entry<ForeignKeyService, String> foreignKeyService : serviceForeignKeyMap.entrySet())
         {
-            String foreignKey = serviceForeignKeyMap.get(foreignKeyService);
-
-            if (foreignKeyService.countByForeignKey(foreignKey, id) > 0)
+            if (foreignKeyService.getKey().countByForeignKey(foreignKeyService.getValue(), id) > 0)
             {
-                foreignKeyService.deleteAllByForeignKey(foreignKey, id);
+                foreignKeyService.getKey().deleteAllByForeignKey(foreignKeyService.getValue(), id);
             }
-
         }
 
         return true;

@@ -15,6 +15,29 @@ export function formatDate(cellValue) {
   return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
 }
 
+//计算两个时间之间的时间差 多少天时分秒
+export function intervalTime(autoTime) {
+  var date1 = (Date.parse(new Date(autoTime)))/1000; //事件发生的时间戳 （字符串转时间戳）
+  var date2 = (Date.parse(new Date()))/1000;//计算当前时间戳 
+  var date3 =  (date2- date1)*1000; //时间差的毫秒数
+  //计算出相差天数
+  var days = Math.floor(date3 / (24 * 3600 * 1000));
+  //计算出小时数
+  var leave1 = date3 % (24 * 3600 * 1000); //计算天数后剩余的毫秒数
+  var hours = Math.floor(leave1 / (3600 * 1000));
+  //计算相差分钟数
+  var leave2 = leave1 % (3600 * 1000); //计算小时数后剩余的毫秒数
+  var minutes = Math.floor(leave2 / (60 * 1000));
+  //计算相差秒数
+  var leave3 = leave2 % (60 * 1000); //计算分钟数后剩余的毫秒数
+  var seconds = Math.round(leave3 / 1000);
+  if(days >= 1){
+    var hours = +days * 24 +  hours
+  }
+  return hours + "小时" + minutes + "分" + seconds + "秒"
+}
+
+
 /**
  * @param {number} time
  * @param {string} option

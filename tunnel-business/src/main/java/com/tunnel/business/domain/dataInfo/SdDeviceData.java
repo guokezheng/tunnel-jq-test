@@ -19,22 +19,111 @@ public class SdDeviceData extends BaseEntity
     private Long id;
 
     /** 设备id */
-    @Excel(name = "设备id")
     private String deviceId;
 
     /** 设备数据项id */
-    @Excel(name = "设备数据项id")
     private Long itemId;
 
     /** 设备数据 */
-    @Excel(name = "设备数据")
     private String data;
 
+    /** 设备名称 */
+    @Excel(name = "设备名称")
+    private String eqName;
+
+    /** 所属隧道 */
+    @Excel(name = "所属隧道")
+    private String tunnelName;
+
+    /** 管理机构 */
+    @Excel(name = "管理机构")
+    private String deptName;
+
+    /** 方向 */
+    @Excel(name = "方向")
+    private String direction;
+
+    /** 桩号 */
+    @Excel(name = "桩号")
+    private String pile;
+
+
+
     private Long deptId;
+
+    private String dept;
 
     private String tunnelId;
 
     private String searchValue;
+
+    private String eqType;
+
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
+    public String getEqName() {
+        return this.eqName;
+    }
+
+    public void setEqName( String eqName) {
+        this.eqName = eqName;
+    }
+
+    public String getTunnelName() {
+        return this.tunnelName;
+    }
+
+    public void setTunnelName( String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
+
+    public String getDeptName() {
+        return this.deptName;
+    }
+
+    public void setDeptName( String deptName) {
+        this.deptName = deptName;
+    }
+
+    public String getDirection() {
+        return this.direction;
+    }
+
+    public void setDirection( String direction) {
+        this.direction = direction;
+    }
+
+    public String getEqType() {
+        return this.eqType;
+    }
+
+    public void setEqType(String eqType) {
+        this.eqType = eqType;
+    }
+
+    public String getDept() {
+        return this.dept;
+    }
+
+    public void setDept( String dept) {
+        this.dept = dept;
+    }
+
+    public String getPile() {
+        return pile;
+    }
+
+    public void setPile(String pile) {
+        this.pile = pile;
+    }
 
     public Long getDeptId() {
         return deptId;

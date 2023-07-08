@@ -7,8 +7,9 @@ import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.ruoyi.system.domain.SysLogininfor;
+import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
+import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +124,7 @@ public class SdDeviceDataController extends BaseController
                 itemMap.put("eqStatus",deviceMap.get("eqStatus"));
                 itemMap.put("eqType",deviceMap.get("eqType"));
                 itemMap.put("eqTunnelId",deviceMap.get("eqTunnelId"));
+                itemMap.put("brightness",deviceMap.get("brightness"));
                 String itemCode = deviceMap.get("itemCode");
                 String data = deviceMap.get("dataUnit");
                 if(itemCode != null){
@@ -133,7 +135,7 @@ public class SdDeviceDataController extends BaseController
                 Map<String,String> itemMap = map.get(eqId);
                 String itemCode = deviceMap.get("itemCode");
                 String data = deviceMap.get("dataUnit");
-                if(itemCode != null){
+                if(itemCode != null && data != null){
                     itemMap.put(itemCode,data);
                 }
             }
@@ -157,6 +159,18 @@ public class SdDeviceDataController extends BaseController
         return Result.success(todayFSFXData);
     }
 
+    /**
+     * 获取远传压力表数据
+     * @param deviceId
+     * @return
+     */
+    @GetMapping("/getTodayYcylData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayYcylData(@PathVariable("deviceId") String deviceId){
+        Map<String, Object> todayFSFXData = sdDeviceDataService.getTodayYcylData(deviceId);
+        return Result.success(todayFSFXData);
+    }
+
     @GetMapping("/getTodayLDData/{deviceId}")
     @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result<Map> getTodayLDData(@PathVariable("deviceId") String deviceId)
@@ -165,6 +179,11 @@ public class SdDeviceDataController extends BaseController
         return Result.success(todayLDData);
     }
 
+    /**
+     * 查询设备详情---列表数据
+     * @param sdDeviceData
+     * @return
+     */
     @GetMapping("/dataLogInfoList")
     public TableDataInfo dataLogInfoList(SdDeviceData sdDeviceData)
     {
@@ -172,4 +191,89 @@ public class SdDeviceDataController extends BaseController
         List<Map<String, String>> list = sdDeviceDataService.dataLogInfoList(sdDeviceData);
         return getDataTable(list);
     }
+    @GetMapping("/dataLogInfoLineList")
+    public TableDataInfo dataLogInfoLineList(SdDeviceData sdDeviceData)
+    {
+        List<Map<String, String>> list = sdDeviceDataService.dataLogInfoLineList(sdDeviceData);
+        return getDataTable(list);
+    }
+
+    @GetMapping(value = "/energyConsumptionDetection/{tunnelId}")
+    public AjaxResult energyConsumptionDetection(@PathVariable("tunnelId") String tunnelId)
+    {
+        return AjaxResult.success(sdDeviceDataService.energyConsumptionDetection(tunnelId));
+    }
+
+    /**
+     * 获取风机安全检测仪实时数据
+     * @param deviceId
+     * @return
+     */
+    @GetMapping(value = "/getFanSafeData/{deviceId}")
+    public AjaxResult getFanSafeData(@PathVariable("deviceId") String deviceId){
+        return sdDeviceDataService.getFanSafeData(deviceId);
+    }
+
+
+    /**
+     * 查询设备列表
+     * @param sdDeviceData
+     * @return
+     */
+    @GetMapping("/dataDevicesLogInfoList")
+    public TableDataInfo dataDevicesLogInfoList(SdDeviceData sdDeviceData)
+    {
+        startPage();
+        List<Map<String, String>> list = sdDeviceDataService.dataDevicesLogInfoList(sdDeviceData);
+        return getDataTable(list);
+    }
+
+
+
+    @Log(title = "数据报表", businessType = BusinessType.EXPORT)
+    @GetMapping("/exportDatainforTab")
+    public AjaxResult exportDatainforTab(SdDeviceData sdDeviceData)
+    {
+        List<SdDeviceData> list = sdDeviceDataService.exportDatainforTab(sdDeviceData);
+        ExcelUtil<SdDeviceData> util = new ExcelUtil<SdDeviceData>(SdDeviceData.class);
+        return util.exportExcel(list, "数据报表");
+    }
+
+
+    @Log(title = "数据报表", businessType = BusinessType.EXPORT)
+    @GetMapping("/handleExportRecord")
+    public AjaxResult handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData)
+    {
+        if(DeviceType.COVIITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//covi
+            List<SdDeviceCOVIData> list = sdDeviceDataService.handleExportRecord(sdDeviceCOVIData);
+            ExcelUtil<SdDeviceCOVIData> util = new ExcelUtil<SdDeviceCOVIData>(SdDeviceCOVIData.class);
+            return util.exportExcel(list, DeviceType.COVIITEM.getName());
+        }else if(DeviceType.FENGSHUFENGXIANGITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//风速风向
+            List<SdDeviceFSFXData> list = sdDeviceDataService.handleFSFXExportRecord(sdDeviceCOVIData);
+            ExcelUtil<SdDeviceFSFXData> util = new ExcelUtil<SdDeviceFSFXData>(SdDeviceFSFXData.class);
+            return util.exportExcel(list, DeviceType.FENGSHUFENGXIANGITEM.getName());
+        }else if(DeviceType.DONGNEILIANGDUITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//洞内亮度
+            List<SdDeviceDNData> list = sdDeviceDataService.handleDNExportRecord(sdDeviceCOVIData);
+            ExcelUtil<SdDeviceDNData> util = new ExcelUtil<SdDeviceDNData>(SdDeviceDNData.class);
+            return util.exportExcel(list, DeviceType.DONGNEILIANGDUITEM.getName());
+        }else if(DeviceType.DONGWAILIANGDUITEM.getCode().equals(sdDeviceCOVIData.getSearchValue())){//洞外亮度
+            List<SdDeviceDWData> list = sdDeviceDataService.handleDWExportRecord(sdDeviceCOVIData);
+            ExcelUtil<SdDeviceDWData> util = new ExcelUtil<SdDeviceDWData>(SdDeviceDWData.class);
+            return util.exportExcel(list, DeviceType.DONGWAILIANGDUITEM.getName());
+        }else{
+            return null;
+        }
+
+    }
+    /**
+     * 小车跑数据控制
+     * @param eqId
+     * @param switchType
+     * @return
+     */
+    @GetMapping(value = "/getFanSafeData/{eqId}/{switchType}")
+    public void carSwitchType(@PathVariable("eqId") String eqId,@PathVariable("switchType") String switchType){
+        sdDeviceDataService.getFanSafeData(eqId);
+    }
+
 }

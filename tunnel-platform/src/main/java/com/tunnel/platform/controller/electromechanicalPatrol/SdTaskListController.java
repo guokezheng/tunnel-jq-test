@@ -1,8 +1,6 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
-import cn.hutool.core.codec.Base64Decoder;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
@@ -16,6 +14,8 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
@@ -35,27 +35,29 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdPatrolListMapper;
-import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
-import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficImageService;
+import com.tunnel.business.utils.work.CustomXWPFDocument;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
-import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 巡查任务Controller
@@ -88,13 +90,18 @@ public class SdTaskListController extends BaseController
      */
    /* @PreAuthorize("@ss.hasPermi('system:list:list')")*/
     @GetMapping("/list")
-    public TableDataInfo list(SdTaskList sdTaskList)
+    public TableDataInfo<List<SdTaskList>>list(SdTaskList sdTaskList)
     {
-
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdTaskList.setDeptId(deptId);
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         return getDataTable(list);
     }
+
 
     /**
      * 导出巡查任务列表
@@ -104,20 +111,17 @@ public class SdTaskListController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(SdTaskList sdTaskList)
     {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdTaskList.setDeptId(deptId);
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         ExcelUtil<SdTaskList> util = new ExcelUtil<SdTaskList>(SdTaskList.class);
-        return util.exportExcel(list, "巡查任务数据");
+        return util.exportExcel(list, "巡查任务");
     }
 
-    /**
-     * 获取巡查任务详细信息
-     */
-   /* @PreAuthorize("@ss.hasPermi('system:list:query')")*/
-    /*@GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") String id)
-    {
-        return AjaxResult.success(sdTaskListService.selectSdTaskListById(id));
-    }*/
+
 
     /**
      * 获取修改任务信息
@@ -146,6 +150,11 @@ public class SdTaskListController extends BaseController
     @PostMapping("/addTask")
     public AjaxResult addTask(SdTaskList sdTaskList)
     {
+        //校验是否存在
+        int count = sdTaskListService.checkTaskList(sdTaskList);
+        if(count > 0){
+            return AjaxResult.error("任务名称已存在");
+        }
         return toAjax(sdTaskListService.insertSdTaskList(sdTaskList));
     }
 
@@ -176,7 +185,6 @@ public class SdTaskListController extends BaseController
     /**
      * 删除巡查任务
      */
-    /*@PreAuthorize("@ss.hasPermi('system:list:remove')")*/
     @Log(title = "巡查任务", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String ids)
@@ -188,19 +196,27 @@ public class SdTaskListController extends BaseController
      * 获取单位隧道所树形结构
      * @return
      */
-    @GetMapping("/treeselect")
+    @PostMapping("/treeselect")
     @ApiOperation("获取隧道树形结构")
-    public Result treeselect()
+    public Result treeselect(@RequestBody String tunnelId)
     {
         String deptId = String.valueOf(SecurityUtils.getDeptId());
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
-        //List<SysDept> depts = deptService.selectTunnelDeptList(deptId);
+        String ssdw = tunnelsService.selectTunnelDept(tunnelId);
         List<SysDeptTunnel>deptTunnels = new ArrayList<>();
+        List<SysDept> depts = new ArrayList<>();
+        // 获取当前的用户
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        SysUser user = loginUser.getUser();
+        if(user.isAdmin())
+            depts = deptService.selectTunnelDeptListBydw(ssdw);
+        else{
+            depts = deptService.selectTunnelDeptList(deptId);
+        }
 
-        List<SysDept> depts = deptService.selectTunnelDeptList(deptId);
-        List<SdTunnels> tunnels = tunnelsService.selectTunnelList(deptId);
+        List<SdTunnels> tunnels = tunnelsService.selectTunnelList(deptId,tunnelId);
         if(depts!=null&&depts.size()>0){
             for(int i = 0;i<depts.size();i++){
                 SysDeptTunnel deptTunnel = new SysDeptTunnel();
@@ -295,84 +311,9 @@ public class SdTaskListController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * app  巡查任务列表
-     * @param
-     * @param sdTaskList
-     * @return
-     */
-    @PostMapping("/app/getTaskList")
-    public Result getTaskList(SdTaskList sdTaskList){
-        List<SdTaskList> taskList = sdTaskListService.getTaskList(sdTaskList);
-        if(taskList!=null&&taskList.size()>0){
-            for(int i=0;i<taskList.size();i++){
-                if(taskList.get(i).getId()!=null){
-                    SdTaskList task = sdTaskListService.countPatrolNum(taskList.get(i).getId());
-                    taskList.get(i).setTotalNum(task.getTotalNum());
-                }
-            }
-
-        }
-        return Result.success(taskList);
-    }
-
-    /**
-     *  app 巡检任务基本信息
-     * @param taskId
-     * @return
-     */
-    @PostMapping("/app/getTaskInfo")
-    public Result getTaskInfo(String taskId){
-        List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(taskId);
-        return Result.success(taskList);
-    }
-
-    /**
-     * app 端接收任务  task_status变为1（巡检中）
-     * @param id
-     * @return
-     */
-    @GetMapping("/app/accept")
-    public AjaxResult accept(String id)
-    {
-        return toAjax(sdTaskListService.acceptSdTaskList(id));
-    }
-
-    /**
-     * app端  巡查点清单
-     * @param taskId
-     * @return
-     */
-    @PostMapping("/app/getPatrolInfo")
-    public Result getPatrolInfo(String taskId){
-        List<SdPatrolList> patrolList = sdTaskListService.getPatrolInfo(taskId);
-        return Result.success(patrolList);
-    }
-
-    /**
-     * app端  获取任务现场情况
-     * @param taskId
-     * @return
-     */
-    @PostMapping("/app/getTaskSiteCondition`")
-    public Result getTaskSiteCondition(String taskId){
-        String result = sdTaskListService.getTaskSiteCondition(taskId);
-        return Result.success(result);
-    }
 
 
 
-    /**
-     * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见
-     *     提交上报    task_status 变为2 已完结
-     * @param  sdTaskList
-     * @return
-     */
-    @GetMapping("/app/saveTask")
-    public AjaxResult saveTask(SdTaskList sdTaskList)
-    {
-        return toAjax(sdTaskListService.saveLocal(sdTaskList));
-    }
 
     /**
      * 导出巡查任务执行报告
@@ -386,6 +327,7 @@ public class SdTaskListController extends BaseController
             SdTaskList task = sdTaskListService.selectSdTaskListById(taskNo);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String pdTime = "";
+            String xcTime = "";
             String planEndTime = "";
             String taskEndTime = "";
             if (task.getDispatchTime() != null) {
@@ -396,6 +338,11 @@ public class SdTaskListController extends BaseController
             }
             if (task.getTaskEndtime() != null) {
                 taskEndTime = format.format(DateUtil.parse(task.getTaskEndtime().toString()));
+            }
+            if (task.getTask() == null){//超时
+                task.setTask("超时");
+            }else{
+                task.setTask("无");
             }
             List<SdPatrolList> list = SpringUtils.getBean(SdPatrolListMapper.class).getPatrolListsInfo(taskNo);
 //            AtomicInteger i = new AtomicInteger(1);
@@ -408,43 +355,65 @@ public class SdTaskListController extends BaseController
                     //处理图片需将原对象类型转为Map
                     Map<String,Object> map = BeanUtils.describe(obj);
                     if(map.get("eqFaultId") != null){
-                        SdDevices devices = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesById(map.get("eqFaultId").toString());
+                        String eqId = null;
+                        if(map.get("patrolType") != null){
+                            if("1".equals(map.get("patrolType"))){//故障点
+                               eqId = sdFaultListService.selectSdFaultEqById(map.get("eqFaultId").toString());
+                            }else if("0".equals(map.get("patrolType"))){//设备
+                               eqId = map.get("eqFaultId").toString();
+                            }
+                        }
+
+                        SdDevices devices = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesById(eqId);
                         map.put("tunnelName",SpringUtils.getBean(SdTunnelsMapper.class).selectSdTunnelsById(devices.getEqTunnelId()).getTunnelName());
                         map.put("typeName",SpringUtils.getBean(SdEquipmentTypeMapper.class).selectSdEquipmentTypeById(devices.getEqType()).getTypeName());
                     }
                     String imgFileId = obj.getImgFileId();
                     if(StrUtil.isNotEmpty(imgFileId)){
-                        SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                        sdTrafficImage.setBusinessId(imgFileId);
-                        List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(sdTrafficImage);
+                        List<SdTrafficImage> imageList = new ArrayList<>();
+                        if (imgFileId != null && !"".equals(imgFileId) && !"null".equals(imgFileId)) {
+                            String[] businessId = imgFileId.split(",");
+                            imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectPatrolFaultImgFileList(businessId);
+                        }
+                        /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
+                        sdTrafficImage.setBusinessId(imgFileId);*/
+                        //List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(sdTrafficImage);
                         if(imageList.size()>0){
-                            // 图片的处理
-                            String imageBaseStr = imageList.get(0).getImgUrl();
-                            Base64.Decoder decoder = Base64.getDecoder();
-                            // 去掉base64前缀
-                            imageBaseStr = imageBaseStr.substring(imageBaseStr.indexOf(",", 1) + 1, imageBaseStr.length());
-                            byte[] b = decoder.decode(imageBaseStr);
-                            // 处理数据
-                            for (int a = 0; a < b.length; ++a) {
-                                if (b[a] < 0) {
-                                    b[a] += 256;
+                            for(int x = 0;x<imageList.size();x++){
+                                String photo = "photo"+x;
+                                // 图片的处理
+                                String imageBaseStr = imageList.get(x).getImgUrl();
+                                Base64.Decoder decoder = Base64.getDecoder();
+                                // 去掉base64前缀
+                                imageBaseStr = imageBaseStr.substring(imageBaseStr.indexOf(",", 1) + 1, imageBaseStr.length());
+                                byte[] b = decoder.decode(imageBaseStr);
+                                // 处理数据
+                                for (int a = 0; a < b.length; ++a) {
+                                    if (b[a] < 0) {
+                                        b[a] += 256;
+                                    }
                                 }
+                                byte[] bytes = decoder.decode(imageBaseStr);
+                                PictureRenderData pictureRenderData = Pictures.ofStream(new ByteArrayInputStream(bytes), PictureType.PNG)
+                                        .size(102, 126).create();
+                                map.put(photo, pictureRenderData);
                             }
-                            byte[] bytes = decoder.decode(imageBaseStr);
-                            PictureRenderData pictureRenderData = Pictures.ofStream(new ByteArrayInputStream(bytes), PictureType.PNG)
-                            .size(102, 126).create();
-                            map.put("photo", pictureRenderData);
+
                         }
                     }
+                    if (map.get("xcTime") != null) {
+                        xcTime = format.format(DateUtil.parse(map.get("xcTime").toString()));
+                    }
                     //添加巡查记录序号
+                    map.put("xcTime",xcTime);
                     map.put("remark",obj.getXcSort()+1);
                     convertList.add(map);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/patrolReport.docx");
-            String resource = classPathResource.getUrl().getPath();
+            /*ClassPathResource classPathResource = new ClassPathResource("patrolTemplate/patrolReport.docx");
+            String resource = classPathResource.getUrl().getPath();*/
             //渲染表格
             HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
             //构建巡查点巡查记录数据
@@ -452,7 +421,8 @@ public class SdTaskListController extends BaseController
             String finalPdTime = pdTime;
             String finalPlanEndTime = planEndTime;
             String finalTaskEndTime = taskEndTime;
-            XWPFTemplate template = XWPFTemplate.compile(resource, config).render(
+            XWPFDocument document = new CustomXWPFDocument(new ClassPathResource("exporttemplate/patrolReport.docx").getInputStream());
+            XWPFTemplate template = XWPFTemplate.compile(document, config).render(
                     new HashMap<String, Object>() {{
                         put("patrolBlock",convertList);
                         put("currentTime", DateUtils.getTime());
@@ -509,15 +479,17 @@ public class SdTaskListController extends BaseController
             e.printStackTrace();
         }
     }
+
     /**
-     * 巡查点检修情况保存
-     * @param sdPatrolList
+     * 根据所选隧道查询班组
+     * @param tunnelId
      * @return
      */
-    @GetMapping("/app/savePatrol")
-    public AjaxResult savePatrol(SdPatrolList sdPatrolList)
-    {
-        return toAjax(sdTaskListService.savePatrol(sdPatrolList));
+    @PostMapping("/selectBzByTunnel")
+    public Result selectBzByTunnel(@RequestBody String tunnelId){
+        String bz = sdTaskListService.selectBzByTunnel(tunnelId);
+        return Result.success(bz);
     }
+
 
 }

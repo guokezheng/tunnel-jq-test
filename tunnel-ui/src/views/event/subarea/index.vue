@@ -465,7 +465,7 @@ export default {
     handleDelete(row) {
       const sIds = row.sId || this.ids;
       this.$modal
-        .confirm('是否确认删除隧道分区编号为"' + sIds + '"的数据项？')
+        .confirm('是否确认删除？')
         .then(function () {
           return delSubarea(sIds);
         })
@@ -480,7 +480,7 @@ export default {
     handleExport() {
       const queryParams = this.queryParams;
       this.$modal
-        .confirm("是否确认导出所有隧道分区数据项？")
+        .confirm("是否确认导出隧道分区数据项？")
         .then(() => {
           this.exportLoading = true;
           return exportSubarea(queryParams);
@@ -513,7 +513,7 @@ export default {
 
 <style scoped>
 .tunnelName {
-  width: 378px;
+  width: 100%;
 }
 </style>
 

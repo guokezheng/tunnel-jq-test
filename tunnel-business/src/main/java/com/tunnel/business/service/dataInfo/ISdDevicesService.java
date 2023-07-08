@@ -1,9 +1,9 @@
 package com.tunnel.business.service.dataInfo;
 
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
-import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +38,15 @@ public interface ISdDevicesService {
      * @return 设备集合
      */
     List<SdDevices> selectSdDevicesList(SdDevices sdDevices);
+
+
+    /**
+     * 根据隧道ID、设备类型获取设备列表
+     * @param tunnelId 隧道ID
+     * @param typeList 设备类型列表
+     * @return
+     */
+    List<SdDevices> selectDeviceList(String tunnelId,List<String> typeList);
 
     /**
      * 新增设备
@@ -213,7 +222,7 @@ public interface ISdDevicesService {
      * app端获取设备列表
      * @return
      */
-    Map getAppDevicesList(String param, String eqType, String eqStatus);
+    List<SdDevices> getAppDevicesList(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum);
 
     /**
      * app端设备信息
@@ -228,4 +237,97 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> getAppDevicesStatus(String eqId);
+
+    List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId);
+
+    /**
+     * 根据隧道+方向+类型 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    List<SdDevices> getSpkList(SdDevices sdDevices);
+
+    /**
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    SdDevices getLight(SdDevices sdDevices);
+
+    SdDevices getDeviceByAssociationDeviceId(Long deviceId);
+
+    List<SdDevices> selectDevicesLineList(String deptId,String eqtype);
+
+    /**
+     * 查询级联选择设备列表
+     * @param sdDevices
+     * @return
+     */
+    AjaxResult getTreeDeviceList(SdDevices sdDevices);
+
+    /**
+     *  查询指定设备名称是否重复
+     * @param eqName
+     * @return
+     */
+    List<SdDevices> verifyEqNameOnly(String eqId,String eqName);
+    /**
+     *  查询指定隧道下设备名称是否重复
+     * @param eqName
+     * @return
+     */
+    List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName);
+
+    int getAppDevicesCountList(String param, String eqType, String eqStatus, String deptId);
+
+    List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum);
+
+    /**
+     * 修改设备以及子设备状态在线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    int updateOnlineStatus(String deviceId,boolean cascade);
+
+    /**
+     * 修改设备以及子设备状态离线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateOfflineStatus(String deviceId,boolean cascade);
+
+
+    /**
+     * 修改设备以及子设备状态故障
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateFaultStatus(String deviceId,boolean cascade);
+
+
+    /**
+     * 设置设备以及子设备状态
+     * @param deviceId 设备ID
+     * @param status 设备状态
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+     int updateDeviceStatus(String deviceId,String status,boolean cascade);
+
+
+    /**
+     * 根据外部设备ID查询设备信息
+     * @param externalId 外部设备ID
+     * @return
+     */
+    SdDevices getDevicesListByExternalId(String externalId);
+
+
+    /**
+     * 根据协议Id查询设备列表
+     * @param sdDevices 设备信息
+     * @return
+     */
+    List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices);
+
+    List<Map> getMcaList();
 }

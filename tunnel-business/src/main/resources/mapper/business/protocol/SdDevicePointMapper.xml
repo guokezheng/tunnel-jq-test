@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.protocol.SdDevicePointMapper">
+
+    <resultMap type="SdDevicePoint" id="SdDevicePointResult">
+        <result property="id"    column="id"    />
+        <result property="eqId"    column="eq_id"    />
+        <result property="eqType"    column="eq_type"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="address"    column="address"    />
+        <result property="addressIndex"    column="address_index"    />
+        <result property="functionCode" column="function_code"/>
+        <result property="dataLength" column="data_length"/>
+        <result property="functionName"    column="function_name"    />
+        <result property="dataType"    column="data_type"    />
+        <result property="signalName"    column="signal_name"    />
+        <result property="stateId"    column="state_id"    />
+        <result property="dataStatus"    column="data_status"    />
+        <result property="functionDescription"    column="function_description"    />
+        <result property="isReserved"    column="is_reserved"    />
+        <result property="pointConfig" column="point_config"/>
+    </resultMap>
+
+    <sql id="selectSdDevicePointVo">
+        select id, eq_id, eq_type, item_id, address, address_index, function_code,data_length,function_name, data_type, signal_name, state_id, data_status, function_description, is_reserved,point_config from sd_device_point
+    </sql>
+
+    <select id="selectSdDevicePointList" parameterType="SdDevicePoint" resultMap="SdDevicePointResult">
+        <include refid="selectSdDevicePointVo"/>
+        <where>
+            <if test="eqId != null  and eqId != ''"> and eq_id = #{eqId}</if>
+            <if test="eqType != null "> and eq_type = #{eqType}</if>
+            <if test="itemId != null "> and item_id = #{itemId}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="addressIndex != null "> and address_index = #{addressIndex}</if>
+            <if test="functionCode != null "> and function_code = #{functionCode}</if>
+            <if test="dataLength != null "> and data_length = #{dataLength}</if>
+            <if test="functionName != null  and functionName != ''"> and function_name like concat('%', #{functionName}, '%')</if>
+            <if test="dataType != null  and dataType != ''"> and data_type = #{dataType}</if>
+            <if test="signalName != null  and signalName != ''"> and signal_name like concat('%', #{signalName}, '%')</if>
+            <if test="stateId != null "> and state_id = #{stateId}</if>
+            <if test="dataStatus != null  and dataStatus != ''"> and data_status = #{dataStatus}</if>
+            <if test="functionDescription != null  and functionDescription != ''"> and function_description = #{functionDescription}</if>
+            <if test="isReserved != null "> and is_reserved = #{isReserved}</if>
+        </where>
+    </select>
+
+    <select id="selectSdDevicePointById" parameterType="Long" resultMap="SdDevicePointResult">
+        <include refid="selectSdDevicePointVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectSdDeviceIdList" parameterType="SdDevicePoint" resultMap="SdDevicePointResult">
+        select eq_id from sd_device_point
+        <where>
+            <if test="eqId != null  and eqId != ''"> and eq_id = #{eqId}</if>
+            <if test="eqType != null "> and eq_type = #{eqType}</if>
+            <if test="itemId != null "> and item_id = #{itemId}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="addressIndex != null "> and address_index = #{addressIndex}</if>
+            <if test="functionCode != null "> and function_code = #{functionCode}</if>
+            <if test="dataLength != null "> and data_length = #{dataLength}</if>
+            <if test="functionName != null  and functionName != ''"> and function_name like concat('%', #{functionName}, '%')</if>
+            <if test="dataType != null  and dataType != ''"> and data_type = #{dataType}</if>
+            <if test="signalName != null  and signalName != ''"> and signal_name like concat('%', #{signalName}, '%')</if>
+            <if test="stateId != null "> and state_id = #{stateId}</if>
+            <if test="dataStatus != null  and dataStatus != ''"> and data_status = #{dataStatus}</if>
+            <if test="functionDescription != null  and functionDescription != ''"> and function_description = #{functionDescription}</if>
+            <if test="isReserved != null "> and is_reserved = #{isReserved}</if>
+        </where>
+        GROUP BY eq_id
+    </select>
+
+
+
+    <select id="selectDevicePointByList" resultMap="SdDevicePointResult">
+        <include refid="selectSdDevicePointVo"/>
+        <where>
+            eq_id in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+            and is_reserved = #{pointType}
+        </where>
+    </select>
+
+    <select id="selectDevicePointByGroup" resultType="java.util.Map">
+        SELECT d.f_eq_id fEqId,p.function_code functionCode,p.data_length dataLength,min(p.address) minAddress,max(p.address) maxAddress
+        FROM sd_device_point p
+        left join sd_devices  d on p.eq_id = d.eq_id
+        where p.is_reserved = #{pointType}
+        and f_eq_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        <if test="codeList != null and codeList.size() > 0">
+            and p.function_code in
+            <foreach collection="codeList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by d.f_eq_id ,p.function_code,p.data_length
+    </select>
+
+    <select id="selectPointMapByFEqId" resultType="java.util.Map">
+        SELECT d.f_eq_id fEqId,p.eq_id,p.function_code functionCode,p.data_length dataLength,p.address
+        FROM sd_device_point p
+        left join sd_devices  d on p.eq_id = d.eq_id
+        where p.is_reserved = #{pointType}
+        and f_eq_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        <if test="codeList != null and codeList.size() > 0">
+            and p.function_code in
+            <foreach collection="codeList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </select>
+
+
+    <select id="selectDevicePointByFEqId" resultMap="SdDevicePointResult">
+        select p.id, p.eq_id, p.eq_type, p.item_id, p.address, p.address_index, p.function_code,p.data_length,
+        p.function_name, p.data_type, p.signal_name, p.state_id, p.data_status, p.function_description, p.is_reserved,p.point_config
+        from sd_device_point p
+        left join sd_devices  d on p.eq_id = d.eq_id
+        where p.is_reserved = #{pointType}
+        <if test="functionCode !=null and functionCode != ''">
+            and p.function_code = #{functionCode}
+        </if>
+        and f_eq_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        order by p.address asc
+    </select>
+
+
+    <insert id="insertSdDevicePoint" parameterType="SdDevicePoint" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_device_point
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eqId != null">eq_id,</if>
+            <if test="eqType != null">eq_type,</if>
+            <if test="itemId != null "> item_id,</if>
+            <if test="address != null">address,</if>
+            <if test="addressIndex != null">address_index,</if>
+            <if test="functionCode != null ">function_code,</if>
+            <if test="dataLength != null "> data_length,</if>
+            <if test="functionName != null">function_name,</if>
+            <if test="dataType != null">data_type,</if>
+            <if test="signalName != null">signal_name,</if>
+            <if test="stateId != null">state_id,</if>
+            <if test="dataStatus != null">data_status,</if>
+            <if test="functionDescription != null">function_description,</if>
+            <if test="isReserved != null">is_reserved,</if>
+            <if test="pointConfig != null">point_config,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eqId != null">#{eqId},</if>
+            <if test="eqType != null">#{eqType},</if>
+            <if test="itemId != null ">#{itemId},</if>
+            <if test="address != null">#{address},</if>
+            <if test="addressIndex != null">#{addressIndex},</if>
+            <if test="functionCode != null ">#{functionCode},</if>
+            <if test="dataLength != null "> #{dataLength},</if>
+            <if test="functionName != null">#{functionName},</if>
+            <if test="dataType != null">#{dataType},</if>
+            <if test="signalName != null">#{signalName},</if>
+            <if test="stateId != null">#{stateId},</if>
+            <if test="dataStatus != null">#{dataStatus},</if>
+            <if test="functionDescription != null">#{functionDescription},</if>
+            <if test="isReserved != null">#{isReserved},</if>
+            <if test="pointConfig != null">#{pointConfig},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdDevicePoint" parameterType="SdDevicePoint">
+        update sd_device_point
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eqId != null">eq_id = #{eqId},</if>
+            <if test="eqType != null">eq_type = #{eqType},</if>
+            <if test="itemId != null">item_id = #{itemId},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="addressIndex != null">address_index = #{addressIndex},</if>
+            <if test="functionCode != null">function_code = #{functionCode},</if>
+            <if test="dataLength != null "> and data_length = #{dataLength},</if>
+            <if test="functionName != null">function_name = #{functionName},</if>
+            <if test="dataType != null">data_type = #{dataType},</if>
+            <if test="signalName != null">signal_name = #{signalName},</if>
+            <if test="stateId != null">state_id = #{stateId},</if>
+            <if test="dataStatus != null">data_status = #{dataStatus},</if>
+            <if test="functionDescription != null">function_description = #{functionDescription},</if>
+            <if test="isReserved != null">is_reserved = #{isReserved},</if>
+            <if test="pointConfig != null"> point_config = #{pointConfig},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdDevicePointById" parameterType="Long">
+        delete from sd_device_point where id = #{id}
+    </delete>
+
+    <delete id="deleteSdDevicePointByIds" parameterType="String">
+        delete from sd_device_point where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

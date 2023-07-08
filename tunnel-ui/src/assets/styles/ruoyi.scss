@@ -79,19 +79,24 @@ h6 {
 .el-dialog__wrapper.scrollbar .el-dialog .el-dialog__body {
   overflow: auto;
   overflow-x: hidden;
-  max-height: 70vh;
+  max-height: 78vh;
   padding: 10px 20px 0;
 }
+// .tableClass{
+//   max-height: 66vh;
+//   overflow: auto;
+// }
 
 .el-table {
+  font-size: 0.7vw;
   .el-table__header-wrapper,
   .el-table__fixed-header-wrapper {
     th {
       word-break: break-word;
       background-color: #f8f8f9;
       color: #515a6e;
-      height: 40px;
-      font-size: 13px;
+      height: 4vh;
+      font-size: 0.7vw;
     }
   }
   .el-table__body-wrapper {
@@ -99,8 +104,17 @@ h6 {
       margin-left: 1px;
     }
   }
+  .el-table__cell{
+    height: 4vh;
+    line-height: 4vh;
+    padding:0;
+  }
 }
-
+.el-dialog{
+  .el-table .el-table__cell{
+    line-height: normal !important;
+  }
+}
 /** 表单布局 **/
 .form-header {
   font-size: 15px;
@@ -109,7 +123,17 @@ h6 {
   margin: 8px 10px 25px 10px;
   padding-bottom: 5px;
 }
-
+.el-form-item__label{
+  font-size: 0.7vw;
+}
+// .el-form-item--medium .el-form-item__label{
+//   line-height: 4vh;
+// }
+// .el-input--small .el-input__inner{
+//   height: 4vh;
+//   line-height: 4vh;
+//   font-size: 0.7vw;
+// }
 /** 表格布局 **/
 .pagination-container {
   position: relative;
@@ -159,7 +183,9 @@ h6 {
 .el-icon-arrow-down {
   font-size: 12px;
 }
-
+.el-tree-node{
+  font-size: 0.7vw;
+}
 .el-tree-node__content > .el-checkbox {
   margin-right: 8px;
 }

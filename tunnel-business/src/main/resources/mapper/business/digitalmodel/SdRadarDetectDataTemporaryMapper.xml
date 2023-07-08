@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataTemporaryMapper">
+
+    <resultMap type="sdRadarDetectDataTemporary" id="SdRadarDetectDataResult">
+        <result property="id" column="id"/>
+        <result property="vehicleId" column="vehicle_id"/>
+        <result property="tunnelId" column="tunnel_id"/>
+        <result property="vehicleType" column="vehicle_type"/>
+        <result property="vehicleColor" column="vehicle_color"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="speed" column="speed"/>
+        <result property="laneNum" column="lane_num"/>
+        <result property="courseAngle" column="course_angle"/>
+        <result property="vehicleLicense" column="vehicle_license"/>
+        <result property="licenseColor" column="license_color"/>
+        <result property="stakeNum" column="stake_num"/>
+        <result property="detectTime" column="detect_time"/>
+        <result property="startTime" column="startTime"/>
+        <result property="endTime" column="endTime"/>
+        <result property="deptId" column="dept_id" />
+        <result property="objectType" column="object_type" />
+        <result property="roadDir" column="road_dir" />
+    </resultMap>
+
+    <sql id="selectSdRadarDetectDataVo" >
+        select id,
+               vehicle_id,
+               tunnel_id,
+               vehicle_type,
+               vehicle_color,
+               longitude,
+               latitude,
+               speed,
+               lane_num,
+               course_angle,
+               vehicle_license,
+               license_color,
+               stake_num,
+               detect_time
+        from sd_radar_detect_data_temporary
+    </sql>
+
+    <select id="selectSdRadarDetectDataList" parameterType="sdRadarDetectDataTemporary" resultType="java.util.Map">
+        select detect.id,
+        detect.vehicle_id as vehicleId,
+        detect.tunnel_id as tunnelId,
+        detect.vehicle_type as vehicleType,
+        detect.vehicle_color as vehicleColor,
+        detect.longitude,
+        detect.latitude,
+        detect.speed,
+        detect.lane_num as laneNum,
+        detect.course_angle as courseAngle,
+        detect.vehicle_license as vehicleLicense,
+        detect.license_color as licenseColor,
+        detect.stake_num as stakeNum,
+        detect.detect_time as detectTime,
+        tunnul.tunnel_name as tunnulName
+        from sd_radar_detect_data_temporary detect
+        left join sd_tunnels tunnul on detect.tunnel_id = tunnul.tunnel_id
+        <where>
+            1=1
+            <if test="vehicleId != null  and vehicleId != ''">and detect.vehicle_id = #{vehicleId}</if>
+            <if test="tunnelId != null  and tunnelId != ''">and detect.tunnel_id = #{tunnelId}</if>
+            <if test="vehicleType != null  and vehicleType != ''">and detect.vehicle_type = #{vehicleType}</if>
+            <if test="vehicleColor != null  and vehicleColor != ''">and detect.vehicle_color = #{vehicleColor}</if>
+            <if test="longitude != null  and longitude != ''">and detect.longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''">and detect.latitude = #{latitude}</if>
+            <if test="speed != null  and speed != ''">and detect.speed = #{speed}</if>
+            <if test="laneNum != null  and laneNum != ''">and detect.lane_num = #{laneNum}</if>
+            <if test="courseAngle != null  and courseAngle != ''">and detect.course_angle = #{courseAngle}</if>
+            <if test="vehicleLicense != null  and vehicleLicense != ''">and detect.vehicle_license = #{vehicleLicense}</if>
+            <if test="licenseColor != null  and licenseColor != ''">and detect.license_color = #{licenseColor}</if>
+            <if test="stakeNum != null  and stakeNum != ''">and detect.stake_num = #{stakeNum}</if>
+            <if test="detectTime != null ">and detect.detect_time = #{detectTime}</if>
+
+            <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+                and date_format(detect.detect_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+                and date_format(detect.detect_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="(startTime ==null or startTime =='') and (endTime==null or endTime =='')">
+                and date(detect.detect_time) = curdate()
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND (tunnul.dept_id = #{deptId} OR tunnul.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+        </where>
+        order by detect.detect_time desc
+    </select>
+
+    <select id="selectSdRadarDetectDataById" parameterType="String" resultMap="SdRadarDetectDataResult">
+        <include refid="selectSdRadarDetectDataVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdRadarDetectData" parameterType="sdRadarDetectDataTemporary">
+        insert into sd_radar_detect_data_temporary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="vehicleId != null">vehicle_id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="vehicleType != null">vehicle_type,</if>
+            <if test="vehicleColor != null">vehicle_color,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="speed != null">speed,</if>
+            <if test="laneNum != null">lane_num,</if>
+            <if test="courseAngle != null">course_angle,</if>
+            <if test="vehicleLicense != null">vehicle_license,</if>
+            <if test="licenseColor != null">license_color,</if>
+            <if test="stakeNum != null">stake_num,</if>
+            <if test="detectTime != null">detect_time,</if>
+            <if test="objectType != null">object_type,</if>
+            <if test="roadDir != null">road_dir,</if>
+            <if test="recordSerialNumber != null">record_Serial_Number,</if>
+            <if test="distance != null">distance,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="vehicleId != null">#{vehicleId},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="vehicleType != null">#{vehicleType},</if>
+            <if test="vehicleColor != null">#{vehicleColor},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="laneNum != null">#{laneNum},</if>
+            <if test="courseAngle != null">#{courseAngle},</if>
+            <if test="vehicleLicense != null">#{vehicleLicense},</if>
+            <if test="licenseColor != null">#{licenseColor},</if>
+            <if test="stakeNum != null">#{stakeNum},</if>
+            <if test="detectTime != null">#{detectTime},</if>
+            <if test="objectType != null">#{objectType},</if>
+            <if test="roadDir != null">#{roadDir},</if>
+            <if test="recordSerialNumber != null">#{recordSerialNumber},</if>
+            <if test="distance != null">#{distance},</if>
+            NOW()
+        </trim>
+    </insert>
+
+    <update id="updateSdRadarDetectData" parameterType="sdRadarDetectDataTemporary">
+        update sd_radar_detect_data_temporary
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleId != null">vehicle_id = #{vehicleId},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="vehicleColor != null">vehicle_color = #{vehicleColor},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="laneNum != null">lane_num = #{laneNum},</if>
+            <if test="courseAngle != null">course_angle = #{courseAngle},</if>
+            <if test="vehicleLicense != null">vehicle_license = #{vehicleLicense},</if>
+            <if test="licenseColor != null">license_color = #{licenseColor},</if>
+            <if test="stakeNum != null">stake_num = #{stakeNum},</if>
+            <if test="detectTime != null">detect_time = #{detectTime},</if>
+            <if test="objectType != null">object_type = #{objectType},</if>
+            <if test="roadDir != null">road_dir = #{roadDir},</if>
+            <if test="recordSerialNumber != null">record_Serial_Number = #{recordSerialNumber}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdRadarDetectDataById" parameterType="String">
+        delete
+        from sd_radar_detect_data_temporary
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteSdRadarDetectDataByIds" parameterType="String">
+        delete from sd_radar_detect_data_temporary where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--修改原因：删除全部数据导致数据清除定时任务报错（Prohibition of full table deletion），数据量过大接口查询超时，数据库链接占用过多导致项目后台崩溃-->
+    <delete id="deleteData">
+        delete from sd_radar_detect_data_temporary where detect_time &lt; date_sub(sysdate(),interval 1 day)
+    </delete>
+    <delete id="deleteCatData">
+        delete from sd_radar_detect_data where id  LIMIT  10000
+    </delete>
+    <select id="countDevices"  resultType="Integer">
+        select count(*) from sd_radar_detect_data
+    </select>
+
+
+    <select id="getSdRadarDetectDataCount" parameterType="String" resultType="int">
+        select count(s.vehicle_id)  from (
+            select vehicle_id from  sd_radar_detect_data_temporary t
+            where 1=1
+            and t.detect_time > DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MINUTE)
+            and t.detect_time <![CDATA[<=]]> now()
+            and t.vehicle_id != ''
+            and t.vehicle_license != ''
+            <if test="roadDir != null and roadDir != '' ">
+                and t.road_dir = #{roadDir}
+            </if>
+            <if test="tunnelId != null and tunnelId != '' ">
+                and t.tunnel_id = #{tunnelId}
+            </if>
+            GROUP BY t.vehicle_id
+        ) s
+    </select>
+</mapper>

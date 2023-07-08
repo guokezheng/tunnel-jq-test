@@ -42,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectConfigVo"/>
         <where>
 			<if test="configName != null and configName != ''">
-				AND config_name like concat('%', #{configName}, '%')
+                AND CONCAT(config_name, config_key) LIKE CONCAT('%',#{configName},'%')
 			</if>
 			<if test="configType != null and configType != ''">
 				AND config_type = #{configType}
@@ -56,6 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
 				and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
 			</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(config_id,#{ids}) > 0</if>
 		</where>
     </select>
     

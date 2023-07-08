@@ -34,9 +34,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <select id="selectTunnelAssociationByTunnelId" parameterType="String" resultMap="TunnelAssociationResult">
+    <select id="selectTunnelAssociationsByTunnelId" parameterType="String" resultMap="TunnelAssociationResult">
         <include refid="selectTunnelAssociationVo"/>
-        where tunnel_id = #{tunnelId} LIMIT 1
+        where tunnel_id = #{tunnelId}
     </select>
 
     <insert id="insertTunnelAssociation" parameterType="TunnelAssociation" useGeneratedKeys="true" keyProperty="id">
@@ -89,4 +89,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{tunnelId}
         </foreach>
     </delete>
+
+    <select id="checkInsertUnique" parameterType="com.tunnel.business.domain.dataInfo.TunnelAssociation" resultMap="TunnelAssociationResult">
+        <include refid="selectTunnelAssociationVo"/>
+        where tunnel_id = #{tunnelId} and tunnel_direction = #{tunnelDirection} and external_system_id = #{externalSystemId}
+    </select>
+
+    <select id="checkUpdateUnique" parameterType="com.tunnel.business.domain.dataInfo.TunnelAssociation" resultMap="TunnelAssociationResult">
+        <include refid="selectTunnelAssociationVo"/>
+        where id!=#{id} and tunnel_id = #{tunnelId}  and tunnel_direction = #{tunnelDirection} and external_system_id = #{externalSystemId}
+    </select>
 </mapper>

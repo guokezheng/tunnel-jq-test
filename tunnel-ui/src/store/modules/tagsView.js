@@ -5,6 +5,7 @@ const state = {
 
 const mutations = {
   ADD_VISITED_VIEW: (state, view) => {
+    // debugger
     if (state.visitedViews.some(v => v.path === view.path)) return
     state.visitedViews.push(
       Object.assign({}, view, {
@@ -13,6 +14,7 @@ const mutations = {
     )
   },
   ADD_CACHED_VIEW: (state, view) => {
+    // debugger
     if (state.cachedViews.includes(view.name)) return
     if (!view.meta.noCache) {
       state.cachedViews.push(view.name)
@@ -63,7 +65,7 @@ const mutations = {
       }
     }
   },
-  
+
   DEL_RIGHT_VIEWS: (state, view) => {
     const index = state.visitedViews.findIndex(v => v.path === view.path)
     if (index === -1) {
@@ -101,6 +103,7 @@ const mutations = {
 
 const actions = {
   addView({ dispatch }, view) {
+    debugger
     dispatch('addVisitedView', view)
     dispatch('addCachedView', view)
   },

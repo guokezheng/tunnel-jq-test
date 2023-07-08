@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-27 09:52:13
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-24 14:33:34
+ * @LastEditTime: 2023-02-02 15:44:29
  * @FilePath: \tunnel-ui\src\views\bigscreen\warning\components\faultList.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -41,7 +41,7 @@
           <el-col style="width: 4vw; text-align: center">{{
             index + 1
           }}</el-col>
-          <el-col style="width: 26vw">{{ item.eventTitle }}</el-col>
+          <el-col style="width: 26vw">{{ item.faultInformation }}</el-col>
         </el-row>
       </vue-seamless-scroll>
     </div>
@@ -84,7 +84,7 @@ export default {
   methods: {
     getList() {
       // let tunnelId = "WLJD-JiNan-YanJiuYuan-FHS";
-      getequipmentFailure(tunnelId).then((res) => {
+      getequipmentFailure().then((res) => {
         console.log(res.data, "故障信息列表");
         this.faultList = res.data;
       });

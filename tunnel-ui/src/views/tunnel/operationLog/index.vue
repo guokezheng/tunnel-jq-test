@@ -87,8 +87,12 @@
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
     >
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <el-table-column label="序号" align="center" prop="id" display:"none"/>
+       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号" width="100px" align="center">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
 
       <el-table-column
         label="隧道名称"
@@ -101,8 +105,8 @@
         prop="typeName.typeName"
       />
       <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
-      <el-table-column label="识别码" align="center" prop="code" display:"none" />
-      <el-table-column label="操作前状态" align="center" prop="beforeState" display:"none" />
+<!--      <el-table-column label="识别码" align="center" prop="code" display:"none" />
+      <el-table-column label="操作前状态" align="center" prop="beforeState" display:"none" />-->
       <el-table-column
         label="操作状态"
         align="center"
@@ -115,7 +119,7 @@
       </el-table-column>
       <el-table-column label="操作结果" align="center" prop="state" :formatter="stateFormat"/>
 
-      <el-table-column label="描述" align="center" prop="description" display:"none" />
+<!--      <el-table-column label="描述" align="center" prop="description" display:"none" />-->
 
       <el-table-column label="操作地址" align="center" prop="operIp" />
 
@@ -215,11 +219,12 @@
 </template>
 
 <script>
-import { listLog, getLog, delLog, addLog, updateLog } from "@/api/system/log";
+import {listLog, getLog, delLog, addLog, updateLog, exportLogininfor1} from "@/api/system/log";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listType } from "@/api/equipment/type/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import { listEqTypeState } from "@/api/equipment/eqTypeState/api";
+import {exportUser} from "@/api/system/user";
 export default {
   name: "OperationLog",
   dicts: ['sd_control_type'],
@@ -428,13 +433,23 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download(
-        "system/log/export",
-        {
-          ...this.queryParams,
-        },
-        `system_log.xlsx`
-      );
+      let confirmInfo ="是否确认导出所有的操作日志数据项？";
+      if(this.ids.length>0){
+        confirmInfo = "是否确认导出所选的操作日志数据项？";
+      }
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm(confirmInfo)
+        .then(() => {
+          this.exportLoading = true;
+          return exportLogininfor1(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
     // 表格行样式
     tableRowClassName({ row, rowIndex }) {

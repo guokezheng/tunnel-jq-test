@@ -1,15 +1,21 @@
 package com.tunnel.business.service.dataInfo.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
+import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.http.HttpUtils;
+import com.tunnel.business.datacenter.domain.dataReport.DeviceType;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +35,13 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     private SdDeviceDataMapper sdDeviceDataMapper;
     @Autowired
     private SdDevicesMapper sdDevicesMapper;
+    @Autowired
+    private IExternalSystemService externalSystemService;
+    @Autowired
+    private SdTunnelsMapper sdTunnelsMapper;
+
+    @Autowired
+    private SdDeviceDataRecordMapper sdDeviceDataRecordMapper;
 
     /**
      * 查询设备实时数据（存储模拟量）
@@ -202,6 +215,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
                 today = simpleDateFormat.format(deviceData.getUpdateTime());
             } else if (deviceData != null && deviceData.getCreateTime() != null) {
                 today = simpleDateFormat.format(deviceData.getCreateTime());
+            } else if (deviceData == null) {
+                today = simpleDateFormat.format(new Date());
             }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
             map.put("todayLDInsideData", todayLDData);
@@ -218,6 +233,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
                 today = simpleDateFormat.format(deviceData.getUpdateTime());
             } else if (deviceData != null && deviceData.getCreateTime() != null) {
                 today = simpleDateFormat.format(deviceData.getCreateTime());
+            } else if (deviceData == null) {
+                today = simpleDateFormat.format(new Date());
             }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
             map.put("todayLDOutsideData", todayLDData);
@@ -231,45 +248,359 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     }
 
     @Override
-    public List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData) {
-        String dept = "";
-        if (sdDeviceData.getDeptId() == null) {
-            String deptId = SecurityUtils.getDeptId();
-            dept = deptId;
-        } else if (sdDeviceData.getDeptId() != null) {
-            dept = sdDeviceData.getDeptId().toString();
-        }
-        String tunnelId = "";
-        if (sdDeviceData.getTunnelId() != null && !sdDeviceData.getTunnelId().equals("")) {
-            tunnelId = sdDeviceData.getTunnelId();
-        }
-        String searchValue = "1";
+    public List<Map<String, String>> dataLogInfoLineList(SdDeviceData sdDeviceData) {
+        List<Map<String, String>> maps = new ArrayList<>();
+        String searchValue = null;
         if (sdDeviceData.getSearchValue() != null && !sdDeviceData.getSearchValue().equals("")) {
             searchValue = sdDeviceData.getSearchValue();
         }
-        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String beginTime = now + " 00:00:00";
-        String endTime = now + " 23:59:59";
+        String deviceId = "";
+        if (sdDeviceData.getDeviceId() != null && !sdDeviceData.getDeviceId().equals("")) {
+            deviceId = sdDeviceData.getDeviceId();
+        }
+        String beginTime = getCurrentDayTime().get(0);
+        String endTime = getCurrentDayTime().get(1);
         if (!sdDeviceData.getParams().isEmpty()) {
-//            Map<String, String> params = (Map<String, String>)map.get("params");
             beginTime = sdDeviceData.getParams().get("beginTime").toString();
             endTime = sdDeviceData.getParams().get("endTime").toString();
         }
-        if (searchValue.equals("1")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(dept, tunnelId, beginTime, endTime);
+        if (searchValue.equals(DeviceType.COVIITEM.getCode())) {//covi
+            maps = sdDeviceDataMapper.selectCOVIDataLineList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("2")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(dept, tunnelId, beginTime, endTime);
+        } else if (searchValue.equals(DeviceType.FENGSHUFENGXIANGITEM.getCode())) {//风速风向
+            maps = sdDeviceDataMapper.selectFSFXDataLineList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("3")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(dept, tunnelId, beginTime, endTime);
+        } else if (searchValue.equals(DeviceType.DONGNEILIANGDUITEM.getCode())) {//洞内亮度
+            maps = sdDeviceDataMapper.selectDNDataLineList(beginTime, endTime, deviceId);
             return maps;
-        } else if (searchValue.equals("4")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(dept, tunnelId, beginTime, endTime);
+        } else if (searchValue.equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度
+            maps = sdDeviceDataMapper.selectDWDataLineList(beginTime, endTime, deviceId);
             return maps;
         } else {
             return null;
         }
+
     }
 
+    /**
+     * 查询设备列表
+     * @param sdDeviceData
+     * @return
+     */
+    @Override
+    public List<Map<String, String>> dataDevicesLogInfoList(SdDeviceData sdDeviceData) {
+        deviceDataTab(sdDeviceData);
+        List<Map<String, String>> maps = sdDeviceDataMapper.dataDevicesLogInfoList(sdDeviceData);
+        return maps;
+    }
+
+
+    @Override
+    public List<SdDeviceData> exportDatainforTab(SdDeviceData sdDeviceData) {
+        deviceDataTab(sdDeviceData);
+        List<SdDeviceData> list = sdDeviceDataMapper.exportDatainforTab(sdDeviceData);
+        return list;
+    }
+
+
+    private SdDeviceData deviceDataTab(SdDeviceData sdDeviceData){
+        if(sdDeviceData!=null&&!"".equals(sdDeviceData)){
+            if (DeviceType.COVIITEM.getCode().equals(sdDeviceData.getSearchValue())) {//covi
+                sdDeviceData.setSearchValue(DeviceType.COVI.getCode());
+            }else if (DeviceType.FENGSHUFENGXIANGITEM.getCode().equals(sdDeviceData.getSearchValue())) {//风速风向
+                sdDeviceData.setSearchValue(DeviceType.FENGSHUFENGXIANG.getCode());
+            }else if (DeviceType.DONGNEILIANGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//洞内亮度
+                sdDeviceData.setSearchValue(DeviceType.DONGNEILIANGDU.getCode());
+            }else if (DeviceType.DONGWAILIANGDUITEM.getCode().equals(sdDeviceData.getSearchValue())) {//洞外亮度
+                sdDeviceData.setSearchValue(DeviceType.DONGWAILIANGDU.getCode());
+            }
+        }
+        if (sdDeviceData.getDeptId() == null) {
+            sdDeviceData.setDept(SecurityUtils.getDeptId());
+        }
+        return sdDeviceData;
+
+    };
+
+
+
+
+    @Override
+    public List<SdDeviceCOVIData> handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        getSelectExportParams(sdDeviceCOVIData);
+        List<SdDeviceCOVIData> list = sdDeviceDataMapper.selectCOVIExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
+        return list;
+    }
+
+    @Override
+    public List<SdDeviceFSFXData> handleFSFXExportRecord( SdDeviceCOVIData sdDeviceCOVIData) {
+        getSelectExportParams(sdDeviceCOVIData);
+        List<SdDeviceFSFXData> list = sdDeviceDataMapper.selectFSFXExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
+        return list;
+    }
+
+    @Override
+    public List<SdDeviceDNData> handleDNExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        getSelectExportParams(sdDeviceCOVIData);
+        List<SdDeviceDNData> list = sdDeviceDataMapper.selectDNExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
+        return list;
+    }
+
+    @Override
+    public List<SdDeviceDWData> handleDWExportRecord(SdDeviceCOVIData sdDeviceCOVIData) {
+        getSelectExportParams(sdDeviceCOVIData);
+        List<SdDeviceDWData> list = sdDeviceDataMapper.selectDWExportDataList(sdDeviceCOVIData.getBeginTime(), sdDeviceCOVIData.getEndTime(), sdDeviceCOVIData.getDeviceId(),sdDeviceCOVIData.getIds());
+        return list;
+    }
+
+
+    @Override
+    public Map<String, Object> energyConsumptionDetection(String tunnelId) {
+        Map<String, Object> allDataList = new HashMap<>();
+        ExternalSystem externalSystem = new ExternalSystem();
+        externalSystem.setTunnelId(tunnelId);
+        externalSystem.setSystemName("能源管控平台");
+        List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
+        if (externalSystems.isEmpty()) {
+            return allDataList;
+        }
+        ExternalSystem system = externalSystems.get(0);
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setExternalSystemId(system.getId());
+        List<SdDevices> sdDevicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
+        if (sdDevicesList.isEmpty()) {
+            return allDataList;
+        }
+        SdDevices devices = sdDevicesList.get(0);
+        String eqId = devices.getExternalDeviceId();
+        String url = system.getSystemUrl() + "login";
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("username", "admin");
+        map.put("password", "HSD123!@#");
+        String result = "";
+        try {
+            result = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));
+        } catch (Exception e) {
+            return allDataList;
+        }
+        if (result == "" || result.equals("")) {
+            return allDataList;
+        }
+        JSONObject json = JSONObject.parseObject(result);
+        if (json == null || json.isEmpty() || json.get("token") == null) {
+            return allDataList;
+        }
+        String token =  json.get("token").toString();
+        //获取能耗数据
+        url = system.getSystemUrl() + "sjfx/getEnergyByStatisticsType";
+        String[] str = new String[]{"day","month","year"};
+        for (int j = 0;j < str.length;j++) {
+            if (token == null || token.equals("")) {
+                break;
+            }
+            String type = str[j];
+            String params = "powerCode=" + eqId + "&type="+type;
+            json = JSONObject.parseObject(HttpUtils.sendGetWithAuth(url, params, Constants.UTF8, token));
+            if (json == null || json.isEmpty() || json.getJSONArray("data") == null) {
+                continue;
+            }
+            JSONArray data = json.getJSONArray("data");
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (int i = 0;i < data.size(); i++) {
+                Map<String, Object> maps = new HashMap<>();
+                String value = "0";
+                if (data.getJSONObject(i).get("value") != null) {
+                    value = data.getJSONObject(i).get("value").toString();
+                }
+                String rt = data.getJSONObject(i).get("rt").toString();
+                maps.put("value", value);
+                maps.put("rt", rt);
+                list.add(maps);
+            }
+            allDataList.put(type, list);
+        }
+
+        return allDataList;
+    }
+
+    @Override
+    public Map<String, Object> getTodayYcylData(String deviceId) {
+        Long itemId = Long.valueOf(DevicesTypeItemEnum.YUAN_CHUAN_YA_LI_ZHI.getCode());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String today = simpleDateFormat.format(new Date());
+        SdDeviceData data = new SdDeviceData();
+        data.setDeviceId(deviceId);
+        data.setItemId(Long.valueOf(itemId));
+        SdDeviceData devData = sdDeviceDataMapper.selectLastRecord(data);
+        if (devData != null && devData.getUpdateTime() != null) {
+            today = simpleDateFormat.format(devData.getUpdateTime());
+        } else if (devData != null && devData.getCreateTime() != null) {
+            today = simpleDateFormat.format(devData.getCreateTime());
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (devData != null) {
+            map.put("nowData", devData.getData());
+        } else {
+            map.put("nowData", null);
+        }
+        List<Map<String, Object>> todayYcylData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        map.put("todayYcylData", todayYcylData);
+        return map;
+    }
+
+
+
+    @Override
+    public AjaxResult getFanSafeData(String deviceId) {
+        SdDevices sdDevices = sdDevicesMapper.selectZdyDevice(deviceId, DevicesTypeEnum.NEI_WAI_ZHEN_DONG_YI_JIANCEQI.getCode());
+        //振动速度值
+        List<SdDeviceData> suDuList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_SU_DU.getCode()), sdDevices.getEqId());
+        //振动幅度值
+        List<SdDeviceData> fuDuList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_FU_DU.getCode()), sdDevices.getEqId());
+        //沉降值
+        List<SdDeviceData> chenJiangList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_ZHI.getCode()), sdDevices.getEqId());
+        //倾斜值
+        List<SdDeviceData> qingXieList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.QING_XIE_ZHI.getCode()), sdDevices.getEqId());
+        //振动告警
+        List<SdDeviceData> zhenGaoJingList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_GAO_JING.getCode()), sdDevices.getEqId());
+        //沉降倾斜告警
+        List<SdDeviceData> chenQingGaoJingList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_QING_XIE_GAO_JING.getCode()), sdDevices.getEqId());
+        //封装到mqp
+        Map<String, String> map = new HashMap<>();
+        map.put("shakeSpeed",suDuList.size() == 0 ? "" : suDuList.get(0).getData());
+        map.put("amplitude",fuDuList.size() == 0 ? "" : fuDuList.get(0).getData());
+        map.put("subside",chenJiangList.size() == 0 ? "" : chenJiangList.get(0).getData());
+        map.put("slope",qingXieList.size() == 0 ? "" : qingXieList.get(0).getData());
+        map.put("shakeAlaram",zhenGaoJingList.size() == 0 ? "" : zhenGaoJingList.get(0).getData());
+        map.put("subsideSlopeAlaram",chenQingGaoJingList.size() == 0 ? "" : chenQingGaoJingList.get(0).getData());
+        return AjaxResult.success(map);
+    }
+
+    @Override
+    public List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData) {
+        String deviceId = sdDeviceData.getDeviceId();
+
+        String beginTime = "";
+        String endTime = "";
+        if (!sdDeviceData.getParams().isEmpty()) {
+            beginTime = sdDeviceData.getParams().get("beginTime").toString();
+            endTime = sdDeviceData.getParams().get("endTime").toString();
+        }
+
+        if (sdDeviceData.getSearchValue().equals(DeviceType.COVIITEM.getCode())) {//covi
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(beginTime, endTime, deviceId);
+            return maps;
+        } else if (sdDeviceData.getSearchValue().equals(DeviceType.FENGSHUFENGXIANGITEM.getCode())) {//风速风向
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(beginTime, endTime, deviceId);
+            return maps;
+        } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGNEILIANGDUITEM.getCode())) {//洞内亮度
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(beginTime, endTime, deviceId);
+            return maps;
+        } else if (sdDeviceData.getSearchValue().equals(DeviceType.DONGWAILIANGDUITEM.getCode())) {//洞外亮度
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(beginTime, endTime, deviceId);
+            return maps;
+        } else {
+            return null;
+        }
+
+
+    }
+
+    /**
+     * 获取设备实时数据
+     * @param itemId
+     * @param deviceId
+     * @return
+     */
+    public List<SdDeviceData> getDeviceDataList(Long itemId, String deviceId){
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setItemId(itemId);
+        sdDeviceData.setDeviceId(deviceId);
+        return sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+    }
+
+    /**
+     * 默认获取当天时间
+     * @return
+     */
+    private List<String> getCurrentDayTime(){
+        List<String> intraday = new ArrayList<>();
+        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String beginTime = now + " 00:00:00";
+        String endTime = now + " 23:59:59";
+        intraday.add(beginTime);
+        intraday.add(endTime);
+        return intraday;
+    }
+
+
+    private SdDeviceCOVIData getSelectExportParams(SdDeviceCOVIData sdDeviceCOVIData){
+        String beginTime = getCurrentDayTime().get(0);
+        String endTime = getCurrentDayTime().get(1);
+        if (!sdDeviceCOVIData.getParams().isEmpty()) {
+            beginTime = sdDeviceCOVIData.getParams().get("beginTime").toString();
+            endTime = sdDeviceCOVIData.getParams().get("endTime").toString();
+        }
+        String ids = sdDeviceCOVIData.getIds();
+        sdDeviceCOVIData.setBeginTime(beginTime);
+        sdDeviceCOVIData.setEndTime(endTime);
+        return sdDeviceCOVIData;
+    }
+
+
+    @Override
+    public void updateDeviceData(String deviceId, String value, Integer itemId,boolean createLog) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            insertSdDeviceData(sdDeviceData);
+        }
+
+        // 是否插入log
+        if(createLog){
+            //存入数据记录表中
+            SdDeviceDataRecord sdDeviceDataRecord = new SdDeviceDataRecord();
+            sdDeviceDataRecord.setDeviceId(deviceId);
+            sdDeviceDataRecord.setItemId(Long.valueOf(itemId));
+            sdDeviceDataRecord.setData(value);
+            sdDeviceDataRecord.setCreateTime(new Date());
+            sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
+        }
+
+    }
+
+
+    /**
+     * 修改设备数据表中实时数据
+     * @param sdDevices 设备信息
+     * @param value 数据
+     * @param itemId 数据项
+     */
+    @Override
+    public void updateDeviceData(SdDevices sdDevices, String value, Long itemId) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        List<SdDeviceData> deviceData = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            updateSdDeviceData(data);
+        } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setCreateTime(new Date());
+            insertSdDeviceData(sdDeviceData);
+        }
+    }
 }
+

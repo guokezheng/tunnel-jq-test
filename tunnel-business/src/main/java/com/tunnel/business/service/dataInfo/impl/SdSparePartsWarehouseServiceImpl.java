@@ -1,6 +1,7 @@
 package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdSparePartsWarehouse;
 import com.tunnel.business.domain.dataInfo.vo.SdSparePartsWarehouseVO;
 import com.tunnel.business.mapper.dataInfo.SdSparePartsWarehouseMapper;
@@ -40,6 +41,13 @@ public class SdSparePartsWarehouseServiceImpl implements ISdSparePartsWarehouseS
      */
     @Override
     public List<SdSparePartsWarehouse> selectSdSparePartsWarehouseList(SdSparePartsWarehouse sdSparePartsWarehouse) {
+        if (SecurityUtils.getDeptId() != null && !"".equals(SecurityUtils.getDeptId())) {
+            String deptId = SecurityUtils.getDeptId();
+            if (deptId == null) {
+                throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            }
+            sdSparePartsWarehouse.getParams().put("deptId", deptId);
+        }
         return sdSparePartsWarehouseMapper.selectSdSparePartsWarehouseList(sdSparePartsWarehouse);
     }
 
@@ -62,6 +70,10 @@ public class SdSparePartsWarehouseServiceImpl implements ISdSparePartsWarehouseS
     @Override
     public int insertSdSparePartsWarehouse(SdSparePartsWarehouse sdSparePartsWarehouse) {
         sdSparePartsWarehouse.setCreateTime(DateUtils.getNowDate());
+        List<SdSparePartsWarehouse> list = sdSparePartsWarehouseMapper.selectSdSparePartsWarehouseList(sdSparePartsWarehouse);
+        if(list.size()>0){
+            throw new RuntimeException("当前数据已存在，请勿重复录入。");
+        }
         return sdSparePartsWarehouseMapper.insertSdSparePartsWarehouse(sdSparePartsWarehouse);
     }
 
@@ -97,5 +109,15 @@ public class SdSparePartsWarehouseServiceImpl implements ISdSparePartsWarehouseS
     @Override
     public int deleteSdSparePartsWarehouseById(Long id) {
         return sdSparePartsWarehouseMapper.deleteSdSparePartsWarehouseById(id);
+    }
+
+    /**
+     * 查询备件名称是否重复
+     * @param partName 备件名称
+     * @return
+     */
+    @Override
+    public List<SdSparePartsWarehouse> verifySparePartsWarehouseOnly(SdSparePartsWarehouse sdSparePartsWarehouse) {
+        return sdSparePartsWarehouseMapper.verifySparePartsWarehouseOnly(sdSparePartsWarehouse);
     }
 }

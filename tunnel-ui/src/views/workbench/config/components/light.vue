@@ -8,29 +8,20 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
+      <div class="dialogStyleBox">
         <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
+        <div class="dialogCloseButton"></div>
       </div>
+
       <el-form
         ref="form"
         :model="stateForm"
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding: 15px; padding-top: 0px"
       >
         <el-row>
           <el-col :span="13">
@@ -39,40 +30,51 @@
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="隧道名称:">
+            <el-form-item label="隧道名称:" label-width="102px">
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+
           <el-col :span="13">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="所属方向:">
+            <el-form-item label="所属方向:" label-width="102px">
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+
           <el-col :span="13">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="设备厂商:">
-              {{ getBrandName(stateForm.brandName) }}
+            <el-form-item label="设备厂商:" label-width="102px">
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+
           <el-col :span="13">
-            <el-form-item label="设备状态:">
-              <!-- {{ stateForm.eqStatus }} -->
+            <el-form-item
+              label="设备状态:"
+              :style="{
+                color:
+                  stateForm.eqStatus == '1'
+                    ? 'yellowgreen'
+                    : stateForm.eqStatus == '2'
+                    ? 'white'
+                    : 'red',
+              }"
+            >
               {{ geteqType(stateForm.eqStatus) }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11" v-if="stateForm.eqType == 13">
+            <el-form-item label="消防栓状态:">
+              {{ stateForm.xfsStatus }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -98,7 +100,13 @@
                       : '',
                   ]"
                 >
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1' && stateForm.eqType == (1 || 2)">
+                  <el-row
+                    class="flex-row"
+                    v-if="
+                      stateForm.eqDirection == '1' &&
+                      (stateForm.eqType == 1 || stateForm.eqType == 2)
+                    "
+                  >
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -108,35 +116,45 @@
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[1]"
-                      v-if="item.url.length > 1"
+                      v-if="item.url[1]"
                     />
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '2'&& stateForm.eqType == (1 || 2)">
+                  <el-row
+                    class="flex-row"
+                    v-if="
+                      stateForm.eqDirection == '2' &&
+                      (stateForm.eqType == 1 || stateForm.eqType == 2)
+                    "
+                  >
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[1]"
+                      v-if="item.url.length > 1"
                     />
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[0]"
-                      v-if="item.url.length > 1"
                     />
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqType != 1">
+                  <el-row
+                    class="flex-row"
+                    v-if="stateForm.eqType != 1 && stateForm.eqType != 2"
+                  >
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[0]"
+                      :style="{width:clickEqType == 31?'110px':'auto'}"
                     />
-                  
+
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
@@ -145,20 +163,63 @@
               </el-radio-group>
             </div>
           </el-form-item>
-          <div slot="footer" style="float: right; margin-bottom: 20px">
+          <!-- 加强照明：7  基本照明：9 疏散标志：30 诱导灯：31 警示灯带：45 -->
+          <el-row v-show="clickEqType == 30">
+            <el-col :span="11">
+              <el-form-item v-show="showTipe == true" label-width="10px">
+                <span style="color: red; font-weight: bold"
+                  >当前地址为报警点位</span
+                >
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row
+            style="margin-top: 10px"
+            v-show="[7, 9, 30, 31, 45].includes(this.clickEqType)"
+          >
+            <el-col :span="15">
+              <el-form-item label="亮度调整">
+                <el-slider
+                  v-model="stateForm.brightness"
+                  :max="100"
+                  :min="brightnessMin"
+                  class="sliderClass"
+                  :disabled="!stateForm.brightness"
+                ></el-slider>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9" >
+              <span style="padding-left: 10px; line-height: 30px"
+                >{{ stateForm.brightness }} %</span
+              >
+            </el-col>
+          </el-row>
+          <el-row v-show="(this.clickEqType == 30 && stateForm.state == 5) || (this.clickEqType == 31)" style="margin-top: 10px" >
+            <el-col :span="15">
+              <el-form-item label="闪烁频率:">
+                <el-slider
+                  v-model="stateForm.frequency"
+                  :max="100"
+                  :min="frequencyMin"
+                  class="sliderClass"
+                  :disabled="!stateForm.frequency"
+                ></el-slider>
+              </el-form-item>
+            </el-col>
+            <el-col :span="9" >
+              <span style="padding-left: 10px; line-height: 30px"
+                >{{ stateForm.frequency }} m/s</span
+              >
+            </el-col>
+          </el-row>
+          <div slot="footer" style="margin-top: 10px" class="dialog-footer">
             <el-button
-              type="primary"
-              size="mini"
               @click="handleOK()"
-              style="width: 80px"
               class="submitButton"
-              >确 定</el-button
+              v-hasPermi="['workbench:dialog:save']"
+              >执 行</el-button
             >
-            <el-button
-              type="primary"
-              size="mini"
-              @click="handleClosee()"
-              style="width: 80px"
+            <el-button class="closeButton" @click="handleClosee()"
               >取 消</el-button
             >
           </div>
@@ -167,55 +228,126 @@
     </el-dialog>
   </div>
 </template>
-  
+
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
-import { getDevice } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
+import { getDevice, setBrightness } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
-import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
+import {
+  controlDevice,
+  controlWarningLightStripDevice,
+  setControlDeviceByParam,
+  controlEvacuationSignDevice,
+  controlGuidanceLampDevice
+} from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       title: "",
-      stateForm: {}, //弹窗表单
+      stateForm: {
+        brightness: 0,
+      }, //弹窗表单
       eqTypeStateList: [],
       visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       iconWidth: "",
       iconHeight: "",
+      clickEqType: "",
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
+      brightnessMin: 1,
+      frequencyMin: 1,
+      fireMarkData: [],
+      showTipe: false,
     };
   },
-  created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    console.log(this.eqInfo.clickEqType, "clickEqTypeclickEqTypeclickEqType");
-
-    this.getMessage();
-    // this.loadFlv();
+  watch: {
+    "stateForm.state": function (newVal, oldVal) {
+      // console.log(newVal, "newVal");
+      if([7, 9].includes(this.clickEqType)){
+      // 基础照明、加强照明  state == 1 开启  state == 2  关闭
+        if(newVal == "1" && this.stateForm.brightness == 0){
+          this.stateForm.brightness = 1;
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
+        }else if(newVal == "2"){
+          this.stateForm.brightness = 0;
+          this.brightnessMin = 0;
+        } 
+      }else if([30, 31].includes(this.clickEqType)){
+         // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
+        if(newVal == "1"){
+          this.stateForm.brightness = 0;
+          this.stateForm.frequency = 0;
+          this.brightnessMin = 0;
+          this.frequencyMin = 0;
+        }else if(newVal != "1" && this.stateForm.brightness == 0){
+          this.stateForm.brightness = 1;
+          if(newVal != "2"){
+            this.stateForm.frequency = 1;
+          }else {
+            this.stateForm.frequency = 0;
+          }
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
+        }else if(newVal == "2"){
+          this.stateForm.frequency = 0;
+          this.frequencyMin = 0;
+          this.brightnessMin = 1;
+        }else if(newVal == "5"){
+          this.stateForm.frequency = 1;
+          this.brightnessMin = 1;
+          this.frequencyMin = 1;
+        }
+      }
+    },
   },
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.clickEqType = JSON.parse(JSON.stringify(this.eqInfo.clickEqType));
+      this.getMessage();
+    },
     // 查设备详情
     async getMessage() {
-      var that = this;
       if (this.eqInfo.equipmentId) {
-        var obj = {};
-        var state = "";
+        let form = {}
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          this.stateForm = res.data;
-          this.title = this.stateForm.eqName;
+          form = JSON.parse(JSON.stringify(res.data));
+          this.title = form.eqName;
+          form.frequency = typeof(form.frequency) == "string"?Number(form.frequency):form.frequency;
+          form.brightness = typeof(form.brightness) == "string"? Number(form.brightness):form.brightness;
+          this.stateForm = form
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
             this.stateForm.state = response.data.state;
-            console.log(this.stateForm.state, "this.stateForm.state");
             this.getEqTypeStateIcon();
           });
+          if (this.eqInfo.clickEqType == 30) {
+            this.fireMarkData = [
+              {
+                label: "设置为报警点位",
+                value: this.stateForm.query_point_address,
+              },
+            ];
+            if (this.stateForm.query_point_address == this.stateForm.fireMark) {
+              this.fireMarkData.push({ label: "清除报警点位", value: "255" });
+              this.showTipe = true;
+            } else {
+              this.showTipe = false;
+            }
+          }
         });
-        
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -247,7 +379,6 @@ export default {
             iconUrl.push(img);
           }
         }
-        console.log(iconUrl,);
 
         that.eqTypeStateList.push({
           type: list[i].stateTypeId,
@@ -284,31 +415,129 @@ export default {
       }
     },
     handleOK() {
-      console.log(this.stateForm.state,"单选框点击绑定")
-      const param = {
-        devId: this.stateForm.eqId, //设备id
-        state :this.stateForm.state
-      };
+      let that = this;
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+      // 警示灯带
+      if (this.eqInfo.clickEqType == 45) {
+        const param = {
+          devId: this.eqInfo.equipmentId,
+          state: this.stateForm.state,
+          brightness: this.stateForm.brightness,
+        };
+        controlWarningLightStripDevice(param).then((res) => {
+          console.log("警示灯带控制成功", res);
+          if (res.data == 1) {
+            this.$modal.msgSuccess("操作成功");
+          } else {
+            this.$modal.msgError("操作失败");
+          }
+          loading.close();
+        }).catch(()=>{
+          loading.close();
+        });
+        // 消防水泵:13 潜水深井泵:49
+      } else if (
+        this.eqInfo.clickEqType == 13 ||
+        this.eqInfo.clickEqType == 49
+      ) {
+        const param = {
+          eqId: this.stateForm.eqId, //设备id
+          data: this.stateForm.state,
+          comType: "omron",
+        };
+        setControlDeviceByParam(param).then((res) => {
+          console.log("消防栓控制成功", res);
+          let msg = res.msg;
+          if (res.data == 1) {
+            this.$modal.msgSuccess(msg);
+          } else {
+            this.$modal.msgError(msg);
+          }
+          loading.close();
+        }).catch(()=>{
+          loading.close();
+        });
+      } else if (this.stateForm.eqType == 30) {
+        const param = {
+          devId: this.stateForm.eqId, //设备id
+          state: this.stateForm.state, //设备状态
+          brightness: this.stateForm.brightness, //疏散标志亮度
+          frequency: this.stateForm.frequency, //疏散标志频率
+          fireMark: // 关闭传0 常亮传255 报警传3
+            this.stateForm.state == "1"
+              ? "0"
+              : this.stateForm.state == "2"
+              ? "255"
+              : "3",
+        };
+        this.$modal.msgSuccess("指令下发中，请稍后。");
+        controlEvacuationSignDevice(param).then((response) => {
+          console.log(response, "提交控制");
+          loading.close();
+          this.$modal.msgSuccess("操作成功");
+        }).catch(()=>{
+          loading.close();
+        });
+      } else if (this.stateForm.eqType == 31) {
+        const param = {
+          devId: this.stateForm.eqId, //设备id
+          state: this.stateForm.state, //设备状态
+          brightness: this.stateForm.brightness, //诱导灯亮度
+          frequency: this.stateForm.frequency, //诱导灯频率
+          eqType: this.stateForm.eqType,
 
-      controlDevice(param).then((response) => {
-        if(response.data == 0){
-          this.$modal.msgError("控制失败");
-        }else if(response.data == 1){
-          this.$modal.msgSuccess("控制成功");
-
+        };
+        this.$modal.msgSuccess("指令下发中，请稍后。");
+        controlGuidanceLampDevice(param).then((response) => {
+          console.log(response, "提交控制");
+          loading.close();
+          this.$modal.msgSuccess("操作成功");
+        }).catch(()=>{
+          loading.close();
+        });
+      } else {
+        if (
+          this.stateForm.eqType == 9 &&
+          this.stateForm.state == 1 &&
+          this.stateForm.brightness < 30
+        ) {
+          loading.close();
+          this.$modal.msgWarning("基本照明亮度不得低于30");
+          return;
         }
+        const param = {
+          devId: this.stateForm.eqId, //设备id
+          state: this.stateForm.state,
+          brightness: this.stateForm.brightness,
+          eqType: this.stateForm.eqType,
+        };
+        controlDevice(param).then((response) => {
+          if (response.data == 0) {
+            this.$modal.msgError("控制失败");
+          } else if (response.data == 1) {
+            this.$modal.msgSuccess("控制成功");
+          }
+          loading.close();
+        }).catch(()=>{
+          loading.close();
 
-        this.$emit("dialogClose");
-      });
+        });
+      }
+      this.visible = false;
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false;
     },
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
 .videoTabs {
   padding: 0 15px;
@@ -344,5 +573,22 @@ export default {
   height: 40px;
   line-height: 40px;
 }
+::v-deep.sliderClass {
+  .el-slider__runway {
+    width: 100%;
+    margin: 12px 0;
+  }
+  .el-slider__bar {
+    background: linear-gradient(90deg, #00aded 0%, #007cdd 100%);
+  }
+  .el-slider__button {
+    width: 10px;
+    height: 10px;
+    border: solid 1px #fff;
+    background-color: #ff9300;
+  }
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
+}
 </style>
-  

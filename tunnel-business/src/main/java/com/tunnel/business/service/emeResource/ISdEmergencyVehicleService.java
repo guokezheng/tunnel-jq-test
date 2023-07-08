@@ -1,5 +1,6 @@
 package com.tunnel.business.service.emeResource;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 import com.tunnel.business.domain.emeResource.SdEmergencyVehicle;
@@ -44,7 +45,7 @@ public interface ISdEmergencyVehicleService {
      * @param sdEmergencyVehicle 应急车辆
      * @return 结果
      */
-    int updateSdEmergencyVehicle(SdEmergencyVehicle sdEmergencyVehicle);
+    AjaxResult updateSdEmergencyVehicle(SdEmergencyVehicle sdEmergencyVehicle);
 
     /**
      * 批量删除应急车辆

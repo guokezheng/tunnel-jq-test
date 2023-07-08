@@ -98,10 +98,10 @@
       </div>
       <CrontabResult :ex="crontabValueString"></CrontabResult>
 
-      <div class="pop_btn">
-        <el-button size="small" type="primary" @click="submitFill">确定</el-button>
-        <el-button size="small" type="warning" @click="clearCron">重置</el-button>
-        <el-button size="small" @click="hidePopup">取消</el-button>
+      <div class="pop_btn dialog-footer">
+        <el-button class="submitButton" @click="submitFill">确定</el-button>
+        <el-button class="submitButton" @click="clearCron">重置</el-button>
+        <el-button class="closeButton" @click="hidePopup">取消</el-button>
       </div>
     </div>
   </div>
@@ -366,7 +366,7 @@ export default {
 <style scoped>
 .pop_btn {
   text-align: center;
-  margin-top: 20px;
+  margin: 20px auto;
 }
 .popup-main {
   position: relative;

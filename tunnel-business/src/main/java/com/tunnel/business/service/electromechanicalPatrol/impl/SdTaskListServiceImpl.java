@@ -1,18 +1,17 @@
 package com.tunnel.business.service.electromechanicalPatrol.impl;
 
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.config.RuoYiConfig;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.DeptTunnelTreeSelect;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
 import com.ruoyi.common.core.domain.entity.SysDept;
-import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.dataReport.FaultStatus;
+import com.tunnel.business.datacenter.domain.dataReport.OptType;
+import com.tunnel.business.datacenter.domain.dataReport.TaskStatus;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.electromechanicalPatrol.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
@@ -24,9 +23,21 @@ import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import org.apache.ibatis.annotations.Param;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -53,6 +64,23 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Autowired
     private SdFaultListMapper sdFaultListMapper;
 
+//    @Autowired
+//    @Qualifier("kafkaThreeTemplate")
+//    private KafkaTemplate<String, String> kafkaThreeTemplate;
+
+    @Autowired
+    @Qualifier("kafkaTwoTemplate")
+    private KafkaTemplate<String, String> kafkaTwoTemplate;
+//
+//    @Value("${tunnelTaskList}")
+//    private String tunnelTaskList;
+//
+//    @Value("${tunnelTaskPatrol}")
+//    private String tunnelTaskPatrol;
+//
+//    @Value("${tunnelTaskOperation}")
+//    private String tunnelTaskOperation;
+
     /**
      * 查询巡查任务
      *
@@ -62,7 +90,16 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public SdTaskList selectSdTaskListById(String id)
     {
-        return sdTaskListMapper.selectSdTaskListById(id);
+        SdTaskList sdTaskList = sdTaskListMapper.selectSdTaskListById(id);
+
+        if(sdTaskList.getTaskCxtime()==null||"".equals(sdTaskList.getTaskCxtime())){//没有持续时间
+            //任务持续时间为 当前时间-发布时间
+            if(sdTaskList.getEndPlantime()!=null&&!"".equals(sdTaskList.getEndPlantime())){
+                sdTaskList.setTaskCxtime(lengthTime(sdTaskList.getDispatchTime()));
+            }
+        }
+
+        return sdTaskList;
     }
 
     /**
@@ -74,11 +111,65 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public List<SdTaskList> selectSdTaskListList(SdTaskList sdTaskList)
     {
-        return sdTaskListMapper.selectSdTaskListList(sdTaskList);
+        List<SdTaskList> taskLists = sdTaskListMapper.selectSdTaskListList(sdTaskList);
+        for(int i = 0;i<taskLists.size();i++){
+                if(taskLists.get(i).getTaskStatus()!=null&&!"".equals(taskLists.get(i).getTaskStatus())){
+                    taskListStatus(taskLists.get(i));
+                }
+            }
+        return taskLists;
+
+    }
+
+    /**
+     * 筛选超时的任务
+     * @param taskListsAll
+     * @return
+     */
+    private List<SdTaskList> getChaoshiTaskList(List<SdTaskList> taskListsAll) {
+        List<SdTaskList> chaoshiTaskLists = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for(int i = 0;i<taskListsAll.size();i++){
+            if(taskListsAll.get(i).getEndPlantime()!=null){
+                String  plantime = sdf.format(taskListsAll.get(i).getEndPlantime());//计划完成时间
+                long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+                long diff = System.currentTimeMillis() - time + 1000;
+                if(diff>0){//当前时间与计划完成时间的差值
+                    taskListsAll.get(i).setTask(taskListsAll.get(i).getTask()+","+TaskStatus.YICHAOSHI.getName());
+                    chaoshiTaskLists.add(taskListsAll.get(i));
+                }
+            }
+        }
+        return chaoshiTaskLists;
+    }
+
+
+    /**
+     * 判断任务状态
+     * @param taskList
+     * @return
+     */
+    private SdTaskList taskListStatus(SdTaskList taskList){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long diff = 0;
+        if(taskList.getTask()== null){//完结，已超时的情况
+            taskList.setTask(TaskStatus.YIWANJIE.getName()+","+TaskStatus.YICHAOSHI.getName());
+        }else if(taskList.getEndPlantime()!=null&&!"".equals(taskList.getEndPlantime())){
+            String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
+            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+            diff = System.currentTimeMillis() - time;
+            if(taskList.getTask().equals(TaskStatus.DAIXUNCHA.getName())||taskList.getTask().equals(TaskStatus.XUNCHAZHONG.getName())){
+                if(diff>0){//当前时间与计划完成时间的差值
+                    taskList.setTask(taskList.getTask()+","+TaskStatus.YICHAOSHI.getName());
+                }
+            }
+        }
+        return taskList;
     }
 
     /**
      * 新增巡查任务
+     *
      *
      * @param sdTaskList 巡查任务
      * @return 结果
@@ -87,20 +178,21 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     public int insertSdTaskList(SdTaskList sdTaskList)
     {
         int result = -1;
-        String taskId = UUIDUtil.getRandom32BeginTimePK();//任务编号
+        //String taskId = UUIDUtil.getRandom32BeginTimePK();//任务编号
+        String taskId = createTaskId(sdTaskList.getTunnelId());
         sdTaskList.setId(taskId);//id
         sdTaskList.setZzjgId(SecurityUtils.getLoginUser().getDeptId());
         sdTaskList.setDispatcher(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
         sdTaskList.setCreateBy(SecurityUtils.getLoginUser().getUsername());
         //sdTaskList.setTaskStatus("0");//待巡查
         result = sdTaskListMapper.insertSdTaskList(sdTaskList);
+        SdTaskOpt sdTaskOpt = new SdTaskOpt();
         if(result>0){
             /*添加操作记录*/
             if("0".equals(sdTaskList.getTaskStatus())){//发布任务
-                SdTaskOpt sdTaskOpt = new SdTaskOpt();
                 sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
                 sdTaskOpt.setTaskId(taskId);
-                sdTaskOpt.setOptType("0");
+                sdTaskOpt.setOptType(OptType.PAIDAN.getCode());
                 sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
                 result = sdTaskListMapper.insertTaskOpt(sdTaskOpt);
             }
@@ -109,10 +201,63 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         if(result>0){
             result = insertPatrol(sdTaskList,taskId);
         }
+//        JSONObject  jsonObject = new JSONObject();
+//        //任务数据推送
+//        jsonObject.put("taskRecord",sdTaskList);
+//        jsonObject.put("optType",OptType.PAIDAN.getCode());//用于区分新增，修改，删除，接收，提交
+//        kafkaTwoTemplate.send(tunnelTaskList, jsonObject.toString());
+//        //操作记录数据推送
+//        jsonObject.put("taskOptRecord",sdTaskOpt);
+//        kafkaTwoTemplate.send(tunnelTaskOperation, jsonObject.toString());
         return result;
     }
+   /**
+    *
+    * 生成任务id  格式:隧道id的后三位+当前年月日+001  例HSD20230331001
+    *
+    * */
+    private String createTaskId(String tunnelId) {
+        tunnelId.substring(tunnelId.length()-3);
 
-    private int insertPatrol(SdTaskList sdTaskList,String taskId){
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date(System.currentTimeMillis());
+        String pid = tunnelId.substring(tunnelId.length()-3)+formatter.format(date);
+
+        String cid = sdTaskListMapper.selectCurrentDayTask(pid);
+        String countNum = "";
+        if(cid != null&&!"".equals(cid)){
+            String codeTmp = cid.substring(cid.length() - 3); // 获取字符串最后三个字符
+            int num = StrToInt(codeTmp) + 1;
+            if(num>=100) {
+                countNum += num;
+            }else if(10<=num&&num<100) {
+                countNum += ("0"+num);
+            }else if(num<10) {
+                countNum += ("00"+num);
+            }
+        }else
+            countNum += "001";
+        pid = pid+countNum;
+        return pid;
+
+    }
+
+    public static int StrToInt(String str) {
+        int rs = 0;
+        DecimalFormat df = new DecimalFormat("#");
+        if (str != null) {
+            try {
+                rs = df.parse(str).intValue();
+            } catch (Exception e) {
+                rs = 0;
+            }
+        }
+        return rs;
+    }
+
+
+
+    public int insertPatrol(SdTaskList sdTaskList,String taskId){
         int result = -1;
         List<String> list = sdTaskList.getDevicesList();
         list.remove(list.size() - 1);
@@ -144,6 +289,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
             if(devices!=null&&devices.size()>0){
                 for(Map.Entry<String, Integer> entry:devicesMap.entrySet()){
                     SdPatrolList sdPatrolList = new SdPatrolList();
+                    //区分  pc端新增或者高速云监听到的数据
                     sdPatrolList.setId(UUIDUtil.getRandom32BeginTimePK());//id
                     sdPatrolList.setTaskId(taskId);//task_id
                     for(int j=0;j<devices.size();j++){
@@ -154,6 +300,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                             sdPatrolList.setPosition(devices.get(j).getEqDirection()+devices.get(j).getPile());//position
                             sdPatrolList.setXcSort(entry.getValue());
                             sdPatrolList.setXcStatus("0");//未巡查
+                            sdPatrolList.setFaultClstatus("2");//未消除
                             patrolList.add(sdPatrolList);
                         }
                     }
@@ -179,6 +326,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                             sdPatrolList.setPosition(fault.get(j).getFaultLocation());//position
                             sdPatrolList.setXcSort(entry.getValue());
                             sdPatrolList.setXcStatus("0");//未巡查
+                            sdPatrolList.setFaultClstatus("2");//未消除
                             patrolList1.add(sdPatrolList);
                         }
                     }
@@ -186,8 +334,12 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                 result = sdPatrolListMapper.batchInsertPatrol(patrolList1);
             }
         }
-
-
+//        JSONObject  jsonObject = new JSONObject();
+//        //巡检点数据推送
+//        jsonObject.put("taskPatrolDeviceRecord",patrolList);
+//        jsonObject.put("taskPatrolFaultRecord",patrolList1);
+//        jsonObject.put("optType",OptType.PAIDAN.getCode());
+//        kafkaTwoTemplate.send(tunnelTaskPatrol, jsonObject.toString());
         return result;
 
     }
@@ -202,27 +354,35 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     public int updateSdTaskList(SdTaskList sdTaskList)
     {
         int result = -1;
-        sdTaskList.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
+        if(sdTaskList.getUpdateBy()==null||"".equals(sdTaskList.getUpdateBy())){
+            sdTaskList.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
+        }
         sdTaskList.setUpdateTime(DateUtils.getNowDate());
         result = sdTaskListMapper.updateSdTaskList(sdTaskList);
-        if(result>0){
-            result = sdPatrolListMapper.batchDeletePatrolListByTaskId(sdTaskList.getId());
-        }
-        if(result>0){
-            String taskId = sdTaskList.getId();
-            result = insertPatrol(sdTaskList,taskId);
-        }
-        if(result>0){
-            /*添加操作记录*/
-            if("0".equals(sdTaskList.getTaskStatus())){//发布任务
-                SdTaskOpt sdTaskOpt = new SdTaskOpt();
-                sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
-                sdTaskOpt.setTaskId(sdTaskList.getId());
-                sdTaskOpt.setOptType("0");
-                sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
-                result = sdTaskListMapper.insertTaskOpt(sdTaskOpt);
+        if(sdTaskList.getUpdateBy()==null||"".equals(sdTaskList.getUpdateBy())){
+            if(result>0){
+                result = sdPatrolListMapper.batchDeletePatrolListByTaskId(sdTaskList.getId());
+            }
+            if(result>0){
+                String taskId = sdTaskList.getId();
+                result = insertPatrol(sdTaskList,taskId);
             }
 
+            if(result>0){
+                /*添加操作记录*/
+                if("0".equals(sdTaskList.getTaskStatus())){//发布任务
+                    SdTaskOpt sdTaskOpt = new SdTaskOpt();
+                    sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
+                    sdTaskOpt.setTaskId(sdTaskList.getId());
+                    sdTaskOpt.setOptType(OptType.PAIDAN.getCode());
+                    sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
+                    result = sdTaskListMapper.insertTaskOpt(sdTaskOpt);
+                }
+            }
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.put("taskRecord",sdTaskList);
+//            jsonObject.put("optType",OptType.PAIDAN.getCode());//用于区分新增，修改，删除，接收，提交
+//            kafkaTwoTemplate.send(tunnelTaskList, jsonObject.toString());
         }
         return result;
     }
@@ -241,7 +401,12 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         if(result>0){
             result = sdPatrolListMapper.batchDeletePatrolListByTaskIds(ids);
         }
-
+//        JSONObject  jsonObject = new JSONObject();
+//        //任务数据推送
+//        jsonObject.put("taskRecord",ids);
+//        jsonObject.put("optType",OptType.DELETE.getCode());//用于区分新增，修改，删除，接收，提交
+//        kafkaTwoTemplate.send(tunnelTaskList, jsonObject.toString());
+//        kafkaTwoTemplate.send(tunnelTaskPatrol, jsonObject.toString());
         return result;
     }
 
@@ -268,72 +433,80 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         taskList = sdTaskListMapper.getTaskInfoList(task_id);
         //任务持续时间逻辑判断   task_status=2  已完结
         if(taskList!=null){
-            String  st0 = "待";//待巡查
-            String  st1 = "中";//巡查中
-            /*String st2 = "4";//已超时*/
             //判断任务状态，已完结时保存任务持续时间
-            if(taskList.get(0).getTaskStatus()!=null&&!"".equals(taskList.get(0).getTaskStatus())){
-                //if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0||taskList.get(0).getTaskStatus().indexOf(st1) >= 0){// 待巡查/巡查中 直接取持续时间即可无需计算
-                    //if(taskList.get(0).getTaskStatus().indexOf("4") >= 0){//已超时
-                        if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0&&taskList.get(0).getEndPlantime()!=null){
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            String  plantime = sdf.format(taskList.get(0).getEndPlantime());//计划完成时间
-                            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
-                            long diff = System.currentTimeMillis() - time + 1000;
-                            if(diff>0){//当前时间与计划完成时间的差值
-                                taskList.get(0).setTaskStatus("待巡查");
-                                taskList.get(0).setIfchaosgu("已超时");
-                            }else{
-                                taskList.get(0).setTaskStatus("待巡查");
-                                taskList.get(0).setIfchaosgu("");//未超时
-                            }
-
-                        }
-                        if(taskList.get(0).getTaskStatus().indexOf(st1) >= 0&&taskList.get(0).getEndPlantime()!=null){
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            String  plantime = sdf.format(taskList.get(0).getEndPlantime());//计划完成时间
-                            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
-                            long diff = System.currentTimeMillis() - time;
-                            if(diff>0){//当前时间与计划完成时间的差值
-                                taskList.get(0).setTaskStatus("巡查中");
-                                taskList.get(0).setIfchaosgu("已超时");
-                            }else{
-                                taskList.get(0).setTaskStatus("巡查中");
-                                taskList.get(0).setIfchaosgu("");//未超时
-                            }
-
-                        }
-               // }
+            if(taskList.get(0).getTaskStatus()==null){//已完结，超时
+                taskList.get(0).setTaskStatus(TaskStatus.YIWANJIE.getName());
+                taskList.get(0).setIfchaosgu(TaskStatus.YICHAOSHI.getName());//超时
+            }
+            else{
+                taskStatus(taskList.get(0));
                 if(taskList.get(0).getTaskCxtime()==null||"".equals(taskList.get(0).getTaskCxtime())){//没有持续时间
                     //任务持续时间为 当前时间-发布时间
-                    if(taskList.get(0).getEndPlantime()!=null&&!"".equals(taskList.get(0).getEndPlantime())){
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String  fbtime = sdf.format(taskList.get(0).getDispatchTime());
-                        long time = sdf.parse(fbtime, new ParsePosition(0)).getTime();
-                        long nd = 1000 * 24 * 60 * 60;
-                        long nh = 1000 * 60 * 60;
-                        long nm = 1000 * 60;
-                        long ns = 1000;
-                        // 获得两个时间的毫秒时间差异
-                        long diff = System.currentTimeMillis() - time + 1000;
-                        // 计算差多少天
-                        long day = diff / nd;
-                        // 计算差多少小时
-                        long hour = diff % nd / nh;
-                        // 计算差多少分钟
-                        long min = diff % nd % nh / nm;
-                        // 计算差多少秒//输出结果
-                        long sec = diff % nd % nh % nm / ns;
-                        System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
-                        taskList.get(0).setTaskCxtime(day + "天" + hour + "小时");
-                    }
+                    //if(taskList.get(0).getEndPlantime()!=null&&!"".equals(taskList.get(0).getEndPlantime())){
+                        taskList.get(0).setTaskCxtime(lengthTime(taskList.get(0).getDispatchTime()));
+                    //}
                 }
 
             }
-
         }
 
         return taskList;
+    }
+
+    /**
+     * 判断任务状态
+     * @param taskList
+     * @return
+     */
+    private SdTaskList taskStatus(SdTaskList taskList){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long diff = 0;
+        if(taskList.getEndPlantime()!=null&&!"".equals(taskList.getEndPlantime())){
+            String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
+            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+            diff = System.currentTimeMillis() - time;
+            if((taskList.getTaskStatus().equals(TaskStatus.DAIXUNCHA.getName()))||(taskList.getTaskStatus().equals(TaskStatus.XUNCHAZHONG.getName()))){
+                if(diff>0){
+                    taskList.setTaskStatus(taskList.getTaskStatus());
+                    taskList.setIfchaosgu(TaskStatus.YICHAOSHI.getName());
+                }else{
+                    taskList.setTaskStatus(taskList.getTaskStatus());
+                    taskList.setIfchaosgu("");//未超时
+                }
+            }
+
+
+        }
+        return taskList;
+    }
+
+
+    /**
+     * 计算持续时间
+     * @param dispatchTime
+     * @return
+     */
+    private String lengthTime(Date dispatchTime){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String  fbtime = sdf.format(dispatchTime);
+        long time = sdf.parse(fbtime, new ParsePosition(0)).getTime();
+        long nd = 1000 * 24 * 60 * 60;
+        long nh = 1000 * 60 * 60;
+        long nm = 1000 * 60;
+        long ns = 1000;
+        // 获得两个时间的毫秒时间差异
+        long diff = System.currentTimeMillis() - time + 1000;
+        // 计算差多少天
+        long day = diff / nd;
+        // 计算差多少小时
+        long hour = diff % nd / nh;
+        // 计算差多少分钟
+        long min = diff % nd % nh / nm;
+        // 计算差多少秒//输出结果
+        long sec = diff % nd % nh % nm / ns;
+        System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
+        return day + "天" + hour + "小时" + min + "分钟";
+
     }
 
     /**
@@ -346,12 +519,11 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 
         List<SdPatrolList> sdPatrolList = sdPatrolListMapper.getPatrolListsInfo(task_id);
         if(sdPatrolList!=null && sdPatrolList.size()>=0){
-            for(int i =0;i<sdPatrolList.size();i++){
-                String fileId = sdPatrolList.get(i).getImgFileId();
+            for (SdPatrolList patrolList : sdPatrolList) {
+                String fileId = patrolList.getImgFileId();
                 if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
-                    SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                    sdTrafficImage.setBusinessId(fileId);
-                    sdPatrolList.get(i).setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
+                    String[] businessId = fileId.split(",");
+                    patrolList.setiFileList(sdTrafficImageMapper.selectPatrolFaultImgFileList(businessId));
                 }
             }
         }
@@ -426,14 +598,36 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 
     /**
      * 查询巡查列表
-     * @param sdTaskList
-     * @param sdTaskList
+     * @param
+     * @param
      * @return
      */
     @Override
-    public List<SdTaskList> getTaskList(@Param("sdTaskList") SdTaskList sdTaskList) {
+    public List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId,Integer pageSize,Integer pageNum,Long userId ) {
+        SdTaskList sdTaskList  = new SdTaskList();
+        if(pageNum!=null&&pageSize!=null){
+            pageNum = (pageNum-1)*pageSize ;
+        }
+        sdTaskList.getParams().put("taskStatus",taskStatus);
+        sdTaskList.getParams().put("taskName",taskName);
+        sdTaskList.getParams().put("startTime",startTime);
+        sdTaskList.getParams().put("endTime",endTime);
+        sdTaskList.getParams().put("deptId",deptId);
+        sdTaskList.getParams().put("pageSize",pageSize);
+        sdTaskList.getParams().put("pageNum",pageNum);
+        sdTaskList.getParams().put("userId",userId);
+        //return sdTaskListMapper.getTaskList(sdTaskList);
+        List<SdTaskList>list = sdTaskListMapper.getTaskList(sdTaskList);
+        if(list!=null&&list.size()>0){
+            for(int i=0;i<list.size();i++){
+                if(list.get(i).getTaskStatus()!=null&&!"".equals(list.get(i).getTaskStatus())){
+                    taskListAppStatus(list.get(i));
+                }
+            }
+        }
 
-        return sdTaskListMapper.getTaskList(sdTaskList);
+
+        return list;
     }
 
     /**
@@ -452,8 +646,27 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public int acceptSdTaskList(String id) {
-        return sdTaskListMapper.acceptSdTaskList(id);
+    public int acceptSdTaskList(String id,Long userId) {
+        int result = -1;
+        result = sdTaskListMapper.acceptSdTaskList(id,userId);
+        SdTaskOpt sdTaskOpt = new SdTaskOpt();
+        if(result>0){//添加操作记录
+            sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
+            sdTaskOpt.setTaskId(id);
+            sdTaskOpt.setOptType(OptType.JEISHOU.getCode());
+            sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
+            result = sdTaskListMapper.insertTaskOpt(sdTaskOpt);
+        }
+//        JSONObject  jsonObject = new JSONObject();
+//        jsonObject.put("taskRecord",id);
+//        jsonObject.put("acceptUser",userId);
+//        jsonObject.put("optType",OptType.JEISHOU.getCode());//用于区分新增，修改，删除，接收，提交
+//        //接收任务数据推送
+//        kafkaTwoTemplate.send(tunnelTaskList, jsonObject.toString());
+//        //操作记录数据推送
+//        jsonObject.put("taskOptRecord",sdTaskOpt);
+//        kafkaTwoTemplate.send(tunnelTaskOperation, jsonObject.toString());
+        return result;
     }
 
     /**
@@ -463,6 +676,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      */
     @Override
     public List<SdPatrolList> getPatrolInfo(String taskId) {
+        //要判断是故障点还是设备点
         return sdPatrolListMapper.getPatrolInfo(taskId);
     }
 
@@ -483,9 +697,6 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                 }
             }
         }
-        //List<SdTaskList>taskList = sdTaskListMapper.getTaskSiteCondition(taskId);
-
-
         return result;
     }
 
@@ -572,7 +783,31 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      */
     @Override
     public int saveLocal(SdTaskList sdTaskList) {
-        return sdTaskListMapper.saveLocal(sdTaskList);
+        if(sdTaskList.getTaskStatus()!=null&&!"".equals(sdTaskList.getTaskStatus())&&"4".equals(sdTaskList.getTaskStatus())){
+            sdTaskList.setTaskStatus(TaskStatus.YIWANJIE.getCode()+","+TaskStatus.YICHAOSHI.getCode());
+        }else{
+            sdTaskList.setTaskStatus(TaskStatus.YIWANJIE.getCode());
+        }
+        int result = -1;
+        result =  sdTaskListMapper.saveLocal(sdTaskList);
+        SdTaskOpt sdTaskOpt = new SdTaskOpt();
+        if(result>0){//添加操作记录
+            sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
+            sdTaskOpt.setTaskId(sdTaskList.getId());
+            sdTaskOpt.setOptType(OptType.TIJIAO.getCode());
+            sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
+            result = sdTaskListMapper.insertTaskOpt(sdTaskOpt);
+        }
+//        JSONObject  jsonObject = new JSONObject();
+//        jsonObject.put("taskRecord",sdTaskList);
+//        jsonObject.put("optType",OptType.TIJIAO.getCode());//用于区分新增，修改，删除，接收，提交
+//        //接收任务数据推送
+//        kafkaTwoTemplate.send(tunnelTaskList, jsonObject.toString());
+//        //操作记录数据推送
+//        jsonObject.put("taskOptRecord",sdTaskOpt);
+//        kafkaTwoTemplate.send(tunnelTaskOperation, jsonObject.toString());
+
+        return result ;
     }
 
     /**
@@ -582,7 +817,237 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      */
     @Override
     public int savePatrol(SdPatrolList sdPatrolList) {
-        return sdPatrolListMapper.savePatrol(sdPatrolList);
+        List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
+        int result = -1;
+        String falltRemoveStatue = null;
+        String  faultId  = null;
+        if(sdPatrolList.getImgFileId()!=null&&!"".equals(sdPatrolList.getImgFileId())){
+            sdPatrolList.setImgFileId(sdPatrolList.getImgFileId().substring(0,sdPatrolList.getImgFileId().length()-1));
+        }
+        //先判断是故障点还是设备
+        SdPatrolList patrolInfo = sdPatrolListMapper.getPatroltype(sdPatrolList.getId());
+        sdPatrolList.setXcStatus("1");//巡查状态为已巡查
+        sdPatrolList.setUpdateTime(new Date());//更新时间
+        sdPatrolList.setUpdateBy(SecurityUtils.getUsername());
+        if(patrolInfo.getPatrolType().equals("1")){//故障点
+            faultId = patrolInfo.getEqFaultId();
+        }
+        /*巡检点故障处理情况与故障消除状态情况对应*/
+        if(faultId!=null){
+            if(sdPatrolList.getFaultClstatus()!=null&&!"".equals(sdPatrolList)){
+                if(sdPatrolList.getFaultClstatus().equals(FaultStatus.PATROLNULL.getCode())){//无故障
+                    falltRemoveStatue = FaultStatus.FAULTNULL.getCode();
+                }else  if(sdPatrolList.getFaultClstatus().equals(FaultStatus.PATROLYIXIAOCHU.getCode())){//已消除
+                    falltRemoveStatue  = FaultStatus.FAULTYIXIAOCHU.getCode();
+                }else{
+                    falltRemoveStatue = FaultStatus.FAULTWEIXIAOCHU.getCode();
+                }
+            }
+        }
+        result = sdPatrolListMapper.savePatrol(sdPatrolList);
+        if(result > -1&&falltRemoveStatue!=null){//是故障点则更新故障点的消除状态
+            if(falltRemoveStatue.equals(FaultStatus.FAULTYIXIAOCHU.getCode())||falltRemoveStatue.equals(FaultStatus.FAULTNULL.getCode())){//已消除或者无故障
+                result = sdFaultListMapper.updateFaultRemoveState(faultId,falltRemoveStatue);
+            }else{
+                result = sdFaultListMapper.updateFaultUnRemoveState(faultId,falltRemoveStatue);
+            }
+
+//            JSONObject  jsonObjectFault = new JSONObject();
+//            //故障状态数据推送
+//            jsonObjectFault.put("faultRecord",faultId);
+//            jsonObjectFault.put("faultStatue",falltRemoveStatue);
+//            jsonObjectFault.put("optType","2");//更新故障状态
+//            kafkaTwoTemplate.send("test", jsonObjectFault.toString());
+        }
+//
+//        JSONObject  jsonObject = new JSONObject();
+//        //任务数据推送
+//        jsonObject.put("taskPatrol",sdPatrolList);
+//        jsonObject.put("taskPatrolImg",list);
+//        jsonObject.put("optType",OptType.TIJIAO.getCode());//用于区分新增，修改，删除，接收，提交
+//        kafkaTwoTemplate.send(tunnelTaskPatrol, jsonObject.toString());
+        return result;
+    }
+
+    /***
+     * 获取任务状态
+     * @return
+     */
+    @Override
+    public List<SdTaskList> getTaskStatus() {
+        return sdTaskListMapper.getTaskStatus();
+    }
+
+    /**
+     * app端首页待处理任务单
+     * @param deptId
+     * @return
+     */
+    @Override
+    public List<SdTaskList> getTaskToDo(String deptId,Long userId) {
+        return sdTaskListMapper.getTaskToDo(deptId,userId);
+    }
+
+    @Override
+    public String selectBzByTunnel(String tunnelId) {
+        return sdTaskListMapper.selectBzByTunnel(tunnelId);
+    }
+
+    @Override
+    public List<SdTaskList> getTaskToDoTeams(String deptId,Long userId) {
+        return sdTaskListMapper.getTaskToDoTeams(deptId,userId);
+    }
+
+    @Override
+    public int getTaskCountList(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId) {
+        return sdTaskListMapper.getTaskCountList(taskStatus,taskName,startTime,endTime,deptId,userId);
+    }
+
+    @Override
+    public int getTaskCountListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId) {
+        return sdTaskListMapper.getTaskCountListTeams(taskStatus,taskName,startTime,endTime,deptId,userId);
+    }
+
+    @Override
+    public List<SdTaskList> getTaskListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId, Integer pageSize, Integer pageNum,Long userId) {
+        SdTaskList sdTaskList  = new SdTaskList();
+        if(pageNum!=null&&pageSize!=null){
+            pageNum = (pageNum-1)*pageSize ;
+        }
+        sdTaskList.getParams().put("taskStatus",taskStatus);
+        sdTaskList.getParams().put("taskName",taskName);
+        sdTaskList.getParams().put("startTime",startTime);
+        sdTaskList.getParams().put("endTime",endTime);
+        sdTaskList.getParams().put("deptId",deptId);
+        sdTaskList.getParams().put("pageSize",pageSize);
+        sdTaskList.getParams().put("pageNum",pageNum);
+        sdTaskList.getParams().put("userId",userId);
+        List<SdTaskList>list = sdTaskListMapper.getTaskListTeams(sdTaskList);
+        if(list!=null&&list.size()>0){
+            for(int i=0;i<list.size();i++){
+                if(list.get(i).getTaskStatus()!=null&&!"".equals(list.get(i).getTaskStatus())){
+                    taskListAppStatus(list.get(i));
+                }
+            }
+        }
+
+
+        return list;
+    }
+
+    private SdTaskList taskListAppStatus(SdTaskList taskList) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long diff = 0;
+        if(taskList.getEndPlantime()!=null&&!"".equals(taskList.getEndPlantime())){
+            String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
+            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+            diff = System.currentTimeMillis() - time;
+        }
+        if(taskList.getTaskStatus().equals(TaskStatus.DAIXUNCHA.getCode())||taskList.getTaskStatus().equals(TaskStatus.XUNCHAZHONG.getCode())){
+            if(diff>0){//当前时间与计划完成时间的差值
+                taskList.setTaskStatus(taskList.getTaskStatus()+","+TaskStatus.YICHAOSHI.getCode());
+            }
+        }
+        return taskList;
+    }
+
+    @Override
+    public List<SdTaskList> getSiteInfo(String taskId) {
+        return sdTaskListMapper.getSiteInfo(taskId);
+    }
+
+    @Override
+    public SdTaskList selectSdTaskById(String id) {
+        return sdTaskListMapper.selectSdTaskById(id);
+    }
+
+    @Override
+    public int updateGsySdTaskList(SdTaskList sdTaskList) {
+        int result = -1;
+        sdTaskList.setUpdateTime(DateUtils.getNowDate());
+        result = sdTaskListMapper.updateSdTaskList(sdTaskList);
+        return result;
+    }
+
+    @Override
+    public String uploadPicture(MultipartFile[] file) {
+        String guid ="";
+        List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
+        int result = -1;
+        if(file!=null){
+            guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
+            //sdPatrolList.setImgFileId(guid);// 文件关联ID
+            for (int i = 0; i < file.length; i++) {
+                // 图片Base64
+                String imageBaseStr = null;
+                try {
+                    String contentType = file[i].getContentType();
+                    if (!contentType.contains("image")) {
+                        throw new RuntimeException("文件类型不正确!");
+                    }
+                    byte[] imageBytes = file[i].getBytes();
+                    BASE64Encoder base64Encoder = new BASE64Encoder();
+                    imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+                    imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+                } catch (IOException e) {
+                    throw new RuntimeException("图片转换base64异常");
+                }
+                // 从缓存中获取文件存储路径
+                String fileServerPath = RuoYiConfig.getUploadPath();
+                // 原图文件名
+                String filename = file[i].getOriginalFilename();
+                // 原图扩展名
+                String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
+                // 新的全名
+                String fileName = extendName;
+                // 加路径全名
+                File dir = new File(fileServerPath + "/faultIcon/" + fileName);
+                File filepath = new File(fileServerPath + "/faultIcon");
+
+                SdTrafficImage iconFile = new SdTrafficImage();
+                iconFile.setBusinessId(guid);
+                iconFile.setImgUrl(imageBaseStr);
+                iconFile.setImgName(fileName);
+                iconFile.setCreateBy(SecurityUtils.getUsername());
+                iconFile.setCreateTime(DateUtils.getNowDate());
+                list.add(iconFile);
+
+                if (!filepath.exists()) {
+                    filepath.mkdirs();
+                } else {
+                }
+                try {
+                    file[i].transferTo(dir);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            result = sdTrafficImageMapper.brachInsertFaultIconFile(list);
+            /*if (result > -1) {
+                result = sdPatrolListMapper.savePatrol(sdPatrolList);
+            }*/
+        }
+        return guid;
+    }
+
+    /**
+     * 检验任务名称是否存在
+     * @param sdTaskList
+     * @return
+     */
+    @Override
+    public int checkTaskList(SdTaskList sdTaskList) {
+        return sdTaskListMapper.checkTaskList(sdTaskList);
+    }
+
+    /**
+     * 删除现场图片
+     * @param id
+     * @return
+     */
+    @Override
+    public int deleteSitePhoto(String id) {
+        return sdTrafficImageMapper.deleteSitePhoto(id);
     }
 
 }

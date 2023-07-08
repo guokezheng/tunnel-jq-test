@@ -96,4 +96,20 @@ public class Threads
             logger.error(t.getMessage(), t);
         }
     }
+
+
+
+    /**
+     * 新旧线程替换
+     * @param thread
+     */
+    public static synchronized void replaceThread(Thread[] threadArrs,Thread thread){
+        if(threadArrs[0]!=null){
+            Thread oldThread = threadArrs[0];
+            //删除旧线程
+            oldThread.interrupt();
+        }
+        //存入新线程
+        threadArrs[0] = thread;
+    }
 }

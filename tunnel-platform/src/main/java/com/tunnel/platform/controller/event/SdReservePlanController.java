@@ -2,10 +2,14 @@ package com.tunnel.platform.controller.event;
 
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.oss.OssUtil;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.tunnel.business.domain.event.SdJoinTypeFlow;
 import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.event.SdReservePlanFile;
 import com.tunnel.business.service.dataInfo.ISdEquipmentFileService;
@@ -16,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -90,24 +95,8 @@ public class SdReservePlanController extends BaseController {
     @Log(title = "预案信息")
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
-    public Result addReservePlan(MultipartFile[] file,
-                                 @RequestParam("tunnelId") String tunnelId,
-                                 @RequestParam("category") String category,
-                                 @RequestParam("planTypeId") String planTypeId,
-                                 @RequestParam("planDescription") String planDescription,
-                                 @RequestParam("planName") String planName,
-                                 @RequestParam("direction") String direction,
-                                 @RequestParam("controlDirection") String controlDirection,
-                                 HttpServletRequest request) {
-        SdReservePlan sdReservePlan = new SdReservePlan();
-        sdReservePlan.setTunnelId(tunnelId);
-        sdReservePlan.setCategory(category);
-        sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
-        sdReservePlan.setPlanName(planName);
-        sdReservePlan.setPlanDescription(planDescription);
-        sdReservePlan.setDirection(direction);
-        sdReservePlan.setControlDirection(controlDirection);
-        return Result.toResult(sdReservePlanService.insertSdReservePlan(file, sdReservePlan));
+    public AjaxResult addReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
+        return sdReservePlanService.insertSdReservePlan(file, sdReservePlan);
     }
 
     /**
@@ -129,13 +118,6 @@ public class SdReservePlanController extends BaseController {
      * 修改预案信息
      *
      * @param file
-     * @param id
-     * @param planTypeId
-     * @param planDescription
-     * @param planName
-     * @param planFileId
-     * @param removeIds
-     * @param request
      * @return
      */
    /* @PreAuthorize(hasPermi = "business:plan:edit")
@@ -148,30 +130,8 @@ public class SdReservePlanController extends BaseController {
     @Log(title = "预案信息")
     @PostMapping(value = "/updateReservePlan")
     @ApiOperation("修改预案信息")
-    public Result updateReservePlan(MultipartFile[] file,
-                                    @RequestParam("id") Long id,
-                                    @RequestParam("tunnelId") String tunnelId,
-                                    @RequestParam("planTypeId") Long planTypeId,
-                                    @RequestParam("category") String category,
-                                    @RequestParam("planDescription") String planDescription,
-                                    @RequestParam("planName") String planName,
-                                    @RequestParam("planFileId") String planFileId,
-                                    @RequestParam("direction") String direction,
-                                    @RequestParam("controlDirection") String controlDirection,
-                                    @RequestParam("removeIds") Long[] removeIds,
-                                    HttpServletRequest request
-    ) {
-        SdReservePlan sdReservePlan = new SdReservePlan();
-        sdReservePlan.setId(id);
-        sdReservePlan.setPlanTypeId(planTypeId);
-        sdReservePlan.setCategory(category);
-        sdReservePlan.setPlanName(planName);
-        sdReservePlan.setPlanDescription(planDescription);
-        sdReservePlan.setPlanFileId(planFileId);
-        sdReservePlan.setDirection(direction);
-        sdReservePlan.setControlDirection(controlDirection);
-        sdReservePlan.setTunnelId(tunnelId);
-        return Result.toResult(sdReservePlanService.updateSdReservePlan(file, sdReservePlan, removeIds));
+    public AjaxResult updateReservePlan(MultipartFile[] file,SdReservePlan sdReservePlan) {
+        return sdReservePlanService.updateSdReservePlan(file, sdReservePlan, sdReservePlan.getRemoveIds());
     }
 
 
@@ -184,6 +144,19 @@ public class SdReservePlanController extends BaseController {
     @ApiImplicitParam(name = "id", value = "预案信息ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
     public Result remove(@PathVariable Long id) {
         return Result.toResult(sdReservePlanService.deleteSdReservePlanById(id));
+    }
+
+
+    /**
+     * 导出事件类型预案流程关联列表
+     */
+    @Log(title = "预案信息", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public AjaxResult export(SdReservePlan sdReservePlan)
+    {
+        List<SdReservePlan> list = sdReservePlanService.selectSdReservePlanList(sdReservePlan);
+        ExcelUtil<SdReservePlan> util = new ExcelUtil<SdReservePlan>(SdReservePlan.class);
+        return util.exportExcel(list, "应急预案");
     }
 
 //    /**
@@ -244,10 +217,9 @@ public class SdReservePlanController extends BaseController {
 
     @Log(title = "预案一键执行")
     @GetMapping(value = "/implementPlan")
-    public Result implementPlan(@RequestParam("planId") Long planId,
+    public AjaxResult implementPlan(@RequestParam("planId") String planId,
                                 @RequestParam("eventId") Long eventId) {
-        int result = sdStrategyService.implementPlan(planId,eventId);
-        return Result.success(result);
+        return sdStrategyService.implementPlan(planId,eventId);
     }
 
     @Log(title = "环节执行")
@@ -255,6 +227,18 @@ public class SdReservePlanController extends BaseController {
     public Result implementProcess(@RequestParam("processId") Long processId,
                                    @RequestParam("eventId") Long eventId) {
         int result = sdStrategyService.implementProcess(processId,eventId);
-        return Result.success(result);
+        return Result.toResult(result);
+    }
+
+    /**
+     * 查询事件相关预案
+     *
+     * @param sdReservePlan
+     * @return
+     */
+    @GetMapping("/getReservePlanData")
+    @ApiOperation("查询事件相关预案")
+    public AjaxResult getReservePlanData(SdReservePlan sdReservePlan){
+        return sdReservePlanService.getReservePlanData(sdReservePlan);
     }
 }

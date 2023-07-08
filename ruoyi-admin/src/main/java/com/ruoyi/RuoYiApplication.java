@@ -21,7 +21,6 @@ public class RuoYiApplication
 {
     public static void main(String[] args)
     {
-        // System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(RuoYiApplication.class, args);
         System.out.println("后台启动成功！");
     }

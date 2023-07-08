@@ -12,7 +12,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="effectiveTime" column="effective_time" />
         <result property="equipments"    column="equipments"    />
         <result property="state"    column="state"    />
+        <result property="stateNum"    column="state_num"    />
         <result property="endState"    column="end_state"    />
+        <result property="endStateNum"    column="end_state_num"    />
         <result property="retrievalRule"    column="retrieval_rule"    />
         <result property="planId"    column="plan_id"    />
         <result property="disposalName"    column="disposal_name"    />
@@ -24,11 +26,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="typeName" column="type_name"   />
 	</resultMap>
     <sql id="selectSdStrategyRlVo">
-        select id, strategy_id, eq_type_id, control_time,effective_time, equipments, state,end_state,retrieval_rule,plan_id,disposal_name from sd_strategy_rl
+        select id, strategy_id, eq_type_id, control_time,effective_time, equipments, state,end_state,state_num,end_state_num,retrieval_rule,plan_id,disposal_name from sd_strategy_rl
     </sql>
 
+
+
+    <select id="selectAllDirectionSdDevListByDevId" resultType="string">
+        SELECT
+            eq_id
+        FROM
+            sd_devices
+        WHERE
+          external_device_id IN (
+            SELECT external_device_id FROM sd_devices WHERE eq_id in
+            <foreach item="item" collection="devIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          )
+          AND eq_tunnel_id = #{tunnelId}
+          and eq_type = #{eqTypeId}
+    </select>
+
     <select id="selectSdStrategyRlList" parameterType="SdStrategyRl" resultMap="SdStrategyRlResult">
-        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name, A.control_time,A.effective_time,A.end_state,A.disposal_name
+        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name, A.control_time,A.effective_time,A.end_state,A.disposal_name,A.state_num,A.end_state_num
         from sd_strategy_rl A
         left join sd_equipment_type B ON A.eq_type_id = B.type_id
         <where>
@@ -37,6 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="equipments != null  and equipments != ''"> and A.equipments = #{equipments}</if>
             <if test="state != null  and state != ''"> and A.state = #{state}</if>
         </where>
+       order by A.id
     </select>
 
     <select id="selectSdStrategyRlById" parameterType="Long" resultMap="SdStrategyRlResult">
@@ -64,6 +85,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="equipments != null">equipments,</if>
             <if test="state != null">state,</if>
             <if test="endState != null">end_state,</if>
+            <if test="stateNum != null">state_num,</if>
+            <if test="endStateNum != null">end_state_num,</if>
             <if test="retrievalRule != null">retrieval_rule,</if>
             <if test="planId != null">plan_id,</if>
             <if test="disposalName != null">disposal_name,</if>
@@ -76,6 +99,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="equipments != null">#{equipments},</if>
             <if test="state != null">#{state},</if>
             <if test="endState != null">#{endState},</if>
+            <if test="stateNum != null">#{stateNum},</if>
+            <if test="endStateNum != null">#{endStateNum},</if>
             <if test="retrievalRule != null">#{retrievalRule},</if>
             <if test="planId != null">#{planId},</if>
             <if test="disposalName != null">#{disposalName},</if>
@@ -106,9 +131,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqTypeId != null">eq_type_id = #{eqTypeId},</if>
             <if test="equipments != null">equipments = #{equipments},</if>
             <if test="state != null">state = #{state},</if>
+            <if test="stateNum != null">state_num = #{stateNum},</if>
             <if test="controlTime != null">control_time = #{controlTime},</if>
             <if test="effectiveTime != null">effective_time = #{effectiveTime},</if>
             <if test="endState != null">end_state = #{endState},</if>
+            <if test="endStateNum != null">end_state_num = #{endStateNum},</if>
             <if test="retrievalRule != null">retrieval_rule = #{retrievalRule},</if>
             <if test="planId != null">plan_id = #{planId},</if>
             <if test="disposalName != null">disposal_name = #{disposalName}</if>
@@ -142,5 +169,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectSdStrategyREquipments" parameterType="Long" resultMap="SdStrategyRlResult">
+        SELECT
+        strategy_id,
+        control_time,
+        state_num,
+        sd_strategy_rl.id,
+        equipments
+        FROM
+        sd_strategy_rl
+        LEFT JOIN sd_strategy st ON sd_strategy_rl.strategy_id = st.id
+        WHERE
+        1 = 1 AND st.strategy_state =0
+        <if test="equipments != null and equipments != ''">
+            AND sd_strategy_rl.equipments like concat('%', #{equipments}, '%')
+        </if>
+
+    </select>
 
 </mapper>

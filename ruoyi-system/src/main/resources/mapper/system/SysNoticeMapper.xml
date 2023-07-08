@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectNoticeVo"/>
         <where>
 			<if test="noticeTitle != null and noticeTitle != ''">
-				AND notice_title like concat('%', #{noticeTitle}, '%')
+                AND CONCAT(notice_title, create_by) LIKE CONCAT('%',#{noticeTitle},'%')
 			</if>
 			<if test="noticeType != null and noticeType != ''">
 				AND notice_type = #{noticeType}

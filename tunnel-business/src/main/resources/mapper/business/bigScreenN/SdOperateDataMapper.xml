@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tunnel.business.mapper.bigScreenApiN.SdOperateDataMapper">
+
+
+    <select id="getYesterdayFlowDataTunnelsList" resultType="int">
+        select A.count from
+
+            (select A.tunnel_id as tunnelId,A.tunnel_name as tunnelName,count(1) as count from sd_tunnels A left join sd_vehicle_driving  B on A.tunnel_id = B.tunnel_id
+                and to_days(NOW()) - TO_DAYS(B.create_time ) = 1
+                and  B.track_id not in (select track_id from sd_vehicle_driving  where travel_type = 2)
+             group by  A.tunnel_id
+
+             order by A.tunnel_id
+            ) A left join
+
+            (select A.tunnel_id as tunnelId,A.tunnel_name as tunnelName,count(1) as count from sd_tunnels A left join sd_vehicle_driving  B on A.tunnel_id = B.tunnel_id
+                and to_days(NOW()) - TO_DAYS(B.create_time ) = 7
+                and  B.track_id not in (select track_id from sd_vehicle_driving  where travel_type = 2)
+             group by  A.tunnel_id
+
+             order by A.tunnel_id
+            ) B on A.tunnelId = B.tunnelId
+
+    </select>
+
+    <select id="getYeasterDayFlowDataTunnelsQoQList" resultType="int">
+        select IFNULL(round((A.count - B.count) / B.count  * 100,2),A.count) as percent from
+
+            (select A.tunnel_id as tunnelId,A.tunnel_name as tunnelName,count(1) as count from sd_tunnels A left join sd_vehicle_driving  B on A.tunnel_id = B.tunnel_id
+                and to_days(NOW()) - TO_DAYS(B.create_time ) = 1
+                and  B.track_id not in (select track_id from sd_vehicle_driving  where travel_type = 2)
+             group by  A.tunnel_id
+
+             order by A.tunnel_id
+            ) A left join
+
+            (select A.tunnel_id as tunnelId,A.tunnel_name as tunnelName,count(1) as count from sd_tunnels A left join sd_vehicle_driving  B on A.tunnel_id = B.tunnel_id
+                and to_days(NOW()) - TO_DAYS(B.create_time ) = 7
+                and  B.track_id not in (select track_id from sd_vehicle_driving  where travel_type = 2)
+             group by  A.tunnel_id
+
+             order by A.tunnel_id
+            ) B on A.tunnelId = B.tunnelId
+
+    </select>
+
+    <select id="getIndexDataTodayFlowCount" resultType="int">
+        select count(*) from sd_vehicle_driving where to_days(create_time) = to_days(now())
+                                                  
+        and track_id NOT IN (select track_id from sd_vehicle_driving where travel_type = 2)
+    </select>
+    
+    <select id="getIndexDataTodayFolwPercent" resultType="int">
+        select IFNULL(round((A.count - B.count) / B.count  * 100,2),A.count) from
+
+        (select count(*) as count from sd_vehicle_driving where to_days(create_time) = to_days(now())
+
+         and track_id NOT IN (select track_id from sd_vehicle_driving where travel_type = 2)) A ,
+
+        -- 前日车流量
+        (select count(*) as count from sd_vehicle_driving where 	to_days(NOW()) - TO_DAYS(create_time ) = 1
+
+         and track_id NOT IN (select track_id from sd_vehicle_driving where travel_type = 2)) B
+    </select>
+
+    <select id="getIndexDataBoardCount" resultType="int">
+        SELECT count(*) FROM `iot_board`
+    </select>
+
+    <select id="getIndexDataSevenDaysBoardPushCount" resultType="int">
+        SELECT  count(*) FROM `iot_board_release_log` where to_days(NOW()) - TO_DAYS(release_time ) &lt;= 7
+    </select>
+
+    <select id="getIndexDataBoardPushCount" resultType="int">
+        SELECT  count(*) FROM `iot_board_release_log`
+    </select>
+
+    <select id="getEventDataList" resultType="map">
+        select C.tunnel_name as tunnelName,B.event_type as eventType,A.create_time as createTime from sd_event A
+        left join sd_event_type B on A.event_type_id = B.id
+        left join sd_tunnels C on A.tunnel_id= C.tunnel_id
+        order by A.create_time desc
+        limit 30
+    </select>
+
+</mapper>

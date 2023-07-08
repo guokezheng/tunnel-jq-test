@@ -6,31 +6,27 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.service.ISysDeptService;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.informationBoard.IotBoradFont;
-import com.tunnel.business.domain.informationBoard.SdIotDevice;
+import com.tunnel.business.domain.informationBoard.*;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
-import com.tunnel.business.service.informationBoard.IIotBoradFontService;
-import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
+import com.tunnel.business.service.informationBoard.*;
 import com.tunnel.business.utils.exception.BusinessException;
 import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * 情报板操作Controller
@@ -48,6 +44,7 @@ public class BoardController extends BaseController {
     public static Map<String, String> releaseContentMap = new HashMap<String, String>();//发布内容存储
     public static Map<String, List<String>> modifyResultMap = new HashMap<String, List<String>>();//返回修改内容存储
     private static int fontSizeList[] = {64, 48, 40, 32, 24, 16};//字体大小集合
+    public static Map<String, Object> nowContentMap = new HashMap<String, Object>();
     @Autowired
     private ISdIotDeviceService sdIotDeviceService;
     @Autowired
@@ -57,27 +54,43 @@ public class BoardController extends BaseController {
     private ExecutorService executorService;
     @Autowired
     private ISdDevicesService sdDevicesService;
-    
+    @Autowired
+    private ISdReleaseRecordService sdReleaseRecordService;
+    @Autowired
+    private IIotDeviceAccessService iotDeviceAccessService;
+    @Autowired
+    private IIotBoardVocabularyService iotBoardVocabularyService;
+    @Autowired
+    private ISysDeptService sysDeptService;
+
     /**
-     * 
+     *
      * 1分钟检测一次情报板的状态
      */
-  
+    @Scheduled(fixedRate = 60000 * 5)
     public void getIcyData() {
-    	
+
     	List<SdIotDevice> list = sdIotDeviceService.selectIotDeviceList(new SdIotDevice());
     	for(int i=0;i<list.size();i++){
     		SdIotDevice iotDevice = list.get(i);
-    		try {
-    			DeviceManagerFactory.getInstance().getDeviceDisplayListByDeviceId(String.valueOf(iotDevice.getDeviceId()));
-    			iotDevice.setDeviceStatus("0");
-    			sdIotDeviceService.updateIotDevice(iotDevice);
+            Long deviceId = iotDevice.getDeviceId();
+            SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+            try {
+                DeviceManagerFactory.getInstance().getDeviceDisplayListByDeviceId(String.valueOf(iotDevice.getDeviceId()));
+                iotDevice.setDeviceStatus("0");
+                sdIotDeviceService.updateIotDevice(iotDevice);
+                device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+                device.setEqStatusTime(new Date());
+                sdDevicesService.updateSdDevices(device);
             } catch (Exception e) {
             	iotDevice.setDeviceStatus("1");
     			sdIotDeviceService.updateIotDevice(iotDevice);
+                device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+                device.setEqStatusTime(new Date());
+                sdDevicesService.updateSdDevices(device);
             }
     	}
-    	
+
     }
 
 
@@ -89,6 +102,10 @@ public class BoardController extends BaseController {
     @GetMapping("/getBoardContent")
     @ResponseBody
     public AjaxResult loadRealtimeInf(Long deviceId) {
+        SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+        if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+            return null;
+        }
         List<String> paramsList = new ArrayList<String>();
         AjaxResult ajaxResult;
         try {
@@ -100,13 +117,38 @@ public class BoardController extends BaseController {
             JSONObject items = new JSONObject();
 
             JSONArray resultObj = JSONArray.parseArray(jsonResult);
+            for (int i = 0;i < resultObj.size();i++) {
+                JSONObject jsonObject = resultObj.getJSONObject(i);
+                int length = String.valueOf(i).length();
+                String num = "";
+                if (length < 3) {
+                    int size = 3-length;
+                    for (int j = 0;j < size;j++) {
+                        num = num + "0";
+                    }
+                    num = num + String.valueOf(i);
+                } else if (length == 3) {
+                    num = String.valueOf(i);
+                }
+                JSONObject object = jsonObject.getJSONArray("ITEM" + num).getJSONObject(0);
+                String content = object.getString("CONTENT");
+                if (content.startsWith("S0")) {
+                    object.put("CONTENT", content.substring(3));
+                }
+            }
             items.put("content", resultObj);
+            IotDeviceAccess deviceAccess = iotDeviceAccessService.selectIotDeviceAccessById(deviceId);
+            items.put("devicePixel", deviceAccess.getDevicePixel());
+
             paramsList.add(items.toString());
+            nowContentMap.put(deviceId.toString(), items.toString());
             ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
-        } catch (BusinessException e) {
-        	return AjaxResult.error(-1, e.getMessage());
         } catch (Exception e) {
-        	return AjaxResult.error(-1, e.getMessage());
+//        	return AjaxResult.error(-1, e.getMessage());
+            device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
+            return null;
         }
         return ajaxResult;
     }
@@ -143,6 +185,10 @@ public class BoardController extends BaseController {
     @ResponseBody
     public AjaxResult getBoardEditInfo(Long deviceId) {
         AjaxResult ajaxResult = new AjaxResult();
+        SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+        if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+            return null;
+        }
         List<String> paramsList = new ArrayList<String>();
         try {
             // 1.获取设备状态
@@ -153,20 +199,43 @@ public class BoardController extends BaseController {
             releaseContentMap.put(deviceId.toString(), result);
             JSONArray contentObject = JSONArray.parseArray(jsonContent);
             JSONObject items = new JSONObject();
+            for (int i = 0;i < contentObject.size();i++) {
+                JSONObject jsonObject = contentObject.getJSONObject(i);
+                int length = String.valueOf(i).length();
+                String num = "";
+                if (length < 3) {
+                    int size = 3-length;
+                    for (int j = 0;j < size;j++) {
+                        num = num + "0";
+                    }
+                    num = num + String.valueOf(i);
+                } else if (length == 3) {
+                    num = String.valueOf(i);
+                }
+                JSONObject object = jsonObject.getJSONArray("ITEM" + num).getJSONObject(0);
+                String content = object.getString("CONTENT");
+                if (content.startsWith("S0")) {
+                    object.put("CONTENT", content.substring(3));
+                }
+            }
             items.put("content", contentObject);
             items.put("support", DataUtils.getSupport(String.valueOf(deviceId), protocolType));
             paramsList.add(items.toString());
             ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
-        } catch (BusinessException e) {
-            return AjaxResult.error(-1, e.getMessage());
+//        } catch (BusinessException e) {
+//            return AjaxResult.error(-1, e.getMessage());
         } catch (Exception e) {
-        	return AjaxResult.error(-1, e.getMessage());
+//        	return AjaxResult.error(-1, e.getMessage());
+            device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
+            return null;
         }
 
         return ajaxResult;
     }
-    
-    
+
+
 
     /**
      * 发布单条情报板编辑信息
@@ -175,57 +244,123 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/uploadBoardEditInfo")
     @ResponseBody
-    public AjaxResult uploadBoardEditInfo(String deviceId, String protocolType,String parameters) {
+    public AjaxResult uploadBoardEditInfo(String deviceIds, String protocolType,String parameters) {
         AjaxResult ajaxResult = new AjaxResult();
-        
-        List<String> paramsList = new ArrayList<String>();
-//        IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
-        try {
-        	parameters = URLDecoder.decode(parameters, "UTF-8");
-            if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
-                parameters = parameters.replaceAll("—", "-");
-                parameters = parameters.replaceAll("\\\\n", "\\\\A");
-            } else if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
-                parameters = parameters.replaceAll("—", "-");
-                parameters = parameters.replaceAll("\\\\n", "\\\\N");
-            } else {
-                parameters = parameters.replaceAll("—", "-");
-            }
-            String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
-            Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
-            if (result) {
-                if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
-                    String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
-                    result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, XKcommands);
-                    if (result) {
-                        ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
-                    } else {
-                        ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
-                    }
-                } else {
-                    ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
-                }
-            } else {
-                ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
-            }
-
-
+        String[] devices = deviceIds.split(",");
+        Boolean flag = false;
+        List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyService.selectIotBoardVocabularyList(null);
+        String deptId = SecurityUtils.getDeptId();
+        SysDept sysDept = sysDeptService.selectDeptById(deptId);
+        String userId = SecurityUtils.getUserId().toString();
+        String username = SecurityUtils.getUsername();
+        //储存发布失败的设备
+        List<String> failDevList = new ArrayList<>();
+        for (int i = 0;i < devices.length;i++) {
+            String deviceId = devices[i];
+            SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(Long.parseLong(deviceId));
+            IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
+            iotBoardReleaseLog.setDeviceId(deviceId);
+            iotBoardReleaseLog.setReleaseTime(new Date());
+            iotBoardReleaseLog.setReleaseDeptId(deptId);
+            iotBoardReleaseLog.setReleaseDeptName(sysDept.getDeptName());
+            iotBoardReleaseLog.setReleaseUserId(userId);
+            iotBoardReleaseLog.setReleaseUserName(username);
             String releaseOldContent = releaseContentMap.get(deviceId);
-//            String userName = (String) PermissionUtils.getPrincipalProperty("userName");
-//            iotBoardReleaseLog.setDeviceId(deviceId);
-//            iotBoardReleaseLog.setReleaseBy(userName);
-//            iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
-            parameters = parameters.replaceAll("\n", "<n>");
-            parameters = parameters.replaceAll("\r", "<r>");
-//            iotBoardReleaseLog.setReleaseNewContent(parameters);
-//            iotBoardReleaseLog.setReleaseTime(new Date());
-//            iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
-            releaseContentMap.clear();
-        } catch (BusinessException e) {
-            ajaxResult = new AjaxResult(HttpStatus.ERROR, e.getMessage());
-        } catch (Exception e) {
-            ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
+            iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
+//            if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+//                flag = true;
+//                iotBoardReleaseLog.setReleaseStatus("1");
+//                iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+//                continue;
+//            }
+            SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(Long.parseLong(deviceId));
+            protocolType = sdIotDevice.getProtocolName();
+            List<String> paramsList = new ArrayList<String>();
+            try {
+                parameters = URLDecoder.decode(parameters, "UTF-8");
+                if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
+                    parameters = parameters.replaceAll("—", "-");
+                    parameters = parameters.replaceAll("\\\\n", "\\\\A");
+                } else if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
+                    parameters = parameters.replaceAll("—", "-");
+                    parameters = parameters.replaceAll("\\\\n", "\\\\N");
+                } else {
+                    parameters = parameters.replaceAll("—", "-");
+                }
+                parameters = parameters.replaceAll("<r><n>","\r\n");
+                parameters = parameters.replaceAll("<br>","\\\\n");
+                String newContent = parameters;
+                if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+                    flag = true;
+                    newContent = newContent.replaceAll("\n", "<n>");
+                    newContent = newContent.replaceAll("\r", "<r>");
+                    iotBoardReleaseLog.setReleaseNewContent(newContent);
+                    iotBoardReleaseLog.setReleaseStatus("1");
+                    iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+                    //储存失败设备名称
+                    failDevList.add(device.getEqName());
+                    continue;
+                }
+                for (int g = 0;g < iotBoardVocabularies.size();g++) {
+                    String word = iotBoardVocabularies.get(g).getWord();
+                    if (parameters.contains(word)) {
+                        flag = true;
+                        //储存失败设备名称
+                        failDevList.add(device.getEqName());
+                        break;
+                    }
+                }
+                if (flag) {
+                    newContent = newContent.replaceAll("\n", "<n>");
+                    newContent = newContent.replaceAll("\r", "<r>");
+                    iotBoardReleaseLog.setReleaseNewContent(newContent);
+                    iotBoardReleaseLog.setReleaseStatus("1");
+                    iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+                    throw new RuntimeException("发送的内容包含不恰当的关键字，请修改后重试！");
+                }
+                String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
+                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
+//                Boolean result = false;
+                if (result) {
+                    if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
+                        String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
+                        result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, XKcommands);
+                        if (result) {
+                            ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
+                        } else {
+                            ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
+                        }
+                    } else {
+                        ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
+                    }
+                    iotBoardReleaseLog.setReleaseStatus("0");
+                } else {
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
+                    iotBoardReleaseLog.setReleaseStatus("1");
+                }
+                parameters = parameters.replaceAll("\n", "<n>");
+                parameters = parameters.replaceAll("\r", "<r>");
+                iotBoardReleaseLog.setReleaseNewContent(parameters);
+                iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+                releaseContentMap.clear();
+            } catch (Exception e) {
+                if (flag) {
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "发送的内容包含不恰当的关键字，请修改后重试！");
+                } else {
+                    parameters = parameters.replaceAll("\n", "<n>");
+                    parameters = parameters.replaceAll("\r", "<r>");
+                    iotBoardReleaseLog.setReleaseNewContent(parameters);
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
+                }
+                iotBoardReleaseLog.setReleaseStatus("1");
+                iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+            }
         }
+
+        if(flag){
+            ajaxResult = new AjaxResult(900, StringUtils.join(failDevList,","));
+        }
+
         return ajaxResult;
     }
 
@@ -242,6 +377,30 @@ public class BoardController extends BaseController {
 
         executorService.execute(new Task(deviceId));
 
+    }
+
+    @GetMapping("/getWorkBenchBoardContent/{tunnelId}")
+    public Map<String, Object> getWorkBenchBoardContent(@PathVariable String tunnelId) {
+        Map<String, Object> map = new HashMap<>();
+        List<Long> deviceIds = sdIotDeviceService.selectIotDevicesByTunnelId(tunnelId);
+        for (int i = 0;i < deviceIds.size();i++) {
+            Long deviceId = deviceIds.get(i);
+            String devId = deviceId.toString();
+            IotDeviceAccess iotDeviceAccess = iotDeviceAccessService.selectIotDeviceAccessById(deviceId);
+            if (iotDeviceAccess == null || iotDeviceAccess.getDevicePixel() == null || iotDeviceAccess.getDevicePixel().equals("")) {
+                continue;
+            }
+            String deviceInformation = "{\"devicePixel\":\"" + iotDeviceAccess.getDevicePixel() + "\"}";
+            map.put(devId, deviceInformation);
+            if (nowContentMap != null && !nowContentMap.isEmpty() && nowContentMap.get(devId) != null) {
+                Object result = nowContentMap.get(devId);
+                JSONObject jsonObject = JSONObject.parseObject(result.toString());
+                if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
+                    map.put(devId, result);
+                }
+            }
+        }
+        return map;
     }
 
     /**
@@ -907,7 +1066,7 @@ public class BoardController extends BaseController {
         }
         return fontSize;
     }
-    
+
     /**
      * 根据设备ID获取设备详情
      * @param deviceId
@@ -917,7 +1076,7 @@ public class BoardController extends BaseController {
     	SdDevices sd = sdDevicesService.selectSdDevicesById(deviceId);
     	return sd;
     }
-    
+
     /**
      * 获取单条情报板基础信息
      *
@@ -962,5 +1121,10 @@ public class BoardController extends BaseController {
         }
 
         return ajaxResult;
+    }
+
+    @GetMapping("/getFontSizeByDevicePixel/{devicePixel}")
+    public AjaxResult getFontSizeByDevicePixel(@PathVariable("devicePixel") String devicePixel) {
+        return AjaxResult.success(iIotBoradFontService.getFontSizeByDevicePixel(devicePixel));
     }
 }

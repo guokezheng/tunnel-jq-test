@@ -58,15 +58,6 @@ public interface SdSmartBigScreenMapper {
                                            @Param("dictValue") String dictValue);
 
     /**
-     * 查询本月报警趋势(主动安全)
-     * @param tunnelId
-     * @return
-     */
-    List<Integer> getWarningList(@Param("tunnelId") String tunnelId,
-                                             @Param("prevControlType") String prevControlType,
-                                             @Param("dictValue") String dictValue);
-
-    /**
      * 查询本月报警趋势(设备故障)
      * @param tunnelId
      * @return
@@ -167,4 +158,29 @@ public interface SdSmartBigScreenMapper {
      * @return
      */
     List<Map<String, Object>> getAlarmInformation(@Param("tunnelId") String tunnelId);
+
+    /**
+     * 查询风险指标
+     *
+     * @param tunnelId
+     * @return
+     */
+    List<Map<String, Object>> getRiskIndicators(@Param("tunnelId") String tunnelId);
+
+    /**
+     * 查询当日累计车辆
+     * @param tunnelId
+     * @return
+     */
+    Map<String, Object> getCumulativeCar(@Param("tunnelId") String tunnelId,
+                                         @Param("model") String model);
+
+    /**
+     * 查询车辆在途数
+     * @param tunnelId
+     * @param model
+     * @return
+     */
+    Map<String, Object> getTransitCar(@Param("tunnelId") String tunnelId,
+                                      @Param("model") String model);
 }

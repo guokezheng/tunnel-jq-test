@@ -28,22 +28,22 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("隧道Id")
     private String tunnelId;
 
-    @Excel(name = "分区ID")
+    /*@Excel(name = "分区ID")*/
     @ApiModelProperty("分区ID")
     private Long subareaId;
 
     /** 预案类型ID */
-    @Excel(name = "预案类型ID")
+    /*@Excel(name = "预案类型ID")*/
     @ApiModelProperty("预案类型ID")
     private Long planTypeId;
 
-    @Excel(name = "预案类别")
+    /*@Excel(name = "预案类别")*/
     @ApiModelProperty("预案类型")
     private String category;
 
     /** 预案类型对象 */
     @Excels({
-        @Excel(name = "预案类型", targetAttr = "planType"),
+        @Excel(name = "事件类型", targetAttr = "eventType"),
     })
     @ApiModelProperty("预案类型对象")
     private SdEventType eventType;
@@ -52,9 +52,9 @@ public class SdReservePlan extends BaseEntity
     private List<SdReservePlanFile> pFileList;
 
     /** 策略对象 */
-    @Excels({
+   /* @Excels({
         @Excel(name = "控制策略", targetAttr = "strategy"),
-    })
+    })*/
     @ApiModelProperty("策略对象")
     private SdStrategy strategy;
 
@@ -69,12 +69,12 @@ public class SdReservePlan extends BaseEntity
     private String planName;
 
     /** 预案文件ID */
-    @Excel(name = "预案文件ID")
+    /*@Excel(name = "预案文件ID")*/
     @ApiModelProperty("预案文件ID")
     private String planFileId;
 
     /** 策略ID */
-    @Excel(name = "策略IDs")
+   /* @Excel(name = "策略IDs")*/
     @ApiModelProperty("策略ID")
     private String strategyId;
 
@@ -84,8 +84,16 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("隧道分区对象")
     private SdTunnelSubarea sdTunnelSubarea;
 
+    @Excels({
+            @Excel(name = "隧道名称", targetAttr = "tunnelName"),
+    })
     @ApiModelProperty("隧道对象")
     private SdTunnels sdTunnels;
+
+    @Excel(name = "方向")
+    private String fx;
+    @Excel(name = "事件等级")
+    private String dj;
 
     @ApiModelProperty("管控方向")
     private String controlDirection;
@@ -101,6 +109,56 @@ public class SdReservePlan extends BaseEntity
 
     @ApiModelProperty("环节Id")
     private Long processId;
+
+    @ApiModelProperty("事件等级")
+    private String eventGrade;
+
+    private String ids;
+
+    public String getDj() {
+        return this.dj;
+    }
+
+    public void setDj(final String dj) {
+        this.dj = dj;
+    }
+
+    /**
+     * 删除的id
+     */
+    private Long[] removeIds;
+
+    public String getFx() {
+        return this.fx;
+    }
+
+    public void setFx(final String fx) {
+        this.fx = fx;
+    }
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds(final String ids) {
+        this.ids = ids;
+    }
+
+    public Long[] getRemoveIds() {
+        return removeIds;
+    }
+
+    public void setRemoveIds(Long[] removeIds) {
+        this.removeIds = removeIds;
+    }
+
+    public String getEventGrade() {
+        return eventGrade;
+    }
+
+    public void setEventGrade(String eventGrade) {
+        this.eventGrade = eventGrade;
+    }
 
     public Long getProcessId() {
         return processId;

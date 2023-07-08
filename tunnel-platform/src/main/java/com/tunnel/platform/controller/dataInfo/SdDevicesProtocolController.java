@@ -29,7 +29,7 @@ public class SdDevicesProtocolController extends BaseController {
     /**
      * 查询设备协议列表
      */
-    @PreAuthorize("@ss.hasPermi('device:protocol:list')")
+    // @PreAuthorize("@ss.hasPermi('device:protocol:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdDevicesProtocol sdDevicesProtocol) {
         startPage();
@@ -54,7 +54,7 @@ public class SdDevicesProtocolController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('device:protocol:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Integer id) {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(sdDevicesProtocolService.selectSdDevicesProtocolById(id));
     }
 
@@ -84,7 +84,7 @@ public class SdDevicesProtocolController extends BaseController {
     @PreAuthorize("@ss.hasPermi('device:protocol:remove')")
     @Log(title = "设备协议", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Integer[] ids) {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(sdDevicesProtocolService.deleteSdDevicesProtocolByIds(ids));
     }
 }

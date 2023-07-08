@@ -43,6 +43,15 @@ export function updateStrategy(data) {
   })
 }
 
+// 导出策略
+export function export1(query) {
+  return request({
+    url: '/strategy/export',
+    method: 'get',
+    params: query
+  })
+}
+
 // 删除控制策略
 export function delStrategy(id) {
   return request({
@@ -97,5 +106,21 @@ export function updateState(query) {
     url: '/strategy/switch',
     method: 'get',
     params: query
+  })
+}
+
+// 触发控制
+export function workTriggerInfo(id) {
+  return request({
+    url: '/strategy/workTriggerInfo/' + id,
+    method: 'get'
+  })
+}
+
+// 查询设备类型大小类 树结构
+export function getCategoryTree() {
+  return request({
+    url: '/bigType/getCategoryTree',
+    method: 'get'
   })
 }

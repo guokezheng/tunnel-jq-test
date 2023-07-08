@@ -281,6 +281,9 @@ public class ExcelUtil<T>
                     fieldsMap.put(column, objects);
                 }
             }
+            if(fieldsMap.isEmpty()){//为空
+                throw new IOException("抱歉，导入失败，请检查数据");
+            }
             for (int i = titleNum + 1; i <= rows; i++)
             {
                 // 从第2行开始取数据,默认第一行是表头.
@@ -305,14 +308,14 @@ public class ExcelUtil<T>
                     if (String.class == fieldType)
                     {
                         String s = Convert.toStr(val);
-                        if (StringUtils.endsWith(s, ".0"))
+                        if (org.apache.commons.lang3.StringUtils.endsWith(s, ".0"))
                         {
-                            val = StringUtils.substringBefore(s, ".0");
+                            val = org.apache.commons.lang3.StringUtils.substringBefore(s, ".0");
                         }
                         else
                         {
                             String dateFormat = field.getAnnotation(Excel.class).dateFormat();
-                            if (StringUtils.isNotEmpty(dateFormat))
+                            if (org.apache.commons.lang3.StringUtils.isNotEmpty(dateFormat))
                             {
                                 val = DateUtils.parseDateToStr(dateFormat, (Date) val);
                             }
@@ -407,7 +410,7 @@ public class ExcelUtil<T>
      */
     public AjaxResult exportExcel(List<T> list, String sheetName)
     {
-        return exportExcel(list, sheetName, StringUtils.EMPTY);
+        return exportExcel(list, sheetName, org.apache.commons.lang3.StringUtils.EMPTY);
     }
     
     /**
@@ -435,7 +438,7 @@ public class ExcelUtil<T>
      */
     public void exportExcel(HttpServletResponse response, List<T> list, String sheetName)throws IOException
     {
-        exportExcel(response, list, sheetName, StringUtils.EMPTY);
+        exportExcel(response, list, sheetName, org.apache.commons.lang3.StringUtils.EMPTY);
     }
 
     /**
@@ -464,7 +467,7 @@ public class ExcelUtil<T>
      */
     public AjaxResult importTemplateExcel(String sheetName)
     {
-        return importTemplateExcel(sheetName, StringUtils.EMPTY);
+        return importTemplateExcel(sheetName, org.apache.commons.lang3.StringUtils.EMPTY);
     }
 
     /**
@@ -488,7 +491,7 @@ public class ExcelUtil<T>
      */
     public void importTemplateExcel(HttpServletResponse response, String sheetName) throws IOException
     {
-        importTemplateExcel(response, sheetName, StringUtils.EMPTY);
+        importTemplateExcel(response, sheetName, org.apache.commons.lang3.StringUtils.EMPTY);
     }
 
     /**

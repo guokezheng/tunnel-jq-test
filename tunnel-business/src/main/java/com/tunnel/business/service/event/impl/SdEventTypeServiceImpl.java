@@ -1,5 +1,6 @@
 package com.tunnel.business.service.event.impl;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
@@ -57,7 +58,11 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
      * @return 结果
      */
     @Override
-    public int insertSdEventType(MultipartFile[] file, SdEventType sdEventType) {
+    public AjaxResult insertSdEventType(MultipartFile[] file, SdEventType sdEventType) {
+        int count = checkData(sdEventType);
+        if(count > 0){
+            return AjaxResult.error("事件类型已存在，添加失败，请检查填写内容！");
+        }
         if (file.length > 0) {
             for (int i = 0; i < file.length; i++) {
                 // 图片Base64
@@ -83,8 +88,12 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
                 sdEventType.setIconUrl(imageBaseStr);
             }
         }
-        //sdEventType.setCreateTime(DateUtils.getNowDate());
-        return sdEventTypeMapper.insertSdEventType(sdEventType);
+        int i = sdEventTypeMapper.insertSdEventType(sdEventType);
+        if(i > 0){
+            return AjaxResult.success();
+        }else {
+            return AjaxResult.error();
+        }
     }
 
     /**
@@ -94,7 +103,11 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
      * @return 结果
      */
     @Override
-    public int updateSdEventType(MultipartFile[] file,SdEventType sdEventType) {
+    public AjaxResult updateSdEventType(MultipartFile[] file,SdEventType sdEventType) {
+        int count = checkData(sdEventType);
+        if(count > 0){
+            return AjaxResult.error("事件类型已存在，修改失败,请检查填写内容！");
+        }
         if (file!=null) {
             for (int i = 0; i < file.length; i++) {
                 // 图片Base64
@@ -124,7 +137,12 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
 //            sdEventType.setIconUrl("");
 //        }
         sdEventType.setUpdateTime(DateUtils.getNowDate());
-        return sdEventTypeMapper.updateSdEventType(sdEventType);
+        int i = sdEventTypeMapper.updateSdEventType(sdEventType);
+        if(i > 0){
+            return AjaxResult.success();
+        }else {
+            return AjaxResult.error();
+        }
     }
 
     /**
@@ -158,8 +176,36 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
     public Map<Long, String> getEventTypeMap() {
         List<SdEventType> list = sdEventTypeMapper.selectSdEventTypeList(new SdEventType());
 
-        Map<Long,String> map = list.stream().collect(Collectors.toMap(SdEventType::getId, SdEventType::getEventType));
+        Map<Long,String> map = list.stream().collect(Collectors.toMap(SdEventType::getId, SdEventType::getSimplifyName));
 
         return map;
+    }
+
+    public int checkData(SdEventType sdEventType){
+        int count = 0;
+        SdEventType type = new SdEventType();
+        type.setId(sdEventType.getId() == null ? 0 : sdEventType.getId());
+        if(sdEventType.getEventType() != null && sdEventType.getEventType() != ""){
+            type.setEventType(sdEventType.getEventType());
+            count = sdEventTypeMapper.checkData(type);
+            if(count > 0){
+                return count;
+            }
+        }
+        if(sdEventType.getSimplifyName() != null && sdEventType.getSimplifyName() != ""){
+            type.setEventType(sdEventType.getSimplifyName());
+            count = sdEventTypeMapper.checkData(type);
+            if(count > 0){
+                return count;
+            }
+        }
+        if(sdEventType.getPrevControlType() != null && sdEventType.getPrevControlType() != ""){
+            type.setEventType(sdEventType.getSimplifyName());
+            count = sdEventTypeMapper.checkData(type);
+            if(count > 0){
+                return count;
+            }
+        }
+        return count;
     }
 }

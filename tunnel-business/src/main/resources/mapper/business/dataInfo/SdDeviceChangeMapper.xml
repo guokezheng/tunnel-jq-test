@@ -25,11 +25,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
         <where>
             <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
-            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="deviceName != null  and deviceName != ''"> and concat(device_name,device_id) like concat('%', #{deviceName}, '%')</if>
             <if test="params.beginChangeTime != null and params.beginChangeTime != '' and params.endChangeTime != null and params.endChangeTime != ''"> and change_time between #{params.beginChangeTime} and #{params.endChangeTime}</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (c.dept_id = #{params.deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
         </where>
     </select>
 

@@ -99,11 +99,39 @@ public interface SdTunnelsMapper
      * @param deptId
      * @return
      */
-    List<SdTunnels> selectTunnelList(String deptId);
+    List<SdTunnels> selectTunnelList(@Param("deptId")String deptId,@Param("tunnelId")String tunnelId);
 
     /**
      * 查询当前登录者所属
      * @return
      */
     List<SdTunnels> getJlyTunnel(@Param("deptId") String deptId);
+
+    List<SdTunnels> selectAllSdTunnelsList();
+
+    /**
+     * 查询所有的隧道列表
+     * @param sdTunnels
+     * @return
+     */
+    List<SdTunnels> selectSdTunnelsList1(SdTunnels sdTunnels);
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    List<SdTunnels> selectAllSdTunnelsList1();
+
+    /**
+     * 查询隧道所属部门
+     * @param tunnelId
+     * @return
+     */
+    String selectTunnelDept(@Param("tunnelId") String tunnelId);
+
+    List<SdTunnels> selectTunnelLineList(String deptId);
+
+    String isTunnel(@Param("deviceId") String deviceId);
+
+    List<SdTunnels> selectTunnels(@Param("deptId") String deptId);
 }

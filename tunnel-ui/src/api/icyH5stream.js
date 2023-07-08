@@ -7,7 +7,8 @@ var vedioBox = "h5sVideo1"
  ,'f9a5','c65a','df09','c71b'] //所有视频tokens
  var vedioBoxs = ['h5sVideo1'] //入出卡口相机
 var v1,
-vs = []
+    v2,
+    vs = []
 
 var conf = {
     videoid: "h5sVideo1",
@@ -85,26 +86,41 @@ var pbconf = {
     autoplay: 'true', // 'true' or 'false' for playback autoplay
     showposter: 'false', //'true' or 'false' show poster
 };
-export function displayH5sVideoAll(token,startTime,endTime) {
-    console.log(token,'============================================================')
+export function displayH5sVideoAll(token, id, index, startTime, endTime) {
+    // console.log(token,'============================================================')
     $.ajax({
     type: "POST", //提交方式 
     url: "http://10.3.16.4:8080/api/v1/Login?user=admin&password=baa70aa2e4c48a30549cc3abb429179b",
     success: function (result) {
+        console.log(result, "resultresultresultresultresult");
         conf.session=result.strSession;
         if (H5siOS() === true || H5sSafariBrowser() === true) {
-            $("#" + vedioBox).prop("controls", true)
+            $("#" + id).prop("controls", true)
         }
-    
-        if (v1 != null) {
-            v1.disconnect()
-            v1 = null
+        if (index == 1) {
+            // if (v1 != null) {
+            //     v1.disconnect()
+            //     v1 = null
+            // }
+            conf.videoid = id
+            conf.token = token
+            v1 = H5sPlayerCreate(conf)
+            v1.connect();
+            console.log(v1, "v1v1v1v1v1v1");
+            setTimeout(() => { }, 3000)
+        } else {
+            // if (v2 != null) {
+            //     v2.disconnect()
+            //     v2 = null
+            // }
+            conf.videoid = id
+            conf.token = token
+            v2 = H5sPlayerCreate(conf)
+            v2.connect();
+            console.log(v2, "v1v1v1v1v1v1");
+            setTimeout(() => { }, 3000)
         }
-        conf.videoid = vedioBox
-        conf.token = token
-        v1 = H5sPlayerCreate(conf)
-        v1.connect()
-        setTimeout(() => {}, 3000)
+
     }
 })
 }

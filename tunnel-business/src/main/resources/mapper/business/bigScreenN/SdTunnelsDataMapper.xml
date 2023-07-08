@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tunnel.business.mapper.bigScreenApiN.SdTunnelsDataMapper">
+
+    <select id="getMajorEventDataCount"  resultType="int">
+        select count(1) from sd_event where event_grade in (3,4) and create_time BETWEEN CONCAT(CURDATE(),' 00:00:00') AND CONCAT(CURDATE(),' 23:59:59');
+    </select>
+
+    <select id="getMajorEventDataWarnCount" resultType="int">
+        select count(1) from sd_event A left join sd_event_type B on A.event_type_id = B.id where event_grade in (3,4) and  B.prev_control_type = 1 and A.create_time  BETWEEN CONCAT(CURDATE(),' 00:00:00') AND CONCAT(CURDATE(),' 23:59:59');
+    </select>
+
+    <select id="getMajorEventDataHandleWarnCount" resultType="int">
+        select count(1) from sd_event A left join sd_event_type B on A.event_type_id = B.id where event_grade in (3,4) and  B.prev_control_type = 1 and A.create_time  BETWEEN CONCAT(CURDATE(),' 00:00:00') AND CONCAT(CURDATE(),' 23:59:59') and A.event_state in (0,3) ;
+    </select>
+
+    <select id="getMajorEventDataEventCount" resultType="int">
+        select count(1) from sd_event A left join sd_event_type B on A.event_type_id = B.id where event_grade in (3,4) and  B.prev_control_type = 0 and A.create_time  BETWEEN CONCAT(CURDATE(),' 00:00:00') AND CONCAT(CURDATE(),' 23:59:59');
+    </select>
+
+    <select id="getMajorEventDataHandleEventCount" resultType="int">
+        select count(1) from sd_event A left join sd_event_type B on A.event_type_id = B.id where event_grade in (3,4) and  B.prev_control_type = 0 and A.create_time  BETWEEN CONCAT(CURDATE(),' 00:00:00') AND CONCAT(CURDATE(),' 23:59:59') and A.event_state in (0,3) ;
+    </select>
+
+    <select id="getMajorEventDataList" resultType="map">
+        select B.event_type as eventType,
+               B.simplify_name as simplifyName,
+               C.tunnel_name as tunnelName,
+               A.direction as direction,
+               A.event_state as eventState,
+               A.create_time as createTime from sd_event A left join sd_event_type B on A.event_type_id = B.id left join sd_tunnels C on A.tunnel_id = C.tunnel_id
+        where  A.event_grade in (3,4) and B.prev_control_type in (0,1) and A.create_time BETWEEN CONCAT(CURDATE(),' 00:00:00') AND CONCAT(CURDATE(),' 23:59:59') order by A.create_time desc  limit 30
+</select>
+
+    <select id="getAllTunnelsList" resultType="string">
+        select tunnel_name as tunnelName from sd_tunnels order by tunnel_id
+    </select>
+
+    <select id="getListByPrevControlTypeId" resultType="map">
+        select id as eventTypeId,event_type,simplify_name as simplifyName from sd_event_type where prev_control_type = #{prevControlTypeId}
+    </select>
+
+    <select id="getEventStatMonthDataByEventTypeId" resultType="int">
+        select count(B.id) from sd_tunnels as A left join sd_event B on A.tunnel_id = B.tunnel_id and B.event_type_id = #{eventTypeId} and YEAR(B.create_time) = YEAR(NOW())
+        GROUP BY A.tunnel_id
+        order by A.tunnel_id
+    </select>
+
+    <select id="getEventStatWeekDataByEventTypeId" resultType="int">
+        select count(B.id) from (
+                                    SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY),'%m-%d') AS dayStr UNION ALL
+                                    SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 DAY),'%m-%d') AS dayStr UNION ALL
+                                    SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 3 DAY),'%m-%d') AS dayStr UNION ALL
+                                    SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 4 DAY),'%m-%d') AS dayStr UNION ALL
+                                    SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 5 DAY),'%m-%d') AS dayStr UNION ALL
+                                    SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 6 DAY),'%m-%d') AS dayStr UNION ALL
+                                    SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 7 DAY),'%m-%d') AS dayStr
+                                ) as A left join sd_event B on A.dayStr = DATE_FORMAT(B.create_time,'%m-%d') and B.event_type_id = #{eventTypeId} and YEAR(B.create_time) = YEAR(NOW())
+
+        GROUP BY A.`dayStr`
+        order by A.`dayStr`
+    </select>
+
+    <select id="getCarFlowDataThisYearCount" resultType="int">
+        select count(DISTINCT vehicle_id) from sd_radar_detect_data where  YEAR(detect_time) = YEAR(NOW())
+    </select>
+
+    <select id="getCarFlowDataLastYearCount" resultType="int">
+        select count(DISTINCT vehicle_id) from sd_radar_detect_data where  YEAR(detect_time) = YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR));
+    </select>
+
+    <select id="getCarFlowDataTopList" resultType="map">
+
+        select
+            b.tunnel_id AS tunnelId,
+            b.tunnel_name AS tunnelName,
+            count(A.vehicle_id) AS `count`
+        from
+            sd_tunnels B
+
+                left join
+            (select DISTINCT vehicle_id,tunnel_id  from sd_radar_detect_data where  YEAR (detect_time) = YEAR (NOW()))  A
+
+            ON A.tunnel_id = B.tunnel_id
+        GROUP BY
+            B.tunnel_id
+        ORDER BY
+            A.vehicle_id DESC
+    </select>
+
+    <select id="getCarFlowDataWeekList" resultType="int">
+
+        select count(B.id) from (
+           SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY),'%m-%d') AS dayStr UNION ALL
+           SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 2 DAY),'%m-%d') AS dayStr UNION ALL
+           SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 3 DAY),'%m-%d') AS dayStr UNION ALL
+           SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 4 DAY),'%m-%d') AS dayStr UNION ALL
+           SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 5 DAY),'%m-%d') AS dayStr UNION ALL
+           SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 6 DAY),'%m-%d') AS dayStr UNION ALL
+           SELECT DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 7 DAY),'%m-%d') AS dayStr
+       ) as A left join sd_radar_detect_data B on  A.dayStr = DATE_FORMAT(B.detect_time,'%m-%d') and YEAR(B.detect_time) = YEAR(NOW())
+
+        GROUP BY A.`dayStr`
+        order by A.`dayStr`
+
+    </select>
+
+    <select id="getCarFlowDataLastYearList" resultType="int">
+        select count(B.id) from (
+                                    SELECT '01' AS mon UNION ALL
+                                    SELECT '02' AS mon UNION ALL SELECT '03' AS mon UNION ALL
+                                    SELECT '04' AS mon UNION ALL SELECT '05' AS mon UNION ALL
+                                    SELECT '06' AS mon UNION ALL SELECT '07' AS mon UNION ALL
+                                    SELECT '08' AS mon UNION ALL SELECT '09' AS mon UNION ALL
+                                    SELECT '10' AS mon UNION ALL SELECT '11' AS mon UNION ALL
+                                    SELECT '12' AS mon
+                                ) as A left join sd_radar_detect_data B on  A.mon = DATE_FORMAT(B.detect_time,'%m') and YEAR(B.create_time) = YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR))
+
+        GROUP BY A.`mon`
+        order by A.`mon`
+
+    </select>
+
+    <select id="getCarFlowDataFourHoursList" resultType="int">
+        select count(B.id) from (
+                                    SELECT '00:00' AS time UNION ALL
+                                    SELECT '04:00' AS time UNION ALL
+                                    SELECT '08:00' AS time UNION ALL
+                                    SELECT '12:00' AS time UNION ALL
+                                    SELECT '16:00' AS time UNION ALL
+                                    SELECT '20:00' AS time
+                                ) as A left join sd_radar_detect_data B on  A.time =
+            CASE
+            FLOOR(( cast( HOUR ( B.detect_time ) AS SIGNED ) ) / 4 )
+                                             WHEN 0 THEN
+                                                 '00:00'
+                                             WHEN 1 THEN
+                                                 '04:00'
+                                             WHEN 2 THEN
+                                                 '08:00'
+                                             WHEN 3 THEN
+                                                 '12:00'
+                                             WHEN 4 THEN
+                                                 '16:00'
+                                             WHEN 5 THEN
+                                                 '20:00'
+            END
+            and B.detect_time BETWEEN CONCAT(CURDATE(),' 00:00:00') AND CONCAT(CURDATE(),' 23:59:59')
+        GROUP BY A.`time`
+        order by A.`time`
+    </select>
+
+    <select id="getVehicleTypeList" resultType="map">
+        select id as vehicleTypeId,`vehicle_type_code` as vehicleTypeCode,vehicle_type_name as vehicleTypeName from sd_vehicle_type
+    </select>
+
+    <select id="getRealTimeCarFlowByVehicleTypeId" resultType="int">
+        select count(B.id) from sd_tunnels A left join sd_vehicle_driving B on A.tunnel_id = B.tunnel_id  and B.vehicle_type = #{vehicleTypeId}
+
+            and track_id not in (
+
+                select track_id from sd_vehicle_driving  where travel_type = 2
+            )
+
+        GROUP BY A.tunnel_id
+    </select>
+
+    <select id="getIndexData24HoursEventCount" resultType="int">
+        select count(1) from sd_event A left join sd_event_type B on A.event_type_id = B.id
+
+        where event_grade in (3,4)  and  B.prev_control_type = 0 and A.create_time >= ( NOW( ) - INTERVAL 24 HOUR )
+    </select>
+
+    <select id="getIndexDataEventCount" resultType="int">
+        select count(1) from sd_event A left join sd_event_type B on A.event_type_id = B.id
+
+        where event_grade in (3,4)  and  B.prev_control_type = 0
+    </select>
+
+    <select id="getIndexDataEventSourceList" resultType="map">
+        SELECT
+            A.dict_label as eventSouce,
+            IFNULL(B.count,0) as `count`
+        FROM
+            ( SELECT dict_label, dict_value FROM sys_dict_data WHERE dict_type = 'sd_event_source' ORDER BY dict_sort ) A
+                LEFT JOIN
+            (
+                select A.event_source,count(1) as count from sd_event_type B left join  sd_event  A   on A.event_type_id = B.id
+
+                where   B.prev_control_type = 0 and event_grade in (3,4)   and A.create_time >= ( NOW( ) - INTERVAL 24 HOUR )
+
+                group by event_source
+            ) B on A.dict_value = B.event_source
+    </select>
+    
+    <select id="getIndexDataTravelVehicleFlowCount" resultType="int">
+        select count(1) from sd_vehicle_driving
+
+        where track_id not in (
+
+            select track_id from sd_vehicle_driving  where travel_type = 2
+        )
+
+    </select>
+
+    <select id="getIndexDataTravelVehicleFlowList" resultType="map">
+
+        SELECT
+            A.vehicle_type_name,
+            A.count,
+            round( A.count / B.count * 100, 2 ) AS percent
+        FROM
+            (
+                SELECT
+                    IFNULL( B.vehicle_type_name, '未知' ) AS vehicle_type_name,
+                    count( 1 ) AS count
+                FROM
+                    sd_vehicle_driving A
+                    LEFT JOIN sd_vehicle_type B ON A.vehicle_type = B.id
+                WHERE
+                    track_id NOT IN ( SELECT track_id FROM sd_vehicle_driving WHERE travel_type = 2 )
+                GROUP BY
+                    B.vehicle_type_name
+            ) A
+                LEFT JOIN (
+                SELECT
+                    count( 1 ) AS count
+                FROM
+                    sd_vehicle_driving
+                WHERE
+                    track_id NOT IN ( SELECT track_id FROM sd_vehicle_driving WHERE travel_type = 2 )) B ON 1 =1
+    </select>
+
+    <select id="getIndexDataImportantVehicleCount" resultType="int">
+        select count(1) from sd_vehicle_driving A left join sd_vehicle_type B on A.vehicle_type = B.id
+
+        where track_id not in (
+
+            select track_id from sd_vehicle_driving  where travel_type = 2
+        )
+          and B.is_key_vehicle = 1
+    </select>
+
+    <select id="getIndexDataImportantVehicleList" resultType="map">
+
+        select A.vehicle_type as vehicleType,count(1) as count from sd_vehicle_driving A left join sd_vehicle_type B on A.vehicle_type = B.id
+
+        where track_id not in (
+
+            select track_id from sd_vehicle_driving  where travel_type = 2
+        )
+          and B.is_key_vehicle = 1
+
+        GROUP BY A.vehicle_type
+    </select>
+
+</mapper>

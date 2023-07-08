@@ -47,6 +47,22 @@ public class SdStrategyRl extends BaseEntity
     //处置名称
     private String disposalName;
 
+
+    private String content;
+    /**
+     * 亮度值
+     */
+    private String brightness;
+
+    public String getBrightness() {
+        return brightness;
+    }
+
+    public void setBrightness(String brightness) {
+        this.brightness = brightness;
+    }
+
+
     public String getDisposalName() {
         return disposalName;
     }
@@ -69,6 +85,15 @@ public class SdStrategyRl extends BaseEntity
 
     public void setPlanId(String planId) {
         this.planId = planId;
+    }
+
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getEndState() {
@@ -105,7 +130,28 @@ public class SdStrategyRl extends BaseEntity
     @Excel(name = "设备状态")
     private String state;
 
-    public void setId(Long id) 
+    private String stateNum;
+
+    private String endStateNum;
+
+
+    public String getStateNum() {
+        return stateNum;
+    }
+
+    public void setStateNum(String stateNum) {
+        this.stateNum = stateNum;
+    }
+
+    public String getEndStateNum() {
+        return endStateNum;
+    }
+
+    public void setEndStateNum(String endStateNum) {
+        this.endStateNum = endStateNum;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

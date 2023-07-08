@@ -1,6 +1,6 @@
 <template>
   <div class="app-container configurePage" v-loading="saveLoading" style="position: relative;background-color: #D3EBFF;"
-    element-loading-background="rgba(0, 0, 0, 0.8)">
+       element-loading-background="rgba(0, 0, 0, 0.8)">
     <div class="header config-header">
     </div>
     <div class="menu config-menu">
@@ -13,14 +13,16 @@
         </el-button>
         <el-button type="info" size="small" icon="el-icon-check" class="tunnelNameButton" @click="preserve">保存配置
         </el-button>
+        <el-button type="info" size="small" icon="el-icon-refresh-left" class="tunnelNameButton" @click="handleBack">返回</el-button>
         <el-popconfirm popper-class="reset-confirm" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
-          icon-color="red" title="重置后该隧道的配置信息将被清空,确定清空吗？" @onConfirm="reset">
-          <el-button type="info" size="small" slot="reference" icon="el-icon-refresh-left" class="tunnelNameButton"
-            style="margin-left: 10px;">重置</el-button>
+                       icon-color="red" title="重置后该隧道的配置信息将被清空,确定清空吗？" @confirm="reset">
+          <el-button type="info" size="small" slot="reference" icon="el-icon-refresh" class="tunnelNameButton"
+                     style="margin-left: 10px;">重置</el-button>
         </el-popconfirm>
+
         <div class="display-box">
           <p class="menu-title title-wrap">显示设备编号：</p>
-          <el-switch class="title-wrap" v-model="displayNumb" active-color="#46a6ff" inactive-color="#46a6ff">
+          <el-switch class="title-wrap" v-model="displayNumb" active-color="#46a6ff" inactive-color="#ccc">
           </el-switch>
         </div>
       </el-row>
@@ -28,7 +30,7 @@
         <b class="menu-title title-wrap">设备类型：</b>
         <el-button-group class="menu-button-group">
           <el-button type="info" size="mini" v-for="(item,index) in eqTypeList" :key="index"
-            @click="openEquipmentDialog(item.typeId,index,'type')">{{item.typeName}}</el-button>
+                     @click="openEquipmentDialog(item.typeId,index,'type')">{{item.typeName}}</el-button>
         </el-button-group>
 
       </el-row>
@@ -36,7 +38,7 @@
         <b class="menu-title title-wrap">环境配置：</b>
         <el-button-group class="menu-button-group">
           <el-button type="info" size="mini" v-for="(item,index) in  dict.type.environment" :key="index"
-            @click="openEquipmentDialog(item.value,index,'configuration')">{{item.label}}</el-button>
+                     @click="openEquipmentDialog(item.value,index,'configuration')">{{item.label}}</el-button>
         </el-button-group>
       </el-row>
     </div>
@@ -44,18 +46,24 @@
     <div class="content config-back">
       <div class="config-content">
         <!--画布区域-->
-        <el-row class="config-img-box" v-loading="loading">
-          <el-image class="config-img" :src="selectedTunnel.lane.url" :style="{width:selectedTunnel.lane.width + 'px'}" lazy></el-image>
-          <svg id="svg" class="tunnelSvg" height="580" :style="{width:selectedTunnel.lane.width + 'px'}" style="position: relative;z-index: 3;"></svg>
+        <el-row class="config-img-box"  id ='svgRow' v-loading="loading" >
+          <el-image class="config-img" id="imageId" :src="selectedTunnel.lane.url" :style="{width:selectedTunnel.lane.width + 'px'}" lazy></el-image>
+          <svg id="svg" class="tunnelSvg" height="580" :style="{width:selectedTunnel.lane.width + 'px'}" style="position: relative;z-index: 3;" ></svg>
           <!-- 辅助线 -->
           <div id="guide-h" class="guide"></div>
           <div id="guide-v" class="guide"></div>
+          <div id="guide-h1" class="guide"></div>
+          <div id="guide-v1" class="guide"></div>
         </el-row>
       </div>
     </div>
     <!--车道 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" :title="title" :visible.sync="laneVisible" width="723px"
-      append-to-body>
+               append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="dialog-content">
         <el-tabs type="border-card" class="laneTabs" v-model="activeTab">
           <el-tab-pane label="车道逆向" name="direction0">
@@ -73,21 +81,25 @@
         </el-tabs>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitLane">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary"class="submitButton"  @click="submitLane">确 定</el-button>
+        <el-button @click="cancel" class="closeButton">取 消</el-button>
       </div>
     </el-dialog>
     <!--设备 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" :title="title" :visible.sync="equipmentVisible" width="560px"
-      append-to-body>
+               append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="dialog-content">
         <div v-for="item in equipmentList" :key="item.id">
           <div class="equipment-img-box">
             <el-row v-if="eqTypeList[equipmentTypeflag].url.length>0">
               <!-- 此处将el-image更换为img、动态更换图片尺寸 -->
               <img :width="eqTypeList[equipmentTypeflag].iconWidth" :height="eqTypeList[equipmentTypeflag].iconHeight"
-                :class="[item.exist == true ? 'eq-exist' : '']" v-for="(url,index) in eqTypeList[equipmentTypeflag].url"
-                :key="index" :src="url" @click="getEquipment(item,eqTypeList[equipmentTypeflag])">
+                   :class="[item.exist == true ? 'eq-exist' : '']" v-for="(url,index) in eqTypeList[equipmentTypeflag].url"
+                   :key="index" :src="url" @click="getEquipment(item,eqTypeList[equipmentTypeflag])">
             </el-row>
             <el-row v-else>
               <el-image>
@@ -103,19 +115,23 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">关 闭</el-button>
+        <el-button @click="cancel" class="closeButton">关 闭</el-button>
       </div>
     </el-dialog>
     <!--环境配置 选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog" title="环境配置" :visible.sync="EnvironmentVisible" width="560px"
-      append-to-body>
+               append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="dialog-content">
         <div v-for="(items,index) in EnvironmentList[Environmentflag]" :key="index">
           <div class="equipment-img-box">
             <el-row v-if="items.url.length>0">
               <!-- 此处将el-image更换为img、动态更换图片尺寸 -->
               <img :width="items.iconWidth" :height="items.iconHeight" v-for="(url,index) in items.url" :key="index"
-                :src="url" @click="getEquipment(items,items)">
+                   :src="url" @click="getEquipment(items,items)">
               </img>
             </el-row>
             <el-row v-else>
@@ -132,17 +148,21 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">关 闭</el-button>
+        <el-button @click="cancel" class="closeButton">关 闭</el-button>
       </div>
     </el-dialog>
     <!--风向等设备选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog batch-table" :title="title" :visible.sync="paramVisible"
-      width="560px" append-to-body>
+               width="560px" append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="paramFrom" :rules="rules" :model="paramFrom" label-width="80px" label-position="left" size="mini"
-        hide-required-asterisk>
+               hide-required-asterisk>
         <el-table ref="multipleTable" :data="equipmentList" tooltip-effect="dark" style="width: 100%" max-height="400"
-          size="mini" @selection-change="equipmentSelectionChange" :row-style="rowStyle" :header-cell-style="rowStyle"
-          empty-text="暂无设备">
+                  size="mini" @selection-change="equipmentSelectionChange" :row-style="rowStyle" :header-cell-style="rowStyle"
+                  empty-text="暂无设备">
           <el-table-column type="selection" width="55">
           </el-table-column>
           <el-table-column prop="eqName" label="名称" width="150" show-overflow-tooltip>
@@ -163,11 +183,11 @@
       </el-form>
       <div slot="footer">
         <el-button type="primary" size="mini" @click="submitParam('paramFrom')">确 定</el-button>
-        <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
+        <el-button type="primary" size="mini"  class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
 
-    <ul v-show="deleteVisible" :style="{left:left+'px',top:top + 40 +'px'}" class="contextmenu">
+    <ul v-show="deleteVisible" :style="{left:left - svgScrollLeft +'px',top:top + 40 +'px'}" class="contextmenu">
       <li @click="deleteImage"><i class="el-icon-delete"></i>删除</li>
     </ul>
 
@@ -260,8 +280,8 @@ export default {
         require("@/assets/image/lane/3blue_duan.png"),
         require("@/assets/image/lane/3blue_chang.png"),
         require("@/assets/image/lane/fenghuangshan.png"),
-        require("@/assets/image/lane/mjy.jpg"),
-        require("@/assets/image/lane/fhs.jpg"),
+        require("@/assets/image/lane/mjy.png"),
+        require("@/assets/image/lane/fhs.png"),
       ],
       //当前隧道
       selectedTunnel: {
@@ -304,6 +324,7 @@ export default {
       selectedIconList: [], //全部拖动的图标
       svg: {},
       deleteObj: "",
+      deleteObjs: "",
       direction: 0,
       deleteIndex: 0,
       loading: true,
@@ -316,10 +337,14 @@ export default {
       saveLoading: false,
       //环境变量临时扩大数组
       Clist: [],
+      pageXimage: 0,
+      pageYimage: 0,
+      scroll:'',
+      svgScrollLeft:0,
     };
   },
   created: function () {
-    console.log("我被穿件了");
+    // console.log("我被穿件了");
     this.saveLoading = true;
     img = [];
     let lane = this.getLanUrl(this.$route.query.lane);
@@ -328,13 +353,15 @@ export default {
       name: this.$route.query.name,
       lane: lane,
     };
-    console.log(this.selectedTunnel, "this.selectedTunnel");
+    // console.log(this.selectedTunnel, "this.selectedTunnel");
     this.selectEquipmentType();
     this.selectEnvironment();
     this.getTunnels(this.selectedTunnel.id);
+
   },
   watch: {
     deleteVisible(value) {
+      // debugger
       if (value) {
         document.body.addEventListener("click", this.closeMenu);
       } else {
@@ -342,6 +369,7 @@ export default {
       }
     },
     displayNumb(value) {
+      // console.log(value, "value");
       this.displayControl(value);
     },
   },
@@ -354,28 +382,68 @@ export default {
         this.windowHeight = document.documentElement.clientHeight;
       })();
     };
+    // 横向滚动 获取滚动的长度 好定位删除提示的位置
+    let params = document.getElementById("svgRow")
+    params.addEventListener("scroll",this.dataScroll);
     //鼠标右键
     window.oncontextmenu = function (e) {
+      // debugger
       e.preventDefault(); //取消默认右键
       if (e.target.localName == "image") {
         // debugger
         let letftWidth = 105;
-        that.left = e.offsetX + letftWidth + 30;
+        that.left = e.offsetX + 30;
         that.top = e.y - 90;
+
         that.deleteVisible = true;
         that.deleteObj = e.target.parentElement.snap;
-        console.log(e)
       }
     };
+    //鼠标拖动
+    window.ondrag = function (e) {
+      console.log(e)
+      let oDiv = document.getElementById("imageId");
+      this.pageXimage = e.pageX;
+      this.pageYimage = e.pageY;
+      if (
+        e.pageY - oDiv.getBoundingClientRect().top < 5 ||
+        e.pageX - oDiv.getBoundingClientRect().left < 5 ||
+        oDiv.clientWidth + oDiv.getBoundingClientRect().left - e.pageX < 5 ||
+        oDiv.clientHeight + oDiv.getBoundingClientRect().top - e.pageY < 5
+      ) {
+        let num = "";
+        let selectedIconLists = JSON.parse(
+          JSON.stringify(that.selectedIconList)
+        );
+        that.deleteObjs = e.target.snap;
+        for (let i = 0; i < img.length; i++) {
+          if (img[i].id == that.deleteObjs) {
+            img[i].remove();
+            img.splice(i, 1);
+            that.selectedIconList.splice(i, 1);
+            num = i;
+          }
+        }
+        let selectedIcon = that.eqTypeList.find(
+          (item) => item.typeId == selectedIconLists[num].eqType
+        );
+        that.getEquipment(selectedIconLists[num], selectedIcon);
+      }
+    };
+    
   },
 
   methods: {
+    // 获取滚动条横向滚动的长度
+    dataScroll(){
+      this.svgScrollLeft = document.getElementById("svgRow").scrollLeft
+    },
     /* 查询设备类型*/
     selectEquipmentType() {
       var that = this;
       listType("").then((response) => {
         that.planRoadmapUrl(response.rows);
-        console.log(response.rows, "response");
+        // console.log(response.rows, "response");
       });
     },
     /* 查询环境配置*/
@@ -388,10 +456,10 @@ export default {
           e.eqId = e.id + e.sdName;
           e.pile = "";
         });
-        console.log(response.rows, "接口返回数据");
-        console.log(response.rows.length, "接口返回数据");
-        console.log(that.dict.type.environment, "字典数据");
-        console.log(that.dict.type.environment.length, "字典数据长度");
+        // console.log(response.rows, "接口返回数据");
+        // console.log(response.rows.length, "接口返回数据");
+        // console.log(that.dict.type.environment, "字典数据");
+        // console.log(that.dict.type.environment.length, "字典数据长度");
         if (that.dict.type.environment.length != response.rows.length) {
           for (
             let index = 0;
@@ -402,9 +470,9 @@ export default {
               (e) =>
                 e.environmentType == that.dict.type.environment[index].value
             );
-            console.log(obj, "符合条件的obj");
+            // console.log(obj, "符合条件的obj");
             if (obj == undefined) {
-              console.log(obj, "666666");
+              // console.log(obj, "666666");
               let one = [
                 {
                   url: [],
@@ -416,7 +484,7 @@ export default {
             }
           }
         }
-        console.log(that.Clist, "that.Clist");
+        // console.log(that.Clist, "that.Clist");
         that.planRoadmapEnvironmentUrl(that.Clist);
       });
     },
@@ -444,7 +512,7 @@ export default {
     async planRoadmapUrl(list) {
       // debugger
       var that = this;
-      console.log(list, "接口返回数据");
+      // console.log(list, "接口返回数据");
       for (let i = 0; i < list.length; i++) {
         if (list[i].iFileList != null) {
           let imgUrl = [];
@@ -459,7 +527,7 @@ export default {
         }
       }
       that.eqTypeList = list;
-      console.log(list, "list");
+      // console.log(list, "list");
       this.saveLoading = false;
     },
     /* 请求图片base64地址*/
@@ -497,6 +565,7 @@ export default {
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
           this.selectedIconList = res.eqList;
+          console.log(this.selectedIconList, "this.selectedIconList");
           listType("").then((response) => {
             this.drawSvg(response.rows);
           });
@@ -531,10 +600,10 @@ export default {
     drawSvg(eqTypeList) {
       var that = this;
       let list = that.selectedIconList;
-      console.log('that.selectedIconList',that.selectedIconList)
+      // console.log("that.selectedIconList", that.selectedIconList);
       // debugger;
       for (let i = 0; i < list.length; i++) {
-        console.log('list.length',list.length)
+        // console.log("list.length", list.length);
         var iconWidth = 0;
         var iconHeight = 0;
         if (list[i].width != "") {
@@ -548,7 +617,7 @@ export default {
             break;
           }
         }
-        console.log('list[i]',list[i])
+        // console.log("list[i]", list[i]);
         //矩形框
         if (list[i].url.length > 1) {
           // console.log('矩形框')
@@ -569,7 +638,7 @@ export default {
           );
           // console.log(list[i].pile, 'list[i].pile')
           if (list[i].pile != "" && list[i].pile) {
-            console.log('list[i].pile')
+            // console.log("list[i].pile");
             let r = that.svg.paper
               .rect(
                 list[i].position.left - 20,
@@ -583,12 +652,12 @@ export default {
               });
 
             //桩号
-            console.log(
-              list[i],
-              list[i].pile.length,
-              list[i].position.left - (2 * list[i].pile.length - 20),
-              "list[i].pile"
-            );
+            // console.log(
+            //   list[i],
+            //   list[i].pile.length,
+            //   list[i].position.left - (2 * list[i].pile.length - 20),
+            //   "list[i].pile"
+            // );
             let t = "";
             if (list[i].pile) {
               if (list[i].pile.length > 10) {
@@ -625,7 +694,7 @@ export default {
             });
           }
         } else {
-          console.log(iconWidth, iconWidth < 20, "iconWidth");
+          // console.log(iconWidth, iconWidth < 20, "iconWidth");
           // let num = iconWidth<30?(iconWidth<25?10:2):-8;
           // let num = 0;
           var img3 = that.svg.paper.image(
@@ -673,25 +742,24 @@ export default {
             t.attr({
               x: list[i].position.left - list[i].pile.length - 4,
             });
-            console.log(list[i], r, "list[i]");
+            // console.log(list[i], r, "list[i]");
             img[i] = that.svg.paper.g(r, t, img3).attr({
               class: "mydrags",
             });
-            console.log('正常',img[i]);
+            // console.log("正常", img[i]);
             // if(list[i].eqType == 5){
             //   img[i] = that.svg.paper.g(r - 10, t, img3).attr({
             //     class: "mydrags",
             //   });
             // }
           } else {
-
             img[i] = that.svg.paper.g(img3).attr({
               class: "mydrags",
             });
-            console.log('错误',img[i]);
+            // console.log("错误", img[i]);
           }
         }
-        console.log('所有',img[i]);
+        // console.log("所有", img[i]);
         img[i].drag();
       }
 
@@ -713,17 +781,19 @@ export default {
       this.saveLoading = true;
       let eqList = [];
       //遍历设备，获取位置
-      console.log(this.selectedIconList,'this.selectedIconList',img)
+      // console.log(this.selectedIconList, "this.selectedIconList", img);
       for (let i = 0; i < this.selectedIconList.length; i++) {
         if (this.selectedIconList[i].eqType == 12) {
-          console.log(this.selectedIconList[i],'111111111w')
-          this.selectedIconList[i].pileNum = this.selectedIconList[i].pile.replace(/[^\d.]/g, "");
-          console.log(this.selectedIconList[i].pileNum);
+          // console.log(this.selectedIconList[i], "111111111w");
+          this.selectedIconList[i].pileNum = this.selectedIconList[
+            i
+          ].pile.replace(/[^\d.]/g, "");
+          // console.log(this.selectedIconList[i].pileNum);
         }
         if (JSON.stringify(this.selectedIconList[i]) != "{}") {
-          console.log(2222222)
+          // console.log(2222222);
           if (img[i]) {
-            console.log(3333333333)
+            // console.log(3333333333);
             this.selectedIconList[i].position = {
               left:
                 img[i].attr("transform").localMatrix.e +
@@ -733,7 +803,7 @@ export default {
                 this.selectedIconList[i].position.top,
             };
             eqList.push(this.selectedIconList[i]);
-          }else{
+          } else {
             eqList.push(this.selectedIconList[i]);
           }
         }
@@ -777,10 +847,10 @@ export default {
         tunnelId: this.selectedTunnel.id,
         storeConfigure: JSON.stringify(configData),
       };
-      console.log(param, configData, "configData");
+      // console.log(param, configData, "configData");
       configData.eqList.forEach((v) => {
         if (v.eqType == 3) {
-          console.log(v, "交通信号灯");
+          // console.log(v, "交通信号灯");
         }
       });
       updateTunnels(param).then((response) => {
@@ -807,18 +877,22 @@ export default {
     },
     /* 控制桩号显示*/
     displayControl(value) {
-      console.log(value, "value");
       let list = this.selectedIconList;
       //不显示
       if (value == false) {
         for (let i = 0; i < list.length; i++) {
-          img[i][0].attr({
-            width: 0,
-            height: 0,
-          });
-          img[i][1].attr({
-            text: "",
-          });
+          if(img[i][0].node.nodeName != 'image'){
+            img[i][0].attr({
+              width: 0,
+              height: 0,
+            });
+            if (img[i][1]) {
+              img[i][1].attr({
+                text: "",
+              });
+            }
+          }
+          
         }
       } else {
         //显示
@@ -855,13 +929,13 @@ export default {
     },
     /* 点击删除*/
     deleteImage() {
-      console.log("我右键删除了",this.direction,img);
+      // debugger
+      // console.log("我右键删除了", this.direction, img);
       if (this.direction == 1) {
         this.upList.splice(this.deleteIndex, 1, {});
       } else if (this.direction == 2) {
         this.downList.splice(this.deleteIndex, 1, {});
       } else {
-
         for (let i = 0; i < img.length; i++) {
           if (img[i].id == this.deleteObj) {
             img[i].remove();
@@ -871,7 +945,7 @@ export default {
         }
         // this.equipmentList = this.addMask(response.rows)
       }
-      console.log("我右键删除了11",img,this.selectedIconList);
+      // console.log("我右键删除了11", img, this.selectedIconList);
       this.deleteVisible = false;
       this.direction = 0;
     },
@@ -893,7 +967,7 @@ export default {
     },
     /* 打开设备弹框*/
     openEquipmentDialog(id, index, type) {
-      console.log(id, index, type, "id, index, type");
+      // console.log(id, index, type, "id, index, type");
       this.title = "选择设备";
       this.equipmentList = [];
       if (type == "type") {
@@ -918,7 +992,7 @@ export default {
       that.EnvironmentList.forEach((e) => {
         e = that.addMask(e);
       });
-      console.log(this.EnvironmentList, "处理后的数组");
+      // console.log(this.EnvironmentList, "处理后的数组");
       // console.log(this.EnvironmentLis.length,'判断的长度')
       if (this.EnvironmentList.length > 0) {
         this.EnvironmentVisible = true;
@@ -929,6 +1003,7 @@ export default {
       var that = this;
       newListDevices(param).then((response) => {
         that.equipmentList = that.addMask(response.rows);
+        // console.log(that.equipmentList,"that.equipmentList")
         if (this.equipmentList.length > 0) {
           this.equipmentVisible = true;
         }
@@ -957,7 +1032,8 @@ export default {
     },
     /* 选择设备*/
     getEquipment(item, eqType) {
-      console.log(item, eqType, "选择设备");
+      // console.log(item, eqType, "选择设备");
+      // console.log(this.selectedIconList);
       // debugger
       var url = eqType.url;
       var iconWidth = Number(eqType.iconWidth);
@@ -972,7 +1048,7 @@ export default {
             top: 0,
           });
         this.selectedIconList.push(item);
-        console.log(this.selectedIconList, "this.selectedIconList");
+        // console.log(this.selectedIconList, "this.selectedIconList");
         that.equipmentList = that.addMask(that.equipmentList);
         if (item.pile != "" && item.pile) {
           // 桩号框以及框内汉字的位置是由设备位置决定的
@@ -1056,7 +1132,6 @@ export default {
             //       id: item.eqId,
             //     });
             // }
-
 
             img3 = this.svg.paper.image(url, 0, 0, iconWidth, iconHeight).attr({
               id: item.eqId,
@@ -1183,7 +1258,7 @@ export default {
           break;
         }
       }
-      console.log(exist, "exist");
+      // console.log(exist, "exist");
       return exist;
     },
     /* 选过的设备加遮罩*/
@@ -1322,10 +1397,18 @@ export default {
       this.laneVisible = false;
       this.paramVisible = false;
     },
+    handleBack() {
+      this.$router.push({
+        path: "/dev/sd/tunnel",
+      });
+    },
     // 辅助线
     auxiliaryLine() {
+      // debugger;
+      // debugger
+      let that = this;
       if (!$("#svg g")) return;
-      var MIN_DISTANCE = 8; //捕获的最小距离
+      var MIN_DISTANCE = 1; //捕获的最小距离
 
       var guides = []; // 没有可用的引导
 
@@ -1333,6 +1416,7 @@ export default {
 
       $("#svg g").draggable({
         start: function (event, ui) {
+          // debugger
           guides = $.map($("#svg g").not(this), computeGuidesForElement);
           //鼠标距离选中元素最左边和最上边的距离
           for (const k in event.target) {
@@ -1350,25 +1434,27 @@ export default {
 
         /**
 
-		            * 参数说明
+         * 参数说明
 
-		            * @param event
+         * @param event
 
-		            * @param ui
+         * @param ui
 
-		            *
+         *
 
-		            *  event事件的
+         *  event事件的
 
-		            * offsetX：
+         * offsetX：
 
-		            * outerwidth： 属性是一个只读的整数，声明了整个窗口的宽度。
+         * outerwidth： 属性是一个只读的整数，声明了整个窗口的宽度。
 
-		            *  outerheight： 属性是一个只读的整数，声明了整个窗口的高度。
+         *  outerheight： 属性是一个只读的整数，声明了整个窗口的高度。
 
-		            */
+         */
 
         drag: function (event, ui) {
+          // console.log(event)
+          // debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1391,9 +1477,10 @@ export default {
 
           //pageX、pageY：文档坐标x、y ;
           var pos = {
-            top: event.pageY - innerOffsetY,
-            left: event.pageX - innerOffsetX,
+            top: event.pageY,
+            left: event.pageX,
           };
+
           //outerHeight、outerWidth：整个浏览器的高度、宽度
 
           var w = event.pageX - 1; //改
@@ -1413,11 +1500,45 @@ export default {
                 var d = Math.abs(elemGuide[prop] - guide[prop]);
 
                 if (d < chosenGuides[prop].dist) {
+                  // debugger
                   chosenGuides[prop].dist = d;
 
                   chosenGuides[prop].offset = elemGuide[prop] - pos[prop];
+                  let guide1 = {
+                    left: event.pageX + 32,
+                    top: event.pageY + 35,
+                    type: "h",
+                  };
+                  event.toElement.parentNode;
+                  // console.log(event.toElement.parentNode);
 
-                  chosenGuides[prop].guide = guide;
+                  let style = window.getComputedStyle(
+                    event.toElement.parentNode,
+                    null
+                  );
+                  let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
+                  let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
+
+                  let svgs = document.getElementById("svgRow");
+                  let svgss = document.querySelector(".config-content");
+                  let svgeimage = document.querySelector(".el-image");
+                  let stylea = window.getComputedStyle(svgs, null);
+                  let styleas = window.getComputedStyle(svgss, null);
+                  let styleas1 = window.getComputedStyle(svgeimage, null);
+
+                  let paddingLa = parseFloat(
+                    stylea.getPropertyValue("padding-top")
+                  ); //获取左侧内边距
+                  let paddingLa1 = parseFloat(
+                    styleas.getPropertyValue("width")
+                  ); //获取左侧内边距
+                  let paddingLa2 = parseFloat(
+                    styleas1.getPropertyValue("width")
+                  ); //获取左侧内边距
+
+                  guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
+                  guide1.top = paddingtop + paddingLa;
+                  chosenGuides[prop].guide = guide1;
                 }
               }
             });
@@ -1426,14 +1547,18 @@ export default {
           // 画布与窗口的距离
           let left = event.pageX - event.offsetX;
           let top = event.pageY - event.offsetY + 3; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
-
           if (chosenGuides.top.dist <= MIN_DISTANCE) {
             $("#guide-h")
               .css("top", chosenGuides.top.guide.top - top)
               .show();
+            // $("#guide-h1")
+            //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
+            //   .show();
             // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
           } else {
+            // debugger
             $("#guide-h").hide();
+            $("#guide-h1").hide();
             // ui.position.top = pos.top - 104;
           }
 
@@ -1441,18 +1566,172 @@ export default {
             $("#guide-v")
               .css("left", chosenGuides.left.guide.left - left)
               .show();
+            // $("#guide-v1")
+            //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
+            //   .show();
             /* ui.position.left =
 				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
           } else {
             $("#guide-v").hide();
+            $("#guide-v1").hide();
             /* ui.position.left = pos.left; */
           }
         },
 
         stop: function (event, ui) {
-          $("#guide-v, #guide-h").hide();
+          // console.log(event)
+          // debugger
+          //迭代所有的guids，记住最近的h和v guids
+
+          var guideV,
+            guideH,
+            distV = MIN_DISTANCE + 1,
+            distH = MIN_DISTANCE + 1,
+            offsetV,
+            offsetH;
+
+          var chosenGuides = {
+            top: {
+              dist: MIN_DISTANCE + 1,
+            },
+            left: {
+              dist: MIN_DISTANCE + 1,
+            },
+          };
+
+          var $t = $(this);
+
+          //pageX、pageY：文档坐标x、y ;
+          var pos = {
+            top: event.pageY,
+            left: event.pageX,
+          };
+
+          //outerHeight、outerWidth：整个浏览器的高度、宽度
+
+          var w = event.pageX - 1; //改
+
+          var h = event.pageY - 1;
+
+          var elemGuides = computeGuidesForElement(null, pos, w, h);
+
+          // 旁边那个的
+          $.each(guides, function (i, guide) {
+            // 选择了那个的
+            $.each(elemGuides, function (i, elemGuide) {
+              // 高对高 航对航
+              if (guide.type == elemGuide.type) {
+                var prop = guide.type == "h" ? "top" : "left";
+
+                var d = Math.abs(elemGuide[prop] - guide[prop]);
+
+                if (d < chosenGuides[prop].dist) {
+                  // debugger
+                  chosenGuides[prop].dist = d;
+
+                  chosenGuides[prop].offset = elemGuide[prop] - pos[prop];
+                  let guide1 = {
+                    left: event.pageX + 32,
+                    top: event.pageY + 35,
+                    type: "h",
+                  };
+                  event.toElement.parentNode;
+                  // console.log(event.toElement.parentNode);
+
+                  let style = window.getComputedStyle(
+                    event.toElement.parentNode,
+                    null
+                  );
+                  let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
+                  let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
+                  // console.log(paddingL);
+                  // console.log(paddingtop);
+                  // console.log("ddddddddddddddddddddddddddddddd");
+                  // let ds = getElementPosition(event.toElement.parentNode)
+                  // console.log(ds)
+                  let oDiv = document.getElementById("imageId");
+
+                  let svgs = document.getElementById("svgRow");
+                  let svgss = document.querySelector(".config-content");
+                  let svgeimage = document.querySelector(".el-image");
+                  // console.log(svgss);
+
+                  let stylea = window.getComputedStyle(svgs, null);
+                  let styleas = window.getComputedStyle(svgss, null);
+                  let styleas1 = window.getComputedStyle(svgeimage, null);
+                  // console.log(styleas);
+
+                  let paddingLa = parseFloat(
+                    stylea.getPropertyValue("padding-top")
+                  ); //获取左侧内边距
+                  let paddingLa1 = parseFloat(
+                    styleas.getPropertyValue("width")
+                  ); //获取左侧内边距
+                  let paddingLa2 = parseFloat(
+                    styleas1.getPropertyValue("width")
+                  ); //获取左侧内边距
+                  // console.log(paddingLa1 - paddingLa2);
+                  // console.log(44444444444444444444444444444444444);
+                  // console.log(event.toElement.width.animVal.value);
+                  guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
+                  guide1.top = paddingtop + paddingLa;
+                  chosenGuides[prop].guide = guide1;
+                }
+              }
+            });
+          });
+
+          // 画布与窗口的距离
+          let left = event.pageX - event.offsetX;
+          let top = event.pageY - event.offsetY ; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
+          if (chosenGuides.top.dist <= MIN_DISTANCE) {
+            $("#guide-h")
+              .css("top", chosenGuides.top.guide.top)
+              .show();
+            // $("#guide-h1")
+            //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
+            //   .show();
+            // ui.position.top = chosenGuides.top.guide.top - 104 - chosenGuides.top.offset;
+          } else {
+            // debugger
+            $("#guide-h").hide();
+            $("#guide-h1").hide();
+            // ui.position.top = pos.top - 104;
+          }
+
+          if (chosenGuides.left.dist <= MIN_DISTANCE) {
+            $("#guide-v")
+              .css("left", chosenGuides.left.guide.left )
+              .show();
+            // $("#guide-v1")
+            //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
+            //   .show();
+            /* ui.position.left =
+				      chosenGuides.left.guide.left - chosenGuides.left.offset; */
+          } else {
+            $("#guide-v").hide();
+            $("#guide-v1").hide();
+            /* ui.position.left = pos.left; */
+          }
+          $("#guide-v, #guide-h ,#guide-v1 ,#guide-h1").hide();
         },
       });
+
+      function getElementPosition(element) {
+        let top = element.offsetTop; //这是获取元素距父元素顶部的距离
+        let left = element.offsetLeft;
+        var current = element.offsetParent; //这是获取父元素
+        while (current !== null) {
+          //当它上面有元素时就继续执行
+          top += current.offsetTop; //这是获取父元素距它的父元素顶部的距离累加起来
+          left += current.offsetLeft;
+          current = current.offsetParent; //继续找父元素
+        }
+        return {
+          top,
+          left,
+        };
+      }
 
       function computeGuidesForElement(elem, pos, w, h) {
         if (elem != null) {
@@ -1880,8 +2159,16 @@ input {
   border-top: 1px solid red;
   width: 100%;
 }
+#guide-h1 {
+  border-top: 1px solid red;
+  width: 100%;
+}
 
 #guide-v {
+  border-left: 1px solid red;
+  height: 100%;
+}
+#guide-v1 {
   border-left: 1px solid red;
   height: 100%;
 }

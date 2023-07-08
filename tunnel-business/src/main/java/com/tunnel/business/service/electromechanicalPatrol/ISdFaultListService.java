@@ -45,7 +45,7 @@ public interface ISdFaultListService
      * @param sdFaultList 故障清单
      * @return 结果
      */
-    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,Long[] removeIds);
+    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,String[] removeIds);
 
     /**
      * 批量删除故障清单
@@ -77,4 +77,31 @@ public interface ISdFaultListService
      * @return
      */
     List<SdFaultList> getFaultList(String tunnelId, String faultLevel);
+
+    /**
+     * 根据故障id查设备
+     * @param eqFaultId
+     * @return
+     */
+    String selectSdFaultEqById(String eqFaultId);
+
+    /**
+     * 高速云监听   判断故障是否已存在
+     * @param id
+     * @return
+     */
+    SdFaultList selectSdFaultById(String id);
+
+    /**
+     * app端查询故障类型
+     * @return
+     */
+    List<SdFaultList> getFaultDictValue(String dictType);
+
+    /**
+     * App添加故障信息
+     * @param sdFaultList
+     * @return
+     */
+    int saveFault(SdFaultList sdFaultList);
 }

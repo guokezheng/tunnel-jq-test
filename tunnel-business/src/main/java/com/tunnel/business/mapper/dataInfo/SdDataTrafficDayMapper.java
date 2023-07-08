@@ -69,4 +69,10 @@ public interface SdDataTrafficDayMapper
     public List<Map<String, Object>> getCarTypeOfToday(@Param("tunnelId") String tunnelId);
 
     public List<Map<String, Object>> selectSdDataTrafficDayCountList(@Param("year") long year, @Param("month") long month);
+
+    //每日定时流量统计
+    public Map<String, Object> getVehicleDayListsByParam(Map param);
+
+    //每月定时流量统计
+    public Map<String, Object> getVehicleMonthListsByParam(Map param);
 }

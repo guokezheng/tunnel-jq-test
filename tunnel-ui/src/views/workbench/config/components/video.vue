@@ -8,31 +8,16 @@
       append-to-body
       :visible="cameraVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
+      <div class="dialogStyleBox">
         <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
+        <div class="dialogCloseButton"></div>
       </div>
-      <!-- <div style="width: 100%; height: 30px; padding: 0 15px"></div> -->
       <div style="width: 100%; height: 200px; padding: 0 15px">
-        <!--   <video class="h5video_" id="tt" :src="videoMoNi"  controls
-          muted
-          autoplay
-          disablePictureInPicture="true"
-          controlslist="nodownload noremoteplayback noplaybackrate"
-          loopstyle="width:100%;height:100%;"></video> -->
         <video
+          v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
           class="h5video_"
           controls
@@ -42,6 +27,11 @@
           controlslist="nodownload noplaybackrate noremoteplayback"
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
         ></video>
+        <videoPlayer
+          v-if="videoForm.liveUrl"
+          :rtsp="videoForm.liveUrl"
+          :open="cameraPlayer"
+        ></videoPlayer>
       </div>
       <el-form
         ref="form"
@@ -49,7 +39,6 @@
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding: 0 15px 15px 15px"
       >
         <el-tabs class="videoTabs" v-model="videoActive">
           <el-tab-pane label="详细信息" name="information">
@@ -79,23 +68,21 @@
             </el-row>
             <el-row>
               <el-col :span="13">
-                <el-form-item label="设备状态:">
+                <el-form-item
+                  label="设备状态:"
+                  :style="{
+                    color:
+                      stateForm.eqStatus == '1'
+                        ? 'yellowgreen'
+                        : stateForm.eqStatus == '2'
+                        ? 'white'
+                        : 'red',
+                  }"
+                >
                   {{ geteqType(stateForm.eqStatus) }}
                 </el-form-item>
               </el-col>
             </el-row>
-            <!-- <el-row>
-              <el-col :span="13">
-                <el-form-item label="上行摄像机:">
-                  {{ "1000米" }}
-                </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item label="下行摄像机:">
-                  {{ "1000米" }}
-                </el-form-item>
-              </el-col>
-            </el-row> -->
           </el-tab-pane>
           <el-tab-pane label="摄像机参数" name="videoParams">
             <el-row>
@@ -149,31 +136,22 @@
           </el-tab-pane>
         </el-tabs>
       </el-form>
-      <div slot="footer">
+      <div slot="footer" class="dialog-footer">
         <el-button
-          type="primary"
-          size="mini"
           @click="videoYunTai()"
-          style="width: 80px"
           class="submitButton"
           v-show="stateForm.eqType == 24"
           >云台控制</el-button
         >
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="videoViewing()"
           style="width: 80px"
           class="submitButton"
           >录像查看</el-button
-        >
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleClosee()"
-          style="width: 80px"
-          >取 消</el-button
-        >
+        > -->
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -184,7 +162,13 @@
       append-to-body
       :visible="historyVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form
         ref="historyForm"
         :model="queryParams"
@@ -237,7 +221,14 @@
           >重 置</el-button
         >
       </el-form>
-      <div style="width: 100%; height: 400px; overflow-y: auto; margin-bottom: 50px;">
+      <div
+        style="
+          width: 100%;
+          height: 400px;
+          overflow-y: auto;
+          margin-bottom: 50px;
+        "
+      >
         <div
           style="
             width: 19%;
@@ -284,53 +275,63 @@
       append-to-body
       :visible="yunTaiVisible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-row class="yuntaiBox">
         <el-col :span="18">
           <div class="yuntaiVideoBox">
-             
-            <video
-              class="yunTaiVideo"
-              id="tt"
-              :src="videoMoNi"
-              controls
-              muted
-              autoplay
-              disablePictureInPicture="true"
-              controlslist="nodownload noremoteplayback noplaybackrate"
-              loopstyle="width:100%;height:100%;"
-            ></video>
+            <videoPlayer
+              v-if="videoForm.liveUrl"
+              :rtsp="videoForm.liveUrl"
+              :open="cameraPlayer"
+            ></videoPlayer>
           </div>
-          <div class="yuntaiPic">
-            <div @click="clickLeft()"><</div>
+          <!-- <div class="yuntaiPic"> -->
+          <!-- <div @click="clickLeft()"><</div>
             <div>
               <img :src="item.pic" v-for="(item,index) in picList" :key="index"></img>
             </div>
-            <div @click="clickRight()">></div>
-          </div>
+            <div @click="clickRight()">></div> -->
+          <!-- <img :src="videoIcon" v-for="(item,index) of 8" :key="index"/> -->
+          <!-- </div> -->
         </el-col>
         <el-col :span="6">
-          <div class="fangxiang"></div>
+          <div class="fangxiang">
+            <div class="picBox">
+              <img
+                :src="yuntai"
+                v-for="(item, index) of yuntaiList"
+                :key="index"
+                @click="changeYunTai(item.cmdType)"
+              />
+            </div>
+            <div class="yuzhiwei">预置位</div>
+          </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(11)">-</div>
             <div>变倍</div>
-            <div>+</div>
+            <div @click="changeYunTai(12)">+</div>
           </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(13)">-</div>
             <div>聚焦</div>
-            <div>+</div>
+            <div @click="changeYunTai(14)">+</div>
           </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(16)">-</div>
             <div>光圈</div>
-            <div>+</div>
+            <div @click="changeYunTai(15)">+</div>
           </div>
-          <div class="sliderClass">
+          <!-- <div class="sliderClass">
             <div>0</div>
             <el-slider v-model="yunTaiForm.slider" :max="255"></el-slider>
             <div>255</div>
-          </div>
+          </div> -->
           <div class="switchClass">
             <div>雨刷</div>
             <el-switch
@@ -340,10 +341,11 @@
               inactive-color="#ddd"
               active-text="开"
               inactive-text="关"
+              @change="changeYunTai(yunTaiForm.yuShua, 'yushua')"
             >
             </el-switch>
           </div>
-          <div class="switchClass">
+          <!-- <div class="switchClass">
             <div>灯光</div>
             <el-switch
               style="display: block"
@@ -354,8 +356,8 @@
               inactive-text="关"
             >
             </el-switch>
-          </div>
-          <div class="switchClass">
+          </div> -->
+          <!-- <div class="switchClass">
             <div>除雪</div>
             <el-switch
               style="display: block"
@@ -366,7 +368,7 @@
               inactive-text="关"
             >
             </el-switch>
-          </div>
+          </div> -->
         </el-col>
       </el-row>
     </el-dialog>
@@ -375,21 +377,29 @@
 
 <script>
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
+import { getDeviceById, videoStreaming } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
+import flvjs from "flv.js";
+import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
+import { PTZContro } from "@/api/workbench/config.js"; //提交控制信息
+
+// import { getLocalIP } from "@/api/event/vedioRecord";
 
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  components: {
+    videoPlayer,
+  },
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
-      cameraVisible: true, //摄像机弹窗
+      cameraPlayer: false, //摄像机弹窗
       historyVisible: false, //历史记录弹窗
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
       eventTypeData: [], //事件类型
-      yunTaiVisible:false,
+      yunTaiVisible: false,
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -397,7 +407,41 @@ export default {
       dateRange: [], //选择时间数组
       total: 0, // 总条数
       src: require("@/assets/images/warningPhoto.png"),
-      videoMoNi: require("../../../../assets/Example/d1.mp4"),
+      videoMoNi: "",
+      // videoMoNi: require("../../../../assets/Example/d1.mp4"),
+      videoForm: {
+        liveUrl: "",
+      },
+      // hostIP: null,
+      cameraVisible: false,
+      videoIcon: require("@/assets/logo/equipment_log/固定摄像机-正常.png"),
+      yuntai: require("@/assets/cloudControl/yuntai.png"),
+      yuntaiList: [
+        {
+          cmdType: 21, //上
+        },
+        {
+          cmdType: 52, //右上
+        },
+        {
+          cmdType: 24, //右
+        },
+        {
+          cmdType: 53, //右下
+        },
+        {
+          cmdType: 22, //下
+        },
+        {
+          cmdType: 51, //左下
+        },
+        {
+          cmdType: 23, //左
+        },
+        {
+          cmdType: 50, //左上
+        },
+      ],
       videoList: [
         {
           pic: require("@/assets/images/ruoyi-login-background.jpg"),
@@ -429,7 +473,7 @@ export default {
           event: "事件: 道路拥堵",
           status: "正在进行",
         },
-        
+
         {
           pic: require("@/assets/images/warningPhoto.png"),
           time: "2022-03-11 14:47:13",
@@ -463,21 +507,41 @@ export default {
       ],
       yunTaiForm: {
         slider: 0,
-        yuShua: true,
+        yuShua: false,
         dengGuang: false,
         chuXue: true,
       },
-      picPage:1,
+      picPage: 1,
+      player: null,
+      tunnelId: "",
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
-  created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    this.getmessage();
-    if(this.videoList.length > 4){
-      this.picList = this.videoList.slice(0,4)
-    }
-  },
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.cameraVisible = true;
+      this.videoActive = "information", // tab页
+      this.cameraPlayer = false;
+      this.getmessage();
+    },
+    // 点击云台方向
+    changeYunTai(cmdType, type) {
+      if (type && cmdType == false) {
+        cmdType = 48;
+      } else if (type && cmdType == true) {
+        cmdType = 49;
+      }
+      PTZContro(this.eqInfo.equipmentId, cmdType).then((res) => {
+        console.log(res, "云台控制");
+      });
+    },
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
@@ -485,12 +549,28 @@ export default {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          displayH5sVideoAll(res.data.secureKey);
+          this.tunnelId = res.data.tunnelId;
+          if (res.data.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
+            displayH5sVideoAll(res.data.secureKey, "h5sVideo1");
+          } else {
+            videoStreaming(this.eqInfo.equipmentId)
+              .then((response) => {
+                console.log(response, "视频流");
+                if (response.code == 200 && response.data) {
+                  this.videoForm = response.data;
+                  this.cameraPlayer = true;
+                } else {
+                  // this.videoForm.liveUrl = "rtsp://admin:12345@192.168.1.64:554/ch1/sub/av_stream"
+                  // this.cameraPlayer = true;
+
+                  this.$modal.msgWarning("获取视频失败");
+                }
+              })
+              .catch((e) => {
+                this.$modal.msgWarning("获取视频失败");
+              });
+          }
         });
-        // await getInfo(this.eqInfo.clickEqType).then((response) => {
-        //     console.log(response, "查询设备当前状态");
-        //     this.stateForm.state = response.data.state;
-        //   });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -519,16 +599,18 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.cameraVisible = false;
+      this.cameraPlayer = false;
+      this.yunTaiVisible = false;
     },
     // 录像查看
     videoViewing() {
-      this.cameraVisible = false;
+      // this.cameraVisible = false;
       this.historyVisible = true;
     },
     // 云台控制
     videoYunTai() {
-      this.cameraVisible = false;
+      // this.cameraVisible = false;
       this.yunTaiVisible = true;
     },
     // 历史记录表单查询
@@ -537,30 +619,28 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
     },
-    clickLeft(){
-      if(this.videoList.length > 4){
-
-        if(this.picPage == 2){
-          this.picList = this.videoList.slice(0,4)
-          this.picPage = 1
-        }else if(this.picPage == 1){
-          this.picList = this.videoList.slice(4,8)
-          this.picPage = 2
+    clickLeft() {
+      if (this.videoList.length > 4) {
+        if (this.picPage == 2) {
+          this.picList = this.videoList.slice(0, 4);
+          this.picPage = 1;
+        } else if (this.picPage == 1) {
+          this.picList = this.videoList.slice(4, 8);
+          this.picPage = 2;
         }
-        this.$forceUpdate()
-
+        this.$forceUpdate();
       }
     },
-    clickRight(){
-      if(this.videoList.length > 4){
-        if(this.picPage == 2){
-          this.picList = this.videoList.slice(0,4)
-          this.picPage = 1
-        }else if(this.picPage == 1){
-          this.picList = this.videoList.slice(4,8)
-          this.picPage = 2
+    clickRight() {
+      if (this.videoList.length > 4) {
+        if (this.picPage == 2) {
+          this.picList = this.videoList.slice(0, 4);
+          this.picPage = 1;
+        } else if (this.picPage == 1) {
+          this.picList = this.videoList.slice(4, 8);
+          this.picPage = 2;
         }
-        this.$forceUpdate()
+        this.$forceUpdate();
       }
     },
   },
@@ -576,7 +656,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
-.theme-light .pagination-container {
+.theme-dark .pagination-container {
   background: #00152b;
 }
 .historyMiniBox {
@@ -589,7 +669,7 @@ export default {
   background-color: #638ca6;
 }
 ::v-deep .el-pagination__total {
-  color: #01AAFD !important;
+  color: #01aafd !important;
 }
 .el-pagination.is-background .btn-prev,
 .el-pagination.is-background .btn-next,
@@ -609,33 +689,32 @@ export default {
 }
 .yuntaiBox {
   width: 100%;
-  height: 600px;
+  // height: 600px;
+  height: 460px;
   padding: 20px;
-  // border: solid 1px red;
   > .el-col:nth-of-type(1) {
     padding-right: 10px;
   }
   .yuntaiVideoBox {
     width: 100%;
     height: 400px;
-    .yunTaiVideo{
+    .yunTaiVideo {
       width: 100%;
       height: 100%;
-      object-fit: cover; 
-      z-index: -100
+      object-fit: cover;
+      z-index: -100;
     }
   }
   .yuntaiPic {
     width: 100%;
-    height: calc(100% - 450px);
-    margin-top: 20px;
+    height: calc(100% - 440px);
+    margin-top: 10px;
     display: flex;
     align-items: center;
     > div:nth-of-type(1),
     > div:nth-of-type(3) {
       width: 30px;
       height: 30px;
-      // border: solid 1px white;
       border-radius: 15px;
       text-align: center;
       line-height: 28px;
@@ -653,16 +732,112 @@ export default {
       margin-left: 5px;
       cursor: pointer;
     }
-    img{
-      width: 25%;
-      height: 100%;
-      padding-right: 5px;
+    img {
+      width: 30px;
+      height: 30px;
+      margin-left: 6px;
+      cursor: pointer;
+      caret-color: rgba(0, 0, 0, 0);
+    }
+    img:nth-of-type(1) {
+      margin-left: 0;
     }
   }
   .fangxiang {
-    widows: 100%;
-    height: 40%;
-    border: solid 1px white;
+    width: 100%;
+    height: 215px;
+    margin: 0 auto;
+    transform: scale(0.8);
+    position: relative;
+    .yuzhiwei {
+      text-decoration: underline;
+      color: #fff;
+      font-size: 24px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      height: 36px;
+      width: 74px;
+      cursor: pointer;
+      caret-color: rgba(0, 0, 0, 0);
+    }
+    .picBox {
+      width: 215px;
+      height: 100%;
+      margin: 0 auto;
+      position: relative;
+      transform: rotate(-23deg);
+      > div {
+        text-decoration: underline;
+        color: #fff;
+        font-size: 24px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        height: 36px;
+        width: 74px;
+        cursor: pointer;
+        caret-color: rgba(0, 0, 0, 0);
+      }
+      > img {
+        cursor: pointer;
+        caret-color: rgba(0, 0, 0, 0);
+      }
+      > img:nth-of-type(1) {
+        position: absolute;
+        top: -1px;
+        left: 96px;
+        transform: rotate(0deg) scale(0.77);
+      }
+      > img:nth-of-type(2) {
+        position: absolute;
+        top: 45px;
+        left: 137px;
+        transform: rotate(45deg) scale(0.77);
+      }
+      > img:nth-of-type(3) {
+        position: absolute;
+        top: 106px;
+        left: 133px;
+        transform: rotate(90deg) scale(0.77);
+      }
+      > img:nth-of-type(4) {
+        position: absolute;
+        top: 147px;
+        left: 87px;
+        transform: rotate(135deg) scale(0.77);
+      }
+      > img:nth-of-type(5) {
+        position: absolute;
+        top: 143px;
+        left: 26px;
+        transform: rotate(180deg) scale(0.77);
+      }
+      > img:nth-of-type(6) {
+        position: absolute;
+        top: 97px;
+        left: -14px;
+        transform: rotate(225deg) scale(0.77);
+      }
+      > img:nth-of-type(7) {
+        position: absolute;
+        top: 36px;
+        left: -11px;
+        transform: rotate(269deg) scale(0.77);
+      }
+      > img:nth-of-type(8) {
+        position: absolute;
+        top: -5px;
+        left: 35px;
+        transform: rotate(315deg) scale(0.77);
+      }
+    }
   }
   .jiaJian {
     width: 100%;
@@ -671,14 +846,21 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 10px;
+    transform: translateY(-20px);
     > div:nth-of-type(1),
     > div:nth-of-type(3) {
       width: 23px;
       height: 23px;
-      // border: solid 1px white;
       border-radius: 15px;
       text-align: center;
       font-size: 18px;
+      cursor: pointer;
+      caret-color: rgba(0, 0, 0, 0);
+    }
+    > div:nth-of-type(1):hover,
+    > div:nth-of-type(3):hover {
+      background: #01aafd;
+      color: #fff;
     }
     > div:nth-of-type(1) {
       line-height: 18px;
@@ -694,6 +876,7 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 15px;
+
     > .el-slider {
       width: 50%;
     }
@@ -705,28 +888,36 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 22px;
+    transform: translateY(-20px);
   }
 }
-::v-deep .el-switch__label{
-  color:#0A6591 !important;
+::v-deep .el-switch__label {
+  color: #0a6591 !important;
 }
-::v-deep .el-switch__label.is-active{
-  color:#FF9900 !important;
+::v-deep .el-switch__label.is-active {
+  color: #ff9900 !important;
 }
-::v-deep .el-switch__core{
+::v-deep .el-switch__core {
   height: 14px;
 }
-::v-deep .el-switch__core:after{
+::v-deep .el-switch__core:after {
   height: 12px;
   width: 12px;
   top: 0;
 }
-::v-deep .el-switch.is-checked .el-switch__core::after{
+::v-deep .el-switch.is-checked .el-switch__core::after {
   margin-left: -12px;
 }
-.paginationWorkbench{
+.paginationWorkbench {
   position: fixed;
   bottom: 350px !important;
   height: 60px;
+}
+
+::v-deep .el-dialog__wrapper {
+  pointer-events: none !important;
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
 }
 </style>

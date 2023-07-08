@@ -41,8 +41,13 @@ public class DataUtils {
      * @return
      */
     public static String itemContentToJson(String itemContent, String protocolType) {
-        if (itemContent == null || "".equals(itemContent) || itemContent.length() < 5)
+        if (itemContent == null || "".equals(itemContent) || itemContent.length() < 5) {
             return itemContent;
+        }
+        itemContent = itemContent.replaceAll("\n", "<n>");
+        itemContent = itemContent.replaceAll("\r", "<r>");
+        itemContent = itemContent.replaceAll("\r\n","<r><n>");
+        itemContent = itemContent.replaceAll("\\\\n","<br>");
         String splitSign = itemContent.substring(0, 4);//直接和硬件通讯获取的结果
         itemContent = itemContent.substring(itemContent.indexOf("="), itemContent.length());//直接和硬件通讯获取的结果
         JSONArray jsonArrList = new JSONArray();

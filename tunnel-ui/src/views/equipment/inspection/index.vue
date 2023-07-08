@@ -489,7 +489,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有巡视记录数据项?', "警告", {
+      this.$confirm('是否确认导出巡视记录数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -503,7 +503,7 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-  
+
   ::v-deep .el-form-item--medium .el-form-item__content{
       width: 220px;
   }

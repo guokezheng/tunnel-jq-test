@@ -9,15 +9,13 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.datacenter.domain.enumeration.EventSourceEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.datacenter.domain.enumeration.EventStateEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.*;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
+import com.tunnel.business.domain.wulian.KafkaRadar;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
@@ -27,6 +25,7 @@ import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
+import com.zc.common.core.kafka.kafkaTool;
 import com.zc.common.core.websocket.WebSocketService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -38,10 +37,16 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
+import static com.ruoyi.common.utils.DictUtils.getCacheKey;
 
 /**
- * @author dzy
+ * @author dzy 万集接口
  * @date 2022/9/4 16:51
  */
 @Service
@@ -86,12 +91,12 @@ public class RadarEventServiceImpl implements RadarEventService {
     private String picUrl;
     @Value("${wj.url}")
     private String prefix;
-    @Value("${eventTopic}")
-    private String eventTopic;
+    /*@Value("${eventTopic}")
+    private String eventTopic;*/
     @Value("${authorize.name}")
     private String authorizeName;
-    @Value("${devStatusTopic}")
-    private static String devStatusTopic;
+    /*@Value("${devStatusTopic}")
+    private static String devStatusTopic;*/
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -119,38 +124,48 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setLaneNo(f.getLaneNo() + "");
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
-                sdEvent.setStartTime(f.getEventTimeStampStart());
-                sdEvent.setEndTime(f.getEventTimeStampEnd());
+                sdEvent.setStartTime(dateZh(f.getEventTimeStampStart()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampStart())));
+                sdEvent.setEndTime(dateZh(f.getEventTimeStampEnd()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampEnd())));
+                sdEvent.setEventTime(dateZh(f.getEventTimeStampStart()));
                 sdEvent.setId(f.getEventId());
                 sdEvent.setUpdateTime(DateUtils.getNowDate());
                 //方向
                 if(!StringUtils.isEmpty(f.getDirection())){
-                    sdEvent.setDirection(f.getDirection() + "");
+//                    sdEvent.setDirection(f.getDirection() + "");
+                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
+                    sdEvent.setDirection(direction);
                 }
                 wjMapper.updateEvent(sdEvent);
                 //推送事件数据到物联中台kafka
-                sendDataToOtherSystem(null, sdEvent);
+                //sendDataToOtherSystem(null, sdEvent);
             } else {
                 sdEvent.setId(f.getEventId());
                 String eventType = WJEnum.getValue(f.getEventType());
                 sdEvent.setEventTypeId(Long.parseLong(eventType));
                 sdEvent.setTunnelId(tunnelId);
                 sdEvent.setStationId(f.getStationId() + "");
+                //事件桩号
                 sdEvent.setStakeNum(f.getStakeNum());
+                //车道号
                 sdEvent.setLaneNo(f.getLaneNo() + "");
+                //经度
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
+                //维度
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
-                sdEvent.setStartTime(f.getEventTimeStampStart());
-                sdEvent.setEndTime(f.getEventTimeStampEnd());
+                sdEvent.setStartTime(dateZh(f.getEventTimeStampStart()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampStart())));
+                sdEvent.setEndTime(dateZh(f.getEventTimeStampEnd()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampEnd())));
+                sdEvent.setEventTime(dateZh(f.getEventTimeStampStart()));
+                //事件等级默认为一般
+                sdEvent.setEventGrade("1");
                 //接收到的事件状态设置为未处理
                 sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
                 //事件来源：雷达
-                sdEvent.setEventSource(EventSourceEnum.radar.getCode());
+                sdEvent.setEventSource(EventDescEnum.event_source_radar_video.getCode());
                 //事件方向--将万集定义的隧道方向映射为平台的隧道方向
                 if(!StringUtils.isEmpty(f.getDirection())){
-//                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
-//                    sdEvent.setDirection(direction);
-                    sdEvent.setDirection(String.valueOf(f.getDirection()));
+                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
+                    sdEvent.setDirection(direction);
+                    //sdEvent.setDirection(String.valueOf(f.getDirection()));
                 }
                 //拼接获取默认的事件标题
                 String eventTitle = sdEventService.getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
@@ -161,20 +176,31 @@ public class RadarEventServiceImpl implements RadarEventService {
                 List<WjConfidence> targetList = f.getTargetList();
                 targetList.forEach(s -> s.setEventIds(f.getEventId()));
                 wjMapper.insertEventConfidence(targetList);
+
+                //事故只存 车祸 和 火灾  通过redis 加 定时任务 推送前端  展示爆炸
+                if("16".equals(sdEvent.getEventType())||"20".equals(sdEvent.getEventType())){
+                    redisCache.setCacheObject(getCacheEventKey(sdEvent.getId().toString()),sdEvent);
+                }
             }
         });
         if (CollectionUtils.isNotEmpty(eventList)) {
             wjMapper.insertWjEvent(eventList);
             //推送新添加的事件数据到物联中台
-            sendDataToOtherSystem(eventList, null);
+            //sendDataToOtherSystem(eventList, null);
             log.info("---插入数据list---{}", eventList);
-            List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
-            JSONObject object = new JSONObject();
-            object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("sdEventList",object.toString());
+            for(SdEvent sdEvent : eventList){
+                SdEvent sdEvent1 = new SdEvent();
+                sdEvent1.setId(sdEvent.getId());
+                List<SdEvent> sdEvents = sdEventService.querySdEventList(sdEvent1);
+                //新增事件后推送前端  弹出视频
+                JSONObject object = new JSONObject();
+                object.put("sdEventList", sdEvents);
+                WebSocketService.broadcast("sdEventList",object.toString());
+                // 添加事件流程记录
+                eventFlowService.addEventFlowBatch(sdEvents);
+            }
+            //List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
 
-            // 添加事件流程记录
-            eventFlowService.addEventFlowBatch(sdEventList);
 //            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();
@@ -188,13 +214,37 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
             if (eventList != null && eventList.size() > 0) {
                 for (int i = 0;i < eventList.size();i++) {
-                    jsonObject.put("event", eventList.get(i));
-                    kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
+                    SdEvent event = eventList.get(i);
+                    //event.setEventState("1");
+                    event.setStakeNum(event.getStakeNum().replaceAll("-",""));
+                    jsonObject.put("event", event);
+//                    kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
                 }
             } else if (sdEvent != null) {
+                //sdEvent.setEventState("1");
+                if(sdEvent.getStakeNum()!=null){
+                    sdEvent.setStakeNum(sdEvent.getStakeNum().replaceAll("-",""));
+                }
                 jsonObject.put("event", sdEvent);
-                kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
+                kafkaTwoTemplate.send(TopicEnum.EVENT_TOPIC.getCode(), jsonObject.toString());
             }
+        }
+    }
+
+    //重写管理站推送事件数据到物联中台kafka
+    public void sendDataToOtherSystem(Map<String,Object> sdEventDataMap) {
+        if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("devNo", "S00063700001980001");
+            jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+            if(sdEventDataMap.get("stakeNum") != null){
+                sdEventDataMap.put("stakeNum",sdEventDataMap.get("stakeNum").toString().replaceAll("-",""));
+            }
+            jsonObject.put("event", sdEventDataMap);
+            JSONObject jsonObject1 = JSONObject.parseObject(jsonObject.toString());
+            Object o = jsonObject1.get("event");
+            SdEvent sdEvent = JSONUtil.toBean(o.toString(), SdEvent.class);
+            kafkaTwoTemplate.send(TopicEnum.EVENT_TOPIC.getCode(), jsonObject.toString());
         }
     }
 
@@ -205,7 +255,6 @@ public class RadarEventServiceImpl implements RadarEventService {
         String videoImage = (String) map.get("videoImage");
         String secondVideoImage = (String) map.get("secondVideoImage");
         String thirdVideoImage = (String) map.get("thirdVideoImage");
-        String username = SecurityUtils.getUsername();
         if (StringUtils.isNotBlank(eventId)) {
             // 从缓存中获取文件存储路径
 //            String fileServerPath = RuoYiConfig.getUploadPath();
@@ -215,19 +264,19 @@ public class RadarEventServiceImpl implements RadarEventService {
                 String e1 = "事件前";
 //                String imgUrl = ImageUtil.generateImage(videoImage, url,e1);
 //                String s1 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + videoImage,"0", e1, username);
+                wjMapper.insertPic(eventId, prefix + videoImage,"0", e1);
             }
             if (StringUtils.isNotEmpty(secondVideoImage)) {
                 String e2 = "事件中";
 //                String imgUrl = ImageUtil.generateImage(secondVideoImage, url,e2);
 //                String s2 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + secondVideoImage, "0", e2, username);
+                wjMapper.insertPic(eventId, prefix + secondVideoImage, "0", e2);
             }
             if (StringUtils.isNotEmpty(thirdVideoImage)) {
                 String e3 = "事件后";
 //                String imgUrl = ImageUtil.generateImage(thirdVideoImage, url,e3);
 //                String s3 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + thirdVideoImage, "0", e3 , username);
+                wjMapper.insertPic(eventId, prefix + thirdVideoImage, "0", e3 );
             }
         }
         return AjaxResult.success();
@@ -236,12 +285,11 @@ public class RadarEventServiceImpl implements RadarEventService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult eventVideo(Map<String, Object> map) {
-        String username = SecurityUtils.getUsername();
         String eventId = map.get("eventId") + "";
         String eventVideoUrl = (String) map.get("eventVideoUrl");
         if (StringUtils.isNotBlank(eventVideoUrl)) {
             //wjMapper.updateVideoById(Long.parseLong(eventId), prefix + eventVideoUrl);
-            wjMapper.insertPic(eventId, prefix + eventVideoUrl, "1", "事件短视频" , username);
+            wjMapper.insertPic(eventId, prefix + eventVideoUrl, "1", "事件短视频" );
             return AjaxResult.success();
         }
         return AjaxResult.error();
@@ -283,6 +331,8 @@ public class RadarEventServiceImpl implements RadarEventService {
         }
         List<WjParticipants> list = JSONUtil.toList(parse.toString(), WjParticipants.class);
         List<SdRadarDetectData> dataList = new ArrayList<>();
+        //存入websocket集合
+        List<Map> webSocketList = new ArrayList<>();
         list.forEach(
                 f -> {
                     SdRadarDetectData sdRadarDetectData = new SdRadarDetectData();
@@ -301,14 +351,23 @@ public class RadarEventServiceImpl implements RadarEventService {
                     sdRadarDetectData.setLicenseColor(f.getVehicleColor() + "");
                     sdRadarDetectData.setStakeNum(f.getStakeNum());
                     sdRadarDetectData.setDistance(f.getDistanceEntry());
-                    System.out.println("ID："+sdRadarDetectData.getVehicleId()+",车牌："+sdRadarDetectData.getVehicleLicense()+",速度："+sdRadarDetectData.getSpeed()+",距离："+f.getDistanceEntry());
+                    //将数据推送至物联
+                    sendKafka(sdRadarDetectData);
+                    //感知数据转换map
+                    Map map1 = setCarsnapRedis(sdRadarDetectData);
+                    //判断不是空并且启示数据不是0米
+                    if(StringUtils.isNotEmpty(map1)&&!"0".equals(map1.get("distance"))){
+                        webSocketList.add(map1);
+                    }
+//                    System.out.println("ID："+sdRadarDetectData.getVehicleId()+",车牌："+sdRadarDetectData.getVehicleLicense()+",速度："+sdRadarDetectData.getSpeed()+",距离："+f.getDistanceEntry());
                     dataList.add(sdRadarDetectData);
                 });
         wjMapper.insertRadarDetect(dataList);
+        //传到前端实时展示
         JSONObject object = new JSONObject();
-        object.put("radarDataList", dataList);
-        redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
-        WebSocketService.broadcast("radarDataList",object.toString());
+        object.put("radarDataList", webSocketList);
+        //给指定的客户端发送websocket请求
+        kafkaTool.sendAssignWebSocket(webSocketList,object);
     }
 
     @Override
@@ -395,14 +454,14 @@ public class RadarEventServiceImpl implements RadarEventService {
                                                 data.setUpdateTime(new Date());
                                                 sdDeviceDataMapper.updateSdDeviceData(data);
                                                 jsonObject.put("deviceData", data);
-                                                kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                                                kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
                                                 log.info("推送物联中台kafka内容：" + jsonObject);
                                             } else {
                                                 sdDeviceData.setData(value);
                                                 sdDeviceData.setCreateTime(new Date());
                                                 sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
                                                 jsonObject.put("deviceData", sdDeviceData);
-                                                kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                                                kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
                                                 log.info("推送物联中台kafka内容：" + jsonObject);
                                             }
                                             //接收到摄像机和雷达的数据，直接回传给万集
@@ -411,7 +470,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                                     }
                                     devicesMapper.updateSdDevicesBatch(t.getEqId(), t.getEqStatus());
                                     jsonObject.put("deviceStatus", t);
-                                    kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                                    kafkaTemplate.send(TopicEnum.DEV_STATUS_TOPIC.getCode(), jsonObject.toString());
                                     log.info("推送物联中台kafka内容：" + jsonObject);
                                 }
                         );
@@ -420,15 +479,15 @@ public class RadarEventServiceImpl implements RadarEventService {
                     wjDevicelidar.setEqId(wjDeviceCameraList.get(wjDeviceCameraList.size() - 1).getEqId());
                     //存储后将雷达数据从相机数据剔除
                     wjDeviceCameraList.remove(wjDeviceCameraList.size() - 1);
-                    //雷达数据存redis
-                    redisCache.setCacheMapValue(RadarEventConstants.WJ_LIDAR_INFO_KEY, RadarEventConstants.WJ_LIDAR_INFO_KEY + wjDevicelidar.getEqId(), parse);
-                    //相机数据存redis
-                    wjDeviceCameraList.forEach(
-                            v -> {
-                                JSON parse1 = JSONUtil.parse(v);
-                                redisCache.setCacheMapValue(RadarEventConstants.WJ_CAMERA_INFO_KEY, RadarEventConstants.WJ_CAMERA_INFO_KEY + v.getEqId(), parse1);
-                            }
-                    );
+//                    //雷达数据存redis
+//                    redisCache.setCacheMapValue(RadarEventConstants.WJ_LIDAR_INFO_KEY, RadarEventConstants.WJ_LIDAR_INFO_KEY + wjDevicelidar.getEqId(), parse);
+//                    //相机数据存redis
+//                    wjDeviceCameraList.forEach(
+//                            v -> {
+//                                JSON parse1 = JSONUtil.parse(v);
+//                                redisCache.setCacheMapValue(RadarEventConstants.WJ_CAMERA_INFO_KEY, RadarEventConstants.WJ_CAMERA_INFO_KEY + v.getEqId(), parse1);
+//                            }
+//                    );
                 });
     }
 
@@ -758,5 +817,58 @@ public class RadarEventServiceImpl implements RadarEventService {
         String[] split = urlName.split("/");
         String s = split[split.length - 1];
         return s;
+    }
+
+    public Date dateZh(String timeData){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = null;
+        try {
+            if(timeData != null && !"".equals(timeData)){
+                time = sdf.parse(timeData);
+                return time;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+    /**
+     * 将车辆快照转map
+     *
+     * @param sdRadarDetectData
+     */
+    public Map setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("roadDir",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+//        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.SECONDS);
+        return  map;
+    }
+
+    /**
+     * 将数据推送至物联
+     * @param sdRadarDetectData
+     */
+    public void sendKafka(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",sdRadarDetectData.getTunnelId());
+        map.put("direction",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        JSONObject jsonObject = new JSONObject(map);
+        kafkaTwoTemplate.send(TopicEnum.TUNNEL_RADAR_TOPIC.getCode(),jsonObject.toString());
     }
 }

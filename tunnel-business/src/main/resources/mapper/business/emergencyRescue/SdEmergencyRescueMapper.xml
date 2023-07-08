@@ -43,6 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 AND (sdt.dept_id = #{params.deptId} OR sdt.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
         </where>
+        order by sder.create_time desc
     </select>
 
     <select id="selectSdEmergencyRescueById" parameterType="Long" resultMap="SdEmergencyRescueResult">

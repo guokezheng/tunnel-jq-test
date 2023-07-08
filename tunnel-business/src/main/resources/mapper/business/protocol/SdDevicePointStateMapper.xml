@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.protocol.SdDevicePointStateMapper">
+
+    <resultMap type="SdDevicePointState" id="SdDevicePointStateResult">
+        <result property="id"    column="id"    />
+        <result property="devicePointId"    column="device_point_id"    />
+        <result property="deviceStateId"    column="device_state_id"    />
+        <result property="controlState"    column="control_state"    />
+    </resultMap>
+
+    <sql id="selectSdDevicePointStateVo">
+        select id, device_point_id, device_state_id, control_state from sd_device_point_state
+    </sql>
+
+    <select id="selectSdDevicePointStateList" parameterType="SdDevicePointState" resultMap="SdDevicePointStateResult">
+        <include refid="selectSdDevicePointStateVo"/>
+        <where>
+            <if test="devicePointId != null "> and device_point_id = #{devicePointId}</if>
+            <if test="deviceStateId != null "> and device_state_id = #{deviceStateId}</if>
+            <if test="controlState != null  and controlState != ''"> and control_state = #{controlState}</if>
+        </where>
+    </select>
+
+    <select id="selectSdDevicePointStateById" parameterType="String" resultMap="SdDevicePointStateResult">
+        <include refid="selectSdDevicePointStateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdDevicePointState" parameterType="SdDevicePointState">
+        insert into sd_device_point_state
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="devicePointId != null">device_point_id,</if>
+            <if test="deviceStateId != null">device_state_id,</if>
+            <if test="controlState != null">control_state,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="devicePointId != null">#{devicePointId},</if>
+            <if test="deviceStateId != null">#{deviceStateId},</if>
+            <if test="controlState != null">#{controlState},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdDevicePointState" parameterType="SdDevicePointState">
+        update sd_device_point_state
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="devicePointId != null">device_point_id = #{devicePointId},</if>
+            <if test="deviceStateId != null">device_state_id = #{deviceStateId},</if>
+            <if test="controlState != null">control_state = #{controlState},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdDevicePointStateById" parameterType="Long">
+        delete from sd_device_point_state where id = #{id}
+    </delete>
+
+    <delete id="deleteSdDevicePointStateByIds" parameterType="Long">
+        delete from sd_device_point_state where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

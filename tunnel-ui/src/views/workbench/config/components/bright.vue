@@ -8,21 +8,12 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
+      <div class="dialogStyleBox">
         <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
+        <div class="dialogCloseButton"></div>
       </div>
       <el-form
         ref="form"
@@ -30,7 +21,6 @@
         label-width="80px"
         label-position="left"
         size="mini"
-        style="padding: 15px; padding-top: 0px"
       >
         <el-row>
           <el-col :span="13">
@@ -43,8 +33,6 @@
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
@@ -55,8 +43,6 @@
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
@@ -64,13 +50,21 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ getBrandName(stateForm.brandName) }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="13">
-            <el-form-item label="设备状态:">
+            <el-form-item
+              label="设备状态:"
+              :style="{
+                color:
+                  stateForm.eqStatus == '1'
+                    ? 'yellowgreen'
+                    : stateForm.eqStatus == '2'
+                    ? 'white'
+                    : 'red',
+              }"
+            >
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
@@ -90,11 +84,7 @@
 
         <div class="lineClass"></div>
       </el-form>
-      <el-radio-group
-        v-model="tab"
-        style="margin-bottom: 10px; margin-left: 10px"
-        class="comCovi"
-      >
+      <el-radio-group v-model="tab" style="margin: 10px 0" class="comCovi">
         <el-radio-button label="Inside" v-if="this.eqInfo.clickEqType == 18"
           >洞内亮度</el-radio-button
         >
@@ -103,22 +93,8 @@
         >
       </el-radio-group>
       <div id="Inside" style="margin-bottom: 10px"></div>
-      <div slot="footer">
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleClosee()"
-          style="width: 80px"
-          class="submitButton"
-          >确 定</el-button
-        >
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleClosee()"
-          style="width: 80px"
-          >取 消</el-button
-        >
+      <div slot="footer" class="dialog-footer">
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -129,7 +105,6 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数
 import { getTodayLDData } from "@/api/workbench/config.js"; //查询弹窗图表信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
@@ -144,18 +119,27 @@ export default {
     return {
       stateForm: {},
       title: "",
-      visible: true,
+      visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       tab: "Inside",
       nowData: "",
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
-  created() {
-    this.getMessage();
-    this.getChartMes();
-    console.log(this.eqInfo,"eqInfo")
-  },
+  created() {},
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getMessage();
+      this.visible = true;
+      this.getChartMes();
+    },
     // 查设备详情
     async getMessage() {
       if (this.eqInfo.equipmentId) {
@@ -172,8 +156,8 @@ export default {
     getChartMes() {
       getTodayLDData(this.eqInfo.equipmentId).then((response) => {
         console.log(response, "亮度检测器数据");
-        if(response.data.nowData){
-          this.nowData = parseFloat(response.data.nowData).toFixed(2)
+        if (response.data.nowData) {
+          this.nowData = parseFloat(response.data.nowData).toFixed(2);
         }
         var xData = [];
         var yData = [];
@@ -187,12 +171,11 @@ export default {
           for (var item of response.data.todayLDInsideData) {
             xData.push(item.order_hour);
             yData.push(item.count);
-           
           }
         }
         this.brightValue = yData[yData.length - 1];
-       console.log(xData,"xData")
-       console.log(yData,"yData")
+        console.log(xData, "xData");
+        console.log(yData, "yData");
 
         this.$nextTick(() => {
           this.initChart(xData, yData);
@@ -223,23 +206,9 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false;
     },
     initChart(xData, yData) {
-      // var lincolor = [];
-      // var XData = [];
-      // var YData = [];
-
-      // if (this.tab == "Inside") {
-      // XData = inXdata;
-      // YData = inYdata;
-      // lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
-      // } else {
-      //   XData = outXdata;
-      //   YData = outYdata;
-      //   lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
-      // }
-
       this.mychart = echarts.init(document.getElementById("Inside"));
       var option = {
         tooltip: {
@@ -371,10 +340,9 @@ export default {
 }
 #Outside,
 #Inside {
-  width: 90%;
+  width: 100%;
   height: 150px;
   background: #fff;
-  margin-left: 5%;
   div {
     width: 100%;
     height: 150px !important;
@@ -393,5 +361,8 @@ export default {
 
 ::v-deep .el-radio-button {
   margin: 0 10px;
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
 }
 </style>

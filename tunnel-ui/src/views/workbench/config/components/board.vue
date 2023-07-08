@@ -1,743 +1,530 @@
 <template>
   <div style="width: 100%; height: 100%">
     <el-dialog
+      v-dialogDrag
       class="workbench-dialog boardDialog"
       :title="title"
-      width="620px"
+      width="835px"
       append-to-body
-      :visible="cameraVisible"
+      :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
+      <div class="dialogStyleBox">
         <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
+        <div class="dialogCloseButton"></div>
       </div>
-      <div v-show="infoType == 'info'">
-        <div class="infoBox">
+      <div v-show="infoType == 'info'" style="display: flex">
+        <div style="float: left">
+          <div class="infoBox">
+            <el-table
+              :data="contentList"
+              row-key="ID"
+              max-height="550"
+              v-loading="loading"
+            >
+              <el-table-column align="left" width="645">
+                <template slot-scope="scope">
+                  <div class="contentBox">
+                    <div
+                      class="content"
+                      :style="{
+                        color: getColorStyle(scope.row.COLOR),
+                        fontSize: addForm.devicePixel
+                          ? getFontSize(
+                              scope.row.FONT_SIZE,
+                              addForm.devicePixel
+                            )
+                          : '',
+                        fontFamily: scope.row.FONT,
+                        width: addForm.devicePixel
+                          ? getDevicePixel(addForm.devicePixel, 0) + 'px'
+                          : '',
+                        height: addForm.devicePixel
+                          ? getDevicePixel(addForm.devicePixel, 1) + 'px'
+                          : '',
+                      }"
+                    >
+                      <span
+                        :style="{
+                          left: getCoordinate(
+                            scope.row.COORDINATE.substring(0, 3),
+                            'left'
+                          ),
+                          top: getCoordinate(
+                            scope.row.COORDINATE.substring(3, 6),
+                            'top'
+                          ),
+                        }"
+                        class="boardTextStyle"
+                        v-html="
+                          scope.row.CONTENT
+                            ? scope.row.CONTENT.replace(
+                                /\n|\r\n/g,
+                                '<br>'
+                              ).replace(/ /g, '&nbsp')
+                            : ''
+                        "
+                      ></span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column align="center" width="135">
+                <template slot-scope="scope">
+                  <div class="infoButton">
+                    <div
+                      @click="openQbbDrawer(scope.row, scope.$index, 1)"
+                    ></div>
+                    <!-- <img
+                        src="../../../../assets/cloudControl/edit2.png"
+                        @click="openQbbDrawer(scope.row, scope.$index, 1)"
+                      /> -->
+                    <div @click="delQbbDrawer(scope.$index)"></div>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
           <div
-            v-for="(item, index) of contentList"
-            class="infoContent"
-            :key="index"
+            class="openMIniDialogStyle"
+            :class="
+              msgModeShow ? 'el-icon-d-arrow-left' : 'el-icon-d-arrow-right'
+            "
+            @click="openMesMode"
           >
-            <div class="upDown">
-              <i
-                :class="index == 0 ? 'disabledClass' : ''"
-                class="el-icon-caret-top"
-                size="18"
-                style="cursor: pointer"
-                @click="moveTop(index, item)"
-              ></i>
-              <i
-                :class="contentList.length == index + 1 ? 'disabledClass' : ''"
-                class="el-icon-caret-bottom"
-                style="cursor: pointer"
-                @click="moveBottom(index, item)"
-              ></i>
-            </div>
-            <div class="contentBox">
-              <div
-                class="content"
-                :style="{
-                  color: getColorStyle(item.COLOR),
-                  fontSize: getFontSize(item.FONT_SIZE),
-                  fontFamily: item.FONT,
-                }"
-              >
-                <span
-                  :style="{
-                    left: getCoordinate1(item.COORDINATE.substring(0, 3)),
-                    top: getCoordinate2(item.COORDINATE.substring(3, 6)),
-                  }"
-                  style="position: absolute"
-                  v-html="
-                    item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                      / /g,
-                      ' &nbsp'
-                    )
-                  "
-                ></span>
-              </div>
-            </div>
-
-            <div class="infoButton">
-              <img
-                src="../../../../assets/cloudControl/edit2.png"
-                @click="openQbbDrawer(item, index, 1)"
-              />
-              <div @click="delQbbDrawer(item)">X</div>
+            信息模板
+          </div>
+          <el-form
+            ref="form"
+            :model="stateForm"
+            label-width="75px"
+            label-position="left"
+            size="mini"
+            style="width: 800px"
+          >
+            <el-tabs class="videoTabs" v-model="videoActive">
+              <el-tab-pane label="详细信息" name="information">
+                <el-row>
+                  <el-col :span="9">
+                    <el-form-item label="设备名称:">
+                      {{ stateForm.typeName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="隧道名称:">
+                      {{ stateForm.tunnelName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="7">
+                    <el-form-item label="设备厂商:">
+                      {{ stateForm.supplierName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="9">
+                    <el-form-item label="所属机构:">
+                      {{ stateForm.deptName }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="设备桩号:">
+                      {{ stateForm.pile }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="7">
+                    <el-form-item
+                      label="设备状态:"
+                      :style="{
+                        color:
+                          stateForm.eqStatus == '1'
+                            ? 'yellowgreen'
+                            : stateForm.eqStatus == '2'
+                            ? 'white'
+                            : 'red',
+                      }"
+                    >
+                      {{ geteqType(stateForm.eqStatus) }}
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-tab-pane>
+              <el-tab-pane label="设备参数" name="videoParams">
+                <el-row>
+                  <el-col :span="8">
+                    <el-form-item label="IP:">
+                      {{ stateForm.ip }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="端口:">
+                      {{ stateForm.port }}
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="分辨率:">
+                      {{ addForm.devicePixel }}
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-tab-pane>
+            </el-tabs>
+          </el-form>
+          <div
+            slot="footer"
+            style="margin: 10px 0 20px; width: 800px"
+            class="dialog-footer"
+          >
+            <el-button
+              @click="openDialogVisible(1, 1)"
+              style="width: 80px"
+              class="submitButton"
+              v-hasPermi="['workbench:dialog:save']"
+              >添加信息</el-button
+            >
+            <el-button
+              @click="releaseInfo()"
+              v-hasPermi="['workbench:dialog:save']"
+              :disabled="contentList.length == 0"
+              :class="
+                contentList.length == 0
+                  ? 'zancunButtonDisabled'
+                  : 'zancunButton'
+              "
+              >信息发布</el-button
+            >
+          </div>
+        </div>
+        <div class="boardRightBox" v-show="msgModeShow">
+          <div class="mesModeBg">
+            <div class="mesModeBox">
+              <el-collapse v-model="activeNames" @change="handleChange">
+                <el-collapse-item
+                  v-for="(item, index) in iotTemplateCategoryList"
+                  :key="index"
+                  :title="item.dictLabel"
+                  :name="item.dictValue"
+                >
+                  <div
+                    v-for="(itm, indx) in item.list"
+                    :key="indx"
+                    class="con"
+                    :style="{
+                      'font-size': getFontSize(
+                        itm.tcontents[0].fontSize,
+                        itm.screenSize
+                      ),
+                      color: getColorStyle(itm.tcontents[0].fontColor),
+                      fontFamily: itm.tcontents[0].fontType,
+                    }"
+                  >
+                    <div class="templateTitle">
+                      <div
+                        :style="{
+                          width: getDevicePixel(itm.screenSize, 0) + 'px',
+                          height: getDevicePixel(itm.screenSize, 1) + 'px',
+                        }"
+                        style="background: black; position: relative"
+                      >
+                        <span
+                          :style="{
+                            left: getCoordinate(
+                              itm.tcontents[0].coordinate.substring(0, 3),
+                              'left',
+                              itm.screenSize
+                            ),
+                            top: getCoordinate(
+                              itm.tcontents[0].coordinate.substring(3, 6),
+                              'top',
+                              itm.screenSize
+                            ),
+                          }"
+                          class="boardTextStyle"
+                          v-html="
+                            itm.tcontents[0].content
+                              .replace(/\n|\r\n/g, '<br>')
+                              .replace(/ /g, '&nbsp')
+                          "
+                        ></span>
+                      </div>
+                    </div>
+                    <div class="downIcon">
+                      <div
+                        class="el-icon-d-arrow-left"
+                        @click="arrowLeft(itm)"
+                      ></div>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
             </div>
           </div>
         </div>
-        <div
-          class="openMIniDialogStyle"
-          :class="openDialog ? 'el-icon-d-arrow-left' : 'el-icon-d-arrow-right'"
-          @click="openMesMode"
-        >
-          信息模板
-        </div>
-        <el-form
-          ref="form"
-          :model="stateForm"
-          label-width="75px"
-          label-position="left"
-          size="mini"
-          style="padding: 0 15px 15px 15px"
-        >
-          <el-tabs class="videoTabs" v-model="videoActive">
-            <el-tab-pane label="详细信息" name="information">
-              <el-row>
-                <el-col :span="9">
-                  <el-form-item label="设备名称:">
-                    {{ stateForm.typeName }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="隧道名称:">
-                    {{ stateForm.tunnelName }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="7">
-                  <el-form-item label="设备厂商:">
-                    {{ getBrandName(stateForm.brandName) }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="9">
-                  <el-form-item label="所属机构:">
-                    {{ stateForm.deptName }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="设备桩号:">
-                    {{ stateForm.pile }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="7">
-                  <el-form-item label="设备状态:">
-                    {{ geteqType(stateForm.eqStatus) }}
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-tab-pane>
-            <el-tab-pane label="设备参数" name="videoParams">
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item label="IP:">
-                    {{ stateForm.ip }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="端口:">
-                    {{ stateForm.port }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="设备厂商:">
-                    {{ getBrandName(stateForm.brandName) }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="型号:">
-                    {{ stateForm.eqModel }}
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="分辨率:">
-                    {{ stateForm.devicePixel }}
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-tab-pane>
-          </el-tabs>
-        </el-form>
-        <div
-          slot="footer"
-          style="
-            display: flex;
-            justify-content: right;
-            margin-right: 20px;
-            margin-bottom: 20px;
-          "
-        >
-          <el-button
-            type="primary"
-            size="mini"
-            @click="addInfo()"
-            style="width: 80px"
-            class="submitButton"
-            >添加信息</el-button
-          >
-          <el-button
-            type="primary"
-            size="mini"
-            @click="releaseInfo()"
-            style="width: 80px"
-            >信息发布</el-button
-          >
-        </div>
-      </div>
-      <div v-show="infoType == 'add'">
-        <div
-          style="
-            width: calc(100% - 30px);
-            height: 60px;
-            border: solid 1px white;
-            margin: 0 auto 10px;
-          "
-        ></div>
-        <el-form
-          ref="form"
-          :model="addForm"
-          label-width="72px"
-          label-position="left"
-          size="mini"
-          style="padding: 0 15px 15px 15px"
-        >
-          <el-row>
-            <el-col :span="8">
-              <el-form-item prop="category" label="所属类别">
-                <el-select
-                  v-model="addForm.category"
-                  placeholder="请选择所属类别"
-                  clearable
-                  size="small"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="item in iotTemplateCategoryList"
-                    :key="item.dictValue"
-                    :label="item.dictLabel"
-                    :value="item.dictValue"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="分辨率">
-                <el-select
-                  v-model="addForm.screenSize"
-                  placeholder="请选择分辨率"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="(item, index) in screenSizeOptions"
-                    :key="index"
-                    :label="item.type"
-                    :value="item.type"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="内容位置">
-                <el-radio-group v-model="addForm.COORDINATE" size="mini">
-                  <el-radio-button label="左"></el-radio-button>
-                  <el-radio-button label="中"></el-radio-button>
-                  <el-radio-button label="右"></el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="详细内容">
-                <el-input
-                  type="textarea"
-                  clearable
-                  id="textContent"
-                  placeholder="详细内容"
-                  v-model="addForm.CONTENT"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="字体">
-                <el-select
-                  v-model="addForm.FONT"
-                  filterable
-                  placeholder="请选择"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="item in fontTypeOptions"
-                    :key="item.code"
-                    :label="item.content"
-                    :value="item.code"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="FONT_SIZE" label="字体大小">
-                <el-select v-model="addForm.FONT_SIZE" style="width: 90%">
-                  <el-option
-                    v-for="item in fontSizeOpt"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="COLOR" label="字体颜色">
-                <el-select
-                  v-model="addForm.COLOR"
-                  filterable
-                  placeholder="请选择"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="item in colorOptions"
-                    :key="item.code"
-                    :label="item.content"
-                    :value="item.code"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="ACTION" label="入屏方式">
-                <el-select
-                  v-model="addForm.ACTION"
-                  filterable
-                  placeholder="请选择"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="item in inScreenModeOptions"
-                    :key="item.code"
-                    :label="item.name"
-                    :value="item.code"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="STAY" label="停留时间">
-                <el-input-number
-                  :min="0"
-                  controls-position="right"
-                  v-model="addForm.STAY"
-                  style="width: 90%"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
       </div>
     </el-dialog>
-    <el-dialog
-      class="workbench-dialog mesModeDialog"
-      title="信息模板"
-      width="530px"
-      append-to-body
-      :visible="mesModeVisible"
-      :before-close="closeMesMode"
-    >
-      <div class="mesModeBg">
-        <div class="mesModeBox">
-          <el-collapse v-model="activeNames" @change="handleChange" accordion>
-            <el-collapse-item
-              v-for="(item, index) in iotTemplateCategoryList"
-              :key="index"
-              :title="item.dictLabel"
-              :name="item.dictValue"
-            >
-              <div
-                v-for="(itm, indx) in templateList"
-                :key="indx"
-                class="con"
-                :style="{
-                  'font-size': getFontSize(
-                    itm.tcontents[0].fontSize,
-                    itm.screenSize
-                  ),
-                  color: itm.tcontents[0].fontColor,
-                  fontFamily: itm.tcontents[0].fontType,
-                }"
-              >
-                <div class="templateTitle">
-                  <span
-                    :style="{
-                      left: getCoordinate1(
-                        itm.tcontents[0].coordinate.substring(0, 3),
-                        itm.screenSize
-                      ),
-                      top: getCoordinate2(
-                        itm.tcontents[0].coordinate.substring(3, 6),
-                        itm.screenSize
-                      ),
-                    }"
-                    style="position: absolute"
-                    v-html="
-                      itm.tcontents[0].content
-                        .replace(/\n|\r\n/g, '<br>')
-                        .replace(/ /g, ' &nbsp')
-                    "
-                  ></span>
-                </div>
-                <div class="downIcon">
-                  <div
-                    class="el-icon-d-arrow-left"
-                    @click="arrowLeft(itm)"
-                  ></div>
-                </div>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-        </div>
-      </div>
-    </el-dialog>
+
     <editInfo
       :boardEmitItem="this.boardEmitItem"
       @receiveForm="receiveForm"
       v-if="this.showEmit"
-      @dialogClose="dialogClose"
+      @dialogClose="dialogClose1"
     ></editInfo>
+    <addinfo ref="addinfo" @addInfo="addInfo"></addinfo>
   </div>
 </template>
-  
+
   <script>
+import $ from "jquery";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { listDevice } from "@/api/board/informationBoard.js"; //查询弹窗信息
-import { getAllVmsTemplate } from "@/api/board/template";
+import {
+  getAllVmsTemplate,
+  uploadBoardEditInfo,
+  getBoardContent,
+} from "@/api/board/template";
 import boardData from "@/views/information/board/boardData.json";
 import editInfo from "@/views/information/board/editInfo";
-
+import addinfo from "@/views/information/board//addinfo";
+import Sortable from "sortablejs";
+import { getBoardEditInfo } from "@/api/information/api.js";
+// 对象深拷贝
+export const deepClone = (data) => {
+  // 封装的判断数据类型的方法
+  var type = typeof data;
+  var obj;
+  if (type === "array") {
+    obj = [];
+  } else if (type === "object") {
+    obj = {};
+  } else {
+    // 不再具有下一层次
+    return data;
+  }
+  if (type === "array") {
+    for (var i = 0, len = data.length; i < len; i++) {
+      obj.push(deepClone(data[i]));
+    }
+  } else if (type === "object") {
+    for (var key in data) {
+      obj[key] = deepClone(data[key]);
+    }
+  }
+  return obj;
+};
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   components: {
     editInfo,
+    addinfo,
   },
   data() {
     return {
-      openDialog: false,
-      titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
+      loading: false,
+      msgModeShow: false,
+      associatedDeviceId: "",
       title: "",
-      cameraVisible: true, //摄像机弹窗
+      visible: false, //情报板弹窗
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
       infoType: "info",
-      mesModeVisible: false,
       boardEmitItem: {},
       showEmit: false,
       index_: 0,
-      addForm: {
-        category: "",
-        screenSize: "",
-        COORDINATE: "中",
-        CONTENT: "",
-        FONT: "",
-        FONT_SIZE: "",
-        COLOR: "",
-        ACTION: "",
-        STAY: "",
-      },
+      addForm: {},
       iotTemplateCategoryList: [],
-      screenSizeOptions: [
-        {
-          type: "400*40",
-        },
-        {
-          type: "128*64",
-        },
-      ],
-      fontTypeOptions: [
-        {
-          code: "KaiTi",
-          content: "楷体",
-        },
-        {
-          code: "SimSun",
-          content: "宋体",
-        },
-        {
-          code: "SimHei",
-          content: "黑体",
-        },
-      ],
-      fontSizeOpt: [
-        {
-          value: "32px",
-          label: "32px",
-        },
-        {
-          value: "24px",
-          label: "24px",
-        },
-        {
-          value: "16px",
-          label: "16px",
-        },
-      ],
-      colorOptions: [
-        {
-          code: "red",
-          content: "红色",
-        },
-        {
-          code: "yellow",
-          content: "黄色",
-        },
-        {
-          code: "blue",
-          content: "蓝色",
-        },
-        {
-          code: "GreenYellow",
-          content: "绿色",
-        },
-      ],
-      inScreenModeOptions: [
-        {
-          code: "0",
-          name: "清屏（全黑)",
-        },
-        {
-          code: "1",
-          name: "立即显示",
-        },
-        {
-          code: "2",
-          name: "上移",
-        },
-        {
-          code: "3",
-          name: "下移",
-        },
-        {
-          code: "4",
-          name: "左移",
-        },
-        {
-          code: "5",
-          name: "右移",
-        },
-        {
-          code: "6",
-          name: "横百叶窗",
-        },
-        {
-          code: "7",
-          name: "竖百叶窗",
-        },
-        {
-          code: "8",
-          name: "上下合拢",
-        },
-        {
-          code: "9",
-          name: "上下展开",
-        },
-        {
-          code: "10",
-          name: "左右合拢",
-        },
-        {
-          code: "11",
-          name: "左右展开",
-        },
-        {
-          code: "12",
-          name: "中心合拢",
-        },
-        {
-          code: "13",
-          name: "中心展开",
-        },
-        {
-          code: "14",
-          name: "向下马赛克",
-        },
-        {
-          code: "15",
-          name: "向右马赛克",
-        },
-        {
-          code: "16",
-          name: "淡入",
-        },
-        {
-          code: "17",
-          name: "淡出",
-        },
-        {
-          code: "18",
-          name: "字符闪烁（闪后消失）",
-        },
-        {
-          code: "19",
-          name: "字符闪烁（闪后停留）",
-        },
-        {
-          code: "20",
-          name: "区域闪烁（闪后复原）",
-        },
-        {
-          code: "21",
-          name: "区域闪烁（闪后区域为黑）",
-        },
-      ],
-      activeNames: "0",
+      activeNames: [],
       templateList: [],
-      contentList: [
-        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
-        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
-        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
-      ],
+      contentList: [],
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
+  watch: {
+    contentList: function (newVal, oldVal) {
+      this.$nextTick(() => {
+        console.log("大弹窗contentList");
+        this.rowDrop();
+      });
+    },
+  },
   created() {
-    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    this.getmessage();
-    this.getAllVmsTemplate();
-    this.onSubmit();
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
-      console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
+      // console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
+  mounted() {},
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      console.log("进来了");
+      this.contentList = [];
+      this.videoActive = "information", // tab页
+      this.msgModeShow = true;
+      this.openMesMode();
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getmessage();
+      this.visible = true;
+    },
+    // 行拖拽
+    rowDrop() {
+      if (JSON.parse(JSON.stringify(this.contentList)).length > 0) {
+        // 要侦听拖拽响应的DOM对象
+        const tbody = document.querySelector(
+          ".infoBox .el-table__body-wrapper tbody"
+        );
+        const _this = this;
+        Sortable.create(tbody, {
+          // 结束拖拽后的回调函数
+          onEnd({ newIndex, oldIndex }) {
+            const currentRow = _this.contentList.splice(oldIndex, 1)[0];
+            _this.contentList.splice(newIndex, 0, currentRow);
+          },
+        });
+      }
+    },
+    // 信息发布
+    releaseInfo() {
+      this.$confirm("是否确定发布情报板?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          console.log("确定发布情报板");
+          var content = "";
+          var playList = "[Playlist]<r><n>";
+          var Item_Start = "ITEM_NO=";
+          var Item_Content = "ITEM";
+          content += playList;
+          var length = parseInt(this.contentList.length);
+          var Item_No = Item_Start + length + "<r><n>";
+          var value = "";
+          content += Item_No;
+          console.log("确定发布情报板111111");
+          for (var i = 0; i < this.contentList.length; i++) {
+            value = ("000" + i).slice(-3);
+            content += Item_Content + value + "=";
+            content += this.contentList[i].STAY + ",";
+            content += this.contentList[i].ACTION + ",";
+            content += this.contentList[i].SPEED + "," + "\\";
+            content +=
+              "C" + this.contentList[i].COORDINATE.replace("-", "0") + "\\";
+            content += "S00\\";
+            content +=
+              "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
+            content += "f" + this.getFontValue(this.contentList[i].FONT);
+
+            content +=
+              this.contentList[i].FONT_SIZE.substring(0, 2) +
+              this.contentList[i].FONT_SIZE.substring(0, 2);
+            content += this.contentList[i].CONTENT.replace(
+              /\n|\r\n/g,
+              "<r><n>"
+            );
+
+            if (i + 1 != this.contentList.length) {
+              content += "<r><n>";
+            }
+            console.log(content, "content");
+          }
+          console.log("确定发布情报板22222222");
+          let protocolType = "GUANGDIAN_V33";
+          let deviceld = this.associatedDeviceId.toString();
+          uploadBoardEditInfo(deviceld, protocolType, content)
+            .then((response) => {
+              this.$modal.msgSuccess("发布成功");
+              console.log(response, "返回结果");
+            })
+            .catch(() => {});
+        })
+        .catch(() => {
+          console.log("已取消发布情报板");
+          this.$message({
+            type: "info",
+            message: "已取消发布情报板",
+          });
+        });
+    },
+    getFontValue(font) {
+      if (font == "黑体") return "h";
+      if (font == "楷体") return "k";
+      if (font == "仿宋") return "f";
+      if (font == "隶书") return "l";
+      return "s";
+    },
+    getColorValue(color) {
+      if (color == "蓝色" || color == "blue") return "000000255000";
+      if (color == "绿色" || color == "#00FF00" || color == "GreenYellow")
+        return "000255000000";
+      if (color == "透明色" || color == "transparent") return "t";
+      if (color == "红色" || color == "red") return "255000000000";
+      return "255255000000"; //黄色
+    },
+
+    // 打开添加信息弹窗
+    openDialogVisible(type, mode) {
+      if (type == 1) {
+        this.$refs.addinfo.init(this.addForm.devicePixel, type, mode);
+      } else {
+        this.$refs.addinfo.init(this.devicePixelMode, type, mode);
+      }
+    },
+    // 接收子组件新增待发模板
+    addInfo(form) {
+      form.ID = this.contentList.length;
+      console.log(form, "待发新增");
+      this.contentList.push(deepClone(form));
+      console.log(this.contentList, "this.contentList");
+      this.$forceUpdate();
+    },
     // 接收子组件form表单 修改
     receiveForm(form) {
-      // if (this.editType == 2) {
-      //   console.log(this.index, "this.index_");
-      //   console.log(form, "2222222222222");
-      //   this.templateList[this.index].tcontents[0] = {
-      //     fontColor: form.COLOR,
-      //     content: form.CONTENT,
-      //     coordinate: form.COORDINATE,
-      //     fontType: form.FONT,
-      //     fontSize: form.FONT_SIZE,
-      //     fontSpacing: form.SPEED,
-      //     stopTime: form.STAY,
-      //     inScreenMode: form.ACTION,
-      //   };
-      //   // this.templateList[this.index_] = form;
-      //   console.log(
-      //     this.templateList[this.index].tcontents[0],
-      //     "this.templateList"
-      //   );
-      //   console.log(this.templateList, "this.templateList");
-      //   this.$forceUpdate();
-      // } else {
-
-      console.log(form, "1111111111111");
-      this.contentList[this.index_] = form;
+      console.log(form, "接收子组件form表单 修改");
+      this.contentList.splice(this.index_, 1, form);
       this.$forceUpdate();
-      console.log(this.contentList, "99999999999");
-
-      // }
+      console.log(this.contentList, "this.contentList");
     },
     // 编辑
     openQbbDrawer(item, index, type) {
       this.index_ = index;
       console.log(item);
       this.boardEmitItem = item;
-      // console.log(this.form.devicePixel,"this.form.devicePixel");
-      // this.boardEmitItem.screenSize = this.stateForm.devicePixel;
-      // this.boardEmitItem.deviceId = this.deviceId;
+      this.boardEmitItem.screenSize = this.addForm.devicePixel;
       this.boardEmitItem.type = type;
-
       this.showEmit = true;
-      // this.$refs.editInfo.init();
-      // this.$emit("boardEmitItem",item)
     },
-    // 编辑
-    // editOutline(item) {
-    //   console.log(item, "item,index");
-    //   // this.index = index;
-    //   console.log(item);
-    //   this.boardEmitItem = {
-    //     FONT_SIZE: item.tcontents[0].fontSize + "px",
-    //     COLOR: item.tcontents[0].fontColor,
-    //     CONTENT: item.tcontents[0].content,
-    //     COORDINATE: item.tcontents[0].coordinate,
-    //     FONT: this.getFont(item.tcontents[0].fontType),
-    //     SPEED: item.tcontents[0].fontSpacing,
-    //     ACTION: item.inScreenMode, //出屏方式
-    //     STAY: item.stopTime, //停留时间
-    //     type: type,
-    //     screenSize: item.screenSize,
-    //     category: item.category,
-    //     id: item.id,
-    //     tcontentsId: item.tcontents[0].id,
-    //   };
-    //   // console.log(this.form.devicePixel,"this.form.devicePixel");
-    //   // this.boardEmitItem.screenSize = item.screenSize;
-    //   // this.boardEmitItem.category = item.category;
-    //   // this.boardEmitItem.deviceId = this.deviceId;
-    //   console.log(this.showEmit, "this.showEmit");
-    //   this.showEmit = true;
-    // },
+
     onSubmit() {
-      // var that = this;
-      // if (
-      //   this.checkboxValue[0] == "undefined" ||
-      //   this.checkboxValue[0] == null
-      // ) {
-      //   return;
-      // }
-      // getBoardInfo(this.checkboxValue[0]).then((res) => {
-      //   console.log(res, "getBoardInfo");
-      // this.deviceId = res.data.deviceId;
-      // if (res.data.deviceId) {
-      //   this.disabledButton = false;
-      // } else {
-      //   this.disabledButton = true;
-      // }
-      // });
-
-      var response = {};
-      response = boardData;
-      var parseObject = JSON.parse(response);
-      var protocolType = parseObject.support.PROTOCOL_TYPE;
-      var contents = parseObject.content;
-
-      if (
-        typeof contents == "undefined" ||
-        typeof protocolType == "undefined"
-      ) {
-        this.$message(response.msg);
-        return;
-      }
-      // this.supplier = protocolType;
-      var currRowId = "";
-      var reg = /,/g;
-      console.log(contents, "contents");
-      for (var i = 0; i < contents.length; i++) {
-        var content = contents[i];
-        var itemId = "ITEM" + this.formatNum(i, 3);
-        if (i == 0) {
-          currRowId = itemId;
-        }
-        var con = content[itemId];
-
-        for (let item of con) {
-          item.COLOR = this.getColorStyle(item.COLOR);
-          item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
-          // item.font = this.getFontStyle(item.FONT)
-        }
-        console.log(con, "con");
-        this.contentList = con;
-      }
+      this.loading = true;
+      getBoardEditInfo(this.associatedDeviceId)
+        .then((response) => {
+          var parseObject = JSON.parse(response.data[0]);
+          var contents = parseObject.content;
+          this.contentList = [];
+          for (var i = 0; i < contents.length; i++) {
+            var content = contents[i];
+            var itemId = "ITEM" + this.formatNum(i, 3);
+            for (var itm of content[itemId]) {
+              itm.COLOR = this.getColorStyle(itm.COLOR);
+              itm.FONT_SIZE = Number(itm.FONT_SIZE.substring(0, 2)) + "px";
+              itm.ID = i;
+              this.contentList.push(itm);
+            }
+          }
+          console.log(this.contentList, "this.contentList11");
+          this.loading = false;
+          this.rowDrop();
+        })
+        .catch((e) => {
+          this.loading = false;
+        });
     },
     formatNum(num, length) {
       return (Array(length).join("0") + parseInt(num)).slice(-length);
@@ -763,6 +550,7 @@ export default {
         ACTION: item.inScreenMode, //出屏方式
         STAY: item.stopTime, //停留时间
         category: item.category, //所属类别
+        ID: this.contentList.length,
       };
       this.contentList.push(contentList);
       console.log(this.contentList, "this.contentList");
@@ -780,11 +568,22 @@ export default {
       }
     },
     // 情报板管理右侧查询接口
-    getAllVmsTemplate() {
-      getAllVmsTemplate("0").then((res) => {
+    allVmsTemplate() {
+      const param = {
+        devicePixel: this.addForm.devicePixel,
+        category: 0,
+      };
+      getAllVmsTemplate(param).then((res) => {
+        let data = res.data;
         console.log(res, "情报板管理右侧查询接口");
-        this.templateList = res.data;
-        // console.log(this.templateList,"this.templateList");
+        for (let j = 0; j < this.iotTemplateCategoryList.length; j++) {
+          let arr = this.iotTemplateCategoryList[j];
+          let brr = data[j];
+          arr.list = brr;
+          this.activeNames.push(j.toString());
+        }
+        this.$forceUpdate();
+        // console.log(this.iotTemplateCategoryList, "新模板");
       });
     },
     //  上移
@@ -807,43 +606,71 @@ export default {
     },
     // 切换模板
     handleChange(active) {
-      console.log(active);
       this.activeNames = active;
-      getAllVmsTemplate(active).then((res) => {
+      const param = {
+        devicePixel: this.addForm.devicePixel,
+        category: active,
+      };
+      getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
-        // console.log(this.templateList,"this.templateList");
       });
     },
 
-    getCoordinate1(coordinate, screenSize) {
-      var screen = "";
+    getCoordinate(coordinate, type, screenSize) {
+      let width = "";
+      let height = "";
       if (!screenSize) {
-        screen = "400*40";
+        width = this.addForm.devicePixel.split("*")[0];
+        height = this.addForm.devicePixel.split("*")[1];
       } else {
-        screen = screenSize.split("*")[0];
+        width = screenSize.split("*")[0];
+        height = screenSize.split("*")[1];
       }
-      if (screen <= 630) {
-        var i = 630 / screen;
-        return coordinate * i + "px";
+      if (width < 630 && height < 75) {
+        return coordinate + "px";
       } else {
-        var i = screen / 630;
-        return coordinate / i + "px";
+        if (width / 630 > height / 75) {
+          if (type == "left") {
+            return coordinate / (width / 630) + "px";
+          } else if (type == "top") {
+            return coordinate / (width / 630) + "px";
+          }
+        } else {
+          if (type == "left") {
+            return coordinate / (height / 75) + "px";
+          } else if (type == "top") {
+            return coordinate / (height / 75) + "px";
+          }
+        }
       }
     },
-    getCoordinate2(coordinate, screenSize) {
-      var screen = "";
-      if (!screenSize) {
-        screen = "400*40";
+    // 转分辨率
+    getDevicePixel(devicePixel, type) {
+      let width = devicePixel.split("*")[0];
+      let height = devicePixel.split("*")[1];
+      // 实际分辨率比页面板子小
+      if (width < 630 && height < 75) {
+        if (type == 0) {
+          return width;
+        } else if (type == 1) {
+          return height;
+        }
       } else {
-        screen = screenSize.split("*")[1];
-      }
-      if (screen <= 75) {
-        var i = 75 / screen;
-        return coordinate * i + "px";
-      } else {
-        var i = screen / 75;
-        return coordinate / i + "px";
+        // 实际分辨率比页面板子大
+        if (width / 630 > height / 75) {
+          if (type == 0) {
+            return 630;
+          } else if (type == 1) {
+            return height / (width / 630);
+          }
+        } else {
+          if (type == 0) {
+            return width / (height / 75);
+          } else if (type == 1) {
+            return 75;
+          }
+        }
       }
     },
     // 转字号
@@ -851,26 +678,28 @@ export default {
       if (!font) {
         return;
       }
-      var screen = "";
-      if (!screenSize) {
-        screen = "400";
-      } else {
-        screen = screenSize.split("*")[0];
-      }
-      if (screen <= 407) {
-        var i = 407 / screen;
+      let width = screenSize.split("*")[0];
+      let height = screenSize.split("*")[1];
 
+      if (width < 630 && height < 75) {
         if (font.toString().length == 2) {
-          return font * i + "px";
+          return font + "px";
         } else {
-          return font.substring(0, 2) * i + "px";
+          return font.substring(0, 2) + "px";
         }
       } else {
-        var i = screen / 407;
-        if (font.toString().length == 2) {
-          return font / i + "px";
+        if (width / 630 > height / 75) {
+          if (font.toString().length == 2) {
+            return font / (width / 630) - 1 + "px";
+          } else {
+            return font.substring(0, 2) / (width / 630) - 1 + "px";
+          }
         } else {
-          return font.substring(0, 2) / i + "px";
+          if (font.toString().length == 2) {
+            return font / (height / 75) - 1 + "px";
+          } else {
+            return font.substring(0, 2) / (height / 75) - 1 + "px";
+          }
         }
       }
     },
@@ -880,8 +709,8 @@ export default {
         return "yellow";
       } else if (font == "红色") {
         return "red";
-      } else if (font == "绿色") {
-        return "green";
+      } else if (font == "绿色" || font == 'GreenYellow') {
+        return "#00FF00";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -890,40 +719,42 @@ export default {
     },
     // 打开信息模板
     openMesMode() {
-      if (this.openDialog == false) {
-        this.mesModeVisible = true;
+      let dialog = $(".boardDialog .el-dialog")[0];
+      if (this.msgModeShow == false) {
+        this.msgModeShow = true;
+        dialog.style.width = "1600px";
+        dialog.style.left = "200px";
       } else {
-        this.mesModeVisible = false;
+        this.msgModeShow = false;
+        dialog.style.width = "835px";
+        dialog.style.left = "28%";
       }
-    },
-    // 关闭信息模板
-    closeMesMode() {
-      this.mesModeVisible = false;
     },
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-          console.log(res, "查询摄像机弹窗信息");
+          console.log(res, "查询情报板弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          displayH5sVideoAll(res.data.secureKey);
+          this.associatedDeviceId = res.data.associatedDeviceId;
+          this.onSubmit();
           if (res.data.associatedDeviceId) {
             const param = {
               deviceId: res.data.associatedDeviceId,
             };
             listDevice(param).then((response) => {
               console.log(response, "查询设备信息");
-              // this.stateForm = response.data.state;
+              if(response.rows.length>0){
+                this.addForm = response.rows[0];
+              }
+              this.allVmsTemplate();
             });
           }
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
-    },
-    addInfo() {
-      this.infoType = "add";
     },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -949,13 +780,29 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      if (this.associatedDeviceId) {
+        getBoardContent(this.associatedDeviceId)
+          .then((res) => {
+            console.log(res, "情报板内容查询");
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
+      this.visible = false;
+    },
+    dialogClose1() {
+      this.showEmit = false;
+      this.$forceUpdate();
     },
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
+  ::v-deep .el-table--medium .el-table__cell{
+    padding: 10px 0 !important;
+  }
 .el-row {
   margin-bottom: -10px;
   display: flex;
@@ -963,7 +810,7 @@ export default {
 }
 .openMIniDialogStyle {
   position: absolute;
-  right: 0;
+  left: 813px;
   width: 20px;
   height: 85px;
   background: #d8d8d8 linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
@@ -989,192 +836,238 @@ export default {
   background: white;
 }
 .boardDialog {
-  left: 20%;
-  margin: unset;
-  width: 620px;
-  z-index: 2017;
+  .el-dialog {
+    left: 28%;
+  }
 }
-.mesModeDialog {
-  left: 53%;
-  margin: unset;
-  width: 530px;
-  z-index: 2017;
-  .mesModeBg {
-    padding: 10px;
-    background: #fff;
-    width: calc(100% - 30px);
-    height: 403px;
-    margin: 10px auto;
-    overflow: auto;
-
-    .mesModeBox {
+.boardRightBox {
+  float: right;
+  width: 760px;
+  margin-left: 20px;
+  .el-collapse {
+    border-top: transparent !important;
+  }
+}
+.mesModeBg {
+  height: 753px;
+  overflow: auto;
+  .mesModeBox {
+    width: 100%;
+    border: solid 1px #01aafd;
+    .con {
       width: 100%;
-      height: 100px;
-      border: solid 1px #e1e4e6;
-      .con {
-        width: 100%;
-        height: 50px;
-        margin-bottom: 10px;
+      height: 80px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      .templateTitle {
+        height: 75px;
+        border: 1px solid #01aafd;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 630px;
+        float: left;
+        margin-left: 5px;
         overflow: hidden;
+      }
+      .downIcon {
+        width: 75px;
+        height: 75px;
+        border: solid 1px #01aafd;
+        margin-left: 10px;
+        justify-content: center;
         display: flex;
-        border: 1px solid #f3f3f3;
-        .templateTitle {
-          height: 75px;
-          border: 1px solid #f3f3f3;
-          background: black;
-          position: relative;
-          width: 407px;
-          float: left;
+        align-items: center;
+        > div {
+          width: 40px;
+          height: 40px;
+          border: solid 1px #cfd5e0;
+          border-radius: 2px;
+          text-align: center;
+          line-height: 40px;
+          font-size: 16px;
+          color: #00162c;
+          display: block;
+          cursor: pointer;
+          background: #f2f8ff;
         }
-        .downIcon {
-          width: 50px;
-          height: 50px;
-          border-left: solid 1px #f3f3f3;
-          > div {
-            width: 40px;
-            height: 40px;
-            border: solid 1px #cfd5e0;
-            border-radius: 2px;
-            text-align: center;
-            line-height: 40px;
-            font-size: 16px;
-            color: #00162c;
-            display: block;
-            margin-top: 5px;
-            margin-left: 5px;
-            cursor: pointer;
-            background: #f2f8ff;
-          }
-        }
-        .menuBox {
-          display: flex;
-          // align-items: center;
-          margin: 28px 0;
-          float: right;
-          i {
-            font-size: 24px;
-            color: #666;
-          }
-          .disabledClass {
-            pointer-events: none;
-            cursor: auto !important;
-            color: #ccc;
-          }
+        > div:hover {
+          background: #39adff;
+          color: #fff;
+          border: solid 1px #39adff;
         }
       }
+      .menuBox {
+        display: flex;
+        margin: 28px 0;
+        float: right;
+        i {
+          font-size: 24px;
+          color: #666;
+        }
+        .disabledClass {
+          pointer-events: none;
+          cursor: auto !important;
+          color: #ccc;
+        }
+      }
+    }
 
-      .mesModeTitle {
-        font-size: 14px;
-        color: rgba(0, 22, 44, 0.7);
-        line-height: 30px;
-        height: 30px;
-        width: 100%;
-        border: solid 1px #cfd5e0;
-      }
-      .mesModeContent {
+    .mesModeTitle {
+      font-size: 14px;
+      color: rgba(0, 22, 44, 0.7);
+      line-height: 30px;
+      height: 30px;
+      width: 100%;
+      border: solid 1px #cfd5e0;
+    }
+    .mesModeContent {
+      display: flex;
+      width: 100%;
+      height: 70px;
+      .mesModeLeft {
+        width: 280px;
+        height: 100%;
         display: flex;
-        width: 100%;
-        height: 70px;
-        .mesModeLeft {
-          width: 280px;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .mesModeRight {
-          width: calc(100% - 280px);
-          height: 100%;
-          border-left: solid 1px #cfd5e0;
-        }
+        justify-content: center;
+        align-items: center;
+      }
+      .mesModeRight {
+        width: calc(100% - 280px);
+        height: 100%;
+        border-left: solid 1px #cfd5e0;
       }
     }
   }
 }
+// }
 .infoBox {
-  width: 93%;
-  height: 200px;
-  background: #fff;
-  margin: 0 30px 0 15px;
-  overflow: auto;
+  width: 783px;
+  height: 550px;
+  overflow: hidden;
+  border: solid 1px #01aafd;
+
   .infoContent {
     width: 97%;
-    height: 60px;
+    height: 75px;
     margin: 5px 10px;
     display: flex;
     .upDown {
       width: 30px;
       height: 100%;
-      border: solid 1px #cfd5e0;
-      background: #f2f8ff;
+      border: solid 1px #01aafd;
       text-align: center;
-      padding: 10px 0;
+      writing-mode: tb-rl;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       i {
         display: block;
-        color: #586f85;
+        color: #f2f8ff;
       }
       i:nth-of-type(2) {
         padding-top: 10px;
       }
     }
-    .contentBox {
-      width: calc(100% - 150px);
-      height: 100%;
-      border: solid 1px #cfd5e0;
-      margin-left: 4px;
-      position: relative;
-      .content {
-        width: calc(100% - 10px);
-        height: calc(100% - 10px);
-        background: #000;
-        margin: 5px auto;
-      }
-    }
-    .infoButton {
-      width: 112px;
-      height: 100%;
-      border: solid 1px #cfd5e0;
-      margin-left: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      img {
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-      }
-      > div {
-        width: 40px;
-        height: 40px;
-        text-align: center;
-        line-height: 40px;
-        border: solid 1px #cfd5e0;
-        color: #333;
-        font-weight: 600;
-        background: #f2f8ff;
-        border-radius: 2px;
-        font-size: 16px;
-        cursor: pointer;
-      }
-    }
+  }
+}
+.contentBox {
+  width: 630px;
+  height: 75px;
+  border: solid 1px #01aafd;
+  margin-left: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .content {
+    background: #000;
+    overflow: hidden;
+    position: relative;
+  }
+}
+.infoButton {
+  width: 112px;
+  height: 75px;
+  border: solid 1px #01aafd;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  > div,
+  img {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+    padding-left: 2px;
+  }
+  > div:nth-of-type(1) {
+    background-image: url(../../../../assets/cloudControl/edit3.png);
+  }
+  > div:nth-of-type(2) {
+    background-image: url(../../../../assets/cloudControl/edit4.png);
+  }
+  > div:nth-of-type(1):hover {
+    background-image: url(../../../../assets/cloudControl/edit1.png);
+  }
+  > div:nth-of-type(2):hover {
+    background-image: url(../../../../assets/cloudControl/closeIcon1.png);
   }
 }
 .disabledClass {
   pointer-events: none;
   cursor: auto !important;
-  color: #f2f8ff !important;
+  color: #00152b !important;
 }
 ::v-deep .el-collapse-item__header {
   height: 30px;
+  border-bottom: solid 1px #01aafd;
+  padding-left: 10px;
+}
+::v-deep .el-collapse-item__header.is-active {
+  border-bottom: transparent;
 }
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 10px;
+  padding-bottom: 0px;
 }
 ::v-deep .el-collapse-item__wrap {
   padding: 0 10px;
+  border-bottom: solid 1px #01aafd;
 }
 ::v-deep ::-webkit-scrollbar {
-  width: 0px;
+  width: 0px !important;
+}
+.boardTextStyle {
+  position: absolute;
+  line-height: 1;
+  caret-color: rgba(0, 0, 0, 0);
+  user-select: none;
+}
+::v-deep .el-table {
+  border-bottom: none !important;
+  thead {
+    display: none;
+  }
+  th.el-table__cell.is-leaf,
+  td.el-table__cell {
+    border-bottom: none;
+  }
+}
+::v-deep .el-table::before {
+  height: 0px;
+}
+::v-deep .sortable-chosen:not(th) {
+  background-color: rgba(5, 175, 227, 0.1) !important;
+}
+::v-deep .el-loading-mask {
+  background: transparent !important;
+}
+::v-deep .el-dialog {
+  pointer-events: auto !important;
 }
 </style>
-  

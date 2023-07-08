@@ -66,12 +66,12 @@ export default {
       // Y轴
       var yData = [];
       if(myData.length == 0){
-          xData = ['测试数据1','测试数据2','测试数据3','测试数据4']
+          xData = ['第一季度','第二季度','第三季度','第四季度']
           yData = [0,0,0,0]
       }else{
         for(var i=0;i<myData.length;i++){
           xData.push(myData[i].date + "季度");
-          yData.push(Number(myData[i].byVehicelNum) / 2);
+          yData.push(Number(myData[i].byVehicelNum));
         }
       }
 

@@ -1,19 +1,27 @@
 package com.tunnel.business.service.electromechanicalPatrol.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.datacenter.domain.dataReport.OptType;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
+import com.tunnel.business.mapper.electromechanicalPatrol.SdPatrolListMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
@@ -28,7 +36,7 @@ import java.util.List;
 
 /**
  * 故障清单Service业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2022-11-02
  */
@@ -41,9 +49,22 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Autowired
     private SdTrafficImageMapper sdTrafficImageMapper;
 
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+
+    @Autowired
+    private SdPatrolListMapper sdPatrolListService;
+
+//    @Autowired
+//    @Qualifier("kafkaTwoTemplate")
+//    private KafkaTemplate<String, String> kafkaTwoTemplate;
+
+//    @Value("${tunnelFaultList}")
+//    private String tunnelFaultList;
+
     /**
      * 查询故障清单
-     * 
+     *
      * @param id 故障清单主键
      * @return 故障清单
      */
@@ -53,9 +74,11 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         SdFaultList sdFaultList = sdFaultListMapper.selectSdFaultListById(id);
         if(sdFaultList!=null){
             if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
-                SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());
-                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
+                /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
+                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());*/
+                String[] businessId = sdFaultList.getImgFileId().split(",");
+                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileLists(businessId));
+                //sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
             }
         }
         return sdFaultList;
@@ -64,7 +87,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     /**
      * 查询故障清单列表
-     * 
+     *
      * @param sdFaultList 故障清单
      * @return 故障清单
      */
@@ -76,7 +99,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             for(int i = 0;i<list.size();i++){
                 if(list.get(i).getFalltRemoveStatue()!=null&&!"null".equals(list.get(i).getFalltRemoveStatue())&&!"".equals(list.get(i).getFalltRemoveStatue())){
                     int removeflag =  Integer.valueOf(list.get(i).getFalltRemoveStatue());
-                    if(1==removeflag){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
+                    if("1".equals(removeflag)){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     if(list.get(i).getFaultFxtime()!=null){
                         String  fxtime = sdf.format(list.get(i).getFaultFxtime());
@@ -110,7 +133,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     /**
      * 新增故障清单
-     * 
+     *
      * @param sdFaultList 故障清单
      * @return 结果
      */
@@ -121,8 +144,15 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         int result = -1;
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
         try {
+            sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
             sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
+            sdFaultList.setFaultTbr(SecurityUtils.getUsername());// 设置当前创建人
+            if (sdFaultList.getEqId() != null && !sdFaultList.getEqId().equals("")
+                    && (sdFaultList.getFaultLocation() == null || sdFaultList.getFaultLocation().equals(""))) {
+                SdDevices sdDevices = sdDevicesService.selectSdDevicesById(sdFaultList.getEqId());
+                sdFaultList.setFaultLocation(sdDevices.getPile());
+            }
             if(file!=null){
                 String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
                 sdFaultList.setImgFileId(guid);// 文件关联ID
@@ -172,7 +202,6 @@ public class SdFaultListServiceImpl implements ISdFaultListService
                     result = sdFaultListMapper.insertSdFaultList(sdFaultList);
                 }
             }else {
-                sdFaultList.setImgFileId(null);// 图标文件ID
                 result = sdFaultListMapper.insertSdFaultList(sdFaultList);
             }
 
@@ -180,17 +209,24 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             e.printStackTrace();
             return 0;
         }
+
+//        JSONObject jsonObject = new JSONObject();
+//        //故障数据推送
+//        jsonObject.put("faultRecord",sdFaultList);
+//        jsonObject.put("faultImgRecord",list);
+//        jsonObject.put("optType", "1");//故障新增
+//        kafkaTwoTemplate.send(tunnelFaultList, jsonObject.toString());
         return result;
     }
 
     /**
      * 修改故障清单
-     * 
+     *
      * @param sdFaultList 故障清单
      * @return 结果
      */
     @Override
-    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,Long[] removeIds)
+    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,String[] removeIds)
     {
         int result = 0;
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
@@ -199,7 +235,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             sdFaultList.setUpdateBy(SecurityUtils.getUsername());// 设置当前创建人
             if (file != null) {
                 String guid = sdFaultList.getImgFileId();// 关联ID--guid
-                if (guid == null || guid.equals("null") || guid.equals("")) {
+                if (guid == null || guid.equals("null") || guid.equals("")||guid.equals("undefined")) {
                     guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
                 }
                 sdFaultList.setImgFileId(guid);// 文件关联ID
@@ -258,7 +294,13 @@ public class SdFaultListServiceImpl implements ISdFaultListService
             e.printStackTrace();
             return 0;
         }
-
+//        JSONObject jsonObject = new JSONObject();
+//        //故障数据推送
+//        jsonObject.put("faultRecord",sdFaultList);
+//        jsonObject.put("faultImgRecord",list);
+//        jsonObject.put("faultImgRemoveRecord",removeIds);
+//        jsonObject.put("optType", "1");//故障修改
+//        kafkaTwoTemplate.send(tunnelFaultList, jsonObject.toString());
 
         return result;
 
@@ -267,19 +309,31 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     /**
      * 批量删除故障清单
-     * 
+     *
      * @param ids 需要删除的故障清单主键
      * @return 结果
      */
     @Override
     public int deleteSdFaultListByIds(String[] ids)
     {
-        return sdFaultListMapper.deleteSdFaultListByIds(ids);
+        //先删除图片
+        int result = -1;
+        result = sdTrafficImageMapper.deleteFaultIconFile(ids);
+        if(result>-1){
+            result = sdFaultListMapper.deleteSdFaultListByIds(ids);
+
+        }
+//        JSONObject jsonObject = new JSONObject();
+//        //故障数据推送
+//        jsonObject.put("faultRecord",ids);
+//        jsonObject.put("optType", "0");//故障删除
+//        kafkaTwoTemplate.send(tunnelFaultList, jsonObject.toString());
+        return result;
     }
 
     /**
      * 删除故障清单信息
-     * 
+     *
      * @param id 故障清单主键
      * @return 结果
      */
@@ -296,15 +350,30 @@ public class SdFaultListServiceImpl implements ISdFaultListService
      */
     @Override
     public List<SdPatrolList> getFaultRepairInfo(String faultId) {
-        List<SdPatrolList> patrolList = sdFaultListMapper.getFaultRepairInfo(faultId);
-        if(patrolList!=null&&patrolList.size()>0){
-            String fileId = patrolList.get(0).getImgFileId();
-            if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
-                SdTrafficImage sdTrafficImage = new SdTrafficImage();
-                sdTrafficImage.setBusinessId(fileId);
-                patrolList.get(0).setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
-            }
+        List<SdPatrolList> patrolList = new ArrayList<>();
+        //先判断是巡检点还是故障点
+        SdPatrolList sdPatrolList = sdPatrolListService.faultOrDevices(faultId);
+        //故障点
+        if(sdPatrolList!=null&&"1".equals(sdPatrolList.getPatrolType())){
+            patrolList = sdFaultListMapper.getFaultRepairInfo(faultId);
+
         }
+        //巡检点
+        if(sdPatrolList!=null&&"0".equals(sdPatrolList.getPatrolType())){
+            patrolList = sdFaultListMapper.getDevicesRepairInfo(faultId);
+        }
+        if(patrolList!=null&&patrolList.size()>0){
+            for(int i  = 0;i<patrolList.size();i++){
+                String fileId = patrolList.get(i).getImgFileId();
+                if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
+                    String[] businessId = fileId.split(",");
+                    patrolList.get(i).setiFileList(sdTrafficImageMapper.selectPatrolFaultImgFileList(businessId));
+                }
+            }
+
+        }
+
+
 
         return patrolList;
     }
@@ -318,5 +387,50 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public List<SdFaultList> getFaultList(String tunnelId, String faultLevel) {
         return sdFaultListMapper.getFaultList1(tunnelId,faultLevel);
+    }
+
+    @Override
+    public String selectSdFaultEqById(String eqFaultId) {
+        return sdFaultListMapper.selectSdFaultEqById(eqFaultId);
+    }
+
+    @Override
+    public SdFaultList selectSdFaultById(String id) {
+        return sdFaultListMapper.selectSdFaultById(id);
+    }
+
+    /**
+     * app端查询故障类型
+     * @return
+     */
+    @Override
+    public List<SdFaultList> getFaultDictValue(String dictType) {
+        return sdFaultListMapper.getFaultDictValue(dictType);
+    }
+
+    /**
+     * app添加故障信息
+     * @param sdFaultList
+     * @return
+     */
+    @Override
+    public int saveFault(SdFaultList sdFaultList) {
+        int result = -1;
+        sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
+        if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
+            sdFaultList.setImgFileId(sdFaultList.getImgFileId().substring(0,sdFaultList.getImgFileId().length()-1));
+        }
+        sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
+        sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
+        sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
+        sdFaultList.setFaultTbr(SecurityUtils.getUsername());// 设置当前创建人
+        /*if (sdFaultList.getEqId() != null && !sdFaultList.getEqId().equals("")
+                && (sdFaultList.getFaultLocation() == null || sdFaultList.getFaultLocation().equals(""))) {
+            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(sdFaultList.getEqId());
+            sdFaultList.setFaultLocation(sdDevices.getPile());
+        }*/
+        result = sdFaultListMapper.insertSdFaultList(sdFaultList);
+
+        return result;
     }
 }

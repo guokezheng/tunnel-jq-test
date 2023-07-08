@@ -17,7 +17,7 @@ public class SdDevicesProtocol extends BaseEntity {
     /**
      * $column.columnComment
      */
-    private Integer id;
+    private Long id;
 
     /**
      * 厂商 ID
@@ -29,7 +29,7 @@ public class SdDevicesProtocol extends BaseEntity {
      * 设备类型 ID
      */
     @Excel(name = "设备类型 ID")
-    private Long eqTypeId;
+    private Long eqType;
 
     /**
      * 协议名称
@@ -60,11 +60,16 @@ public class SdDevicesProtocol extends BaseEntity {
      */
     private Integer isDel;
 
-    public void setId(Integer id) {
+    /**
+     * 协议唯一标识
+     */
+    private String protocolCode;
+
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -76,12 +81,12 @@ public class SdDevicesProtocol extends BaseEntity {
         return brandId;
     }
 
-    public void setEqTypeId(Long eqTypeId) {
-        this.eqTypeId = eqTypeId;
+    public Long getEqType() {
+        return eqType;
     }
 
-    public Long getEqTypeId() {
-        return eqTypeId;
+    public void setEqType(Long eqType) {
+        this.eqType = eqType;
     }
 
     public void setProtocolName(String protocolName) {
@@ -124,12 +129,20 @@ public class SdDevicesProtocol extends BaseEntity {
         this.isDel = isDel;
     }
 
+    public String getProtocolCode() {
+        return protocolCode;
+    }
+
+    public void setProtocolCode(String protocolCode) {
+        this.protocolCode = protocolCode;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId())
                 .append("brandId", getBrandId())
-                .append("eqTypeId", getEqTypeId())
+                .append("eqType", getEqType())
                 .append("protocolName", getProtocolName())
                 .append("protocolType", getProtocolType())
                 .append("className", getClassName())

@@ -25,7 +25,7 @@
               :class="{ 'fixed-header': fixedHeader }"
               :style="fixedHeader ? 'background-color:white;' : ''"
             >
-              <navbar style="display: block; height: 72px" />
+              <navbar style="display: block; height: 7.6vh" />
               <!-- <tags-view v-if="needTagsView" /> -->
             </div>
             <div
@@ -129,7 +129,7 @@
                 ref="picDialog"
               ></event-dialog>
               <event-dialogTable v-if="eventDialogTable"></event-dialogTable>
-              <evtDialogVideo v-if="evtDialogVideo" ></evtDialogVideo>
+              <evtDialogVideo v-if="evtDialogVideo"></evtDialogVideo>
             </div>
           </div>
         </template>
@@ -220,7 +220,7 @@ export default {
   },
   data() {
     return {
-      evtDialogOneThing:false,
+      evtDialogOneThing: false,
       badgeHidden: true,
       eventValue: 0,
       mapStyle: "",
@@ -232,9 +232,9 @@ export default {
       is_weather: null,
       is_breadcrumb: null,
       tunnelStyle: null,
-      eventDialogPic: false,
+      eventDialogPic: true,
       eventDialogTable: false,
-      evtDialogVideo:false,
+      evtDialogVideo: false,
       routePath: [
         "/index",
         "/map/map/index",
@@ -300,8 +300,8 @@ export default {
     },
   },
   created() {
-    console.log(this.topNav,"this.topNav");
-    console.log(this.$route.path, "路由");
+    // console.log(this.topNav,"this.topNav");
+    // console.log(this.$route.path, "路由");
     if (this.$route.path == "/tunnel") {
       if (
         this.sideTheme == "theme-blue" ||
@@ -324,7 +324,7 @@ export default {
     //   }
     // },
     getRoute(path) {
-      console.log(path,"path");
+      // console.log(path,"path");
       var arr = [
         "/index",
         "/map/map/index",
@@ -336,7 +336,6 @@ export default {
         "/map/deviceMonitor",
         "/map/trackPlayback",
         "/map/analyse",
-
       ];
       if (arr.includes(path)) {
         return "none";
@@ -356,7 +355,6 @@ export default {
         "/map/deviceMonitor",
         "/map/trackPlayback",
         "/map/analyse",
-
       ];
       if (arr.includes(path)) {
         return true;
@@ -374,17 +372,19 @@ export default {
       const header = "http://api.tianapi.com/txapi";
       const url = `${header}/${word}/?${key}&${city}`;
       axios.get(url).then((res) => {
-        const data = res.data.newslist[0];
-        this.weather_weather =
-          data.area +
-          ":" +
-          data.weather +
-          data.lowest +
-          data.wind +
-          data.windsc;
-        this.weather_weatherimg = require("@/assets/weather/" +
-          data.weatherimg +
-          "");
+        if (res.data.newslist) {
+          const data = res.data.newslist[0];
+          this.weather_weather =
+            data.area +
+            ":" +
+            data.weather +
+            data.lowest +
+            data.wind +
+            data.windsc;
+          this.weather_weatherimg = require("@/assets/weather/" +
+            data.weatherimg +
+            "");
+        }
       });
     },
     handleClickOutside() {
@@ -396,8 +396,8 @@ export default {
       document.getElementsByTagName("body")[0].className = val;
     },
     sdEventList(event) {
-      if(event.length>0){
-        this.evtDialogOneThing = true
+      if (event.length > 0) {
+        this.evtDialogOneThing = true;
       }
       // this.eventValue += event.length;
       // if (this.eventValue > 0) {
@@ -418,13 +418,13 @@ export default {
       "breadcrumb"
     ];
     // 打开列表弹窗
-    bus.$on('openTableDialog', () => {
+    bus.$on("openTableDialog", () => {
       this.eventDialogTable = true;
-    })
+    });
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
       this.eventDialogTable = false;
-      this.evtDialogOneThing = false
+      this.evtDialogOneThing = false;
     });
     // 打开三图一视弹窗
     bus.$on("openPicDialog", () => {
@@ -435,13 +435,13 @@ export default {
       this.eventDialogPic = false;
     });
     // 打开视频弹窗
-    bus.$on('openVideoDialog', () => {
+    bus.$on("openVideoDialog", () => {
       this.evtDialogVideo = true;
-    })
+    });
     // 关闭视频弹窗
-    bus.$on('closeVideoDialog', () => {
+    bus.$on("closeVideoDialog", () => {
       this.evtDialogVideo = false;
-    })
+    });
     // 事件表格忽略后 右上角数字跟着改
     // bus.$on("getEvtList", () => {
     //   this.eventValue = this.eventValue - 1;
@@ -464,9 +464,9 @@ export default {
   width: 100%;
   z-index: 999;
 }
-.theme-light-navbar {
-  background-color: white;
-}
+// .theme-light-navbar {
+//   background-color: white;
+// }
 .app-wrapper {
   @include clearfix;
   position: relative;
@@ -481,7 +481,7 @@ export default {
 .topNav_head .has-logo {
   background: transparent !important;
 }
- .has-logo {
+.has-logo {
   background: rgb(0, 67, 117);
 }
 .drawer-bg {

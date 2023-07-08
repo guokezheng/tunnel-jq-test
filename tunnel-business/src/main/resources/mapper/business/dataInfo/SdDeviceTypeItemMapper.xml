@@ -24,12 +24,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdDeviceTypeItemList" parameterType="SdDeviceTypeItem" resultMap="SdDeviceTypeItemResult">
         <include refid="selectSdDeviceTypeItemVo"/>
         <where>
-            <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId} </if>
             <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
             <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
             <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId}</if>
             <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="searchValue != null  and searchValue != ''"> and CONCAT(item_code,item_name) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(id,#{ids}) > 0</if>
+
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectSdDeviceTypeItemLists" parameterType="SdDeviceTypeItem" resultMap="SdDeviceTypeItemResult">

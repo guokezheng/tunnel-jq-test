@@ -9,6 +9,15 @@ export function listSystem(query) {
   })
 }
 
+export function listAllSystem(query) {
+  return request({
+    url: '/system/system/listAll',
+    method: 'get',
+    params: query
+  })
+}
+
+
 // 查询外部系统详细
 export function getSystem(id) {
   return request({

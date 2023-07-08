@@ -11,14 +11,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="strategyId"    column="strategy_id"    />
         <result property="processName"    column="process_name"    />
         <result property="processSort"    column="process_sort"    />
+        <result property="processStageName"    column="process_stage_name"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <!-- 预案流程 -->
+    <resultMap id="processListResult" type="sdReserveProcess">
+        <result property="processStageName" column="process_stage_name"/>
+        <result property="processSort" column="process_sort"/>
+        <result column="reserve_id" property="reserveId"/>
+        <collection property="processesList" ofType="sdReserveProcess">
+            <id property="id" column="id"/>
+            <result column="reserve_id" property="reserveId"/>
+            <result column="device_type_id" property="deviceTypeId"/>
+            <result column="strategy_id" property="strategyId"/>
+            <result column="process_name" property="processName"/>
+            <result column="equipments" property="equipments"/>
+            <result column="retrieval_rule" property="retrievalRule"/>
+            <result column="state" property="state"/>
+        </collection>
+    </resultMap>
+
     <sql id="selectSdReserveProcessVo">
-        select id, reserve_id, device_type_id, strategy_id, process_name, process_sort, create_by, create_time, update_by, update_time from sd_reserve_process
+        select id, reserve_id, device_type_id, strategy_id, process_name, process_sort, process_stage_name, create_by, create_time, update_by, update_time from sd_reserve_process
     </sql>
 
     <select id="selectSdReserveProcessList" parameterType="SdReserveProcess" resultMap="SdReserveProcessResult">
@@ -45,6 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyId != null">strategy_id,</if>
             <if test="processName != null">process_name,</if>
             <if test="processSort != null">process_sort,</if>
+            <if test="processStageName != null">process_stage_name,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -56,6 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyId != null">#{strategyId},</if>
             <if test="processName != null">#{processName},</if>
             <if test="processSort != null">#{processSort},</if>
+            <if test="processStageName != null">#{processStageName},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -71,7 +91,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         process_name,
         process_sort,
         create_by,
-        create_time
+        create_time,
+        process_stage_name
         ) value
         <foreach collection="sdReserveProcesses" separator="," item="resp" index="index">
         (
@@ -81,7 +102,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{resp.processName},
             #{resp.processSort},
             #{resp.createBy},
-            #{resp.createTime}
+            #{resp.createTime},
+            #{resp.processStageName}
         )
     </foreach>
 </insert>
@@ -94,6 +116,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyId != null">strategy_id = #{strategyId},</if>
             <if test="processName != null">process_name = #{processName},</if>
             <if test="processSort != null">process_sort = #{processSort},</if>
+            <if test="processStageName != null">process_stage_name = #{processStageName},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
@@ -124,10 +147,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by process_sort
     </select>
 
-    <select id="getReservePlanProcess" resultType="hashmap">
-        select process.process_name,process.process_sort,rl.eq_type_id,rl.equipments,rl.retrieval_rule,rl.state from sd_reserve_process process
-            left join sd_strategy_rl rl on rl.id = process.strategy_id
-            where process.reserve_id = #{reserveId}
-        order by process.process_sort
+    <select id="getReservePlanProcess" resultType="hashmap" parameterType="java.lang.Long">
+        SELECT
+            process.process_name,
+            rl.eq_type_id,
+            rl.equipments,
+            rl.retrieval_rule,
+            rl.state
+        FROM
+            sd_reserve_process process
+                LEFT JOIN sd_strategy_rl rl ON rl.id = process.strategy_id
+        WHERE
+            process.reserve_id = #{reserveId}
+    </select>
+
+    <select id="getProcessList" parameterType="java.lang.Long" resultMap="processListResult">
+        SELECT
+            rp.process_stage_name,
+            rp.process_sort,
+            rp.id,
+            rp.reserve_id,
+            rp.process_name,
+            rp.device_type_id,
+            rp.strategy_id,
+            IFNULL( sr.equipments, '' ) AS equipments,
+            sr.retrieval_rule,
+            sr.state
+        FROM
+            sd_reserve_process rp
+            LEFT JOIN sd_strategy_rl sr ON rp.strategy_id = sr.id
+        WHERE
+            1 = 1
+          AND rp.reserve_id = #{reserveId}
     </select>
 </mapper>

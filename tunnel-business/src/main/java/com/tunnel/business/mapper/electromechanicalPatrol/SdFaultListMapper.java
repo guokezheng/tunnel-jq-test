@@ -106,4 +106,54 @@ public interface SdFaultListMapper
                                                           @Param("falltRemoveStatue") String falltRemoveStatue);
 
     SdFaultList exportFaultReport(String faultId);
+
+    /**
+     * 查询设备运行状态
+     * @param deviceId
+     * @param deviceType
+     * @return
+     */
+    String selectEqRunStatus(@Param("deviceId") String deviceId,
+                             @Param("deviceType") Long deviceType);
+
+    /**
+     * 查询设备上报的故障数据
+     * @return
+     */
+    List<SdFaultList> selectDeviceFault();
+
+    /**
+     * 巡查点故障检修记录
+     * @param faultId
+     * @return
+     */
+    List<SdPatrolList> getDevicesRepairInfo(String faultId);
+
+    String selectSdFaultEqById(@Param("eqFaultId") String eqFaultId);
+
+    List<SdPatrolList> getFaultRepairReportInfo(@Param("faultId")String faultId);
+
+    int updateFaultRemoveState(@Param("faultId")String faultId,@Param("falltRemoveStatue")String falltRemoveStatue);
+
+    /**
+     * 高速云监听判断故障是否已存在
+     * @param id
+     * @return
+     */
+    SdFaultList selectSdFaultById(@Param("id")String id);
+
+    /**
+     * 故障未消除
+     * @param faultId
+     * @param falltRemoveStatue
+     * @return
+     */
+    int updateFaultUnRemoveState(@Param("faultId")String faultId,@Param("falltRemoveStatue")String falltRemoveStatue);
+
+    /**
+     * app查询故障相关字典值
+     * @return
+     */
+    List<SdFaultList> getFaultDictValue(@Param("dictType")String dictType);
+
 }

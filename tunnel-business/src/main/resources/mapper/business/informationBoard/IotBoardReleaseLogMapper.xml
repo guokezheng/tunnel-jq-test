@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.informationBoard.IotBoardReleaseLogMapper">
-    
+
     <resultMap type="IotBoardReleaseLog" id="IotBoardReleaseLogResult">
         <result property="id"    column="id"    />
         <result property="deviceId"    column="device_id"    />
@@ -12,35 +12,66 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="releaseNewContent"    column="release_new_content"    />
         <result property="releaseBy"    column="release_by"    />
         <result property="releaseTime"    column="release_time"    />
+        <result property="releaseStatus"    column="release_status"    />
+        <result property="releaseDeptName"    column="release_dept_name"    />
+        <result property="releaseDeptId"    column="release_dept_id"    />
+        <result property="releaseUserName"    column="release_user_name"    />
+        <result property="releaseUserId"    column="release_user_id"    />
+        <result property="releaseIp"    column="release_ip"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="direction"    column="direction"    />
     </resultMap>
 
     <sql id="selectIotBoardReleaseLogVo">
-        select id, device_id, device_name, release_old_content, release_new_content, release_by, release_time from iot_board_release_log
+        select id, device_id, device_name, release_old_content, release_new_content, release_by, release_time,
+               release_status, release_dept_name, release_dept_id, release_user_name, release_user_id from iot_board_release_log
     </sql>
 
     <select id="selectIotBoardReleaseLogList" parameterType="IotBoardReleaseLog" resultMap="IotBoardReleaseLogResult">
-        <include refid="selectIotBoardReleaseLogVo"/>
-        <where>  
-            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
-            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
-            <if test="releaseOldContent != null  and releaseOldContent != ''"> and release_old_content = #{releaseOldContent}</if>
-            <if test="releaseNewContent != null  and releaseNewContent != ''"> and release_new_content = #{releaseNewContent}</if>
-            <if test="releaseBy != null  and releaseBy != ''"> and release_by = #{releaseBy}</if>
-            <if test="releaseTime != null "> and release_time = #{releaseTime}</if>
+        select a.id, a.device_id, IFNULL(a.device_name,b.eq_name) as device_name, a.release_old_content, a.release_new_content, a.release_by, a.release_time,
+        if(a.release_status is null, "1",a.release_status) release_status, a.release_dept_name, a.release_dept_id,
+        a.release_user_name, a.release_user_id, b.pile, c.tunnel_name, d.dict_label direction ,a.release_ip
+        from iot_board_release_log a
+        left join sd_devices b on a.device_id = b.associated_device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data d on d.dict_value = b.eq_direction and d.dict_type = "sd_direction"
+        <where>
+            <if test="deviceId != null  and deviceId != ''"> and a.device_id = #{deviceId}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+            <if test="direction != null  and direction != ''"> and b.eq_direction = #{direction}</if>
+            <if test="deviceName != null  and deviceName != ''"> and (a.device_name like concat('%', #{deviceName}, '%') or b.eq_name like concat('%', #{deviceName}, '%'))</if>
+            <if test="releaseOldContent != null  and releaseOldContent != ''"> and a.release_old_content = #{releaseOldContent}</if>
+            <if test="releaseNewContent != null  and releaseNewContent != ''"> and a.release_new_content = #{releaseNewContent}</if>
+            <if test="releaseBy != null  and releaseBy != ''"> and a.release_by = #{releaseBy}</if>
+            <if test="releaseTime != null ">and date_format(release_time,'%Y-%m-%d')  = date_format(#{releaseTime},'%Y-%m-%d')</if>
+            <if test="searchValue != null  and searchValue != ''"> and CONCAT(a.device_id,a.release_new_content,b.eq_name) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="releaseStatus != null  and releaseStatus != ''"> and a.release_status = #{releaseStatus}</if>
+            <if test="releaseDeptName != null  and releaseDeptName != ''"> and a.release_dept_name like concat('%', #{releaseDeptName}, '%')</if>
+            <if test="releaseUserName != null  and releaseUserName != ''"> and a.release_user_name like concat('%', #{releaseUserName}, '%')</if>
             <if test="params.beginReleaseTime != null and params.beginReleaseTime != ''"><!-- 开始时间检索 -->
-                AND date_format(release_time,'%y%m%d%H%i%s') &gt;= date_format(#{params.beginReleaseTime},'%y%m%d%H%i%s')
+                AND date_format(a.release_time,'%y%m%d%H%i%s') &gt;= date_format(#{params.beginReleaseTime},'%y%m%d%H%i%s')
             </if>
             <if test="params.endReleaseTime != null and params.endReleaseTime != ''"><!-- 结束时间检索 -->
-                AND date_format(release_time,'%y%m%d%H%i%s') &lt;= date_format(#{params.endReleaseTime},'%y%m%d%H%i%s')
+                AND date_format(a.release_time,'%y%m%d%H%i%s') &lt;= date_format(#{params.endReleaseTime},'%y%m%d%H%i%s')
+            </if>
+            <if test="ids != null "><!-- id 筛选 -->
+                AND a.id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
         </where>
+        ORDER BY a.id DESC
     </select>
-    
+
     <select id="selectIotBoardReleaseLogById" parameterType="Long" resultMap="IotBoardReleaseLogResult">
         <include refid="selectIotBoardReleaseLogVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertIotBoardReleaseLog" parameterType="IotBoardReleaseLog" useGeneratedKeys="true" keyProperty="id">
         insert into iot_board_release_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -50,6 +81,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="releaseNewContent != null  and releaseNewContent != ''">release_new_content,</if>
             <if test="releaseBy != null  and releaseBy != ''">release_by,</if>
             <if test="releaseTime != null ">release_time,</if>
+            <if test="releaseStatus != null">release_status,</if>
+            <if test="releaseDeptName != null">release_dept_name,</if>
+            <if test="releaseDeptId != null">release_dept_id,</if>
+            <if test="releaseUserName != null">release_user_name,</if>
+            <if test="releaseUserId != null">release_user_id,</if>
+            <if test="releaseIp != null">release_ip,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="deviceId != null  and deviceId != ''">#{deviceId},</if>
@@ -58,6 +95,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="releaseNewContent != null  and releaseNewContent != ''">#{releaseNewContent},</if>
             <if test="releaseBy != null  and releaseBy != ''">#{releaseBy},</if>
             <if test="releaseTime != null ">#{releaseTime},</if>
+            <if test="releaseStatus != null">#{releaseStatus},</if>
+            <if test="releaseDeptName != null">#{releaseDeptName},</if>
+            <if test="releaseDeptId != null">#{releaseDeptId},</if>
+            <if test="releaseUserName != null">#{releaseUserName},</if>
+            <if test="releaseUserId != null">#{releaseUserId},</if>
+            <if test="releaseIp != null">#{releaseIp},</if>
          </trim>
     </insert>
 
@@ -70,6 +113,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="releaseNewContent != null  and releaseNewContent != ''">release_new_content = #{releaseNewContent},</if>
             <if test="releaseBy != null  and releaseBy != ''">release_by = #{releaseBy},</if>
             <if test="releaseTime != null ">release_time = #{releaseTime},</if>
+            <if test="releaseStatus != null">release_status = #{releaseStatus},</if>
+            <if test="releaseDeptName != null">release_dept_name = #{releaseDeptName},</if>
+            <if test="releaseDeptId != null">release_dept_id = #{releaseDeptId},</if>
+            <if test="releaseUserName != null">release_user_name = #{releaseUserName},</if>
+            <if test="releaseUserId != null">release_user_id = #{releaseUserId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -79,10 +127,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteIotBoardReleaseLogByIds" parameterType="String">
-        delete from iot_board_release_log where id in 
+        delete from iot_board_release_log where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    
+
+    <select id="getLastReleaseLogsByDeviceId" resultMap="IotBoardReleaseLogResult">
+        <include refid="selectIotBoardReleaseLogVo"/>
+        <where>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+        </where>
+        ORDER BY id DESC LIMIT 10
+    </select>
+
+    <select id="selectBoardContentList" parameterType="java.lang.String" resultMap="IotBoardReleaseLogResult">
+        SELECT
+            brl.device_id,
+            brl.release_old_content,
+            brl.release_time
+        FROM
+            iot_board_release_log brl
+        WHERE
+            1 = 1
+          AND brl.device_id = #{deviceId}
+        ORDER BY
+            brl.release_time DESC LIMIT 0,1
+    </select>
 </mapper>

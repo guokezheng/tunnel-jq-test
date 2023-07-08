@@ -5,6 +5,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.business.domain.event.SdEmergencyPer;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.event.SdEmergencyPerMapper;
 import com.tunnel.business.service.event.ISdEmergencyPerService;
 import org.slf4j.Logger;
@@ -31,6 +32,9 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
     @Autowired
     private SysDictDataMapper sysDictDataMapper;
 
+    @Autowired
+    private SdTunnelsMapper sdTunnelsMapper;
+
     /**
      * 查询应急人员信息
      *
@@ -50,7 +54,12 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
      */
     @Override
     public List<SdEmergencyPer> selectSdEmergencyPerList(SdEmergencyPer sdEmergencyPer) {
-        String deptId = SecurityUtils.getDeptId();
+        String deptId = "";
+        if(sdEmergencyPer.getTunnelId() != null && !"".equals(sdEmergencyPer.getTunnelId())){
+            deptId = sdTunnelsMapper.selectSdTunnelsById(sdEmergencyPer.getTunnelId()).getDeptId();
+        }else {
+            deptId = SecurityUtils.getDeptId();
+        }
         sdEmergencyPer.getParams().put("deptId", deptId);
         List<SdEmergencyPer> pers = sdEmergencyPerMapper.selectSdEmergencyPerList(sdEmergencyPer);
         List<SysDictData> dictData = sysDictDataMapper.selectDictDataByType("sd_emergency_post");
@@ -83,6 +92,7 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
             logger.error("当前人员已经存在！");
             throw new RuntimeException("当前人员已经存在！");
         }
+        sdEmergencyPer.setCreateTime(DateUtils.getNowDate());
         return sdEmergencyPerMapper.insertSdEmergencyPer(sdEmergencyPer);
     }
 

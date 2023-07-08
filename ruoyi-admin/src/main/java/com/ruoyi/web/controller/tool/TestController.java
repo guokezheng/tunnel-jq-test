@@ -31,7 +31,9 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/test/user")
 public class TestController extends BaseController
 {
-    private final static Map<Integer, UserEntity> users = new LinkedHashMap<Integer, UserEntity>();
+    private static String userNetNull = "用户不存在";
+
+    private final static Map<Integer, UserEntity> users = new LinkedHashMap<>();
     {
         users.put(1, new UserEntity(1, "admin", "admin123", "15888888888"));
         users.put(2, new UserEntity(2, "ry", "admin123", "15666666666"));
@@ -41,7 +43,7 @@ public class TestController extends BaseController
     @GetMapping("/list")
     public AjaxResult userList()
     {
-        List<UserEntity> userList = new ArrayList<UserEntity>(users.values());
+        List<UserEntity> userList = new ArrayList<>(users.values());
         return AjaxResult.success(userList);
     }
 
@@ -56,7 +58,7 @@ public class TestController extends BaseController
         }
         else
         {
-            return error("用户不存在");
+            return error(userNetNull);
         }
     }
 
@@ -87,7 +89,7 @@ public class TestController extends BaseController
         }
         if (users.isEmpty() || !users.containsKey(user.getUserId()))
         {
-            return error("用户不存在");
+            return error(userNetNull);
         }
         users.remove(user.getUserId());
         return AjaxResult.success(users.put(user.getUserId(), user));
@@ -105,7 +107,7 @@ public class TestController extends BaseController
         }
         else
         {
-            return error("用户不存在");
+            return error(userNetNull);
         }
     }
 }

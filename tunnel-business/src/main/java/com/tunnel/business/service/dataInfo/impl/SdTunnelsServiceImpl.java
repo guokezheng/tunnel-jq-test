@@ -8,8 +8,6 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -154,8 +152,8 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
      * @return
      */
     @Override
-    public List<SdTunnels> selectTunnelList(String deptId) {
-        return sdTunnelsMapper.selectTunnelList(deptId);
+    public List<SdTunnels> selectTunnelList(String deptId,String tunnelId) {
+        return sdTunnelsMapper.selectTunnelList(deptId,tunnelId);
     }
 
     @Override
@@ -163,5 +161,55 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
         String deptId = SecurityUtils.getDeptId();
         List<SdTunnels> jlyTunnel = sdTunnelsMapper.getJlyTunnel(deptId);
         return jlyTunnel;
+    }
+
+
+
+    /**
+     * 查询隧道列表
+     * @return 隧道
+     */
+    @Override
+    public List<SdTunnels> selectAllSdTunnelsList() {
+        return sdTunnelsMapper.selectAllSdTunnelsList();
+    }
+
+    /**
+     * 查询所有的隧道列表
+     * @param sdTunnels
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectSdTunnelsList1(SdTunnels sdTunnels) {
+        return sdTunnelsMapper.selectSdTunnelsList1(sdTunnels);
+    }
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectAllSdTunnelsList1() {
+        return sdTunnelsMapper.selectAllSdTunnelsList1();
+    }
+
+    /**
+     * 查询隧道所属部门
+     * @param tunnelId
+     * @return
+     */
+    @Override
+    public String selectTunnelDept(String tunnelId) {
+        return sdTunnelsMapper.selectTunnelDept(tunnelId);
+    }
+
+    @Override
+    public List<SdTunnels> selectTunnelLineList(String deptId) {
+        return sdTunnelsMapper.selectTunnelLineList(deptId);
+    }
+
+    @Override
+    public List<SdTunnels> selectTunnels(String deptId) {
+        return sdTunnelsMapper.selectTunnels(deptId);
     }
 }

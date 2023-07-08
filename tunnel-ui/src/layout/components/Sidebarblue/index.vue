@@ -116,16 +116,19 @@ export default {
         bottom:unset;
         position: unset;
     }
+    .theme-dark  .el-scrollbar__wrap{
+        margin-right: 0px !important;
+    }
     .theme-blue{
         .blue_index_logo{width:22%;}
         .index_logo{width:29%;}
-        #index_logo{height:72px;background-size: 100% 100%;z-index: 999;border-bottom-right-radius:121px;line-height: 72px;}
+        #index_logo{height:7.6vh;background-size: 100% 100%;z-index: 999;border-bottom-right-radius:121px;line-height: 7.6vh;}
         .el-men-flex{display:flex;justify-content:left;align-items:center;}
         .index_menu{
             el-scrollbar.theme-blue{
                 .el-scrollbar__bar.is-vertical{display:none;}
             }
-            .el-scrollbar__wrap{height: 100%;overflow: hidden;}
+            .el-scrollbar__wrap{height: 100%;overflow: hidden;margin-right: 0px !important;margin-bottom: 0px !important;}
             .el-scrollbar__view{width:100%;height:100%;
                 .end_item{white-space:nowrap;display:inline-block;vertical-align:initial;}
                 .el-submenu{

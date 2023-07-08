@@ -1,5 +1,6 @@
 package com.tunnel.business.domain.dataInfo;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -23,6 +24,7 @@ public class SdDevicesBrand extends BaseEntity {
      * 设备厂商名称
      */
     @Excel(name = "设备厂商名称")
+    @ApiModelProperty("设备厂商名称")
     private String supplierName;
 
     /**
@@ -31,10 +33,36 @@ public class SdDevicesBrand extends BaseEntity {
     @Excel(name = "简称")
     private String shortName;
 
+
+    /**
+     * 备注
+     */
+    @Excel(name = "备注")
+    private String remark;
+
+    @Override
+    public String getRemark() {
+        return this.remark;
+    }
+
+    @Override
+    public void setRemark(final String remark) {
+        this.remark = remark;
+    }
+
     /**
      * 是否删除（1-是，0-否）
      */
     private Integer isDel;
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public void setSupplierId(String supplierId) {
         this.supplierId = supplierId;

@@ -50,9 +50,8 @@ public class EvacuationSignTask {
                     && ("").equals(devices.getIp()) && ("").equals(devices.getPort())) {
                 continue;
             } else if (deploymentType != null && deploymentType.equals("GLZ")) {
-                System.err.println("111111111111111");
                 //进行状态查询
-//                sendCommand(devices, devices.getIp(), devices.getPort());
+                sendCommand(devices, devices.getIp(), devices.getPort());
             }
         }
     }

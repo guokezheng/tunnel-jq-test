@@ -1,6 +1,16 @@
 import request from '@/utils/request'
 
 // 查询隧道列表
+export function listTunnels1(query) {
+  return request({
+    url: '/tunnels/list1',
+    method: 'get',
+    params: query
+  })
+}
+
+
+// 查询隧道列表
 export function listTunnels(query) {
   return request({
     url: '/tunnels/list',
@@ -8,6 +18,23 @@ export function listTunnels(query) {
     params: query
   })
 }
+
+export function listAllTunnels(query) {
+  return request({
+    url: '/tunnels/listAll',
+    method: 'get',
+    params: query
+  })
+}
+
+export function listAllTunnels1(query) {
+  return request({
+    url: '/tunnels/listAll1',
+    method: 'get',
+    params: query
+  })
+}
+
 
 // 查询隧道详细
 export function getTunnels(tunnelId) {
@@ -40,6 +67,15 @@ export function delTunnels(tunnelId) {
   return request({
     url: '/tunnels/' + tunnelId,
     method: 'delete'
+  })
+}
+
+// 导出隧道信息
+export function exportTunnels(query) {
+  return request({
+    url: '/tunnels/exportTunnels',
+    method: 'get',
+    params: query
   })
 }
 //查询配置数据（测试）
@@ -137,5 +173,33 @@ export function getJlyTunnel() {
   return request({
     url: '/tunnels/getJlyTunnel',
     method: 'get'
+  })
+}
+
+// // 加强照明 弹窗
+// export function setBrightness(query) {
+//   return request({
+//     url: '/light/setBrightness',
+//     method: 'get',
+//     params: query
+//
+//   })
+// }
+
+// 工作台 能耗图表
+export function energyConsumptionDetection(tunneld) {
+  return request({
+    url: '/system/data/energyConsumptionDetection/' + tunneld,
+    method: 'get'
+
+  })
+}
+
+// 情报板 设备图标样式
+export function getBoardContent(query) {
+  return request({
+    url: '/parser/board/getWorkBenchBoardContent/' + query,
+    method: 'get',
+
   })
 }

@@ -1,16 +1,25 @@
 package com.tunnel.business.service.dataInfo.impl;
 
 import com.github.pagehelper.util.StringUtil;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.system.mapper.SysDictDataMapper;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.*;
+import com.tunnel.business.strategy.factory.DeviceDataStrategyFactory;
+import com.tunnel.business.strategy.service.DeviceDataStrategyService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +56,15 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Autowired
     private SdDeviceDataMapper sdDeviceDataMapper;
 
+    @Autowired
+    private SdEquipmentIconFileMapper sdEquipmentIconFileMapper;
+
+    @Autowired
+    private SdOperationLogMapper sdOperationLogMapper;
+
+    @Autowired
+    private DeviceDataStrategyFactory deviceDataStrategyFactory;
+
 
     /**
      * 查询设备
@@ -68,55 +86,24 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public Map<String, String> queryDeviceById(String eqId) {
         Map<String, String> devices = sdDevicesMapper.queryDeviceById(eqId);
-        if (devices.get("eqStatus") == null || devices.get("eqStatus").equals("") || devices.get("eqStatus").equals("0")) {
+        if (devices.get("eqStatus") == null || "".equals(devices.get("eqStatus")) || "0".equals(devices.get("eqStatus"))) {
             devices.put("eqStatus","2");
         }
+        String eqType = String.valueOf(devices.get("eqType"));
         SdDeviceData sdDeviceData = new SdDeviceData();
-        if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
+        if (String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()).equals(eqType)) {
             sdDeviceData.setDeviceId(devices.get("fEqId"));
         } else {
             sdDeviceData.setDeviceId(eqId);
         }
         List<SdDeviceData> deviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
         if (!deviceDataList.isEmpty()) {
+            //匹配策略
+            DeviceDataStrategyService strategyService = deviceDataStrategyFactory.strategy(eqType);
+
             for (int i = 0;i < deviceDataList.size();i++) {
                 SdDeviceData data = deviceDataList.get(i);
-                //诱导灯
-                if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode())) {
-                        devices.put("state", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode())) {
-                        devices.put("brightness", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode())) {
-                        devices.put("frequency", data.getData());
-                    }
-                //疏散标志
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode())) {
-                        devices.put("state", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode())) {
-                        devices.put("brightness", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode())) {
-                        devices.put("frequency", data.getData());
-                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
-                        devices.put("fireMark", data.getData());
-                    }
-                    //车指
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
-                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
-                        devices.put("state", data.getData());
-                    }
-                //声光报警器
-                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode()))) {
-                    if (data != null && (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode())
-                            || data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode()))) {
-                        if (devices.get("eqState") != null && devices.get("eqState").equals("1")) {
-                            devices.put("state", data.getData());
-                        }
-                    }
-                } else if (data != null) {
-                    devices.put("state", data.getData());
-                }
+                strategyService.getDeviceData(devices,data);
             }
         }
         return devices;
@@ -132,6 +119,19 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevices> selectSdDevicesList(SdDevices sdDevices) {
         List<SdDevices> devicesList = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
         return devicesList;
+    }
+
+    /**
+     * 根据隧道ID、设备类型获取设备列表
+     *
+     * @param tunnelId 隧道ID
+     * @param typeList 设备类型列表
+     * @return
+     */
+    @Override
+    public List<SdDevices> selectDeviceList(String tunnelId, List<String> typeList) {
+
+        return sdDevicesMapper.selectDeviceList(tunnelId,typeList);
     }
 
     /**
@@ -432,7 +432,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                 /*SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());*/
                 SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());
                 if (StringUtils.isNull(d)) {
-                    Map map = checkDevices(devices);
+                    Map map = checkDevices(devices,isUpdateSupport);
                     if ((Boolean) map.get("flag")) {
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
 //                        StringBuilder sb=new StringBuilder();
@@ -449,7 +449,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         failureMsg.append("<br/>" + failureNum + map.get("failureMsg").toString());
                     }
                 } else if (isUpdateSupport) {
-                    Map map = checkDevices(devices);
+                    Map map = checkDevices(devices,isUpdateSupport);
                     if ((Boolean) map.get("flag")) {
                         devices.setUpdateBy(operName);
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
@@ -489,7 +489,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return successMsg.toString();
     }
 
-    public Map checkDevices(SdDevices devices) {
+    public Map checkDevices(SdDevices devices, Boolean isUpdateSupport) {
         StringBuilder failureMsg = new StringBuilder();
         Map<String, Object> map = new HashMap<String, Object>();
         Long eqType = devices.getEqType();
@@ -497,9 +497,26 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         String fEqId = devices.getFEqId();
         //所属隧道
         SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(devices.getEqTunnelId());
+        /*//根据隧道id和设备名称查询
+        List<SdDevices> sdDevicesList = sdDevicesMapper.tunnelEqNameOnly(devices.getEqTunnelId(), devices.getEqName());*/
         //设备类型
         SdEquipmentType sdEquipmentType = equipmentTypeService.selectSdEquipmentTypeById(eqType);
 //        SdEquipmentState sdEquipmentState = sdEquipmentStateService.selectSdEquipmentStateById(devices.getEqType());
+        String deptId = SecurityUtils.getDeptId();
+        List<SdTunnels>tunnelList = sdTunnelsService.selectTunnels(deptId);
+        String tunnels = "";
+        if(tunnelList.size()>0){
+            for(SdTunnels sdTunnel : tunnelList){
+                tunnels += sdTunnel.getTunnelId()+',';
+            }
+
+        }
+        if(tunnels.indexOf(devices.getEqTunnelId())==-1){//不包含改隧道
+            failureMsg.append("、设备ID " + devices.getEqId() + " 所属隧道ID有误,请检查");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
+        }
         if (!StringUtil.isEmpty(fEqId)) {
             //有些设备不需要关联PLC，只有当录入PLC主机ID时，才校验PLC
             SdDevices plc = sdDevicesMapper.selectSdDevicesById(fEqId);
@@ -519,7 +536,23 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             map.put("flag", false);
             map.put("failureMsg", failureMsg);
             return map;
+        } else if (StringUtils.isEmpty(devices.getEqName())||StringUtils.isLongNotNull(devices.getEqType()) ||StringUtils.isLongNotNull(devices.getFEqType())) {
+            failureMsg.append("、设备ID " + devices.getEqId() + "设备名称或设备类型或设备大类不能为空 ");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
+        } else if (StringUtils.isEmpty(devices.getDirection())) {
+            failureMsg.append("、设备ID " + devices.getEqId() + "设备方向不能为空 ");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
         }
+        /*else if (sdDevicesList!=null&&sdDevicesList.size()>0&&!sdDevicesList.get(0).getEqId().equals(devices.getEqId())) {
+            failureMsg.append("、设备ID " + devices.getEqId() + "该隧道下设备名称重复");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
+        }*/
         //设备方向
         //devices.getEqDirection();
         //控制模式+机位
@@ -629,7 +662,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         });
         //设备类型名称简称
         String typeAbbr = collect.get(typeId.longValue());
-        String ss = tunnelId + "-" + typeAbbr;
+        String ss = tunnelId + "-" + typeAbbr + "-";
         List<String> list = sdDevicesMapper.selectID(ss);
         log.info("当前设备类型名称简称-->>>>>>>>>>>>>>>>>>{}", typeAbbr);
         StringBuilder sb = new StringBuilder();
@@ -682,7 +715,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             }
             SdDevices devices = new SdDevices();
             devices.setEqTunnelId(tunnelName);
-            devices.setEqType(1L);
+            Long [] eqTypes = new Long[]{1L,2L};
+            //devices.setEqType(1L);
+            devices.setEqTypes(eqTypes);
             devices.setEqDirection(direction);
             devices.setLane(lane.toString());
             List<SdDevices> sdDevicesLists = sdDevicesMapper.batchControlCarFinger(devices);
@@ -776,19 +811,55 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.getDevBrandList();
     }
 
+    @Override
+    public List<SdDevices> getAppDevicesList(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum) {
+        List<String> tunnelArray = null;
+        String start = null;
+        String end = null;
+        String deptId = SecurityUtils.getDeptId();
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        if(pageNum!=null&&pageSize!=null){
+            pageNum = (pageNum-1)*pageSize ;
+        }
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        sdDevices.getParams().put("pageSize", pageSize);
+        sdDevices.getParams().put("pageNum", pageNum);
+        return sdDevicesMapper.getAppDevicesList(sdDevices);
+    }
+
+
+
     /**
      * app端获取设备列表
      * @return
      */
-    @Override
+    /*@Override
     public Map getAppDevicesList(String param, String eqType, String eqStatus) {
         Map<String, Object> map=new HashMap<String, Object>();
         List<SdDevices> sdDevicesList = sdDevicesMapper.getAppDevicesList(param,eqType,eqStatus);
+        if(sdDevicesList!=null && sdDevicesList.size()>=0){
+            for(int i =0;i<sdDevicesList.size();i++){
+                String fileId = sdDevicesList.get(i).getIconFileId();
+                if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
+                    SdEquipmentStateIconFile sdEquipmentStateIconFilee = new SdEquipmentStateIconFile();
+                    sdEquipmentStateIconFilee.setStateIconId(fileId);
+                    sdDevicesList.get(i).setiFileList(sdEquipmentIconFileMapper.selectSdTypeImgFileList(sdEquipmentStateIconFilee));
+                }
+            }
+        }
         List<SdDevices> num = sdDevicesMapper.getDevicesNum(param,eqType,eqStatus);
         map.put("sdDevicesList",sdDevicesList);
         map.put("numList",num);
         return map;
-    }
+    }*/
 
     /**
      * app端设备信息
@@ -800,6 +871,12 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.getAppDevicesInfo(eqId);
     }
 
+    @Override
+    public List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId) {
+        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByEqTypes(guidanceLampTypeId, lunKuoBiaoTypeId);
+        return devicesList;
+    }
+
     /**
      * app端查询设备状态
      * @param eqId
@@ -807,6 +884,233 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      */
     @Override
     public List<SdDevices> getAppDevicesStatus(String eqId) {
-       return  sdDevicesMapper.getAppDevicesStatus(eqId);
+        List<SdDevices>list = sdDevicesMapper.getAppDevicesStatus(eqId);
+        if(list!=null&&list.size()>0){
+            String iconFileId = list.get(0).getIconFileId();
+            if (iconFileId != null && !"".equals(iconFileId) && !"null".equals(iconFileId)) {
+                if (!"-1".equals(iconFileId)) {
+                    SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+                    sdEquipmentStateIconFile.setStateIconId(iconFileId);
+                    list.get(0).setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
+                }
+            }
+        }
+         return list;
+    }
+
+    /**
+     * 根据隧道+方向+类型 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public List<SdDevices> getSpkList(SdDevices sdDevices){
+        return sdDevicesMapper.getSpkList(sdDevices);
+    }
+
+    /**
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public SdDevices getLight(SdDevices sdDevices){
+        return sdDevicesMapper.getLight(sdDevices);
+    }
+
+    @Override
+    public SdDevices getDeviceByAssociationDeviceId(Long deviceId) {
+        return sdDevicesMapper.getDeviceByAssociationDeviceId(deviceId);
+    }
+
+    @Override
+    public List<SdDevices> selectDevicesLineList(String deptId,String eqtype) {
+        return sdDevicesMapper.selectDevicesLineList(deptId,eqtype);
+    }
+
+    @Override
+    public AjaxResult getTreeDeviceList(SdDevices sdDevices) {
+        SdTunnelsMapper sdTunnelsMapper = SpringUtils.getBean(SdTunnelsMapper.class);
+        SdDevices sdDevicesParam = new SdDevices();
+        sdDevicesParam.setEqTunnelId(sdDevices.getEqTunnelId());
+        sdDevicesParam.setEqType(sdDevices.getEqType());
+        //隧道中双向设备
+        List<Map<String, Object>> sdDevicesList = sdDevicesMapper.getTreeDevicesData(sdDevicesParam);
+        //隧道中设备方向
+        List<String> tunnelDirection = sdDevicesMapper.getTunnelDirection(sdDevicesParam);
+        //隧道信息
+        SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(sdDevices.getEqTunnelId());
+        //如果没有设备则返回空
+        if(sdDevicesList.size() == 0){
+            return AjaxResult.success(new ArrayList<>());
+        }
+        //处理相关数据组合成级联相关数据结构
+        List<Map<String, Object>> list = new ArrayList<>();
+        List<Map<String, Object>> directionList = new ArrayList<>();
+        for(String direction : tunnelDirection){
+            Map<String, Object> map1 = new HashMap<>();
+            List<Map<String, Object>> collect = sdDevicesList.stream().filter(item -> direction.equals(item.get("eqDirection").toString())).collect(Collectors.toList());
+            //查询方向字典值
+            String directionLabel = SpringUtils.getBean(SysDictDataMapper.class).selectDictLabel(DictTypeEnum.sd_direction.getCode(), direction);
+            map1.put("label", directionLabel);
+            map1.put("children",collect);
+            directionList.add(map1);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("label",sdTunnels.getTunnelName());
+        map.put("children",directionList);
+        list.add(map);
+        return AjaxResult.success(list);
+    }
+
+    @Override
+    public List<SdDevices> verifyEqNameOnly(String eqId,String eqName) {
+        return sdDevicesMapper.verifyEqNameOnly(eqId,eqName);
+    }
+
+
+    @Override
+    public List<SdDevices> tunnelEqNameOnly(String eqTunnelId,String eqName) {
+        return sdDevicesMapper.tunnelEqNameOnly(eqTunnelId,eqName);
+    }
+
+    @Override
+    public int getAppDevicesCountList(String param, String eqType, String eqStatus, String deptId) {
+        List<String> tunnelArray = null;
+        String start = null;
+        String end = null;
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        return sdDevicesMapper.getAppDevicesCountList(sdDevices);
+    }
+
+    @Override
+    public List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum) {
+        List<String> tunnelArray = null;
+        String deptId = SecurityUtils.getDeptId();
+        // 超级管理员，可以看到全部数据
+        if(!SecurityUtils.getUsername().equals("admin")){
+            //获取所属部门下隧道列表
+            tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
+        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.getParams().put("tunnelArray", tunnelArray);
+        sdDevices.getParams().put("param", param);
+        sdDevices.getParams().put("eqType", eqType);
+        sdDevices.getParams().put("eqStatus", eqStatus);
+        sdDevices.getParams().put("pageSize", pageSize);
+        sdDevices.getParams().put("pageNum", pageNum);
+        return sdDevicesMapper.getDevicesNum(sdDevices);
+    }
+
+
+    /**
+     * 修改设备以及子设备状态在线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateOnlineStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId, DevicesStatusEnum.DEVICE_ON_LINE.getCode(),cascade);
+    }
+
+    /**
+     * 修改设备以及子设备状态离线
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateOfflineStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId,DevicesStatusEnum.DEVICE_OFF_LINE.getCode(),cascade);
+    }
+
+    /**
+     * 修改设备以及子设备状态故障
+     * @param deviceId 设备ID
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateFaultStatus(String deviceId,boolean cascade){
+      return updateDeviceStatus(deviceId,DevicesStatusEnum.DEVICE_ERROR.getCode(),cascade);
+    }
+
+    /**
+     * 设置设备以及子设备状态
+     * @param deviceId 设备ID
+     * @param status 设备状态
+     * @param cascade 是否级联修改子设备状态，true为修改
+     */
+    @Override
+    public int updateDeviceStatus(String deviceId,String status,boolean cascade){
+        int result;
+
+        SdDevices sdDevices = new SdDevices();
+        //设置设备状态
+        sdDevices.setEqId(deviceId);
+        sdDevices.setEqStatus(status);
+        sdDevices.setEqStatusTime(new Date());
+        result = updateSdDevices(sdDevices);
+
+        //级联修改子设备状态
+        if(cascade){
+            //设置子设备状态
+            sdDevices.setFEqId(deviceId);
+           result = updateSdDevicesByFEqId(sdDevices);
+        }
+        return result;
+    }
+
+    /**
+     * 根据外部设备ID查询设备信息
+     *
+     * @param externalId 外部设备ID
+     * @return
+     */
+    @Override
+    public SdDevices getDevicesListByExternalId(String externalId) {
+        return sdDevicesMapper.getDevicesListByExternalId(externalId);
+    }
+
+    /**
+     * 根据协议Id查询设备列表
+     *
+     * @param sdDevices 设备信息
+     * @return
+     */
+    @Override
+    public List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices) {
+        return sdDevicesMapper.selectDevicesByProtocol(sdDevices);
+    }
+
+    /**
+     * 获取测控执行器设备
+     * @return
+     */
+    @Override
+    public List<Map> getMcaList() {
+
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+
+        List<Map> list = sdDevicesMapper.getMcaList();
+
+        for(Map map : list){
+
+            String devId = map.get("device_id") != null ? map.get("device_id").toString() : null ;
+            if(devId != null){
+                map.put("function",sdDevicesMapper.getMacItem(devId));
+            }
+        }
+        return list;
     }
 }

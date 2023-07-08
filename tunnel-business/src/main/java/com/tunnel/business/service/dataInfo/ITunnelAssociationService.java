@@ -1,7 +1,8 @@
 package com.tunnel.business.service.dataInfo;
 
-import java.util.List;
 import com.tunnel.business.domain.dataInfo.TunnelAssociation;
+
+import java.util.List;
 
 /**
  * 隧道关联关系Service接口
@@ -16,7 +17,7 @@ public interface ITunnelAssociationService
      */
     public TunnelAssociation selectTunnelAssociationById(Long id);
 
-    public TunnelAssociation selectTunnelAssociationByTunnelId(String tunnelId);
+    public List<TunnelAssociation> selectTunnelAssociationsByTunnelId(String tunnelId);
 
     /**
      * 查询隧道关联关系列表
@@ -59,4 +60,19 @@ public interface ITunnelAssociationService
      * @return 结果
      */
     public int deleteTunnelAssociationById(Long id);
+
+    int updateTunnelAssociations(List<TunnelAssociation> tunnelAssociations);
+
+    List<TunnelAssociation> checkInsertUnique(TunnelAssociation tunnelAssociation);
+
+    List<TunnelAssociation> checkUpdateUnique(TunnelAssociation tunnelAssociation);
+
+    /**
+     * 根据隧道、方向、外部系统 获取外部系统隧道洞ID
+     * @param eqTunnelId
+     * @param eqDirection
+     * @param externalSystemId
+     * @return
+     */
+    public String getExternalSystemTunnelId(String eqTunnelId, String eqDirection, Long externalSystemId);
 }

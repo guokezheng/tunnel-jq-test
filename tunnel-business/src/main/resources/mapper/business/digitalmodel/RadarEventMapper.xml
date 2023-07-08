@@ -14,22 +14,22 @@
 
     <insert id="insertWjEvent">
         insert into sd_event
-        (id,event_type_id,tunnel_id,lane_no,longitude,latitude,start_time,end_time,stake_num,event_source,
-        event_title,direction,event_state,create_time)
+        (id,event_type_id,tunnel_id,lane_no,longitude,latitude,start_time,end_time,event_time,stake_num,event_source,
+        event_title,direction,event_state,create_time,event_grade)
         values
         <foreach collection="list" item="item" separator=",">
             (#{item.id},#{item.eventTypeId},#{item.tunnelId},#{item.laneNo},#{item.eventLongitude},#{item.eventLatitude},
-            #{item.startTime},#{item.endTime},#{item.stakeNum},#{item.eventSource},
-            #{item.eventTitle},#{item.direction},#{item.eventState},#{item.createTime}
+            #{item.startTime},#{item.endTime},#{item.eventTime},#{item.stakeNum},#{item.eventSource},
+            #{item.eventTitle},#{item.direction},#{item.eventState},#{item.createTime},#{item.eventGrade}
             )
         </foreach>
     </insert>
 
     <insert id="insertPic">
         insert into sd_traffic_image
-            (business_id,img_name,img_url,img_type,create_time,create_by)
+            (business_id,img_name,img_url,img_type,create_time)
         values
-            (#{eventId},#{picName},#{imgUrl},#{imgType},NOW(),#{createBy})
+            (#{eventId},#{picName},#{imgUrl},#{imgType},NOW())
     </insert>
 
     <insert id="insertVhc">
@@ -54,7 +54,7 @@
     update sd_event
     set
         id=#{id},event_type_id=#{eventTypeId},tunnel_id=#{tunnelId},lane_no=#{laneNo},longitude=#{eventLongitude},latitude=#{eventLatitude},
-        start_time=#{startTime},end_time=#{endTime},stake_num=#{stakeNum},update_time = #{updateTime},direction = #{direction}
+        start_time=#{startTime},end_time=#{endTime},event_time=#{eventTime},stake_num=#{stakeNum},update_time = #{updateTime},direction = #{direction}
     where id=#{id}
     </update>
     <update id="updateVideoById">
@@ -67,18 +67,16 @@
         select COUNT(1) from sd_event where id=#{eventId}
     </select>
 
-    <select id="selectConfidence" parameterType="java.lang.Long" resultType="com.tunnel.business.domain.digitalmodel.WjConfidence">
+    <select id="selectConfidence" parameterType="java.lang.Long" resultType="java.lang.String">
         SELECT
-            ec.id,
-            ec.plate,
-            ec.speed,
-            ec.event_id AS eventIds,
-            ec.confidence AS eventConfidence
+            GROUP_CONCAT( ec.plate ) AS plate
         FROM
             sd_event_confidence ec
         WHERE
-            1 = 1
-          AND ec.event_id = #{eventId}
+          1 = 1
+          <if test="eventId != null and eventId != ''">
+              AND ec.event_id = #{eventId}
+          </if>
     </select>
 
     <update id="updateEventConfidence" parameterType="com.tunnel.business.domain.digitalmodel.WjConfidence">

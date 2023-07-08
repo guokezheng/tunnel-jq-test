@@ -1,0 +1,47 @@
+#------开发环境配置-----
+spring:
+  # 数据源配置
+  datasource:
+    druid:
+      # 主库数据源
+      master:
+        url: jdbc:mysql://10.168.56.204:3306/tunnel-platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true
+        username: root
+        password: Platform123!@#
+#测试kafka配置
+  kafka:
+    wulian:
+      bootstrap-servers: 10.168.56.206:9092
+      producer:
+        # 重试次数，设置大于0的值，则客户端会将发送失败的记录重新发送
+        #        retries: 3
+        #        batch-size: 16384 #批量处理大小，16K
+        #        buffer-memory: 33554432 #缓冲存储大，32M
+        #        acks: 1
+        # 指定消息key和消息体的编解码方式
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        security:
+          protocol: SASL_PLAINTEXT
+          properties:
+            sasl:
+              mechanism: SCRAM-SHA-256
+              jaas:
+                config: org.apache.kafka.common.security.scram.ScramLoginModule required username='admin' password='admin@123';
+      consumer:
+        group-id: test
+        enable-auto-commit: false # 不自动签收
+        auto-offset-reset: earliest  #kafka出现错误重启后，会找到未消费的offset继续消费
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        max-poll-records: 5
+        security:
+          protocol: SASL_PLAINTEXT
+          properties:
+            sasl:
+              mechanism: SCRAM-SHA-256
+              jaas:
+                config: org.apache.kafka.common.security.scram.ScramLoginModule required username='admin' password='admin@123';
+
+
+

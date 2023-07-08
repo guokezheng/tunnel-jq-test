@@ -1,19 +1,135 @@
 <template>
   <div class="app-container">
-    <el-form
+    <!-- 全局搜索 -->
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          v-hasPermi="['system:material:add']"
+          size="small"
+          @click="handleAdd()"
+          >新增
+        </el-button>
+        <el-button size="small" :loading="exportLoading" @click="handleExport"
+          >导出
+        </el-button>
+        <!--        <el-button type="primary" plain size="mini" @click="toggleExpandAll"
+          >展开/折叠</el-button
+        >-->
+        <el-button size="small" @click="resetQuery">刷新</el-button>
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div ref="main" class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入物资名称、桩号，回车搜索"
+            v-model="queryParams.materialName"
+            @keyup.enter.native="handleQuery"
+            size="small"
+          >
+            <el-button
+              slot="append"
+              class="searchTable"
+              @click="wz_boxShow = !wz_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="wz_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="物资类型" prop="materialType">
+          <el-select
+            v-model="queryParams.materialType"
+            clearable
+            placeholder="请选择物资类型"
+            size="small"
+          >
+            <el-option
+              v-for="dict in materialTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <!--        <el-form-item label="开始桩号:">
+            <el-form-item prop="station">
+              <el-input
+                style="width:335px"
+                class="dateClass"
+                v-model.number="queryParams.station"
+                placeholder="0~999"
+                clearable
+                size="small"
+                oninput="value=value.replace(/[^\d]/g,'')"
+              >
+                <template slot="prepend">K</template>
+              </el-input>
+            </el-form-item>
+            <span style="margin: 0 5px" class="formAddClass">+</span>
+            <el-form-item prop="deviation">
+              <el-input
+                style="width:335px"
+                class="dateClass"
+                v-model.number="queryParams.deviation"
+                placeholder="桩号偏差"
+                clearable
+                size="small"
+              />
+            </el-form-item>
+          </el-form-item>
+          <el-form-item label="结束桩号:">
+            <el-form-item prop="endStation">
+              <el-input
+                style="width: 335px"
+                class="dateClass"
+                v-model.number="queryParams.endStation"
+                placeholder="0~999"
+                clearable
+                size="small"
+                oninput="value=value.replace(/[^\d]/g,'')"
+              >
+                <template slot="prepend">K</template>
+              </el-input>
+            </el-form-item>
+            <span style="margin: 0 5px" class="formAddClass">+</span>
+            <el-form-item prop="endDeviation">
+              <el-input
+                style="width: 335px"
+                class="dateClass"
+                v-model.number="queryParams.endDeviation"
+                placeholder="桩号偏差"
+                clearable
+                size="small"
+              />
+            </el-form-item>
+          </el-form-item>-->
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+    <!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
       v-show="showSearch"
       :rules="queryParamsRules"
     >
-      <!--      <el-form-item label="物资编号" prop="materialId">-->
-      <!--        <el-input class="dateClass" v-model="queryParams.materialId" placeholder="请输入物资编号" clearable size="small" @keyup.enter.native="handleQuery" />-->
-      <!--      </el-form-item>-->
-      <el-form-item label="物品类型" prop="materialType">
+      <el-form-item label="物资类型" prop="materialType">
         <el-select
           v-model="queryParams.materialType"
-          placeholder="请选择物品类型"
+          placeholder="请选择物资类型"
           clearable
           size="small"
         >
@@ -34,14 +150,15 @@
             placeholder="0~999"
             clearable
             size="small"
+            oninput="value=value.replace(/[^\d]/g,'')"
           >
             <template slot="prepend">K</template>
           </el-input>
         </el-form-item>
-        <span style="margin: 0 5px;" class="formAddClass">+</span>
+        <span style="margin: 0 5px" class="formAddClass">+</span>
         <el-form-item prop="deviation">
           <el-input
-            style="width: 100px"
+            style="width: 145px"
             class="dateClass"
             v-model.number="queryParams.deviation"
             placeholder="桩号偏差"
@@ -59,14 +176,15 @@
             placeholder="0~999"
             clearable
             size="small"
+            oninput="value=value.replace(/[^\d]/g,'')"
           >
             <template slot="prepend">K</template>
           </el-input>
         </el-form-item>
-        <span style="margin: 0 5px;" class="formAddClass">+</span>
+        <span style="margin: 0 5px" class="formAddClass">+</span>
         <el-form-item prop="endDeviation">
           <el-input
-            style="width: 100px"
+            style="width: 145px"
             class="dateClass"
             v-model.number="queryParams.endDeviation"
             placeholder="桩号偏差"
@@ -75,11 +193,11 @@
           />
         </el-form-item>
       </el-form-item>
-<!--      <el-form-item label="状态" prop="state">-->
-<!--        <el-select v-model="queryParams.state" placeholder="请选择状态" clearable size="small">-->
-<!--          <el-option v-for="dict in stateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
+      &lt;!&ndash;      <el-form-item label="状态" prop="state">&ndash;&gt;
+      &lt;!&ndash;        <el-select v-model="queryParams.state" placeholder="请选择状态" clearable size="small">&ndash;&gt;
+      &lt;!&ndash;          <el-option v-for="dict in stateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />&ndash;&gt;
+      &lt;!&ndash;        </el-select>&ndash;&gt;
+      &lt;!&ndash;      </el-form-item>&ndash;&gt;
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
@@ -114,7 +232,7 @@
           >删除</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form>-->
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增物资</el-button>
@@ -148,16 +266,35 @@
         </el-tooltip>
       </div>
     </el-row> -->
-
+    <div class="tableTopHr"></div>
     <el-table
       v-loading="loading"
       :data="materialList"
       @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName"
-      max-height="640"
+      class="allTable"
+      height="62vh"
+      :row-key="getRowKey"
+      ref="tableFile"
     >
-      <el-table-column type="selection" width="55" align="center" />
-<!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        reserve-selection
+      />
+      <el-table-column
+        type="index"
+        :index="indexMethod"
+        label="序号"
+        width="68"
+        align="center"
+      ></el-table-column>
+      <!--      <el-table-column label="序号" align="center">
+        <template slot-scope="scope">
+          {{ scope.$index + 1 }}
+        </template>
+      </el-table-column>-->
+      <!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
       <el-table-column label="物资名称" align="center" prop="materialName" />
       <el-table-column
         label="物资类型"
@@ -232,9 +369,9 @@
             style="padding-bottom: 60px"
           >
             <el-col :span="6">
-              <el-form-item label="" style="color: green;">
+              <el-form-item label="" style="color: green">
                 <template>
-                  <div v-if="item.type === '1' ">
+                  <div v-if="item.type === '1'">
                     <span class="kcczMessage">入库:</span>{{ item.changeStock }}
                   </div>
                   <div v-else-if="item.type === '2'">
@@ -284,10 +421,14 @@
 
     <!-- 添加/修改应急资源对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-<!--        <el-form-item label="物资编号" prop="materialId">-->
-<!--          <el-input v-model="form.materialId" placeholder="请输入物资编号" />-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="物资编号" prop="materialId">-->
+        <!--          <el-input v-model="form.materialId" placeholder="请输入物资编号" />-->
+        <!--        </el-form-item>-->
         <el-form-item label="物资名称" prop="materialName">
           <el-input v-model="form.materialName" placeholder="请输入物资名称" />
         </el-form-item>
@@ -359,8 +500,8 @@
             placeholder="请输入保质期，例：3"
             style="display: table"
           >
-           <template slot="append">月</template>
-         </el-input>
+            <template slot="append">月</template>
+          </el-input>
         </el-form-item>
         <el-form-item label="生产日期" prop="dateOfManufacture">
           <el-date-picker
@@ -372,25 +513,25 @@
             placeholder="选择生产时间"
             :picker-options="pickerOptions0"
             class="dateClass"
+            @focus="focus"
           >
           </el-date-picker>
         </el-form-item>
-
+        <div class="dialog-footer">
+          <el-button
+            class="submitButton"
+            :disabled="disabled"
+            :loading="submitBtnLoading"
+            @click="submitForm"
+            v-prevent-click
+            >确 定</el-button
+          >
+          <el-button @click="cancel" class="closeButton">取 消</el-button>
+        </div>
         <!-- <el-form-item label="价格(元)" prop="price">
           <el-input v-model="form.price" placeholder="请输入保留两位小数的单价" oninput="value=value.replace(/[^0-9.]/g,'')" />
         </el-form-item> -->
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button
-          type="primary"
-          :disabled = "disabled"
-          :loading="submitBtnLoading"
-          @click="submitForm"
-          v-prevent-click
-          >确 定</el-button
-        >
-        <el-button @click="cancel">取 消</el-button>
-      </div>
     </el-dialog>
 
     <!-- 出入库应急资源对话框 -->
@@ -422,7 +563,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item
-                label="物品类型"
+                label="物资类型"
                 prop="materialType"
                 style="width: 240px"
               >
@@ -437,7 +578,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row style="margin-top: 10px;">
+          <el-row style="margin-top: 10px">
             <el-col :span="12">
               <el-form-item
                 label="库存数量"
@@ -448,12 +589,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="单位" prop="company" style="width: 240px;">
+              <el-form-item label="单位" prop="company" style="width: 240px">
                 <el-input v-model="formDetail.company" disabled />
               </el-form-item>
             </el-col>
           </el-row>
-          <el-form-item label="仓库位置" prop="position" style="width: 240px;">
+          <el-form-item label="仓库位置" prop="position" style="width: 240px">
             <el-input v-model="formDetail.position" disabled />
           </el-form-item>
         </fieldset>
@@ -522,11 +663,11 @@ import {
   addMaterial,
   updateMaterial,
   getCrkDetailById,
-  updateMaterialCrk
+  updateMaterialCrk,
+  exportList,
 } from "@/api/system/material";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import { number } from 'echarts';
-import {tunnelNames} from "@/api/event/reservePlan";
+
 var type = "";
 var varid = "";
 export default {
@@ -572,16 +713,20 @@ export default {
           return time.getTime() > Date.now() - 8.64e6;
         },
       },
+
+      // 导出遮罩层
+      exportLoading: false,
       paramsData: {
-        tunnelId : ""
+        tunnelId: "",
       },
       statusClass: {
         1: "yellowClass",
         2: "greenClass",
         3: "redClass",
       },
-      disabled:false,
+      disabled: false,
       // 遮罩层
+      wz_boxShow: false,
       loading: true,
       dloading: false,
       // 选中数组
@@ -644,36 +789,36 @@ export default {
         endDeviation: null,
       },
       // 查询参数桩号验证
-      queryParamsRules: {
-        station: {
-          type: "number",
-          required: false,
-          pattern: /^(?:[0-9]{1,3})$/,
-          message: "桩号为0~999之间的数字",
-          trigger: "blur",
-        },
-        deviation: {
-          type: "number",
-          required: false,
-          pattern: /^(?:[0-9]{1,2})$/,
-          message: "桩号偏差为0~99之间数字",
-          trigger: "blur",
-        },
-        endStation: {
-          type: "number",
-          required: false,
-          pattern: /^(?:[0-9]{1,3})$/,
-          message: "桩号为0~999之间的数字",
-          trigger: "blur",
-        },
-        endDeviation: {
-          type: "number",
-          required: false,
-          pattern: /^(?:[0-9]{1,2})$/,
-          message: "桩号偏差为0~99之间数字",
-          trigger: "blur",
-        },
-      },
+      // queryParamsRules: {
+      //   station: {
+      //     type: "number",
+      //     required: true,
+      //     pattern: /^(?:[0-9]{1,3})$/,
+      //     message: "桩号为0~999之间的数字",
+      //     trigger: "blur",
+      //   },
+      //   deviation: {
+      //     type: "number",
+      //     required: true,
+      //     pattern: /^(?:[0-9]{1,3})$/,
+      //     message: "桩号偏差为0~999之间数字",
+      //     trigger: "blur",
+      //   },
+      //   endStation: {
+      //     type: "number",
+      //     required: true,
+      //     pattern: /^(?:[0-9]{1,3})$/,
+      //     message: "桩号为0~999之间的数字",
+      //     trigger: "blur",
+      //   },
+      //   endDeviation: {
+      //     type: "number",
+      //     required: true,
+      //     pattern: /^(?:[0-9]{1,3})$/,
+      //     message: "桩号偏差为0~999之间数字",
+      //     trigger: "blur",
+      //   },
+      // },
       // 表单参数
       form: {
         /* type: null,
@@ -712,7 +857,7 @@ export default {
           message: "隧道名称不能为空",
           trigger: "change",
         },
-        station: [
+        /*station: [
           {
             required: true,
             message: "桩号格式为K、YK、ZKxxx+xxx组成",
@@ -723,7 +868,7 @@ export default {
             message: "桩号格式为K、YK、ZKxxx+xxx组成",
             trigger: "blur",
           },
-        ],
+        ],*/
         direction: {
           required: true,
           message: "隧道方向不能为空",
@@ -781,11 +926,42 @@ export default {
       this.directionData = response.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey(row) {
+      return row.id;
+    },
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.wz_boxShow == true) {
+          self.wz_boxShow = false;
+        }
+      }
+    },
+
+    //翻页时不刷新序号
+    indexMethod(index) {
+      return (
+        index + (this.queryParams.pageNum - 1) * this.queryParams.pageSize + 1
+      );
+    },
+    focus() {
+      this.$nextTick(() => {
+        document
+          .getElementsByClassName("el-button--text")[1]
+          .setAttribute("style", "display:none"); // 隐藏此刻按钮
+      });
+    },
+
     openCrkDrawer(row) {
       this.drawer = true;
       this.crkFormDetail.materialId = row.id; //通过物资id去查询出入库详情信息
-      getCrkDetailById(this.crkFormDetail).then(response => {
+      getCrkDetailById(this.crkFormDetail).then((response) => {
         if (response.code == 200) {
           this.list = response.data;
         }
@@ -806,45 +982,54 @@ export default {
         pageNum: obj.pageNum,
         pageSize: obj.pageSize,
         materialType: obj.materialType,
+        materialName: obj.materialName,
       };
       // 有开始桩号
-      if (obj.station) {
+      /*if (obj.station) {
         if (!obj.endStation) {
           this.loading = false;
           return this.$modal.msgWarning(
             "桩号查询必须同时有'开始桩号'和'结束桩号'"
           );
         }
-      }
+      }*/
       // 有结束桩号
-      if (obj.endStation) {
+      /*if (obj.endStation) {
         if (!obj.station) {
           this.loading = false;
           return this.$modal.msgWarning(
             "桩号查询必须同时有'开始桩号'和'结束桩号'"
           );
         }
-      }
+      }*/
       // 开始桩号 和 结束桩号 都有
-      if (obj.station && obj.endStation) {
+      /*if (obj.station && obj.endStation) {
         if (obj.endStation < obj.station) {
           return this.$modal.msgWarning("'结束桩号'要大于'开始桩号'");
         }
-        obj.deviation == undefined || obj.deviation ==null || obj.deviation == '' ? obj.deviation = 0 : ''
-        obj.endDeviation == undefined || obj.endDeviation ==null || obj.endDeviation == '' ? obj.endDeviation = 0 : ''
-        if(obj.endStation == obj.station) {
-          if(obj.endDeviation <= obj.deviation ) {
-          this.loading = false;
-            return this.$modal.msgWarning("'结束桩号'要大于'开始桩号'")
+        obj.deviation == undefined ||
+        obj.deviation == null ||
+        obj.deviation == ""
+          ? (obj.deviation = 0)
+          : "";
+        obj.endDeviation == undefined ||
+        obj.endDeviation == null ||
+        obj.endDeviation == ""
+          ? (obj.endDeviation = 0)
+          : "";
+        if (obj.endStation == obj.station) {
+          if (obj.endDeviation <= obj.deviation) {
+            this.loading = false;
+            return this.$modal.msgWarning("'结束桩号'要大于'开始桩号'");
           }
         }
-        params.station = 'K' + '.' +  obj.station + '.' + obj.deviation
-        params.endStation = 'K' + '.' +  obj.endStation + '.' + obj.endDeviation
+        params.station = "K" + "." + obj.station + "." + obj.deviation;
+        params.endStation = "K" + "." + obj.endStation + "." + obj.endDeviation;
+      }*/
+      if (this.$cache.local.get("manageStation") == "1") {
+        params.tunnelId = this.$cache.local.get("manageStationSelect");
       }
-      if(this.$cache.local.get("manageStation") == "1"){
-        params.tunnelId = this.$cache.local.get("manageStationSelect")
-      }
-      listMaterial(params).then(response => {
+      listMaterial(params).then((response) => {
         this.materialList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -852,8 +1037,8 @@ export default {
     },
     /** 查询隧道下拉框 */
     getTunnels() {
-      if(this.$cache.local.get("manageStation") == "1"){
-        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      if (this.$cache.local.get("manageStation") == "1") {
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
       }
       listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
@@ -885,7 +1070,7 @@ export default {
       this.reset();
     },
     resetMaterial() {
-      this.$refs.crkFormDetail.resetFields()
+      this.$refs.crkFormDetail.resetFields();
     },
     // 表单重置
     reset() {
@@ -903,26 +1088,27 @@ export default {
         state: undefined,
         createTime: undefined,
         updateTime: undefined,
-        price: undefined
+        price: undefined,
       };
       this.resetForm("form");
       this.crkFormRecord = {
         stock: undefined,
-        remark: undefined
+        remark: undefined,
       };
       this.resetForm("crkFormRecord");
     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      this.materialList = []
-
+      this.materialList = [];
+      this.$refs.tableFile.clearSelection();
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
-      this.$refs.queryForm.resetFields()
+      this.queryParams.materialName = "";
+      this.$refs.queryForm.resetFields();
       this.queryForm = {
         pageNum: 1,
         pageSize: 10,
@@ -940,18 +1126,19 @@ export default {
         deviation: null,
         endStation: null,
         endDeviation: null,
-      }
+      };
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length !== 1
-      this.multiple = !selection.length //非多个禁用
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length; //非多个禁用
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.disabled = false;
       this.open = true;
       this.title = "添加应急资源";
     },
@@ -959,8 +1146,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdateMaterial(row) {
       this.reset();
-      const id = row.id || this.ids
-      getMaterial(id).then(response => {
+      const id = row.id || this.ids;
+      getMaterial(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改应急资源";
@@ -969,13 +1156,13 @@ export default {
 
     /** 应急资源提交按钮 */
     submitForm() {
-      this.disabled = true
+      this.disabled = true;
       // if(this.submitBtnLoading) return
       // this.submitBtnLoading = true
-      this.$refs["form"].validate(async valid => {
+      this.$refs["form"].validate(async (valid) => {
         if (valid) {
           if (this.form.id != undefined) {
-            await updateMaterial(this.form).then(response => {
+            await updateMaterial(this.form).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
@@ -983,7 +1170,7 @@ export default {
               }
             });
           } else {
-            await addMaterial(this.form).then(response => {
+            await addMaterial(this.form).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
@@ -992,7 +1179,7 @@ export default {
             });
           }
         }
-        this.disabled = false
+        this.disabled = false;
         // this.submitBtnLoading = false
       });
     },
@@ -1006,7 +1193,7 @@ export default {
       this.rules.position = {};
       this.rules.price = {};
       this.reset();
-      getMaterial(rkid).then(response => {
+      getMaterial(rkid).then((response) => {
         this.formDetail = response.data;
         this.openCrkForm = true;
         if (this.flag == 1) {
@@ -1017,17 +1204,17 @@ export default {
       });
     },
     /** 出入库提交按钮 */
-    submitCrkFormRecord: function() {
+    submitCrkFormRecord: function () {
       this.crkFormRecord.materialId = this.formDetail.id;
       this.crkFormRecord.type = this.flag;
-      this.$refs["crkFormRecord"].validate(valid => {
+      this.$refs["crkFormRecord"].validate((valid) => {
         if (valid) {
           if (this.flag == 1) {
             if (this.crkFormRecord.changeStock == 0) {
               this.$modal.msgError("请重新输入入库数量");
               return;
             }
-            updateMaterialCrk(this.crkFormRecord).then(response => {
+            updateMaterialCrk(this.crkFormRecord).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("入库成功");
                 this.openCrkForm = false;
@@ -1036,11 +1223,15 @@ export default {
             });
           }
           if (this.flag == 2) {
-            if (this.crkFormRecord.changeStock > this.formDetail.inventoryQuantity) {
-              this.$modal.msgError("当前库存不足，无法完成库存操作，请重新选择出库数量");
+            if (
+              this.crkFormRecord.changeStock > this.formDetail.inventoryQuantity
+            ) {
+              this.$modal.msgError(
+                "当前库存不足，无法完成库存操作，请重新选择出库数量"
+              );
               return;
             }
-            updateMaterialCrk(this.crkFormRecord).then(response => {
+            updateMaterialCrk(this.crkFormRecord).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("出库成功");
                 this.openCrkForm = false;
@@ -1048,7 +1239,6 @@ export default {
               }
             });
           }
-
         }
       });
     },
@@ -1056,35 +1246,46 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除?', "警告", {
+      this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
-      }).then(function() {
-        return delMaterial(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(function() {});
+        type: "warning",
+      })
+        .then(function () {
+          return delMaterial(ids);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(function () {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/material/export', {
-        ...this.queryParams
-      }, `system_material.xlsx`)
+      let confirmInfo = "是否确认导出所有的应急物资数据项？";
+      if (this.ids.length > 0) {
+        confirmInfo = "是否确认导出所选的应急物资数据项？";
+      }
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm(confirmInfo)
+        .then(() => {
+          this.exportLoading = true;
+          return exportList(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+          this.$refs.tableFile.clearSelection();
+          this.queryParams.ids = "";
+        })
+        .catch(() => {});
     },
     //关闭drawer
     materialFormClose() {
       this.resetMaterial();
       this.drawer = false;
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
     },
     // // 查询参数-桩号-获取焦点
     // queryStationFocus(value, index) {
@@ -1145,8 +1346,8 @@ export default {
       console.log(newVal, "0000000000000000000000");
       this.getList();
       this.getTunnels();
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
@@ -1158,23 +1359,22 @@ export default {
 h3 {
   text-decoration: underline;
   color: red;
-
 }
 
 .el-input {
   position: relative;
   /* font-size: 14px; */
-  display: inline;
-  width: 65%;
+  /*display: inline;*/
+  width: 100%;
 }
 
 .material-msg {
   background-color: #1890ff;
   border-color: #1890ff;
 
-.el-message__content {
-  color: #ffffff;
-}
+  .el-message__content {
+    color: #ffffff;
+  }
 }
 
 .el-drawer__header {
@@ -1226,7 +1426,7 @@ h3 {
     vertical-align: top;
 } */
 
-.dateClass{
+.dateClass {
   width: 100%;
   display: inline-table;
   vertical-align: middle;

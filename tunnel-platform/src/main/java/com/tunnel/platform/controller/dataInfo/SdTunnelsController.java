@@ -8,8 +8,10 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import io.swagger.annotations.Api;
@@ -53,7 +55,6 @@ public class SdTunnelsController extends BaseController
     /**
      * 查询隧道列表
      */
-    // @ApiOperation("查询隧道列表")
     @GetMapping("/list")
     public TableDataInfo<List<SdTunnels>> list(SdTunnels sdTunnels)
     {
@@ -68,6 +69,43 @@ public class SdTunnelsController extends BaseController
         List<SdTunnels> list = sdTunnelsService.selectSdTunnelsList(sdTunnels);
         return getDataTable(list);
     }
+
+    /**
+     * 查询隧道列表
+     */
+    @GetMapping("/list1")
+    public TableDataInfo<List<SdTunnels>> list1(SdTunnels sdTunnels)
+    {
+        startPage();
+        if (null == sdTunnels.getDeptId() || "".equals(sdTunnels.getDeptId())){
+            String deptId = SecurityUtils.getDeptId();
+            if (deptId == null) {
+                throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            }
+            sdTunnels.setDeptId(deptId);
+        }
+        List<SdTunnels> list = sdTunnelsService.selectSdTunnelsList1(sdTunnels);
+        return getDataTable(list);
+    }
+
+
+    @GetMapping("/listAll")
+    public AjaxResult listAll() {
+        List<SdTunnels> list = sdTunnelsService.selectAllSdTunnelsList();
+        return AjaxResult.success(list);
+    }
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    @GetMapping("/listAll1")
+    public AjaxResult listAll1() {
+        List<SdTunnels> list = sdTunnelsService.selectAllSdTunnelsList1();
+        return AjaxResult.success(list);
+    }
+
+
 
     /**
      * 获取隧道详细信息
@@ -128,6 +166,20 @@ public class SdTunnelsController extends BaseController
             platformApiController.tunnelsPush(sdTunnelsList,"del");
         }
         return Result.toResult(i);
+    }
+
+    /**
+     * 导出
+     * @param sdTunnels
+     * @return
+     */
+    @Log(title = "隧道管理", businessType = BusinessType.EXPORT)
+    @GetMapping("/exportTunnels")
+    public AjaxResult exportTunnels(SdTunnels sdTunnels)
+    {
+        List<SdTunnels> list = sdTunnelsService.selectSdTunnelsList1(sdTunnels);
+        ExcelUtil<SdTunnels> util = new ExcelUtil<SdTunnels>(SdTunnels.class);
+        return util.exportExcel(list, "隧道管理");
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.tunnel.platform.service.event;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyModel;
 
@@ -43,6 +44,8 @@ public interface ISdStrategyService {
      * @return
      */
     int strategySwitch(Long strategyId,String change);
+
+    List<Map> workTriggerInfo(String tunnelId);
 
     /**
      * 查询控制策略
@@ -142,11 +145,19 @@ public interface ISdStrategyService {
      */
     void handleStrategyRollBack(Long warId);
 
-    int implementPlan(Long planId,Long eventId);
+    AjaxResult implementPlan(String planId,Long eventId);
 
     int implementProcess(Long processId,Long eventId);
 
     int implementDisposalStrategy(Long strategyId,Long eventId);
 
     int implementDisposalStrategyRl(Long rlId,Long eventId);
+
+    /**
+     * 查询预警事件触发策略
+     * @param strategy
+     * @return
+     */
+    AjaxResult getStrategyData(SdStrategy strategy);
+
 }

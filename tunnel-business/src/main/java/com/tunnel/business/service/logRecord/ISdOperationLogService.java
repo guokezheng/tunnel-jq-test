@@ -1,6 +1,7 @@
 package com.tunnel.business.service.logRecord;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 
 import java.util.List;
@@ -36,6 +37,13 @@ public interface ISdOperationLogService {
      * @return 结果
      */
     int insertSdOperationLog(SdOperationLog sdOperationLog);
+
+    /**
+     * 批量新增
+     * @param list
+     * @return
+     */
+    int insertBatchSdOperationLog(List<SdOperationLog> list);
 
     /**
      * 修改操作日志
@@ -75,4 +83,28 @@ public interface ISdOperationLogService {
     AjaxResult operationLog(SdOperationLog sdOperationLog);
 
     List<Map> getDispatchExecuted(String eventId);
+
+    /**
+     * app获取操作日志
+     * @param time
+     * @return
+     */
+    List<SdOperationLog> selectAppOperationLogList(String eqId,String time,String deptId,Integer pageSize,Integer pageNum);
+
+    /**
+     * 查询操作日志总数
+     * @param sdOperationLog
+     * @return
+     */
+    int selectSdOperationLogCountList(SdOperationLog sdOperationLog);
+
+    /**
+     * 查询app端操控日志的条数
+     * @param time
+     * @param deptId
+     * @return
+     */
+    int selectAppOperationLogCountList(String eqId,String time, String deptId);
+
+
 }

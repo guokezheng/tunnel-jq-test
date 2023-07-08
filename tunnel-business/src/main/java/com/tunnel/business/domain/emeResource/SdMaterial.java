@@ -31,28 +31,49 @@ public class SdMaterial extends BaseEntity {
     /**
      * 物资编号
      */
-    @Excel(name = "物资编号")
+   /* @Excel(name = "物资编号")*/
     @ApiModelProperty("物资编号")
     private String materialId;
 
     /**
-     * 物品名称
+     * 物资名称
      */
-    @Excel(name = "物品名称")
-    @ApiModelProperty("物品名称")
+    @Excel(name = "物资名称")
+    @ApiModelProperty("物资名称")
     private String materialName;
     /**
-     * 物品类型
+     * 物资类型
      */
-    @Excel(name = "物品类型")
-    @ApiModelProperty("物品类型")
+    /*@Excel(name = "物资类型")*/
+    @ApiModelProperty("物资类型")
     private String materialType;
+    @Excel(name = "物资类型")
+    private String wzlx;
+    @Excel(name = "隧道")
+    private String tName;
+
+    public String getWzlx() {
+        return this.wzlx;
+    }
+
+    public void setWzlx( String wzlx) {
+        this.wzlx = wzlx;
+    }
+
+    public String gettName() {
+        return this.tName;
+    }
+
+    public void settName( String tName) {
+        this.tName = tName;
+    }
+
     /**
      * 物资类型对象
      */
-    @Excels({
-            @Excel(name = "materialType", targetAttr = "sdMaterialType"),
-    })
+    /*@Excels({
+            @Excel(name = "物资类型", targetAttr = "name"),
+    })*/
     @ApiModelProperty("物资类型对象")
     private SdMaterialType sdMaterialType;
 
@@ -70,7 +91,7 @@ public class SdMaterial extends BaseEntity {
     /**
      * 库存数量
      */
-    @Excel(name = "库存数量")
+   /* @Excel(name = "库存数量")*/
     @ApiModelProperty("库存数量")
     private Integer inventoryQuantity;
 
@@ -92,9 +113,21 @@ public class SdMaterial extends BaseEntity {
     /**
      * 位置
      */
-    @Excel(name = "位置")
+   /* @Excel(name = "位置")*/
     @ApiModelProperty("位置")
     private String position;
+
+
+
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     /**
      * 警告值 ，废除
@@ -114,32 +147,35 @@ public class SdMaterial extends BaseEntity {
     /**
      * 编码
      */
-    @Excel(name = "编码")
+    /*@Excel(name = "编码")*/
     @ApiModelProperty("编码")
     private String code;
 
     /**
      * 状态（1.物资紧张，2.正常,3.缺货）
      */
-    @Excel(name = "状态", readConverterExp = "1=.物资紧张，2.正常,3.缺货")
+   /* @Excel(name = "状态", readConverterExp = "1=.物资紧张，2.正常,3.缺货")*/
     @ApiModelProperty("状态（1.物资紧张，2.正常,3.缺货）")
     private String state;
 
     /**
      * 桩号
      */
+    @Excel(name = "桩号")
     @ApiModelProperty("桩号")
     private String station;
 
     /**
      * 方向
      */
-    @ApiModelProperty("方向")
+    @Excel(name = "方向",  readConverterExp = "1=潍坊方向,2=济南方向")
+    @ApiModelProperty("方向" )
     private String direction;
 
     /**
      * 应急资源使用数量
      */
+    @Excel(name = "数量")
     @ApiModelProperty("应急资源使用数量")
     private String number;
 
@@ -153,6 +189,7 @@ public class SdMaterial extends BaseEntity {
     /**
      * 生产日期
      * */
+    @Excel(name = "生产日期",width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("生产日期")
     private Date dateOfManufacture;
@@ -164,6 +201,7 @@ public class SdMaterial extends BaseEntity {
     /**
      * 保质期
      * */
+    @Excel(name = "保质期(月)")
     @ApiModelProperty("保质期")
     private String qualityGuaranteePeriod;
 

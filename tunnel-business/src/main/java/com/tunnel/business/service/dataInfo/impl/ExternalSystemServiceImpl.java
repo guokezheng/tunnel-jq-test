@@ -31,18 +31,6 @@ public class ExternalSystemServiceImpl implements IExternalSystemService
     }
 
     /**
-     * 查询外部系统
-     *
-     * @param externalSystem 外部系统
-     * @return 外部系统
-     */
-    @Override
-    public ExternalSystem getByBrandAndDept(ExternalSystem externalSystem)
-    {
-        return externalSystemMapper.getByBrandAndDept(externalSystem);
-    }
-
-    /**
      * 查询外部系统列表
      *
      * @param externalSystem 外部系统

@@ -47,6 +47,125 @@ public class SdReserveProcess extends BaseEntity
     //策略关联设备信息对象
     private SdStrategyRl sdStrategyRl;
 
+    /**
+     * 流程阶段名称
+     */
+    private String processStageName;
+
+    /**
+     * 流程集合
+     */
+    private List<SdReserveProcess> processesList;
+
+    /**
+     * 设备名称
+     */
+    private String equipments;
+
+    /**
+     * 设备集合
+     */
+    private List<String> equipmentList;
+
+    /**
+     * 规则条件
+     */
+    private String retrievalRule;
+
+    /**
+     * 指令
+     */
+    private String state;
+
+    private String type;
+
+    /**
+     * 亮度值
+     */
+    private String brightness;
+
+    private String content;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getBrightness() {
+        return brightness;
+    }
+
+    public void setBrightness(String brightness) {
+        this.brightness = brightness;
+    }
+
+    public String getRetrievalRule() {
+        return retrievalRule;
+    }
+
+    public void setRetrievalRule(String retrievalRule) {
+        this.retrievalRule = retrievalRule;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getEquipments() {
+        return equipments;
+    }
+
+    public void setEquipments(String equipments) {
+        this.equipments = equipments;
+    }
+
+    public List<String> getEquipmentList() {
+        return equipmentList;
+    }
+
+    public void setEquipmentList(List<String> equipmentList) {
+        this.equipmentList = equipmentList;
+    }
+
+    public List<SdReserveProcess> getProcessesList() {
+        return processesList;
+    }
+
+    public void setProcessesList(List<SdReserveProcess> processesList) {
+        this.processesList = processesList;
+    }
+
+    public String getStrategyIds() {
+        return strategyIds;
+    }
+
+    public void setStrategyIds(String strategyIds) {
+        this.strategyIds = strategyIds;
+    }
+
+    public String getProcessStageName() {
+        return processStageName;
+    }
+
+    public void setProcessStageName(String processStageName) {
+        this.processStageName = processStageName;
+    }
+
     public SdStrategyRl getSdStrategyRl() {
         return sdStrategyRl;
     }

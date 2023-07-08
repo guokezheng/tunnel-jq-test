@@ -3,11 +3,11 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.dataInfo.SdDevicesProtocolMapper">
-    
+
     <resultMap type="com.tunnel.business.domain.dataInfo.SdDevicesProtocol" id="SdDevicesProtocolResult">
         <result property="id"    column="id"    />
         <result property="brandId"    column="brand_id"    />
-        <result property="eqTypeId"    column="eq_type_id"    />
+        <result property="eqType"    column="eq_type"    />
         <result property="protocolName"    column="protocol_name"    />
         <result property="protocolType"    column="protocol_type"    />
         <result property="className"    column="class_name"    />
@@ -17,10 +17,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="note"    column="note"    />
+        <result property="protocolCode" column="protocol_code"></result>
     </resultMap>
 
     <sql id="selectSdDevicesProtocolVo">
-        select id, brand_id, eq_type_id, protocol_name, protocol_type, class_name, is_del,create_by, create_time, update_by, update_time, note from sd_devices_protocol
+        select id, brand_id, eq_type, protocol_name, protocol_type, class_name, is_del,create_by, create_time, update_by, update_time, note,protocol_code from sd_devices_protocol
     </sql>
 
     <select id="selectSdDevicesProtocolList" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesProtocol" resultMap="SdDevicesProtocolResult">
@@ -28,24 +29,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             is_del=0
             <if test="brandId != null  and brandId != ''"> and brand_id = #{brandId}</if>
-            <if test="eqTypeId != null "> and eq_type_id = #{eqTypeId}</if>
+            <if test="eqType != null "> and eq_type = #{eqType}</if>
             <if test="protocolName != null  and protocolName != ''"> and protocol_name like concat('%', #{protocolName}, '%')</if>
             <if test="protocolType != null  and protocolType != ''"> and protocol_type = #{protocolType}</if>
             <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
             <if test="note != null  and note != ''"> and note = #{note}</if>
+            <if test="protocolCode != null  and protocolCode != ''"> and protocol_code = #{protocolCode}</if>
         </where>
+        order by create_time desc
     </select>
-    
-    <select id="selectSdDevicesProtocolById" parameterType="Integer" resultMap="SdDevicesProtocolResult">
+
+    <select id="selectSdDevicesProtocolById" parameterType="Long" resultMap="SdDevicesProtocolResult">
         <include refid="selectSdDevicesProtocolVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSdDevicesProtocol" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesProtocol" useGeneratedKeys="true" keyProperty="id">
         insert into sd_devices_protocol
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="brandId != null">brand_id,</if>
-            <if test="eqTypeId != null">eq_type_id,</if>
+            <if test="eqType != null">eq_type,</if>
             <if test="protocolName != null">protocol_name,</if>
             <if test="protocolType != null">protocol_type,</if>
             <if test="className != null">class_name,</if>
@@ -55,10 +58,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="note != null">note,</if>
+            <if test="protocolCode != null">protocol_code,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="brandId != null">#{brandId},</if>
-            <if test="eqTypeId != null">#{eqTypeId},</if>
+            <if test="eqType != null">#{eqType},</if>
             <if test="protocolName != null">#{protocolName},</if>
             <if test="protocolType != null">#{protocolType},</if>
             <if test="className != null">#{className},</if>
@@ -68,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="note != null">#{note},</if>
+            <if test="protocolCode != null">#{protocolCode},</if>
          </trim>
     </insert>
 
@@ -75,7 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update sd_devices_protocol
         <trim prefix="SET" suffixOverrides=",">
             <if test="brandId != null">brand_id = #{brandId},</if>
-            <if test="eqTypeId != null">eq_type_id = #{eqTypeId},</if>
+            <if test="eqType != null">eq_type = #{eqType},</if>
             <if test="protocolName != null">protocol_name = #{protocolName},</if>
             <if test="protocolType != null">protocol_type = #{protocolType},</if>
             <if test="className != null">class_name = #{className},</if>
@@ -85,11 +90,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="note != null">note = #{note},</if>
+            <if test="protocolCode != null">protocol_code = #{protocolCode},</if>
         </trim>
         where id = #{id}
     </update>
 
-    <delete id="deleteSdDevicesProtocolById" parameterType="Integer">
+    <delete id="deleteSdDevicesProtocolById" parameterType="Long">
         delete from sd_devices_protocol where id = #{id}
     </delete>
 
@@ -103,6 +109,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="checkUniqueForUpdate" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesProtocol" resultMap="SdDevicesProtocolResult">
         <include refid="selectSdDevicesProtocolVo"/>
-        where brand_id = #{brandId} and eq_type_id=#{eqTypeId} and id != #{id}
+        where brand_id = #{brandId} and eq_type=#{eqType} and id != #{id}
     </select>
 </mapper>

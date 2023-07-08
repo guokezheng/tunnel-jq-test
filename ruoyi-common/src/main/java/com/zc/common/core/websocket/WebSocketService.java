@@ -131,5 +131,41 @@ public class WebSocketService
         redisStream.add(RedisStreamConstants.WebSocketStreamBroadcast.KEY, "", msg);
 
     }
+    /**
+     * 群发消息（广播）不走队列直接发送
+     * @param subEvent 事件名称
+     * @param content 消息内容
+     * @param <T>
+     * @return
+     */
+    public static<T> void broadcastCloser(String subEvent, T content)
+    {
+        if (subEvent == null || subEvent.isEmpty())
+        {
+            return;
+        }
+
+        EventParam<T> eventParam = new EventParam<>();
+        eventParam.setSubEvent(subEvent);
+        eventParam.setContent(content);
+
+        CmdMsg<EventParam<T>> eventCmd = new CmdMsg<>();
+        eventCmd.setMethod(EVENT);
+        eventCmd.setParams(eventParam);
+
+        RedisWebSocketMsg redisWebSocketMsg = new RedisWebSocketMsg();
+
+        redisWebSocketMsg.setCmdMsg(eventCmd);
+
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+        Type type = new TypeToken<RedisWebSocketMsg>()
+        {
+        }.getType();
+
+        String msg = gson.toJson(redisWebSocketMsg, type);
+
+        redisStream.add(RedisStreamConstants.WebSocketStreamBroadcast.KEY, "", msg);
+
+    }
 
 }

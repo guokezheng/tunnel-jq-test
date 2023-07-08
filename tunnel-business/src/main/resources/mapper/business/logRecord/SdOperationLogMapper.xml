@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="tunnelId"    column="tunnel_id"    />
         <result property="userName"    column="user_name"    />
         <result property="eqId"    column="eq_id"    />
-        <!-- <result property="eqName"    column="eq_name"    /> -->
+        <!--<result property="eqName"    column="eq_name"    />-->
         <result property="code"    column="code"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -23,6 +23,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="description"    column="description"    />
         <result property="operIp"    column="oper_ip"    />
         <result property="eventId"    column="event_id"    />
+        <result property="pile"    column="pile"    />
+        <result property="direction"    column="direction"    />
         <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
         <association property="typeName"  column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult" />
         <association property="stateName"  column="id" javaType="SdEquipmentState" resultMap="stateNameResult" />
@@ -49,6 +51,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, eq_type_id, tunnel_id, user_name, eq_id,code,create_by, create_time, update_by, update_time, before_state, operation_state, control_type, state, description from sd_operation_log
     </sql>
 
+
+    <select id="selectSdOperationLogCountList" resultType="int">
+        select count(1) from sd_operation_log a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        left join sd_devices c on a.eq_id = c.eq_id
+        where 1 = 1
+        <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
+        <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
+        <if test="controlType != null  and controlType != ''"> and a.control_type = #{controlType}</if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and a.create_time &gt;= #{params.beginTime}
+        </if>
+        <if test="operIp != null  and operIp != ''"> AND CONCAT(c.pile, c.eq_name,a.oper_ip) LIKE CONCAT('%',#{operIp},'%')</if>
+
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and a.create_time &lt;= #{params.endTime}
+        </if>
+        <if test="params.tunnelArray != null and params.size > 0">
+            and a.tunnel_id  in
+            <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getTunnelArrayByDeptId" resultType="string">
+
+        select tunnel_id from sd_tunnels where dept_id in (
+
+            SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET ( #{deptId}, d.ancestors )
+
+        ) or dept_id = #{deptId}
+
+    </select>
+
     <select id="selectSdOperationLogList" parameterType="SdOperationLog" resultMap="SdOperationLogResult">
         <!-- <include refid="selectSdOperationLogVo"/> -->
         select
@@ -60,6 +97,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.user_name,
         a.eq_id,
         c.eq_name,
+        c.pile,
+       <!-- f.dict_label direction, -->
+        c.eq_direction direction,
         a.code,
         a.create_by,
         a.create_time,
@@ -67,22 +107,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.update_time,
         a.before_state,
         a.operation_state,
-        e.state_name,
+        IFNULL(e.state_name,a.operation_state) state_name,
         a.control_type,
-        a.state,
+        CASE a.state WHEN 0 THEN '失败' WHEN 1 THEN '成功' END AS state,
         a.description,
         a.oper_ip
         from sd_operation_log a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
         left join sd_devices c on a.eq_id = c.eq_id
+        <!-- left join sys_dict_data f on f.dict_value = c.eq_direction and f.dict_type = "sd_direction" -->
         left join sd_equipment_type d on a.eq_type_id = d.type_id
         left join sd_equipment_state e on a.operation_state = e.device_state AND  e.state_type_id=a.eq_type_id and state_type = 2
-        where 1=1 and a.create_time <![CDATA[ > ]]> DATE_SUB(CURDATE(),INTERVAL 3 day)
+        where 1=1
         <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
         <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
         <if test="userName != null  and userName != ''"> and a.user_name like concat('%', #{userName}, '%')</if>
+        <if test="operIp != null  and operIp != ''"> AND CONCAT(c.pile, c.eq_name,a.oper_ip) LIKE CONCAT('%',#{operIp},'%')</if>
         <if test="eqId != null  and eqId != ''"> and a.eq_id = #{eqId}</if>
-        <!-- <if test="eqName != null  and eqName != ''"> and a.eq_name like concat('%', #{eqName}, '%')</if> -->
         <if test="code != null  and code != ''"> and a.code = #{code}</if>
         <if test="beforeState != null  and beforeState != ''"> and a.before_state = #{beforeState}</if>
         <if test="operationState != null  and operationState != ''"> and a.operation_state = #{operationState}</if>
@@ -90,21 +131,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="state != null  and state != ''"> and a.state = #{state}</if>
         <if test="description != null  and description != ''"> and a.description = #{description}</if>
         <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-            and date_format(a.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            and a.create_time &gt;= #{params.beginTime}
         </if>
         <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-            and date_format(a.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            and a.create_time &lt;= #{params.endTime}
         </if>
-        <if test="params.deptId != null and params.deptId != ''">
-            AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+
+        <if test="params.tunnelArray != null and params.size > 0">
+            and a.tunnel_id  in
+            <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
         </if>
+
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(a.id,#{ids}) > 0</if>
         order by a.create_time desc
+        <if test="params.pageNum != null">
+        limit #{params.pageNum},#{params.pageSize}
+        </if>
     </select>
 
     <select id="selectSdOperationLogById" parameterType="Long" resultMap="SdOperationLogResult">
         <include refid="selectSdOperationLogVo"/>
         where id = #{id}
     </select>
+
 
     <insert id="insertSdOperationLog" parameterType="SdOperationLog" useGeneratedKeys="true" keyProperty="id">
         insert into sd_operation_log
@@ -146,6 +197,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="operIp != null and operIp != ''">#{operIp},</if>
             <if test="eventId != null">#{eventId}</if>
         </trim>
+    </insert>
+
+    <insert id="insertBatchSdOperationLog" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_operation_log
+        (eq_type_id,
+        tunnel_id,
+        user_name,
+        eq_id,
+        code,
+        create_by,
+        create_time,
+        update_by,
+        update_time,
+        before_state,
+        operation_state,
+        control_type,
+        state,
+        description,
+        oper_ip,
+        event_id)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.eqTypeId},
+            #{item.tunnelId},
+            #{item.userName},
+            #{item.eqId},
+            #{item.code},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.updateBy},
+            #{item.updateTime},
+            #{item.beforeState},
+            #{item.operationState},
+            #{item.controlType},
+            #{item.state},
+            #{item.description},
+            #{item.operIp},
+            #{item.eventId}
+            )
+        </foreach>
     </insert>
 
     <update id="updateSdOperationLog" parameterType="SdOperationLog">
@@ -251,5 +342,85 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="description != null">#{description},</if>
         </trim>
     </insert>
+
+    <select id="selectAppOperationLogList" parameterType="SdOperationLog" resultMap="SdOperationLogResult">
+        select
+        a.id,
+        a.eq_type_id,
+        d.type_name,
+        a.tunnel_id,
+        b.tunnel_name,
+        a.user_name,
+        a.eq_id,
+        c.eq_name,
+        c.pile,
+        c.eq_direction direction,
+        a.code,
+        a.create_by,
+        a.create_time,
+        a.update_by,
+        a.update_time,
+        a.before_state,
+        a.operation_state,
+        IFNULL(e.state_name,a.operation_state) state_name,
+        a.control_type,
+        CASE a.state WHEN 0 THEN '失败' WHEN 1 THEN '成功' END AS state,
+        a.description,
+        a.oper_ip
+        from sd_operation_log a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        left join sd_devices c on a.eq_id = c.eq_id
+        left join sd_equipment_type d on a.eq_type_id = d.type_id
+        left join sd_equipment_state e on a.operation_state = e.device_state AND  e.state_type_id=a.eq_type_id and state_type = 2
+        where 1=1
+        <if test="params.start != null and params.start != ''"><!-- 开始时间检索 -->
+            and a.create_time &gt;= #{params.start}
+        </if>
+        <if test="params.end != null and params.end != ''"><!-- 结束时间检索 -->
+            and a.create_time &lt;= #{params.end}
+        </if>
+
+        <if test="params.tunnelArray != null and params.size > 0">
+            and a.tunnel_id  in
+            <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="params.eqId != null and params.eqId != ''"><!-- 开始时间检索 -->
+            and c.eq_id = #{params.eqId}
+        </if>
+
+        order by a.create_time desc
+        <if test="params.pageNum != null">
+            limit #{params.pageNum},#{params.pageSize}
+        </if>
+    </select>
+
+
+
+
+
+
+    <select id="selectAppOperationLogCountList" resultType="int">
+        select count(1) from sd_operation_log a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        left join sd_devices c on a.eq_id = c.eq_id
+        where 1 = 1
+        <if test="eqId!= null and eqId!= ''"><!-- 结束时间检索 -->
+            and c.eq_id = #{eqId}
+        </if>
+        <if test="start!= null and start!= ''"><!-- 开始时间检索 -->
+            and a.create_time &gt;= #{start}
+        </if>
+        <if test="end!= null and end!= ''"><!-- 结束时间检索 -->
+            and a.create_time &lt;= #{end}
+        </if>
+        <if test="tunnelArray != null and tunnelArray.size > 0">
+            and a.tunnel_id  in
+            <foreach item="id" collection="tunnelArray" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
 
 </mapper>

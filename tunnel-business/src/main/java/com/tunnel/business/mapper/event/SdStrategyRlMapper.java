@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.event;
 
 
 import com.tunnel.business.domain.event.SdStrategyRl;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -100,4 +101,7 @@ public interface SdStrategyRlMapper
 
     public List<SdStrategyRl> selectSdStrategyRlByPlanId(Long planId);
 
+    String[] selectAllDirectionSdDevListByDevId(@Param("devIds")String[] split, @Param("tunnelId")String tunnelId, @Param("eqTypeId") String eqTypeId);
+
+    List<SdStrategyRl> selectSdStrategyREquipments(@Param("equipments")String equipments);
 }

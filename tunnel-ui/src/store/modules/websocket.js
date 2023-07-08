@@ -13,10 +13,12 @@ const websocket = {
     carList: [],
     realTimeLaneTrajectory: {},
     sdEventList: {},
+    sdSvgEventList: {},
     radarDataList: {},
     deviceStatus: {},
     deviceStatusChangeLog: {},
-    eventFlow:{}
+    eventFlow:{},
+    eventUntreatedNum:0
   },
 
   mutations: {
@@ -35,6 +37,9 @@ const websocket = {
     SDEVENTLIST: (state, data) => {
       state.sdEventList = data
     },
+    SDSVGEVENTLIST: (state, data) => {
+      state.sdSvgEventList = data
+    },
     RADARDATALIST: (state, data) => {
       state.radarDataList = data
     },
@@ -44,6 +49,9 @@ const websocket = {
     EVENTFLOW: (state, data) => {
       state.eventFlow = data
     },
+    EVENTUNTREATEDNUM: (state ,data) =>{
+      state.eventUntreatedNum = data
+    }
   },
 
   actions: {

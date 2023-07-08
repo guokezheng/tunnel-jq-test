@@ -6,7 +6,9 @@ import com.tunnel.business.service.informationBoard.IIotBoardVocabularyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 情报板敏感字管理Service业务层处理
@@ -83,5 +85,32 @@ public class IotBoardVocabularyServiceImpl implements IIotBoardVocabularyService
     @Override
     public int deleteIotBoardVocabularyById(Long id) {
         return iotBoardVocabularyMapper.deleteIotBoardVocabularyById(id);
+    }
+
+    @Override
+    public int checkIotBoardContent(String content) {
+        if (content == null || content.equals("")) {
+            return 2;
+        } else {
+            Boolean flag = false;
+            List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyMapper.selectIotBoardVocabularyList(null);
+            try {
+                content = URLDecoder.decode(content, "UTF-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0;
+            }
+            for (int g = 0;g < iotBoardVocabularies.size();g++) {
+                String word = iotBoardVocabularies.get(g).getWord();
+                if (content.contains(word)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                return 0;
+            }
+        }
+        return 1;
     }
 }

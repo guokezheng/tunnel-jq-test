@@ -76,8 +76,8 @@ export function listBz(query) {
 export function treeselect(query) {
   return request({
     url: '/task/list/treeselect',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: query
   })
 }
 
@@ -125,11 +125,21 @@ export function updateTask(data) {
   })
 }
 
-//查询操作记录
-/*export function getTaskOpt(taskId) {
+
+//根据隧道信息查询对应的班组
+export function selectBzByTunnel(data) {
   return request({
-    url: '/task/list/getTaskOpt',
+    url: '/task/list/selectBzByTunnel',
     method: 'post',
     data: data
   })
-}*/
+}
+
+
+export function getUserInfo() {
+  return request({
+    url: '/system/user/getUserInfo',
+    method: 'get',
+  })
+}
+

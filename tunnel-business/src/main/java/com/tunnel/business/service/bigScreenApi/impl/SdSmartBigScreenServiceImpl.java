@@ -1,19 +1,22 @@
 package com.tunnel.business.service.bigScreenApi.impl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.EventStateEnum;
+import com.tunnel.business.datacenter.domain.enumeration.FaultStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
+import com.tunnel.business.domain.event.SdRoadSectionStatistics;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
 import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zhai
@@ -24,6 +27,12 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Autowired
     private SdSmartBigScreenMapper sdSmartBigScreenMapper;
+
+    @Autowired
+    private RedisCache redisCache;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Map<String, Object> getEventWarning(String tunnelId) {
@@ -57,7 +66,7 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         //查询交通事件
         List<Integer> eventList = sdSmartBigScreenMapper.getEventList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode());
         //查询主动安全
-        List<Integer> warningList = sdSmartBigScreenMapper.getWarningList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
+        List<Integer> warningList = sdSmartBigScreenMapper.getEventList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
         //查询设备故障
         List<Integer> faultList = sdSmartBigScreenMapper.getFaultList(tunnelId);
         map.put("event",eventList);
@@ -90,6 +99,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         list.add(activeSafety(cumulativeWarning,dataCount));
         //计算设备故障数量、百分比
         list.add(equipmentFailure(cumulativeFault,dataCount));
+        cumulativeAlarmList.stream().forEach(item -> {
+            if(item.get("eventTime") == null){
+                item.put("eventTime",null);
+            }
+        });
         //累计分析列表
         Map<String, Object> map = new HashMap<>();
         map.put("eventPercentage",list);
@@ -141,6 +155,105 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         return AjaxResult.success(sdSmartBigScreenMapper.getAlarmInformation(tunnelId));
     }
 
+    @Override
+    public AjaxResult getRiskIndicators(String tunnelId) {
+        List<Map<String, Object>> riskIndicators = sdSmartBigScreenMapper.getRiskIndicators(tunnelId);
+        //事件总数量
+        BigDecimal numCount = new BigDecimal(0);
+        for(int i = 0; i < riskIndicators.size(); i++){
+            numCount = numCount.add(new BigDecimal(riskIndicators.get(i).get("eventPercentage").toString()));
+        }
+        if(numCount.compareTo(new BigDecimal(0)) == 0){
+            List<Map<String, Object>> list = new ArrayList<>();
+            Map<String, Object> map = new HashMap<>();
+            map.put("id",null);
+            map.put("typeName",null);
+            map.put("eventPercentage","0");
+            list.add(map);
+            return AjaxResult.success(list);
+        }
+        for(Map<String, Object> item : riskIndicators){
+            item.put("eventPercentage", new BigDecimal(item.get("eventPercentage").toString()).divide(numCount, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).toString());
+        }
+        return AjaxResult.success(riskIndicators);
+    }
+
+    @Override
+    public AjaxResult getTunnelVehicles(String tunnelId, String roadDir) {
+        if(StringUtils.isNull(tunnelId) || StringUtils.isEmpty(tunnelId)){
+            Collection<String> keys = redisCache.keys("tunnelVehicleTotal:*");
+            List<Map<String, Object>> list = (List<Map<String, Object>>) redisTemplate.opsForValue().multiGet(keys);
+            return AjaxResult.success(list);
+        }else {
+            if(StringUtils.isNotNull(roadDir) && StringUtils.isNotEmpty(roadDir)){
+                Map<String, Object> map = (Map<String, Object>)redisCache.getCacheObject("tunnelVehicleTotal:" + tunnelId + ":" + roadDir);
+                List<Map<String, Object>> list = new ArrayList<>();
+                list.add(map);
+                return AjaxResult.success(list);
+            }else {
+                Collection<String> keys = redisCache.keys("tunnelVehicleTotal:" + tunnelId + ":*");
+                List<Map<String, Object>> list = (List<Map<String, Object>>)redisTemplate.opsForValue().multiGet(keys);
+                return AjaxResult.success(list);
+            }
+        }
+    }
+
+    @Override
+    public AjaxResult getRealCars(String tunnelId, String vehicleLicense) {
+        if(StringUtils.isNull(tunnelId) || StringUtils.isEmpty(tunnelId)){
+            Collection<String> keys = redisCache.keys("vehicleSnap:*");
+            List<Map<String, Object>> list = (List<Map<String, Object>>) redisTemplate.opsForValue().multiGet(keys);
+            return AjaxResult.success(list);
+        }else {
+            if(StringUtils.isNotNull(vehicleLicense) && StringUtils.isNotEmpty(vehicleLicense)){
+                Map<String, Object> map = (Map<String, Object>)redisCache.getCacheObject("vehicleSnap:" + tunnelId + ":" + vehicleLicense);
+                List<Map<String, Object>> list = new ArrayList<>();
+                list.add(map);
+                return AjaxResult.success(list);
+            }else {
+                Collection<String> keys = redisCache.keys("vehicleSnap:" + tunnelId + ":*");
+                List<Map<String, Object>> list = (List<Map<String, Object>>)redisTemplate.opsForValue().multiGet(keys);
+                return AjaxResult.success(list);
+            }
+        }
+    }
+
+    @Override
+    public AjaxResult getCumulativeCar(String tunnelId) {
+        //查询当日所有车辆
+        Map<String, Object> cumulativeCarAll = sdSmartBigScreenMapper.getCumulativeCar(tunnelId,null);
+        //查询客车
+        Map<String, Object> cumulativeCarKe = sdSmartBigScreenMapper.getCumulativeCar(tunnelId, "1");
+        //查询货车
+        Map<String, Object> cumulativeCarHuo = sdSmartBigScreenMapper.getCumulativeCar(tunnelId, "2");
+        //查询重点车辆
+        Map<String, Object> cumulativeCarKey = sdSmartBigScreenMapper.getCumulativeCar(tunnelId, "3");
+        Map<String, Object> map = new HashMap<>();
+        map.put("allCars",cumulativeCarAll == null ? 0 : cumulativeCarAll.get("num"));
+        map.put("passengerCars",cumulativeCarKe == null ? 0 : cumulativeCarKe.get("num"));
+        map.put("goodsCars",cumulativeCarHuo == null ? 0 : cumulativeCarHuo.get("num"));
+        map.put("keyCars",cumulativeCarKey == null ? 0 : cumulativeCarKey.get("num"));
+        return AjaxResult.success(map);
+    }
+
+    @Override
+    public AjaxResult getTransitCar(String tunnelId) {
+        //查询车辆在途数
+        Map<String, Object> transitCarAll = sdSmartBigScreenMapper.getTransitCar(tunnelId, null);
+        //查询客车
+        Map<String, Object> transitCarKe = sdSmartBigScreenMapper.getTransitCar(tunnelId, "1");
+        //查询货车
+        Map<String, Object> transitCarHuo = sdSmartBigScreenMapper.getTransitCar(tunnelId, "2");
+        //查询重点车辆
+        Map<String, Object> transitCarKey = sdSmartBigScreenMapper.getTransitCar(tunnelId, "3");
+        Map<String, Object> map = new HashMap<>();
+        map.put("allCars",transitCarAll == null ? 0 : transitCarAll.get("num"));
+        map.put("passengerCars",transitCarKe == null ? 0 : transitCarKe.get("num"));
+        map.put("goodsCars",transitCarHuo == null ? 0 : transitCarHuo.get("num"));
+        map.put("keyCars",transitCarKey == null ? 0 : transitCarKey.get("num"));
+        return AjaxResult.success(map);
+    }
+
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){
         List<Map<String, Object>> list = new ArrayList<>();
         //已完成数量
@@ -149,7 +262,7 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         BigDecimal noCompleted = new BigDecimal(0);
         for(Map<String, Object> item : eventWarning){
             String eventState = item.get("eventState").toString();
-            if("0".equals(eventState) || "3".equals(eventState)){
+            if(EventStateEnum.processing.getCode().equals(eventState) || EventStateEnum.unprocessed.getCode().equals(eventState)){
                 noCompleted = noCompleted.add(new BigDecimal(item.get("eventNumber").toString()));
             }else {
                 completed = completed.add(new BigDecimal(item.get("eventNumber").toString()));
@@ -157,7 +270,7 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         }
         for(Map<String, Object> item : faultWarning){
             String falltRemoveStatue = item.get("falltRemoveStatue").toString();
-            if("1".equals(falltRemoveStatue)){
+            if(FaultStatusEnum.DEVICE_NO_REMOVE.getCode().equals(falltRemoveStatue)){
                 noCompleted = noCompleted.add(new BigDecimal(item.get("eventNumber").toString()));
             }else {
                 completed = completed.add(new BigDecimal(item.get("eventNumber").toString()));
@@ -194,7 +307,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         Map<String, Object> map = new HashMap<>();
         //计算交通事件数量、百分比
         map.put("eventCount",cumulativeEvent);
-        map.put("percentage",cumulativeEvent.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        if(cumulativeEvent.compareTo(new BigDecimal(0)) == 0){
+            map.put("percentage",0);
+        }else {
+            map.put("percentage",cumulativeEvent.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        }
         return map;
     }
 
@@ -206,7 +323,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         Map<String, Object> map = new HashMap<>();
         //计算交通事件数量、百分比
         map.put("warningCount",cumulativeWarning);
-        map.put("percentage",cumulativeWarning.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        if(cumulativeWarning.compareTo(new BigDecimal(0)) == 0){
+            map.put("percentage",0);
+        }else {
+            map.put("percentage",cumulativeWarning.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        }
         return map;
     }
 
@@ -218,7 +339,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         Map<String, Object> map = new HashMap<>();
         //计算设备故障数量、百分比
         map.put("faultCount",cumulativeFault);
-        map.put("percentage",cumulativeFault.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        if(cumulativeFault.compareTo(new BigDecimal(0)) == 0){
+            map.put("percentage",0);
+        }else {
+            map.put("percentage",cumulativeFault.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        }
         return map;
     }
 }

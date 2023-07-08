@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.event.SdRoadSectionStatisticsMapper">
+    
+    <resultMap type="SdRoadSectionStatistics" id="SdRoadSectionStatisticsResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="speed"    column="speed"    />
+        <result property="timeOccupy"    column="time_occupy"    />
+        <result property="spaceOccupy"    column="space_occupy"    />
+        <result property="gap"    column="gap"    />
+        <result property="gapTime"    column="gap_time"    />
+        <result property="time"    column="time"    />
+        <result property="inFlow"    column="in_flow"    />
+        <result property="outFlow"    column="out_flow"    />
+        <result property="congestionIndex"    column="congestion_index"    />
+        <result property="roadDir"    column="road_dir"    />
+        <result property="saturationVc"    column="saturation_vc"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="cars"    column="cars"    />
+    </resultMap>
+
+    <sql id="selectSdRoadSectionStatisticsVo">
+        select id, tunnel_id, speed, time_occupy, space_occupy, gap, gap_time, time, in_flow, out_flow, congestion_index, road_dir, saturation_vc, cars, start_time, end_time, create_by, create_time, update_by, update_time from sd_road_section_statistics
+    </sql>
+
+    <select id="selectSdRoadSectionStatisticsList" parameterType="SdRoadSectionStatistics" resultMap="SdRoadSectionStatisticsResult">
+        <include refid="selectSdRoadSectionStatisticsVo"/>
+        <where>  
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="speed != null  and speed != ''"> and speed = #{speed}</if>
+            <if test="timeOccupy != null  and timeOccupy != ''"> and time_occupy = #{timeOccupy}</if>
+            <if test="spaceOccupy != null  and spaceOccupy != ''"> and space_occupy = #{spaceOccupy}</if>
+            <if test="gap != null  and gap != ''"> and gap = #{gap}</if>
+            <if test="gapTime != null  and gapTime != ''"> and gap_time = #{gapTime}</if>
+            <if test="time != null "> and time = #{time}</if>
+            <if test="inFlow != null  and inFlow != ''"> and in_flow = #{inFlow}</if>
+            <if test="outFlow != null  and outFlow != ''"> and out_flow = #{outFlow}</if>
+            <if test="congestionIndex != null  and congestionIndex != ''"> and congestion_index = #{congestionIndex}</if>
+            <if test="roadDir != null  and roadDir != ''"> and road_dir = #{roadDir}</if>
+            <if test="saturationVc != null  and saturationVc != ''"> and saturation_vc = #{saturationVc}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdRoadSectionStatisticsById" parameterType="Long" resultMap="SdRoadSectionStatisticsResult">
+        <include refid="selectSdRoadSectionStatisticsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdRoadSectionStatistics" parameterType="SdRoadSectionStatistics">
+        insert into sd_road_section_statistics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="speed != null">speed,</if>
+            <if test="timeOccupy != null">time_occupy,</if>
+            <if test="spaceOccupy != null">space_occupy,</if>
+            <if test="gap != null">gap,</if>
+            <if test="gapTime != null">gap_time,</if>
+            <if test="time != null">time,</if>
+            <if test="inFlow != null">in_flow,</if>
+            <if test="outFlow != null">out_flow,</if>
+            <if test="congestionIndex != null">congestion_index,</if>
+            <if test="roadDir != null">road_dir,</if>
+            <if test="saturationVc != null">saturation_vc,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="cars != null">cars,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="timeOccupy != null">#{timeOccupy},</if>
+            <if test="spaceOccupy != null">#{spaceOccupy},</if>
+            <if test="gap != null">#{gap},</if>
+            <if test="gapTime != null">#{gapTime},</if>
+            <if test="time != null">#{time},</if>
+            <if test="inFlow != null">#{inFlow},</if>
+            <if test="outFlow != null">#{outFlow},</if>
+            <if test="congestionIndex != null">#{congestionIndex},</if>
+            <if test="roadDir != null">#{roadDir},</if>
+            <if test="saturationVc != null">#{saturationVc},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="cars != null">#{cars},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdRoadSectionStatistics" parameterType="SdRoadSectionStatistics">
+        update sd_road_section_statistics
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="timeOccupy != null">time_occupy = #{timeOccupy},</if>
+            <if test="spaceOccupy != null">space_occupy = #{spaceOccupy},</if>
+            <if test="gap != null">gap = #{gap},</if>
+            <if test="gapTime != null">gap_time = #{gapTime},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="inFlow != null">in_flow = #{inFlow},</if>
+            <if test="outFlow != null">out_flow = #{outFlow},</if>
+            <if test="congestionIndex != null">congestion_index = #{congestionIndex},</if>
+            <if test="roadDir != null">road_dir = #{roadDir},</if>
+            <if test="saturationVc != null">saturation_vc = #{saturationVc},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="cars != null">cars = #{cars},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdRoadSectionStatisticsById" parameterType="Long">
+        delete from sd_road_section_statistics where id = #{id}
+    </delete>
+
+    <delete id="deleteSdRoadSectionStatisticsByIds" parameterType="String">
+        delete from sd_road_section_statistics where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

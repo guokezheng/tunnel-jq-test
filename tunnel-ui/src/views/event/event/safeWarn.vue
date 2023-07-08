@@ -1,372 +1,248 @@
 <script src="../../../../vue.config.js"></script>
 <template>
   <div class="app-container safeWarnStyle">
-    <el-tabs v-model="activeName" @tab-click="handleClick" style="100%">
-      <el-tab-pane
-        :label="item.title"
-        :name="item.name"
-        v-for="item in tabList"
-        :key="item.name"
-      >
-        <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-          v-if="activeName == '1' || activeName == '0'"
-          label-width="68px"
-          class="formStyle"
-        >
-          <el-row>
-            <el-col>
-              <el-form-item label="事件类型" prop="eventTypeId">
-                <div style="display: flex">
-                  <el-button
-                    v-for="(item, index) in eventTypeData"
-                    class="eventTypeButton"
-                    :key="index"
-                    @click="handleEvtButton(item.id)"
-                  >
-                    {{ item.simplifyName }}
-                  </el-button>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="管理机构" prop="deptId">
-                <treeselect
-                  v-model="queryParams.deptId"
-                  :options="deptOptions"
-                  :show-count="true"
-                  placeholder="请选择归属部门"
-                  @select="changeMechanism"
-                  style="width: 300px"
-                />
-              </el-form-item>
-              <el-form-item
-                label="所属隧道"
-                prop="tunnelId"
-                v-show="manageStation == '0'"
-              >
-                <el-select
-                  v-model="queryParams.tunnelId"
-                  placeholder="请选择所属隧道"
-                  clearable
-                  size="small"
-                  style="width: 180px"
-                >
-                  <el-option
-                    v-for="item in tunnelList"
-                    :key="item.tunnelId"
-                    :label="item.tunnelName"
-                    :value="item.tunnelId"
-                  />
-                </el-select>
-              </el-form-item>
-
-              <el-form-item label="事件状态" prop="eventState">
-                <el-select
-                  v-model="queryParams.eventState"
-                  placeholder="请选择事件状态"
-                  clearable
-                  size="small"
-                  style="width: 180px"
-                >
-                  <el-option
-                    v-for="dict in eventStateOptions"
-                    :key="dict.dictValue"
-                    :label="dict.dictLabel"
-                    :value="dict.dictValue"
-                  />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="选择日期" prop="eventTime">
-                <el-date-picker
-                  v-model="dateRange"
-                  size="small"
-                  style="width: 240px"
-                  value-format="yyyy-MM-dd"
-                  type="daterange"
-                  range-separator="-"
-                  unlink-panels
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                ></el-date-picker>
-              </el-form-item>
-
-              <el-form-item>
-                <el-button type="primary" size="mini" @click="handleQuery"
-                  >搜索
-                </el-button>
-                <el-button size="mini" @click="resetQuery" type="primary" plain
-                  >重置
-                </el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-          label-width="68px"
-          v-if="activeName == '2'"
-        >
-          <el-form-item label="故障位置" prop="faultLocation">
-            <el-input
-              v-model="queryParams.faultLocation"
-              placeholder="请输入故障位置"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="故障类型" prop="faultType">
-            <el-select
-              v-model="queryParams.faultType"
-              placeholder="请选择故障类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in dict.type.fault_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="故障描述" prop="faultDescription">
-            <el-input
-              v-model="queryParams.faultDescription"
-              placeholder="请输入故障描述"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleQuery"
-              >搜索
-            </el-button>
-            <el-button type="primary" plain size="mini" @click="resetQuery"
-              >重置
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="handleAdd"
-              v-hasPermi="['system:list:add']"
-              >新增
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :disabled="single"
-              @click="handleUpdate"
-              v-hasPermi="['system:list:edit']"
-              :style="{ display: 'none' }"
-              >修改
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              :disabled="multiple"
-              @click="handleDelete"
-              v-hasPermi="['system:list:remove']"
-              :style="{ display: 'none' }"
-              >删除
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="handleExport"
-              v-hasPermi="['system:list:export']"
-              :style="{ display: 'none' }"
-              >导出
-            </el-button>
-          </el-form-item>
-        </el-form>
-        <div
-          class="contentListBox"
-          v-if="activeName == '1' || activeName == '0'"
-        >
-          <div
-            class="contentBox"
-            v-for="(item, index) in eventList"
-            :key="index"
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="tabTopFormRow">
+      <el-col :span="6">
+        <el-button size="small" @click="resetQuery()">刷新 </el-button>
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div class="grid-content bg-purple" ref="main1">
+          <el-input
+            @keyup.enter.native="handleQuery"
+            size="small"
+            placeholder="请输入事件位置、来源，回车搜索"
+            v-model="fuzzySearch1"
           >
-            <div class="video">
-              <video :src="item.videoUrl" controls muted loop fluid v-if="item.videoUrl"></video>
-              <img src="../../../assets/cloudControl/nullImg.png" v-else></video>
+            <el-button
+              slot="append"
+              class="searchTable"
+              @click="zd_boxShow = !zd_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <!-- 右侧弹窗 -->
+    <div class="searchBox searchSafeWarn" v-show="zd_boxShow" ref="cc1">
+      <el-form
+        :model="queryParams"
+        ref="queryForm"
+        :inline="true"
+        label-width="68px"
+        class="formStyle"
+      >
+        <el-form-item label="事件状态">
+          <el-checkbox-group v-model="checkBoxEventState">
+            <el-checkbox
+              v-for="item in eventStateOptions"
+              :key="item.dictValue"
+              :label="item.dictValue"
+              @change.native="changeCheckBox($event)"
+            >
+              {{ item.dictLabel }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
 
-              <div>{{ item.simplifyName }}</div>
+        <el-form-item label="防控类型" prop="prevControlType">
+          <el-select
+            v-model="queryParams.prevControlType"
+            placeholder="请选择防控类型"
+            clearable
+            size="small"
+            style="width: 325px"
+            @change="handleChangeControl"
+          >
+            <el-option
+              v-for="item in controlTypeOptions"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="事件类型" prop="eventTypeId">
+          <el-select
+            v-model="queryParams.eventTypeId"
+            placeholder="请选择事件类型"
+            clearable
+            size="small"
+            style="width: 325px"
+            @change="$forceUpdate()"
+          >
+            <el-option
+              v-for="(item, index) in eventTypeDataList"
+              :key="index"
+              :label="item.simplifyName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item
+          label="所属隧道"
+          prop="tunnelId"
+          v-show="manageStation == '0'"
+        >
+          <el-select
+            v-model="queryParams.tunnelId"
+            placeholder="请选择所属隧道"
+            clearable
+            size="small"
+            style="width: 325px"
+            @change="$forceUpdate()"
+          >
+            <el-option
+              v-for="item in tunnelList"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="隧道方向" prop="direction">
+          <el-select
+            v-model="queryParams.direction"
+            placeholder="请选择隧道方向"
+            clearable
+            size="small"
+            style="width: 325px"
+            @change="$forceUpdate()"
+          >
+            <el-option
+              v-for="item in directionList"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="事件时间" prop="eventTime">
+          <el-date-picker
+            v-model="dateRange"
+            size="small"
+            style="width: 325px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            unlink-panels
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :picker-options="pickerOptionsStart"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" @click="handleQuery">搜索</el-button>
+          <el-button size="small" @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="contentListBox container"  v-loading="isLoading">
+      <div
+        class="contentBox"
+        :style="topNav ? 'width:24.6%' : 'width:24.5%'"
+        v-for="(item, index) in eventList"
+        :key="index"
+      >
+        <div class="top" style="">
+          <div class="video">
+            <img
+              :src="item.eventImgUrl"
+              v-show="item.eventImgUrl"
+              style="width: 100%"
+              @click="openPicDialog(item)"
+            />
+            <img
+              src="../../../assets/cloudControl/nullImg.png"
+              v-show="!item.eventImgUrl || item.eventImgUrl == null"
+            />
+          </div>
+          <div class="contentText">
+            <div>
+              来源 <span>{{ getFrom(item.eventSource) }}</span>
             </div>
-            <div class="contentText">
-              <div>
-                来源 <span>{{ getFrom(item.eventSource) }}</span>
-              </div>
-              <div>
-                位置 <span>{{ item.position }}</span>
-              </div>
-              <div>
-                时间 <span>{{ item.startTime }}</span>
-              </div>
-              <div class="contentButton">
-                <div @click="detailsButton(item, 1)">详情</div>
-                <div @click="detailsButton(item, 2)" 
-                :class="item.eventState == '1'|| item.eventState == '2'?'disabledButton':''">复核</div>
-              </div>
-              <div class="stateTab">
-                <img :src="safeWarn0" v-show="item.eventState == '0'" />
-                <img :src="safeWarn1" v-show="item.eventState == '1'" />
-                <img :src="safeWarn2" v-show="item.eventState == '2'" />
-                <img :src="safeWarn3" v-show="item.eventState == '3'" />
-              </div>
+            <div style="width: 100%; overflow: hidden; white-space: nowrap">
+              位置 <span>{{ item.position }}</span>
+            </div>
+            <div v-show="item.eventState == '3'">
+              时间 <span>{{ item.eventTime }}</span>
+            </div>
+            <div
+              v-show="
+                item.eventState == '2' ||
+                item.eventState == '4' ||
+                item.eventState == '5' ||
+                item.eventState == '1'
+              "
+            >
+              时间 <span>{{ item.endTime }}</span>
+            </div>
+            <div v-show="item.eventState == '0'">
+              时间 <span>{{ item.updateTime }}</span>
+            </div>
+
+            <div class="stateTab">
+              <img :src="safeWarn0" v-show="item.eventState == '0'" />
+              <img :src="safeWarn1" v-show="item.eventState == '1'" />
+              <img :src="safeWarn2" v-show="item.eventState == '2'" />
+              <img :src="safeWarn3" v-show="item.eventState == '3'" />
+              <img :src="safeWarn4" v-show="item.eventState == '4'" />
+              <img :src="safeWarn5" v-show="item.eventState == '5'" />
             </div>
           </div>
         </div>
+        <div
+          class="bottom"
+        >
+          <div class="eventBox">
+            <div class="eventType">
+              {{ item.prevControlType == "1" ? "安全预警" : "普通事件" }}
+            </div>
 
-        <el-table
-          v-loading="loading"
-          :data="eventList"
-          @selection-change="handleSelectionChange"
-          :row-class-name="tableRowClassName"
-          max-height="600"
-          v-if="activeName == '2'"
-        >
-          <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="故障类型" align="center" prop="faultType">
-            <template slot-scope="scope">
-              <dict-tag
-                :options="dict.type.fault_type"
-                :value="scope.row.faultType"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="发现时间"
-            align="center"
-            prop="faultFxtime"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="持续时间" align="center" prop="faultCxtime" />
-          <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
-          <el-table-column label="设备状态" align="center" prop="eqStatus">
-            <template slot-scope="scope">
-              <dict-tag
-                :options="dict.type.sd_monitor_state"
-                :value="scope.row.eqStatus"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column label="故障等级" align="center" prop="faultLevel">
-            <template slot-scope="scope">
-              <dict-tag
-                :options="dict.type.fault_level"
-                :value="scope.row.faultLevel"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="消除状态"
-            align="center"
-            prop="falltRemoveStatue"
-          >
-            <template slot-scope="scope">
-              <dict-tag
-                :options="dict.type.fault_remove_statue"
-                :value="scope.row.falltRemoveStatue"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column label="状态" align="center" prop="faultStatus">
-            <template slot-scope="scope">
-              <dict-tag
-                :options="dict.type.fault_status"
-                :value="scope.row.faultStatus"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            align="center"
-            class-name="small-padding fixed-width"
-          >
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                class="tableBlueButtton"
-                @click="handleCheckDetail(scope.row)"
-                v-hasPermi="['system:list:edit']"
-                :style="{ display: scope.row.faultStatus == 1 ? 'none' : '' }"
-                >故障详情</el-button
-              >
-              <el-button
-                size="mini"
-                class="tableBlueButtton"
-                @click="recordQuery(scope.row)"
-              >
-                检修记录
-              </el-button>
-              <el-button
-                size="mini"
-                class="tableBlueButtton"
-                @click="handleUpdate(scope.row)"
-                v-hasPermi="['system:list:edit']"
-                :style="{ display: scope.row.faultStatus == 0 ? 'none' : '' }"
-                >修改
-              </el-button>
-              <el-button
-                size="mini"
-                class="tableDelButtton"
-                @click="handleDelete(scope.row)"
-                v-hasPermi="['system:list:remove']"
-                :style="{ display: scope.row.faultStatus == 0 ? 'none' : '' }"
-                >删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <!-- <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-          :page-size="16"
-        /> -->
-        <el-pagination
-          v-show="total>0"
-          class="specialPagination"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="queryParams.pageNum"
-          :page-sizes="[16, 32, 48, 64]"
-          :page-size="queryParams.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
-        </el-pagination>
-      </el-tab-pane>
-    </el-tabs>
+            <div>{{ item.simplifyName }}</div>
+          </div>
+          <div class="contentButton">
+            <div @click="detailsOpen(item)">详情</div>
+            <div
+              v-once
+              v-if="item.eventState == '3'"
+              @click="detailsButton(item)"
+            >
+              复核
+            </div>
+            <div
+              v-if="item.eventState == '0' && item.prevControlType == '0'"
+              class="chuzhi"
+              @click="management(item.id)"
+            >
+              处置
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <el-pagination
+      v-if="total > 0"
+      class="specialPagination"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="queryParams.pageNum"
+      :page-sizes="[16, 32, 48, 64]"
+      :page-size="queryParams.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+    >
+    </el-pagination>
 
     <!-- 查看详情弹窗 -->
     <el-dialog
       :title="title"
       :visible.sync="details"
       :before-close="cancel"
-      width="1000px"
+      width="60%"
       text-align="left"
       :style="processType ? 'left: 13%' : ''"
       class="detailsDialog"
@@ -375,67 +251,172 @@
       :modal="false"
       append-to-body
     >
-    <!-- append-to-body -->
-
-    <!--  -->
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="videoDialogBox">
         <div
+          style="display: none"
           class="processButton"
           @click="openProcess()"
           :class="processType ? 'el-icon-s-fold' : 'el-icon-s-unfold'"
-        >预警处置</div>
-        <div class="dialogBg">
-          <div>三图一视<span>(事前、事中、事后三张抓图+录像判断)</span></div>
-          <video :src="eventForm.videoUrl" controls muted loop fluid></video>
-          <div class="picBox">
-            <div   v-if="eventForm.iconUrlList.length>0" >
-              <img  :src="item.imgUrl" v-for="(item, index) in eventForm.iconUrlList" :key="index"  />
-            </div>
-            <img src="../../../assets/cloudControl/nullImg.png" v-else/>
-
-          </div>
+        >
+          预警处置
         </div>
         <div class="dialogBg">
-          <div>实时视频<span>(事发位置最近的监控视频录像)</span></div>
-          <video :src="videoUrl" controls muted loop fluid></video>
+          <div style="padding: 6px 0">事发时抓图或录像</div>
+          <!-- <video :src="eventForm.videoUrl" controls muted loop fluid></video> -->
           <div class="picBox">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <swiper
+              class="swiper gallery-top"
+              :options="swiperOptionTop"
+              ref="swiperTop"
+              v-show="eventFormDetail.iconUrlList.length >= 1"
+            >
+              <!-- slides -->
+              <swiper-slide
+                v-for="(item, index) in eventFormDetail.iconUrlList"
+                :key="index"
+                :class="'slide-' + index"
+              >
+                <video
+                  :src="item.imgUrl"
+                  :poster="item.imgUrl"
+                  v-if="index == 0"
+                  @click="openPicDialog(eventFormDetail)"
+                  class="leftVideo"
+                  autoplay
+                  muted
+                  loop
+                ></video>
+                <img
+                  :src="item.imgUrl"
+                  style="width: 100%; height: 100%"
+                  v-if="index != 0"
+                  @click="clickImg(item.imgUrl)"
+                />
+              </swiper-slide>
+              <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> -->
+            </swiper>
+            <swiper
+              class="swiper gallery-thumbs"
+              :options="swiperOptionThumbs"
+              ref="swiperThumbs"
+              v-show="eventFormDetail.iconUrlList.length >= 1"
+            >
+              <swiper-slide
+                v-for="(item, index) in eventFormDetail.iconUrlList"
+                :key="index"
+                :class="'slide-' + index"
+              >
+                <video
+                  :src="item.imgUrl"
+                  :poster="item.imgUrl"
+                  v-if="index == 0"
+                  autoplay
+                  muted
+                  loop
+                ></video>
+                <img
+                  :src="item.imgUrl"
+                  style="width: 100%; height: 100%"
+                  v-if="index != 0"
+                />
+              </swiper-slide>
+              <div class="swiper-button-prev" slot="button-prev"></div>
+              <div class="swiper-button-next" slot="button-next"></div>
+            </swiper>
+            <div
+              v-show="eventFormDetail.iconUrlList.length < 1"
+              style="width: 100%; height: 329px"
+            >
+              <el-image
+                style="width: 100%; height: 100%"
+                :src="noPic"
+                :fit="contain"
+              >
+              </el-image>
+            </div>
           </div>
+        </div>
+        <div class="dialogBg dialogBg2">
+          <div style="padding: 6px 0">
+            实时视频<span>(事发位置最近的监控视频)</span>
+          </div>
+          <div class="picBox">
+            <el-carousel
+              trigger="click"
+              :autoplay="false"
+              v-if="videoList.length >= 1"
+            >
+              <el-carousel-item v-for="(item, index) in videoList" :key="index">
+                <videoPlayer
+                  v-show="item.liveUrl != null && item.liveUrl != ''"
+                  :rtsp="item.liveUrl"
+                  :open="cameraPlayer"
+                ></videoPlayer>
+              </el-carousel-item>
+            </el-carousel>
+            <el-image
+              v-show="videoList.length < 1"
+              :src="noDataUrl"
+              :fit="contain"
+            >
+            </el-image>
+          </div>
+
+          <!-- 现场用这个 -->
+          <!-- <video
+            id="h5sVideo1"
+            class="h5video_"
+            controls
+            muted
+            loop
+            autoplay
+            webkit-playsinline
+            playsinline
+            disablePictureInPicture="true"
+            controlslist="nodownload noplaybackrate noremoteplayback"
+            style="width: 100%; height: 290px; object-fit: cover; z-index: -100"
+          ></video> -->
         </div>
       </div>
       <div class="dialogForm">
-        <el-form :model="eventForm" label-width="80px" :rules="rules">
+        <el-form
+          ref="eventFormDetail"
+          :model="eventFormDetail"
+          label-width="80px"
+        >
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="8">
               <el-form-item label="告警来源" prop="eventSource">
                 <el-select
-                  v-model="eventForm.eventSource"
-                  :disabled="detailsDisabled"
+                  v-model="eventFormDetail.eventSource"
+                  disabled
                   placeholder="请选择告警来源"
+                  style="width: calc(100% - 10px)"
                 >
                   <el-option
                     v-for="item in fromList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
                   ></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="告警时间" prop="startTime">
+              <el-form-item label="告警时间" prop="eventTime">
                 <el-date-picker
                   clearable
                   size="small"
-                  :disabled="detailsDisabled"
-                  v-model="eventForm.startTime"
+                  disabled
+                  v-model="eventFormDetail.eventTime"
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择告警时间"
-                  style="width: 202px"
+                  style="width: calc(100% - 10px)"
                   :picker-options="setDisabled"
                 >
                 </el-date-picker>
@@ -448,14 +429,14 @@
                 label-width="100px"
               >
                 <el-date-picker
+                  @change="changeEndTime"
                   clearable
                   size="small"
-                  :disabled="detailsDisabled"
-                  v-model="eventForm.endTime"
+                  v-model="eventFormDetail.endTime"
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择预计解除时间"
-                  style="width: 202px"
+                  style="width: calc(100% - 10px)"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -463,11 +444,13 @@
             <el-col :span="8">
               <el-form-item label="所属隧道" prop="tunnelName">
                 <el-select
-                  v-model="eventForm.tunnelName"
+                  v-model="eventFormDetail.tunnelName"
                   placeholder="请选择所属隧道"
                   clearable
                   size="small"
                   disabled
+                  style="width: calc(100% - 10px)"
+                  @change="getReservePlanData"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -480,512 +463,878 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="事件起点">
-                <el-input
-                  v-model="eventForm.stakeNum1"
-                  placeholder="Km"
-                  :disabled="detailsDisabled"
-                  width="70px"
-                />
-                +
-                <el-input
-                  v-model="eventForm.stakeNum2"
-                  placeholder="m"
-                  :disabled="detailsDisabled"
-                  width="70px"
-                />
+                <el-row>
+                  <el-col :span="11">
+                    <el-input
+                      v-model="eventFormDetail.stakeNum1"
+                      placeholder="Km"
+                      oninput="value=value.replace(/[^\d]/g,'')"
+                      width="100%"
+                    >
+                      <template slot="prepend">K</template>
+                    </el-input>
+                  </el-col>
+                  <el-col :span="1">+</el-col>
+                  <el-col :span="11">
+                    <el-input
+                      v-model="eventFormDetail.stakeNum2"
+                      placeholder="m"
+                      oninput="value=value.replace(/[^\d]/g,'')"
+                      width="100%"
+                    />
+                  </el-col>
+                </el-row>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="事件终点" label-width="100px">
-                <el-input
-                  v-model="eventForm.stakeEndNum1"
-                  placeholder="Km"
-                  :disabled="detailsDisabled"
-                  width="70px"
-                />
-                +
-                <el-input
-                  v-model="eventForm.stakeEndNum2"
-                  placeholder="m"
-                  :disabled="detailsDisabled"
-                  width="70px"
-                />
+                <el-row>
+                  <el-col :span="11">
+                    <el-input
+                      v-model="eventFormDetail.stakeEndNum1"
+                      placeholder="Km"
+                      oninput="value=value.replace(/[^\d]/g,'')"
+                      width="100%"
+                    >
+                      <template slot="prepend">K</template>
+                    </el-input>
+                  </el-col>
+                  <el-col :span="1">+</el-col>
+                  <el-col :span="11">
+                    <el-input
+                      v-model="eventFormDetail.stakeEndNum2"
+                      placeholder="m"
+                      oninput="value=value.replace(/[^\d]/g,'')"
+                      width="100%"
+                    />
+                  </el-col>
+                </el-row>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="影响车道">
-                <el-select
-                  v-model="eventForm.direction"
-                  placeholder="方向"
-                  clearable
-                  size="small"
-                  :disabled="detailsDisabled"
-                  style="width: 100px"
-                >
-                  <el-option
-                    v-for="item in directionList"
-                    :key="item.dictValue"
-                    :label="item.dictLabel"
-                    :value="item.dictValue"
-                  />
-                </el-select>
-                <el-select
-                  v-model="eventForm.laneNo"
-                  placeholder="车道"
-                  clearable
-                  size="small"
-                  :disabled="detailsDisabled"
-                  style="width: 100px; margin-left: 15px"
-                >
-                  <el-option
-                    v-for="item in chezhiLaneList"
-                    :key="item.laneId"
-                    :label="item.laneName"
-                    :value="item.laneId"
-                  />
-                </el-select>
+                <el-row>
+                  <el-col :span="11">
+                    <el-select
+                      v-model="eventFormDetail.direction"
+                      placeholder="方向"
+                      clearable
+                      size="small"
+                      style="width: 100%"
+                      @change="getReservePlanData"
+                    >
+                      <el-option
+                        v-for="item in directionList"
+                        :key="item.dictValue"
+                        :label="item.dictLabel"
+                        :value="item.dictValue"
+                      />
+                    </el-select>
+                  </el-col>
+                  <el-col :span="11">
+                    <el-select
+                      v-model="eventFormDetail.laneNo"
+                      placeholder="车道"
+                      clearable
+                      size="small"
+                      multiple
+                      collapse-tags
+                      style="width: 100%; margin-left: 8px"
+                    >
+                      <el-option
+                        v-for="(item, index) in chezhiLaneList"
+                        :key="index"
+                        :label="item.dictLabel"
+                        :value="item.dictValue"
+                      />
+                    </el-select>
+                  </el-col>
+                </el-row>
               </el-form-item>
             </el-col>
+
             <el-col :span="16">
-              <el-form-item label="事件描述" prop="eventDescription">
+              <el-form-item label="事件车辆" prop="confidenceList">
                 <el-input
-                  v-model="eventForm.eventDescription"
-                  placeholder="m"
+                  v-model="eventFormDetail.confidenceList"
+                  placeholder=""
                   :disabled="detailsDisabled"
-                  style="width: 536px"
+                  style="width: calc(100% - 10px)"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="事件车辆" prop="plate">
-                <div class="evtCarStyle">
-                  <div
-                    v-for="(item, index) in eventForm.confidenceList"
+              <el-form-item label="影响描述" prop="eventDescription">
+                <el-input
+                  v-model="eventFormDetail.eventDescription"
+                  placeholder="影响描述"
+                  style="width: calc(100% - 10px)"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="预估类型" prop="eventTypeId">
+                <el-select
+                  v-model="eventFormDetail.eventTypeId"
+                  clearable
+                  size="small"
+                  style="width: 100%"
+                  @change="getReservePlanData"
+                >
+                  <el-option
+                    v-for="(item, index) in eventTypeData"
                     :key="index"
+                    :label="item.simplifyName"
+                    :value="item.id"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="预估等级" prop="eventGrade">
+                <el-select
+                  v-model="eventFormDetail.eventGrade"
+                  clearable
+                  size="small"
+                  style="width: calc(100% - 10px)"
+                  @change="getReservePlanData"
+                >
+                  <el-option
+                    v-for="(item, index) in eventGradeList"
+                    :key="index"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="复核结果" prop="eventState">
+                <el-radio-group
+                  v-model="eventFormDetail.eventState"
+                  @input="eventStateChange"
+                >
+                  <el-radio :label="4"> 确认(已处理) </el-radio>
+                  <el-radio :label="2"> 挂起(稍后处理) </el-radio>
+                  <el-radio :label="5"> 误报 </el-radio>
+                  <el-radio :label="0"> 突发事件处置 </el-radio>
+                </el-radio-group>
+                <span style="color: #c59105">(请根据复核判定结果选择)</span>
+              </el-form-item>
+            </el-col>
+            <div style="width: 100%">
+              <el-col :span="24" v-show="eventFormDetail.eventState == 4">
+                <el-form-item prop="reviewRemark">
+                  <el-checkbox-group
+                    v-model="eventFormDetail.reviewRemark"
+                    class="checkBox"
                   >
-                    <div class="evtNum">{{ index + 1 }}</div>
-                    <div>
-                      车牌号
-                      <el-input
-                        v-model="item.plate"
-                        :disabled="detailsDisabled"
-                      ></el-input>
-                    </div>
-                    <div>
-                      速度
-                      <el-input
-                      style="width: 110px;"
-                        v-model="item.speed"
-                        :disabled="detailsDisabled"
-                      ></el-input>
-                    </div>
-                    <div>
-                      目标置信度
-                      <el-input
-                        v-model="item.eventConfidence"
-                        :disabled="detailsDisabled"
-                      ></el-input>
+                    <el-checkbox-button
+                      label="已线下处理"
+                      value="已线下处理"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="车辆已驶离"
+                      value="车辆已驶离"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="施工车辆"
+                      value="施工车辆"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="正常施工作业"
+                      value="正常施工作业"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="其他"
+                      value="其他"
+                    ></el-checkbox-button>
+                  </el-checkbox-group>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" v-show="eventFormDetail.eventState == 2">
+                <el-form-item prop="reviewRemark">
+                  <el-checkbox-group
+                    v-model="eventFormDetail.reviewRemark"
+                    class="checkBox"
+                  >
+                    <el-checkbox-button
+                      label="稍后处理"
+                      value="稍后处理"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="持续跟踪，事态发展情况"
+                      value="持续跟踪，事态发展情况"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="已通知高警现场处理"
+                      value="已通知高警现场处理"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="已通知路政现场处理"
+                      value="已通知路政现场处理"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="其他"
+                      value="其他"
+                    ></el-checkbox-button>
+                  </el-checkbox-group>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" v-show="eventFormDetail.eventState == 5">
+                <el-form-item prop="reviewRemark">
+                  <el-checkbox-group
+                    v-model="eventFormDetail.reviewRemark"
+                    class="checkBox"
+                  >
+                    <el-checkbox-button
+                      label="系统误报"
+                      value="系统误报"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="误报或涉事车辆已驶离"
+                      value="误报或涉事车辆已驶离"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="无法复核事发情况"
+                      value="无法复核事发情况"
+                    ></el-checkbox-button>
+                    <el-checkbox-button
+                      label="其他"
+                      value="其他"
+                    ></el-checkbox-button>
+                  </el-checkbox-group>
+                </el-form-item>
+              </el-col>
+              <el-col
+                :span="24"
+                v-if="
+                  eventFormDetail.eventState == 0 &&
+                  eventFormDetail.prevControlType == 0
+                "
+              >
+                <el-form-item prop="currencyId">
+                  <el-select
+                    v-model="eventFormDetail.currencyId"
+                    placeholder="请选择预案"
+                    style="width: 30%"
+                  >
+                    <el-option
+                      v-for="item in ReservePlanList"
+                      :key="item.id"
+                      :label="item.planName"
+                      :value="item.id"
+                    ></el-option>
+                  </el-select>
+                  <el-button
+                    size="small"
+                    v-show="eventFormDetail.currencyId"
+                    @click="openDoor(eventFormDetail)"
+                    >查看</el-button
+                  >
+                  <span style="color: #c59105"
+                    >(事件处置预案根据事件类型、事件等级智能推荐,处置过程中允许升级及更改预案)</span
+                  >
+                </el-form-item>
+              </el-col>
+              <el-col
+                :span="24"
+                v-if="
+                  eventFormDetail.eventState == 0 &&
+                  eventFormDetail.prevControlType == 1
+                "
+              >
+                <el-form-item prop="currencyId">
+                  <el-select
+                    v-model="eventFormDetail.currencyId"
+                    placeholder="请选择策略"
+                  >
+                    <el-option
+                      v-for="item in strategyList"
+                      :key="item.id"
+                      :label="item.strategyName"
+                      :value="item.id"
+                    ></el-option>
+                  </el-select>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    v-show="eventFormDetail.currencyId"
+                    @click="openDoor(eventFormDetail)"
+                    >查看</el-button
+                  >
+                  <span style="color: #c59105"
+                    >(事件处置预案根据事件类型、事件等级智能推荐,处置过程中允许升级及更改预案)</span
+                  >
+                </el-form-item>
+              </el-col>
+              <el-col
+                v-show="
+                  eventIsShow(
+                    eventFormDetail.reviewRemark,
+                    eventFormDetail.eventState
+                  )
+                "
+              >
+                <el-form-item>
+                  <el-input
+                    placeholder="请输入其他原因内容"
+                    v-model="eventFormDetail.otherContent"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+            </div>
+          </el-row>
+        </el-form>
+        <div class="dialogFooterButton">
+          <div @click="submitDialog">复核提交</div>
+          <!-- <div
+            @click="openProcess(1, eventFormDetail.id)"
+          >
+            处置
+          </div> -->
+        </div>
+      </div>
+    </el-dialog>
+    <el-dialog
+      title="事件详情报告"
+      :visible.sync="dialogTableVisible"
+      :close-on-click-modal="false"
+      :destroy-on-close="true"
+      width="70%"
+      class="evtInfo"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <el-timeline>
+        <el-timeline-item timestamp="事件发现" placement="top">
+          <el-card>
+            <el-form
+              ref="eventDiscovery"
+              :model="eventDiscovery"
+              label-width="100px"
+            >
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  <el-form-item label="告警来源">
+                    <el-input
+                      v-model="eventDiscovery.eventSource"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="告警时间">
+                    <el-input
+                      v-model="eventDiscovery.eventTime"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="持续时长">
+                    <el-input
+                      v-model="eventDiscovery.continuedTime"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="事发路段">
+                    <el-input
+                      v-model="eventDiscovery.tunnelName"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="事发位置">
+                    <el-input
+                      v-model="eventDiscovery.stakeNum"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="所属方向">
+                    <el-input
+                      v-model="eventDiscovery.direction"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="抓图录像" prop="iconUrlList">
+                    <!-- class="detailImg" -->
+                    <el-scrollbar wrap-class="scrollbar-wrapper">
+                      <div
+                        class="scrollbar_li"
+                        v-for="(item, index) in eventDiscovery.iconUrlList"
+                        :key="index"
+                      >
+                        <video
+                          v-if="item.imgType == '1'"
+                          :src="item.imgUrl"
+                          muted
+                          loop
+                          fluid
+                          autoplay
+                          @click="openPicDialog(item)"
+                        ></video>
+                        <el-image
+                          v-if="item.imgType == '0'"
+                          :src="item.imgUrl"
+                          @click="clickImg(item.imgUrl)"
+                        >
+                        </el-image>
+                      </div>
+                    </el-scrollbar>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <!-- <el-row :gutter="20">
+                <el-col :span="8">
+                  <el-form-item label="历史时间">
+                    <el-date-picker
+                      v-model="eventDiscovery.startTime"
+                      type="datetime"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="请选择历史时间">
+                    </el-date-picker>
+                    <el-button size="small" @click="viewVedio" style="margin-left: 7px;">查看</el-button>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="下载时间">
+                    <el-date-picker
+                      v-model="eventDiscovery.downLoadTime"
+                      type="datetime"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="请选择下载时间">
+                    </el-date-picker>
+                    <el-button size="small" @click="downloadVedio" style="margin-left: 7px;">下载</el-button>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-form-item label="历史录像" prop="historyUrlList">
+                    <el-scrollbar wrap-class="scrollbar-wrapper">
+                      <div
+                        class="scrollbar_li"
+                        v-for="(item, index) in eventDiscovery.historyUrlList"
+                        :key="index"
+                      >
+                        <videoPlayer
+                          v-if="item.imgType == '2'"
+                          :rtsp="item.imgUrl"
+                          :open="vedioPlayer"
+                        ></videoPlayer>
+                      </div>
+                    </el-scrollbar>
+                  </el-form-item>
+                </el-col>
+              </el-row> -->
+            </el-form>
+          </el-card>
+        </el-timeline-item>
+        <el-timeline-item
+          timestamp="人工复核"
+          placement="top"
+          v-if="eventStateCurrent != '3'"
+        >
+          <el-form ref="manualReview" :model="manualReview" label-width="100px">
+            <el-card>
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-form-item label="当事目标">
+                    <el-input
+                      v-model="manualReview.confidenceList"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-form-item label="影响描述">
+                    <el-input
+                      v-model="manualReview.eventDescription"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  <el-form-item label="预估类型">
+                    <el-input
+                      v-model="manualReview.eventTypeName"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="预估等级">
+                    <el-input
+                      v-model="manualReview.eventGrade"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="复核结果">
+                    <el-input
+                      v-model="manualReview.eventState"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  <el-form-item label="事发位置">
+                    <el-input
+                      v-model="manualReview.stakeNum"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="影响车道">
+                    <el-input v-model="manualReview.laneNo" readonly></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="事发路段">
+                    <el-input
+                      v-model="manualReview.tunnelName"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  <el-form-item label="复核人">
+                    <el-input
+                      v-model="manualReview.updateBy"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="复核时间">
+                    <el-input
+                      v-model="manualReview.updateTime"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-form-item label="复核描述">
+                    <el-input
+                      v-model="manualReview.reviewRemark"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-card>
+          </el-form>
+        </el-timeline-item>
+        <el-timeline-item
+          timestamp="事件处置"
+          placement="top"
+          v-if="eventStateCurrent == '1' || eventStateCurrent == '0'"
+        >
+          <el-card>
+            <el-col :span="12" v-if="prevControlType == 0">
+              <div class="IncHand">
+                <div class="incHandBox">
+                  <el-tabs v-model="historyIndex" @tab-click="handleClick">
+                    <el-tab-pane
+                      v-for="(item, index) of planDisposal"
+                      :label="item.planName"
+                      :name="'first' + index"
+                      :key="index"
+                    >
+                      <!-- {{ item.planName }} -->
+                    </el-tab-pane>
+                  </el-tabs>
+                  <div
+                    v-for="(item, index) of planDisposal"
+                    :key="index"
+                    v-if="historyIndex == 'first' + index"
+                  >
+                    <div
+                      v-for="(items, indexs) of item.planList"
+                      :key="indexs"
+                      class="incHandContent"
+                    >
+                      <div class="classification">
+                        <el-tooltip v-if="items.flowContent" class="item" effect="dark"
+                        :content="items.flowContent" placement="right">
+                          <div
+                            class="type"
+                            :style="{
+                              padding: items.flowContent
+                                ? items.flowContent.toString().length > 2
+                                  ? '8px'
+                                  : '15px 5px'
+                                : '',
+                              marginTop: items.children
+                                ? items.flowContent == '设备联控'
+                                  ? (items.children.length * 40 +
+                                      4 * (items.children.length - 1)) /
+                                      2 -
+                                    35 +
+                                    'px'
+                                  : (items.children.length * 40 +
+                                      4 * (items.children.length - 1)) /
+                                      2 -
+                                    25 +
+                                    'px'
+                                : '',
+                            }"
+                            v-if="items.flowContent"
+                          >
+                            {{ items.flowContent }}
+                          </div>
+                        </el-tooltip>
+                        <!-- <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)"
+                        :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">一键</div> -->
+                      </div>
+
+                      <div
+                        class="heng1"
+                        v-if="items.children"
+                        :style="{
+                          marginTop: items.children
+                            ? items.children.length == 1
+                              ? '20px'
+                              : (items.children.length * 40 +
+                                  4 * (items.children.length - 1)) /
+                                  2 +
+                                'px'
+                            : '',
+                        }"
+                      ></div>
+                      <div
+                        class="shu"
+                        v-if="items.children"
+                        :style="{
+                          height: items.children
+                            ? items.children.length > 1
+                              ? items.children.length * 44 +
+                                4 * items.children.length -
+                                40 +
+                                'px'
+                              : '0px'
+                            : '',
+                          borderTop:
+                            items.children && items.children.length > 1
+                              ? 'solid 1px #39adff'
+                              : '',
+                        }"
+                      ></div>
+                      <div class="gxp">
+                        <div
+                          v-for="(itm, inx) of items.children"
+                          :key="inx"
+                          class="contentList"
+                        >
+                          <h4 style="float: left; width: 80%">
+                            {{ itm.flowContent }}
+                          </h4>
+                          <div class="yzx" v-show="itm.eventState != '0'">
+                            已执行
+                          </div>
+                          <div
+                            class="wzx"
+                            v-show="itm.eventState == '0'"
+                            type="info"
+                          >
+                            未执行
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </el-form-item>
+              </div>
             </el-col>
-          </el-row>
-        </el-form>
-      </div>
-      <div class="dialogFooterButton" >
-        <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
-        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)" >应急调度</div>
-        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1)">处置</div>
-        
-      </div>
-    </el-dialog>
-    <!--    流程弹窗-->
-    <el-dialog
-      title="预警处置"
-      :visible.sync="processDialog"
-      width="480px"
-      append-to-body
-      class="animationDialog"
-      :modal="false"
-      :before-close="cancelProcessDialog"
-      :close-on-click-modal="closeProcessDialog"
-    >
-      <div style="padding: 10px; background: #f7f7f7; height: 686px;overflow:auto">
-        <div v-for="(item,index) of incHandList" :key="index" class="incHandContent" v-if="activeName == '1'">
-          <div class="classification">
-            <div class="type"
-                  :style="{
-            padding:item.flowContent?item.flowContent.toString().length>2?'8px':'15px 12px':'',
-            marginTop:item.children?item.flowContent == '设备联控' ? (item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 35 +'px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 25 +'px':''
-
-            }"
-            v-if="item.flowContent">{{item.flowContent}}
-            </div>
-          
-            <div v-show="item.flowId == 7" class="yijian"  @click="getYiJian(item)"
-            :class="!miniDialog?'disabledButton':''">一键</div>
-            <div v-show="item.flowId == 1" class="hulue" @click="hulue()"
-            :class="!miniDialog?'disabledButton':''">忽略</div>
-
-          </div>
-
-          <div class="heng1"
-          v-if="item.children"
-                :style="{
-            marginTop:item.children?item.children.length==1?'20px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 +'px':''
-            }"
-            ></div>
-          <div class="shu"
-          v-if="item.children"
-                :style="{
-            height:item.children?item.children.length >1 ?item.children.length * 40 + (4 * item.children.length) - 40 +'px':'0px':'',
-            borderTop: item.children && item.children.length >1 ?'solid 1px #39adff':'',
-          }"
-          ></div>
-          <div>
-            <div v-for="(itm,inx) of item.children" :key="inx" class="contentList">
-              <div style="float:left">{{ itm.flowContent }}</div>
-              <img :src="incHand2"  style="float:right;" v-show="itm.eventState != '0'" >
-              <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm)"
-              :class="!miniDialog?'disabledButton':''">
-
-            </div>
-          </div>
-
-        </div>
-        <div v-if="activeName == '0'">
-          <el-timeline style="height: calc(100% - 40px); overflow: auto">
-            <el-timeline-item
-              placement="top"
-              v-for="(item, index) in eventWarnList"
-              :key="index + item.flowTime"
-            >
-              <div>{{ item.flowDescription }}</div>
-              <div>{{ item.flowTime }}</div>
-            </el-timeline-item>
-          </el-timeline>
-        </div>
-      </div>
-    </el-dialog>
-    <!-- 添加或修改故障清单对话框 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="open"
-      width="1200px"
-      append-to-body
-    >
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-row>
-          <el-col :span="24">
-            <div class="topTxt">故障基本信息</div>
-          </el-col>
-          <el-col :span="8" :style="{ display: 'none' }">
-            <el-form-item label="故障id" prop="id" :style="{ display: 'none' }">
-              <el-input v-model="form.id" placeholder="请输入发现源" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="所在路段隧道" prop="tunnelId">
-              <el-select
-                v-model="form.tunnelId"
-                :disabled="disstate"
-                placeholder="请选择所属隧道"
+            <el-col :span="12" v-if="prevControlType == 1">
+              <el-timeline
+                :reverse="reverse"
+                style="
+                  overflow-y: auto;
+                  height: 420px;
+                  padding: 20px 10px 20px 25px;
+                "
               >
-                <el-option
-                  v-for="item in tunnelList"
-                  :key="item.tunnelId"
-                  :label="item.tunnelName"
-                  :value="item.tunnelId"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item label="故障类型" prop="faultType">
-              <el-select
-                v-model="form.faultType"
-                :disabled="disstate"
-                placeholder="请选择故障类型"
-              >
-                <el-option
-                  v-for="item in faultTypeOptions"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障发现源" prop="faultSource">
-              <el-input
-                :disabled="disstate"
-                v-model="form.faultSource"
-                placeholder="请输入发现源"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障发现时间" prop="faultFxtime">
-              <el-date-picker
-                clearable
-                size="small"
-                :disabled="disstate"
-                v-model="form.faultFxtime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择故障发现时间"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障持续时间" prop="faultCxtime">
-              <el-input
-                :disabled="disstate"
-                v-model="form.faultCxtime"
-                style="width: 15.5em"
-                placeholder="请按照天/小时/分格式填写"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item label="故障填报时间" prop="faultTbtime">
-              <el-date-picker
-                clearable
-                size="small"
-                :disabled="disstate"
-                v-model="form.faultTbtime"
-                style="width: 268px"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择故障填报时间"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="24">
-            <div class="topTxt">故障设备情况</div>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="设备名称" prop="eqId">
-              <el-select
-                v-model="form.eqId"
-                :disabled="disstate"
-                placeholder="请选择设备名称"
-                @change="eqStatusGet"
-              >
-                <el-option
-                  v-for="item in eqListData"
-                  :key="item.eqId"
-                  :label="item.eqName"
-                  :value="item.eqId"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="设备填报状态" prop="eqStatus">
-              <el-select
-                v-model="form.eqStatus"
-                :disabled="disstate"
-                placeholder="请选择设备填报状态"
-              >
-                <el-option
-                  v-for="item in eqStatusList"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障位置" prop="faultLocation">
-              <el-input
-                ref="faultLocation"
-                :disabled="disstate"
-                v-model="form.faultLocation"
-                placeholder="请输入故障位置"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="7">
-            <el-form-item label="设备运行状态" prop="eqRunStatus">
-              <el-input
-                v-model="form.eqRunStatus"
-                :disabled="disstate"
-                placeholder=""
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <div class="topTxt">故障描述</div>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障代码" prop="faultCode">
-              <el-input
-                v-model="form.faultCode"
-                :disabled="disstate"
-                placeholder="请输入故障代码"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障等级" prop="faultLevel">
-              <el-select
-                v-model="form.faultLevel"
-                :disabled="disstate"
-                placeholder="请选择故障等级"
-              >
-                <el-option
-                  v-for="dict in dict.type.fault_level"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                />
-                <!--                <el-option
-                                  v-for="item in faultLevelOptions"
-                                  :key="item.dictValue"
-                                  :label="item.dictLabel"
-                                  :value="item.dictValue"
-                                />-->
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="故障消除状态" prop="falltRemoveStatue">
-              <el-select
-                v-model="form.falltRemoveStatue"
-                :disabled="disstate"
-                placeholder="请选择消除状态"
-              >
-                <el-option
-                  v-for="item in faultRemoveStateOptions"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="故障描述" prop="faultDescription">
-              <el-input
-                v-model="form.faultDescription"
-                maxlength="250"
-                :disabled="disstate"
-                placeholder="请输入故障描述"
-                style="width: 80%"
-                type="textarea"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="现场图片" label-width="120px">
-              <el-upload
-                ref="upload"
-                action="http://xxx.xxx.xxx/personality/uploadExcel"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-                :http-request="uploadFile"
-                :file-list="fileList"
-                :disabled="disstate"
-                :on-exceed="handleExceed"
-                :on-change="handleChange"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog
-                :visible.sync="dialogVisible"
-                class="modifyEqTypeDialog"
-                :append-to-body="true"
-                style="width: 600px !important; margin: 0 auto"
-              >
-                <img width="100%" :src="dialogImageUrl" alt="" />
-              </el-dialog>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button v-if="isWritable" type="primary" @click="submitForm"
-          >仅保存</el-button
+                <el-table
+                  stripe
+                  class="phoneTable"
+                  :data="tacticsList"
+                  :fit="true"
+                  height="250"
+                  style="width: 100%"
+                >
+                  <el-table-column prop="eqName" label="设备名称">
+                  </el-table-column>
+                  <el-table-column prop="pile" label="桩号"> </el-table-column>
+                  <el-table-column prop="stateName" label="状态">
+                  </el-table-column>
+                </el-table>
+              </el-timeline>
+            </el-col>
+            <el-col :span="12" style="padding-bottom: 10px">
+              <el-timeline :reverse="reverse" class="disposalRecordBox">
+                <el-timeline-item
+                  v-for="(activity, index) in disposalRecord"
+                  :key="index"
+                  :timestamp="activity.flowTime"
+                  style="color: #fff"
+                  placement="top"
+                >
+                  <el-card>
+                    <h4>{{ activity.flowDescription }}</h4>
+                    <p>用户:{{ activity.nickName }}</p>
+                  </el-card>
+                </el-timeline-item>
+              </el-timeline>
+            </el-col>
+          </el-card>
+        </el-timeline-item>
+        <el-timeline-item
+          timestamp="完结报告"
+          placement="top"
+          v-if="eventStateCurrent == '1'"
         >
-        <el-button v-if="isWritable" type="primary" @click="publishForm"
-          >保存并发布</el-button
-        >
-        <el-button @click="cancel">取 消</el-button>
+          <el-form ref="endReport" :model="endReport" label-width="100px">
+            <el-card>
+              <el-row :gutter="20">
+                <el-col :span="6">
+                  <el-form-item label="完结时间">
+                    <el-input v-model="endReport.endTime" readonly></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label="确认人">
+                    <el-input v-model="endReport.updateBy" readonly></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label="累计耗时">
+                    <el-input
+                      v-model="endReport.continuedTime"
+                      readonly
+                    ></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label="完结原因">
+                    <el-input v-model="endReport.remark" readonly></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-card>
+          </el-form>
+        </el-timeline-item>
+        <el-divider></el-divider>
+        <el-button type="success" @click="downFile()">下载报告</el-button>
+      </el-timeline>
+    </el-dialog>
+    <!-- 视频展示 -->
+    <el-dialog
+      :visible.sync="picUrlDialog"
+      :close-on-click-modal="false"
+      width="70%"
+      title="事件视频"
+      class="videoDialog"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <div class="videoDialogClass">
+        <video :src="videoUrl" controls muted loop fluid autoplay></video>
       </div>
     </el-dialog>
-
-    <el-dialog :visible.sync="record" width="70%">
-      <div style="text-align: center; font-size: 18px">故障检修记录</div>
-      <div class="card" v-if="news.length > 0" v-for="(item,index) in news" :key="index">
-        <div class="card-col" style="font-size: 16px">
-          <div>
-            巡检时间:
-            <span>{{ item.xcTime }}</span>
-          </div>
-          <div>
-            检修班组:
-            <span>{{ item.bzId }}</span>
-          </div>
-          <div>
-            检修人:
-            <span>{{ item.walkerId }}</span>
-          </div>
-        </div>
-        <div class="card-col" style="font-size: 16px">
-          <div>
-            外观情况:
-            <span>{{ item.impression }}</span>
-          </div>
-          <div>
-            网络情况:
-            <span>{{ item.network }}</span>
-          </div>
-          <div>
-            配电情况:
-            <span>{{ item.power }}</span>
-          </div>
-        </div>
-        <div class="card-cols" style="font-size: 16px">
-          <div>
-            设备运行状态:
-            <span style="margin: 6%">设备状态:{{ item.eqStatus }}</span
-            ><span> 设备运行状态:{{ item.runStatus }}</span>
-          </div>
-          <div class="col-test">(检修时检测情况)</div>
-        </div>
-        <div class="card-cols" style="font-size: 16px">
-          <div>
-            现场故障情况:
-            <span>{{ item.eqFaultDescription }}</span>
-          </div>
-          <div class="col-test">(检修时检测情况)</div>
-        </div>
-        <div class="card-cols" style="font-size: 16px">
-          现场图片:
-          <div v-for="(pic,index) in item.iFileList" :key="index">
-            <img :src="pic.imgUrl" :title="pic.imgName" />
-          </div>
-        </div>
+    <!-- 图片展示 -->
+    <el-dialog
+      title="抓图详情"
+      :visible.sync="dialogVisibleImg"
+      width="60%"
+      :before-close="handleCloseImg"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
       </div>
-      <div v-if="news.length == 0">
-        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
-          暂无记录
-        </div>
+      <img :src="alongImgUrl" style="width: 100%" />
+      <!-- <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleImg = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisibleImg = false"
+          >确 定</el-button
+        >
+      </span> -->
+    </el-dialog>
+    <!-- 复核详情展示 -->
+    <el-dialog
+      title="设备详情"
+      :visible.sync="dialogVisibleDevice"
+      width="50%"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
       </div>
+      <div>
+        <el-tabs v-model="activeName" @tab-click="handleClickDevice">
+          <el-tab-pane
+            v-for="(item, index) in DeviceDetail"
+            :key="index"
+            :label="item.tableName"
+            :name="index"
+          ></el-tab-pane>
+        </el-tabs>
+      </div>
+      <div
+        v-for="(item, index) in DeviceDetail"
+        :key="index"
+        v-show="deviceIndexShow == index"
+      >
+        <el-table :data="item.devicesList" style="width: 100%" height="600">
+          <el-table-column prop="eqName" label="设备名称"> </el-table-column>
+          <el-table-column prop="pile" label="桩号"> </el-table-column>
+          <el-table-column prop="stateName" label="修改后状态">
+          </el-table-column>
+        </el-table>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button class="submitButton" @click="dialogVisibleDevice = false"
+          >确 定</el-button
+        >
+        <el-button @click="closeDetail()" class="closeButton"
+          >取 消</el-button
+        >
+      </span>
     </el-dialog>
   </div>
 </template>
-
 <script>
+import $ from "jquery";
+import { displayH5sVideoAll } from "@/api/icyH5stream";
+import { Loading } from 'element-ui';
 import {
   listEvent,
   getEvent,
@@ -1002,29 +1351,47 @@ import {
   eventFlowList,
   getSafetyHandle,
   implementDisposalStrategy,
-  implementDisposalStrategyRl
+  implementDisposalStrategyRl,
+  getReservePlanData,
+  detailExport,
+  closeVedio,
+  getVedioData,
+  downloadVedio,
 } from "@/api/event/event";
 import {
   addList,
   delList,
+  exportFaultList,
   getEquipmentInfo,
   getList,
   getRepairRecordList,
   listList,
   updateList,
 } from "@/api/electromechanicalPatrol/faultManage/fault";
-import { listEventType, getTodayEventCount } from "@/api/event/eventType";
-import { listPlan } from "@/api/event/reservePlan";
+import {
+  listEventType,
+  getTodayEventCount,
+  getEventDetail,
+  handleStrategy,
+} from "@/api/event/eventType";
+import { examineDeviceDetail, getStrategyData } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import { image, video } from "@/api/eventDialog/api.js";
+import { image, video, getEventCamera } from "@/api/eventDialog/api.js";
 import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
 import { treeselect, treeselectExcYG1 } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { listType, loadPicture } from "@/api/equipment/type/api";
-import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
-import { listDevices } from "@/api/equipment/eqlist/api";
-
+import {
+  exportList,
+  listBz,
+} from "@/api/electromechanicalPatrol/taskManage/task";
+import {
+  listDevices,
+  videoStreaming,
+  getDeviceById,
+} from "@/api/equipment/eqlist/api";
+import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 export default {
   name: "Event",
   dicts: [
@@ -1038,47 +1405,92 @@ export default {
     "network",
     "power",
   ],
-  //字典值：故障类型、故障等级，故障消除状态
-  components: { Treeselect },
+  components: {
+    Treeselect,
+    videoPlayer,
+  },
   data() {
     return {
+      strategyList: [], //策略列表
+      controlTypeOptions: [],//防控类型
+      pickerOptionsStart: {
+        // 时间不能大于当前时间
+        disabledDate: (time) => {
+          return time.getTime() > Date.now();
+        },
+      },
+      deviceIndexShow: 0,
+      activeName: "0",
+      dialogVisibleDevice: false,
+      DeviceDetail: [], //复核弹窗详情
+      tableData: [],
+      // 区分事件类型
+      prevControlType: "",
+      historyIndex: "first0",
+      alongImgUrl: "",
+      dialogVisibleImg: false, //图片和视频容器
+      videoShow: false,
+      checkBoxEventState: [],
+      exportLoading: false,
+      contain: "contain",
+      fault_boxShow: false,
+      zd_boxShow: false,
+      boxShow: false,
+      swiperOptionTop: {
+        loop: false,
+        loopedSlides: 5, // looped slides should be the same
+        spaceBetween: 10,
+      },
+      swiperOptionThumbs: {
+        loop: false,
+        loopedSlides: 5, // looped slides should be the same
+        spaceBetween: 10,
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        centeredSlides: true,
+        slidesPerView: "auto",
+        touchRatio: 0.2,
+        slideToClickedSlide: true,
+      },
+      reverse: true,
+      iconDisabled: false,
+      endReport: {}, //完结报告
+      disposalRecord: [], //记录
+      planDisposal: [], //历史预案
+      manualReview: {}, //人工复核
+      eventDiscovery: {}, //发现数据
+      vedioData:{}, //视频录像数据
+      tacticsList: {}, //表单数据
+      dialogTableVisible: false,
+      radioList: [
+        { label: "确认(已确认)", value: "4" },
+        { label: "挂起(稍后处理)", value: "2" },
+        { label: "误报", value: "5" },
+        { label: "突发事件处置", value: "0" },
+      ],
+      ReservePlanList: null,
+      planTypeData: [],
+      eventGradeList: "", //事件等级
+      picUrlDialog: false,
       eventWarnList: [],
-      miniDialog:true,
+      miniDialog: true,
       eventTypeId: "",
       evtId: "",
+      noPic: require("@/assets/image/noPic.png"),
+      noDataUrl: require("@/assets/image/noVideo.png"),
       incHand1: require("@/assets/cloudControl/incHand1.png"),
       incHand2: require("@/assets/cloudControl/incHand2.png"),
       incHandList: [],
       setDisabled: {
         disabledDate(time) {
           return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
-          // return time.getTime() > Date.now() - 8.64e7;  // 可选历史天、不可选当前天、不可选未来天
-          // return time.getTime() < Date.now() - 8.64e7;  // 不可选历史天、可选当前天、可选未来天
-          // return time.getTime() < Date.now(); // 不可选历史天、不可选当前天、可选未来天
         },
       },
-      detailsButtonType: 1,
-      eqStatusList: [],
       directionList: [],
-      direction:'',
-      fromList: [
-        {
-          value: "0",
-          label: "雷达",
-        },
-        {
-          value: "1",
-          label: "火灾报警",
-        },
-        {
-          value: "2",
-          label: "紧急电话",
-        },
-        {
-          value: "3",
-          label: "其他",
-        },
-      ],
+      direction: "",
+      fromList: [],
       closeProcessDialog: false,
       processDialog: false,
       processType: false,
@@ -1101,11 +1513,19 @@ export default {
           value: 1,
         },
       ],
-      videoUrl: require("@/assets/Example/v1.mp4"),
+      videoUrl: "",
+      // 处理中:0
+      // 已处理:1
+      // 已挂起:2
+      // 待确认:3
+      // 已确认:4
+      // 误报:5
       safeWarn0: require("@/assets/cloudControl/safeWarn0.png"),
       safeWarn1: require("@/assets/cloudControl/safeWarn1.png"),
       safeWarn2: require("@/assets/cloudControl/safeWarn2.png"),
       safeWarn3: require("@/assets/cloudControl/safeWarn3.png"),
+      safeWarn4: require("@/assets/cloudControl/safeWarn4.png"),
+      safeWarn5: require("@/assets/cloudControl/safeWarn5.png"),
       // 一键车道指示器 车道下拉框
       chezhiLaneList: [],
       chezhiLaneList1: [
@@ -1125,18 +1545,18 @@ export default {
         },
       ],
       chezhiLaneList3: [
-        {
-          laneId: "1",
-          laneName: "一车道",
-        },
-        {
-          laneId: "2",
-          laneName: "二车道",
-        },
-        {
-          laneId: "3",
-          laneName: "三车道",
-        },
+        // {
+        //   laneId: "1",
+        //   laneName: "一车道",
+        // },
+        // {
+        //   laneId: "2",
+        //   laneName: "二车道",
+        // },
+        // {
+        //   laneId: "3",
+        //   laneName: "三车道",
+        // },
       ],
 
       // 选中数组
@@ -1145,21 +1565,6 @@ export default {
       single: true,
       // 非多个禁用
       multiple: true,
-      activeName: "1",
-      tabList: [
-        {
-          title: "主动安全",
-          name: "1",
-        },
-        {
-          title: "交通事件",
-          name: "0",
-        },
-        {
-          title: "设备故障",
-          name: "2",
-        },
-      ],
       sClick: true,
       manageStation: this.$cache.local.get("manageStation"),
       manageStationSelect: this.$cache.local.get("manageStationSelect"),
@@ -1171,11 +1576,7 @@ export default {
         process: 0,
         bl: 0,
       },
-      urls: [
-        { imgUrl: require("@/assets/image/nodata.png") },
-        { imgUrl: require("@/assets/image/nodata.png") },
-      ],
-
+      removeStata: false,
       // 管理机构
       mechanism: [],
       // 所属隧道
@@ -1196,7 +1597,9 @@ export default {
       // 显示搜索条件
       showSearch: true,
       //事件类型
-      eventTypeData: {},
+      eventTypeData: [],
+      // 全部事件类型
+      eventTypeDataList: [],
       // 总条数
       total: 0,
       // 事件管理表格数据
@@ -1209,15 +1612,16 @@ export default {
       eventStateOptions: [],
       // 级别 字典
       eventGradeOptions: [],
-      // 查询参数
+      // 事件查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 16,
         tunnelId: null,
         eventTypeId: null,
+        prevControlType:null,
         eventTitle: null,
         eventTime: null,
-        eventState: null,
+        eventState: [],
         eventGrade: null,
         eventLocation: null,
         eventDeath: null,
@@ -1232,8 +1636,6 @@ export default {
       proportion: "",
       // 表单参数
       form: {},
-      //故障类型
-      faultTypeData: {},
       //所属隧道
       eqTunnelData: {},
       //设备类型
@@ -1256,77 +1658,6 @@ export default {
         imgUrl: "",
         imgName: "",
       },
-      // 表单校验
-      rules: {
-        /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
-        eventTitle: [
-          { required: true, message: "请输入事件标题", trigger: "blur" },
-        ],
-        eventTypeId: [
-          { required: true, message: "请选择事件类型", trigger: "change" },
-        ],
-        eventGrade: [
-          { required: true, message: "请选择事件级别", trigger: "change" },
-        ],
-        eventLocation: [
-          { required: true, message: "请输入位置", trigger: "blur" },
-        ],
-        eventDescription: [
-          { required: true, message: "请输入内容", trigger: "blur" },
-        ],
-        faultLevel: [
-          { required: true, message: "请选择故障等级", trigger: "faultLevel" },
-        ],
-        faultLocation: [
-          {
-            required: true,
-            message: "请填写故障位置",
-            trigger: "faultLocation",
-          },
-        ],
-        faultType: [
-          {
-            required: true,
-            message: "请选中故障类型",
-            trigger: "faultLocation",
-          },
-        ],
-        faultFxtime: [
-          { required: true, message: "请填写发现时间", trigger: "faultFxtime" },
-        ],
-        faultCxtime: [
-          { required: true, message: "请填写持续时间", trigger: "faultCxtime" },
-        ],
-        eqId: [{ required: true, message: "请填写设备名称", trigger: "eqId" }],
-        eqStatus: [
-          {
-            required: true,
-            message: "请选中设备填报状态",
-            trigger: "eqStatus",
-          },
-        ],
-        falltRemoveStatue: [
-          {
-            required: true,
-            message: "请选中消除状态",
-            trigger: "falltRemoveStatue",
-          },
-        ],
-        falltRemoveStatu: [
-          {
-            required: true,
-            message: "请选中消除状态",
-            trigger: "falltRemoveStatue",
-          },
-        ],
-        tunnelId: [
-          {
-            required: true,
-            message: "请选中所在路段隧道",
-            trigger: "tunnelId",
-          },
-        ],
-      },
       // 日期范围
       dateRange: [],
       open: false,
@@ -1339,198 +1670,464 @@ export default {
         stakeEndNum1: "",
         stakeEndNum2: "",
         iconUrlList: [],
+        reviewRemark: [],
+        eventState: "1",
       },
+      // 详情弹窗内
+      eventFormDetail: {
+        stakeNum1: "",
+        stakeNum2: "",
+        stakeEndNum1: "",
+        stakeEndNum2: "",
+        iconUrlList: [],
+        reviewRemark: [],
+        eventState: "4",
+      },
+      iconUrlListAll: [],
+      imgUrlList: [],
+      urls: [],
+      urlsList: [],
+      urlsAll: [],
+      // 翻页
+      arrowRight: false,
+      arrowLeft: false,
+      arrowRight2: false,
+      arrowLeft2: false,
+      imgPage: 1,
+      imgPage2: 1,
+      eventStateCurrent: "",
       // 遮罩层
       dloading: false,
       // 部门树选项
       deptOptions: [],
-      //检修记录故障id
-      faultId: "",
-      //设备填报状态
-      faultTypeOptions: [], //故障类型
-      faultLevelOptions: [], //故障等级
-      faultRemoveStateOptions: [], //故障消除状态
-      impressionOptions: [], //外观情况
-      networkOptions: [], //网络情况
-      powerOptions: [], //配电情况
+      // 实时视频
+      videoForm: {
+        liveUrl: "",
+      },
+      videoList: [],
+      cameraVisible: true,
+      isState: false,
+      showElement: true,
+      showFaultElement: false,
+      fuzzySearch1: "",
+      // 表单校验
+      rules: {},
+      isLoading: false,
+      loadingText: "加载中...",
+      vedioPlayer:false,
     };
+  },
+  computed: {
+    topNav: {
+      get() {
+        return this.$store.state.settings.topNav;
+      },
+    },
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
-      console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
       this.manageStationSelect = newVal;
       this.queryParams.tunnelId = newVal;
       this.queryParams.eventTypeId = "";
+      this.queryParams.prevControlType = "";
       this.getList();
       this.getTunnelLane();
     },
   },
+  mounted() {},
   async created() {
-    // this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect");
-
     this.eventList = [];
+    this.eventLists = [];
     this.getTreeselect();
     this.getBz();
-
     await this.getList();
     await this.getEventMsg();
-    this.getEventType();
+    this.getEventTypeAll();
     this.getTunnel();
     this.getEqType();
     this.getDevices();
-    this.getTunnelLane();
+    // 事件来源
+    this.getDicts("sd_event_source").then((data) => {
+      this.fromList = data.data;
+    });
     this.fileData = new FormData(); // new formData对象
-    //设备填报状态
-    this.getDicts("sd_monitor_state").then((data) => {
-      this.eqStatusList = data.data;
-    });
-    //故障类型
-    this.getDicts("fault_type").then((response) => {
-      this.faultTypeOptions = response.data;
-    });
-    //故障等级
-    this.getDicts("fault_level").then((response) => {
-      this.faultLevelOptions = response.data;
-    });
-    //故障消除状态
-    this.getDicts("fault_remove_statue").then((response) => {
-      this.faultRemoveStateOptions = response.data;
-    });
-    //外观情况
-    this.getDicts("impression").then((response) => {
-      this.impressionOptions = response.data;
-    });
-    //网络情况
-    this.getDicts("network").then((response) => {
-      this.networkOptions = response.data;
-    });
-    //外观情况
-    this.getDicts("power").then((response) => {
-      this.powerOptions = response.data;
-    });
     this.getDicts("sd_event_state").then((response) => {
+      console.log(response.data, "事件状态");
       this.eventStateOptions = response.data;
     });
     this.getDicts("sd_incident_level").then((response) => {
-      console.log(response.data, "response.data事件级别");
       this.eventGradeOptions = response.data;
     });
     this.getDicts("sd_direction").then((response) => {
-      console.log(response.data, "response.data车道方向");
       this.directionList = response.data;
+    });
+    // 二车道
+    this.getDicts("sd_lane_one").then((data) => {
+      this.chezhiLaneList2 = data.data;
+    });
+    // 三车道
+    this.getDicts("sd_lane_two").then((data) => {
+      this.chezhiLaneList3 = data.data;
+    });
+    // 事件类型
+    // this.getPlanType();
+    // 事件等级
+    this.getDicts("sd_event_grade").then((response) => {
+      this.eventGradeList = response.data;
+    });
+
+    //防控类型
+    this.getDicts("prev_control_type").then((response) => {
+      if(response.data.length>0){
+        for(let i = 0;i<response.data.length;i++){
+            if(response.data[i].dictLabel=='设备故障'){
+              response.data.splice(i,1)
+            }
+          }
+      }
+      this.controlTypeOptions = response.data;
     });
     // 管理机构
     toll().then((res) => {
-      console.log(res);
       this.mechanism = res.data;
     });
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus1);
+  },
   methods: {
-    // 忽略
-    hulue(){
-      const param = {
-        id:this.eventForm.id,
-        eventState:2,
-      }
-      updateEvent(param).then((res) =>{
-        console.log(res,"忽略")
-        that.$modal.msgSuccess("忽略成功");
+    //下载录像
+    // downloadVedio(){
+    //   console.log(this.eventDiscovery,"22223333")
+    //   if(this.eventDiscovery.downLoadTime == null){
+    //     this.$modal.msgError("请选择下载时间！");
+    //   }else {
+    //     if(this.vedioData.camID == undefined || this.vedioData.camID == undefined == null || this.vedioData.camID == ''){
+    //       this.$modal.msgError("请先查看视频后下载！");
+    //     }
+    //     downloadVedio(this.vedioData.camID,this.eventDiscovery.downLoadTime).then((res) => {
+    //       console.log(res,"下载下载下载");
+    //       window.open(res.data.fileUrl)
+    //     })
+    //   }
 
-      })
+    // },
+
+    //查看录像
+    // viewVedio(){
+    //   console.log(this.eventDiscovery,"111222")
+    //   if(this.eventDiscovery.startTime == null){
+    //     this.$modal.msgError("请选择历史时间！");
+    //   }else {
+    //     //请求前先关闭
+    //     console.log(this.vedioData,"hhjjhhjj");
+    //     if(this.vedioData != {} && this.vedioData != undefined){
+    //       this.closeDialog();
+    //     }
+    //     let param = {
+    //       id: this.eventDiscovery.id,
+    //       tunnelId: this.eventDiscovery.tunnelId,
+    //       startTime: this.eventDiscovery.startTime
+    //     }
+    //     getVedioData(param).then((res) => {
+    //       console.log(res,"sssssssssssssssss");
+    //       this.vedioData = res.data.vedioData;
+    //       this.eventDiscovery.historyUrlList = res.data.vedioList
+    //       this.vedioPlayer = true;
+    //       console.log(this.eventDiscovery,"111222")
+    //     })
+    //   }
+
+    // },
+    // closeDialog(){
+    //   console.log("关闭了关闭了")
+    //   console.log(this.vedioData)
+    //   if(this.vedioData.camID != undefined){
+    //     closeVedio(this.vedioData.camID,this.vedioData.playId).then((res) => {
+    //       this.vedioPlayer = false;
+    //     })
+    //   }
+    // },
+    closeDetail(){
+      this.deviceIndexShow = 0;
+      this.activeName = '0';
+      this.dialogVisibleDevice = false
     },
-    // 处置记录
-    getEventList() {
-      eventFlowList({ eventId: this.eventForm.id }).then((res) => {
-        console.log(res,"处置记录");
-        this.eventWarnList = res.rows;
+    getStrategyData(item) {
+      console.log(item);
+      let param = {
+        tunnelId: item.tunnelId,
+        direction: item.direction,
+        eventType: item.eventTypeId,
+      };
+      getStrategyData(param).then((res) => {
+        console.log(res.data, "策略列表");
+        this.strategyList = res.data;
+        this.eventFormDetail.currencyId = res.data[0].id;
       });
     },
-    // 单点 下发
-    changeIncHand(item) {
-      console.log(item,"下发")
-      var that = this
-        this.$confirm(item.flowId==5? "是否完成?":item.flowId==6?"是否上报?":item.flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }).then(function () {
-          if(item.flowPid == '7'){
-            let rlId = item.processId
-            let eventId = that.eventForm.id
-            implementDisposalStrategyRl(eventId,rlId).then((response) =>{
-              console.log(response,"单点下发");
-              that.$modal.msgSuccess("状态修改成功");
-              that.evtHandle()
-            })
-          }else{
-            const params = {
-              id: that.eventForm.id,
-              ids: item.id,
-            };
-            updateHandle(params).then((res) => {
-              console.log(res,"单点改状态");
-              console.log(that.incHandList,"this.incHandList");
-              for(let itt of that.incHandList) {
-                if(itt.children){
-                  for(let itm of itt.children) {
-                    if (itm.id == item.id) {
-                      itm.eventState = "1";
-                      that.$modal.msgSuccess("状态修改成功");
-                    }
-                  }
-                }
-              }
-              that.evtHandle()
-            });
+    handleClickDevice(tab, event) {
+      console.log(tab.index);
+      this.deviceIndexShow = tab.index;
+    },
+
+    handleChangeControl(){
+      this.$forceUpdate();
+      this.queryParams.eventTypeId = null;
+      //查询事件类型
+      let prevControlType = {
+        isUsable: "1",
+        prevControlType:this.queryParams.prevControlType
+      };
+      listEventType(prevControlType).then((response) => {
+        this.eventTypeDataList = [...response.rows];
+      });
+    },
+    // 打开复核内详情
+    openDoor(item) {
+      // 点击查看按钮重置tab
+      this.deviceIndexShow = 0;
+      this.activeName = '0';
+
+      let lane = "";
+      if (item.laneNo == null || item.laneNo.length == 0) {
+        lane = "";
+      } else {
+        lane = item.laneNo.toString();
+      }
+      let query = {
+        prevControlType: item.prevControlType,
+        currencyId: item.currencyId,
+        id: item.id,
+        laneNo: lane,
+      };
+      examineDeviceDetail(query).then((res) => {
+        console.log(res);
+        this.DeviceDetail = res.data;
+        this.dialogVisibleDevice = true;
+      });
+    },
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+    // 点击缩略图
+    clickImg(gImgUrl) {
+      let imgurl = gImgUrl.substr(-3, 3);
+      if (imgurl == "jpg") {
+        this.alongImgUrl = gImgUrl;
+        this.dialogVisibleImg = true;
+      }
+      console.log(imgurl);
+    },
+    // 复核内图片展示弹窗关闭事件
+    handleCloseImg(done) {
+      done();
+    },
+    changeCheckBox(e) {
+      console.log(this.checkBoxEventState, "queryParams.eventState");
+    },
+    changeInput() {
+      this.$forceUpdate();
+    },
+    bodyCloseMenus1(e) {
+      let self = this;
+      if (self.zd_boxShow == true) {
+        self.$nextTick(() => {
+          if (
+            !this.$refs.main1.contains(e.target) &&
+            !this.$refs.cc1.contains(e.target)
+          ) {
+            if (self.zd_boxShow == true) {
+              self.zd_boxShow = false;
+            }
           }
+        });
+      }
+    },
+    beforeDestroy() {
+      document.removeEventListener("click", this.bodyCloseMenus1);
+    },
+    getReservePlanData() {
+      this.ReservePlanList = [];
+      this.eventFormDetail.currencyId = "";
+      let data = {
+        tunnelId: this.eventFormDetail.tunnelId,
+        planTypeId: this.eventFormDetail.eventTypeId,
+        direction: this.eventFormDetail.direction,
+        eventGrade: this.eventFormDetail.eventGrade,
+      };
+      getReservePlanData(data).then((res) => {
+        this.ReservePlanList = res.data;
+        if(this.ReservePlanList.length > 0){
+          this.eventFormDetail.currencyId = this.ReservePlanList[0].id
+        }else{
+          if(this.eventFormDetail.eventState == '0'){
+            this.$modal.msgWarning("暂无相关预案");
+          }
+        }
+      })
+    },
+    // 下载事件报告
+    downFile() {
+      const data = { id: this.eventDiscovery.id };
+      detailExport(data).then((res) => {
+        let blob = new Blob([res], {
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+        const createFile = document.createElement("a");
+        createFile.href = URL.createObjectURL(blob);
+        createFile.download = `事件详情报告.docx`;
+        createFile.click();
+        document.body.appendChild(createFile);
+        document.body.removeChild(createFile); // 下载完成移除元素
+        window.URL.revokeObjectURL(createFile.href); // 释放掉blob对象
       });
     },
     // 事件处置 一键
-    getYiJian(item){
-      console.log(item,"一键");
-      var that = this
-      // let str = ''
-      let arr = []
-      for(let itm of item.children){
-        arr.push(itm.id)
+    getYiJian(item) {
+      console.log(item, "一键");
+      var that = this;
+      let arr = [];
+      for (let itm of item.children) {
+        arr.push(itm.id);
       }
-      // str = arr.join(',')
-      
+
       this.$confirm("是否确认执行?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
-      
-          let strategyId = item.reserveId
-          let eventId = that.eventForm.id
-        
-          implementDisposalStrategy(eventId,strategyId).then((response) =>{
-          console.log(response,"一键下发成功");
-          for(let item of that.incHandList) {
-            for(let itm of item.children) {
-              for(let it_m of arr){
+        let planId = item.reserveId;
+        let eventId = that.$route.query.id;
+
+        implementPlan(planId, eventId).then((response) => {
+          console.log(response, "一键下发成功");
+          for (let item of that.incHandList) {
+            for (let itm of item.children) {
+              for (let it_m of arr) {
                 if (itm.id == it_m) {
                   itm.eventState = "1";
-                 that.$modal.msgSuccess("一键下发成功");
-
+                  that.$modal.msgSuccess("一键下发成功");
                 }
-              } 
+              }
             }
           }
-        
-        })
+          this.evtHandle();
+          this.getEventList();
+        });
+      });
+    },
+    //打开详情弹窗
+    detailsOpen(item) {
+      this.prevControlType = item.prevControlType;
+      let data = { id: item.id };
+      getEventDetail(data).then((res) => {
+        console.log(res, "详情数据");
+        this.eventDiscovery = res.data.eventDiscovery;
+        console.log(res.data.manualReview)
+        this.manualReview = !!res.data.manualReview ? res.data.manualReview :{};
+        this.planDisposal = res.data.planDisposal;
+        this.disposalRecord = res.data.disposalRecord;
+        this.eventStateCurrent = res.data.eventState;
+        this.endReport = res.data.endReport;
+        this.tacticsList = res.data.tacticsList;
+      });
+      this.historyIndex = "first0",
+      this.dialogTableVisible = true;
+    },
+    eventIsShow(value, state) {
+      if (value != null) {
+        if (state != "0" &&(!!value ? value.includes("其他"):false)) {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    },
+    isShow(item) {
+      if (item.eventState == "3") {
+        return true;
+      }
+    },
+    reviewRemarkChange() {
+      console.log(this.eventFormDetail.reviewRemark);
+    },
+    // 复核弹窗内单选改变事件
+    eventStateChange() {
+      if (this.eventFormDetail.eventState != 0) {
+        this.eventFormDetail.currencyId = "";
+      }
+      this.eventFormDetail.reviewRemark = [];
+    },
+    getPlanType() {
+      let data = { prevControlType: 0 };
+      listEventType(data).then((response) => {
+        this.planTypeData = response.rows;
+      });
+    },
+    // 打开图片变视频弹窗
+    openPicDialog(item) {
+      console.log(item);
+      if (!item.videoUrl && !item.imgUrl) {
+        this.$message.warning("暂无视频");
+      } else {
+        this.videoUrl =
+          item.videoUrl == undefined ? item.imgUrl : item.videoUrl;
+        // this.videoUrl = item.videoUrl;
+        this.picUrlDialog = true;
+      }
+    },
+    // 忽略
+    hulue() {
+      const param = {
+        id: this.eventForm.id,
+        eventState: 2,
+      };
+      updateEvent(param).then((res) => {
+        that.$modal.msgSuccess("忽略成功");
+      });
+    },
+    // 处置记录
+    getEventList() {
+      eventFlowList({ eventId: this.eventForm.id }).then((res) => {
+        this.eventWarnList = res.rows;
+      });
+    },
+    // 事件处置 一键
+    getYiJian(item) {
+      var that = this;
+      // let str = ''
+      let arr = [];
+      for (let itm of item.children) {
+        arr.push(itm.id);
+      }
+      // str = arr.join(',')
+
+      this.$confirm("是否确认执行?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(function () {
+        let strategyId = item.reserveId;
+        let eventId = that.eventForm.id;
+
+        implementDisposalStrategy(eventId, strategyId).then((response) => {
+          for (let item of that.incHandList) {
+            for (let itm of item.children) {
+              for (let it_m of arr) {
+                if (itm.id == it_m) {
+                  itm.eventState = "1";
+                  that.$modal.msgSuccess("一键下发成功");
+                }
+              }
+            }
+          }
+        });
       });
     },
     // 处置
     management(id) {
-      const param = {
-        id: id,
-        eventState: "0",
-      };
-      updateEvent(param).then(() => {
-        this.$modal.msgSuccess("开始处理事件");
-      });
       this.$router.push({
         path: "/emergency/administration/dispatch",
         query: { id: id },
@@ -1538,52 +2135,104 @@ export default {
       //
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.queryParams.pageSize = val;
-
       this.getList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.queryParams.pageNum = val;
       this.getList();
     },
     // 复核提交
     submitDialog() {
-      for (let item of this.eventForm.confidenceList) {
-        if (
-          !/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/.test(
-            item.plate
-          )
-        ) {
-          this.$modal.msgWarning("请输入正确车牌号");
-          return;
-        }
+      console.log(this.eventFormDetail, "1123123");
+      this.$cache.local.set("currencyId", this.eventFormDetail.currencyId);
+
+      if (this.eventFormDetail.stakeNum1 && this.eventFormDetail.stakeNum2) {
+        this.eventFormDetail.stakeNum =
+          "K" +
+          this.eventFormDetail.stakeNum1 +
+          "+" +
+          this.eventFormDetail.stakeNum2;
       }
-      if (this.eventForm.stakeNum1 && this.eventForm.stakeNum2) {
-        this.eventForm.stakeNum =
-          "K" + this.eventForm.stakeNum1 + "+" + this.eventForm.stakeNum2;
+      if (
+        this.eventFormDetail.stakeEndNum1 &&
+        this.eventFormDetail.stakeEndNum2
+      ) {
+        this.eventFormDetail.stakeEndNum =
+          "K" +
+          this.eventFormDetail.stakeEndNum1 +
+          "+" +
+          this.eventFormDetail.stakeEndNum2;
       }
-      if (this.eventForm.stakeEndNum1 && this.eventForm.stakeEndNum2) {
-        this.eventForm.stakeEndNum =
-          "K" + this.eventForm.stakeEndNum1 + "+" + this.eventForm.stakeEndNum2;
+      if (this.eventFormDetail.reviewRemark.includes("其他")) {
+        this.eventFormDetail.reviewRemark =
+          this.eventFormDetail.reviewRemark.toString() +
+          ":" +
+          this.eventFormDetail.otherContent;
+      } else {
+        this.eventFormDetail.reviewRemark =
+          this.eventFormDetail.reviewRemark.toString();
       }
-      // delete this.eventForm['confidenceList'];
-      console.log(this.eventForm, "888888888888888888");
-      this.eventForm.searchValue = this.activeName;
-      updateEvent(this.eventForm).then((response) => {
+      if (
+        (this.eventFormDetail.eventState == "0" &&
+          this.eventFormDetail.currencyId == "") ||
+        this.eventFormDetail.currencyId == null
+      ) {
+        return this.$modal.msgWarning("请选择事件处置预案");
+      }
+      const currencyId = this.eventFormDetail.currencyId;
+      if (this.eventFormDetail.laneNo) {
+        this.eventFormDetail.laneNo = this.eventFormDetail.laneNo.toString();
+      }
+
+      updateEvent(this.eventFormDetail).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;
         this.processType = false;
         this.details = false;
         this.$modal.msgSuccess("修改成功");
         this.getList();
+        //主动安全
+        //策略不为空
+        if (
+          this.eventFormDetail.prevControlType == 1 &&
+          currencyId &&
+          this.eventFormDetail.eventState == 0
+        ) {
+          let id = currencyId;
+          handleStrategy(id).then((res) => {
+            console.log(res);
+            this.$modal.msgSuccess("下发指令成功");
+          });
+        }
+        // 1.预案不为空
+        // 2.当前状态为0
+        // 3.普通事件
+        if (
+          this.eventFormDetail.prevControlType == 0 &&
+          currencyId &&
+          this.eventFormDetail.eventState == 0
+        ) {
+          this.$router.push({
+            path: "/emergency/administration/dispatch",
+            query: { id: this.eventFormDetail.id },
+          });
+        }
+        this.$cache.local.remove("currencyId");
       });
+    },
+    changeEndTime() {
+      let startTime = new Date(this.eventFormDetail.eventTime).getTime();
+      let endTime = new Date(this.eventFormDetail.endTime).getTime();
+      console.log(startTime, endTime);
+      if (endTime < startTime) {
+        this.$modal.msgWarning("结束时间必须大于开始时间");
+        this.eventFormDetail.endTime = "";
+      }
     },
     // 获取车道数
     getTunnelLane() {
-      getTunnelLane(this.manageStationSelect).then((res) => {
-        console.log(res.data.lane, "车道数");
+      getTunnelLane(this.tunnelId).then((res) => {
         this.chezhiLaneList = [];
         if (res.data.lane == 1) {
           this.chezhiLaneList = this.chezhiLaneList1;
@@ -1596,8 +2245,8 @@ export default {
     },
     getFrom(from) {
       for (let item of this.fromList) {
-        if (from == item.value) {
-          return item.label;
+        if (from == item.dictValue) {
+          return item.dictLabel;
         }
       }
     },
@@ -1606,11 +2255,18 @@ export default {
       this.processDialog = false;
       this.processType = false;
     },
-    openProcess(type) {
-      console.log(type, "00000000000000");
-      if (type) {
+    openProcess(type, id) {
+      if (type && id) {
         this.processType = true;
         this.processDialog = true;
+        const param = {
+          id: id,
+          eventState: 0,
+        };
+        updateEvent(param).then((res) => {
+          this.$modal.msgSuccess("正在处理");
+          this.evtHandle();
+        });
       } else {
         if (this.processType == true) {
           this.processDialog = false;
@@ -1628,82 +2284,198 @@ export default {
     // 事件处置
     evtHandle() {
       const param = {
-        tunnelId:this.tunnelId,
-        id:this.evtId,
-        eventTypeId:this.eventTypeId,
-        direction:this.direction,
-      }
-      getSafetyHandle(param).then(
-        (res) => {
-          let list = this.handleTree(res.data, "flowId", "flowPid");
-          console.log(list, "999999999999999999");
-          //  for(let item of list){
-          //   console.log(item.flowContent.toString().length,"555555555555555")
-          //  }
-          this.incHandList = list;
-          this.$forceUpdate();
-        }
-      );
+        tunnelId: this.tunnelId,
+        id: this.evtId,
+        eventTypeId: this.eventTypeId,
+        direction: this.direction,
+      };
+      getSafetyHandle(param).then((res) => {
+        let list = this.handleTree(res.data, "flowId", "flowPid");
+        this.incHandList = list;
+        this.$forceUpdate();
+      });
     },
     //详情弹窗
-    detailsButton(item, type) {
-      if(type == 1){
-        this.miniDialog = false
-      }else{
-        this.miniDialog = true
-      }
+    detailsButton(item) {
+      // 获取对应事件
+      this.getEventType(item);
       console.log(item, "点击弹窗");
+      this.imgUrlList = [];
+      this.iconUrlListAll = [];
+      this.miniDialog = true;
+      this.detailsDisabled = true;
+      item.reviewRemark = [];
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
-      this.tunnelId = item.tunnelId
-      this.direction = item.direction
-      this.evtHandle();
-      if (type == 1) {
-        this.detailsDisabled = true;
-        this.detailsButtonType = 1;
-      } else {
-        this.detailsDisabled = false;
-        this.detailsButtonType = 2;
-      }
+      this.tunnelId = item.tunnelId;
+
+      this.direction = item.direction;
       this.details = true;
-      this.eventForm = item;
-      this.getEventList()
+      this.eventFormDetail = { ...item };
+      this.eventFormDetail.eventState = 4;
+      if (item.prevControlType == 1) {
+        this.getStrategyData(item);
+      } else {
+        this.getReservePlanData();
+      }
+
+      this.$nextTick(() => {
+        const swiperTop = this.$refs.swiperTop.$el.swiper;
+        const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
+        swiperTop.controller.control = swiperThumbs;
+        swiperThumbs.controller.control = swiperTop;
+      });
+      this.getEventList();
       if (item.stakeNum) {
         this.$set(
-          this.eventForm,
+          this.eventFormDetail,
           "stakeNum1",
           item.stakeNum.split("+")[0].substr(1)
         );
-        this.$set(this.eventForm, "stakeNum2", item.stakeNum.split("+")[1]);
+        this.$set(
+          this.eventFormDetail,
+          "stakeNum2",
+          item.stakeNum.split("+")[1]
+        );
       }
       if (item.stakeEndNum) {
         this.$set(
-          this.eventForm,
+          this.eventFormDetail,
           "stakeEndNum1",
           item.stakeEndNum.split("+")[0].substr(1)
         );
         this.$set(
-          this.eventForm,
+          this.eventFormDetail,
           "stakeEndNum2",
           item.stakeEndNum.split("+")[1]
         );
       }
       this.title = item.eventTitle;
+      // 获取车道
+      this.getTunnelLane();
+      // 获取实时视频
+      this.getVideoUrl(item);
+      // 获取实时视频截图
+      this.getImgUrl(item);
+      // this.getImgUrls(item);
     },
-
+    getImgUrls(item) {
+      this.urlsList = [];
+      this.urlsAll = [];
+      const param = {
+        businessId: item.id,
+      };
+      image(param).then((response) => {
+        this.urls = response.data;
+        this.arrowRight2 = false;
+        this.urlsList = this.urls;
+      });
+    },
+    getImgUrl(item) {
+      this.urlsList = [];
+      this.urlsAll = [];
+      const param = {
+        businessId: item.id,
+      };
+      image(param).then((response) => {
+        this.urls = response.data;
+        if (response.data.length > 4) {
+          this.arrowRight2 = true;
+          for (let i = 0; i < this.urls.length; ) {
+            this.urlsAll.push(this.urls.splice(0, 4));
+          }
+          this.urlsList = this.urlsAll[0];
+          this.imgPage2 = 0;
+        } else {
+          this.arrowRight2 = false;
+          this.urlsList = this.urls;
+        }
+      });
+    },
+    getVideoUrl(item) {
+      this.cameraPlayer = false;
+      console.log(item, "itemitem");
+      //现场
+      // getEventCamera(item.tunnelId, item.stakeNum, item.direction).then((res)=>{
+      //   getDeviceById(res.data[0].eqId).then((response)=>{
+      //     console.log(response,"00000000000000000")
+      //     displayH5sVideoAll(response.data.secureKey,'h5sVideo1',1);
+      //   })
+      // })
+      // 公司
+      this.videoList = [];
+      getEventCamera(item.tunnelId, item.stakeNum, item.direction).then(
+        (res) => {
+          if (res.data) {
+            // let videoId = res.data[0].eqId
+            let videoId = "";
+            for (let item of res.data) {
+              videoId = item.eqId;
+              videoStreaming(videoId).then((response) => {
+                if (response.code == 200) {
+                  if (response.data != null) {
+                    this.videoList.push(response.data);
+                  }
+                  this.cameraPlayer = true;
+                }
+              });
+            }
+          }
+        }
+      );
+    },
+    turnLeft() {
+      this.arrowRight = true;
+      this.imgPage--;
+      this.imgUrlList = this.iconUrlListAll[this.imgPage];
+      if (this.imgPage == 0) {
+        this.arrowLeft = false;
+      }
+    },
+    turnRight() {
+      this.imgPage++;
+      this.imgUrlList = this.iconUrlListAll[this.imgPage];
+      this.arrowLeft = true;
+      if (this.imgPage == this.iconUrlListAll.length - 1) {
+        this.arrowRight = false;
+      }
+    },
+    turnLeft2() {
+      this.arrowRight2 = true;
+      this.imgPage2--;
+      this.urlsList = this.urlsAll[this.imgPage2];
+      if (this.imgPage2 == 0) {
+        this.arrowLeft2 = false;
+      }
+    },
+    turnRight2() {
+      this.imgPage2++;
+      this.urlsList = this.urlsAll[this.imgPage2];
+      this.arrowLeft2 = true;
+      if (this.imgPage2 == this.urlsAll.length - 1) {
+        this.arrowRight2 = false;
+      }
+    },
     //选事件类型
     handleEvtButton(item) {
-      console.log(item);
       this.queryParams.eventTypeId = item;
       this.getList();
     },
     //导出
-    handleExport() {},
-    //切换tab页
-    handleClick(e) {
-      console.log(e);
-      this.getList();
-      this.getEventType();
+    handleExport() {
+      this.queryParams.ids = this.ids.join();
+      const queryParams = this.queryParams;
+      this.$modal
+        .confirm("是否确认导出设备故障数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportFaultList(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
     handleSelectionChange(val) {
       this.ids = val.map((item) => item.id);
@@ -1713,39 +2485,12 @@ export default {
     getTreeselect() {
       treeselectExcYG1().then((response) => {
         this.deptOptions = response.data;
-        console.log(this.deptOptions);
       });
     },
-    eqStatusGet(e) {
-      getEquipmentInfo({ eqId: e }).then((response) => {
-        this.form.faultLocation = "";
-        this.form.eqRunStatus = "";
-        this.form.eqStatus = "";
-        debugger;
-        if (response.data.length != 0) {
-          this.form.faultLocation = response.data[0].pile;
-          this.form.eqRunStatus = response.data[0].runStatus;
-          this.form.eqStatus = response.data[0].eqStatus;
-          //this.$refs(this.form, "eqStatus", 1);
-        }
-        // this.$modal.msgSuccess("修改成功");
-        // this.open = false;
-        // this.getList();
-      });
-    },
-    // // 切换按钮
-    // qiehuan(inx) {
-    //   this.queryParams.eventTypeId = "";
-    //   this.queryParams.searchValue = inx;
-    //   this.searchValue = inx;
-    //   this.getEventType();
-    //   this.getList();
-    // },
     accidentInit(eventId) {
       var eventId = { eventId: eventId };
       listEventFlow(eventId).then((result) => {
         this.dialogEventList = result.rows;
-        console.log(this.dialogEventList);
       });
     },
     /** 巡查班组 */
@@ -1782,30 +2527,29 @@ export default {
     getEventMsg() {
       // 获取事件预警信息
       getTodayEventCount().then((result) => {
-        console.log(result, "11111111111111");
         this.eventMsg = result.data;
         this.$forceUpdate();
       });
     },
     //获取图片视频
-    getUrl(id) {
-      const param3 = {
-        businessId: id,
-      };
-      const param4 = {
-        id: id,
-      };
-      image(param3).then((response) => {
-        console.log(response.data.length);
-        if (response.data.length >= 1) {
-          this.urls = response.data;
-        }
-      });
-      video(param4).then((response) => {
-        console.log(response.data, "视频信息");
-        this.videoUrl = response.data.videoUrl;
-      });
-    },
+    // getUrl(id) {
+    //   const param3 = {
+    //     businessId: id,
+    //   };
+    //   const param4 = {
+    //     id: id,
+    //   };
+    //   image(param3).then((response) => {
+    //     console.log(response.data.length);
+    //     if (response.data.length >= 1) {
+    //       this.urls = response.data;
+    //     }
+    //   });
+    //   video(param4).then((response) => {
+    //     console.log(response.data, "视频信息");
+    //     this.videoUrl = response.data.videoUrl;
+    //   });
+    // },
     // 查询方向
     getDirection(num) {
       for (var item of this.directionList) {
@@ -1814,87 +2558,56 @@ export default {
         }
       }
     },
-
-    // 根据管理机构筛选所属隧道
-    changeMechanism(item) {
-      this.queryParams.tunnelId = null;
-      const param = {
-        deptId: item.id,
-      };
-      getTunnelList(param).then((res) => {
-        console.log(res, "根据管理机构筛选所属隧道");
-        this.tunnelList = res.data;
-      });
-    },
     /** 查询事件管理列表 */
     getList() {
-      // console.log(this.activeName, "9999999");
-      this.loading = true;
-      // console.log(this.manageStation, "this.manageStation");
+      this.eventForm.currencyId = "";
+      this.ReservePlanList = [];
+      this.isLoading = true;
+      // let options ={}
+      // let loadingInstances = Loading.service(options);
+      this.eventList = [];
+      this.eventLists = [];
       if (this.manageStation == "1") {
         this.queryParams.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
-        console.log(this.queryParams.tunnelId, "666666666666666666666");
       }
-      if (this.activeName == "2") {
-        listList(this.queryParams).then((response) => {
-          this.eventList = response.rows;
-          this.eventList.forEach((item) => {
-            if (item.faultLocation == "null") {
-              item.faultLocation = "";
+      if (!this.dateRange) {
+        this.dateRange = [];
+      }
+      this.queryParams.startTime = this.dateRange[0];
+      this.queryParams.endTime = this.dateRange[1];
+      // this.queryParams.searchValue = this.activeName;
+      this.queryParams.eventState = this.checkBoxEventState.toString();
+      if (this.fuzzySearch1) {
+        this.queryParams.fuzzySearch = this.fuzzySearch1.replace(/\s*/g, "");
+      }
+      listEvent(this.queryParams).then((response) => {
+        console.log(response, "responseresponse");
+        for (let item of response.rows) {
+          if (item.iconUrlList) {
+            for (let i = 0; i < item.iconUrlList.length; i++) {
+              // console.log(item.iconUrlList[1].imgUrl,"item.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrlitem.iconUrlList[1].imgUrl")
+              if (item.iconUrlList.length == 1) {
+                item.picUrl = item.iconUrlList[0].imgUrl;
+              } else {
+                item.picUrl = item.iconUrlList[1].imgUrl;
+              }
             }
-            if (item.faultCxtime == "null") {
-              item.faultCxtime = "";
-            }
-            if (item.faultCode == "null") {
-              item.faultCode = "";
-            }
-          });
-          this.total = response.total;
-          this.loading = false;
-        });
-      } else {
-        if (!this.dateRange) {
-          this.dateRange = [];
+          }
         }
-        this.queryParams.startTime = this.dateRange[0];
-        this.queryParams.endTime = this.dateRange[1];
-        this.queryParams.searchValue = this.activeName;
-        listEvent(this.queryParams).then((response) => {
-          console.log(response, "查询事件管理列表");
-          this.eventList = response.rows;
-          // this.$nextTick(() => {
-          //   this.$refs.tableRef.doLayout();
-          // });
-          this.total = response.total;
-          this.loading = false;
-        });
-      }
+        this.eventList = response.rows;
+        this.isLoading = false;
+        console.log(this.eventList, "this.eventListthis.eventList");
+        this.total = response.total;
+        this.loading = false;
+      });
     },
-    // getList() {
-    //   this.loading = true;
-    //   if(!this.dateRange){
-    //     this.dateRange = []
-    //   }
-    //   this.queryParams.startTime = this.dateRange[0];
-    //   this.queryParams.endTime = this.dateRange[1];
-    //   listEvent(this.addDateRange(this.queryParams)).then((response) => {
-    //     console.log(response.rows, "查询事件管理列表");
-    //     this.eventList = response.rows;
-    //     this.$nextTick(() => {
-    //       this.$refs.tableRef.doLayout();
-    //     });
-    //     this.total = response.total;
-    //     this.loading = false;
-    //   });
-    // },
-
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除故障清单编号为"' + ids + '"的数据项？')
+        .confirm("是否确认删除选中的数据项？")
         .then(function () {
           return delList(ids);
         })
@@ -1908,17 +2621,26 @@ export default {
     getTunnel() {
       if (!this.queryParams.deptId) {
         listTunnels().then((response) => {
-          console.log(response.rows, "所属隧道");
           this.tunnelList = response.rows;
         });
       }
     },
-    /** 查询事件类型列表 */
-    getEventType() {
-      let prevControlType = { prevControlType: this.activeName };
+    getEventTypeAll() {
+      let prevControlType = {
+        isUsable: "1",
+      };
       listEventType(prevControlType).then((response) => {
-        console.log(response, "responseresponse1111");
-        this.eventTypeData = response.rows;
+        this.eventTypeDataList = [...response.rows];
+      });
+    },
+    /** 查询事件类型列表 */
+    getEventType(item) {
+      let prevControlType = {
+        isUsable: "1",
+        prevControlType: item.prevControlType,
+      };
+      listEventType(prevControlType).then((response) => {
+        this.eventTypeData = [...response.rows];
       });
     },
     // 状态字典翻译
@@ -1951,116 +2673,6 @@ export default {
     loadBigScreen(row) {
       alert("正在研发中...");
     },
-    /** 新增按钮操作 */
-    handleGzAdd() {
-      this.reset();
-      this.isWritable = true;
-      this.disstate = false;
-      this.open = true;
-      this.title = "添加故障清单";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      let that = this;
-      this.isWritable = true;
-      this.activeName = "2";
-      that.reset();
-      const id = row.id || that.ids;
-      getList(id).then((response) => {
-        this.form = response.data;
-        if (this.form.faultSource == "null") {
-          this.form.faultSource = "";
-        }
-        if (this.form.eqRunStatus == "undefined") {
-          this.form.eqRunStatus = "";
-        }
-        if (this.form.faultCode == "null") {
-          this.form.faultCode = "";
-        }
-        if (this.form.faultDescription == "null") {
-          this.form.faultDescription = "";
-        }
-        console.log(
-          "that.form.iFileList====================" + that.form.iFileList.length
-        );
-        that.planRoadmapUrl(that.form.iFileList);
-        this.disstate = false;
-
-        this.open = true;
-        this.title = "修改故障清单";
-      });
-    },
-    handleCheckDetail(row) {
-      let that = this;
-      this.isWritable = false;
-      that.reset();
-      const id = row.id || that.ids;
-      getList(id).then((response) => {
-        this.form = response.data;
-        if (this.form.faultSource == "null") {
-          this.form.faultSource = "";
-        }
-        if (this.form.eqRunStatus == "undefined") {
-          this.form.eqRunStatus = "";
-        }
-        if (this.form.faultCode == "null") {
-          this.form.faultCode = "";
-        }
-        if (this.form.faultDescription == "null") {
-          this.form.faultDescription = "";
-        }
-        that.planRoadmapUrl(that.form.iFileList);
-        this.disstate = true;
-        this.open = true;
-        this.title = "故障详情";
-      });
-    },
-    // 检修记录按钮操作
-    recordQuery(row) {
-      this.record = true;
-      this.faultId = row.id;
-      let that = this;
-      getRepairRecordList(this.faultId).then((response) => {
-        that.news = response.data;
-        that.impressionOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].impression = opt.dictLabel;
-          }
-          if (opt.dictValue == "1") {
-            that.news[0].impression = opt.dictLabel;
-          }
-        });
-        that.networkOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].network = opt.dictLabel;
-          }
-          if (opt.dictValue == "1") {
-            that.news[0].network = opt.dictLabel;
-          }
-        });
-        that.powerOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            that.news[0].power = opt.dictLabel;
-          }
-          if (opt.dictValue == "1") {
-            that.news[0].power = opt.dictLabel;
-          }
-        });
-
-        this.news.forEach((taskitem) => {
-          this.bzData.forEach((opt) => {
-            if (taskitem.bzId == opt.deptId) {
-              taskitem.bzId = opt.deptName;
-            } else {
-              taskitem.bzId = "";
-            }
-            if (taskitem.bzId == null || taskitem.bzId == "null") {
-              taskitem.bzId = "";
-            }
-          });
-        });
-      });
-    },
     // 关闭弹窗
     close() {
       // 关闭弹出层
@@ -2072,10 +2684,8 @@ export default {
       this.eventForm = row;
       this.accidentInit(row.id);
       this.getUrl(row.id);
-      console.log(row, "事件详情row");
     },
     handleDispatch(row) {
-      console.log(row);
       this.$router.push({
         path: "/emergency/administration/dispatch",
         query: {
@@ -2090,8 +2700,10 @@ export default {
     reset() {
       this.form = {
         id: null,
+        currencyId: "",
         tunnelId: null,
         eventTypeId: null,
+        prevControlType:null,
         eventTitle: null,
         eventTime: null,
         eventState: null,
@@ -2154,15 +2766,17 @@ export default {
     async planRoadmapUrl(iFileList) {
       let that = this;
       that.fileList = [];
-      for (let i = 0; i < iFileList.length; i++) {
-        let iconName = iFileList[i].imgName;
-        // let iconUrl = await that.picture(iFileList[i].url);
-        let iconUrl = iFileList[i].imgUrl;
-        that.fileList.push({
-          name: iconName,
-          url: iconUrl,
-          fId: iFileList[i].businessId,
-        });
+      if (iFileList != null) {
+        for (let i = 0; i < iFileList.length; i++) {
+          let iconName = iFileList[i].imgName;
+          // let iconUrl = await that.picture(iFileList[i].url);
+          let iconUrl = iFileList[i].imgUrl;
+          that.fileList.push({
+            name: iconName,
+            url: iconUrl,
+            fId: iFileList[i].businessId,
+          });
+        }
       }
     },
     /* 请求图片base64地址*/
@@ -2186,32 +2800,29 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.queryParams.pageSize = 16;
+      this.zd_boxShow = false;
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams = { pageNum: 1, pageSize: 16 };
+      this.isLoading = true;
+      // this.queryParams.pageSize bug:857
       this.dateRange = [];
-      this.tunnelList = [];
+      // this.tunnelList = [];
       this.queryParams.eventTypeId = "";
-      this.resetForm("queryForm");
+      this.queryParams.tunnelId = null;
+      this.queryParams.prevControlType = null;
+      this.queryParams.direction = null;
+      this.queryParams.fuzzySearch = "";
+      this.fuzzySearch1 = "";
+      this.checkBoxEventState = [];
+      // this.resetForm("queryForm");
       this.handleQuery();
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.isWritable = true;
-      this.disstate = false;
-      this.open = true;
-      this.title = "添加故障清单";
     },
     //关闭drawer
     handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
+      done();
     },
     /** 提交按钮 */
     submitEventForm() {
@@ -2240,105 +2851,6 @@ export default {
       this.resetEvent();
       this.open = false;
     },
-
-    /** 提交按钮 */
-    submitForm() {
-      debugger;
-      this.fileData = new FormData(); // new formData对象
-      this.$refs.upload.submit(); // 提交调用uploadFile函数
-      this.fileData.append("id", this.form.id);
-      this.fileData.append("tunnelId", this.form.tunnelId);
-      this.fileData.append("faultType", this.form.faultType);
-      this.fileData.append("faultSource", this.form.faultSource);
-      this.fileData.append("faultFxtime", this.form.faultFxtime);
-      this.fileData.append("faultCxtime", this.form.faultCxtime);
-      this.fileData.append("faultTbtime", this.form.faultTbtime);
-      this.fileData.append("eqId", this.form.eqId);
-      this.fileData.append("eqStatus", this.form.eqStatus);
-      this.fileData.append("faultLocation", this.form.faultLocation);
-      this.fileData.append("eqRunStatus", this.form.eqRunStatus);
-      this.fileData.append("faultCode", this.form.faultCode);
-      this.fileData.append("faultLevel", this.form.faultLevel);
-      this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
-      this.fileData.append("faultDescription", this.form.faultDescription);
-      this.fileData.append("faultStatus", 1);
-      /*      if(this.fileList.length <= 0) {
-                this.fileData.append("file", -1);
-              }else{
-                console.log("================"+this.fileList)
-                return
-              }*/
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            this.fileData.append("removeIds", this.removeIds);
-            if (this.isClick) {
-              updateList(this.fileData).then((response) => {
-                this.isClick = false;
-                this.$modal.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
-              });
-            }
-          } else {
-            if (this.isClick) {
-              addList(this.fileData).then((response) => {
-                this.isClick = false;
-                this.$modal.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              });
-            }
-          }
-        }
-      });
-      this.isClick = true;
-    },
-    publishForm() {
-      this.fileData = new FormData(); // new formData对象
-      this.$refs.upload.submit(); // 提交调用uploadFile函数
-      this.fileData.append("id", this.form.id);
-      this.fileData.append("tunnelId", this.form.tunnelId);
-      this.fileData.append("faultType", this.form.faultType);
-      this.fileData.append("faultSource", this.form.faultSource);
-      this.fileData.append("faultFxtime", this.form.faultFxtime);
-      this.fileData.append("faultCxtime", this.form.faultCxtime);
-      this.fileData.append("faultTbtime", this.form.faultTbtime);
-      this.fileData.append("eqId", this.form.eqId);
-      this.fileData.append("eqStatus", this.form.eqStatus);
-      this.fileData.append("faultLocation", this.form.faultLocation);
-      this.fileData.append("eqRunStatus", this.form.eqRunStatus);
-      this.fileData.append("faultCode", this.form.faultCode);
-      this.fileData.append("faultLevel", this.form.faultLevel);
-      this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
-      this.fileData.append("faultDescription", this.form.faultDescription);
-      this.fileData.append("faultStatus", 0);
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            this.fileData.append("removeIds", this.removeIds);
-            if (this.isClick) {
-              updateList(this.fileData).then((response) => {
-                this.isClick = false;
-                this.$modal.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
-              });
-            }
-          } else {
-            if (this.isClick) {
-              addList(this.fileData).then((response) => {
-                this.isClick = false;
-                this.$modal.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              });
-            }
-          }
-        }
-      });
-      this.isClick = true;
-    },
     // 表单重置
     resetEvent() {
       this.$refs.form1.resetFields();
@@ -2354,98 +2866,271 @@ export default {
       this.reset();
       this.getList();
     },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
   },
 };
 </script>
+
 <style scoped lang="scss">
-.formStyle {
-  .el-form-item {
-    margin-bottom: 10px;
+::v-deep .dialogForm .el-checkbox-button{
+  background: #052C4D;
+}
+.theme-light .el-dialog .el-dialog__body .dialogForm .checkBox{
+  display: unset!important;
+  width: unset!important;
+}
+::v-deep .el-timeline-item__content {
+  background-color: #022443;
+}
+.scrollbar_li {
+  width: 145px;
+  margin-right: 15px;
+  display: inline-block;
+  white-space: nowrap;
+  video {
+    width: 100%;
   }
 }
-.el-tabs__header {
-  margin: 0 0 12px !important;
+::v-deep
+  .el-table--striped
+  .el-table__body
+  tr.el-table__row--striped
+  td.el-table__cell,
+::v-deep .el-table tr {
+  background: unset !important;
 }
-.contentListBox {
-  width: 100%;
-  // height: 570px;
-  word-wrap: break-word;
-  word-break: normal;
-  //display: flex;
-  .contentBox {
-    width: 24%;
-    // height: 135px;
-    border: solid 1px #2aa6ff;
-    display: inline-block;
-    margin-right: 24px;
-    margin-bottom: 5px;
-    position: relative;
-    .video {
-      width: 200px;
-      height: 100%;
-      float: left;
-      text-align: center;
-      font-size: 14px;
-      // color: #2aa6ff;
-      video {
-        width: 100%;
-        height: 100px;
-        margin-left: 10px;
-        margin-top: 2px;
-        float: left;
+::v-deep .el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+::v-deep .el-scrollbar .el-scrollbar__wrap .el-scrollbar__view {
+  white-space: nowrap;
+}
+::v-deep .el-carousel__arrow {
+  background-color: rgba(31, 45, 61, 0.8);
+}
+::v-deep .el-carousel__arrow:hover {
+  background-color: rgba(31, 45, 61, 0.8);
+}
+.gallery-thumbs {
+  height: 75px;
+  box-sizing: border-box;
+  padding: 10px 0;
+}
+.gallery-thumbs .swiper-slide {
+  width: 25%;
+  height: 100%;
+  opacity: 0.4;
+}
+.gallery-thumbs .swiper-slide-active {
+  opacity: 1;
+}
+
+.chuzhi {
+  background: #05afe3;
+}
+.yzx {
+  color: #45d20a;
+}
+.wzx {
+  color: #666666;
+}
+.incHandBox {
+  height: calc(100% - 40px);
+  overflow: auto;
+  .incHandContent {
+    display: flex;
+    // color: white;
+    font-size: 12px;
+    padding: 10px;
+    .classification {
+      .type {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
-      img {
-        // width: 100%;
-        height: 100px;
-        margin-top: 2px;
+      .yijian {
+        color: white;
+        width: 50px;
+        background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+        border: 1px solid #39adff;
+        // padding: 10px;
+        text-align: center;
       }
     }
 
-    .contentText {
-      margin-top: 10px;
-      font-size: 14px;
-      // color: #0087e7;
-      margin-right: 20px;
-      width: 213px;
-      float: right;
-      .stateTab {
-        position: absolute;
-        top: -34px;
-        right: -21px;
+    .heng1 {
+      width: 20px;
+      height: 1px;
+      border-top: solid 1px #39adff;
+    }
+    .shu {
+      width: 5.5px;
+      border-left: solid 1px #39adff;
+      border-bottom: solid 1px #39adff;
+      margin-top: 20px;
+      // border-right: none;
+      border-top-left-radius: 37px;
+      border-bottom-left-radius: 37px;
+    }
+    .gxp {
+      width: 77%;
+      margin-left: 4px;
+      .contentList {
+        display: block;
+        margin-top: 4px;
+        line-height: 40px;
+        padding: 0 20px;
+        border-radius: 3px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        img {
+          width: 18px;
+          height: 18px;
+        }
       }
-      div {
-        padding: 4px 0;
-        span {
-          padding-left: 6px;
+    }
+
+    .contentList:nth-of-type(1) {
+      margin-top: 0;
+    }
+  }
+}
+.formStyle {
+  .el-form-item {
+    margin-bottom: 1vh;
+  }
+}
+::v-deep .el-form-item--medium .el-form-item__label {
+  font-size: 0.7vw;
+}
+::v-deep .el-form-item--medium .el-form-item__content {
+  font-size: 0.7vw;
+}
+::v-deep .el-tabs__header {
+  margin: 0 0 8px !important;
+}
+.contentListBox {
+  width: 100%;
+  word-wrap: break-word;
+  word-break: normal;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 68vh;
+  //display: flex;
+  .contentBox {
+    display: inline-block;
+    margin-right: 0.5vw;
+    margin-bottom: 10px;
+    // position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+    height: 15.4vh;
+    .top {
+      height: 76%;
+      display: flex;
+      position: relative;
+      .video {
+        width: 40%;
+        height: 100%;
+        float: left;
+        text-align: center;
+        font-size: 0.7vw;
+        // color: #2aa6ff;
+
+        video {
+          width: 100%;
+          height: 100px;
+          margin-top: 2px;
+          float: left;
+        }
+        img {
+          // width: 100%;
+          height: 10vh;
+          margin-top: 2px;
+        }
+      }
+    }
+    .bottom {
+      height: 24%;
+      display: flex;
+      .eventBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: calc(40% - 30px);
+        margin: 0 10px;
+        .eventType {
+          background: rgba(228, 14, 14, 0.4);
+          font-size: 0.7vw;
+          font-weight: 600;
+          color: #fff;
+
+          // padding:5px 10px;
+          width: 60%;
+          // height: 3vh;
+          // line-height: 3vh;
+        }
+        div {
+          background: rgba(228, 14, 14, 0.2);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: 0.7vw;
+          font-weight: 400;
+          color: #fff;
+          padding: 2px 0px;
+          width: 40%;
+          text-align: center;
         }
       }
       .contentButton {
         display: flex;
-        justify-content: space-between;
-        width: 150px;
+        justify-content: right;
+        width: 60%;
+        align-items: center;
         div {
           width: 65px;
-          height: 24px;
+          height: 23px;
           border-radius: 14px;
           color: white;
           display: flex;
           justify-content: center;
           align-items: center;
           cursor: pointer;
+          margin-left: 10px;
+          font-size: 0.7vw;
         }
         div:nth-of-type(1) {
           background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);
         }
         div:nth-of-type(2) {
           background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+        }
+      }
+    }
+
+    .contentText {
+      margin-top: 10px;
+      font-size: 0.7vw;
+      // color: #0087e7;
+      margin-right: 20px;
+      width: 60%;
+      float: right;
+      margin-left: 2px;
+      .stateTab {
+        position: absolute;
+        top: -27px;
+        right: -17px;
+      }
+      div {
+        padding: 6px 0;
+        span {
+          padding-left: 6px;
+          font-weight: bold;
         }
       }
     }
@@ -2457,14 +3142,20 @@ export default {
 
 .videoDialogBox {
   width: 100%;
-  height: 365px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   position: relative;
+  .swiper-slide {
+    video {
+      width: 100%;
+      height: 100%;
+    }
+  }
   .processButton {
     position: absolute;
     top: 20px;
-    right: -20px;
+    right: -15px;
     width: 25px;
     height: 100px;
     cursor: pointer;
@@ -2477,51 +3168,102 @@ export default {
     font-size: 14px;
     color: #fff;
   }
+  .dialogBg2 {
+    width: 55% !important;
+    padding: 0px 10px 10px 10px !important;
+    margin-left: 10px;
+    // ::v-deep .el-carousel__container{
+    //   height:378px;
+    // }
+    .picBox {
+      height: calc(400px - 71px);
+    }
+    ::v-deep .el-image {
+      height: calc(400px - 71px);
+      width: 100%;
+      image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
   .dialogBg {
     background: #f7f7f7;
     height: 100%;
-    width: 49%;
+    width: 45%;
     color: #0087e7;
-    padding: 20px;
+    padding: 0px 10px 10px 20px;
     span {
       color: #767676 !important;
       padding-left: 10px;
     }
-    video {
+    .leftVideo {
       width: 100%;
-      height: 240px;
+      height: 251px;
     }
     .picBox {
       width: 100%;
-      height: calc(100% - 265px);
-      margin-top: 10px;
+      // height: calc(24% - 25px);
+      margin-top: 5px;
       // border: solid 1px red;
-      display: flex;
-      justify-content: space-between;
-      div {
-        width: 24%;
+      // display: flex;
+      // justify-content: center;
+      // align-items: center;
+      .picList {
+        width: 100%;
         height: 100%;
-        overflow: hidden;
-        // border: solid 1px blue;
+        // display: flex;
+        // justify-content: left;
+        > div {
+          overflow: hidden;
+          margin-left: 10px;
+          width: 21%;
+          height: 100%;
+          display: inline-block;
+          > .el-image {
+            width: auto;
+            height: 100%;
+            overflow: hidden;
+            // border: solid 1px blue;
+            margin: 0 auto;
+          }
+        }
       }
-      > img {
-        width: auto;
-        height: 100%;
-        overflow: hidden;
-        // border: solid 1px blue;
-        margin: 0 auto;
+      .turnPages {
+        width: 20px !important;
+        height: 20px !important;
+        border: solid 1px #0087e7;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        caret-color: rgba(0, 0, 0, 0);
+      }
+      .turnPages:hover {
+        background: #0087e7;
+        color: #fff;
+      }
+      .noPic {
+        border: solid 1px #0087e7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          width: 50%;
+        }
       }
     }
   }
 }
 .dialogForm {
   width: 100%;
-  height: 270px;
+  height: calc(44% - 50px);
   background: #f7f7f7;
-  padding: 10px;
+  padding: 10px 10px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   margin-top: 10px;
   .el-input {
-    width: 93px;
+    width: 100%;
     .el-input--medium .el-input__inner {
       width: 93px;
     }
@@ -2530,19 +3272,19 @@ export default {
     margin-bottom: 10px !important;
   }
   .evtCarStyle {
-    width: calc(100% - 12px);
-    height: 100px;
-    border: solid 1px #cfd5e0;
+    width: calc(100% - 10px);
+    height: 40px;
     padding: 10px;
     overflow-y: auto;
     padding-bottom: 0;
+    border-radius: 4px;
     > div {
       display: flex;
       margin-bottom: 5px;
       .evtNum {
         width: 35px;
         height: 35px;
-        border: solid 1px #ccc;
+        // border: solid 1px #ccc;
         text-align: center;
         line-height: 35px;
       }
@@ -2555,9 +3297,9 @@ export default {
 .dialogFooterButton {
   width: 100%;
   height: 30px;
-  margin-top: 10px;
   display: flex;
   justify-content: right;
+  margin-bottom: 15px;
   div {
     margin-right: 20px;
     width: 80px;
@@ -2578,16 +3320,35 @@ export default {
     background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
 }
-.detailsDialog {
-  height: 100%;
-  // z-index: 2008 !important;
-  width: 53%;
+// ::v-deep .el-dialog .el-dialog__header{
+//     background-image: url(../../../assets/cloudControl/dialogHeader.png);
+//     background-repeat: no-repeat;
+//     background-position-x: right;
+//     background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
+// }
+.el-dialog__headerbtn {
+  z-index: 3;
+}
+
+::v-deep .detailsDialog {
+  width: 60%;
   position: absolute;
   left: 20%;
+  .el-dialog:not {
+    margin-top: 0px !important;
+  }
 }
+::v-deep .detailsDialog .el-dialog {
+  height: calc(100% - 8vh) !important;
+  .el-dialog__body {
+    height: calc(100% - 4vh - 30px);
+    padding: 0 !important;
+  }
+}
+
 .animationDialog {
   z-index: 2008 !important;
-  height: 100%;
+  height: 92%;
   width: 480px;
   // transform: translateX(1330px);
   animation: mymove 0.3s linear;
@@ -2606,13 +3367,30 @@ export default {
   z-index: 2010 !important;
 }
 .eventTypeButton {
-  padding: 0px 4px;
-  border: solid 1px #65bfff;
+  height: 2.6vh;
+  line-height: 2.6vh;
   border-radius: 2px;
-  color: #189fff;
   cursor: pointer;
-  padding: 8px 5px;
+  padding: 0px 10px;
+  font-size: 0.7vw;
 }
+// ::v-deep .vue-treeselect__control {
+//   height: 4vh;
+// }
+// ::v-deep .vue-treeselect__placeholder,
+// .vue-treeselect__single-value {
+//   line-height: 4vh;
+// }
+// ::v-deep .el-input--small .el-input__inner {
+//   line-height: 3vh;
+//   height: 4vh;
+//   font-size: 0.7vw;
+// }
+// ::v-deep .el-input--medium .el-input__inner {
+//   line-height: 3vh;
+//   height: 4vh;
+//   font-size: 0.7vw;
+// }
 .butBox {
   width: 280px;
   display: flex;
@@ -2643,9 +3421,10 @@ export default {
     .type {
       width: 50px;
       height: 50px;
-      background: #f2f8ff;
+      // background: #f2f8ff;
       border: 1px solid #39adff;
       text-align: center;
+      color: #fff;
     }
     .yijian {
       width: 50px;
@@ -2655,7 +3434,6 @@ export default {
       text-align: center;
       transform: translateY(-2px);
       cursor: pointer;
-
     }
     .hulue {
       width: 50px;
@@ -2684,8 +3462,9 @@ export default {
     margin-top: 4px;
     line-height: 40px;
     padding: 0 20px;
-    background: #f2f8ff;
-    border: solid 1px #39adff;
+    background: #052c4d;
+    color: #fff;
+    // border: solid 1px #39adff;
     border-radius: 3px;
     width: 300px;
     display: flex;
@@ -2759,7 +3538,7 @@ hr {
 .video {
   height: 300px;
   border-radius: 0;
-  padding: 5px;
+  padding: 10px;
   margin-top: 0;
 }
 
@@ -2851,24 +3630,91 @@ hr {
     background-size: 100%;
   }
 }
-::v-deep .el-tabs__content {
-  height: calc(100% - 55px);
-  .el-tab-pane {
-    height: 100%;
-    .contentListBox {
-      height: calc(100% - 130px);
-      .contentBox {
-        height: 23%;
-      }
-    }
-  }
-}
-.el-tabs__item {
-  color: #fff;
-}
-.disabledButton{
+
+.disabledButton {
   cursor: no-drop;
   pointer-events: none;
 }
-</style>
+::-webkit-scrollbar {
+  width: 6px;
+}
+// .videoDialog {
+//   height: 92%;
+// }
+.videoDialogClass {
+  width: 100%;
+  height: 100%;
 
+  video {
+    width: 100%;
+    height: auto;
+  }
+}
+.el-carousel {
+  height: 100%;
+}
+::v-deep .el-carousel__indicators {
+  display: none;
+}
+.topTxt {
+  margin-left: 7px;
+  margin-top: 10px;
+  font-size: 16px;
+  background-image: url(../../../assets/cloudControl/cardTitle.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  text-align: center;
+  width: 139px;
+  height: 30px;
+  line-height: 30px;
+}
+.searchSafeWarn {
+  top: 6% !important;
+  right: 0.8% !important;
+  width: 453px !important;
+  .el-checkbox + .el-checkbox {
+    margin-left: 0 !important;
+  }
+}
+.hitchDialog {
+  ::v-deep .el-dialog__body {
+    height: 70vh !important;
+    overflow: auto !important;
+  }
+  ::v-deep .el-card {
+    margin-bottom: 10px !important;
+  }
+}
+.evtInfo {
+  ::v-deep .el-dialog__body {
+    max-height: 70vh;
+    overflow: auto;
+  }
+}
+.detailsDialog {
+  ::v-deep .el-dialog__body {
+    max-height: 88vh;
+    overflow: auto;
+  }
+}
+.el-divider {
+  background-color: transparent;
+}
+.disposalRecordBox {
+  overflow-y: auto;
+  height: 420px;
+  padding: 20px 10px 20px 25px;
+  .el-card {
+    background: #052c4d !important;
+  }
+}
+</style>
+<style lang="scss">
+.evtInfo .el-timeline-item__node {
+  background: #39adff !important;
+}
+.evtInfo .el-timeline-item__tail {
+  border-left: 1px dashed #39adff !important;
+}
+
+</style>

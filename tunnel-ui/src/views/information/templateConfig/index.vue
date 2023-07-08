@@ -1,140 +1,202 @@
 <template>
   <div class="app-container">
-        <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-    >
-      <el-form-item label="屏幕尺寸" prop="screenSize">
-        <el-select
-          @change="resolvingPowerType"
-          v-model="queryParams.screenSize"
-          placeholder="请选择屏幕尺寸"
-          clearable
+    <!-- 全局搜索 -->
+    <el-row  :gutter="20" class="topFormRow" style="margin: 10px 0 25px">
+      <el-col :span="6">
+        <el-button
           size="small"
-        >
-          <el-option
-            v-for="item in screenSizeList"
-            :key="item.dictValue"
-            :label="item.dictLabel"
-            :value="item.dictValue"
-          >
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
           @click="addOrUpdateHandle"
           v-hasPermi="['system:templateConfig:add']"
-          >新增</el-button
-        >
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['system:templateConfig:edit']"-->
-<!--          >修改</el-button-->
-<!--        >-->
+          >新增</el-button>
         <el-button
-          type="primary"
-          plain
-          size="mini"
+          size="small"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:templateConfig:remove']"
-          >删除</el-button
-        >
+          >删除</el-button>
+          <el-button
+          size="small"
+          @click="handleExport"
+          v-hasPermi="['system:templateConfig:export']"
+          >导出</el-button>
+          <el-button size="small" @click="resetQuery"  plain
+          >刷新</el-button
+          >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div  ref="main" class="grid-content bg-purple">
+          <el-input
+            v-model="queryParams.searchValue"
+            placeholder="请输入模板内容,回车搜索"
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+
+    <div ref="cc" class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+          <!-- <el-form-item label="模板内容" style="width: 100%" prop="searchValue">
+            <el-input
+            v-model="queryParams.searchValue"
+            placeholder="请输入模板内容"
+            size="small"
+            @keyup.enter.native="handleQuery"
+          >
+          </el-input>
+          </el-form-item> -->
+          <el-form-item label="屏幕尺寸" style="width: 100%" prop="screenSize">
+            <el-select
+              @change="resolvingPowerType"
+              v-model="queryParams.screenSize"
+              placeholder="请选择屏幕尺寸"
+              style="width: 100%"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in screenSizeList"
+                :key="item.dictValue"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        <el-form-item class="bottomBox" align="center">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+<!--        <el-form-->
+<!--      :model="queryParams"-->
+<!--      ref="queryForm"-->
+<!--      :inline="true"-->
+<!--      v-show="showSearch"-->
+<!--    >-->
+<!--      <el-form-item label="屏幕尺寸" prop="screenSize">-->
+<!--        <el-select-->
+<!--          @change="resolvingPowerType"-->
+<!--          v-model="queryParams.screenSize"-->
+<!--          placeholder="请选择屏幕尺寸"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in screenSizeList"-->
+<!--            :key="item.dictValue"-->
+<!--            :label="item.dictLabel"-->
+<!--            :value="item.dictValue"-->
+<!--          >-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item>-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          size="mini"-->
+<!--          @click="handleQuery"-->
+<!--          >搜索</el-button-->
+<!--        >-->
+<!--        <el-button size="mini" @click="resetQuery" type="primary" plain-->
+<!--          >重置</el-button-->
+<!--        >-->
+
+<!--        >-->
+<!--&lt;!&ndash;        <el-button&ndash;&gt;-->
+<!--&lt;!&ndash;          type="primary"&ndash;&gt;-->
+<!--&lt;!&ndash;          plain&ndash;&gt;-->
+<!--&lt;!&ndash;          size="mini"&ndash;&gt;-->
+<!--&lt;!&ndash;          @click="handleExport"&ndash;&gt;-->
+<!--&lt;!&ndash;          v-hasPermi="['system:templateConfig:export']"&ndash;&gt;-->
+<!--&lt;!&ndash;          >导出</el-button&ndash;&gt;-->
+<!--&lt;!&ndash;        >&ndash;&gt;-->
+<!--      </el-form-item>-->
+<!--    </el-form>-->
+<!--    &lt;!&ndash; <el-row :gutter="10" class="mb8">-->
+<!--      <el-col :span="1.5">-->
 <!--        <el-button-->
 <!--          type="primary"-->
 <!--          plain-->
+<!--          icon="el-icon-plus"-->
+<!--          size="mini"-->
+<!--          @click="addOrUpdateHandle"-->
+<!--          v-hasPermi="['system:template:add']"-->
+<!--          >新增</el-button-->
+<!--        >-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="success"-->
+<!--          plain-->
+<!--          icon="el-icon-edit"-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['system:template:edit']"-->
+<!--          >修改</el-button-->
+<!--        >-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="danger"-->
+<!--          plain-->
+<!--          icon="el-icon-delete"-->
+<!--          size="mini"-->
+<!--          :disabled="multiple"-->
+<!--          @click="handleDelete"-->
+<!--          v-hasPermi="['system:template:remove']"-->
+<!--          >删除</el-button-->
+<!--        >-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          plain-->
+<!--          icon="el-icon-download"-->
 <!--          size="mini"-->
 <!--          @click="handleExport"-->
-<!--          v-hasPermi="['system:templateConfig:export']"-->
+<!--          v-hasPermi="['system:template:export']"-->
 <!--          >导出</el-button-->
 <!--        >-->
-      </el-form-item>
-    </el-form>
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="addOrUpdateHandle"
-          v-hasPermi="['system:template:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:template:edit']"
-          >修改</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:template:remove']"
-          >删除</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:template:export']"
-          >导出</el-button
-        >
-      </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
-    </el-row> -->
+<!--      </el-col>-->
+<!--      <right-toolbar-->
+<!--        :showSearch.sync="showSearch"-->
+<!--        @queryTable="getList"-->
+<!--      ></right-toolbar>-->
+<!--    </el-row> &ndash;&gt;-->
     <!-- 展示表格 -->
     <el-table
       v-loading="loading"
       :data="dataList"
       @selection-change="handleSelectionChange"
     :row-class-name="tableRowClassName"
-    max-height="640"
+    class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="序号" align="center" type="index" /> -->
+      <el-table-column type="index" :index="indexMethod" label="序号" width="68" align="center"></el-table-column>
       <el-table-column label="屏幕尺寸" align="center" prop="screenSize"  />
       <el-table-column label="入屏方式" align="center" prop="inScreenMode" :formatter="inScreenModeMatter" />
-      <el-table-column label="滚动速度/毫秒" align="center" prop="tcontent.content" />
-      <el-table-column label="停留时间/秒" align="center" prop="stopTime" />
+      <el-table-column label="模板内容" align="center" prop="tcontent.content" />
+      <el-table-column label="停留时间/毫秒" align="center" prop="stopTime" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
         label="操作"
@@ -172,7 +234,7 @@
 </template>
 <script>
 import addOrUpdate from './edit'
-import {getTemplates} from "@/api/board/template";
+import {exportTemplate, getTemplates} from "@/api/board/template";
 import {deleteTemplate} from "@/api/board/template";
 export default {
   name: 'vms-tiss-content-template',
@@ -181,6 +243,7 @@ export default {
   },
   data () {
     return {
+      boxShow: false,
       screenSizeList:[],//屏幕尺寸列表
       iotTemplateCategoryList:[],
         // 显示搜索条件
@@ -201,7 +264,7 @@ export default {
               content: '白色',
           },
           {
-              code: 'GreenYellow',
+              code: '#00FF00',
               content: '绿色',
           },
         ],
@@ -313,6 +376,7 @@ export default {
         queryParams: {
             pageNum: 1,
             pageSize: 10,
+            searchValue:null,
             screenSize: null,
         },
       isCurrencyOptions: [
@@ -331,6 +395,7 @@ export default {
     this.getList();
   },
   mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
     // 屏幕尺寸字典数据
     this.getDicts("screenSize").then((res) => {
       this.screenSizeList = res.data;
@@ -342,6 +407,18 @@ export default {
     });
   },
   methods: {
+    //翻页时不刷新序号
+    indexMethod(index){
+      return index+(this.queryParams.pageNum-1)*this.queryParams.pageSize+1
+    },
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.cc.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     init () {
 
     },
@@ -361,7 +438,8 @@ export default {
     getList () {
       this.indexStart = (this.page - 1) * this.limit + 1;
       this.loading = true;
-      getTemplates(this.queryParams).then((res) => { 
+      this.boxShow = false;
+      getTemplates(this.queryParams).then((res) => {
       // listTemplate(this.queryParams).then((res) => {
         this.dataList = res.rows;
         console.log(this.dataList)
@@ -380,6 +458,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.searchValue='';
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -392,7 +471,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      let content = '是否确认删除选中数据项?'
+      let content = '是否确认删除?'
       if(ids == null || ids == undefined || ids == [] || ids == '') {
         content = '是否确认删除当前情报板模板?'
       }
@@ -456,8 +535,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有情报板模板数据项?", "警告", {
+      this.$confirm("是否确认导出情报板模板数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -544,4 +624,31 @@ export default {
 }
 </script>
 <style lang="scss">
+</style>
+
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
 </style>

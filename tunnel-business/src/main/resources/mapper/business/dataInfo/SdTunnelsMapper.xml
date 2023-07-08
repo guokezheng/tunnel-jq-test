@@ -30,6 +30,17 @@
         <result property="startPileNum" column="start_pile_num" />
         <result property="endPileNum" column="end_pile_num" />
         <result property="roadId" column="road_id" />
+        <result property="roadCode" column="road_code" />
+        <result property="roadName" column="road_name" />
+        <result property="levelCode" column="level_code" />
+        <result property="levelName" column="level_name" />
+        <result property="lengthCode" column="length_code" />
+        <result property="lengthName" column="length_name" />
+        <result property="constructYear" column="construct_year" />
+        <result property="activateTime" column="activate_time" />
+        <result property="managerId" column="manager_id" />
+        <result property="orgCode" column="org_code" />
+        <result property="orgName" column="org_name" />
         <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
         <collection property="sdTunnelSubareas" ofType="sdTunnelSubarea" javaType="java.util.List" select="getSubareas" column="tunnel_id">
             <result property="sId" column="s_id" />
@@ -46,7 +57,8 @@
     <sql id="selectSdTunnelsVo">
         select tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
                tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
-               create_time, update_by, update_time, dept_id,start_pile,end_pile,start_pile_num,end_pile_num,road_id from sd_tunnels
+               create_time, update_by, update_time, dept_id,start_pile,end_pile,start_pile_num,end_pile_num,road_id,level_code,length_code,construct_year,
+               manager_id,org_name,org_code,level_name,length_name,road_code,road_name ,activate_time from sd_tunnels
     </sql>
 
     <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
@@ -58,6 +70,7 @@
         left join sys_dept d on t.dept_id = d.dept_id
         left join sd_safety_index i on i.tunnel_id = t.tunnel_id
         <where>
+            1=1 and t.poll= 0
             <if test="tunnelName != null and tunnelName != ''">and t.tunnel_name like concat('%', #{tunnelName}, '%')
             </if>
             <if test="tunnelId != null and tunnelId != ''">and t.tunnel_id = #{tunnelId}
@@ -67,6 +80,31 @@
             <if test="deptId != null and deptId != ''">
                 AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
+            ${params.dataScope}
+        </where>
+    </select>
+
+    <select id="selectSdTunnelsList1" parameterType="SdTunnels" resultMap="SdTunnelsResult">
+        select t.tunnel_id, t.tunnel_name, t.tunnel_code, t.tunnel_address, t.longitude, t.latitude, t.tunnel_station_id,
+        t.tunnel_station_name, t.lane, t.coordinates, t.remake, t.tunnel_length, t.poll, t.store_configure, t.create_by,
+        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name,t.start_pile,t.end_pile,t.start_pile_num,t.end_pile_num,
+        ifnull(i.security_percentage,'0') security_percentage, t.road_id, t.road_code, t.road_name, t.level_code, t.level_name, t.length_code,
+        t.length_name, t.construct_year, t.activate_time, t.manager_id, t.org_code, t.org_name
+        from sd_tunnels t
+        left join sys_dept d on t.dept_id = d.dept_id
+        left join sd_safety_index i on i.tunnel_id = t.tunnel_id
+        <where>
+            <if test="tunnelName != null and tunnelName != ''">and t.tunnel_name like concat('%', #{tunnelName}, '%')
+            </if>
+            <if test="tunnelId != null and tunnelId != ''">and t.tunnel_id = #{tunnelId}
+            </if>
+            <if test="poll != null ">and t.poll = #{poll}</if>
+            <if test="storeConfigure != null  and storeConfigure != ''">and t.store_configure = #{storeConfigure}</if>
+            <if test="searchValue != null  and searchValue != ''">and CONCAT(t.tunnel_name,t.start_pile,t.end_pile) LIKE CONCAT('%',#{searchValue},'%')</if>
+            <if test="deptId != null and deptId != ''">
+                AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(t.tunnel_id,#{ids}) > 0</if>
             ${params.dataScope}
         </where>
     </select>
@@ -130,7 +168,18 @@
             <if test="endPile != null">end_pile,</if>
             <if test="startPileNum != null">start_pile_num,</if>
             <if test="endPileNum != null">end_pile_num,</if>
-            <if test="roadId != null">road_id</if>
+            <if test="roadId != null">road_id,</if>
+            <if test="roadCode != null">road_code,</if>
+            <if test="roadName != null">road_name,</if>
+            <if test="levelName != null">level_name,</if>
+            <if test="lengthName != null">length_Name,</if>
+            <if test="activateTime != null">activate_time,</if>
+            <if test="orgCode != null">org_code,</if>
+            <if test="levelCode != null">level_code,</if>
+            <if test="lengthCode != null">length_code,</if>
+            <if test="constructYear != null">construct_year,</if>
+            <if test="managerId != null">manager_id,</if>
+            <if test="orgName != null">org_name</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -156,7 +205,18 @@
             <if test="endPile != null">#{endPile},</if>
             <if test="startPileNum != null">#{startPileNum},</if>
             <if test="endPileNum != null">#{endPileNum},</if>
-            <if test="roadId != null">#{roadId}</if>
+            <if test="roadId != null">#{roadId},</if>
+            <if test="roadCode != null">#{roadCode},</if>
+            <if test="roadName != null">#{roadName},</if>
+            <if test="levelName != null">#{levelName},</if>
+            <if test="lengthName != null">#{lengthName},</if>
+            <if test="activateTime != null">#{activateTime},</if>
+            <if test="orgCode != null">#{orgCode},</if>
+            <if test="levelCode != null">#{levelCode},</if>
+            <if test="lengthCode != null">#{lengthCode},</if>
+            <if test="constructYear != null">#{constructYear},</if>
+            <if test="managerId != null">#{managerId},</if>
+            <if test="orgName != null">#{orgName}</if>
         </trim>
     </insert>
 
@@ -185,7 +245,18 @@
             <if test="endPile != null">end_pile = #{endPile},</if>
             <if test="startPileNum != null">start_pile_num = #{startPileNum},</if>
             <if test="endPileNum != null">end_pile_num = #{endPileNum},</if>
-            <if test="roadId != null">road_id = #{roadId}</if>
+            <if test="roadId != null">road_id = #{roadId},</if>
+            <if test="levelCode != null">level_code = #{levelCode},</if>
+            <if test="lengthCode != null">length_code = #{lengthCode},</if>
+            <if test="constructYear != null">construct_year = #{constructYear},</if>
+            <if test="managerId != null">manager_id = #{managerId},</if>
+            <if test="orgName != null">org_name = #{orgName},</if>
+            <if test="orgCode != null">org_code = #{orgCode},</if>
+            <if test="levelName != null">level_name = #{levelName},</if>
+            <if test="lengthName != null">length_name = #{lengthName},</if>
+            <if test="roadCode != null">road_code = #{roadCode},</if>
+            <if test="roadName != null">road_name = #{roadName},</if>
+            <if test="activateTime != null">activate_time = #{activateTime}</if>
         </trim>
         where tunnel_id = #{tunnelId}
     </update>
@@ -205,8 +276,9 @@
         select a.tunnel_id, a.tunnel_name, b.s_id, b.s_name from sd_tunnels a
         left join sd_tunnel_subarea b on a.tunnel_id = b.tunnel_id
         <where>
-            <if test="tunnelId != null and tunnelId != ''">a.tunnel_id = #{tunnelId}</if>
-            <if test="tunnelName != null">a.tunnelName = #{tunnelName} </if>
+        1=1 and a.poll= '0'
+            <if test="tunnelId != null and tunnelId != ''">and a.tunnel_id = #{tunnelId}</if>
+            <if test="tunnelName != null">and a.tunnelName = #{tunnelName} </if>
         </where>
     </select>
 
@@ -237,7 +309,7 @@
                update_time,
                dept_id
         from sd_tunnels
-        where dept_id = #{deptId}
+        where dept_id = #{deptId}  and poll = '0'
     </select>
 
 
@@ -249,9 +321,9 @@
 
 
     <select id="selectTunnelList" resultMap="SdTunnelsResult">
-        select * from  sd_tunnels t where 1=1
+        select * from  sd_tunnels t where 1=1 and poll= '0'
         AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
-
+        and t.tunnel_id = #{tunnelId}
     </select>
 
     <select id="getJlyTunnel" resultType="com.tunnel.business.domain.dataInfo.SdTunnels">
@@ -266,11 +338,58 @@
             sd_tunnels t
                 LEFT JOIN sys_dept d ON t.dept_id = d.dept_id
         WHERE
-            1 = 1
+            1 = 1 and t.poll = '0'
         <if test="deptId != null and deptId != ''">
             AND (
             d.dept_id = #{deptId}
             OR d.dept_id IN ( SELECT dept_id FROM sys_dept WHERE 1 = 1 AND FIND_IN_SET( #{deptId}, ancestors ) > 0 ))
         </if>
     </select>
+
+    <select id="selectAllSdTunnelsList" resultMap="SdTunnelsResult">
+        select tunnel_id ,tunnel_name
+        from sd_tunnels
+    </select>
+
+
+    <select id="selectAllSdTunnelsList1" resultMap="SdTunnelsResult">
+        select tunnel_id ,tunnel_name
+        from sd_tunnels where poll = '0'
+    </select>
+
+
+
+    <select id="selectTunnelDept" resultType="String">
+        select dept_id
+        from sd_tunnels where tunnel_id  = #{tunnelId}
+    </select>
+
+
+    <select id="selectTunnelLineList" resultMap="SdTunnelsResult">
+        select * from sd_tunnels where dept_id in (
+        select t.dept_id from sys_dept t
+        <where>
+            <if test="deptId != null and deptId != ''">
+                AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+        </where>
+        )
+    </select>
+
+
+    <select id="selectTunnels" resultMap="SdTunnelsResult">
+        select t.tunnel_id from sd_tunnels t
+        <where>
+            <if test="deptId != null and deptId != ''">
+                AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+
+    <select id="isTunnel" resultType="String">
+        select tunnel_name
+        from sd_tunnels where tunnel_id  = #{deviceId}
+    </select>
+
 </mapper>

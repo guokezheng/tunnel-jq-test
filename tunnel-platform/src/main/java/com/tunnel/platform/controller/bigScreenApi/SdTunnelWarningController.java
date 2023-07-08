@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 近30日隧道预警信息Controller
@@ -28,9 +29,18 @@ public class SdTunnelWarningController extends BaseController {
      * @return
      */
     @GetMapping("/warningnum")
-    public AjaxResult getTunnelWarningNumber(){
-        List<Long> tunnelWarningNumber = iSdTunnelWarningService.getTunnelWarningNumber();
+    public AjaxResult getTunnelWarningNumber(String tunnelId){
+        List<Long> tunnelWarningNumber = iSdTunnelWarningService.getTunnelWarningNumber(tunnelId);
         return AjaxResult.success(tunnelWarningNumber);
     }
 
+    /**
+     * 查询近30日隧道预警带日期
+     * @return
+     */
+    @GetMapping("/getTunnelWarningNumData")
+    public AjaxResult getTunnelWarningNumData(String tunnelId, String startDate, String endDate){
+        List<Map<String, Object>> list = iSdTunnelWarningService.getTunnelWarningNumData(tunnelId,startDate,endDate);
+        return AjaxResult.success(list);
+    }
 }

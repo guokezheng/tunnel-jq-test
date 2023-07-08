@@ -34,14 +34,24 @@ public class SdTaskOpt extends BaseEntity
     @Excel(name = "操作人")
     private String optPersonId;
 
+    private String tunnelName;
+
     /** 操作时间 */
     @Excel(name = "操作时间")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date optTime;
 
     /** 操作说明 */
     @Excel(name = "操作说明")
     private String optDescription;
+
+    public String getTunnelName() {
+        return this.tunnelName;
+    }
+
+    public void setTunnelName(final String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
 
     public String getId() {
         return this.id;

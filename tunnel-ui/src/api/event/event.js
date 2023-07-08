@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-09-07 22:06:50
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-17 16:27:03
+ * @LastEditTime: 2023-02-20 14:49:15
  * @FilePath: \tunnel-ui\src\api\event\event.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,6 +22,15 @@ export function getEvent(id) {
   return request({
     url: '/event/' + id,
     method: 'get'
+  })
+}
+
+// 获取批量事件详情
+export function batchHandleEvent(query) {
+  return request({
+    url: '/event/batchHandleEvent',
+    method: 'get',
+    params: query
   })
 }
 
@@ -122,14 +131,21 @@ export function dispatchExecuted(eventId) {
 }
 
 // 事件弹窗分类数组
-export function eventList(searchValue, pageNum, startTime) {
+export function eventList(searchValue, pageNum, eventTime) {
   return request({
     // url: searchValue == 3?'/event/list?remark=pop&pageNum='+pageNum +'&pageSize=10&startTime='+startTime:'/event/list?searchValue='+searchValue+'&remark=pop&pageNum='+pageNum +'&pageSize=10$startTime='+startTime,
-    url: '/event/list?searchValue=' + searchValue + '&remark=pop&pageNum=' + pageNum + '&pageSize=10&startTime=' + startTime,
+    url: '/event/list?searchValue=' + searchValue + '&remark=pop&pageNum=' + pageNum + '&pageSize=10&eventTime=' + eventTime,
     method: 'get',
   })
 }
 
+export function eventPopData(query) {
+  return request({
+    url: '/event/eventPopData',
+    method: 'get',
+    params: query
+  })
+}
 // 事件弹窗分类数组 全部
 export function eventPopAll(pageNum) {
   return request({
@@ -267,5 +283,90 @@ export function implementDisposalStrategyRl(eventId,rlId) {
     method: 'get',
   })
 }
+// 获取预案
+export function getReservePlanData(query) {
+  return request({
+    url: '/plan/getReservePlanData',
+    method: 'get',
+    params: query
+  })
+}
 
+export function getReservePlanDataa(query) {
+  const param = {
+    id: "鲁BUD697",
+  };
+  return request({
+    url: '/radar/data/selectSdRadarDetectDataByVehicleLicense',
+    method: 'get',
+    params: param
+  })
+}
 
+// 事件详情导出
+export function detailExport(data) {
+  return request({
+    responseType: 'blob',
+    url: '/event/detailExport',
+    method: 'post',
+    data: data
+  })
+}
+// 应急调度警情升级
+export function getSituationUpgrade(query) {
+  return request({
+    url: '/event/getSituationUpgrade',
+    method: 'get',
+    params: query
+  })
+}
+//警情升级修改
+export function updateSituationUpgrade(query) {
+  return request({
+    url: '/event//updateSituationUpgrade',
+    method: 'get',
+    params: query
+  })
+}
+//查询事件等级和预案
+export function getEventInif(query) {
+  return request({
+    url: '/event/getEventInif/',
+    method: 'get',
+    params: query
+  })
+}
+//一键控制设备
+
+export function getAllManagementDevices(query) {
+  return request({
+    url: '/event/getAllManagementDevices',
+    method: 'get',
+    params: query
+  })
+}
+
+//查看相机录像视频流
+export function getVedioData(query) {
+  return request({
+    url: '/event/vedioData',
+    method: 'get',
+    params: query
+  })
+}
+
+//关闭相机录像视频流
+export function closeVedio(camId,playId) {
+  return request({
+    url: '/event/closeVedio?camId='+camId+'&playId='+playId,
+    method: 'get'
+  })
+}
+
+//下载历史录像视频
+export function downloadVedio(camId,downLoadTime) {
+  return request({
+    url: '/event/downLoadVedio?camId='+camId+'&downLoadTime='+downLoadTime,
+    method: 'get'
+  })
+}

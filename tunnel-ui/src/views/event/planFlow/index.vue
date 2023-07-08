@@ -1,55 +1,88 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="事件类型" prop="eventTypeId">
-<!--        <el-input
-          v-model="queryParams.eventTypeId"
-          placeholder="请输入事件类型"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />-->
-        <el-select
-          v-model="queryParams.eventTypeId"
-          clearable
-          placeholder="请选择事件类型"
-          size="small">
-          <el-option
-            v-for="item in optionsData"
-            :key="item.id"
-            :label="item.eventType"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-<!--      <el-form-item label="环节名称" prop="flowName">
-        <el-input
-          v-model="queryParams.flowName"
-          placeholder="请输入环节名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>-->
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button type="primary" plain size="mini" @click="resetQuery">重置</el-button>
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
         <el-button
-          type="primary" plain size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:flow:add']"
-        >新增</el-button>
-        <el-button
-          type="primary" plain size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:flow:remove']"
-        >删除</el-button>
-      </el-form-item>
-    </el-form>
+            size="small"
+            @click="handleAdd"
+            v-hasPermi="['system:flow:add']"
+          >新增</el-button>
+          <el-button
+            size="small"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['system:flow:remove']"
+          >删除</el-button>
+          <el-button
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+          >导出
+          </el-button>
+          <el-button size="small" @click="resetQuery">刷新</el-button>
 
-    <el-table v-loading="loading" :data="flowList" @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
+      </el-col>
+      <el-col :span="6" :offset="12" >
+        <div class="grid-content bg-purple" ref="main">
+          <el-input
+            placeholder="请选择事件类型，回车搜索"
+            v-model="queryParams.planName"
+            @keyup.enter.native="handleQuery"
+            size="small"
+          >
+            <el-button
+              slot="append"
+              class="searchTable"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="boxShow" ref="cc">
+
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+        <el-form-item label="事件类型" prop="eventTypeId" >
+          <el-select
+            v-model="queryParams.eventTypeId"
+            clearable
+            placeholder="请选择事件类型"
+            size="small">
+            <el-option
+              v-for="item in optionsData"
+              :key="item.id"
+              :label="item.eventType"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+  <!--      <el-form-item label="环节名称" prop="flowName">
+          <el-input
+            v-model="queryParams.flowName"
+            placeholder="请输入环节名称"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>-->
+        <el-form-item class="bottomBox">
+          <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button type="primary"  size="mini" @click="resetQuery">重置</el-button>
+
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="tableTopHr" ></div>
+    <el-table v-loading="loading" :data="flowList" height="59vh"
+    @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column
+        type="index"
+        width="70"
+        align="center"
+        label="序号">
+      </el-table-column>
       <el-table-column label="事件分类" align="center" prop="dictLabel" />
       <el-table-column label="事件类型" align="center" prop="eventTypeId" >
         <template slot-scope="scope">
@@ -63,15 +96,13 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:flow:edit']"
+            v-hasPermi="['system:flow:query']"
           >详情</el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:flow:remove']"
           >删除</el-button>
@@ -88,11 +119,11 @@
     />
 
     <!-- 添加或修改事件类型预案流程关联对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="780px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="880px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="事件分类" prop="prevControlType">
-          <el-radio v-model="form.radio" label="0" @change="radioFun">交通事件</el-radio>
-          <el-radio v-model="form.radio" label="1" @change="radioFun">主动安全</el-radio>
+          <el-radio v-model="form.radio" label="0" @change="radioFun">普通事件</el-radio>
+          <el-radio v-model="form.radio" label="1" @change="radioFun">安全预警</el-radio>
         </el-form-item>
         <el-form-item label="事件类型" prop="eventTypeId">
 <!--          <el-input v-model="form.eventTypeId" placeholder="请输入事件类型" />-->
@@ -114,7 +145,7 @@
           :from_data='fromData'
           :to_data='toData'
           :defaultProps="{label:'label'}"
-          height='540px'
+          height='580px'
           @add-btn='add'
           @remove-btn='remove'
           :mode='mode'
@@ -177,6 +208,7 @@ export default {
       }
     };
     return {
+      boxShow:false,
       radio: '0',
       // 遮罩层
       loading: true,
@@ -238,7 +270,18 @@ export default {
     this.getEventType();
     this.getTableEventType();
   },
+  mounted(){
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (!this.$refs.main.contains(e.target) && !this.$refs.main.contains(e.target)) {
+        if (self.boxShow == true){
+          self.boxShow = false;
+        }
+      }
+    },
     /** 查询事件类型预案流程关联列表 */
     getList() {
       this.loading = true;
@@ -315,15 +358,6 @@ export default {
       }
     },
 
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
-
     // 取消按钮
     cancel() {
       this.open = false;
@@ -394,6 +428,10 @@ export default {
               this.getList();
             });
           } else {
+            if(this.toData.length == 0){
+              this.$modal.msgError("请选择预案流程");
+              return;
+            }
             checkData(this.form.eventTypeId).then(res => {
               if(res.code == 200){
                 this.form.planFlowList = this.toData
@@ -413,7 +451,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.eventTypeId || this.ids;
-      this.$modal.confirm('是否确认删除事件类型预案流程').then(function() {
+      this.$modal.confirm('是否确认删除？').then(function() {
         return delFlow(ids);
       }).then(() => {
         this.getList();
@@ -422,8 +460,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.queryParams.ids = this.ids.join();
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有事件类型预案流程关联数据项？').then(() => {
+      this.$modal.confirm('是否确认导出预案流程数据项？').then(() => {
         this.exportLoading = true;
         return exportFlow(queryParams);
       }).then(response => {
@@ -517,8 +556,15 @@ export default {
   }
 };
 </script>
-<style  lang="scss">
+<style  lang="scss" scoped>
+
+::v-deep ::-webkit-scrollbar {
+  width: 0px;
+}
+
+</style>
+<style  lang="scss" scoped>
 .treeList .transfer-main{
-  height: calc(100% - 70px) !important;;
+  height: calc(100% - 84px) !important;;
 }
 </style>

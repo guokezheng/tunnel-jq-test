@@ -68,7 +68,7 @@
       </div>
     </el-row>
 
-    <el-table ref="videoTable" v-loading="loading" :data="vediorecordList" max-height="610" 
+    <el-table ref="videoTable" v-loading="loading" :data="vediorecordList" max-height="610"
                 @selection-change="handleSelectionChange" @row-click="videoTableRowClick">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="隧道" align="center" prop="tunnels.tunnelName"/>
@@ -266,7 +266,6 @@
 
             /** 播放操作 */
             openPlayer(row) {
-                debugger
                 this.id = row.id;
                 this.rtsp = row.url;
                 this.openV = true;

@@ -44,9 +44,9 @@ export function getEqTypeStateByType(typeId) {
 }
 
 // 根据设备类型查状态(状态名称横向)
-export function getEqTypeStatesByType(typeId,stateType) {
+export function getEqTypeStatesByType(typeId, stateType) {
   return request({
-    url: '/eqTypeState/getStates/' + typeId + '/' +stateType,
+    url: '/eqTypeState/getStates/' + typeId + '/' + stateType,
     method: 'get'
   })
 }
@@ -83,12 +83,20 @@ export function updatePic(data) {
     data: data
   })
 }
+//批量删除图片
+export function batchDeletePic(data) {
+  return request({
+    url: '/eqTypeState/batchDeletePic',
+    method: 'post',
+    data: data
+  })
+}
 
 
 //删除
 export function deletePicture(id) {
   return request({
-    url: '/eqTypeState/delFiles/'+id,
+    url: '/eqTypeState/delFiles/' + id,
     method: 'delete',
   })
 }
@@ -154,6 +162,15 @@ export function getStateByData(query) {
 export function getVMSTemplatesByDevIdAndCategory(data) {
   return request({
     url: '/system/template/getVMSTemplatesByDevIdAndCategory',
+    method: 'post',
+    data: data
+  })
+}
+
+// 广播查询
+export function getAudioFileList(data) {
+  return request({
+    url: '/phoneSpk/getAudioFileList',
     method: 'post',
     data: data
   })

@@ -1,7 +1,8 @@
 package com.tunnel.business.service.dataInfo;
 
 
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.domain.dataInfo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,55 @@ public interface ISdDeviceDataService {
 
     Map<String, Object> getTodayFSFXData(String deviceId);
 
+    Map<String, Object> getTodayYcylData(String deviceId);
+
     Map<String, Object> getTodayLDData(String deviceId);
 
     List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData);
+
+    Map<String, Object> energyConsumptionDetection(String tunnelId);
+
+    /**
+     * 获取风机安全检测仪实时数据
+     * @param deviceId
+     * @return
+     */
+    AjaxResult getFanSafeData(String deviceId);
+
+    List<Map<String, String>> dataLogInfoLineList(SdDeviceData sdDeviceData);
+
+    /**
+     * 查询设备列表
+     * @param sdDeviceData
+     * @return
+     */
+    List<Map<String, String>> dataDevicesLogInfoList(SdDeviceData sdDeviceData);
+
+
+    /**
+     * 导出Tab
+     * @param sdDeviceData
+     * @return
+     */
+    List<SdDeviceData> exportDatainforTab(SdDeviceData sdDeviceData);
+
+    List<SdDeviceCOVIData> handleExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<SdDeviceFSFXData> handleFSFXExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<SdDeviceDNData> handleDNExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+    List<SdDeviceDWData> handleDWExportRecord(SdDeviceCOVIData sdDeviceCOVIData);
+
+     void updateDeviceData(String deviceId, String value, Integer itemId,boolean createLog);
+
+
+    /**
+     * 修改设备数据表中实时数据
+     * @param sdDevices 设备信息
+     * @param value 数据
+     * @param itemId 数据项
+     */
+   void updateDeviceData(SdDevices sdDevices, String value, Long itemId);
+
 }

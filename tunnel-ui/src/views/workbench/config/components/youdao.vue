@@ -8,21 +8,12 @@
       append-to-body
       :visible="visible"
       :before-close="handleClosee"
+      :close-on-click-modal="false"
+      :modal="false"
     >
-      <div
-        style="
-          width: 100%;
-          height: 30px;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
+      <div class="dialogStyleBox">
         <div class="dialogLine"></div>
-        <img
-          :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px); cursor: pointer"
-          @click="handleClosee"
-        />
+        <div class="dialogCloseButton"></div>
       </div>
       <el-form
         ref="form"
@@ -30,7 +21,6 @@
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding: 15px; padding-top: 0px"
         v-show="show1"
       >
         <el-row>
@@ -65,13 +55,23 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ getBrandName(stateForm.brandName) }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="13">
-            <el-form-item label="设备状态:">
+            <el-form-item
+              label="设备状态:"
+              :style="{
+                color:
+                  stateForm.eqStatus == '1'
+                    ? 'yellowgreen'
+                    : stateForm.eqStatus == '2'
+                    ? 'white'
+                    : 'red',
+              }"
+            >
               {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
@@ -91,10 +91,16 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="11">
-            <el-form-item v-show="stateForm2.eqType == 30 && showTipe == true" label-width="10px">
-              <span style="color: red; font-weight: bold">当前地址为报警点位</span>
-            </el-form-item></el-col>
+          <!-- <el-col :span="11">
+            <el-form-item
+              v-show="stateForm2.eqType == 30 && showTipe == true"
+              label-width="10px"
+            >
+              <span style="color: red; font-weight: bold"
+                >当前地址为报警点位</span
+              >
+            </el-form-item>
+          </el-col> -->
         </el-row>
         <el-row>
           <el-col :span="15">
@@ -130,58 +136,49 @@
         </el-row>
         <el-row style="margin-top: 10px">
           <el-col :span="13">
-<!--            <el-form-item label="报警点位:" label-width="130px">-->
-<!--            <el-form-item label="报警点位:" v-show="stateForm2.eqType == 30">-->
-<!--              <el-radio-group v-model="stateForm2.address">-->
-<!--                <el-radio-->
-<!--                  v-for="item in fireMarkData"-->
-<!--                  :key="item.value"-->
-<!--                  :label="item.value"-->
-<!--                >{{item.label}}</el-radio>-->
-<!--              </el-radio-group>-->
-<!--            </el-form-item>-->
+            <!--            <el-form-item label="报警点位:" label-width="130px">-->
+            <!--            <el-form-item label="报警点位:" v-show="stateForm2.eqType == 30">-->
+            <!--              <el-radio-group v-model="stateForm2.address">-->
+            <!--                <el-radio-->
+            <!--                  v-for="item in fireMarkData"-->
+            <!--                  :key="item.value"-->
+            <!--                  :label="item.value"-->
+            <!--                >{{item.label}}</el-radio>-->
+            <!--              </el-radio-group>-->
+            <!--            </el-form-item>-->
             <!-- <el-form-item v-show="stateForm2.eqType == 30 && showTipe == true">
               <span style="color: red; font-weight: bold">当前地址为报警点位</span>
             </el-form-item> -->
           </el-col>
         </el-row>
       </el-form>
-      <div
-        slot="footer"
-        style="float: right; margin-right: 15px; margin-bottom: 20px"
-      >
+      <div slot="footer" class="dialog-footer">
         <el-button
-          type="primary"
-          size="mini"
           @click="handleOK()"
-          style="width: 80px"
           class="submitButton"
-          >确 定</el-button
+          v-hasPermi="['workbench:dialog:save']"
+          >执 行</el-button
         >
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleClosee()"
-          style="width: 80px"
-          >取 消</el-button
-        >
+        <el-button class="closeButton" @click="handleClosee()">取 消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
-import { controlGuidanceLampDevice } from "@/api/workbench/config.js"; //提交控制信息
+import {
+  controlGuidanceLampDevice,
+  controlEvacuationSignDevice,
+} from "@/api/workbench/config.js"; //提交控制信息
 import { getDevice, fireMarkList } from "@/api/equipment/tunnel/api.js"; //查诱导灯亮度、频率等
 
 export default {
-  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       fireMarkData: [],
       stateForm: {},
       title: "",
-      visible: true,
+      visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       show1: true,
       show2: false,
@@ -199,18 +196,25 @@ export default {
           label: "关闭",
         },
       ],
+      brandList: [],
+      eqInfo: {},
+      eqTypeDialogList: [],
+      directionList: [],
     };
   },
-  created() {
-    this.getMessage();
-  },
+  created() {},
   methods: {
+    init(eqInfo, brandList, directionList, eqTypeDialogList) {
+      this.eqInfo = eqInfo;
+      this.brandList = brandList;
+      this.directionList = directionList;
+      this.eqTypeDialogList = eqTypeDialogList;
+      this.getMessage();
+      this.visible = true;
+    },
     // 查设备详情
     async getMessage() {
-      var that = this;
       if (this.eqInfo.equipmentId) {
-        var obj = {};
-        var state = "";
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
@@ -251,8 +255,8 @@ export default {
             {
               value: "5",
               label: "报警",
-            },
-          )
+            }
+          );
           // fireMarkList(this.eqInfo.equipmentId).then((res) => {
           //   let data = res.data;
           //   this.fireMarkData = data;
@@ -268,8 +272,8 @@ export default {
             {
               value: "3",
               label: "逆向流水",
-            },
-          )
+            }
+          );
         }
       } else {
         this.$modal.msgWarning("没有设备Id");
@@ -301,39 +305,36 @@ export default {
     // 提交修改
     handleOK() {
       if (this.stateForm2.state == "2") {
-        this.stateForm2.address="255";
+        this.stateForm2.address = "255";
       } else if (this.stateForm2.state == "1") {
-        this.stateForm2.address="0";
+        this.stateForm2.address = "0";
       }
       const param = {
         devId: this.stateForm.eqId, //设备id
         state: this.stateForm2.state, //设备状态
-        // devType: this.eqInfo.clickEqType,
         brightness: this.stateForm2.brightness, //诱导灯亮度
         frequency: this.stateForm2.frequency, //诱导灯频率
         fireMark: this.stateForm2.address,
-        // tunnelId: this.stateForm.tunnelId,
       };
       this.$modal.msgSuccess("指令下发中，请稍后。");
-      controlGuidanceLampDevice(param).then((response) => {
-        console.log(response, "提交控制");
-        this.$modal.msgSuccess("操作成功");
-        this.$emit("dialogClose");
-      });
+      if (this.stateForm2.eqType == 30) {
+        controlEvacuationSignDevice(param).then((response) => {
+          console.log(response, "提交控制");
+          this.$modal.msgSuccess("操作成功");
+          this.$emit("dialogClose");
+        });
+      } else if (this.stateForm2.eqType == 31) {
+        controlGuidanceLampDevice(param).then((response) => {
+          console.log(response, "提交控制");
+          this.$modal.msgSuccess("操作成功");
+          this.$emit("dialogClose");
+        });
+      }
     },
     // 关闭弹窗
     handleClosee() {
-      this.$emit("dialogClose");
+      this.visible = false;
     },
-    //  设备管控
-    // handleControl() {
-    //   console.log(this.stateForm2, "this.stateForm211111111111");
-    //   this.stateForm2 = {};
-    //   console.log(this.stateForm2, "this.stateForm222222222222");
-
-    //   this.show1 = false;
-    //   this.show2 = true;
-    // },
   },
 };
 </script>
@@ -347,7 +348,6 @@ export default {
 ::v-deep.sliderClass {
   .el-slider__runway {
     width: 100%;
-    // background-color: #006784;
     margin: 12px 0;
   }
   .el-slider__bar {
@@ -400,24 +400,12 @@ export default {
   z-index: 10;
   font-size: 10px;
 }
-// ::v-deep .el-input__inner {
-//   color: white !important;
-// }
-// ::v-deep .el-input {
-//   width: 86%;
-// }
-// ::v-deep .el-scrollbar{
-//   background: #006784 !important;
-// }
 ::v-deep .el-select-dropdown__item.hover,
 .el-select-dropdown__item:hover {
   background-color: #1d58a9;
   color: white;
 }
-// ::v-deep .el-select-dropdown__item{
-//   color:white !important;
-// }
-// ::v-deep .el-select-dropdown__item.selected{
-//   color:white;
-// }
+::v-deep .el-dialog {
+  pointer-events: auto !important;
+}
 </style>

@@ -26,6 +26,10 @@ export default {
     },
     monthData: {
       type: null
+    },
+    datePickerMonth:{
+      type: null
+,
     }
   },
   watch: {
@@ -65,12 +69,31 @@ export default {
       // Y轴
       var yData = [];
       if(myData.length == 0){
-          xData = ['测试数据1','测试数据2','测试数据3','测试数据4']
-          yData = [0,0,0,0]
+          let dataTime;
+          if(this.datePickerMonth!=null){
+            if(this.datePickerMonth  instanceof Date){
+              dataTime = this.datePickerMonth
+            }else{
+              dataTime = new Date(this.datePickerMonth);
+            }
+          }else{
+            dataTime = new Date();
+          }
+          let dataInfo = [];
+          let dataInfoY = [];
+          //模拟数据
+          for (let index = 1; index <= 12; index++) {
+              let endYear = dataTime.getFullYear();
+              let endMonth = index;
+              dataInfo.push(endYear+"-"+endMonth);
+              dataInfoY.push(0);
+          }
+          xData = dataInfo;
+          yData = dataInfoY;
       }else{
         for(var i=0;i<myData.length;i++){
           xData.push(myData[i].date + "月");
-          yData.push(Number(myData[i].byVehicelNum) / 2);
+          yData.push(Number(myData[i].byVehicelNum));
         }
       }
       this.chart.setOption({

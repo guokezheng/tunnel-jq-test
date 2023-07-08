@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ruoyi.common.annotation.Excels;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -16,6 +19,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author ruoyi
  * @date 2022-11-04
  */
+
 public class SdTaskList extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -24,55 +28,180 @@ public class SdTaskList extends BaseEntity
     private String id;
 
     /** 所属单位id(新增时保存当前登录人的单位id) */
-    @Excel(name = "所属单位id(新增时保存当前登录人的单位id)")
     private String zzjgId;
 
-    /** 计划完成时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date endPlantime;
+    private String deptId;
+
+    /** 隧道id */
+    /*@Excel(name = "隧道id")*/
+    private String tunnelId;
+
+    private String sdName;
+
+
+
+    /** tunnel对象 */
+    @Excels({
+            @Excel(name = "所属隧道", targetAttr = "tunnelName"),
+    })
+    private SdTunnels tunnelName;
+
+    /**
+     * 隧道对象
+     * @return
+     */
+    public SdTunnels getTunnelName() {
+        if (tunnelName == null)
+        {
+            tunnelName = new SdTunnels();
+        }
+        return tunnelName;
+    }
+
+    public void setTunnelName(SdTunnels tunnelName) {
+        this.tunnelName = tunnelName;
+    }
+
+
+
+    private String time;
+
+    public String getSdName() {
+        return this.sdName;
+    }
+
+    public void setSdName( String sdName) {
+        this.sdName = sdName;
+    }
+
+    public String getDeptId() {
+        return this.deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getTime() {
+        return this.time;
+    }
+
+    public void setTime(final String time) {
+        this.time = time;
+    }
+
+    /** 任务名称 */
+    @Excel(name = "任务名称")
+    private String taskName;
 
     /** 派单人员 */
     @Excel(name = "派单人员")
     private String dispatcher;
 
     /** 派单时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "派单时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "派单时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date dispatchTime;
 
     /** 指派巡查班组id */
-    @Excel(name = "指派巡查班组id")
+   /* @Excel(name = "指派巡查班组id")*/
     private String bzId;
+    @Excel(name = "巡查班组")
+    private String bzName;
+
+    /** 预完成时 */
+    @Excel(name = "预完成时", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endPlantime;
+     /*任务完成情况*/
+    private String finishStatus;
+
 
     /** 任务描述 */
-    @Excel(name = "任务描述")
+   /* @Excel(name = "任务描述")*/
     private String taskDescription;
 
     /** 发布状态(0:未发布状态;1:已废止状态;2:发布状态) */
-    @Excel(name = "发布状态(0:未发布状态;1:已废止状态;2:发布状态)")
+    /*@Excel(name = "发布状态")*/
     private String publishStatus;
 
-    /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时） */
-    @Excel(name = "任务状态", readConverterExp = "0=::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时")
+    /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:超时） */
+    /*@Excel(name = "任务状态")*/
     private String taskStatus;
 
+    @Excel(name = "发布状态")
+    private String publish;
+
+    @Excel(name = "任务状态")
+    private String task;
+
     /** 巡查人员id */
-    @Excel(name = "巡查人员id")
+   /* @Excel(name = "巡查人员id")*/
     private String walkerId;
 
+    private Long userId;
+
     /** 任务完成时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "任务完成时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+   /* @Excel(name = "任务完成时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private Date taskEndtime;
 
+    private String ids;
+
+
     /** 任务持续时间 */
-    @Excel(name = "任务持续时间", width = 30, dateFormat = "yyyy-MM-dd")
+   /* @Excel(name = "任务持续时间", width = 30, dateFormat = "yyyy-MM-dd")*/
     private String  taskCxtime;
 
     /** 现场情况描述 */
-    @Excel(name = "现场情况描述")
+  /*  @Excel(name = "现场情况描述")*/
     private String siteDescription;
+
+    private String dictLabel;
+
+
+    private String dictValue;
+
+    public String getFinishStatus() {
+        return this.finishStatus;
+    }
+
+    public void setFinishStatus( String finishStatus) {
+        this.finishStatus = finishStatus;
+    }
+
+    public Long getUserId() {
+        return this.userId;
+    }
+
+    public void setUserId( Long userId) {
+        this.userId = userId;
+    }
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds(final String ids) {
+        this.ids = ids;
+    }
+
+    public String getPublish() {
+        return this.publish;
+    }
+
+    public void setPublish( String publish) {
+        this.publish = publish;
+    }
+
+    public String getTask() {
+        return this.task;
+    }
+
+    public void setTask( String task) {
+        this.task = task;
+    }
+
     /*是否超时*/
     private String ifchaosgu;
 
@@ -86,6 +215,46 @@ public class SdTaskList extends BaseEntity
 
     /*巡检点数量*/
     private Integer totalNum;
+
+    public String getBzName() {
+        return this.bzName;
+    }
+
+    public void setBzName(final String bzName) {
+        this.bzName = bzName;
+    }
+
+    public String getTunnelId() {
+        return this.tunnelId;
+    }
+
+    public void setTunnelId(final String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    public String getTaskName() {
+        return this.taskName;
+    }
+
+    public void setTaskName(final String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getDictLabel() {
+        return this.dictLabel;
+    }
+
+    public void setDictLabel(final String dictLabel) {
+        this.dictLabel = dictLabel;
+    }
+
+    public String getDictValue() {
+        return this.dictValue;
+    }
+
+    public void setDictValue(final String dictValue) {
+        this.dictValue = dictValue;
+    }
 
     public Integer getTotalNum() {
         return this.totalNum;
@@ -186,7 +355,7 @@ public class SdTaskList extends BaseEntity
     {
         return taskStatus;
     }
-    public void setWalkerId(String walkerId) 
+    public void setWalkerId(String walkerId)
     {
         this.walkerId = walkerId;
     }

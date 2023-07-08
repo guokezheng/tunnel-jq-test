@@ -17,7 +17,7 @@ export function getAssociation(id) {
   })
 }
 
-export function getAssociationByTunnelId(tunnelId) {
+export function getAssociationsByTunnelId(tunnelId) {
   return request({
     url: '/system/association/getDetail/' + tunnelId,
     method: 'get'
@@ -41,6 +41,15 @@ export function updateAssociation(data) {
     data: data
   })
 }
+
+export function updateTunnelAssociations(data) {
+  return request({
+    url: '/system/association/updateTunnelAssociations',
+    method: 'put',
+    data: data
+  })
+}
+
 
 // 删除隧道关联关系
 export function delAssociation(id) {

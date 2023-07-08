@@ -105,10 +105,19 @@ public class SdSparePartsWarehouse extends BaseEntity
     private String remake;
 
     /** 备注1 */
-    @Excel(name = "备注1")
+    /*@Excel(name = "备注1")*/
     @ApiModelProperty("备注1")
     private String remake1;
 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
 
     public String getTunnelId() {
         return tunnelId;

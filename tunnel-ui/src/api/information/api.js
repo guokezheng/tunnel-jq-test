@@ -10,10 +10,12 @@ export function listTunnels(deptId) {
 
 
   // 查询位置信息
-export function devicessize() {
+export function devicessize(query) {
     return request({
       url: '/information/getdevicessize',
       method: 'get',
+      params: query
+
     })
   }
 
@@ -39,5 +41,31 @@ export function getBoardEditInfo(deviceId) {
   return request({
     url: '/parser/board/getBoardEditInfo?deviceId='+deviceId,
     method: 'get',
+  })
+}
+
+// 查询情报板设备列表
+export function getIotBoardList(query) {
+  return request({
+    url: '/information/getIotBoardList',
+    method: 'get',
+    params: query
+  })
+}
+// 预案查询情报板模板
+export function getVmsTemplateList(query) {
+  return request({
+    url: '/system/template/getVmsTemplateList',
+    method: 'get',
+    params: query
+  })
+}
+// 查询当前情报板信息
+
+export function selectVmsContent(query) {
+  return request({
+    url: '/plan/process/selectVmsContent',
+    method: 'get',
+    params: query
   })
 }

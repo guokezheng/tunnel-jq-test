@@ -186,6 +186,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/electromechanicalPatrol/teamsManage',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'teamsUser/:deptId',
+        component: (resolve) => require(['@/views/electromechanicalPatrol/teamsManage/authTeamsUser'], resolve),
+        name: 'AuthUser',
+        meta: { title: '包含用户', activeMenu: '/electromechanicalPatrol/teamsManage'}
+      }
+    ]
+  },
+  {
     path: '/system/dict-data',
     component: Layout,
     hidden: true,
@@ -224,10 +237,22 @@ export const constantRoutes = [
       }
     ]
   },
+  // {
+  //   path: '/bigscreen/index.html',
+  //   name: '数据可视化大屏',
+  //   component: (resolve) => require(['@/views/bigscreen/index2'], resolve),
+  //   hidden: true
+  // },
   {
-    path: '/bigscreen/index.html',
+    path: '/bigScreen2/index.html',
     name: '数据可视化大屏',
-    component: (resolve) => require(['@/views/bigscreen/index2'], resolve),
+    component: (resolve) => require(['@/views/bigScreen2/index'], resolve),
+    hidden: true
+  },
+  {
+    path: '/tunnelDialog',
+    name: '隧道大屏弹窗',
+    component: (resolve) => require(['@/views/bigScreen2/tunnelDialog'], resolve),
     hidden: true
   },
   //诱导灯参数配置
@@ -240,6 +265,7 @@ export const constantRoutes = [
 ]
 
 export default new Router({
+ // base:"/tunnel",
   mode: 'hash', // 去掉url中的#
   // mode: 'history', // 去掉url中的#
   scrollBehavior: () => ({ y: 0 }),

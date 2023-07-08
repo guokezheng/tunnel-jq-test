@@ -61,6 +61,5 @@ public interface ExternalSystemMapper
      */
     public int deleteExternalSystemByIds(Long[] ids);
 
-    ExternalSystem getByBrandAndDept(ExternalSystem externalSystem);
 
 }

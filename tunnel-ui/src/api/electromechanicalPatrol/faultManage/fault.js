@@ -56,7 +56,7 @@ export function exportList(query) {
 // 故障运行状态
 export function getEquipmentInfo(query) {
   return request({
-    url: '/fault/list/getEquipmentInfo/',
+    url: '/fault/list/getEquipmentInfo',
     method: 'post',
     data: query
   })
@@ -68,5 +68,15 @@ export function getRepairRecordList(data) {
     url: '/fault/list/getFaultRepairInfo',
     method: 'post',
     data: data
+  })
+}
+
+
+// 导出设备故障
+export function exportFaultList(query) {
+  return request({
+    url: '/fault/list/export',
+    method: 'get',
+    params: query
   })
 }

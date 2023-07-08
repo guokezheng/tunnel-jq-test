@@ -91,11 +91,47 @@ public interface ISdTunnelsService {
      * @param deptId
      * @return
      */
-    List<SdTunnels> selectTunnelList(String deptId);
+    List<SdTunnels> selectTunnelList(String deptId,String tunnelId);
 
     /**
      * 查询当前登录者所属
      * @return
      */
     List<SdTunnels> getJlyTunnel();
+
+    List<SdTunnels> selectAllSdTunnelsList();
+
+    /**
+     * 查询所有的隧道列表
+     * @param sdTunnels
+     * @return
+     */
+    List<SdTunnels> selectSdTunnelsList1(SdTunnels sdTunnels);
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    List<SdTunnels> selectAllSdTunnelsList1();
+
+    /**
+     * 查询隧道所属部门
+     * @param tunnelId
+     * @return
+     */
+    String selectTunnelDept(String tunnelId);
+
+    /**
+     * 查询数据报表折线图设备树
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> selectTunnelLineList(String deptId);
+
+    /**
+     * 获取部门下的所有隧道
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> selectTunnels(String deptId);
 }

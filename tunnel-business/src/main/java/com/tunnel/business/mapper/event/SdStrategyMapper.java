@@ -88,6 +88,8 @@ public interface SdStrategyMapper
      * @return
      */
     public Long[] getStrategyRefJobIds(Long[] ids);
+
+    List<Map> workTriggerInfo(String tunnelId);
     /**
      * 批量删除控制策略
      * 
@@ -112,7 +114,7 @@ public interface SdStrategyMapper
      */
     /*public List<SdStrategy> selectStrategyList(SdStrategy sdStrategy);*/
 
-    public List<Map<String, Object>> checkStrategyIfExist(Long id);
+    public int checkStrategyIfExist(@Param("id") Long id);
 
     public List<Map<String,String>> getManualStrategy();
 
@@ -122,4 +124,20 @@ public interface SdStrategyMapper
      * @return
      */
     List<SdStrategy> getSafetyHandle(SdStrategy strategy);
+
+    int checkStrategy(SdStrategy strategy);
+
+    /**
+     * 查询事件触发预警策略
+     * @param strategy
+     * @return
+     */
+    List<Map<String, Object>> getEventStrategyData(SdStrategy strategy);
+
+    /**
+     * 校验名称是否重复
+     * @param strategy
+     * @return
+     */
+    int checkStrName(SdStrategy strategy);
 }

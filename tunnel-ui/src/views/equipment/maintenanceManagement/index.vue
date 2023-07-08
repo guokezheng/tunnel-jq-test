@@ -92,7 +92,7 @@
             @click="openRecord(scope.row)"
             v-hasPermi="['trafficFlowInformation:information:edit']"
           >查看详情</el-button>
-      
+
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remake" />
@@ -382,7 +382,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有养护管理数据项？').then(() => {
+      this.$modal.confirm('是否确认导出养护管理数据项？').then(() => {
         this.exportLoading = true;
         return exportManagement(queryParams);
       }).then(response => {

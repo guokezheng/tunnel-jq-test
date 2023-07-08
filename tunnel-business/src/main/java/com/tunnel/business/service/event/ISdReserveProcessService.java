@@ -1,6 +1,7 @@
 package com.tunnel.business.service.event;
 
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.event.SdReserveProcess;
 import com.tunnel.business.domain.event.SdReserveProcessModel;
 
@@ -101,4 +102,11 @@ public interface ISdReserveProcessService {
      * @return
      */
     Integer planImplementa(String eventId, Long reserveId);
+
+    /**
+     * 预案策略中查看情报板信息
+     * @param sdReserveProcess
+     * @return
+     */
+    AjaxResult selectVmsContent(SdReserveProcess sdReserveProcess);
 }

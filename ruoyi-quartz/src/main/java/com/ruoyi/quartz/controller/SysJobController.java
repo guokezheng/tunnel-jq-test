@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +97,7 @@ public class SysJobController extends BaseController
             return error("新增任务'" + job.getJobName() + "'失败，目标字符串存在违规");
         }
         job.setCreateBy(getUsername());
-        return toAjax(jobService.insertJob(job));
+        return jobService.insertJob(job);
     }
 
     /**
@@ -128,7 +129,7 @@ public class SysJobController extends BaseController
             return error("修改任务'" + job.getJobName() + "'失败，目标字符串存在违规");
         }
         job.setUpdateBy(getUsername());
-        return toAjax(jobService.updateJob(job));
+        return jobService.updateJob(job);
     }
 
     /**
@@ -180,10 +181,15 @@ public class SysJobController extends BaseController
     public AjaxResult remove(@PathVariable String relationId) throws SchedulerException, TaskException
     {
         SysJob job=new SysJob();
-        job.setInvokeTarget(relationId);
+        /*job.setInvokeTarget(Long.valueOf(relationId));
         List<SysJob> sysJobs = jobService.selectJobList(job);
         for (SysJob rjob:sysJobs){
             jobService.deleteJob(rjob);
+        }*/
+        List<String> list = Arrays.asList(relationId.split(","));
+        for(String sysJobId : list){
+            job.setJobId(Long.valueOf(sysJobId));
+            jobService.deleteJob(job);
         }
         return AjaxResult.success();
     }

@@ -56,7 +56,7 @@ public class SdVehicleTypeController extends BaseController
     {
         List<SdVehicleType> list = sdVehicleTypeService.exportSdVehicleTypeList(sdVehicleType);
         ExcelUtil<SdVehicleType> util = new ExcelUtil<SdVehicleType>(SdVehicleType.class);
-        return util.exportExcel(list, "车辆类型配置数据");
+        return util.exportExcel(list, "车辆类型");
     }
 
     /**

@@ -28,7 +28,7 @@ export function addCmd(data) {
 
 // 修改plc 报文
 export function updateCmd(data) {
-  debugger
+  // debugger
   return request({
     url: '/cmd',
     method: 'put',

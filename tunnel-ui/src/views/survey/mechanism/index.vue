@@ -1,6 +1,101 @@
 <template>
   <div class="app-container">
-    <el-form
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" class="topFormRow">
+      <el-col :span="6">
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
+        <el-button size="small" @click="resetQuery" type="primary" plain
+            >刷新</el-button
+            >
+      </el-col>
+      <el-col :span="6" :offset="12">
+        <div ref="main" class="grid-content bg-purple">
+          <el-input
+              placeholder="请输入机构、负责人，回车搜索"
+              v-model="queryParams.deptName"
+              @keyup.enter.native="handleQuery"
+              size="small"
+            >
+              <el-button
+                slot="append"
+                class="searchTable"
+                @click="jg_boxShow = !jg_boxShow"
+              ></el-button>
+            </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <!-- <div>
+      <el-col :span="4">
+        <el-button style ="margin: 10px 0px 0px;height: 35px;"
+          type="primary"
+          plain
+          size="mini"
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
+      </el-col>
+    </div> -->
+    <!-- <div ref="main" style = "margin-left: 75%"> -->
+      <!-- <el-row :gutter="20" style="margin: 10px 0 25px">
+
+        <el-col :span="6"  style ="width: 100%;">
+          <div class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入机构、负责人，回车搜索"
+              v-model="queryParams.deptName"
+              @keyup.enter.native="handleQuery"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-s-fold"
+                @click="jg_boxShow = !jg_boxShow"
+              ></el-button>
+            </el-input>
+          </div>
+        </el-col>
+      </el-row> -->
+      <div class="searchBox" v-show="jg_boxShow">
+        <el-form
+          ref="queryForm"
+          :inline="true"
+          :model="queryParams"
+          label-width="75px"
+        >
+
+          <el-form-item label="机构状态" prop="status">
+            <el-select
+              v-model="queryParams.status"
+              clearable
+              placeholder="请选择机构状态"
+              size="small"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item class="bottomBox">
+            <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+            >
+            <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
+    <!-- </div> -->
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -49,7 +144,8 @@
           @click="toggleExpandAll"
         >展开/折叠</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
+    <div class="tableTopHr" ></div>
 
       <el-table
         v-if="refreshTable"
@@ -58,9 +154,9 @@
         row-key="deptId"
         :default-expand-all="isExpandAll"
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-        max-height="640"
         :row-class-name="tableRowClassName"
         class="menuAdministration"
+        height="70vh"
       >
       <el-table-column label="机构名称" prop="deptName" />
       <el-table-column label="机构负责人" align="center" prop="leader" />
@@ -89,6 +185,7 @@ import { batchDelete } from "@/api/surveyMechanism/api.js";
 export default {
   data() {
     return {
+      jg_boxShow:false,
       //新增弹出
       open: false,
       // 遮罩层
@@ -125,7 +222,19 @@ export default {
   created() {
     this.getList();
   },
+  //点击空白区域关闭全局搜索弹窗
+  mounted() {
+    document.addEventListener("click", this.bodyCloseMenus);
+  },
   methods: {
+    bodyCloseMenus(e) {
+      let self = this;
+      if (this.$refs.main && !this.$refs.main.contains(e.target)) {
+        if (self.jg_boxShow == true){
+          self.jg_boxShow = false;
+        }
+      }
+    },
     /** 展开/折叠操作 */
     toggleExpandAll() {
       this.refreshTable = false;
@@ -149,10 +258,11 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.deptName = "";
       this.$refs.queryForm.resetFields();
       this.queryForm = {
         deptName: null,
-        leader: null,
+        /*leader: null,*/
         status: null
       };
       this.handleQuery();
@@ -211,5 +321,5 @@ export default {
 };
 </script>
 
-<style>
-</style>
+
+

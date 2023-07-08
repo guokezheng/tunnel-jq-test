@@ -29,13 +29,13 @@ public interface ISysDeptService
      */
     public List<SysDept> listDeptExcYG1(SysDept dept);
 
-    /**
-     * 查询部门管理数据(只查询 dept_id=YG1及其子孙部门)
-     *
-     * @param dept 部门信息
-     * @return 部门信息集合
-     */
-    public List<SysDept> treeselectYG1(SysDept dept);
+//    /**
+//     * 查询部门管理数据(只查询 dept_id=YG1及其子孙部门)
+//     *
+//     * @param dept 部门信息
+//     * @return 部门信息集合
+//     */
+//    public List<SysDept> treeselectYG1(SysDept dept);
 
     /**
      * 构建前端所需要树结构
@@ -68,6 +68,22 @@ public interface ISysDeptService
      * @return 部门信息
      */
     public SysDept selectDeptById(String deptId);
+
+    /**
+     * 根据ID查询所有子部门
+     *
+     * @param deptId 部门ID
+     * @return 部门列表
+     */
+    public List<SysDept> selectChildrenDeptById(String deptId);
+
+    /**
+     * 根据ID查询所有子部门及自身
+     *
+     * @param deptId 部门ID
+     * @return 部门列表
+     */
+    public List<SysDept> selectChildrenIncludeSelfById(String deptId);
 
     /**
      * 根据ID查询所有子部门（正常状态）
@@ -147,4 +163,28 @@ public interface ISysDeptService
      * @return
      */
     List<SysDept> selectTunnelDeptList(String deptId);
+
+    /**
+     * 查询单位
+     * @param
+     * @param ssdw
+     * @return
+     */
+    List<SysDept> selectTunnelDeptListBydw(String ssdw);
+
+    /**
+     * 管养部门树
+     * @param dept
+     * @return
+     */
+    List<SysDept> listDeptYG1(SysDept dept);
+
+    String getParentDept(String deptId);
+
+    /**
+     * 根据ID查询所有子部门及自身(状态：正常)
+     * @param deptId
+     * @return
+     */
+    List<SysDept> selectChildrenIncludeSelfByIdNormal(String deptId);
 }

@@ -28,11 +28,11 @@ export default {
       getToWeekEventWarning().then((res) => {
         const ywc = res.data[0].eventNumber;
         const wwc = res.data[1].eventNumber;
-        // var proportion = ((wwc / (wwc + ywc)) * 100).toFixed(2);
+        var proportion = ((wwc / (wwc + ywc)) * 100).toFixed(2);
         var option = {
           // backgroundColor: "#03141c",
           title: {
-            text: +wwc + "%",
+            text: proportion + "%",
             subtext: "未完成",
             x: "center",
             y: "center",
@@ -82,14 +82,7 @@ export default {
                   label: {
                     color: "rgba(255,255,255,.45)",
                     fontSize: 14,
-                    formatter: "未完成\n{a|" + wwc + "}个",
-                    rich: {
-                      a: {
-                        color: "#fff",
-                        fontSize: 20,
-                        lineHeight: 30,
-                      },
-                    },
+                    formatter: "未完成\n" + wwc + "个",
                   },
                 },
                 {
@@ -101,14 +94,7 @@ export default {
                   label: {
                     color: "rgba(255,255,255,.45)",
                     fontSize: 14,
-                    formatter: "已完成\n{a|" + ywc + "}个",
-                    rich: {
-                      a: {
-                        color: "#fff",
-                        fontSize: 20,
-                        lineHeight: 30,
-                      },
-                    },
+                    formatter: "已完成\n" + ywc + "个",
                   },
                 },
               ],
@@ -121,21 +107,20 @@ export default {
               data: [
                 {
                   value: wwc,
-                  name: "",
+                  name: "未完成",
                   itemStyle: {
                     color: "transparent",
                   },
                 },
                 {
                   value: ywc,
-                  name: "rose2",
+                  name: "已完成",
                   //
                   itemStyle: {
                     normal: {
                       color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
                         {
                           //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
-
                           offset: 0,
                           color: "#00a2ff",
                         },
@@ -148,18 +133,6 @@ export default {
                           color: "#00a2ff",
                         },
                       ]),
-                    },
-                  },
-                  label: {
-                    color: "rgba(255,255,255,.45)",
-                    fontSize: 14,
-                    formatter: "部门总量\n{a|52}个",
-                    rich: {
-                      a: {
-                        color: "#fff",
-                        fontSize: 20,
-                        lineHeight: 30,
-                      },
                     },
                   },
                 },

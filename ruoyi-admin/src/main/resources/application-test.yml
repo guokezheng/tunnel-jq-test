@@ -1,0 +1,42 @@
+#------测试环境配置-----
+ruoyi:
+  profile: /opt/suidao/file/uploadPath
+
+# 数据源配置
+spring:
+  datasource:
+    druid:
+      # 主库数据源
+      master:
+        url: jdbc:mysql://10.168.56.204:3306/tunnel-jq?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true
+        username: root
+        password: Platform123!@#
+
+  # redis 配置
+  redis:
+    # 地址
+    host: 10.168.56.206
+    # 端口，默认为6379
+    port: 6379
+    # 数据库索引
+    database: 10
+    # 密码
+    password: Redis123!@#
+    # 连接超时时间
+    timeout: 1000s
+
+  kafka:
+    wulian:
+      #非正式环境使用地址，修改端口号避免推送测试数据
+      bootstrap-servers: 10.166.139.204:9093,10.166.139.205:9093,10.166.139.206:9093
+    huawei:
+      #非正式环境使用地址，避免接收推送数据
+      bootstrap-servers: 100.7.187.29:9092
+
+sso:
+  url: http://10.166.154.213:30001
+
+device:
+  hongmeng:
+    #非正式环境使用地址，修改地址信息避免推送测试数据
+    url: http://100.70.187.28:60400/qxsd-iot

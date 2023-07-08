@@ -55,7 +55,7 @@ public class SdDeviceChangeController extends BaseController
     {
         List<SdDeviceChange> list = sdDeviceChangeService.selectSdDeviceChangeList(sdDeviceChange);
         ExcelUtil<SdDeviceChange> util = new ExcelUtil<SdDeviceChange>(SdDeviceChange.class);
-        return util.exportExcel(list, "设备变更数据");
+        return util.exportExcel(list, "设备变更");
     }
 
     /**

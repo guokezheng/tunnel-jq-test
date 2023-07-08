@@ -1,6 +1,9 @@
 package com.tunnel.business.service.event.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -9,16 +12,13 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.event.*;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
-import com.tunnel.business.mapper.event.SdReservePlanMapper;
-import com.tunnel.business.mapper.event.SdReserveProcessMapper;
-import com.tunnel.business.mapper.event.SdStrategyMapper;
-import com.tunnel.business.mapper.event.SdStrategyRlMapper;
-import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
+import com.tunnel.business.mapper.event.*;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +50,15 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
 
     @Autowired
     private ISdEventService sdEventService;
+
+    @Autowired
+    private SdReservePlanMapper sdReservePlanMapper;
+
+    @Autowired
+    private IotBoardTemplateMapper templateMapper;
+
+    @Autowired
+    private SdJoinPlanStrategyMapper planStrategyMapper;
 
     /**
      * 查询预案流程节点
@@ -104,53 +114,84 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchSdReserveProcessed(SdReserveProcessModel sdReserveProcesses) {
-        List<SdReserveProcess> list = new ArrayList<>();
+        //获取预案id
         String planId = sdReserveProcesses.getReserveId().toString();
+        //查询预案信息
+        SdReservePlan sdReservePlan = sdReservePlanMapper.selectSdReservePlanById(Long.valueOf(planId));
+        //查询此预案是否被使用
+        /*int currCount = sdReservePlanMapper.checkCurrId(sdReservePlan);
+        if(currCount > 0){
+            throw new RuntimeException("当前预案已被普通事件使用，请勿修改");
+        }*/
+        if(sdReserveProcesses.getSdReserveProcesses().isEmpty()){
+            throw new RuntimeException("无效数据策略添加失败");
+        }
+        List<SdReserveProcess> list = new ArrayList<>();
+
+        //查询历史预案流程节点
+        SdReserveProcess process1 = new SdReserveProcess();
+        process1.setReserveId(sdReserveProcesses.getReserveId());
+        List<SdReserveProcess> processesList = sdReserveProcessMapper.selectSdReserveProcessList(process1);
+        processesList.stream().forEach(item -> {
+            planStrategyMapper.deletePlanStrategyVms(item.getId(),"2");
+        });
         //删除预案流程节点
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
         SpringUtils.getBean(SdStrategyRlMapper.class).deleteSdStrategyRlByPlanId(Long.valueOf(planId));
         for (Map process : sdReserveProcesses.getSdReserveProcesses()) {
-            SdReserveProcess reserveProcess = new SdReserveProcess();
-            SdStrategyRl rl = new SdStrategyRl();
-            String equipments = "";
-            if(StrUtil.isNotBlank(process.get("equipments").toString())){
-                List<String> value = (List<String>) process.get("equipments");
-                equipments = StringUtils.join(value,",");
+            //处置名称
+            String processStageName = process.get("processStageName").toString();
+            //联控流程集合
+            List<Map<String, Object>> list1 = (List<Map<String, Object>>)process.get("processesList");
+
+            for(Map<String, Object> item : list1){
+                List<String> equipments = new ArrayList<>();
+                if(item.get("equipments").toString() != "" && item.get("equipments") != null){
+                    equipments = (List<String>)item.get("equipments");
+                }
+                if(item.get("state").equals("")){
+                    throw new RuntimeException("无效数据策略添加失败");
+                }
+                SdReserveProcess reserveProcess = new SdReserveProcess();
+                String eqTypeId = item.get("eqTypeId").toString();
+                String eqState = String.valueOf(item.get("state"));
+
+                //新增策略关联设备信息
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(eqTypeId);
+                rl.setEquipments(StringUtils.join(equipments,","));
+                rl.setState(eqState);
+                if(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString().equals(eqTypeId) || DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString().equals(eqTypeId)){
+                    if(eqState.equals("1")){
+                        rl.setState(item.get("brightness").toString());
+                    }else {
+                        rl.setState("0");
+                    }
+                }
+                rl.setPlanId(planId);
+                rl.setRetrievalRule(item.get("retrievalRule").toString());
+                SpringUtils.getBean(SdStrategyRlMapper.class).insertSdStrategyRl(rl);
+
+                //保存预案流程信息
+                reserveProcess.setProcessName(item.get("processName").toString());
+                reserveProcess.setProcessSort(Integer.parseInt(process.get("processSort").toString()));
+                reserveProcess.setDeviceTypeId(Long.valueOf(eqTypeId));
+                reserveProcess.setStrategyId(rl.getId());
+                reserveProcess.setReserveId(Long.valueOf(planId));
+                reserveProcess.setProcessStageName(processStageName);
+                reserveProcess.setCreateTime(DateUtils.getNowDate());
+                reserveProcess.setState(eqState);
+                list.add(reserveProcess);
             }
-            String equipmentTypeId = process.get("eqTypeId") + "";
-            String eqState = (String) process.get("state");
-            rl.setEqTypeId(equipmentTypeId);
-            rl.setEquipments(equipments);
-            rl.setState(eqState);
-            rl.setPlanId(planId);
-            rl.setRetrievalRule(process.get("retrievalRule").toString());
-            SpringUtils.getBean(SdStrategyRlMapper.class).insertSdStrategyRl(rl);
-            //rl.getId();
-            reserveProcess.setProcessName(process.get("processName").toString());
-            reserveProcess.setProcessSort(Integer.parseInt(process.get("processSort").toString()));
-            reserveProcess.setDeviceTypeId(Long.valueOf(equipmentTypeId));
-            reserveProcess.setStrategyId(rl.getId());
-            reserveProcess.setReserveId(Long.valueOf(planId));
-            //SpringUtils.getBean(SdStrategyRlMapper.class).insertSdStrategyRl(rl);
-//            Long[] strategyIds = process.getHandleStrategyList();
-//            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(strategyIds[1]);
-//            if(rlList.isEmpty()){
-//                continue;
-//            }
-//            reserveProcess.setReserveId(sdReserveProcesses.getReserveId());
-//            reserveProcess.setDeviceTypeId(Long.parseLong(rl.getEqTypeId()));
-//            reserveProcess.setProcessName(process.getProcessName());
-//            reserveProcess.setProcessSort(process.getProcessSort());
-//            reserveProcess.setStrategyId(rl.getId());
-//            reserveProcess.setCreateTime(DateUtils.getNowDate());
-//            reserveProcess.setCreateBy(SecurityUtils.getUsername());
-            list.add(reserveProcess);
         }
         int result = -1;
-        if(list.isEmpty()){
-            throw new RuntimeException("无效数据策略添加失败");
-        }
         result = sdReserveProcessMapper.batchSdReserveProcess(list);
+        list.stream().forEach(item -> {
+            if(DevicesTypeEnum.VMS.getCode() == item.getDeviceTypeId() || DevicesTypeEnum.MEN_JIA_VMS.getCode() == item.getDeviceTypeId()){
+                //储存情报板信息
+                setJoinVms(item.getState(),item.getId());
+            }
+        });
         return result;
     }
 
@@ -311,9 +352,9 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             List<SdEquipmentState> sdEquipmentStates = new ArrayList<>();
             if(rl.getEqTypeId().equals(DevicesTypeEnum.VMS.getCode().toString()) || rl.getEqTypeId().equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString())){
                 String templateId = rl.getState();
-                SdVmsTemplateContent content = new SdVmsTemplateContent();
+                IotBoardTemplateContent content = new IotBoardTemplateContent();
                 content.setTemplateId(templateId);
-                List<SdVmsTemplateContent> contentList = SpringUtils.getBean(SdVmsTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
+                List<IotBoardTemplateContent> contentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
                 eqOperation.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
             }else{
                 SdEquipmentState state = new SdEquipmentState();
@@ -439,5 +480,49 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         map.put("strategy",strategy);
         int result = sdEventFlowService.execPlanSaveEventFlow(eventId, map);
         return result;
+    }
+
+    @Override
+    public AjaxResult selectVmsContent(SdReserveProcess sdReserveProcess) {
+        Map<String, Object> map = new HashMap<>();
+        if(sdReserveProcess.getId() != null && sdReserveProcess.getId() != 0L){
+            SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+            planStrategy.setType("2");
+            if(sdReserveProcess.getType() != null){
+                planStrategy.setType(sdReserveProcess.getType());
+            }
+
+            planStrategy.setCurrentId(sdReserveProcess.getId());
+            planStrategy.setTemplateId(sdReserveProcess.getState());
+            map = planStrategyMapper.getTemplateContent(planStrategy);
+            if(map == null){
+                map = templateMapper.getSdVmsTemplateContent(Long.valueOf(sdReserveProcess.getState()));
+            }
+        }else {
+            map = templateMapper.getSdVmsTemplateContent(Long.valueOf(sdReserveProcess.getState()));
+        }
+        return AjaxResult.success(map);
+    }
+
+    public void setJoinVms(String tempId, Long id){
+        Map<String, Object> vmsData = templateMapper.getSdVmsTemplateContent(Long.valueOf(tempId));
+        if(vmsData == null){
+            return;
+        }
+        SdJoinPlanStrategy planStrategy = new SdJoinPlanStrategy();
+        planStrategy.setScreenSize(vmsData.get("screen_size").toString());
+        planStrategy.setContent(vmsData.get("content").toString());
+        planStrategy.setCoordinate(vmsData.get("coordinate").toString());
+        planStrategy.setCurrentId(id);
+        planStrategy.setFontColor(vmsData.get("font_color").toString());
+        planStrategy.setFontSize(Long.valueOf(vmsData.get("font_size").toString()));
+        planStrategy.setFontSpacing(Long.valueOf(vmsData.get("font_spacing").toString()));
+        planStrategy.setFontType(vmsData.get("font_type").toString());
+        planStrategy.setTemplateId(tempId);
+        //0：预案 1：策略 2:情报板
+        planStrategy.setType("2");
+        planStrategy.setCreateTime(DateUtils.getNowDate());
+        planStrategy.setStopTime(Long.valueOf(vmsData.get("stop_time").toString()));
+        planStrategyMapper.insertSdJoinPlanStrategy(planStrategy);
     }
 }

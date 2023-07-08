@@ -3,10 +3,7 @@
     <div class="eventBox">
       <div class="title">
         事件详情
-        <!-- <img
-          src="../../assets/cloudControl/dialogHeader.png"
-          style="height: 30px"
-        /> -->
+
         <img
           src="../../assets/cloudControl/closeIcon.png"
           style="
@@ -19,34 +16,27 @@
           @click="closeDialogTable()"
         />
       </div>
-      <div class="blueLine"></div>
       <div class="listContent">
-        <div v-for="(item, index) of list" :key="index">
+        <div
+          v-for="(item, index) of list"
+          :key="index"
+          @click="handleSee(item.id)"
+        >
           <el-row style="color: white; font-size: 14px">
             <el-col :span="2">
               <img
-                :src="item.iconUrl"
+                :src="item.eventType.iconUrl"
                 style="width: 20px; height: 20px; transform: translateY(5px)"
               />
             </el-col>
             <el-col :span="3">
               <div>{{ item.eventType.eventType }}</div>
             </el-col>
-            <el-col :span="15">
+            <el-col :span="19">
               <div class="overflowText">{{ item.eventTitle }}</div>
               <div style="float: right; margin-right: 16px">
                 {{ item.startTime }}
               </div>
-            </el-col>
-            <el-col :span="2">
-              <el-button size="mini" type="text" @click="handleSee(item.id)"
-                >查看
-              </el-button>
-            </el-col>
-            <el-col :span="2">
-              <el-button size="mini" type="text" @click="handleIgnore(item.id)"
-                >忽略
-              </el-button>
             </el-col>
           </el-row>
           <div class="lineBT">
@@ -59,7 +49,7 @@
     </div>
   </div>
 </template>
-  
+
   <script>
 import { mapState } from "vuex";
 import bus from "@/utils/bus";
@@ -73,7 +63,6 @@ export default {
   },
   data() {
     return {
-      // showTable:false,
       carIcon: require("@/assets/icons/carIcon.png"),
       eventTableDialog: false,
       activeName: "0",
@@ -98,50 +87,29 @@ export default {
     sdEventList: {
       immediate: true,
       handler: function (event) {
-        console.log(event, "事件弹窗");
-
+        console.log(event, "事件弹窗websockt推送");
         this.list = event;
       },
-      // this.eventTableDialog = true;
-      // this.showTable = true
     },
     deep: true,
   },
-  created() {
-    // this.getDicts("sd_event_source").then((data) => {
-    //   console.log(data, "事件来源");
-    //   this.tabList = data.data;
-    //   this.tabList.forEach((item) => {
-    //     item.list = [];
-    //   });
-    // });
-  },
+  created() {},
   mounted() {
-    bus.$on('forceUpdateTable', (id) => {
+    bus.$on("forceUpdateTable", (id) => {
       let index = this.list.findIndex((item) => {
-          if (item.id == id) {
-            return true;
-          }
-        });
-        this.list.splice(index, 1);
-        if(this.list.length == 0){
-          bus.$emit("closeDialog");
+        if (item.id == id) {
+          return true;
         }
-    })
-    // this.handleSee()
-    // bus.$on('closeTableDialog', () => {
-    //    this.eventTableDialog = false
-    // })
-    // bus.$on('openTableDialog', () => {
-    //    this.eventTableDialog = true
-    // })
+      });
+      this.list.splice(index, 1);
+      if (this.list.length == 0) {
+        bus.$emit("closeDialog");
+      }
+    });
   },
   methods: {
     handleSee(id) {
-      setTimeout(() => {
-        bus.$emit("getPicId", id);
-      }, 200);
-      bus.$emit("openPicDialog");
+      bus.$emit("getPicId", id);
     },
 
     // 忽略事件
@@ -154,7 +122,6 @@ export default {
         updateEvent(param).then((response) => {
           this.$modal.msgSuccess("已成功忽略");
         });
-        // this.list = []
         let index = this.list.findIndex((item) => {
           if (item.id == id) {
             return true;
@@ -162,36 +129,11 @@ export default {
         });
         this.list.splice(index, 1);
         this.$forceUpdate();
-        // this.tabList.forEach((item) => {
-        //   item.list.forEach((its) =>{
-        //     if(its.id == id){
-        //       item.list.splice(its,1)
-        //     }
-        //   })
-        // });
         bus.$emit("getEvtList");
       } else {
         this.$modal.msgError("没有接收到事件id");
       }
     },
-
-    // 处理 跳转应急调度
-    // handleDispatch(event) {
-    //   const param = {
-    //     id: event.id,
-    //     eventState: "0",
-    //   };
-    //   updateEvent(param).then((response) => {
-    //     console.log(response, "修改状态");
-    //     this.$modal.msgSuccess("开始处理事件");
-    //   });
-    //   this.$router.push({
-    //     path: "/emergency/administration/dispatch",
-    //     query: { id: event.id },
-    //   });
-    //   bus.$emit("closeDialog");
-    //   this.eventTableDialog = false
-    // },
     closeDialogTable() {
       bus.$emit("closeDialog");
       this.eventTableDialog = false;
@@ -200,18 +142,10 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    // 表格的行样式
-    // tableRowClassName({ row, rowIndex }) {
-    //   if (rowIndex%2 == 0) {
-    //   return 'tableEvenRow';
-    //   } else {
-    //   return "tableOddRow";
-    //   }
-    // },
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
 .eventClass {
   position: absolute;
@@ -220,20 +154,24 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 100;
-  // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
   background-color: rgba($color: #000000, $alpha: 0.1);
-  // border-radius: 10px;
 }
 .eventBox {
   width: 570px;
   max-height: 180px;
-  border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
   position: absolute;
   top: 0px;
   left: calc(100% - 600px);
-  background: rgba($color: #00152b, $alpha: 0.9);
+  background-color: #00152b;
   z-index: 2000;
-
+  border-bottom: solid 2px white;
+  border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
+  border-left: solid 1px rgba($color: #0198ff, $alpha: 0.8);
+  border-right: solid 1px rgba($color: #0198ff, $alpha: 0.8);
+  .el-dialog__body {
+    padding: 0 !important;
+    width: 100% !important;
+  }
   .title {
     padding-left: 20px;
     height: 30px;
@@ -241,17 +179,11 @@ export default {
     color: white;
     font-size: 14px;
     font-weight: bold;
-    // background: linear-gradient(
-    //   270deg,
-    //   rgba(1, 149, 251, 0) 0%,
-    //   rgba(1, 149, 251, 0.35) 100%
-    // );
-    // border-top: solid 2px white;
+    background-image: url(../../assets/cloudControl/evtDialogTitle.png);
+    background-repeat: no-repeat;
     display: flex;
     justify-content: space-between;
-    // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
     margin: 0 !important;
-    background-image: url(../../assets/cloudControl/evtDialogTitle.png);
   }
   .blueLine {
     width: 20%;
@@ -263,10 +195,9 @@ export default {
 .listContent {
   max-height: 290px;
   overflow: auto;
-  background: rgba($color: #6c8097, $alpha: 0.3);
+  background: #44576f;
   margin: 10px;
   > div {
-    // margin-bottom: 6px;
     padding: 10px;
     padding-bottom: 0px;
   }
@@ -297,11 +228,7 @@ export default {
 }
 .lineBT {
   width: 100%;
-
   margin: 5px 0px auto;
-
-  // border-bottom: solid 1px white;
-  // transform: translateY(-30px);
   display: flex;
   > div:nth-of-type(1) {
     width: 5%;
@@ -317,4 +244,3 @@ export default {
   }
 }
 </style>
-  

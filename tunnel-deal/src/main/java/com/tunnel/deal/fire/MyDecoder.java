@@ -14,7 +14,7 @@ public class MyDecoder extends ByteToMessageDecoder {
         byte[] b = new byte[buffer.readableBytes()];
         //复制内容到字节数组b
         buffer.readBytes(b);
-        String str = new String(b, Charset.forName("GBK"));
+        String str = new String(b, Charset.forName("ASCII"));
         out.add(str);
     }
 }

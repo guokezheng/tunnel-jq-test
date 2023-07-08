@@ -1,10 +1,10 @@
 package com.ruoyi.common.core.redis;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundSetOperations;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisCache
 {
+    private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
+
     @Autowired
     public RedisTemplate redisTemplate;
 
@@ -178,6 +180,30 @@ public class RedisCache
     public <T> Map<String, T> getCacheMap(final String key)
     {
         return redisTemplate.opsForHash().entries(key);
+    }
+
+    /**
+     * 通过Scan模糊获取key
+     * @param key
+     * @return
+     */
+    public List<String> getScanKey(final String key)
+    {
+        long start = System.currentTimeMillis();
+        //需要匹配的key
+//        String patternKey = "pay:*";
+        ScanOptions options = ScanOptions.scanOptions()
+                .count(10000) //这里指定每次扫描key的数量
+                .match(key).build();
+        RedisSerializer<String> redisSerializer = (RedisSerializer<String>) redisTemplate.getKeySerializer();
+        Cursor cursor = (Cursor) redisTemplate.executeWithStickyConnection(redisConnection -> new ConvertingCursor<>(redisConnection.scan(options), redisSerializer::deserialize));
+        List<String> result = new ArrayList<>();
+        while(cursor.hasNext()){
+            result.add(cursor.next().toString());
+        }
+        //切记这里一定要关闭，否则会耗尽连接数。
+        cursor.close();
+        return result;
     }
 
     /**

@@ -186,7 +186,7 @@ $theme-blue-rgba: rgba(0, 74, 119, 0.8);
     // background-color: rgba(0, 74, 119, 0.8);
     .el-scrollbar {
       .scrollbar-wrapper.el-scrollbar__wrap {
-        margin: 0px !important;
+        margin-right: -16px !important;
         overflow: auto;
       }
       .scrollbar-wrapper .el-scrollbar__wrap::-webkit-scrollbar {

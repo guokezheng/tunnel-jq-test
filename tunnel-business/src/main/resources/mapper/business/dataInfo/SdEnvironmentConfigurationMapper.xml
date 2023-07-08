@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="environmentType != null  and environmentType != ''"> and environment_type = #{environmentType}</if>
             <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectSdEnvironmentConfigurationList_exp" parameterType="SdEnvironmentConfiguration" resultMap="SdEnvironmentConfigurationResult">

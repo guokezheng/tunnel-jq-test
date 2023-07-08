@@ -28,7 +28,7 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
      * @return 设备协议
      */
     @Override
-    public SdDevicesProtocol selectSdDevicesProtocolById(Integer id) {
+    public SdDevicesProtocol selectSdDevicesProtocolById(Long id) {
         return sdDevicesProtocolMapper.selectSdDevicesProtocolById(id);
     }
 
@@ -53,11 +53,12 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
     public int insertSdDevicesProtocol(SdDevicesProtocol sdDevicesProtocol) {
         SdDevicesProtocol protocol = new SdDevicesProtocol();
         protocol.setBrandId(sdDevicesProtocol.getBrandId());
-        protocol.setEqTypeId(sdDevicesProtocol.getEqTypeId());
+        protocol.setEqType(sdDevicesProtocol.getEqType());
         List<SdDevicesProtocol> list = sdDevicesProtocolMapper.selectSdDevicesProtocolList(protocol);
-        if (!CollectionUtils.isEmpty(list)) {
-            throw new RuntimeException("已存在相同设备品牌和类型的数据，请确认！");
+        if (list.size() > 0) {
+            throw new RuntimeException("已存在相同设备品牌和类型的数据，请确认");
         }
+
         sdDevicesProtocol.setCreateTime(DateUtils.getNowDate());
         sdDevicesProtocol.setIsDel(0);
         return sdDevicesProtocolMapper.insertSdDevicesProtocol(sdDevicesProtocol);
@@ -86,7 +87,7 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
      * @return 结果
      */
     @Override
-    public int deleteSdDevicesProtocolByIds(Integer[] ids) {
+    public int deleteSdDevicesProtocolByIds(Long[] ids) {
         return sdDevicesProtocolMapper.deleteSdDevicesProtocolByIds(ids);
     }
 
@@ -97,7 +98,7 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
      * @return 结果
      */
     @Override
-    public int deleteSdDevicesProtocolById(Integer id) {
+    public int deleteSdDevicesProtocolById(Long id) {
         return sdDevicesProtocolMapper.deleteSdDevicesProtocolById(id);
     }
 

@@ -115,6 +115,10 @@ public interface ISdIotDeviceService {
 
     List<SdIotDevice> selectIotDeviceArrayList(SdIotDevice iotDevice);
 
-    public List<Map<String, Object>> getDevicesSize();
+    public List<Map<String, Object>> getDevicesSize(SdIotDevice iotDevice);
+
+    List<Long> selectIotDevicesByTunnelId(String tunnelId);
+
+    public List<Map<String, Object>> getIotBoardList(SdIotDevice iotDevice);
 
 }

@@ -49,13 +49,61 @@ public class SdEventHandle extends BaseEntity
     private List<SdEventHandle> children;
 
     @ApiModelProperty("预案Id")
-    private Long reserveId;
+    private String reserveId;
 
     @ApiModelProperty("环节Id")
     private Long processId;
 
     @ApiModelProperty("流程排序")
     private String flowSort;
+
+    @ApiModelProperty("流程名称")
+    private String flowName;
+
+    @ApiModelProperty("历史条数")
+    private String flowNum;
+
+    /**
+     * 预案名称
+     */
+    private String reserveName;
+
+    /**
+     * 设备类型id
+     */
+    private Long eqTypeId;
+
+    public Long getEqTypeId() {
+        return eqTypeId;
+    }
+
+    public void setEqTypeId(Long eqTypeId) {
+        this.eqTypeId = eqTypeId;
+    }
+
+    public String getReserveName() {
+        return reserveName;
+    }
+
+    public void setReserveName(String reserveName) {
+        this.reserveName = reserveName;
+    }
+
+    public String getFlowNum() {
+        return flowNum;
+    }
+
+    public void setFlowNum(String flowNum) {
+        this.flowNum = flowNum;
+    }
+
+    public String getFlowName() {
+        return flowName;
+    }
+
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
+    }
 
     public String getFlowSort() {
         return flowSort;
@@ -65,11 +113,11 @@ public class SdEventHandle extends BaseEntity
         this.flowSort = flowSort;
     }
 
-    public Long getReserveId() {
+    public String getReserveId() {
         return reserveId;
     }
 
-    public void setReserveId(Long reserveId) {
+    public void setReserveId(String reserveId) {
         this.reserveId = reserveId;
     }
 

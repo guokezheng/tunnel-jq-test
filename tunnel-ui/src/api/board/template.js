@@ -109,7 +109,9 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
   var data = {
     deviceIds:devicelds,
     protocolType:protocolType,
+    // parameters:parameters
     parameters:encodeURI(parameters)
+
   }
   return request({
     url: '/parser/board/uploadBoardEditInfo',
@@ -127,5 +129,34 @@ export function getAllVmsTemplate(data) {
     method: 'get',
     params: data
 
+  })
+}
+
+// 情报板内容查询
+export function getBoardContent(deviceId) {
+  return request({
+    url: '/parser/board/getBoardContent?deviceId=' + deviceId,
+    method: 'get',
+
+  })
+}
+
+
+// 情报板根据分辨率筛字体大小
+export function getFontSizeByDevicePixel(screenSize) {
+  return request({
+    url: '/parser/board/getFontSizeByDevicePixel/' + screenSize,
+    method: 'get',
+
+  })
+}
+
+
+// 导出情报板模板
+export function exportTemplate(query) {
+  return request({
+    url: '/system/template/export',
+    method: 'get',
+    params: query
   })
 }

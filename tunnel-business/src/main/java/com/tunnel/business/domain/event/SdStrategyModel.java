@@ -44,7 +44,7 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("策略名称")
     private String strategyName;
 
-    /** 策略类型 */
+    /** 策略类型 策略类型 0：手动执行、事件触发 1：定时控制 2：自动触发（阈值）3：分时*/
     @Excel(name = "策略类型")
     @ApiModelProperty("策略类型")
     private String strategyType;
@@ -81,11 +81,44 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("策略组")
     private String strategyGroup;
 
+    @ApiModelProperty("定时控制-执行时间")
+    private String execTime;
+
+    @ApiModelProperty("定时控制-执行日期")
+    private String execDate;
+
     @ApiModelProperty("分时控制-开始时间")
     private String startTime;
 
     @ApiModelProperty("分时控制-结束时间")
     private String endTime;
+
+    @ApiModelProperty("手动自动")
+    private String isAutomatic;
+
+    public String getExecTime() {
+        return execTime;
+    }
+
+    public void setExecTime(String execTime) {
+        this.execTime = execTime;
+    }
+
+    public String getExecDate() {
+        return execDate;
+    }
+
+    public void setExecDate(String execDate) {
+        this.execDate = execDate;
+    }
+
+    public String getIsAutomatic() {
+        return isAutomatic;
+    }
+
+    public void setIsAutomatic(String isAutomatic) {
+        this.isAutomatic = isAutomatic;
+    }
 
     public String getStartTime() {
         return startTime;

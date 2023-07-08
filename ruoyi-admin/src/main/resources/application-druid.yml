@@ -7,14 +7,14 @@ spring:
     druid:
       # 主库数据源
       master:
-        #        url: jdbc:mysql://127.0.0.1:3306/tunnel-fhs?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+                #url: jdbc:mysql://127.0.0.1:3306/local?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
         url: jdbc:mysql://bj-cdb-48v4fpmo.sql.tencentcdb.com:59624/tunnel-jq?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
         # 公司tunnel库地址
         #        url: jdbc:mysql://10.168.3.169:3306/tunnel-fhs?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
         username: jq_user
-        #        username: root
+               # username: root
         password: Platform123!@#
-        #        password: 123456
+               # password: 123456
         # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -60,3 +60,4 @@ spring:
           merge-sql: true
         wall:
           config:
+            multi-statement-allow: true

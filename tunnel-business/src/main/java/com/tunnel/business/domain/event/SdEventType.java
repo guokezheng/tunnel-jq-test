@@ -30,6 +30,32 @@ public class SdEventType extends BaseEntity
 
     private String iconUrl;
 
+    /**
+     * 是否可用
+     */
+    private String isUsable;
+
+    /**
+     * 优先级
+     */
+    private String priority;
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getIsUsable() {
+        return isUsable;
+    }
+
+    public void setIsUsable(String isUsable) {
+        this.isUsable = isUsable;
+    }
+
     public String getIconUrl() {
         return iconUrl;
     }

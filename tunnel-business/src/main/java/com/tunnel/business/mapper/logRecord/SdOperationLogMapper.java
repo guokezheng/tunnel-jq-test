@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.logRecord;
 
 
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,13 @@ public interface SdOperationLogMapper
      * @return 结果
      */
     public int insertSdOperationLog(SdOperationLog sdOperationLog);
+
+    /**
+     * 批量新增
+     * @param list
+     * @return
+     */
+    int insertBatchSdOperationLog(@Param("list") List<SdOperationLog> list);
 
     /**
      * 修改操作日志
@@ -76,4 +84,20 @@ public interface SdOperationLogMapper
     SdOperationLog getLatestRecord(String eqId);
 
     public List<Map> getDispatchExecuted(String eventId);
+
+    /**
+     * app端获取操作日志
+     * @param start
+     * @param end
+     * @return
+     */
+    
+
+    int selectSdOperationLogCountList(SdOperationLog sdOperationLog);
+
+    List<String> getTunnelArrayByDeptId(@Param("deptId")String deptId);
+
+    int selectAppOperationLogCountList(@Param("eqId")String eqId,@Param("start")String start,@Param("end")String end, @Param("tunnelArray")List<String> tunnelArray);
+
+    List<SdOperationLog> selectAppOperationLogList(SdOperationLog sdOperationLog);
 }

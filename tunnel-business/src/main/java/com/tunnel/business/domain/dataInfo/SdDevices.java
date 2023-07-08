@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @ApiModel("设备对象类")
-public class SdDevices extends BaseEntity {
+public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -32,10 +32,10 @@ public class SdDevices extends BaseEntity {
     private List<String> eqIds;
 
     /**
-     * 父设备ID-PLC
+     * plc主机
      */
-    @Excel(name = "父设备ID-PLC")
-    @ApiModelProperty("父设备ID-PLC")
+    @Excel(name = "plc主机",type = Excel.Type.IMPORT)
+    @ApiModelProperty("plc主机")
     private String fEqId;
 
     @ApiModelProperty("部门id")
@@ -46,15 +46,15 @@ public class SdDevices extends BaseEntity {
     /**
      * 所属隧道 ID
      */
-    @Excel(name = "所属隧道 ID")
-    @ApiModelProperty("所属隧道 ID")
+    @Excel(name = "所属隧道",type = Excel.Type.IMPORT)
+    @ApiModelProperty("所属隧道")
     private String eqTunnelId;
 
     /**
      * tunnel对象
      */
     @Excels({
-            @Excel(name = "隧道名称", targetAttr = "tunnelName", type = Excel.Type.EXPORT),
+            @Excel(name = "所属隧道", targetAttr = "tunnelName", type = Excel.Type.EXPORT),
     })
     @ApiModelProperty("tunnel对象")
     private SdTunnels tunnelName;
@@ -66,22 +66,61 @@ public class SdDevices extends BaseEntity {
     @ApiModelProperty("设备名称")
     private String eqName;
 
+
+    @ApiModelProperty("隧道名称")
+    private String tunnel;
+
+    public String getTunnel() {
+        return this.tunnel;
+    }
+
+    public void setTunnel(final String tunnel) {
+        this.tunnel = tunnel;
+    }
+
     /**
      * 设备类型
      */
     @ApiModelProperty("设备类型")
-    @Excel(name = "设备类型")
+    @Excel(name = "设备类型",type= Excel.Type.IMPORT)
     private Long eqType;
+
+
+    private Long[] eqTypes;
 
 
     /**
      * eqType对象
      */
     @Excels({
-            @Excel(name = "设备类型名称", targetAttr = "typeName", type = Excel.Type.EXPORT),
+            @Excel(name = "设备类型", targetAttr = "typeName", type = Excel.Type.EXPORT),
     })
     @ApiModelProperty("eqType对象")
     private SdEquipmentType eqTypeName;
+
+    /**
+     * 设备品牌
+     */
+    @Excel(name = "设备品牌ID",type = Excel.Type.IMPORT)
+    @ApiModelProperty("设备品牌")
+    private String brandId;
+
+    /**
+     * 设备品牌
+     */
+    @Excel(name = "设备品牌")
+    @ApiModelProperty("设备品牌")
+    private String brandName;
+
+
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
 
     /**
      * 设备型号
@@ -90,56 +129,56 @@ public class SdDevices extends BaseEntity {
     @ApiModelProperty("设备型号")
     private String eqModel;
 
-    /**
-     * 设备品牌编号
-     */
-    @Excel(name = "设备品牌编号")
 
-    @ApiModelProperty("设备品牌编号")
-    private String brandId;
+
+    /**
+     * 外部系统ID
+     */
+    @Excel(name = "外部系统",type= Excel.Type.IMPORT)
+    @ApiModelProperty("外部系统")
+    private Long externalSystemId;
+
+
+    /**
+     * 设备大类
+     */
+   /* @Excel(name = "设备大类",type= Excel.Type.IMPORT)*/
+    @ApiModelProperty("设备大类")
+    private Long fEqType;
+
+    /**
+     * 设备大类
+     */
+    @Excel(name = "设备大类",type= Excel.Type.IMPORT)
+    @ApiModelProperty("设备大类")
+    private Long FEqType;
 
     /**
      * 所属道路方向(上行、下行)
      */
-    @Excel(name = "所属道路方向(上行、下行)", dictType = "sd_direction")
-    //@Excel(name = "遥感检测仪工作状态", readConverterExp = "0=正常,1=异常")
-    @ApiModelProperty("所属道路方向(上行、下行)")
+    @Excel(name = "设备方向", dictType = "sd_direction")
+    @ApiModelProperty("设备方向")
     private String eqDirection;
+
+
+    @Excel(name = "设备方向：1-潍坊方向 2-济南方向",type= Excel.Type.IMPORT)
+    @ApiModelProperty("设备方向：1-潍坊方向 2-济南方向")
+    private String direction;
+
+    public String getDirection() {
+        return this.direction;
+    }
+
+    public void setDirection( String direction) {
+        this.direction = direction;
+    }
 
     /**
      * 设备所属车道
      */
-    @Excel(name = "设备所属车道")
-    @ApiModelProperty("设备所属车道")
+    @Excel(name = "所属车道",type= Excel.Type.IMPORT)
+    @ApiModelProperty("所属车道")
     private String lane;
-
-    /**
-     * 设备桩号
-     */
-    @Excel(name = "设备桩号")
-    @ApiModelProperty("设备桩号")
-    private String pile;
-
-    /**
-     * 设备整形桩号
-     */
-    @Excel(name = "设备整形桩号")
-    @ApiModelProperty("设备整形桩号")
-    private Long pileNum;
-
-    /**
-     * 纬度
-     */
-    @Excel(name = "纬度")
-    @ApiModelProperty("纬度")
-    private String lat;
-
-    /**
-     * 经度
-     */
-    @Excel(name = "经度")
-    @ApiModelProperty("经度")
-    private String lng;
 
     /**
      * 设备IP
@@ -156,30 +195,65 @@ public class SdDevices extends BaseEntity {
     private String port;
 
     /**
+     * 设备桩号
+     */
+    @Excel(name = "桩号")
+    @ApiModelProperty("桩号")
+    private String pile;
+
+    @Excel(name = "备注")
+    private String remark;
+
+
+
+    /**
+     * 设备整形桩号
+     */
+    @Excel(name = "设备整形桩号",type= Excel.Type.IMPORT)
+    @ApiModelProperty("设备整形桩号")
+    private Long pileNum;
+
+    /**
+     * 纬度
+     */
+    @Excel(name = "纬度",type= Excel.Type.IMPORT)
+    @ApiModelProperty("纬度")
+    private String lat;
+
+    /**
+     * 经度
+     */
+    @Excel(name = "经度",type= Excel.Type.IMPORT)
+    @ApiModelProperty("经度")
+    private String lng;
+
+
+
+    /**
      * 设备密钥
      */
-    @Excel(name = "设备密钥")
+    @Excel(name = "设备密钥",type= Excel.Type.IMPORT)
     @ApiModelProperty("设备密钥")
     private String secureKey;
 
     /**
      * 设备用户名
      */
-    @Excel(name = "设备用户名")
+    @Excel(name = "设备用户名",type= Excel.Type.IMPORT)
     @ApiModelProperty("设备用户名")
     private String eqUser;
 
     /**
      * 设备密码
      */
-    @Excel(name = "设备密码")
+    @Excel(name = "设备密码",type= Excel.Type.IMPORT)
     @ApiModelProperty("设备密码")
     private String eqPwd;
 
     /**
      * 协议类型（tcp/udp/api）
      */
-    @Excel(name = "协议类型")
+    @Excel(name = "协议类型",type= Excel.Type.IMPORT)
     @ApiModelProperty("协议类型")
     private String commProtocol;
 
@@ -188,7 +262,7 @@ public class SdDevices extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("出厂时间")
-    @Excel(name = "出厂时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "出厂时间", width = 30, dateFormat = "yyyy-MM-dd",type= Excel.Type.IMPORT)
     private Date deliveryTime;
 
     /**
@@ -196,7 +270,7 @@ public class SdDevices extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("维保截止时间")
-    @Excel(name = "维保截止时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "维保截止时间", width = 30, dateFormat = "yyyy-MM-dd",type= Excel.Type.IMPORT)
     private Date warrantyEndTime;
 
     /**
@@ -204,20 +278,20 @@ public class SdDevices extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("设备安装时间")
-    @Excel(name = "设备安装时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "设备安装时间", width = 30, dateFormat = "yyyy-MM-dd",type= Excel.Type.IMPORT)
     private Date installTime;
 
     /**
      * 预期寿命/设计寿命,单位为年
      */
-    @Excel(name = "预期寿命/设计寿命,单位为年")
+    @Excel(name = "预期寿命",type= Excel.Type.IMPORT)
     @ApiModelProperty("预期寿命/设计寿命,单位为年")
     private String useLife;
 
     /**
      * 使用状态:1-在用 2-停用 3-备用
      */
-    @Excel(name = "使用状态:1-在用 2-停用 3-备用")
+    @Excel(name = "使用状态:1-在用 2-停用 3-备用",type= Excel.Type.IMPORT)
     @ApiModelProperty("使用状态:1-在用 2-停用 3-备用")
     private String useStatus;
 
@@ -225,13 +299,13 @@ public class SdDevices extends BaseEntity {
      * 是否监控
      */
     @ApiModelProperty("是否监控")
-    @Excel(name = "是否监控:0=是 1=否")
+    @Excel(name = "是否监控:0=是 1=否",type= Excel.Type.IMPORT)
     private Long isMonitor;
 
     /**
      * 端口状态
      */
-    @Excel(name = "端口状态")
+    @Excel(name = "端口状态",type= Excel.Type.IMPORT)
     @ApiModelProperty("端口状态")
     private String portStatus;
 
@@ -240,13 +314,13 @@ public class SdDevices extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("端口状态更新时间")
-    @Excel(name = "端口状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "端口状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd",type= Excel.Type.IMPORT)
     private Date portStatusTime;
 
     /**
      * 网关与设备连通状态	1-在线，2-离线
      */
-    @Excel(name = "网关与设备连通状态	1-在线，2-离线")
+    @Excel(name = "网关与设备连通状态	1-在线，2-离线",type= Excel.Type.IMPORT)
     @ApiModelProperty("网关与设备连通状态\t1-在线，2-离线")
     private String gatewayNetstatus;
 
@@ -254,14 +328,14 @@ public class SdDevices extends BaseEntity {
      * 网关状态更新时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "网关状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "网关状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd",type= Excel.Type.IMPORT)
     @ApiModelProperty("网关状态更新时间")
     private Date gatewayNetstatusTime;
 
     /**
      * 设备状态	1-故障，2-告警
      */
-    @Excel(name = "设备状态	1-故障，2-告警")
+    @Excel(name = "设备状态	1-故障，2-告警",type= Excel.Type.IMPORT)
     @ApiModelProperty("设备状态\t1-故障，2-告警")
     private String eqStatus;
 
@@ -270,20 +344,20 @@ public class SdDevices extends BaseEntity {
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty("设备状态更新时间")
-    @Excel(name = "设备状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "设备状态更新时间	", width = 30, dateFormat = "yyyy-MM-dd",type= Excel.Type.IMPORT)
     private Date eqStatusTime;
 
     /**
      * 控制点位地址
      */
-    @Excel(name = "控制点位地址")
+    @Excel(name = "控制点位地址",type= Excel.Type.IMPORT)
     @ApiModelProperty("控制点位地址")
     private String controlPointAddress;
 
     /**
      * 点位地址1
      */
-    @Excel(name = "点位地址")
+    @Excel(name = "点位地址",type= Excel.Type.IMPORT)
     @ApiModelProperty("点位地址")
     private String queryPointAddress;
 
@@ -291,6 +365,15 @@ public class SdDevices extends BaseEntity {
      * 是否更新
      */
     private boolean updateSupport;
+
+
+
+    /** 图片id */
+    @Excel(name = "图片id",type= Excel.Type.IMPORT)
+    private String iconFileId;
+
+    @ApiModelProperty("设备类型图片")
+    private List<SdEquipmentStateIconFile> iFileList;
 
     public void setEqId(String eqId) {
         this.eqId = eqId;
@@ -318,7 +401,7 @@ public class SdDevices extends BaseEntity {
     /**
      * 协议ID
      * */
-    private String protocolId;
+    private Long protocolId;
 
     /**
      * road_id路段ID
@@ -336,7 +419,47 @@ public class SdDevices extends BaseEntity {
     private String externalDeviceId;
 
     /**
-     * 关联设备ID（关联iot_device中device_id字段）
+     * 导出设备ID
+     **/
+    private String exportIds;
+
+
+    public Long[] getEqTypes() {
+        return eqTypes;
+    }
+
+    public void setEqTypes(Long[] eqTypes) {
+        this.eqTypes = eqTypes;
+    }
+
+    public Long getFEqType() {
+        return this.FEqType;
+    }
+
+    public void setFEqType( Long FEqType) {
+        this.FEqType = FEqType;
+    }
+
+    public String getExportIds() {
+        return this.exportIds;
+    }
+
+    public void setExportIds(final String exportIds) {
+        this.exportIds = exportIds;
+    }
+
+    @Override
+    public String getRemark() {
+        return this.remark;
+    }
+
+    @Override
+    public void setRemark(final String remark) {
+        this.remark = remark;
+    }
+
+    /**
+     * 关联设备ID（关联iot_board中device_id字段）
      * */
     private Long associatedDeviceId;
 
@@ -349,6 +472,7 @@ public class SdDevices extends BaseEntity {
     }
 
     public String getExternalDeviceId() {
+
         return externalDeviceId;
     }
 
@@ -372,7 +496,7 @@ public class SdDevices extends BaseEntity {
         this.roadId = roadId;
     }
 
-    public String getProtocolId() {
+    public Long getProtocolId() {
         return protocolId;
     }
     /**
@@ -389,6 +513,59 @@ public class SdDevices extends BaseEntity {
      * 运行状态
      **/
     private String runStatus;
+
+
+    private String runState;
+
+    private String eqState;
+    //摄像机类型
+    private String camType;
+
+    //设备  当前数据
+    private String data;
+
+    /** 设备数据项id */
+    private Integer itemId;
+
+    public String getRunState() {
+        return this.runState;
+    }
+
+    public void setRunState(final String runState) {
+        this.runState = runState;
+    }
+
+    public String getEqState() {
+        return this.eqState;
+    }
+
+    public void setEqState(final String eqState) {
+        this.eqState = eqState;
+    }
+
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public String getCamType() {
+        return camType;
+    }
+
+    public void setCamType(String camType) {
+        this.camType = camType;
+    }
 
     public String getRunStatus() {
         return this.runStatus;
@@ -414,7 +591,7 @@ public class SdDevices extends BaseEntity {
         this.lxNum = lxNum;
     }
 
-    public void setProtocolId(String protocolId) {
+    public void setProtocolId(Long protocolId) {
         this.protocolId = protocolId;
     }
 
@@ -784,6 +961,39 @@ public class SdDevices extends BaseEntity {
         this.updateSupport = updateSupport;
     }
 
+    public Long getExternalSystemId() {
+        return externalSystemId;
+    }
+
+    public void setExternalSystemId(Long externalSystemId) {
+        this.externalSystemId = externalSystemId;
+    }
+
+    public Long getfEqType() {
+        return fEqType;
+    }
+
+    public void setfEqType(Long fEqType) {
+        this.fEqType = fEqType;
+    }
+
+    public String getIconFileId() {
+        return this.iconFileId;
+    }
+
+    public void setIconFileId(final String iconFileId) {
+        this.iconFileId = iconFileId;
+    }
+
+    public List<SdEquipmentStateIconFile> getiFileList() {
+        return this.iFileList;
+    }
+
+    public void setiFileList(final List<SdEquipmentStateIconFile> iFileList) {
+        this.iFileList = iFileList;
+    }
+
+
     @Override
     public String toString() {
         return "SdDevices{" +
@@ -799,6 +1009,8 @@ public class SdDevices extends BaseEntity {
                 ", eqTypeName=" + eqTypeName +
                 ", eqModel='" + eqModel + '\'' +
                 ", brandId=" + brandId +
+                ", externalSystemId=" + externalSystemId +
+                ", fEqType=" + fEqType +
                 ", eqDirection='" + eqDirection + '\'' +
                 ", lane='" + lane + '\'' +
                 ", pile='" + pile + '\'' +

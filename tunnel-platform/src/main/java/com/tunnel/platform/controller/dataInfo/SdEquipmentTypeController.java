@@ -6,7 +6,9 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTeamsList;
 import com.tunnel.business.service.dataInfo.ISdEquipmentTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -132,7 +134,7 @@ public class SdEquipmentTypeController extends BaseController
 	@Log(title = "设备类型", businessType = BusinessType.INSERT)
 	@PostMapping
 	@ApiOperation("新增设备类型")
-	public Result add(@RequestParam("file") MultipartFile[] file,SdEquipmentType sdEquipmentType)
+	public Result add(@RequestParam(value = "file", required = false) MultipartFile[] file,SdEquipmentType sdEquipmentType)
 	{
 	  	Integer num = sdEquipmentTypeService.selectExistSameType(sdEquipmentType);
 	  	if(num > 0){
@@ -155,7 +157,7 @@ public class SdEquipmentTypeController extends BaseController
     		@RequestParam("typeName") String typeName,
 			@RequestParam("typeAbbr") String typeAbbr,
 			@RequestParam("bigType") String bigType,
-			@RequestParam("eqCategory") String eqCategory,
+			@RequestParam("eqCategory") Long eqCategory,
 			@RequestParam("eqSystem") String eqSystem,
     		@RequestParam("removeIds") Long[] removeIds,
     		@RequestParam("isControl") String isControl
@@ -230,4 +232,15 @@ public class SdEquipmentTypeController extends BaseController
 		}
 		return strBase64;
 	}
+
+	@Log(title = "设备图标", businessType = BusinessType.EXPORT)
+	@GetMapping("/export")
+	public AjaxResult export(SdEquipmentType sdEquipmentType)
+	{
+		List<SdEquipmentType> list = sdEquipmentTypeService.selectSdEquipmentTypeList(sdEquipmentType);
+		ExcelUtil<SdEquipmentType> util = new ExcelUtil<SdEquipmentType>(SdEquipmentType.class);
+		return util.exportExcel(list, "设备图标数据");
+	}
+
+
 }

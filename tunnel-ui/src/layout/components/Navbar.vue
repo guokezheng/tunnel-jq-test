@@ -165,9 +165,10 @@
         :value="nodealNum"
         :hidden="nodealNum > 0 ? false : true"
         class="item bell_icon"
-        style="cursor: pointer;padding: 0 16px; vertical-align: text-bottom;color: white !important;"
+        style="cursor: pointer;padding: 0 16px; vertical-align: text-bottom;
+              color: white !important;caret-color: rgba(0,0,0,0);user-select: none;"
       >
-        <img src="../../assets/image/evtNum.png" style="width:30px;height:30px;transform: translateY(8px);" @click="bell()"></i>
+        <img src="../../assets/image/evtNum.png" style="height:3vh;transform: translateY(0.7vh);" @click="bell()"/>
       </el-badge>
       <!-- </div> -->
       <el-dropdown class="right-menu-item bell">
@@ -181,8 +182,8 @@
               hover-effect
               white_icon
             "
-            @click="bigScreenfun"
-            style="height: 33px; font-size: 20px; padding: 13px 0px"
+            @click="bigScreenfun2"
+            style="height: 7.6vh;line-height:7.6vh; font-size: 2.2vh;"
             title="监控一体化大屏"
           ></i>
         </el-tooltip>
@@ -476,7 +477,6 @@ import Search from "@/components/HeaderSearch";
 import RuoYiGit from "@/components/RuoYi/Git";
 import RuoYiDoc from "@/components/RuoYi/Doc";
 import {
-  listWarning,
   listWarningInfo,
   getStrategyList,
   getDeviceInfo,
@@ -494,7 +494,6 @@ import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import earlyWarning from "@/components/earlyWarning"; // 路侧设备
 import { checkPermi } from "@/utils/permission.js";
 import { getUserProfile } from "@/api/system/user";
-import { getEventUntreatedNum } from "@/api/event/event";
 
 export default {
   data() {
@@ -651,6 +650,7 @@ export default {
   computed: {
     ...mapState({
       sdEventList: (state) => state.websocket.sdEventList,
+      eventUntreatedNum: (state) => state.websocket.eventUntreatedNum,
     }),
     ...mapGetters(["sidebar", "device"]),
     setting: {
@@ -675,25 +675,31 @@ export default {
       },
     },
   },
-  // watch: {
-  //   sdEventList(event) {
-  //     console.log(event,"事件弹窗");
-  //   this.nodealNum += event.length;
-  //   this.$forceUpdate()
-  //   },
-  // },
+  watch: {
+    // sdEventList(event) {
+    //   console.log(event,"事件弹窗");
+    // this.nodealNum += event.length;
+    // this.$forceUpdate()
+    // },
+    eventUntreatedNum(event){
+      // debugger
+      console.log(event, "事件总数");
+      this.nodealNum = event;
+    },
+  },
+
   created() {
-    this.getUser();
-    this.getAlarmInfo();
-    setInterval(() => {
-      setTimeout(this.getAlarmInfo, 0);
-    }, 5000 * 1);
+    this.nodealNum =0
+      this.getUser();
+    // setInterval(() => {
+    //   setTimeout(this.getAlarmInfo, 0);
+    // }, 5000 * 1);
   },
   mounted() {
-    setInterval(()=>{
-      this.getNodealNum()
-
-    },1000)
+    // setInterval(()=>{
+    //   this.getNodealNum()
+    //
+    // },5000)
 
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
@@ -704,12 +710,12 @@ export default {
     // });
   },
   methods: {
-    getNodealNum() {
-      getEventUntreatedNum().then((res) => {
-        // console.log(res, "事件总数");
-        this.nodealNum = res.data;
-      });
-    },
+    // getNodealNum() {
+    //   getEventUntreatedNum().then((res) => {
+    //     // console.log(res, "事件总数");
+    //     this.nodealNum = res.data;
+    //   });
+    // },
     getRoute(path) {
       var arr = [
         "/index",
@@ -727,7 +733,8 @@ export default {
     // 获取当前角色信息
     getUser() {
       getUserProfile().then((response) => {
-        this.roleGroup = response.roleGroup;
+        console.log(response,"获取当前角色信息")
+        this.roleGroup = response.data.nickName;
       });
     },
     block() {},
@@ -748,6 +755,17 @@ export default {
         this.$modal.msgWarning("您的账号没有查看此功能的权限");
       }
     },
+    bigScreenfun2() {
+      if (checkPermi(["fullViewShow"])) {
+        let routeUrl = this.$router.resolve({
+          path: "/bigScreen2/index.html",
+          query: {},
+        });
+        window.open(routeUrl.href, "_blank");
+      } else {
+        this.$modal.msgWarning("您的账号没有查看此功能的权限");
+      }
+    },
     async logout() {
       this.$confirm("确定注销并退出系统吗？", "提示", {
         confirmButtonText: "确定",
@@ -757,6 +775,7 @@ export default {
         .then(() => {
           this.$store.dispatch("LogOut").then(() => {
             location.href = "";
+            this.$cache.local.remove("deptId")
             // location.href = '/#/login';
           });
         })
@@ -765,16 +784,16 @@ export default {
     // handleClick(tab, event) {
     //   console.log(tab, event);
     // },
-    
+
     // 鼠标经过铃铛提示信息
-    getAlarmInfo() {
-      listWarning(this.queryParams).then((response) => {
-        this.warningInfoList = response.rows;
-        this.total = response.total;
-        this.alarmTitle = "您有" + response.total + "个未处理预警";
-        // this.nodealNum = response.total;
-      });
-    },
+    // getAlarmInfo() {
+    //   listWarning(this.queryParams).then((response) => {
+    //     this.warningInfoList = response.rows;
+    //     this.total = response.total;
+    //     this.alarmTitle = "您有" + response.total + "个未处理预警";
+    //     // this.nodealNum = response.total;
+    //   });
+    // },
     // 更多
     moreInfo() {
       this.$router.push({
@@ -828,7 +847,7 @@ export default {
         bus.$emit("closeDialog");
 
       }
-      
+
     },
     // 监听弹层关闭
     closeDialog() {
@@ -969,7 +988,7 @@ export default {
   position: absolute;
   right: 0;
 }
-.theme-light .navbar {
+.theme-dark .navbar {
   background-color: unset;
 }
 .theme-dark .right-menu #screenfull {
@@ -984,7 +1003,7 @@ export default {
 .el-dropdown-menu_theme-light {
   background-color: rgba(255, 255, 255, 0.9);
   .el-tabs__content {
-    .theme-light .el-scrollbar__wrap {
+    .theme-dark .el-scrollbar__wrap {
       background-color: rgba(255, 255, 255, 0.8);
     }
     .el-scrollbar__view {
@@ -1047,12 +1066,12 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 72px;
+    line-height: 7.6vh;
     &:focus {
       outline: none;
     }
     .bell {
-      margin-right: 15px;
+      // margin-right: 15px;
     }
     .right-menu-item {
       display: inline-block;
@@ -1081,15 +1100,15 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 72px;
+        height: 7.6vh;
         span {
-          font-size: 16px;
+          font-size: 0.8vw;
           margin-left: 10px;
         }
         .user-avatar {
           cursor: pointer;
-          width: 30px;
-          height: 30px;
+          // width: 30px;
+          height: 3vh;
           border-radius: 10px;
         }
         .el-icon-caret-bottom {

@@ -36,7 +36,7 @@ public class SysDictTypeController extends BaseController
 
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysDictType dictType)
+    public TableDataInfo<List<SysDictType>> list(SysDictType dictType)
     {
         startPage();
         List<SysDictType> list = dictTypeService.selectDictTypeList(dictType);
@@ -49,8 +49,8 @@ public class SysDictTypeController extends BaseController
     public AjaxResult export(SysDictType dictType)
     {
         List<SysDictType> list = dictTypeService.selectDictTypeList(dictType);
-        ExcelUtil<SysDictType> util = new ExcelUtil<SysDictType>(SysDictType.class);
-        return util.exportExcel(list, "字典类型");
+        ExcelUtil<SysDictType> util = new ExcelUtil<>(SysDictType.class);
+        return util.exportExcel(list, "字典管理");
     }
 
     /**

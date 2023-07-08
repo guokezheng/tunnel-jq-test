@@ -119,7 +119,7 @@ public class MinaClient {
          * 4.获取响应内容。
          */
         String respondContent = null;
-        int waitTime = 100;
+        int waitTime = 50;
         while (StringUtils.isEmpty(respondContent)) {
             try {
                 logger.info("[sendCommand(command,sessionId,radix)] 等待接收Iot消息.... ");

@@ -4,6 +4,7 @@ package com.tunnel.business.service.informationBoard;
 import com.tunnel.business.domain.informationBoard.IotBoardVocabulary;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 情报板敏感字管理Service接口
@@ -59,4 +60,6 @@ public interface IIotBoardVocabularyService {
      * @return 结果
      */
     int deleteIotBoardVocabularyById(Long id);
+
+    int checkIotBoardContent(String content);
 }

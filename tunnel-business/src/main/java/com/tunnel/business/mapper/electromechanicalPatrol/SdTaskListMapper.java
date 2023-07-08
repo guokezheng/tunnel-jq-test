@@ -3,6 +3,7 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -89,7 +90,7 @@ public interface SdTaskListMapper
      * @param id
      * @return
      */
-    int acceptSdTaskList(String id);
+    int acceptSdTaskList(@Param("id")String id,@Param("userId")Long userId);
 
     /**
      * app  查询巡查列表
@@ -97,7 +98,7 @@ public interface SdTaskListMapper
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(SdTaskList sdTaskList );
+    List<SdTaskList> getTaskList(SdTaskList sdTaskList);
 
     /**
      * 操作记录
@@ -119,4 +120,67 @@ public interface SdTaskListMapper
      * @return
      */
     int insertTaskOpt(SdTaskOpt sdTaskOpt);
+
+    /**
+     * 获取任务状态
+     * @return
+     */
+    List<SdTaskList> getTaskStatus();
+
+    /**
+     * app端首页待处理任务单
+     * @param deptId
+     * @return
+     */
+    List<SdTaskList> getTaskToDo(@Param("deptId")String deptId,@Param("userId")Long userId);
+
+    /**
+     * 根据隧道查询班组
+     * @param tunnelId
+     * @return
+     */
+    String selectBzByTunnel(String tunnelId);
+
+    /**
+     * 查询超时任务列表
+     * @param sdTaskList
+     * @return
+     */
+    List<SdTaskList> selectChaoshiSdTaskListList(SdTaskList sdTaskList);
+
+    /**
+     * 查询当天任务数量
+     * @param pid
+     * @return
+     */
+    String selectCurrentDayTask(String pid);
+
+    List<SdTaskList> getTaskToDoTeams(@Param("deptId")String deptId,@Param("userId")Long userId);
+
+    int getTaskCountList(@Param("taskStatus")String taskStatus, @Param("taskName")String taskName, @Param("startTime")String startTime, @Param("endTime")String endTime, @Param("deptId")String deptId,@Param("userId")Long userId);
+
+    int getTaskCountListTeams(@Param("taskStatus")String taskStatus, @Param("taskName")String taskName, @Param("startTime")String startTime, @Param("endTime")String endTime, @Param("deptId")String deptId,@Param("userId")Long userId);
+
+    List<SdTaskList> getTaskListTeams( SdTaskList sdTaskList);
+
+    /**
+     * app端查看现场情况
+     * @param taskId
+     * @return
+     */
+    List<SdTaskList> getSiteInfo(@Param("taskId")String taskId);
+
+    /**
+     * /判断高速云是否存在该条任务
+     * @param id
+     * @return
+     */
+    SdTaskList selectSdTaskById(@Param("id")String id);
+
+    /**
+     * 检验任务名称是否存在
+     * @param sdTaskList
+     * @return
+     */
+    int checkTaskList(SdTaskList sdTaskList);
 }

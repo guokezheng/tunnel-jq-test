@@ -1,7 +1,5 @@
 package com.tunnel.deal.guidancelamp.control.inductionlamp;
 
-import com.tunnel.business.domain.dataInfo.InductionlampControlStatusDetails;
-import com.tunnel.business.domain.dataInfo.InductionlampControlStatusParam;
 import com.tunnel.deal.guidancelamp.control.ClientHandler;
 import com.tunnel.deal.guidancelamp.control.NettyClient;
 import org.slf4j.Logger;
@@ -30,122 +28,11 @@ public class InductionlampUtil {
 
 //    private static final int PILOT_LIGHT_MODE_5 = 5;
 
-    /**
-     * 传感器查询
-     * 查询指令:
-     * 0GH+STATUS?\r\n
-     *
-     * 响应指令:
-     * 0GH+STATUS=GPS1,LUX10000,HUM850,TEMP+280
-     */
-    public static Map  sensorQuery(List<InductionlampControlStatusParam> paramList, InductionlampControlStatusDetails statusDetails, String ip, Integer prot){
-        String code = "0GH+STATUS?\r\n";
-        NettyClient client = new NettyClient(ip, prot,code,1);
-        try {
-            client.start(null);
-        } catch (Exception e) {
-            log.error(ip+":"+prot+" 请求链接超时，请联系管理员。");
-            client.stop();
-            return null;
-        }
-        try {
-            client.pushCode(code);
-            //获取返回数据
-            ClientHandler clientHandler =  client.getClientHandler();
-            //推送数据开始时间
-            long st = System.currentTimeMillis();
-            //等待返回数据
-            while (clientHandler.FLAG){
-                long ed = System.currentTimeMillis();
-                //判断当前时间是否超时
-                if((ed-st)/1000>client.OVERTIME){
-                    clientHandler.stop();
-                    return null;
-                }
-                if(clientHandler.DOWNLOADFLAG){
-                    switch (code) {
-                        case "OK":
-                            log.info("操作成功。");
-                            break;
-                        case "ERROR":
-                            log.error("操作失败，请检查操作指令并联系管理员。");
-                            break;
-                        case "INVALID":
-                            log.error("无效操作，请检查操作指令并联系管理员。");
-                            break;
-                        default:
-                            //响应指令:
-                            //0GH+STATUS=GPS1,LUX10000,HUM850,TEMP+280
-                            //GPS2表示  GPS后面的数字 0:表示正在搜星 1:表示授时成功 2:表示授时失败
-                            String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
-                            String[] strCode = codeInfo.split(",");
-                            log.info("codeInfo:"+codeInfo);
-                            // LUX后面的数字表示光照传感器数值
-                            BigDecimal lux  = new BigDecimal(strCode[1].substring(3));
-                            log.info(strCode[1]+":光照："+lux);
-                            // HUM413表示湿度41.3%
-                            BigDecimal humBig  = new BigDecimal(strCode[2].substring(3)).divide(new BigDecimal(10),1,BigDecimal.ROUND_HALF_UP);
-                            log.info(strCode[2]+":湿度："+humBig);
-                            // TEMP+261表示温度26.1℃
-                            BigDecimal tempB  = new BigDecimal(strCode[3].substring(5)).divide(new BigDecimal(10),1,BigDecimal.ROUND_HALF_UP);
-                            log.info(strCode[3]+":湿度："+tempB);
-                            //模式类型
-                            InductionlampControlStatusParam statusParam = getPilotLightMode(lux,humBig,tempB,paramList);
-                            Integer modeType;
-//                            if(statusDetails!=null){
-//                                //获取当前设备模式类型
-//                                modeType = statusDetails.getEquipmentModeType();
-//                                //查看当前模式是否更改。如果更改，则重新推送  模式类型
-//                                if(statusParam.getModeCode() != modeType){
-//                                    //获取模式参数   亮度、次/min
-//                                    Integer brightnessParam  = statusParam.getBrightnessParam();
-//                                    Integer timeSecond = statusParam.getTimeSecond();
-//                                    Map codeMap = getPilotLightMode(statusParam.getModeCode(),brightnessParam,timeSecond);
-//                                    String pushCode = codeMap.get("code").toString();
-//                                    //推送模式指令
-//                                    client.pushCode(pushCode);
-//                                    //关闭状态链接
-//                                    client.stop();
-//                                    log.info("推送模式为："+statusParam.getModeCode());
-//                                    log.info("推送指令为："+pushCode);
-//                                    codeMap.put("modeCode",statusParam.getModeCode());
-//                                    return codeMap;
-//                                }
-//                            }else{
-                                //默认类型为 0
-                                modeType = 0;
-                                //获取模式参数   亮度、次/min
-                                Integer brightnessParam  = statusParam.getBrightnessParam();
-                                Integer timeSecond = statusParam.getTimeSecond();
-                                Map codeMap = InductionlampUtil.getPilotLightMode(modeType,brightnessParam,timeSecond);
-                                String pushCode = codeMap.get("code").toString();
-                                //推送模式指令
-                                client.pushCode(pushCode);
-                                //关闭状态链接
-                                client.stop();
-                                log.info("推送模式为："+modeType);
-                                log.info("推送指令为："+pushCode);
-                                codeMap.put("modeCode",modeType);
-                                return codeMap;
-//                            }
-//                            break;
-                    }
-                    client.stop();
-                    return null;
-                }
-                Thread.sleep(1);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        client.stop();
-        return null;
-    }
 
     public static Map getXianKeDeviceBrightness(String ip, Integer port) {
         //获取当前是否开灯
         String code = "000000000006010300030001";
-        NettyClient client = new NettyClient(ip, port, code, 1);
+        NettyClient client = new NettyClient(ip, port, code, 3);
         try {
             client.start(null);
         } catch (Exception e) {
@@ -154,7 +41,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushCode(code);
+//            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间
@@ -176,9 +63,13 @@ public class InductionlampUtil {
                         String brightness = codeInfo.substring(0, 2);
                         int brightnessParam = Integer.parseInt(brightness, 16);
                         map.put("brightness", brightnessParam);
+                        //发送控制器同步指令
+                        client.pushCode("000000000006010600020001");
+                        client.stop();
                         return map;
                     } else {
                         map.put("brightness", "0");
+                        client.stop();
                         return map;
                     }
                 }
@@ -196,7 +87,7 @@ public class InductionlampUtil {
     public static Map getXianKeDeviceFrequency(String ip, Integer port) {
         //获取当前是否开灯
         String code = "000000000006010300050001";
-        NettyClient client = new NettyClient(ip, port, code, 1);
+        NettyClient client = new NettyClient(ip, port, code, 3);
         try {
             client.start(null);
         } catch (Exception e) {
@@ -205,7 +96,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushCode(code);
+//            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间
@@ -227,8 +118,10 @@ public class InductionlampUtil {
                         String frequency = codeInfo.substring(0, 2);
                         int frequencyParam = Integer.parseInt(frequency, 16);
                         map.put("frequency", frequencyParam);
+                        client.stop();
                         return map;
                     } else {
+                        client.stop();
                         map.put("frequency", "0");
                         return map;
                     }
@@ -247,7 +140,7 @@ public class InductionlampUtil {
     public static Map getXianKeDeviceDutyCycle(String ip, Integer port) {
         //获取当前是否开灯
         String code = "000000000006010300070001";
-        NettyClient client = new NettyClient(ip, port, code, 1);
+        NettyClient client = new NettyClient(ip, port, code, 3);
         try {
             client.start(null);
         } catch (Exception e) {
@@ -256,7 +149,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushCode(code);
+//            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间
@@ -278,9 +171,11 @@ public class InductionlampUtil {
                         String dutyCycle = codeInfo.substring(0, 2);
                         int dutyCycleParam = Integer.parseInt(dutyCycle, 16);
                         map.put("dutyCycle", dutyCycleParam);
+                        client.stop();
                         return map;
                     } else {
                         map.put("dutyCycle", "0");
+                        client.stop();
                         return map;
                     }
                 }
@@ -677,6 +572,10 @@ public class InductionlampUtil {
                 resultCode = "01060004000" + brightnessParam;
                 resultMap.put("msgInfo","灯亮度为：" + brightnessParam);
                 break;
+            case PILOT_LIGHT_MODE_2 :
+                resultCode = "010600020001";
+                resultMap.put("msgInfo","同步所有控制器");
+                break;
             default:
                 resultCode = "010600040000";
                 resultMap.put("msgInfo","关闭所有灯光");
@@ -735,140 +634,4 @@ public class InductionlampUtil {
         return resultMap;
     }
 
-    /**
-     * 根据参数 获取模式信息
-     * @param illumination  光照
-     * @param humidity      湿度
-     * @param temperature   温度
-     */
-    public static InductionlampControlStatusParam getPilotLightMode(BigDecimal illumination, BigDecimal humidity, BigDecimal temperature, List<InductionlampControlStatusParam> paramList){
-        for (InductionlampControlStatusParam statusParam:paramList) {
-            //光照
-            if(statusParam.getIlluminationStart()==null){
-                if(statusParam.getIlluminationEnd()!=null){
-                    int result = illumination.compareTo(new BigDecimal(statusParam.getIlluminationEnd()));
-                    if(result == 0||result == -1){
-                        return statusParam;
-                    }
-                }
-            }else{
-                if(statusParam.getIlluminationEnd()!=null){
-                    int resultS = illumination.compareTo(new BigDecimal(statusParam.getIlluminationStart()));
-                    int result = illumination.compareTo(new BigDecimal(statusParam.getIlluminationEnd()));
-                    if((result == 0||result == -1)&&resultS == 1){
-                        return statusParam;
-                    }
-                }else{
-                    int resultS = illumination.compareTo(new BigDecimal(statusParam.getIlluminationStart()));
-                    if(resultS == 1){
-                        return statusParam;
-                    }
-                }
-            }
-            //湿度
-            if(statusParam.getHumidityStart()==null){
-                if(statusParam.getHumidityEnd()!=null){
-                    int result = humidity.compareTo(new BigDecimal(statusParam.getHumidityEnd()));
-                    if(result == 0||result == -1){
-                        return statusParam;
-                    }
-                }
-            }else{
-                if(statusParam.getHumidityEnd()!=null){
-                    int resultS = humidity.compareTo(new BigDecimal(statusParam.getHumidityStart()));
-                    int result = humidity.compareTo(new BigDecimal(statusParam.getHumidityEnd()));
-                    if((result == 0||result == -1)&&resultS == 1){
-                        return statusParam;
-                    }
-                }else{
-                    int resultS = humidity.compareTo(new BigDecimal(statusParam.getHumidityStart()));
-                    if(resultS == 1){
-                        return statusParam;
-                    }
-                }
-            }
-            //温度
-            if(statusParam.getTemperatureStart()==null){
-                if(statusParam.getTemperatureEnd()!=null){
-                    int result = temperature.compareTo(new BigDecimal(statusParam.getTemperatureEnd()));
-                    if(result == 0||result == -1){
-                        return statusParam;
-                    }
-                }
-            }else{
-                if(statusParam.getTemperatureEnd()!=null){
-                    int resultS = temperature.compareTo(new BigDecimal(statusParam.getTemperatureStart()));
-                    int result = temperature.compareTo(new BigDecimal(statusParam.getTemperatureEnd()));
-                    if((result == 0||result == -1)&&resultS == 1){
-                        return statusParam;
-                    }
-                }else{
-                    int resultS = temperature.compareTo(new BigDecimal(statusParam.getTemperatureStart()));
-                    if(resultS == 1){
-                        return statusParam;
-                    }
-                }
-            }
-        }
-        if(paramList.size()>0) {
-            //默认推送模式0
-            return paramList.get(0);
-        }
-        return null;
-    }
-
-
-    public static void main(String[] args) {
-//        String code = "0GH+STATUS=GPS1,LUX10000,HUM854,TEMP+282";
-//        String[] strCode = code.split(",");
-//        // LUX后面的数字表示光照传感器数值
-//        String lux = strCode[1].substring(3);
-//        // HUM413表示湿度41.3%
-//        // HUM413表示湿度41.3%
-//        BigDecimal humBig  = new BigDecimal(strCode[2].substring(3)).divide(new BigDecimal(10),1,BigDecimal.ROUND_HALF_UP);
-//        // TEMP+261表示温度26.1℃
-//        BigDecimal tempB  = new BigDecimal(strCode[3].substring(5)).divide(new BigDecimal(10),1,BigDecimal.ROUND_HALF_UP);
-//        System.out.println("光照:"+lux);
-//        System.out.println("湿度:"+humBig+"%");
-//        System.out.println("温度:"+tempB+"℃");
-//        //测试模拟数据
-        List<InductionlampControlStatusParam> paramList = new ArrayList<>();
-        InductionlampControlStatusParam statusParam1 = new InductionlampControlStatusParam();
-        statusParam1.setModeCode(1);
-        statusParam1.setModeName("模式1");
-        //关系运算符  0 =  1  >  2 <  3 >=   4 <=
-        statusParam1.setIlluminationStart(500);//光照开始值
-        statusParam1.setIlluminationStartSymbol(1);  //光照开始值关系运算符
-        statusParam1.setIlluminationEnd(1000);//光照结束值
-        statusParam1.setIlluminationEndSymbol(4);   //光照结束值关系运算符
-        statusParam1.setHumidityStart(90);      //湿度开始值
-        statusParam1.setHumidityStartSymbol(1); //湿度开始值运算符
-        statusParam1.setHumidityEnd(100);       //湿度结束值
-        statusParam1.setHumidityEndSymbol(4);   //湿度结束值运算符
-        statusParam1.setTemperatureStart(30);      //温度开始值
-        statusParam1.setTemperatureStartSymbol(1); //温度开始值运算符
-        statusParam1.setTemperatureEnd(40);       //温度结束值
-        statusParam1.setTemperatureEndSymbol(4);   //温度结束值运算符
-
-        InductionlampControlStatusParam statusParam2 = new InductionlampControlStatusParam();
-        statusParam2.setModeCode(2);
-        statusParam2.setModeName("模式2");
-        //关系运算符  0 =  1  >  2 <  3 >=   4 <=
-        statusParam2.setIlluminationStart(300);//光照开始值
-        statusParam2.setIlluminationStartSymbol(1);  //光照开始值关系运算符
-        statusParam2.setIlluminationEnd(500);//光照结束值
-        statusParam2.setIlluminationEndSymbol(4);   //光照结束值关系运算符
-        statusParam2.setHumidityStart(90);      //湿度开始值
-        statusParam2.setHumidityStartSymbol(1); //湿度开始值运算符
-        statusParam2.setHumidityEnd(100);       //湿度结束值
-        statusParam2.setHumidityEndSymbol(4);   //湿度结束值运算符
-        statusParam2.setTemperatureStart(20);      //温度开始值
-        statusParam2.setTemperatureStartSymbol(1); //温度开始值运算符
-        statusParam2.setTemperatureEnd(30);       //温度结束值
-        statusParam2.setTemperatureEndSymbol(4);   //温度结束值运算符
-        //根据 mode_code 排序
-        paramList.add(statusParam2);
-        paramList.add(statusParam1);
-        System.out.println( getPilotLightMode(new BigDecimal(800),new BigDecimal(90.1),new BigDecimal(31.1),paramList));
-    }
 }

@@ -3,12 +3,14 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ruoyi.common.core.domain.entity.SysUserImport;
 import com.ruoyi.common.core.page.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -46,6 +48,8 @@ import com.ruoyi.system.service.ISysUserService;
 @Api(tags = "用户管理")
 public class SysUserController extends BaseController
 {
+    private static String insertUser = "新增用户'";
+
     @Autowired
     private ISysUserService userService;
 
@@ -74,8 +78,8 @@ public class SysUserController extends BaseController
     public AjaxResult export(SysUser user)
     {
         List<SysUser> list = userService.selectUserList(user);
-        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
-        return util.exportExcel(list, "用户数据");
+        ExcelUtil<SysUser> util = new ExcelUtil<>(SysUser.class);
+        return util.exportExcel(list, "用户管理");
     }
 
     @Log(title = "用户管理", businessType = BusinessType.IMPORT)
@@ -83,7 +87,7 @@ public class SysUserController extends BaseController
     @PostMapping("/importData")
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
     {
-        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+        ExcelUtil<SysUser> util = new ExcelUtil<>(SysUser.class);
         List<SysUser> userList = util.importExcel(file.getInputStream());
         String operName = getUsername();
         String message = userService.importUser(userList, updateSupport, operName);
@@ -93,7 +97,7 @@ public class SysUserController extends BaseController
     @GetMapping("/importTemplate")
     public AjaxResult importTemplate()
     {
-        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+        ExcelUtil<SysUserImport> util = new ExcelUtil<>(SysUserImport.class);
         return util.importTemplateExcel("用户数据");
     }
 
@@ -127,21 +131,21 @@ public class SysUserController extends BaseController
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
     @ApiOperation("新增用户")
-    public Result add(@Validated @RequestBody SysUser user)
+    public Result<T> add(@Validated @RequestBody SysUser user)
     {
         if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName())))
         {
-            return Result.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+            return Result.error(insertUser + user.getUserName() + "'失败，登录账号已存在");
         }
         else if (StringUtils.isNotEmpty(user.getPhonenumber())
                 && UserConstants.NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
         {
-            return Result.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+            return Result.error(insertUser + user.getUserName() + "'失败，手机号码已存在");
         }
         else if (StringUtils.isNotEmpty(user.getEmail())
                 && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
         {
-            return Result.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            return Result.error(insertUser + user.getUserName() + "'失败，邮箱账号已存在");
         }
         if (user.getDeptId() == null) {
             return Result.error("用户所属部门不能为空");
@@ -161,7 +165,7 @@ public class SysUserController extends BaseController
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     @ApiOperation("修改用户")
-    public Result edit(@Validated @RequestBody SysUser user)
+    public Result<T> edit(@Validated @RequestBody SysUser user)
     {
         userService.checkUserAllowed(user);
         if (StringUtils.isNotEmpty(user.getPhonenumber())
@@ -192,7 +196,7 @@ public class SysUserController extends BaseController
     @DeleteMapping("/{userIds}")
     @ApiOperation("删除用户")
     @ApiImplicitParam(name = "userIds", value = "用户ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable Long[] userIds)
+    public Result<T> remove(@PathVariable Long[] userIds)
     {
         if (ArrayUtils.contains(userIds, getUserId()))
         {
@@ -208,7 +212,7 @@ public class SysUserController extends BaseController
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
     @ApiOperation("重置密码")
-    public Result resetPwd(@RequestBody SysUser user)
+    public Result<T> resetPwd(@RequestBody SysUser user)
     {
         userService.checkUserAllowed(user);
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
@@ -223,7 +227,7 @@ public class SysUserController extends BaseController
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     @ApiOperation("状态修改")
-    public Result changeStatus(@RequestBody SysUser user)
+    public Result<T> changeStatus(@RequestBody SysUser user)
     {
         userService.checkUserAllowed(user);
         user.setUpdateBy(getUsername());
@@ -258,11 +262,11 @@ public class SysUserController extends BaseController
             @ApiImplicitParam(name = "userId", value = "用户ID", dataType = "Long", dataTypeClass = Long.class),
             @ApiImplicitParam(name = "roleIds", value = "角色组", dataType = "Long", dataTypeClass = Long.class)
     })
-    public Result insertAuthRole(Long userId, Long[] roleIds)
+    public Result<T> insertAuthRole(Long userId, Long[] roleIds)
     {
         userService.insertUserAuth(userId, roleIds);
         return Result.success();
-}
+    }
 
     /**
      * 根据用户名查询部门接口
@@ -274,4 +278,18 @@ public class SysUserController extends BaseController
         List<SysUser> list = userService.getUserDeptId(user);
         return getDataTable(list);
     }
+
+    /**
+     * 查询当前登录用户
+     * @return
+     */
+    @GetMapping("/getUserInfo")
+    public TableDataInfo<List<SysUser>>list()
+    {
+        Long userId = SecurityUtils.getUserId();
+        startPage();
+        List<SysUser> list = userService.getCurrentUserInfo(userId);
+        return getDataTable(list);
+    }
+
 }

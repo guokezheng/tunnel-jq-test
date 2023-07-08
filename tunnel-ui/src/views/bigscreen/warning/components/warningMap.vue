@@ -10,7 +10,6 @@ export default {
       type: Object,
       required: true,
     },
-    
   },
   data() {
     return {
@@ -27,7 +26,7 @@ export default {
     };
   },
   mounted() {
-      console.log(this.placeDate,"地图")
+    console.log(this.placeDate, "地图");
     //   页面加载完,开始异步引入高德地图
     //创建了一个回调函数,高德地图加载完毕会调用
     this.initNetTick();
@@ -39,12 +38,12 @@ export default {
         this.init1(this.placeDate);
         this.initMarker();
         // 开启轮播
-          this.markers[0].setIcon(
+        this.markers[0].setIcon(
           "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png"
-          );
-          this.markers[0].setzIndex(101);
-          this.openWindows(this.markers[0]);
-          this.LoopClick();
+        );
+        this.markers[0].setzIndex(101);
+        this.openWindows(this.markers[0]);
+        this.LoopClick();
       });
     },
     initmap() {
@@ -101,9 +100,12 @@ export default {
     },
     // 点击地图
     showInfoClick(e) {
-        console.log(e,"点击地图")
+      console.log(e, "点击地图");
       this.resetMarkers();
-      this.infoWindow.close(this.map, [this.infoWindowPosition.lng, this.infoWindowPosition.lat])
+      this.infoWindow.close(this.map, [
+        this.infoWindowPosition.lng,
+        this.infoWindowPosition.lat,
+      ]);
       var text =
         "您在 [ " +
         e.lnglat.getLng() +
@@ -128,7 +130,7 @@ export default {
           offset: new AMap.Pixel(-13, -30),
           // content:'<div>'+marker.title+'</div><div>'+[marker.position[0], marker.position[1]]+'</div>'
         });
-        console.log(mark,"mark")
+        console.log(mark, "mark");
         mark.on("click", this.showInfoM);
         this.markers.push(mark);
       });
@@ -139,7 +141,7 @@ export default {
     },
     // 点击图标
     showInfoM(e) {
-        console.log((e,"点击图标"))
+      console.log((e, "点击图标"));
       // 每次点击坐标 重置所有图标颜色
       this.resetMarkers();
       // 清空定时器
@@ -152,7 +154,7 @@ export default {
           this.loopIndex = index;
         }
       });
-      
+
       // 点击坐标 更换坐标颜色为红色
       e.target.setIcon(
         "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png"
@@ -168,28 +170,36 @@ export default {
       this.LoopClick();
     },
     openWindows(e) {
-        console.log(e)
-      var header = "<div style='background:rgba(2,19,88,0.8);padding:10px;border:solid 1px #04B4E2;" +
-          "border-radius:10px;font-size:0.8vw;color:#04B4E2'>" 
-      var footer = "</div>"
+      var header =
+        "<div style='background:rgba(2,19,88,0.8);padding:10px;border:solid 1px #04B4E2;" +
+        "border-radius:10px;font-size:0.8vw;color:#04B4E2'>";
+      var footer = "</div>";
       var contert;
-      var title = "<div>"+ e.w.title + "</div>"
-      console.log(title,"title")
-      var coordinates = "<div>经纬度：" + e.w.position.lng + "/" + e.w.position.lat + "</div>"
-      var tunnelLength = e.w.extData.tunnelLength==null ? '' : "<div>隧道长度：" + e.w.extData.tunnelLength + "</div>"
-      var affiliation = e.w.extData.affiliation==null ? '' : "<div>隧道所属：" + e.w.extData.affiliation + "</div>"
+      var title = "<div>" + e.w.title + "</div>";
+      console.log(title, "title");
+      var coordinates =
+        "<div>经纬度：" + e.w.position.lng + "/" + e.w.position.lat + "</div>";
+      var tunnelLength =
+        e.w.extData.tunnelLength == null
+          ? ""
+          : "<div>隧道长度：" + e.w.extData.tunnelLength + "</div>";
+      var affiliation =
+        e.w.extData.affiliation == null
+          ? ""
+          : "<div>隧道所属：" + e.w.extData.affiliation + "</div>";
       // 内容
-      contert = header + title + coordinates + tunnelLength + affiliation + footer
+      contert =
+        header + title + coordinates + tunnelLength + affiliation + footer;
       // 点击弹窗
       this.infoWindow = new AMap.InfoWindow({
         isCustom: true,
         anchor: "top-left",
-        content: contert
+        content: contert,
       });
       this.infoWindowPosition = {
         lng: e.w.position.lng,
         lat: e.w.position.lat,
-      }
+      };
       this.infoWindow.open(this.map, [e.w.position.lng, e.w.position.lat]);
     },
     // 重置图标颜色
@@ -250,7 +260,7 @@ export default {
 #container {
   width: 100%;
   height: 100%;
-  background: #040F4E !important;
+  background: #040f4e !important;
   /deep/ .amap-logo {
     display: none;
     opacity: 0 !important;

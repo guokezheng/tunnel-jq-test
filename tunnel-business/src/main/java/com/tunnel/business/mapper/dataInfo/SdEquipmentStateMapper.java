@@ -125,4 +125,11 @@ public interface SdEquipmentStateMapper
      * @return
      */
     public int deleteSdEquipmentStateByTypeId(Long[] typeId);
+
+    /**
+     * 批量删除状态图片
+     * @param id
+     * @return
+     */
+    int batchDeletePic(String[] id);
 }

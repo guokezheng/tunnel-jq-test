@@ -15,6 +15,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap type="SdDeviceCOVIData" id="SdDeviceCOVIDataResult">
+        <result property="id"    column="id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="data"    column="data"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="SdDeviceFSFXData" id="SdDeviceFSFXDataResult">
+        <result property="id"    column="id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="data"    column="data"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="SdDeviceDNData" id="SdDeviceDNDataResult">
+        <result property="id"    column="id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="data"    column="data"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="SdDeviceDWData" id="SdDeviceDWDataResult">
+        <result property="id"    column="id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="data"    column="data"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
     <sql id="selectSdDeviceDataVo">
         select id, device_id, item_id, data, create_by, create_time, update_by, update_time from sd_device_data
     </sql>
@@ -55,6 +95,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
+
+
+    <insert id="insertFireMonitorData" parameterType="SdDeviceData" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_device_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">device_id,</if>
+            <if test="itemId != null">item_id,</if>
+            <if test="data != null">data,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="itemId != null">#{itemId},</if>
+            <if test="data != null">#{data},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+
     <update id="updateSdDeviceData" parameterType="SdDeviceData">
         update sd_device_data
         <trim prefix="SET" suffixOverrides=",">
@@ -67,6 +132,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where id = #{id}
+    </update>
+
+
+
+
+    <update id="updateKafkaDeviceData" parameterType="SdDeviceData">
+        update sd_device_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="data != null">data = #{data},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where device_id = #{deviceId} AND item_id = #{itemId}
+    </update>
+
+
+    <update id="updateFireMonitorData" parameterType="SdDeviceData">
+        update sd_device_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="data != null">data = #{data},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where device_id = #{deviceId} AND item_id = #{itemId}
     </update>
 
     <delete id="deleteSdDeviceDataById" parameterType="Long">
@@ -82,9 +175,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!--根据隧道id查询当前设备的监测状态、实时数据或状态-->
     <select id="getDeviceDataByTunnelId" parameterType="String" resultType="java.util.Map">
-		select d.eq_id eqId,d.eq_name eqName,d.eq_tunnel_id eqTunnelId,d.eq_type eqType,
-        ifnull(d.eq_status,2) eqStatus,d.eq_direction eqDirection,i.item_code itemCode,i.item_name itemName,
-        i.unit,a.data,concat(a.data,ifnull(i.unit,'')) dataUnit
+		select
+            d.eq_id eqId,
+            d.eq_name eqName,
+            d.eq_tunnel_id eqTunnelId,
+            d.eq_type eqType,
+            ifnull(d.eq_status,2) eqStatus,
+            d.eq_direction eqDirection,
+            i.item_code itemCode,
+            i.item_name itemName,
+            i.unit,
+            a.data,
+            concat(a.data,ifnull(i.unit,'')) dataUnit
         from sd_devices d
         left join sd_device_type_item i on d.eq_type = i.device_type_id
         left join sd_device_data a on a.device_id = d.eq_id and a.item_id = i.id
@@ -115,12 +217,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             FROM (SELECT a.id,a.data,a.create_time	from sd_device_data_record a WHERE a.create_time <![CDATA[ >= ]]> (#{today} - interval 25 hour)
             and a.device_id = #{deviceId} and item_id = #{itemId} ) b GROUP BY date )
             AS sa
-        ON sa.date = DATE_FORMAT( t.time,'%Y-%m-%d %H') GROUP BY t.time ORDER BY sa.date
+        ON sa.date = DATE_FORMAT( t.time,'%Y-%m-%d %H') GROUP BY t.time
     </select>
 
     <select id="selectCOVIDataList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
-        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
         MAX(CASE a.item_id WHEN 2 THEN a.data ELSE 0 END ) VI
@@ -130,19 +231,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
-        where b.eq_type = 19 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
-        <if test="deptId != null and deptId != ''">
-         AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
+        where b.eq_type = 19
+        <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''"><!-- 开始时间检索 -->
+            and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
         </if>
-        <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
     </select>
 
     <select id="selectFSFXDataList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
-        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
         MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
         MAX(CASE a.item_id WHEN 6 THEN a.data ELSE 0 END ) FX
@@ -153,18 +252,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
         where b.eq_type = 17 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
-        <if test="deptId != null and deptId != ''">
-            AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
-        </if>
-        <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
     </select>
 
     <select id="selectDWDataList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
-        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
         left join sd_devices b on b.eq_id = a.device_id
@@ -173,18 +267,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
         where b.eq_type = 5 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
-        <if test="deptId != null and deptId != ''">
-            AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
-        </if>
-        <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
     </select>
 
     <select id="selectDNDataList" resultType="hashmap">
-        SELECT @i:=@i+1 as num, j.* from
-        (select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
         b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
         from sd_device_data_record a
         left join sd_devices b on b.eq_id = a.device_id
@@ -193,14 +282,215 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dept f on f.dept_id = c.dept_id
         left join sd_device_type_item g on g.id = a.item_id
         where b.eq_type = 18 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
-        <if test="deptId != null and deptId != ''">
-            AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
-        </if>
-        <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
-        ) j,(SELECT @i:=0) i
     </select>
+
+
+    <select id="selectCOVIDataLineList" resultType="hashmap">
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,round(a.data,2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
+        MAX(CASE a.item_id WHEN 2 THEN a.data ELSE 0 END ) VI
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 19 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        GROUP BY createTime,eqId
+    </select>
+
+    <select id="selectFSFXDataLineList" resultType="hashmap">
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,round(a.data,2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
+        MAX(CASE a.item_id WHEN 6 THEN a.data ELSE 0 END ) FX
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 17 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        GROUP BY createTime,eqId
+    </select>
+
+    <select id="selectDNDataLineList" resultType="hashmap">
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,round(a.data,2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 18 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        GROUP BY createTime,eqId
+    </select>
+
+    <select id="selectDWDataLineList" resultType="hashmap">
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,round(a.data,2)data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where b.eq_type = 5 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        GROUP BY createTime,eqId
+    </select>
+
+    <select id="dataDevicesLogInfoList" resultType="hashmap">
+        select b.eq_id eqId,b.eq_type eqType,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,b.pile
+        from sd_devices b
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        where 1=1
+        and b.eq_type in('5','17','18','19')
+        <if test="searchValue != null and searchValue != ''">and b.eq_type=#{searchValue}</if>
+        <if test="tunnelId != null and tunnelId != ''">and b.eq_tunnel_id=#{tunnelId}</if>
+        <if test="pile != null and pile != ''">AND CONCAT(b.pile, b.eq_name) LIKE CONCAT('%',#{pile},'%')</if>
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+    </select>
+
+
+
+
+    <select id="selectDeviceTableDataList" resultType="hashmap">
+
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where 1=1 and a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        and b.eq_id = #{deviceId}
+        GROUP BY createTime,eqId
+        ORDER BY a.create_time desc
+
+    </select>
+
+
+
+
+    <select id="exportDatainforTab" parameterType="SdDeviceData" resultMap="SdDeviceDataResult">
+        select b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,b.pile
+        from sd_devices b
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        where 1=1
+        and b.eq_type in('5','17','18','19')
+        <if test="searchValue != null and searchValue != ''">and b.eq_type=#{searchValue}</if>
+        <if test="tunnelId != null and tunnelId != ''">and b.eq_tunnel_id=#{tunnelId}</if>
+        <if test="pile != null and pile != ''">AND CONCAT(b.pile, b.eq_name) LIKE CONCAT('%',#{pile},'%')</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(b.eq_id,#{ids}) > 0</if>
+        <if test="dept != null and dept != ''">
+            AND (c.dept_id = #{dept} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{dept},z.ancestors) ))
+        </if>
+    </select>
+
+
+
+
+
+    <select id="selectCOVIExportDataList" parameterType="SdDeviceCOVIData" resultMap="SdDeviceCOVIDataResult">
+        SELECT b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+            b.pile,a.data, DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i:00') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+            MAX(CASE a.item_id WHEN 1 THEN a.data ELSE 0 END ) CO,
+            MAX(CASE a.item_id WHEN 2 THEN a.data ELSE 0 END ) VI
+            from sd_device_data_record a
+            left join sd_devices b on b.eq_id = a.device_id
+            left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+            left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+            left join sys_dept f on f.dept_id = c.dept_id
+            left join sd_device_type_item g on g.id = a.item_id
+            where  a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+            <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+            <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time, '%Y-%m-%d %H:%i' ),#{ids}) > 0</if>
+        GROUP BY createTime,eqId
+        ORDER BY a.create_time desc
+
+    </select>
+
+
+
+    <select id="selectFSFXExportDataList" parameterType="SdDeviceFSFXData" resultMap="SdDeviceFSFXDataResult">
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i:00') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName,
+        MAX(CASE a.item_id WHEN 5 THEN a.data ELSE 0 END ) FS,
+        MAX(CASE a.item_id WHEN 6 THEN a.data ELSE 0 END ) FX
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where  a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i'),#{ids}) > 0</if>
+        GROUP BY createTime,eqId
+        ORDER BY a.create_time desc
+    </select>
+
+
+    <select id="selectDNExportDataList" parameterType="SdDeviceDNData" resultMap="SdDeviceDNDataResult">
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i:00') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where  a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i'),#{ids}) > 0</if>
+        GROUP BY createTime,eqId
+        ORDER BY a.create_time desc
+    </select>
+
+    <select id="selectDWExportDataList" parameterType="SdDeviceDWData" resultMap="SdDeviceDWDataResult">
+        select b.eq_id eqId,b.eq_name eqName,c.tunnel_name tunnelName,f.dept_name deptName,e.dict_label direction,
+        b.pile,a.data,DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i:00') createTime,a.item_id itemId,g.item_code itemCode,g.item_name itemName
+        from sd_device_data_record a
+        left join sd_devices b on b.eq_id = a.device_id
+        left join sd_tunnels c on c.tunnel_id = b.eq_tunnel_id
+        left join sys_dict_data e on e.dict_value = b.eq_direction and e.dict_type = "sd_direction"
+        left join sys_dept f on f.dept_id = c.dept_id
+        left join sd_device_type_item g on g.id = a.item_id
+        where  a.create_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s') and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
+        <if test="deviceId != null and deviceId != ''"> and b.eq_id  = #{deviceId}</if>
+        <if test="ids != null and ids != ''"> and FIND_IN_SET(DATE_FORMAT( a.create_time,'%Y-%m-%d %H:%i'),#{ids}) > 0</if>
+        GROUP BY createTime,eqId
+        ORDER BY a.create_time desc
+    </select>
+
+    <select id="selectSdDeviceDataInfo" parameterType="SdDeviceData" resultMap="SdDeviceDataResult">
+        select * from sd_device_data where device_id =#{deviceId} and item_id = #{itemId}
+    </select>
+
+
+
+
+
+
+
+
 
 
 </mapper>

@@ -1,6 +1,8 @@
 package com.tunnel.business.domain.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
@@ -27,6 +29,7 @@ public class SdEvent extends BaseEntity {
      * 事件ID
      */
     @ApiModelProperty("事件id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -154,6 +157,9 @@ public class SdEvent extends BaseEntity {
     @ApiModelProperty("车道号")
     private String laneNo;
 
+    @ApiModelProperty("拼接车道号")
+    private String laneNoName;
+
     @ApiModelProperty("事件位置经度")
     private String eventLongitude;
 
@@ -177,7 +183,7 @@ public class SdEvent extends BaseEntity {
     @ApiModelProperty("事件终点桩号")
     private String stakeEndNum;
 
-//    @ApiModelProperty("事件结束时间")
+    //    @ApiModelProperty("事件结束时间")
 //    private Date endTime;
     @ApiModelProperty("清障电话")
     public String wreckerPhone;
@@ -207,6 +213,8 @@ public class SdEvent extends BaseEntity {
 
     private Long deptId;
 
+    private String dept;
+
     /**
      * 隧道名称
      */
@@ -218,6 +226,11 @@ public class SdEvent extends BaseEntity {
     private List<SdTrafficImage> iconUrlList;
 
     /**
+     * 历史录像
+     */
+    private List<SdTrafficImage> historyUrlList;
+
+    /**
      * 类型简称
      */
     private String simplifyName;
@@ -225,7 +238,7 @@ public class SdEvent extends BaseEntity {
     /**
      * 事件置信度集合
      */
-    private List<WjConfidence> confidenceList;
+    private String confidenceList;
 
     /**
      * 事件处置下发id
@@ -241,6 +254,160 @@ public class SdEvent extends BaseEntity {
      * 备注
      */
     private String remark;
+
+    //推送物联中台 图片临时保存字段
+    private String eventImgUrl;
+
+    /**
+     * 弹框事件标题
+     */
+    private String frameEventTitle;
+
+    /**
+     * 复核描述
+     */
+    private String reviewRemark;
+
+    /**
+     * 通用id
+     */
+    private String currencyId;
+
+    /**
+     * 警情升级判断是否添加操作记录
+     */
+    private String handleModel;
+
+    /**
+     * 持续时间
+     */
+    private String continuedTime;
+
+    /**
+     * 事件名称
+     */
+    private String eventTypeName;
+
+    /**
+     * 模糊搜索
+     */
+    private String fuzzySearch;
+
+    /**
+     * 防控类型
+     */
+    private String prevControlType;
+
+    /**
+     * 前端字段  行车方向
+     */
+    private String roadDir;
+
+    /**
+     * 前端字段  距离
+     */
+    private String distance;
+
+    /**
+     * 下载时间
+     */
+    private String downLoadTime;
+
+    public String getDept() {
+        return dept;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
+    public String getDownLoadTime() {
+        return downLoadTime;
+    }
+
+    public void setDownLoadTime(String downLoadTime) {
+        this.downLoadTime = downLoadTime;
+    }
+
+    public List<SdTrafficImage> getHistoryUrlList() {
+        return historyUrlList;
+    }
+
+    public void setHistoryUrlList(List<SdTrafficImage> historyUrlList) {
+        this.historyUrlList = historyUrlList;
+    }
+
+    public String getLaneNoName() {
+        return laneNoName;
+    }
+
+    public void setLaneNoName(String laneNoName) {
+        this.laneNoName = laneNoName;
+    }
+
+    public String getPrevControlType() {
+        return prevControlType;
+    }
+
+    public void setPrevControlType(String prevControlType) {
+        this.prevControlType = prevControlType;
+    }
+
+    public String getEventTypeName() {
+        return eventTypeName;
+    }
+
+    public void setEventTypeName(String eventTypeName) {
+        this.eventTypeName = eventTypeName;
+    }
+
+    public String getContinuedTime() {
+        return continuedTime;
+    }
+
+    public void setContinuedTime(String continuedTime) {
+        this.continuedTime = continuedTime;
+    }
+
+    public String getCurrencyId() {
+        return currencyId;
+    }
+
+    public void setCurrencyId(String currencyId) {
+        this.currencyId = currencyId;
+    }
+
+    public String getHandleModel() {
+        return handleModel;
+    }
+
+    public void setHandleModel(String handleModel) {
+        this.handleModel = handleModel;
+    }
+
+    public String getReviewRemark() {
+        return reviewRemark;
+    }
+
+    public void setReviewRemark(String reviewRemark) {
+        this.reviewRemark = reviewRemark;
+    }
+
+    public String getFrameEventTitle() {
+        return frameEventTitle;
+    }
+
+    public void setFrameEventTitle(String frameEventTitle) {
+        this.frameEventTitle = frameEventTitle;
+    }
+
+    public String getEventImgUrl() {
+        return eventImgUrl;
+    }
+
+    public void setEventImgUrl(String eventImgUrl) {
+        this.eventImgUrl = eventImgUrl;
+    }
 
     @Override
     public String getRemark() {
@@ -268,11 +435,11 @@ public class SdEvent extends BaseEntity {
         this.ids = ids;
     }
 
-    public List<WjConfidence> getConfidenceList() {
+    public String getConfidenceList() {
         return confidenceList;
     }
 
-    public void setConfidenceList(List<WjConfidence> confidenceList) {
+    public void setConfidenceList(String confidenceList) {
         this.confidenceList = confidenceList;
     }
 
@@ -460,6 +627,14 @@ public class SdEvent extends BaseEntity {
 
     public int getSlightInjured() {
         return slightInjured;
+    }
+
+    public String getFuzzySearch() {
+        return fuzzySearch;
+    }
+
+    public void setFuzzySearch(String fuzzySearch) {
+        this.fuzzySearch = fuzzySearch;
     }
 
     @Override
@@ -655,4 +830,20 @@ public class SdEvent extends BaseEntity {
         this.eventType = eventType;
     }
 
+
+    public String getRoadDir() {
+        return roadDir;
+    }
+
+    public void setRoadDir(String roadDir) {
+        this.roadDir = roadDir;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 }

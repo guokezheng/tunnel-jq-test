@@ -1,6 +1,10 @@
 package com.tunnel.business.service.dataInfo.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
 import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
@@ -92,4 +96,42 @@ public class SdMicrowavePeriodicStatisticsServiceImpl implements ISdMicrowavePer
     {
         return sdMicrowavePeriodicStatisticsMapper.deleteSdMicrowavePeriodicStatisticsByStatisticsId(statisticsId);
     }
+
+    @Override
+    public List<SdMicrowavePeriodicStatistics> getStatisticsNewList(SdMicrowavePeriodicStatistics statistics) {
+        List<SdMicrowavePeriodicStatistics> list = new ArrayList<>();
+        //一车道
+        statistics.setLaneNo(1L);
+        SdMicrowavePeriodicStatistics laneNoOne = sdMicrowavePeriodicStatisticsMapper.getStatisticsNewList(statistics);
+        //二车道
+        statistics.setLaneNo(2L);
+        SdMicrowavePeriodicStatistics laneNoTwo = sdMicrowavePeriodicStatisticsMapper.getStatisticsNewList(statistics);
+        //三车道
+        statistics.setLaneNo(3L);
+        SdMicrowavePeriodicStatistics laneNoThree = sdMicrowavePeriodicStatisticsMapper.getStatisticsNewList(statistics);
+        list.add(laneNoOne);
+        list.add(laneNoTwo);
+        list.add(laneNoThree);
+        return list;
+    }
+
+    @Override
+    public Map<String, List<Map<String, String>>> getStatisticsRealList(SdMicrowavePeriodicStatistics statistics) {
+        Map<String, List<Map<String, String>>> map = new HashMap<>();
+        //一车道
+        statistics.setLaneNo(1L);
+        List<Map<String, String>> laneNoOne = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
+        //二车道
+        statistics.setLaneNo(2L);
+        List<Map<String, String>> laneNoTwo = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
+        //三车道
+        statistics.setLaneNo(3L);
+        List<Map<String, String>> laneNoThree = sdMicrowavePeriodicStatisticsMapper.getStatisticsRealList(statistics);
+        map.put("laneNoOne",laneNoOne);
+        map.put("laneNoTwo",laneNoTwo);
+        map.put("laneNoThree",laneNoThree);
+        return map;
+    }
+
+
 }

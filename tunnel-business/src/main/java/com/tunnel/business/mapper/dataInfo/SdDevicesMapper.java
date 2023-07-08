@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.dataInfo;
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
+import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.digitalmodel.SdDeviceDataItem;
 import org.apache.ibatis.annotations.Param;
@@ -25,7 +26,7 @@ public interface SdDevicesMapper
 	 */
 	public SdDevices selectSdDevicesById(String eqId);
 
-
+	SdDevices getDevicesListByExternalId(String externalId);
 	/**
 	 * 查询设备详情
 	 *
@@ -46,6 +47,15 @@ public interface SdDevicesMapper
 	 * 查询设备列表
 	 */
 	public List<SdDevices> selectDropSdDevicesList(SdDevices sdDevices);
+
+
+	/**
+	 * 根据隧道ID、设备类型获取设备列表
+	 * @param tunnelId 隧道ID
+	 * @param typeList 设备类型列表
+	 * @return
+	 */
+	List<SdDevices> selectDeviceList(@Param("tunnelId") String tunnelId,@Param("typeList") List<String> typeList);
 
 	/**
 	 * 新增设备
@@ -164,7 +174,11 @@ public interface SdDevicesMapper
 
 	public int updateSdDevicesByFEqId(SdDevices sdDevices);
 
+	public int updateSdDevicesByExternalSystemId(SdDevices sdDevices);
+
 	public List<SdDevices> selectFireComponentsList(SdDevices sdDevices);
+
+	public List<SdDevices> selectDevicesListByExternalSystemId(SdDevices sdDevices);
 
 	public List<Map<String, Object>> selectDeviceDataAndUnit(@Param("eqId") String eqId);
 
@@ -179,6 +193,11 @@ public interface SdDevicesMapper
 
 	public List<Map> getReserveProcessDevices(String[] param);
 
+	/**
+	 * 根据父设备ID查询关联子设备信息
+	 * @param fEqId 父设备ID
+	 * @return
+	 */
 	public List<SdDevices> getDevicesListByFEqId(String fEqId);
 
 	/**
@@ -228,7 +247,7 @@ public interface SdDevicesMapper
 	 * @param eqStatus
 	 * @return
 	 */
-    List<SdDevices> getAppDevicesList(@Param("param")String param,@Param("eqType") String eqType,@Param("eqStatus") String eqStatus);
+    List<SdDevices> getAppDevicesList(SdDevices sdDevices);
 
 	/**
 	 * 查询在线离线设备数量
@@ -237,7 +256,7 @@ public interface SdDevicesMapper
 	 * @param eqStatus
 	 * @return
 	 */
-	List<SdDevices> getDevicesNum(@Param("param")String param,@Param("eqType") String eqType,@Param("eqStatus") String eqStatus);
+	List<SdDevices> getDevicesNum(SdDevices sdDevices);
 
 	/**
 	 * app端设备信息
@@ -252,4 +271,201 @@ public interface SdDevicesMapper
 	 * @return
 	 */
     List<SdDevices> getAppDevicesStatus(@Param("eqId")String eqId);
+
+	public List<SdDevices> selectSdDevicesListByEqTypes(@Param("guidanceLampTypeId") Long guidanceLampTypeId, @Param("lunKuoBiaoTypeId") Long lunKuoBiaoTypeId);
+
+	/**
+	 * 根据类型和外部设备ID查询紧急电话和广播
+	 * @param devices
+	 * @return
+	 */
+	SdDevices selectPhoneSpk(SdDevices devices);
+
+	/**
+	 * 查询左洞或者右洞的设备
+	 * @param sdDevices
+	 * @return
+	 */
+    List<SdDevices> getSpkList(SdDevices sdDevices);
+
+	/**
+	 * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取设备
+	 * @param sdDevices
+	 * @return
+	 */
+	SdDevices getLight(SdDevices sdDevices);
+
+	/**
+	 * 查询风机对应的振动仪检测器
+	 * @param deviceId
+	 * @return
+	 */
+	SdDevices selectZdyDevice(@Param("deviceId") String deviceId,
+							  @Param("eqType") Long eqType);
+
+	SdDevices getDeviceByAssociationDeviceId(@Param("deviceId") Long deviceId);
+
+
+    List<SdDevices> selectDevicesLineList(@Param("deptId")String deptId,@Param("eqtype")String eqtype);
+
+
+	List<SdDevices> selectSdDevicesListByParam(SdDevices sdDevices);
+	/**
+	 * 查询设备方向
+	 * @param sdDevices
+	 * @return
+	 */
+	List<String> getTunnelDirection(SdDevices sdDevices);
+
+	/**
+	 * 查询级联选择双向设备
+	 * @param sdDevices
+	 * @return
+	 */
+	List<Map<String, Object>> getTreeDevicesData(SdDevices sdDevices);
+
+	/**
+	 * 查询最近3km设备
+	 * @param eqType
+	 * @param direction
+	 * @param frontStakeNum
+	 * @param afterStakeNum
+	 * @return
+	 */
+	List<String> getRlDevice(@Param("eqType") int eqType,
+							 @Param("direction") String direction,
+							 @Param("frontStakeNum") int frontStakeNum,
+							 @Param("afterStakeNum") int afterStakeNum,
+							 @Param("tunnelId") String tunnelId,
+							 @Param("lane") String lane);
+
+	//前5个
+	List<String> getFrontLatelyFive(@Param("eqType") int eqType,
+									@Param("direction") String direction,
+									@Param("stakeNum") int stakeNum,
+									@Param("tunnelId") String tunnelId,
+									@Param("lane") String lane);
+
+	//后5个
+	List<String> getAfterLatelyFive(@Param("eqType") int eqType,
+									@Param("direction") String direction,
+									@Param("stakeNum") int stakeNum,
+									@Param("tunnelId") String tunnelId,
+									@Param("lane") String lane);
+
+	/**
+	 * 查询出入口视频
+	 * @param sdDevices
+	 * @return
+	 */
+	List<SdDevices> getEntranceExitVideo(SdDevices sdDevices);
+
+	/**
+	 * 批量查询设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectDevices(@Param("ids") String ids,
+											@Param("state") String state);
+
+	/**
+	 * 批量查询情报板设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectVmsDevices(@Param("ids") String ids,
+											   @Param("state") String state);
+
+	/**
+	 * 查询情报板留存信息
+	 * @param ids
+	 * @param state
+	 * @param type
+	 * @return
+	 */
+	List<Map<String, Object>> selectVmsDevicesOld(@Param("ids") String ids,
+											      @Param("state") String state,
+											      @Param("type") String type);
+
+	/**
+	 * 批量查询扬声器设备信息
+	 * @param ids
+	 * @return
+	 */
+	List<Map<String, Object>> selectLsDevices(@Param("ids") String ids);
+
+	/**
+	 * 查询设备名称是否重复
+	 * @param eqName 设备名称
+	 * @return
+	 */
+	List<SdDevices> verifyEqNameOnly(@Param("eqId") String eqId,@Param("eqName") String eqName);
+	/**
+	 * 查询设备名称是否重复
+	 * @param eqTunnelId 所属隧道 ID
+	 * @param eqName 设备名称
+	 * @return
+	 */
+	List<SdDevices> tunnelEqNameOnly(@Param("eqTunnelId") String eqTunnelId,@Param("eqName") String eqName);
+
+
+	/**
+	 * 根据条件查询 当前设备 数据 状态
+	 * @param sdDevices
+	 * @return
+	 */
+	List<SdDevices> selectSdDevicesDataByParam(SdDevices sdDevices);
+
+	int getAppDevicesCountList(SdDevices sdDevices);
+
+	/**
+	 * 查询情报板分辨率
+	 * @param sdDevices
+	 * @return
+	 */
+	String selectDevicePixel(SdDevices sdDevices);
+
+	/**
+	 * 根据协议Id查询设备列表
+	 * @param sdDevices 设备信息
+	 * @return
+	 */
+	List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices);
+
+	int updateFireMonitorStatus(SdDevices sdDevices);
+
+	/**
+	 * 查询消防设备id
+	 * @param deviceAddress
+	 * @return
+	 */
+	String getFireMonitorId(String deviceAddress);
+
+	/**
+	 * 查询消防设备类型数据项 r
+	 * @param fireMonitorType
+	 * @return
+	 */
+	Long getFireMonitorTypeItem(String fireMonitorType);
+
+
+
+	/**
+	 *  查询控制执行器关联设备列表
+	 * @return
+	 */
+	List<Map> getMcaList();
+
+	/**
+	 *  查询控制执行器设备数据项
+	 * @return
+	 */
+	List<Map> getMacItem(String devId);
+
+	/**
+	 * 根据ip消防炮信息
+	 * @param deviceAddress
+	 * @return
+	 */
+	SdDevices getXfpDevicesInfo(String deviceAddress);
 }

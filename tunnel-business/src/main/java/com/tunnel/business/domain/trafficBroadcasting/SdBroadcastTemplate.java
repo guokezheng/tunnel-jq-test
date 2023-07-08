@@ -54,7 +54,17 @@ public class SdBroadcastTemplate extends BaseEntity
     @Excel(name = "备注2")
     private String remake2;
 
-    public void setId(Long id) 
+    private String ids;
+
+    public String getIds() {
+        return this.ids;
+    }
+
+    public void setIds( String ids) {
+        this.ids = ids;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

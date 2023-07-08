@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,7 @@ public interface ISdTaskListService
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(SdTaskList sdTaskList);
+    List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime,String deptId,Integer pageSize,Integer pageNum,Long userId);
 
     /**
      * 查询任务关联的巡查点数量
@@ -121,7 +122,7 @@ public interface ISdTaskListService
      * @param id
      * @return
      */
-    int acceptSdTaskList(String id);
+    int acceptSdTaskList(String id,Long userId);
 
     /**
      * app端  巡查点清单
@@ -164,4 +165,72 @@ public interface ISdTaskListService
      * @return
      */
     int savePatrol(SdPatrolList sdPatrolList);
+
+    /**
+     * 获取任务状态
+     * @return
+     */
+    List<SdTaskList> getTaskStatus();
+
+    /**
+     * app端首页待处理任务单
+     * @param deptId
+     * @return
+     */
+    List<SdTaskList> getTaskToDo(String deptId,Long userId);
+
+    /**
+     * 根据隧道查询班组
+     * @param tunnelId
+     * @return
+     */
+    String selectBzByTunnel(String tunnelId);
+
+    List<SdTaskList> getTaskToDoTeams(String deptId,Long userId);
+
+    int getTaskCountList(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId);
+
+    int getTaskCountListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId);
+
+    List<SdTaskList> getTaskListTeams(String taskStatus, String taskName, String startTime, String endTime, String deptId, Integer pageSize, Integer pageNum,Long userId);
+
+    /**
+     * app端查看现场情况
+     * @param taskId
+     * @return
+     */
+    List<SdTaskList> getSiteInfo(String taskId);
+
+    /**
+     * 判断高速云是否存在该条任务
+     * @param id
+     * @return
+     */
+    SdTaskList selectSdTaskById(String id);
+
+    /**
+     * 更新高速云的任务
+     * @param sdTaskList
+     */
+    int updateGsySdTaskList(SdTaskList sdTaskList);
+
+    /**
+     * app端上传图片
+     * @param file
+     * @return
+     */
+    String uploadPicture(MultipartFile[] file);
+
+    /**
+     * 检验任务名称是否存在
+     * @param sdTaskList
+     * @return
+     */
+    int checkTaskList(SdTaskList sdTaskList);
+    /**
+     * 删除现场图片
+     * @param id
+     * @return
+     */
+    int deleteSitePhoto(String id);
 }

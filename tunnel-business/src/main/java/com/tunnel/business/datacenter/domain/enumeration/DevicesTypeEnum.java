@@ -41,18 +41,24 @@ public enum DevicesTypeEnum {
     YOU_DAO_DENG(31L, "智能诱导灯"),
     SHENG_GUANG_BAO_JING(32L, "声光报警器"),
     XIAO_FANG_PAO(33L, "智能消防炮"),
-    FIRE_ALARM_HOST(34L, "火灾报警主机"),
+//    FIRE_ALARM_HOST(34L, "火灾报警主机"),
     BIAN_SIAN_SUO(35L, "变电所"),
     MEN_JIA_VMS(36L, "门架式可变信息标志"),
-    ZHOU_LIU_FENG_JI(37L, "门架式可变信息标志"),
+    ZHOU_LIU_FENG_JI(37L, "轴流风机"),
     XIAO_FANG_SHUAN(38L, "消防栓"),
     SHOU_BAO(39L, "智能手动报警按钮"),
     HUO_YAN_TAN_CE_QI(40L, "火焰探测器"),
-    CHE_XING_HENG_DONG(41L, "车行横洞指示标志"),
-    RSU(42L, "路侧单元RSU"),
-    TING_CHE_DAI(43L, "紧急停车带标志"),
+    WEN_SHI_DU_CHUAN_GAN_QI(41L, "温湿度传感器"),
+    SHUI_JIN_CHUAN_GAN_QI(42L, "水浸传感器"),
+    DI_PIN_XUN_JIAN_GUI(43L, "低频巡检柜"),
+    DIAN_BAN_RE(44L, "电伴热"),
+    JING_SHI_DENG_DAI(45L, "警示灯带"),
+    LUN_KUO_BIAO(46L, "轮廓标"),
+    CE_KONG_ZHI_XING_QI(47L, "测控执行器"),
+    NEI_WAI_ZHEN_DONG_YI_JIANCEQI(48L, "内外振动仪检测器"),
     SHU_SAN_BIAO_ZHI_CONTROL(1030L, "智能疏散标志控制器"),
-    YOU_DAO_DENG_CONTROL(1031L, "智能诱导灯控制器");
+    YOU_DAO_DENG_CONTROL(1031L, "智能诱导灯控制器"),
+    LUN_KUO_BIAO_CONTROL(1046L, "轮廓标控制器");
 
 
     private Long code;

@@ -499,7 +499,7 @@ export default {
       equipmentTypeData: [], //设备类型列表
       equipmentData: [], //设备列表
       formDataValidator: {
-        direction: [{ required: true, message: "请选择方向", trigger: "blur" }],
+        direction: [{ required: true, message: "请选择方向", trigger: "change" }],
         tunnelId: [
           { required: true, message: "请选择隧道", trigger: "change" },
         ],
@@ -507,26 +507,26 @@ export default {
           { required: true, message: "请输入策略名称", trigger: "change" },
         ],
         eventType: [
-          { required: true, message: "请选择事件类型", trigger: "blur" },
+          { required: true, message: "请选择事件类型", trigger: "change" },
         ],
         schedulerTime:[
-          { required: true, message: "请选择定时频率", trigger: "blur" },
+          { required: true, message: "请选择定时频率", trigger: "change" },
         ],
         triggers: {
           deviceTypeId: [
-            { required: true, message: "请选择设备类型", trigger: "blur" },
+            { required: true, message: "请选择设备类型", trigger: "change" },
           ],
           deviceId: [
-            { required: true, message: "请选择设备名称", trigger: "blur" },
+            { required: true, message: "请选择设备名称", trigger: "change" },
           ],
           elementId: [
-            { required: true, message: "请选择数据项", trigger: "blur" },
+            { required: true, message: "请选择数据项", trigger: "change" },
           ],
           comparePattern: [
-            { required: true, message: "请选择运算符", trigger: "blur" },
+            { required: true, message: "请选择运算符", trigger: "change" },
           ],
           compareValue: [
-            { required: true, message: "请输入阈值", trigger: "blur" },
+            { required: true, message: "请输入阈值", trigger: "change" },
           ],
         },
       },

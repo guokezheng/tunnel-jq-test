@@ -46,7 +46,7 @@
     </sql>
 
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
-        select t.id, s.tunnel_name, t.end_plantime, u.nick_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.nick_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+        select t.id,t.task_name, s.tunnel_name, t.end_plantime, u.nick_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.nick_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
         left join sys_user u on t.dispatcher = u.user_id
         left join sd_teams b on b.dept_id =  t.bz_id
         left join sys_user w on t.walker_id = w.user_id

@@ -118,6 +118,8 @@
                   multiple
                   collapse-tags
                   style="width:100%;"
+                  @visible-change="selectDataItem"
+                  @change="optionDataItem()"
                 >
                   <!-- @change="selectDataItem()" -->
                   <el-option
@@ -497,7 +499,7 @@ export default {
       equipmentTypeData: [], //设备类型列表
       equipmentData: [], //设备列表
       formDataValidator: {
-        direction: [{ required: true, message: "请选择方向", trigger: "blur" }],
+        direction: [{ required: true, message: "请选择方向", trigger: "change" }],
         tunnelId: [
           { required: true, message: "请选择隧道", trigger: "change" },
         ],
@@ -505,26 +507,26 @@ export default {
           { required: true, message: "请输入策略名称", trigger: "change" },
         ],
         eventType: [
-          { required: true, message: "请选择事件类型", trigger: "blur" },
+          { required: true, message: "请选择事件类型", trigger: "change" },
         ],
         schedulerTime:[
-          { required: true, message: "请选择定时频率", trigger: "blur" },
+          { required: true, message: "请选择定时频率", trigger: "change" },
         ],
         triggers: {
           deviceTypeId: [
-            { required: true, message: "请选择设备类型", trigger: "blur" },
+            { required: true, message: "请选择设备类型", trigger: "change" },
           ],
           deviceId: [
-            { required: true, message: "请选择设备名称", trigger: "blur" },
+            { required: true, message: "请选择设备名称", trigger: "change" },
           ],
           elementId: [
-            { required: true, message: "请选择数据项", trigger: "blur" },
+            { required: true, message: "请选择数据项", trigger: "change" },
           ],
           comparePattern: [
-            { required: true, message: "请选择运算符", trigger: "blur" },
+            { required: true, message: "请选择运算符", trigger: "change" },
           ],
           compareValue: [
-            { required: true, message: "请输入阈值", trigger: "blur" },
+            { required: true, message: "请输入阈值", trigger: "change" },
           ],
         },
       },
@@ -621,11 +623,11 @@ export default {
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
         this.strategyForm.schedulerTime = data.schedulerTime;
-        listItem({
-          deviceTypeId: this.strategyForm.triggers.deviceTypeId,
-        }).then((res) => {
-          this.dataItem = res.rows;
-        });
+        // listItem({
+        //   deviceTypeId: this.strategyForm.triggers.deviceTypeId,
+        // }).then((res) => {
+        //   this.dataItem = res.rows;
+        // });
 
         // 获取触发器的数据
         getTriggersByRelateId({ relateId: response.data.id }).then((res) => {
@@ -642,6 +644,7 @@ export default {
             res.data.warningType
           );
           this.$set(this.strategyForm, "eventType", +data.eventType);
+          console.log(this.strategyForm.tunnelId,this.strategyForm.direction)
           listDevices({
             eqType: this.strategyForm.triggers.deviceTypeId,
             eqTunnelId: this.strategyForm.tunnelId,
@@ -887,11 +890,17 @@ export default {
     // 改变隧道或者方向
     changeEvent(value) {
       console.log(value,"value")
-      this.equipmentTypeData = [];
       // 重置设备列表
+      this.equipmentTypeData = [];
+      this.deviceName = []
+      this.dataItem = []
       this.strategyForm.autoControl = [
         { state: "", value: "", equipmentTypeId: "" },
       ];
+      this.strategyForm.triggers = 
+        { deviceTypeId: "", deviceId: "", elementId: "",comparePattern:"",compareValue:"", warningType:""}
+      ;
+
       if(this.strategyForm.tunnelId.length !=0 && this.strategyForm.direction.length !=0){
         //this.listEqTypeStateIsControl();
         this.getEquipmentType();
@@ -937,24 +946,44 @@ export default {
     selectEqName() {
       this.rest();
       // 选择设备名称赋值
-      listDevices({
-        eqType: this.strategyForm.triggers.deviceTypeId,
-        eqTunnelId: this.strategyForm.tunnelId,
-        eqDirection: this.strategyForm.direction,
-      }).then((res) => {
-        this.getListItem();
-        this.equipmentData = res.rows;
-        this.deviceName = res.rows;
-      });
+      console.log(this.strategyForm.tunnelId,this.strategyForm.direction)
+      if(this.strategyForm.tunnelId && this.strategyForm.direction && this.strategyForm.triggers.deviceTypeId){
+        listDevices({
+          eqType: this.strategyForm.triggers.deviceTypeId,
+          eqTunnelId: this.strategyForm.tunnelId,
+          eqDirection: this.strategyForm.direction,
+        }).then((res) => {
+          this.equipmentData = res.rows;
+          this.deviceName = res.rows;
+        });
+      }
+    },
+    selectDataItem(e){
+      console.log(this.strategyForm.triggers.deviceId,"111111111")
+      if(e == true){
+        if(!this.strategyForm.tunnelId){
+          this.$modal.msgWarning("请先选择隧道")
+        }else if(!this.strategyForm.direction){
+          this.$modal.msgWarning("请先选择方向")
+        }else{
+          this.selectEqName()
+        }
+      }
+    },
+    optionDataItem(){
+      this.getListItem();
     },
     getListItem() {
       //给设备数据项赋值
-      listItem({ deviceTypeId: this.strategyForm.triggers.deviceTypeId }).then(
-        (res) => {
-          this.dataItem = res.rows;
-          console.log(this.dataItem, "数据项");
-        }
-      );
+      console.log(this.strategyForm.triggers.deviceId,"00000000000")
+      if(this.strategyForm.triggers.deviceId){
+        listItem({ deviceTypeId: this.strategyForm.triggers.deviceTypeId }).then(
+          (res) => {
+            this.dataItem = res.rows;
+            console.log(this.dataItem, "数据项");
+          }
+        );
+      }
     },
     //重置方法
     rest() {

@@ -2579,12 +2579,13 @@ export default {
 
   watch: {
     "batchManageForm.state": function (newVal, oldVal) {
+      console.log(newVal,"newVal")
       if ([7, 9].includes(this.itemEqType)) {
         // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if (newVal == "1" && this.batchManageForm.brightness == 0) {
           this.batchManageForm.brightness = 1;
           this.min = 1;
-        } else if (newVal == "2") {
+        } else if (newVal == "2" || newVal == "") {
           this.batchManageForm.brightness = 0;
           this.min = 0;
         }
@@ -2599,12 +2600,21 @@ export default {
           this.batchManageForm.frequency = 1;
           this.min = 1;
         }
-      } else {
-        if (this.batchManageForm.brightness == 0) {
-          this.min = 1;
+      } else if(this.itemEqType == 45){
+        if(newVal == ""){
+          this.min = 0;
+          this.batchManageForm.brightness = 0;
+        }else{
           this.batchManageForm.brightness = 1;
+          this.min = 1;
         }
       }
+      // else {
+      //   if (this.batchManageForm.brightness == 0) {
+      //     this.min = 1;
+      //     this.batchManageForm.brightness = 1;
+      //   }
+      // }
     },
 
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
@@ -3093,12 +3103,6 @@ export default {
     },
     // 批量操作 弹窗确定
     batchManageOK() {
-      const loading = this.$loading({
-        lock: true,
-        text: "Loading",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)",
-      });
       if (
         this.batchManageForm.brightness < 30 &&
         this.batchManageForm.state == 1 &&
@@ -3106,8 +3110,14 @@ export default {
       ) {
         this.$modal.msgWarning("基本照明亮度不得低于30");
         return;
-      }
-      const param = {
+      }else{
+        const loading = this.$loading({
+          lock: true,
+          text: "Loading",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.7)",
+        });
+        const param = {
         eqId: this.itemEqId.toString(),
         eqDirection: this.batchManageForm.eqDirection,
         state: this.batchManageForm.state,
@@ -3129,6 +3139,7 @@ export default {
         .catch(() => {
           loading.close();
         });
+      }
     },
     // 新版批量操作 点击变俩按钮
     batchManage() {
@@ -3154,6 +3165,9 @@ export default {
         this.$modal.msgWarning("请选择至少一个设备进行控制！");
         return;
       }
+      this.batchManageForm.state = ''
+      this.batchManageForm.brightness = 0
+      this.batchManageForm.frequency = 0
       this.batchManageDialog = true;
       let list = [];
       const param = {

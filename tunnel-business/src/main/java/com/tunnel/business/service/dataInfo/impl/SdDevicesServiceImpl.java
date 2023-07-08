@@ -489,6 +489,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return successMsg.toString();
     }
 
+    @Override
     public Map checkDevices(SdDevices devices, Boolean isUpdateSupport) {
         StringBuilder failureMsg = new StringBuilder();
         Map<String, Object> map = new HashMap<String, Object>();

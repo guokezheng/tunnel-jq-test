@@ -31,6 +31,17 @@ public class SdDeviceTypeItemController extends BaseController
     @Autowired
     private ISdDeviceTypeItemService sdDeviceTypeItemService;
 
+
+    /**
+     * 查询设备类型数据项列表
+     */
+    @GetMapping("/allList")
+    @ApiOperation("查询设备类型数据项列表")
+    public AjaxResult allList(SdDeviceTypeItem sdDeviceTypeItem)
+    {
+        return AjaxResult.success(sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem));
+    }
+
     /**
      * 查询设备类型数据项列表
      */

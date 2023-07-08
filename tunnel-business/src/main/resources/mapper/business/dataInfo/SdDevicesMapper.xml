@@ -11,10 +11,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="eqName"    column="eq_name"    />
         <result property="eqType"    column="eq_type"    />
         <result property="fEqType"    column="f_eq_type"    />
+        <result property="FEqType"    column="f_eq_type"    />
         <result property="eqModel"    column="eq_model"    />
         <result property="brandId"    column="brand_id"    />
         <result property="externalSystemId"    column="external_system_id"    />
         <result property="eqDirection"    column="eq_direction"    />
+        <result property="direction"    column="eq_direction"    />
         <result property="lane"    column="lane"    />
         <result property="pile"    column="pile"    />
         <result property="pileNum"    column="pile_num"    />
@@ -259,7 +261,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.control_point_address, a.query_point_address, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name, a.external_device_id
+        ,c.tunnel_name, a.external_device_id,a.protocol_id
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id

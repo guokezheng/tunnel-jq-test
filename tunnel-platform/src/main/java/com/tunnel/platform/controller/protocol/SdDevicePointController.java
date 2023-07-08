@@ -2,6 +2,9 @@ package com.tunnel.platform.controller.protocol;
 
 import java.util.List;
 
+import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.protocol.SdDevicePoint;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +23,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 设备点位状态详情Controller
@@ -100,5 +104,26 @@ public class SdDevicePointController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdDevicePointService.deleteSdDevicePointByIds(ids));
+    }
+
+
+    @Log(title = "设备点位管理", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
+        if(file!=null){
+            String str1 = file.getOriginalFilename();
+            String str = str1.substring(str1.indexOf(".") + 1);
+            System.out.println("文件类型为============"+str);
+            if(!"xls".equals(str)&&!"xlsx".equals(str)){
+                String message = "抱歉，导入失败，仅允许导入“xls”或“xlsx”格式文件！";
+                return AjaxResult.success(message);
+            }
+        }
+        ExcelUtil<SdDevicePoint> util = new ExcelUtil<SdDevicePoint>(SdDevicePoint.class);
+        List<SdDevicePoint> devicePointList = util.importExcel(file.getInputStream());
+        String operName = SecurityUtils.getUsername();
+        String message = sdDevicePointService.importSdDevices(devicePointList, updateSupport, operName);
+
+        return AjaxResult.success(message);
     }
 }

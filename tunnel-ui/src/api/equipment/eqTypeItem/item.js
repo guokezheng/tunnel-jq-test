@@ -1,5 +1,15 @@
 import request from '@/utils/request'
 
+
+// 查询设备类型数据项列表
+export function allListItem(query) {
+  return request({
+    url: '/eqType/item/allList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询设备类型数据项列表
 export function listItem(query) {
   return request({

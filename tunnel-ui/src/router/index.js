@@ -260,7 +260,35 @@ export const constantRoutes = [
     path: '/inductionLamp',
     component: (resolve) => require(['@/views/equipment/param/index'], resolve),
     hidden: true
-  }
+  },
+  {
+    path: '/equipment/eqlist-point',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: (resolve) => require(['@/views/equipment/protocol/index'], resolve),
+        name: 'devPoint',
+        meta: { title: '设备点位配置', activeMenu: '/equipment/eqlist'}
+      }
+    ]
+  },
+  {
+    path: '/tool/gen',
+    component: (resolve) => require(['@/views/tool/gen/index'], resolve),
+    hidden: true
+  },
+  {
+    path: '/tool/swagger/tool/swagger',
+    component: (resolve) => require(['@/views/tool/swagger/index'], resolve),
+    hidden: true
+  },
+  {
+    path: '/index-test',
+    component: (resolve) => require(['@/views/workbench/config/index-test'], resolve),
+    hidden: true
+  },
 
 ]
 

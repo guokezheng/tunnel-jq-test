@@ -223,15 +223,22 @@
         label="操作"
         align="center"
         class-name="small-padding fixed-width"
-        width="210"
+        width="280"
       >
         <template slot-scope="scope">
-          <el-button
+<!--          <el-button
             size="mini"
             class="tableBlueButtton"
             @click="updateCmd(scope.row)"
             v-hasPermi="['system:devices:edit']"
             >控制修改
+          </el-button>-->
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
+            @click="settingPoint(scope.row)"
+            v-hasPermi="['system:devices:edit']"
+          >点位设置
           </el-button>
           <el-button
             size="mini"
@@ -1487,6 +1494,17 @@ export default {
           this.ctrlCommandList[index].command = response.rows[0].command;
           this.ctrlCommandList[index].zhanshi = false;
         });
+      });
+    },
+    /** 点位设置 **/
+    settingPoint(row){
+      const eqId = row.eqId || 0;
+      const eqType = row.eqType || 0;
+      const protocolId = row.protocolId || 0;
+
+      this.$router.push({
+        path: "/equipment/eqlist-point/index",
+        query: { eqId: eqId ,typeId : eqType,protocolId:protocolId},
       });
     },
     /** 修改控制指令操作 */

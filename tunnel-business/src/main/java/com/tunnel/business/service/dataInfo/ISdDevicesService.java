@@ -323,6 +323,13 @@ public interface ISdDevicesService {
 
 
     /**
+     * 检查设备信息
+     * @param devices
+     * @param isUpdateSupport
+     * @return
+     */
+     Map checkDevices(SdDevices devices, Boolean isUpdateSupport);
+    /**
      * 根据协议Id查询设备列表
      * @param sdDevices 设备信息
      * @return

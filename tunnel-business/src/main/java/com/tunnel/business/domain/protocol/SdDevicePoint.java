@@ -19,14 +19,22 @@ public class SdDevicePoint extends BaseEntity
     private Long id;
 
     /** 设备id */
-    @Excel(name = "设备id")
+    @Excel(name = "设备id",width = 30)
     private String eqId;
 
     /** 设备类型 */
     @Excel(name = "设备类型")
     private Long eqType;
 
+    @Excel(name = "功能",width = 30)
+    private String functionName;
+
+    @Excel(name = "数据项编号")
     private Long itemId;
+
+    /** 数据类型 */
+    @Excel(name = "数据类型")
+    private String dataType;
 
     /** 寄存器点位 */
     @Excel(name = "寄存器点位")
@@ -45,12 +53,7 @@ public class SdDevicePoint extends BaseEntity
     private String dataLength;
 
     /** 功能 */
-    @Excel(name = "功能")
-    private String functionName;
 
-    /** 数据类型 */
-    @Excel(name = "数据类型")
-    private String dataType;
 
     /** 信号名称 */
     @Excel(name = "信号名称")
@@ -64,18 +67,35 @@ public class SdDevicePoint extends BaseEntity
     @Excel(name = "数据状态")
     private String dataStatus;
 
-    /** 功能描述 */
-    @Excel(name = "功能描述")
-    private String functionDescription;
 
     /** 是否预留 */
     @Excel(name = "是否预留")
     private Long isReserved;
 
+
     /**
      * 点位配置json
      */
+    @Excel(name = "服务端JSON配置" ,height=100,width = 42)
     private String pointConfig;
+
+    /**
+     * 手机端点位配置json
+     */
+    @Excel(name = "客户端JSON配置",height=100,width = 42)
+    private String functionJson;
+
+    /** 功能描述 */
+    @Excel(name = "功能描述")
+    private String functionDescription;
+
+    public String getFunctionJson() {
+        return functionJson;
+    }
+
+    public void setFunctionJson(String functionJson) {
+        this.functionJson = functionJson;
+    }
 
     public void setId(Long id)
     {

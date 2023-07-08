@@ -142,7 +142,7 @@ public class DictUtils
         {
             for (SysDictData dict : datas)
             {
-                if (dictLabel.equals(dict.getDictLabel()))
+                if (dictLabel!= null && dictLabel.equals(dict.getDictLabel()))
                 {
                     return dict.getDictValue();
                 }

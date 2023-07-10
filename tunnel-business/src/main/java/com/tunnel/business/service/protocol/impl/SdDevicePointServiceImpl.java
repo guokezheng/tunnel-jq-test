@@ -3,8 +3,14 @@ package com.tunnel.business.service.protocol.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.protocol.SdDevicePoint;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.protocol.SdDevicePointMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.impl.SdDevicesServiceImpl;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +26,13 @@ public class SdDevicePointServiceImpl implements ISdDevicePointService
 {
     @Autowired
     private SdDevicePointMapper sdDevicePointMapper;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
+
+
+    @Autowired
+    private ISdDevicesService sdDevicesService;
 
     /**
      * 查询设备点位状态详情
@@ -142,5 +155,61 @@ public class SdDevicePointServiceImpl implements ISdDevicePointService
     public int deleteSdDevicePointById(Long id)
     {
         return sdDevicePointMapper.deleteSdDevicePointById(id);
+    }
+
+    @Override
+    public String importSdDevices(List<SdDevicePoint> devicePointList, boolean isUpdateSupport, String operName) {
+        if (StringUtils.isNull(devicePointList) || devicePointList.size() == 0) {
+            throw new ServiceException("导入设备数据不能为空！");
+        }
+        int successNum = 0;
+        int failureNum = 0;
+        StringBuilder successMsg = new StringBuilder();
+        StringBuilder failureMsg = new StringBuilder();
+        for (SdDevicePoint devicePoint : devicePointList) {
+            try {
+                SdDevices d = sdDevicesMapper.selectSdDevicesById(devicePoint.getEqId());
+                List<SdDevicePoint> dpList =  sdDevicePointMapper.selectSdDevicePointByDevId(devicePoint.getEqId());
+                if (dpList.size() == 0) {
+                    Map map = sdDevicesService.checkDevices(d,isUpdateSupport);
+                    if ((Boolean) map.get("flag")) {
+                        this.insertSdDevicePoint(devicePoint);
+                        successNum++;
+                        successMsg.append("<br/>" + successNum + "、设备ID " + devicePoint.getEqId() + " 点位导入成功");
+                    } else {
+                        failureNum++;
+                        failureMsg.append("<br/>" + failureNum + map.get("failureMsg").toString());
+                    }
+         /*       } else if (isUpdateSupport) {
+                    Map map = new SdDevicesServiceImpl().checkDevices(d,isUpdateSupport);
+                    if ((Boolean) map.get("flag")) {
+                        this.updateSdDevicePoint(devicePoint);
+                        successNum++;
+                        successMsg.append("<br/>" + successNum + "、设备ID " + devicePoint.getEqId() + " 更新成功");
+                    } else {
+                        failureNum++;
+                        failureMsg.append("<br/>" + failureNum + map.get("failureMsg").toString());
+                    }*/
+                } else {
+                    failureNum++;
+                    failureMsg.append("<br/>" + failureNum + "、设备ID " + devicePoint.getEqId() + " 点位已存在");
+                }
+            } catch (Exception e) {
+                failureNum++;
+                String msg = "<br/>" + failureNum + "、设备ID " + devicePoint.getEqId() + " 点位导入失败：";
+                failureMsg.append(msg + e.getMessage());
+            }
+        }
+        if (failureNum > 0) {
+            if (successNum > 0) {
+                failureMsg.insert(0, successNum + " 条数据导入成功" + "，" + failureNum + " 条数据格式不正确，导入失败！错误如下：");
+            } else {
+                failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确，错误如下：");
+            }
+            throw new ServiceException(failureMsg.toString());
+        } else {
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
+        }
+        return successMsg.toString();
     }
 }

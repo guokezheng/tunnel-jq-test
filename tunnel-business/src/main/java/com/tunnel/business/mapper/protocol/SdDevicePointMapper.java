@@ -110,4 +110,11 @@ public interface SdDevicePointMapper
      * @return 结果
      */
     public int deleteSdDevicePointByIds(Long[] ids);
+
+    /**
+     * 查询指定设备的设备点位
+     * @param eqId
+     * @return
+     */
+    List<SdDevicePoint> selectSdDevicePointByDevId(String eqId);
 }

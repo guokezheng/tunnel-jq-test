@@ -38,9 +38,7 @@ public class SdTaskList extends BaseEntity
 
     private String sdName;
 
-    /** 任务名称 */
-   /* @Excel(name = "任务名称")*/
-    private String taskName;
+
 
     /** tunnel对象 */
     @Excels({
@@ -91,6 +89,10 @@ public class SdTaskList extends BaseEntity
     public void setTime(final String time) {
         this.time = time;
     }
+
+    /** 任务名称 */
+    @Excel(name = "任务名称")
+    private String taskName;
 
     /** 派单人员 */
     @Excel(name = "派单人员")

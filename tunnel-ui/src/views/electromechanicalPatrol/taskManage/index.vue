@@ -144,6 +144,11 @@
         align="center"
         prop="tunnelName.tunnelName"
       />
+      <el-table-column
+        label="任务名称"
+        align="center"
+        prop="taskName"
+      />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
         label="派单时间"
@@ -901,6 +906,7 @@ import {
   addTask,
   getFaultList,
   updateTask,
+  //test11,
   selectBzByTunnel, getUserInfo,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import {
@@ -1095,7 +1101,7 @@ export default {
       forbiddenTime: {
         disabledDate(time) {
           //Date.now()是javascript中的内置函数，它返回自1970年1月1日00:00:00 UTC以来经过的毫秒数。
-          return time.getTime() < Date.now() - 8.64e7;
+          return time.getTime() < (Date.now()+24*60*60*1000 - 8.64e7);
         },
       },
       // 表单参数
@@ -1129,6 +1135,8 @@ export default {
     this.getList();
     this.getTunnel();
     this.getTreeSelect();
+
+    //this.test11()
     //外观情况
     this.getDicts("impression").then((response) => {
       this.impressionOptions = response.data;
@@ -1563,6 +1571,15 @@ export default {
         console.log(response.data, "隧道部门树");
       });
     },
+
+
+    /** 测试 */
+    // test11() {
+    //
+    //   test11().then((response) => {
+    //
+    //   });
+    // },
 
     // 表单重置
     reset() {

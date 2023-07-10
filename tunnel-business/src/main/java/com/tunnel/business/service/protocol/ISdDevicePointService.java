@@ -98,4 +98,14 @@ public interface ISdDevicePointService
      * @return 结果
      */
     public int deleteSdDevicePointById(Long id);
+
+    /**
+     * 导入设备点位数据
+     *
+     * @param devicePointList   设备点位数据列表
+     * @param updateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName        操作用户
+     * @return 结果
+     */
+    String importSdDevices(List<SdDevicePoint> devicePointList, boolean updateSupport, String operName);
 }

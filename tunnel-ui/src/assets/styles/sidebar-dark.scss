@@ -643,7 +643,7 @@
           width: 520px;
           height: 40px;
           background: #052C4D;
-          display: flex;
+          display: unset!important;
           align-items: center;
           justify-content: center;
           .el-checkbox-button.is-checked:first-child .el-checkbox-button__inner{
@@ -882,10 +882,19 @@
       color:#fff;
     }
   }
+  .el-dropdown-menu--medium .el-dropdown-menu__item.el-dropdown-menu__item--divided:before{
+    height:0px !important;
+    display: none !important;
+  }
+  .el-dropdown-menu--medium .el-dropdown-menu__item.el-dropdown-menu__item--divided{
+    border-top:none;
+    margin-top:0;
+  }
   .el-dropdown-menu__item:not(.is-disabled):hover, .el-dropdown-menu__item:focus{
     background: transparent;
     color:#3e7deb;
   }
+  
   #app {
     .charts ::-webkit-scrollbar {
       width: 0px !important;

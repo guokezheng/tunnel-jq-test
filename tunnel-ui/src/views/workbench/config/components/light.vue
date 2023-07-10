@@ -267,41 +267,42 @@ export default {
   },
   watch: {
     "stateForm.state": function (newVal, oldVal) {
-      // console.log(newVal, "newVal");
       if([7, 9].includes(this.clickEqType)){
       // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if(newVal == "1" && this.stateForm.brightness == 0){
           this.stateForm.brightness = 1;
           this.brightnessMin = 1;
           this.frequencyMin = 1;
-        }else if(newVal == "2"){
+        }else if(newVal == "2" || newVal == ''){
           this.stateForm.brightness = 0;
           this.brightnessMin = 0;
         } 
       }else if([30, 31].includes(this.clickEqType)){
          // 疏散标志 state == 1 关闭 state == 2 常亮 state == 5 报警
-        if(newVal == "1"){
+         // 诱导灯 state == 1 关闭 state == 2 同步单山 state == 3 逆向流水
+         if (newVal == "1" || newVal == '') {
           this.stateForm.brightness = 0;
           this.stateForm.frequency = 0;
           this.brightnessMin = 0;
-          this.frequencyMin = 0;
-        }else if(newVal != "1" && this.stateForm.brightness == 0){
-          this.stateForm.brightness = 1;
-          if(newVal != "2"){
-            this.stateForm.frequency = 1;
-          }else {
-            this.stateForm.frequency = 0;
+          this.frequencyMin = 0
+        } else if (newVal != "1") {
+          if(this.stateForm.brightness == 0){
+            this.brightnessMin = 1;
+            this.stateForm.brightness = 1;
           }
+          if(this.stateForm.frequency == 0){
+            this.frequencyMin = 1
+            this.stateForm.frequency = 1;
+          }
+        }
+      }else if(this.clickEqType == 45){
+        // 警示灯带 红黄绿灯
+        if(newVal == ""){
+          this.brightnessMin = 0;
+          this.stateForm.brightness = 0;
+        }else if(newVal && this.stateForm.brightnes == 0){
+          this.stateForm.brightness = 1;
           this.brightnessMin = 1;
-          this.frequencyMin = 1;
-        }else if(newVal == "2"){
-          this.stateForm.frequency = 0;
-          this.frequencyMin = 0;
-          this.brightnessMin = 1;
-        }else if(newVal == "5"){
-          this.stateForm.frequency = 1;
-          this.brightnessMin = 1;
-          this.frequencyMin = 1;
         }
       }
     },

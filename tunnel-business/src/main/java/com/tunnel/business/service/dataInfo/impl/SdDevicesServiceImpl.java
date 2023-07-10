@@ -30,6 +30,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -489,6 +491,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return successMsg.toString();
     }
 
+    @Override
     public Map checkDevices(SdDevices devices, Boolean isUpdateSupport) {
         StringBuilder failureMsg = new StringBuilder();
         Map<String, Object> map = new HashMap<String, Object>();
@@ -511,12 +514,23 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             }
 
         }
+        /*判断id不能包含汉字*/
+        Pattern p = Pattern.compile("[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]");
+        Matcher m = p.matcher(devices.getEqId());
+        if (m.find()) {
+            failureMsg.append("、设备ID " + devices.getEqId() + " ID不能包含汉字,请检查");
+            map.put("flag", false);
+            map.put("failureMsg", failureMsg);
+            return map;
+        }
+
         if(tunnels.indexOf(devices.getEqTunnelId())==-1){//不包含改隧道
             failureMsg.append("、设备ID " + devices.getEqId() + " 所属隧道ID有误,请检查");
             map.put("flag", false);
             map.put("failureMsg", failureMsg);
             return map;
         }
+
         if (!StringUtil.isEmpty(fEqId)) {
             //有些设备不需要关联PLC，只有当录入PLC主机ID时，才校验PLC
             SdDevices plc = sdDevicesMapper.selectSdDevicesById(fEqId);

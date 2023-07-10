@@ -198,6 +198,7 @@
             label="策略名称"
             align="center"
             prop="strategyName"
+            show-overflow-tooltip
           />
           <el-table-column
             label="方向"
@@ -870,7 +871,6 @@ export default {
     },
     // 每次点击取消按钮，策略类型赋空
     closeDialog(flag) {
-
       let index = this.strategyForm.strategyType;
       switch (index) {
         case '0':
@@ -882,12 +882,16 @@ export default {
           this.$refs.timingControl.resetForm();
           this.$refs.timingControl.closeBoard();
           break;
+        case '2':
+          this.$refs.autoControl.resetForm();
+          this.$refs.autoControl.closeBoard();
+          break;
         case '3':
           this.$refs.timeControl.resetForm();
           this.$refs.timeControl.closeBoard();
           break;
       }
-      console.log(this.strategyForm.strategyType,"0000000000");
+      // console.log(this.strategyForm.strategyType,"0000000000");
       this.strategyForm.strategyType = "";
       this.dialogVisible = false;
       this.$refs.tableFile1.clearSelection();
@@ -1161,6 +1165,7 @@ export default {
     //关闭drawer
     handleClose(done) {
       let index = this.strategyForm.strategyType;
+      console.log(index,"index")
       switch (index) {
         case '0':
           this.$refs.manualControl.resetForm();
@@ -1169,6 +1174,10 @@ export default {
         case '1':
           this.$refs.timingControl.resetForm();
           this.$refs.timingControl.closeBoard();
+          break;
+        case '2':
+          this.$refs.autoControl.resetForm();
+          this.$refs.autoControl.closeBoard();
           break;
         case '3':
           this.$refs.timeControl.resetForm();

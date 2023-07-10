@@ -113,7 +113,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20" style="clear:both;">
         <el-col :span="24">
           <el-form-item
             v-for="(items, index) in strategyForm.autoControl"
@@ -408,6 +408,7 @@ export default {
         ],
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
+          { max: 50, message: '最长输入50个字符', trigger: 'blur' }
         ],
     /*    schedulerTime:[
           { required: true, message: "请输入定时频率", trigger: "change" }

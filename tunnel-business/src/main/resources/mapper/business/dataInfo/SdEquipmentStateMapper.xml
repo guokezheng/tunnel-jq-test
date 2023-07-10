@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- <if test="deviceState != null  and deviceState != ''"> and device_state = #{deviceState}</if>-->
             <!-- <if test="stateName != null  and stateName != ''"> and state_name like concat('%', #{stateName}, '%')</if>-->
             <!-- <if test="isControl != null  and isControl != ''"> and is_control like concat('%', #{isControl}, '%')</if> -->
-            <!-- <if test="isControl != null "> and a.is_control = #{isControl}</if> -->
+             <if test="isControl != null "> and a.is_control = #{isControl}</if>
         </where>
         order by a.sort asc
     </select>

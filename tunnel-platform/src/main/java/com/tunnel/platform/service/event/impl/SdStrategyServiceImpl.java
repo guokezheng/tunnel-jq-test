@@ -1118,10 +1118,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 rl.setEqTypeId(equipmentTypeId);
                 rl.setEquipments(equipments);
                 rl.setState(eqState);
-                rl.setStateNum(stateNum);
+                rl.setStateNum((stateNum == null || "".equals(stateNum)) ? "0" : stateNum);
                 rl.setStrategyId(sty.getId());
                 sdStrategyRlMapper.insertSdStrategyRl(rl);
+                map.put("id",rl.getId());
             }
+            // 情报板增加历史记录
+            autoControl.stream().forEach(item -> {
+                if(DevicesTypeEnum.VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())
+                        || DevicesTypeEnum.MEN_JIA_VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())){
+                    //储存情报板信息
+                    setJoinVms(item.get("state").toString(),Long.parseLong(item.get("id").toString()));
+                }
+            });
         }
         // 保存触发器
         SdTrigger sdTrigger = model.getTriggers();

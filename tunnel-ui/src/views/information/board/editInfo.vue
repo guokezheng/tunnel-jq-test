@@ -549,7 +549,7 @@ export default {
   methods: {
     init() {
       this.title = "修改";
-      
+
       this.dialogVisible = true;
       this.itemPropertyMap = new HashMap();
       this.alignmentNum = 2
@@ -620,10 +620,10 @@ export default {
 
           break;
       }
-     
+
       var textLeft = this.addZero(JSON.parse(JSON.stringify(textBoard1[0].offsetLeft)));
       var textTop = this.addZero(textBoard1[0].offsetTop);
-    
+
       this.dataForm.COORDINATE = textLeft + textTop;
     },
     addZero(num) {
@@ -665,7 +665,7 @@ export default {
           return this.$modal.msgError("当前发布内容包含敏感字段，请修改");
         } else if(response.data == 2){
           return this.$modal.msgError("当前输入内容为空");
-        } 
+        }
         else {
           this.loading = true;
           console.log(this.dataForm, "点击修改 表单");
@@ -686,7 +686,7 @@ export default {
               fontColor: this.dataForm.COLOR,
               fontSize: this.dataForm.FONT_SIZE.substring(0, 2),
               fontSpacing: this.dataForm.SPEED,
-              fontType: this.getFontStyle(this.dataForm.FONT),
+              fontType: this.dataForm.FONT,
               height: null,
               id: this.dataForm.id,
               imageUrl: null,
@@ -726,7 +726,7 @@ export default {
               content: this.dataForm.CONTENT,
               fontColor: this.dataForm.COLOR,
               fontSize: this.dataForm.FONT_SIZE.substring(0, 2),
-              fontType: this.getFontStyle(this.dataForm.FONT),
+              fontType: this.dataForm.FONT,
               fontSpacing: this.dataForm.SPEED,
               coordinate: this.dataForm.COORDINATE,
               id: this.dataForm.tcontentsId,

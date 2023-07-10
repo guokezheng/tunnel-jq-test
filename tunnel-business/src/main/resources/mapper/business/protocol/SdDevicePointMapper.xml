@@ -21,10 +21,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="functionDescription"    column="function_description"    />
         <result property="isReserved"    column="is_reserved"    />
         <result property="pointConfig" column="point_config"/>
+        <result property="functionJson" column="function_json"/>
     </resultMap>
 
     <sql id="selectSdDevicePointVo">
-        select id, eq_id, eq_type, item_id, address, address_index, function_code,data_length,function_name, data_type, signal_name, state_id, data_status, function_description, is_reserved,point_config from sd_device_point
+        select id, eq_id, eq_type, item_id, address, address_index, function_code,data_length,function_name, data_type, signal_name, state_id, data_status, function_description, is_reserved,point_config,function_json from sd_device_point
     </sql>
 
     <select id="selectSdDevicePointList" parameterType="SdDevicePoint" resultMap="SdDevicePointResult">
@@ -51,7 +52,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdDevicePointVo"/>
         where id = #{id}
     </select>
-
+    <select id="selectSdDevicePointByDevId" parameterType="String" resultMap="SdDevicePointResult">
+        <include refid="selectSdDevicePointVo"/>
+        where eq_id = #{eqId}
+    </select>
 
     <select id="selectSdDeviceIdList" parameterType="SdDevicePoint" resultMap="SdDevicePointResult">
         select eq_id from sd_device_point
@@ -159,6 +163,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="functionDescription != null">function_description,</if>
             <if test="isReserved != null">is_reserved,</if>
             <if test="pointConfig != null">point_config,</if>
+            <if test="functionJson != null">function_json,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqId != null">#{eqId},</if>
@@ -176,6 +181,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="functionDescription != null">#{functionDescription},</if>
             <if test="isReserved != null">#{isReserved},</if>
             <if test="pointConfig != null">#{pointConfig},</if>
+            <if test="functionJson != null">#{functionJson},</if>
          </trim>
     </insert>
 
@@ -188,7 +194,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="address != null">address = #{address},</if>
             <if test="addressIndex != null">address_index = #{addressIndex},</if>
             <if test="functionCode != null">function_code = #{functionCode},</if>
-            <if test="dataLength != null "> and data_length = #{dataLength},</if>
+            <if test="dataLength != null ">data_length = #{dataLength},</if>
             <if test="functionName != null">function_name = #{functionName},</if>
             <if test="dataType != null">data_type = #{dataType},</if>
             <if test="signalName != null">signal_name = #{signalName},</if>
@@ -197,6 +203,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="functionDescription != null">function_description = #{functionDescription},</if>
             <if test="isReserved != null">is_reserved = #{isReserved},</if>
             <if test="pointConfig != null"> point_config = #{pointConfig},</if>
+            <if test="functionJson != null"> function_json = #{functionJson},</if>
         </trim>
         where id = #{id}
     </update>

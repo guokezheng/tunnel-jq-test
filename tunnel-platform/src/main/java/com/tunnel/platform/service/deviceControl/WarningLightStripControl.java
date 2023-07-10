@@ -21,7 +21,7 @@ import com.tunnel.deal.tcp.modbus.rtu.ModbusRtuCmd;
 import com.tunnel.deal.tcp.modbus.rtu.ModbusRtuCmdResolver;
 import com.tunnel.deal.tcp.util.Obj2ListUtil;
 import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
-import com.tunnel.deal.warninglightstrip.WarningLightStripTask2;
+import com.tunnel.deal.warninglightstrip.WarningLightStripTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,7 +244,7 @@ public class WarningLightStripControl implements GeneralControlBean, TcpClientGe
             String pointValue = jsonObject.getString("pointValue");
             String command = modbusRtuCmd.getSendCommand(functionCode,address,"","",pointValue);
             System.out.println("警示灯带指令下发："+command);
-            AjaxResult ajaxResult = modbusRtuCmd.sendCommand(WarningLightStripTask2.deviceMap,deviceId,command);
+            AjaxResult ajaxResult = modbusRtuCmd.sendCommand(WarningLightStripTask.deviceMap,deviceId,command);
             int code = Integer.parseInt(String.valueOf(ajaxResult.get("code")));
             if(code == HttpStatus.SUCCESS){
                 result = 1;

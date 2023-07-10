@@ -2,6 +2,7 @@ package com.tunnel.deal.tcp.client.general;
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,4 +46,12 @@ public interface TcpClientGeneralService {
      * @param eqType 设备类型
      */
      void deviceInfoCache(Map<String, Map> deviceMap, String protocolCode, Long eqType);
+
+    /**
+     * 根据协议、设备类型查询设备
+     * @param protocolCode
+     * @param eqType
+     * @return
+     */
+    List<SdDevices> getDevicesList(String protocolCode, Long eqType);
 }

@@ -1307,7 +1307,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and eq_type = #{eqType}
             </if>
         </where>
-
+        GROUP BY
+            eq_id,
+            eq_direction,
+            eq_tunnel_id
     </select>
 
 

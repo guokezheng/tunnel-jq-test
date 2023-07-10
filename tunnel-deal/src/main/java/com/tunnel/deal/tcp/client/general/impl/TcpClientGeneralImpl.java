@@ -12,10 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -143,5 +140,24 @@ public class TcpClientGeneralImpl implements TcpClientGeneralService {
             map.put("port",device.getPort());
             deviceMap.put(deviceId,map);
         }
+    }
+
+    @Override
+    public List<SdDevices> getDevicesList(String protocolCode, Long eqType) {
+        SdDevicesProtocol sdDevicesProtocol = new SdDevicesProtocol();
+        sdDevicesProtocol.setProtocolCode(protocolCode);
+
+        List<SdDevicesProtocol> protocolList = sdDevicesProtocolService.selectSdDevicesProtocolList(sdDevicesProtocol);
+        if(protocolList == null || protocolList.size() == 0){
+            log.error("缓存设备信息报错,未查询到对应的协议：协议标识protocolCode="+protocolCode+"，设备类型eqType="+eqType);
+            return new ArrayList<>();
+        }
+
+        sdDevicesProtocol = protocolList.get(0);
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setProtocolId(sdDevicesProtocol.getId());
+        sdDevices.setEqType(eqType);
+        List<SdDevices> list = sdDevicesService.selectDevicesByProtocol(sdDevices);
+        return list;
     }
 }

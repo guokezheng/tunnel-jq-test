@@ -284,11 +284,11 @@ export const constantRoutes = [
     component: (resolve) => require(['@/views/tool/swagger/index'], resolve),
     hidden: true
   },
-  {
+/*  {
     path: '/index-test',
     component: (resolve) => require(['@/views/workbench/config/index-test'], resolve),
     hidden: true
-  },
+  },*/
 
 ]
 

@@ -643,7 +643,7 @@
           width: 520px;
           height: 40px;
           background: #052C4D;
-          display: flex;
+          display: unset!important;
           align-items: center;
           justify-content: center;
           .el-checkbox-button.is-checked:first-child .el-checkbox-button__inner{

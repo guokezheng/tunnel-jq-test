@@ -87,7 +87,7 @@ export default {
     sdEventList: {
       immediate: true,
       handler: function (event) {
-        console.log(event, "事件弹窗websockt推送");
+        // console.log(event, "事件弹窗websockt推送");
         this.list = event;
       },
     },

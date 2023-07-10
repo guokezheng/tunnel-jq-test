@@ -387,6 +387,7 @@
           ref="eventFormDetail"
           :model="eventFormDetail"
           label-width="80px"
+          :rules="rules"
         >
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="8">
@@ -776,7 +777,7 @@
                   )
                 "
               >
-                <el-form-item>
+                <el-form-item prop="otherContent">
                   <el-input
                     placeholder="请输入其他原因内容"
                     v-model="eventFormDetail.otherContent"
@@ -1711,7 +1712,11 @@ export default {
       showFaultElement: false,
       fuzzySearch1: "",
       // 表单校验
-      rules: {},
+      rules: {
+        otherContent:[
+          { max: 100, message: '最长输入100个字符', trigger: 'blur' }
+        ]
+      },
       isLoading: false,
       loadingText: "加载中...",
       vedioPlayer:false,

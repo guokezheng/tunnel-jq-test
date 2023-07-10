@@ -11,7 +11,7 @@
       :modal="false"
       append-to-body
     >
-      <el-form :model="form" label-width="80px" class="dialogForm">
+      <el-form :model="form" label-width="80px" class="dialogForm" :rules="rules">
         <el-row>
           <el-col :span="12">
             <el-form-item label="影响方向">
@@ -145,7 +145,7 @@
             <el-checkbox-button label="其他" value="其他"></el-checkbox-button>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item v-show="eventIsShow(form.reviewRemark)">
+        <el-form-item v-show="eventIsShow(form.reviewRemark)" prop="otherContent">
           <el-input
             placeholder="请输入其他原因内容"
             v-model="form.otherContent"
@@ -182,6 +182,11 @@ export default {
       eventTypeData: [],
       eventGradeList: [],
       tunnelId: "",
+      rules:{
+        otherContent:[
+          { max: 100, message: '最长输入100个字符', trigger: 'blur' }
+        ]
+      }
     };
   },
   watch: {

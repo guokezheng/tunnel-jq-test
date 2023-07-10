@@ -324,6 +324,8 @@ export default {
         ],
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
+          { max: 50, message: '最长输入50个字符', trigger: 'blur' }
+
         ],
         equipmentTypeId: [
           { required: true, message: "请选择设备类型", trigger: "change" },

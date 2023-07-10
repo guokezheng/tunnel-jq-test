@@ -198,6 +198,7 @@
             label="策略名称"
             align="center"
             prop="strategyName"
+            show-overflow-tooltip
           />
           <el-table-column
             label="方向"

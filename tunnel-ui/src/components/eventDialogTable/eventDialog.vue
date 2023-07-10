@@ -104,7 +104,7 @@
         </div>
       </div>
       <div class="dialogForm">
-        <el-form ref="eventFormDetail" :model="eventFormDetail" label-width="80px">
+        <el-form ref="eventFormDetail" :model="eventFormDetail" label-width="80px" :rules="rules">
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="8">
               <el-form-item label="告警来源" prop="eventSource">
@@ -400,7 +400,7 @@
                 </el-form-item>
               </el-col>
               <el-col v-show="eventIsShow(eventFormDetail.reviewRemark, eventFormDetail.eventState)">
-                <el-form-item>
+                <el-form-item prop="otherContent">
                   <el-input placeholder="请输入其他原因内容" v-model="eventFormDetail.otherContent"></el-input>
                 </el-form-item>
               </el-col>
@@ -536,6 +536,11 @@ export default {
   },
   data() {
     return {
+      rules:{
+        otherContent:[
+          { max: 100, message: '最长输入100个字符', trigger: 'blur' }
+        ]
+      },
       processDialog:"false",
       deviceIndexShow:0,
       activeName:'0',
@@ -612,76 +617,76 @@ export default {
       detailsDisabled: false,
       videoList: [],
       // 表单校验
-      rules: {
-        /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
-        eventTitle: [
-          { required: true, message: "请输入事件标题", trigger: "blur" },
-        ],
-        eventTypeId: [
-          { required: true, message: "请选择事件类型", trigger: "change" },
-        ],
-        eventGrade: [
-          { required: true, message: "请选择事件级别", trigger: "change" },
-        ],
-        eventLocation: [
-          { required: true, message: "请输入位置", trigger: "blur" },
-        ],
-        eventDescription: [
-          { required: true, message: "请输入内容", trigger: "blur" },
-        ],
-        faultLevel: [
-          { required: true, message: "请选择故障等级", trigger: "faultLevel" },
-        ],
-        faultLocation: [
-          {
-            required: true,
-            message: "请填写故障位置",
-            trigger: "faultLocation",
-          },
-        ],
-        faultType: [
-          {
-            required: true,
-            message: "请选中故障类型",
-            trigger: "faultType",
-          },
-        ],
-        faultFxtime: [
-          { required: true, message: "请填写发现时间", trigger: "faultFxtime" },
-        ],
-        faultCxtime: [
-          { required: true, message: "请填写持续时间", trigger: "faultCxtime" },
-        ],
-        eqId: [{ required: true, message: "请填写设备名称", trigger: "eqId" }],
-        eqStatus: [
-          {
-            required: true,
-            message: "请选中设备填报状态",
-            trigger: "eqStatus",
-          },
-        ],
-        falltRemoveStatue: [
-          {
-            required: true,
-            message: "请选中消除状态",
-            trigger: "falltRemoveStatue",
-          },
-        ],
-        falltRemoveStatu: [
-          {
-            required: true,
-            message: "请选中消除状态",
-            trigger: "falltRemoveStatue",
-          },
-        ],
-        tunnelId: [
-          {
-            required: true,
-            message: "请选中所在路段隧道",
-            trigger: "tunnelId",
-          },
-        ],
-      },
+      // rules: {
+      //   /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
+      //   eventTitle: [
+      //     { required: true, message: "请输入事件标题", trigger: "blur" },
+      //   ],
+      //   eventTypeId: [
+      //     { required: true, message: "请选择事件类型", trigger: "change" },
+      //   ],
+      //   eventGrade: [
+      //     { required: true, message: "请选择事件级别", trigger: "change" },
+      //   ],
+      //   eventLocation: [
+      //     { required: true, message: "请输入位置", trigger: "blur" },
+      //   ],
+      //   eventDescription: [
+      //     { required: true, message: "请输入内容", trigger: "blur" },
+      //   ],
+      //   faultLevel: [
+      //     { required: true, message: "请选择故障等级", trigger: "faultLevel" },
+      //   ],
+      //   faultLocation: [
+      //     {
+      //       required: true,
+      //       message: "请填写故障位置",
+      //       trigger: "faultLocation",
+      //     },
+      //   ],
+      //   faultType: [
+      //     {
+      //       required: true,
+      //       message: "请选中故障类型",
+      //       trigger: "faultType",
+      //     },
+      //   ],
+      //   faultFxtime: [
+      //     { required: true, message: "请填写发现时间", trigger: "faultFxtime" },
+      //   ],
+      //   faultCxtime: [
+      //     { required: true, message: "请填写持续时间", trigger: "faultCxtime" },
+      //   ],
+      //   eqId: [{ required: true, message: "请填写设备名称", trigger: "eqId" }],
+      //   eqStatus: [
+      //     {
+      //       required: true,
+      //       message: "请选中设备填报状态",
+      //       trigger: "eqStatus",
+      //     },
+      //   ],
+      //   falltRemoveStatue: [
+      //     {
+      //       required: true,
+      //       message: "请选中消除状态",
+      //       trigger: "falltRemoveStatue",
+      //     },
+      //   ],
+      //   falltRemoveStatu: [
+      //     {
+      //       required: true,
+      //       message: "请选中消除状态",
+      //       trigger: "falltRemoveStatue",
+      //     },
+      //   ],
+      //   tunnelId: [
+      //     {
+      //       required: true,
+      //       message: "请选中所在路段隧道",
+      //       trigger: "tunnelId",
+      //     },
+      //   ],
+      // },
       fromList:[],
       setDisabled: {
         disabledDate(time) {

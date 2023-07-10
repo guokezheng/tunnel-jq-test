@@ -1648,7 +1648,7 @@
           prop="tunnels.tunnelName"
           v-if="strategyActive == 'yujing'"
         />
-        <el-table-column label="策略名称" align="center" prop="strategyName" />
+        <el-table-column label="策略名称" align="center" prop="strategyName" show-overflow-tooltip/>
         <el-table-column
           label="方向"
           align="center"
@@ -2699,7 +2699,7 @@ export default {
     },
     ...mapState({
       radarDataList: (state) => state.websocket.radarDataList,
-      sdEventList: (state) => state.websocket.sdEventList,
+      // sdEventList: (state) => state.websocket.sdEventList,
       // sdSvgEventList: (state) => state.websocket.sdSvgEventList,
     }),
     sideTheme: {

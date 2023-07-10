@@ -94,7 +94,7 @@
     background-size: 8px 2px;//第一个值（20px）越大线条越长间隙越大
     background-repeat: repeat-x;
   }
-  .boardDialog{
+  .workbench-boardDialog{
     .el-table{
       background-color: #00152b;
     }
@@ -131,6 +131,20 @@
     }
     .el-dialog__footer{
       padding: 20px;
+      .dialog-footer {
+        .submitButton{
+          background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+        }
+        .closeButton{
+          background: linear-gradient(180deg, #C2C2C3 0%, #A1A1A1 100%);
+        }
+        .zancunButton{
+          background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
+        }
+        .zancunButtonDisabled{
+          background: linear-gradient(180deg, #e6bf7c 0%, #ffd792 100%);
+        }
+      }
     }
      // 所有弹窗横杠和 右上角样式
     .dialogStyleBox{
@@ -211,9 +225,9 @@
     }
     // 输入框自带搜索按钮
     .el-input-group__append, .el-input-group__prepend{
-      background: #05669D !important;
-      color: #00C8FF;
-      border: solid 1px #00C8FF;
+      background:  #F2F8FF;
+      // color: #00C8FF;
+      border: solid 1px #DCDFE6;
       border-left: transparent;
     }
     .vue-treeselect__control{
@@ -717,6 +731,13 @@
   }
   .my-back{
     background-color: #010913;
+    // 输入框自带搜索按钮
+    .el-input-group__append, .el-input-group__prepend{
+      background: #05669d !important;
+      color: #00C8FF !important;
+      border: solid 1px #00b0ff !important;
+      border-left: transparent !important;
+    }
   }
    .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 100%;height:7.6vh;}
   // 工作台下拉框
@@ -1411,7 +1432,49 @@
       padding:0 15px !important;
     }
   }
+  // 联控策略弹窗
+  .celueDialog .buttonBox .el-button--medium, .strategyDialog .buttonBox .el-button--medium{
+    padding: 0;
+  }
   
+  .strategy-dialog{
+    .dialongBox {
+      background: rgba($color: #4cbfff, $alpha: 0.1);
+      .dialogButton{
+        background: linear-gradient(180deg,#4cbfff,#259bff)!important;
+        padding: 0 10px;
+        color: #fff;
+        border: none;
+        width: auto;
+        height: 26px;
+      }
+      .myTable{
+        background: #4cbfff;
+      }
+      .sort{
+        // width:50px !important;
+        background: #4cbfff;
+        color: #fff;
+        // margin-left: 6px;
+      }
+      .planBox .el-col {
+        padding:0 2px;
+        .el-form-item, .el-select{
+          width: 100%;
+          margin-right: 0px;
+          .el-form-item__content{
+            width: 100%;
+          }
+        }
+      }
+      .dialogTableButtonBox{
+        border:solid 1px #4cbfff;
+        .el-button--medium{
+          padding: 0;
+        }
+      }
+    }
+  }
   .vehicle-dialog{
     .el-table{
       background:#00152b;
@@ -1677,7 +1740,7 @@
     border-top: solid 10px #1287B2;
   }
   .planBox{
-    border-top: solid 10px #0F9CF5;
+    // border-top: solid 10px #0F9CF5;
     >.title{
       border-bottom: solid 1px #E0E7ED;
     }

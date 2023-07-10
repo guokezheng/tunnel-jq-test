@@ -9,7 +9,7 @@
 <template>
   <div >
     <el-dialog
-      class="workbench-dialog boardDialog"
+      class="boardDialog"
       title="情报板模板选择"
       width="835px"
       append-to-body

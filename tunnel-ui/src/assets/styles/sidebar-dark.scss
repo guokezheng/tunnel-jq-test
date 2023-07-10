@@ -788,7 +788,16 @@
       // background: #00152B !important;
       .el-card{
         background: #0D203C  !important;
+        .topTxt{
+          background-image: url(../../assets/cloudControl/cardTitle.png);
+
+        }
       }
+    }
+  }
+  .xjDialog{
+    .topTxt{
+      background-image: url(../../assets/cloudControl/cardTitle.png);
     }
   }
   // 表格上方虚线

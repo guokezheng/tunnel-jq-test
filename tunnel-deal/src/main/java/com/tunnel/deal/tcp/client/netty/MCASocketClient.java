@@ -3,7 +3,6 @@ package com.tunnel.deal.tcp.client.netty;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.deal.tcp.client.config.ChannelKey;
-import com.tunnel.deal.tcp.client.config.DeviceManager;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -92,7 +91,7 @@ public class MCASocketClient
             }
         });
 
-        deviceConnect();
+//        deviceConnect();
 
 //        connect("192.168.1.131",502);
     }
@@ -100,13 +99,13 @@ public class MCASocketClient
     /**
      * 遍历设备进行连接
      */
-    public void deviceConnect(){
+    public void deviceConnect(Map<String,Map> deviceMap){
         //获取所有的设备ip和端口号，循环处理进行连接
-        DeviceManager.deviceMap.forEach((deviceId, map) ->{
+        deviceMap.forEach((deviceId, map) ->{
             String ip = map.get("ip") == null ? "" : map.get("ip").toString();
             String port = map.get("port") == null ? "" : map.get("port").toString();
             if(!"".equals(ip) && !"".equals(port)){
-                connect(ip,Integer.valueOf(port));
+                connect(deviceMap,ip,Integer.valueOf(port));
             }
         });
     }
@@ -116,27 +115,34 @@ public class MCASocketClient
      * @param ip ip
      * @param port 端口号
      */
-    public void connect(String ip,int port){
-//        try
-//        {
-            Channel channel = channels.get(ChannelKey.getChannelKey(ip,port));
-            if(channel != null && channel.isActive()){
-                String deviceId =  tcpClientGeneralService.getDeviceIdByIp(ip);
-                //设置设备及子设备在线
-                sdDevicesService.updateOnlineStatus(deviceId,true);
-                return;
-            }
-            //连接服务
-            ChannelFuture channelFuture = bootstrap.connect(ip, port);
-            log.info("MCASocketClient 连接:访问地址="+ip+":"+port);
-             channelFuture.addListener(new FutureListener(ip,port,reconnectTimes));
-//        channelFuture.addListener(new FutureListener(ip,port));
-//        } finally
-//        {
-//            eventLoopGroup.shutdownGracefully();
+    public void connect(Map<String,Map> deviceMap,String ip,int port){
+        Channel channel = channels.get(ChannelKey.getChannelKey(ip,port));
+        if(channel != null && channel.isActive()){
+            String deviceId =  tcpClientGeneralService.getDeviceIdByIp(deviceMap,ip);
+            //设置设备及子设备在线
+            sdDevicesService.updateOnlineStatus(deviceId,true);
+            return;
+        }
+        //连接服务
+        ChannelFuture channelFuture = bootstrap.connect(ip, port);
+        log.info("MCASocketClient 连接:访问地址="+ip+":"+port);
+        channelFuture.addListener(new FutureListener(ip,port,reconnectTimes));
+    }
 
-//            log.info("MCASocketClient 连接ip="+ip+",port="+port+"出现异常");
-//        }
+    /**
+     * 创建连接
+     * @param ip ip
+     * @param port 端口号
+     */
+    public void connect(String ip,int port){
+        Channel channel = channels.get(ChannelKey.getChannelKey(ip,port));
+        if(channel != null && channel.isActive()){
+            return;
+        }
+        //连接服务
+        ChannelFuture channelFuture = bootstrap.connect(ip, port);
+        log.info("MCASocketClient 连接:访问地址="+ip+":"+port);
+        channelFuture.addListener(new FutureListener(ip,port,reconnectTimes));
     }
 
     public static void sendMsg(String ip,String port,String msg) throws Exception {

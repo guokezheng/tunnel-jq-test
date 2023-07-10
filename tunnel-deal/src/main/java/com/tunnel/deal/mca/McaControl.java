@@ -112,10 +112,10 @@ public class McaControl implements GeneralControlBean, TcpClientGeneralBean {
      * 解析读取的数据
      * @param ip 网关设备IP
      * @param deviceId 网关设备ID
-     * @param jsonObject 读取的数据
+     * @param msg 读取的数据
      */
     @Override
-    public void handleReadData(String ip, String deviceId, JSONObject jsonObject) {
-        mcaDataParse.readDataParse(ip,deviceId,jsonObject);
+    public void handleReadData(String ip, String deviceId, String msg) {
+        mcaDataParse.readDataParse(ip,deviceId,msg);
     }
 }

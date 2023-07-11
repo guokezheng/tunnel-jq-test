@@ -255,8 +255,10 @@ spring:
 
       # 消费者
       consumer:
-        # 消费者组
+        # 车辆数据存储消费者组
         group-id: HuaWeiGroup
+        # 小车前端显示消费者组
+        group-id-Two: HuaWeiGroup1
         # 是否自动提交
         enable-auto-commit: false
         # 消费偏移配置

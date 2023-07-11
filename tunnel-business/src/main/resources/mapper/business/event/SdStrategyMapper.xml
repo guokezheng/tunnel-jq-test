@@ -272,7 +272,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             when tri.compare_pattern = '2' then '<![CDATA[<]]>'
             when tri.compare_pattern = '3' then '<![CDATA[<=]]>'
             when tri.compare_pattern = '4' then '<![CDATA[=]]>'
-        end,tri.compare_value) str from sd_strategy strategy
+        end,tri.compare_value) str ,strategy.strategy_name from sd_strategy strategy
         inner join sd_trigger tri on tri.relate_id = strategy.id
         left join sd_device_type_item item on (item.id = tri.element_id
         and tri.device_type_id = item.device_type_id) where strategy.tunnel_id = #{tunnelId}

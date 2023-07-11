@@ -759,7 +759,9 @@
         </div>
       </div>
     </el-dialog>
+    <jointControl ref = "jointControl" :show="visibleSync"></jointControl>
   </div>
+
 </template>
 
 <script>
@@ -786,8 +788,12 @@ import { editForm } from "@/api/equipment/yingJiGou/emergencyVehicles";
 import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
 import { download } from "@/utils/request";
 import { list } from "@/api/monitor/logininfor";
+
+import  jointControl  from "@/views/event/event/projectionScreen/jointControl.vue";
+import selectUser from "@/views/electromechanicalPatrol/teamsManage/selectUser.vue";
 export default {
   name: "List",
+  components: { jointControl },
   //字典值：故障类型、故障等级，故障消除状态
   dicts: [
     "fault_type",
@@ -1005,6 +1011,7 @@ export default {
       impressionOptions: [], //外观情况
       networkOptions: [], //网络情况
       powerOptions: [], //配电情况
+      visibleSync:false,
     };
   },
   created() {
@@ -1757,6 +1764,10 @@ export default {
         .catch(() => {
           this.$refs.tableFile.clearSelection();
         });
+    },
+    jointControlClick(){
+      debugger
+      this.visibleSync = !this.visibleSync
     },
     /** 导出按钮操作 */
     handleExport() {

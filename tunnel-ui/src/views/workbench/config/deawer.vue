@@ -327,7 +327,8 @@
             color: #00c2ff;
           "
         >
-          <span style="padding-left: 5px">预警类型</span>
+          <span style="padding-left: 5px">预警名称</span>
+          <span style="padding-left: 28px; line-height: 40px">预警类型</span>
           <span style="padding-left: 28px; line-height: 40px">触发值</span>
           <span style="padding-left: 28px; line-height: 40px">相关预案</span>
         </div>
@@ -341,6 +342,9 @@
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
           "
         >
+          <div style="width: 80px; margin-right: 5px; padding-left: 5px">
+            {{ item.strategy_name }}
+          </div>
           <div style="width: 80px; margin-right: 5px; padding-left: 5px">
             {{ item.name }}
           </div>

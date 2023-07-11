@@ -943,6 +943,7 @@
     </el-dialog>
     <!-- <el-dialog> -->
         <robot class="comClass robotHtmlBox" v-if="this.clickEqType == 29"></robot>
+    <jointControl ref = "jointControl" :show="visibleSync" :eqIdList="eqIdList"></jointControl>
     <!-- </el-dialog> -->
   </div>
 </template>
@@ -970,6 +971,7 @@ import comData from "@/views/workbench/config/components/data"; //只有数据�
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
 import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
+import  jointControl  from "@/views/event/event/projectionScreen/jointControl.vue";
 
 import {
   listEventType,
@@ -1017,6 +1019,7 @@ export default {
     comBoard,
     workBench,
     videoPlayer,
+    jointControl
   },
   data() {
     return {
@@ -1097,6 +1100,8 @@ export default {
       videoForm2: {},
       videoForm3: {},
       videoForm4: {},
+      //存放设备id
+      eqIdList:[],
 
       fromList: [],
       reservePlan: {
@@ -1119,6 +1124,7 @@ export default {
       lineHeight: 0,
       circlePosition: "",
       deviceIconUrl: [],
+      visibleSync:false,
     };
   },
   computed: {
@@ -1192,11 +1198,10 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-         
-        })
-        .catch(() => {
+      }).then(() => {
+        debugger
+        this.visibleSync = !this.visibleSync
+        }).catch(() => {
           this.$message({
             type: "info",
             message: "已取消操作",
@@ -1707,19 +1712,23 @@ export default {
 
       console.log(this.eventForm, "this.eventForm");
       // this.videoList = []
+      this.eqIdList = []
       getEntranceExitVideo(
         this.eventForm.tunnelId,
         this.eventForm.direction
       ).then((response) => {
+        this.eqIdList.push(response.data[0].inlet)
         videoStreaming(response.data[0].inlet).then((response) => {
           if (response.data) {
             response.data.title = "入口";
             if (response.code == 200) {
+              debugger
               this.videoForm1 = response.data;
               this.videoForm1.cameraPlayer = true;
             }
           }
         });
+        this.eqIdList.push(response.data[0].outlet)
         videoStreaming(response.data[0].outlet).then((response) => {
           if (response.data) {
             response.data.title = "出口";
@@ -1736,6 +1745,7 @@ export default {
           this.eventForm.stakeNum,
           this.eventForm.direction
         ).then((res) => {
+          this.eqIdList.push(res.data[0].eqId)
           videoStreaming(res.data[0].eqId).then((response) => {
             if (response.data) {
               response.data.title = "现场1";
@@ -1745,6 +1755,7 @@ export default {
               }
             }
           });
+          this.eqIdList.push(res.data[1].eqId)
           videoStreaming(res.data[1].eqId).then((response) => {
             if (response.data) {
               response.data.title = "现场2";

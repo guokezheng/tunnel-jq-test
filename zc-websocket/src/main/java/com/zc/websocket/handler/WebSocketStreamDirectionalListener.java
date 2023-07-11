@@ -49,7 +49,7 @@ public class WebSocketStreamDirectionalListener implements StreamListener<String
             // 消费完成后确认消费（ACK）
             redisStream.ack(streamKay, group, String.valueOf(recordId));
             //删除消息队列
-//            redisStream.del(streamKay,String.valueOf(recordId));
+            redisStream.del(streamKay,String.valueOf(recordId));
         }catch (Exception e) {
             e.printStackTrace();
             log.error("消费异常 key: {}, 群组：{}, 消息Id：{}", streamKay, group, recordId);

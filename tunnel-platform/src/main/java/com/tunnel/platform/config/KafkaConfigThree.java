@@ -27,6 +27,8 @@ public class KafkaConfigThree {
     private boolean enableAutoCommit;
     @Value("${spring.kafka.huawei.consumer.group-id}")
     private String groupId;
+    @Value("${spring.kafka.huawei.consumer.group-id-Two}")
+    private String groupIdTwo;
 //    @Value("${spring.kafka.wanji.producer.linger-ms}")
 //    private Integer lingerMs;
 //    @Value("${spring.kafka.wanji.producer.max-request-size}")
@@ -100,7 +102,7 @@ public class KafkaConfigThree {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG,"HuaWeiGroup2");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG,groupIdTwo);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000000);

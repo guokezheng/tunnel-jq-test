@@ -954,7 +954,7 @@ export default {
           { required: true, message: "请填写隧道ID", trigger: "blur" },
           {
             pattern: /^[0-9a-zA-Z_-]{1,100}$/,
-            message: "请输入数字字母或横线",
+            message: "请输入数字字母或横线,最长不得超过100个字符",
             trigger: "change"
           },
         ],

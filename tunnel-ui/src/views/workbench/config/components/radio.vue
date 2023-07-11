@@ -76,7 +76,7 @@
           </el-col>
         </el-row>
         <div class="lineClass"></div>
-        <el-row style="margin-top: 10px">
+        <el-row style="margin-top: 10px" v-if="brandOne">
           <el-col :span="14">
             <el-form-item label="播放次数:" prop="loopCount">
               <el-input-number
@@ -97,7 +97,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="brandOne">
           <el-col :span="15">
             <el-form-item label="音量:">
               <el-slider
@@ -111,6 +111,25 @@
             <span style="padding-left: 10px; line-height: 30px"
                 >{{ stateForm2.volume }} %</span
               >
+          </el-col>
+        </el-row>
+        <el-row v-if="brandTwo">
+          <el-col>
+            <el-form-item label="状态:">
+              <el-select 
+                v-model="stateForm2.loopStatus" 
+                placeholder="请选择状态"
+                clearable
+                size="mini"
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
@@ -155,7 +174,15 @@ import {
 export default {
   data() {
     return {
+      options: [{
+          value: '#PLY#',
+          label: '播放'
+        }, {
+          value: '#STOP#',
+          label: '停止'
+        }],
       stateForm2: {
+        loopStatus:"",
         loopCount: 1,
         loop: false,
         volume: 0,
@@ -170,6 +197,8 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
+      brandOne: true,
+      brandTwo: false,
     };
   },
   created() {},
@@ -198,6 +227,13 @@ export default {
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
+          if(res.data.brandId != "0060"){
+            this.brandOne = false;
+            this.brandTwo = true;
+          }else {
+            this.brandOne = true;
+            this.brandTwo = false;
+          }
           this.stateForm = res.data;
           this.device = res.data.externalDeviceId;
           this.title = this.stateForm.eqName;
@@ -225,6 +261,7 @@ export default {
         lib: "YeastarHost",
         loop: this.stateForm2.loop,
         loopCount: this.stateForm2.loopCount,
+        loopStatus: this.stateForm2.loopStatus,
         volume: this.stateForm2.volume,
         fileNames: Array(this.stateForm2.fileNames),
         spkDeviceIds: Array(this.eqInfo.equipmentId),

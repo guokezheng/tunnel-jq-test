@@ -4,17 +4,17 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicePointControlTypeE
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
 import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
-import com.tunnel.deal.tcp.client.config.DeviceManager;
-import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
 import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
 import com.tunnel.deal.tcp.client.netty.MCASocketClient;
 import com.tunnel.deal.tcp.modbus.ModbusCmd;
+import com.tunnel.deal.tcp.modbus.ModbusFunctionCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * describe: 测控执行器--定时任务类
@@ -35,21 +35,26 @@ public class McaTask {
     @Autowired
     private ModbusCmd mcaCmd;
 
+    /**
+     * 存储设备数据，key为deviceId,value为设备数据【ip,port】
+     * 将HashMap替换为线程安全类ConcurrentHashMap
+     */
+    public static Map<String,Map> deviceMap = new ConcurrentHashMap<>();
 
     /**
      * 固定时间间隔更新测控执行器设备信息缓存,定时重新连接MCA
      */
     public void connect(){
-        macInfoCache();
-        MCASocketClient.getInstance().deviceConnect();
+        deviceInfoCache();
+        MCASocketClient.getInstance().deviceConnect(deviceMap);
     }
 
     /**
      * 测控执行器设备信息缓存
      *
      */
-    public void macInfoCache(){
-        tcpClientGeneralService.deviceInfoCache(DeviceProtocolCodeEnum.TUNSHAN_MCA_PROTOCOL_CODE.getCode(),DevicesTypeEnum.CE_KONG_ZHI_XING_QI.getCode());
+    public void deviceInfoCache(){
+        tcpClientGeneralService.deviceInfoCache(deviceMap,DeviceProtocolCodeEnum.ZHENGCHEN_MCA_PROTOCOL_CODE.getCode(),DevicesTypeEnum.CE_KONG_ZHI_XING_QI.getCode());
     }
 
 
@@ -59,7 +64,7 @@ public class McaTask {
      */
     public void getMcaDeviceData(){
         //拿到缓存设备数据-测控执行器
-        Map<String, Map> deviceMap = DeviceManager.deviceMap;
+        Map<String, Map> deviceMap = McaTask.deviceMap;
         //点位类型：只读点位
         Long pointType = DevicePointControlTypeEnum.only_read.getCode();
 
@@ -110,8 +115,8 @@ public class McaTask {
             Integer cmdLength = Integer.valueOf(maxAddress) + Integer.valueOf(dataLength) - Integer.valueOf(minAddress);
 //            log.info("读取数据：设备ID="+fEqId+",功能码="+functionCode+",最小点位="+minAddress+",读取长度="+cmdLength);
 
-            sleep(2);
-            mcaCmd.sendQueryCommand(fEqId,functionCode,minAddress,String.valueOf(cmdLength));
+            mcaCmd.sleep(2);
+            mcaCmd.sendQueryCommand(deviceMap,fEqId,functionCode,minAddress,String.valueOf(cmdLength));
         }
     }
 
@@ -144,21 +149,10 @@ public class McaTask {
 
             //2毫秒间隔，如果定时任务执行周期是2秒钟，支持1000个指令循环下发，大概可以支持1000个设备的查询指令
             //最长的盘顶山隧道按照200个设备计算，3个隧道，600个设备
-            sleep(2);
-            mcaCmd.sendQueryCommand(fEqId,functionCode,address,String.valueOf(dataLength));
+            mcaCmd.sleep(2);
+            mcaCmd.sendQueryCommand(deviceMap,fEqId,functionCode,address,String.valueOf(dataLength));
         }
     }
 
-    /**
-     * 线程休眠固定时间
-     * @param ms 毫秒
-     */
-    public void sleep(int ms){
-        //间隔固定时间（毫秒）发送指令，避免同一个设备连续多次发送指令无回复
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+
 }

@@ -49,4 +49,32 @@ public class ThreadConfig {
         log.info("线程池初始化完毕！！！");
         return poolTaskExecutor;
     }
+
+    /**
+     * 自定义线程池
+     * 作用：诱导标异步控制实现同频同闪
+     * @return
+     */
+    @Bean(name = "induceExecutor")
+    public Executor induceExecutor(){
+        ThreadPoolTaskExecutor poolTaskExecutor = new ThreadPoolTaskExecutor();
+        //核心线程数
+        poolTaskExecutor.setCorePoolSize(10);
+        //最大线程数
+        poolTaskExecutor.setMaxPoolSize(20);
+        //关闭时等待任务完成
+        poolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        //线程名称前缀
+        poolTaskExecutor.setThreadNamePrefix("syncInduce");
+        //缓存队列
+        poolTaskExecutor.setQueueCapacity(10);
+        //非核心线程超过时间被销毁
+        poolTaskExecutor.setKeepAliveSeconds(200);
+        //拒绝策略:重试添加当前任务，自动重复调用直到成功
+        poolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        //初始化
+        poolTaskExecutor.initialize();
+        log.info("线程池初始化完毕！！！");
+        return poolTaskExecutor;
+    }
 }

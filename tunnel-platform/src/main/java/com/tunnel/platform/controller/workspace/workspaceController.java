@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -366,7 +367,7 @@ public class workspaceController extends BaseController {
                 if (dev.getIp() == null || dev.getIp().equals("")) {
                     continue;
                 }
-                controlState = GuidanceLampHandle.getInstance().toControlXianKeDev(dev.getEqId(), Integer.parseInt(state), dev, brightness, frequency);
+                controlState = asynInduce(dev,state,brightness,frequency);
             }
 //            controlState = GuidanceLampHandle.getInstance().toControlXianKeDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency);
         }
@@ -816,5 +817,19 @@ public class workspaceController extends BaseController {
             controlState = generalControlBean.controlDevices(params);
         }
         return controlState==1 ?  AjaxResult.success("控制成功") : AjaxResult.error("控制失败");
+    }
+
+    /**
+     * 异步控制诱导标
+     * @param dev
+     * @param state
+     * @param brightness
+     * @param frequency
+     * @return
+     */
+    @Async(value = "induceExecutor")
+    public int asynInduce(SdDevices dev, String state, String brightness, String frequency){
+        System.out.println(dev.getIp() + "：进来了");
+        return GuidanceLampHandle.getInstance().toControlXianKeDev(dev.getEqId(), Integer.parseInt(state), dev, brightness, frequency);
     }
 }

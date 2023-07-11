@@ -1539,6 +1539,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
+      this.fileList = []
       this.$refs.planTable.clearSelection();
       //this.handleQuery();
       // this.resetReservePlanDrawForm();
@@ -2144,6 +2145,7 @@ export default {
                 } else {
                   this.$modal.msgError("保存失败");
                 }
+                
               });
             } else if (this.planChangeSink == "edit") {
               this.fileData.append("id", this.reservePlanDrawForm.id);
@@ -2167,6 +2169,7 @@ export default {
                 }
               });
             }
+            this.fileList = []
             this.multipleSelectionIds = [];
           }
           this.dloading = false;
@@ -2210,9 +2213,11 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+
       this.resetForm("addForm1");
       // this.resetReservePlanDrawForm();
       this.planChangeSink = "edit";
+
       const id = row.id || this.ids;
       listTunnels().then((res) => {
         console.log(res, "resresres");
@@ -2222,7 +2227,6 @@ export default {
         this.planCategory = response.data;
       });
       getPlan(id).then((response) => {
-        this.fileList = [];
         this.reservePlanDrawForm = response.data;
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId;
         this.reservePlanDrawForm.sId = response.data.sdTunnelSubarea.sId;
@@ -2237,13 +2241,16 @@ export default {
         }
 
         let fileInfo = response.data.pFileList;
-        for (var i = 0; i < fileInfo.length; i++) {
-          let fileModel = {};
-          fileModel.name = fileInfo[i].fileName;
-          fileModel.url = fileInfo[i].url;
-          fileModel.fId = fileInfo[i].id;
-          this.fileList.push(fileModel);
-        }
+        this.$nextTick(()=>{
+          for (var i = 0; i < fileInfo.length; i++) {
+            let fileModel = {};
+            fileModel.name = fileInfo[i].fileName;
+            fileModel.url = fileInfo[i].url;
+            fileModel.fId = fileInfo[i].id;
+            this.fileList.push(fileModel);
+          }
+        })
+       
         //文件回显
       });
       // this.drawer = true;

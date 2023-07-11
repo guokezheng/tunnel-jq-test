@@ -426,7 +426,7 @@ public interface SdDevicesMapper
 	String selectDevicePixel(SdDevices sdDevices);
 
 	/**
-	 * 根据协议Id查询设备列表
+	 * 根据协议Id、设备IP等条件查询设备列表
 	 * @param sdDevices 设备信息
 	 * @return
 	 */

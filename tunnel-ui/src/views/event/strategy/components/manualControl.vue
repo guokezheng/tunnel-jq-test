@@ -12,7 +12,6 @@
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
               style="width: 100%"
-              :maxlength="50"
               v-model="strategyForm.strategyName"
               placeholder="请输入策略名称"
             />
@@ -324,6 +323,8 @@ export default {
         ],
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
+          { max: 50, message: '最长输入50个字符', trigger: 'change' }
+
         ],
         equipmentTypeId: [
           { required: true, message: "请选择设备类型", trigger: "change" },

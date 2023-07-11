@@ -408,6 +408,7 @@ export default {
         ],
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
+          { max: 50, message: '最长输入50个字符', trigger: 'change' }
         ],
     /*    schedulerTime:[
           { required: true, message: "请输入定时频率", trigger: "change" }

@@ -881,7 +881,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getDevBrandList" resultType="com.tunnel.business.domain.dataInfo.SdDevicesBrand">
-        select * from sd_devices_brand
+        select * from sd_devices_brand  where is_del = 0
     </select>
 
 
@@ -1296,10 +1296,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectDevicesByProtocol" parameterType="sdDevices" resultMap="SdDevicesResult">
         select eq_id,f_eq_id,eq_type,protocol_id,external_device_id,ip,port
         from sd_devices
-        where protocol_id = #{protocolId}
-        <if test="eqType != null and eqType !=''">
-            and eq_type = #{eqType}
-        </if>
+        <where>
+            <if test="ip != null and ip != ''">
+                and ip = #{ip}
+            </if>
+            <if test="protocolId != null and protocolId !=''">
+               and protocol_id = #{protocolId}
+            </if>
+            <if test="eqType != null and eqType !=''">
+                and eq_type = #{eqType}
+            </if>
+        </where>
+        GROUP BY
+            eq_id,
+            eq_direction,
+            eq_tunnel_id
     </select>
 
 

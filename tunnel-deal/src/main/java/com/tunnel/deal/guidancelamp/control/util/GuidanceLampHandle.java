@@ -11,6 +11,7 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.deal.guidancelamp.control.NettyClient;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
+import org.springframework.scheduling.annotation.Async;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -181,8 +182,8 @@ public class GuidanceLampHandle {
             codeMap = InductionlampUtil.getXianKeFrequency(ctrState,Integer.parseInt(frequency));
             client.pushHexCode(codeMap.get("code").toString());
             //控制占空比（亮的时间在一整个周期的比例）
-//            codeMap = InductionlampUtil.getXianKeDutyCycle(ctrState,Integer.parseInt(frequency));
-//            client.pushCode(codeMap.get("code").toString());
+            /*codeMap = InductionlampUtil.getXianKeDutyCycle(ctrState,Integer.parseInt(frequency));
+            client.pushHexCode(codeMap.get("code").toString());*/
             client.stop();
         } catch (Exception e) {
             System.err.println("设备编号为" + deviceId + "的设备变更状态失败");
@@ -201,6 +202,25 @@ public class GuidanceLampHandle {
             updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()), frequency);
         }
         return 1;
+    }
+
+    @Async("induceExecutor")
+    public void syncYdd(SdDevices sdDevices){
+        String ip = sdDevices.getIp();
+
+        Integer port = Integer.parseInt(sdDevices.getPort());
+        try {
+            String code = "000000000006010300010001";
+            NettyClient client = new NettyClient(ip, port,code,3);
+            client.start(null);
+            //控制同步时间指令
+            client.pushHexCode("000000000006010600020001");
+            System.out.println(ip + "：执行了");
+            client.stop();
+        } catch (Exception e) {
+            System.err.println("设备编号为" + sdDevices.getEqId() + "的设备变更状态失败");
+        }
+
     }
 
     private void updateDeviceDatas(SdDevices sdDevices, String value, Integer itemId) {

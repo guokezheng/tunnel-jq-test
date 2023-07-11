@@ -516,4 +516,74 @@
         WHERE
             1 = 1
     </select>
+
+    <select id="getHoursTrafficVolume" resultType="hashmap">
+        SELECT HOUR
+            ( t.TIME ) order_hour,
+            ifnull( sa.num, 0 ) AS count
+        FROM
+            (
+            SELECT
+                DATE_FORMAT( DATE_SUB( NOW(), INTERVAL ( -( @i := @i - 1 ) ) HOUR ), '%Y-%m-%d %H' ) AS 'time'
+            FROM
+            (
+                SELECT
+                    a
+                FROM
+                    ( SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' ) AS a
+                    JOIN ( SELECT '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b ON 1
+                    ) AS b,(
+                SELECT
+                    @i :=+ 1
+                ) AS i
+            ) AS t
+            LEFT JOIN (
+                SELECT
+                    DATE_FORMAT( DATE_SUB( b.detect_time, INTERVAL MINUTE ( NOW() ) - 60 MINUTE ), '%Y-%m-%d %H' ) AS DATE,
+                    count( b.vehicle_license ) AS num
+                FROM
+                (
+                    SELECT
+                        rdd.vehicle_license,
+                        rdd.detect_time
+                    FROM
+                        sd_radar_detect_data rdd
+                    WHERE
+                        rdd.detect_time >= ( NOW() - INTERVAL 25 HOUR )
+                        AND vehicle_license != ''
+                        AND vehicle_license IS NOT NULL
+                        AND rdd.tunnel_id = #{tunnelId}
+                        <if test="model == 1">
+                            AND rdd.vehicle_type IN ( '15', '16', '25' )
+                        </if>
+                        <if test="model == 2">
+                            AND rdd.vehicle_type IN ( '14', '17', '26' )
+                        </if>
+                        <if test="model == 3">
+                            AND rdd.vehicle_type IN ( '16', '40' )
+                        </if>
+                ) b
+                GROUP BY
+                DATE
+                ) AS sa ON sa.DATE = DATE_FORMAT( t.TIME, '%Y-%m-%d %H' )
+        GROUP BY
+            t.TIME
+    </select>
+    
+    <select id="getStatisticalDevice" resultType="hashmap">
+        SELECT
+            et.type_name,
+            count( d.eq_id ) AS eqNum,
+            count( f.eq_id ) AS fNum,
+            ROUND(( count( f.eq_id ) / count( d.eq_id ))* 100, 1 ) AS faultPercentage,
+            ROUND((( count( d.eq_id )- count( f.eq_id ))/ count( d.eq_id ))* 100, 1 ) AS normalPercentage
+        FROM
+            sd_devices d
+                LEFT JOIN sd_equipment_type et ON d.eq_type = et.type_id
+                LEFT JOIN sd_fault_list f ON d.eq_id = f.eq_id
+        WHERE
+            d.eq_tunnel_id = #{tunnelId}
+        GROUP BY
+            d.eq_type
+    </select>
 </mapper>

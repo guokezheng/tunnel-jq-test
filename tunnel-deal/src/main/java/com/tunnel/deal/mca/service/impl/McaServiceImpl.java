@@ -11,6 +11,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdEquipmentStateService;
 import com.tunnel.business.service.protocol.ISdDevicePointService;
 import com.tunnel.business.service.protocol.ISdDevicePointStateService;
+import com.tunnel.deal.mca.task.McaTask;
 import com.tunnel.deal.tcp.modbus.ModbusCmd;
 import com.tunnel.deal.mca.service.McaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +126,7 @@ public class McaServiceImpl implements McaService {
         }
 
         //发送指令
-      return mcaCmd.sendControlCommand(fEqId,functionCode,address,writeLength,controlState);
+      return mcaCmd.sendControlCommand(McaTask.deviceMap,fEqId,functionCode,address,writeLength,controlState);
     }
 
 

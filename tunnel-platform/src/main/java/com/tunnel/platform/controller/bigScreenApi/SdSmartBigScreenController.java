@@ -205,4 +205,24 @@ public class SdSmartBigScreenController extends BaseController {
     public AjaxResult getTransitCar(String tunnelId){
         return sdSmartBigScreenService.getTransitCar(tunnelId);
     }
+
+    /**
+     * 查询24小时车流量
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getHoursTrafficVolume")
+    public AjaxResult getHoursTrafficVolume(String tunnelId){
+        return sdSmartBigScreenService.getHoursTrafficVolume(tunnelId);
+    }
+
+    /**
+     * 统计设备状态
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getStatisticalDevice")
+    public AjaxResult getStatisticalDevice(String tunnelId){
+        return sdSmartBigScreenService.getStatisticalDevice(tunnelId);
+    }
 }

@@ -137,4 +137,18 @@ public interface SdSmartBigScreenService {
      * @return
      */
     AjaxResult getTransitCar(String tunnelId);
+
+    /**
+     * 查询24小时车流量
+     * @param tunnelId
+     * @return
+     */
+    AjaxResult getHoursTrafficVolume(String tunnelId);
+
+    /**
+     * 统计设备状态
+     * @param tunnelId
+     * @return
+     */
+    AjaxResult getStatisticalDevice(String tunnelId);
 }

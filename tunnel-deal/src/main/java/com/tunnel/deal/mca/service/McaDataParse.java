@@ -57,9 +57,12 @@ public class McaDataParse {
      * 将原始指令解析成对应格式的数据
      * @param ip
      * @param deviceId
-     * @param jsonObject
+     * @param msg
      */
-    public void readDataParse(String ip,String deviceId,JSONObject jsonObject){
+    public void readDataParse(String ip,String deviceId,String msg){
+
+        JSONObject jsonObject = ModbusCmdResolver.commandParse(msg);
+
         String functionCode = jsonObject.getString("functionCode");
         String readData = jsonObject.getString("readData");
         if(ModbusFunctionCode.CODE_TWO.equals(functionCode)){

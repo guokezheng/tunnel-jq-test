@@ -1892,7 +1892,7 @@ export default {
   margin-left: 7px;
   margin-top: -5px;
   font-size: 16px;
-  background-image: url(../../../assets/cloudControl/cardTitle.png);
+  // background-image: url(../../../assets/cloudControl/cardTitle.png);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   text-align: center;

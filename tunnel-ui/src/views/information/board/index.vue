@@ -962,11 +962,11 @@ export default {
 
     // 转报文 字体
     getFontValue(font) {
-      if (font == "黑体") return "h";
-      if (font == "楷体") return "k";
-      if (font == "仿宋") return "f";
-      if (font == "隶书") return "l";
-      return "s";
+      if (font == "黑体" || font == "SimHei") return "h";
+      if (font == "楷体" || font == "KaiTi") return "k";
+      if (font == "仿宋" || font == "FangSong") return "f";
+      if (font == "隶书" || font == "LiSu") return "l";
+      else return "s";
     },
 
     // 转报文 色号

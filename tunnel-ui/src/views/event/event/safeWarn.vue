@@ -140,7 +140,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="contentListBox container"  v-loading="isLoading">
+    <div class="contentListBox container" v-loading="isLoading">
       <div
         class="contentBox"
         :style="topNav ? 'width:24.6%' : 'width:24.5%'"
@@ -194,9 +194,7 @@
             </div>
           </div>
         </div>
-        <div
-          class="bottom"
-        >
+        <div class="bottom">
           <div class="eventBox">
             <div class="eventType">
               {{ item.prevControlType == "1" ? "安全预警" : "普通事件" }}
@@ -387,6 +385,7 @@
           ref="eventFormDetail"
           :model="eventFormDetail"
           label-width="80px"
+          :rules="rules"
         >
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="8">
@@ -776,7 +775,7 @@
                   )
                 "
               >
-                <el-form-item>
+                <el-form-item prop="otherContent">
                   <el-input
                     placeholder="请输入其他原因内容"
                     v-model="eventFormDetail.otherContent"
@@ -1077,8 +1076,13 @@
                       class="incHandContent"
                     >
                       <div class="classification">
-                        <el-tooltip v-if="items.flowContent" class="item" effect="dark"
-                        :content="items.flowContent" placement="right">
+                        <el-tooltip
+                          v-if="items.flowContent"
+                          class="item"
+                          effect="dark"
+                          :content="items.flowContent"
+                          placement="right"
+                        >
                           <div
                             class="type"
                             :style="{
@@ -1324,9 +1328,7 @@
         <el-button class="submitButton" @click="dialogVisibleDevice = false"
           >确 定</el-button
         >
-        <el-button @click="closeDetail()" class="closeButton"
-          >取 消</el-button
-        >
+        <el-button @click="closeDetail()" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -1334,7 +1336,7 @@
 <script>
 import $ from "jquery";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import { Loading } from 'element-ui';
+import { Loading } from "element-ui";
 import {
   listEvent,
   getEvent,
@@ -1412,7 +1414,7 @@ export default {
   data() {
     return {
       strategyList: [], //策略列表
-      controlTypeOptions: [],//防控类型
+      controlTypeOptions: [], //防控类型
       pickerOptionsStart: {
         // 时间不能大于当前时间
         disabledDate: (time) => {
@@ -1461,7 +1463,7 @@ export default {
       planDisposal: [], //历史预案
       manualReview: {}, //人工复核
       eventDiscovery: {}, //发现数据
-      vedioData:{}, //视频录像数据
+      vedioData: {}, //视频录像数据
       tacticsList: {}, //表单数据
       dialogTableVisible: false,
       radioList: [
@@ -1618,7 +1620,7 @@ export default {
         pageSize: 16,
         tunnelId: null,
         eventTypeId: null,
-        prevControlType:null,
+        prevControlType: null,
         eventTitle: null,
         eventTime: null,
         eventState: [],
@@ -1711,10 +1713,14 @@ export default {
       showFaultElement: false,
       fuzzySearch1: "",
       // 表单校验
-      rules: {},
+      rules: {
+        otherContent: [
+          { max: 100, message: "最长输入100个字符", trigger: "change" },
+        ],
+      },
       isLoading: false,
       loadingText: "加载中...",
-      vedioPlayer:false,
+      vedioPlayer: false,
     };
   },
   computed: {
@@ -1778,12 +1784,12 @@ export default {
 
     //防控类型
     this.getDicts("prev_control_type").then((response) => {
-      if(response.data.length>0){
-        for(let i = 0;i<response.data.length;i++){
-            if(response.data[i].dictLabel=='设备故障'){
-              response.data.splice(i,1)
-            }
+      if (response.data.length > 0) {
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data[i].dictLabel == "设备故障") {
+            response.data.splice(i, 1);
           }
+        }
       }
       this.controlTypeOptions = response.data;
     });
@@ -1849,10 +1855,10 @@ export default {
     //     })
     //   }
     // },
-    closeDetail(){
+    closeDetail() {
       this.deviceIndexShow = 0;
-      this.activeName = '0';
-      this.dialogVisibleDevice = false
+      this.activeName = "0";
+      this.dialogVisibleDevice = false;
     },
     getStrategyData(item) {
       console.log(item);
@@ -1872,13 +1878,13 @@ export default {
       this.deviceIndexShow = tab.index;
     },
 
-    handleChangeControl(){
+    handleChangeControl() {
       this.$forceUpdate();
       this.queryParams.eventTypeId = null;
       //查询事件类型
       let prevControlType = {
         isUsable: "1",
-        prevControlType:this.queryParams.prevControlType
+        prevControlType: this.queryParams.prevControlType,
       };
       listEventType(prevControlType).then((response) => {
         this.eventTypeDataList = [...response.rows];
@@ -1888,7 +1894,7 @@ export default {
     openDoor(item) {
       // 点击查看按钮重置tab
       this.deviceIndexShow = 0;
-      this.activeName = '0';
+      this.activeName = "0";
 
       let lane = "";
       if (item.laneNo == null || item.laneNo.length == 0) {
@@ -1959,14 +1965,14 @@ export default {
       };
       getReservePlanData(data).then((res) => {
         this.ReservePlanList = res.data;
-        if(this.ReservePlanList.length > 0){
-          this.eventFormDetail.currencyId = this.ReservePlanList[0].id
-        }else{
-          if(this.eventFormDetail.eventState == '0'){
+        if (this.ReservePlanList.length > 0) {
+          this.eventFormDetail.currencyId = this.ReservePlanList[0].id;
+        } else {
+          if (this.eventFormDetail.eventState == "0") {
             this.$modal.msgWarning("暂无相关预案");
           }
         }
-      })
+      });
     },
     // 下载事件报告
     downFile() {
@@ -2025,20 +2031,21 @@ export default {
       getEventDetail(data).then((res) => {
         console.log(res, "详情数据");
         this.eventDiscovery = res.data.eventDiscovery;
-        console.log(res.data.manualReview)
-        this.manualReview = !!res.data.manualReview ? res.data.manualReview :{};
+        console.log(res.data.manualReview);
+        this.manualReview = !!res.data.manualReview
+          ? res.data.manualReview
+          : {};
         this.planDisposal = res.data.planDisposal;
         this.disposalRecord = res.data.disposalRecord;
         this.eventStateCurrent = res.data.eventState;
         this.endReport = res.data.endReport;
         this.tacticsList = res.data.tacticsList;
       });
-      this.historyIndex = "first0",
-      this.dialogTableVisible = true;
+      (this.historyIndex = "first0"), (this.dialogTableVisible = true);
     },
     eventIsShow(value, state) {
       if (value != null) {
-        if (state != "0" &&(!!value ? value.includes("其他"):false)) {
+        if (state != "0" && (!!value ? value.includes("其他") : false)) {
           return true;
         }
       } else {
@@ -2145,80 +2152,88 @@ export default {
     // 复核提交
     submitDialog() {
       console.log(this.eventFormDetail, "1123123");
-      this.$cache.local.set("currencyId", this.eventFormDetail.currencyId);
+      this.$refs["eventFormDetail"].validate((valid) => {
+        if (valid) {
+          this.$cache.local.set("currencyId", this.eventFormDetail.currencyId);
 
-      if (this.eventFormDetail.stakeNum1 && this.eventFormDetail.stakeNum2) {
-        this.eventFormDetail.stakeNum =
-          "K" +
-          this.eventFormDetail.stakeNum1 +
-          "+" +
-          this.eventFormDetail.stakeNum2;
-      }
-      if (
-        this.eventFormDetail.stakeEndNum1 &&
-        this.eventFormDetail.stakeEndNum2
-      ) {
-        this.eventFormDetail.stakeEndNum =
-          "K" +
-          this.eventFormDetail.stakeEndNum1 +
-          "+" +
-          this.eventFormDetail.stakeEndNum2;
-      }
-      if (this.eventFormDetail.reviewRemark.includes("其他")) {
-        this.eventFormDetail.reviewRemark =
-          this.eventFormDetail.reviewRemark.toString() +
-          ":" +
-          this.eventFormDetail.otherContent;
-      } else {
-        this.eventFormDetail.reviewRemark =
-          this.eventFormDetail.reviewRemark.toString();
-      }
-      if (
-        (this.eventFormDetail.eventState == "0" &&
-          this.eventFormDetail.currencyId == "") ||
-        this.eventFormDetail.currencyId == null
-      ) {
-        return this.$modal.msgWarning("请选择事件处置预案");
-      }
-      const currencyId = this.eventFormDetail.currencyId;
-      if (this.eventFormDetail.laneNo) {
-        this.eventFormDetail.laneNo = this.eventFormDetail.laneNo.toString();
-      }
+          if (
+            this.eventFormDetail.stakeNum1 &&
+            this.eventFormDetail.stakeNum2
+          ) {
+            this.eventFormDetail.stakeNum =
+              "K" +
+              this.eventFormDetail.stakeNum1 +
+              "+" +
+              this.eventFormDetail.stakeNum2;
+          }
+          if (
+            this.eventFormDetail.stakeEndNum1 &&
+            this.eventFormDetail.stakeEndNum2
+          ) {
+            this.eventFormDetail.stakeEndNum =
+              "K" +
+              this.eventFormDetail.stakeEndNum1 +
+              "+" +
+              this.eventFormDetail.stakeEndNum2;
+          }
+          if (this.eventFormDetail.reviewRemark.includes("其他")) {
+            this.eventFormDetail.reviewRemark =
+              this.eventFormDetail.reviewRemark.toString() +
+              ":" +
+              this.eventFormDetail.otherContent;
+          } else {
+            this.eventFormDetail.reviewRemark =
+              this.eventFormDetail.reviewRemark.toString();
+          }
+          if (
+            (this.eventFormDetail.eventState == "0" &&
+              this.eventFormDetail.currencyId == "") ||
+            this.eventFormDetail.currencyId == null
+          ) {
+            return this.$modal.msgWarning("请选择事件处置预案");
+          }
+          const currencyId = this.eventFormDetail.currencyId;
+          if (this.eventFormDetail.laneNo) {
+            this.eventFormDetail.laneNo =
+              this.eventFormDetail.laneNo.toString();
+          }
 
-      updateEvent(this.eventFormDetail).then((response) => {
-        this.processDialog = false;
-        this.closeProcessDialog = false;
-        this.processType = false;
-        this.details = false;
-        this.$modal.msgSuccess("修改成功");
-        this.getList();
-        //主动安全
-        //策略不为空
-        if (
-          this.eventFormDetail.prevControlType == 1 &&
-          currencyId &&
-          this.eventFormDetail.eventState == 0
-        ) {
-          let id = currencyId;
-          handleStrategy(id).then((res) => {
-            console.log(res);
-            this.$modal.msgSuccess("下发指令成功");
+          updateEvent(this.eventFormDetail).then((response) => {
+            this.processDialog = false;
+            this.closeProcessDialog = false;
+            this.processType = false;
+            this.details = false;
+            this.$modal.msgSuccess("修改成功");
+            this.getList();
+            //主动安全
+            //策略不为空
+            if (
+              this.eventFormDetail.prevControlType == 1 &&
+              currencyId &&
+              this.eventFormDetail.eventState == 0
+            ) {
+              let id = currencyId;
+              handleStrategy(id).then((res) => {
+                console.log(res);
+                this.$modal.msgSuccess("下发指令成功");
+              });
+            }
+            // 1.预案不为空
+            // 2.当前状态为0
+            // 3.普通事件
+            if (
+              this.eventFormDetail.prevControlType == 0 &&
+              currencyId &&
+              this.eventFormDetail.eventState == 0
+            ) {
+              this.$router.push({
+                path: "/emergency/administration/dispatch",
+                query: { id: this.eventFormDetail.id },
+              });
+            }
+            this.$cache.local.remove("currencyId");
           });
         }
-        // 1.预案不为空
-        // 2.当前状态为0
-        // 3.普通事件
-        if (
-          this.eventFormDetail.prevControlType == 0 &&
-          currencyId &&
-          this.eventFormDetail.eventState == 0
-        ) {
-          this.$router.push({
-            path: "/emergency/administration/dispatch",
-            query: { id: this.eventFormDetail.id },
-          });
-        }
-        this.$cache.local.remove("currencyId");
       });
     },
     changeEndTime() {
@@ -2703,7 +2718,7 @@ export default {
         currencyId: "",
         tunnelId: null,
         eventTypeId: null,
-        prevControlType:null,
+        prevControlType: null,
         eventTitle: null,
         eventTime: null,
         eventState: null,
@@ -2871,12 +2886,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .dialogForm .el-checkbox-button{
-  background: #052C4D;
+::v-deep .dialogForm .el-checkbox-button {
+  background: #052c4d;
 }
-.theme-light .el-dialog .el-dialog__body .dialogForm .checkBox{
-  display: unset!important;
-  width: unset!important;
+.theme-light .el-dialog .el-dialog__body .dialogForm .checkBox {
+  display: unset !important;
+  width: unset !important;
 }
 ::v-deep .el-timeline-item__content {
   background-color: #022443;
@@ -3716,5 +3731,4 @@ hr {
 .evtInfo .el-timeline-item__tail {
   border-left: 1px dashed #39adff !important;
 }
-
 </style>

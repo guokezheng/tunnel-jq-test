@@ -2,7 +2,7 @@
   <div style="width: 100%; height: 100%">
     <el-dialog
       v-dialogDrag
-      class="workbench-dialog boardDialog"
+      class="workbench-dialog workbench-boardDialog"
       :title="title"
       width="835px"
       append-to-body
@@ -719,7 +719,7 @@ export default {
     },
     // 打开信息模板
     openMesMode() {
-      let dialog = $(".boardDialog .el-dialog")[0];
+      let dialog = $(".workbench-boardDialog .el-dialog")[0];
       if (this.msgModeShow == false) {
         this.msgModeShow = true;
         dialog.style.width = "1600px";
@@ -835,7 +835,7 @@ export default {
 ::v-deep .el-radio-group .el-radio-button__inner {
   background: white;
 }
-.boardDialog {
+.workbench-boardDialog {
   .el-dialog {
     left: 28%;
   }

@@ -41,17 +41,16 @@ public class SocketClientHandler extends SimpleChannelInboundHandler<ByteBuf>
             String ip = ipSocket.getAddress().getHostAddress();
 //            int port = ipSocket.getPort();
             String strMsg = ByteBufUtil.convertByteBufToString(msg);
-//            String strMsg = "9c73000000050103020004";
 //            log.info("回复指令：ip="+ip+",msg="+strMsg);
 //            System.out.println("回复指令：ip="+ip+",msg="+strMsg);
-            JSONObject jsonObject = ModbusCmdResolver.commandParse(strMsg);
+
 
            String deviceId = tcpClientGeneralService.getDeviceIdByIp(ip);
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(deviceId);
             //设备解析类
             TcpClientGeneralBean tcpClientGeneralBean = tcpClientGeneralService.getProtocolBean(sdDevices);
             if(tcpClientGeneralBean != null){
-                tcpClientGeneralBean.handleReadData(ip,deviceId,jsonObject);
+                tcpClientGeneralBean.handleReadData(ip,deviceId,strMsg);
             }else{
                 log.error("设备协议配置为空");
             }

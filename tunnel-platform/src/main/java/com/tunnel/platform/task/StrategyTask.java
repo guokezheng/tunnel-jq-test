@@ -6,9 +6,7 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DeviceDirectionEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.TriggerEventTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
@@ -74,6 +72,9 @@ public class StrategyTask {
 
     @Autowired
     private ISdDevicesProtocolService sdDevicesProtocolService;
+
+    @Autowired
+    private ISdEventService sdEventService;
 
     /**
      * 懒汉模式实例化。
@@ -424,7 +425,7 @@ public class StrategyTask {
                     default: isControl = false; break;
                 }
                 //符合触发条件
-                if(isControl){
+                /*if(isControl){
                     //仅预警
                     if(s.get("warning_type").equals("0")){
                         //插入事件
@@ -446,7 +447,8 @@ public class StrategyTask {
                             sdEvent.setEventTypeId(TriggerEventTypeEnum.getTriggerEventTypeEnum(s.get("eq_type").toString()+s.get("element_id")).getEventType());
                         }
                         sdEvent.setStartTime(DateUtils.getTime());
-                        sdEvent.setEventState("3");
+                        sdEvent.setEventGrade(EventGradeEnum.YI_BAN.getCode());
+                        sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
                         sdEvent.setCreateTime(DateUtils.getNowDate());
                         String eventTitle = SpringUtils.getBean(ISdEventService.class).getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
                         sdEvent.setEventTitle(eventTitle);
@@ -456,8 +458,9 @@ public class StrategyTask {
 //                        }
                         int updateRows = SpringUtils.getBean(SdEventMapper.class).insertSdEvent(sdEvent);
                         if(updateRows>0){
-                            List<SdEvent> sdEventList = new ArrayList<>();
-                            sdEventList.add(sdEvent);
+                            SdEvent event = new SdEvent();
+                            event.setId(sdEvent.getId());
+                            List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
                             JSONObject object = new JSONObject();
                             object.put("sdEventList", sdEventList);
                             WebSocketService.broadcast("sdEventList",object.toString());
@@ -481,7 +484,7 @@ public class StrategyTask {
                         }
                     }
                     break out;
-                }
+                }*/
             }
             break;
         }

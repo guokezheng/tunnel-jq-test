@@ -569,7 +569,7 @@ public class InductionlampUtil {
                 resultMap.put("msgInfo","关闭所有灯光");
                 break;
             case PILOT_LIGHT_MODE_1 :
-                resultCode = "01060004000" + brightnessParam;
+                resultCode = "01060004000" + convertBrightnessOrFrequency("2",brightnessParam);
                 resultMap.put("msgInfo","灯亮度为：" + brightnessParam);
                 break;
             case PILOT_LIGHT_MODE_2 :
@@ -597,7 +597,7 @@ public class InductionlampUtil {
                 resultMap.put("msgInfo","频率为0");
                 break;
             case PILOT_LIGHT_MODE_1 :
-                resultCode = "01060006000" + frequency;
+                resultCode = "01060006000" + convertBrightnessOrFrequency("1",frequency);
                 resultMap.put("msgInfo","频率为：" + frequency);
                 break;
             default:
@@ -608,6 +608,49 @@ public class InductionlampUtil {
         resultCode = start + resultCode;
         resultMap.put("code",resultCode);
         return resultMap;
+    }
+
+    /**
+     * 亮度or频率转换
+     * model  1:频率 2:亮度
+     * @param model
+     * @param num
+     * @return
+     */
+    public static Integer convertBrightnessOrFrequency(String model, Integer num){
+        if("1".equals(model)){
+            if(num > 0 && num <= 25){
+                return 1;
+            }else if(num > 25 && num <= 50){
+                return 2;
+            }else if(num > 50 && num <= 75){
+                return 3;
+            }else if(num > 75 && num <= 100){
+                return 4;
+            }else {
+                return 0;
+            }
+        }else {
+            if(num > 0 && num <= 12.5){
+                return 1;
+            }else if(num > 12.5 && num <= 25){
+                return 2;
+            }else if(num > 25 && num <= 37.5){
+                return 3;
+            }else if(num > 37.5 && num <= 50){
+                return 4;
+            }else if(num > 50 && num <= 62.5){
+                return 5;
+            }else if(num > 62.5 && num <= 75){
+                return 6;
+            }else if(num > 75 && num <= 87.5){
+                return 7;
+            }else if(num > 87.5 && num <= 100){
+                return 8;
+            }else {
+                return 0;
+            }
+        }
     }
 
     //显科设备占空比控制

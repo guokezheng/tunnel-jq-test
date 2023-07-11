@@ -226,8 +226,10 @@
                 top: item.TOP,
                 left: item.LEFT,
               }"
-              style="position: absolute; line-height: 1"
-              v-html="item.CONTENT.replace(/\n|\r\n/g, '<br>')"
+              style="position: absolute; line-height: 1;text-align: left;"
+              v-html="item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                / /g,
+                '&nbsp')"
             >
             </span>
           </div>

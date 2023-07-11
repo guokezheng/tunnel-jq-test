@@ -2,6 +2,7 @@ package com.tunnel.deal.tcp.client.config;
 
 import com.tunnel.deal.mca.task.McaTask;
 import com.tunnel.deal.tcp.client.netty.MCASocketClient;
+import com.tunnel.deal.warninglightstrip.WarningLightStripTask;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -17,6 +18,9 @@ public class ClientApplicationRunner implements ApplicationRunner {
     @Autowired
     private McaTask mcaTask;
 
+    @Autowired
+    private WarningLightStripTask warningLightStripTask;
+
 
 
 //    /**
@@ -27,14 +31,14 @@ public class ClientApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-
-        //项目启动时缓存设备信息
-        addDeviceInfoCache();
-
         ThreadPool.executor.execute(() -> {
             try {
-                //重连次数设置
+                //初始化netty客户端，重连次数设置
                 MCASocketClient.getInstance().init(1);
+
+                //项目启动时缓存设备信息，与设备建立通信通道
+                mcaTask.connect();
+//                warningLightStripTask.connect();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -42,8 +46,5 @@ public class ClientApplicationRunner implements ApplicationRunner {
     }
 
 
-    public void addDeviceInfoCache(){
-        //缓存测控执行器设备信息
-        mcaTask.macInfoCache();
-    }
+
 }

@@ -952,6 +952,11 @@ export default {
         ],
         tunnelId: [
           { required: true, message: "请填写隧道ID", trigger: "blur" },
+          {
+            pattern: /^[0-9a-zA-Z_-]{1,100}$/,
+            message: "请输入数字字母或横线,最长不得超过100个字符",
+            trigger: "change"
+          },
         ],
         deptId: [
           { required: true, message: "请选择所属部门", trigger: "change" },
@@ -1012,7 +1017,7 @@ export default {
         ],
       },
       rule: {
-        tunnelId: [
+        tunnelId: [ 
           { required: true, message: "请填写隧道ID", trigger: "blur" },
         ],
       },

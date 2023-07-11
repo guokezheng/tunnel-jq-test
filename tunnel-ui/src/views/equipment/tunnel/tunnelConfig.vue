@@ -891,19 +891,22 @@ export default {
                 text: "",
               });
             }
-          }
-          
+          } 
         }
       } else {
         //显示
         for (let i = 0; i < list.length; i++) {
-          img[i][0].attr({
-            width: 80,
-            height: 18,
-          });
-          img[i][1].attr({
-            text: list[i].pile,
-          });
+          if(img[i][0].node.nodeName != 'image'){
+            img[i][0].attr({
+              width: 80,
+              height: 18,
+            });
+            if (img[i][1]) {
+              img[i][1].attr({
+                text: list[i].pile,
+              });
+            }
+          }
         }
       }
     },

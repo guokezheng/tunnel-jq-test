@@ -1,4 +1,4 @@
-package com.ruoyi.quartz.task;
+package com.tunnel.deal.warninglightstrip;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -12,13 +12,19 @@ import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
-import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
+import com.tunnel.deal.enums.DeviceProtocolCodeEnum;
+import com.tunnel.deal.guidancelamp.protocol.JavaCrc16;
+import com.tunnel.deal.tcp.client.general.TcpClientGeneralService;
+import com.tunnel.deal.tcp.client.netty.MCASocketClient;
+import com.tunnel.deal.tcp.modbus.ModbusCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 警示灯带定时任务调度
@@ -35,6 +41,57 @@ public class WarningLightStripTask {
     private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
     private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
     private static ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
+
+    @Autowired
+    private TcpClientGeneralService tcpClientGeneralService;
+
+    @Autowired
+    private ModbusCmd modbusCmd;
+
+    /**
+     * 存储设备数据，key为deviceId,value为设备数据【ip,port】
+     * 将HashMap替换为线程安全类ConcurrentHashMap
+     */
+    public static Map<String,Map> deviceMap = new ConcurrentHashMap<>();
+
+
+    /**
+     * 固定时间间隔更新设备信息缓存,定时重新连接设备
+     */
+    public void connect(){
+        deviceInfoCache();
+        MCASocketClient.getInstance().deviceConnect(deviceMap);
+    }
+
+    /**
+     * 警示灯带设备信息缓存
+     *
+     */
+    public void deviceInfoCache(){
+        tcpClientGeneralService.deviceInfoCache(deviceMap,DeviceProtocolCodeEnum.XIANKE_WARN_LIGHT_PROTOCOL_CODE.getCode(),DevicesTypeEnum.JING_SHI_DENG_DAI.getCode());
+    }
+
+    /**
+     * 定时获取警示灯带实时状态（新代码）
+     * 代码更替原因：
+     * 原代码在杭山东隧道服务器执行一段时间后会报错：Caused by: java.io.IOException: 打开的文件过多
+     * 新代码用netty长连接实现，测试是否正常运行
+     */
+    public void handleNew(){
+        //固定查询指令，查询14个地址的信息，包含警示灯带所有的信息
+        String cmdBody = "01030000000E";
+        String crc = JavaCrc16.getCRC(cmdBody);
+        String command = cmdBody + crc;
+
+        deviceMap.forEach((deviceId, map) ->{
+            String ip = map.get("ip") == null ? "" : map.get("ip").toString();
+            String port = map.get("port") == null ? "" : map.get("port").toString();
+            if(!"".equals(ip) && !"".equals(port)){
+                modbusCmd.executeCommand(deviceId,ip,port,command);
+            }
+        });
+
+    }
 
     public void handle() {
         //定时获取警示灯带当前状态

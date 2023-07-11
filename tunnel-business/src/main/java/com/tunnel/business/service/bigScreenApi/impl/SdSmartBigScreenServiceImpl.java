@@ -254,6 +254,44 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         return AjaxResult.success(map);
     }
 
+    @Override
+    public AjaxResult getHoursTrafficVolume(String tunnelId) {
+        Map<String, Object> map = new HashMap<>();
+        //客车
+        List<Map<String, Object>> carKe = sdSmartBigScreenMapper.getHoursTrafficVolume(tunnelId, "1");
+        //货车
+        List<Map<String, Object>> carHuo = sdSmartBigScreenMapper.getHoursTrafficVolume(tunnelId, "2");
+        //重点
+        List<Map<String, Object>> carKey = sdSmartBigScreenMapper.getHoursTrafficVolume(tunnelId, "3");
+        map.put("ke",carKe);
+        map.put("huo",carHuo);
+        map.put("key",carKey);
+        return AjaxResult.success(map);
+    }
+
+    @Override
+    public AjaxResult getStatisticalDevice(String tunnelId) {
+        List<Map<String, Object>> devList = sdSmartBigScreenMapper.getStatisticalDevice(tunnelId);
+        int devNum = 0;
+        int faultNum = 0;
+        for(Map<String, Object> item : devList){
+            int eqCount = Integer.valueOf(item.get("eqNum").toString());
+            int fCount = Integer.valueOf(item.get("fNum").toString());
+            devNum = devNum + eqCount;
+            faultNum = faultNum + fCount;
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("devNum",devNum);
+        map.put("faultNum",faultNum);
+        BigDecimal dev = new BigDecimal(devNum);
+        BigDecimal fault = new BigDecimal(faultNum);
+        BigDecimal divide = fault.divide(dev,5,BigDecimal.ROUND_DOWN);
+        BigDecimal multiply = divide.multiply(new BigDecimal(100)).setScale(1,BigDecimal.ROUND_HALF_UP);
+        map.put("failureRate",multiply);
+        map.put("list",devList);
+        return AjaxResult.success(map);
+    }
+
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){
         List<Map<String, Object>> list = new ArrayList<>();
         //已完成数量

@@ -321,18 +321,22 @@
       <div
         style="height: 150px; overflowy: auto; padding: 5px; padding-left: 10px"
       >
-        <div
-          style="
+        
+        <el-row style="line-height: 40px;
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
-            color: #00c2ff;
-          "
-        >
-          <span style="padding-left: 5px">预警名称</span>
-          <span style="padding-left: 28px; line-height: 40px">预警类型</span>
-          <span style="padding-left: 28px; line-height: 40px">触发值</span>
-          <span style="padding-left: 28px; line-height: 40px">相关预案</span>
-        </div>
-        <div
+            color: #00c2ff;">
+          <el-col :span="7" style="padding-left: 4px;">
+            <span >预警类型</span>
+          </el-col>
+          <el-col :span="4">
+            <span >触发值</span>
+          </el-col>
+          <el-col :span="13">
+            <span >相关预案</span>
+          </el-col>
+        </el-row>
+       
+        <el-row
           v-for="(item, index) in isDrawerCList"
           :key="index"
           style="
@@ -342,19 +346,22 @@
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
           "
         >
-          <div style="width: 80px; margin-right: 5px; padding-left: 5px">
-            {{ item.strategy_name }}
-          </div>
-          <div style="width: 80px; margin-right: 5px; padding-left: 5px">
-            {{ item.name }}
-          </div>
-          <div style="width: 66px; margin-right: 5px; padding-left: 5px">
+          <el-col :span="7">
+            <div >
+              {{ item.name }}
+            </div>
+          </el-col>
+          <el-col :span="4">
+            <div >
             {{ item.str }}
           </div>
-          <div class="reservePlan" v-for="(itm, inx) in item.plan" :key="inx">
+          </el-col>
+          <el-col :span="13">
+            <div class="reservePlan" v-for="(itm, inx) in item.plan" :key="inx">
             {{ itm }}
           </div>
-        </div>
+          </el-col>
+        </el-row>
       </div>
     </el-drawer>
   </div>

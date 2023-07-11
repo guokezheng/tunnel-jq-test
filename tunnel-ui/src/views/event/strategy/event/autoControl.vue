@@ -505,6 +505,8 @@ export default {
         ],
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
+          { max: 50, message: '最长输入50个字符', trigger: 'change' }
+
         ],
         eventType: [
           { required: true, message: "请选择事件类型", trigger: "change" },

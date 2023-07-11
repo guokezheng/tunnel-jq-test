@@ -183,4 +183,19 @@ public interface SdSmartBigScreenMapper {
      */
     Map<String, Object> getTransitCar(@Param("tunnelId") String tunnelId,
                                       @Param("model") String model);
+
+    /**
+     * 查询24小时车流量
+     * @param tunnelId
+     * @return
+     */
+    List<Map<String, Object>> getHoursTrafficVolume(@Param("tunnelId") String tunnelId,
+                                              @Param("model") String model);
+
+    /**
+     * 统计设备状态
+     * @param tunnelId
+     * @return
+     */
+    List<Map<String, Object>> getStatisticalDevice(@Param("tunnelId") String tunnelId);
 }

@@ -121,7 +121,11 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setTunnelId(tunnelId);
                 sdEvent.setStationId(f.getStationId() + "");
                 sdEvent.setStakeNum(f.getStakeNum());
-                sdEvent.setLaneNo(f.getLaneNo() + "");
+                if(20L == Long.valueOf(eventType)){
+                    sdEvent.setLaneNo("1,2,3");
+                }else {
+                    sdEvent.setLaneNo(f.getLaneNo() + "");
+                }
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
                 sdEvent.setStartTime(dateZh(f.getEventTimeStampStart()) == null ? null : DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,dateZh(f.getEventTimeStampStart())));
@@ -147,7 +151,11 @@ public class RadarEventServiceImpl implements RadarEventService {
                 //事件桩号
                 sdEvent.setStakeNum(f.getStakeNum());
                 //车道号
-                sdEvent.setLaneNo(f.getLaneNo() + "");
+                if(20L == Long.valueOf(eventType)){
+                    sdEvent.setLaneNo("1,2,3");
+                }else {
+                    sdEvent.setLaneNo(f.getLaneNo() + "");
+                }
                 //经度
                 sdEvent.setEventLongitude(f.getEventLongitude() + "");
                 //维度

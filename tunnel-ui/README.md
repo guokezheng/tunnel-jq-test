@@ -58,4 +58,7 @@ npm run build:prod
 
 # 新版gis地图
 npm install gis-map-admin@0.9.2
+
+# 新增 vue-resource 数据请求
+npm install vue-resource --save
 ```

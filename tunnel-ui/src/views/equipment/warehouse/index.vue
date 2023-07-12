@@ -265,11 +265,12 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
-        <el-form-item label="所属隧道" prop="eqTunnelId">
+        <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
             v-model="form.tunnelId"
             placeholder="请选择所属隧道"
             style="width: 100%"
+            @change="$forceUpdate()"
           >
             <el-option
               v-for="item in eqTunnelData"
@@ -455,6 +456,11 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        tunnelId: [{
+          required: true,
+          message: '请选择隧道',
+          trigger: 'change'
+        }],
         partName: [
           {
             required: true,
@@ -660,6 +666,7 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
+          console.log(this.form,"this.form11")
             updateWarehouse(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -667,6 +674,8 @@ export default {
               this.getList();
             });
           } else {
+          console.log(this.form,"this.form222")
+
             addWarehouse(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;

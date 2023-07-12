@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import method from "vue-resource/src/http/interceptor/method";
+// import method from "vue-resource/src/http/interceptor/method";
 
 // 查询分项列表
 export function listItemized(query) {

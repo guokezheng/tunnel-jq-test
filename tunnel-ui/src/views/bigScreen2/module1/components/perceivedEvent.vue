@@ -28,6 +28,7 @@ export default {
     getList() {
       findEventStat().then((res) => {
         let list = res.data;
+        console.log(list,"list")
         this.$nextTick(() => {
           this.initEchats1(list);
         });

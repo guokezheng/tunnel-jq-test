@@ -222,7 +222,7 @@
               <p>{{deadline4}}</p>
             </div>
           </div>
-          <div class="dieBox" style="height: 75%;overflow-y: scroll;">
+          <div class="dieBox" style="height: 75%;overflow-y: auto;">
             <div class="heightBox" style="height:100%;">
               <div
                 v-for="(item, index) of incHandList"
@@ -269,10 +269,10 @@
                   </div>
                   </div>
                   <div class="dashed"
-                    :style="{top:index == 0?'55px':'80px'}"
+                    :style="{top:index == 0?'55px':'76px'}"
                     v-show="index != incHandList.length - 1">
                     <span class="circle"></span>
-                    <p :style="{height:index == 0?'58px':lineHeight + 'px'}"></p>
+                    <p :style="{height:index == 0?'50px':lineHeight + 12 + 'px'}"></p>
                   </div>
                 </div>
 
@@ -1722,7 +1722,6 @@ export default {
           if (response.data) {
             response.data.title = "入口";
             if (response.code == 200) {
-              debugger
               this.videoForm1 = response.data;
               this.videoForm1.cameraPlayer = true;
             }
@@ -2035,7 +2034,7 @@ export default {
   padding: 35px;
 }
 ::v-deep .plan .el-table__body-wrapper {
-  width: 104% !important;
+  width: 100% !important;
 }
 
 ::v-deep .yjBox .is-always-shadow .el-card {
@@ -2078,10 +2077,10 @@ export default {
   border: 1px solid #0661ae;
 }
 .dieBox::-webkit-scrollbar {
-  display: none;
+  // display: none;
 }
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper::-webkit-scrollbar {
-  display: none;
+  // display: none;
 }
 // ::v-deep .drawerLog .el-drawer.ltr{left: 25%!important;}
 ::v-deep .el-dialog__title {
@@ -2123,10 +2122,10 @@ export default {
   overflow-x: hidden;
 }
 ::v-deep .el-drawer__body::-webkit-scrollbar {
-  display: none;
+  // display: none;
 }
 ::v-deep .el-table--scrollable-x .el-table__body-wrapper::-webkit-scrollbar {
-  display: none;
+  // display: none;
 }
 // ::v-deep .el-table--scrollable-y .el-table__body-wrapper{
 //   overflow-y: unset;
@@ -2923,7 +2922,7 @@ export default {
   border-left: 1px solid #03659e !important;
 }
 ::v-deep ::-webkit-scrollbar {
-  width: 0px;
+  // width: 0px;
 }
 // ::v-deep .phoneTable tr {
 //   background: #12578f !important;

@@ -389,12 +389,13 @@
                       effect="dark"
                       placement="right"
                       popper-class="tipCase"
+                      
                     >
                       <div slot="content">
                         <span>名称：{{ item.eqName }}</span
                         ><br />
                         <!-- <span>桩号：{{ item.pile}}</span><br/> -->
-                        <span>方向：{{ getDirection(item.eqDirection) }}</span>
+                        <span>方向：{{ getDirection(item.eqDirection) }}{{item.iconWidth +10}}</span>
                       </div>
 
                       <!-- 巡检机器人 -->
@@ -922,8 +923,8 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-tabs v-model="operationActive" @tab-click="handleTabClick">
-        <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
         <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
+        <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
       </el-tabs>
       <el-row
         :gutter="20"
@@ -1989,7 +1990,7 @@ export default {
       },
 
       dateRange: this.getPastTime(),
-      operationActive: "xitong",
+      operationActive: "caozuo",
       manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
       lane: "",
@@ -2899,6 +2900,7 @@ export default {
       }
     },
     treeClear() {
+      this.resetCanvas()
       for (var item of this.selectedIconList) {
         if (item.eqName.indexOf(this.screenEqName) > -1) {
           item.click = false;
@@ -2911,6 +2913,7 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
+      console.log(data,"data")
       // 如果存在children，则代表是父级
       if (data.children) {
         // 点击父级业务
@@ -3245,6 +3248,9 @@ export default {
       if (this.screenEqName) {
         for (var item of this.selectedIconList) {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
+            this.resetCanvasFlag = true;
+            this.$refs.dragImgDom.style.left = - item.position.left + 864 + 'px' ;
+            this.$refs.dragImgDom.style.top = 290 - item.position.top + 'px';
             item.click = true;
           } else {
             item.click = false;
@@ -5021,11 +5027,11 @@ export default {
       this.dateRange = this.getPastTime();
       this.dateRange1 = this.getPastTime();
       this.title = "操作日志";
-      this.operationActive = "xitong";
+      this.operationActive = "caozuo";
       this.operationLogDialog = true;
       this.operationParam_xt.ipaddr = "";
       this.operationParam.operIp = "";
-      this.getOperationList("xitong");
+      this.getOperationList("caozuo");
     },
 
     /* 打开图标说明对话框*/
@@ -6348,7 +6354,7 @@ input {
   background: #cdedfa !important;
   border: solid 1px #1d58a9;
   color: #1d58a9 !important;
-  transform: translateX(20px);
+  transform: translateX(15px);
 }
 .workbench-msg {
   background-color: #1890ff;
@@ -6880,11 +6886,12 @@ input {
   top: 5%;
   width: 13.5%;
   height: 60vh;
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y:auto;
 }
-.treeBox::-webkit-scrollbar {
-  display: none;
-}
+// .treeBox::-webkit-scrollbar {
+//   display: none;
+// }
 </style>
 
 <style lang="scss" scoped>

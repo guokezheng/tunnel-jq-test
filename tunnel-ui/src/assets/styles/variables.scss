@@ -216,6 +216,10 @@ $theme-blue-rgba: rgba(0, 74, 119, 0.8);
     .el-popper[x-placement^="bottom"] .popper__arrow::after {
       border-bottom-color: white;
     }
+    .el-scrollbar__wrap{
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
   }
   .onlyPop {
     .popper__arrow::after {

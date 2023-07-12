@@ -321,21 +321,24 @@
       <div
         style="height: 150px; overflowy: auto; padding: 5px; padding-left: 10px"
       >
-        
+
         <el-row style="line-height: 40px;
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
             color: #00c2ff;">
-          <el-col :span="7" style="padding-left: 4px;">
+          <el-col :span="5" style="padding-left: 4px;">
+            <span >预警名称</span>
+          </el-col>
+          <el-col :span="7" >
             <span >预警类型</span>
           </el-col>
           <el-col :span="4">
             <span >触发值</span>
           </el-col>
-          <el-col :span="13">
+          <el-col :span="5">
             <span >相关预案</span>
           </el-col>
         </el-row>
-       
+
         <el-row
           v-for="(item, index) in isDrawerCList"
           :key="index"
@@ -346,6 +349,12 @@
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
           "
         >
+
+          <el-col :span="5">
+            <div >
+              {{ item.strategy_name }}
+            </div>
+          </el-col>
           <el-col :span="7">
             <div >
               {{ item.name }}
@@ -356,7 +365,7 @@
             {{ item.str }}
           </div>
           </el-col>
-          <el-col :span="13">
+          <el-col :span="5">
             <div class="reservePlan" v-for="(itm, inx) in item.plan" :key="inx">
             {{ itm }}
           </div>

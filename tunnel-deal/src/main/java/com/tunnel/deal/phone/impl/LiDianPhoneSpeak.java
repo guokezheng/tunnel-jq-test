@@ -50,7 +50,7 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
     private SdEventMapper sdEventMapper;
 
     @Override
-    public void playVoice(Map<String, Object> map, SdDevices sdDevices) {
+    public int playVoice(Map<String, Object> map, SdDevices sdDevices) {
         /*
          * 向服务器端发送数据
          */
@@ -75,8 +75,10 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
             socket.send(packet);
             //5.关闭资源
             socket.close();
+            return 1;
         }catch (Exception e){
             e.getMessage();
+            return 0;
         }
     }
 

@@ -625,7 +625,7 @@ export default {
             itemStyle: {},
             top: "top",
             left: "center",
-            padding: [20, 15, 0, 15],
+            padding: [6, 15, 0, 15],
             icon: "circle",
             orient: "horizontal",
           },
@@ -633,7 +633,7 @@ export default {
             left: "6%",
             right: "8%",
             bottom: "1%",
-            top: "30%",
+            top: "25%",
             containLabel: true,
           },
 
@@ -920,7 +920,7 @@ export default {
         },
         legend: {
           show: true,
-          icon: "rect",
+          icon: "circle",
           itemWidth: 10,
           itemHeight: 10,
           selectedMode: "single", // 单选
@@ -934,15 +934,15 @@ export default {
           textStyle: {
             //图例文字的样式
             color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
-            fontSize: 12,
+            fontSize: 10,
           },
         },
         calculable: true,
         grid: {
           top: "24%",
-          bottom: "20%",
-          left: "14%",
-          right: "14%",
+          bottom: "12%",
+          left: "10%",
+          right: "10%",
         },
         xAxis: [
           {

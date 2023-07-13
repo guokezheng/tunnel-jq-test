@@ -12,7 +12,7 @@
         @tab-click="handleClick"
         style="width: 100%"
       >
-        <el-tab-pane label="回路用能" name="first">
+        <!-- <el-tab-pane label="回路用能" name="first">
           <el-card class="my-card-height left_tree" shadow="never">
             <department-select
               @getTreeFirst="getFirstId"
@@ -30,7 +30,7 @@
               height="calc(100vh - 320px)"
             ></circuit-tree>
           </el-card>
-        </el-tab-pane>
+        </el-tab-pane> -->
         <el-tab-pane label="站点用能" name="second">
           <el-card class="my-card-height left_tree" shadow="never">
             <site-tree
@@ -389,7 +389,7 @@ export default {
 
       myChart: "",
 
-      activeName: "first", // tab初始页
+      activeName: "second", // tab初始页
       siteIdCircuit: null, //站点id
 
       tableName: "回路名称",
@@ -415,10 +415,10 @@ export default {
 
     /******回路******/
     //默认选中回路回调
-    defaultCheckLoop2(keys) {
-      this.loopIds2 = keys;
-      if (this.activeName === "first") this.getData();
-    },
+    // defaultCheckLoop2(keys) {
+    //   this.loopIds2 = keys;
+    //   if (this.activeName === "first") this.getData();
+    // },
     //节点选中状态发生变化时的回调
     handleCheckChange2(data, checked) {
       this.loopIds2 = checked.checkedKeys; //选中回路的id
@@ -445,10 +445,10 @@ export default {
 
     // 清除siteId
     clear() {
-      if (this.activeName === "first") {
-        this.siteIdCircuit = null;
-        this.loopIds2 = [];
-      }
+      // if (this.activeName === "first") {
+      //   this.siteIdCircuit = null;
+      //   this.loopIds2 = [];
+      // }
       this.list = [];
       if (this.myChart) {
         this.myChart.clear();
@@ -458,9 +458,10 @@ export default {
     handleClick(tab, event) {
       if (this.activeName === "second") {
         this.tableName = "站点名称";
-      } else {
-        this.tableName = "回路名称";
-      }
+      } 
+      // else {
+      //   this.tableName = "回路名称";
+      // }
       this.getData();
     },
     // 日月年切换
@@ -483,7 +484,7 @@ export default {
           });
           return;
         }
-        this.loading = true;
+        // this.loading = true;
         // 参数
         this.queryParams.deptCodeList = this.loopIds
           .filter((e) => e != null)
@@ -516,64 +517,65 @@ export default {
         //     .catch(err => {
         //     })
         this.loading = false;
-      } else if (this.activeName === "first") {
-        // console.log(this.loopIds2);
-        this.clearData();
-        if (!this.siteIdCircuit) {
-          this.$message({
-            showClose: true,
-            message: "请选择归属部门",
-            type: "warning",
-            duration: 1500,
-          });
-          return;
-        }
-        //校验参数
-        if (this.loopIds2.length === 0) {
-          this.$message({
-            showClose: true,
-            message: "至少选择一条回路",
-            type: "warning",
-            duration: 1500,
-          });
-          return;
-        }
-        this.loading = true;
-        // 参数
-        this.queryParams2.loopCodeList = this.loopIds2
-          .filter((e) => e != null)
-          .join(",");
-        this.queryParams2.baseTime = this.parseTime(this.base_date);
-        // this.queryParams2.loopCodeList = "aa";
-        // this.queryParams2.baseTime = "2022/10/13 15:51:21";
-        this.queryParams2.type = this.tabType;
+      } 
+      // else if (this.activeName === "first") {
+      //   // console.log(this.loopIds2);
+      //   this.clearData();
+      //   if (!this.siteIdCircuit) {
+      //     this.$message({
+      //       showClose: true,
+      //       message: "请选择归属部门",
+      //       type: "warning",
+      //       duration: 1500,
+      //     });
+      //     return;
+      //   }
+      //   //校验参数
+      //   if (this.loopIds2.length === 0) {
+      //     this.$message({
+      //       showClose: true,
+      //       message: "至少选择一条回路",
+      //       type: "warning",
+      //       duration: 1500,
+      //     });
+      //     return;
+      //   }
+      //   this.loading = true;
+      //   // 参数
+      //   this.queryParams2.loopCodeList = this.loopIds2
+      //     .filter((e) => e != null)
+      //     .join(",");
+      //   this.queryParams2.baseTime = this.parseTime(this.base_date);
+      //   // this.queryParams2.loopCodeList = "aa";
+      //   // this.queryParams2.baseTime = "2022/10/13 15:51:21";
+      //   this.queryParams2.type = this.tabType;
 
-        // 回路接口请求
-        //   await getSplitTimeByLoop(this.queryParams2)
-        //     .then(res => {
-        //       if (res.code === 200) {
-        //         this.list = res.data
-        //         this.$nextTick(function () {
-        //           //清除选中行
-        //           this.$refs.multipleTable.doLayout()
-        //         })
+      //   // 回路接口请求
+      //   //   await getSplitTimeByLoop(this.queryParams2)
+      //   //     .then(res => {
+      //   //       if (res.code === 200) {
+      //   //         this.list = res.data
+      //   //         this.$nextTick(function () {
+      //   //           //清除选中行
+      //   //           this.$refs.multipleTable.doLayout()
+      //   //         })
 
-        //         // 计算金额
-        //         let that = this
-        //         this.list.forEach(item => {
-        //           item.f_EpiJAmount = item.jValue == null || item.jPrice == null ? null : that.numberMul(item.jValue, item.jPrice).toFixed(2)
-        //           item.f_EpiFAmount = item.fValue == null || item.fPrice == null ? null : that.numberMul(item.fValue, item.fPrice).toFixed(2)
-        //           item.f_EpiPAmount = item.pValue == null || item.pPrice == null ? null : that.numberMul(item.pValue, item.pPrice).toFixed(2)
-        //           item.f_EpiGAmount = item.gValue == null || item.gPrice == null ? null : that.numberMul(item.gValue, item.gPrice).toFixed(2)
-        //           item.f_EpiSAmount = item.sValue == null || item.sPrice == null ? null : that.numberMul(item.sValue, item.sPrice).toFixed(2)
-        //         })
-        //         this.openChart()
-        //       }
-        //     })
-        //     .catch(err => {
-        //     })
-        this.loading = false;
-      }
+      //   //         // 计算金额
+      //   //         let that = this
+      //   //         this.list.forEach(item => {
+      //   //           item.f_EpiJAmount = item.jValue == null || item.jPrice == null ? null : that.numberMul(item.jValue, item.jPrice).toFixed(2)
+      //   //           item.f_EpiFAmount = item.fValue == null || item.fPrice == null ? null : that.numberMul(item.fValue, item.fPrice).toFixed(2)
+      //   //           item.f_EpiPAmount = item.pValue == null || item.pPrice == null ? null : that.numberMul(item.pValue, item.pPrice).toFixed(2)
+      //   //           item.f_EpiGAmount = item.gValue == null || item.gPrice == null ? null : that.numberMul(item.gValue, item.gPrice).toFixed(2)
+      //   //           item.f_EpiSAmount = item.sValue == null || item.sPrice == null ? null : that.numberMul(item.sValue, item.sPrice).toFixed(2)
+      //   //         })
+      //   //         this.openChart()
+      //   //       }
+      //   //     })
+      //   //     .catch(err => {
+      //   //     })
+      //   this.loading = false;
+      // }
     },
     // 清空数据
     clearData() {
@@ -881,7 +883,7 @@ export default {
     align-items: center;
     padding: 10px 20px;
     p {
-      color: #3070ba;
+      color: #fff;
       font-size: 20px;
       font-weight: 600;
       height: 100%;

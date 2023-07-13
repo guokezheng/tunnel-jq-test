@@ -405,7 +405,7 @@ export default {
           });
           return;
         }
-        this.loading = true;
+        // this.loading = true;
         // 参数
         this.queryParams.codeList = this.loopIds
           .filter((e) => e != null)
@@ -493,7 +493,7 @@ export default {
           });
           return;
         }
-        this.loading = true;
+        // this.loading = true;
         // 参数
         this.queryParams.codeList = this.loopIds3
           .filter((e) => e != null)

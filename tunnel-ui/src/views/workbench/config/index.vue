@@ -56,8 +56,8 @@
 
         <div class="flex-row" style="z-index: 8">
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
-              {{ srollSwitch ? "滚动关" : "滚动开" }}
+            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 0.5vw">
+              {{ srollSwitch ? "滚动" : "滚动" }}
             </p>
             <el-switch
               v-model="srollSwitch"
@@ -66,8 +66,8 @@
             ></el-switch>
           </div>
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
-              {{ carShow ? "实时车辆关" : "实时车辆开" }}
+            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 0.5vw">
+              {{ carShow ? "实时车辆" : "实时车辆" }}
             </p>
             <el-switch
               v-model="carShow"
@@ -109,7 +109,7 @@
             </div>
           </div>
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw">缩放：</p>
+            <!-- <p class="zoom-title" style="font-size: 0.75vw">缩放：</p> -->
             <el-input-number
               v-model="zoom"
               :step="10"
@@ -122,8 +122,8 @@
             </el-input-number>
           </div>
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw">
-              {{ zoomSwitch == 0 ? "缩放开" : "缩放关" }}
+            <p class="zoom-title" style="font-size: 0.75vw;margin-right:0.5vw">
+              {{ zoomSwitch == 0 ? "缩放" : "缩放" }}
             </p>
             <el-switch
               v-model="zoomSwitch"
@@ -389,13 +389,12 @@
                       effect="dark"
                       placement="right"
                       popper-class="tipCase"
-                      
                     >
                       <div slot="content">
                         <span>名称：{{ item.eqName }}</span
                         ><br />
                         <!-- <span>桩号：{{ item.pile}}</span><br/> -->
-                        <span>方向：{{ getDirection(item.eqDirection) }}{{item.iconWidth +10}}</span>
+                        <span>方向：{{ getDirection(item.eqDirection) }}</span>
                       </div>
 
                       <!-- 巡检机器人 -->
@@ -417,7 +416,7 @@
                         :class="{ focus: item.focus }"
                       >
                         <img
-                          v-show="item.eqType != '31'"
+                          v-show="item.eqType != '31' && item.eqType != '16' && item.eqType != '36'"
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{
@@ -2520,6 +2519,8 @@ export default {
     },
   },
   created() {
+    
+    
     // debugger
     //小车运行渲染定时任务
     clearInterval(this.timerCat);
@@ -6354,7 +6355,7 @@ input {
   background: #cdedfa !important;
   border: solid 1px #1d58a9;
   color: #1d58a9 !important;
-  transform: translateX(15px);
+  // transform: translateX(15px);
 }
 .workbench-msg {
   background-color: #1890ff;

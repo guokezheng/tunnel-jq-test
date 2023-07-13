@@ -25,7 +25,7 @@
             style="margin-left: 3px"
             :style="isManagementStation ? 'display: flex;' : ''"
           >
-          <el-tooltip
+            <el-tooltip
               class="item"
               popper-class="wb-tip"
               v-for="(item, index) in tunnelList"
@@ -43,7 +43,7 @@
                   display: flex;
                   justify-content: center;
                   height: 100%;
-                  line-height: 3vh;
+                  line-height: 3.1vh;
                   font-size: 0.75vw;
                   padding: 0 1vw;
                 "
@@ -53,144 +53,220 @@
             </el-tooltip>
           </el-button-group>
         </el-row>
-
-        <div class="flex-row" style="z-index: 8">
-          <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 0.5vw">
-              {{ srollSwitch ? "滚动" : "滚动" }}
-            </p>
-            <el-switch
-              v-model="srollSwitch"
-              class="switchStyle"
-              @change="srollSwitchChange"
-            ></el-switch>
-          </div>
-          <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 0.5vw">
-              {{ carShow ? "实时车辆" : "实时车辆" }}
-            </p>
-            <el-switch
-              v-model="carShow"
-              class="switchStyle"
-              @change="carShowChange"
-            ></el-switch>
-          </div>
-          <div class="display-box zoomClass" ref="treeBox">
-            <el-input
-              placeholder="请输入内容"
-              v-model="screenEqName"
-              class="input-with-select"
-              clearable
-              @click.native="treeClick()"
-              @keyup.enter.native="screenEqNameButton(screenEqName)"
-              @clear="treeClear"
-            >
-              <el-button
-                slot="append"
-                icon="el-icon-search"
-                @click="screenEqNameButton(screenEqName)"
-              ></el-button>
-            </el-input>
-            <!-- 搜索栏树状结构 -->
-            <div
-              class="treeBox"
-              ref="treeBox"
-              v-show="treeShow"
-              :style="dragFlag ? '47%' : '54.5%'"
-            >
-              <el-tree
-                :show-checkbox="false"
-                :data="treeData"
-                :props="defaultProps"
-                @node-click="handleNodeClick"
-                accordion
-                ref="tree"
-              ></el-tree>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(7px);
+          "
+        >
+          <div class="flex-row" style="z-index: 8">
+            <!-- <div class="display-box zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.75vw; margin-right: 0.5vw"
+              >
+                {{ srollSwitch ? "滚动" : "滚动" }}
+              </p>
+              <el-switch
+                v-model="srollSwitch"
+                class="switchStyle"
+                @change="srollSwitchChange"
+              ></el-switch>
             </div>
-          </div>
-          <div class="display-box zoomClass">
-            <!-- <p class="zoom-title" style="font-size: 0.75vw">缩放：</p> -->
-            <el-input-number
-              v-model="zoom"
-              :step="10"
-              :min="60"
-              :max="140"
-              step-strictly
-              @change="zoomChange"
+            <div class="display-box zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.75vw; margin-right: 0.5vw"
+              >
+                {{ carShow ? "实时车辆" : "实时车辆" }}
+              </p>
+              <el-switch
+                v-model="carShow"
+                class="switchStyle"
+                @change="carShowChange"
+              ></el-switch>
+            </div> -->
+            <div class="display-box zoomClass" ref="treeBox">
+              <el-input
+                placeholder="请输入内容"
+                v-model="screenEqName"
+                class="input-with-select"
+                clearable
+                @click.native="treeClick()"
+                @keyup.enter.native="screenEqNameButton(screenEqName)"
+                @clear="treeClear"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-search"
+                  @click="screenEqNameButton(screenEqName)"
+                ></el-button>
+              </el-input>
+              <!-- 搜索栏树状结构 -->
+              <div
+                class="treeBox"
+                ref="treeBox"
+                v-show="treeShow"
+                :style="dragFlag ? '47%' : '54.5%'"
+              >
+                <el-tree
+                  :show-checkbox="false"
+                  :data="treeData"
+                  :props="defaultProps"
+                  @node-click="handleNodeClick"
+                  accordion
+                  ref="tree"
+                ></el-tree>
+              </div>
+            </div>
+            <div class="display-box zoomClass">
+              <!-- <p class="zoom-title" style="font-size: 0.75vw">缩放：</p> -->
+              <el-input-number
+                v-model="zoom"
+                :step="10"
+                :min="60"
+                :max="140"
+                step-strictly
+                @change="zoomChange"
+              >
+                {{ zoom + "%" }}
+              </el-input-number>
+            </div>
+            <!-- <div class="display-box zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.75vw; margin-right: 0.5vw"
+              >
+                {{ zoomSwitch == 0 ? "缩放" : "缩放" }}
+              </p>
+              <el-switch
+                v-model="zoomSwitch"
+                class="switchStyle"
+                @change="zoomSwitchChange"
+              ></el-switch>
+            </div> -->
+            <el-button
+              v-if="resetCanvasFlag"
+              class="flex-row"
+              type="primary"
+              size="mini"
+              icon="el-icon-map-location"
+              @click="resetCanvas"
             >
-              {{ zoom + "%" }}
-            </el-input-number>
+              地图复位
+            </el-button>
+            <el-button
+              class="buttons"
+              type="primary"
+              size="mini"
+              @click="strategyPage"
+            >
+              <img src="../../../assets/icons/kzcl.png" />
+              <span>控制策略</span>
+            </el-button>
+            <el-button
+              class="buttons"
+              type="primary"
+              size="mini"
+              @click="iconLighting"
+            >
+              <img src="../../../assets/icons/zmpz.png" />
+              <span>照明配置</span>
+            </el-button>
+            <el-button
+              class="buttons"
+              type="primary"
+              size="mini"
+              @click="batchManage"
+              v-if="batchManageType == 1"
+            >
+              <img src="../../../assets/icons/plcz.png" />
+              <span>批量操作</span>
+            </el-button>
+            <div v-if="batchManageType == 2" class="batchManageButton">
+              <div @click="closeBatchManageDialog">取消</div>
+              <div @click="implementBatchManage">执行</div>
+            </div>
+            <el-button
+              class="buttons"
+              type="primary"
+              size="mini"
+              @click="iconExplain"
+            >
+              <img src="../../../assets/icons/tbhy.png" />
+              <span>图标含义</span>
+            </el-button>
+            <el-button
+              class="buttons"
+              type="primary"
+              size="mini"
+              @click="operationLogPage"
+            >
+              <img src="../../../assets/icons/czrz.png" />
+              <span>操作日志</span>
+            </el-button>
           </div>
-          <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw;margin-right:0.5vw">
-              {{ zoomSwitch == 0 ? "缩放" : "缩放" }}
-            </p>
-            <el-switch
-              v-model="zoomSwitch"
-              class="switchStyle"
-              @change="zoomSwitchChange"
-            ></el-switch>
+          <div class="buttonsDeawer" @click="isDrawer()">
+            <img src="../../../assets/icons/deawer.png"/>
           </div>
-          <el-button
-            v-if="resetCanvasFlag"
-            class="flex-row"
-            type="primary"
-            size="mini"
-            icon="el-icon-position"
-            @click="resetCanvas"
+          <el-drawer
+            title="一键控制"
+            :visible.sync="buttonsDeawer"
+            :modal="false"
+            :append-to-body="true"
+            class="drawerBox"
+            :close-on-click-modal="false"
+
           >
-            地图复位
-          </el-button>
-          <el-button
-            class="flex-row"
-            type="primary"
-            size="mini"
-            icon="el-icon-s-operation"
-            @click="strategyPage"
-          >
-            控制策略
-          </el-button>
-          <el-button
-            class="flex-row"
-            type="primary"
-            size="mini"
-            icon="el-icon-s-operation"
-            @click="iconLighting"
-          >
-            照明配置
-          </el-button>
-          <el-button
-            class="flex-row"
-            type="primary"
-            size="mini"
-            icon="el-icon-files"
-            @click="batchManage"
-            v-if="batchManageType == 1"
-          >
-            批量操作
-          </el-button>
-          <div v-if="batchManageType == 2" class="batchManageButton">
-            <div @click="closeBatchManageDialog">取消</div>
-            <div @click="implementBatchManage">执行</div>
-          </div>
-          <el-button
-            class="flex-row"
-            type="primary"
-            size="mini"
-            icon="el-icon-top"
-            @click="iconExplain"
-          >
-            图标含义
-          </el-button>
-          <el-button
-            class="flex-row"
-            type="primary"
-            size="mini"
-            icon="el-icon-tickets"
-            @click="operationLogPage"
-          >
-            操作日志
-          </el-button>
+            <el-row>
+              <el-col :span="12">
+                <div class="drawerItem zoomClass " >
+                  <p
+                    class="zoom-title"
+                    style="font-size: 0.7vw; margin-right: 0.5vw"
+                  >
+                    {{ srollSwitch ? "底图滚动关" : "底图滚动开" }}
+                  </p>
+                  <el-switch
+                    v-model="srollSwitch"
+                    class="switchStyle"
+                    @change="srollSwitchChange"
+                  ></el-switch>
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <div class="drawerItem zoomClass ">
+                  <p
+                    class="zoom-title"
+                    style="font-size: 0.7vw; margin-right: 0.5vw"
+                  >
+                    {{ carShow ? "实时车辆关" : "实时车辆开" }}
+                  </p>
+                  <el-switch
+                    v-model="carShow"
+                    class="switchStyle"
+                    @change="carShowChange"
+                  ></el-switch>
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <div class="drawerItem zoomClass ">
+                  <p
+                    class="zoom-title"
+                    style="font-size: 0.7vw; margin-right: 0.5vw"
+                  >
+                    {{ zoomSwitch == 0 ? "缩放比例开" : "缩放比例关" }}
+                  </p>
+                  <el-switch
+                    v-model="zoomSwitch"
+                    class="switchStyle"
+                    @change="zoomSwitchChange"
+                  ></el-switch>
+                </div>
+              </el-col>
+            </el-row>
+          </el-drawer>
         </div>
       </div>
       <div class="vehicleLane">
@@ -416,7 +492,11 @@
                         :class="{ focus: item.focus }"
                       >
                         <img
-                          v-show="item.eqType != '31' && item.eqType != '16' && item.eqType != '36'"
+                          v-show="
+                            item.eqType != '31' &&
+                            item.eqType != '16' &&
+                            item.eqType != '36'
+                          "
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{
@@ -1925,7 +2005,8 @@ export default {
 
   data() {
     return {
-      srollSwitch:false,
+      buttonsDeawer: false,
+      srollSwitch: false,
       phoneList: [],
       lightingFormRules: {
         beforeLuminance: [
@@ -2540,8 +2621,6 @@ export default {
     },
   },
   created() {
-    
-    
     // debugger
     //小车运行渲染定时任务
     clearInterval(this.timerCat);
@@ -2597,12 +2676,11 @@ export default {
         this.directionOptions.push(item);
       });
     });
-
   },
 
   watch: {
     "batchManageForm.state": function (newVal, oldVal) {
-      console.log(newVal,"newVal")
+      console.log(newVal, "newVal");
       if ([7, 9].includes(this.itemEqType)) {
         // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if (newVal == "1" && this.batchManageForm.brightness == 0) {
@@ -2623,11 +2701,11 @@ export default {
           this.batchManageForm.frequency = 1;
           this.min = 1;
         }
-      } else if(this.itemEqType == 45){
-        if(newVal == ""){
+      } else if (this.itemEqType == 45) {
+        if (newVal == "") {
           this.min = 0;
           this.batchManageForm.brightness = 0;
-        }else{
+        } else {
           this.batchManageForm.brightness = 1;
           this.min = 1;
         }
@@ -2761,20 +2839,23 @@ export default {
   },
 
   methods: {
-    //拆分拼接数据
-    splitData(item){
-      item = item.replace(/\s*/g,"");
-      let ago = item.substring(0,item.indexOf("右"));
-      let after = item.substring(item.indexOf("右"),item.length);
-      // console.log((ago + "<br/>" + after),"hahahahhahah")
-      return ago + '<br/>' + after;
+    isDrawer() {
+      this.buttonsDeawer = !this.buttonsDeawer;
     },
-    srollSwitchChange(){
-      if(this.srollSwitch){
+    //拆分拼接数据
+    splitData(item) {
+      item = item.replace(/\s*/g, "");
+      let ago = item.substring(0, item.indexOf("右"));
+      let after = item.substring(item.indexOf("右"), item.length);
+      // console.log((ago + "<br/>" + after),"hahahahhahah")
+      return ago + "<br/>" + after;
+    },
+    srollSwitchChange() {
+      if (this.srollSwitch) {
         //调取滚动条
         this.mouseleaveImage();
-      }else{
-        this.mouseoversImage()
+      } else {
+        this.mouseoversImage();
       }
     },
     async destroyedDelete() {
@@ -2922,7 +3003,7 @@ export default {
       }
     },
     treeClear() {
-      this.resetCanvas()
+      this.resetCanvas();
       for (var item of this.selectedIconList) {
         if (item.eqName.indexOf(this.screenEqName) > -1) {
           item.click = false;
@@ -2935,7 +3016,7 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
-      console.log(data,"data")
+      console.log(data, "data");
       // 如果存在children，则代表是父级
       if (data.children) {
         // 点击父级业务
@@ -3182,7 +3263,7 @@ export default {
       ) {
         this.$modal.msgWarning("基本照明亮度不得低于30");
         return;
-      }else{
+      } else {
         const loading = this.$loading({
           lock: true,
           text: "Loading",
@@ -3190,27 +3271,27 @@ export default {
           background: "rgba(0, 0, 0, 0.7)",
         });
         const param = {
-        eqId: this.itemEqId.toString(),
-        eqDirection: this.batchManageForm.eqDirection,
-        state: this.batchManageForm.state,
-        brightness: this.batchManageForm.brightness,
-        eqType: this.itemEqType,
-        frequency: this.batchManageForm.frequency,
-      };
-      batchControlDevice(param)
-        .then((res) => {
-          if (res.data == 0) {
-            this.$modal.msgError("控制失败");
-          } else if (res.data == 1) {
-            this.$modal.msgSuccess("控制成功");
-          }
-          loading.close();
-          this.batchManageDialog = false;
-          this.closeBatchManageDialog();
-        })
-        .catch(() => {
-          loading.close();
-        });
+          eqId: this.itemEqId.toString(),
+          eqDirection: this.batchManageForm.eqDirection,
+          state: this.batchManageForm.state,
+          brightness: this.batchManageForm.brightness,
+          eqType: this.itemEqType,
+          frequency: this.batchManageForm.frequency,
+        };
+        batchControlDevice(param)
+          .then((res) => {
+            if (res.data == 0) {
+              this.$modal.msgError("控制失败");
+            } else if (res.data == 1) {
+              this.$modal.msgSuccess("控制成功");
+            }
+            loading.close();
+            this.batchManageDialog = false;
+            this.closeBatchManageDialog();
+          })
+          .catch(() => {
+            loading.close();
+          });
       }
     },
     // 新版批量操作 点击变俩按钮
@@ -3237,9 +3318,9 @@ export default {
         this.$modal.msgWarning("请选择至少一个设备进行控制！");
         return;
       }
-      this.batchManageForm.state = ''
-      this.batchManageForm.brightness = 0
-      this.batchManageForm.frequency = 0
+      this.batchManageForm.state = "";
+      this.batchManageForm.brightness = 0;
+      this.batchManageForm.frequency = 0;
       this.batchManageDialog = true;
       let list = [];
       const param = {
@@ -3318,8 +3399,8 @@ export default {
         for (var item of this.selectedIconList) {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
             this.resetCanvasFlag = true;
-            this.$refs.dragImgDom.style.left = - item.position.left + 864 + 'px' ;
-            this.$refs.dragImgDom.style.top = 290 - item.position.top + 'px';
+            this.$refs.dragImgDom.style.left = -item.position.left + 864 + "px";
+            this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
           } else {
             item.click = false;
@@ -3399,7 +3480,7 @@ export default {
       this.imageTimer = null;
     },
     mouseleaveImage() {
-      if(this.srollSwitch){
+      if (this.srollSwitch) {
         this.srollAuto();
       }
       // this.srollSwitch = true
@@ -3531,7 +3612,7 @@ export default {
 
     // 改变站点
     changeSite(index) {
-      console.log(index,"index")
+      console.log(index, "index");
       if (index) {
         console.log(this.$cache.local.get("deptId"),"this.$cache.local.get('deptId')")
         // 判断是否有缓存的管理站id
@@ -5049,7 +5130,6 @@ export default {
 
     },
     handleClick(tab, event) {
-      debugger
       this.dictCode = tab.index;
       // this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.handleQueryOperationParam();
@@ -5453,6 +5533,73 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.buttons {
+  padding:0;
+  width:110px !important;
+  height:28px !important;
+  overflow: hidden;
+  span{
+    img{
+      width:13px;
+      margin-right:5px;
+      display: inline;
+      transform: translateY(2px);
+    }
+    span{
+      line-height: 16px;
+    }
+  }
+    
+}
+::v-deep .el-drawer {
+  pointer-events: auto !important;
+}
+.buttonsDeawer {
+  width: 1.6vw;
+  height: 4.1vh;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 172, 237, 0.8),
+    rgba(0, 121, 219, 0.8)
+  );
+  transform: translateY(-1px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img{
+    width:1vw;
+    height: 1.6vh;
+  }
+}
+.drawerBox {
+  width: 22.6%;
+  right: 38px;
+  height: 12vh;
+  top: 81px;
+  left: unset;
+  ::v-deep .el-drawer.rtl {
+    width: 100% !important;
+    height: 12vh;
+    color: #fff;
+    .el-drawer__header {
+      font-size: 14px;
+      margin-bottom: 0px !important;
+      height: 36px;
+      line-height: 40px;
+      color: #fff;
+      margin-bottom: 0px;
+    }
+    .drawerItem{
+      display:flex;
+      padding-left:10px;
+      line-height:34px;
+      .el-switch{
+        height:34px;
+        line-height:34px;
+      }
+    }
+  }
+}
 ::v-deep .zoomClass .el-input__suffix {
   transform: translate(-30px, -4px) !important;
 }
@@ -5862,6 +6009,9 @@ export default {
   align-items: center;
   padding: 0 1vw;
   font-size: 0.6vw;
+  >span{
+    display: flex;
+  }
 }
 
 .my-back {
@@ -6988,7 +7138,7 @@ input {
   width: 13.5%;
   height: 60vh;
   overflow-x: hidden;
-  overflow-y:auto;
+  overflow-y: auto;
 }
 // .treeBox::-webkit-scrollbar {
 //   display: none;

@@ -1274,7 +1274,12 @@ public class KafkaReadListenToHuaWeiTopic {
         event.setEventDescription(jsonObject.getString("eventDescribe"));
         event.setEventTime(DateUtils.parseDate(jsonObject.getString("foundTime")));
         event.setEndTime(jsonObject.getString("completeTime"));
-        event.setLaneNo(jsonObject.getString("carLane"));
+        if(20L == eventTypeId){
+            event.setLaneNo("1,2,3");
+        }else {
+            event.setLaneNo(jsonObject.getString("carLane"));
+        }
+
         //rhy 事件状态,1:待复核; 2:处置中; 3:已处置; 4:已确认; 5:已挂起; 6:误报; 7:关联
         //zc  状态             0：处理中 1：已处理           2:忽略 3：未处理
         Integer eventStatus = jsonObject.getInteger("eventStatus");
@@ -1321,7 +1326,10 @@ public class KafkaReadListenToHuaWeiTopic {
         imageMapper.brachInsertFaultIconFile(imageList);
         //将视频存入
         SdTrafficImage image = new SdTrafficImage();
-        image.setImgUrl(jsonObject.getString("eventVideoUrl"));
+        if(jsonObject.getString("eventVideoUrl") != null && !"".equals(jsonObject.getString("eventVideoUrl"))){
+            image.setImgUrl(jsonObject.getString("eventVideoUrl"));
+        }
+
         image.setBusinessId(eventId.toString());
         image.setImgType("1");
         imageMapper.insertSdTrafficImage(image);

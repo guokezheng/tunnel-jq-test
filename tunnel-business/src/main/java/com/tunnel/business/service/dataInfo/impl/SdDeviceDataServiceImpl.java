@@ -362,14 +362,14 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         externalSystem.setSystemName("能源管控平台");
         List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
         if (externalSystems.isEmpty()) {
-            return allDataList;
+            return setAllData();
         }
         ExternalSystem system = externalSystems.get(0);
         SdDevices sdDevices = new SdDevices();
         sdDevices.setExternalSystemId(system.getId());
         List<SdDevices> sdDevicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
         if (sdDevicesList.isEmpty()) {
-            return allDataList;
+            return setAllData();
         }
         SdDevices devices = sdDevicesList.get(0);
         String eqId = devices.getExternalDeviceId();
@@ -381,14 +381,14 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         try {
             result = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));
         } catch (Exception e) {
-            return allDataList;
+            return setAllData();
         }
         if (result == "" || result.equals("")) {
-            return allDataList;
+            return setAllData();
         }
         JSONObject json = JSONObject.parseObject(result);
         if (json == null || json.isEmpty() || json.get("token") == null) {
-            return allDataList;
+            return setAllData();
         }
         String token =  json.get("token").toString();
         //获取能耗数据
@@ -421,6 +421,51 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         }
 
         return allDataList;
+    }
+
+    public Map<String, Object> setAllData(){
+        Map<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> dayList = new ArrayList<>();
+        List<Map<String, Object>> monthList = new ArrayList<>();
+        List<Map<String, Object>> yearList = new ArrayList<>();
+        for(int i = 0; i < 24; i++){
+            Map<String, Object> mapData = new HashMap<>();
+            mapData.put("value", "0");
+            if(i < 10){
+                mapData.put("rt", "2023-07-13 0" + i);
+            }else {
+                mapData.put("rt", "2023-07-13 " + i);
+            }
+            dayList.add(mapData);
+        }
+        for(int i = 0; i < 31; i++){
+            Map<String, Object> mapData = new HashMap<>();
+            mapData.put("value", "0");
+            if(i < 9){
+                int count = i+1;
+                mapData.put("rt", "2023-07-0" + count);
+            }else {
+                int count = i+1;
+                mapData.put("rt", "2023-07-" + count);
+            }
+            monthList.add(mapData);
+        }
+        for(int i = 0; i < 12; i++){
+            Map<String, Object> mapData = new HashMap<>();
+            mapData.put("value", "0");
+            if(i < 9){
+                int count = i+1;
+                mapData.put("rt", "2023-0" + count);
+            }else {
+                int count = i+1;
+                mapData.put("rt", "2023-" + count);
+            }
+            yearList.add(mapData);
+        }
+        map.put("day",dayList);
+        map.put("month",monthList);
+        map.put("year",yearList);
+        return map;
     }
 
     @Override

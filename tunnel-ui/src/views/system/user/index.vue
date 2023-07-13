@@ -21,7 +21,7 @@
             :filter-node-method="filterNode"
             ref="tree"
             @node-click="handleNodeClick"
-            style="height: 740px; overflow: auto"
+            style="height: 690px; overflow: auto"
           />
         </div>
       </el-col>
@@ -55,7 +55,7 @@
             <el-col :span="7" :offset="11">
               <div class="grid-content bg-purple" ref="main">
                 <el-input
-                  placeholder="请输入用户名称、手机号码"
+                  placeholder="请输入用户名称、手机号码，回车搜索"
                   v-model="queryParams.userName"
                   @keyup.enter.native="handleQuery"
                 >

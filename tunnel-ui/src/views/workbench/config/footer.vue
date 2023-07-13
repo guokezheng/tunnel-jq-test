@@ -39,11 +39,27 @@
               style="width: 0.8vw; margin-right: 5px"
               v-show="sideTheme != 'theme-blue'"
             />
-            <p>重点车辆</p>
-            <p>Key vehicles</p>
+            <p>设备健康监测</p>
+            <p>Equipment health monitoring</p>
           </div>
         </div>
-        <div id="focusCar"></div>
+        <div class="deviceBox">
+          <div class="allMsg">
+            <div class="item1 item">
+              <div>{{devNum}}</div>
+              <div>设备总数</div>
+            </div>
+            <div class="item2 item">
+              <div>{{faultNum}}</div>
+              <div>设备故障数</div>
+            </div>
+            <div class="item3 item">
+              <div>{{failureRate}}%</div>
+              <div>故障率</div>
+            </div>
+          </div>
+          <div id="deviceChart"></div>
+        </div>
       </div>
       <div class="footerRight footMiniBox" v-show="footChangeRadio == '图表'">
         <div class="footTitle">
@@ -301,25 +317,20 @@ import bus from "@/utils/bus";
 import * as echarts from "echarts";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import {
-  videoStreaming,
-  getDeviceById,
-} from "@/api/equipment/eqlist/api";
+import { videoStreaming, getDeviceById } from "@/api/equipment/eqlist/api";
 import { getEntranceExitVideo } from "@/api/eventDialog/api.js";
 import {
   vehicleMonitoringInRecent24Hours,
+  getHoursTrafficVolume,
+  getStatisticalDevice,
   specialVehicleMonitoringInRecent24Hours,
 } from "@/api/workbench/config.js";
-import {
-  energyConsumptionDetection,
-} from "@/api/equipment/tunnel/api.js";
-import {
-  getWarnEvent,
-} from "@/api/event/event";
+import { energyConsumptionDetection } from "@/api/equipment/tunnel/api.js";
+import { getWarnEvent } from "@/api/event/event";
 
 export default {
-  components:{
-    videoPlayer
+  components: {
+    videoPlayer,
   },
   data() {
     return {
@@ -343,11 +354,14 @@ export default {
       cameraPlayer2: false,
       cameraPlayer3: false,
       cameraPlayer4: false,
-      directionList:[{},{}],
-      tunnelId:''
+      directionList: [{}, {}],
+      tunnelId: "",
+      devNum:"",
+      failureRate:"",
+      faultNum:"",
     };
   },
-  computed:{
+  computed: {
     sideTheme: {
       get() {
         return this.$store.state.settings.sideTheme;
@@ -372,174 +386,79 @@ export default {
     });
   },
   methods: {
-    init(tunnelId){
-        this.tunnelId = tunnelId;
-        this.getWarnList();
-        this.vehicleEcharts()
-        this.specialVehicleEcharts()
-        this.getEnergyConsumption()
+    init(tunnelId) {
+      this.tunnelId = tunnelId;
+      this.getWarnList();
+      this.vehicleEcharts();
+      // this.specialVehicleEcharts()
+      this.getEnergyConsumption();
+      this.getDeviceChart();
     },
     // 车辆监测数据
     vehicleEcharts() {
       const param = {
         tunnelId: this.tunnelId,
       };
-      vehicleMonitoringInRecent24Hours(param).then((res) => {
-        // console.log(res, "车辆监测数据");
-        var vehicleXData = [];
-        var vehicleYData = [];
-        for (var item of res.data) {
-          vehicleXData.push(item.hour);
-          vehicleYData.push(item.count);
+      getHoursTrafficVolume(param).then((res) => {
+        console.log(res, "车辆监测数据");
+        var huoArr = [];
+        var keArr = [];
+        var keyArr = [];
+        var timeArr = [];
+        for (var item of res.data.huo) {
+          huoArr.push(item.count);
+          timeArr.push(item.order_hour  + ":00");
         }
-        this.initeChartsEnd(vehicleXData, vehicleYData);
+        for (var item of res.data.ke) {
+          keArr.push(item.count);
+        }
+        for (var item of res.data.key) {
+          keyArr.push(item.count);
+        }
+        this.initeChartsEnd(huoArr, keArr, keyArr, timeArr);
       });
     },
-    // 重点车辆监测数据
-    specialVehicleEcharts() {
-      // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
+    getDeviceChart(){
       const param = {
         tunnelId: this.tunnelId,
       };
-      specialVehicleMonitoringInRecent24Hours(param).then((res) => {
-        // console.log(res, "重点车辆监测数据");
-        var specialVehicleXData = [];
-        var specialVehicleYData = [];
-        for (var item of res.data) {
-          specialVehicleXData.push(item.hour);
-          specialVehicleYData.push(item.count);
+      getStatisticalDevice(param).then((res)=>{
+        console.log(res,"设备健康监测");
+        this.devNum = res.data.devNum;
+        this.failureRate = res.data.failureRate;
+        this.faultNum = res.data.faultNum;
+        let nameArr = []
+        let faultArr = []
+        let normalArr = []
+        let allArr = []
+        for(let item of res.data.list){
+          nameArr.push(item.type_name)
+          faultArr.push(item.faultPercentage)
+          normalArr.push(item.normalPercentage)
+          allArr.push(100)
         }
-        this.loadFocusCar(specialVehicleXData, specialVehicleYData);
-      });
-    },
-    getEnergyConsumption() {
-      energyConsumptionDetection(this.tunnelId).then((res) => {
-        console.log(res, "能耗监测");
-        if(!res.data.year && !res.data.month && !res.data.day){
-          return
-        }
-        console.log(res.data.year,"0000")
-        let xDataN = [];
-        let xDataY = [];
-        let xDataR = [];
+        this.initDeviceChart(nameArr,faultArr,normalArr,allArr)
 
-        let xData = [];
-        let yData = [];
-        yData.push({
-          name: "年",
-          type: "line",
-          color: "#59c5f9",
-          symbol: "circle",
-          symbolSize: [7, 7],
-          itemStyle: {
-            normal: {
-              borderColor: "white",
-            },
-          },
-          smooth: true,
-          // 渐变色
-          areaStyle: {
-            normal: {
-              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: "#59c5f9",
-                },
-                {
-                  offset: 1,
-                  color: "rgba(89,197,249,0.3)",
-                },
-              ]),
-            },
-          },
-          data: res.data.year.map((item) => item.value),
-        });
-        yData.push({
-          name: "月",
-          type: "line",
-          color: "#db72a7",
-          symbol: "circle",
-          symbolSize: [7, 7],
-          itemStyle: {
-            normal: {
-              borderColor: "white",
-            },
-          },
-          smooth: true,
-          stack: "Total",
-          emphasis: {
-            focus: "series",
-          },
-          //渐变色
-          areaStyle: {
-            normal: {
-              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: "#db72a7",
-                },
-                {
-                  offset: 1,
-                  color: "rgba(219,114,167,0.3)",
-                },
-              ]),
-            },
-          },
-          data: res.data.month.map((item) => item.value),
-        });
-        yData.push({
-          name: "日",
-          type: "line",
-          color: "#FDB400",
-          symbol: "circle",
-          symbolSize: [7, 7],
-          itemStyle: {
-            normal: {
-              borderColor: "white",
-            },
-          },
-          smooth: true,
-          // 渐变色
-          areaStyle: {
-            normal: {
-              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: "#FDB400",
-                },
-                {
-                  offset: 1,
-                  color: "rgba(253,180,0,0.3)",
-                },
-              ]),
-            },
-          },
-          data: res.data.day.map((item) => item.value),
-        });
-        for (let item of res.data.year) {
-          xData.push(item.rt);
-          xDataN.push(item.rt);
-
-          // yDataN.push(item.value)
-        }
-        for (let item of res.data.month) {
-          xDataY.push(item.rt);
-          // yDataY.push(item.value)
-        }
-        for (let item of res.data.day) {
-          xDataR.push(item.rt);
-          // yDataR.push(item.value)
-        }
-        // let xData = []
-        // console.log(xData,yData,xDataN,xDataY,xDataR,"能耗年月日")
-        this.$nextTick(() => {
-          this.initEnergyConsumption(xData, yData, xDataN, xDataY, xDataR);
-        });
-      });
+      })
     },
+    // 重点车辆监测数据
+    // specialVehicleEcharts() {
+    //   // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
+    //   const param = {
+    //     tunnelId: this.tunnelId,
+    //   };
+    //   specialVehicleMonitoringInRecent24Hours(param).then((res) => {
+    //     // console.log(res, "重点车辆监测数据");
+    //     var specialVehicleXData = [];
+    //     var specialVehicleYData = [];
+    //     for (var item of res.data) {
+    //       specialVehicleXData.push(item.hour);
+    //       specialVehicleYData.push(item.count);
+    //     }
+    //     this.loadFocusCar(specialVehicleXData, specialVehicleYData);
+    //   });
+    // },
+    
     // jumpLink(url) {
     //   if (url == "/15/status") {
     //     this.$modal.msgWarning("跳转页面暂未完成");
@@ -662,7 +581,7 @@ export default {
         }
       );
     },
-    initeChartsEnd(vehicleXData, vehicleYData) {
+    initeChartsEnd(huoArr, keArr, keyArr, timeArr) {
       let newPromise = new Promise((resolve) => {
         resolve();
       });
@@ -670,239 +589,98 @@ export default {
       newPromise.then(() => {
         //	此dom为echarts图标展示dom
         var vehicle = echarts.init(document.getElementById("vehicle"));
-        var option = {
+
+        const option = {
+          // color: [
+          //   "rgba(84, 181, 157, 1)",
+          //   "rgba(31, 149, 215, 1)",
+          //   "rgba(239, 175, 76, 1)",
+          //   "rgba(55, 231, 255, 1)",
+          // ],
           tooltip: {
             trigger: "axis",
-          },
-          // legend: {
-          //   show: true,
-          //   icon: "rect",
-          //   itemWidth: 10,
-          //   itemHeight: 10,
-          //   x: 'center',
-          //   data: ['客车', '货车', '专项车'],
-          //   textStyle: { //图例文字的样式
-          //     color: this.sideTheme!='theme-blue'?'#fff':'#003a5d',
-          //     fontSize: 12
-          //   }
-          // },
-          calculable: true,
-          grid: {
-            top: "24%",
-            bottom: "20%",
-            left: "14%",
-            right: "14%",
-          },
-          xAxis: [
-            {
-              name: "小时",
-              nameTextStyle: {
-                fontFamily: "PingFang",
-              },
-              type: "category",
-              axisTick: {
-                show: false,
-              },
-              splitLine: {
-                show: false,
-              },
-              boundaryGap: false,
-              axisLabel: {
-                textStyle: {
-                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-                  fontSize: 10,
-                  fontFamily: "PingFang",
-                },
-              },
-              axisLine: {
-                show: true,
-                lineStyle: {
-                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-                },
-              },
-              data: vehicleXData,
+            backgroundColor: "rgba(1, 29, 63, .8)", // 设置背景颜色
+            textStyle: {
+              color: "#fff",
+              fontSize: 12,
             },
-          ],
-          yAxis: [
-            {
-              name: "总车量",
-              nameTextStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-                fontSize: 10,
-                padding: [0, 20, 0, 0],
-              },
-              type: "value",
-              minInterval: 1,
-              axisTick: {
-                show: false,
-              },
-              splitNumber: 5,
-              splitLine: {
-                show: true,
-                lineStyle: {
-                  //分割线的样式
-                  color: ["#4E6B83"],
-                  width: 1,
-                  type: "dashed",
-                },
-              },
-              axisLine: {
-                show: false,
-              },
-              axisLabel: {
-                textStyle: {
-                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-                  fontSize: 10,
-                },
+            borderColor: "rgba(1, 29, 63,.8)",
+            axisPointer: {
+              type: "shadow",
+              shadowStyle: {
+                fontSize: 12,
+                color: "rgba(0, 11, 34, 0)",
               },
             },
-          ],
-          series: [
-            {
-              name: "车辆总数",
-              type: "line",
-              color: "#59c5f9",
-              symbol: "circle",
-              symbolSize: [7, 7],
-              itemStyle: {
-                normal: {
-                  borderColor: "white",
-                },
-              },
-              smooth: true,
-              // 渐变色
-              areaStyle: {
-                normal: {
-                  //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                      offset: 0,
-                      color: "#59c5f9",
-                    },
-                    {
-                      offset: 1,
-                      color: "rgba(89,197,249,0.3)",
-                    },
-                  ]),
-                },
-              },
-              data: vehicleYData,
-            },
-            // {
-            //   name: '货车',
-            //   type: 'line',
-            //   color: '#db72a7',
-            //   symbol: 'circle',
-            //   symbolSize: [7, 7],
-            //   itemStyle: {
-            //     normal: {
-            //       borderColor: "white"
-            //     }
-            //   },
-            //   smooth: true,
-            //   stack: 'Total',
-            //   areaStyle: {},
-            //   emphasis: {
-            //     focus: 'series'
-            //   },
-            //   //渐变色
-            //   areaStyle: {
-            //     normal: {
-            //       //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-            //       color: new echarts.graphic.LinearGradient(
-            //         0, 0, 0, 1,
-            //         [{
-            //             offset: 0,
-            //             color: '#db72a7'
-            //           },
-            //           {
-            //             offset: 1,
-            //             color: 'rgba(219,114,167,0.3)'
-            //           }
-            //         ]
-            //       )
-            //     }
-            //   },
-            //   data: [90, 70, 50, 30, 80, 90, 30, 60, 70, 80, 90, 20]
-            // }, {
-            //   name: '专项车',
-            //   type: 'line',
-            //   color: '#ffb600',
-            //   symbol: 'circle',
-            //   symbolSize: [7, 7],
-            //   itemStyle: {
-            //     normal: {
-            //       borderColor: "white"
-            //     }
-            //   },
-            //   smooth: true,
-            //   data: [20, 30, 40, 50, 70, 80, 90, 60, 40, 30, 20, 60]
-            // },
-          ],
-        };
-        vehicle.setOption(option);
-        window.addEventListener("resize", function () {
-          vehicle.resize();
-        });
-      });
-    },
-    loadFocusCar(specialVehicleXData, specialVehicleYData) {
-      let newPromise = new Promise((resolve) => {
-        resolve();
-      });
-      newPromise.then(() => {
-        var focusCar = echarts.init(document.getElementById("focusCar"));
-        var option = {
-          tooltip: {
-            trigger: "axis",
           },
-          toolbox: {
+          legend: {
             show: true,
-            feature: {
-              // magicType: { show: true, type: ['stack', 'tiled'] },
-              // saveAsImage: { show: true }
+            data: ["客车", "货车", "重点车辆"],
+            textStyle: {
+              color: "#AFAFAF",
+              fontSize: 10,
             },
+            itemWidth: 10,
+            itemHeight: 10,
+            itemStyle: {},
+            top: "top",
+            left: "center",
+            padding: [6, 15, 0, 15],
+            icon: "circle",
+            orient: "horizontal",
           },
           grid: {
-            top: "20%",
-            bottom: "18%",
-            left: "14%",
-            right: "14%",
+            left: "6%",
+            right: "8%",
+            bottom: "1%",
+            top: "25%",
+            containLabel: true,
           },
+
           xAxis: {
+            name: "辆",
+            nameTextStyle: {
+              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              fontSize: 10,
+              padding: [0, 20, 0, 0],
+            },
             type: "category",
-            boundaryGap: false,
-            data: specialVehicleXData,
-            name: "小时",
+            data: timeArr,
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
               },
+            },
+            axisTick: {
+              show: false,
             },
           },
           yAxis: {
-            type: "value",
-            name: "总车辆",
+            name: "时",
             nameTextStyle: {
-              color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,
               padding: [0, 20, 0, 0],
             },
-            minInterval: 1, //y轴的刻度只显示整数
+            type: "value",
+            min: 0,
+            minInterval: 1,
+            splitArea: {
+              show: false,
+            },
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },
-
             axisLine: {
               show: false,
             },
@@ -910,15 +688,13 @@ export default {
               show: false,
             },
             splitLine: {
-              show: true,
               lineStyle: {
-                //分割线的样式
-                color: ["#4E6B83"],
-                width: 1,
-                type: "dashed",
+                color: "#11395D",
+                type: "dashed", // dotted 虚线
               },
             },
           },
+
           series: [
             {
               type: "line",
@@ -953,18 +729,186 @@ export default {
                   ]),
                 },
               },
-              data: specialVehicleYData,
+              name: "客车",
+              data: keArr,
+            },
+            ,
+            {
+              type: "line",
+              smooth: true, // 平滑曲线显示
+              color: "#FAC858",
+              lineStyle: {
+                width: 1,
+              },
+              // stack: "Total",
+              // areaStyle: {},
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              // emphasis: {
+              //   focus: "series",
+              // },
+              name: "货车",
+              data: huoArr,
+            },
+            {
+              type: "line",
+              smooth: true, // 平滑曲线显示
+              color: "#7BE748",
+              showSymbol: false,
+              lineStyle: {
+                width: 1,
+              },
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              name: "重点车辆",
+              data: keyArr,
             },
           ],
         };
-
-        focusCar.setOption(option);
+        vehicle.setOption(option);
         window.addEventListener("resize", function () {
-          focusCar.resize();
+          vehicle.resize();
         });
       });
     },
-    // 能耗监测echarts
+    getEnergyConsumption() {
+      energyConsumptionDetection(this.tunnelId).then((res) => {
+        console.log(res, "能耗监测");
+        if (!res.data.year && !res.data.month && !res.data.day) {
+          return;
+        }
+        console.log(res.data.year, "0000");
+        let xDataN = [];
+        let xDataY = [];
+        let xDataR = [];
+
+        let xData = [];
+        let yData = [];
+        yData.push({
+          name: "年",
+          type: "line",
+          color: "#59c5f9",
+          symbol: "circle",
+          symbolSize: [7, 7],
+          itemStyle: {
+            normal: {
+              borderColor: "white",
+            },
+          },
+          smooth: true,
+          // 渐变色
+          areaStyle: {
+            normal: {
+              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: "#59c5f9",
+                },
+                {
+                  offset: 1,
+                  color: "rgba(89,197,249,0.3)",
+                },
+              ]),
+            },
+          },
+          data: res.data.year.map((item) => item.value),
+        });
+        yData.push({
+          name: "月",
+          type: "line",
+          color: "#db72a7",
+          symbol: "circle",
+          symbolSize: [7, 7],
+          itemStyle: {
+            normal: {
+              borderColor: "white",
+            },
+          },
+          smooth: true,
+          stack: "Total",
+          emphasis: {
+            focus: "series",
+          },
+          //渐变色
+          areaStyle: {
+            normal: {
+              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: "#db72a7",
+                },
+                {
+                  offset: 1,
+                  color: "rgba(219,114,167,0.3)",
+                },
+              ]),
+            },
+          },
+          data: res.data.month.map((item) => item.value),
+        });
+        yData.push({
+          name: "日",
+          type: "line",
+          color: "#FDB400",
+          symbol: "circle",
+          symbolSize: [7, 7],
+          itemStyle: {
+            normal: {
+              borderColor: "white",
+            },
+          },
+          smooth: true,
+          // 渐变色
+          areaStyle: {
+            normal: {
+              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: "#FDB400",
+                },
+                {
+                  offset: 1,
+                  color: "rgba(253,180,0,0.3)",
+                },
+              ]),
+            },
+          },
+          data: res.data.day.map((item) => item.value),
+        });
+        for (let item of res.data.year) {
+          xData.push(item.rt);
+          xDataN.push(item.rt);
+
+          // yDataN.push(item.value)
+        }
+        for (let item of res.data.month) {
+          xDataY.push(item.rt);
+          // yDataY.push(item.value)
+        }
+        for (let item of res.data.day) {
+          xDataR.push(item.rt);
+          // yDataR.push(item.value)
+        }
+        // let xData = []
+        // console.log(xData,yData,xDataN,xDataY,xDataR,"能耗年月日")
+        this.$nextTick(() => {
+          this.initEnergyConsumption(xData, yData, xDataN, xDataY, xDataR);
+        });
+      });
+    },
     initEnergyConsumption(xData, yData, xDataN, xDataY, xDataR) {
       var energyConsumption = echarts.init(
         document.getElementById("energyConsumption")
@@ -976,7 +920,7 @@ export default {
         },
         legend: {
           show: true,
-          icon: "rect",
+          icon: "circle",
           itemWidth: 10,
           itemHeight: 10,
           selectedMode: "single", // 单选
@@ -989,16 +933,16 @@ export default {
           data: ["年", "月", "日"],
           textStyle: {
             //图例文字的样式
-            color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-            fontSize: 12,
+            color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+            fontSize: 10,
           },
         },
         calculable: true,
         grid: {
           top: "24%",
-          bottom: "20%",
-          left: "14%",
-          right: "14%",
+          bottom: "12%",
+          left: "10%",
+          right: "10%",
         },
         xAxis: [
           {
@@ -1016,7 +960,7 @@ export default {
             boundaryGap: false,
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
                 fontFamily: "PingFang",
               },
@@ -1024,7 +968,7 @@ export default {
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
               },
             },
             data: xData,
@@ -1034,7 +978,7 @@ export default {
           {
             name: "kwh",
             nameTextStyle: {
-              color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
               fontSize: 10,
               padding: [0, 20, 0, 0],
             },
@@ -1062,7 +1006,7 @@ export default {
             },
             axisLabel: {
               textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
                 fontSize: 10,
               },
             },
@@ -1091,6 +1035,344 @@ export default {
         energyConsumption.resize();
       });
     },
+    initDeviceChart(nameArr,faultArr,normalArr,allArr) {
+      let newPromise = new Promise((resolve) => {
+        resolve();
+      });
+      newPromise.then(() => {
+        var deviceChart = echarts.init(document.getElementById("deviceChart"));
+        var option = {
+          tooltip: {
+            trigger: "axis",
+            backgroundColor: "rgba(1, 29, 63, .8)", //设置背景颜色
+            textStyle: {
+              color: "#fff",
+              fontSize: 12,
+            },
+            borderColor: "rgba(1, 29, 63,.8)",
+            axisPointer: {
+              type: "none",
+            },
+            formatter: function (param) {
+              console.log(param)
+              var tooltip = param[0].name +"<br>"
+              tooltip += param[0].marker + param[0].seriesName + " : " +param[0].value + "%<br>"
+              tooltip += param[1].marker + param[1].seriesName + " : " +param[1].value + "%"
+
+              return tooltip
+            }
+          },
+          dataZoom: [
+            {
+              moveOnMouseMove: true,
+              type: "slider",
+              show: false,
+              xAxisIndex: [0],
+              startValue: 0, // 数据窗口范围的起始数值
+              endValue: 8, // 数据窗口范围的结束数值（一页显示多少条数据）
+              minValueSpan: 0,
+              maxValueSpan: 8,
+            },
+            {
+              type: "inside",
+              xAxisIndex: 0,
+              zoomOnMouseWheel: false, //滚轮是否触发缩放
+              moveOnMouseMove: true, //鼠标滚轮触发滚动
+              moveOnMouseWheel: true,
+            },
+          ],
+          legend: {
+            icon: "circle",
+            orient: "horizontal",
+            itemGap: 40,
+            itemWidth: 10,
+            itemHeight: 10,
+            textStyle: {
+              fontSize: 10,
+              color: "#AFAFAF",
+              fontWeight: 400,
+              padding: [4, 0, 0, 0],
+            },
+          },
+          // color: ["#F57474", "#ccc016", "#1089E7", "#7bd42b", "#8B78F6"],
+          grid: {
+            top: "22%",
+            left: "6%",
+            right: "6%",
+            bottom: "8%",
+            containLabel: true,
+          },
+          xAxis: {
+            type: "category",
+            data: nameArr,
+            axisTick: {
+              show: false,
+            },
+            axisLabel: {
+              textStyle: {
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                fontSize: 10,
+              },
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              },
+            },
+          },
+          yAxis: {
+            type: "value",
+            name: "单位：%",
+            // 标题名称颜色
+            nameTextStyle: {
+              color: "#AFAFAF",
+              fontSize: 10,
+              fontWeight: 800,
+            },
+            axisLabel: {
+              textStyle: {
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                fontSize: 10,
+              },
+            },
+            axisLine: {
+              show: false,
+            },
+            splitLine: {
+              lineStyle: {
+                color: "#11395D",
+                type: "dashed", // dotted 虚线
+              },
+            },
+          },
+          series: [
+            {
+              name: "故障率",
+              type: "bar",
+              stack: "total",
+              label: {
+                show: false,
+                color: "#FFFFFF",
+                formatter: function (e) {
+                  // return e.value ? e.value : "";
+                  // return e.value ? e.seriesName : "";
+                },
+              },
+              itemStyle: {
+                normal: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      // color: '#00FFE3',//渐变1
+                      color: "rgba(247,245,26,1)", //渐变1
+                    },
+                    {
+                      offset: 1,
+                      // color: '#4693EC',//渐变2
+                      color: "rgba(247,178,26,1)", //渐变2
+                    },
+                  ]),
+                },
+              },
+              emphasis:{
+                disabled: true,
+                focus: 'none'
+              },
+              barWidth: 14,
+              data: faultArr,
+            },
+            {
+              name: "正常率",
+              type: "bar",
+              stack: "total",
+              label: {
+                show: false,
+                color: "#FFFFFF",
+                formatter: "{a}",
+              },
+              itemStyle: {
+                normal: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      // color: '#00FFE3',//渐变1
+                      color: "rgba(140,228,255,1)", //渐变1
+                    },
+                    {
+                      offset: 1,
+                      // color: '#4693EC',//渐变2
+                      color: "rgba(41,204,255,1)", //渐变2
+                    },
+                  ]),
+                },
+              },
+              emphasis:{
+                disabled: true,
+                focus: 'none'
+              },
+              data: normalArr,
+            },
+            {
+              type: "pictorialBar",
+              barWidth: 24,
+              itemStyle: {
+                normal: {
+                  color: "#010913", //数据的间隔颜色
+                },
+              },
+              symbolRepeat: "fixed",
+              symbolMargin: 2,
+              symbol: "rect",
+              symbolSize: [14, 4],
+              symbolPosition: "end",
+              symbolOffset: [0, 0],
+              data: allArr,
+              z: 1,
+              zlevel: 1,
+            },
+          ],
+        };
+        if (faultArr.length > 0) {
+          let that = this;
+          setInterval(function () {
+            // 每次向后滚动一个，最后一个从头开始。
+            if (option.dataZoom[0].endValue == faultArr.length) {
+              option.dataZoom[0].endValue = 9;
+              option.dataZoom[0].startValue = 0;
+            } else {
+              option.dataZoom[0].endValue = option.dataZoom[0].endValue + 1;
+              option.dataZoom[0].startValue = option.dataZoom[0].startValue + 1;
+            }
+            deviceChart.setOption(option);
+          }, 4000);
+        }
+        deviceChart.setOption(option);
+        window.addEventListener("resize", function () {
+          deviceChart.resize();
+        });
+      });
+    },
+    // loadFocusCar(specialVehicleXData, specialVehicleYData) {
+    //   let newPromise = new Promise((resolve) => {
+    //     resolve();
+    //   });
+    //   newPromise.then(() => {
+    //     var focusCar = echarts.init(document.getElementById("focusCar"));
+    //     var option = {
+    //       tooltip: {
+    //         trigger: "axis",
+    //       },
+    //       toolbox: {
+    //         show: true,
+    //         feature: {
+    //           // magicType: { show: true, type: ['stack', 'tiled'] },
+    //           // saveAsImage: { show: true }
+    //         },
+    //       },
+    //       grid: {
+    //         top: "20%",
+    //         bottom: "18%",
+    //         left: "14%",
+    //         right: "14%",
+    //       },
+    //       xAxis: {
+    //         type: "category",
+    //         boundaryGap: false,
+    //         data: specialVehicleXData,
+    //         name: "小时",
+    //         axisLabel: {
+    //           textStyle: {
+    //             color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+    //             fontSize: 10,
+    //           },
+    //         },
+    //         axisLine: {
+    //           show: true,
+    //           lineStyle: {
+    //             color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+    //           },
+    //         },
+    //       },
+    //       yAxis: {
+    //         type: "value",
+    //         name: "总车辆",
+    //         nameTextStyle: {
+    //           color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+    //           fontSize: 10,
+    //           padding: [0, 20, 0, 0],
+    //         },
+    //         minInterval: 1, //y轴的刻度只显示整数
+    //         axisLabel: {
+    //           textStyle: {
+    //             color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+    //             fontSize: 10,
+    //           },
+    //         },
+
+    //         axisLine: {
+    //           show: false,
+    //         },
+    //         axisTick: {
+    //           show: false,
+    //         },
+    //         splitLine: {
+    //           show: true,
+    //           lineStyle: {
+    //             //分割线的样式
+    //             color: ["#4E6B83"],
+    //             width: 1,
+    //             type: "dashed",
+    //           },
+    //         },
+    //       },
+    //       series: [
+    //         {
+    //           type: "line",
+    //           color: "#00c8ff",
+    //           symbol: "none",
+    //           smooth: true,
+    //           stack: "Total",
+    //           areaStyle: {},
+    //           symbol: "circle",
+    //           symbolSize: [7, 7],
+    //           itemStyle: {
+    //             normal: {
+    //               borderColor: "white",
+    //             },
+    //           },
+    //           emphasis: {
+    //             focus: "series",
+    //           },
+    //           //渐变色
+    //           areaStyle: {
+    //             normal: {
+    //               //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色
+    //               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+    //                 {
+    //                   offset: 0,
+    //                   color: "#33b0ee",
+    //                 },
+    //                 {
+    //                   offset: 1,
+    //                   color: "rgba(51,176,238,0.3)",
+    //                 },
+    //               ]),
+    //             },
+    //           },
+    //           data: specialVehicleYData,
+    //         },
+    //       ],
+    //     };
+
+    //     focusCar.setOption(option);
+    //     window.addEventListener("resize", function () {
+    //       focusCar.resize();
+    //     });
+    //   });
+    // },
+    // 能耗监测echarts
+    
   },
 };
 </script>
@@ -1105,7 +1387,7 @@ export default {
   justify-content: space-between;
   // margin-top: 8px;
   position: absolute;
-  bottom:0.5%;
+  bottom: 0.5%;
   z-index: 8;
   .fourBox {
     display: flex;
@@ -1218,12 +1500,47 @@ export default {
       }
     }
   }
+  .deviceBox {
+    width: 100%;
+    height: calc(100% - 2.4vh);
+    padding-top: 10px;
+    // background: yellow;
+    .allMsg {
+      width: 100%;
+      height: 20%;
+      // background: pink;
+      display: flex;
+      justify-content: space-around;
+      .item {
+        font-size: 0.7vw;
+        font-weight: bold;
+        > div {
+          display: flex;
+          align-items: center;
+          height: 50%;
+          justify-content: center;
+        }
+      }
+      .item1 {
+        color: #fff;
+      }
+      .item2 {
+        color: rgba(238, 49, 139, 1);
+      }
+      .item3 {
+        color: #f7b21a;
+      }
+    }
+  }
 }
 #vehicle,
 #energyConsumption,
-#focusCar {
+#deviceChart {
   width: 100%;
   height: calc(100% - 2vw);
   margin-top: 5px;
+}
+#deviceChart {
+  height: calc(75% - 4px);
 }
 </style>

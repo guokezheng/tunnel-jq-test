@@ -435,15 +435,15 @@ export default {
   dicts: ["sys_common_status, sd_control_type","sd_direction"],
   data() {
     return {
-      activeName: "1",
+      activeName: "2",
       tabList: [
-        {
-          title: "系统日志",
-          name: "1",
-        },
         {
           title: "操作日志",
           name: "2",
+        },
+        {
+          title: "系统日志",
+          name: "1",
         },
       ],
       setoptions: {
@@ -523,7 +523,7 @@ export default {
   created() {
     this.dateRangeDl = this.getPastTime();
     this.dateRangeCz = this.getPastTime();
-    this.getList("1");
+    this.getList("2");
     this.getTunnel();
     this.getEqType();
     this.getDicts("sd_control_type").then((response) => {

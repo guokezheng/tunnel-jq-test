@@ -31,7 +31,23 @@ export function vehicleMonitoringInRecent24Hours(data) {
     data: data
   })
 }
+// 车辆监测数据 
+export function getHoursTrafficVolume(query) {
+  return request({
+    url: '/eventWarning/getHoursTrafficVolume',
+    method: 'get',
+    params: query
+  })
+}
 
+// 设备健康监测
+export function getStatisticalDevice(query) {
+  return request({
+    url: '/eventWarning/getStatisticalDevice',
+    method: 'get',
+    params: query
+  })
+}
 
 // 重点车辆监测数据
 export function specialVehicleMonitoringInRecent24Hours(data) {
@@ -41,6 +57,7 @@ export function specialVehicleMonitoringInRecent24Hours(data) {
     data: data
   })
 }
+
 // 重点车辆监测数据
 export function special(query) {
   return request({

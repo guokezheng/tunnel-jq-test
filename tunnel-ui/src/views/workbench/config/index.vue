@@ -56,8 +56,8 @@
 
         <div class="flex-row" style="z-index: 8">
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
-              {{ srollSwitch ? "滚动关" : "滚动开" }}
+            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 0.5vw">
+              {{ srollSwitch ? "滚动" : "滚动" }}
             </p>
             <el-switch
               v-model="srollSwitch"
@@ -66,8 +66,8 @@
             ></el-switch>
           </div>
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 1vw">
-              {{ carShow ? "实时车辆关" : "实时车辆开" }}
+            <p class="zoom-title" style="font-size: 0.75vw; margin-right: 0.5vw">
+              {{ carShow ? "实时车辆" : "实时车辆" }}
             </p>
             <el-switch
               v-model="carShow"
@@ -109,7 +109,7 @@
             </div>
           </div>
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw">缩放：</p>
+            <!-- <p class="zoom-title" style="font-size: 0.75vw">缩放：</p> -->
             <el-input-number
               v-model="zoom"
               :step="10"
@@ -122,8 +122,8 @@
             </el-input-number>
           </div>
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 0.75vw">
-              {{ zoomSwitch == 0 ? "缩放开" : "缩放关" }}
+            <p class="zoom-title" style="font-size: 0.75vw;margin-right:0.5vw">
+              {{ zoomSwitch == 0 ? "缩放" : "缩放" }}
             </p>
             <el-switch
               v-model="zoomSwitch"
@@ -416,7 +416,7 @@
                         :class="{ focus: item.focus }"
                       >
                         <img
-                          v-show="item.eqType != '31'"
+                          v-show="item.eqType != '31' && item.eqType != '16' && item.eqType != '36'"
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{
@@ -922,8 +922,8 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-tabs v-model="operationActive" @tab-click="handleTabClick">
-        <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
         <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
+        <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
       </el-tabs>
       <el-row
         :gutter="20"
@@ -2008,7 +2008,7 @@ export default {
       },
 
       dateRange: this.getPastTime(),
-      operationActive: "xitong",
+      operationActive: "caozuo",
       manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
       lane: "",
@@ -2540,6 +2540,8 @@ export default {
     },
   },
   created() {
+    
+    
     // debugger
     //小车运行渲染定时任务
     clearInterval(this.timerCat);
@@ -2920,6 +2922,7 @@ export default {
       }
     },
     treeClear() {
+      this.resetCanvas()
       for (var item of this.selectedIconList) {
         if (item.eqName.indexOf(this.screenEqName) > -1) {
           item.click = false;
@@ -2932,6 +2935,7 @@ export default {
     },
     //点击树状图获取值
     handleNodeClick(data) {
+      console.log(data,"data")
       // 如果存在children，则代表是父级
       if (data.children) {
         // 点击父级业务
@@ -3313,6 +3317,9 @@ export default {
       if (this.screenEqName) {
         for (var item of this.selectedIconList) {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
+            this.resetCanvasFlag = true;
+            this.$refs.dragImgDom.style.left = - item.position.left + 864 + 'px' ;
+            this.$refs.dragImgDom.style.top = 290 - item.position.top + 'px';
             item.click = true;
           } else {
             item.click = false;
@@ -5121,11 +5128,11 @@ export default {
       this.dateRange = this.getPastTime();
       this.dateRange1 = this.getPastTime();
       this.title = "操作日志";
-      this.operationActive = "xitong";
+      this.operationActive = "caozuo";
       this.operationLogDialog = true;
       this.operationParam_xt.ipaddr = "";
       this.operationParam.operIp = "";
-      this.getOperationList("xitong");
+      this.getOperationList("caozuo");
     },
 
     /* 打开图标说明对话框*/
@@ -6448,7 +6455,7 @@ input {
   background: #cdedfa !important;
   border: solid 1px #1d58a9;
   color: #1d58a9 !important;
-  transform: translateX(20px);
+  // transform: translateX(15px);
 }
 .workbench-msg {
   background-color: #1890ff;
@@ -6980,11 +6987,12 @@ input {
   top: 5%;
   width: 13.5%;
   height: 60vh;
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y:auto;
 }
-.treeBox::-webkit-scrollbar {
-  display: none;
-}
+// .treeBox::-webkit-scrollbar {
+//   display: none;
+// }
 </style>
 
 <style lang="scss" scoped>

@@ -26,8 +26,8 @@ import org.springframework.messaging.MessageHandler;
  * @author zs
  * @date 2023/5/25
  */
-@Configuration
-@IntegrationComponentScan
+//@Configuration
+//@IntegrationComponentScan
 public class MqttInboundConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(MqttInboundConfiguration.class);

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @author zs
  * @date 2023/3/28
  */
-@RestController
-@RequestMapping("/mqtt")
+//@RestController
+//@RequestMapping("/mqtt")
 public class MessageController {
 
     @Autowired

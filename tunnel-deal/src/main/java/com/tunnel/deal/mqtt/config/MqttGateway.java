@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
  * @author zs
  * @date 2023/3/28
  */
-@Component
-@MessagingGateway(defaultRequestChannel = "mqttOutboundChannel")
+//@Component
+//@MessagingGateway(defaultRequestChannel = "mqttOutboundChannel")
 public interface MqttGateway {
 //    void sendToMqtt(String data, @Header(MqttHeaders.TOPIC) String topic);
 

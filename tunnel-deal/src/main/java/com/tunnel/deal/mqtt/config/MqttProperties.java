@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
  * @author zs
  * @date 2023/5/25
  */
-@Component
-@ConfigurationProperties(prefix = "mqtt")
+//@Component
+//@ConfigurationProperties(prefix = "mqtt")
 public class MqttProperties {
     private String url;
 //    private String clientId;

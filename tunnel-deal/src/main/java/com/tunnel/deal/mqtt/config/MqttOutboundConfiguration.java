@@ -20,8 +20,8 @@ import org.springframework.messaging.MessageHandler;
  * @author zs
  * @date 2023/3/28
  */
-@Configuration
-@IntegrationComponentScan
+//@Configuration
+//@IntegrationComponentScan
 public class MqttOutboundConfiguration {
 
 

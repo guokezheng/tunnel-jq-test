@@ -425,7 +425,7 @@ public class StrategyTask {
                     default: isControl = false; break;
                 }
                 //符合触发条件
-                /*if(isControl){
+                if(isControl){
                     //仅预警
                     if(s.get("warning_type").equals("0")){
                         //插入事件
@@ -484,7 +484,7 @@ public class StrategyTask {
                         }
                     }
                     break out;
-                }*/
+                }
             }
             break;
         }

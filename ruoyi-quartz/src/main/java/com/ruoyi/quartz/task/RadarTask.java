@@ -32,6 +32,9 @@ import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.zc.common.core.websocket.WebSocketService;
+import com.zc.websocket.bo.ChannelProperty;
+import com.zc.websocket.constant.AttributeKeyConst;
+import com.zc.websocket.util.MsgUtil;
 import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +48,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
+import io.netty.channel.Channel;
 import java.util.concurrent.TimeUnit;
 
 import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
@@ -148,18 +152,31 @@ public class RadarTask {
     }
 
     /**
-     * 每天凌晨执行一次 删除小车数据推送的tocken
+     * 遍历redis传事故位置到前端显示
+     * @throws InterruptedException
      */
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void task() {
-        // 每天凌晨执行的任务
-        List<String> scanKeyList = redisCache.getScanKey(Constants.CAR_TOKEN + "*");
-        scanKeyList.forEach((tocken)->{
-            redisCache.deleteObject(tocken);
-        });
-        //删除需要推送前端的tocken
+    @Scheduled(fixedRate = 5000)
+    public void deleteTokenSN() throws InterruptedException {
+        //获取所有需要发送消息客服端的token
+        List<String> scanKey = redisCache.getCacheList("caKokenList");
+        List<Object> caKokenList = new ArrayList<>();
+        for (String key :scanKey) {
+            //获取隧道以及是否推送
+            Map<String, Object> cacheMap = redisCache.getCacheMap(key);
+            //推送的token
+            String s = key.replaceAll(Constants.CAR_TOKEN, "");
+            for (Channel channel : MsgUtil.channels){
+                ChannelProperty channelProperty = channel.attr(AttributeKeyConst.CHANNEL_PROPERTY_KEY).get();
+                if(s.equalsIgnoreCase(channelProperty.getTokenSN())){
+                    caKokenList.add((Constants.CAR_TOKEN+s));
+                }
+            }
+        }
         redisCache.deleteObject("caKokenList");
+        redisCache.setCacheList("caKokenList",caKokenList);
     }
+
+
 //    @Scheduled(fixedRate = 100)
     public void radarTask1() throws InterruptedException {
         List<Map> list = new ArrayList<>();

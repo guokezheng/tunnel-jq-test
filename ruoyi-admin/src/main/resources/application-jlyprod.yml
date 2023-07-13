@@ -30,6 +30,8 @@ spring:
       consumer:
         # 消费者组
         group-id: HuaWeiGroup_Formal
+        # 小车前端显示消费者组
+        group-id-Two: HuaWeiGroup_Formal_Cat
 device:
   hongmeng:
     #正式环境部署地址

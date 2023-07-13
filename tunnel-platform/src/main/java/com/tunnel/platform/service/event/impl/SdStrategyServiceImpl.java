@@ -624,25 +624,27 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if(model.getStrategyType().equals("0")){
             mapList = model.getManualControl();
         }
+        //查询历史策略流程节点
+        List<SdStrategyRl> sdStrategyRlList =  sdStrategyRlMapper.selectSdStrategyRlByStrategyId(model.getId());
+        if(sdStrategyRlList.size()>0){
+            // 关联设备效验  判断基本照明不可低于30代码块
+            for (Map map : mapList) {
 
-        // 关联设备效验  判断基本照明不可低于30代码块
-        for (Map map : mapList) {
+                if(map.get("state") == null || map.get("state").equals("")){
+                    throw new RuntimeException("请填写完整策略信息！");
+                }
+                String equipmentTypeId = map.get("equipmentTypeId") + "";
 
-            if(map.get("state") == null || map.get("state").equals("")){
-                throw new RuntimeException("请填写完整策略信息！");
-            }
-            String equipmentTypeId = map.get("equipmentTypeId") + "";
-
-            // 基本照明 亮度不得低于30
-            if(equipmentTypeId.equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())) {
-                if((map.get("stateNum") == null || Integer.parseInt(map.get("stateNum").toString()) < 30) && map.get("state").toString().equals("1")){
-                    throw new RuntimeException("基本照明亮度不得低于30");
+                // 基本照明 亮度不得低于30
+                if(equipmentTypeId.equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())) {
+                    if((map.get("stateNum") == null || Integer.parseInt(map.get("stateNum").toString()) < 30) && map.get("state").toString().equals("1")){
+                        throw new RuntimeException("基本照明亮度不得低于30");
+                    }
                 }
             }
         }
 
-        //查询历史策略流程节点
-        List<SdStrategyRl> sdStrategyRlList =  sdStrategyRlMapper.selectSdStrategyRlByStrategyId(model.getId());
+
         sdStrategyRlList.stream().forEach(item -> {
             planStrategyMapper.deletePlanStrategyVms(item.getId(),"1");
         });

@@ -1374,6 +1374,7 @@ export default {
           //   delJob(jobRelationId).then((response) => {});
           // }
           delStrategy(ids).then((res) => {
+            debugger
             if (res.code == 200) {
               this.$refs.tableFile1.clearSelection()
               this.$modal.msgSuccess(res.msg);

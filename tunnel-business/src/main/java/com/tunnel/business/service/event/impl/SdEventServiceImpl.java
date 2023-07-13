@@ -216,9 +216,9 @@ public class SdEventServiceImpl implements ISdEventService {
                 image2.setImgUrl(image2.getImgUrl().split(";")[0]);
                 collect.add(0,image2);
             }
-            item.setIconUrlList(collect.subList(0,image1.size() > 10 ? 10 : image1.size()));
+            item.setIconUrlList(collect.subList(0,collect.size() > 10 ? 10 : collect.size()));
             item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
-            for(SdTrafficImage temp : image1){
+            for(SdTrafficImage temp : collect){
                 if("0".equals(temp.getImgType())){
                     item.setEventImgUrl(temp.getImgUrl());
                     break;

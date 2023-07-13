@@ -1452,6 +1452,7 @@
       width="1000px"
       append-to-body
       :close-on-click-modal="false"
+      :destroy-on-close ="true"
       @close="strategyResetQuery"
     >
       <div class="dialogStyleBox">
@@ -1459,16 +1460,18 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-tabs v-model="strategyActive" @tab-click="handleClick">
-        <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
-        <!--        <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>-->
+        <el-tab-pane label="手动控制" name="richang"></el-tab-pane>
+        <el-tab-pane label="定时控制" name="dingshi"></el-tab-pane>
+        <el-tab-pane label="自动触发" name="zidong"></el-tab-pane>
+<!--                <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>-->
       </el-tabs>
       <el-row
         :gutter="20"
         style="margin: 0px 0 10px"
-        v-show="strategyActive == 'richang'"
+        v-show="strategyActive == 'richang'||strategyActive == 'dingshi'||strategyActive == 'zidong'"
       >
         <el-col :span="4">
-          <el-button size="small" @click="resetQuery">刷新</el-button>
+          <el-button size="small" @click="strategResetQuery">刷新</el-button>
         </el-col>
         <el-col :span="10" :offset="10">
           <div class="grid-content bg-purple" ref="main2">
@@ -1543,7 +1546,7 @@
             <el-button size="small" @click="handlestrategyQuery"
               >搜索</el-button
             >
-            <el-button size="small" @click="resetQuery">重置</el-button>
+            <el-button size="small" @click="strategResetQuery">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -1621,13 +1624,14 @@
         ref="multipleTable"
         :data="strategyList"
         tooltip-effect="dark"
+        v-loading="strategyLoading"
         style="width: 100%"
         :max-height="420"
         size="mini"
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         empty-text="暂无策略"
-        :key="1"
+        :key="2"
       >
         <el-table-column
           type="index"
@@ -1683,7 +1687,8 @@
           </template>
           <div v-else>暂无信息</div>
         </el-table-column>
-        <el-table-column label="状态" align="center" prop="schedulerTime">
+
+        <el-table-column label="状态" align="center" prop="schedulerTime" v-if="strategyActive != 'richang'">
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.strategyState"
@@ -1694,6 +1699,18 @@
               @change="changeStrategyState(scope.row)"
             >
             </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="执行" align="center" prop="schedulerTime"   v-if="strategyActive == 'richang'">
+          <template slot-scope="scope">
+
+            <el-button
+              size="mini"
+              type="text"
+              class="tableBlueButtton"
+              @click="richanghandleUpdate(scope.row)"
+            >执行</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -1780,6 +1797,7 @@ import {
   handleStrategy,
   workTriggerInfo,
   updateState,
+  updateStrategyInfo
 } from "@/api/event/strategy";
 import { getEntranceExitVideo } from "@/api/eventDialog/api.js";
 import { selectByEqDeno } from "@/api/business/roadState.js";
@@ -1863,6 +1881,7 @@ import {
   addConfig,
   updateConfig,
 } from "@/api/business/enhancedLighting/app.js";
+import {listRl} from "@/api/event/strategyRl";
 
 let configData = {}; //配置信息
 let wrapperClientX = 0;
@@ -2235,6 +2254,7 @@ export default {
       },
       checkboxTunnel: [], //可点的隧道
       tunnelList: [], //隧道
+      tunnelItem:"",
       selectedIconList: [], //配置图标
       stateForm: {
         state: 1,
@@ -2265,6 +2285,7 @@ export default {
       // 策略visible
       strategyVisible: null,
       strategyList: [],
+      strategyLoading:false,
       asd: 50,
       fjState: null,
       hostIP: null,
@@ -2574,7 +2595,7 @@ export default {
         this.directionOptions.push(item);
       });
     });
-    
+
   },
 
   watch: {
@@ -2927,6 +2948,53 @@ export default {
           this.$modal.msgSuccess("开启成功");
         } else if (row.strategyState == 1) {
           this.$modal.msgSuccess("关闭成功");
+        }
+      });
+    },
+    async richanghandleUpdate(row){
+      console.log(row)
+      debugger
+      let params = row
+      await listRl({ strategyId: params.id }).then((response) => {
+        // console.log(response, "设备数据");
+        params.manualControl = response.rows;
+        params.manualControl.equipmentTypeId = params.manualControl.eqTypeId;
+        for (let i = 0; i < response.rows.length; i++) {
+          let attr = response.rows[i];
+          let manualControl =params.manualControl[i];
+
+
+          console.log(params.manualControl[i].value, "选择的设备");
+          params.manualControl[i].state = attr.state;
+          params.manualControl[i].stateNum = attr.stateNum;
+
+          params.manualControl[i].manualControlStateList =
+            attr.eqStateList;
+
+          params.manualControl[i].equipmentTypeId = String(
+            attr.eqTypeId
+          );
+          // 情报板设备
+          if (
+            params.manualControl[i].equipmentTypeId == 16 ||
+            params.manualControl[i].equipmentTypeId == 36
+          ) {
+            // 改变数据类型
+            params.manualControl[i].state = +attr.state;
+          }
+
+
+          //基本照明限制 最低亮度为 30
+          if(params.manualControl[i].equipmentTypeId == 9){
+            this.$set(params.manualControl[i], "limitMin", 30);
+          }
+
+          }
+      })
+      await updateStrategyInfo(params).then((res) => {
+        debugger
+        if(res.code==200){
+          this.$modal.msgSuccess("执行成功");
         }
       });
     },
@@ -3356,7 +3424,14 @@ export default {
     strategyResetQuery() {
       this.resetQuery();
     },
-
+    strategResetQuery(){
+      this.strategyLoading = true
+      this.queryParams.pageSize = 10;
+      this.queryParams.pageNum = 1;
+      this.getStrategyQuery(this.dictCode)
+      this.handleQueryOperationParam();
+      this.handlestrategyQuery();
+    },
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = this.getPastTime();
@@ -4959,18 +5034,19 @@ export default {
     /* 跳至策略页面*/
     strategyPage() {
       //this.$router.push('/strategy/index')
-      this.loading = true;
       this.queryParams.strategyName = "";
       this.strategyVisible = true;
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
-      this.getStrategyQuery();
+      this.getStrategyQuery(0);
+
     },
     handleClick(tab, event) {
+      debugger
       this.dictCode = tab.index;
-      this.queryParams.strategyGroup = Number(tab.index) + Number(1);
+      // this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.handleQueryOperationParam();
-      this.handlestrategyQuery();
+      this.handlestrategyQuery(this.dictCode);
     },
     //系统日志操作日志tab切换
     handleTabClick(tab, event) {
@@ -4988,17 +5064,41 @@ export default {
     strategyCancel() {
       this.strategyVisible = false;
     },
-    handlestrategyQuery() {
+    handlestrategyQuery(tabIndex) {
       this.syxt_boxShow2 = false;
       this.sycz_boxShow3 = false;
       this.$refs.multipleTable.bodyWrapper.scrollTop = 0;
-      this.getStrategyQuery();
+      this.getStrategyQuery(tabIndex);
     },
-    getStrategyQuery() {
+    getStrategyQuery(tabIndex) {
+      this.strategyLoading = true
       this.loading = true;
+      console.log(this.queryParams)
+      let tunnelItems =''
+      if(!!this.tunnelItem){
+        tunnelItems = this.tunnelItem
+      }else{
+        tunnelItems = this.tunnelList[0]
+      }
+      if(tabIndex ==0){
+        this.queryParams.strategyGroup = Number(1);
+        this.queryParams.tunnelId = tunnelItems.tunnelId
+        this.queryParams.strategyType = "0"
+      }else if(tabIndex ==1){
+        this.queryParams.strategyGroup = Number(1);
+        this.queryParams.tunnelId = tunnelItems.tunnelId
+        this.queryParams.strategyType = "1"
+      }else if(tabIndex ==2){
+        this.queryParams.strategyGroup = Number(1);
+        this.queryParams.tunnelId = tunnelItems.tunnelId
+        this.queryParams.strategyType = "2"
+      }
+      debugger
+      console.log(this.queryParams)
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;
+        this.strategyLoading = false
         this.loading = false;
       });
     },

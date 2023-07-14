@@ -131,22 +131,22 @@ public class RadarTask {
 //    @Scheduled(fixedRate = 5000)
     public void deleteTokenSN() throws InterruptedException {
         //获取所有需要发送消息客服端的token
-        List<String> scanKey = redisCache.getCacheList("caKokenList");
-        List<Object> caKokenList = new ArrayList<>();
-        for (String key :scanKey) {
-            //获取隧道以及是否推送
-            Map<String, Object> cacheMap = redisCache.getCacheMap(key);
-            //推送的token
-            String s = key.replaceAll(Constants.CAR_TOKEN, "");
-            for (Channel channel : MsgUtil.channels){
-                ChannelProperty channelProperty = channel.attr(AttributeKeyConst.CHANNEL_PROPERTY_KEY).get();
-                if(s.equalsIgnoreCase(channelProperty.getTokenSN())){
-                    caKokenList.add((Constants.CAR_TOKEN+s));
-                }
-            }
-        }
-        redisCache.deleteObject("caKokenList");
-        redisCache.setCacheList("caKokenList",caKokenList);
+//        List<String> scanKey = redisCache.getCacheList("caKokenList");
+//        List<Object> caKokenList = new ArrayList<>();
+//        for (String key :scanKey) {
+//            //获取隧道以及是否推送
+//            Map<String, Object> cacheMap = redisCache.getCacheMap(key);
+//            //推送的token
+//            String s = key.replaceAll(Constants.CAR_TOKEN, "");
+//            for (Channel channel : MsgUtil.channels){
+//                ChannelProperty channelProperty = channel.attr(AttributeKeyConst.CHANNEL_PROPERTY_KEY).get();
+//                if(s.equalsIgnoreCase(channelProperty.getTokenSN())){
+//                    caKokenList.add((Constants.CAR_TOKEN+s));
+//                }
+//            }
+//        }
+//        redisCache.deleteObject("caKokenList");
+//        redisCache.setCacheList("caKokenList",caKokenList);
     }
 
 

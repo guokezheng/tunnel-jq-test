@@ -1,55 +1,28 @@
 package com.ruoyi.quartz.task;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.ruoyi.common.constant.Constants;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.ServletUtils;
-import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.ip.IpUtils;
-import com.ruoyi.system.service.ISysDictDataService;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+
 import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
-import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
-import com.tunnel.business.domain.logRecord.SdOperationLog;
-import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
-import com.tunnel.business.mapper.digitalmodel.SdSpecialVehiclesMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
-import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
-import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventService;
-import com.tunnel.business.service.logRecord.ISdOperationLogService;
-import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
+import com.zc.common.core.kafka.kafkaTool;
 import com.zc.common.core.websocket.WebSocketService;
 import com.zc.websocket.bo.ChannelProperty;
 import com.zc.websocket.constant.AttributeKeyConst;
-import com.zc.websocket.util.MsgUtil;
-import org.checkerframework.checker.units.qual.A;
+import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.*;
-import io.netty.channel.Channel;
-import java.util.concurrent.TimeUnit;
 
 import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
 
@@ -151,30 +124,7 @@ public class RadarTask {
         WebSocketService.broadcast("sdSvgEventList",object.toString());
     }
 
-    /**
-     * 遍历redis传事故位置到前端显示
-     * @throws InterruptedException
-     */
-    @Scheduled(fixedRate = 5000)
-    public void deleteTokenSN() throws InterruptedException {
-        //获取所有需要发送消息客服端的token
-        List<String> scanKey = redisCache.getCacheList("caKokenList");
-        List<Object> caKokenList = new ArrayList<>();
-        for (String key :scanKey) {
-            //获取隧道以及是否推送
-            Map<String, Object> cacheMap = redisCache.getCacheMap(key);
-            //推送的token
-            String s = key.replaceAll(Constants.CAR_TOKEN, "");
-            for (Channel channel : MsgUtil.channels){
-                ChannelProperty channelProperty = channel.attr(AttributeKeyConst.CHANNEL_PROPERTY_KEY).get();
-                if(s.equalsIgnoreCase(channelProperty.getTokenSN())){
-                    caKokenList.add((Constants.CAR_TOKEN+s));
-                }
-            }
-        }
-        redisCache.deleteObject("caKokenList");
-        redisCache.setCacheList("caKokenList",caKokenList);
-    }
+
 
 
 //    @Scheduled(fixedRate = 100)

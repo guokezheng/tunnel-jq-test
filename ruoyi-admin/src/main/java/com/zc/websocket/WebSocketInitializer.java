@@ -4,6 +4,7 @@ import com.zc.common.constant.RedisStreamConstants;
 import com.zc.common.core.stream.RedisStream;
 import com.zc.websocket.handler.WebSocketStarter;
 import com.zc.websocket.handler.WebSocketStreamBroadcastListener;
+import com.zc.websocket.handler.WebSocketStreamCatListener;
 import com.zc.websocket.handler.WebSocketStreamDirectionalListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -36,6 +37,11 @@ public class WebSocketInitializer implements CommandLineRunner {
     @Resource
     private WebSocketStreamDirectionalListener directionalListener;
 
+    @Resource
+    private WebSocketStreamCatListener webSocketStreamCatListener;
+
+
+
     @Override
     public void run(String... args) {
 
@@ -50,6 +56,12 @@ public class WebSocketInitializer implements CommandLineRunner {
                 RedisStreamConstants.WebSocketDirectional.GROUP,
                 RedisStreamConstants.WebSocketDirectional.CONSUMER,
                 directionalListener);
+
+        redisStream.subscription(
+                RedisStreamConstants.WebSocketCatDirectional.KEY,
+                RedisStreamConstants.WebSocketCatDirectional.GROUP,
+                RedisStreamConstants.WebSocketCatDirectional.CONSUMER,
+                webSocketStreamCatListener);
 
         // WebSocket 启动
         threadPoolTaskExecutor.execute(() -> {

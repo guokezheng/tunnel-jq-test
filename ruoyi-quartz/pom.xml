@@ -42,12 +42,13 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-        <!-- WebSocket工具类-->
         <dependency>
             <groupId>com.zc</groupId>
             <artifactId>zc-websocket</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
+
     </dependencies>
 
 </project>

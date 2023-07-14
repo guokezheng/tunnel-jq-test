@@ -375,7 +375,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSONObject object = new JSONObject();
         object.put("radarDataList", webSocketList);
         //给指定的客户端发送websocket请求
-        kafkaTool.sendAssignWebSocket(webSocketList,object);
+        kafkaTool.sendAssignWebSocket(null ,webSocketList,object);
     }
 
     @Override

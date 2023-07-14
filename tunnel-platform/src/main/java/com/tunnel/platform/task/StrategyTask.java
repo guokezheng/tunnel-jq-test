@@ -452,6 +452,7 @@ public class StrategyTask {
                         sdEvent.setCreateTime(DateUtils.getNowDate());
                         String eventTitle = SpringUtils.getBean(ISdEventService.class).getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
                         sdEvent.setEventTitle(eventTitle);
+                        sdEvent.setEventTime(DateUtils.getNowDate());
                         //方向
 //                        if(!StringUtils.isEmpty(f.getDirection())){
 //                            sdEvent.setDirection(f.getDirection() + "");

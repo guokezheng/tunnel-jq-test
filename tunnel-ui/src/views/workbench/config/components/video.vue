@@ -68,6 +68,11 @@
             </el-row>
             <el-row>
               <el-col :span="13">
+                <el-form-item label="所属方向:">
+                  {{ getDirection(stateForm.eqDirection) }}
+                </el-form-item>
+              </el-col>
+              <el-col :span="11">
                 <el-form-item
                   label="设备状态:"
                   :style="{

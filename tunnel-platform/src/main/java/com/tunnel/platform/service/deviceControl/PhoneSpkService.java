@@ -23,6 +23,7 @@ import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
+import com.tunnel.deal.phone.LdPhoneSpeak;
 import com.tunnel.deal.phone.PhoneSpeak;
 import com.tunnel.platform.service.SdOptDeviceService;
 import okhttp3.MediaType;
@@ -105,6 +106,36 @@ public class PhoneSpkService {
             e.printStackTrace();
         }
         return phoneSpeak;
+    }
+
+    public LdPhoneSpeak getLdBeanOfDeviceProtocol(String deviceId) {
+        SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
+
+        String brandId = device.getBrandId();
+        Long fEqType = device.getfEqType();
+        Assert.hasText(brandId, "未设置该设备的品牌");
+        Assert.notNull(fEqType, "未设置该设备所属大类");
+
+        SdDevicesProtocol protocol = new SdDevicesProtocol();
+        protocol.setBrandId(brandId);
+        protocol.setEqType(fEqType);
+        List<SdDevicesProtocol> protocolList = sdDevicesProtocolService.selectSdDevicesProtocolList(protocol);
+        Assert.notEmpty(protocolList, "未查询到该设备的相关协议配置");
+
+        SdDevicesProtocol sdDevicesProtocol = protocolList.get(0);
+        String className = sdDevicesProtocol.getClassName();
+
+        LdPhoneSpeak ldPhoneSpeak = null;
+        try {
+            Class<?> aClass = Class.forName(className);
+            Object object = aClass.newInstance();
+            if (object instanceof LdPhoneSpeak) {
+                ldPhoneSpeak = (LdPhoneSpeak) SpringContextUtils.getBean(object.getClass());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ldPhoneSpeak;
     }
 
 
@@ -307,6 +338,12 @@ public class PhoneSpkService {
         String operIp = (String) map.get("operIp");
         String tunnelId = (String) map.get("tunnelId");
         //参数校验
+        if(fileList.size() > 0){
+            String file = fileList.get(0).toString();
+            if("".equals(file) || file == null){
+                Assert.notEmpty(new ArrayList<>(), "未选择音频文件！");
+            }
+        }
         Assert.notEmpty(fileList, "未选择音频文件！");
         Assert.notEmpty(spkDeviceIds, "未选择广播设备！");
         Assert.hasText(controlType, "未指定控制类型参数！");
@@ -387,13 +424,23 @@ public class PhoneSpkService {
         map.put("items", spkList);
 
         PhoneSpeak phoneSpeak = null;
+        LdPhoneSpeak ldPhoneSpeak = null;
         for (String spkDeviceId : spkDeviceIds) {
             phoneSpeak = getBeanOfDeviceProtocol(spkDeviceId);
             if (null != phoneSpeak) {
                 break;
+            }else {
+                ldPhoneSpeak = getLdBeanOfDeviceProtocol(spkDeviceId);
             }
         }
-        int status = phoneSpeak.playVoice(systemUrl, map);
+
+        int status = 0;
+        if(phoneSpeak == null){
+            status = ldPhoneSpeak.playVoice(map,new SdDevices());
+        }else {
+            status = phoneSpeak.playVoice(systemUrl, map);
+        }
+
 
         //添加操作日志
         List<SdOperationLog> list = new ArrayList<>();

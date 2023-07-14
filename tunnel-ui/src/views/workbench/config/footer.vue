@@ -46,15 +46,15 @@
         <div class="deviceBox">
           <div class="allMsg">
             <div class="item1 item">
-              <div>{{devNum}}</div>
+              <div>{{ devNum }}</div>
               <div>设备总数</div>
             </div>
             <div class="item2 item">
-              <div>{{faultNum}}</div>
+              <div>{{ faultNum }}</div>
               <div>设备故障数</div>
             </div>
             <div class="item3 item">
-              <div>{{failureRate}}%</div>
+              <div>{{ failureRate }}%</div>
               <div>故障率</div>
             </div>
           </div>
@@ -356,9 +356,13 @@ export default {
       cameraPlayer4: false,
       directionList: [{}, {}],
       tunnelId: "",
-      devNum:"",
-      failureRate:"",
-      faultNum:"",
+      devNum: "",
+      failureRate: "",
+      faultNum: "",
+      deviceChart: null,
+      option: null,
+      nameArr: [],
+      myChart:null,
     };
   },
   computed: {
@@ -407,7 +411,7 @@ export default {
         var timeArr = [];
         for (var item of res.data.huo) {
           huoArr.push(item.count);
-          timeArr.push(item.order_hour  + ":00");
+          timeArr.push(item.order_hour + ":00");
         }
         for (var item of res.data.ke) {
           keArr.push(item.count);
@@ -418,28 +422,27 @@ export default {
         this.initeChartsEnd(huoArr, keArr, keyArr, timeArr);
       });
     },
-    getDeviceChart(){
+    getDeviceChart() {
       const param = {
         tunnelId: this.tunnelId,
       };
-      getStatisticalDevice(param).then((res)=>{
-        console.log(res,"设备健康监测");
+      getStatisticalDevice(param).then((res) => {
+        console.log(res, "设备健康监测");
         this.devNum = res.data.devNum;
         this.failureRate = res.data.failureRate;
         this.faultNum = res.data.faultNum;
-        let nameArr = []
-        let faultArr = []
-        let normalArr = []
-        let allArr = []
-        for(let item of res.data.list){
-          nameArr.push(item.type_name)
-          faultArr.push(item.faultPercentage)
-          normalArr.push(item.normalPercentage)
-          allArr.push(100)
+        this.nameArr = [];
+        let faultArr = [];
+        let normalArr = [];
+        let allArr = [];
+        for (let item of res.data.list) {
+          this.nameArr.push(item.type_name);
+          faultArr.push(item.faultPercentage);
+          normalArr.push(item.normalPercentage);
+          allArr.push(100);
         }
-        this.initDeviceChart(nameArr,faultArr,normalArr,allArr)
-
-      })
+        this.initDeviceChart(faultArr, normalArr, allArr);
+      });
     },
     // 重点车辆监测数据
     // specialVehicleEcharts() {
@@ -458,7 +461,7 @@ export default {
     //     this.loadFocusCar(specialVehicleXData, specialVehicleYData);
     //   });
     // },
-    
+
     // jumpLink(url) {
     //   if (url == "/15/status") {
     //     this.$modal.msgWarning("跳转页面暂未完成");
@@ -611,6 +614,43 @@ export default {
                 fontSize: 12,
                 color: "rgba(0, 11, 34, 0)",
               },
+            },
+            //   提示框超出范围时调整位置
+            position: function (point, params, dom, rect, size) {
+              // 鼠标坐标和提示框位置的参考坐标系是：以外层div的左上角那一点为原点，x轴向右，y轴向下
+              // 提示框位置
+              let x = 0; // x坐标位置
+              let y = 0; // y坐标位置
+
+              // 当前鼠标位置
+              let pointX = point[0];
+              let pointY = point[1];
+
+              // 外层div大小
+              // var viewWidth = size.viewSize[0];
+              // var viewHeight = size.viewSize[1];
+
+              // 提示框大小
+              let boxWidth = size.contentSize[0];
+              let boxHeight = size.contentSize[1];
+
+              // boxWidth > pointX 说明鼠标左边放不下提示框
+              if (boxWidth > pointX) {
+                x = 5;
+              } else {
+                // 左边放的下
+                x = pointX - boxWidth;
+              }
+
+              // boxHeight > pointY 说明鼠标上边放不下提示框
+              if (boxHeight > pointY) {
+                y = 5;
+              } else {
+                // 上边放得下
+                y = pointY - boxHeight;
+              }
+
+              return [x, y];
             },
           },
           legend: {
@@ -917,6 +957,19 @@ export default {
       var option = {
         tooltip: {
           trigger: "axis",
+          backgroundColor: "rgba(1, 29, 63, .8)", // 设置背景颜色
+          textStyle: {
+            color: "#fff",
+            fontSize: 12,
+          },
+          borderColor: "rgba(1, 29, 63,.8)",
+          axisPointer: {
+            type: "shadow",
+            shadowStyle: {
+              fontSize: 12,
+              color: "rgba(0, 11, 34, 0)",
+            },
+          },
         },
         legend: {
           show: true,
@@ -1035,13 +1088,13 @@ export default {
         energyConsumption.resize();
       });
     },
-    initDeviceChart(nameArr,faultArr,normalArr,allArr) {
+    initDeviceChart(faultArr, normalArr, allArr) {
       let newPromise = new Promise((resolve) => {
         resolve();
       });
       newPromise.then(() => {
-        var deviceChart = echarts.init(document.getElementById("deviceChart"));
-        var option = {
+        this.deviceChart = echarts.init(document.getElementById("deviceChart"));
+        this.option = {
           tooltip: {
             trigger: "axis",
             backgroundColor: "rgba(1, 29, 63, .8)", //设置背景颜色
@@ -1054,13 +1107,22 @@ export default {
               type: "none",
             },
             formatter: function (param) {
-              console.log(param)
-              var tooltip = param[0].name +"<br>"
-              tooltip += param[0].marker + param[0].seriesName + " : " +param[0].value + "%<br>"
-              tooltip += param[1].marker + param[1].seriesName + " : " +param[1].value + "%"
+              var tooltip = param[0].name + "<br>";
+              tooltip +=
+                param[0].marker +
+                param[0].seriesName +
+                " : " +
+                param[0].value +
+                "%<br>";
+              tooltip +=
+                param[1].marker +
+                param[1].seriesName +
+                " : " +
+                param[1].value +
+                "%";
 
-              return tooltip
-            }
+              return tooltip;
+            },
           },
           dataZoom: [
             {
@@ -1104,7 +1166,7 @@ export default {
           },
           xAxis: {
             type: "category",
-            data: nameArr,
+            data: this.nameArr,
             axisTick: {
               show: false,
             },
@@ -1175,9 +1237,9 @@ export default {
                   ]),
                 },
               },
-              emphasis:{
+              emphasis: {
                 disabled: true,
-                focus: 'none'
+                focus: "none",
               },
               barWidth: 14,
               data: faultArr,
@@ -1207,9 +1269,9 @@ export default {
                   ]),
                 },
               },
-              emphasis:{
+              emphasis: {
                 disabled: true,
-                focus: 'none'
+                focus: "none",
               },
               data: normalArr,
             },
@@ -1233,25 +1295,44 @@ export default {
             },
           ],
         };
-        if (faultArr.length > 0) {
-          let that = this;
-          setInterval(function () {
-            // 每次向后滚动一个，最后一个从头开始。
-            if (option.dataZoom[0].endValue == faultArr.length) {
-              option.dataZoom[0].endValue = 9;
-              option.dataZoom[0].startValue = 0;
-            } else {
-              option.dataZoom[0].endValue = option.dataZoom[0].endValue + 1;
-              option.dataZoom[0].startValue = option.dataZoom[0].startValue + 1;
-            }
-            deviceChart.setOption(option);
-          }, 4000);
+        if (this.nameArr.length > 0) {
+        this.deviceChart.setOption(this.option);
+
+          this.deviceChart.on("mouseover", () => {
+            this.stop();
+          });
+          this.deviceChart.on("mouseout", () => {
+            this.goMove();
+          });
+          this.autoMove();
+
         }
-        deviceChart.setOption(option);
+        this.deviceChart.setOption(this.option);
         window.addEventListener("resize", function () {
-          deviceChart.resize();
+          this.deviceChart.resize();
         });
       });
+    },
+    autoMove() {
+      this.myChart = setInterval(() => {
+        if (this.option.dataZoom[0].endValue == this.nameArr.length) {
+          this.option.dataZoom[0].endValue = 8;
+          this.option.dataZoom[0].startValue = 0;
+        } else {
+          this.option.dataZoom[0].endValue =
+          this.option.dataZoom[0].endValue + 1;
+          this.option.dataZoom[0].startValue =
+          this.option.dataZoom[0].startValue + 1;
+        }
+
+        this.deviceChart.setOption(this.option);
+      }, 4000);
+    },
+    stop() {
+      clearInterval(this.myChart);
+    },
+    goMove() {
+      this.autoMove();
     },
     // loadFocusCar(specialVehicleXData, specialVehicleYData) {
     //   let newPromise = new Promise((resolve) => {
@@ -1372,7 +1453,6 @@ export default {
     //   });
     // },
     // 能耗监测echarts
-    
   },
 };
 </script>

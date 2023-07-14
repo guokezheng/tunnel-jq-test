@@ -16,5 +16,5 @@ public interface LdPhoneSpeak {
      * @param map
      * @return
      */
-    void playVoice(Map<String, Object> map, SdDevices sdDevices);
+    int playVoice(Map<String, Object> map, SdDevices sdDevices);
 }

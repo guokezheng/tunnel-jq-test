@@ -155,7 +155,7 @@ public class RadarTask {
      * 遍历redis传事故位置到前端显示
      * @throws InterruptedException
      */
-    @Scheduled(fixedRate = 5000)
+//    @Scheduled(fixedRate = 5000)
     public void deleteTokenSN() throws InterruptedException {
         //获取所有需要发送消息客服端的token
         List<String> scanKey = redisCache.getCacheList("caKokenList");

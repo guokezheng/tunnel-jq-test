@@ -79,7 +79,7 @@ public class SdIntegratedVideoService {
      * ptzCtrl 是否有云台控制 0 有（球机）  1 无（枪机）
      * @return
      */
-    @Scheduled(fixedRate = 1000*60*60*24)
+//    @Scheduled(fixedRate = 1000*60*60*24)
     public int getDeptCamList(){
         String url = address+"/system/camera/camList";
         HttpHeaders headers = new HttpHeaders();

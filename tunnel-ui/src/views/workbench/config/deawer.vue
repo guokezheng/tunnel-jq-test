@@ -325,18 +325,18 @@
         <el-row style="line-height: 40px;
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
             color: #00c2ff;">
-          <el-col :span="5" style="padding-left: 4px;">
+          <el-col :span="6" style="padding-left: 4px;">
             <span >预警名称</span>
           </el-col>
-          <el-col :span="7" >
+          <el-col :span="8" >
             <span >预警类型</span>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <span >触发值</span>
           </el-col>
-          <el-col :span="5">
-            <span >相关预案</span>
-          </el-col>
+<!--          <el-col :span="5">-->
+<!--            <span >相关预案1</span>-->
+<!--          </el-col>-->
         </el-row>
 
         <el-row
@@ -350,26 +350,26 @@
           "
         >
 
-          <el-col :span="5">
+          <el-col :span="6">
             <div >
               {{ item.strategy_name }}
             </div>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="8">
             <div >
               {{ item.name }}
             </div>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <div >
             {{ item.str }}
           </div>
           </el-col>
-          <el-col :span="5">
-            <div class="reservePlan" v-for="(itm, inx) in item.plan" :key="inx">
-            {{ itm }}
-          </div>
-          </el-col>
+<!--          <el-col :span="5">-->
+<!--            <div class="reservePlan" v-for="(itm, inx) in item.plan" :key="inx">-->
+<!--            {{ itm }}-->
+<!--          </div>-->
+<!--          </el-col>-->
         </el-row>
       </div>
     </el-drawer>

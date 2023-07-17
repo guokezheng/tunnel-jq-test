@@ -581,9 +581,10 @@ public class SdDevicesController extends BaseController {
         }
 
         //清空集合
-        cacheMap = new HashMap<>();
+//        cacheMap = new HashMap<>();
         // 特殊标记不要添加到map destroyed
         if(!"destroyed".equals(eqId)){
+            cacheMap.replaceAll((key, value) -> "1");
             //添加 要运行的
             cacheMap.put(eqId,switchType);
         }else{//带有destroyed就说明页面跳转刷新了所以要删除这个token

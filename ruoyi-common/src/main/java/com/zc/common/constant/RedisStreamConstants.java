@@ -22,4 +22,13 @@ public class RedisStreamConstants {
         public final static String GROUP = "group1";
         public final static String CONSUMER = "consumer1";
     }
+
+    /**
+     * websocket 队列、组、消费者定义小车跑数据（指定客户端）
+     */
+    public static class WebSocketCatDirectional {
+        public final static String KEY = "websocket:directionalCat";
+        public final static String GROUP = "group1Cat";
+        public final static String CONSUMER = "consumer1Cat";
+    }
 }

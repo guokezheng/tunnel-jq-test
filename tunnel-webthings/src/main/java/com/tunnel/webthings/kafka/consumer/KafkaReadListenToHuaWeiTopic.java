@@ -36,7 +36,11 @@ import com.tunnel.business.service.vehicle.ISdVehicleDataService;
 import com.tunnel.platform.service.event.impl.SdStrategyServiceImpl;
 import com.zc.common.core.kafka.kafkaTool;
 import com.zc.common.core.websocket.WebSocketService;
+import com.zc.websocket.bo.ChannelProperty;
+import com.zc.websocket.constant.AttributeKeyConst;
+import com.zc.websocket.util.MsgUtil;
 import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -1547,8 +1551,39 @@ public class KafkaReadListenToHuaWeiTopic {
         //传到前端实时展示
         JSONObject object = new JSONObject();
         object.put("radarDataList", list);
-        //给指定的客户端发送websocket请求
-        kafkaTool.sendAssignWebSocket(list,object);
+        //caKokenList 判断小车是否运行的key
+        List<String> scanKey = redisCache.getCacheList("caKokenList");
+        List<Object> caKokenList = new ArrayList<>();
+
+        for (String key :scanKey) {
+            //获取隧道以及是否推送 map可能会有多个
+            Map<String, Object> cacheMap = redisCache.getCacheMap(key);
+            //推送的token
+            String s = key.replaceAll(Constants.CAR_TOKEN, "");
+
+            //后台存在的token集合
+            for (Channel channel : MsgUtil.channels){
+                ChannelProperty channelProperty = channel.attr(AttributeKeyConst.CHANNEL_PROPERTY_KEY).get();
+                //第一步判断 token是否存活
+                if(s.equalsIgnoreCase(channelProperty.getTokenSN())){
+                    //便利map存放 隧道以及是否推送标志
+                    for(String keys : cacheMap.keySet()){
+                        //判断是否可以推送  && 前端可以推送的隧道是否和当前隧道匹配
+                        //获取当前隧道tunnelId
+                        String tunnelId = "";
+                        if(list.size()>0){
+                            tunnelId = (String)list.get(0).get("tunnelId");
+                        }
+
+                        if("0".equals(cacheMap.get(keys))&&tunnelId.equals(keys)){
+                            // 给指定客户端发送消息
+                            kafkaTool.sendAssignWebSocket(s,list,object);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     /**

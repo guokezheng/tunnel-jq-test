@@ -28,6 +28,12 @@
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common</artifactId>
         </dependency>
+        <!-- WebSocket工具类-->
+        <dependency>
+            <groupId>com.zc</groupId>
+            <artifactId>zc-websocket</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <properties>

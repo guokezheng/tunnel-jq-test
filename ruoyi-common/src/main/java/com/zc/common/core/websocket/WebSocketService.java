@@ -167,5 +167,41 @@ public class WebSocketService
         redisStream.add(RedisStreamConstants.WebSocketStreamBroadcast.KEY, "", msg);
 
     }
+    /**
+     * 小车给指定客户端发送消息
+     * @param subscriber 客户端标识（token）
+     * @param subEvent 事件名称
+     * @param content 消息内容
+     * @param <T>
+     * @return
+     */
+    public static<T> void catPostEvent(String subscriber, String subEvent, T content)
+    {
+        if (subscriber == null || subscriber.isEmpty() || subEvent == null || subEvent.isEmpty())
+        {
+            return;
+        }
 
+        EventParam<T> eventParam = new EventParam<>();
+        eventParam.setSubEvent(subEvent);
+        eventParam.setContent(content);
+
+        CmdMsg<EventParam<T>> eventCmd = new CmdMsg<>();
+        eventCmd.setMethod(EVENT);
+        eventCmd.setParams(eventParam);
+
+        RedisWebSocketMsg redisWebSocketMsg = new RedisWebSocketMsg();
+
+        redisWebSocketMsg.setCmdMsg(eventCmd);
+        redisWebSocketMsg.setSubscriber(subscriber);
+
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+        Type type = new TypeToken<RedisWebSocketMsg>()
+        {
+        }.getType();
+
+        String msg = gson.toJson(redisWebSocketMsg, type);
+
+        redisStream.add(RedisStreamConstants.WebSocketCatDirectional.KEY, "", msg);
+    }
 }

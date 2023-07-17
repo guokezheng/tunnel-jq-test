@@ -337,4 +337,11 @@ public interface ISdDevicesService {
     List<SdDevices> selectDevicesByProtocol(SdDevices sdDevices);
 
     List<Map> getMcaList();
+
+    /**
+     * 查询摄像机
+     * @param sdDevices
+     * @return
+     */
+    AjaxResult getCamera(SdDevices sdDevices);
 }

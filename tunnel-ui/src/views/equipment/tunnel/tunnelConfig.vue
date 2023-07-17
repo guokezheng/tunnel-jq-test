@@ -20,6 +20,23 @@
                      style="margin-left: 10px;">重置</el-button>
         </el-popconfirm>
 
+        <el-select
+          class="tunnelNameSelect"
+          v-model="deviceEqType"
+          placeholder="请选择设备类型"
+          style="width: 10%; "
+          size="small"
+          @change="selectEqType"
+        >
+          <el-option
+            v-for="item in deviceEqTypeList"
+            :key="item.raw.dictCode"
+            :label="item.label"
+            :value="item.raw.dictValue"
+          >
+          </el-option>
+        </el-select>
+
         <div class="display-box">
           <p class="menu-title title-wrap">显示设备编号：</p>
           <el-switch class="title-wrap" v-model="displayNumb" active-color="#46a6ff" inactive-color="#ccc">
@@ -220,7 +237,7 @@ import {
   delType,
   addType,
   updateType,
-  loadPicture,
+  loadPicture, hasListByBigType,
 } from "@/api/equipment/type/api.js";
 
 import {
@@ -244,7 +261,7 @@ var selectedIconIndex = ""; //删除索引
 var img = [];
 export default {
   name: "TunnelConfig",
-  dicts: ["environment"],
+  dicts: ["environment","sd_sys_name"],
   components: {
     DragItDude,
   },
@@ -341,6 +358,9 @@ export default {
       pageYimage: 0,
       scroll:'',
       svgScrollLeft:0,
+      //设备类型集合
+      deviceEqTypeList:"",
+      deviceEqType:"0",
     };
   },
   created: function () {
@@ -357,6 +377,8 @@ export default {
     this.selectEquipmentType();
     this.selectEnvironment();
     this.getTunnels(this.selectedTunnel.id);
+    debugger
+
 
   },
   watch: {
@@ -430,10 +452,71 @@ export default {
         that.getEquipment(selectedIconLists[num], selectedIcon);
       }
     };
-    
+
   },
 
   methods: {
+    selectEqType(e){
+      console.log(this.deviceEqTypeList)
+      console.log(this.deviceEqType)
+      let value = e
+      let lable = ""
+      for (let i = 0; i < this.deviceEqTypeList.length; i++) {
+        if(this.deviceEqTypeList[i].raw.dictValue==e){
+          lable = this.deviceEqTypeList[i].label
+        }
+      }
+
+      var val = value.toString();
+      console.log( img)
+      for (let i = 0; i <  img.length; i++) {
+        img[i].attr({
+          opacity: 0  // 设置透明度为0，使图像不可见
+        });
+      }
+      hasListByBigType(val).then((response) => {
+        let typelist = response.rows;
+        let typeIndex = [];
+        if (typelist.length > 0) {
+          for (let y = 0; y < typelist.length; y++) {
+            for (let i = 0; i < this.selectedIconList.length; i++) {
+              if (typelist[y].typeId == this.selectedIconList[i].eqType) {
+                typeIndex.push(i);
+              }
+              this.selectedIconList[i].display = false;
+              img[i].attr({
+                opacity: 0  // 设置透明度为0，使图像不可见
+              });
+
+              // 没有eqType属性的图片依旧显示 例如：隧道名称
+              if (
+                this.selectedIconList[i].eqType == null ||
+                this.selectedIconList[i].eqType == undefined
+              ) {
+                this.selectedIconList[i].display = true;
+                img[i].attr({
+                  opacity: 1  // 设置透明度为0，使图像不可见
+                });
+              }
+            }
+          }
+          for (let i = 0; i < typeIndex.length; i++) {
+            this.selectedIconList[typeIndex[i]].display = true;
+            img[typeIndex[i]].attr({
+              opacity: 1  // 设置透明度为0，使图像不可见
+            });
+          }
+        } else {
+          for (let i = 0; i < this.selectedIconList.length; i++) {
+            this.selectedIconList[i].display = false;
+            img[i].attr({
+              opacity: 0  // 设置透明度为0，使图像不可见
+            });
+          }
+        }
+      });
+      debugger
+    },
     // 获取滚动条横向滚动的长度
     dataScroll(){
       this.svgScrollLeft = document.getElementById("svgRow").scrollLeft
@@ -456,6 +539,13 @@ export default {
           e.eqId = e.id + e.sdName;
           e.pile = "";
         });
+        debugger
+        var newDict = that.dict.type.sd_sys_name;
+        if (that.selectedTunnel.name != "马家峪隧道") {
+          that.deviceEqTypeList = newDict.slice(0, 8);
+        } else if (that.selectedTunnel.name == "马家峪隧道") {
+          that.deviceEqTypeList = this.dict.type.sd_sys_name;
+        }
         // console.log(response.rows, "接口返回数据");
         // console.log(response.rows.length, "接口返回数据");
         // console.log(that.dict.type.environment, "字典数据");
@@ -564,6 +654,7 @@ export default {
         let res = response.data.storeConfigure;
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
+          debugger
           this.selectedIconList = res.eqList;
           console.log(this.selectedIconList, "this.selectedIconList");
           listType("").then((response) => {
@@ -697,6 +788,7 @@ export default {
           // console.log(iconWidth, iconWidth < 20, "iconWidth");
           // let num = iconWidth<30?(iconWidth<25?10:2):-8;
           // let num = 0;
+          //添加图像
           var img3 = that.svg.paper.image(
             list[i].url[0],
             list[i].position.left, //此处增加+ iconWidth
@@ -891,7 +983,7 @@ export default {
                 text: "",
               });
             }
-          } 
+          }
         }
       } else {
         //显示
@@ -932,7 +1024,7 @@ export default {
     },
     /* 点击删除*/
     deleteImage() {
-      // debugger
+      debugger
       // console.log("我右键删除了", this.direction, img);
       if (this.direction == 1) {
         this.upList.splice(this.deleteIndex, 1, {});
@@ -1035,9 +1127,9 @@ export default {
     },
     /* 选择设备*/
     getEquipment(item, eqType) {
-      // console.log(item, eqType, "选择设备");
-      // console.log(this.selectedIconList);
-      // debugger
+      console.log(item, eqType, "选择设备");
+      console.log(this.selectedIconList);
+      debugger
       var url = eqType.url;
       var iconWidth = Number(eqType.iconWidth);
       var iconHeight = Number(eqType.iconHeight);
@@ -2292,6 +2384,10 @@ input {
 
 .el-tabs--border-card .el-tabs__content {
   padding: 0px;
+}
+
+.tunnelNameSelect {
+  margin-left: 10px;
 }
 
 /* .el-tabs--border-card .el-tabs__header .el-tabs__item.is-active {

@@ -473,6 +473,7 @@ export default {
       ],
       tunnelId:'',
       tunnelLane:'',
+      tunnelIdNew:'',
     };
   },
   created() {
@@ -626,7 +627,7 @@ export default {
       this.drawerCVisible = !this.drawerCVisible;
       this.drawerA = false;
       this.drawerB = false;
-
+      console.log(this.tunnelId)
       workTriggerInfo(this.tunnelId).then((response) => {
         // console.log(response, "自动触发抽屉");
         this.isDrawerCList = response.data;

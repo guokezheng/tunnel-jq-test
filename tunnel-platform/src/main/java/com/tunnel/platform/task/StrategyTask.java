@@ -435,7 +435,7 @@ public class StrategyTask {
                         //所有隧道Map
                         Map<String,String> tunnelMap = SpringUtils.getBean(ISdTunnelsService.class).getTunnelNameMap();
                         sdEvent.setTunnelId(s.get("tunnel_id").toString());
-                        sdEvent.setEventSource("3");
+                        sdEvent.setEventSource("6");
                         sdEvent.setDirection(s.get("eq_direction").toString());
                         sdEvent.setStakeNum(s.get("pile").toString());
                         if(s.get("lane")!=null){

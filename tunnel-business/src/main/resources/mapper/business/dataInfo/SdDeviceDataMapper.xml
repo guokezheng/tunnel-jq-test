@@ -486,7 +486,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 
-
+    <select id="getItemDataByEqId" resultType="map">
+        SELECT
+            B.id as itemId,
+            B.item_name as itemName,
+            A.id as dataId,
+            A.DATA as data,
+            B.unit as unit
+        FROM
+            sd_device_data A
+                LEFT JOIN sd_device_type_item B ON A.item_id = B.id
+        WHERE
+            A.device_id = #{eqId}
+    </select>
 
 
 

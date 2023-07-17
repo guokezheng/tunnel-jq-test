@@ -42,6 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="eqStatus"    column="eq_status"    />
         <result property="eqState"    column="eqState"    />
         <result property="runState"    column="runState"    />
+        <result property="runStatus"    column="runStatus"    />
         <result property="eqStatusTime"    column="eq_status_time"    />
         <result property="controlPointAddress"    column="control_point_address"    />
         <result property="queryPointAddress"    column="query_point_address"    />
@@ -950,7 +951,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesInfo" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select d.eq_name,t.type_name,eq_id,u.tunnel_name,c.dict_label eq_direction,d.pile,d.install_time
+        select d.eq_name,d.eq_type as eq_type,t.type_name,eq_id,u.tunnel_name,c.dict_label eq_direction,d.pile,d.install_time
         from sd_devices d
         left join sd_equipment_type t on d.eq_type = t.type_id
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
@@ -964,8 +965,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getAppDevicesStatus" parameterType="SdDevices" resultMap="SdDevicesResult">
         SELECT
          t.eq_name ,
-         es.device_state,
-         es.state_name runState,
+         es.device_state runState,
+         es.state_name runStatus,
          e.dict_label eqState,
          sdd.update_time,
          es.icon_file_id

@@ -53,14 +53,8 @@
             </el-tooltip>
           </el-button-group>
         </el-row>
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(7px);
-          "
-        >
-          <div class="flex-row" style="z-index: 8">
+        
+          <div class="flex-row buttonsBox">
             <!-- <div class="display-box zoomClass">
               <p
                 class="zoom-title"
@@ -207,68 +201,71 @@
               <span>操作日志</span>
             </el-button>
           </div>
-          <div class="buttonsDeawer" @click="isDrawer()">
-            <img src="../../../assets/icons/deawer.png"/>
-          </div>
-          <el-drawer
-            title="一键控制"
-            :visible.sync="buttonsDeawer"
-            :modal="false"
-            :append-to-body="true"
-            class="drawerBox"
-            :close-on-click-modal="false"
-
-          >
-            <el-row>
-              <el-col :span="12">
-                <div class="drawerItem zoomClass " >
-                  <p
-                    class="zoom-title"
-                    style="font-size: 0.7vw; margin-right: 0.5vw"
-                  >
-                    {{ srollSwitch ? "底图滚动关" : "底图滚动开" }}
-                  </p>
-                  <el-switch
-                    v-model="srollSwitch"
-                    class="switchStyle"
-                    @change="srollSwitchChange"
-                  ></el-switch>
-                </div>
-              </el-col>
-              <el-col :span="12">
-                <div class="drawerItem zoomClass ">
-                  <p
-                    class="zoom-title"
-                    style="font-size: 0.7vw; margin-right: 0.5vw"
-                  >
-                    {{ carShow ? "实时车辆关" : "实时车辆开" }}
-                  </p>
-                  <el-switch
-                    v-model="carShow"
-                    class="switchStyle"
-                    @change="carShowChange"
-                  ></el-switch>
-                </div>
-              </el-col>
-              <el-col :span="12">
-                <div class="drawerItem zoomClass ">
-                  <p
-                    class="zoom-title"
-                    style="font-size: 0.7vw; margin-right: 0.5vw"
-                  >
-                    {{ zoomSwitch == 0 ? "缩放比例开" : "缩放比例关" }}
-                  </p>
-                  <el-switch
-                    v-model="zoomSwitch"
-                    class="switchStyle"
-                    @change="zoomSwitchChange"
-                  ></el-switch>
-                </div>
-              </el-col>
-            </el-row>
-          </el-drawer>
         </div>
+      <div class="buttonsDeawer" @click="isDrawer()">
+        <img 
+          src="../../../assets/icons/deawer.png" 
+          :style="{
+            transform:buttonsDeawer?'rotate(180deg)':''
+          }"
+        />
       </div>
+      <el-drawer
+        title="一键控制"
+        :visible.sync="buttonsDeawer"
+        :modal="false"
+        :append-to-body="true"
+        class="drawerBox"
+        :close-on-click-modal="false"
+      >
+        <el-row>
+          <el-col :span="12">
+            <div class="drawerItem zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.7vw; margin-right: 0.5vw"
+              >
+                {{ srollSwitch ? "底图滚动关" : "底图滚动开" }}
+              </p>
+              <el-switch
+                v-model="srollSwitch"
+                class="switchStyle"
+                @change="srollSwitchChange"
+              ></el-switch>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="drawerItem zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.7vw; margin-right: 0.5vw"
+              >
+                {{ carShow ? "实时车辆关" : "实时车辆开" }}
+              </p>
+              <el-switch
+                v-model="carShow"
+                class="switchStyle"
+                @change="carShowChange"
+              ></el-switch>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="drawerItem zoomClass">
+              <p
+                class="zoom-title"
+                style="font-size: 0.7vw; margin-right: 0.5vw"
+              >
+                {{ zoomSwitch == 0 ? "缩放比例开" : "缩放比例关" }}
+              </p>
+              <el-switch
+                v-model="zoomSwitch"
+                class="switchStyle"
+                @change="zoomSwitchChange"
+              ></el-switch>
+            </div>
+          </el-col>
+        </el-row>
+      </el-drawer>
       <div class="vehicleLane">
         <div
           class="content"
@@ -465,15 +462,19 @@
                       effect="dark"
                       placement="right"
                       popper-class="tipCase"
+                      ref="tipCaseRef"
+                      offset="10"
                     >
-                      <div slot="content">
-                        <span>名称：{{ item.eqName }}</span
-                        ><br />
-                        <!-- <span>桩号：{{ item.pile}}</span><br/> -->
-                        <span>方向：{{ getDirection(item.eqDirection) }}</span>
-                      </div>
-
-                      <!-- 巡检机器人 -->
+                      <template #content>
+                        <div>
+                          <span>名称：{{ item.eqName }}</span
+                          ><br />
+                          <!-- <span>桩号：{{ item.pile}}</span><br/> -->
+                          <span
+                            >方向：{{ getDirection(item.eqDirection) }}</span
+                          >
+                        </div>
+                      </template>
 
                       <div
                         v-show="
@@ -1532,7 +1533,7 @@
       width="1000px"
       append-to-body
       :close-on-click-modal="false"
-      :destroy-on-close ="true"
+      :destroy-on-close="true"
       @close="strategyResetQuery"
     >
       <div class="dialogStyleBox">
@@ -1543,12 +1544,16 @@
         <el-tab-pane label="手动控制" name="richang"></el-tab-pane>
         <el-tab-pane label="定时控制" name="dingshi"></el-tab-pane>
         <el-tab-pane label="自动触发" name="zidong"></el-tab-pane>
-<!--                <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>-->
+        <!--                <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>-->
       </el-tabs>
       <el-row
         :gutter="20"
         style="margin: 0px 0 10px"
-        v-show="strategyActive == 'richang'||strategyActive == 'dingshi'||strategyActive == 'zidong'"
+        v-show="
+          strategyActive == 'richang' ||
+          strategyActive == 'dingshi' ||
+          strategyActive == 'zidong'
+        "
       >
         <el-col :span="4">
           <el-button size="small" @click="strategResetQuery">刷新</el-button>
@@ -1732,7 +1737,12 @@
           prop="tunnels.tunnelName"
           v-if="strategyActive == 'yujing'"
         />
-        <el-table-column label="策略名称" align="center" prop="strategyName" show-overflow-tooltip/>
+        <el-table-column
+          label="策略名称"
+          align="center"
+          prop="strategyName"
+          show-overflow-tooltip
+        />
         <el-table-column
           label="方向"
           align="center"
@@ -1768,7 +1778,12 @@
           <div v-else>暂无信息</div>
         </el-table-column>
 
-        <el-table-column label="状态" align="center" prop="schedulerTime" v-if="strategyActive != 'richang'">
+        <el-table-column
+          label="状态"
+          align="center"
+          prop="schedulerTime"
+          v-if="strategyActive != 'richang'"
+        >
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.strategyState"
@@ -1781,15 +1796,19 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="执行" align="center" prop="schedulerTime"   v-if="strategyActive == 'richang'">
+        <el-table-column
+          label="执行"
+          align="center"
+          prop="schedulerTime"
+          v-if="strategyActive == 'richang'"
+        >
           <template slot-scope="scope">
-
             <el-button
               size="mini"
               type="text"
               class="tableBlueButtton"
               @click="richanghandleUpdate(scope.row)"
-            >执行</el-button
+              >执行</el-button
             >
           </template>
         </el-table-column>
@@ -1877,7 +1896,7 @@ import {
   handleStrategy,
   workTriggerInfo,
   updateState,
-  updateStrategyInfo
+  updateStrategyInfo,
 } from "@/api/event/strategy";
 import { getEntranceExitVideo } from "@/api/eventDialog/api.js";
 import { selectByEqDeno } from "@/api/business/roadState.js";
@@ -1961,7 +1980,7 @@ import {
   addConfig,
   updateConfig,
 } from "@/api/business/enhancedLighting/app.js";
-import {listRl} from "@/api/event/strategyRl";
+import { listRl } from "@/api/event/strategyRl";
 
 let configData = {}; //配置信息
 let wrapperClientX = 0;
@@ -2335,7 +2354,7 @@ export default {
       },
       checkboxTunnel: [], //可点的隧道
       tunnelList: [], //隧道
-      tunnelItem:"",
+      tunnelItem: "",
       selectedIconList: [], //配置图标
       stateForm: {
         state: 1,
@@ -2366,7 +2385,7 @@ export default {
       // 策略visible
       strategyVisible: null,
       strategyList: [],
-      strategyLoading:false,
+      strategyLoading: false,
       asd: 50,
       fjState: null,
       hostIP: null,
@@ -3036,29 +3055,25 @@ export default {
         }
       });
     },
-    async richanghandleUpdate(row){
-      console.log(row)
-      debugger
-      let params = row
+    async richanghandleUpdate(row) {
+      console.log(row);
+      debugger;
+      let params = row;
       await listRl({ strategyId: params.id }).then((response) => {
         // console.log(response, "设备数据");
         params.manualControl = response.rows;
         params.manualControl.equipmentTypeId = params.manualControl.eqTypeId;
         for (let i = 0; i < response.rows.length; i++) {
           let attr = response.rows[i];
-          let manualControl =params.manualControl[i];
-
+          let manualControl = params.manualControl[i];
 
           console.log(params.manualControl[i].value, "选择的设备");
           params.manualControl[i].state = attr.state;
           params.manualControl[i].stateNum = attr.stateNum;
 
-          params.manualControl[i].manualControlStateList =
-            attr.eqStateList;
+          params.manualControl[i].manualControlStateList = attr.eqStateList;
 
-          params.manualControl[i].equipmentTypeId = String(
-            attr.eqTypeId
-          );
+          params.manualControl[i].equipmentTypeId = String(attr.eqTypeId);
           // 情报板设备
           if (
             params.manualControl[i].equipmentTypeId == 16 ||
@@ -3068,17 +3083,15 @@ export default {
             params.manualControl[i].state = +attr.state;
           }
 
-
           //基本照明限制 最低亮度为 30
-          if(params.manualControl[i].equipmentTypeId == 9){
+          if (params.manualControl[i].equipmentTypeId == 9) {
             this.$set(params.manualControl[i], "limitMin", 30);
           }
-
-          }
-      })
+        }
+      });
       await updateStrategyInfo(params).then((res) => {
-        debugger
-        if(res.code==200){
+        debugger;
+        if (res.code == 200) {
           this.$modal.msgSuccess("执行成功");
         }
       });
@@ -3512,11 +3525,11 @@ export default {
     strategyResetQuery() {
       this.resetQuery();
     },
-    strategResetQuery(){
-      this.strategyLoading = true
+    strategResetQuery() {
+      this.strategyLoading = true;
       this.queryParams.pageSize = 10;
       this.queryParams.pageNum = 1;
-      this.getStrategyQuery(this.dictCode)
+      this.getStrategyQuery(this.dictCode);
       this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },
@@ -3614,7 +3627,10 @@ export default {
     changeSite(index) {
       console.log(index, "index");
       if (index) {
-        console.log(this.$cache.local.get("deptId"),"this.$cache.local.get('deptId')")
+        console.log(
+          this.$cache.local.get("deptId"),
+          "this.$cache.local.get('deptId')"
+        );
         // 判断是否有缓存的管理站id
         // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
         // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
@@ -5127,7 +5143,6 @@ export default {
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
-
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;
@@ -5158,34 +5173,34 @@ export default {
       this.getStrategyQuery(tabIndex);
     },
     getStrategyQuery(tabIndex) {
-      this.strategyLoading = true
+      this.strategyLoading = true;
       this.loading = true;
-      console.log(this.queryParams)
-      let tunnelItems =''
-      if(!!this.tunnelItem){
-        tunnelItems = this.tunnelItem
-      }else{
-        tunnelItems = this.tunnelList[0]
+      console.log(this.queryParams);
+      let tunnelItems = "";
+      if (!!this.tunnelItem) {
+        tunnelItems = this.tunnelItem;
+      } else {
+        tunnelItems = this.tunnelList[0];
       }
-      if(tabIndex ==0){
+      if (tabIndex == 0) {
         this.queryParams.strategyGroup = Number(1);
-        this.queryParams.tunnelId = tunnelItems.tunnelId
-        this.queryParams.strategyType = "0"
-      }else if(tabIndex ==1){
+        this.queryParams.tunnelId = tunnelItems.tunnelId;
+        this.queryParams.strategyType = "0";
+      } else if (tabIndex == 1) {
         this.queryParams.strategyGroup = Number(1);
-        this.queryParams.tunnelId = tunnelItems.tunnelId
-        this.queryParams.strategyType = "1"
-      }else if(tabIndex ==2){
+        this.queryParams.tunnelId = tunnelItems.tunnelId;
+        this.queryParams.strategyType = "1";
+      } else if (tabIndex == 2) {
         this.queryParams.strategyGroup = Number(1);
-        this.queryParams.tunnelId = tunnelItems.tunnelId
-        this.queryParams.strategyType = "2"
+        this.queryParams.tunnelId = tunnelItems.tunnelId;
+        this.queryParams.strategyType = "2";
       }
-      debugger
-      console.log(this.queryParams)
+      debugger;
+      console.log(this.queryParams);
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;
-        this.strategyLoading = false
+        this.strategyLoading = false;
         this.loading = false;
       });
     },
@@ -5259,8 +5274,10 @@ export default {
     },
     handleTableWheel(event) {
       let obj = this.$refs.divRoller;
+      let tipCase = this.$refs.tipCaseRef;
       if (this.handleTableWheelSwithch == true) {
         this.tableZoom(obj, event);
+        this.tableZoom(tipCase, event);
       }
     },
     tableZoom(obj, event) {
@@ -5507,6 +5524,8 @@ export default {
     zoomChange(val) {
       val < 70 ? (val = this.zoom) : "";
       val > 130 ? (val = this.zoom) : "";
+      console.log(document.getElementsByClassName("tipCase"));
+      console.log(this.$refs.tipCaseRef, "this.$refs.tipCaseRef.style");
       if (val) {
         this.$refs.divRoller.style.zoom = val + "%";
         this.setMoveTop(val);
@@ -5534,29 +5553,28 @@ export default {
 
 <style lang="scss" scoped>
 .buttons {
-  padding:0;
-  width:110px !important;
-  height:28px !important;
+  padding: 0;
+  width: 110px !important;
+  height: 28px !important;
   overflow: hidden;
-  span{
-    img{
-      width:13px;
-      margin-right:5px;
+  span {
+    img {
+      width: 13px;
+      margin-right: 5px;
       display: inline;
       transform: translateY(2px);
     }
-    span{
+    span {
       line-height: 16px;
     }
   }
-    
 }
 ::v-deep .el-drawer {
   pointer-events: auto !important;
 }
 .buttonsDeawer {
   width: 1.6vw;
-  height: 4.1vh;
+  height: 4.2vh;
   background: linear-gradient(
     90deg,
     rgba(0, 172, 237, 0.8),
@@ -5566,8 +5584,11 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  img{
-    width:1vw;
+  position: absolute;
+  right: 0;
+  top: 10px;
+  img {
+    width: 1vw;
     height: 1.6vh;
   }
 }
@@ -5589,13 +5610,13 @@ export default {
       color: #fff;
       margin-bottom: 0px;
     }
-    .drawerItem{
-      display:flex;
-      padding-left:10px;
-      line-height:34px;
-      .el-switch{
-        height:34px;
-        line-height:34px;
+    .drawerItem {
+      display: flex;
+      padding-left: 10px;
+      line-height: 34px;
+      .el-switch {
+        height: 34px;
+        line-height: 34px;
       }
     }
   }
@@ -5668,18 +5689,22 @@ export default {
   width: 120px;
   // height: 40px;
   position: absolute;
-  top: -40px;
-  left: 30px;
+  top: -42px;
+  left: 10px;
   line-height: 1;
   text-align: center;
   padding: 10px;
-  padding-bottom: 22px;
+  // padding-bottom: 22px;
   font-size: 10px;
-  background-image: url(../../../assets/cloudControl/screenEqName.png);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+  // background-image: url(../../../assets/cloudControl/screenEqName.png);
+  // background-repeat: no-repeat;
+  // background-size: 100% 100%;
   color: #07c3fc;
   z-index: 10;
+  background: #fff;
+  border-radius: 10px;
+  max-height: 42px;
+  border: solid 1px #07c3fc;
 }
 .textFalseBox {
   width: 120px;
@@ -6001,7 +6026,10 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-
+.buttonsBox{
+  z-index: 8;
+  margin-right: 32px;
+}
 .flex-row {
   display: flex;
   // flex-direction: row;
@@ -6009,7 +6037,7 @@ export default {
   align-items: center;
   padding: 0 1vw;
   font-size: 0.6vw;
-  >span{
+  > span {
     display: flex;
   }
 }
@@ -6605,6 +6633,18 @@ input {
   background: #cdedfa !important;
   border: solid 1px #1d58a9;
   color: #1d58a9 !important;
+  padding: 0 !important;
+  // transform:translateX(10px);
+  span {
+    padding: 10px !important;
+    line-height: 24px !important;
+  }
+  // span:first-of-type{
+  //   padding-bottom: 0 !important;
+  // }
+  // span:last-of-type{
+  //   padding-top: 5px !important;
+  // }
   // transform: translateX(15px);
 }
 .workbench-msg {

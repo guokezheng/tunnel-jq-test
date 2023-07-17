@@ -1,28 +1,32 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.page.TableSupport;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.ISdEquipmentStateService;
 import com.tunnel.business.service.dataInfo.ISdEquipmentTypeService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
+import com.tunnel.deal.generalcontrol.GeneralControlBean;
+import com.tunnel.deal.generalcontrol.service.GeneralControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * app端设备Controller
@@ -43,6 +47,15 @@ public class SdAppDevicesController extends BaseController
 
     @Autowired
     private ISdOperationLogService sdOperationLogService;
+
+    @Autowired
+    private GeneralControlService generalControlService;
+
+    @Autowired
+    private ISdEquipmentStateService sdEquipmentStateService;
+
+    @Autowired
+    private ISdDeviceDataService sdDeviceDataService;
 
 
 
@@ -109,7 +122,23 @@ public class SdAppDevicesController extends BaseController
             eqList.get(0).setRunStatus(statusList.get(0).getRunState());
             eqList.get(0).setUpdateTime(statusList.get(0).getUpdateTime());
             eqList.get(0).setiFileList(statusList.get(0).getiFileList());
+
+            SdEquipmentState sdEquipmentState = new SdEquipmentState();
+            sdEquipmentState.setStateTypeId(eqList.get(0).getEqType());
+            sdEquipmentState.setIsControl(1);
+            sdEquipmentState.setStateType("2");
+
+            // 获取设备可控
+            List<SdEquipmentState> list = sdEquipmentStateService.selectSdEquipmentStateListGroupByStateType(sdEquipmentState);
+            map.put("stateList",list);
+
+            // 设备参数
+            List<Map> itemData = sdDeviceDataService.getItemDataByEqId(eqId);
+            map.put("itemData",itemData);
+
+            eqList.get(0).setParams(map);
         }
+
 
         return Result.success(eqList);
     }
@@ -133,6 +162,50 @@ public class SdAppDevicesController extends BaseController
 
         return new TableDataInfo(null,0);
 
+    }
+
+    /**
+     * app端  查询控制执行器关联设备列表
+     *
+     * @param eqId 设备编号
+     * @param state 设备状态
+     * @param brightness 亮度
+     * @param frequency 频率
+     * @param fireMark 标号位置信息
+     *
+     * @return
+     */
+    @GetMapping("/app/controlDevice")
+    public AjaxResult controlDevice(String eqId,String state,String brightness,String frequency,String fireMark){
+
+        if(eqId == null){
+            return AjaxResult.error("设备Id不能为空");
+        }
+
+        if(state == null){
+            return AjaxResult.error("状态信息能为空");
+        }
+
+        SdDevices sdDevices = devicesService.selectSdDevicesById(eqId);
+
+        if(Integer.parseInt(brightness) < 30 && state.equals("1") && DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+            return AjaxResult.error("基本照明亮度不得低于30");
+        }
+        //设备控制
+        GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
+        if(generalControlBean == null){
+            return AjaxResult.error("设备协议配置为空");
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("state",state);
+        map.put("brightness",brightness);
+        map.put("frequency",frequency);
+        map.put("fireMark",fireMark);
+
+        AjaxResult ajaxResult = generalControlBean.control(map,sdDevices);
+
+        return ajaxResult;
     }
 
 

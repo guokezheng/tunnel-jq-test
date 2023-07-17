@@ -1439,7 +1439,7 @@ export default {
       zd_boxShow: false,
       boxShow: false,
       swiperOptionTop: {
-        loop: false,
+        loop: true,
         loopedSlides: 5, // looped slides should be the same
         spaceBetween: 10,
       },
@@ -1957,6 +1957,9 @@ export default {
     getReservePlanData() {
       this.ReservePlanList = [];
       this.eventFormDetail.currencyId = "";
+      if(this.eventFormDetail.eventTypeId == 20){
+        this.eventFormDetail.laneNo = ['1','2','3']
+      }
       let data = {
         tunnelId: this.eventFormDetail.tunnelId,
         planTypeId: this.eventFormDetail.eventTypeId,
@@ -2339,6 +2342,9 @@ export default {
         const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
         swiperTop.controller.control = swiperThumbs;
         swiperThumbs.controller.control = swiperTop;
+        swiperThumbs.activeIndex = 0;
+        swiperTop.activeIndex = 0;
+
       });
       this.getEventList();
       if (item.stakeNum) {

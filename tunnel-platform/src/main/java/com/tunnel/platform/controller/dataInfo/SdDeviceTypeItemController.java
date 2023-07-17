@@ -45,7 +45,7 @@ public class SdDeviceTypeItemController extends BaseController
     /**
      * 查询设备类型数据项列表
      */
-    @PreAuthorize("@ss.hasPermi('eqType:item:list')")
+ /*   @PreAuthorize("@ss.hasPermi('eqType:item:list')")*/
     @GetMapping("/list")
     @ApiOperation("查询设备类型数据项列表")
     public TableDataInfo list(SdDeviceTypeItem sdDeviceTypeItem)

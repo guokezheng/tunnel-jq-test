@@ -647,5 +647,10 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             insertSdDeviceData(sdDeviceData);
         }
     }
+
+    @Override
+    public List<Map> getItemDataByEqId(String eqId) {
+        return sdDeviceDataMapper.getItemDataByEqId(eqId);
+    }
 }
 

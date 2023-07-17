@@ -126,4 +126,5 @@ public interface ISdDeviceDataService {
      */
    void updateDeviceData(SdDevices sdDevices, String value, Long itemId);
 
+    List<Map> getItemDataByEqId(String eqId);
 }

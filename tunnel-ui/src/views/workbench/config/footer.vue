@@ -1308,9 +1308,9 @@ export default {
 
         }
         this.deviceChart.setOption(this.option);
-        window.addEventListener("resize", function () {
-          this.deviceChart.resize();
-        });
+        // window.addEventListener("resize", function () {
+        //   this.deviceChart.resize();
+        // });
       });
     },
     autoMove() {

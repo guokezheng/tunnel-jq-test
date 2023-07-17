@@ -46,15 +46,18 @@
         <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
             v-model="queryParams.tunnelId"
+            @change="changeGroup()"
             placeholder="请选择所属隧道"
             clearable
             size="small"
+
           >
             <el-option
               v-for="item in eqTunnelData"
               :key="item.tunnelId"
               :label="item.tunnelName"
               :value="item.tunnelId"
+
             />
           </el-select>
         </el-form-item>
@@ -373,6 +376,7 @@
                     value-format="yyyy-MM-dd HH:mm:ss"
                     @change="handleEndTime"
                     placeholder="选择预完成时"
+                    @focus="focus"
                   >
                   </el-date-picker>
                 </el-form-item>
@@ -1162,6 +1166,12 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+
+    //更换隧道，更新隧道下关联班组列表
+    changeGroup(){
+      console.log("1111111111111111")
+      console.log(this.queryParams.tunnelId)
+    },
     closeRecord() {
       // 关闭弹出层
       this.$refs.tableFile.clearSelection();
@@ -1756,6 +1766,13 @@ export default {
         this.openGz = true;
         this.openCz = true;
         this.title = "修改巡查任务";
+      });
+    },
+    focus() {
+      this.$nextTick(() => {
+        document
+          .getElementsByClassName("el-button--text")[1]
+          .setAttribute("style", "display:none"); // 隐藏此刻按钮
       });
     },
     exportTaskReport(row) {

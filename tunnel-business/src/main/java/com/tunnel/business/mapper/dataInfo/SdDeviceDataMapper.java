@@ -120,4 +120,6 @@ public interface SdDeviceDataMapper
     int updateFireMonitorData(SdDeviceData sdDeviceData);
 
     int insertFireMonitorData(SdDeviceData sdDeviceData);
+
+    List<Map> getItemDataByEqId(String eqId);
 }

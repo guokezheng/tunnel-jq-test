@@ -468,4 +468,18 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	SdDevices getXfpDevicesInfo(String deviceAddress);
+
+	/**
+	 * 查询左侧
+	 * @param devices
+	 * @return
+	 */
+	SdDevices getDevLeft(SdDevices devices);
+
+	/**
+	 * 查询右侧
+	 * @param devices
+	 * @return
+	 */
+	SdDevices getDevRight(SdDevices devices);
 }

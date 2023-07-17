@@ -536,6 +536,7 @@ export default {
   },
   methods: {
     init() {
+      debugger
       if (this.sink == "add") {
         this.resetForm();
       }
@@ -544,6 +545,8 @@ export default {
       // this.getEquipmentType();
       this.getTunnels();
       this.getDirection();
+      //给设备数据项赋值
+      this.getListItem();
     },
     // 请选择设备 照明
     selectStateVal(index){
@@ -578,7 +581,7 @@ export default {
     //查看情报板信息
     openTemDialog(item){
       let params = {id: item.id,state:item.state,type:'1'};
-   
+
       if(item.state == '' || item.state == null){
         return this.$modal.msgWarning("请选择模板");
       }
@@ -899,7 +902,7 @@ export default {
       this.strategyForm.autoControl = [
         { state: "", value: "", equipmentTypeId: "" },
       ];
-      this.strategyForm.triggers = 
+      this.strategyForm.triggers =
         { deviceTypeId: "", deviceId: "", elementId: "",comparePattern:"",compareValue:"", warningType:""}
       ;
 
@@ -981,6 +984,7 @@ export default {
       if(this.strategyForm.triggers.deviceId){
         listItem({ deviceTypeId: this.strategyForm.triggers.deviceTypeId }).then(
           (res) => {
+            debugger
             this.dataItem = res.rows;
             console.log(this.dataItem, "数据项");
           }

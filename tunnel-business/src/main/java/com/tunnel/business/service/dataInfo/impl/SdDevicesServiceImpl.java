@@ -1127,4 +1127,20 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         }
         return list;
     }
+
+    @Override
+    public AjaxResult getCamera(SdDevices devices) {
+        if(devices.getRlModel() == null){
+            SdDevices devLeft = sdDevicesMapper.getDevLeft(devices);
+            if(devLeft == null){
+                return AjaxResult.success(sdDevicesMapper.getDevRight(devices));
+            }
+            return AjaxResult.success(devLeft);
+        }
+        if("left".equals(devices.getRlModel())){
+            return AjaxResult.success(sdDevicesMapper.getDevLeft(devices));
+        }else {
+            return AjaxResult.success(sdDevicesMapper.getDevRight(devices));
+        }
+    }
 }

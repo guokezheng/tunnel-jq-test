@@ -1439,7 +1439,7 @@ export default {
       zd_boxShow: false,
       boxShow: false,
       swiperOptionTop: {
-        loop: false,
+        loop: true,
         loopedSlides: 5, // looped slides should be the same
         spaceBetween: 10,
       },
@@ -2339,6 +2339,9 @@ export default {
         const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
         swiperTop.controller.control = swiperThumbs;
         swiperThumbs.controller.control = swiperTop;
+        swiperThumbs.activeIndex = 0;
+        swiperTop.activeIndex = 0;
+
       });
       this.getEventList();
       if (item.stakeNum) {

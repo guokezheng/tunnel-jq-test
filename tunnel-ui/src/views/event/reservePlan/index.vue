@@ -1738,6 +1738,7 @@ export default {
     closeStrategy() {
       // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
+      this.planTypeIdList = []
       // this.handleQuery();
       this.$refs.boardRef.handleClosee();
 
@@ -1793,6 +1794,7 @@ export default {
       addProcess(data).then((res) => {
         if (res.code === 200) {
           this.strategyVisible = false;
+          this.planTypeIdList = []
           this.$modal.msgSuccess(res.msg);
           this.$refs.planTable.clearSelection();
           this.getList();

@@ -128,7 +128,11 @@
     />
 
     <!-- 添加或修改设备点位状态详情对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body class="hitchDialog">
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
 <!--        <el-form-item label="设备id" prop="eqId">
           <el-input v-model="form.eqId" placeholder="请输入设备id" />
@@ -139,7 +143,7 @@
           </el-select>
         </el-form-item>-->
         <el-form-item label="数据项" prop="itemId">
-          <el-select ref="itemRef" v-model="form.itemId" placeholder="请选择数据项" >
+          <el-select ref="itemRef" v-model="form.itemId" placeholder="请选择数据项" style="width:100%">
             <el-option
               v-for="(item) in itemList"
               :key="item.id"
@@ -154,6 +158,7 @@
             v-model="form.isReserved"
             placeholder="请选择是否可控"
             @change="itemChange"
+            style="width:100%"
           >
             <el-option
               v-for="dict in isControlOptions"
@@ -164,7 +169,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="数据类型" prop="dataType">
-          <el-select v-model="form.dataType" placeholder="请选择数据类型">
+          <el-select v-model="form.dataType" placeholder="请选择数据类型" style="width:100%">
             <el-option
               v-for="(item) in dataTypeList"
               :key="item.dictValue"
@@ -230,8 +235,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button class="submitButton" @click="submitForm">确 定</el-button>
+        <el-button class="closeButton" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 用户导入对话框 -->
@@ -660,3 +665,10 @@ export default {
   }
 };
 </script>
+<style scoped lang="scss">
+::v-deep .el-dialog__body{
+    max-height: 70vh!important;
+    overflow-y: auto!important;
+  }
+
+</style>

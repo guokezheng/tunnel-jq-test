@@ -423,6 +423,18 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      **/
     private String exportIds;
 
+    /**
+     * 区分标志位
+     */
+    private String rlModel;
+
+    public String getRlModel() {
+        return rlModel;
+    }
+
+    public void setRlModel(String rlModel) {
+        this.rlModel = rlModel;
+    }
 
     public Long[] getEqTypes() {
         return eqTypes;

@@ -604,6 +604,17 @@ public class SdDevicesController extends BaseController {
         }
 
     }
+
+    /**
+     * 查询摄像机
+     * @param sdDevices
+     * @return
+     */
+    @GetMapping("/getCamera")
+    public AjaxResult getCamera(SdDevices sdDevices){
+        return sdDevicesService.getCamera(sdDevices);
+    }
+
     /**
      * 设置cache key
      *

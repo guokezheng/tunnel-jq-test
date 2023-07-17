@@ -2,6 +2,8 @@ package com.tunnel.platform.controller.electromechanicalPatrol;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.SdEquipmentCategoryDto;
+import com.ruoyi.common.core.domain.TreeCategorySelect;
 import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -13,10 +15,7 @@ import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
-import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
-import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.dataInfo.ISdEquipmentStateService;
-import com.tunnel.business.service.dataInfo.ISdEquipmentTypeService;
+import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.generalcontrol.GeneralControlBean;
 import com.tunnel.deal.generalcontrol.service.GeneralControlService;
@@ -56,6 +55,12 @@ public class SdAppDevicesController extends BaseController
 
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
+
+    @Autowired
+    private ISdTunnelsService sdTunnelsService;
+
+    @Autowired
+    private ISdEquipmentCategoryService sdEquipmentCategoryService;
 
 
 
@@ -188,8 +193,14 @@ public class SdAppDevicesController extends BaseController
 
         SdDevices sdDevices = devicesService.selectSdDevicesById(eqId);
 
-        if(Integer.parseInt(brightness) < 30 && state.equals("1") && DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
-            return AjaxResult.error("基本照明亮度不得低于30");
+        if(sdDevices == null){
+            return AjaxResult.error("设备不存在");
+        }
+
+       if(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().equals(sdDevices.getEqType())){
+            if(Integer.parseInt(brightness) < 30 && state.equals("1")){
+                return AjaxResult.error("基本照明亮度不得低于30");
+            }
         }
         //设备控制
         GeneralControlBean generalControlBean = generalControlService.getProtocolBean(sdDevices);
@@ -219,6 +230,29 @@ public class SdAppDevicesController extends BaseController
 
 
         return Result.success(devicesService.getMcaList());
+    }
+
+    /**
+     * 查询当前登录者所属
+     * @return
+     */
+    @GetMapping("/app/getJlyTunnel")
+    public AjaxResult getJlyTunnel(){
+        return AjaxResult.success(sdTunnelsService.getJlyTunnel());
+    }
+
+
+    /**
+     * 查询设备类型
+     * @return
+     */
+    @GetMapping(value = "/app/getCategoryTree")
+    public AjaxResult getCategoryTree() {
+        List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryList();
+
+        List<TreeCategorySelect> treeCategory = sdEquipmentCategoryService.buildCategoryTreeSelect(list);
+
+        return AjaxResult.success(treeCategory);
     }
 
 }

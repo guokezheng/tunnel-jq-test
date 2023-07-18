@@ -1154,6 +1154,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                 return AjaxResult.success(devRight.get(0));
             }
         }
-        return AjaxResult.error("",null);
+        return AjaxResult.success("","");
     }
 }

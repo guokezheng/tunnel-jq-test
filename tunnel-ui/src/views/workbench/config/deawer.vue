@@ -339,13 +339,13 @@
             color: #00c2ff;
           "
         >
-          <el-col :span="8" style="padding-left: 4px">
+          <el-col :span="7" style="padding-left: 4px">
             <span>预警名称</span>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
             <span>预警类型</span>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="5">
             <span>触发值</span>
           </el-col>
           <el-col :span="4">
@@ -363,7 +363,7 @@
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
           "
         >
-          <el-col :span="8">
+          <el-col :span="7">
             <div class="overflowText" @mouseenter="showToolTip(item)">
               <el-tooltip v-if="item.show" :content="item.strategy_name">
                 <span>{{ item.strategy_name }}</span>
@@ -373,12 +373,12 @@
               </span>
             </div>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
             <div>
               {{ item.name }}
             </div>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="5">
             <div>
               {{ item.str }}
             </div>

@@ -895,6 +895,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.param != null and params.param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{params.param},'%') </if>
             <if test="params.eqType != null and params.eqType != ''">and t.eq_type = #{params.eqType}</if>
             <if test="params.eqStatus != null and params.eqStatus != ''">and t.eq_status = #{params.eqStatus}</if>
+            <if test="params.tunnelId != null and params.tunnelId != ''">and u.tunnel_id = #{params.tunnelId}</if>
             <if test="params.tunnelArray != null and params.tunnelArray.size > 0">
                 and u.tunnel_id  in
                 <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
@@ -917,6 +918,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="params.param != null and params.param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{params.param},'%') </if>
         <if test="params.eqType != null and params.eqType != ''">and t.eq_type = #{params.eqType}</if>
         <if test="params.eqStatus != null and params.eqStatus != ''">and t.eq_status = #{params.eqStatus}</if>
+        <if test="params.tunnelId != null and params.tunnelId != ''">and u.tunnel_id = #{params.tunnelId}</if>
         <if test="params.tunnelArray != null and params.tunnelArray.size > 0">
             and u.tunnel_id  in
             <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">

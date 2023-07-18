@@ -46,8 +46,8 @@
         <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
             v-model="queryParams.tunnelId"
-            @change="changeGroup()"
             placeholder="请选择所属隧道"
+            @change="changeGroup($event)"
             clearable
             size="small"
 
@@ -339,6 +339,7 @@
                   <el-select
                     v-model="form.tunnelId"
                     placeholder="请选择所属隧道"
+                    @change="changeGroup($event)"
                   >
                     <el-option
                       v-for="item in eqTunnelData"
@@ -1168,9 +1169,11 @@ export default {
   methods: {
 
     //更换隧道，更新隧道下关联班组列表
-    changeGroup(){
-      console.log("1111111111111111")
-      console.log(this.queryParams.tunnelId)
+    changeGroup(e){
+
+      console.log("change group by tunnelid",e);
+
+      this.getBz(e)
     },
     closeRecord() {
       // 关闭弹出层
@@ -1566,8 +1569,13 @@ export default {
     },
 
     /** 巡查班组 */
-    getBz() {
-      listBz().then((response) => {
+    getBz(tunnelId) {
+
+      let param = {
+        "tunnelId":tunnelId
+      }
+
+      listBz(param).then((response) => {
         this.bzData = response.rows;
       });
     },

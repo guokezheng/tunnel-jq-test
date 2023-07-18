@@ -826,7 +826,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     @Override
-    public List<SdDevices> getAppDevicesList(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum) {
+    public List<SdDevices> getAppDevicesList(String param, String eqType, String tunnelId, String eqStatus, Integer pageSize, Integer pageNum) {
         List<String> tunnelArray = null;
         String start = null;
         String end = null;
@@ -840,6 +840,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         if(pageNum!=null&&pageSize!=null){
             pageNum = (pageNum-1)*pageSize ;
         }
+        sdDevices.getParams().put("tunnelId", tunnelId);
         sdDevices.getParams().put("tunnelArray", tunnelArray);
         sdDevices.getParams().put("param", param);
         sdDevices.getParams().put("eqType", eqType);
@@ -989,7 +990,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     @Override
-    public int getAppDevicesCountList(String param, String eqType, String eqStatus, String deptId) {
+    public int getAppDevicesCountList(String param, String eqType,String tunnelId,  String eqStatus, String deptId) {
         List<String> tunnelArray = null;
         String start = null;
         String end = null;
@@ -999,6 +1000,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
         }
         SdDevices sdDevices = new SdDevices();
+        sdDevices.getParams().put("tunnelId", tunnelId);
         sdDevices.getParams().put("tunnelArray", tunnelArray);
         sdDevices.getParams().put("param", param);
         sdDevices.getParams().put("eqType", eqType);
@@ -1007,7 +1009,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     @Override
-    public List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus, Integer pageSize, Integer pageNum) {
+    public List<SdDevices> getDevicesNum(String param, String eqType,String tunnelId, String eqStatus, Integer pageSize, Integer pageNum) {
         List<String> tunnelArray = null;
         String deptId = SecurityUtils.getDeptId();
         // 超级管理员，可以看到全部数据
@@ -1016,6 +1018,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             tunnelArray = sdOperationLogMapper.getTunnelArrayByDeptId(deptId);
         }
         SdDevices sdDevices = new SdDevices();
+        sdDevices.getParams().put("tunnelId", tunnelId);
         sdDevices.getParams().put("tunnelArray", tunnelArray);
         sdDevices.getParams().put("param", param);
         sdDevices.getParams().put("eqType", eqType);

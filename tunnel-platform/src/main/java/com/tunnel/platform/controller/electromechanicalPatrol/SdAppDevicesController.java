@@ -84,18 +84,18 @@ public class SdAppDevicesController extends BaseController
      * @return
      */
     @PostMapping("/app/getAppDevicesList")
-    public Map<String,Object> getAppDevicesList(String param,String eqType,String eqStatus,Integer pageSize,Integer pageNum){
+    public Map<String,Object> getAppDevicesList(String param,String eqType,String eqStatus,String tunnelId,Integer pageSize,Integer pageNum){
         Map<String,Object>map = new HashMap();
         String deptId = SecurityUtils.getDeptId();
         List<SdDevices> stateNum = new ArrayList<>();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
-        int count = devicesService.getAppDevicesCountList(param,eqType,eqStatus,deptId);
+        int count = devicesService.getAppDevicesCountList(param,eqType,tunnelId,eqStatus,deptId);
         if(count > 0){
-            List<SdDevices> list = devicesService.getAppDevicesList(param,eqType,eqStatus,pageSize,pageNum);
+            List<SdDevices> list = devicesService.getAppDevicesList(param,eqType,tunnelId,eqStatus,pageSize,pageNum);
             TableDataInfo devicesList = new TableDataInfo(list,count);
-            stateNum = devicesService.getDevicesNum(param,eqType,eqStatus,pageSize,pageNum);
+            stateNum = devicesService.getDevicesNum(param,eqType,tunnelId,eqStatus,pageSize,pageNum);
             map.put("devicesList",devicesList);
             map.put("stateNum",stateNum);
             return map;

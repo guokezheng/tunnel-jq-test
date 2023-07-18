@@ -303,11 +303,11 @@ public class SdTaskListController extends BaseController
      */
     @ApiOperation("查询班组列表")
     @GetMapping("/getListBz")
-    public TableDataInfo<List<SysDept>> list()
+    public TableDataInfo<List<SysDept>> list(String tunnelId)
     {
         startPage();
         String deptId = SecurityUtils.getDeptId();
-        List<SysDept> list = sdTaskListService.selectTableBzDataInfo(deptId);
+        List<SysDept> list = sdTaskListService.selectTableBzDataInfo(deptId,tunnelId);
         return getDataTable(list);
     }
 

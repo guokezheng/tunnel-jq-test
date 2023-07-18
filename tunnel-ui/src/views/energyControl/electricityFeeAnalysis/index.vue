@@ -449,10 +449,10 @@
         height: 100%;
     }
   }
-  ::v-deep .el-scrollbar {
-    margin: 0px 10px;
-    height: calc(100% - 52px);
-  }
+  // ::v-deep .el-scrollbar {
+  //   margin: 0px 10px;
+  //   height: calc(100% - 52px);
+  // }
   // 隐藏滚动条
   ::v-deep .el-scrollbar__wrap {
     margin-right: -20px !important;

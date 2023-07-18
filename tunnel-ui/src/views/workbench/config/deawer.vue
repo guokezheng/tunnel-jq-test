@@ -252,12 +252,23 @@
       class="drawerTop"
     >
       <div
-        v-for="(item, index) in timStrategyList"
+        v-for="item in timStrategyList"
         :key="item.strategy_id"
         style="width: 100%"
       >
         <div class="ledLighting">
-          <span>{{ item.strategy_name }} </span>
+          <span
+            style="max-width: 340px; margin-right: 10px"
+            class="overflowText"
+            @mouseenter="showToolTip2(item.strategy_name)"
+            >
+            <el-tooltip v-if="item.show" :content="item.strategy_name">
+                <span>{{ item.strategy_name }}</span>
+              </el-tooltip>
+              <span v-else>
+                {{ item.strategy_name }}
+              </span>
+          </span>
           <el-switch
             v-model="item.strategy_state"
             active-value="0"
@@ -269,13 +280,13 @@
         <div class="Time">
           <div class="timeStart">
             <span class="setTime">执行日期：</span>
-<!--            <el-time-picker-->
-<!--              v-model="item.arr[0]"-->
-<!--              size="mini"-->
-<!--              :clearable="false"-->
-<!--              value-format="yyyy-MM-dd"-->
-<!--            >-->
-<!--            </el-time-picker>-->
+            <!--            <el-time-picker-->
+            <!--              v-model="item.arr[0]"-->
+            <!--              size="mini"-->
+            <!--              :clearable="false"-->
+            <!--              value-format="yyyy-MM-dd"-->
+            <!--            >-->
+            <!--            </el-time-picker>-->
             <el-date-picker
               v-model="item.arr[0]"
               type="date"
@@ -298,15 +309,15 @@
             >
             </el-time-picker>
           </div>
-<!--          <el-button-->
-<!--            type="primary"-->
-<!--            size="mini"-->
-<!--            class="handleLightClass"-->
-<!--            @click="timingStrategy(item)"-->
-<!--            v-hasPermi="['workbench:dialog:save']"-->
-<!--            :disabled="timingStrategyDisabled"-->
-<!--            >确定-->
-<!--          </el-button>-->
+          <!--          <el-button-->
+          <!--            type="primary"-->
+          <!--            size="mini"-->
+          <!--            class="handleLightClass"-->
+          <!--            @click="timingStrategy(item)"-->
+          <!--            v-hasPermi="['workbench:dialog:save']"-->
+          <!--            :disabled="timingStrategyDisabled"-->
+          <!--            >确定-->
+          <!--          </el-button>-->
         </div>
       </div>
     </el-drawer>
@@ -321,22 +332,25 @@
       <div
         style="height: 150px; overflowy: auto; padding: 5px; padding-left: 10px"
       >
-
-        <el-row style="line-height: 40px;
+        <el-row
+          style="
+            line-height: 40px;
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
-            color: #00c2ff;">
-          <el-col :span="6" style="padding-left: 4px;">
-            <span >预警名称</span>
+            color: #00c2ff;
+          "
+        >
+          <el-col :span="8" style="padding-left: 4px">
+            <span>预警名称</span>
           </el-col>
-          <el-col :span="8" >
-            <span >预警类型</span>
+          <el-col :span="8">
+            <span>预警类型</span>
           </el-col>
-          <el-col :span="6">
-            <span >触发值</span>
+          <el-col :span="8">
+            <span>触发值</span>
           </el-col>
-<!--          <el-col :span="5">-->
-<!--            <span >相关预案1</span>-->
-<!--          </el-col>-->
+          <!--          <el-col :span="5">-->
+          <!--            <span >相关预案1</span>-->
+          <!--          </el-col>-->
         </el-row>
 
         <el-row
@@ -349,27 +363,31 @@
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
           "
         >
-
-          <el-col :span="6">
-            <div >
-              {{ item.strategy_name }}
+          <el-col :span="8">
+            <div class="overflowText" @mouseenter="showToolTip(item)">
+              <el-tooltip v-if="item.show" :content="item.strategy_name">
+                <span>{{ item.strategy_name }}</span>
+              </el-tooltip>
+              <span v-else>
+                {{ item.strategy_name }}
+              </span>
             </div>
           </el-col>
           <el-col :span="8">
-            <div >
+            <div>
               {{ item.name }}
             </div>
           </el-col>
-          <el-col :span="6">
-            <div >
-            {{ item.str }}
-          </div>
+          <el-col :span="8">
+            <div>
+              {{ item.str }}
+            </div>
           </el-col>
-<!--          <el-col :span="5">-->
-<!--            <div class="reservePlan" v-for="(itm, inx) in item.plan" :key="inx">-->
-<!--            {{ itm }}-->
-<!--          </div>-->
-<!--          </el-col>-->
+          <!--          <el-col :span="5">-->
+          <!--            <div class="reservePlan" v-for="(itm, inx) in item.plan" :key="inx">-->
+          <!--            {{ itm }}-->
+          <!--          </div>-->
+          <!--          </el-col>-->
         </el-row>
       </div>
     </el-drawer>
@@ -383,13 +401,8 @@ import {
   updateControlTime,
   timeStrategySwitch,
 } from "@/api/workbench/config.js";
-import {
-  workTriggerInfo,
-} from "@/api/event/strategy";
-import {
-  getAudioFileList,
-  playVoiceGroup,
-} from "@/api/equipment/eqlist/api";
+import { workTriggerInfo } from "@/api/event/strategy";
+import { getAudioFileList, playVoiceGroup } from "@/api/equipment/eqlist/api";
 export default {
   data() {
     return {
@@ -429,7 +442,7 @@ export default {
       isDrawerCList: [],
       setDisabled: {
         disabledDate(time) {
-          return time.getTime() < Date.now()-86400000; // 可选历史天、可选当前天、不可选未来天
+          return time.getTime() < Date.now() - 86400000; // 可选历史天、可选当前天、不可选未来天
         },
       },
       chezhiLaneOptionList: [
@@ -471,9 +484,9 @@ export default {
           laneName: "9车道",
         },
       ],
-      tunnelId:'',
-      tunnelLane:'',
-      tunnelIdNew:'',
+      tunnelId: "",
+      tunnelLane: "",
+      tunnelIdNew: "",
     };
   },
   created() {
@@ -482,11 +495,38 @@ export default {
     });
   },
   methods: {
-    init(tunnelId,lane){
+    init(tunnelId, lane) {
       // console.log(tunnelId,lane,"tunnelId,lane")
       this.tunnelId = tunnelId;
-      this.tunnelLane = lane
+      this.tunnelLane = lane;
       this.getTunnelState();
+    },
+    showToolTip(row) {
+      // 改变列表数据的show字段，show为true时展示tooltip，false为隐藏tooltip
+      this.isDrawerCList.forEach((item) => {
+        if (
+          item.strategy_name == row.strategy_name &&
+          row.strategy_name.length > 10
+        ) {
+          item.show = true;
+        } else {
+          item.show = false;
+        }
+      });
+      this.$forceUpdate();
+    },
+    showToolTip2(title){
+      this.timStrategyList.forEach((item) => {
+        if (
+          item.strategy_name == title &&
+          title.length > 23
+        ) {
+          item.show = true;
+        } else {
+          item.show = false;
+        }
+      });
+      this.$forceUpdate();
     },
     // 抽屉车指批量控制 状态下拉框
     getTunnelState() {
@@ -517,11 +557,11 @@ export default {
     // 控制按钮
     chezhiControl(num) {
       const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
       this.chezhiDisabled = true;
       const param = {
         tunnelId: this.tunnelId,
@@ -529,17 +569,18 @@ export default {
         state: this["chezhiForm" + num].state,
         lane: this["chezhiForm" + num].lane,
       };
-      batchControlCarFinger(param).then((res) => {
-        // console.log(res);
-        loading.close();
+      batchControlCarFinger(param)
+        .then((res) => {
+          // console.log(res);
+          loading.close();
 
-        if (res.data == 0) {
-          this.$modal.msgWarning("控制失败");
-        } else if (res.data == 1) {
-          this.$modal.msgSuccess("控制成功");
-        }
-
-      }).catch(()=>{
+          if (res.data == 0) {
+            this.$modal.msgWarning("控制失败");
+          } else if (res.data == 1) {
+            this.$modal.msgSuccess("控制成功");
+          }
+        })
+        .catch(() => {
           loading.close();
         });
       this.chezhiDisabled = false;
@@ -594,15 +635,15 @@ export default {
       this.phoneForm2 = {
         loopCount: "1",
       };
-      this.chezhiForm1 = {
+      (this.chezhiForm1 = {
         lane: [],
         state: "",
-      },
-      this.chezhiForm2= {
-        lane: [],
-        state: "",
-      },
-      this.getTunnelLane()
+      }),
+        (this.chezhiForm2 = {
+          lane: [],
+          state: "",
+        }),
+        this.getTunnelLane();
       this.$forceUpdate();
     },
     isDrawerB() {
@@ -614,10 +655,10 @@ export default {
       if (this.tunnelId) {
         timeSharing(this.tunnelId).then((res) => {
           for (var item of res.data) {
-            let itemData = []
-            itemData.push(item.sky)
-            itemData.push(item.minuteStr)
-            item.arr = itemData
+            let itemData = [];
+            itemData.push(item.sky);
+            itemData.push(item.minuteStr);
+            item.arr = itemData;
           }
           this.timStrategyList = res.data;
         });
@@ -627,7 +668,7 @@ export default {
       this.drawerCVisible = !this.drawerCVisible;
       this.drawerA = false;
       this.drawerB = false;
-      console.log(this.tunnelId)
+
       workTriggerInfo(this.tunnelId).then((response) => {
         // console.log(response, "自动触发抽屉");
         this.isDrawerCList = response.data;
@@ -635,11 +676,11 @@ export default {
     },
     phoneControl(direction) {
       const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
       if (direction == 1) {
         const param = {
           lib: "YeastarHost",
@@ -652,12 +693,14 @@ export default {
           controlType: "0",
         };
         // console.log(param, "param");
-        playVoiceGroup(param).then((res) => {
-          loading.close();
-          this.$modal.msgSuccess("控制成功");
-        }).catch(()=>{
-          loading.close();
-        });
+        playVoiceGroup(param)
+          .then((res) => {
+            loading.close();
+            this.$modal.msgSuccess("控制成功");
+          })
+          .catch(() => {
+            loading.close();
+          });
       } else {
         const param = {
           lib: "YeastarHost",
@@ -670,12 +713,14 @@ export default {
           controlType: "0",
         };
         // console.log(param, "param");
-        playVoiceGroup(param).then((res) => {
-          loading.close();
-          this.$modal.msgSuccess("控制成功");
-        }).catch(()=>{
-          loading.close();
-        });
+        playVoiceGroup(param)
+          .then((res) => {
+            loading.close();
+            this.$modal.msgSuccess("控制成功");
+          })
+          .catch(() => {
+            loading.close();
+          });
       }
       // console.log(direction,"广播一键控制方向");
     },
@@ -696,11 +741,16 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.overflowText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .topNavRightDeawer {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  height:100%;
+  height: 100%;
 }
 
 .indicatorLight {
@@ -843,6 +893,8 @@ export default {
     line-height: 40px;
     padding-left: 14px;
     font-size: 14px;
+    display: flex;
+    align-items: center;
   }
 
   .Time {

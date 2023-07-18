@@ -818,10 +818,11 @@ export default {
 }
 ::v-deep .el-card__body {
   padding: 6px !important;
+  height: 100%;
 }
-::v-deep .el-scrollbar {
-  margin: 0px 10px;
-}
+// ::v-deep .el-scrollbar {
+//   margin: 0px 10px;
+// }
 // 隐藏滚动条
 ::v-deep .el-scrollbar__wrap {
   margin-right: -20px !important;

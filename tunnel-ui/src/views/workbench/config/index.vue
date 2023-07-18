@@ -53,9 +53,9 @@
             </el-tooltip>
           </el-button-group>
         </el-row>
-        
-          <div class="flex-row buttonsBox">
-            <!-- <div class="display-box zoomClass">
+
+        <div class="flex-row buttonsBox">
+          <!-- <div class="display-box zoomClass">
               <p
                 class="zoom-title"
                 style="font-size: 0.75vw; margin-right: 0.5vw"
@@ -81,53 +81,54 @@
                 @change="carShowChange"
               ></el-switch>
             </div> -->
-            <div class="display-box zoomClass" ref="treeBox">
-              <el-input
-                placeholder="请输入内容"
-                v-model="screenEqName"
-                class="input-with-select"
-                clearable
-                @click.native="treeClick()"
-                @keyup.enter.native="screenEqNameButton(screenEqName)"
-                @clear="treeClear"
-              >
-                <el-button
-                  slot="append"
-                  icon="el-icon-search"
-                  @click="screenEqNameButton(screenEqName)"
-                ></el-button>
-              </el-input>
-              <!-- 搜索栏树状结构 -->
-              <div
-                class="treeBox"
-                ref="treeBox"
-                v-show="treeShow"
-                :style="dragFlag ? '47%' : '54.5%'"
-              >
-                <el-tree
-                  :show-checkbox="false"
-                  :data="treeData"
-                  :props="defaultProps"
-                  @node-click="handleNodeClick"
-                  accordion
-                  ref="tree"
-                ></el-tree>
-              </div>
+          <div class="display-box zoomClass" ref="treeBox">
+            <el-input
+              placeholder="请输入内容"
+              v-model="screenEqName"
+              class="input-with-select"
+              clearable
+              @click.native="treeClick()"
+              @keyup.enter.native="screenEqNameButton(screenEqName)"
+              @clear="treeClear"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-search"
+                @click="screenEqNameButton(screenEqName)"
+              ></el-button>
+            </el-input>
+            <!-- 搜索栏树状结构 -->
+            <div
+              class="treeBox"
+              ref="treeBox"
+              v-show="treeShow"
+              :style="dragFlag ? '47%' : '54.5%'"
+            >
+              <el-tree
+                :show-checkbox="false"
+                :data="treeData"
+                :props="defaultProps"
+                @node-click="handleNodeClick"
+                :filter-node-method="filterNode"
+                accordion
+                ref="tree"
+              ></el-tree>
             </div>
-            <div class="display-box zoomClass">
-              <!-- <p class="zoom-title" style="font-size: 0.75vw">缩放：</p> -->
-              <el-input-number
-                v-model="zoom"
-                :step="10"
-                :min="60"
-                :max="140"
-                step-strictly
-                @change="zoomChange"
-              >
-                {{ zoom + "%" }}
-              </el-input-number>
-            </div>
-            <!-- <div class="display-box zoomClass">
+          </div>
+          <div class="display-box zoomClass">
+            <!-- <p class="zoom-title" style="font-size: 0.75vw">缩放：</p> -->
+            <el-input-number
+              v-model="zoom"
+              :step="10"
+              :min="60"
+              :max="140"
+              step-strictly
+              @change="zoomChange"
+            >
+              {{ zoom + "%" }}
+            </el-input-number>
+          </div>
+          <!-- <div class="display-box zoomClass">
               <p
                 class="zoom-title"
                 style="font-size: 0.75vw; margin-right: 0.5vw"
@@ -140,73 +141,73 @@
                 @change="zoomSwitchChange"
               ></el-switch>
             </div> -->
-            <el-button
-              v-if="resetCanvasFlag"
-              class="flex-row"
-              type="primary"
-              size="mini"
-              icon="el-icon-map-location"
-              @click="resetCanvas"
-            >
-              地图复位
-            </el-button>
-            <el-button
-              class="buttons"
-              type="primary"
-              size="mini"
-              @click="strategyPage"
-            >
-              <img src="../../../assets/icons/kzcl.png" />
-              <span>控制策略</span>
-            </el-button>
-            <el-button
-              class="buttons"
-              type="primary"
-              size="mini"
-              @click="iconLighting"
-            >
-              <img src="../../../assets/icons/zmpz.png" />
-              <span>照明配置</span>
-            </el-button>
-            <el-button
-              class="buttons"
-              type="primary"
-              size="mini"
-              @click="batchManage"
-              v-if="batchManageType == 1"
-            >
-              <img src="../../../assets/icons/plcz.png" />
-              <span>批量操作</span>
-            </el-button>
-            <div v-if="batchManageType == 2" class="batchManageButton">
-              <div @click="closeBatchManageDialog">取消</div>
-              <div @click="implementBatchManage">执行</div>
-            </div>
-            <el-button
-              class="buttons"
-              type="primary"
-              size="mini"
-              @click="iconExplain"
-            >
-              <img src="../../../assets/icons/tbhy.png" />
-              <span>图标含义</span>
-            </el-button>
-            <el-button
-              class="buttons"
-              type="primary"
-              size="mini"
-              @click="operationLogPage"
-            >
-              <img src="../../../assets/icons/czrz.png" />
-              <span>操作日志</span>
-            </el-button>
+          <el-button
+            v-if="resetCanvasFlag"
+            class="flex-row"
+            type="primary"
+            size="mini"
+            icon="el-icon-map-location"
+            @click="resetCanvas"
+          >
+            地图复位
+          </el-button>
+          <el-button
+            class="buttons"
+            type="primary"
+            size="mini"
+            @click="strategyPage"
+          >
+            <img src="../../../assets/icons/kzcl.png" />
+            <span>控制策略</span>
+          </el-button>
+          <el-button
+            class="buttons"
+            type="primary"
+            size="mini"
+            @click="iconLighting"
+          >
+            <img src="../../../assets/icons/zmpz.png" />
+            <span>照明配置</span>
+          </el-button>
+          <el-button
+            class="buttons"
+            type="primary"
+            size="mini"
+            @click="batchManage"
+            v-if="batchManageType == 1"
+          >
+            <img src="../../../assets/icons/plcz.png" />
+            <span>批量操作</span>
+          </el-button>
+          <div v-if="batchManageType == 2" class="batchManageButton">
+            <div @click="closeBatchManageDialog">取消</div>
+            <div @click="implementBatchManage">执行</div>
           </div>
+          <el-button
+            class="buttons"
+            type="primary"
+            size="mini"
+            @click="iconExplain"
+          >
+            <img src="../../../assets/icons/tbhy.png" />
+            <span>图标含义</span>
+          </el-button>
+          <el-button
+            class="buttons"
+            type="primary"
+            size="mini"
+            @click="operationLogPage"
+          >
+            <img src="../../../assets/icons/czrz.png" />
+            <span>操作日志</span>
+          </el-button>
         </div>
+      </div>
       <div class="buttonsDeawer" @click="isDrawer()">
-        <img 
-          src="../../../assets/icons/deawer.png" 
+        <img
+          src="../../../assets/icons/deawer.png"
           :style="{
-            transform:buttonsDeawer?'rotate(180deg)':''
+            transform: buttonsDeawer ? 'rotate(180deg)' : '',
           }"
         />
       </div>
@@ -293,7 +294,7 @@
                   :src="currentTunnel.lane.url"
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
-                <div class="wrapper" id="eq-wrapper">
+                <div class="wrapper" id="eq-wrapper" ref="eqWrapper">
                   <!-- <div
                   class="wrapper"
                   id="eq-wrapper"
@@ -456,277 +457,264 @@
                     <div v-if="item.textKKFalse" class="textFalseBox">
                       请选择可控设备
                     </div>
-                    <!-- <div class="tooltip" v-if="showTooltipIndex == index && showTooltip">{{ sensorContent(item) }}</div> -->
-
-                    <el-tooltip
-                      effect="dark"
-                      placement="right"
-                      popper-class="tipCase"
-                      ref="tipCaseRef"
-                      offset="10"
+                    <div
+                      class="tooltipBox"
+                      v-if="showTooltipIndex == index"
+                      :style="{
+                        top:
+                          item.tooltipType == 1 || item.tooltipType == 2
+                            ? '35px'
+                            : item.tooltipType == 2
+                            ? '35px'
+                            : '-35px',
+                        left:
+                          item.tooltipType == 1 || item.tooltipType == 3
+                            ? '0px'
+                            : -item.eqName.length * 10 - 40 + 'px',
+                      }"
                     >
-                      <template #content>
-                        <div>
-                          <span>名称：{{ item.eqName }}</span
-                          ><br />
-                          <!-- <span>桩号：{{ item.pile}}</span><br/> -->
+                      <span>名称：{{ item.eqName }}</span
+                      ><br />
+                      <span>方向：{{ getDirection(item.eqDirection) }}</span>
+                    </div>
+                    <div
+                      v-show="
+                        (item.eqType != 7 &&
+                          item.eqType != 15 &&
+                          item.eqType != 8 &&
+                          item.eqType != 9 &&
+                          item.display == true) ||
+                        ((item.eqType == 7 ||
+                          item.eqType == 8 ||
+                          item.eqType == 9 ||
+                          item.eqType == 21) &&
+                          item.display == true &&
+                          lightSwitch == 1)
+                      "
+                      :class="{ focus: item.focus }"
+                    >
+                      <img
+                        v-show="
+                          item.eqType != '31' &&
+                          item.eqType != '16' &&
+                          item.eqType != '36'
+                        "
+                        v-for="(url, indexs) in item.url"
+                        style="position: absolute"
+                        :style="{
+                          left: indexs * 14 + 'px',
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border: item.click == true ? 'solid 2px #09C3FC' : '',
+                          transform:
+                            item.eqType == 23 && item.eqDirection == 2
+                              ? 'scale(-1,1)'
+                              : '',
+                        }"
+                        :width="item.iconWidth"
+                        :height="item.iconHeight"
+                        :key="item.eqId + indexs"
+                        :src="url"
+                        :class="
+                          item.eqName == screenEqName ? 'screenEqNameClass' : ''
+                        "
+                      />
+                      <img
+                        v-show="item.eqType == '31'"
+                        style="position: absolute"
+                        :style="{
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border: item.click == true ? 'solid 2px #09C3FC' : '',
+                          width: item.iconWidth + 'px',
+                          height: item.iconHeight + 'px',
+                        }"
+                        :src="getTypePic(item)"
+                        :class="
+                          item.eqName == screenEqName ? 'screenEqNameClass' : ''
+                        "
+                      />
+                      <div
+                        v-show="item.eqType == 16"
+                        class="boardBox1"
+                        :style="{
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border: item.click == true ? 'solid 2px #09C3FC' : '',
+                          width: item.associated_device_id
+                            ? getBoardStyle(
+                                item.associated_device_id,
+                                'width',
+                                item.eqType
+                              ) + 'px'
+                            : item.iconWidth + 'px',
+                          height: item.associated_device_id
+                            ? getBoardStyle(
+                                item.associated_device_id,
+                                'height',
+                                item.eqType
+                              ) + 'px'
+                            : item.iconHeight + 'px',
+                          fontSize: item.associated_device_id
+                            ? getBoardStyle(
+                                item.associated_device_id,
+                                'fontSize',
+                                item.eqType
+                              ) + 'px'
+                            : '15px',
+                        }"
+                        :src="getTypePic(item)"
+                        :class="
+                          item.eqName == screenEqName ? 'screenEqNameClass' : ''
+                        "
+                      >
+                        <div
+                          :style="{
+                            animation:
+                              'boardBox1 ' +
+                              Number(
+                                getBoardStyle(
+                                  item.associated_device_id,
+                                  'content'
+                                ).length
+                              ) *
+                                1.3 +
+                              's' +
+                              ' linear infinite',
+                          }"
+                        >
                           <span
-                            >方向：{{ getDirection(item.eqDirection) }}</span
+                            v-for="itm in getBoardStyle(
+                              item.associated_device_id,
+                              'array'
+                            )"
+                            :key="itm.associated_device_id"
+                            :style="{
+                              color: getColorStyle(itm.COLOR),
+                            }"
+                            style="padding-top: 10px"
+                            >{{ itm.CONTENT }}</span
                           >
                         </div>
-                      </template>
-
+                      </div>
                       <div
-                        v-show="
-                          (item.eqType != 7 &&
-                            item.eqType != 15 &&
-                            item.eqType != 8 &&
-                            item.eqType != 9 &&
-                            item.display == true) ||
-                          ((item.eqType == 7 ||
-                            item.eqType == 8 ||
-                            item.eqType == 9 ||
-                            item.eqType == 21) &&
-                            item.display == true &&
-                            lightSwitch == 1)
-                        "
-                        :class="{ focus: item.focus }"
-                      >
-                        <img
-                          v-show="
-                            item.eqType != '31' &&
-                            item.eqType != '16' &&
-                            item.eqType != '36'
-                          "
-                          v-for="(url, indexs) in item.url"
-                          style="position: absolute"
-                          :style="{
-                            left: indexs * 14 + 'px',
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 2
-                                ? 'scale(-1,1)'
-                                : '',
-                          }"
-                          :width="item.iconWidth"
-                          :height="item.iconHeight"
-                          :key="item.eqId + indexs"
-                          :src="url"
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          "
-                        />
-                        <img
-                          v-show="item.eqType == '31'"
-                          style="position: absolute"
-                          :style="{
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            width: item.iconWidth + 'px',
-                            height: item.iconHeight + 'px',
-                          }"
-                          :src="getTypePic(item)"
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          "
-                        />
-                        <div
-                          v-show="item.eqType == 16"
-                          class="boardBox1"
-                          :style="{
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            width: item.associated_device_id
+                        v-show="item.eqType == 36"
+                        class="boardBox2"
+                        :style="{
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border: item.click == true ? 'solid 2px #09C3FC' : '',
+                          width:
+                            item.associated_device_id != undefined
                               ? getBoardStyle(
                                   item.associated_device_id,
                                   'width',
                                   item.eqType
                                 ) + 'px'
                               : item.iconWidth + 'px',
-                            height: item.associated_device_id
+                          height:
+                            item.associated_device_id != undefined
                               ? getBoardStyle(
                                   item.associated_device_id,
                                   'height',
                                   item.eqType
                                 ) + 'px'
                               : item.iconHeight + 'px',
-                            fontSize: item.associated_device_id
+                          fontSize:
+                            item.associated_device_id != undefined
                               ? getBoardStyle(
                                   item.associated_device_id,
                                   'fontSize',
                                   item.eqType
                                 ) + 'px'
                               : '15px',
-                          }"
-                          :src="getTypePic(item)"
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          "
-                        >
-                          <div
-                            :style="{
-                              animation:
-                                'boardBox1 ' +
-                                Number(
-                                  getBoardStyle(
-                                    item.associated_device_id,
-                                    'content'
-                                  ).length
-                                ) *
-                                  1.3 +
-                                's' +
-                                ' linear infinite',
-                            }"
-                          >
-                            <span
-                              v-for="itm in getBoardStyle(
-                                item.associated_device_id,
-                                'array'
-                              )"
-                              :key="itm.associated_device_id"
-                              :style="{
-                                color: getColorStyle(itm.COLOR),
-                              }"
-                              style="padding-top: 10px"
-                              >{{ itm.CONTENT }}</span
-                            >
-                          </div>
-                        </div>
+                        }"
+                        :src="getTypePic(item)"
+                        :class="
+                          item.eqName == screenEqName ? 'screenEqNameClass' : ''
+                        "
+                      >
                         <div
-                          v-show="item.eqType == 36"
-                          class="boardBox2"
                           :style="{
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            width:
-                              item.associated_device_id != undefined
-                                ? getBoardStyle(
-                                    item.associated_device_id,
-                                    'width',
-                                    item.eqType
-                                  ) + 'px'
-                                : item.iconWidth + 'px',
-                            height:
-                              item.associated_device_id != undefined
-                                ? getBoardStyle(
-                                    item.associated_device_id,
-                                    'height',
-                                    item.eqType
-                                  ) + 'px'
-                                : item.iconHeight + 'px',
-                            fontSize:
-                              item.associated_device_id != undefined
-                                ? getBoardStyle(
-                                    item.associated_device_id,
-                                    'fontSize',
-                                    item.eqType
-                                  ) + 'px'
-                                : '15px',
+                            animation:
+                              'boardBox2 ' +
+                              Number(
+                                getBoardStyle(
+                                  item.associated_device_id,
+                                  'content'
+                                ).length
+                              ) *
+                                1.3 +
+                              's' +
+                              ' linear infinite',
                           }"
-                          :src="getTypePic(item)"
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          "
                         >
-                          <div
+                          <span
+                            v-for="itm in getBoardStyle(
+                              item.associated_device_id,
+                              'array'
+                            )"
+                            :key="itm.associated_device_id"
                             :style="{
-                              animation:
-                                'boardBox2 ' +
-                                Number(
-                                  getBoardStyle(
-                                    item.associated_device_id,
-                                    'content'
-                                  ).length
-                                ) *
-                                  1.3 +
-                                's' +
-                                ' linear infinite',
+                              color: getColorStyle(itm.COLOR),
                             }"
+                            style="padding-top: 10px"
+                            >{{ itm.CONTENT }}</span
                           >
-                            <span
-                              v-for="itm in getBoardStyle(
-                                item.associated_device_id,
-                                'array'
-                              )"
-                              :key="itm.associated_device_id"
-                              :style="{
-                                color: getColorStyle(itm.COLOR),
-                              }"
-                              style="padding-top: 10px"
-                              >{{ itm.CONTENT }}</span
-                            >
-                          </div>
                         </div>
-                        <!-- 调光数值 -->
-                        <label
-                          style="
-                            color: yellow;
-                            position: absolute;
-                            left: 30px;
-                            bottom: 2px;
-                            pointer-events: none;
-                          "
-                          v-if="item.eqType == 21"
-                          >{{ item.lightValue }}</label
-                        >
-                        <!-- CO/VI -->
-                        <label
-                          style="color: #79e0a9"
-                          class="labelClass"
-                          v-if="item.eqType == 19"
-                        >
-                          {{ item.num }}
-                        </label>
-                        <!-- 风速风向 -->
-                        <label
-                          style="color: #79e0a9"
-                          class="labelClass"
-                          v-if="item.eqType == 17"
-                        >
-                          {{ item.num }}
-                        </label>
-                        <!-- 洞内洞外 -->
-                        <label
-                          style="color: #f2a520"
-                          class="labelClass"
-                          v-if="item.eqType == 5 || item.eqType == 18"
-                        >
-                          {{ item.num }}
-                        </label>
-                        <!-- 加强照明 -->
-                        <label
-                          style="color: #f2a520"
-                          class="labelClass labelClass7"
-                          v-if="item.eqType == 7"
-                        >
-                          {{ item.num }}
-                        </label>
-                        <label
-                          style="color: #f2a520"
-                          class="labelClass labelClass9"
-                          v-if="item.eqType == 9"
-                        >
-                          {{ item.num }}
-                        </label>
                       </div>
-                    </el-tooltip>
+                      <!-- 调光数值 -->
+                      <label
+                        style="
+                          color: yellow;
+                          position: absolute;
+                          left: 30px;
+                          bottom: 2px;
+                          pointer-events: none;
+                        "
+                        v-if="item.eqType == 21"
+                        >{{ item.lightValue }}</label
+                      >
+                      <!-- CO/VI -->
+                      <label
+                        style="color: #79e0a9"
+                        class="labelClass"
+                        v-if="item.eqType == 19"
+                      >
+                        {{ item.num }}
+                      </label>
+                      <!-- 风速风向 -->
+                      <label
+                        style="color: #79e0a9"
+                        class="labelClass"
+                        v-if="item.eqType == 17"
+                      >
+                        {{ item.num }}
+                      </label>
+                      <!-- 洞内洞外 -->
+                      <label
+                        style="color: #f2a520"
+                        class="labelClass"
+                        v-if="item.eqType == 5 || item.eqType == 18"
+                      >
+                        {{ item.num }}
+                      </label>
+                      <!-- 加强照明 -->
+                      <label
+                        style="color: #f2a520"
+                        class="labelClass labelClass7"
+                        v-if="item.eqType == 7"
+                      >
+                        {{ item.num }}
+                      </label>
+                      <label
+                        style="color: #f2a520"
+                        class="labelClass labelClass9"
+                        v-if="item.eqType == 9"
+                      >
+                        {{ item.num }}
+                      </label>
+                    </div>
                     <!-- 桩号 -->
                     <input
                       :class="[
@@ -1132,7 +1120,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item
+          <!-- <el-form-item
             label="隧道名称"
             prop="tunnelId"
             v-show="manageStation == '0'"
@@ -1151,7 +1139,7 @@
                 :value="item.tunnelId"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="控制方式" prop="controlType" style="width: 100%">
             <el-select
               v-model="operationParam.controlType"
@@ -1582,7 +1570,7 @@
           :model="operationParam"
           label-width="68px"
         >
-          <el-form-item label="隧道名称" prop="tunnelId">
+          <!-- <el-form-item label="隧道名称" prop="tunnelId">
             <el-select
               v-model="queryParams.tunnelId"
               placeholder="请选择隧道"
@@ -1596,7 +1584,7 @@
                 :value="item.tunnelId"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="方向" prop="direction">
             <el-select
               v-model="queryParams.direction"
@@ -1612,7 +1600,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType">
+          <!-- <el-form-item label="策略类型" prop="strategyType">
             <el-select
               v-model="queryParams.strategyType"
               placeholder="请选择策略类型"
@@ -1626,7 +1614,7 @@
                 :value="dict.dictValue"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item class="bottomBox">
             <el-button size="small" @click="handlestrategyQuery"
               >搜索</el-button
@@ -2532,6 +2520,7 @@ export default {
       robotXData: null,
       // 巡检机器人-----------------------------------------------------------------end
       isManagementStation: false, // 当前账号的权限是否是管理站
+      tooltipType: false,
       showTooltipIndex: 999,
       showTooltip: false,
       tooltipShow: false, //是否展示提示内容
@@ -2698,6 +2687,9 @@ export default {
   },
 
   watch: {
+    screenEqName(val) {
+      this.$refs.tree.filter(val);
+    },
     "batchManageForm.state": function (newVal, oldVal) {
       console.log(newVal, "newVal");
       if ([7, 9].includes(this.itemEqType)) {
@@ -3240,6 +3232,7 @@ export default {
           }
         );
       } else if (inx == "caozuo") {
+        this.operationParam.tunnelId = this.currentTunnel.id
         listLog(this.addDateRange(this.operationParam, this.dateRange1)).then(
           (response) => {
             console.log(response, "操作日志");
@@ -3426,6 +3419,11 @@ export default {
       }
       this.$forceUpdate();
     },
+    filterNode(value, data) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
+      },
+    
     // 预警事件点击跳转应急调度
     // jumpYingJi(e) {
     //   const item = e.target.closest(".listRow");
@@ -3568,13 +3566,26 @@ export default {
       return this.selectDictLabel(this.operationStateOptions, row.state);
     },
     openTooltip(item, index) {
+      document.addEventListener("mousemove", function (event) {
+        let mouseX = event.clientX;
+        let mouseY = event.clientY;
+        if (mouseX < 1650 && mouseY < 620) {
+          item.tooltipType = 1;
+        } else if (mouseX > 1650 && mouseY < 620) {
+          item.tooltipType = 2;
+        } else if (mouseX < 1650 && mouseY > 620) {
+          item.tooltipType = 3;
+        } else {
+          item.tooltipType = 4;
+        }
+      });
+      this.$forceUpdate();
       this.showTooltipIndex = index;
-      this.sensorDisabled(item);
+      // this.sensorDisabled(item);
     },
     closeTooltip(item) {
       this.showTooltipIndex = 999;
     },
-
     getDeptList() {
       var userDeptId = this.userDeptId;
       const params = { status: 0 };
@@ -4508,6 +4519,7 @@ export default {
       });
       // 树状搜索
       getCategoryTree(tunnelId).then((res) => {
+        // console.log(res.data, "res.data");
         this.treeData = res.data;
       });
     },
@@ -4901,7 +4913,7 @@ export default {
           this.dialogEqType = item.eqType;
         }
         this.$nextTick(() => {
-          if ([23, 24, 25, 33].includes(item.eqType)) {
+          if ([21, 23, 24, 25, 32, 33, 39, 40].includes(item.eqType)) {
             this.$refs.videoRef.init(
               this.eqInfo,
               this.brandList,
@@ -4927,7 +4939,7 @@ export default {
               this.eqTypeDialogList
             );
           } else if (
-            [14, 21, 32, 15, 35, 39, 40, 41, 42, 47, 48].includes(item.eqType)
+            [14, 15, 35, 41, 42, 47, 48].includes(item.eqType)
           ) {
             this.$refs.dataRef.init(
               this.eqInfo,
@@ -5140,6 +5152,7 @@ export default {
       //this.$router.push('/strategy/index')
       this.queryParams.strategyName = "";
       this.strategyVisible = true;
+      this.strategyActive = "richang"
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
@@ -5175,27 +5188,25 @@ export default {
     getStrategyQuery(tabIndex) {
       this.strategyLoading = true;
       this.loading = true;
-      console.log(this.queryParams);
-      let tunnelItems = "";
-      if (!!this.tunnelItem) {
-        tunnelItems = this.tunnelItem;
-      } else {
-        tunnelItems = this.tunnelList[0];
-      }
+      // console.log(this.queryParams);
+      // let tunnelItems = "";
+      // if (!!this.tunnelItem) {
+      //   tunnelItems = this.tunnelItem;
+      // } else {
+      //   tunnelItems = this.tunnelList[0];
+      // }
+      this.queryParams.tunnelId = this.currentTunnel.id;
+
       if (tabIndex == 0) {
         this.queryParams.strategyGroup = Number(1);
-        this.queryParams.tunnelId = tunnelItems.tunnelId;
         this.queryParams.strategyType = "0";
       } else if (tabIndex == 1) {
         this.queryParams.strategyGroup = Number(1);
-        this.queryParams.tunnelId = tunnelItems.tunnelId;
         this.queryParams.strategyType = "1";
       } else if (tabIndex == 2) {
         this.queryParams.strategyGroup = Number(1);
-        this.queryParams.tunnelId = tunnelItems.tunnelId;
         this.queryParams.strategyType = "2";
       }
-      debugger;
       console.log(this.queryParams);
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
@@ -5274,10 +5285,8 @@ export default {
     },
     handleTableWheel(event) {
       let obj = this.$refs.divRoller;
-      let tipCase = this.$refs.tipCaseRef;
       if (this.handleTableWheelSwithch == true) {
         this.tableZoom(obj, event);
-        this.tableZoom(tipCase, event);
       }
     },
     tableZoom(obj, event) {
@@ -5524,8 +5533,6 @@ export default {
     zoomChange(val) {
       val < 70 ? (val = this.zoom) : "";
       val > 130 ? (val = this.zoom) : "";
-      console.log(document.getElementsByClassName("tipCase"));
-      console.log(this.$refs.tipCaseRef, "this.$refs.tipCaseRef.style");
       if (val) {
         this.$refs.divRoller.style.zoom = val + "%";
         this.setMoveTop(val);
@@ -6026,7 +6033,7 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-.buttonsBox{
+.buttonsBox {
   z-index: 8;
   margin-right: 32px;
 }
@@ -7033,14 +7040,24 @@ input {
   color: #fff;
 }
 
-.tooltip {
+.tooltipBox {
   position: absolute;
-  top: 35px;
-  left: -155px;
+
   padding: 10px 20px;
   white-space: nowrap;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 12px;
+  background: #cdedfa !important;
+  border: solid 1px #1d58a9;
+  color: #1d58a9 !important;
+  padding: 0 !important;
+  z-index: 96659;
+  text-align: left;
+  // transform:translateX(10px);
+  span {
+    padding: 10px !important;
+    line-height: 24px !important;
+  }
 }
 
 .tooltip::before {

@@ -749,6 +749,10 @@
             <span>{{ item.dispatchTime }}</span>
           </el-col>
           <el-col :span="8">
+            <div>任务名称：</div>
+            <span>{{ item.taskName }}</span>
+          </el-col>
+          <el-col :span="8">
             <div>任务描述：</div>
             <span>{{
                 item.taskDescription == "null" ? "" : item.taskDescription

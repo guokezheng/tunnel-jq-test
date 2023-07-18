@@ -474,12 +474,12 @@ public interface SdDevicesMapper
 	 * @param devices
 	 * @return
 	 */
-	SdDevices getDevLeft(SdDevices devices);
+	List<SdDevices> getDevLeft(SdDevices devices);
 
 	/**
 	 * 查询右侧
 	 * @param devices
 	 * @return
 	 */
-	SdDevices getDevRight(SdDevices devices);
+	List<SdDevices> getDevRight(SdDevices devices);
 }

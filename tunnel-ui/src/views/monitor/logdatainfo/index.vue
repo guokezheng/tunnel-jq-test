@@ -201,7 +201,7 @@
         label-width="75px"
       >
         <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
-          <el-select
+          <!-- <el-select
             v-model="queryParams.eqTypeId"
             placeholder="请选择设备类型"
             filterable
@@ -214,7 +214,15 @@
               :label="item.typeName"
               :value="item.typeId"
             />
-          </el-select>
+          </el-select> -->
+          <el-cascader
+              v-model="queryParams.eqTypeId"
+              :options="eqTypeData"
+              :props="equipmentTypeProps"
+              :show-all-levels="false"
+              @change="changeEquipmentType(index)"
+              style="width: 100%"
+            ></el-cascader>
         </el-form-item>
         <el-form-item
           label="隧道名称"
@@ -429,12 +437,20 @@ import {
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listType } from "@/api/equipment/type/api";
 import { exportLogininfor1, listLog } from "@/api/system/log";
-
+import {
+getCategoryTree,
+} from "@/api/event/strategy";
 export default {
   name: "Logininfor",
   dicts: ["sys_common_status, sd_control_type","sd_direction"],
   data() {
     return {
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
       activeName: "2",
       tabList: [
         {
@@ -481,7 +497,7 @@ export default {
       //所属隧道
       eqTunnelData: {},
       //设备类型
-      eqTypeData: {},
+      eqTypeData: [],
       //操作状态 0：成功，1：失败
       operationStateOptions: [],
       //控制方式
@@ -661,11 +677,14 @@ export default {
     },
     /** 设备类型 */
     getEqType() {
-      const params = {
-        isControl: 1, //是否显示/是否可控：1：是 0：否
-      };
-      listType(params).then((response) => {
-        this.eqTypeData = response.rows;
+      // const params = {
+      //   isControl: 1, //是否显示/是否可控：1：是 0：否
+      // };
+      // listType(params).then((response) => {
+      //   this.eqTypeData = response.rows;
+      // });
+      getCategoryTree().then((data) => {
+        this.eqTypeData = data.data;
       });
     },
     //操作是否成功 0：成功 1：失败

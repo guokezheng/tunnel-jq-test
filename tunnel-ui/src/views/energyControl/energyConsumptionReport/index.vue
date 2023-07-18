@@ -836,6 +836,7 @@ export default {
 }
 ::v-deep .el-card__body {
   padding: 6px !important;
+  height: 100%;
 }
 //   ::v-deep .el-scrollbar {
 //     margin: 0px 10px;

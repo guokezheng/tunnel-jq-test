@@ -1,4 +1,32 @@
 .theme-dark {
+  // 表格内按钮 红色
+  .tableDelButtton{
+    // width: 50px;
+    padding: 0 5px !important;
+    font-size: 14px;
+    color: #FA6F8E;
+    height: 28px;
+    border-radius: 3px;
+    border: 1px solid #FA6F8E;
+    background-color: transparent;
+  }
+  .tableDelButtton:hover{
+    color: white;
+    background: #FA6F8E !important;
+  }
+  .tableBlueButtton{
+    padding: 0 5px  !important;
+    font-size: 14px;
+    color: #39ADFF;
+    height: 3vh;
+    border-radius: 3px;
+    border: 1px solid #39ADFF;
+    background-color: transparent;
+  }
+  .tableBlueButtton:hover{
+    color: white;
+    background: #39ADFF;
+  }
   // 表单内多选框
   .el-form, .phoneBox1{
     .el-checkbox__inner{
@@ -1130,34 +1158,7 @@
     .formAddClass{
       color: white;
     }
-    // 表格内按钮 红色
-    .tableDelButtton{
-      // width: 50px;
-      padding: 0 5px;
-      font-size: 14px;
-      color: #FA6F8E;
-      height: 28px;
-      border-radius: 3px;
-      border: 1px solid #FA6F8E;
-      background-color: transparent;
-    }
-    .tableDelButtton:hover{
-      color: white;
-      background: #FA6F8E !important;
-    }
-    .tableBlueButtton{
-      padding: 0 5px;
-      font-size: 14px;
-      color: #39ADFF;
-      height: 3vh;
-      border-radius: 3px;
-      border: 1px solid #39ADFF;
-      background-color: transparent;
-    }
-    .tableBlueButtton:hover{
-      color: white;
-      background: #39ADFF;
-    }
+    
     // 表格loading背景色
     .el-loading-mask{
       background: transparent;

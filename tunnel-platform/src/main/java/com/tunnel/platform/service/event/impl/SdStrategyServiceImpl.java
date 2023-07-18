@@ -1138,8 +1138,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         SdTrigger sdTrigger = model.getTriggers();
         sdTrigger.setRelateId(sty.getId());
         int insertSdTrigger = sdTriggerMapper.insertSdTrigger(sdTrigger);
+        //分钟转换为表达式
+        String schedulerTime =CronUtil.ConvertFrequencyToCron(Integer.parseInt(sty.getSchedulerTime()));
         //新增定时任务 corn表达式 校验是否合规
-        if(!CronUtils.isValid(sty.getSchedulerTime())){
+        if(!CronUtils.isValid(schedulerTime)){
             throw new RuntimeException("当前日期表达式选择有误，请重新选择！");
         }
         Long refId = sdTrigger.getId();
@@ -1149,7 +1151,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         job.setJobName(model.getStrategyName());
         // 调用目标字符串
         job.setInvokeTarget("strategyTask.triggerJob('" + refId + "')");
-        job.setCronExpression(sty.getSchedulerTime());
+        //分钟转换为表达式
+        job.setCronExpression(schedulerTime);
         // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
         job.setMisfirePolicy("1");
         // 是否并发执行（0允许 1禁止）

@@ -4,6 +4,8 @@ package com.tunnel.business.datacenter.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+//import org.quartz.CronExpression;
+import java.text.ParseException;
 
 
 public class CronUtil {
@@ -111,6 +113,21 @@ public class CronUtil {
         String [] array = cronStr.split(" ");
 
         return array[2]+":"+array[1]+":"+array[0];
+    }
+
+    public static String ConvertFrequencyToCron(int frequencyInMinutes) {
+        // 构建Cron表达式，分钟字段为 '*/frequencyInMinutes'，其他字段使用通配符 *
+        String cronExpression = String.format("0 */%d * ? * *", frequencyInMinutes);
+
+        // 验证Cron表达式是否有效
+        try {
+//            new CronExpression(cronExpression);
+            return cronExpression;
+        } catch (Exception e) {
+            // 处理无效的Cron表达式异常
+            e.printStackTrace();
+            return null;
+        }
     }
 
 

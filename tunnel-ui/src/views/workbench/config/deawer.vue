@@ -325,18 +325,18 @@
         <el-row style="line-height: 40px;
             border-bottom: 1px solid rgba(224, 231, 237, 0.2);
             color: #00c2ff;">
-          <el-col :span="6" style="padding-left: 4px;">
+          <el-col :span="5" style="padding-left: 4px;">
             <span >预警名称</span>
           </el-col>
-          <el-col :span="8" >
+          <el-col :span="7" >
             <span >预警类型</span>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <span >触发值</span>
           </el-col>
-<!--          <el-col :span="5">-->
-<!--            <span >相关预案1</span>-->
-<!--          </el-col>-->
+          <el-col :span="4">
+            <span >状态</span>
+          </el-col>
         </el-row>
 
         <el-row
@@ -350,26 +350,29 @@
           "
         >
 
-          <el-col :span="6">
+          <el-col :span="5">
             <div >
               {{ item.strategy_name }}
             </div>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
             <div >
               {{ item.name }}
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <div >
             {{ item.str }}
           </div>
           </el-col>
-<!--          <el-col :span="5">-->
-<!--            <div class="reservePlan" v-for="(itm, inx) in item.plan" :key="inx">-->
-<!--            {{ itm }}-->
-<!--          </div>-->
-<!--          </el-col>-->
+          <el-col :span="4">
+            <el-switch
+              v-model="item.strategyState"
+              active-value="0"
+              inactive-value="1"
+              @change="changeStrategyState(item.id,item.strategyState)"
+            ></el-switch>
+          </el-col>
         </el-row>
       </div>
     </el-drawer>
@@ -384,12 +387,14 @@ import {
   timeStrategySwitch,
 } from "@/api/workbench/config.js";
 import {
+  updateState,
   workTriggerInfo,
 } from "@/api/event/strategy";
 import {
   getAudioFileList,
   playVoiceGroup,
 } from "@/api/equipment/eqlist/api";
+import {changeJobStatus} from "@/api/monitor/job";
 export default {
   data() {
     return {
@@ -690,6 +695,36 @@ export default {
       getAudioFileList(params).then((res) => {
         // console.log(res, "广播一键文件列表");
         this.fileNamesList = res.data;
+      });
+    },
+    // 任务状态修改
+    handleStatusChange(row) {
+      let text = row.status === "0" ? "启用" : "停用";
+      this.$modal
+        .confirm('确认要"' + text + '""' + row.jobName + '"任务吗？')
+        .then(function () {
+          return changeJobStatus(row.jobId, row.status);
+        })
+        .then(() => {
+          this.$modal.msgSuccess(text + "成功");
+        })
+        .catch(function () {
+          row.status = row.status === "0" ? "1" : "0";
+        });
+    },
+    changeStrategyState(row,index) {
+      let data = {strategyId: row, change: index};
+      updateState(data).then((result) => {
+
+        if(result.code == 200){
+          if(index == 0){
+            this.$modal.msgSuccess("开启成功");
+          }else{
+            this.$modal.msgSuccess("关闭成功");
+          }
+        }else{
+          this.$modal.msgSuccess(result.msg);
+        }
       });
     },
   },

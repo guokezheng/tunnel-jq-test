@@ -206,4 +206,12 @@ public interface SdEventMapper
      * @return
      */
     int batchUpdateSdEvent(SdEvent sdEvent);
+
+    /**
+     * 查询事件
+     *
+     * @param sdEvent 事件管理
+     * @return 事件管理集合
+     */
+    public List<SdEvent> selectSdEventSingleList(SdEvent sdEvent);
 }

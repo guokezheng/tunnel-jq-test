@@ -763,4 +763,31 @@
             where id = #{item}
         </foreach>
     </update>
+
+    <select id="selectSdEventSingleList" parameterType="SdEvent" resultMap="SdEventResult">
+        select A.id, A.tunnel_id, A.event_type_id, A.event_title,A.event_source, A.event_time, A.event_state, A.event_grade,
+        A.event_location, A.event_death, A.event_injured,A.slight_injured, A.event_description, A.reserve_plan_id,
+        A.flow_id, A.warning_id,A.station_id, A.lane_no,A.longitude, A.latitude, A.stake_num, A.stake_end_num, A.start_time, A.end_time,A.video_url,
+        A.create_by, A.create_time, A.update_by, A.update_time,A.direction,A.small_car_num,A.truck_num,A.passenger_car_num,A.tanker_num,
+        A.car_owner_phone, A.wrecker_phone,A.police_phone,A.remark,A.currency_id
+        from sd_event A
+        <where>
+            1=1
+            <if test="id != null  and id != ''">and A.id = #{id}</if>
+            <if test="tunnelId != null  and tunnelId != ''">and A.tunnel_id = #{tunnelId}</if>
+            <if test="eventSource != null">and A.event_source = #{eventSource}</if>
+            <if test="eventTypeId != null">and A.event_type_id = #{eventTypeId}</if>
+            <if test="eventTitle != null  and eventTitle != ''">and A.event_title = #{eventTitle}</if>
+            <if test="eventGrade != null  and eventGrade != ''">and A.event_grade = #{eventGrade}</if>
+            <if test="eventLocation != null  and eventLocation != ''">and A.event_location = #{eventLocation}</if>
+            <if test="direction != null  and direction != ''">and A.direction = #{direction}</if>
+            <if test="eventDeath != null ">and A.event_death = #{eventDeath}</if>
+            <if test="eventInjured != null ">and A.event_injured = #{eventInjured}</if>
+            <if test="eventDescription != null  and eventDescription != ''">and A.event_description =
+                #{eventDescription}
+            </if>
+            <if test="eventState != null  and eventState != ''">and A.event_state = #{eventState}</if>
+        </where>
+        ORDER BY A.end_time
+    </select>
 </mapper>

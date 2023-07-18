@@ -70,24 +70,39 @@
           </el-form-item>
         </el-col>
         <el-col>
-          <el-col :span="24">
+          <el-col :span="4">
+<!--            <el-form-item-->
+<!--              label="定时频率"-->
+<!--              prop="schedulerTime"-->
+<!--              style="width: 100%"-->
+<!--            >-->
+<!--              <el-input-->
+<!--                v-model="strategyForm.schedulerTime"-->
+<!--                placeholder="请输入cron执行表达式"-->
+<!--              >-->
+<!--                <template slot="append">-->
+<!--                  <el-button type="primary" @click="handleShowCron">-->
+<!--                    生成表达式-->
+<!--                    <i class="el-icon-time el-icon&#45;&#45;right"></i>-->
+<!--                  </el-button>-->
+<!--                </template>-->
+<!--              </el-input>-->
+<!--            </el-form-item>-->
             <el-form-item
-              label="定时频率"
+              label="间隔时间"
               prop="schedulerTime"
               style="width: 100%"
             >
               <el-input
                 v-model="strategyForm.schedulerTime"
-                placeholder="请输入cron执行表达式"
-              >
-                <template slot="append">
-                  <el-button type="primary" @click="handleShowCron">
-                    生成表达式
-                    <i class="el-icon-time el-icon--right"></i>
-                  </el-button>
-                </template>
+                placeholder="请输入分钟"
+              > <div>dsd</div>
               </el-input>
+
             </el-form-item>
+          </el-col>
+          <el-col :span="4" style="margin-top: 6px">
+            <span>(分钟)</span>
           </el-col>
         </el-col>
         <el-col class="triggers">
@@ -696,6 +711,7 @@ export default {
                 eqTunnelId: this.strategyForm.tunnelId,
                 eqDirection: this.strategyForm.direction, //方向
               }).then((res) => {
+                debugger
                 this.$set(autoControl, "equipmentData", res.rows);
                 console.log(autoControl.equipmentData, "设备列表数据1");
               });
@@ -721,6 +737,7 @@ export default {
       if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
+      debugger
       listDevices(params).then((res) => {
         this.$set(
           this.strategyForm.autoControl[index],
@@ -953,10 +970,14 @@ export default {
       // 选择设备名称赋值
       console.log(this.strategyForm.tunnelId,this.strategyForm.direction)
       if(this.strategyForm.tunnelId && this.strategyForm.direction && this.strategyForm.triggers.deviceTypeId){
+        let params={eqDirection: this.strategyForm.direction}
+        if(this.strategyForm.direction == 3){
+          params.eqDirection = null;
+        }
         listDevices({
           eqType: this.strategyForm.triggers.deviceTypeId,
           eqTunnelId: this.strategyForm.tunnelId,
-          eqDirection: this.strategyForm.direction,
+          eqDirection: params.eqDirection,
         }).then((res) => {
           this.equipmentData = res.rows;
           this.deviceName = res.rows;
@@ -1139,7 +1160,7 @@ export default {
     },
     //查询方向
     getDirection() {
-      this.getDicts("sd_direction").then((response) => {
+      this.getDicts("sd_strategy_direction").then((response) => {
         this.directionOptions = response.data;
         console.log(this.directionOptions, "方向");
       });

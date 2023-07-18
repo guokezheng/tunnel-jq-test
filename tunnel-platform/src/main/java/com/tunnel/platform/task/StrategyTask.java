@@ -457,7 +457,28 @@ public class StrategyTask {
 //                        if(!StringUtils.isEmpty(f.getDirection())){
 //                            sdEvent.setDirection(f.getDirection() + "");
 //                        }
-                        int updateRows = SpringUtils.getBean(SdEventMapper.class).insertSdEvent(sdEvent);
+                        //相同定时触发一天内只能触发两次 
+                        SdEvent sdEventOne = new SdEvent();
+                        //事件来源
+                        sdEventOne.setEventSource(sdEvent.getEventSource());
+                        //隧道id
+                        sdEventOne.setTunnelId(sdEvent.getTunnelId());
+                        //事件类型
+                        sdEventOne.setEventTypeId(sdEvent.getEventTypeId());
+                        //事件标题
+                        sdEventOne.setEventTitle(sdEvent.getEventTitle());
+                        //event_state  处理状态
+                        sdEventOne.setEventState(sdEvent.getEventState());
+                        List<SdEvent> sdEventsList = SpringUtils.getBean(SdEventMapper.class).selectSdEventSingleList(sdEvent);
+                        int updateRows = 0;
+                        if(sdEventsList.size()>0){
+                            sdEventsList.get(0).setStartTime(DateUtils.getTime());
+                            sdEventsList.get(0).setEventTime(DateUtils.getNowDate());
+                            updateRows = SpringUtils.getBean(SdEventMapper.class).updateSdEvent(sdEventsList.get(0));
+
+                        }else{
+                            updateRows = SpringUtils.getBean(SdEventMapper.class).insertSdEvent(sdEvent);
+                        }
                         if(updateRows>0){
                             SdEvent event = new SdEvent();
                             event.setId(sdEvent.getId());
@@ -465,8 +486,11 @@ public class StrategyTask {
                             JSONObject object = new JSONObject();
                             object.put("sdEventList", sdEventList);
                             WebSocketService.broadcast("sdEventList",object.toString());
-                            // 添加事件流程记录
-                            SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);
+                            if(!(sdEventsList.size()>0)){//添加
+                                // 添加事件流程记录
+                                SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);
+                            }
+
                         }
                     }else{
                         //预警联动控制设备

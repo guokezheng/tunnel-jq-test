@@ -214,7 +214,7 @@ public interface SdDevicesMapper
 	 * @param deviceType
 	 * @return
 	 */
-	List<SdDevices> getDevicesList(@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
+	List<SdDevices> getDevicesList(@Param("searchValue")String searchValue,@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
 
 	public List<String> getDevicesFireMarkList(SdDevices sdDevices);
 

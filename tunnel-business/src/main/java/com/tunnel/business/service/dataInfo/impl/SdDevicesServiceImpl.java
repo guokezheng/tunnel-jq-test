@@ -165,8 +165,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      * @return
      */
     @Override
-    public List<SdDevices> getDevicesList(String tunnelId, String deviceType) {
-        return sdDevicesMapper.getDevicesList(tunnelId,deviceType);
+    public List<SdDevices> getDevicesList(String searchValue,String tunnelId, String deviceType) {
+        return sdDevicesMapper.getDevicesList(searchValue,tunnelId,deviceType);
     }
 
     /**

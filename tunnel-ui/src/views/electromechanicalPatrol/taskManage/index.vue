@@ -531,6 +531,11 @@
               :value="dict.value"
             />
           </el-select>
+          <div >
+            <el-input placeholder="请输入设备类型、名称" v-model="searchValue" class="input-with-select">
+              <el-button slot="append" icon="el-icon-search" @click="getTable()"></el-button>
+            </el-input>
+          </div>
           <div class="cancel-determine">
             <el-button @click="cancelDetermine1">取消</el-button>
             <el-button type="primary" @click="determine1">确定</el-button>
@@ -983,6 +988,7 @@ export default {
       userName: "",
       currentTime: "",
       deviceType: "",
+      searchValue:"",
       faultLevel: "",
       // 获取巡检点 表格选中项
       dialogSelection: [],
@@ -1174,10 +1180,8 @@ export default {
 
     //更换隧道，更新隧道下关联班组列表
     changeGroup(e){
-
-      console.log("change group by tunnelid",e);
-
       this.getBz(e)
+      this.boxList = [];
     },
     closeRecord() {
       // 关闭弹出层
@@ -1338,6 +1342,7 @@ export default {
         this.deviceType = deviceType;
       }
       getDevicesList(
+        this.searchValue,
         this.tunnelId,
         this.deviceType,
         this.pageNum,
@@ -1406,6 +1411,7 @@ export default {
       this.tunnelId = data.id;
 
       getDevicesList(
+        this.searchValue,
         this.tunnelId,
         this.deviceType,
         this.pageNum,

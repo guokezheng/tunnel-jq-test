@@ -91,9 +91,9 @@ export function abolishList(data) {
 }
 
 // 获取设备table
-export function getDevicesList(tunnelId,deviceType,pageNum,pageSize) {
+export function getDevicesList(searchValue,tunnelId,deviceType,pageNum,pageSize) {
   return request({
-    url: '/task/list/getDevicesList?tunnelId='+tunnelId +'&deviceType=' + deviceType +'&pageNum=' + pageNum +'&pageSize=' +pageSize,
+    url: '/task/list/getDevicesList?searchValue='+searchValue +'&tunnelId='+tunnelId +'&deviceType=' + deviceType +'&pageNum=' + pageNum +'&pageSize=' +pageSize,
     method: 'get',
   })
 }

@@ -210,7 +210,7 @@ public interface ISdDevicesService {
      * @param deviceType
      * @return
      */
-    List<SdDevices> getDevicesList(String tunnelId, String deviceType);
+    List<SdDevices> getDevicesList(String searchValue,String tunnelId,String deviceType);
 
     List<String> fireMarkList(String eqId);
 

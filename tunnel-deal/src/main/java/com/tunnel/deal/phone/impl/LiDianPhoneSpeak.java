@@ -110,10 +110,10 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         sdEventMapper.insertSdEvent(sdEvent);
     }
 
-    @PostConstruct
-    public void init() {
-        runThread();
-    }
+//    @PostConstruct
+//    public void init() {
+//        runThread();
+//    }
 
     public void runThread() {
         new Thread() {

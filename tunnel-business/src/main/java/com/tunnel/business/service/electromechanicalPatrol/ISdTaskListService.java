@@ -88,7 +88,7 @@ public interface ISdTaskListService
      * @param deptId
      * @return
      */
-    List<SysDept> selectTableBzDataInfo(String deptId);
+    List<SysDept> selectTableBzDataInfo(String deptId,String tunnelId);
 
     /**
      * 构建前端所需要下拉树结构

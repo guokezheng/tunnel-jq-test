@@ -220,14 +220,16 @@
     </select>
 
     <select id="selectTableBzDataInfo" parameterType="String" resultType="com.ruoyi.common.core.domain.entity.SysDept">
-        select *
-        from sd_teams
+        select A.*
+        from sd_teams A left join sd_tunnels B on A.parent_id = B.dept_id
         <where>
-            1=1 and status = '0'
+            1=1 and A.status = '0'
             <if test="deptId != null and deptId != ''">
-                AND (parent_id = #{deptId} OR parent_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+                AND (A.parent_id = #{deptId} OR A.parent_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
-
+            <if test="tunnelId != null and tunnelId != ''">
+                AND B.tunnel_id = #{tunnelId}
+            </if>
         </where>
     </select>
 

@@ -76,7 +76,7 @@ public interface SdTaskListMapper
      * @param deptId
      * @return
      */
-    List<SysDept> selectTableBzDataInfo(String deptId);
+    List<SysDept> selectTableBzDataInfo(@Param("deptId") String deptId,@Param("tunnelId") String tunnelId);
 
     /**
      * 废纸巡查任务

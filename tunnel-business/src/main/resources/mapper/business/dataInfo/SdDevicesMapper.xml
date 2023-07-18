@@ -804,6 +804,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
         <where>
         and s.dict_type= 'sd_direction'
+            <if test="searchValue != null and searchValue != ''">AND CONCAT(d.eq_name, t.type_name) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="tunnelId != null and tunnelId != ''">and d.eq_tunnel_id = #{tunnelId}</if>
             <if test="deviceType != null and deviceType != ''">and t.eq_system = #{deviceType}</if>
         </where>
@@ -895,6 +896,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.param != null and params.param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{params.param},'%') </if>
             <if test="params.eqType != null and params.eqType != ''">and t.eq_type = #{params.eqType}</if>
             <if test="params.eqStatus != null and params.eqStatus != ''">and t.eq_status = #{params.eqStatus}</if>
+            <if test="params.tunnelId != null and params.tunnelId != ''">and u.tunnel_id = #{params.tunnelId}</if>
             <if test="params.tunnelArray != null and params.tunnelArray.size > 0">
                 and u.tunnel_id  in
                 <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
@@ -917,6 +919,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="params.param != null and params.param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{params.param},'%') </if>
         <if test="params.eqType != null and params.eqType != ''">and t.eq_type = #{params.eqType}</if>
         <if test="params.eqStatus != null and params.eqStatus != ''">and t.eq_status = #{params.eqStatus}</if>
+        <if test="params.tunnelId != null and params.tunnelId != ''">and u.tunnel_id = #{params.tunnelId}</if>
         <if test="params.tunnelArray != null and params.tunnelArray.size > 0">
             and u.tunnel_id  in
             <foreach item="id" collection="params.tunnelArray" open="(" separator="," close=")">
@@ -1393,8 +1396,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         1 =1
        AND d.eq_type = 23
        AND d.eq_tunnel_id = #{eqTunnelId}
-       AND d.pile_num <![CDATA[ <= ]]> #{pileNum}
+       AND d.pile_num <![CDATA[ < ]]> #{pileNum}
        AND d.eq_direction = #{eqDirection}
+       ORDER BY
+           pile_num ASC
    </select>
 
     <select id="getDevRight" resultType="sdDevices" parameterType="sdDevices">
@@ -1410,7 +1415,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             1 =1
           AND d.eq_type = 23
           AND d.eq_tunnel_id = #{eqTunnelId}
-          AND d.pile_num <![CDATA[ >= ]]> #{pileNum}
+          AND d.pile_num <![CDATA[ > ]]> #{pileNum}
           AND d.eq_direction = #{eqDirection}
+          ORDER BY
+            pile_num ASC
     </select>
 </mapper>

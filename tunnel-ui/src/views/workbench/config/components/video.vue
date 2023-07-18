@@ -15,7 +15,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div style="width: 100%; height: 200px; padding: 0 15px">
+      <div style="width: 100%; height: 200px;">
         <video
           v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
@@ -32,6 +32,10 @@
           :rtsp="videoForm.liveUrl"
           :open="cameraPlayer"
         ></videoPlayer>
+      </div>
+      <div class="rlModelBox">
+        <div class="rlModelButton left" @click="changeVideo('left')"></div>
+        <div class="rlModelButton" @click="changeVideo('right')"></div>
       </div>
       <el-form
         ref="form"
@@ -89,7 +93,7 @@
               </el-col>
             </el-row>
           </el-tab-pane>
-          <el-tab-pane label="摄像机参数" name="videoParams">
+          <el-tab-pane label="摄像机参数" name="videoParams" v-if="[23,24,25].includes(this.clickEqType)">
             <el-row>
               <el-col :span="13">
                 <el-form-item label="IP:">
@@ -386,7 +390,7 @@ import { getDeviceById, videoStreaming } from "@/api/equipment/eqlist/api.js"; /
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import flvjs from "flv.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
-import { PTZContro } from "@/api/workbench/config.js"; //提交控制信息
+import { PTZContro, getCamera } from "@/api/workbench/config.js"; //提交控制信息
 
 // import { getLocalIP } from "@/api/event/vedioRecord";
 
@@ -397,6 +401,7 @@ export default {
   },
   data() {
     return {
+      clickEqType:'',
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
       cameraPlayer: false, //摄像机弹窗
@@ -523,17 +528,20 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
+      pileNum:'',
     };
   },
   methods: {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
       this.eqInfo = eqInfo;
+      this.clickEqType = JSON.parse(JSON.stringify(this.eqInfo.clickEqType));
+      console.log(this.clickEqType,"this.clickEqType");
       this.brandList = brandList;
       this.directionList = directionList;
       this.eqTypeDialogList = eqTypeDialogList;
       this.cameraVisible = true;
-      this.videoActive = "information", // tab页
-      this.cameraPlayer = false;
+      (this.videoActive = "information"), // tab页
+        (this.cameraPlayer = false);
       this.getmessage();
     },
     // 点击云台方向
@@ -558,27 +566,58 @@ export default {
           if (res.data.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
             displayH5sVideoAll(res.data.secureKey, "h5sVideo1");
           } else {
-            videoStreaming(this.eqInfo.equipmentId)
-              .then((response) => {
-                console.log(response, "视频流");
-                if (response.code == 200 && response.data) {
-                  this.videoForm = response.data;
-                  this.cameraPlayer = true;
-                } else {
-                  // this.videoForm.liveUrl = "rtsp://admin:12345@192.168.1.64:554/ch1/sub/av_stream"
-                  // this.cameraPlayer = true;
-
-                  this.$modal.msgWarning("获取视频失败");
-                }
-              })
-              .catch((e) => {
-                this.$modal.msgWarning("获取视频失败");
-              });
+            if([23,24,25].includes(this.clickEqType)){
+              this.getVideo();
+            }else{
+              this.changeVideo()
+            }
           }
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
+    },
+    // 火灾探测器 声光报警器 手报 电话
+    // 1.  刚打开 传火灾报警桩号pileNum 隧道id 方向 返回来的是对象 当前摄像机基本信息
+    // 2.  往右 传 （1）rlModel：right （2）摄像机桩号 隧道id 方向
+    getVideo(videoData) {
+      let equipmentId = ''
+      if(videoData){
+        equipmentId = videoData
+      }else{
+        equipmentId = this.eqInfo.equipmentId
+      }
+      videoStreaming(equipmentId)
+        .then((response) => {
+          console.log(response, "视频流");
+          if (response.code == 200 && response.data) {
+            this.videoForm = response.data;
+            this.cameraPlayer = true;
+          } else {
+            this.$modal.msgWarning("获取视频失败");
+          }
+        })
+        .catch((e) => {
+          this.$modal.msgWarning("获取视频失败");
+        });
+    },
+    changeVideo(rlModel){
+      const params = {
+        eqDirection:this.stateForm.eqDirection,
+        pileNum:rlModel?this.pileNum:this.stateForm.pileNum,
+        eqTunnelId:this.stateForm.tunnelId,
+        rlModel:rlModel
+      }
+      getCamera(params).then((res)=>{
+        console.log(res,"切换左右摄像机信息")
+        if(res.data == ''){
+          this.$message.warning('当前为最后一个摄像机');
+        }else{
+          this.pileNum = res.data.pileNum
+          this.cameraPlayer = false;
+          this.getVideo(res.data.eqId)
+        }
+      })
     },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -653,6 +692,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.rlModelBox{
+  width:100%;
+  height: 40px;
+  position: absolute;
+  top:140px;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 15px;
+  .rlModelButton{
+    width:40px;
+    height: 40px;
+    border-radius: 20px;
+    background: url(../../../../assets/cloudControl/toRight2.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+  .left{
+    transform: rotate(180deg);
+  }
+  .rlModelButton:hover{
+    background: url(../../../../assets/cloudControl/toRight1.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    opacity: 1;
+  }
+}
 .robotTabs {
   padding: 0 15px;
 }

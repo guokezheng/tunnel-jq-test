@@ -1,6 +1,6 @@
 <!-- 机构-多选 -->
 <template>
-  <div>
+  <div style="height: 100%">
     <div style="width: 100%; padding: 10px 0" class="box">
       <el-row v-if="filter">
         <el-input
@@ -23,7 +23,14 @@
             >全选</el-checkbox
           >
         </div>
-        <div style="overflow-x: hidden;overflow-y: auto;height: calc(100% - 40px);">
+        <div
+          style="
+            overflow-x: hidden;
+            overflow-y: auto;
+            height: calc(100% - 40px);
+            width:97%;
+          "
+        >
           <el-tree
             class="tree"
             :data="siteTreeOptions"
@@ -173,7 +180,7 @@ export default {
     },
     //节点选中事件--复选框
     handleCheckChange(data, checked) {
-      // console.log(data, checked);
+      console.log(data, checked);
       let n = this.getAllKeys(this.siteTreeOptions);
       // 反选
       if (checked.checkedKeys.length === n.length) {
@@ -229,7 +236,6 @@ export default {
 <style lang="scss" scoped>
 .leftTree {
   height: 100%;
-  width: 95%;
 }
 .showName {
   width: 170px; //外部容器的宽度
@@ -264,8 +270,12 @@ export default {
 .theme-blue .box {
   background: none !important;
 }
-.el-scrollbar__wrap{
+.el-scrollbar__wrap {
   overflow-x: hidden;
   overflow-y: auto;
+  width: 100%;
+}
+.el-scrollbar{
+  height: calc(100% - 52px);
 }
 </style>

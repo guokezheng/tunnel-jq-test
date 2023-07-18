@@ -47,14 +47,17 @@
           <el-select
             v-model="queryParams.tunnelId"
             placeholder="请选择所属隧道"
+            @change="changeGroup($event)"
             clearable
             size="small"
+
           >
             <el-option
               v-for="item in eqTunnelData"
               :key="item.tunnelId"
               :label="item.tunnelName"
               :value="item.tunnelId"
+
             />
           </el-select>
         </el-form-item>
@@ -336,6 +339,7 @@
                   <el-select
                     v-model="form.tunnelId"
                     placeholder="请选择所属隧道"
+                    @change="changeGroup($event)"
                   >
                     <el-option
                       v-for="item in eqTunnelData"
@@ -373,6 +377,7 @@
                     value-format="yyyy-MM-dd HH:mm:ss"
                     @change="handleEndTime"
                     placeholder="选择预完成时"
+                    @focus="focus"
                   >
                   </el-date-picker>
                 </el-form-item>
@@ -526,6 +531,11 @@
               :value="dict.value"
             />
           </el-select>
+          <div >
+            <el-input placeholder="请输入设备类型、名称" v-model="searchValue" class="input-with-select">
+              <el-button slot="append" icon="el-icon-search" @click="getTable()"></el-button>
+            </el-input>
+          </div>
           <div class="cancel-determine">
             <el-button @click="cancelDetermine1">取消</el-button>
             <el-button type="primary" @click="determine1">确定</el-button>
@@ -742,6 +752,10 @@
           <el-col :span="8">
             <div>派单时间：</div>
             <span>{{ item.dispatchTime }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>任务名称：</div>
+            <span>{{ item.taskName }}</span>
           </el-col>
           <el-col :span="8">
             <div>任务描述：</div>
@@ -974,6 +988,7 @@ export default {
       userName: "",
       currentTime: "",
       deviceType: "",
+      searchValue:"",
       faultLevel: "",
       // 获取巡检点 表格选中项
       dialogSelection: [],
@@ -1162,6 +1177,12 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+
+    //更换隧道，更新隧道下关联班组列表
+    changeGroup(e){
+      this.getBz(e)
+      this.boxList = [];
+    },
     closeRecord() {
       // 关闭弹出层
       this.$refs.tableFile.clearSelection();
@@ -1321,6 +1342,7 @@ export default {
         this.deviceType = deviceType;
       }
       getDevicesList(
+        this.searchValue,
         this.tunnelId,
         this.deviceType,
         this.pageNum,
@@ -1389,6 +1411,7 @@ export default {
       this.tunnelId = data.id;
 
       getDevicesList(
+        this.searchValue,
         this.tunnelId,
         this.deviceType,
         this.pageNum,
@@ -1556,8 +1579,13 @@ export default {
     },
 
     /** 巡查班组 */
-    getBz() {
-      listBz().then((response) => {
+    getBz(tunnelId) {
+
+      let param = {
+        "tunnelId":tunnelId
+      }
+
+      listBz(param).then((response) => {
         this.bzData = response.rows;
       });
     },
@@ -1756,6 +1784,13 @@ export default {
         this.openGz = true;
         this.openCz = true;
         this.title = "修改巡查任务";
+      });
+    },
+    focus() {
+      this.$nextTick(() => {
+        document
+          .getElementsByClassName("el-button--text")[1]
+          .setAttribute("style", "display:none"); // 隐藏此刻按钮
       });
     },
     exportTaskReport(row) {

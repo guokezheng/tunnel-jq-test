@@ -286,6 +286,14 @@ export function setControlDeviceByParam(data) {
   })
 }
 
+// 查询附近相机
+export function getCamera(query) {
+  return request({
+    url: '/devices/getCamera',
+    method: 'get',
+    params: query
+  })
+}
 
 
 /************** 隧道机器人  start ******************/

@@ -101,7 +101,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="设备类型" prop="eqType">
-          <el-select
+          <!-- <el-select
             v-model="queryParams.eqType"
             placeholder="请选择设备类型"
             clearable
@@ -113,7 +113,15 @@
               :label="item.typeName"
               :value="item.typeId"
             />
-          </el-select>
+          </el-select> -->
+          <el-cascader
+              v-model="queryParams.eqType"
+              :options="eqTypeData"
+              :props="equipmentTypeProps"
+              :show-all-levels="false"
+              @change="changeEquipmentType(index)"
+              style="width: 100%"
+            ></el-cascader>
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
@@ -911,7 +919,9 @@ import { listAllSystem } from "@/api/equipment/externalsystem/system";
 import { listCategory } from "@/api/equipment/bigType/category";
 import { treeSelectYG1 } from "@/api/system/dept";
 import { getTeams } from "@/api/electromechanicalPatrol/teamsManage/teams";
-
+import {
+getCategoryTree,
+} from "@/api/event/strategy";
 export default {
   name: "Devices",
   //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
@@ -933,6 +943,12 @@ export default {
       }
     };
     return {
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
       checkIndex: 1,
       boxShow: false,
       //设备大类
@@ -987,7 +1003,7 @@ export default {
       // 设备类型字典
       /* eqTypeOptions: [], */
       //设备类型
-      eqTypeData: {},
+      eqTypeData: [],
       // 照明灯类型字典
       eqLampTypeOptions: [],
       instructionTypeOptions: [],
@@ -1172,6 +1188,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    changeEquipmentType(index){
+      console.log(index)
+    },
     handleRowClick(row) {
       this.$refs.tableFile.toggleRowSelection(row);
     },
@@ -1283,9 +1302,6 @@ export default {
     },
     /** 查询设备列表 */
     getList() {
-      console.log(this.ids, "ids");
-      console.log(this.queryParams.exportIds, "this.queryParams.exportIds");
-
       if (this.manageStatin == "1") {
         this.queryParams.eqTunnelId = this.$cache.local.get(
           "manageStationSelect"
@@ -1328,8 +1344,9 @@ export default {
     },
     /** 设备类型 */
     getEqType() {
-      listType().then((response) => {
-        this.eqTypeData = response.rows;
+      
+      getCategoryTree().then((data) => {
+        this.eqTypeData = data.data;
       });
     },
     // 取消按钮

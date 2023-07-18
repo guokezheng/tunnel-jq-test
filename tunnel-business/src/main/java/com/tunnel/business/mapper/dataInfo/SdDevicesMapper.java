@@ -214,7 +214,7 @@ public interface SdDevicesMapper
 	 * @param deviceType
 	 * @return
 	 */
-	List<SdDevices> getDevicesList(@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
+	List<SdDevices> getDevicesList(@Param("searchValue")String searchValue,@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
 
 	public List<String> getDevicesFireMarkList(SdDevices sdDevices);
 
@@ -474,12 +474,12 @@ public interface SdDevicesMapper
 	 * @param devices
 	 * @return
 	 */
-	SdDevices getDevLeft(SdDevices devices);
+	List<SdDevices> getDevLeft(SdDevices devices);
 
 	/**
 	 * 查询右侧
 	 * @param devices
 	 * @return
 	 */
-	SdDevices getDevRight(SdDevices devices);
+	List<SdDevices> getDevRight(SdDevices devices);
 }

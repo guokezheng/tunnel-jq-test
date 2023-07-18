@@ -537,8 +537,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SysDept> selectTableBzDataInfo(String deptId) {
-        return sdTaskListMapper.selectTableBzDataInfo(deptId);
+    public List<SysDept> selectTableBzDataInfo(String deptId,String tunnelId) {
+        return sdTaskListMapper.selectTableBzDataInfo(deptId,tunnelId);
     }
 
 

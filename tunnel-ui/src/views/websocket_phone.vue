@@ -6,7 +6,7 @@
 <script>
   import {mapState} from "vuex";
   import {onMessage} from "@/api/equipment/phone/phone";
-
+  import Cookies from 'js-cookie'
   export default {
     name: "PhoneWebsocket",
     data() {
@@ -84,6 +84,10 @@
         // this.initWebSocket();
       },
       websocketonmessage(message){ //数据接收
+        let token = Cookies.get('Admin-Token');
+        if(token == undefined){
+          return;
+        }
         if (this.isJson(message.data)) {
           let data = {
             data : message.data

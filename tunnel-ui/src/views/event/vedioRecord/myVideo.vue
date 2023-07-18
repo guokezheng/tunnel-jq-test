@@ -71,7 +71,7 @@
             playVideo () {
                 console.log(this.rtsp,"this.rtspthis.rtspthis.rtsp");
               this.loading = true
-                const time1 = new Date().getTime();
+                // const time1 = new Date().getTime();
                 if (flvjs.isSupported()) {
                     let video = this.$refs.player;
                     if (video) {
@@ -99,7 +99,7 @@
                         try {
                             this.player.load();
                             this.player.play().then(() => {
-                                console.log(new Date().getTime() - time1);
+                                // console.log(new Date().getTime() - time1);
                                 this.loading = false
                             })
                         } catch (error) {

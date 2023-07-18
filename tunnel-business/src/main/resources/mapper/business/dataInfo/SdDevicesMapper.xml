@@ -1393,8 +1393,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         1 =1
        AND d.eq_type = 23
        AND d.eq_tunnel_id = #{eqTunnelId}
-       AND d.pile_num <![CDATA[ <= ]]> #{pileNum}
+       AND d.pile_num <![CDATA[ < ]]> #{pileNum}
        AND d.eq_direction = #{eqDirection}
+       ORDER BY
+           pile_num ASC
    </select>
 
     <select id="getDevRight" resultType="sdDevices" parameterType="sdDevices">
@@ -1410,7 +1412,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             1 =1
           AND d.eq_type = 23
           AND d.eq_tunnel_id = #{eqTunnelId}
-          AND d.pile_num <![CDATA[ >= ]]> #{pileNum}
+          AND d.pile_num <![CDATA[ > ]]> #{pileNum}
           AND d.eq_direction = #{eqDirection}
+          ORDER BY
+            pile_num ASC
     </select>
 </mapper>

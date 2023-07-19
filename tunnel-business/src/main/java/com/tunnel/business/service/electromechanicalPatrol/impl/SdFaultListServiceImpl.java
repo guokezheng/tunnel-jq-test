@@ -420,6 +420,8 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
             sdFaultList.setImgFileId(sdFaultList.getImgFileId().substring(0,sdFaultList.getImgFileId().length()-1));
         }
+        sdFaultList.setFalltRemoveStatue("0");    // 消除状态
+        sdFaultList.setFaultStatus("0");     //发布状态
         sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
         sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
         sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人

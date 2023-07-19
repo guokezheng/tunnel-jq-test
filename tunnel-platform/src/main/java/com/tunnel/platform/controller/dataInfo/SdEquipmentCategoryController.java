@@ -118,6 +118,19 @@ public class SdEquipmentCategoryController extends BaseController {
         return AjaxResult.success(treeCategory);
     }
 
+    /**
+     * 查询全部设备类型
+     * @return
+     */
+    @GetMapping(value = "/getCategoryAllTree")
+    public AjaxResult getCategoryAllTree() {
+        List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryAllList();
+
+        List<TreeCategorySelect> treeCategory = sdEquipmentCategoryService.buildCategoryTreeSelect(list);
+
+        return AjaxResult.success(treeCategory);
+    }
+
 
 
 

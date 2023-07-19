@@ -425,7 +425,7 @@ export default {
         this.strategyForm.jobRelationId = data.jobRelationId;
 
         listRl({ strategyId: this.id }).then((response) => {
-          // console.log(response, "设备数据");
+          console.log(response, "设备数据");
           this.strategyForm.manualControl = response.rows;
           for (let i = 0; i < response.rows.length; i++) {
             let attr = response.rows[i];

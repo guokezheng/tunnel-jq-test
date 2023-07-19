@@ -28,7 +28,7 @@
             overflow-x: hidden;
             overflow-y: auto;
             height: calc(100% - 40px);
-            width:97%;
+            width: 100%;
           "
         >
           <el-tree
@@ -44,14 +44,14 @@
             default-expand-all
             @node-click="handleNodeClick"
             @check="handleCheckChange"
-            node-key="code"
+            node-key="id"
             highlight-current
           >
             <!-- 鼠标移入文本提示 -->
             <div class="showName" slot-scope="{ node, data }">
-              <el-tooltip :content="node.label" placement="top" effect="light">
+              <!-- <el-tooltip :content="node.label" placement="top" effect="light" > -->
                 <span>{{ node.label }}</span>
-              </el-tooltip>
+              <!-- </el-tooltip> -->
             </div>
           </el-tree>
         </div>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { treeselect } from "@/api/system/dept";
+import { treeselectExcYG1 } from "@/api/system/dept";
 
 export default {
   name: "loopTree",
@@ -87,7 +87,7 @@ export default {
     //   type: Boolean,
     //   default: false,
     // },
-    // //开启默认选中第一个子节点
+    //开启默认选中第一个子节点
     // default_check_first: {
     //   type: Boolean,
     //   default: false,
@@ -111,7 +111,7 @@ export default {
       //回路选项
       siteTreeOptions: [],
       defaultProps: {
-        value: "code",
+        value: "id",
         label: "label",
         children: "children",
       },
@@ -152,7 +152,7 @@ export default {
 
     // 获取树结构
     async getSiteTree() {
-      const response = await treeselect();
+      const response = await treeselectExcYG1();
       if (response.code === 200) {
         this.siteTreeOptions =
           response.data == null || response.data.length === 0
@@ -204,6 +204,7 @@ export default {
           let arr = [];
           let first = this.getFirstChildren(this.siteTreeOptions);
           if (first) arr.push(first);
+
           this.$refs.tree.setCheckedKeys(arr);
           this.$emit("defaultCheck", arr);
         }
@@ -213,7 +214,7 @@ export default {
     //获取所有节点
     getAllKeys(node, arr = []) {
       for (let item of node) {
-        arr.push(item.code);
+        arr.push(item.id);
         let parentArr = [];
         if (item.children) parentArr.push(...item.children);
         if (parentArr && parentArr.length) this.getAllKeys(parentArr, arr);
@@ -226,7 +227,7 @@ export default {
         // return node[0].children && node[0].children.length > 0
         //   ? this.getFirstChildren(node[0].children)
         //   : node[0].code;
-        return node[0].code;
+        return node[0].id;
       }
     },
   },
@@ -275,7 +276,7 @@ export default {
   overflow-y: auto;
   width: 100%;
 }
-.el-scrollbar{
+.el-scrollbar {
   height: calc(100% - 52px);
 }
 </style>

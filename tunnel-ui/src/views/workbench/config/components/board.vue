@@ -738,7 +738,11 @@ export default {
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
           this.associatedDeviceId = res.data.associatedDeviceId;
-          this.onSubmit();
+          if(this.associatedDeviceId){
+            this.onSubmit();
+          } else {
+            this.$modal.msgWarning("没有设备Id");
+          }
           if (res.data.associatedDeviceId) {
             const param = {
               deviceId: res.data.associatedDeviceId,

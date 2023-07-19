@@ -476,7 +476,7 @@
 
             <el-col :span="8">
               <el-form-item label="设备类型" prop="typeId">
-                <el-select
+                <!-- <el-select
                   v-model="form.typeId"
                   :disabled="disstate"
                   @change="eqTypeGet"
@@ -491,7 +491,14 @@
                     :label="item.typeName"
                     :value="item.typeId"
                   />
-                </el-select>
+                </el-select> -->
+                <el-cascader
+                  v-model="form.typeId"
+                  :options="eqTypeListData"
+                  :props="equipmentTypeProps"
+                  :show-all-levels="false"
+                  style="width: 100%"
+                ></el-cascader>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -783,6 +790,7 @@ import {
   loadPicture,
   updateType,
 } from "@/api/equipment/type/api";
+import { getCategoryAllTree } from "@/api/event/strategy";
 import { getDevices, listDevices } from "@/api/equipment/eqlist/api";
 import { editForm } from "@/api/equipment/yingJiGou/emergencyVehicles";
 import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
@@ -807,6 +815,12 @@ export default {
   ],
   data() {
     return {
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
       holderRunStatus:"",
       holderFaultCode:"",
       holderFaultCxtime:"",
@@ -867,7 +881,7 @@ export default {
       //设备
       eqListData: {},
       //设备类型
-      eqTypeListData: {},
+      eqTypeListData: [],
       setoptions: {
         // 时间不能大于当前时间
         disabledDate(time) {
@@ -1458,8 +1472,9 @@ export default {
 
     /** 设备类型 */
     getDevicesType() {
-      listDevicesType().then((response) => {
-        this.eqTypeListData = response.rows;
+      getCategoryAllTree().then((response) => {
+        console.log(response.data,"response.data设备类型")
+        this.eqTypeListData = response.data;
       });
     },
 
@@ -1534,8 +1549,6 @@ export default {
         this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
-
-
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
         this.disstateDevice = false;
@@ -1569,15 +1582,15 @@ export default {
       // console.log(response,"-------------------------------------")
       getList(id).then((response) => {
         this.form.tunnelId = response.data.tunnelId;
-        this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
-
+        this.form.typeId = String(response.data.typeId);
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = true;
         this.disstateDevice = true;
         this.open = true;
         this.title = "故障详情";
+        this.$forceUpdate()
       });
     },
 

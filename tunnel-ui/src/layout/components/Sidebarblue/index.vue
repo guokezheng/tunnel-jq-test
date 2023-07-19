@@ -118,6 +118,7 @@ export default {
     }
     .theme-dark  .el-scrollbar__wrap{
         margin-right: 0px !important;
+        margin-bottom: 0px !important;
     }
     .theme-blue{
         .blue_index_logo{width:22%;}

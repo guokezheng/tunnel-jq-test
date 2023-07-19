@@ -99,4 +99,15 @@ public class SdStrategyRlController extends BaseController
     {
         return toAjax(sdStrategyRlService.deleteSdStrategyRlByIds(ids));
     }
+
+    /**
+     * 查询全部策略关联设备信息列表
+     */
+    @GetMapping("/listAll")
+    public TableDataInfo listAll(SdStrategyRl sdStrategyRl)
+    {
+        startPage();
+        List<SdStrategyRl> list = sdStrategyRlService.selectSdStrategyRlList(sdStrategyRl);
+        return getDataTable(list);
+    }
 }

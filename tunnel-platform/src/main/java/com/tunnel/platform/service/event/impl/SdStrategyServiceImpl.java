@@ -806,7 +806,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     private SdStrategy conditionalJudgement(SdStrategyModel model) {
         if ("0".equals(model.getStrategyType())) {
             List<Map> manualControl = model.getManualControl();
-            long num = manualControl.stream().filter(s -> StrUtil.isBlank((String) s.get("state"))).count();
+            long num = manualControl.stream().filter(s -> StrUtil.isBlank( s.get("state").toString())).count();
             if (num > 0)
                 throw new RuntimeException("请填写完整手动控制！");
         }
@@ -852,7 +852,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             List<String> value = (List<String>) map.get("value");
             String equipments = StringUtils.join(value,",");
             String equipmentTypeId = map.get("equipmentTypeId") + "";
-            String state = (String) map.get("state");
+            String state =  map.get("state").toString();
             SdStrategyRl sdStrategyRl = new SdStrategyRl();
             sdStrategyRl.setEquipments(equipments);
             sdStrategyRl.setState(state);

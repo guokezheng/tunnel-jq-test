@@ -526,11 +526,11 @@ export default {
           value: 0,
         },
         {
-          name: "自动模式",
+          name: "洞外亮度",
           value: 1,
         },
         {
-          name: "节能模式",
+          name: "车来灯亮",
           value: 2,
         },
       ],
@@ -683,7 +683,7 @@ export default {
             );
           }
         }
-       
+
         this.nowTimeSlotList = this.timeSlotList;
         //获取 HH:mm:ss;
         this.open = true;

@@ -7,7 +7,7 @@
           <el-col :span="6">
             <el-button
               size="small"
-              @click="openInsertStrategy('richang')"
+              @click="openInsertStrategy(tableType)"
               v-hasPermi="['system:strategy:add']"
             >新增
             </el-button
@@ -933,19 +933,27 @@ export default {
       this.sink = "add";
       // 日常策略
       // this.strategyForm.strategyType = 0;
-      this.$set(this.strategyForm, "strategyType", "0");
+      if(type=="shoudong"){
+        this.$set(this.strategyForm, "strategyType", "0");
+      }else if(type=="dingshi"){
+        this.$set(this.strategyForm, "strategyType", "1");
+      }else if(type=="zidong"){
+        this.$set(this.strategyForm, "strategyType", "2");
+      }
+
       this.$nextTick(() => {
-        if (type == "richang") {
+        // if (type == "richang") {
           this.dialogVisible = true;
           this.strategyTypeClose();
-        } else if (type == "event") {
-          this.dialogVisibleEvent = true;
-          this.strategyTypeEventClose();
-        }
+        // } else if (type == "event") {
+        //   this.dialogVisibleEvent = true;
+        //   this.strategyTypeEventClose();
+        // }
       })
     },
     /** 编辑修改按钮操作 */
     handleUpdate(row) {
+      debugger
       this.title = "策略编辑";
       this.strategyForm.strategyType = row.strategyType;
       this.sink = "edit";
@@ -1032,6 +1040,8 @@ export default {
     strategyTypeClose(row) {
       console.log(this.$refs.manualControl, "获取组件");
       this.$nextTick(() => {
+        debugger
+        console.log(this.strategyForm.strategyType)
         switch (this.strategyForm.strategyType) {
           case "0":
             this.$refs.manualControl.sink = this.sink;

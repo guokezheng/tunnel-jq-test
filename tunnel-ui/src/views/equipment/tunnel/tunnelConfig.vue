@@ -1549,7 +1549,7 @@ export default {
 
         drag: function (event, ui) {
           // console.log(event)
-          // debugger
+          debugger
           //迭代所有的guids，记住最近的h和v guids
 
           var guideV,
@@ -1612,24 +1612,34 @@ export default {
                     null
                   );
                   let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
+                  console.log(paddingL)
                   let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
-
+                  console.log(paddingtop)
                   let svgs = document.getElementById("svgRow");
+                  console.log(svgs)
                   let svgss = document.querySelector(".config-content");
+                  console.log(svgss)
                   let svgeimage = document.querySelector(".el-image");
+                  console.log(svgeimage)
                   let stylea = window.getComputedStyle(svgs, null);
+                  console.log(stylea)
                   let styleas = window.getComputedStyle(svgss, null);
+                  console.log(styleas)
                   let styleas1 = window.getComputedStyle(svgeimage, null);
+                  console.log(styleas1)
 
                   let paddingLa = parseFloat(
                     stylea.getPropertyValue("padding-top")
                   ); //获取左侧内边距
+                  console.log(paddingLa)
                   let paddingLa1 = parseFloat(
                     styleas.getPropertyValue("width")
                   ); //获取左侧内边距
+                  console.log(paddingLa1)
                   let paddingLa2 = parseFloat(
                     styleas1.getPropertyValue("width")
                   ); //获取左侧内边距
+                  console.log(paddingLa2)
 
                   guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
                   guide1.top = paddingtop + paddingLa;

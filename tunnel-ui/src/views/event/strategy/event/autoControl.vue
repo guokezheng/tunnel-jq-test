@@ -173,7 +173,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item prop="triggers.compareValue" style="width: 12%">
-                <el-input
+                <el-input-number
                   v-model="strategyForm.triggers.compareValue"
                   placeholder="请输入阈值"
                 />
@@ -550,18 +550,21 @@ export default {
     };
   },
   methods: {
-    init() {
+    async init() {
       debugger
       if (this.sink == "add") {
         this.resetForm();
       }
       // 获取事件类型
-      this.getListEventType();
-      // this.getEquipmentType();
-      this.getTunnels();
-      this.getDirection();
+      await this.getListEventType();
+      //设备资源类型
+      await this.getEquipmentType();
+      //请选择隧道
+      await this.getTunnels();
+      //请选择方向
+      await this.getDirection();
       //给设备数据项赋值
-      this.getListItem();
+      await this.getListItem();
     },
     // 请选择设备 照明
     selectStateVal(index){
@@ -640,7 +643,7 @@ export default {
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
-        this.strategyForm.equipmentTypeId = data.equipmentTypeId;
+        // this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
         this.strategyForm.schedulerTime = data.schedulerTime;
         // listItem({
@@ -664,14 +667,23 @@ export default {
             res.data.warningType
           );
           this.$set(this.strategyForm, "eventType", +data.eventType);
-          console.log(this.strategyForm.tunnelId,this.strategyForm.direction)
+          console.log(this.strategyForm.triggers.deviceTypeId ,this.strategyForm.tunnelId,this.strategyForm.direction)
+          let params={eqDirection: this.strategyForm.direction}
+          if(this.strategyForm.direction == 3){
+            params.eqDirection = null;
+          }
           listDevices({
             eqType: this.strategyForm.triggers.deviceTypeId,
             eqTunnelId: this.strategyForm.tunnelId,
-            eqDirection: this.strategyForm.direction,
+            eqDirection: params.eqDirection,
           }).then((data) => {
             this.deviceName = data.rows;
-            this.strategyForm.triggers.deviceId = res.data.deviceId.split(",");
+            debugger
+            this.$nextTick(() => {
+              debugger
+              this.strategyForm.triggers.deviceId = res.data.deviceId.split(",");
+            })
+
           });
           listRl({ strategyId: row.id }).then((response) => {
             console.log(response,"response")
@@ -691,7 +703,7 @@ export default {
               this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
               this.strategyForm.autoControl[i].state = attr.state;
               this.strategyForm.autoControl[i].type = attr.eqTypeId;
-              this.strategyForm.autoControl[i].equipmentTypeId = Number(
+              this.strategyForm.autoControl[i].equipmentTypeId = String(
                 attr.eqTypeId
               );
               if (
@@ -701,15 +713,20 @@ export default {
                 this.strategyForm.autoControl[i].state = +attr.state;
                 this.qbgChange(i,this.strategyForm.autoControl[i].equipments);
               }
+              debugger
               this.$set(
                 autoControl,
                 "equipmentTypeData",
                 this.equipmentTypeData
               );
+              let params={eqDirection: this.strategyForm.direction}
+              if(this.strategyForm.direction == 3){
+                params.eqDirection = null;
+              }
               listDevices({
                 eqType: attr.eqTypeId,
                 eqTunnelId: this.strategyForm.tunnelId,
-                eqDirection: this.strategyForm.direction, //方向
+                eqDirection: params.eqDirection, //方向
               }).then((res) => {
                 debugger
                 this.$set(autoControl, "equipmentData", res.rows);
@@ -960,6 +977,7 @@ export default {
       let autoControl = this.strategyForm.autoControl;
       for (let i = 0; i < autoControl.length; i++) {
         getCategoryTree().then((data) => {
+          debugger
           this.$set(autoControl[i], "equipmentTypeData", data.data);
           this.equipmentTypeData = data.data;
         });
@@ -974,12 +992,14 @@ export default {
         if(this.strategyForm.direction == 3){
           params.eqDirection = null;
         }
+        console.log(this.strategyForm.triggers.deviceTypeId,this.strategyForm.tunnelId, params.eqDirection)
         listDevices({
           eqType: this.strategyForm.triggers.deviceTypeId,
           eqTunnelId: this.strategyForm.tunnelId,
           eqDirection: params.eqDirection,
         }).then((res) => {
           this.equipmentData = res.rows;
+          debugger
           this.deviceName = res.rows;
         });
       }

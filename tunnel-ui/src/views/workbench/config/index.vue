@@ -1445,7 +1445,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item
-              label="开启调光模式"
+              label="开启"
               prop="isStatus"
               v-if="lightingForm.modeType != 0"
             >
@@ -1464,45 +1464,45 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="当前亮度值"
-              prop="beforeLuminance"
-              v-if="lightingForm.modeType == 1"
-            >
-              <el-input
-                v-model="lightingForm.beforeLuminance"
-                placeholder="请输入当前亮度值(0-100)"
-              />
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="12">-->
+<!--            <el-form-item-->
+<!--              label="当前亮度值"-->
+<!--              prop="beforeLuminance"-->
+<!--              v-if="lightingForm.modeType == 1"-->
+<!--            >-->
+<!--              <el-input-->
+<!--                v-model="lightingForm.beforeLuminance"-->
+<!--                placeholder="请输入当前亮度值(0-100)"-->
+<!--              />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item
-              label="最小亮度值"
-              prop="minLuminance"
-              v-if="lightingForm.modeType != 0"
-            >
-              <el-input
-                v-model="lightingForm.minLuminance"
-                placeholder="请输入最小亮度值(0-100)"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="响应时长(毫秒)"
-              prop="respondTime"
-              v-if="lightingForm.modeType != 0"
-            >
-              <el-input
-                v-model="lightingForm.respondTime"
-                placeholder="请输入响应时长 单位：秒s"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
+<!--        <el-row>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item-->
+<!--              label="最小亮度值"-->
+<!--              prop="minLuminance"-->
+<!--              v-if="lightingForm.modeType != 0"-->
+<!--            >-->
+<!--              <el-input-->
+<!--                v-model="lightingForm.minLuminance"-->
+<!--                placeholder="请输入最小亮度值(0-100)"-->
+<!--              />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item-->
+<!--              label="响应时长(毫秒)"-->
+<!--              prop="respondTime"-->
+<!--              v-if="lightingForm.modeType != 0"-->
+<!--            >-->
+<!--              <el-input-->
+<!--                v-model="lightingForm.respondTime"-->
+<!--                placeholder="请输入响应时长 单位：秒s"-->
+<!--              />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="submitLightingForm"
@@ -2124,6 +2124,7 @@ export default {
       brandList: [],
       directionList: [{}, {}], //设备方向字典
       dictList: [],
+      leftButtonS:'leftButtonS',
       robotShow: false,
       drawerLineList: [
         {
@@ -2544,11 +2545,11 @@ export default {
           value: 0,
         },
         {
-          name: "自动模式",
+          name: "洞外亮度",
           value: 1,
         },
         {
-          name: "节能模式",
+          name: "车来灯亮",
           value: 2,
         },
       ],
@@ -3423,7 +3424,7 @@ export default {
         if (!value) return true;
         return data.label.indexOf(value) !== -1;
       },
-    
+
     // 预警事件点击跳转应急调度
     // jumpYingJi(e) {
     //   const item = e.target.closest(".listRow");
@@ -4247,6 +4248,14 @@ export default {
         } else if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY") {
           this.dictList = this.dict.type.sd_sys_name;
         }
+        for (let i = 0; i < this.dictList.length; i++) {
+          if( this.dictList[i].label=="火灾报警"){
+            this.dictList[i].labelClass = "huozaibaojing"
+          }else if( this.dictList[i].label=="紧急电话"){
+            this.dictList[i].labelClass = "jinjidianhua"
+          }
+        }
+        debugger
         this.checkboxTunnel = [];
         let list = response.rows;
         if (list.length > 0) {
@@ -5868,6 +5877,9 @@ export default {
   width: 5.4vw;
   line-height: 28px;
 }
+.leftButtonSone{
+
+}
 .leftButtonS {
   position: relative;
   left: 0px;
@@ -7259,5 +7271,13 @@ input {
 }
 .my-div {
   cursor: pointer;
+}
+.jinjidianhua{
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0% { background-color: red; }
+  50% { background-color: transparent; }
+  100% { background-color: red; }
 }
 </style>

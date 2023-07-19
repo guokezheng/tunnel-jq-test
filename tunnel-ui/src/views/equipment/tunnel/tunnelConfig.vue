@@ -20,22 +20,7 @@
                      style="margin-left: 10px;">重置</el-button>
         </el-popconfirm>
 
-        <el-select
-          class="tunnelNameSelect"
-          v-model="deviceEqType"
-          placeholder="请选择设备类型"
-          style="width: 10%; "
-          size="small"
-          @change="selectEqType"
-        >
-          <el-option
-            v-for="item in deviceEqTypeList"
-            :key="item.raw.dictCode"
-            :label="item.label"
-            :value="item.raw.dictValue"
-          >
-          </el-option>
-        </el-select>
+        
 
         <div class="display-box">
           <p class="menu-title title-wrap">显示设备编号：</p>
@@ -57,6 +42,25 @@
           <el-button type="info" size="mini" v-for="(item,index) in  dict.type.environment" :key="index"
                      @click="openEquipmentDialog(item.value,index,'configuration')">{{item.label}}</el-button>
         </el-button-group>
+      </el-row>
+      <el-row class="configuration" style="margin-top: 4px;">
+        <b class="menu-title title-wrap">设备大类：</b>
+        <el-select
+          class="tunnelNameSelect"
+          v-model="deviceEqType"
+          placeholder="请选择设备类型"
+          style="width: 10%; "
+          size="small"
+          @change="selectEqType"
+        >
+          <el-option
+            v-for="item in deviceEqTypeList"
+            :key="item.raw.dictCode"
+            :label="item.label"
+            :value="item.raw.dictValue"
+          >
+          </el-option>
+        </el-select>
       </el-row>
     </div>
     <!--配置区域-->
@@ -377,7 +381,7 @@ export default {
     this.selectEquipmentType();
     this.selectEnvironment();
     this.getTunnels(this.selectedTunnel.id);
-    debugger
+    // debugger
 
 
   },
@@ -515,7 +519,7 @@ export default {
           }
         }
       });
-      debugger
+      // debugger
     },
     // 获取滚动条横向滚动的长度
     dataScroll(){
@@ -539,7 +543,7 @@ export default {
           e.eqId = e.id + e.sdName;
           e.pile = "";
         });
-        debugger
+        // debugger
         var newDict = that.dict.type.sd_sys_name;
         if (that.selectedTunnel.name != "马家峪隧道") {
           that.deviceEqTypeList = newDict.slice(0, 8);
@@ -654,7 +658,7 @@ export default {
         let res = response.data.storeConfigure;
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          debugger
+          // debugger
           this.selectedIconList = res.eqList;
           console.log(this.selectedIconList, "this.selectedIconList");
           listType("").then((response) => {
@@ -2184,7 +2188,7 @@ export default {
   // display: flex;
   // justify-content: center;
   // align-items: center;
-  height: 680px;
+  height: 610px;
   width: 1788px;
   background-size: cover;
   position: relative;
@@ -2192,7 +2196,7 @@ export default {
   // margin-top: 10px;
   margin: 10px auto;
   overflow-x: auto;
-  padding: 38px 0px;
+  padding: 0px;
 }
 
 .config-img {
@@ -2387,7 +2391,7 @@ input {
 }
 
 .tunnelNameSelect {
-  margin-left: 10px;
+  
 }
 
 /* .el-tabs--border-card .el-tabs__header .el-tabs__item.is-active {

@@ -268,7 +268,7 @@ export function controlWarningLightStripDevice(data) {
 }
 
 // 工作台树状搜索
-export function getCategoryTree(tunnelId) {
+export function getCategoryDeviceTree(tunnelId) { 
   return request({
     url: '/bigType/getCategoryDeviceTree?tunnelId=' + tunnelId,
     method: 'get'

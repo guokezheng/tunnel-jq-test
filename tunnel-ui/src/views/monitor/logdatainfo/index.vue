@@ -558,7 +558,9 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
   },
   methods: {
-
+    changeEquipmentType(index){
+      console.log(index)
+    },
     // 参数timer是过去的n个小时
     getPastTime() {
       //alert(this.timeFormat(new Date(new Date().setHours(0, 0, 0, 0)).getTime()));

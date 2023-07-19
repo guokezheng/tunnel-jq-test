@@ -1041,6 +1041,9 @@ export default {
     getReservePlanData(){
       this.ReservePlanList = [];
       this.eventFormDetail.currencyId = '';
+      if(this.eventFormDetail.eventTypeId == 20){
+        this.eventFormDetail.laneNo = ['1','2','3']
+      }
       let data = {
         tunnelId:this.eventFormDetail.tunnelId,
         planTypeId:this.eventFormDetail.eventTypeId,

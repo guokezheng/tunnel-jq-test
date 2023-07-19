@@ -252,5 +252,17 @@ public class SdAppTaskListController extends BaseController
     }
 
 
+    /**
+     *
+     * @return
+     */
+    @GetMapping("/app/getTaskAllList")
+    public Result getTaskAllList(){
+
+
+        return Result.success(sdTaskListService.getTaskAllList());
+    }
+
+
 
 }

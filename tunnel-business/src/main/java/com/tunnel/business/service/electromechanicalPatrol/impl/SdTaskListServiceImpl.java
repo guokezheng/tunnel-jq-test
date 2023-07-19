@@ -1050,4 +1050,66 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         return sdTrafficImageMapper.deleteSitePhoto(id);
     }
 
+
+    @Override
+    public List getTaskAllList() {
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+
+        List<Map> taskList = sdTaskListMapper.getTaskAllList(deptId);
+
+
+        for (Map map: taskList) {
+
+            String taskId = map.get("id").toString();
+
+            Map taskInfoMap = sdTaskListMapper.getTaskInfoByTaskId(taskId);
+
+            if(taskInfoMap != null){
+                String taskStatus = taskInfoMap.get("taskStatus") != null ? taskInfoMap.get("taskStatus").toString():null;
+                String taskCxtime = taskInfoMap.get("taskCxtime") != null ? taskInfoMap.get("taskCxtime").toString():null;
+                String dispatchTime = taskInfoMap.get("dispatchTime") != null ? taskInfoMap.get("dispatchTime").toString():null;
+                String endPlantime = taskInfoMap.get("endPlantime") != null ? taskInfoMap.get("endPlantime").toString():null;
+                if(taskStatus == null){
+                    taskInfoMap.put("taskStatus",TaskStatus.YIWANJIE.getName());
+                    taskInfoMap.put("ifchaosgu",TaskStatus.YICHAOSHI.getName());
+                }else{
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    long diff = 0;
+                    if(endPlantime!=null&&!"".equals(endPlantime)){
+                        long time = sdf.parse(endPlantime, new ParsePosition(0)).getTime();
+                        diff = System.currentTimeMillis() - time;
+                        if((taskStatus.equals(TaskStatus.DAIXUNCHA.getName()))||(taskStatus.equals(TaskStatus.XUNCHAZHONG.getName()))) {
+                            if (diff > 0) {
+                                taskInfoMap.put("ifchaosgu", TaskStatus.YICHAOSHI.getName());
+                            } else {
+                                taskInfoMap.put("ifchaosgu", "");
+                            }
+                        }
+                    }
+                    if(taskCxtime==null||"".equals(taskCxtime)){//没有持续时间
+                        //任务持续时间为 当前时间-发布时间
+                        //if(taskList.get(0).getEndPlantime()!=null&&!"".equals(taskList.get(0).getEndPlantime())){
+                        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date dispatchTimeDate;
+                        try{
+                            dispatchTimeDate = sdf1.parse(dispatchTime);
+                        }catch (Exception e){
+                            dispatchTimeDate = null;
+                        }
+                        taskInfoMap.put("taskCxtime",lengthTime(dispatchTimeDate));
+                        //}
+                    }
+                }
+            }
+
+            map.put("taskInfo",taskInfoMap);
+            map.put("patrolInfo",sdTaskListMapper.getpatrolInfoByTaskId(taskId));
+
+        }
+
+        return taskList;
+    }
 }

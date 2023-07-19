@@ -261,6 +261,7 @@ public class SdTaskListController extends BaseController
     @GetMapping("/getDevicesList")
     public TableDataInfo getDevicesList(String searchValue,String tunnelId, String deviceType){
         startPage();
+        searchValue = searchValue.replace(" ","+");
         List<SdDevices> devices = devicesService.getDevicesList(searchValue,tunnelId,deviceType);
         return getDataTable(devices);
     }

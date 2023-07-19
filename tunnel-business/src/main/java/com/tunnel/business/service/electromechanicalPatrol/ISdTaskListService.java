@@ -233,4 +233,6 @@ public interface ISdTaskListService
      * @return
      */
     int deleteSitePhoto(String id);
+
+    List getTaskAllList();
 }

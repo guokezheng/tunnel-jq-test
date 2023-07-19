@@ -71,6 +71,7 @@
                   align="center"
                   type="date"
                   :clearable="false"
+                  :picker-options="setDateRange"
                 ></el-date-picker>
                 <el-date-picker
                   v-if="tabType === 'month'"
@@ -81,6 +82,7 @@
                   align="center"
                   type="month"
                   :clearable="false"
+                  :picker-options="setDateRange"
                 ></el-date-picker>
                 <el-date-picker
                   v-if="tabType === 'year'"
@@ -91,6 +93,7 @@
                   align="center"
                   type="year"
                   :clearable="false"
+                  :picker-options="setDateRange"
                 ></el-date-picker>
                 <el-button size="mini" class="search" @click="getData"
                   >搜索</el-button
@@ -362,6 +365,12 @@ export default {
   components: { CircuitTree, SiteTree, departmentSelect },
   data() {
     return {
+      setDateRange: {
+        disabledDate: (time) => {
+          // 禁用今天之后的日期【当前天可选】
+          return time.getTime() > Date.now();
+        },
+      },
       powerCode: null,
       loopIds: [], //选中的站点列表id
       loopIds2: [], //选中的回路列表id
@@ -458,7 +467,7 @@ export default {
     handleClick(tab, event) {
       if (this.activeName === "second") {
         this.tableName = "站点名称";
-      } 
+      }
       // else {
       //   this.tableName = "回路名称";
       // }
@@ -517,7 +526,7 @@ export default {
         //     .catch(err => {
         //     })
         this.loading = false;
-      } 
+      }
       // else if (this.activeName === "first") {
       //   // console.log(this.loopIds2);
       //   this.clearData();
@@ -824,9 +833,9 @@ export default {
 //   margin: 0px 10px;
 // }
 // 隐藏滚动条
-::v-deep .el-scrollbar__wrap {
-  margin-right: -20px !important;
-}
+// ::v-deep .el-scrollbar__wrap {
+//   margin-right: -20px !important;
+// }
 .echart {
   width: 100%;
   height: calc(100% - 56px);

@@ -532,8 +532,9 @@
             />
           </el-select>
           <div >
-            <el-input placeholder="请输入设备类型、名称" v-model="searchValue" class="input-with-select">
-              <el-button slot="append" icon="el-icon-search" @click="getTable()"></el-button>
+
+            <el-input placeholder="请输入设备类型、名称"  @keyup.enter.native="getTable()"   v-model="searchValue" class="input-with-select">
+              <el-button slot="append" icon="el-icon-search"  @click.native.prevent="getTable()"></el-button>
             </el-input>
           </div>
           <div class="cancel-determine">
@@ -1181,6 +1182,7 @@ export default {
     //更换隧道，更新隧道下关联班组列表
     changeGroup(e){
       this.getBz(e)
+      this.form.bzId = '';
       this.boxList = [];
     },
     closeRecord() {

@@ -6,6 +6,7 @@ import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 巡查任务Mapper接口
@@ -183,4 +184,10 @@ public interface SdTaskListMapper
      * @return
      */
     int checkTaskList(SdTaskList sdTaskList);
+
+    List<Map> getTaskAllList(String deptId);
+
+    Map getTaskInfoByTaskId(String taskId);
+
+    List<Map> getpatrolInfoByTaskId(String taskId);
 }

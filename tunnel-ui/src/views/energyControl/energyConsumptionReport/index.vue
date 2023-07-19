@@ -68,6 +68,7 @@
                   align="center"
                   type="date"
                   :clearable="false"
+                  :picker-options="setDateRange"
                 ></el-date-picker>
                 <el-date-picker
                   v-if="tabType === 'month'"
@@ -78,6 +79,7 @@
                   align="center"
                   type="month"
                   :clearable="false"
+                  :picker-options="setDateRange"
                 ></el-date-picker>
                 <el-date-picker
                   v-if="tabType === 'year'"
@@ -88,6 +90,7 @@
                   align="center"
                   type="year"
                   :clearable="false"
+                  :picker-options="setDateRange"
                 ></el-date-picker>
                 <el-button size="mini" class="search" @click="getData"
                   >搜索</el-button
@@ -199,6 +202,12 @@ export default {
   components: { ItemizedTree, SiteTree, departmentSelect2 },
   data() {
     return {
+      setDateRange: {
+        disabledDate: (time) => {
+          // 禁用今天之后的日期【当前天可选】
+          return time.getTime() > Date.now();
+        },
+      },
       powerCode: null,
       loopIds: [], //选中的站点列表id
       loopIds2: [], //选中的回路列表id
@@ -842,9 +851,9 @@ export default {
 //     margin: 0px 10px;
 //   }
 // 隐藏滚动条
-::v-deep .el-scrollbar__wrap {
-  margin-right: -20px !important;
-}
+// ::v-deep .el-scrollbar__wrap {
+//   margin-right: -20px !important;
+// }
 .echart {
   width: 100%;
   height: calc(100% - 56px);
@@ -856,23 +865,23 @@ export default {
   width: 100%;
   height: 45%;
   // overflow: auto;
-  ::v-deep .el-table .el-table__fixed-header-wrapper th {
-    background: #e7f5ff;
-  }
-  ::v-deep .el-table .el-table__header-wrapper th {
-    background: #e7f5ff;
-  }
-  /* 修改滚动条宽度 */
-  ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
-    // width: 7px;
-    // height: 7px;
-    background: #f4f4f4;
-  }
-  /* 修改滚动条颜色 */
-  ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
-    background-color: rgba(91, 143, 216, 0.5);
-    border-radius: 6px;
-  }
+  // ::v-deep .el-table .el-table__fixed-header-wrapper th {
+  //   background: #e7f5ff;
+  // }
+  // ::v-deep .el-table .el-table__header-wrapper th {
+  //   background: #e7f5ff;
+  // }
+  // /* 修改滚动条宽度 */
+  // ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
+  //   // width: 7px;
+  //   // height: 7px;
+  //   background: #f4f4f4;
+  // }
+  // /* 修改滚动条颜色 */
+  // ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
+  //   background-color: rgba(91, 143, 216, 0.5);
+  //   border-radius: 6px;
+  // }
 }
 // .el-table {
 // overflow-y: auto !important;

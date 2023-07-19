@@ -197,6 +197,7 @@
   .left_tree{
     .el-scrollbar__wrap{
       overflow-x: hidden;
+      overflow-y: auto;
     }
     .el-checkbox{
       color:#fff;
@@ -950,6 +951,20 @@
     }
   }
   #app {
+    // 隧道配置页面下拉框
+    .tunnelNameSelect{
+      .el-input--small .el-input__inner{
+        background: linear-gradient(177deg, #00aced, #0079db);
+        opacity: 0.8;
+        color: #fff !important;
+        height: 26px;
+        line-height: 26px;
+        font-size: 12px;
+      }
+      .el-input--small .el-input__icon{
+        line-height: 26px;
+      }
+    }
     .el-table .el-table--border .el-table__cell{
       background-color: #0090D8;
       border-bottom: solid 1px rgba(225,228,230,.16);
@@ -1812,9 +1827,9 @@
  }
 //  时间日期选择器
 .el-picker-panel{
-  background: #012E51 !important;
+  background: #022A54  !important;
   color: #C0C4CC;
-  border: solid 1px #004375 !important;
+  border: solid 1px #022A54  !important;
   border-radius: 1px !important;
   transform:translateX(-25px) !important;
   // 时间选择器箭头
@@ -1825,10 +1840,10 @@
     background: transparent;
   }
   .el-date-range-picker__content.is-left{
-    border-right: 1px solid #004375 !important;
+    border-right: 1px solid #022A54  !important;
   }
   .el-date-range-picker__time-header,.el-date-picker__time-header{
-    border-bottom: 1px solid #004375 !important;
+    border-bottom: 1px solid #022A54  !important;
     .el-input__inner{
       background: transparent;
       color: #FFF;
@@ -1844,8 +1859,45 @@
     color: #C0C4CC;
     border-bottom:none !important;
   }
+  .el-date-picker__header--bordered{
+    border-bottom:none !important;
+  }
   .el-date-picker__header-label{
     color: #C0C4CC;
+  }
+  .el-month-table td .cell{
+    color: #4cbfff;
+    border: solid 1px #4cbfff;
+    border-radius: 8px;
+  }
+  .el-month-table td.today .cell{
+    color: #fff;
+    border: solid 1px #4cbfff;
+    background: #4cbfff;
+    border-radius: 8px;
+  }
+  .el-month-table td.disabled .cell{
+    color: #999;
+    border: solid 1px #666;
+    background: transparent;
+
+  }
+  .el-year-table td .cell{
+    color: #4cbfff;
+    border: solid 1px #4cbfff;
+    border-radius: 8px;
+  }
+  .el-year-table td.today .cell{
+    color: #fff;
+    border: solid 1px #4cbfff;
+    background: #4cbfff;
+    border-radius: 8px;
+  }
+  .el-year-table td.disabled .cell{
+    color: #999;
+    border: solid 1px #666;
+    background: transparent;
+
   }
   .el-input__inner{
     border:solid 1px #00518D;
@@ -1855,9 +1907,9 @@
   }
   .available{
     div span{
-      box-shadow: inset 0 0 1px 0 #6ff;
-      border: 1px solid #0292ac;
-      color: #00fff4;
+      box-shadow: inset 0 0 1px 0 #88d3fb;
+      border: 1px solid #4cbfff;
+      color: #4cbfff;
       border-radius: 50%;
     }
   }
@@ -1870,7 +1922,7 @@
     }
   }
   .el-picker-panel__footer{
-    background: #012E51 !important;
+    background: #022A54  !important;
     border-top:1px solid #004375 !important;
   }
   .el-button{

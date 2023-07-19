@@ -251,11 +251,11 @@
         <if test="params.taskStatus != null and params.taskStatus != '' and  params.taskStatus == '4'.toString()"> and t.end_plantime &lt; now() and (t.task_status in(0,1) or t.task_status = '2,4')</if>
         <if test="params.taskStatus != null and params.taskStatus != '' and  params.taskStatus == '2'.toString()"> and (t.task_status = '2,4' or t.task_status = '2')</if>
         <if test="params.startTime != null and params.startTime!=''and params.endTime!=null and params.endTime!=''"> and (t.end_plantime BETWEEN #{params.startTime} and #{params.endTime})</if>
-        <if test="params.deptId != null and params.deptId != ''">
-            AND (t.bz_id = #{params.deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{params.deptId},q.ancestors) ))
-        </if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (t.bz_id = #{params.deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{params.deptId},q.ancestors) ))
+            </if>
         and publish_status ='2'
-        order by t.create_time desc
+        order by t.task_status asc, t.create_time desc
         <if test="params.pageNum != null">
             limit #{params.pageNum},#{params.pageSize}
         </if>
@@ -359,6 +359,7 @@
             bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors))
             and task_status in('0','1','3','4') and publish_status ='2'
         </if>
+        order by create_time desc
 
     </select>
 
@@ -370,7 +371,7 @@
             and publish_status ='2'
             and ((task_status in('0','1','3','4') and walker_id = #{userId})or(task_status ='0' and   ISNULL(walker_id)))
         </if>
-
+        order by create_time desc
     </select>
 
 
@@ -453,5 +454,105 @@
     </select>
 
 
+
+    <select id="getTaskAllList" resultType="map">
+        SELECT
+            t.task_name as taskName,   -- 任务名称
+            e.tunnel_name as tunnelName,  -- 隧道名称
+            d.dept_name zzjgId, -- 管理站名称
+            DATE_FORMAT(t.end_plantime , '%Y-%m-%d %H:%i:%s') as endPlantime,     -- 计划完成时间
+            u.nick_name dispatcher, -- 派单人员
+            t.task_description as taskDescription,  -- 任务描述
+            t.task_status as taskStatus,  -- 任务状态
+            t.id            -- 任务编号
+        FROM
+            sd_task_list t
+                LEFT JOIN sys_dept d ON d.dept_id = t.zzjg_id
+                LEFT JOIN sys_user u ON t.dispatcher = u.user_id
+                LEFT JOIN sd_tunnels e ON t.tunnel_id = e.tunnel_id
+        WHERE
+            1 =1
+          AND (t.bz_id = #{deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
+          and publish_status ='2'
+          order by t.task_status asc, t.create_time desc
+    </select>
+
+    <select id="getTaskInfoByTaskId"  resultType="map">
+
+        SELECT
+            e.tunnel_name sdName,  -- 隧道名称
+            s.id,   -- 任务编号
+            s.task_name as taskName, -- 任务编号
+            s.tunnel_id as tunnelId,  -- 隧道编号
+            DATE_FORMAT(s.end_plantime, '%Y-%m-%d %H:%i:%s') as  endPlantime, -- 计划完成时间
+            y.dept_name bzName, -- 管理站名称
+            y.dept_id bzId,  -- 管理站编号
+            DATE_FORMAT(s.dispatch_time, '%Y-%m-%d %H:%i:%s') as dispatchTime, -- 派单时间
+            s.task_description as taskDescription, -- 任务描述
+            u.nick_name dispatcher, -- 派单人员
+            t.dict_label taskStatus, -- 任务状态
+            p.dict_label publishStatus, -- 发布状态
+            DATE_FORMAT(s.task_endtime, '%Y-%m-%d %H:%i:%s') as taskEndtime, -- 任务完成时间
+            s.task_cxtime as taskCxtime,   -- 任务持续时间
+            w.nick_name walkerId, -- 巡查人员
+            s.site_description as siteDescription  -- 现场情况描述
+        FROM
+            sd_task_list s
+                LEFT JOIN sys_user u ON u.user_id = s.dispatcher
+                LEFT JOIN sys_user w ON w.user_id = s.walker_id
+                LEFT JOIN sd_teams y ON s.bz_id = y.dept_id
+                LEFT JOIN sd_tunnels e ON s.tunnel_id = e.tunnel_id
+                LEFT JOIN sys_dict_data t ON t.dict_value = s.task_status
+                AND t.dict_type = 'task_status'
+                LEFT JOIN sys_dict_data p ON p.dict_value = s.publish_status
+                AND p.dict_type = 'publish_status'
+        WHERE
+            s.id = #{taskId}
+    </select>
+
+    <select id="getpatrolInfoByTaskId" resultType="map">
+        SELECT
+            p.id, -- 巡查点清单
+            p.eq_name as eqName, -- 设备名称
+            p.position as position, -- 安装位置
+            p.eq_fault_description as eqFaultDescription, -- 设备故障描述
+            p.fault_clstatus faultClstatus, -- 故障处理情况（0：无故障:；1：已消除:；2：未消除
+            DATE_FORMAT(p.xc_time, '%Y-%m-%d %H:%i:%s') as xcTime, -- 巡查时间
+            p.xc_status as xcXtatus, -- 巡查状态
+            u.tunnel_name as tunnelName , -- 隧道名称
+            d.pile, -- 设备桩号
+            y.type_name as typeName -- 设备类型
+        FROM
+            sd_patrol_list p
+                LEFT JOIN sd_task_list t ON t.id = p.task_id
+                LEFT JOIN sd_fault_list f ON f.id = p.eq_fault_id
+                LEFT JOIN sd_tunnels u ON u.tunnel_id = f.tunnel_id
+                LEFT JOIN sd_devices d ON d.eq_id = f.eq_id
+                LEFT JOIN sd_equipment_type y ON y.type_id = d.eq_type
+        WHERE
+            p.task_id = #{taskId} and p.patrol_type = '1'
+        UNION ALL
+        (
+            SELECT
+                p.id,
+                p.eq_name,
+                p.position,
+                p.eq_fault_description,
+                p.fault_clstatus,
+                p.xc_time,
+                p.xc_status,
+                u.tunnel_name,
+                d.pile,
+                y.type_name
+            FROM
+                sd_patrol_list p
+                    LEFT JOIN sd_task_list t ON t.id = p.task_id
+                    LEFT JOIN sd_devices d ON d.eq_id = p.eq_fault_id
+                    LEFT JOIN sd_tunnels u ON u.tunnel_id = d.eq_tunnel_id
+                    LEFT JOIN sd_equipment_type y ON y.type_id = d.eq_type
+            WHERE
+                p.task_id = #{taskId} and p.patrol_type = '0')
+
+    </select>
 
 </mapper>

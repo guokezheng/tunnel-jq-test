@@ -307,7 +307,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备类型" prop="eqType">
-              <el-select
+              <!-- <el-select
                 v-model="form.eqType"
                 placeholder="请选择设备类型"
                 @change="changeEqType(form.eqType)"
@@ -320,7 +320,15 @@
                   :value="item.typeId"
                 >
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <el-cascader
+                v-model="form.eqType"
+                :options="eqTypeData"
+                :props="equipmentTypeProps"
+                :show-all-levels="false"
+                @change="changeEquipmentType(index)"
+                style="width: 100%"
+              ></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="21">
@@ -920,7 +928,7 @@ import { listCategory } from "@/api/equipment/bigType/category";
 import { treeSelectYG1 } from "@/api/system/dept";
 import { getTeams } from "@/api/electromechanicalPatrol/teamsManage/teams";
 import {
-getCategoryTree,
+  getCategoryAllTree,
 } from "@/api/event/strategy";
 export default {
   name: "Devices",
@@ -1345,7 +1353,7 @@ export default {
     /** 设备类型 */
     getEqType() {
       
-      getCategoryTree().then((data) => {
+      getCategoryAllTree().then((data) => {
         this.eqTypeData = data.data;
       });
     },
@@ -1574,7 +1582,9 @@ export default {
       this.reset();
       const eqId = row.eqId || this.ids;
       getDevices(eqId).then((response) => {
+        console.log(response.data,"修改按钮操作")
         this.form = response.data;
+        this.form.eqType = String(response.data.eqType);
         this.open = true;
         this.submitMode = 0;
         this.title = "修改设备";

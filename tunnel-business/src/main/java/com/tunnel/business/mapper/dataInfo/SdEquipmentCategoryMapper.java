@@ -66,4 +66,10 @@ public interface SdEquipmentCategoryMapper
 
     List<SdEquipmentCategoryDto> getCategoryList(Map<String,Object> paramMap);
 
+    /**
+     * 查询全部设备类型
+     * @param paramMap
+     * @return
+     */
+    List<SdEquipmentCategoryDto> getCategoryAllList(Map<String,Object> paramMap);
 }

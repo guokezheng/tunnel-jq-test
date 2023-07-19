@@ -65,6 +65,11 @@ public interface ISdEquipmentCategoryService {
 
     List<SdEquipmentCategoryDto> getCategoryList();
 
+    /**
+     * 查询全部设备类型
+     * @return
+     */
+    List<SdEquipmentCategoryDto> getCategoryAllList();
 
     /**
      * 构建前端所需要树结构

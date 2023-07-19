@@ -464,9 +464,7 @@
                         top:
                           item.tooltipType == 1 || item.tooltipType == 2
                             ? '35px'
-                            : item.tooltipType == 2
-                            ? '35px'
-                            : '-35px',
+                            : '-50px',
                         left:
                           item.tooltipType == 1 || item.tooltipType == 3
                             ? '0px'
@@ -1106,7 +1104,7 @@
           v-show="operationActive == 'caozuo'"
         >
           <el-form-item label="设备类型" prop="eqTypeId" style="width: 100%">
-            <el-select
+            <!-- <el-select
               v-model="operationParam.eqTypeId"
               clearable
               placeholder="请选择设备类型"
@@ -1118,8 +1116,16 @@
                 :label="item.typeName"
                 :value="item.typeId"
               />
-            </el-select>
+            </el-select> -->
+            <el-cascader
+              v-model="operationParam.eqTypeId"
+              :options="eqTypeData"
+              :props="equipmentTypeProps"
+              :show-all-levels="false"
+              style="width: 100%"
+            ></el-cascader>
           </el-form-item>
+
           <!-- <el-form-item
             label="隧道名称"
             prop="tunnelId"
@@ -1191,7 +1197,7 @@
         v-show="operationActive == 'xitong'"
         :default-sort="{ prop: 'loginTime', order: 'descending' }"
         max-height="430"
-        :key="1"
+        :row-key="getRowKey1"
       >
         <el-table-column
           type="index"
@@ -1270,7 +1276,7 @@
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         v-show="operationActive == 'caozuo'"
-        :key="1"
+        :row-key="getRowKey2"
       >
         <el-table-column
           type="index"
@@ -1848,6 +1854,7 @@ import {
   hasListByBigType,
   loadPicture,
 } from "@/api/equipment/type/api.js";
+import { getCategoryTree } from "@/api/event/strategy";
 import { getTemplateInfo } from "@/api/board/template.js";
 import {
   listTunnels,
@@ -1948,7 +1955,7 @@ import {
   getNewBoardEditInfo,
   templateList,
   batchControlDevice,
-  getCategoryTree,
+  getCategoryDeviceTree,
   carSwitchType,
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
@@ -2012,6 +2019,12 @@ export default {
 
   data() {
     return {
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
       buttonsDeawer: false,
       srollSwitch: false,
       phoneList: [],
@@ -2147,7 +2160,7 @@ export default {
       sevenDaysBefore: [],
       operationLogDialog: false, //操作日志弹窗
       //设备类型
-      eqTypeData: {},
+      eqTypeData: [],
       tunnelData: [],
       //所属隧道
       eqTunnelData: {},
@@ -2851,6 +2864,13 @@ export default {
   },
 
   methods: {
+    // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
+    getRowKey1(row) {
+      return row.infoId
+    },
+    getRowKey2(row) {
+      return row.id
+    },
     isDrawer() {
       this.buttonsDeawer = !this.buttonsDeawer;
     },
@@ -3048,9 +3068,7 @@ export default {
         }
       });
     },
-    async richanghandleUpdate(row) {
-      console.log(row);
-      debugger;
+    async richangUpdate(row){
       let params = row;
       await listRl({ strategyId: params.id }).then((response) => {
         // console.log(response, "设备数据");
@@ -3060,7 +3078,7 @@ export default {
           let attr = response.rows[i];
           let manualControl = params.manualControl[i];
 
-          console.log(params.manualControl[i].value, "选择的设备");
+          // console.log(params.manualControl[i].value, "选择的设备");
           params.manualControl[i].state = attr.state;
           params.manualControl[i].stateNum = attr.stateNum;
 
@@ -3083,11 +3101,20 @@ export default {
         }
       });
       await updateStrategyInfo(params).then((res) => {
-        debugger;
         if (res.code == 200) {
           this.$modal.msgSuccess("执行成功");
         }
       });
+    },
+    richanghandleUpdate(row) {
+      let that = this
+      this.$confirm('是否确认执行控制?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          that.richangUpdate(row)
+        })
     },
     directionFormat(row, column) {
       return this.selectDictLabel(this.directionList, row.direction);
@@ -3233,7 +3260,7 @@ export default {
           }
         );
       } else if (inx == "caozuo") {
-        this.operationParam.tunnelId = this.currentTunnel.id
+        this.operationParam.tunnelId = this.currentTunnel.id;
         listLog(this.addDateRange(this.operationParam, this.dateRange1)).then(
           (response) => {
             console.log(response, "操作日志");
@@ -3407,7 +3434,7 @@ export default {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
             this.resetCanvasFlag = true;
             this.$refs.dragImgDom.style.left = -item.position.left + 864 + "px";
-            this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
+            // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
           } else {
             item.click = false;
@@ -3421,9 +3448,9 @@ export default {
       this.$forceUpdate();
     },
     filterNode(value, data) {
-        if (!value) return true;
-        return data.label.indexOf(value) !== -1;
-      },
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
 
     // 预警事件点击跳转应急调度
     // jumpYingJi(e) {
@@ -3509,8 +3536,8 @@ export default {
 
     /** 设备类型 */
     getEqType() {
-      listType().then((response) => {
-        this.eqTypeData = response.rows;
+      getCategoryTree().then((response) => {
+        this.eqTypeData = response.data;
       });
     },
     /** 所属隧道 */
@@ -3528,8 +3555,10 @@ export default {
       this.strategyLoading = true;
       this.queryParams.pageSize = 10;
       this.queryParams.pageNum = 1;
+      this.queryParams.direction = ''
+      this.queryParams.strategyName = ''
       this.getStrategyQuery(this.dictCode);
-      this.handleQueryOperationParam();
+      // this.handleQueryOperationParam();
       this.handlestrategyQuery();
     },
     /** 重置按钮操作 */
@@ -4527,7 +4556,7 @@ export default {
         }
       });
       // 树状搜索
-      getCategoryTree(tunnelId).then((res) => {
+      getCategoryDeviceTree(tunnelId).then((res) => {
         // console.log(res.data, "res.data");
         this.treeData = res.data;
       });
@@ -4947,9 +4976,7 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          } else if (
-            [14, 15, 35, 41, 42, 47, 48].includes(item.eqType)
-          ) {
+          } else if ([14, 15, 35, 41, 42, 47, 48].includes(item.eqType)) {
             this.$refs.dataRef.init(
               this.eqInfo,
               this.brandList,
@@ -5161,13 +5188,14 @@ export default {
       //this.$router.push('/strategy/index')
       this.queryParams.strategyName = "";
       this.strategyVisible = true;
-      this.strategyActive = "richang"
+      this.strategyActive = "richang";
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;
+      this.strategResetQuery()
       // this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.handleQueryOperationParam();
       this.handlestrategyQuery(this.dictCode);

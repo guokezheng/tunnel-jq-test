@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div>
 <!--    <el-tabs v-model="activeName" @tab-click="handleClick">-->
 <!--      <el-tab-pane :label="strategyTypeGroup[0]?strategyTypeGroup[0].dictLabel:''" name="one">-->
         <!-- 全局搜索 -->
@@ -77,7 +77,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="策略类型" prop="strategyType">
+            <!-- <el-form-item label="策略类型" prop="strategyType">
               <el-select
                 v-model="queryParams.strategyType"
                 placeholder="请选择策略类型"
@@ -91,7 +91,7 @@
                   :value="dict.dictValue"
                 />
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item class="bottomBox">
               <el-button size="small" type="primary" @click="handleQuery"
               >搜索
@@ -696,7 +696,7 @@ export default {
         tunnelId: null,
         strategyName: null,
         direction:null,
-        strategyType: null,
+        strategyType: 0,
         strategyInfo: null,
         schedulerTime: null,
         jobTime: null,
@@ -901,7 +901,6 @@ export default {
 
     },
     changeStrategyState(row,index) {
-      debugger
       let data = {strategyId: row.id, change: row.strategyState};
       updateState(data).then((result) => {
 
@@ -992,10 +991,18 @@ export default {
         }
       });
     },
+    richanghandleUpdate(row) {
+      let that = this
+      this.$confirm('是否确认执行控制?', "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(function() {
+          that.richangUpdate(row)
+        })
+    },
     //手动执行
-    async richanghandleUpdate(row) {
-      console.log(row);
-      debugger;
+    async richangUpdate(row) {
       let params = row;
       await listRl({ strategyId: params.id }).then((response) => {
         // console.log(response, "设备数据");
@@ -1005,7 +1012,7 @@ export default {
           let attr = response.rows[i];
           let manualControl = params.manualControl[i];
 
-          console.log(params.manualControl[i].value, "选择的设备");
+          // console.log(params.manualControl[i].value, "选择的设备");
           params.manualControl[i].state = attr.state;
           params.manualControl[i].stateNum = attr.stateNum;
 
@@ -1028,7 +1035,6 @@ export default {
         }
       });
       await updateStrategyInfo(params).then((res) => {
-        debugger;
         if (res.code == 200) {
           this.$modal.msgSuccess("执行成功");
         }
@@ -1427,7 +1433,6 @@ export default {
           //   delJob(jobRelationId).then((response) => {});
           // }
           delStrategy(ids).then((res) => {
-            debugger
             if (res.code == 200) {
               this.$refs.tableFile1.clearSelection()
               this.$modal.msgSuccess(res.msg);

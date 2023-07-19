@@ -1181,6 +1181,7 @@ export default {
     //更换隧道，更新隧道下关联班组列表
     changeGroup(e){
       this.getBz(e)
+      this.form.bzId = '';
       this.boxList = [];
     },
     closeRecord() {

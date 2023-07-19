@@ -460,7 +460,7 @@
             t.task_name as taskName,   -- 任务名称
             e.tunnel_name as tunnelName,  -- 隧道名称
             d.dept_name zzjgId, -- 管理站名称
-            t.end_plantime as endPlantime,     -- 计划完成时间
+            DATE_FORMAT(t.end_plantime , '%Y-%m-%d %H:%i:%s') as endPlantime,     -- 计划完成时间
             u.nick_name dispatcher, -- 派单人员
             t.task_description as taskDescription,  -- 任务描述
             t.task_status as taskStatus,  -- 任务状态
@@ -492,7 +492,7 @@
             u.nick_name dispatcher, -- 派单人员
             t.dict_label taskStatus, -- 任务状态
             p.dict_label publishStatus, -- 发布状态
-            s.task_endtime as taskEndtime, -- 任务完成时间
+            DATE_FORMAT(s.task_endtime, '%Y-%m-%d %H:%i:%s') as taskEndtime, -- 任务完成时间
             s.task_cxtime as taskCxtime,   -- 任务持续时间
             w.nick_name walkerId, -- 巡查人员
             s.site_description as siteDescription  -- 现场情况描述
@@ -517,7 +517,7 @@
             p.position as position, -- 安装位置
             p.eq_fault_description as eqFaultDescription, -- 设备故障描述
             p.fault_clstatus faultClstatus, -- 故障处理情况（0：无故障:；1：已消除:；2：未消除
-            p.xc_time as xcTime, -- 巡查时间
+            DATE_FORMAT(p.xc_time, '%Y-%m-%d %H:%i:%s') as xcTime, -- 巡查时间
             p.xc_status as xcXtatus, -- 巡查状态
             u.tunnel_name as tunnelName , -- 隧道名称
             d.pile, -- 设备桩号

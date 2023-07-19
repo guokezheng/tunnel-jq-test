@@ -206,8 +206,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     from sd_patrol_list p
     left join sd_task_list t on t.id = p.task_id
     left join sd_fault_list f on f.id = p.eq_fault_id
-	left join sd_tunnels u on u.tunnel_id = f.tunnel_id
     left join sd_devices d on d.eq_id = p.eq_fault_id
+    LEFT JOIN sd_tunnels u ON (u.tunnel_id = d.eq_tunnel_id OR u.tunnel_id = f.tunnel_id)
     left join sd_equipment_state s on s.device_state = p.run_status  and
     d.eq_type = s.state_type_id and  s.state_type = '2'
     LEFT JOIN sys_dict_data a ON a.dict_value = p.eq_status

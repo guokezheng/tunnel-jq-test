@@ -253,7 +253,7 @@ public class SdAppTaskListController extends BaseController
 
 
     /**
-     *
+     * APP 巡检任务列表
      * @return
      */
     @GetMapping("/app/getTaskAllList")

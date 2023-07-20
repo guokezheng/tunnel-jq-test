@@ -85,6 +85,7 @@ public class SdAppDevicesController extends BaseController
      */
     @PostMapping("/app/getAppDevicesList")
     public Map<String,Object> getAppDevicesList(String param,String eqType,String eqStatus,String tunnelId,Integer pageSize,Integer pageNum){
+        param = param.replace(" ","+");
         Map<String,Object>map = new HashMap();
         String deptId = SecurityUtils.getDeptId();
         List<SdDevices> stateNum = new ArrayList<>();

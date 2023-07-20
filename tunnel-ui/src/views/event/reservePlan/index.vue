@@ -1542,7 +1542,7 @@ export default {
       this.fileList = []
       this.$refs.planTable.clearSelection();
       //this.handleQuery();
-      // this.resetReservePlanDrawForm();
+      this.resetReservePlanDrawForm();
     },
     //form表单置空
     resetReservePlanDrawForm() {

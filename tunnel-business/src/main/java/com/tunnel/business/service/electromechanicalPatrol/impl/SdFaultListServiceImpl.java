@@ -1,13 +1,10 @@
 package com.tunnel.business.service.electromechanicalPatrol.impl;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.tunnel.business.datacenter.domain.dataReport.OptType;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
@@ -17,11 +14,9 @@ import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
-import io.lettuce.core.dynamic.annotation.Param;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
@@ -420,7 +415,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
             sdFaultList.setImgFileId(sdFaultList.getImgFileId().substring(0,sdFaultList.getImgFileId().length()-1));
         }
-        sdFaultList.setFalltRemoveStatue("0");    // 消除状态
+        sdFaultList.setFalltRemoveStatue("1");    // 消除状态
         sdFaultList.setFaultStatus("0");     //发布状态
         sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
         sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间

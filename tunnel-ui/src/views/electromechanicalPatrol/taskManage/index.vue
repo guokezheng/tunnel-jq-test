@@ -533,7 +533,7 @@
           </el-select>
           <div >
 
-            <el-input placeholder="请输入设备类型、名称"  @keyup.enter.native="getTable()"   v-model="searchValue" class="input-with-select">
+            <el-input placeholder="请输入设备类型、名称" clearable  @keyup.enter.native="getTable()"   v-model="searchValue" class="input-with-select">
               <el-button slot="append" icon="el-icon-search"  @click.native.prevent="getTable()"></el-button>
             </el-input>
           </div>

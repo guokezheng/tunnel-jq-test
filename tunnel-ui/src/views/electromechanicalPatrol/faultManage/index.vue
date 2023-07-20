@@ -1549,6 +1549,7 @@ export default {
         this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
+        this.form.typeId = String(this.form.typeId);
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
         this.disstateDevice = false;

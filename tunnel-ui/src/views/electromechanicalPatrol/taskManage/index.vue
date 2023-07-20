@@ -1131,6 +1131,7 @@ export default {
             message: "请填写任务名称",
             trigger: "blur",
           },
+          { max: 50, message: '最长输入50个字符', trigger: 'change' }
         ],
         tunnelId: [
           {

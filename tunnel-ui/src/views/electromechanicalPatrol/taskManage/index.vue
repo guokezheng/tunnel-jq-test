@@ -523,7 +523,7 @@
       <div class="show-right">
         <div class="show-title">设备清单</div>
         <div class="right-button">
-          <el-select v-model="options1value" @change="getTable">
+          <el-select v-model="options1value" @change="changeDevList">
             <el-option
               v-for="dict in dict.type.eq_system"
               :key="dict.value"
@@ -1178,6 +1178,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    changeDevList(){
+      this.searchValue = '';
+      this.getTable(this.options1value);
+    },
 
     //更换隧道，更新隧道下关联班组列表
     changeGroup(e){

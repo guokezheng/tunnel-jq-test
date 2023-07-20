@@ -37,9 +37,9 @@
         >
           <!-- 鼠标移入文本提示 -->
           <div class="showName" slot-scope="{ node, data }">
-            <el-tooltip :content="node.label" placement="top" effect="light">
+            <!-- <el-tooltip :content="node.label" placement="top" effect="light"> -->
               <span>{{ node.label }}</span>
-            </el-tooltip>
+            <!-- </el-tooltip> -->
           </div>
         </el-tree>
       </el-row>

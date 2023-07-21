@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="eventBox">
+    <div class="eventBox" v-show="evtShow">
       <div class="title">
         事件详情
 
@@ -53,8 +53,11 @@
   <script>
 import { mapState } from "vuex";
 import bus from "@/utils/bus";
-import { updateEvent } from "@/api/event/event";
-import evtdialog from "@/components/eventDialogTable/eventDialog"; //只有数据的弹窗
+import {updateEvent, getdeptIdTunnelList} from "@/api/event/event";
+import evtdialog from "@/components/eventDialogTable/eventDialog";
+import {getUserDeptId} from "@/api/system/user";
+import {getTreeByDeptId} from "@/api/system/dept"; //只有数据的弹窗
+
 
 export default {
   name: "eventDialogTable",
@@ -76,6 +79,12 @@ export default {
       list: [],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
+      userQueryParams: {
+        userName: this.$store.state.user.name,
+      },
+      userDeptId:"",
+      tunnelList:[],
+      evtShow:false
     };
   },
   computed: {
@@ -88,15 +97,31 @@ export default {
       immediate: true,
       handler: function (event) {
         debugger
+        // 存储集合
+        let  key = this.$store.state.user.name+"suidao"
+
+        this.tunnelList = JSON.parse(sessionStorage.getItem(key));
+        console.log(this.tunnelList);
+
+        if(!!this.tunnelList  &&this.tunnelList.length>0){
+          this.tunnelDataFind(event)
+        }else{
+          this.getUserDept(event)
+        }
+
         // console.log(event, "事件弹窗websockt推送");
-        this.list = event;
+        console.log(   this.tunnelList)
+        // this.list = event;
       },
     },
     deep: true,
   },
-  created() {},
+  created() {
+
+  },
   mounted() {
     bus.$on("forceUpdateTable", (id) => {
+      debugger
       let index = this.list.findIndex((item) => {
         if (item.id == id) {
           return true;
@@ -109,6 +134,92 @@ export default {
     });
   },
   methods: {
+    tunnelDataFind(event){
+      let tunnelDataList = []
+      console.log(event)
+      for (let i = 0; i < event.length; i++) {
+        event[i].tunnelId
+        let tunnelData = this.tunnelList.find(item => item.tunnelId ==event[i].tunnelId)
+        if(!!tunnelData){
+          tunnelDataList.push(event[i])
+        }
+      }
+      if(tunnelDataList.length>0){
+        this.evtShow = true
+        this.list = tunnelDataList;
+      }
+    },
+    getUserDept(event) {
+      getUserDeptId(this.userQueryParams).then((response) => {
+        console.log(response, "管理站级联");
+        this.userDeptId = response.rows[0].deptId;
+        this.getDeptList(event);
+      });
+    },
+    getDeptList(event) {
+      var userDeptId = this.userDeptId;
+      const params = { status: 0 };
+      getTreeByDeptId(params)
+        .then((response) => {
+          debugger
+          console.log(response.data, "级联");
+          const options = response.data;
+          let childs = [];
+          function a(list) {
+            list.forEach((item) => {
+              if (item.id == userDeptId) {
+                childs = item.children || [];
+              } else {
+                item.children && a(item.children);
+              }
+            });
+          }
+          a(options);
+          if (childs.length == 0) {
+            this.siteList = options[0].children;
+          } else {
+            this.siteList = childs;
+          }
+          console.log(this.siteList)
+
+          let ids =[]
+          for (let i = 0; i < this.siteList.length; i++) {
+            if(this.siteList[i].children.length>0){
+                for (let j = 0; j < this.siteList[i].children.length; j++) {
+                  ids.push(this.siteList[i].children[j].id)
+                }
+            }
+          }
+
+          let query = {
+            ids:ids.join(",")
+          }
+          getdeptIdTunnelList(query).then((res) => {
+            debugger
+            console.log(res, "根据管理机构筛选所属隧道");
+            this.tunnelList = res.data;
+            let  key = this.$store.state.user.name+"suidao"
+            sessionStorage.setItem(key, JSON.stringify(this.tunnelList));
+            //判断筛选
+            this.tunnelDataFind(event)
+
+          });
+        })
+        .then(() => {
+        });
+    },
+    checkData(obj, arr) {
+      if (obj.children && obj.children.length > 0) {
+        arr.push(obj.id);
+        this.checkData(obj.children[0], arr);
+      } else {
+        arr.push(obj.id);
+        arr.shift();
+        this.changeSite(arr);
+
+        this.$forceUpdate();
+      }
+    },
     handleSee(id) {
       bus.$emit("getPicId", id);
     },

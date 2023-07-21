@@ -76,6 +76,13 @@ export function getTunnelList(query) {
   })
 }
 
+export function getdeptIdTunnelList(params) {
+  return request({
+    url: `/tunnels/deptIdList`,
+    method: 'get',
+    params: params
+  })
+}
 // ��ѯ����
 export function listDevices(query) {
   return request({

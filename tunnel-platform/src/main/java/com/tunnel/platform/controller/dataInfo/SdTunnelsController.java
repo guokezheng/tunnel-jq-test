@@ -222,4 +222,10 @@ public class SdTunnelsController extends BaseController
     public AjaxResult getJlyTunnel(){
         return AjaxResult.success(sdTunnelsService.getJlyTunnel());
     }
+
+    @GetMapping("/deptIdList")
+    public Result<List<SdTunnels>> deptIdList(@RequestParam("ids")  String[] ids)
+    {
+        return Result.success(sdTunnelsService.deptIdList(ids));
+    }
 }

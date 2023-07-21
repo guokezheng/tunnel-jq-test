@@ -496,6 +496,7 @@
           <el-radio-group v-model="strategyForm.strategyType">
             <el-radio
               border
+              disabled
               v-for="dict in insertStrategyTypeOptions"
               :key="dict.dictValue"
               :label="dict.dictValue"

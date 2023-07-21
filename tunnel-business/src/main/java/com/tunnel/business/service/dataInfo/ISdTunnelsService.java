@@ -134,4 +134,7 @@ public interface ISdTunnelsService {
      * @return
      */
     List<SdTunnels> selectTunnels(String deptId);
+
+
+    List<SdTunnels> deptIdList(String[] ids);
 }

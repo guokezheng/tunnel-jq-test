@@ -392,4 +392,31 @@
         from sd_tunnels where tunnel_id  = #{deviceId}
     </select>
 
+    <select id="deptIdList" parameterType="Long" resultMap="SdTunnelsResult">
+        select tunnel_id,
+               tunnel_name,
+               tunnel_code,
+               tunnel_address,
+               longitude,
+               latitude,
+               tunnel_station_id,
+               tunnel_station_name,
+               lane,
+               coordinates,
+               remake,
+               tunnel_length,
+               poll,
+               store_configure,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               dept_id
+        from sd_tunnels
+        where dept_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+        #{id}
+        </foreach>
+    </select>
+
 </mapper>

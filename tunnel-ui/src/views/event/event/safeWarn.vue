@@ -2313,6 +2313,11 @@ export default {
         this.$forceUpdate();
       });
     },
+    countLetters(string) {
+      var pattern = /[A-Za-z]/g;  // 匹配所有字母的正则表达式
+      var match = string.match(pattern);
+      return match ? match.length : 0;
+    },
     //详情弹窗
     detailsButton(item) {
       // 获取对应事件
@@ -2347,11 +2352,24 @@ export default {
 
       });
       this.getEventList();
+      debugger
       if (item.stakeNum) {
+        let stake = "";
+
+        let letterCount = this.countLetters(item.stakeNum.split("+")[0]);
+        console.log("字母数量：" + letterCount);
+        console.log(item.stakeNum.split("+")[0])
+        if( letterCount>=2){
+          stake = item.stakeNum.split("+")[0].substr(2)
+        }else if( letterCount>=1){
+          stake = item.stakeNum.split("+")[0].substr(1)
+        }else{
+          stake = item.stakeNum.split("+")[0]
+        }
         this.$set(
           this.eventFormDetail,
           "stakeNum1",
-          item.stakeNum.split("+")[0].substr(1)
+          stake
         );
         this.$set(
           this.eventFormDetail,

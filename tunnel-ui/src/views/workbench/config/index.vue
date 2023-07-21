@@ -160,6 +160,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>控制策略</span>
           </el-button>
+<!--          <el-button-->
+<!--            class="buttons"-->
+<!--            type="primary"-->
+<!--            size="mini"-->
+<!--            @click="strategyPage1"-->
+<!--          >-->
+<!--            <img src="../../../assets/icons/kzcl.png" />-->
+<!--            <span>控制策略1</span>-->
+<!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -1816,6 +1825,7 @@
         class="paginationWorkbench"
       />
     </el-dialog>
+    <timingTask :show="timingTaskShow"></timingTask>
   </div>
 </template>
 
@@ -1831,6 +1841,7 @@ import "jquery-ui-dist/jquery-ui";
 import "jquery-ui-dist/jquery-ui.min.css";
 import bus from "@/utils/bus";
 import { mapState } from "vuex";
+import timingTask from "@/views/workbench/config/components/timingTask";
 
 import {
   getLiPowerDevices,
@@ -2015,6 +2026,7 @@ export default {
     comLiquidLevel, //液位传感器
     comDeawer, //抽屉
     comFooter, //底部echarts
+    timingTask,
   },
 
   data() {
@@ -2568,6 +2580,7 @@ export default {
       ],
       // 表单参数
       lightingForm: {},
+      timingTaskShow:false,
     };
   },
 
@@ -4264,6 +4277,7 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
+      debugger
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
@@ -5192,6 +5206,9 @@ export default {
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
+    },
+    strategyPage1(){
+      this.timingTaskShow = !this.timingTaskShow
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;

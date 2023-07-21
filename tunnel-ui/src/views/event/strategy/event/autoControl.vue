@@ -552,8 +552,7 @@ export default {
             {
               pattern: /^[1-9]\d*\.\d*|[1-9]\d*$/,
               message: "请输入数字，可输入小数",
-            },
-            { max: 10, message: '最长输入10个字符', trigger: 'change' }
+            }
 
           ],
         },

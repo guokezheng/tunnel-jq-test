@@ -102,7 +102,6 @@ public class RadarTask {
      * 遍历redis传事故位置到前端显示
      * @throws InterruptedException
      */
-    @Scheduled(fixedRate = 5000)
     public void radarEvent() throws InterruptedException {
 //        num3 =num3+1;
 //        SdEvent sdEventd = new SdEvent();

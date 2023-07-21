@@ -34,8 +34,10 @@
         ></videoPlayer>
       </div>
       <div class="rlModelBox">
-        <div class="rlModelButton left" @click="changeVideo('left')"></div>
-        <div class="rlModelButton" @click="changeVideo('right')"></div>
+        <div class="rlModelButton left" @click="changeVideo('left')">
+        <div @click="changeVideo('left')" :class="{active:isActive}"></div></div>
+        <div class="rlModelButton" >
+        <div @click="changeVideo('right')"></div></div>
       </div>
       <el-form
         ref="form"
@@ -401,6 +403,7 @@ export default {
   },
   data() {
     return {
+      isActive:false,
       clickEqType:'',
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
@@ -602,6 +605,8 @@ export default {
         });
     },
     changeVideo(rlModel){
+      console.log(this.isActive)
+      this.isActive = !this.isActive
       const params = {
         eqDirection:this.stateForm.eqDirection,
         pileNum:rlModel?this.pileNum:this.stateForm.pileNum,
@@ -694,33 +699,38 @@ export default {
 <style lang="scss" scoped>
 .rlModelBox{
   width:100%;
-  height: 40px;
+  height: 200px;
   position: absolute;
-  top:140px;
+  top:53px;
   left: 0;
   display: flex;
   justify-content: space-between;
   padding: 0 15px;
   .rlModelButton{
     width:40px;
-    height: 40px;
-    border-radius: 20px;
-    background: url(../../../../assets/cloudControl/toRight2.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    cursor: pointer;
-    opacity: 0.5;
+    height: 100%;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    >div{
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: url(../../../../assets/cloudControl/toRight2.png);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+    .active{
+      background: url(../../../../assets/cloudControl/toRight1.png);
+    }
   }
   .left{
     transform: rotate(180deg);
   }
   .rlModelButton:hover{
-    background: url(../../../../assets/cloudControl/toRight1.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    opacity: 1;
+    opacity: 0.5;
   }
 }
 .robotTabs {

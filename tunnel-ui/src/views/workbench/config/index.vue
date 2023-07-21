@@ -1752,13 +1752,13 @@
           prop="direction"
           :formatter="directionFormat"
         />
-        <el-table-column
+        <!-- <el-table-column
           label="策略类型"
           align="center"
           prop="strategyType"
           :formatter="strategyTypeFormat"
           v-if="strategyActive == 'richang'"
-        />
+        /> -->
         <el-table-column
           label="策略类型"
           align="center"
@@ -3257,6 +3257,7 @@ export default {
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
+      this.operationList2 = []
       if (this.manageStation == "1") {
         this.operationParam.tunnelId = this.$cache.local.get(
           "manageStationSelect"
@@ -3443,8 +3444,10 @@ export default {
     // 筛选设备名称
     screenEqNameButton() {
       if (this.screenEqName) {
+        let bigType = ''
         for (var item of this.selectedIconList) {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
+            bigType = item.bigType
             this.resetCanvasFlag = true;
             this.$refs.dragImgDom.style.left = -item.position.left + 864 + "px";
             // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
@@ -3453,6 +3456,16 @@ export default {
             item.click = false;
           }
         }
+        if(bigType.includes('0')){
+            this.displayControl(0,'全部设备')
+        }else{
+          for(let itm of this.dictList){
+            if(bigType == itm.value){
+              this.displayControl(bigType,item.label)
+            }
+          }
+        }
+        
       } else {
         for (var item of this.selectedIconList) {
           item.click = false;
@@ -4291,6 +4304,7 @@ export default {
         } else if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY") {
           this.dictList = this.dict.type.sd_sys_name;
         }
+        console.log(this.dictList,"this.dictList")
         for (let i = 0; i < this.dictList.length; i++) {
           if( this.dictList[i].label=="火灾报警"){
             this.dictList[i].labelClass = "huozaibaojing"
@@ -4298,7 +4312,6 @@ export default {
             this.dictList[i].labelClass = "jinjidianhua"
           }
         }
-        debugger
         this.checkboxTunnel = [];
         let list = response.rows;
         if (list.length > 0) {
@@ -4415,6 +4428,7 @@ export default {
         stateName: null,
       };
       await listEqTypeState(queryParams).then((response) => {
+        console.log(response.rows,"response.rows111")
         let list = response.rows;
         that.getEqUrl(list);
       });
@@ -4479,6 +4493,7 @@ export default {
 
           listType("")
             .then((response) => {
+              console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
                 for (let j = 0; j < response.rows.length; j++) {
@@ -4487,6 +4502,7 @@ export default {
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
                     res.eqList[i].iconHeight = iconHeight;
+                    res.eqList[i].bigType = response.rows[j].bigType
                     break;
                   }
                 }
@@ -4739,6 +4755,12 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+        });
       this.tunnelItem = item; //勿动
       this.closeBatchManageDialog();
       this.screenEqName = "";
@@ -4748,7 +4770,6 @@ export default {
         lane: item.lane,
         index: index,
       };
-
       // 判断是否有缓存的currentTunnel对象
       // 1. get不到currentTunnel对象 this.currentTunnel.name为空 是第一次进入 默认在第一个隧道 正常赋值
       // 2. get不到currentTunnel对象 this.currentTunnel.name有 是切换隧道 set到缓存 并赋值
@@ -4786,6 +4807,8 @@ export default {
       //先删除
       this.carList = [];
       this.carList = new Map();
+      loading.close();
+
     },
     onActivated(key) {},
     onDragging(key) {},
@@ -4794,6 +4817,7 @@ export default {
 
     /*点击设备类型*/
     displayControl(value, lable) {
+      console.log(value, lable,"value, lable")
       // carShow
       for (var item of this.selectedIconList) {
         if (
@@ -4818,6 +4842,7 @@ export default {
 
       var val = value.toString();
       hasListByBigType(val).then((response) => {
+        console.log(response.rows,"response.rows")
         let typelist = response.rows;
         let typeIndex = [];
         if (typelist.length > 0) {

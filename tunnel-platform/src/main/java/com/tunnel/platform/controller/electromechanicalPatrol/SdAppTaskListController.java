@@ -217,7 +217,7 @@ public class SdAppTaskListController extends BaseController
     public Result taskToDo(HttpServletRequest request){
         String deptId = SecurityUtils.getDeptId();
         Long userId = SecurityUtils.getUserId();
-        List<SdTaskList> taskList = new ArrayList<>();
+        List<Map> taskList = new ArrayList<>();
         //先判断在不在用户班组
         String result = sdTeamsListService.existInTeams(userId);
         if(result!=null&&!"".equals(result)){//存在班组中

@@ -133,7 +133,7 @@ public interface SdTaskListMapper
      * @param deptId
      * @return
      */
-    List<SdTaskList> getTaskToDo(@Param("deptId")String deptId,@Param("userId")Long userId);
+    List<Map> getTaskToDo(@Param("deptId")String deptId,@Param("userId")Long userId);
 
     /**
      * 根据隧道查询班组
@@ -156,7 +156,7 @@ public interface SdTaskListMapper
      */
     String selectCurrentDayTask(String pid);
 
-    List<SdTaskList> getTaskToDoTeams(@Param("deptId")String deptId,@Param("userId")Long userId);
+    List<Map> getTaskToDoTeams(@Param("deptId")String deptId,@Param("userId")Long userId);
 
     int getTaskCountList(@Param("taskStatus")String taskStatus, @Param("taskName")String taskName, @Param("startTime")String startTime, @Param("endTime")String endTime, @Param("deptId")String deptId,@Param("userId")Long userId);
 

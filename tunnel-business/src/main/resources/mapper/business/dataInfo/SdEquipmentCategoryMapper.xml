@@ -123,12 +123,12 @@
     <select id="getCategoryDeviceList" parameterType="String" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
         select ec.id as id, ec.`name`, ec.parent_id as parentId
         from sd_equipment_category ec
-        where ec.is_control = 1
+        where 1=1
         union
         select d.eq_id as id, d.eq_name as name, d.f_eq_type as parentId
         from sd_devices d
         left join sd_equipment_type et on d.eq_type = et.type_id
-        where d.eq_tunnel_id = #{tunnelId} and et.is_control = 1
+        where d.eq_tunnel_id = #{tunnelId}
     </select>
 
     <select id="getCategoryList" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">

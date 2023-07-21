@@ -397,6 +397,8 @@
                   <el-input
                     type="textarea"
                     :rows="2"
+                    maxlength="255"
+                    show-word-limit
                     placeholder="请输入内容"
                     v-model="form.taskDescription"
                   >
@@ -754,13 +756,13 @@
             <div>派单时间：</div>
             <span>{{ item.dispatchTime }}</span>
           </el-col>
-          <el-col :span="8">
-            <div>任务名称：</div>
-            <span>{{ item.taskName }}</span>
+          <el-col :span="8" style="display:inline-block">
+            <div style="display:inline-block">任务名称：</div>
+            <span style="width: calc(100% - 110px);display:inline-flex">{{ item.taskName }}</span>
           </el-col>
-          <el-col :span="8">
-            <div>任务描述：</div>
-            <span>{{
+          <el-col :span="24" style="display:inline-block">
+            <div style="display:inline-block">任务描述：</div>
+            <span style="width: calc(100% - 110px);display:inline-flex">{{
                 item.taskDescription == "null" ? "" : item.taskDescription
               }}</span>
           </el-col>
@@ -820,7 +822,7 @@
           <el-col>
             <div style="width:12%">现场情况照片：</div>
             <div v-for="(pic, index) in pat.iFileList" :key="index" style = "padding-right: 30px;">
-              <img :src="pic.imgUrl" :title="pic.imgName" />
+              <img :src="pic.imgUrl" :title="pic.imgName" @click="openPic(pic.imgUrl,pic.imgName)"/>
             </div>
           </el-col>
         </el-row>
@@ -899,6 +901,19 @@
           </div>
         </div>
       </div>
+    </el-dialog>
+    <el-dialog
+      :title="picTitle"
+      :visible.sync="picVisible"
+      width="60%"
+      :before-close="handleCloseImg"
+      :close-on-click-modal="false"
+    >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
+      <img :src="picUrl" style="width: 100%" />
     </el-dialog>
   </div>
 </template>
@@ -983,6 +998,9 @@ export default {
   },
   data() {
     return {
+      picUrl:'',
+      picTitle:'',
+      picVisible:false,
       isActive: false,
       task_boxShow: false,
       isClick: true,
@@ -1179,6 +1197,14 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    handleCloseImg(){
+      this.picVisible = false
+    },
+    openPic(src,title){
+      this.picUrl = src
+      this.picTitle = title
+      this.picVisible = true
+    },
     changeDevList(){
       this.searchValue = '';
       this.getTable(this.options1value);
@@ -2179,7 +2205,7 @@ h1 {
 img {
   width: 100px;
   margin-top: 20px;
-  margin-left: -20px;
+  // margin-left: -20px;
 }
 ::v-deep .el-card {
   margin-bottom: 10px !important;
@@ -2479,5 +2505,8 @@ img {
   padding: 5px;
   font-size: 12px;
   margin-left: 4px;
+}
+::v-deep .el-textarea .el-input__count{
+  background: transparent !important;
 }
 </style>

@@ -36,7 +36,7 @@ public class MinaConnection implements IConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 初始化连接
 	 */
 	public void init() {
@@ -55,7 +55,7 @@ public class MinaConnection implements IConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * @Description: 获取里连接session
 	 * @return
 	 */
@@ -76,7 +76,7 @@ public class MinaConnection implements IConnection {
 		 */
 		try {
 			ioSession = cf.getSession();
-			logger.info(" [run()] 获取连接Iot设备成功！Iot设备：[" + ip + ":" + port + "]！创建时间： "+ioSession.getCreationTime());
+//			logger.info(" [run()] 获取连接Iot设备成功！Iot设备：[" + ip + ":" + port + "]！创建时间： "+ioSession.getCreationTime());
 			return ioSession;
 		} catch (Exception e) {
 			logger.warn(" [run()] 获取连接Iot设备异常！Iot设备：[" + ip + ":" + port + "]！ " + e.getMessage());

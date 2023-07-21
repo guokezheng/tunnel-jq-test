@@ -37,7 +37,7 @@
       border:solid 1px #2D69A5;
     }
   }
-  
+
   // 级联
   .el-cascader__dropdown{
     background-color: #003D6C;
@@ -281,7 +281,7 @@
         background-color: #39ADFF !important;
         box-shadow: none !important;
       }
-      
+
     }
     .addUserDialog{
       .el-dialog__body{
@@ -446,9 +446,9 @@
     ::-webkit-scrollbar-thumb {
       background-color: #0090D8;
     }
-  
+
     .el-dialog__body,.el-dialog__footer{
-   
+
       padding: 20px;
       color: #fff;
       .el-radio__inner{
@@ -1061,7 +1061,7 @@
         border:transparent !important;
       }
     }
-    
+
    .infoBoardBox{
     background: #004375;
       .el-checkbox{
@@ -1173,7 +1173,7 @@
     .formAddClass{
       color: white;
     }
-    
+
     // 表格loading背景色
     .el-loading-mask{
       background: transparent;
@@ -1267,7 +1267,7 @@
     .el-table .el-table__header-wrapper th:last-of-type{
       border-right: 1px solid rgba(225,228,230,.16);
     }
-    
+
     // 表格鼠标移入行选中
     .el-table--enable-row-hover .el-table__body tr:hover > td {
       background-color: #0064B0;
@@ -2320,6 +2320,16 @@
     .hover-row{
       background: #0064B0 !important;
     }
+    .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+      background: #00aaf2 !important;
+      border-radius: 20px !important;
+      color:#fff;
+    }
+    .el-radio-button__inner{
+      background: transparent;
+      border: 1px solid transparent;
+      color: #fff;
+    }
     .el-input-group__append{
       background: transparent !important;
       border: transparent !important;
@@ -2763,7 +2773,7 @@
   .tunnelBox{
     background-color: #012E51 !important;
   }
-  
+
   .planBox{
     >.title{
       border-bottom: solid 1px rgba($color: #F0F1F2, $alpha: 0.2);
@@ -2781,7 +2791,7 @@
     >div{
       color:#fff;
     }
-    
+
   }
   .processBox{
     .el-step__icon.is-icon{

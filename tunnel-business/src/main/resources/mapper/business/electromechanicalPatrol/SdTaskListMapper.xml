@@ -353,25 +353,27 @@
 
 
     <select id="getTaskToDo" parameterType="String" resultMap="SdTaskListResult">
-        select * from sd_task_list
+        select id, zzjg_id, end_plantime, dispatcher, date_format(dispatch_time,'%m-%d') dispatch_time, bz_id, task_description, publish_status, task_status, walker_id, task_endtime, task_cxtime, site_description, create_by, create_time, update_by, update_time
+        from sd_task_list
         <if test="deptId != null and deptId != ''">
             where bz_id = #{deptId} OR
             bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors))
             and task_status in('0','1','3','4') and publish_status ='2'
         </if>
-        order by create_time desc
+        order by dispatch_time desc,create_time desc
 
     </select>
 
     <select id="getTaskToDoTeams" parameterType="String" resultMap="SdTaskListResult">
-        select * from sd_task_list
+        select id, zzjg_id, end_plantime, dispatcher, date_format(dispatch_time,'%m-%d') dispatch_time, bz_id, task_description, publish_status, task_status, walker_id, task_endtime, task_cxtime, site_description, create_by, create_time, update_by, update_time
+        from sd_task_list
         <if test="deptId != null and deptId != ''">
             where (bz_id = #{deptId} OR
             bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.dept_id)))
             and publish_status ='2'
             and ((task_status in('0','1','3','4') and walker_id = #{userId})or(task_status ='0' and   ISNULL(walker_id)))
         </if>
-        order by create_time desc
+        order by dispatch_time desc,create_time desc
     </select>
 
 

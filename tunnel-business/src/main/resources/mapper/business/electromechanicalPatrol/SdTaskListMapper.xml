@@ -276,7 +276,7 @@
             AND (t.bz_id = #{params.deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{params.deptId},q.dept_id) ))
         </if>
         and t.publish_status ='2' and (ISNULL(walker_id) or t.walker_id = #{params.userId})
-        order by t.create_time desc
+        order by t.task_status asc, t.create_time desc
         <if test="params.pageNum != null">
             limit #{params.pageNum},#{params.pageSize}
         </if>

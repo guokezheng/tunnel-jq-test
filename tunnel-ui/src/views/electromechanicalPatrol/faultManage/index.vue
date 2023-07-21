@@ -498,7 +498,9 @@
                   :props="equipmentTypeProps"
                   :show-all-levels="false"
                   style="width: 100%"
-                ></el-cascader>
+                  ref="cascader"
+                  :key="cascaderKey"
+                ></el-cascader> 
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -815,11 +817,13 @@ export default {
   ],
   data() {
     return {
+      cascaderKey:null,
       equipmentTypeProps: {
         value: "id",
         label: "label",
         // checkStrictly: true,
         emitPath: false,
+        expandTrigger:'click',   //次级菜单的展开方式
       },
       holderRunStatus:"",
       holderFaultCode:"",
@@ -1274,6 +1278,7 @@ export default {
     reset() {
       this.form = {
         id: null,
+        typeId:null,
         tunnelId: null,
         faultLocation: null,
         faultSource: null,
@@ -1295,6 +1300,7 @@ export default {
       };
       this.fileList = [];
       this.removeIds = [];
+      ++this.cascaderKey //第二次打开时 折叠级联二级菜单 保证不显示上次选项
       this.resetForm("form");
     },
     handlePictureCardPreview(file) {
@@ -1519,7 +1525,6 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
       this.holderRunStatus = '请输入设备运行状态';
       this.holderFaultCode = "请输入故障代码";
       this.holderFaultCxtime = "请按照天/小时/分格式填写";
@@ -1528,6 +1533,7 @@ export default {
       this.isWritable = true;
       this.disstate = false;
       this.disstateDevice = true;
+      // this.reset();
       this.open = true;
       this.title = "添加故障清单";
     },
@@ -1549,6 +1555,7 @@ export default {
         this.form.typeId = response.data.typeId;
         this.getDevices();
         this.form = response.data;
+        this.form.typeId = String(this.form.typeId);
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
         this.disstateDevice = false;
@@ -1682,6 +1689,7 @@ export default {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
                 this.$refs.tableFile.clearSelection();
+                this.reset();
                 this.getList();
               });
             }
@@ -1693,6 +1701,7 @@ export default {
                 this.isClick = false;
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
+                this.reset();
                 this.getList();
               });
             }
@@ -1706,7 +1715,6 @@ export default {
     },
 
     publishForm() {
-      debugger
       this.isClick = true;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
@@ -1746,6 +1754,7 @@ export default {
               this.open = false;
               this.$refs.tableFile.clearSelection();
               this.getList();
+              this.reset()
             });
           } else {
             this.waiting = true;
@@ -1753,6 +1762,7 @@ export default {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+              this.reset()
             });
           }
         }

@@ -527,7 +527,12 @@ export default {
           { required: true, message: "请选择事件类型", trigger: "change" },
         ],
         schedulerTime:[
-          { required: true, message: "请选择定时频率", trigger: "change" },
+          { required: true, message: "请选择间隔时间", trigger: "change" },
+          {
+              pattern: /^[1-9]\d*\.\d*|[1-9]\d*$/,
+              message: "请输入数字，可输入小数",
+          },
+          { max: 10, message: '最长输入10个字符', trigger: 'change' }
         ],
         triggers: {
           deviceTypeId: [
@@ -544,6 +549,12 @@ export default {
           ],
           compareValue: [
             { required: true, message: "请输入阈值", trigger: "change" },
+            {
+              pattern: /^[1-9]\d*\.\d*|[1-9]\d*$/,
+              message: "请输入数字，可输入小数",
+            },
+            { max: 10, message: '最长输入10个字符', trigger: 'change' }
+
           ],
         },
       },
@@ -681,7 +692,7 @@ export default {
             debugger
             this.$nextTick(() => {
               debugger
-              this.strategyForm.triggers.deviceId = res.data.deviceId.split(",");
+            this.strategyForm.triggers.deviceId = res.data.deviceId.split(",");
             })
 
           });
@@ -713,7 +724,6 @@ export default {
                 this.strategyForm.autoControl[i].state = +attr.state;
                 this.qbgChange(i,this.strategyForm.autoControl[i].equipments);
               }
-              debugger
               this.$set(
                 autoControl,
                 "equipmentTypeData",
@@ -728,7 +738,7 @@ export default {
                 eqTunnelId: this.strategyForm.tunnelId,
                 eqDirection: params.eqDirection, //方向
               }).then((res) => {
-                debugger
+                // debugger
                 this.$set(autoControl, "equipmentData", res.rows);
                 console.log(autoControl.equipmentData, "设备列表数据1");
               });
@@ -754,7 +764,7 @@ export default {
       if(this.strategyForm.direction == 3){
         params.eqDirection = null;
       }
-      debugger
+      // debugger
       listDevices(params).then((res) => {
         this.$set(
           this.strategyForm.autoControl[index],
@@ -977,7 +987,6 @@ export default {
       let autoControl = this.strategyForm.autoControl;
       for (let i = 0; i < autoControl.length; i++) {
         getCategoryTree().then((data) => {
-          debugger
           this.$set(autoControl[i], "equipmentTypeData", data.data);
           this.equipmentTypeData = data.data;
         });
@@ -992,14 +1001,12 @@ export default {
         if(this.strategyForm.direction == 3){
           params.eqDirection = null;
         }
-        console.log(this.strategyForm.triggers.deviceTypeId,this.strategyForm.tunnelId, params.eqDirection)
         listDevices({
           eqType: this.strategyForm.triggers.deviceTypeId,
           eqTunnelId: this.strategyForm.tunnelId,
           eqDirection: params.eqDirection,
         }).then((res) => {
           this.equipmentData = res.rows;
-          debugger
           this.deviceName = res.rows;
         });
       }
@@ -1025,7 +1032,7 @@ export default {
       if(this.strategyForm.triggers.deviceId){
         listItem({ deviceTypeId: this.strategyForm.triggers.deviceTypeId }).then(
           (res) => {
-            debugger
+            // debugger
             this.dataItem = res.rows;
             console.log(this.dataItem, "数据项");
           }

@@ -523,7 +523,7 @@
       <div class="show-right">
         <div class="show-title">设备清单</div>
         <div class="right-button">
-          <el-select v-model="options1value" @change="getTable">
+          <el-select v-model="options1value" @change="changeDevList">
             <el-option
               v-for="dict in dict.type.eq_system"
               :key="dict.value"
@@ -533,7 +533,7 @@
           </el-select>
           <div >
 
-            <el-input placeholder="请输入设备类型、名称"  @keyup.enter.native="getTable()"   v-model="searchValue" class="input-with-select">
+            <el-input placeholder="请输入设备类型、名称" clearable  @keyup.enter.native="getTable()"   v-model="searchValue" class="input-with-select">
               <el-button slot="append" icon="el-icon-search"  @click.native.prevent="getTable()"></el-button>
             </el-input>
           </div>
@@ -1131,6 +1131,7 @@ export default {
             message: "请填写任务名称",
             trigger: "blur",
           },
+          { max: 50, message: '最长输入50个字符', trigger: 'change' }
         ],
         tunnelId: [
           {
@@ -1178,6 +1179,10 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
   },
   methods: {
+    changeDevList(){
+      this.searchValue = '';
+      this.getTable(this.options1value);
+    },
 
     //更换隧道，更新隧道下关联班组列表
     changeGroup(e){

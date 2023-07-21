@@ -884,7 +884,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SdTaskList> getTaskToDo(String deptId,Long userId) {
+    public List<Map> getTaskToDo(String deptId,Long userId) {
         return sdTaskListMapper.getTaskToDo(deptId,userId);
     }
 
@@ -894,7 +894,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     }
 
     @Override
-    public List<SdTaskList> getTaskToDoTeams(String deptId,Long userId) {
+    public List<Map> getTaskToDoTeams(String deptId,Long userId) {
         return sdTaskListMapper.getTaskToDoTeams(deptId,userId);
     }
 

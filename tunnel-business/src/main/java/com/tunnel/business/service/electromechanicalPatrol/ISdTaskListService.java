@@ -177,7 +177,7 @@ public interface ISdTaskListService
      * @param deptId
      * @return
      */
-    List<SdTaskList> getTaskToDo(String deptId,Long userId);
+    List<Map> getTaskToDo(String deptId,Long userId);
 
     /**
      * 根据隧道查询班组
@@ -186,7 +186,7 @@ public interface ISdTaskListService
      */
     String selectBzByTunnel(String tunnelId);
 
-    List<SdTaskList> getTaskToDoTeams(String deptId,Long userId);
+    List<Map> getTaskToDoTeams(String deptId,Long userId);
 
     int getTaskCountList(String taskStatus, String taskName, String startTime, String endTime, String deptId,Long userId);
 

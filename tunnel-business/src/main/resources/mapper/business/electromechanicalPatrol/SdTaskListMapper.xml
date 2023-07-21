@@ -352,8 +352,10 @@
     </insert>
 
 
-    <select id="getTaskToDo" parameterType="String" resultMap="SdTaskListResult">
-        select id, zzjg_id, end_plantime, dispatcher, date_format(dispatch_time,'%m-%d') dispatch_time, bz_id, task_description, publish_status, task_status, walker_id, task_endtime, task_cxtime, site_description, create_by, create_time, update_by, update_time
+    <select id="getTaskToDo" parameterType="String" resultType="java.util.Map">
+        select id, zzjg_id zzjgId, end_plantime endPlantime, dispatcher dispatcher, date_format(dispatch_time,'%m-%d') dispatchTime,
+        bz_id bzId, task_description taskDescription, publish_status publishStatus, task_status taskStatus, walker_id walkerId, task_endtime taskEndtime, task_cxtime taskCxtime,
+        site_description siteDescription, create_by createBy, create_time createTime, update_by updateBy, update_time updateTime
         from sd_task_list
         <if test="deptId != null and deptId != ''">
             where bz_id = #{deptId} OR
@@ -364,8 +366,10 @@
 
     </select>
 
-    <select id="getTaskToDoTeams" parameterType="String" resultMap="SdTaskListResult">
-        select id, zzjg_id, end_plantime, dispatcher, date_format(dispatch_time,'%m-%d') dispatch_time, bz_id, task_description, publish_status, task_status, walker_id, task_endtime, task_cxtime, site_description, create_by, create_time, update_by, update_time
+    <select id="getTaskToDoTeams" parameterType="String" resultType="java.util.Map">
+        select id, zzjg_id zzjgId, end_plantime endPlantime, dispatcher dispatcher, date_format(dispatch_time,'%m-%d') dispatchTime,
+        bz_id bzId, task_description taskDescription, publish_status publishStatus, task_status taskStatus, walker_id walkerId, task_endtime taskEndtime, task_cxtime taskCxtime,
+        site_description siteDescription, create_by createBy, create_time createTime, update_by updateBy, update_time updateTime
         from sd_task_list
         <if test="deptId != null and deptId != ''">
             where (bz_id = #{deptId} OR

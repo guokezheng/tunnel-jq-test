@@ -34,7 +34,7 @@
         <div class="grid-content bg-purple" ref="main">
           <el-input
             v-model="queryParams.typeName"
-            placeholder="请输入设备类型名称、设备类型代号,回车搜索"
+            placeholder="请输入设备类型名称、设备类型代号，回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"

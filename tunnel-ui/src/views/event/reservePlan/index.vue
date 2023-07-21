@@ -1194,8 +1194,8 @@ export default {
       retrievalRuleList: [],
       maskOptions: {
         lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
+        text: "Loading",
+        spinner: "el-icon-loading",
         background: "rgba(0, 0, 0, 0.7)",
         target: ".strategy-dialog",
       },
@@ -1539,7 +1539,7 @@ export default {
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
-      this.fileList = []
+      this.fileList = [];
       this.$refs.planTable.clearSelection();
       //this.handleQuery();
       this.resetReservePlanDrawForm();
@@ -1665,7 +1665,7 @@ export default {
             this.$set(
               this.planTypeIdList[number].processesList[index],
               "equipmentData",
-              ''
+              ""
             );
             return this.$modal.msgWarning("暂无设备");
           }
@@ -1738,7 +1738,7 @@ export default {
     closeStrategy() {
       // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
-      this.planTypeIdList = []
+      this.planTypeIdList = [];
       // this.handleQuery();
       this.$refs.boardRef.handleClosee();
 
@@ -1794,7 +1794,7 @@ export default {
       addProcess(data).then((res) => {
         if (res.code === 200) {
           this.strategyVisible = false;
-          this.planTypeIdList = []
+          this.planTypeIdList = [];
           this.$modal.msgSuccess(res.msg);
           this.$refs.planTable.clearSelection();
           this.getList();
@@ -2147,7 +2147,6 @@ export default {
                 } else {
                   this.$modal.msgError("保存失败");
                 }
-                
               });
             } else if (this.planChangeSink == "edit") {
               this.fileData.append("id", this.reservePlanDrawForm.id);
@@ -2171,7 +2170,7 @@ export default {
                 }
               });
             }
-            this.fileList = []
+            this.fileList = [];
             this.multipleSelectionIds = [];
           }
           this.dloading = false;
@@ -2215,6 +2214,12 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+        });
 
       this.resetForm("addForm1");
       // this.resetReservePlanDrawForm();
@@ -2243,16 +2248,20 @@ export default {
         }
 
         let fileInfo = response.data.pFileList;
-        this.$nextTick(()=>{
-          for (var i = 0; i < fileInfo.length; i++) {
-            let fileModel = {};
-            fileModel.name = fileInfo[i].fileName;
-            fileModel.url = fileInfo[i].url;
-            fileModel.fId = fileInfo[i].id;
-            this.fileList.push(fileModel);
+        this.$nextTick(() => {
+          if(fileInfo){
+            for (var i = 0; i < fileInfo.length; i++) {
+              let fileModel = {};
+              fileModel.name = fileInfo[i].fileName;
+              fileModel.url = fileInfo[i].url;
+              fileModel.fId = fileInfo[i].id;
+              this.fileList.push(fileModel);
+            }
           }
-        })
-       
+        });
+        loading.close();
+          this.dialogFormVisible = true;
+          this.title = "修改预案信息";
         //文件回显
       });
       // this.drawer = true;
@@ -2262,8 +2271,6 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs["form1"].clearValidate();
       // });
-      this.dialogFormVisible = true;
-      this.title = "修改预案信息";
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -2416,7 +2423,6 @@ export default {
 };
 </script>
 <style>
-
 .planBox .el-input-number__decrease {
   border-right: 1px solid #00152b !important;
 }
@@ -2425,12 +2431,12 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-::v-deep .el-scrollbar__wrap{
+::v-deep .el-scrollbar__wrap {
   overflow: hidden !important;
 }
 ::v-deep .el-scrollbar__wrap {
-    overflow-x: hidden;
-  }
+  overflow-x: hidden;
+}
 // ::v-deep .el-dialog .el-dialog__header{
 //     // background-image: url(../../../assets/cloudControl/dialogHeader.png);
 //     // background-repeat: no-repeat;

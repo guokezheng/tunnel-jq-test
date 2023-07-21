@@ -1743,13 +1743,13 @@
           prop="direction"
           :formatter="directionFormat"
         />
-        <el-table-column
+        <!-- <el-table-column
           label="策略类型"
           align="center"
           prop="strategyType"
           :formatter="strategyTypeFormat"
           v-if="strategyActive == 'richang'"
-        />
+        /> -->
         <el-table-column
           label="策略类型"
           align="center"
@@ -3244,6 +3244,7 @@ export default {
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
+      this.operationList2 = []
       if (this.manageStation == "1") {
         this.operationParam.tunnelId = this.$cache.local.get(
           "manageStationSelect"
@@ -4740,6 +4741,12 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+        });
       this.tunnelItem = item; //勿动
       this.closeBatchManageDialog();
       this.screenEqName = "";
@@ -4749,7 +4756,6 @@ export default {
         lane: item.lane,
         index: index,
       };
-
       // 判断是否有缓存的currentTunnel对象
       // 1. get不到currentTunnel对象 this.currentTunnel.name为空 是第一次进入 默认在第一个隧道 正常赋值
       // 2. get不到currentTunnel对象 this.currentTunnel.name有 是切换隧道 set到缓存 并赋值
@@ -4787,6 +4793,8 @@ export default {
       //先删除
       this.carList = [];
       this.carList = new Map();
+      loading.close();
+
     },
     onActivated(key) {},
     onDragging(key) {},

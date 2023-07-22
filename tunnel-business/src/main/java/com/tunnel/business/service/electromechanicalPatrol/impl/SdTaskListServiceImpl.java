@@ -1152,20 +1152,17 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                 // 更新基本信息
                 if(updateSdTaskList(sdTaskList) != 0){
                     success.add(id);
-                }else{
-                    error.add(id);
-                }
 
-                // 巡检设备信息
-                JSONArray patrolInfoFormArray = jsonObject.getJSONArray("patrolInfoForm");
+                    // 巡检设备信息
+                    JSONArray patrolInfoFormArray = jsonObject.getJSONArray("patrolInfoForm");
 
-                for (Object plObj : patrolInfoFormArray){
-                    JSONObject patrolJSON = (JSONObject) plObj;
-                    SdPatrolList sdPatrolList = new SdPatrolList();
-                    sdPatrolList.setId(patrolJSON.getString("id"));
-                    sdPatrolList.setImpression(patrolJSON.getString("impression"));
-                    sdPatrolList.setNetwork(patrolJSON.getString("network"));
-                    sdPatrolList.setPower(patrolJSON.getString("power"));
+                    for (Object plObj : patrolInfoFormArray){
+                        JSONObject patrolJSON = (JSONObject) plObj;
+                        SdPatrolList sdPatrolList = new SdPatrolList();
+                        sdPatrolList.setId(patrolJSON.getString("id"));
+                        sdPatrolList.setImpression(patrolJSON.getString("impression"));
+                        sdPatrolList.setNetwork(patrolJSON.getString("network"));
+                        sdPatrolList.setPower(patrolJSON.getString("power"));
 
                /*     @Excel(name = "设备状态")
                     private String eqStatus;
@@ -1174,20 +1171,22 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                     private String runStatus;*/
 
 
-                    // ? 缺个巡查时间 xcTime
-                    sdPatrolList.setEqStatus(patrolJSON.getString("eqStatus"));
-                    sdPatrolList.setRunStatus(patrolJSON.getString("runStatus"));
-                    sdPatrolList.setXcTime(patrolJSON.getDate("xcTime"));
+                        // ? 缺个巡查时间 xcTime
+                        sdPatrolList.setEqStatus(patrolJSON.getString("eqStatus"));
+                        sdPatrolList.setRunStatus(patrolJSON.getString("runStatus"));
+                        sdPatrolList.setXcTime(patrolJSON.getDate("xcTime"));
 
-                    sdPatrolList.setEqFaultCode(patrolJSON.getString("eqFaultCode"));
-                    sdPatrolList.setEqFaultDescription(patrolJSON.getString("eqFaultDescription"));
-                    sdPatrolList.setFaultClstatus(patrolJSON.getString("faultClstatus"));
-                    sdPatrolList.setXcStatus("1");
-                    sdPatrolList.setImgFileId(patrolJSON.getString("imgFileId"));
+                        sdPatrolList.setEqFaultCode(patrolJSON.getString("eqFaultCode"));
+                        sdPatrolList.setEqFaultDescription(patrolJSON.getString("eqFaultDescription"));
+                        sdPatrolList.setFaultClstatus(patrolJSON.getString("faultClstatus"));
+                        sdPatrolList.setXcStatus("1");
+                        sdPatrolList.setImgFileId(patrolJSON.getString("imgFileId"));
 
-                    sdPatrolListMapper.updateSdPatrolList(sdPatrolList);
+                        sdPatrolListMapper.updateSdPatrolList(sdPatrolList);
+                    }
+                }else{
+                    error.add(id);
                 }
-
             }
 
         }

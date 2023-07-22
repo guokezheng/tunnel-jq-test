@@ -77,7 +77,7 @@ public class WarningLightStripTask {
      * 原代码在杭山东隧道服务器执行一段时间后会报错：Caused by: java.io.IOException: 打开的文件过多
      * 新代码用netty长连接实现，测试是否正常运行
      */
-    public void handleNew(){
+    public void handle(){
         //固定查询指令，查询14个地址的信息，包含警示灯带所有的信息
         String cmdBody = "01030000000E";
         String crc = JavaCrc16.getCRC(cmdBody);
@@ -93,7 +93,7 @@ public class WarningLightStripTask {
 
     }
 
-    public void handle() {
+    public void handleOld() {
         //定时获取警示灯带当前状态
         Long warningLightStripId = Long.valueOf(DevicesTypeEnum.JING_SHI_DENG_DAI.getCode());
         SdDevices sdDevices = new SdDevices();

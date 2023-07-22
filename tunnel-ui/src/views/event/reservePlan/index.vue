@@ -2586,4 +2586,9 @@ export default {
     background-image: url(../../../assets/icons/add.png);
   }
 }
+.operationDiglog{
+  .el-dialog__body{
+    padding: 20px !important;
+  }
+}
 </style>

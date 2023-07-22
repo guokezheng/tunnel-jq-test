@@ -235,4 +235,11 @@ public interface ISdTaskListService
     int deleteSitePhoto(String id);
 
     List getTaskAllList();
+
+    /**
+     *  同步巡检任务信息
+     * @param reqJson
+     * @return
+     */
+    Map modifyTaskData(String reqJson);
 }

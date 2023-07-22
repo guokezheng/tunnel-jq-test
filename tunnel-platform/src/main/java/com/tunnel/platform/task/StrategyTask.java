@@ -88,53 +88,12 @@ public class StrategyTask {
     }
 
     /**
-     * 找到时间集合 最接近并且大于 当前时间 的数据
-     * @param time 定时任务时间
-     * @param times 时间集合
-     * @return
-     */
-    public static Optional<LocalTime> findClosestFutureTime(List<String> times,String time) {
-//        LocalTime currentTime = LocalTime.now();
-        LocalTime currentTime = LocalTime.parse(time);
-        //流操作过滤出所有大于当前时间的时间
-        List<LocalTime> futureTimes = times.stream()
-                .map(LocalTime::parse)
-                .filter(t -> t.isAfter(currentTime))
-                .sorted()
-                .collect(Collectors.toList());
-        // Find the future time closest to the current time.
-        return futureTimes.stream()
-                .findFirst();
-    }
-
-    /**
-     * 延迟发送请求
-     * @param SdStrategyRlCollect
-     * @return
-     */
-    public  void ScheduledExecutor( List<SdStrategyRl> SdStrategyRlCollect) {
-        // 创建Random实例
-        Random random = new Random();
-
-        // 生成30-180的随机数字
-        int randomNumberInRange = random.nextInt(30) + 1;
-        executor.schedule(() -> {
-            // 在执行要延迟的代码
-            try {
-                StrategyTask.getInstance().strategyParams(SdStrategyRlCollect.get(0).getId().toString());
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-        }, randomNumberInRange, TimeUnit.SECONDS);
-    }
-
-    /**
      * 定时模式下  照明控制 成功检测
      */
     public  void  errorEquipment() throws UnknownHostException {
         //获取所有照明并且已经执行的定时任务
         List<String> scanKey = redisCache.getScanKey("ERROREQUIPMENT"+ "*");
-
+        log.error("照明任务检测：待判断的任务数："+scanKey.size());
         Set<String> strategyIdList = new HashSet<>();
         for (String key :scanKey){
             //获取照明定时任务的详细控制数据
@@ -157,9 +116,11 @@ public class StrategyTask {
                 if(idList.contains(Long.valueOf(currentId))){
                     //redis缓存的定时任务ID在数据库中存在（运行中的定时任务），允许执行
                     strategyIdList.add(currentId);
+                    log.error("照明任务检测：添加任务到重复执行集合：SdStrategyRl ID="+currentId);
                 }else{
                     //任务被删除或者禁用
                     redisCache.deleteObject(key);
+                    log.error("照明任务检测：任务被删除或者禁用、或执行成功：key="+key);
                 }
 
             }else{//说明 设备控制成功删除定时任务
@@ -184,7 +145,7 @@ public class StrategyTask {
                 // 在执行要延迟的代码
                 try {
                     StrategyTask.getInstance().strategyParams(strategyId);
-                    log.info("repeatControl重发失败的定时照明策略：strategyId="+strategyId);
+                    log.error("repeatControl重发失败的定时照明策略：strategyId="+strategyId);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                     log.error("repeatControl重发失败的定时照明策略报错：strategyId="+strategyId,e.getCause());
@@ -200,53 +161,6 @@ public class StrategyTask {
 //        }
     }
 
-
-    public static void main(String[] args) {
-        // 创建Random实例
-        Random random = new Random();
-
-        // 生成30-180的随机数字
-        int randomNumberInRange = random.nextInt(100) + 30;
-        System.out.print(randomNumberInRange);
-    }
-    public void controlJacklight( List<SdStrategyRl> sdStrategyRls,Map currentMap ,String key ,SdDevices sdDevices ) throws UnknownHostException {
-        List<String> times = new ArrayList<>();
-        sdStrategyRls.forEach(sd ->{
-            times.add(sd.getControlTime());
-        });
-        //找到 时间最接近并且大于 当前定时任务的时间
-        Optional<LocalTime> closestTime = findClosestFutureTime(times, currentMap.get("controlTime").toString().split(" ")[1]);
-        //此设备存在有比失败定时任务时间更晚的定时任务
-        if (closestTime.isPresent()) {//说明存在数据
-            LocalTime localTime = closestTime.get();//失败定时任务 最近定时任务时间
-            LocalTime currentTime = LocalTime.now();//当前时间
-            //相等 0 小于-1 大于1
-            int comparison = localTime.compareTo(currentTime);
-
-            if (comparison < 0) {//失败定时任务 最近定时任务时间 早于当前时间 说明失败的定时任务已经被别的定时任务替代
-                //删除不需要的定时任务
-                redisCache.deleteObject(key);
-            } else if (comparison > 0) {//失败定时任务 最近定时任务时间 晚于当前时间  说明现在阶段还是失败定时任务阶段 还可以重发
-
-                List<SdStrategyRl> SdStrategyRlCollect = sdStrategyRls.stream().filter(sd ->
-                        LocalTime.parse(sd.getControlTime()).compareTo( LocalTime.parse( currentMap.get("controlTime").toString().split(" ")[1])) == 0
-                        && sd.getEquipments().indexOf(sdDevices.getEqId())!=-1)
-                        .sorted(Comparator.comparingLong(SdStrategyRl::getId).reversed()).collect(Collectors.toList());
-
-//                StrategyTask.getInstance().strategyParams(SdStrategyRlCollect.get(0).getId().toString());
-                //延迟方法
-                ScheduledExecutor(SdStrategyRlCollect);
-
-            }
-        } else {//说明后面没有次设备的定时任务了所以可以重发
-            List<SdStrategyRl> SdStrategyRlCollect = sdStrategyRls.stream().filter(sd -> sd.getEquipments().indexOf(sdDevices.getEqId())!=-1)
-                    .sorted(Comparator.comparingLong(SdStrategyRl::getId).reversed()).collect(Collectors.toList());
-
-//            StrategyTask.getInstance().strategyParams(SdStrategyRlCollect.get(0).getId().toString());
-            //延迟方法
-            ScheduledExecutor(SdStrategyRlCollect);
-        }
-    }
     /**
      * 定时、分时控制策略执行
      * @param strategyRlId
@@ -313,6 +227,7 @@ public class StrategyTask {
             //大类为照明的才进行检测 17设备大类为照明
             if("17".equals(devicesProtocol.getEqType().toString())){
                 redisCache.setCacheObject("ERROREQUIPMENT_"+map.get("devId").toString(),map);
+                log.error("照明定时策略执行后，添加到redis缓存中");
             }
         }
     }
@@ -457,7 +372,7 @@ public class StrategyTask {
 //                        if(!StringUtils.isEmpty(f.getDirection())){
 //                            sdEvent.setDirection(f.getDirection() + "");
 //                        }
-                        //相同定时触发一天内只能触发两次 
+                        //相同定时触发一天内只能触发两次
                         SdEvent sdEventOne = new SdEvent();
                         //事件来源
                         sdEventOne.setEventSource(sdEvent.getEventSource());

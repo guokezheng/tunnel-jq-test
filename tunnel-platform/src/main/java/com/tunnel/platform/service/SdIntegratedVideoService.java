@@ -214,20 +214,25 @@ public class SdIntegratedVideoService {
             return null;
         }
         String url = address + "/videoInfo/api/PTZControl";
-        HttpHeaders headers = new HttpHeaders();
-        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-        headers.add("Authorization", getToken());
-        headers.setContentType(type);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+            headers.add("Authorization", getToken());
+            headers.setContentType(type);
+            HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("msgType", 3)
-                .queryParam("camId", devices.getExternalDeviceId())
-                .queryParam("cmdType", param.get("cmdType"))
-                .queryParam("speed", param.get("speed"));
-        ResponseEntity<String> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, String.class);
-        JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
-        return Optional.ofNullable(object).orElseGet(() -> JSONObject.parseObject(exchange.getBody()));
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                    .queryParam("msgType", 3)
+                    .queryParam("camId", devices.getExternalDeviceId())
+                    .queryParam("cmdType", param.get("cmdType"))
+                    .queryParam("speed", param.get("speed"));
+            ResponseEntity<String> exchange = template.exchange(builder.build().toUri(), HttpMethod.GET, requestEntity, String.class);
+            JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
+            return Optional.ofNullable(object).orElseGet(() -> JSONObject.parseObject(exchange.getBody()));
+        }catch (Exception e){
+            return null;
+        }
+
     }
     /**
      * 查询附近相机

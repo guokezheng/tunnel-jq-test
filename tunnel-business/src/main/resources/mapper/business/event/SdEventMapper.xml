@@ -122,6 +122,9 @@
                             A.event_state = '3'
                           AND TO_DAYS( A.event_time ) = TO_DAYS( NOW( ) )
                           AND B.is_usable = '1'
+                          <if test="dept != null and dept != ''">
+                              AND (t.dept_id = #{dept} OR t.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
+                          </if>
                     ) a UNION
                 SELECT
                     id,
@@ -195,6 +198,9 @@
           AND TO_DAYS( A.event_time ) = TO_DAYS(
                 NOW( )
             )
+          <if test="dept != null and dept != ''">
+              AND (t.dept_id = #{dept} OR t.dept_id IN ( SELECT q.dept_id FROM sys_dept q WHERE FIND_IN_SET (#{dept},q.ancestors) ))
+          </if>
     </select>
 
     <select id="eventPopFault" resultType="hashmap" parameterType="sdEvent">

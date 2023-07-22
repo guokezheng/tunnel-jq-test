@@ -214,6 +214,12 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         return result;
     }
 
+
+    @Override
+    public int updateSdFaultList(SdFaultList sdFaultList) {
+        return sdFaultListMapper.updateSdFaultList(sdFaultList);
+    }
+
     /**
      * 修改故障清单
      *

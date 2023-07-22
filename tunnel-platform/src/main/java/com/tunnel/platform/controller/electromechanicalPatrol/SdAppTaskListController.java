@@ -1,5 +1,9 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -7,8 +11,11 @@ import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.datacenter.domain.dataReport.TaskStatus;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.mapper.electromechanicalPatrol.SdPatrolListMapper;
+import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTeamsListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +38,10 @@ public class SdAppTaskListController extends BaseController
 {
     @Autowired
     private ISdTaskListService sdTaskListService;
+
+
+    @Autowired
+    private SdPatrolListMapper sdPatrolListMapper;
 
 
     @Autowired
@@ -259,9 +270,96 @@ public class SdAppTaskListController extends BaseController
     @GetMapping("/app/getTaskAllList")
     public Result getTaskAllList(){
 
-
         return Result.success(sdTaskListService.getTaskAllList());
     }
+    /**
+     * APP 同步巡检任务信息
+     * @return
+     */
+    @PostMapping("/app/modifyTaskData")
+    public Result modifyTaskData(@RequestBody String reqJson){
+
+        JSONArray jsonArray = JSONArray.parseArray(reqJson);
+
+        Map res = new HashMap();
+        List<String>  success = new ArrayList<>();
+        List<String>  error = new ArrayList<>();
+        for(Object obj : jsonArray){
+            JSONObject jsonObject = (JSONObject) obj;
+            Boolean  isEdit = jsonObject.getBoolean("isEdit");
+
+            if(isEdit){
+                SdTaskList sdTaskList = new SdTaskList();
+
+                //更新状态
+                String taskStatus = jsonObject.getString("taskStatus");
+                //巡检编号
+                String id = jsonObject.getString("id");
+
+                sdTaskList.setId(id);
+                if(taskStatus != null){
+                    // 状态为 待回传
+                    if(taskStatus == TaskStatus.DAIHUICHUAN.getCode()){
+                        taskStatus = TaskStatus.YIWANJIE.getCode();
+                    }
+                    sdTaskList.setTaskStatus(taskStatus);
+                }
+
+                JSONObject zc = jsonObject.getJSONObject("zc");
+                if(zc != null){
+                    String siteDescription = zc.getString("siteDescription"); //巡检描述
+                    Date taskEndtime = zc.getDate("taskEndtime"); // 选件完成时间
+                    sdTaskList.setSiteDescription(siteDescription);
+                    sdTaskList.setTaskEndtime(taskEndtime);
+                }
+
+                if(sdTaskListService.updateSdTaskList(sdTaskList) != 0){
+                    success.add(id);
+                }else{
+                    error.add(id);
+                }
+
+                // 巡检设备信息
+                JSONArray patrolInfoFormArray = jsonObject.getJSONArray("patrolInfoForm");
+
+                for (Object plObj : patrolInfoFormArray){
+                    JSONObject patrolJSON = (JSONObject) plObj;
+                    SdPatrolList sdPatrolList = new SdPatrolList();
+                    sdPatrolList.setId(patrolJSON.getString("id"));
+                    sdPatrolList.setImpression(patrolJSON.getString("impression"));
+                    sdPatrolList.setNetwork(patrolJSON.getString("network"));
+                    sdPatrolList.setPower(patrolJSON.getString("power"));
+
+               /*     @Excel(name = "设备状态")
+                    private String eqStatus;
+
+                    @Excel(name = "运行状态")
+                    private String runStatus;*/
+
+
+                    // ? 缺个巡查时间 xcTime
+                    sdPatrolList.setEqStatus(patrolJSON.getString("eqStatus"));
+                    sdPatrolList.setRunStatus(patrolJSON.getString("runStatus"));
+                    sdPatrolList.setXcTime(patrolJSON.getDate("xcTime"));
+
+                    sdPatrolList.setEqFaultCode(patrolJSON.getString("eqFaultCode"));
+                    sdPatrolList.setEqFaultDescription(patrolJSON.getString("eqFaultDescription"));
+                    sdPatrolList.setFaultClstatus(patrolJSON.getString("faultClstatus"));
+                    sdPatrolList.setXcStatus("1");
+                    sdPatrolList.setImgFileId(patrolJSON.getString("imgFileId"));
+
+                    sdPatrolListMapper.updateSdPatrolList(sdPatrolList);
+                }
+
+            }
+
+        }
+        res.put("success",success);
+        res.put("error",error);
+        return Result.success(res);
+    }
+
+
 
 
 

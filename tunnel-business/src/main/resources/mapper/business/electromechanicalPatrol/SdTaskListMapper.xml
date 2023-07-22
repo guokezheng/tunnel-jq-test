@@ -362,7 +362,7 @@
             bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors))
             and task_status in('0','1','3','4') and publish_status ='2'
         </if>
-        order by dispatch_time desc,create_time desc
+        order by task_status asc,dispatch_time desc,create_time desc
 
     </select>
 
@@ -377,7 +377,7 @@
             and publish_status ='2'
             and ((task_status in('0','1','3','4') and walker_id = #{userId})or(task_status ='0' and   ISNULL(walker_id)))
         </if>
-        order by dispatch_time desc,create_time desc
+        order by task_status asc,dispatch_time desc,create_time desc
     </select>
 
 
@@ -480,7 +480,7 @@
             1 =1
           AND (t.bz_id = #{deptId} OR t.bz_id IN ( SELECT q.dept_id FROM sd_teams q WHERE FIND_IN_SET (#{deptId},q.ancestors) ))
           and publish_status ='2'
-          order by t.task_status asc, t.create_time desc
+          order by t.task_status asc, t.dispatch_time desc,t.create_time desc
     </select>
 
     <select id="getTaskInfoByTaskId"  resultType="map">
@@ -518,23 +518,28 @@
 
     <select id="getpatrolInfoByTaskId" resultType="map">
         SELECT
-            p.id, -- 巡查点清单
-            p.eq_name as eqName, -- 设备名称
-            p.position as position, -- 安装位置
-            p.eq_fault_description as eqFaultDescription, -- 设备故障描述
-            p.fault_clstatus faultClstatus, -- 故障处理情况（0：无故障:；1：已消除:；2：未消除
-            DATE_FORMAT(p.xc_time, '%Y-%m-%d %H:%i:%s') as xcTime, -- 巡查时间
-            p.xc_status as xcXtatus, -- 巡查状态
-            u.tunnel_name as tunnelName , -- 隧道名称
-            d.pile, -- 设备桩号
-            y.type_name as typeName -- 设备类型
+            p.id,-- 巡查点清单
+            p.eq_name AS eqName,-- 设备名称
+            p.position AS position,-- 安装位置
+            p.eq_fault_description AS eqFaultDescription,-- 设备故障描述
+            p.fault_clstatus faultClstatus,-- 故障处理情况（0：无故障:；1：已消除:；2：未消除
+            DATE_FORMAT( p.xc_time, '%Y-%m-%d %H:%i:%s' ) AS xcTime,-- 巡查时间
+            p.xc_status AS xcStatus,-- 巡查状态
+            u.tunnel_name AS tunnelName,-- 隧道名称
+            d.pile,-- 设备桩号
+            y.type_name AS typeName,-- 设备类型
+            fsd.mac,
+            d.protocol_id,
+            sdp.function_json
         FROM
             sd_patrol_list p
-                LEFT JOIN sd_task_list t ON t.id = p.task_id
-                LEFT JOIN sd_fault_list f ON f.id = p.eq_fault_id
-                LEFT JOIN sd_tunnels u ON u.tunnel_id = f.tunnel_id
-                LEFT JOIN sd_devices d ON d.eq_id = f.eq_id
-                LEFT JOIN sd_equipment_type y ON y.type_id = d.eq_type
+            LEFT JOIN sd_task_list t ON t.id = p.task_id
+            LEFT JOIN sd_fault_list f ON f.id = p.eq_fault_id
+            LEFT JOIN sd_tunnels u ON u.tunnel_id = f.tunnel_id
+            LEFT JOIN sd_devices d ON d.eq_id = f.eq_id
+            LEFT JOIN sd_devices fsd ON d.f_eq_id = fsd.eq_id
+            LEFT JOIN sd_equipment_type y ON y.type_id = d.eq_type
+            LEFT JOIN sd_device_point sdp ON d.eq_id = sdp.eq_id
         WHERE
             p.task_id = #{taskId} and p.patrol_type = '1'
         UNION ALL
@@ -549,14 +554,20 @@
                 p.xc_status,
                 u.tunnel_name,
                 d.pile,
-                y.type_name
+                y.type_name,
+                fsd.mac,
+                d.protocol_id,
+                sdp.function_json
+
             FROM
                 sd_patrol_list p
-                    LEFT JOIN sd_task_list t ON t.id = p.task_id
-                    LEFT JOIN sd_devices d ON d.eq_id = p.eq_fault_id
-                    LEFT JOIN sd_tunnels u ON u.tunnel_id = d.eq_tunnel_id
-                    LEFT JOIN sd_equipment_type y ON y.type_id = d.eq_type
-            WHERE
+                LEFT JOIN sd_task_list t ON t.id = p.task_id
+                LEFT JOIN sd_devices d ON d.eq_id = p.eq_fault_id
+                left join sd_devices fsd on d.f_eq_id = fsd.eq_id
+                LEFT JOIN sd_tunnels u ON u.tunnel_id = d.eq_tunnel_id
+                LEFT JOIN sd_equipment_type y ON y.type_id = d.eq_type
+                left join sd_device_point sdp on d.eq_id = sdp.eq_id
+        WHERE
                 p.task_id = #{taskId} and p.patrol_type = '0')
 
     </select>

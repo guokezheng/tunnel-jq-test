@@ -38,7 +38,7 @@ public class ClientApplicationRunner implements ApplicationRunner {
 
                 //项目启动时缓存设备信息，与设备建立通信通道
                 mcaTask.connect();
-//                warningLightStripTask.connect();
+                warningLightStripTask.connect();
             } catch (Exception e) {
                 e.printStackTrace();
             }

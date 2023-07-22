@@ -272,6 +272,7 @@
 import * as echarts from "echarts";
 import {getCategoryTree} from "@/api/event/strategy";
 import {listTunnels} from "@/api/equipment/tunnel/api";
+import {dataLogInfoLineList} from "@/api/equipment/eqTypeItem/item";
 export default {
   name: "timingTask",
   data() {
@@ -383,7 +384,32 @@ export default {
     this.getDirection()
   },
   methods:{
-
+    //获取光亮的
+    getEchartsData() {
+      this.queryParams.deviceId = deviceId;
+      this.queryParams.searchValue = searchValue;
+        dataLogInfoLineList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          let list1 = response.rows;
+          if (this.searchValue == "1") {
+            this.CO = list1.map((item) => item.CO);
+            this.VI = list1.map((item) => item.VI);
+            this.VITime = list1.map((item) => item.createTime);
+          } else if (this.searchValue == "2") {
+            this.fsData = list1.map((item) => item.FS);
+            this.fsTime = list1.map((item) => item.createTime);
+          } else if (this.searchValue == "3") {
+            this.dnData = list1.map((item) => item.data);
+            this.dnTime = list1.map((item) => item.createTime);
+          } else {
+            this.dwData = list1.map((item) => item.data);
+            this.dwTime = list1.map((item) => item.createTime);
+          }
+          this.loading = false;
+          this.initChart();
+        });
+    },
     /** 查询隧道列表 */
     getTunnels() {
       if (this.$cache.local.get("manageStation") == "1") {

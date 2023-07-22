@@ -20,22 +20,7 @@
                      style="margin-left: 10px;">重置</el-button>
         </el-popconfirm>
 
-        
-
-        <div class="display-box">
-          <p class="menu-title title-wrap">显示设备编号：</p>
-          <el-switch class="title-wrap" v-model="displayNumb" active-color="#46a6ff" inactive-color="#ccc">
-          </el-switch>
-        </div>
-      </el-row>
-      <el-row class="configuration" style="margin-top: 4px;">
-        <b class="menu-title title-wrap">所属模块：</b>
-        <el-button-group class="menu-button-group">
-          <el-button type="info" size="mini" v-for="(item,index) in deviceEqTypeList" :key="item.raw.dictCode"
-            class="selectEqTypeButton"
-                     @click="selectEqType(item.raw.dictValue)">{{item.label}}</el-button>
-        </el-button-group>
-        <!-- <el-select
+        <el-select
           class="tunnelNameSelect"
           v-model="deviceEqType"
           placeholder="请选择设备类型"
@@ -50,7 +35,13 @@
             :value="item.raw.dictValue"
           >
           </el-option>
-        </el-select> -->
+        </el-select>
+
+        <div class="display-box">
+          <p class="menu-title title-wrap">显示设备编号：</p>
+          <el-switch class="title-wrap" v-model="displayNumb" active-color="#46a6ff" inactive-color="#ccc">
+          </el-switch>
+        </div>
       </el-row>
       <el-row class="eqType">
         <b class="menu-title title-wrap">设备类型：</b>
@@ -67,7 +58,6 @@
                      @click="openEquipmentDialog(item.value,index,'configuration')">{{item.label}}</el-button>
         </el-button-group>
       </el-row>
-      
     </div>
     <!--配置区域-->
     <div class="content config-back">
@@ -271,7 +261,7 @@ var selectedIconIndex = ""; //删除索引
 var img = [];
 export default {
   name: "TunnelConfig",
-  dicts: ["environment", "sd_sys_name"],
+  dicts: ["environment","sd_sys_name"],
   components: {
     DragItDude,
   },
@@ -366,11 +356,11 @@ export default {
       Clist: [],
       pageXimage: 0,
       pageYimage: 0,
-      scroll: "",
-      svgScrollLeft: 0,
+      scroll:'',
+      svgScrollLeft:0,
       //设备类型集合
-      deviceEqTypeList: "",
-      deviceEqType: "0",
+      deviceEqTypeList:"",
+      deviceEqType:"0",
     };
   },
   created: function () {
@@ -388,6 +378,8 @@ export default {
     this.selectEnvironment();
     this.getTunnels(this.selectedTunnel.id);
     // debugger
+
+
   },
   watch: {
     deleteVisible(value) {
@@ -413,8 +405,8 @@ export default {
       })();
     };
     // 横向滚动 获取滚动的长度 好定位删除提示的位置
-    let params = document.getElementById("svgRow");
-    params.addEventListener("scroll", this.dataScroll);
+    let params = document.getElementById("svgRow")
+    params.addEventListener("scroll",this.dataScroll);
     //鼠标右键
     window.oncontextmenu = function (e) {
       // debugger
@@ -431,7 +423,7 @@ export default {
     };
     //鼠标拖动
     window.ondrag = function (e) {
-      console.log(e);
+      console.log(e)
       let oDiv = document.getElementById("imageId");
       this.pageXimage = e.pageX;
       this.pageYimage = e.pageY;
@@ -460,27 +452,26 @@ export default {
         that.getEquipment(selectedIconLists[num], selectedIcon);
       }
     };
+
   },
 
   methods: {
-    selectEqType(value) {
-      $(".selectEqTypeButton")
-        .eq(value)
-        .addClass("selectEqTypeButton_hover")
-        .siblings()
-        .removeClass("selectEqTypeButton_hover");
-      let lable = "";
+    selectEqType(e){
+      console.log(this.deviceEqTypeList)
+      console.log(this.deviceEqType)
+      let value = e
+      let lable = ""
       for (let i = 0; i < this.deviceEqTypeList.length; i++) {
-        if (this.deviceEqTypeList[i].raw.dictValue == value) {
-          lable = this.deviceEqTypeList[i].label;
+        if(this.deviceEqTypeList[i].raw.dictValue==e){
+          lable = this.deviceEqTypeList[i].label
         }
       }
 
       var val = value.toString();
-      console.log(img);
-      for (let i = 0; i < img.length; i++) {
+      console.log( img)
+      for (let i = 0; i <  img.length; i++) {
         img[i].attr({
-          opacity: 0, // 设置透明度为0，使图像不可见
+          opacity: 0  // 设置透明度为0，使图像不可见
         });
       }
       hasListByBigType(val).then((response) => {
@@ -494,7 +485,7 @@ export default {
               }
               this.selectedIconList[i].display = false;
               img[i].attr({
-                opacity: 0, // 设置透明度为0，使图像不可见
+                opacity: 0  // 设置透明度为0，使图像不可见
               });
 
               // 没有eqType属性的图片依旧显示 例如：隧道名称
@@ -504,7 +495,7 @@ export default {
               ) {
                 this.selectedIconList[i].display = true;
                 img[i].attr({
-                  opacity: 1, // 设置透明度为0，使图像不可见
+                  opacity: 1  // 设置透明度为0，使图像不可见
                 });
               }
             }
@@ -512,14 +503,14 @@ export default {
           for (let i = 0; i < typeIndex.length; i++) {
             this.selectedIconList[typeIndex[i]].display = true;
             img[typeIndex[i]].attr({
-              opacity: 1, // 设置透明度为0，使图像不可见
+              opacity: 1  // 设置透明度为0，使图像不可见
             });
           }
         } else {
           for (let i = 0; i < this.selectedIconList.length; i++) {
             this.selectedIconList[i].display = false;
             img[i].attr({
-              opacity: 0, // 设置透明度为0，使图像不可见
+              opacity: 0  // 设置透明度为0，使图像不可见
             });
           }
         }
@@ -527,8 +518,8 @@ export default {
       // debugger
     },
     // 获取滚动条横向滚动的长度
-    dataScroll() {
-      this.svgScrollLeft = document.getElementById("svgRow").scrollLeft;
+    dataScroll(){
+      this.svgScrollLeft = document.getElementById("svgRow").scrollLeft
     },
     /* 查询设备类型*/
     selectEquipmentType() {
@@ -550,9 +541,9 @@ export default {
         });
         // debugger
         var newDict = that.dict.type.sd_sys_name;
-        if (that.selectedTunnel.name != "马家峪隧道") {
+        if (that.selectedTunnel.name != "胡山隧道") {
           that.deviceEqTypeList = newDict.slice(0, 8);
-        } else if (that.selectedTunnel.name == "马家峪隧道") {
+        } else if (that.selectedTunnel.name == "胡山隧道") {
           that.deviceEqTypeList = this.dict.type.sd_sys_name;
         }
         // console.log(response.rows, "接口返回数据");
@@ -982,7 +973,7 @@ export default {
       //不显示
       if (value == false) {
         for (let i = 0; i < list.length; i++) {
-          if (img[i][0].node.nodeName != "image") {
+          if(img[i][0].node.nodeName != 'image'){
             img[i][0].attr({
               width: 0,
               height: 0,
@@ -997,7 +988,7 @@ export default {
       } else {
         //显示
         for (let i = 0; i < list.length; i++) {
-          if (img[i][0].node.nodeName != "image") {
+          if(img[i][0].node.nodeName != 'image'){
             img[i][0].attr({
               width: 80,
               height: 18,
@@ -1033,7 +1024,7 @@ export default {
     },
     /* 点击删除*/
     deleteImage() {
-      debugger;
+      // debugger
       // console.log("我右键删除了", this.direction, img);
       if (this.direction == 1) {
         this.upList.splice(this.deleteIndex, 1, {});
@@ -1138,7 +1129,7 @@ export default {
     getEquipment(item, eqType) {
       console.log(item, eqType, "选择设备");
       console.log(this.selectedIconList);
-      debugger;
+      // debugger
       var url = eqType.url;
       var iconWidth = Number(eqType.iconWidth);
       var iconHeight = Number(eqType.iconHeight);
@@ -1621,24 +1612,34 @@ export default {
                     null
                   );
                   let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
+                  console.log(paddingL)
                   let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
-
+                  console.log(paddingtop)
                   let svgs = document.getElementById("svgRow");
+                  console.log(svgs)
                   let svgss = document.querySelector(".config-content");
+                  console.log(svgss)
                   let svgeimage = document.querySelector(".el-image");
+                  console.log(svgeimage)
                   let stylea = window.getComputedStyle(svgs, null);
+                  console.log(stylea)
                   let styleas = window.getComputedStyle(svgss, null);
+                  console.log(styleas)
                   let styleas1 = window.getComputedStyle(svgeimage, null);
+                  console.log(styleas1)
 
                   let paddingLa = parseFloat(
                     stylea.getPropertyValue("padding-top")
                   ); //获取左侧内边距
+                  console.log(paddingLa)
                   let paddingLa1 = parseFloat(
                     styleas.getPropertyValue("width")
                   ); //获取左侧内边距
+                  console.log(paddingLa1)
                   let paddingLa2 = parseFloat(
                     styleas1.getPropertyValue("width")
                   ); //获取左侧内边距
+                  console.log(paddingLa2)
 
                   guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
                   guide1.top = paddingtop + paddingLa;
@@ -1787,9 +1788,11 @@ export default {
 
           // 画布与窗口的距离
           let left = event.pageX - event.offsetX;
-          let top = event.pageY - event.offsetY; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
+          let top = event.pageY - event.offsetY ; // 上部辅助线稍微有偏差，所以多加了3(线往上偏移)，可以微调
           if (chosenGuides.top.dist <= MIN_DISTANCE) {
-            $("#guide-h").css("top", chosenGuides.top.guide.top).show();
+            $("#guide-h")
+              .css("top", chosenGuides.top.guide.top)
+              .show();
             // $("#guide-h1")
             //   .css("top", chosenGuides.top.guide.top - top +event.toElement.height.animVal.value+1)
             //   .show();
@@ -1802,7 +1805,9 @@ export default {
           }
 
           if (chosenGuides.left.dist <= MIN_DISTANCE) {
-            $("#guide-v").css("left", chosenGuides.left.guide.left).show();
+            $("#guide-v")
+              .css("left", chosenGuides.left.guide.left )
+              .show();
             // $("#guide-v1")
             //   .css("left", chosenGuides.left.guide.left - left +event.toElement.height.animVal.value+1)
             //   .show();
@@ -1917,6 +1922,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  margin-top: 10px;
 }
 
 .flex-row {
@@ -2014,12 +2020,7 @@ export default {
     margin: 5px 1px;
   }
 }
-.selectEqTypeButton{
-  
-}
-.selectEqTypeButton_hover{
-  background: linear-gradient(180deg, #4CBFFF 0%, #259BFF 100%) !important;
-}
+
 /* 图片区域*/
 .content {
   clear: both;
@@ -2193,7 +2194,7 @@ export default {
   // display: flex;
   // justify-content: center;
   // align-items: center;
-  height: 610px;
+  height: 680px;
   width: 1788px;
   background-size: cover;
   position: relative;
@@ -2201,7 +2202,7 @@ export default {
   // margin-top: 10px;
   margin: 10px auto;
   overflow-x: auto;
-  padding: 0px;
+  padding: 38px 0px;
 }
 
 .config-img {
@@ -2396,6 +2397,7 @@ input {
 }
 
 .tunnelNameSelect {
+  margin-left: 10px;
 }
 
 /* .el-tabs--border-card .el-tabs__header .el-tabs__item.is-active {

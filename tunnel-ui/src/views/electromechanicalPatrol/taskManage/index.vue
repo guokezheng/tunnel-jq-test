@@ -396,7 +396,7 @@
                 <el-form-item label="任务描述" prop="taskDescription">
                   <el-input
                     type="textarea"
-                    :rows="2"
+                    :rows="5"
                     maxlength="255"
                     show-word-limit
                     placeholder="请输入内容"
@@ -822,7 +822,7 @@
           <el-col>
             <div style="width:12%">现场情况照片：</div>
             <div v-for="(pic, index) in pat.iFileList" :key="index" style = "padding-right: 30px;">
-              <img :src="pic.imgUrl" :title="pic.imgName" @click="openPic(pic.imgUrl,pic.imgName)"/>
+              <img :src="pic.imgUrl"  @click="openPic(pic.imgUrl)"/>
             </div>
           </el-col>
         </el-row>
@@ -903,11 +903,11 @@
       </div>
     </el-dialog>
     <el-dialog
-      :title="picTitle"
       :visible.sync="picVisible"
       width="60%"
       :before-close="handleCloseImg"
       :close-on-click-modal="false"
+      class="picDialog"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -999,7 +999,6 @@ export default {
   data() {
     return {
       picUrl:'',
-      picTitle:'',
       picVisible:false,
       isActive: false,
       task_boxShow: false,
@@ -1200,9 +1199,8 @@ export default {
     handleCloseImg(){
       this.picVisible = false
     },
-    openPic(src,title){
+    openPic(src){
       this.picUrl = src
-      this.picTitle = title
       this.picVisible = true
     },
     changeDevList(){
@@ -2508,5 +2506,11 @@ img {
 }
 ::v-deep .el-textarea .el-input__count{
   background: transparent !important;
+}
+.picDialog{
+  ::v-deep .el-dialog__body{
+    max-height: 78vh;
+    overflow: auto;
+  }
 }
 </style>

@@ -86,9 +86,9 @@ public class WarningLightStripControl implements GeneralControlBean, TcpClientGe
         }
 
         //控制设备
-        int controlState = WarningLightStripHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+//        int controlState = WarningLightStripHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
         //控制设备的代码与定时获取状态的代码同步更新
-//        int controlState = controlCmd(sdDevices,state);
+        int controlState = controlCmd(sdDevices,state);
 
         //控制方式-手动控制
 //        String controlType = DeviceControlTypeEnum.AUTO_CONTROL.getCode();

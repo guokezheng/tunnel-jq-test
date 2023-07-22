@@ -181,7 +181,7 @@ public class workspaceController extends BaseController {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备，请联系管理员");
         } else if (map.get("state") == null || map.get("state").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的状态信息");
         }
 
         //解析map 杭山东隧道下调用瑞华赢接口控制设备

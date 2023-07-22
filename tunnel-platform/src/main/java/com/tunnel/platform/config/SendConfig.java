@@ -28,8 +28,8 @@ public class SendConfig {
     @Bean(name="HttpTemplate")
     public RestTemplate template(){
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(5 * 1000);
-        factory.setReadTimeout(5 * 1000);
+        factory.setConnectTimeout(3 * 1000);
+        factory.setReadTimeout(3 * 1000);
         RestTemplate restTemplate = new RestTemplate(factory);
         ResponseErrorHandler responseErrorHandler = new ResponseErrorHandler() {
             @Override

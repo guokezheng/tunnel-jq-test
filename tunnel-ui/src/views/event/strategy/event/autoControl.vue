@@ -529,10 +529,10 @@ export default {
           { required: true, message: "请选择事件类型", trigger: "change" },
         ],
         schedulerTime:[
-          { required: true, message: "请选择间隔时间", trigger: "change" },
+          { required: true, message: "请输入间隔时间", trigger: "change" },
           {
-              pattern: /^[1-9]\d*\.\d*|[1-9]\d*$/,
-              message: "请输入数字，可输入小数",
+              pattern: /^[0-9]*[1-9][0-9]*$/,
+              message: "请输入正整数",
           },
           { max: 10, message: '最长输入10个字符', trigger: 'change' }
         ],
@@ -552,7 +552,7 @@ export default {
           compareValue: [
             { required: true, message: "请输入阈值", trigger: "change" },
             {
-              pattern: /^[1-9]\d*\.\d*|[1-9]\d*$/,
+              pattern: /^[0-9]\d*\.\d*|[0-9]\d*$/,
               message: "请输入数字，可输入小数",
             },
             // { max: 10, message: '最长输入10个字符', trigger: 'change' }

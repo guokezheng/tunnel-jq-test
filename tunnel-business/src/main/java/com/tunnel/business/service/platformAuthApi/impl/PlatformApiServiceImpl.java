@@ -59,7 +59,7 @@ public class PlatformApiServiceImpl implements PlatformApiService {
 
     @Override
     @Async(value = "pushTaskExecutor")
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    //@Transactional(isolation = Isolation.READ_COMMITTED)
     public void devicesPush(List<SdDevices> sdDevicesList, String pushType, String userName) {
         Map map = new HashMap();
         map.put("sdDevicesList", sdDevicesList);
@@ -103,7 +103,7 @@ public class PlatformApiServiceImpl implements PlatformApiService {
 
     @Override
     @Async(value = "pushTaskExecutor")
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    //@Transactional(isolation = Isolation.READ_COMMITTED)
     public void tunnelsPush(List<SdTunnels> sdTunnelsList, String pushType) {
         Map map = new HashMap();
         map.put("sdTunnelsList", sdTunnelsList);
@@ -212,7 +212,7 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     /**
      * 定时任务
      */
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    //@Transactional(isolation = Isolation.READ_COMMITTED)
     public void pushTask(){
         //先查询推送历史记录是否有未推送成功的数据
         List<SdPlatformApi> sdPlatformApis = sdPlatformApiMapper.selectList();

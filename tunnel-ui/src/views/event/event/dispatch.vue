@@ -943,6 +943,12 @@
     </el-dialog>
     <!-- <el-dialog> -->
         <robot class="comClass robotHtmlBox" v-if="this.clickEqType == 29"></robot>
+        <img
+          @click="dialogClose"
+          src="../../../assets/cloudControl/closeIcon.png"
+          class="closeRobot"
+          v-if="this.clickEqType == 29"
+        />
     <jointControl ref = "jointControl" :show="visibleSync" :eqIdList="eqIdList"></jointControl>
     <!-- </el-dialog> -->
   </div>
@@ -1199,7 +1205,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
         }).catch(() => {
           this.$message({
@@ -2969,6 +2975,32 @@ export default {
     padding: 0 15px;
   }
 }
+.robotHtmlBox {
+  width: 770px !important;
+  height: 90%;
+  position: absolute;
+  left: 30%;
+  z-index: 96659;
+  background: #071727;
+  pointer-events: auto !important;
+  border-left: 1px solid rgba(1, 152, 255, 0.8);
+  border-right: 1px solid rgba(1, 152, 255, 0.8);
+  border-bottom: 2px solid rgba(1, 152, 255, 0.8);
+}
+.comClass {
+  position: absolute;
+  top: 1.4%;
+  left: 38.8%;
+  pointer-events: none;
+}
+.closeRobot {
+  position: absolute;
+  top: 23px;
+  left: 77%;
+  z-index: 96659;
+  cursor: pointer;
+  width: 13px;
+}
 </style>
 <style lang="scss">
 .IssuedDialog {
@@ -3008,21 +3040,5 @@ export default {
     padding-left: 15px;
   }
 }
-.robotHtmlBox {
-  width: 770px !important;
-  position: absolute;
-  left: 30%;
-  z-index: 96659;
-  background: #071727;
-  pointer-events: auto;
-  border-left: 1px solid rgba(1, 152, 255, 0.8);
-  border-right: 1px solid rgba(1, 152, 255, 0.8);
-  border-bottom: 2px solid rgba(1, 152, 255, 0.8);
-}
-.comClass {
-  position: absolute;
-  top: 1.4%;
-  left: 38.8%;
-  pointer-events: none;
-}
+
 </style>

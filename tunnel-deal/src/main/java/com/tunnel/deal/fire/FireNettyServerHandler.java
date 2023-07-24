@@ -19,6 +19,7 @@ import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
+import com.zc.common.core.websocket.WebSocketService;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -232,10 +233,26 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             sdEvent.setEventTime(dateZh(time));
             sdEvent.setCreateTime(dateZh(time));
             sdEventMapper.insertSdEvent(sdEvent);
+            eventSendWeb(sdEvent);
         } else {
             log.error("当前报文格式异常，请检查设备！");
             return;
         }
+    }
+
+    /**
+     * 将事件推送到前端
+     *  @param sdEvent
+     */
+    public static void eventSendWeb(SdEvent sdEvent){
+        //新增后再查询数据库，返回给前端事件图标等字段
+        SdEvent sdEventData = new SdEvent();
+        sdEventData.setId(sdEvent.getId());
+        List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
+        //新增事件后推送前端  弹出视频
+        JSONObject object = new JSONObject();
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
     }
 
     /*

@@ -3,6 +3,8 @@ package com.tunnel.platform.controller.event;
 import cn.afterturn.easypoi.entity.ImageEntity;
 import cn.afterturn.easypoi.word.WordExportUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -23,8 +25,8 @@ import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.event.ISdEventHandleService;
 import com.tunnel.business.service.event.ISdEventService;
-import com.tunnel.business.utils.json.JSONObject;
 import com.tunnel.platform.service.SdDeviceControlService;
+import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.zc.common.core.websocket.WebSocketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -491,4 +493,28 @@ public class SdEventController extends BaseController
     public void downLoadVedio(@RequestParam("camId") String camId, @RequestParam("downLoadTime") String downLoadTime,HttpServletResponse response){
         sdEventService.downLoadVedio(camId,downLoadTime,response);
     }
+
+    /**
+     * 紧急电话火灾报警模拟事件接口
+     */
+    @GetMapping("/eventDemonstrate")
+    public void eventDemonstrate(String xdData,String ldData,String hzData, String model){
+        if("xd".equals(model)){
+            //兴电
+            if(xdData == null || "".equals(xdData)){
+                xdData = "{\"ext\":{\"deviceType\":\"linePhoneExt\",\"id\":\"1011\"},\'attribute\':\'IDLE\'}";
+            }
+            PhoneSpkService phoneSpkService = SpringUtils.getBean(PhoneSpkService.class);
+            JSONObject jsonObject = JSONObject.parseObject(xdData);
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("data",jsonObject);
+            phoneSpkService.onMessage(jsonObject1);
+        }else if("ld".equals(model)){
+
+        }else if("hz".equals(model)){
+            sdEventService.eventDemonstrate(hzData);
+        }
+    }
+
+
 }

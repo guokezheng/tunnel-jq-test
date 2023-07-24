@@ -71,23 +71,23 @@
         </el-col>
         <el-col>
           <el-col :span="4">
-<!--            <el-form-item-->
-<!--              label="定时频率"-->
-<!--              prop="schedulerTime"-->
-<!--              style="width: 100%"-->
-<!--            >-->
-<!--              <el-input-->
-<!--                v-model="strategyForm.schedulerTime"-->
-<!--                placeholder="请输入cron执行表达式"-->
-<!--              >-->
-<!--                <template slot="append">-->
-<!--                  <el-button type="primary" @click="handleShowCron">-->
-<!--                    生成表达式-->
-<!--                    <i class="el-icon-time el-icon&#45;&#45;right"></i>-->
-<!--                  </el-button>-->
-<!--                </template>-->
-<!--              </el-input>-->
-<!--            </el-form-item>-->
+            <!--            <el-form-item-->
+            <!--              label="定时频率"-->
+            <!--              prop="schedulerTime"-->
+            <!--              style="width: 100%"-->
+            <!--            >-->
+            <!--              <el-input-->
+            <!--                v-model="strategyForm.schedulerTime"-->
+            <!--                placeholder="请输入cron执行表达式"-->
+            <!--              >-->
+            <!--                <template slot="append">-->
+            <!--                  <el-button type="primary" @click="handleShowCron">-->
+            <!--                    生成表达式-->
+            <!--                    <i class="el-icon-time el-icon&#45;&#45;right"></i>-->
+            <!--                  </el-button>-->
+            <!--                </template>-->
+            <!--              </el-input>-->
+            <!--            </el-form-item>-->
             <el-form-item
               label="间隔时间"
               prop="schedulerTime"
@@ -96,9 +96,9 @@
               <el-input
                 v-model="strategyForm.schedulerTime"
                 placeholder="请输入分钟"
-              > <div>dsd</div>
+              >
+                <div>dsd</div>
               </el-input>
-
             </el-form-item>
           </el-col>
           <el-col :span="4" style="margin-top: 6px">
@@ -132,7 +132,7 @@
                   placeholder="请选择设备名称"
                   multiple
                   collapse-tags
-                  style="width:100%;"
+                  style="width: 100%"
                   @visible-change="selectDataItem"
                   @change="optionDataItem()"
                 >
@@ -194,7 +194,7 @@
             </el-form-item>
           </div>
         </el-col>
-        <el-row :gutter="20" style="clear:both;">
+        <el-row :gutter="20" style="clear: both">
           <el-col :span="24">
             <el-form-item label="执行操作">
               <div class="menu">
@@ -208,13 +208,13 @@
         </el-row>
       </el-row>
       <div v-show="strategyForm.triggers.warningType == 1">
-        <el-row :gutter="20" style="clear:both;">
+        <el-row :gutter="20" style="clear: both">
           <el-col :span="24">
             <el-form-item
               v-for="(dain, index) in strategyForm.autoControl"
               :key="index"
             >
-              <el-col :span="6" style="padding-left:0">
+              <el-col :span="6" style="padding-left: 0">
                 <el-cascader
                   v-model="dain.equipmentTypeId"
                   :options="equipmentTypeData"
@@ -246,7 +246,7 @@
                   collapse-tags
                   placeholder="请选择设备"
                   @change="qbgChange(index, dain.equipments)"
-                  style="width:100%;"
+                  style="width: 100%"
                 >
                   <el-option
                     v-for="item in dain.equipmentData"
@@ -259,9 +259,18 @@
               </el-col>
               <el-col
                 :span="8"
-                v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36 && dain.equipmentTypeId != 7 && dain.equipmentTypeId != 9"
+                v-show="
+                  dain.equipmentTypeId != 16 &&
+                  dain.equipmentTypeId != 36 &&
+                  dain.equipmentTypeId != 7 &&
+                  dain.equipmentTypeId != 9
+                "
               >
-                <el-select v-model="dain.state" placeholder="请选择设备执行操作" style="width:100%;">
+                <el-select
+                  v-model="dain.state"
+                  placeholder="请选择设备执行操作"
+                  style="width: 100%"
+                >
                   <el-option
                     v-for="(item, indx) in dain.eqStateList"
                     :key="item.deviceState"
@@ -273,23 +282,29 @@
               </el-col>
               <el-col
                 :span="8"
-                v-show="dain.equipmentTypeId == 7 ||  dain.equipmentTypeId == 9"
+                v-show="dain.equipmentTypeId == 7 || dain.equipmentTypeId == 9"
               >
-              <el-select
-                :style="{'width':  dain.state == 1 ? '45%' :'100%' }"
-                v-model="dain.state"
-                placeholder="请选择执行操作"
-                @change="selectStateVal(index)"
-              >
-                <el-option
-                  v-for="item in dain.eqStateList"
-                  :key="item.deviceState + 1"
-                  :label="item.stateName"
-                  :value="item.deviceState"
+                <el-select
+                  :style="{ width: dain.state == 1 ? '45%' : '100%' }"
+                  v-model="dain.state"
+                  placeholder="请选择执行操作"
+                  @change="selectStateVal(index)"
                 >
-                </el-option>
-              </el-select>
-                <el-input-number v-if="dain.state == 1" v-model="dain.stateNum" style="width: 55%"  :min="dain.limitMin" :max="100" ></el-input-number>
+                  <el-option
+                    v-for="item in dain.eqStateList"
+                    :key="item.deviceState + 1"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+                <el-input-number
+                  v-if="dain.state == 1"
+                  v-model="dain.stateNum"
+                  style="width: 55%"
+                  :min="dain.limitMin"
+                  :max="100"
+                ></el-input-number>
               </el-col>
               <el-col
                 :span="8"
@@ -305,20 +320,29 @@
                   @change="handleChange"
                   style="width:100%;"
                 ></el-cascader> -->
-                <el-input v-model="dain.content" placeholder="请选择模板" readonly @click.native="openTemDialog(dain)">
-                <el-button slot="append" icon="el-icon-search" @click.stop="templateClick(index, index,dain)"></el-button>
-              </el-input>
+                <el-input
+                  v-model="dain.content"
+                  placeholder="请选择模板"
+                  readonly
+                  @click.native="openTemDialog(dain)"
+                >
+                  <el-button
+                    slot="append"
+                    icon="el-icon-search"
+                    @click.stop="templateClick(index, index, dain)"
+                  ></el-button>
+                </el-input>
               </el-col>
               <el-col :span="2" class="buttonBox">
                 <el-button
                   class="delete"
                   @click="removeItem(index)"
                 ></el-button>
-                  <el-button
-                    v-show="strategyForm.equipmentTypeId != 30"
-                    class="add"
-                    @click="addItem"
-                  ></el-button>
+                <el-button
+                  v-show="strategyForm.equipmentTypeId != 30"
+                  class="add"
+                  @click="addItem"
+                ></el-button>
               </el-col>
             </el-form-item>
           </el-col>
@@ -355,39 +379,48 @@
       :visible.sync="dialogVisibleTem"
       append-to-body
       width="45%"
-      :before-close="handleClose">
+      :before-close="handleClose"
+    >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div style="display: flex;justify-content: center;align-items: center;">
+      <div style="display: flex; justify-content: center; align-items: center">
         <!-- 'letter-spacing':templateData['font_spacing'] + 'px', -->
-        <div :style="{
-          'width':templateData['width'] + 'px',
-          'height':templateData['height'] + 'px',
-          'color':templateData['font_color'],
-          'font-size':templateData['font_size'] + 'px',
-          'font-family':templateData['font_type'],
-          'background-color':'#000',
-          'position':'relative',
-          }">
-          <span :style="{
-            'position':'absolute',
-            'top':templateData['top'] + 'px',
-            'left':templateData['left'] + 'px',
+        <div
+          :style="{
+            width: templateData['width'] + 'px',
+            height: templateData['height'] + 'px',
+            color: templateData['font_color'],
+            'font-size': templateData['font_size'] + 'px',
+            'font-family': templateData['font_type'],
+            'background-color': '#000',
+            position: 'relative',
           }"
-                style="line-height:1" v-html="templateData['content']">
+        >
+          <span
+            :style="{
+              position: 'absolute',
+              top: templateData['top'] + 'px',
+              left: templateData['left'] + 'px',
+            }"
+            style="line-height: 1"
+            v-html="templateData['content']"
+          >
           </span>
         </div>
       </div>
     </el-dialog>
-    <com-board class="comClass" ref="boardRef" @getVmsData="getMsgFormSon"></com-board>
-
+    <com-board
+      class="comClass"
+      ref="boardRef"
+      @getVmsData="getMsgFormSon"
+    ></com-board>
   </div>
 </template>
 
     <script>
-    import {selectVmsContent} from "@/api/information/api";
+import { selectVmsContent } from "@/api/information/api";
 import {
   listEqTypeStateIsControl,
   getVMSTemplatesByDevIdAndCategory,
@@ -413,16 +446,16 @@ import {
   updateStrategyInfo,
   getGuid,
   handleStrategy,
-  getCategoryTree
+  getCategoryTree,
 } from "@/api/event/strategy";
 import Crontab from "@/components/Crontab";
-import{listEventType}from "@/api/event/eventType";
+import { listEventType } from "@/api/event/eventType";
 import comBoard from "@/views/event/reservePlan/board";
 
 export default {
   components: {
     Crontab,
-    comBoard
+    comBoard,
   },
   data() {
     return {
@@ -432,8 +465,8 @@ export default {
         // checkStrictly: true,
         emitPath: false,
       },
-      templateData:{},
-      dialogVisibleTem:false,
+      templateData: {},
+      dialogVisibleTem: false,
       checkStrictly: {
         multiple: false,
         emitPath: false,
@@ -516,25 +549,26 @@ export default {
       equipmentTypeData: [], //设备类型列表
       equipmentData: [], //设备列表
       formDataValidator: {
-        direction: [{ required: true, message: "请选择方向", trigger: "change" }],
+        direction: [
+          { required: true, message: "请选择方向", trigger: "change" },
+        ],
         tunnelId: [
           { required: true, message: "请选择隧道", trigger: "change" },
         ],
         strategyName: [
           { required: true, message: "请输入策略名称", trigger: "change" },
-          { max: 50, message: '最长输入50个字符', trigger: 'change' }
-
+          { max: 50, message: "最长输入50个字符", trigger: "change" },
         ],
         eventType: [
           { required: true, message: "请选择事件类型", trigger: "change" },
         ],
-        schedulerTime:[
+        schedulerTime: [
           { required: true, message: "请输入间隔时间", trigger: "change" },
           {
-              pattern: /^[0-9]*[1-9][0-9]*$/,
-              message: "请输入正整数",
+            pattern: /^[0-9]*[1-9][0-9]*$/,
+            message: "请输入正整数",
           },
-          { max: 10, message: '最长输入10个字符', trigger: 'change' }
+          { max: 10, message: "最长输入10个字符", trigger: "change" },
         ],
         triggers: {
           deviceTypeId: [
@@ -556,7 +590,6 @@ export default {
               message: "请输入数字，可输入小数",
             },
             // { max: 10, message: '最长输入10个字符', trigger: 'change' }
-
           ],
         },
       },
@@ -564,7 +597,6 @@ export default {
   },
   methods: {
     async init() {
-      debugger
       if (this.sink == "add") {
         this.resetForm();
       }
@@ -580,64 +612,65 @@ export default {
       await this.getListItem();
     },
     // 请选择设备 照明
-    selectStateVal(index){
-      if(this.strategyForm.autoControl[index].state == 1){
+    selectStateVal(index) {
+      if (this.strategyForm.autoControl[index].state == 1) {
         this.$set(this.strategyForm.autoControl[index], "stateNum", 100);
         //基本照明限制 最低亮度为 30
-        if(this.strategyForm.autoControl[index].equipmentTypeId == 9){
+        if (this.strategyForm.autoControl[index].equipmentTypeId == 9) {
           this.$set(this.strategyForm.autoControl[index], "limitMin", 30);
         }
-
-      }else{
+      } else {
         this.$set(this.strategyForm.autoControl[index], "stateNum", 0);
       }
     },
-    handleClose(){
-      this.dialogVisibleTem = false
+    handleClose() {
+      this.dialogVisibleTem = false;
     },
     // 情报板选择模板点击事件
-    templateClick(number, index,item){
-      this.$refs.boardRef.init(
-        number,
-        index,
-        item.equipmentTypeId,
-      );
+    templateClick(number, index, item) {
+      this.$refs.boardRef.init(number, index, item.equipmentTypeId);
     },
     // 情报板弹窗
-    getMsgFormSon(data){
-      console.log(data,"data")
-      this.$set(this.strategyForm.autoControl[data.index],'content',data.content);
-      this.$set(this.strategyForm.autoControl[data.index],'state',data.id);
+    getMsgFormSon(data) {
+      console.log(data, "data");
+      this.$set(
+        this.strategyForm.autoControl[data.index],
+        "content",
+        data.content
+      );
+      this.$set(this.strategyForm.autoControl[data.index], "state", data.id);
     },
     //查看情报板信息
-    openTemDialog(item){
-      let params = {id: item.id,state:item.state,type:'1'};
+    openTemDialog(item) {
+      let params = { id: item.id, state: item.state, type: "1" };
 
-      if(item.state == '' || item.state == null){
+      if (item.state == "" || item.state == null) {
         return this.$modal.msgWarning("请选择模板");
       }
-      selectVmsContent(params).then((res)=>{
-        this.templateData = Object.assign(res.data,item);
-        console.log(this.templateData)
-        let zxc = this.templateData['screen_size'].split('*');
-        this.templateData['width'] = zxc[0];
-        this.templateData['height'] = zxc[1];
-        let align = this.templateData['coordinate'];
-        this.templateData['left'] = align.substr(0,3);
-        this.templateData['top'] = align.substr(3,6);
-        let content = this.templateData['content'];
-        if(content.indexOf('/n') == '-1'){
-          this.templateData['content'] = content.replace(/\n|\r\n/g,'<br>').replace(/ /g, ' &nbsp');
+      selectVmsContent(params).then((res) => {
+        this.templateData = Object.assign(res.data, item);
+        console.log(this.templateData);
+        let zxc = this.templateData["screen_size"].split("*");
+        this.templateData["width"] = zxc[0];
+        this.templateData["height"] = zxc[1];
+        let align = this.templateData["coordinate"];
+        this.templateData["left"] = align.substr(0, 3);
+        this.templateData["top"] = align.substr(3, 6);
+        let content = this.templateData["content"];
+        if (content.indexOf("/n") == "-1") {
+          this.templateData["content"] = content
+            .replace(/\n|\r\n/g, "<br>")
+            .replace(/ /g, " &nbsp");
         }
         this.dialogVisibleTem = true;
-      })
+      });
     },
-    getListEventType(){
-      let data = {prevControlType:"1"};
-      listEventType(data).then(res=>{
+    getListEventType() {
+      let data = { prevControlType: "1" };
+      listEventType(data).then((res) => {
         this.eventTypeList = res.rows;
-        console.log(this.eventTypeList,"事件类型");
-      })
+        console.log(this.eventTypeList, "事件类型");
+      });
     },
     /** 获取当前策略数据 */
     async getStrategyData(row) {
@@ -650,6 +683,13 @@ export default {
       //   this.equipmentTypeData = response.rows;
       // });
       getStrategy(this.id).then((response) => {
+        const loading = this.$loading({
+          lock: true,
+          text: "Loading",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.7)",
+          target: ".strategy-dialog",
+        });
         let data = response.data;
         this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
@@ -680,9 +720,13 @@ export default {
             res.data.warningType
           );
           this.$set(this.strategyForm, "eventType", +data.eventType);
-          console.log(this.strategyForm.triggers.deviceTypeId ,this.strategyForm.tunnelId,this.strategyForm.direction)
-          let params={eqDirection: this.strategyForm.direction}
-          if(this.strategyForm.direction == 3){
+          console.log(
+            this.strategyForm.triggers.deviceTypeId,
+            this.strategyForm.tunnelId,
+            this.strategyForm.direction
+          );
+          let params = { eqDirection: this.strategyForm.direction };
+          if (this.strategyForm.direction == 3) {
             params.eqDirection = null;
           }
           listDevices({
@@ -691,15 +735,15 @@ export default {
             eqDirection: params.eqDirection,
           }).then((data) => {
             this.deviceName = data.rows;
-            debugger
+            // debugger
             this.$nextTick(() => {
-              debugger
-            this.strategyForm.triggers.deviceId = res.data.deviceId.split(",");
-            })
-
+              // debugger
+              this.strategyForm.triggers.deviceId =
+                res.data.deviceId.split(",");
+            });
           });
           listRl({ strategyId: row.id }).then((response) => {
-            console.log(response,"response")
+            console.log(response, "response");
             this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
             listDevices({
               eqType: response.rows[0].eqTypeId,
@@ -724,15 +768,15 @@ export default {
                 this.strategyForm.autoControl[i].equipmentTypeId == 36
               ) {
                 this.strategyForm.autoControl[i].state = +attr.state;
-                this.qbgChange(i,this.strategyForm.autoControl[i].equipments);
+                this.qbgChange(i, this.strategyForm.autoControl[i].equipments);
               }
               this.$set(
                 autoControl,
                 "equipmentTypeData",
                 this.equipmentTypeData
               );
-              let params={eqDirection: this.strategyForm.direction}
-              if(this.strategyForm.direction == 3){
+              let params = { eqDirection: this.strategyForm.direction };
+              if (this.strategyForm.direction == 3) {
                 params.eqDirection = null;
               }
               listDevices({
@@ -747,6 +791,9 @@ export default {
             }
           });
         });
+        setTimeout(() => {
+          loading.close();
+        }, 1700);
       });
     },
     // 改变设备类型
@@ -759,11 +806,11 @@ export default {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
         eqDirection: this.strategyForm.direction, //方向
-        params:{
-          orderBy : 'eqName'
-        }
+        params: {
+          orderBy: "eqName",
+        },
       };
-      if(this.strategyForm.direction == 3){
+      if (this.strategyForm.direction == 3) {
         params.eqDirection = null;
       }
       // debugger
@@ -851,15 +898,15 @@ export default {
       this.$refs["autoControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-          let response = JSON.parse(JSON.stringify(autoControl))
+          let response = JSON.parse(JSON.stringify(autoControl));
           // console.log(response,"response");
           // 如果为预警联动则判断是否填写完整
-          if(this.strategyForm.triggers.warningType == '1'){
+          if (this.strategyForm.triggers.warningType == "1") {
             let result = response.every(function (item) {
-                return item.equipmentTypeId && item.state && item.equipments
+              return item.equipmentTypeId && item.state && item.equipments;
             });
             // console.log(result);
-            if(!result){
+            if (!result) {
               return this.$modal.msgError("请填写完整");
             }
           }
@@ -909,7 +956,7 @@ export default {
       addStrategyInfo(params).then((res) => {
         this.resetForm();
         let data = true;
-        this.$emit("dialogVisibleClose",data);
+        this.$emit("dialogVisibleClose", data);
         this.$modal.msgSuccess("新增策略成功");
       });
     },
@@ -940,19 +987,27 @@ export default {
     },
     // 改变隧道或者方向
     changeEvent(value) {
-      console.log(value,"value")
+      console.log(value, "value");
       // 重置设备列表
       this.equipmentTypeData = [];
-      this.deviceName = []
-      this.dataItem = []
+      this.deviceName = [];
+      this.dataItem = [];
       this.strategyForm.autoControl = [
         { state: "", value: "", equipmentTypeId: "" },
       ];
-      this.strategyForm.triggers =
-        { deviceTypeId: "", deviceId: "", elementId: "",comparePattern:"",compareValue:"", warningType:""}
-      ;
+      this.strategyForm.triggers = {
+        deviceTypeId: "",
+        deviceId: "",
+        elementId: "",
+        comparePattern: "",
+        compareValue: "",
+        warningType: "",
+      };
 
-      if(this.strategyForm.tunnelId.length !=0 && this.strategyForm.direction.length !=0){
+      if (
+        this.strategyForm.tunnelId.length != 0 &&
+        this.strategyForm.direction.length != 0
+      ) {
         //this.listEqTypeStateIsControl();
         this.getEquipmentType();
       }
@@ -984,8 +1039,8 @@ export default {
         this.listEqTypeStateIsControl();
       }
     },
-     /** 查询设备类型列表 */
-     getEquipmentType() {
+    /** 查询设备类型列表 */
+    getEquipmentType() {
       let autoControl = this.strategyForm.autoControl;
       for (let i = 0; i < autoControl.length; i++) {
         getCategoryTree().then((data) => {
@@ -997,10 +1052,14 @@ export default {
     selectEqName() {
       this.rest();
       // 选择设备名称赋值
-      console.log(this.strategyForm.tunnelId,this.strategyForm.direction)
-      if(this.strategyForm.tunnelId && this.strategyForm.direction && this.strategyForm.triggers.deviceTypeId){
-        let params={eqDirection: this.strategyForm.direction}
-        if(this.strategyForm.direction == 3){
+      console.log(this.strategyForm.tunnelId, this.strategyForm.direction);
+      if (
+        this.strategyForm.tunnelId &&
+        this.strategyForm.direction &&
+        this.strategyForm.triggers.deviceTypeId
+      ) {
+        let params = { eqDirection: this.strategyForm.direction };
+        if (this.strategyForm.direction == 3) {
           params.eqDirection = null;
         }
         listDevices({
@@ -1013,32 +1072,32 @@ export default {
         });
       }
     },
-    selectDataItem(e){
-      console.log(this.strategyForm.triggers.deviceId,"111111111")
-      if(e == true){
-        if(!this.strategyForm.tunnelId){
-          this.$modal.msgWarning("请先选择隧道")
-        }else if(!this.strategyForm.direction){
-          this.$modal.msgWarning("请先选择方向")
-        }else{
-          this.selectEqName()
+    selectDataItem(e) {
+      console.log(this.strategyForm.triggers.deviceId, "111111111");
+      if (e == true) {
+        if (!this.strategyForm.tunnelId) {
+          this.$modal.msgWarning("请先选择隧道");
+        } else if (!this.strategyForm.direction) {
+          this.$modal.msgWarning("请先选择方向");
+        } else {
+          this.selectEqName();
         }
       }
     },
-    optionDataItem(){
+    optionDataItem() {
       this.getListItem();
     },
     getListItem() {
       //给设备数据项赋值
-      console.log(this.strategyForm.triggers.deviceId,"00000000000")
-      if(this.strategyForm.triggers.deviceId){
-        listItem({ deviceTypeId: this.strategyForm.triggers.deviceTypeId }).then(
-          (res) => {
-            // debugger
-            this.dataItem = res.rows;
-            console.log(this.dataItem, "数据项");
-          }
-        );
+      console.log(this.strategyForm.triggers.deviceId, "00000000000");
+      if (this.strategyForm.triggers.deviceId) {
+        listItem({
+          deviceTypeId: this.strategyForm.triggers.deviceTypeId,
+        }).then((res) => {
+          // debugger
+          this.dataItem = res.rows;
+          console.log(this.dataItem, "数据项");
+        });
       }
     },
     //重置方法
@@ -1232,7 +1291,7 @@ export default {
     // 取消按钮
     strategyFormClose() {
       let data = false;
-      this.$emit("dialogVisibleClose",data);
+      this.$emit("dialogVisibleClose", data);
       // this.$emit("dialogVisibleCloseEvent");
     },
     /** cron表达式按钮操作 */
@@ -1245,9 +1304,9 @@ export default {
       this.strategyForm.schedulerTime = value;
     },
     // 关闭情报板窗口
-    closeBoard(){
+    closeBoard() {
       this.$refs.boardRef.handleClosee();
-    }
+    },
   },
 };
 </script>
@@ -1269,7 +1328,7 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  .el-col{
+  .el-col {
     text-align: center;
   }
 }
@@ -1278,19 +1337,20 @@ export default {
   justify-content: space-around;
   align-items: center;
   height: 36px;
-  .delete,.add{
-    width:16px;
+  .delete,
+  .add {
+    width: 16px;
     height: 16px;
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100%;
-    border:none;
+    border: none;
     background-color: transparent;
   }
-  .delete{
+  .delete {
     background-image: url(../../../../assets/icons/delete.png);
   }
-  .add{
+  .add {
     background-image: url(../../../../assets/icons/add.png);
   }
 }

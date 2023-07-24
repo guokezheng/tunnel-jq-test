@@ -633,6 +633,8 @@
                 <el-input
                   v-model="form.faultDescription"
                   maxlength="250"
+                  show-word-limit
+                  :rows="5"
                   :disabled="disstate"
                   placeholder="请输入故障描述"
                   style="width: 100%"
@@ -1947,5 +1949,8 @@ export default {
   div:nth-of-type(3) {
     background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
+}
+::v-deep .el-textarea .el-input__count{
+  background: transparent !important;
 }
 </style>

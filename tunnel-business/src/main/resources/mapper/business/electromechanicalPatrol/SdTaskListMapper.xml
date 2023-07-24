@@ -526,7 +526,9 @@
             DATE_FORMAT( p.xc_time, '%Y-%m-%d %H:%i:%s' ) AS xcTime,-- 巡查时间
             p.xc_status AS xcStatus,-- 巡查状态
             u.tunnel_name AS tunnelName,-- 隧道名称
+            d.eq_id as eqId,
             d.pile,-- 设备桩号
+            Y.type_id as typeId,
             y.type_name AS typeName,-- 设备类型
             fsd.mac,
             d.protocol_id,
@@ -553,7 +555,9 @@
                 p.xc_time,
                 p.xc_status,
                 u.tunnel_name,
+                d.eq_id as eqId,
                 d.pile,
+                Y.type_id as typeId,
                 y.type_name,
                 fsd.mac,
                 d.protocol_id,
@@ -571,5 +575,27 @@
                 p.task_id = #{taskId} and p.patrol_type = '0')
 
     </select>
+
+
+    <select id="getItemListByEqId" resultType="map">
+
+        select
+            id,
+            item_code,
+            item_name,
+            unit,
+            device_type_id
+        from
+            sd_device_type_item sdti
+        where
+            device_type_id = #{typeId}
+
+    </select>
+
+    <select id="getOptionListByEqId" resultType="map">
+        select device_state,state_name,is_control from sd_equipment_state ses where state_type_id  = #{typeId}
+
+    </select>
+
 
 </mapper>

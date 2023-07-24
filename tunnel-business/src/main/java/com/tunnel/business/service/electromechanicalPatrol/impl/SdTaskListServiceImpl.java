@@ -1107,7 +1107,30 @@ public class SdTaskListServiceImpl implements ISdTaskListService
             }
 
             map.put("taskInfo",taskInfoMap);
-            map.put("patrolInfo",sdTaskListMapper.getpatrolInfoByTaskId(taskId));
+
+
+            List<Map> patrolInfoList = sdTaskListMapper.getpatrolInfoByTaskId(taskId);
+            //巡检设备
+            for(Map map1 : patrolInfoList) {
+
+                String typeId = map1.get("typeId") != null?map1.get("typeId").toString():null;
+
+                if(typeId != null){
+
+                    List<Map> itemList =  sdTaskListMapper.getItemListByEqId(typeId);
+
+                    for(Map map2 : itemList){
+
+                        map2.put("option",sdTaskListMapper.getOptionListByEqId(typeId));
+
+                        map1.put("item",itemList);
+                    }
+
+                }
+
+            }
+
+            map.put("patrolInfo",patrolInfoList);
 
         }
 

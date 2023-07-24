@@ -955,10 +955,10 @@ export default {
     },
     /** 编辑修改按钮操作 */
     handleUpdate(row) {
-      debugger
       this.title = "策略编辑";
       this.strategyForm.strategyType = row.strategyType;
       this.sink = "edit";
+      console.log(this.queryParams.strategyGroup)
       if (this.queryParams.strategyGroup == 1) {
         this.$nextTick(() => {
           this.dialogVisible = true;
@@ -1049,7 +1049,6 @@ export default {
     strategyTypeClose(row) {
       console.log(this.$refs.manualControl, "获取组件");
       this.$nextTick(() => {
-        debugger
         console.log(this.strategyForm.strategyType)
         switch (this.strategyForm.strategyType) {
           case "0":

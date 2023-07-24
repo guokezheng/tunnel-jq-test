@@ -252,7 +252,7 @@ export default {
   },
   methods:{
     close(){
-      debugger
+      // debugger
       this.cameraPlayer = false
       this.visibleSync = !this.visibleSync
     },
@@ -262,7 +262,7 @@ export default {
       }else if(e==1){
         this.containerShow = true
       }
-      debugger
+      // debugger
     },
     // calculateNumbers(num) {
     //   var factor1 = Math.floor(Math.sqrt(num)); // 取平方根向下取整
@@ -278,7 +278,7 @@ export default {
     // },
     //div 数 horizontalCount横向数 纵向数
     setWillNum(divNum){
-      debugger
+      // debugger
       this.divItems =4
       var container = document.getElementById("container");
 
@@ -315,12 +315,12 @@ export default {
     },
     //电视墙设置
     wallSetting(){
-      debugger
+      // debugger
       this.wellSettingModalShow = !this.wellSettingModalShow
     },
     //发送修改
     sendUpdate(){
-      debugger
+      // debugger
       this.cameraPlayer = false
     },
     wallHandleChange(){
@@ -346,7 +346,7 @@ export default {
     },
     //解码操作
     decodeButtonClick(e){
-      debugger
+      // debugger
       switch (e) {
         case 1:
           this.dynamicDecodeModalShow = !this.dynamicDecodeModalShow
@@ -359,11 +359,11 @@ export default {
     },
     //设备树下拉出发
     handleNodeClick(e){
-      debugger
+      // debugger
     },
     //电视墙设置回调
     wellSettingModel(e){
-      debugger
+      // debugger
       this.liveUrl = "http://47.104.0.66:8082/live/52088.live.flv"
       this.cameraPlayer = true
       this.horizontalCount = e.breadth
@@ -413,18 +413,18 @@ export default {
               childrenModer.name = response.data.eqName
               childrenModer.expanded = false
               treeModer.children.push(childrenModer)
-              debugger
+              // debugger
             });
           }
           this.treeData.push(treeModer)
         }
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
       },
     },
     eqIdList:{
       handler(newValue, oldValue) {
-        debugger
+        // debugger
         this.eqIdList = newValue
 
       },

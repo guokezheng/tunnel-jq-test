@@ -262,4 +262,6 @@ public interface ISdEventService {
      * @return
      */
     void downLoadVedio(String camId, String downLoadTime,HttpServletResponse response);
+
+    void eventDemonstrate(String hyData);
 }

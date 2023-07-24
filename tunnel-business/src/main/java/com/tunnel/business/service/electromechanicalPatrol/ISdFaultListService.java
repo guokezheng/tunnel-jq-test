@@ -48,6 +48,14 @@ public interface ISdFaultListService
     public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,String[] removeIds);
 
     /**
+     * 修改故障清单
+     *
+     * @param sdFaultList 故障清单
+     * @return 结果
+     */
+    public int updateSdFaultList(SdFaultList sdFaultList);
+
+    /**
      * 批量删除故障清单
      * 
      * @param ids 需要删除的故障清单主键集合

@@ -285,11 +285,16 @@
           @mouseover="mouseoversImage"
           @mouseleave="mouseleaveImage"
         >
-          <div
+        <!-- 右键拖拽 勿删 -->
+          <!-- <div
             class="workbench-content"
             @mousedown="dragImg"
             ref="dragImgDom"
             @contextmenu.prevent
+          > -->
+          <div
+            class="workbench-content"
+            ref="dragImgDom"
           >
             <!--画布区域-->
             <div>
@@ -1318,17 +1323,18 @@
           label="操作状态"
           align="center"
           prop="stateName.stateName"
-          width="120"
+          width="70"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="控制方式"
           align="center"
           prop="controlType"
+          width="80"
           :show-overflow-tooltip="true"
           :formatter="controlTypeFormat"
         />
-        <el-table-column label="操作结果" align="center" prop="state" />
+        <el-table-column label="操作结果" align="center" prop="state" width="70"/>
         <el-table-column label="操作地址" align="center" prop="operIp" />
         <el-table-column
           label="创建时间"
@@ -1367,6 +1373,7 @@
     <com-pressure class="comClass" ref="pressureRef"></com-pressure>
     <com-vehicleDetec class="comClass" ref="vehicleDetecRef"></com-vehicleDetec>
     <com-callPolice class="comClass" ref="callPoliceRef"></com-callPolice>
+    <com-xfp class="comClass" ref="xfpRef"></com-xfp>
     <div v-if="robotIframeShow">
       <robot class="comClass robotHtmlBox"></robot>
       <img
@@ -1926,6 +1933,7 @@ import comXfsb from "@/views/workbench/config/components/xfsb"; //消防水泵�
 import comSjb from "@/views/workbench/config/components/sjb"; //潜水深水泵
 import robot from "@/views/workbench/config/components/robotManagement"; //机器人弹窗
 import comKzq from "@/views/workbench/config/components/kzq"; //鸿蒙控制器
+import comXfp from "@/views/workbench/config/components/xfp"; //消防炮
 
 import comTemperatureHumidity from "@/views/workbench/config/components/temperatureHumidity"; //温湿传感器
 import comLiquidLevel from "@/views/workbench/config/components/liquidLevel"; //液位传感器
@@ -2027,6 +2035,7 @@ export default {
     comDeawer, //抽屉
     comFooter, //底部echarts
     timingTask,
+    comXfp
   },
 
   data() {
@@ -3507,6 +3516,8 @@ export default {
       this.$refs.boardRef.handleClosee();
       this.$refs.radioRef.handleClosee();
       this.$refs.kzqRef.handleClosee();
+      this.$refs.xfpRef.handleClosee();
+
       this.robotIframeShow = false;
     },
 
@@ -4990,7 +5001,7 @@ export default {
           this.dialogEqType = item.eqType;
         }
         this.$nextTick(() => {
-          if ([21, 23, 24, 25, 32, 33, 39, 40].includes(item.eqType)) {
+          if ([21, 23, 24, 25, 32, 39, 40].includes(item.eqType)) {
             this.$refs.videoRef.init(
               this.eqInfo,
               this.brandList,
@@ -5082,6 +5093,14 @@ export default {
           } else if (item.eqType == 29) {
             // 巡检机器人
             this.robotIframeShow = true;
+          }else if(item.eqType == 33){
+            // 智能消防炮
+            this.$refs.xfpRef.init(
+              this.eqInfo,
+              this.brandList,
+              this.directionList,
+              this.eqTypeDialogList
+            );
           }
         });
       }

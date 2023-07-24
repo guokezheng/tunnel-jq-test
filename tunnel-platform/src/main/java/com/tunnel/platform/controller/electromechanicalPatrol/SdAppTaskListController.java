@@ -1,11 +1,9 @@
 package com.tunnel.platform.controller.electromechanicalPatrol;
 
-import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -259,9 +256,20 @@ public class SdAppTaskListController extends BaseController
     @GetMapping("/app/getTaskAllList")
     public Result getTaskAllList(){
 
-
         return Result.success(sdTaskListService.getTaskAllList());
     }
+    /**
+     * APP 同步巡检任务信息
+     * @return
+     */
+    @PostMapping("/app/modifyTaskData")
+    public Result modifyTaskData(@RequestBody String reqJson){
+
+        return Result.success(sdTaskListService.modifyTaskData(reqJson));
+
+    }
+
+
 
 
 

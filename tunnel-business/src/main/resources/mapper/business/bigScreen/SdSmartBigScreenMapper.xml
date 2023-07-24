@@ -540,27 +540,28 @@
             LEFT JOIN (
                 SELECT
                     DATE_FORMAT( DATE_SUB( b.detect_time, INTERVAL MINUTE ( NOW() ) - 60 MINUTE ), '%Y-%m-%d %H' ) AS DATE,
-                    count( b.vehicle_license ) AS num
+                    count( b.plate_number ) AS num
                 FROM
                 (
-                    SELECT
-                        rdd.vehicle_license,
-                        rdd.detect_time
+                    SELECT DISTINCT
+                        vd.plate_number,
+                        DATE_FORMAT( vd.start_time, '%Y-%m-%d %h' ) AS detect_time
                     FROM
-                        sd_radar_detect_data rdd
+                        sd_vehicle_driving vd
                     WHERE
-                        rdd.detect_time >= ( NOW() - INTERVAL 25 HOUR )
-                        AND vehicle_license != ''
-                        AND vehicle_license IS NOT NULL
-                        AND rdd.tunnel_id = #{tunnelId}
+                        vd.start_time >= ( NOW() - INTERVAL 25 HOUR )
+                    AND vd.travel_type = '1'
+                    AND vd.plate_number != ''
+                    AND vd.plate_number IS NOT NULL
+                    AND vd.tunnel_id = #{tunnelId}
                         <if test="model == 1">
-                            AND rdd.vehicle_type IN ( '15', '16', '25' )
+                            AND vd.vehicle_type IN ( '15', '16', '25' )
                         </if>
                         <if test="model == 2">
-                            AND rdd.vehicle_type IN ( '14', '17', '26' )
+                            AND vd.vehicle_type IN ( '14', '17', '26' )
                         </if>
                         <if test="model == 3">
-                            AND rdd.vehicle_type IN ( '16', '40' )
+                            AND vd.vehicle_type IN ( '16', '40' )
                         </if>
                 ) b
                 GROUP BY

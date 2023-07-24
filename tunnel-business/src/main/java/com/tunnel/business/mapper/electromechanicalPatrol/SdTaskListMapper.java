@@ -190,4 +190,8 @@ public interface SdTaskListMapper
     Map getTaskInfoByTaskId(String taskId);
 
     List<Map> getpatrolInfoByTaskId(String taskId);
+
+    List<Map> getItemListByEqId(String typeId);
+
+    List<Map> getOptionListByEqId(String eqId);
 }

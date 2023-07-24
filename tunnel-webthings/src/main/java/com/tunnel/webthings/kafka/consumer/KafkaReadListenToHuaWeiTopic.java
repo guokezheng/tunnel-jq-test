@@ -551,6 +551,9 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject = JSONObject.parseObject(objects.get(i).toString());
             //设备id
             String deviceId = jsonObject.getString("deviceId");
+            if(deviceId == null || "".equals(deviceId)){
+                continue;
+            }
             //设备状态
             Integer onlineStatus = jsonObject.getInteger("onlineStatus");
             //是否故障

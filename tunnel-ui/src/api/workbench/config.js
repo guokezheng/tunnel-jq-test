@@ -295,6 +295,15 @@ export function getCamera(query) {
   })
 }
 
+// 智能消防炮视频流
+export function getRtspStreamAddr(query) {
+  return request({
+    url: '/fireMonitor/getRtspStreamAddr/'+ query,
+    method: 'get',
+    // params: query
+  })
+}
+
 
 /************** 隧道机器人  start ******************/
 //投光灯

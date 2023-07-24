@@ -151,6 +151,7 @@
         label="任务名称"
         align="center"
         prop="taskName"
+        :show-overflow-tooltip="true"
       />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column

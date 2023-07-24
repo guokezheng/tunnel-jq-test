@@ -15,7 +15,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div style="width: 100%; height: 200px;">
+      <div style="width: 100%; height: 200px">
         <video
           v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'"
           id="h5sVideo1"
@@ -33,11 +33,18 @@
           :open="cameraPlayer"
         ></videoPlayer>
       </div>
-      <div class="rlModelBox">
-        <div class="rlModelButton left" @click="changeVideo('left')">
-        <div @click="changeVideo('left')" :class="{active:isActive}"></div></div>
-        <div class="rlModelButton" >
-        <div @click="changeVideo('right')"></div></div>
+      <div
+        class="rlModelButton left"
+        @click="changeVideo('left')"
+        v-if="[21, 32, 39, 40].includes(this.clickEqType)"
+      >
+        <div @click="changeVideo('left')" ></div>
+      </div>
+      <div
+        class="rlModelButton right"
+        v-if="[21, 32, 39, 40].includes(this.clickEqType)"
+      >
+        <div @click="changeVideo('right')"></div>
       </div>
       <el-form
         ref="form"
@@ -95,7 +102,11 @@
               </el-col>
             </el-row>
           </el-tab-pane>
-          <el-tab-pane label="摄像机参数" name="videoParams" v-if="[23,24,25].includes(this.clickEqType)">
+          <el-tab-pane
+            label="摄像机参数"
+            name="videoParams"
+            v-if="[23, 24, 25].includes(this.clickEqType)"
+          >
             <el-row>
               <el-col :span="13">
                 <el-form-item label="IP:">
@@ -403,8 +414,7 @@ export default {
   },
   data() {
     return {
-      isActive:false,
-      clickEqType:'',
+      clickEqType: "",
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
       cameraPlayer: false, //摄像机弹窗
@@ -531,14 +541,14 @@ export default {
       eqInfo: {},
       eqTypeDialogList: [],
       directionList: [],
-      pileNum:'',
+      pileNum: "",
     };
   },
   methods: {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
       this.eqInfo = eqInfo;
       this.clickEqType = JSON.parse(JSON.stringify(this.eqInfo.clickEqType));
-      console.log(this.clickEqType,"this.clickEqType");
+      console.log(this.clickEqType, "this.clickEqType");
       this.brandList = brandList;
       this.directionList = directionList;
       this.eqTypeDialogList = eqTypeDialogList;
@@ -569,10 +579,10 @@ export default {
           if (res.data.tunnelId == "WLJD-JiNan-YanJiuYuan-FHS") {
             displayH5sVideoAll(res.data.secureKey, "h5sVideo1");
           } else {
-            if([23,24,25].includes(this.clickEqType)){
+            if ([23, 24, 25].includes(this.clickEqType)) {
               this.getVideo();
-            }else{
-              this.changeVideo()
+            } else {
+              this.changeVideo();
             }
           }
         });
@@ -584,11 +594,11 @@ export default {
     // 1.  刚打开 传火灾报警桩号pileNum 隧道id 方向 返回来的是对象 当前摄像机基本信息
     // 2.  往右 传 （1）rlModel：right （2）摄像机桩号 隧道id 方向
     getVideo(videoData) {
-      let equipmentId = ''
-      if(videoData){
-        equipmentId = videoData
-      }else{
-        equipmentId = this.eqInfo.equipmentId
+      let equipmentId = "";
+      if (videoData) {
+        equipmentId = videoData;
+      } else {
+        equipmentId = this.eqInfo.equipmentId;
       }
       videoStreaming(equipmentId)
         .then((response) => {
@@ -604,25 +614,23 @@ export default {
           this.$modal.msgWarning("获取视频失败");
         });
     },
-    changeVideo(rlModel){
-      console.log(this.isActive)
-      this.isActive = !this.isActive
+    changeVideo(rlModel) {
       const params = {
-        eqDirection:this.stateForm.eqDirection,
-        pileNum:rlModel?this.pileNum:this.stateForm.pileNum,
-        eqTunnelId:this.stateForm.tunnelId,
-        rlModel:rlModel
-      }
-      getCamera(params).then((res)=>{
-        console.log(res,"切换左右摄像机信息")
-        if(res.data == ''){
-          this.$message.warning('当前为最后一个摄像机');
-        }else{
-          this.pileNum = res.data.pileNum
+        eqDirection: this.stateForm.eqDirection,
+        pileNum: rlModel ? this.pileNum : this.stateForm.pileNum,
+        eqTunnelId: this.stateForm.tunnelId,
+        rlModel: rlModel,
+      };
+      getCamera(params).then((res) => {
+        console.log(res, "切换左右摄像机信息");
+        if (res.data == "") {
+          this.$message.warning("当前为最后一个摄像机");
+        } else {
+          this.pileNum = res.data.pileNum;
           this.cameraPlayer = false;
-          this.getVideo(res.data.eqId)
+          this.getVideo(res.data.eqId);
         }
-      })
+      });
     },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -697,41 +705,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.rlModelBox{
-  width:100%;
-  height: 200px;
+.rlModelButton {
   position: absolute;
-  top:53px;
-  left: 0;
+  top: 53px;
+  width: 40px;
+  height: 200px;
+  opacity: 0;
   display: flex;
-  justify-content: space-between;
-  padding: 0 15px;
-  .rlModelButton{
-    width:40px;
-    height: 100%;
-    opacity: 0;
-    display: flex;
-    align-items: center;
-    >div{
-      cursor: pointer;
-      width: 40px;
-      height: 40px;
-      border-radius: 20px;
-      background: url(../../../../assets/cloudControl/toRight2.png);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-    }
-    .active{
-      background: url(../../../../assets/cloudControl/toRight1.png);
-    }
+  align-items: center;
+  > div {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background: url(../../../../assets/cloudControl/toRight2.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
   }
-  .left{
-    transform: rotate(180deg);
-  }
-  .rlModelButton:hover{
-    opacity: 0.5;
-  }
+}
+.left {
+  left: 15px;
+  transform: rotate(180deg);
+}
+.right {
+  right: 15px;
+}
+.rlModelButton:hover {
+  opacity: 0.5;
 }
 .robotTabs {
   padding: 0 15px;

@@ -492,20 +492,20 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
-        <el-form-item label="策略类型" prop="strategyType">
-          <el-radio-group v-model="strategyForm.strategyType">
-            <el-radio
-              border
-              disabled
-              v-for="dict in insertStrategyTypeOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-              @change.native="strategyTypeClose()"
-            >{{ dict.dictLabel }}
-            </el-radio
-            >
-          </el-radio-group>
-        </el-form-item>
+<!--        <el-form-item label="策略类型" prop="strategyType">-->
+<!--          <el-radio-group v-model="strategyForm.strategyType">-->
+<!--            <el-radio-->
+<!--              border-->
+<!--              disabled-->
+<!--              v-for="dict in insertStrategyTypeOptionsCopy"-->
+<!--              :key="dict.dictValue"-->
+<!--              :label="dict.dictValue"-->
+<!--              @change.native="strategyTypeClose()"-->
+<!--            >{{ dict.dictLabel }}-->
+<!--            </el-radio-->
+<!--            >-->
+<!--          </el-radio-group>-->
+<!--        </el-form-item>-->
       </el-form>
       <!--自动触发      -->
       <auto-control-event
@@ -680,6 +680,8 @@ export default {
       strategyTypeOptions: [],
       // 策略类型字典
       insertStrategyTypeOptions: [],
+      // 策略类型字典
+      insertStrategyTypeOptionsCopy: [],
       // 编辑策略选中rlId
       currentId: null,
       // 导出遮罩层
@@ -1050,6 +1052,9 @@ export default {
         console.log(this.strategyForm.strategyType)
         switch (this.strategyForm.strategyType) {
           case "0":
+            this.insertStrategyTypeOptionsCopy=[]
+            let Strategy = this.insertStrategyTypeOptions.find((item) => item.dictLabel =="手动控制")
+            this.insertStrategyTypeOptionsCopy.push(Strategy)
             this.$refs.manualControl.sink = this.sink;
             this.$refs.manualControl.init();
             if (this.sink == "edit") {
@@ -1061,6 +1066,11 @@ export default {
             break;
 
           case "1":
+
+            console.log(this.insertStrategyTypeOptions)
+            this.insertStrategyTypeOptionsCopy=[]
+            let dictLabelStrategy = this.insertStrategyTypeOptions.find((item) => item.dictLabel =="定时控制")
+            this.insertStrategyTypeOptionsCopy.push(dictLabelStrategy)
             this.$refs.timingControl.sink = this.sink;
             this.$refs.timingControl.init();
             if (this.sink == "edit") {
@@ -1073,6 +1083,9 @@ export default {
             break;
 
           case "2":
+            this.insertStrategyTypeOptionsCopy=[]
+            let Strategys = this.insertStrategyTypeOptions.find((item) => item.dictLabel =="自动触发")
+            this.insertStrategyTypeOptionsCopy.push(Strategys)
             this.$refs.autoControl.sink = this.sink;
             this.$refs.autoControl.init();
             if (this.sink == "edit") {

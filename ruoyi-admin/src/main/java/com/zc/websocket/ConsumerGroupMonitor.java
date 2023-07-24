@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+/**
+ * redis队列定时任务
+ */
 @Component
 public class ConsumerGroupMonitor {
 
@@ -25,6 +28,7 @@ public class ConsumerGroupMonitor {
     @Resource
     private WebSocketStreamCatListener webSocketStreamCatListener;
 
+    //redis队列经常性挂掉 检测死掉 然后重启
     @Scheduled(fixedRate = 30000)
     public void checkConsumerGroup() {
         StreamInfo.XInfoGroups groups = redisTemplate.opsForStream().groups(RedisStreamConstants.WebSocketCatDirectional.KEY);

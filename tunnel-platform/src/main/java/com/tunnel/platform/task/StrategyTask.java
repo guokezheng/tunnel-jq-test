@@ -305,7 +305,11 @@ public class StrategyTask {
     public void triggerJob(String triggerId) throws UnknownHostException {
         //SdTrigger trigger = SpringUtils.getBean(SdTriggerMapper.class).selectSdTriggerById(Long.parseLong(triggerId));
         //触发器数据
-        List<Map> triggerData = SpringUtils.getBean(SdTriggerMapper.class).getTriggerInfo(triggerId);
+        SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(triggerId));
+
+        SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
+        List<Map> triggerData = SpringUtils.getBean(SdTriggerMapper.class).getTriggerInfo(sdStrategy.getId());
         Map<String,Object> issuedParam = new HashMap<>();
         String serverIp = InetAddress.getLocalHost().getHostAddress();
         out: for(Map s:triggerData){
@@ -343,90 +347,144 @@ public class StrategyTask {
                 if(isControl){
                     //仅预警
                     if(s.get("warning_type").equals("0")){
-                        //插入事件
-                        SdEvent sdEvent = new SdEvent();
-                        //所有事件类型Map
-                        Map<Long,String> eventTypeMap = SpringUtils.getBean(ISdEventTypeService.class).getEventTypeMap();
-                        //所有隧道Map
-                        Map<String,String> tunnelMap = SpringUtils.getBean(ISdTunnelsService.class).getTunnelNameMap();
-                        sdEvent.setTunnelId(s.get("tunnel_id").toString());
-                        sdEvent.setEventSource("6");
-                        sdEvent.setDirection(s.get("eq_direction").toString());
-                        sdEvent.setStakeNum(s.get("pile").toString());
-                        if(s.get("lane")!=null){
-                            sdEvent.setLaneNo(s.get("lane").toString());
-                        }
-                        if(s.get("event_type")!=null && !s.get("event_type").equals("")){
-                            sdEvent.setEventTypeId(Long.valueOf(s.get("event_type").toString()));
-                        }else{
-                            sdEvent.setEventTypeId(TriggerEventTypeEnum.getTriggerEventTypeEnum(s.get("eq_type").toString()+s.get("element_id")).getEventType());
-                        }
-                        sdEvent.setStartTime(DateUtils.getTime());
-                        sdEvent.setEventGrade(EventGradeEnum.YI_BAN.getCode());
-                        sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
-                        sdEvent.setCreateTime(DateUtils.getNowDate());
-                        String eventTitle = SpringUtils.getBean(ISdEventService.class).getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
-                        sdEvent.setEventTitle(eventTitle);
-                        sdEvent.setEventTime(DateUtils.getNowDate());
-                        //方向
-//                        if(!StringUtils.isEmpty(f.getDirection())){
-//                            sdEvent.setDirection(f.getDirection() + "");
-//                        }
-                        //相同定时触发一天内只能触发两次
-                        SdEvent sdEventOne = new SdEvent();
-                        //事件来源
-                        sdEventOne.setEventSource(sdEvent.getEventSource());
-                        //隧道id
-                        sdEventOne.setTunnelId(sdEvent.getTunnelId());
-                        //事件类型
-                        sdEventOne.setEventTypeId(sdEvent.getEventTypeId());
-                        //事件标题
-                        sdEventOne.setEventTitle(sdEvent.getEventTitle());
-                        //event_state  处理状态
-                        sdEventOne.setEventState(sdEvent.getEventState());
-                        List<SdEvent> sdEventsList = SpringUtils.getBean(SdEventMapper.class).selectSdEventSingleList(sdEvent);
-                        int updateRows = 0;
-                        if(sdEventsList.size()>0){
-                            sdEventsList.get(0).setStartTime(DateUtils.getTime());
-                            sdEventsList.get(0).setEventTime(DateUtils.getNowDate());
-                            updateRows = SpringUtils.getBean(SdEventMapper.class).updateSdEvent(sdEventsList.get(0));
-
-                        }else{
-                            updateRows = SpringUtils.getBean(SdEventMapper.class).insertSdEvent(sdEvent);
-                        }
-                        if(updateRows>0){
-                            SdEvent event = new SdEvent();
-                            event.setId(sdEvent.getId());
-                            List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
-                            JSONObject object = new JSONObject();
-                            object.put("sdEventList", sdEventList);
-                            WebSocketService.broadcast("sdEventList",object.toString());
-                            if(!(sdEventsList.size()>0)){//添加
-                                // 添加事件流程记录
-                                SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);
-                            }
-
-                        }
+                        this.triggerComparison(s);
                     }else{
-                        //预警联动控制设备
-                        for(Map data:triggerData){
-                            String equipments = data.get("equipments").toString();
-                            String[] eqIds = equipments.split(",");
-                            String alterState = data.get("alterState").toString();
-                            Arrays.stream(eqIds).forEach(eqId->{
-                                issuedParam.put("devId",eqId);
-                                issuedParam.put("state",alterState);
-                                issuedParam.put("controlType","2");
-                                issuedParam.put("operIp",serverIp);
-                                SpringUtils.getBean(SdDeviceControlService.class).controlDevices(issuedParam);
-                                issuedParam.clear();
-                            });
-                        }
+                        // 自动触发控制策略执行
+                        this.triggerJobParams(triggerId);
                     }
                     break out;
                 }
             }
             break;
+        }
+    }
+    //触发控制仅预警
+    public void  triggerComparison(Map  s){
+        //插入事件
+        SdEvent sdEvent = new SdEvent();
+        //所有事件类型Map
+        Map<Long,String> eventTypeMap = SpringUtils.getBean(ISdEventTypeService.class).getEventTypeMap();
+        //所有隧道Map
+        Map<String,String> tunnelMap = SpringUtils.getBean(ISdTunnelsService.class).getTunnelNameMap();
+        sdEvent.setTunnelId(s.get("tunnel_id").toString());
+        sdEvent.setEventSource("6");
+        sdEvent.setDirection(s.get("eq_direction").toString());
+        sdEvent.setStakeNum(s.get("pile").toString());
+        if(s.get("lane")!=null){
+            sdEvent.setLaneNo(s.get("lane").toString());
+        }
+        if(s.get("event_type")!=null && !s.get("event_type").equals("")){
+            sdEvent.setEventTypeId(Long.valueOf(s.get("event_type").toString()));
+        }else{
+            sdEvent.setEventTypeId(TriggerEventTypeEnum.getTriggerEventTypeEnum(s.get("eq_type").toString()+s.get("element_id")).getEventType());
+        }
+        sdEvent.setStartTime(DateUtils.getTime());
+        sdEvent.setEventGrade(EventGradeEnum.YI_BAN.getCode());
+        sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
+        sdEvent.setCreateTime(DateUtils.getNowDate());
+        String eventTitle = SpringUtils.getBean(ISdEventService.class).getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
+        sdEvent.setEventTitle(eventTitle);
+        sdEvent.setEventTime(DateUtils.getNowDate());
+        //方向
+//                        if(!StringUtils.isEmpty(f.getDirection())){
+//                            sdEvent.setDirection(f.getDirection() + "");
+//                        }
+        //相同定时触发一天内只能触发两次
+        SdEvent sdEventOne = new SdEvent();
+        //事件来源
+        sdEventOne.setEventSource(sdEvent.getEventSource());
+        //隧道id
+        sdEventOne.setTunnelId(sdEvent.getTunnelId());
+        //事件类型
+        sdEventOne.setEventTypeId(sdEvent.getEventTypeId());
+        //事件标题
+        sdEventOne.setEventTitle(sdEvent.getEventTitle());
+        //event_state  处理状态
+        sdEventOne.setEventState(sdEvent.getEventState());
+        List<SdEvent> sdEventsList = SpringUtils.getBean(SdEventMapper.class).selectSdEventSingleList(sdEvent);
+        int updateRows = 0;
+        if(sdEventsList.size()>0){
+            sdEventsList.get(0).setStartTime(DateUtils.getTime());
+            sdEventsList.get(0).setEventTime(DateUtils.getNowDate());
+            updateRows = SpringUtils.getBean(SdEventMapper.class).updateSdEvent(sdEventsList.get(0));
+
+        }else{
+            updateRows = SpringUtils.getBean(SdEventMapper.class).insertSdEvent(sdEvent);
+        }
+        if(updateRows>0){
+            SdEvent event = new SdEvent();
+            event.setId(sdEvent.getId());
+            List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
+            JSONObject object = new JSONObject();
+            object.put("sdEventList", sdEventList);
+            WebSocketService.broadcast("sdEventList",object.toString());
+            if(!(sdEventsList.size()>0)){//添加
+                // 添加事件流程记录
+                SpringUtils.getBean(ISdEventFlowService.class).addEventFlowBatch(sdEventList);
+            }
+
+        }
+    }
+    /**
+     * 自动触发控制策略执行
+     * @param strategyRlId
+     * @throws UnknownHostException
+     */
+    public  void triggerJobParams(String strategyRlId) throws UnknownHostException {
+        SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(strategyRlId));
+
+        SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
+        // 默认执行策略关联设备
+        String[] split = sdStrategyRl.getEquipments().split(",");
+        // 加强照明 基本照明 支持双向执行
+        if (sdStrategy.getDirection().equals(DeviceDirectionEnum.ALl.getCode().toString()) &&
+                (
+                        sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                                sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())
+                )
+        ){
+            split = SpringUtils.getBean(SdStrategyRlMapper.class).selectAllDirectionSdDevListByDevId(split,sdStrategy.getTunnelId(),sdStrategyRl.getEqTypeId());
+
+        }
+
+        for (String devId : split){
+            Map<String,Object> map = new HashMap<>();
+
+            if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
+                map.put("templateId",sdStrategyRl.getState());
+            }
+            map.put("devId",devId);
+            map.put("state",sdStrategyRl.getState());
+            map.put("brightness",sdStrategyRl.getStateNum());
+            map.put("controlType",sdStrategy.getStrategyType());
+            map.put("operIp",InetAddress.getLocalHost().getHostAddress());
+            map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
+            map.put("type","1");
+            map.put("currentId",sdStrategyRl.getId());
+
+            //按照设备初始化默认值
+            //疏散标志
+            if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().toString())) {
+
+                // 1 关闭 2常亮
+                if(sdStrategyRl.getState().equals("1")){
+                    map.put("fireMark","0");
+                    map.put("brightness","0");
+                    map.put("frequency","0");
+                } else if (sdStrategyRl.getState().equals("2")) {
+                    map.put("fireMark","255");
+                    map.put("brightness","50");
+                    map.put("frequency","60");
+                }
+
+            }
+            //诱导灯
+            if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
+                map.put("brightness","50");
+                map.put("frequency","60");
+            }
+            SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }
 }

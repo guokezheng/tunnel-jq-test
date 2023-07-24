@@ -1,5 +1,6 @@
 package com.tunnel.deal.phone.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.DateUtils;
@@ -17,6 +18,7 @@ import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.deal.phone.LdPhoneSpeak;
 import com.tunnel.deal.phone.PhoneSpeak;
 import com.zc.common.core.secret.smutil.SecretUtil;
+import com.zc.common.core.websocket.WebSocketService;
 import org.apache.catalina.manager.util.SessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -108,6 +110,22 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
         sdEvent.setDirection(sdDevices.getDirection());
         sdEventMapper.insertSdEvent(sdEvent);
+        eventSendWeb(sdEvent);
+    }
+
+    /**
+     * 将事件推送到前端
+     *  @param sdEvent
+     */
+    public void eventSendWeb(SdEvent sdEvent){
+        //新增后再查询数据库，返回给前端事件图标等字段
+        SdEvent sdEventData = new SdEvent();
+        sdEventData.setId(sdEvent.getId());
+        List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
+        //新增事件后推送前端  弹出视频
+        JSONObject object = new JSONObject();
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
     }
 
 //    @PostConstruct

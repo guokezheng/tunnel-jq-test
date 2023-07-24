@@ -15,10 +15,14 @@ import com.ruoyi.common.utils.oss.OssUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.business.datacenter.domain.enumeration.*;
+import com.tunnel.business.domain.dataInfo.ExternalSystem;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
+import com.tunnel.business.mapper.dataInfo.ExternalSystemMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
@@ -29,9 +33,11 @@ import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import com.tunnel.business.utils.work.CustomXWPFDocument;
 import com.tunnel.business.utils.work.WorderToNewWordUtils;
+import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +56,8 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Pattern;
@@ -674,6 +682,11 @@ public class SdEventServiceImpl implements ISdEventService {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void eventDemonstrate(String hyData) {
+        protocolAnalysis(hyData);
     }
 
     /**
@@ -2004,5 +2017,171 @@ public class SdEventServiceImpl implements ISdEventService {
             }
         }
         return cls;
+    }
+
+    private void protocolAnalysis(String data) {
+        SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
+        ExternalSystemMapper externalSystemMapper = SpringUtils.getBean(ExternalSystemMapper.class);
+        SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
+        SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
+        SdDeviceDataMapper sdDeviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
+        // 主机地址
+        if ("".equals(data) || data == null) {
+            return;
+        }
+        if (!data.contains("火警") && !data.contains("模块或探头故障") && !data.contains("模块或探头恢复")
+                && !data.contains("全部声光启动") && !data.contains("全部声光停止")) {
+            return;
+        }
+        //拿到的报文就是纯文字的报文，直接进行解析
+        //传输格式例：火警: 1号机1回路3地址 点型感烟   001层 西核彩桥F102     2022-12-27 08:42:18
+        //         事件:+空格+机号+回路号+地址号+空格+设备类型+空格+层号+空格+地理位置+空格+年月日+空格+时分秒
+        if (data.contains(":")) {
+            String alarmType = data.substring(0, data.indexOf(":"));
+
+            data = data.substring(data.indexOf(":") + 2);
+            String host = data.substring(0, data.indexOf("号"));
+            //查询外部系统ID
+            ExternalSystem externalSystem = new ExternalSystem();
+            externalSystem.setSystemName("火灾报警系统");
+            externalSystem.setSystemUrl("100.7.187.7");
+            List<ExternalSystem> externalSystems = externalSystemMapper.selectExternalSystemList(externalSystem);
+            ExternalSystem system = externalSystems.get(0);
+            if (externalSystems.isEmpty()) {
+                return;
+            }
+            Long systemId = system.getId();
+            String address = data.substring(0, data.indexOf("号"));
+            data = data.substring(data.indexOf("机") + 1);
+            String loop = data.substring(0, data.indexOf("回"));
+            data = data.substring(data.indexOf("路") + 1);
+
+            data = data.substring(data.indexOf("址") + 2);
+            String sourceDevice = data.substring(0, data.indexOf(" "));
+            //剩层号后的内容
+//            data = data.substring(data.indexOf(" ") + 1);
+            //剩地理位置后的内容
+//            data = data.substring(data.indexOf(" ") + 1);
+            String alarmTime = data.substring(data.length() - 19);
+            Date now = new Date();
+            try {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                now = format.parse(alarmTime);
+            } catch (Exception e) {
+
+            }
+            //根据火灾报警主机外部系统ID和回路确定是哪一批设备
+            SdDevices devices = new SdDevices();
+            devices.setExternalSystemId(systemId);
+            devices.setExternalDeviceId(loop);
+            List<SdDevices> devicesLists = sdDevicesMapper.selectSdDevicesList(devices);
+            //遍历确定是哪个部件
+            String alarmComponentEqId = "";
+            SdDevices sdDevices = new SdDevices();
+            for (int i = 0; i < devicesLists.size(); i++) {
+                SdDevices component = devicesLists.get(i);
+                String eqFeedbackAddress1 = component.getQueryPointAddress();
+                if (eqFeedbackAddress1.equals(address)) {
+                    alarmComponentEqId = component.getEqId();
+                    sdDevices = component;
+                    break;
+                }
+            }
+            //确定报警类型
+            Long itemId = 0L;
+            //查询当前属于什么事件类型
+            SdEventType sdEventType = new SdEventType();
+            sdEventType.setEventType("火灾");
+            if (sourceDevice.equals("手报")) {
+                sourceDevice = "智能手动报警按钮报警";
+                itemId = Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode());
+            } else if (sourceDevice.equals("探测器")) {
+                sourceDevice = "火焰探测器报警";
+                itemId = Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode());
+            } else if (sourceDevice.equals("声光")) {
+                sourceDevice = "声光报警器报警";
+                itemId = Long.valueOf(DevicesTypeItemEnum.SHENG_GUANG_ALARM.getCode());
+            }
+            Long eventTypeId = 0L;
+            if (sdEventType.getEventType() != null) {
+                List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
+                eventTypeId = sdEventTypes.get(0).getId();
+            }
+            if (eventTypeId == 0) {
+                return;
+            }
+            //事件相关的设备要把数据更新到device_data中
+            SdDeviceData sdDeviceData = new SdDeviceData();
+            sdDeviceData.setDeviceId(sdDevices.getEqId());
+            sdDeviceData.setItemId(itemId);
+            List<SdDeviceData> deviceData = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+            if (deviceData.isEmpty()) {
+                sdDeviceData.setData("1");
+                sdDeviceData.setCreateTime(new Date());
+                sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+            } else {
+                SdDeviceData devData = deviceData.get(0);
+                devData.setUpdateTime(new Date());
+                sdDeviceDataMapper.updateSdDeviceData(devData);
+            }
+            //存储事件到事件表
+            SdEvent sdEvent = new SdEvent();
+            sdEvent.setTunnelId(sdDevices.getEqTunnelId());
+            sdEvent.setEventTypeId(eventTypeId);
+            if (alarmType.contains("故障")) {
+                sdEvent.setEventTitle(sourceDevice + "故障事件");
+            } else {
+                sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
+            }
+            sdEvent.setEventSource("1");
+            //要改
+            sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
+            //事件描述
+            sdEvent.setEventDescription(alarmType);
+            sdEvent.setStakeNum(sdDevices.getPile());
+            if(sdEvent.getStakeNum().contains("ZK")){
+                sdEvent.setDirection("2");
+            }else{
+                sdEvent.setDirection("1");
+            }
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = formatter.format(new Date());
+            sdEvent.setEventTime(dateZh(time));
+            sdEvent.setCreateTime(dateZh(time));
+            sdEventMapper.insertSdEvent(sdEvent);
+            eventSendWeb(sdEvent);
+        } else {
+            return;
+        }
+    }
+
+    public Date dateZh(String timeData){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = null;
+        try {
+            if(timeData != null && !"".equals(timeData)){
+                time = sdf.parse(timeData);
+                return time;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
+    /**
+     * 将事件推送到前端
+     *  @param sdEvent
+     */
+    public void eventSendWeb(SdEvent sdEvent){
+        //新增后再查询数据库，返回给前端事件图标等字段
+        SdEvent sdEventData = new SdEvent();
+        sdEventData.setId(sdEvent.getId());
+        List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
+        //新增事件后推送前端  弹出视频
+        JSONObject object = new JSONObject();
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
     }
 }

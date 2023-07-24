@@ -5,11 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONValidator;
 import com.google.gson.JsonObject;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.datacenter.domain.enumeration.PhoneSpkEnum;
-import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
@@ -21,11 +19,14 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.dataInfo.*;
+import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.phone.LdPhoneSpeak;
 import com.tunnel.deal.phone.PhoneSpeak;
 import com.tunnel.platform.service.SdOptDeviceService;
+import com.zc.common.core.websocket.WebSocketService;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -43,6 +44,8 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.ruoyi.common.utils.DictUtils.getCacheEventKey;
 
 @Service
 public class PhoneSpkService {
@@ -71,6 +74,15 @@ public class PhoneSpkService {
 
     @Autowired
     private SdEventMapper sdEventMapper;
+
+    @Autowired
+    private ISdEventTypeService eventTypeService;
+
+    @Autowired
+    private ISdTunnelsService tunnelsService;
+
+    @Autowired
+    private ISdEventService sdEventService;
 
     /**
      * 从Spring容器中获取设备协议中配置的Class对象
@@ -185,6 +197,10 @@ public class PhoneSpkService {
      * @param jsonObject
      */
     public void onMessage(@RequestBody JSONObject jsonObject) {
+        //所有事件类型Map
+        Map<Long,String> eventTypeMap = eventTypeService.getEventTypeMap();
+        //所有隧道Map
+        Map<String,String> tunnelMap = tunnelsService.getTunnelNameMap();
         // System.out.println("电话广播websocket>>>>>>>>>>>" + jsonObject);
         String data1 = jsonObject.getString("data");
         JSONObject jsonObject1 = JSONObject.parseObject(data1);
@@ -220,7 +236,7 @@ public class PhoneSpkService {
                 deviceDataService.updateDeviceData(device, data, Long.valueOf(itemId));
 
                 //判断设备如果数据杭山东隧道，此处对于接收到的报警信息不做处理。
-                if(!TunnelEnum.HANG_SHAN_DONG.getCode().equals(device.getEqTunnelId()) && PhoneSpkEnum.ANSWERED.equals(data)){
+                if(!TunnelEnum.HANG_SHAN_DONG.getCode().equals(device.getEqTunnelId()) && PhoneSpkEnum.ANSWERED.getCode().equals(data)){
                     SdEventType sdEventType = new SdEventType();
                     sdEventType.setEventType("紧急电话");
                     List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
@@ -229,16 +245,34 @@ public class PhoneSpkService {
                     SdEvent sdEvent = new SdEvent();
                     sdEvent.setTunnelId(device.getEqTunnelId());
                     sdEvent.setEventTypeId(eventTypeId);
-
-                    sdEvent.setEventTitle("紧急电话告警事件");
+                    sdEvent.setEventGrade("1");
+                    sdEvent.setDirection(device.getDirection());
+                    sdEvent.setEventTitle(sdEventService.getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap));
                     sdEvent.setEventSource("2");
-                    sdEvent.setEventState("0");
+                    sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
                     sdEvent.setStakeNum(device.getPile());
-                    sdEvent.setStartTime(new Date().toString());
+                    sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+                    sdEvent.setEventTime(DateUtils.getNowDate());
                     sdEventMapper.insertSdEvent(sdEvent);
+                    eventSendWeb(sdEvent);
                 }
             }
         }
+    }
+
+    /**
+     * 将事件推送到前端
+     *  @param sdEvent
+     */
+    public void eventSendWeb(SdEvent sdEvent){
+        //新增后再查询数据库，返回给前端事件图标等字段
+        SdEvent sdEventData = new SdEvent();
+        sdEventData.setId(sdEvent.getId());
+        List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
+        //新增事件后推送前端  弹出视频
+        JSONObject object = new JSONObject();
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
     }
 
 

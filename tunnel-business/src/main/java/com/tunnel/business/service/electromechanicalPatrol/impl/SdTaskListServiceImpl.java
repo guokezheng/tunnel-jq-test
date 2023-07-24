@@ -1170,6 +1170,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                     String siteDescription = zc.getString("siteDescription"); //巡检描述
                     Date taskEndtime = zc.getDate("taskEndtime"); // 选件完成时间
                     sdTaskList.setSiteDescription(siteDescription);
+                    sdTaskList.setWalkerId(SecurityUtils.getUserId() +"");
+               //     sdTaskList.setTaskCxtime(DateUtils.getTime());
                     sdTaskList.setTaskEndtime(taskEndtime);
                 }
                 // 更新基本信息

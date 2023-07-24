@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdTriggerVo"/>
         where id = #{id}
     </select>
-    <select id="getTriggerInfo"  resultType="hashmap" parameterType="String">
+    <select id="getTriggerInfo"  resultType="hashmap" parameterType="Long">
         SELECT strategy.id,strategy.tunnel_id,main.compare_pattern,strategy.strategy_type,main.compare_value,main.device_type_id,device.device_id,
                rl.state alterState,main.element_id,main.warning_type,eq.pile,eq.eq_direction,eq.eq_type,eq.lane,rl.equipments,strategy.event_type
          FROM sd_strategy strategy
@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
               left join sd_trigger main on main.relate_id = strategy.id
               left join sd_trigger_device device on main.id = device.trigger_id
               left join sd_devices eq on eq.eq_id = device.device_id
-        where strategy.strategy_type='2' and strategy.strategy_state = '0' and main.id = #{id}
+        where strategy.strategy_type='2' and strategy.strategy_state = '0' and main.relate_id = #{id}
     </select>
 
     <select id="selectSdTriggerByRelateId" parameterType="Long" resultMap="SdTriggerResult">

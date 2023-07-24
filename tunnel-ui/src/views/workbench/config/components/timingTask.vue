@@ -5,15 +5,11 @@
     title="定时任务策略"
     :close-on-click-modal="false"
     :visible.sync="visibleSync"
-    width="90%"
+    width="80%"
     :destroy-on-close="true"
     append-to-body
     :before-close="closeLogin"
   >
-    <div class="dialogStyleBox">
-      <div class="dialogLine"></div>
-      <div class="dialogCloseButton"></div>
-    </div>
     <div>
       <div style="margin-left: 30%;margin-top: 15px ;font-size: 19px">
         <div style="float: left;">主策略</div>
@@ -21,146 +17,248 @@
         <div style="margin-left:30px ;float: left;">时间：{{titleHistory1}}</div>
         <div style="margin-left:30px ;float: left;">下修比例：{{titleHistory2}}</div>
       </div>
-      <div>
-        <el-table
-          :data="tableData"
-          style="width: 100%;margin-bottom: 20px;"
-          row-key="id"
-          border
-          default-expand-all
-          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-        >
-          <el-table-column
-            prop="date"
-            label="执行时间"
-            sortable
-            width="180">
-          </el-table-column>
+      <div class="app-container">
+<!--        <el-table-->
+<!--          :data="tableData"-->
+<!--          style="width: 100%;margin-bottom: 20px;"-->
+<!--          row-key="id"-->
+<!--          border-->
+<!--          default-expand-all-->
+<!--          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"-->
+<!--        >-->
+<!--          <el-table-column-->
+<!--            prop="date"-->
+<!--            label="执行时间"-->
+<!--            sortable-->
+<!--            width="180">-->
+<!--          </el-table-column>-->
 
-          <el-table-column prop="name" label="策略名称">
-            <template slot-scope="scope">
-              <span v-if="editingRow === scope.row.id">
-                <el-input v-model="scope.row.strategyName"></el-input>
-              </span>
-              <span v-else>{{ scope.row.strategyName }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="name" label="隧道名称">
-            <template slot-scope="scope">
-              <span v-if="editingRow === scope.row.id">
-                <el-select
-                  style="width: 100%"
-                  v-model="scope.row.tunnelId"
-                  placeholder="请选择隧道"
-                  clearable
-                  @change="changeEvent(scope.row,'1')"
-                >
-                  <el-option
-                    v-for="item in tunnelData"
-                    :key="item.tunnelId"
-                    :label="item.tunnelName"
-                    :value="item.tunnelId"
-                  />
-                </el-select>
-              </span>
-              <span v-else>{{ scope.row.tunnelName }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="direction" label="隧道方向">
-            <template slot-scope="scope">
-              <span v-if="editingRow === scope.row.id">
-               <el-select
-                 clearable
-                 v-model="scope.row.direction"
-                 placeholder="请选择隧道方向"
-                 @change="changeEvent(scope.row,'2')"
-                 style="width: 100%"
-               >
-              <el-option
-                v-for="dict in directionOptions"
-                :key="dict.value"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-              </span>
-              <span v-else>{{ scope.row.dictLabel }}</span>
-            </template>
-          </el-table-column>
+<!--          <el-table-column prop="name" label="策略名称">-->
+<!--            <template slot-scope="scope">-->
+<!--              <span v-if="editingRow === scope.row.id">-->
+<!--                <el-input v-model="scope.row.strategyName"></el-input>-->
+<!--              </span>-->
+<!--              <span v-else>{{ scope.row.strategyName }}</span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column prop="name" label="隧道名称">-->
+<!--            <template slot-scope="scope">-->
+<!--              <span v-if="editingRow === scope.row.id">-->
+<!--                <el-select-->
+<!--                  style="width: 100%"-->
+<!--                  v-model="scope.row.tunnelId"-->
+<!--                  placeholder="请选择隧道"-->
+<!--                  clearable-->
+<!--                  @change="changeEvent(scope.row,'1')"-->
+<!--                >-->
+<!--                  <el-option-->
+<!--                    v-for="item in tunnelData"-->
+<!--                    :key="item.tunnelId"-->
+<!--                    :label="item.tunnelName"-->
+<!--                    :value="item.tunnelId"-->
+<!--                  />-->
+<!--                </el-select>-->
+<!--              </span>-->
+<!--              <span v-else>{{ scope.row.tunnelName }}</span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column prop="direction" label="隧道方向">-->
+<!--            <template slot-scope="scope">-->
+<!--              <span v-if="editingRow === scope.row.id">-->
+<!--               <el-select-->
+<!--                 clearable-->
+<!--                 v-model="scope.row.direction"-->
+<!--                 placeholder="请选择隧道方向"-->
+<!--                 @change="changeEvent(scope.row,'2')"-->
+<!--                 style="width: 100%"-->
+<!--               >-->
+<!--              <el-option-->
+<!--                v-for="dict in directionOptions"-->
+<!--                :key="dict.value"-->
+<!--                :label="dict.dictLabel"-->
+<!--                :value="dict.dictValue"-->
+<!--              />-->
+<!--            </el-select>-->
+<!--              </span>-->
+<!--              <span v-else>{{ scope.row.dictLabel }}</span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
 
-          <el-table-column prop="direction" label="设备类型">
-            <template slot-scope="scope">
-              <span v-if="editingRow === scope.row.id">
-                 <el-select
-                   clearable
-                   v-model="scope.row.equipmentTypeId"
-                   placeholder="请选择设备类型"
-                   @change="equipmenEvent(scope.row)"
-                   style="width: 100%"
-                 >
-                  <el-option
-                    v-for="dict in equipmentTypeData"
-                    :key="dict.value"
-                    :label="dict.keyName"
-                    :value="dict.value"
-                  />
-                </el-select>
-              </span>
-              <span v-else>{{ scope.row.equipmentName }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="address"
-            label="设备资源类型">
-          </el-table-column>
-          <el-table-column
-            prop="eqId"
-            label="指定设备">
-          </el-table-column>
-          <el-table-column
-            prop="controlInstruction"
-            label="控制指令">
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            align="center"
-            class-name="small-padding fixed-width"
-          >
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                class="tableBlueButtton"
-                @click="handleRowEdit(scope)"
-              >编辑
-              </el-button
-              >
-              <el-button
-                size="mini"
-                class="tableBlueButtton"
-                @click="handleRowSave(scope)"
-              >保存
-              </el-button
-              >
-              <el-button
-                size="mini"
-                class="tableBlueButtton"
-                @click="richanghandleUpdate(scope.row)"
-              >执行</el-button
-              >
-              <el-button
-                size="mini"
-                class="tableDelButtton"
-                @click="handleDelete(scope.row)"
-                v-hasPermi="['system:strategy:remove']"
-              >删除
-              </el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+<!--          <el-table-column prop="direction" label="设备类型">-->
+<!--            <template slot-scope="scope">-->
+<!--              <span v-if="editingRow === scope.row.id">-->
+<!--                 <el-select-->
+<!--                   clearable-->
+<!--                   v-model="scope.row.equipmentTypeId"-->
+<!--                   placeholder="请选择设备类型"-->
+<!--                   @change="equipmenEvent(scope.row)"-->
+<!--                   style="width: 100%"-->
+<!--                 >-->
+<!--                  <el-option-->
+<!--                    v-for="dict in equipmentTypeData"-->
+<!--                    :key="dict.value"-->
+<!--                    :label="dict.keyName"-->
+<!--                    :value="dict.value"-->
+<!--                  />-->
+<!--                </el-select>-->
+<!--              </span>-->
+<!--              <span v-else>{{ scope.row.equipmentName }}</span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="address"-->
+<!--            label="设备资源类型">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="eqId"-->
+<!--            label="指定设备">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            prop="controlInstruction"-->
+<!--            label="控制指令">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            label="操作"-->
+<!--            align="center"-->
+<!--            class-name="small-padding fixed-width"-->
+<!--          >-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-button-->
+<!--                size="mini"-->
+<!--                class="tableBlueButtton"-->
+<!--                @click="handleRowEdit(scope)"-->
+<!--              >编辑-->
+<!--              </el-button-->
+<!--              >-->
+<!--              <el-button-->
+<!--                size="mini"-->
+<!--                class="tableBlueButtton"-->
+<!--                @click="handleRowSave(scope)"-->
+<!--              >保存-->
+<!--              </el-button-->
+<!--              >-->
+<!--              <el-button-->
+<!--                size="mini"-->
+<!--                class="tableBlueButtton"-->
+<!--                @click="richanghandleUpdate(scope.row)"-->
+<!--              >执行</el-button-->
+<!--              >-->
+<!--              <el-button-->
+<!--                size="mini"-->
+<!--                class="tableDelButtton"-->
+<!--                @click="handleDelete(scope.row)"-->
+<!--                v-hasPermi="['system:strategy:remove']"-->
+<!--              >删除-->
+<!--              </el-button-->
+<!--              >-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--        </el-table>-->
+<!--        <el-tabs v-model="strategyActive" @tab-click="handleClick">-->
+<!--          <el-tab-pane label="手动控制" name="shoudong">-->
+
+<!--          </el-tab-pane>-->
+<!--          <el-tab-pane label="定时控制" name="dingshi">-->
+
+<!--          </el-tab-pane>-->
+<!--          <el-tab-pane label="自动触发" name="zidong">-->
+
+<!--          </el-tab-pane>-->
+<!--          &lt;!&ndash;                <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>&ndash;&gt;-->
+<!--        </el-tabs>-->
+
 
       </div>
-
+      <el-row>
+        <el-col :span="21" class="tabs-container">
+          <el-tabs  v-model="activeName"
+                    class="tabsBorder">
+            <el-tab-pane v-for="(tab, index) in tabsTimeList" :key="index" :label="tab.label" :closable="editable">
+              <el-form
+                ref="timingControl"
+                :model="strategyForm"
+                :rules="formDataValidator"
+                label-width="100px"
+              >
+                <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="隧道名称" prop="tunnelId">
+                      <el-select
+                        style="width: 100%"
+                        v-model="strategyForm.tunnelId"
+                        placeholder="请选择隧道"
+                        clearable
+                        @change="changeEvent()"
+                      >
+                        <el-option
+                          v-for="item in tunnelData"
+                          :key="item.tunnelId"
+                          :label="item.tunnelName"
+                          :value="item.tunnelId"
+                        />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="隧道方向" prop="direction">
+                      <el-select
+                        clearable
+                        v-model="strategyForm.direction"
+                        placeholder="请选择隧道方向"
+                        @change="changeEvent()"
+                        style="width: 100%"
+                      >
+                        <el-option
+                          v-for="dict in directionOptions"
+                          :key="dict.value"
+                          :label="dict.dictLabel"
+                          :value="dict.dictValue"
+                        />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="24" style="clear:both;">
+                  <el-col :span="24">
+                    <el-form-item label="执行操作">
+                      <div class="menu">
+                        <el-col :span="6">设备资源类型</el-col>
+                        <el-col :span="8">指定设备</el-col>
+                        <el-col :span="8">控制指令</el-col>
+                        <el-col :span="2">操作</el-col>
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
+<!--          <el-button class="add-button" icon="el-icon-plus" @click="handleAddTab"></el-button>-->
+        </el-col>
+        <el-col  :span="3" class="add-button">
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
+            @click="handleSave"
+            v-hasPermi="['monitor:job:remove']"
+          >新增</el-button
+          >
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['monitor:job:remove']"
+          >保存</el-button
+          >
+          <el-button
+            size="mini"
+            class="tableDelButtton"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['monitor:job:remove']"
+          >删除</el-button
+          >
+        </el-col>
+      </el-row>
       <el-radio-group v-model="tabRadio" style="margin: 10px 0"  size="small">
         <el-radio-button size="small" label="data">历史洞内亮度</el-radio-button>
         <el-radio-button size="small" label="trend">历史车辆数</el-radio-button>
@@ -282,6 +380,7 @@ export default {
       titleHistory2:"30%",
       visibleSync:false,
       operationLogDialog:false,
+      loginModel:{},
       tableData: [{
         id: 1,
         date: '2016-05-02',
@@ -372,6 +471,42 @@ export default {
         // checkStrictly: true,
         emitPath: false,
       },
+      //光查询
+      queryParamsLight:{},
+      //光 x  光强
+      XDataLight:[],
+      //光 y  时间
+      yDataLight:[],
+      //光 y  时间
+      yDataLight1:[],
+      //光 y  时间
+      yDataLight2:[],
+      tabsTimeList:[
+        { label: 'Tab 1', content: '内容1' },
+        { label: 'Tab 2', content: '内容2' },
+        { label: 'Tab 3', content: '内容3' },
+        { label: 'Tab 4', content: '内容4' }
+      ],
+      activeName:'',
+      strategyForm:{},//定时策略实体
+      //定时策略限制
+      formDataValidator: {
+        direction: [{ required: true, message: "请选择隧道方向", trigger: "blur" }],
+        tunnelId: [
+          { required: true, message: "请选择隧道", trigger: "change" },
+        ],
+        strategyName: [
+          { required: true, message: "请输入策略名称", trigger: "change" },
+          { max: 50, message: '最长输入50个字符', trigger: 'change' }
+        ],
+        /*    schedulerTime:[
+              { required: true, message: "请输入定时频率", trigger: "change" }
+            ],*/
+        execTime: [
+          { required: true, message: "请选择执行时间", trigger: "change" },
+        ]
+      },
+      editable: true, // 设置选项卡是否可编辑
     }
   },
   mounted() {
@@ -382,33 +517,76 @@ export default {
     this.getTunnels()
     //查询方向
     this.getDirection()
+    //获取光亮的
+    this.getEchartsData()
   },
   methods:{
     //获取光亮的
     getEchartsData() {
-      this.queryParams.deviceId = deviceId;
-      this.queryParams.searchValue = searchValue;
+      this.XDataLight = []
+      this.yDataLight = []
+      this.yDataLight1 = []
+      this.yDataLight2 = []
+      this.queryParamsLight.pageNum = 1;
+      this.queryParamsLight.pageSize = 10;
+      this.queryParamsLight.deviceId = 'JQ-WeiFang-JiuLongYu-HSD-OLT-001';
+      this.queryParamsLight.searchValue = 4;
+      let ds = ['2023-07-22 00:00:00', '2023-07-22 23:59:59']
+      let ds1 = ['2023-07-21 00:00:00', '2023-07-21 23:59:59']
+      let ds2 = ['2023-07-20 00:00:00', '2023-07-20 23:59:59']
+      debugger
         dataLogInfoLineList(
-          this.addDateRange(this.queryParams, this.dateRange)
+          this.addDateRange(this.queryParamsLight, ds)
         ).then((response) => {
+          debugger
           let list1 = response.rows;
-          if (this.searchValue == "1") {
-            this.CO = list1.map((item) => item.CO);
-            this.VI = list1.map((item) => item.VI);
-            this.VITime = list1.map((item) => item.createTime);
-          } else if (this.searchValue == "2") {
-            this.fsData = list1.map((item) => item.FS);
-            this.fsTime = list1.map((item) => item.createTime);
-          } else if (this.searchValue == "3") {
-            this.dnData = list1.map((item) => item.data);
-            this.dnTime = list1.map((item) => item.createTime);
-          } else {
-            this.dwData = list1.map((item) => item.data);
-            this.dwTime = list1.map((item) => item.createTime);
+          for (let i = 0; i < list1.length; i++) {
+            this.XDataLight.push(list1[i].createTime)
+            this.yDataLight.push(list1[i].data)
           }
-          this.loading = false;
-          this.initChart();
+          console.log(this.XDataLight)
+          console.log(this.XDataLight)
+          debugger
+          // setTimeout(() => {
+          //   this.$nextTick(() => {
+          //     this.initChart();
+          //   });
+          // }, 500);
         });
+      dataLogInfoLineList(
+        this.addDateRange(this.queryParamsLight, ds1)
+      ).then((response) => {
+        debugger
+        let list1 = response.rows;
+        for (let i = 0; i < list1.length; i++) {
+          this.yDataLight1.push(list1[i].data)
+        }
+        console.log(this.XDataLight)
+        console.log(this.XDataLight)
+        debugger
+        // setTimeout(() => {
+        //   this.$nextTick(() => {
+        //     this.initChart();
+        //   });
+        // }, 500);
+      });
+      dataLogInfoLineList(
+        this.addDateRange(this.queryParamsLight, ds2)
+      ).then((response) => {
+        debugger
+        let list1 = response.rows;
+        for (let i = 0; i < list1.length; i++) {
+          this.yDataLight2.push(list1[i].data)
+        }
+        console.log(this.XDataLight)
+        console.log(this.XDataLight)
+        debugger
+        setTimeout(() => {
+          this.$nextTick(() => {
+            this.initChart();
+          });
+        }, 500);
+      });
     },
     /** 查询隧道列表 */
     getTunnels() {
@@ -647,7 +825,7 @@ export default {
           xAxis: {
             type: "category",
             boundaryGap: true,
-            data: this.XData,
+            data: this.XDataLight,
             axisLabel: {
               textStyle: {
                 color: "#00AAF2",
@@ -703,7 +881,7 @@ export default {
                 },
               },
               smooth: true,
-              data: this.yData1,
+              data: this.yDataLight,
             },
             {
               name: "昨天光强",
@@ -717,7 +895,7 @@ export default {
                 },
               },
               smooth: true,
-              data: this.yData2,
+              data: this.yDataLight1,
             },
             {
               name: "今天光强",
@@ -731,7 +909,7 @@ export default {
                 },
               },
               smooth: true,
-              data: this.yData3,
+              data: this.yDataLight2,
             },
           ],
         };
@@ -789,6 +967,10 @@ export default {
         endValue: ''
       }
       this.formItems.push(form)
+    },
+    handleSave(){
+      let tabsTime = {label: 'Tab 6', content: '内容6'  }
+      this.tabsTimeList.push(tabsTime)
     }
   },
   props:{
@@ -799,7 +981,9 @@ export default {
       handler(newValue, oldValue){
         debugger
         this.visibleSync = !this.visibleSync
-        this.initChart();
+        //获取光亮的
+        this.getEchartsData()
+        // this.initChart();
         this.initChart1();
       }
     },
@@ -925,5 +1109,8 @@ export default {
   background: transparent;
   border: 1px solid transparent;
   background-color: red;
+}
+.tabsBorder{
+  width: 100%;
 }
 </style>

@@ -297,42 +297,15 @@
             label-width="110px"
           >
             <el-row>
+
               <el-col :span="8">
-                <el-form-item label="派单人员" prop="dispatcher">
-                  <el-select
-                    v-model="form.dispatcher"
-                    disabled="disabled"
-                    placeholder="默认当前登录人"
+                <el-form-item label="任务名称" prop="taskName">
+                  <el-input
+                    type="text"
+                    placeholder="请输入内容"
+                    v-model="form.taskName"
                   >
-                    <el-option
-                      v-for="item in userListData"
-                      :key="item.userId"
-                      :label="item.nickName"
-                      :value="item.userId"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-                <!--                <el-form-item label="派单人员" prop="dispatcher">
-                                  <el-input
-                                    ref="dispatcher"
-                                    disabled="disabled"
-                                    v-model="form.dispatcher"
-                                    placeholder="（默认当前登录人）"
-                                  ></el-input>
-                                </el-form-item>-->
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="派单时间" prop="dispatchTime">
-                  <el-date-picker
-                    clearable
-                    size="small"
-                    disabled="disabled"
-                    v-model="form.dispatchTime"
-                    type="datetime"
-                    value-format="yyyy-MM-dd hh:mm:ss"
-                    placeholder="选择派单时间"
-                  >
-                  </el-date-picker>
+                  </el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -368,6 +341,44 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
+                <el-form-item label="派单人员" prop="dispatcher">
+                  <el-select
+                    v-model="form.dispatcher"
+                    disabled="disabled"
+                    placeholder="默认当前登录人"
+                  >
+                    <el-option
+                      v-for="item in userListData"
+                      :key="item.userId"
+                      :label="item.nickName"
+                      :value="item.userId"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <!--                <el-form-item label="派单人员" prop="dispatcher">
+                                          <el-input
+                                            ref="dispatcher"
+                                            disabled="disabled"
+                                            v-model="form.dispatcher"
+                                            placeholder="（默认当前登录人）"
+                                          ></el-input>
+                                        </el-form-item>&ndash;&gt;-->
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="派单时间" prop="dispatchTime">
+                  <el-date-picker
+                    clearable
+                    size="small"
+                    disabled="disabled"
+                    v-model="form.dispatchTime"
+                    type="datetime"
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    placeholder="选择派单时间"
+                  >
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
                 <el-form-item label="预完成时" prop="endPlantime">
                   <el-date-picker
                     clearable
@@ -381,16 +392,6 @@
                     @focus="focus"
                   >
                   </el-date-picker>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="任务名称" prop="taskName">
-                  <el-input
-                    type="text"
-                    placeholder="请输入内容"
-                    v-model="form.taskName"
-                  >
-                  </el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="24">
@@ -737,6 +738,10 @@
             <div>任务编号：</div>
             <span>{{ item.id }}</span>
           </el-col>
+          <el-col :span="8" style="display:inline-block">
+            <div style="display:inline-block">任务名称：</div>
+            <span style="width: calc(100% - 110px);display:inline-flex">{{ item.taskName }}</span>
+          </el-col>
           <!--          <el-col :span="8">
             <div>所属单位：</div>
             <span>{{ item.zzjgId }}</span>
@@ -746,10 +751,6 @@
             <span>{{ item.bzName }}</span>
           </el-col>
           <el-col :span="8">
-            <div>预完成时：</div>
-            <span>{{ item.endPlantime }}</span>
-          </el-col>
-          <el-col :span="8">
             <div>派单人员：</div>
             <span>{{ item.dispatcher }}</span>
           </el-col>
@@ -757,9 +758,9 @@
             <div>派单时间：</div>
             <span>{{ item.dispatchTime }}</span>
           </el-col>
-          <el-col :span="8" style="display:inline-block">
-            <div style="display:inline-block">任务名称：</div>
-            <span style="width: calc(100% - 110px);display:inline-flex">{{ item.taskName }}</span>
+          <el-col :span="8">
+            <div>预完成时：</div>
+            <span>{{ item.endPlantime }}</span>
           </el-col>
           <el-col :span="24" style="display:inline-block">
             <div style="display:inline-block">任务描述：</div>
@@ -792,10 +793,7 @@
             </el-col>-->
         </el-row>
         <el-row style="margin-left: 2em; margin-top: 10px">
-          <el-col :span="8">
-            <div>设备描述：</div>
-            <span>{{ pat.eqFaultDescription }}</span>
-          </el-col>
+
           <el-col :span="8">
             <div>外观情况：</div>
             <span>{{ pat.impression }}</span>
@@ -819,6 +817,10 @@
           <el-col :span="8">
             <div>设备运行状态：</div>
             <span>{{ pat.runStatus }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>设备描述：</div>
+            <span>{{ pat.eqFaultDescription }}</span>
           </el-col>
           <el-col>
             <div style="width:12%">现场情况照片：</div>

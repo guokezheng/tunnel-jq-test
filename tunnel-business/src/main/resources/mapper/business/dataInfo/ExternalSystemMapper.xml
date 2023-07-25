@@ -34,12 +34,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="password != null  and password != ''"> and password = #{password}</if>
             <if test="networkStatus != null  and networkStatus != ''"> and network_status = #{networkStatus}</if>
             <if test="searchValue != null  and searchValue != ''"> and CONCAT(system_name,system_url) LIKE CONCAT('%',#{searchValue},'%')</if>
-            <if test="tunnelId != null and tunnelId != ''"> and tunnel_id = #{tunnelId} </if>
+            <if test="tunnelId != null and tunnelId != ''"> and tunnel_id LIKE CONCAT('%',#{tunnelId},'%') </if>
             <if test="systemUrl != null  and systemUrl != ''"> and system_url = #{systemUrl}</if>
             <if test="systemName != null and systemName != ''"> and system_name = #{systemName} </if>
         </where>
         order by create_time desc
     </select>
+
+
 
     <select id="selectExternalSystemById" parameterType="Long" resultMap="ExternalSystemResult">
         <include refid="selectExternalSystemVo"/>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.energyManagement.EnergySjfxElectricityMapper">
+
+    <select id="getSiteByDateType" resultType="com.tunnel.business.domain.energyManagement.ElectricityData">
+        select es.tunnel_id id,es.energy_value value,CASE es.statistics_type
+        WHEN 0 THEN DATE_FORMAT(es.create_time,'%Y-%m-%d %H')
+        WHEN 1 THEN DATE_FORMAT(es.create_time,'%Y-%m-%d')
+        WHEN 2 THEN DATE_FORMAT(es.create_time,'%Y-%m') END AS rt,st.tunnel_name name from energy_site es
+        left join sd_tunnels st on es.tunnel_id = st.tunnel_id
+        where es.tunnel_id in
+        <foreach collection="codeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and es.statistics_type = #{statisticsType}
+        and es.create_time &gt;= STR_TO_DATE(#{statisticsDate},
+        <choose>
+            <when test="statisticsType == 0">'%Y-%m-%d'</when>
+            <when test="statisticsType == 1">'%Y-%m'</when>
+            <when test="statisticsType == 2">'%Y'</when>
+        </choose>
+        )
+        and es.create_time &lt;STR_TO_DATE(
+        date_add( #{statisticsDate},
+        <choose>
+            <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
+            <when test="statisticsType == 1"> interval 1 month), '%Y-%m'</when>
+            <when test="statisticsType == 2"> interval 1 year), '%Y'</when>
+        </choose>
+        )
+
+
+    </select>
+
+
+    <select id="getItemizedEnergyByDateType" resultType="com.tunnel.business.domain.energyManagement.ElectricityData">
+        select ei.itemized_code id,ei.energy_value value,CASE ei.statistics_type
+        WHEN 0 THEN DATE_FORMAT(ei.create_time,'%Y-%m-%d %H')
+        WHEN 1 THEN DATE_FORMAT(ei.create_time,'%Y-%m-%d')
+        WHEN 2 THEN DATE_FORMAT(ei.create_time,'%Y-%m') END AS rt,eci.itemized_name name from energy_item ei
+        left join energy_configcenter_itemized eci on ei.itemized_code = eci.itemized_code
+        where ei.itemized_code in
+        <foreach collection="codeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and ei.tunnel_id in
+        <foreach collection="childCodeList" item="item1" open="(" close=")" separator=",">
+            #{item1}
+        </foreach>
+        and ei.statistics_type = #{statisticsType}
+        and ei.create_time &gt;= STR_TO_DATE(#{statisticsDate},
+        <choose>
+            <when test="statisticsType == 0">'%Y-%m-%d'</when>
+            <when test="statisticsType == 1">'%Y-%m'</when>
+            <when test="statisticsType == 2">'%Y'</when>
+        </choose>
+        )
+        and ei.create_time &lt;STR_TO_DATE(
+        date_add( #{statisticsDate},
+        <choose>
+            <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
+            <when test="statisticsType == 1"> interval 1 month), '%Y-%m'</when>
+            <when test="statisticsType == 2"> interval 1 year), '%Y'</when>
+        </choose>
+        )
+
+
+    </select>
+
+
+    <select id="getElectricityListByClass" resultType="com.tunnel.business.domain.energyManagement.ElectricityData">
+        select ei.classification_code id,ei.energy_value value,CASE ei.statistics_type
+        WHEN 0 THEN DATE_FORMAT(ei.create_time,'%Y-%m-%d %H')
+        WHEN 1 THEN DATE_FORMAT(ei.create_time,'%Y-%m-%d')
+        WHEN 2 THEN DATE_FORMAT(ei.create_time,'%Y-%m') END AS rt,eci.classification_name name from energy_classification ei
+        left join energy_configcenter_classification eci on ei.classification_code = eci.classification_code
+        where ei.classification_code in
+        <foreach collection="codeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and ei.tunnel_id in
+        <foreach collection="childCodeList" item="item1" open="(" close=")" separator=",">
+            #{item1}
+        </foreach>
+        and ei.statistics_type = #{statisticsType}
+        and ei.create_time &gt;= STR_TO_DATE(#{statisticsDate},
+        <choose>
+            <when test="statisticsType == 0">'%Y-%m-%d'</when>
+            <when test="statisticsType == 1">'%Y-%m'</when>
+            <when test="statisticsType == 2">'%Y'</when>
+        </choose>
+        )
+        and ei.create_time &lt;STR_TO_DATE(
+        date_add( #{statisticsDate},
+        <choose>
+            <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
+            <when test="statisticsType == 1"> interval 1 month), '%Y-%m'</when>
+            <when test="statisticsType == 2"> interval 1 year), '%Y'</when>
+        </choose>
+        )
+
+
+    </select>
+
+    <select id="getEnergyTrackList" resultType="com.tunnel.business.domain.energyManagement.EnergyDayparting">
+        select ef.source source,ef.target target,ef.value value from energy_footprint ef
+        where ef.tunnel_id in
+        <foreach collection="codeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+
+        and ef.statistics_type = #{statisticsType}
+        and ef.create_time &gt;= STR_TO_DATE(#{baseTime},
+        <choose>
+            <when test="statisticsType == 0">'%Y-%m-%d'</when>
+            <when test="statisticsType == 1">'%Y-%m'</when>
+            <when test="statisticsType == 2">'%Y'</when>
+        </choose>
+        )
+        and ef.create_time &lt;STR_TO_DATE(
+        date_add( #{baseTime},
+        <choose>
+            <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
+            <when test="statisticsType == 1"> interval 1 month), '%Y-%m'</when>
+            <when test="statisticsType == 2"> interval 1 year), '%Y'</when>
+        </choose>
+        )
+
+
+    </select>
+
+    <select id="test" resultType="com.tunnel.business.domain.energyManagement.EnergySjfx">
+        select tunnel_id tunnelId,energy_value energyValue,statistics_type statisticsType,create_time createTime from energy_site
+
+    </select>
+
+
+
+
+    <select id="getEnergyDayparting" resultType="com.tunnel.business.domain.energyManagement.EnergyDayparting">
+        select ef.tunnel_id tunnelId,st.tunnel_id tunnelName,ef.jValue jValue,ef.fValue fValue,ef.pValue pValue,ef.gValue gValue,ef.sValue sValue
+        from energy_dayparting ef left join sd_tunnels st on ef.tunnel_id = st.tunnel_id
+        where ef.tunnel_id in
+        <foreach collection="deptCodeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+
+        and ef.statistics_type = #{statisticsType}
+        and ef.create_time &gt;= STR_TO_DATE(#{baseTime},
+        <choose>
+            <when test="statisticsType == 0">'%Y-%m-%d'</when>
+            <when test="statisticsType == 1">'%Y-%m'</when>
+            <when test="statisticsType == 2">'%Y'</when>
+        </choose>
+        )
+        and ef.create_time &lt;STR_TO_DATE(
+        date_add( #{baseTime},
+        <choose>
+            <when test="statisticsType == 0"> INTERVAL 1 DAY ) , '%Y-%m-%d'</when>
+            <when test="statisticsType == 1"> interval 1 month), '%Y-%m'</when>
+            <when test="statisticsType == 2"> interval 1 year), '%Y'</when>
+        </choose>
+        )
+
+
+    </select>
+
+
+
+    <select id="getListOfYear" resultType="com.tunnel.business.domain.energyManagement.EnergyConfigcenterElectricityPrice">
+    select id id,unit_price2 unitPrice2,unit_price3 unitPrice3,unit_price4 unitPrice4,unit_price5 unitPrice5,unit_price6 unitPrice6
+    ,jian_cof jianCof,feng_cof fengCof,gu_cof guCof,shen_cof shenCof,month month
+    from energy_configcenter_electricity_price where year(STR_TO_DATE(`month`,'%Y-%m-%d')) = year(#{createTime}) order by `month` desc
+  </select>
+
+
+    <select id="getListOfMonth" resultType="com.tunnel.business.domain.energyManagement.EnergyConfigcenterElectricityPrice">
+    select id id,unit_price2 unitPrice2,unit_price3 unitPrice3,unit_price4 unitPrice4,unit_price5 unitPrice5,unit_price6 unitPrice6
+    ,jian_cof jianCof,feng_cof fengCof,gu_cof guCof,shen_cof shenCof,month month
+     from energy_configcenter_electricity_price where `month` = DATE_FORMAT(#{month}, '%Y-%m')
+  </select>
+
+    <select id="getInfoByLastMonth" resultType="com.tunnel.business.domain.energyManagement.EnergyConfigcenterElectricityPrice">
+    select id id,unit_price2 unitPrice2,unit_price3 unitPrice3,unit_price4 unitPrice4,unit_price5 unitPrice5,unit_price6 unitPrice6
+    ,jian_cof jianCof,feng_cof fengCof,gu_cof guCof,shen_cof shenCof,month month
+     from energy_configcenter_electricity_price order by `month` desc limit 1
+  </select>
+
+
+
+</mapper>

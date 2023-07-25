@@ -323,7 +323,33 @@
     <select id="selectTunnelList" resultMap="SdTunnelsResult">
         select * from  sd_tunnels t where 1=1 and poll= '0'
         AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
-        and t.tunnel_id = #{tunnelId}
+        <if test="tunnelId != null and tunnelId != ''">
+            and t.tunnel_id = #{tunnelId}
+        </if>
+
+    </select>
+
+
+    <select id="selectSiteTunnelList" resultMap="SdTunnelsResult">
+        select * from  sd_tunnels t where 1=1 and poll= '0'
+        AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+        <if test="deptName != null and deptName != ''">
+            and t.tunnel_name like concat('%', #{deptName}, '%')
+        </if>
+
+    </select>
+
+
+
+
+    <select id="getChildCodeList" resultMap="SdTunnelsResult">
+        select * from sd_tunnels where dept_id in(
+        select dept_id from sys_dept WHERE
+        dept_id = #{deptCode} OR dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptCode}, ancestors) )
+        )
+        union all(
+        select * from sd_tunnels where tunnel_id = #{deptCode}
+        )
     </select>
 
     <select id="getJlyTunnel" resultType="com.tunnel.business.domain.dataInfo.SdTunnels">

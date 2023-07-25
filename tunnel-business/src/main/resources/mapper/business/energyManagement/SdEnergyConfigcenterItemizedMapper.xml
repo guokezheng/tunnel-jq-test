@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.energyManagement.SdEnergyConfigcenterItemizedMapper">
+    <resultMap type="EnergyConfigcenterItemized" id="EnergyConfigcenterItemizedResult">
+        <result property="id"    column="id"    />
+        <result property="itemizedName"    column="itemized_name"    />
+        <result property="itemizedCode"    column="itemized_code"    />
+        <result property="parentCode"    column="parent_code"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+
+    <insert id="insertEnergyItemData" parameterType="java.util.List">
+        insert  into energy_configcenter_itemized
+        (itemized_name,itemized_code,parent_code,remark,create_by,create_time)
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+        (#{item.itemizedName},#{item.itemizedCode},#{item.parentCode},#{item.remark},#{item.createBy},#{item.createTime})
+        </foreach>
+    </insert>
+
+
+    <delete id="deleteEnergyItemData" parameterType="String">
+        delete from energy_configcenter_itemized where itemized_code = #{itemizedCode}
+    </delete>
+
+
+    <select id="getEnergyItemData"  resultMap="EnergyConfigcenterItemizedResult">
+       select * from energy_configcenter_itemized
+        where itemized_code in
+        <foreach collection="codeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+
+
+    <select id="selectItemizedList" parameterType="EnergyConfigcenterItemized" resultMap="EnergyConfigcenterItemizedResult">
+        SELECT
+        i.id,
+        i.itemized_name,
+        i.itemized_code,
+        i.parent_code,
+        i.remark,
+        i.create_by,
+        i.create_time,
+        i.update_by,
+        i.update_time
+        FROM
+        energy_configcenter_itemized i
+        <where>
+            <if test="itemizedName != null  and itemizedName != ''"> and i.itemized_name like concat('%', #{itemizedName}, '%')</if>
+            <if test="itemizedCode != null  and itemizedCode != ''"> and i.itemized_code = #{itemizedCode}</if>
+            <if test="parentCode != null  and parentCode != ''"> and i.parent_code = #{parentCode}</if>
+        </where>
+    </select>
+
+
+    <update id="updateEnergyItemizedData" parameterType="list">
+        <foreach collection="list" item="item" index="index" >
+            update energy_configcenter_itemized
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.itemizedName != null">itemized_name = #{item.itemizedName},</if>
+                <if test="item.parentCode != null">parent_code = #{item.parentCode},</if>
+                update_time = now(),
+            </trim>
+            where itemized_code = #{item.itemizedCode};
+        </foreach>
+    </update>
+
+
+
+
+</mapper>

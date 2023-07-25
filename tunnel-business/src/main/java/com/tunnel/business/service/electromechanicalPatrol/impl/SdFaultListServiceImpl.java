@@ -386,8 +386,8 @@ public class SdFaultListServiceImpl implements ISdFaultListService
      * @return
      */
     @Override
-    public List<SdFaultList> getFaultList(String tunnelId, String faultLevel) {
-        return sdFaultListMapper.getFaultList1(tunnelId,faultLevel);
+    public List<SdFaultList> getFaultList(String tunnelId, String faultLevel,String searchValue,String eqType) {
+        return sdFaultListMapper.getFaultList1(tunnelId,faultLevel,searchValue,eqType);
     }
 
     @Override

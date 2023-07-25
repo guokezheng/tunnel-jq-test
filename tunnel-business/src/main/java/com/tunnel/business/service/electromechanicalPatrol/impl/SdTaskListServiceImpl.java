@@ -1199,7 +1199,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                         // ? 缺个巡查时间 xcTime
                         sdPatrolList.setEqStatus(patrolJSON.getString("eqStatus"));
                         sdPatrolList.setRunStatus(patrolJSON.getString("runStatus"));
-                        sdPatrolList.setXcTime(patrolJSON.getDate("xcTime"));
+                       // sdPatrolList.setXcTime(patrolJSON.getDate("xcTime"));
 
                         sdPatrolList.setEqFaultCode(patrolJSON.getString("eqFaultCode"));
                         sdPatrolList.setEqFaultDescription(patrolJSON.getString("eqFaultDescription"));
@@ -1209,6 +1209,13 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 
                         sdPatrolListMapper.updateSdPatrolList(sdPatrolList);
                     }
+
+                    SdTaskOpt sdTaskOpt = new SdTaskOpt();
+                    sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
+                    sdTaskOpt.setTaskId(sdTaskList.getId());
+                    sdTaskOpt.setOptType(OptType.TIJIAO.getCode());
+                    sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
+                    sdTaskListMapper.insertTaskOpt(sdTaskOpt);
                 }else{
                     error.add(id);
                 }

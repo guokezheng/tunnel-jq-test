@@ -2898,6 +2898,7 @@ export default {
     },
     //拆分拼接数据
     splitData(item) {
+      console.log(item,"item")
       item = item.replace(/\s*/g, "");
       let ago = item.substring(0, item.indexOf("右"));
       let after = item.substring(item.indexOf("右"), item.length);
@@ -3458,6 +3459,7 @@ export default {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
             bigType = item.bigType
             this.resetCanvasFlag = true;
+            console.log(item,"item")
             this.$refs.dragImgDom.style.left = -item.position.left + 864 + "px";
             // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
@@ -4301,7 +4303,7 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
-      debugger
+      // debugger
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
@@ -4766,6 +4768,7 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
+      this.resetCanvas()
       const loading = this.$loading({
         lock: true,
         text: "Loading",

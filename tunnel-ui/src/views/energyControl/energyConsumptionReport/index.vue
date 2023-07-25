@@ -39,6 +39,23 @@
             ></itemized-tree>
           </el-card>
         </el-tab-pane>
+        <el-tab-pane label="分类用能" name="four">
+          <el-card class="my-card-height left_tree" shadow="never">
+            <department-select3
+              @getTreeFirst="getFirstId3"
+              @getTree="clickTree3"
+              @clearTree="clearTree3"
+              class="top_select"
+            ></department-select3>
+            <classification-tree
+              @nodeCheck="handleCheckChange4"
+              @defaultCheck="defaultCheckLoop4"
+              :show_checkbox="true"
+              :default_check_first="true"
+              height="calc(100vh - 320px)"
+            ></classification-tree>
+          </el-card>
+        </el-tab-pane>
       </el-tabs>
     </el-row>
     <el-row :gutter="20" style="width: 83%; float: right">
@@ -113,6 +130,7 @@
               style="width: 100%"
               ref="multipleTable"
               height="100%"
+              class="allTable"
             >
               <el-table-column
                 fixed="left"
@@ -190,16 +208,18 @@
   
   <script>
 import * as echarts from "echarts";
-//   import { getElectricityReportList } from '@/api/analysis/energyAnalyze'
 import { mapState } from "vuex";
 
 import departmentSelect2 from "@/views/components/department";
 import ItemizedTree from "@/views/components/itemizedTree";
 import SiteTree from "@/views/components/siteTree";
+import departmentSelect3 from '@/views/components/department/index3.vue'
+import ClassificationTree from '@/views/components/classificationTree'
+import { getElectricityReportList } from '@/api/energy/api'
 
 export default {
   name: "Online",
-  components: { ItemizedTree, SiteTree, departmentSelect2 },
+  components: { ItemizedTree, SiteTree, departmentSelect2, departmentSelect3, ClassificationTree },
   data() {
     return {
       setDateRange: {
@@ -254,7 +274,7 @@ export default {
       siteIdItemized: null, //分项站点id
       siteIdClass: null, //分类站点id
 
-      tableName: "回路名称",
+      tableName: "站点名称",
     };
   },
   computed: {
@@ -266,12 +286,14 @@ export default {
     /******站点******/
     //默认选中回路回调
     defaultCheckLoop(keys) {
+      console.log(keys, "keys1111");
       this.loopIds = keys;
       if (this.activeName === "second") this.getData();
     },
     //节点选中状态发生变化时的回调
     handleCheckChange(data, checked) {
       this.loopIds = checked.checkedKeys; //选中回路的id
+      console.log(this.loopIds, "this.loopIds11111");
       this.getData();
     },
 
@@ -308,12 +330,14 @@ export default {
     /******分项******/
     //默认选中回路回调
     defaultCheckLoop3(keys) {
+      console.log(keys, "keys");
       this.loopIds3 = keys;
       if (this.activeName === "third") this.getData();
     },
     //节点选中状态发生变化时的回调
     handleCheckChange3(data, checked) {
       this.loopIds3 = checked.checkedKeys; //选中回路的id
+      console.log(this.loopIds3, "this.loopIds3");
       this.getData();
     },
     // 获取初始站点id
@@ -334,10 +358,10 @@ export default {
 
     /******分类******/
     //默认选中回路回调
-    //   defaultCheckLoop4(keys) {
-    //     this.loopIds4 = keys
-    //     if (this.activeName === 'four') this.getData()
-    //   },
+      defaultCheckLoop4(keys) {
+        this.loopIds4 = keys
+        if (this.activeName === 'four') this.getData()
+      },
     //节点选中状态发生变化时的回调
     handleCheckChange4(data, checked) {
       this.loopIds4 = checked.checkedKeys; //选中回路的id
@@ -400,7 +424,7 @@ export default {
       this.getData();
     },
     //查询
-    getData() {
+    async getData() {
       if (this.activeName === "second") {
         // console.log(11, this.loopIds)
         this.clearData();
@@ -423,18 +447,18 @@ export default {
         this.queryParams.type = this.tabType;
         this.queryParams.tabType = 1;
         this.queryParams.deptCode = "null";
-
+        console.log(this.queryParams,"this.queryParams")
         // 接口请求
-        //   const res = await getElectricityReportList(this.queryParams)
-        //   if (res.code === 200) {
-        //     console.log(res)
-        //     this.list1 = res.data
-        //     this.$nextTick(() => {
-        //       //清除选中行
-        //       this.$refs.multipleTable.doLayout()
-        //     })
-        //     this.loading = false
-        //   }
+          const res = await getElectricityReportList(this.queryParams)
+          if (res.code === 200) {
+            console.log(res,"second")
+            this.list1 = res.data
+            this.$nextTick(() => {
+              //清除选中行
+              this.$refs.multipleTable.doLayout()
+            })
+            // this.loading = false
+          }
         this.openChart();
       }
       // else if (this.activeName === 'first') {
@@ -513,61 +537,61 @@ export default {
         this.queryParams.deptCode = this.siteIdItemized;
 
         // 接口请求
-        //   const res = await getElectricityReportList(this.queryParams)
-        //   if (res.code === 200) {
-        //     console.log(res)
-        //     this.list1 = res.data
-        //     this.$nextTick(() => {
-        //       //清除选中行
-        //       this.$refs.multipleTable.doLayout()
-        //     })
-        //     this.loading = false
-        //   }
+          const res = await getElectricityReportList(this.queryParams)
+          if (res.code === 200) {
+            console.log(res)
+            this.list1 = res.data
+            this.$nextTick(() => {
+              //清除选中行
+              this.$refs.multipleTable.doLayout()
+            })
+            this.loading = false
+          }
         this.openChart();
       }
-      // else if (this.activeName === 'four') {
-      //   // console.log(this.loopIds4)
-      //   this.clearData()
-      //   if (!this.siteIdClass) {
-      //     this.$message({
-      //       showClose: true,
-      //       message: '请选择归属部门',
-      //       type: 'warning',
-      //       duration: 1500
-      //     })
-      //     return
-      //   }
-      //   //校验参数
-      //   if (this.loopIds4.length === 0) {
-      //     this.$message({
-      //       showClose: true,
-      //       message: '至少选择一条回路',
-      //       type: 'warning',
-      //       duration: 1500
-      //     })
-      //     return
-      //   }
-      //   this.loading = true
-      //   // 参数
-      //   this.queryParams.codeList = this.loopIds4.filter(e => e != null).join(',')
-      //   this.queryParams.baseTime = this.parseTime(this.base_date)
-      //   this.queryParams.type = this.tabType
-      //   this.queryParams.tabType = 4
-      //   this.queryParams.deptCode = this.siteIdClass
+      else if (this.activeName === 'four') {
+        // console.log(this.loopIds4)
+        this.clearData()
+        if (!this.siteIdClass) {
+          this.$message({
+            showClose: true,
+            message: '请选择归属部门',
+            type: 'warning',
+            duration: 1500
+          })
+          return
+        }
+        //校验参数
+        if (this.loopIds4.length === 0) {
+          this.$message({
+            showClose: true,
+            message: '至少选择一条回路',
+            type: 'warning',
+            duration: 1500
+          })
+          return
+        }
+        this.loading = true
+        // 参数
+        this.queryParams.codeList = this.loopIds4.filter(e => e != null).join(',')
+        this.queryParams.baseTime = this.parseTime(this.base_date)
+        this.queryParams.type = this.tabType
+        this.queryParams.tabType = 4
+        this.queryParams.deptCode = this.siteIdClass
 
-      //   // 接口请求
-      // //   const res = await getElectricityReportList(this.queryParams)
-      // //   if (res.code === 200) {
-      // //     console.log(res)
-      // //     this.list1 = res.data
-      // //     this.$nextTick(() => {
-      // //       //清除选中行
-      // //       this.$refs.multipleTable.doLayout()
-      // //     })
-      // //     this.loading = false
-      // //   }
-      // //   this.openChart()
-      // }
+        // 接口请求
+        const res = await getElectricityReportList(this.queryParams)
+        if (res.code === 200) {
+          console.log(res)
+          this.list1 = res.data
+          this.$nextTick(() => {
+            //清除选中行
+            this.$refs.multipleTable.doLayout()
+          })
+          this.loading = false
+        }
+        this.openChart()
+      }
     },
     // 清空数据
     clearData() {
@@ -643,6 +667,7 @@ export default {
             showAllSymbol: true,
             symbolSize: 8,
             data: n.value,
+            color:"#0090D8"
           });
           this.xData = n.rt;
         }
@@ -705,7 +730,7 @@ export default {
               alignWithLabel: true,
             },
             axisLabel: {
-              color: "#919191",
+              color: "#fff",
             },
             data: this.xData,
           },
@@ -719,7 +744,7 @@ export default {
               },
             },
             axisLabel: {
-              color: "#919191",
+              color: "#fff",
             },
           },
           series: this.seriesData,

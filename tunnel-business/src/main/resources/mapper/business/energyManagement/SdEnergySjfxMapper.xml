@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.energyManagement.SdEnergyDataMapper">
+    <resultMap type="EnergySjfx" id="EnergySiteResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="energyValue"    column="energy_value"    />
+        <result property="classificationCode"    column="classification_code"    />
+        <result property="itemizedCode"    column="itemized_code"    />
+        <result property="statisticsType"    column="statistics_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+
+    <resultMap type="EnergyDayparting" id="EnergyDaypartingResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="jValue"    column="jValue"    />
+        <result property="fValue"    column="fValue"    />
+        <result property="pValue"    column="pValue"    />
+        <result property="sValue"    column="sValue"    />
+        <result property="gValue"    column="gValue"    />
+        <result property="value"    column="value"    />
+        <result property="target"    column="target"    />
+        <result property="source"    column="source"    />
+        <result property="statisticsType"    column="statistics_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+
+
+
+
+    <select id="getEnergySiteData"  resultMap="EnergySiteResult">
+       select * from energy_site  where
+        <foreach collection="list" item="item" separator="OR" index="index">
+            (
+            1 = 1
+            <if test="item.tunnelId != null">
+                AND tunnel_id = #{item.tunnelId}
+            </if>
+            <if test="item.statisticsType != null and item.statisticsType != ''">
+                AND statistics_type = #{item.statisticsType}
+            </if>
+            <if test="item.createTime != null">
+                AND create_time = #{item.createTime}
+            </if>
+            )
+        </foreach>
+    </select>
+
+
+    <insert id="insertEnergySiteData" parameterType="java.util.List">
+        insert  into energy_site
+        (tunnel_id,energy_value,statistics_type,create_time,update_time)
+        values
+        <foreach collection="list" index="index" item="item" separator=","  >
+            (#{item.tunnelId}, #{item.energyValue}, #{item.statisticsType}, #{item.createTime},now())
+        </foreach>
+    </insert>
+
+
+
+    <delete id="deleteEnergySiteData" >
+        delete from energy_site where tunnel_id = #{tunnelId} and statistics_type = #{statisticsType} and create_time = #{createTime}
+    </delete>
+
+    <select id="getEnergyItemCodes"  resultMap="EnergySiteResult">
+       select * from energy_configcenter_itemized
+    </select>
+
+    <select id="getEnergyClassifCodes"  resultMap="EnergySiteResult">
+       select * from energy_configcenter_classification
+    </select>
+
+    <select id="getEnergyItemData"  resultMap="EnergySiteResult">
+       select * from energy_item where
+        <foreach collection="list" item="item" separator="OR" index="index">
+            (
+            1 = 1
+            <if test="item.tunnelId != null">
+                AND tunnel_id = #{item.tunnelId}
+            </if>
+            <if test="item.itemizedCode != null">
+                AND itemized_code = #{item.itemizedCode}
+            </if>
+            <if test="item.statisticsType != null and item.statisticsType != ''">
+                AND statistics_type = #{item.statisticsType}
+            </if>
+            <if test="item.createTime != null">
+                AND create_time = #{item.createTime}
+            </if>
+            )
+        </foreach>
+    </select>
+
+
+
+    <insert id="insertEnergyItemData" parameterType="java.util.List">
+        insert  into energy_item
+        (tunnel_id,itemized_code,energy_value,statistics_type,create_time,update_time)
+        values
+        <foreach collection="list" index="index" item="item" separator=","  >
+            (#{item.tunnelId},#{item.itemizedCode}, #{item.energyValue}, #{item.statisticsType}, #{item.createTime},now())
+        </foreach>
+    </insert>
+
+
+
+    <delete id="deleteEnergyItemData" >
+        delete from energy_item where itemized_code = #{itemizedCode} and statistics_type = #{statisticsType} and create_time = #{createTime}
+    </delete>
+
+
+    <select id="getEnergyClassifData"  resultMap="EnergySiteResult">
+       select * from energy_classification where
+        <foreach collection="list" item="item" separator="OR" index="index">
+            (
+            1 = 1
+            <if test="item.tunnelId != null">
+                AND tunnel_id = #{item.tunnelId}
+            </if>
+            <if test="item.classificationCode != null">
+                AND classification_code = #{item.classificationCode}
+            </if>
+            <if test="item.statisticsType != null and item.statisticsType != ''">
+                AND statistics_type = #{item.statisticsType}
+            </if>
+            <if test="item.createTime != null">
+                AND create_time = #{item.createTime}
+            </if>
+            )
+        </foreach>
+    </select>
+
+
+
+    <insert id="insertEnergyClassifData" parameterType="java.util.List">
+        insert  into energy_classification
+        (tunnel_id,classification_code,energy_value,statistics_type,create_time,update_time)
+        values
+        <foreach collection="list" index="index" item="item" separator=","  >
+            (#{item.tunnelId},#{item.classificationCode}, #{item.energyValue}, #{item.statisticsType}, #{item.createTime},now())
+        </foreach>
+    </insert>
+
+
+
+    <delete id="deleteEnergyClassifData" >
+        delete from energy_classification where classification_code = #{classificationCode} and statistics_type = #{statisticsType} and create_time = #{createTime}
+    </delete>
+
+
+    <select id="getEnergyDaypartingData"  resultMap="EnergyDaypartingResult">
+       select * from energy_dayparting  where
+        <foreach collection="list" item="item" separator="OR" index="index">
+            (
+            1 = 1
+            <if test="item.tunnelId != null">
+                AND tunnel_id = #{item.tunnelId}
+            </if>
+            <if test="item.statisticsType != null and item.statisticsType != ''">
+                AND statistics_type = #{item.statisticsType}
+            </if>
+            <if test="item.createTime != null">
+                AND create_time = #{item.createTime}
+            </if>
+            )
+        </foreach>
+    </select>
+
+
+
+    <insert id="insertEnergyDaypartingData" parameterType="java.util.List">
+        insert  into energy_dayparting
+        (tunnel_id,jValue,fValue,pValue,gValue,sValue,statistics_type,create_time)
+        values
+        <foreach collection="list" index="index" item="item" separator=","  >
+            (#{item.tunnelId}, #{item.jValue}, #{item.fValue}, #{item.pValue}, #{item.gValue} , #{item.sValue},#{item.statisticsType},#{item.createTime})
+        </foreach>
+    </insert>
+
+
+
+    <delete id="deleteEnergyDaypartingData" >
+        delete from energy_dayparting where tunnel_id = #{tunnelId} and statistics_type = #{statisticsType} and create_time = #{createTime}
+    </delete>
+
+    <select id="getEnergyFootprintData"  resultType="com.tunnel.business.domain.energyManagement.EnergyDayparting">
+       select * from energy_footprint where
+        <foreach collection="list" item="item" separator="OR" index="index">
+            (
+            1 = 1
+            <if test="item.tunnelId != null">
+                AND tunnel_id = #{item.tunnelId}
+            </if>
+            <if test="item.source != null">
+                AND source = #{item.source}
+            </if>
+            <if test="item.target != null">
+                AND target = #{item.target}
+            </if>
+            <if test="item.statisticsType != null and item.statisticsType != ''">
+                AND statistics_type = #{item.statisticsType}
+            </if>
+            <if test="item.createTime != null">
+                AND create_time = #{item.createTime}
+            </if>
+            )
+        </foreach>
+    </select>
+
+
+
+    <insert id="insertEnergyFootprintData" parameterType="java.util.List">
+        insert  into energy_footprint
+        (tunnel_id,source,target,value,statistics_type,create_time,update_time)
+        values
+        <foreach collection="list" index="index" item="item" separator=","  >
+            (#{item.tunnelId}, #{item.source}, #{item.target}, #{item.value},#{item.statisticsType},#{item.createTime},now())
+        </foreach>
+    </insert>
+
+
+
+    <delete id="deleteEnergyFootprintData" >
+        delete from energy_footprint where tunnel_id = #{tunnelId} and statistics_type = #{statisticsType} and create_time = #{createTime}
+    </delete>
+
+
+
+    <update id="updateEnergySiteData" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE energy_site
+            SET energy_value = #{item.energyValue},
+            update_time = NOW()
+            WHERE tunnel_id = #{item.tunnelId}
+            AND statistics_type = #{item.statisticsType}
+            AND create_time = #{item.createTime}
+        </foreach>
+    </update>
+
+
+    <update id="updateEnergyItemData" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE energy_item
+            SET energy_value = #{item.energyValue},
+            update_time = NOW()
+            WHERE tunnel_id = #{item.tunnelId}
+            and itemized_code = #{item.itemizedCode}
+            AND statistics_type = #{item.statisticsType}
+            AND create_time = #{item.createTime}
+        </foreach>
+    </update>
+
+
+
+    <update id="updateEnergyClassifData" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE energy_classification
+            SET energy_value = #{item.energyValue},
+            update_time = NOW()
+            WHERE tunnel_id = #{item.tunnelId}
+            and classification_code = #{item.classificationCode}
+            AND statistics_type = #{item.statisticsType}
+            AND create_time = #{item.createTime}
+        </foreach>
+    </update>
+
+    <update id="updateEnergyDayparting" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE energy_dayparting
+            SET jValue = #{item.jValue},
+            fValue = #{item.fValue},
+            pValue = #{item.pValue},
+            gValue = #{item.gValue},
+            sValue = #{item.sValue}
+            WHERE tunnel_id = #{item.tunnelId}
+            AND statistics_type = #{item.statisticsType}
+            AND create_time = #{item.createTime}
+        </foreach>
+    </update>
+
+
+    <update id="updateEnergyFootprint" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE energy_footprint
+            SET value = #{item.value},
+            update_time = NOW()
+            WHERE tunnel_id = #{item.tunnelId}
+            and source = #{item.source}
+            and target = #{item.target}
+            AND statistics_type = #{item.statisticsType}
+            AND create_time = #{item.createTime}
+        </foreach>
+    </update>
+
+
+
+
+    <select id="getEnergycurrentDaySiteData"  resultMap="EnergySiteResult">
+        select * from energy_site  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 0
+    </select>
+
+
+    <select id="getEnergycurrentMonthSiteData"  resultMap="EnergySiteResult">
+        select * from energy_site  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 1
+    </select>
+
+    <select id="getEnergycurrentDayItemData"  resultMap="EnergySiteResult">
+        select * from energy_item  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 0
+    </select>
+
+    <select id="getEnergycurrentMonthItemData"  resultMap="EnergySiteResult">
+        select * from energy_item  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 1
+    </select>
+
+
+    <select id="getEnergycurrentDayClassifData"  resultMap="EnergySiteResult">
+        select * from energy_classification  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 0
+    </select>
+
+
+    <select id="getEnergycurrentMonthClassifData"  resultMap="EnergySiteResult">
+        select * from energy_classification  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 1
+    </select>
+
+    <select id="getEnergycurrentDayFootprintData"  resultMap="EnergyDaypartingResult">
+        select * from energy_footprint  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 0
+    </select>
+
+    <select id="getEnergycurrentMonthFootprintData"  resultMap="EnergyDaypartingResult">
+        select * from energy_footprint  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 1
+    </select>
+
+    <select id="getEnergycurrentDayDaypartingData"  resultMap="EnergyDaypartingResult">
+        select * from energy_dayparting  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 0
+    </select>
+
+    <select id="getEnergycurrentMonthDaypartingData"  resultMap="EnergyDaypartingResult">
+        select * from energy_dayparting  where
+        create_time like concat(#{currentTime}, '%') and statistics_type = 1
+    </select>
+
+
+
+
+
+
+
+
+</mapper>

@@ -179,4 +179,6 @@ public interface SysDeptMapper
      * @return 部门列表
      */
     List<SysDept> selectChildrenIncludeSelfByIdNormal(@Param("deptId")String deptId);
+
+    List<SysDept> listSiteDeptYG1(SysDept dept);
 }

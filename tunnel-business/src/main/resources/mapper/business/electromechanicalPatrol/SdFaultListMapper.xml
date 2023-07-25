@@ -260,6 +260,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         1=1 and  s.dict_type= 'fault_type' and f.fallt_remove_statue = '1' and f.fault_status = '0'
         <if test="tunnelId != null and tunnelId != '' ">and t.tunnel_id = #{tunnelId}</if>
         <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
+        <if test="searchValue != null and searchValue != '' ">and d.eq_name LIKE CONCAT('%',#{searchValue},'%')</if>
+        <if test="eqType != null and eqType != '' ">and d.eq_type = #{eqType}</if>
     </where>
         order by f.create_time desc
     </select>

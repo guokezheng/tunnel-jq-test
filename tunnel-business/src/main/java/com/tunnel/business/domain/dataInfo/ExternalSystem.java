@@ -25,6 +25,11 @@ public class ExternalSystem extends BaseEntity
      */
     private String tunnelId;
 
+    /**
+     * 隧道
+     */
+    private String tunnel;
+
     /** 是否映射方向（0：是，1：否） */
     @Excel(name = "是否映射方向", readConverterExp = "0=：是，1：否")
     private String isDirection;
@@ -48,6 +53,14 @@ public class ExternalSystem extends BaseEntity
     /** 系统地址 */
     @Excel(name = "系统地址")
     private String systemUrl;
+
+    public String getTunnel() {
+        return tunnel;
+    }
+
+    public void setTunnel(String tunnel) {
+        this.tunnel = tunnel;
+    }
 
     public void setId(Long id)
     {

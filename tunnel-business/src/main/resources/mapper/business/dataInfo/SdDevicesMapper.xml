@@ -807,6 +807,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="searchValue != null and searchValue != ''">AND CONCAT(d.eq_name, t.type_name) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="tunnelId != null and tunnelId != ''">and d.eq_tunnel_id = #{tunnelId}</if>
             <if test="deviceType != null and deviceType != ''">and t.eq_system = #{deviceType}</if>
+            <if test="eqType != null and eqType != ''">and d.eq_type = #{eqType}</if>
         </where>
     </select>
 

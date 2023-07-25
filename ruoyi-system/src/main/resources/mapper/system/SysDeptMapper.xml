@@ -290,4 +290,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+
+	<select id="listSiteDeptYG1" parameterType="com.ruoyi.common.core.domain.entity.SysDept" resultMap="SysDeptResult">
+		<include refid="selectDeptVo"/>
+		where d.del_flag = '0' and d.status = '0'
+		<!-- 暂时注释YG1筛选 -->
+		<!--  and  dept_id like 'YG1%' -->
+		<if test="deptId != null and deptId != 0">
+			AND (d.dept_id = #{deptId} OR d.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId}, ancestors) ))
+		</if>
+		<if test="parentId != null and parentId != 0">
+			AND d.parent_id = #{parentId}
+		</if>
+		<if test="deptName != null and deptName != ''">
+			AND d.dept_name like concat('%', #{deptName}, '%')
+		</if>
+
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
+		order by d.parent_id, d.order_num
+	</select>
+
+
+
 </mapper>

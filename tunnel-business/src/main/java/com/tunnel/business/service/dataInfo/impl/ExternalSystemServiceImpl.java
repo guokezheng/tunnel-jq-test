@@ -2,11 +2,14 @@ package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.mapper.dataInfo.ExternalSystemMapper;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,6 +20,9 @@ public class ExternalSystemServiceImpl implements IExternalSystemService
 {
     @Autowired
     private ExternalSystemMapper externalSystemMapper;
+
+    @Autowired
+    private ISdTunnelsService sdTunnelsService;
 
     /**
      * 查询外部系统
@@ -39,8 +45,36 @@ public class ExternalSystemServiceImpl implements IExternalSystemService
     @Override
     public List<ExternalSystem> selectExternalSystemList(ExternalSystem externalSystem)
     {
-        return externalSystemMapper.selectExternalSystemList(externalSystem);
+        List<ExternalSystem> externalSystemList = externalSystemMapper.selectExternalSystemList(externalSystem);
+        List<SdTunnels> list = sdTunnelsService.selectAllSdTunnelsList1();
+        if(externalSystemList!=null&&externalSystemList.size()>0&&list!=null&&list.size()>0){
+            for(int i=0;i<externalSystemList.size();i++){
+                if(externalSystemList.get(i).getTunnelId()!=null&&!"".equals(externalSystemList.get(i).getTunnelId())){
+                    externalSystemList.get(i).setTunnel(externalSystemList.get(i).getTunnelId());
+                    String tunnelId = externalSystemList.get(i).getTunnelId();
+                    List result = Arrays.asList(tunnelId.split(","));
+                    String tunnelName = "";
+                    if(result!=null&&result.size()>0){
+                        for(int j=0;j<result.size();j++){
+                            for(int k=0;k<list.size();k++){
+                                if(result.get(j).equals(list.get(k).getTunnelId())){
+                                    tunnelName += list.get(k).getTunnelName()+"\n";
+
+                                }
+                            }
+                        }
+                    }
+                    tunnelName = tunnelName.substring(0,tunnelName.length()-1);
+                    externalSystemList.get(i).setTunnelId(tunnelName);
+                }
+
+            }
+
+        }
+        return externalSystemList;
+
     }
+
 
     /**
      * 新增外部系统

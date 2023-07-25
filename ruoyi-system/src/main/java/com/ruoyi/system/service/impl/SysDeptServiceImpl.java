@@ -177,6 +177,11 @@ public class SysDeptServiceImpl implements ISysDeptService
         return deptMapper.selectChildrenIncludeSelfByIdNormal(deptId);
     }
 
+    @Override
+    public List<SysDept> listSiteDeptYG1(SysDept dept) {
+        return deptMapper.listSiteDeptYG1(dept);
+    }
+
     /**
      * 根据ID查询所有子部门（正常状态）
      *

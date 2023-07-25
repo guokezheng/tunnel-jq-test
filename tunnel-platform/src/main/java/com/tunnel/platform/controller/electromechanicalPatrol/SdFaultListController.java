@@ -22,6 +22,7 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
+import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
@@ -65,6 +66,10 @@ public class SdFaultListController extends BaseController {
 
     @Autowired
     private ISdDevicesService isdDevicesService;
+
+    @Autowired
+    private SdFaultListMapper sdFaultListMapper;
+
 
 
     /**
@@ -172,7 +177,7 @@ public class SdFaultListController extends BaseController {
     @RequestMapping("/exportFaultReport")
     public void exportFaultReport(HttpServletRequest request, HttpServletResponse response, String faultId) {
         SdFaultList fault = SpringUtils.getBean(SdFaultListMapper.class).exportFaultReport(faultId);
-                //sdFaultListService.selectSdFaultListById(faultId);
+        //sdFaultListService.selectSdFaultListById(faultId);
         SdDevices devices = SpringUtils.getBean(ISdDevicesService.class).selectSdDevicesById(fault.getEqId());
         String eqName = devices.getEqName();
         String typeName = SpringUtils.getBean(ISdEquipmentTypeService.class).selectSdEquipmentTypeById(Long.valueOf(devices.getEqType())).getTypeName();
@@ -192,7 +197,7 @@ public class SdFaultListController extends BaseController {
                 faultTbtime = format.format(DateUtil.parse(fault.getFaultTbtime().toString()));
             }
             AtomicInteger i = new AtomicInteger(1);
-            if (faultMap.get("imgFileId") != null&&!"".equals(faultMap.get("imgFileId"))) {
+            if (faultMap.get("imgFileId") != null && !"".equals(faultMap.get("imgFileId"))) {
                 String faultImgId = faultMap.get("imgFileId").toString();
                 /*SdTrafficImage sdTrafficImage = new SdTrafficImage();
                 sdTrafficImage.setBusinessId(faultImgId);*/
@@ -200,9 +205,9 @@ public class SdFaultListController extends BaseController {
                 List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileLists(businessId);
                 //List<SdTrafficImage> imageList = SpringUtils.getBean(SdTrafficImageMapper.class).selectFaultImgFileList(sdTrafficImage);
                 if (imageList.size() > 0) {
-                    List<PictureRenderData>photoList = new ArrayList<>();
-                    for(int y = 0;y<imageList.size();y++) {
-                        String faultPhoto = "faultPhoto"+y;
+                    List<PictureRenderData> photoList = new ArrayList<>();
+                    for (int y = 0; y < imageList.size(); y++) {
+                        String faultPhoto = "faultPhoto" + y;
                         // 图片的处理
                         String imageBaseStr = imageList.get(y).getImgUrl();
                         Base64.Decoder decoder = Base64.getDecoder();
@@ -246,8 +251,8 @@ public class SdFaultListController extends BaseController {
                     }
 
                     if (imageLists.size() > 0) {
-                        for(int x = 0;x<imageLists.size();x++){
-                            String photo = "photo"+x;
+                        for (int x = 0; x < imageLists.size(); x++) {
+                            String photo = "photo" + x;
                             String imageBaseStr = imageLists.get(x).getImgUrl();
                             Base64.Decoder decoder = Base64.getDecoder();
                             imageBaseStr = imageBaseStr.substring(imageBaseStr.indexOf(",", 1) + 1, imageBaseStr.length());
@@ -281,51 +286,51 @@ public class SdFaultListController extends BaseController {
             String finalFaultTbtime = faultTbtime;
             XWPFDocument document = new CustomXWPFDocument(new ClassPathResource("exporttemplate/faultReport.docx").getInputStream());
             XWPFTemplate template = XWPFTemplate.compile(document, config).render(
-                new HashMap<String, Object>() {{
-                    put("faultBlock", convertList);
-                    put("currentTime", DateUtils.getTime());
-                    put("task", fault);
-                    put("Fxtime", finalFaultFxtime);
-                    put("RemoveTime", finalFaultRemovetime);
-                    put("Tbtime", finalFaultTbtime);
-                    put("eqName", eqName);
-                    put("typeName", typeName);
-                    List<String>photolist = new ArrayList<>();
-                    for (String key : faultMap.keySet()) {
-                        if(key.contains("faultPhoto")){
-                            photolist.add(key);
+                    new HashMap<String, Object>() {{
+                        put("faultBlock", convertList);
+                        put("currentTime", DateUtils.getTime());
+                        put("task", fault);
+                        put("Fxtime", finalFaultFxtime);
+                        put("RemoveTime", finalFaultRemovetime);
+                        put("Tbtime", finalFaultTbtime);
+                        put("eqName", eqName);
+                        put("typeName", typeName);
+                        List<String> photolist = new ArrayList<>();
+                        for (String key : faultMap.keySet()) {
+                            if (key.contains("faultPhoto")) {
+                                photolist.add(key);
+                            }
                         }
-                    }
-                    if(photolist!=null&&photolist.size()>0){
-                        for(int q=0;q<photolist.size();q++){
-                            put(photolist.get(q), faultMap.get(photolist.get(q)));
+                        if (photolist != null && photolist.size() > 0) {
+                            for (int q = 0; q < photolist.size(); q++) {
+                                put(photolist.get(q), faultMap.get(photolist.get(q)));
+                            }
                         }
-                    }
                     /*if (faultMap.get("faultPhoto") != null) {
 
                         put("faultPhoto", faultMap.get("faultPhoto"));
                     }*/
-                    Class<?> cClass = (Class<?>) SdFaultList.class;
-                    Field[] fields = cClass.getDeclaredFields();
-                    for (Field field : fields) {
-                        field.setAccessible(true);
-                        String fieldName = field.getName();
-                        if (fieldName.equals("serialVersionUID") || fieldName.equals("iFileList")) {
-                            continue;
+                        Class<?> cClass = (Class<?>) SdFaultList.class;
+                        Field[] fields = cClass.getDeclaredFields();
+                        for (Field field : fields) {
+                            field.setAccessible(true);
+                            String fieldName = field.getName();
+                            if (fieldName.equals("serialVersionUID") || fieldName.equals("iFileList")) {
+                                continue;
+                            }
+                            String upperChar = fieldName.substring(0, 1).toUpperCase();
+                            String anotherStr = fieldName.substring(1);
+                            String methodName = "get" + upperChar + anotherStr;
+                            Method newMethod = cClass.getDeclaredMethod(methodName);
+                            Object Value = newMethod.invoke(fault);
+                            if (Value != null) {
+                                put(fieldName, Value.toString());
+                            }
                         }
-                        String upperChar = fieldName.substring(0, 1).toUpperCase();
-                        String anotherStr = fieldName.substring(1);
-                        String methodName = "get" + upperChar + anotherStr;
-                        Method newMethod = cClass.getDeclaredMethod(methodName);
-                        Object Value = newMethod.invoke(fault);
-                        if (Value != null) {
-                            put(fieldName, Value.toString());
-                        }
-                    }
-                }}
+                    }}
             );
 //            String temDir = "D:/Electromechanical/" + File.separator + "file/word/";
-            String temDir = RuoYiConfig.getProfile()+"/word/";
+            String temDir = RuoYiConfig.getProfile() + "/word/";
 
             //生成临时文件存放地址
             File file = new File(temDir);
@@ -355,4 +360,31 @@ public class SdFaultListController extends BaseController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 消防炮模拟故障接口
+     */
+    @GetMapping("/faultDemonFireMonitor")
+    public void faultDemonFireMonitor() {
+        String eqStatus = "3";
+        //log.info("设备状态为故障");
+        //故障位置处理
+        //存 故障清单表sd_fault_list
+        SdFaultList sdFaultList = new SdFaultList();
+        sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
+        sdFaultList.setFaultTbtime(DateUtils.getNowDate());//故障填报时间
+        sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
+        sdFaultList.setTunnelId("JQ-JiNan-WenZuBei-MJY");//隧道
+        sdFaultList.setFaultLocation("潍坊方向YK16+718");//设备位置   方向+桩号拼接
+        sdFaultList.setFaultType("6");//故障类型  其他
+        sdFaultList.setFaultEscalationType("1");//故障来源  系统上报
+        sdFaultList.setFaultFxtime(DateUtils.getNowDate());//故障发现时间
+        sdFaultList.setEqId("JQ-JiNan-WenZuBei-MJY-IFM-002");//设备id
+        sdFaultList.setEqStatus("3");//设备状态  故障
+        sdFaultList.setFaultLevel("0");//故障等级  一般
+        sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
+        sdFaultList.setFaultStatus("0");//故障状态  已发布
+        sdFaultListMapper.insertSdFaultList(sdFaultList);
+    }
+
 }

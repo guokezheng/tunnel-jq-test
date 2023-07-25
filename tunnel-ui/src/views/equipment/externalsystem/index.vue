@@ -138,9 +138,11 @@
       </el-table-column>-->
 
       <el-table-column label="所属隧道" align="center" prop="tunnelId" style="white-space: pre-wrap;">
-<!--        <template slot-scope="scope">
-          <span>{{ getTunnelName(scope.row.tunnelId) }}</span>
-        </template>-->
+        <template slot-scope="scope">
+          <div v-for="(item,index) in scope.row.tunnelId" :key="index">
+            {{ item }}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column label="是否映射方向" align="center" prop="isDirection" />
       <el-table-column label="用户名" align="center" prop="username" />
@@ -464,7 +466,6 @@ export default {
     getList() {
       this.loading = true;
       listSystem(this.queryParams).then((response) => {
-        debugger
         this.systemList = response.rows;
         for (let i = 0; i < this.systemList.length; i++) {
           if (this.systemList[i].isDirection == "0") {
@@ -472,6 +473,11 @@ export default {
           } else if (this.systemList[i].isDirection == "1") {
             this.systemList[i].isDirection = "否";
           }
+          var a = this.systemList[i].tunnelId;
+          if(a!=null){
+            this.systemList[i].tunnelId  = a.split(',');
+          }
+
           /*if(this.systemList[i].tunnelId!=null){
             let str = this.systemList[i].tunnelId.replace(/\,/g, '<br>');
             this.systemList[i].tunnelId = str;

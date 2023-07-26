@@ -508,9 +508,6 @@ public class SdEventController extends BaseController
     public void eventDemonstrate(String xdData,String ldData,String hzData, String model){
         if("xd".equals(model)){
             //兴电
-            if(xdData == null || "".equals(xdData)){
-                xdData = "{\"ext\":{\"deviceType\":\"linePhoneExt\",\"id\":\"1011\"},\'attribute\':\'IDLE\'}";
-            }
             PhoneSpkService phoneSpkService = SpringUtils.getBean(PhoneSpkService.class);
             JSONObject jsonObject = JSONObject.parseObject(xdData);
             JSONObject jsonObject1 = new JSONObject();

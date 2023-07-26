@@ -1720,7 +1720,7 @@ public class SdEventServiceImpl implements ISdEventService {
             //查询设备信息以及状态
             List<Map<String, Object>> maps = new ArrayList<>();
             if(eqTypeId == DevicesTypeEnum.VMS.getCode() || eqTypeId == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
-                maps = sdDevicesMapper.selectVmsDevicesOld(item.getEquipments(), item.getState(), "2");
+                maps = sdDevicesMapper.selectVmsDevicesOld(item.getEquipments(), item.getState(), "2", item.getCurrentId());
                 if(maps.size() == 0){
                     maps = sdDevicesMapper.selectVmsDevices(item.getEquipments(), item.getState());
                 }

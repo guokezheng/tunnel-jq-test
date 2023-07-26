@@ -246,7 +246,7 @@ public class PhoneSpkService {
                     sdEvent.setTunnelId(device.getEqTunnelId());
                     sdEvent.setEventTypeId(eventTypeId);
                     sdEvent.setEventGrade("1");
-                    sdEvent.setDirection(device.getDirection());
+                    sdEvent.setDirection(device.getEqDirection());
                     sdEvent.setEventTitle(sdEventService.getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap));
                     sdEvent.setEventSource("2");
                     sdEvent.setEventState(EventStateEnum.unprocessed.getCode());

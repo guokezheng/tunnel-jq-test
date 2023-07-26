@@ -959,7 +959,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_devices d
         left join sd_equipment_type t on d.eq_type = t.type_id
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
-        left join sys_dict_data c on c. dict_value = d.eq_direction and  c.dict_type = 'sd_direction_list'
+        left join sys_dict_data c on c. dict_value = d.eq_direction and  c.dict_type = 'sd_direction'
         where d.eq_id = #{eqId}
     </select>
 

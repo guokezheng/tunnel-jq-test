@@ -1904,7 +1904,9 @@ export default {
         console.log(response.data, "隧道部门树");
       });
       this.isShow1 = true;
+      this.searchValue = '';
       this.options1value = "0";
+      this.eqType = '';
       //点击确定，数据还原
       if (this.openCz) {
         this.options1value = "0";

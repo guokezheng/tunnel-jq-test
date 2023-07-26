@@ -935,7 +935,6 @@ export default {
         leftDirection: this.leftDirection,
         rightDirection: this.rightDirection,
       };
-
       let param = {
         tunnelId: this.selectedTunnel.id,
         storeConfigure: JSON.stringify(configData),

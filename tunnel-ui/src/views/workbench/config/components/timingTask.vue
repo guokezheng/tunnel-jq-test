@@ -544,8 +544,8 @@ export default {
             this.XDataLight.push(list1[i].createTime)
             this.yDataLight.push(list1[i].data)
           }
-          console.log(this.XDataLight)
-          console.log(this.XDataLight)
+          // console.log(this.XDataLight)
+          // console.log(this.XDataLight)
           // debugger
           // setTimeout(() => {
           //   this.$nextTick(() => {
@@ -561,8 +561,8 @@ export default {
         for (let i = 0; i < list1.length; i++) {
           this.yDataLight1.push(list1[i].data)
         }
-        console.log(this.XDataLight)
-        console.log(this.XDataLight)
+        // console.log(this.XDataLight)
+        // console.log(this.XDataLight)
         // debugger
         // setTimeout(() => {
         //   this.$nextTick(() => {
@@ -578,8 +578,8 @@ export default {
         for (let i = 0; i < list1.length; i++) {
           this.yDataLight2.push(list1[i].data)
         }
-        console.log(this.XDataLight)
-        console.log(this.XDataLight)
+        // console.log(this.XDataLight)
+        // console.log(this.XDataLight)
         // debugger
         setTimeout(() => {
           this.$nextTick(() => {
@@ -620,7 +620,7 @@ export default {
         let  tunnelData = this.tunnelData.find(item => item.tunnelId ==value.tunnelId);
         value.tunnelName = tunnelData.tunnelName
       }else if(index=="2"){
-        console.log(this.directionOptions)
+        // console.log(this.directionOptions)
         // debugger
         let  tunnelData = this.directionOptions.find(item => item.dictValue ==value.direction);
         value.dictLabel = tunnelData.dictLabel

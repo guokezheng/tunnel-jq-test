@@ -510,7 +510,7 @@ export default {
           }else{
             this.serverJSON = {"address":'0001',"byte":'0',"rangeMin":'0',"rangeMax":'0',"realRangeMin":'0',"realRangeMax":'0'};
 
-            if(this.protocolId == 5){
+            if(this.protocolId == 6){
               this.clientJSON = {"deviceNo":"1","deviceType":"0"};
             }else{
               this.clientJSON = {"key":"AI1","ma_min":"0","ma_max":"0","lc_max":"0","lc_min":"0"};

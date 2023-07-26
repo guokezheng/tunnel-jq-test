@@ -21,7 +21,7 @@
       <el-col :span="6" :offset="14">
         <div ref="main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入巡查班组，回车搜索"
+            placeholder="请输入巡查班组，任务名称，回车搜索"
             v-model="queryParams.zzjgId"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -495,6 +495,7 @@
         </div>
       </el-card>
     </el-dialog>
+
     <el-dialog
       :visible.sync="isShow1"
       width="50%"
@@ -806,15 +807,16 @@
             <div>供配电情况：</div>
             <span>{{ pat.power }}</span>
           </el-col>
-          <el-col :span="8">
+<!--          <el-col :span="8">
             <div>现场故障情况：</div>
             <span>{{ pat.eqFaultCode }}</span>
-          </el-col>
+          </el-col>-->
+
           <el-col :span="8">
             <div>设备状态：</div>
             <span>{{ pat.eqStatus }}</span>
           </el-col>
-          <el-col :span="8">
+          <el-col v-if="pat.runStatus" :span="8">
             <div>设备运行状态：</div>
             <span>{{ pat.runStatus }}</span>
           </el-col>
@@ -1168,7 +1170,6 @@ export default {
     };
   },
   created() {
-    this.getBz();
     this.getList();
     this.getTunnel();
     this.getTreeSelect();
@@ -1694,6 +1695,7 @@ export default {
       this.dialogSelection = [];
       //  this.$refs.multipleTable1.toggleRowSelection(item, true);
       this.isShow1 = true;
+      this.searchValue = '';
       this.tunnelId = this.form.tunnelId;
       treeselect(this.tunnelId).then((response) => {
         this.treeData = response.data;

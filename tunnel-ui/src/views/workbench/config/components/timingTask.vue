@@ -534,11 +534,11 @@ export default {
       let ds = ['2023-07-22 00:00:00', '2023-07-22 23:59:59']
       let ds1 = ['2023-07-21 00:00:00', '2023-07-21 23:59:59']
       let ds2 = ['2023-07-20 00:00:00', '2023-07-20 23:59:59']
-      debugger
+      // debugger
         dataLogInfoLineList(
           this.addDateRange(this.queryParamsLight, ds)
         ).then((response) => {
-          debugger
+          // debugger
           let list1 = response.rows;
           for (let i = 0; i < list1.length; i++) {
             this.XDataLight.push(list1[i].createTime)
@@ -546,7 +546,7 @@ export default {
           }
           console.log(this.XDataLight)
           console.log(this.XDataLight)
-          debugger
+          // debugger
           // setTimeout(() => {
           //   this.$nextTick(() => {
           //     this.initChart();
@@ -556,14 +556,14 @@ export default {
       dataLogInfoLineList(
         this.addDateRange(this.queryParamsLight, ds1)
       ).then((response) => {
-        debugger
+        // debugger
         let list1 = response.rows;
         for (let i = 0; i < list1.length; i++) {
           this.yDataLight1.push(list1[i].data)
         }
         console.log(this.XDataLight)
         console.log(this.XDataLight)
-        debugger
+        // debugger
         // setTimeout(() => {
         //   this.$nextTick(() => {
         //     this.initChart();
@@ -573,14 +573,14 @@ export default {
       dataLogInfoLineList(
         this.addDateRange(this.queryParamsLight, ds2)
       ).then((response) => {
-        debugger
+        // debugger
         let list1 = response.rows;
         for (let i = 0; i < list1.length; i++) {
           this.yDataLight2.push(list1[i].data)
         }
         console.log(this.XDataLight)
         console.log(this.XDataLight)
-        debugger
+        // debugger
         setTimeout(() => {
           this.$nextTick(() => {
             this.initChart();
@@ -605,12 +605,12 @@ export default {
       });
     },
     handleRowEdit(item) {
-      debugger
+      // debugger
       this.editingRow = item.row.id;
       this.$forceUpdate()
     },
     handleRowSave(item){
-      debugger
+      // debugger
       this.editingRow =""
         this.$forceUpdate()
     },
@@ -621,7 +621,7 @@ export default {
         value.tunnelName = tunnelData.tunnelName
       }else if(index=="2"){
         console.log(this.directionOptions)
-        debugger
+        // debugger
         let  tunnelData = this.directionOptions.find(item => item.dictValue ==value.direction);
         value.dictLabel = tunnelData.dictLabel
       }
@@ -634,7 +634,7 @@ export default {
       }
     },
     equipmenEvent(value){
-      debugger
+      // debugger
       let equipment = this.equipmentTypeData.find(item => item.value ==value.equipmentTypeId);
       value.equipmentName = equipment.keyName
     },
@@ -921,7 +921,7 @@ export default {
       });
     },
     renderChart() {
-      debugger
+      // debugger
       this.chart = echarts.init(this.$refs.chart);
       this.chart.setOption({
         xAxis: {
@@ -952,15 +952,15 @@ export default {
     },
 
     resetQuery(){
-      debugger
+      // debugger
       this.visibleSync = !this.visibleSync
     },
     deleteHandleUpdate(index){
       this.formItems.splice(index,1)
-      debugger
+      // debugger
     },
     addHandleUpdate(index){
-      debugger
+      // debugger
       let form={
         label: '',
         startValue: '',
@@ -979,7 +979,7 @@ export default {
   watch:{
     show:{
       handler(newValue, oldValue){
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
         //获取光亮的
         this.getEchartsData()

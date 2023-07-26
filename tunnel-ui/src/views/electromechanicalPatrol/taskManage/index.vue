@@ -1214,7 +1214,7 @@ export default {
       // 巡查任务表格数据
       listList: [],
       //巡查班组
-      bzData: {},
+      bzData: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层

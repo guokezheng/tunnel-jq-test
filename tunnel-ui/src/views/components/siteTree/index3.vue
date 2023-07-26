@@ -29,7 +29,6 @@
           :check-strictly="false"
           :filter-node-method="filterNode"
           ref="tree"
-          default-expand-all
           @node-click="handleNodeClick"
           @check="handleCheckChange"
           node-key="id"

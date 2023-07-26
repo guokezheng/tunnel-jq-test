@@ -1255,6 +1255,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND jps.template_id = #{state}
           AND FIND_IN_SET(d.eq_id,#{ids})
           AND jps.type = #{type}
+          AND jps.current_id = #{currentId}
     </select>
 
     <select id="selectLsDevices" parameterType="java.lang.String" resultType="hashmap">

@@ -91,18 +91,18 @@ export function abolishList(data) {
 }
 
 // 获取设备table
-export function getDevicesList(searchValue,tunnelId,deviceType,pageNum,pageSize) {
+export function getDevicesList(eqType,searchValue,tunnelId,deviceType,pageNum,pageSize) {
   return request({
-    url: '/task/list/getDevicesList?searchValue='+searchValue +'&tunnelId='+tunnelId +'&deviceType=' + deviceType +'&pageNum=' + pageNum +'&pageSize=' +pageSize,
+    url: '/task/list/getDevicesList?eqType='+eqType+'&searchValue='+searchValue +'&tunnelId='+tunnelId +'&deviceType=' + deviceType +'&pageNum=' + pageNum +'&pageSize=' +pageSize,
     method: 'get',
   })
 }
 
 
 // 获取故障table
-export function getFaultList(tunnelId,faultLevel,pageNum,pageSize) {
+export function getFaultList(searchValue,eqType,tunnelId,faultLevel,pageNum,pageSize) {
   return request({
-    url: '/task/list/getFaultList?tunnelId='+tunnelId +'&faultLevel=' + faultLevel +'&pageNum=' + pageNum +'&pageSize=' +pageSize,
+    url: '/task/list/getFaultList?searchValue=' + searchValue + '&eqType='+eqType+'&tunnelId='+tunnelId +'&faultLevel=' + faultLevel +'&pageNum=' + pageNum +'&pageSize=' +pageSize,
     method: 'get',
   })
 }

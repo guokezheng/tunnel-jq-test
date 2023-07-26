@@ -54,6 +54,16 @@ public class SdStrategyRl extends BaseEntity
      */
     private String brightness;
 
+    private Long currentId;
+
+    public Long getCurrentId() {
+        return currentId;
+    }
+
+    public void setCurrentId(Long currentId) {
+        this.currentId = currentId;
+    }
+
     public String getBrightness() {
         return brightness;
     }

@@ -41,7 +41,6 @@
             :check-strictly="!check_strictly"
             :filter-node-method="filterNode"
             ref="tree"
-            default-expand-all
             @node-click="handleNodeClick"
             @check="handleCheckChange"
             node-key="id"
@@ -61,7 +60,8 @@
 </template>
 
 <script>
-import { treeselectExcYG1 } from "@/api/system/dept";
+import { siteTree } from "@/api/energy/api";
+
 
 export default {
   name: "loopTree",
@@ -137,6 +137,7 @@ export default {
     // },
     // 树权限（全选/全不选）
     handleCheckedTreeNodeAll(value, type) {
+      console.log(value,"value")
       let arr = [];
       if (value) {
         this.getAllKeys(this.siteTreeOptions, arr, "menuId");
@@ -152,7 +153,8 @@ export default {
 
     // 获取树结构
     async getSiteTree() {
-      const response = await treeselectExcYG1();
+      console.log("00000000000")
+      const response = await siteTree();
       if (response.code === 200) {
         this.siteTreeOptions =
           response.data == null || response.data.length === 0
@@ -192,6 +194,7 @@ export default {
     },
     //默认选中--复选框
     showCheckBox() {
+      console.log(this.default_check_first,"this.default_check_first")
       if (this.show_checkbox) {
         //默认全选
         if (this.default_check_all) {
@@ -278,5 +281,8 @@ export default {
 }
 .el-scrollbar {
   height: calc(100% - 52px);
+}
+::v-deep .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
+  background: rgba(0,0,0,0.1);
 }
 </style>

@@ -1,45 +1,35 @@
-<!-- 分项-多选 -->
+<!-- 分类-单选 -->
 <template>
   <div>
-    <div style="width: 100%; padding: 10px 0" class="box">
+    <div style="width: 100%; padding: 10px 0; text-align: center" class="box">
       <el-row>
         <!-- <department-select @getTree="clickTree" @clearTree="clearTree"></department-select> -->
       </el-row>
       <el-row v-if="filter">
         <el-input
           v-model="label"
-          placeholder="请输入分项名称"
+          placeholder="请输入分类名称"
           clearable
           size="small"
           suffix-icon="el-icon-search"
+          style="width: 100%"
         />
       </el-row>
     </div>
     <el-scrollbar>
       <el-row :style="{ height: height }">
-        <!-- 级联 全选 -->
-        <div class="check" v-if="show_checkbox">
-          <el-checkbox v-model="check_strictly">级联选择</el-checkbox>
-          <el-checkbox
-            v-model="default_check_all"
-            @change="handleCheckedTreeNodeAll($event, 'menu')"
-            >全选</el-checkbox
-          >
-        </div>
         <el-tree
           class="tree"
-          :data="itemizedOptions"
+          :data="classificationOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
           :check-on-click-node="true"
-          :show-checkbox="show_checkbox"
-          :check-strictly="!check_strictly"
           :filter-node-method="filterNode"
           ref="tree"
           default-expand-all
           @node-click="handleNodeClick"
           @check="handleCheckChange"
-          node-key="id"
+          node-key="code"
         >
           <div class="showName" slot-scope="{ node, data }">
             <!-- <el-tooltip :content="node.label" placement="top" effect="light"> -->
@@ -53,38 +43,18 @@
 </template>
 
 <script>
-// import departmentSelect from '@/views/components/department'
-import { itemizedTreeselect } from "@/api/energy/api";
+// import { getClassificationTree } from '@/api/configcenter/classification'
+import departmentSelect from "@/views/components/department";
 
 export default {
-  name: "itemizedTree",
-  // components: { departmentSelect },
+  name: "classificationTree",
+  components: { departmentSelect },
   props: {
     //开启过滤
     filter: {
       type: Boolean,
       default: true,
     },
-    //节点是否可被选择
-    show_checkbox: {
-      type: Boolean,
-      default: false,
-    },
-    //是否级联
-    // check_strictly:{
-    //   type:Boolean,
-    //   default:false,
-    // },
-    // //开启默认全选
-    // default_check_all:{
-    //   type:Boolean,
-    //   default:false,
-    // },
-    // //开启默认选中第一个子节点
-    // default_check_first:{
-    //   type:Boolean,
-    //   default:false,
-    // },
     //默认第一个子节点高亮选中
     default_select_first: {
       type: Boolean,
@@ -101,18 +71,17 @@ export default {
   },
   data() {
     return {
-      //分项名称
+      //分类名称
       label: null,
-      //分项选项
-      itemizedOptions: [],
+      //分类选项
+      classificationOptions: [],
       defaultProps: {
-        value: "id",
+        value: "code",
         label: "label",
         children: "children",
       },
+
       default_check_first: true, //默认选中第一项
-      check_strictly: false, //级联选择
-      default_check_all: false, //全选
     };
   },
   watch: {
@@ -125,24 +94,6 @@ export default {
     this.getLoopTree();
   },
   methods: {
-    //节点选中状态发生变化时的回调
-    // clickTree(ids) {
-    //   this.$emit('deptId', ids)
-    // },
-    // // 清除选择站点
-    // clearTree() {
-    //   this.$emit('clear')
-    // },
-    // 树权限（全选/全不选）
-    handleCheckedTreeNodeAll(value, type) {
-      console.log(value, "value");
-      let arr = [];
-      if (value) {
-        this.getAllKeys(this.itemizedOptions, arr, "menuId");
-      }
-      this.$refs.tree.setCheckedKeys(arr);
-      this.$emit("defaultCheck", arr);
-    },
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true;
@@ -150,8 +101,8 @@ export default {
     },
     /** 查询回路树结构 */
     async getLoopTree() {
-      const response = await itemizedTreeselect();
-      this.itemizedOptions =
+      const response = await getClassificationTree();
+      this.classificationOptions =
         response.data == null || response.data.length === 0
           ? []
           : response.data;
@@ -160,7 +111,6 @@ export default {
         this.selectFirstChild();
       });
     },
-
     //节点单击事件
     handleNodeClick(data) {
       this.$emit("nodeClick", data);
@@ -169,59 +119,31 @@ export default {
     //第一个子节点，高亮选中
     selectFirstChild() {
       if (this.default_select_first) {
-        let first = this.getFirstChildren(this.itemizedOptions);
+        let first = this.getFirstChildren(this.classificationOptions);
         this.$refs.tree.setCurrentKey(first);
         this.$emit("defaultSelect", first, this.$refs.tree.getCurrentNode());
       }
     },
     //节点选中事件--复选框
     handleCheckChange(data, checked) {
-      let n = this.getAllKeys(this.itemizedOptions);
-      if (checked.checkedKeys.length === n.length) {
-        this.default_check_all = true;
-      } else {
-        this.default_check_all = false;
-      }
-      this.$emit("nodeCheck", data, checked);
+      this.$emit("nodeCheck", data);
     },
     //默认选中--复选框
     showCheckBox() {
-      console.log("11111111111");
-      if (this.show_checkbox) {
-        //默认全选
-        if (this.default_check_all) {
-          let all = this.getAllKeys(this.itemizedOptions);
-          this.$refs.tree.setCheckedKeys(all);
-          this.$emit("defaultCheck", all);
-        }
-        //默认选中第一个子节点
-        if (this.default_check_first) {
-          let arr = [];
-          let first = this.getFirstChildren(this.itemizedOptions);
-          if (first) arr.push(first);
-          this.$refs.tree.setCheckedKeys(arr);
-          this.$emit("defaultCheck", arr);
-        }
+      //默认选中第一个子节点
+      if (this.default_check_first) {
+        let arr = null;
+        let first = this.getFirstChildren(this.classificationOptions);
+        if (first) arr = first;
+        this.$refs.tree.setCurrentKey(arr);
+        this.$emit("defaultCheck", arr);
       }
     },
 
-    //获取所有节点
-    getAllKeys(node, arr = []) {
-      for (let item of node) {
-        arr.push(item.id);
-        let parentArr = [];
-        if (item.children) parentArr.push(...item.children);
-        if (parentArr && parentArr.length) this.getAllKeys(parentArr, arr);
-      }
-      return arr;
-    },
     //获取第一个子节点
     getFirstChildren(node) {
       if (node.length) {
-        // return node[0].children && node[0].children.length > 0
-        //   ? this.getFirstChildren(node[0].children)
-        //   : node[0].code;
-        return node[0].id;
+        return node[0].code;
       }
     },
   },

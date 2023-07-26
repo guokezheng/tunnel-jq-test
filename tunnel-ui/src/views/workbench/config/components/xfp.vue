@@ -16,12 +16,13 @@
         <div class="dialogCloseButton"></div>
       </div>
       <div class="picVideoBox">
-        <img :src="picUrl" v-if="radio1 == '图像'" />
+        <img :src="picUrl" v-if="radio1 == '图像'"/>
         <videoPlayer
-          v-if="videoForm.liveUrl"
+          v-if="videoForm.liveUrl && radio1 == '视频'"
           :rtsp="videoForm.liveUrl"
           :open="cameraPlayer"
         ></videoPlayer>
+        <img :src="noPicUrl" v-if=" radio1 == '视频' && !videoForm.liveUrl"/>
       </div>
       <div class="picButton">
         <el-radio-group v-model="radio1" class="picVideo">
@@ -163,6 +164,7 @@ export default {
         liveUrl: "",
       },
       picUrl: require("@/assets/image/xfp.png"),
+      noPicUrl:require("@/assets/image/noVideo.png"),
     };
   },
   created() {},
@@ -190,6 +192,7 @@ export default {
       // getRtspStreamAddr(this.eqInfo.ip).then((res)=>{
       //     console.log(res,"消防炮视频流")
       // })
+      this.$modal.msgWarning("获取视频失败");
     },
     pic2X() {
       this.picVisible = true;

@@ -676,6 +676,7 @@ export default {
           let laneId = res.lane;
           for (let i = 0; i < this.laneUrlList.length; i++) {
             if (this.laneUrlList[i].id == laneId) {
+              console.log(this.laneUrlList[i],"this.laneUrlList[i]")
               this.selectedTunnel.lane = this.laneUrlList[i];
               this.activeTab = "direction" + this.selectedTunnel.lane.direction;
               this.laneRadio = i;
@@ -934,7 +935,6 @@ export default {
         leftDirection: this.leftDirection,
         rightDirection: this.rightDirection,
       };
-
       let param = {
         tunnelId: this.selectedTunnel.id,
         storeConfigure: JSON.stringify(configData),

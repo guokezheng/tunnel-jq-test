@@ -385,7 +385,8 @@ public interface SdDevicesMapper
 	 */
 	List<Map<String, Object>> selectVmsDevicesOld(@Param("ids") String ids,
 											      @Param("state") String state,
-											      @Param("type") String type);
+											      @Param("type") String type,
+												  @Param("currentId") Long currentId);
 
 	/**
 	 * 批量查询扬声器设备信息

@@ -2727,7 +2727,7 @@ export default {
       this.$refs.tree.filter(val);
     },
     "batchManageForm.state": function (newVal, oldVal) {
-      console.log(newVal, "newVal");
+      // console.log(newVal, "newVal");
       if ([7, 9].includes(this.itemEqType)) {
         // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if (newVal == "1" && this.batchManageForm.brightness == 0) {
@@ -2898,6 +2898,7 @@ export default {
     },
     //拆分拼接数据
     splitData(item) {
+      // console.log(item,"item")
       item = item.replace(/\s*/g, "");
       let ago = item.substring(0, item.indexOf("右"));
       let after = item.substring(item.indexOf("右"), item.length);
@@ -3454,11 +3455,19 @@ export default {
     screenEqNameButton() {
       if (this.screenEqName) {
         let bigType = ''
+        let param = document.getElementsByClassName("content")
         for (var item of this.selectedIconList) {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
             bigType = item.bigType
             this.resetCanvasFlag = true;
-            this.$refs.dragImgDom.style.left = -item.position.left + 864 + "px";
+            if(this.currentTunnel.lane.width - item.position.left > 864 && item.position.left > 864){
+              this.$refs.dragImgDom.style.left = -item.position.left + 864 + "px";
+            }else if(item.position.left < 864){
+              param[0].scrollLeft = 0
+              this.$refs.dragImgDom.style.left = "0px";
+            }else if(this.currentTunnel.lane.width - item.position.left < 864){
+              this.$refs.dragImgDom.style.left = 1728 - this.currentTunnel.lane.width + 'px'
+            }
             // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
           } else {
@@ -3681,7 +3690,7 @@ export default {
         })
         .then(() => {
           if (this.manageStation == "1") {
-            console.log("this.deptId3333");
+            // console.log("this.deptId3333");
             let arr = ["YG118", "YG11801", "YG1180103"];
             this.changeSite(arr);
           }
@@ -3703,7 +3712,7 @@ export default {
 
     // 改变站点
     changeSite(index) {
-      console.log(index, "index");
+      // console.log(index, "index");
       if (index) {
         console.log(
           this.$cache.local.get("deptId"),
@@ -4301,7 +4310,7 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
-      debugger
+      // debugger
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
@@ -4315,7 +4324,7 @@ export default {
         } else if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY") {
           this.dictList = this.dict.type.sd_sys_name;
         }
-        console.log(this.dictList,"this.dictList")
+        // console.log(this.dictList,"this.dictList")
         for (let i = 0; i < this.dictList.length; i++) {
           if( this.dictList[i].label=="火灾报警"){
             this.dictList[i].labelClass = "huozaibaojing"
@@ -4439,7 +4448,7 @@ export default {
         stateName: null,
       };
       await listEqTypeState(queryParams).then((response) => {
-        console.log(response.rows,"response.rows111")
+        // console.log(response.rows,"response.rows111")
         let list = response.rows;
         that.getEqUrl(list);
       });
@@ -4504,7 +4513,7 @@ export default {
 
           listType("")
             .then((response) => {
-              console.log(response,"response888")
+              // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
                 for (let j = 0; j < response.rows.length; j++) {
@@ -4766,6 +4775,7 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
+      this.resetCanvas()
       const loading = this.$loading({
         lock: true,
         text: "Loading",
@@ -4828,7 +4838,7 @@ export default {
 
     /*点击设备类型*/
     displayControl(value, lable) {
-      console.log(value, lable,"value, lable")
+      // console.log(value, lable,"value, lable")
       // carShow
       for (var item of this.selectedIconList) {
         if (
@@ -4853,7 +4863,7 @@ export default {
 
       var val = value.toString();
       hasListByBigType(val).then((response) => {
-        console.log(response.rows,"response.rows")
+        // console.log(response.rows,"response.rows")
         let typelist = response.rows;
         let typeIndex = [];
         if (typelist.length > 0) {
@@ -5305,7 +5315,7 @@ export default {
         this.queryParams.strategyGroup = Number(1);
         this.queryParams.strategyType = "2";
       }
-      console.log(this.queryParams);
+      // console.log(this.queryParams);
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;

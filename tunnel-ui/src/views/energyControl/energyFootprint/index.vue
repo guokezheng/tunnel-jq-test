@@ -85,7 +85,7 @@
   <script>
 import * as echarts from "echarts";
 import SiteTree from "@/views/components/siteTree/index3.vue";
-//   import {getEnergyTrackList} from "@/api/analysis/energyAnalyze";
+  import {getEnergyTrackList} from "@/api/energy/api";
 
 export default {
   name: "Online",
@@ -151,12 +151,12 @@ export default {
       this.queryParams.baseTime = this.parseTime(this.base_date);
       this.queryParams.type = this.tabType;
 
-      // const res = await getEnergyTrackList(this.queryParams)
-      // if (res.code === 200) {
-      //   console.log(res)
-      //   this.linksData = res.data
-      //   this.loading = false
-      // }
+      const res = await getEnergyTrackList(this.queryParams)
+      if (res.code === 200) {
+        console.log(res)
+        this.linksData = res.data
+        this.loading = false
+      }
 
       // 获取namesData
       let names = [];

@@ -84,7 +84,7 @@
         >
           暂无交通事件
         </div>
-        <div v-if="trafficList" @click="jumpYingJi">
+        <div v-if="trafficList" @click="jumpYingJi" class="jumpBox">
           <vue-seamless-scroll
             :class-option="defaultOption"
             class="listContent"
@@ -166,7 +166,8 @@
           </vue-seamless-scroll>
         </div>
       </div>
-      <div class="footMiniBox" v-show="footChangeRadio == '视频'">
+      <div class="footMiniBox" v-show="footChangeRadio == '视频'"
+      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
         <div class="footTitle">
           <div class="footTitleCont">
             <img
@@ -197,7 +198,8 @@
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'">
+      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'"
+      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
         <div class="footTitle">
           <div class="footTitleCont">
             <img
@@ -232,7 +234,8 @@
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'">
+      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'"
+      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
         <div class="footTitle">
           <div class="footTitleCont">
             <img
@@ -267,7 +270,8 @@
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'">
+      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'"
+      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
         <div class="footTitle">
           <div class="footTitleCont">
             <img
@@ -299,6 +303,28 @@
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
         ></video>
         <div class="noPicBox" v-show="videoNoPic2">
+          <img src="../../../assets/image/noVideo.png" />
+        </div>
+      </div>
+      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'"
+      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
+        <div class="footTitle">
+          <div class="footTitleCont">
+            <img
+              :src="warningIcon"
+              style="width: 16px; margin-right: 5px"
+              v-show="sideTheme != 'theme-blue'"
+            />
+            <p>{{ videoTitle5 }}</p>
+            <p>inspection robot</p>
+          </div>
+        </div>
+        <videoPlayer
+          v-if="liveUrl5 && tunnelId == 'JQ-JiNan-WenZuBei-MJY'"
+          :rtsp="liveUrl5"
+          :open="cameraPlayer5"
+        ></videoPlayer>
+        <div class="noPicBox" v-show="videoNoPic3">
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
@@ -342,18 +368,22 @@ export default {
       trafficList: [],
       videoNoPic1: false,
       videoNoPic2: false,
+      videoNoPic3: false,
       videoTitle1: "",
       videoTitle2: "",
       videoTitle3: "",
       videoTitle4: "",
+      videoTitle5: "巡检机器人",
       liveUrl1: "",
       liveUrl2: "",
       liveUrl3: "",
       liveUrl4: "",
+      liveUrl5: "",
       cameraPlayer1: false,
       cameraPlayer2: false,
       cameraPlayer3: false,
       cameraPlayer4: false,
+      cameraPlayer5: false,
       directionList: [{}, {}],
       tunnelId: "",
       devNum: "",
@@ -362,7 +392,7 @@ export default {
       deviceChart: null,
       option: null,
       nameArr: [],
-      myChart:null,
+      myChart: null,
     };
   },
   computed: {
@@ -391,6 +421,7 @@ export default {
   },
   methods: {
     init(tunnelId) {
+      console.log(tunnelId,"tunnelId")
       this.tunnelId = tunnelId;
       this.getWarnList();
       this.vehicleEcharts();
@@ -484,6 +515,7 @@ export default {
     },
     // 预警事件点击跳转应急调度
     jumpYingJi(e) {
+      console.log(e)
       const item = e.target.closest(".listRow");
       if (item) {
         // 是否是滚动组件的某一行/列
@@ -531,6 +563,7 @@ export default {
                   this.cameraPlayer1 = true;
                 } else {
                   this.$modal.msgWarning("获取视频失败");
+                  this.videoNoPic2 = true;
                 }
               });
               videoStreaming(res.data[0].outlet).then((res) => {
@@ -539,6 +572,7 @@ export default {
                   this.cameraPlayer2 = true;
                 } else {
                   this.$modal.msgWarning("获取视频失败");
+                  this.videoNoPic2 = true;
                 }
               });
             }
@@ -569,6 +603,7 @@ export default {
                   this.cameraPlayer3 = true;
                 } else {
                   this.$modal.msgWarning("获取视频失败");
+                  this.videoNoPic1 = true;
                 }
               });
               videoStreaming(res.data[0].outlet).then((res) => {
@@ -577,12 +612,14 @@ export default {
                   this.cameraPlayer4 = true;
                 } else {
                   this.$modal.msgWarning("获取视频失败");
+                  this.videoNoPic1 = true;
                 }
               });
             }
           }
         }
       );
+      this.videoNoPic3 = true;
     },
     initeChartsEnd(huoArr, keArr, keyArr, timeArr) {
       let newPromise = new Promise((resolve) => {
@@ -1296,7 +1333,7 @@ export default {
           ],
         };
         if (this.nameArr.length > 0) {
-        this.deviceChart.setOption(this.option);
+          this.deviceChart.setOption(this.option);
 
           this.deviceChart.on("mouseover", () => {
             this.stop();
@@ -1305,7 +1342,6 @@ export default {
             this.goMove();
           });
           this.autoMove();
-
         }
         this.deviceChart.setOption(this.option);
         // window.addEventListener("resize", function () {
@@ -1320,9 +1356,9 @@ export default {
           this.option.dataZoom[0].startValue = 0;
         } else {
           this.option.dataZoom[0].endValue =
-          this.option.dataZoom[0].endValue + 1;
+            this.option.dataZoom[0].endValue + 1;
           this.option.dataZoom[0].startValue =
-          this.option.dataZoom[0].startValue + 1;
+            this.option.dataZoom[0].startValue + 1;
         }
 
         this.deviceChart.setOption(this.option);
@@ -1566,7 +1602,7 @@ export default {
       height: 186px;
     }
     .listContent {
-      height: 70%;
+      height: 100%;
       font-size: 14px;
       overflow: hidden;
       ul {
@@ -1622,5 +1658,9 @@ export default {
 }
 #deviceChart {
   height: calc(75% - 4px);
+}
+.jumpBox{
+  height: calc(100% - 2.4vh - 10px);
+  margin-top: 10px;
 }
 </style>

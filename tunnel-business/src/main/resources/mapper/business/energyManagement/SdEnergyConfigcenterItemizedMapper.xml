@@ -54,11 +54,7 @@
         i.update_time
         FROM
         energy_configcenter_itemized i
-        <where>
-            <if test="itemizedName != null  and itemizedName != ''"> and i.itemized_name like concat('%', #{itemizedName}, '%')</if>
-            <if test="itemizedCode != null  and itemizedCode != ''"> and i.itemized_code = #{itemizedCode}</if>
-            <if test="parentCode != null  and parentCode != ''"> and i.parent_code = #{parentCode}</if>
-        </where>
+
     </select>
 
 

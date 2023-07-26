@@ -112,4 +112,6 @@ public interface ISdFaultListService
      * @return
      */
     int saveFault(SdFaultList sdFaultList);
+
+    void faultSendWeb(SdFaultList sdFaultList);
 }

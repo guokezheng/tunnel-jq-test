@@ -52,7 +52,7 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                                                                 String tabType,
                                                                 String deptCode) throws Exception {
         List<List<ElectricityData>> result = new ArrayList<>();
-        List<ElectricityData> list = new ArrayList<>();
+        List<ElectricityData> energyList = new ArrayList<>();
         List<ElectricityData> newlist = new ArrayList<>();
         List<List<ElectricityData>> resultList = new ArrayList<>();
         List<String> deptCodes = null;
@@ -63,21 +63,32 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         }
 
         if ("1".equals(tabType)) {// 机构
-            list = mapper.getSiteByDateType(codeList, statisticType, baseTime);
+            energyList = mapper.getSiteByDateType(codeList, statisticType, baseTime);
+            energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId, Collectors.toList()))
+                    .forEach((model, list) -> {
+                        resultList.add(list);
+                    });
         }else if ("3".equals(tabType)) { // 分项
 
-            list = mapper.getItemizedEnergyByDateType(codeList, statisticType, baseTime, deptCodes);
+            energyList = mapper.getItemizedEnergyByDateType(codeList, statisticType, baseTime, deptCodes);
+            energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId, Collectors.toList()))
+                    .forEach((model, list) -> {
+                        resultList.add(list);
+                    });
 
         } else if ("4".equals(tabType)) { // 分类
 
-            list = mapper.getElectricityListByClass(codeList, statisticType, baseTime, deptCodes);
+            energyList = mapper.getElectricityListByClass(codeList, statisticType, baseTime, deptCodes);
+            energyList.stream().collect(Collectors.groupingBy(ElectricityData::getId, Collectors.toList()))
+                    .forEach((model, list) -> {
+                        resultList.add(list);
+                    });
 
         } else {
             throw new Exception("tabType类型错误");
         }
 
-        result.add(list);
-        return result;
+        return resultList;
     }
 
     /**
@@ -107,6 +118,7 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
     @Override
     public List<SplitTimeDto> getSplitTimeByDept(List<String> deptCodeList, Date baseTime, String type) {
         Integer statisticType = null;
+        List<SplitTimeDto> result = new ArrayList<>();
         if(type.equals(StatisticTypeEnum.RIBAO.getName())){//日报
             statisticType = StatisticTypeEnum.RIBAO.getCode();
         }else if(type.equals(StatisticTypeEnum.YUEBAO.getName())){//月报
@@ -131,7 +143,37 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         EnergyConfigcenterElectricityPrice elePrices = mapper.getInfoByLastMonth(); // 未配置默认使用上月电价
         Map<String, EnergyConfigcenterElectricityPrice> priceMap = priceList.stream().collect(Collectors.toMap(EnergyConfigcenterElectricityPrice::getMonth, e->e));
 
-        List<SplitTimeDto> result = new ArrayList<>();
+        if("year".equals(type)){
+
+        }else{
+            for(int i = 0;i<energyDataList.size();i++){//按月统计的话
+                SplitTimeDto dto = new SplitTimeDto();
+                dto.setCode(energyDataList.get(i).getTunnelId());
+                dto.setName(energyDataList.get(i).getTunnelName());
+                dto.setjPrice(getPrice(priceList.get(0), priceList.get(0).getJianCof().doubleValue()));
+                dto.setgPrice(getPrice(priceList.get(0), priceList.get(0).getGuCof().doubleValue()));
+                dto.setfPrice(getPrice(priceList.get(0), priceList.get(0).getFengCof().doubleValue()));
+                dto.setsPrice(getPrice(priceList.get(0), priceList.get(0).getShenCof().doubleValue()));
+                dto.setpPrice(getPrice(priceList.get(0),1.00));
+                Double sumValue= energyDataList.get(i).getpValue()+energyDataList.get(i).getjValue()+energyDataList.get(i).getfValue()+energyDataList.get(i).getgValue()+energyDataList.get(i).getsValue();
+                dto.setSumValue(sumValue);
+
+                dto.setSumPrice(ArithUtil.accurateDecimal(sumValue, 2));
+                dto.setSumJPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getjValue(), 2));
+                dto.setSumFPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getfValue(), 2));
+                dto.setSumPPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getpValue(), 2));
+                dto.setSumGPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getgValue(), 2));
+                dto.setSumSPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getsValue(), 2));
+                result.add(dto);
+            }
+        }
+
+
+
+
+
+
+
         return null;
     }
 

@@ -8,6 +8,9 @@ import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
+import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.service.event.impl.SdEventServiceImpl;
 import com.tunnel.business.utils.util.UUIDUtil;
 import com.tunnel.deal.tcp.util.ByteBufUtil;
 import com.tunnel.deal.xiaofangpao.msgEnum.DataTypeCodeEnum;
@@ -44,6 +47,12 @@ public class FireMonitorDataParse {
 
     @Autowired
     private SdEventMapper sdEventMapper;
+
+    @Autowired
+    private ISdFaultListService sdFaultListService;
+
+    @Autowired
+    private SdEventServiceImpl sdEventServiceImpl;
 
 
     /**
@@ -138,6 +147,7 @@ public class FireMonitorDataParse {
                     sdFaultList.setFaultLevel("0");//故障等级  一般
                     sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
                     sdFaultList.setFaultStatus("0");//故障状态  已发布
+                    sdFaultListService.faultSendWeb(sdFaultList);//故障推送
                     sdFaultListMapper.insertSdFaultList(sdFaultList);
                 }
                 if(deviceStateLow.substring(6,7).equals("1")){//火警
@@ -155,6 +165,7 @@ public class FireMonitorDataParse {
                     sdEvent.setStakeNum(sdDevices.getPile());//事件桩号
                     sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
                     sdEvent.setDirection(sdDevices.getDirection());//方向
+                    sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
                     sdEventMapper.insertSdEvent(sdEvent);
                 }
                 //高字节状态解析

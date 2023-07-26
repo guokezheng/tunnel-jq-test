@@ -460,7 +460,20 @@
                   >
                     <!-- 设备图标上提示文字 -->
 
-                    <div v-if="item.click" class="screenEqNameBox">
+                    <div
+                      v-if="item.click"
+                      class="screenEqNameBox"
+                      :style="{
+                        top:
+                          item.tooltipType == 1 || item.tooltipType == 2
+                            ? '35px'
+                            : '-50px',
+                        left:
+                          item.tooltipType == 1 || item.tooltipType == 3
+                            ? '0px'
+                            : '-100px',
+                      }"
+                    >
                       {{ item.eqName }}
                     </div>
                     <div v-if="item.textFalse" class="textFalseBox">
@@ -3483,6 +3496,21 @@ export default {
               this.$refs.dragImgDom.style.left =
                 1728 - this.currentTunnel.lane.width + "px";
             }
+            console.log(item.position.left,"item.position.left")
+            console.log(item.position.top,"item.position.top")
+            if(item.position.left <= this.currentTunnel.lane.width - 100 && item.position.top <= 480){
+              console.log(1)
+              item.tooltipType = 1
+            }else if(item.position.left > this.currentTunnel.lane.width - 100 && item.position.top <= 480){
+              console.log(2)
+              item.tooltipType = 2
+            }else if(item.position.left <= this.currentTunnel.lane.width - 100 && item.position.top > 480){
+              console.log(3)
+              item.tooltipType = 3
+            }else{
+              console.log(4)
+              item.tooltipType = 4
+            }
             // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
           } else {
@@ -5817,8 +5845,8 @@ export default {
   width: 120px;
   // height: 40px;
   position: absolute;
-  top: -42px;
-  left: 10px;
+  // top: -42px;
+  // left: 10px;
   line-height: 1;
   text-align: center;
   padding: 10px;

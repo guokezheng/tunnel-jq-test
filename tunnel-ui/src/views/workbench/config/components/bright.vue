@@ -167,17 +167,12 @@ export default {
           for (var item of response.data.todayLDOutsideData) {
             xData.push(item.order_hour);
             yData1.push(item.count);
-            yData2 = [
-              900,800,700,600,500,700,900,1000,1500,1600,1800,1900,2000,1800,0,0,0,0,0,0,0,0,0,0
-            ];
+            yData2.push(item.ctCount);
           }
         } else if (this.eqInfo.clickEqType == 18) {
           for (var item of response.data.todayLDInsideData) {
             xData.push(item.order_hour);
             yData1.push(item.count);
-            yData2 = [
-              900,800,700,600,500,700,900,1000,1500,1600,1800,1900,2000,1800,0,0,0,0,0,0,0,0,0,0
-            ];
           }
         }
         this.brightValue = yData1[yData1.length - 1];
@@ -231,7 +226,7 @@ export default {
         },
         legend: {
           show: true,
-          data: ["当前隧道", "传统隧道"],
+          data: this.eqInfo.clickEqType == 18?[]:["当前隧道", "传统隧道"],
           textStyle: {
             color: "#AFAFAF",
             fontSize: 10,

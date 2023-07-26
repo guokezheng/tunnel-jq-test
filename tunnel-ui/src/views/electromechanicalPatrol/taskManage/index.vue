@@ -1772,6 +1772,7 @@ export default {
     handleAdd() {
       this.boxList = "";
       this.boxIds = "";
+      this.bzData = [];
       this.reset();
       this.open = true;
       this.openGz = true;

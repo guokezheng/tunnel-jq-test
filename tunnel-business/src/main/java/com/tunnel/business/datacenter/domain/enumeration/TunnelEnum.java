@@ -11,6 +11,7 @@ public enum TunnelEnum {
     HANG_SHAN_DONG("JQ-WeiFang-JiuLongYu-HSD", "杭山东隧道"),
     JIN_JIA_LOU("JQ-WeiFang-JiuLongYu-JJL", "金佳楼隧道"),
     MA_AN_SHAN("JQ-WeiFang-JiuLongYu-MAS", "马鞍山隧道"),
+    HU_SHAN("JQ-JiNan-WenZuBei-MJY", "胡山隧道"),
     FENG_HUANG_SHAN("WLJD-JiNan-YanJiuYuan-FHS", "凤凰山隧道");
     private String code;
     private String name;

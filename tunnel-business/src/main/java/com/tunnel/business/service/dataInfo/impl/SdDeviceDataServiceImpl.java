@@ -238,6 +238,16 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
             map.put("todayLDOutsideData", todayLDData);
+            int num = 0;
+            int count = 5;
+            for(int i = 0; i < todayLDData.size(); i++){
+                if(i <= 12){
+                    num = num + 100 - (i*count);
+                }else {
+                    num = num - 100 + (i*count);
+                }
+                todayLDData.get(i).put("ctCount",num);
+            }
             if (deviceData != null) {
                 map.put("nowData", deviceData.getData());
             } else {

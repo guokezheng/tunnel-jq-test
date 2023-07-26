@@ -314,6 +314,24 @@ public class ZhuoShiCorniceTunnelRobot implements CorniceTunnelRobot {
         return 0;
     }
 
+    @Override
+    public int OneClickArrival(String deviceId, String posX, String posY, String angle, String baseUrl) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("deviceId", deviceId);
+        map.put("posX",posX);
+        map.put("posY",posY);
+        map.put("angle",angle);
+        JSONObject jsonObject = toSend(baseUrl + "/Robot/OneclickArrival", "GET", map);
+        try {
+            if (jsonObject != null && jsonObject.getInteger("code") == 0) {
+                return 1;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("飞檐隧道机器人平台数据解析异常");
+        }
+        return 0;
+    }
+
     public JSONObject toSend(String url, String post, Map<String, Object> reqMap) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json;charset=utf-8");

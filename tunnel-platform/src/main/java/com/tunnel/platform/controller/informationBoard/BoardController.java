@@ -274,6 +274,11 @@ public class BoardController extends BaseController {
 //                continue;
 //            }
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(Long.parseLong(deviceId));
+            if(sdIotDevice == null){
+                flag = true;
+                failDevList.add(device.getEqName());
+                continue;
+            }
             protocolType = sdIotDevice.getProtocolName();
             List<String> paramsList = new ArrayList<String>();
             try {

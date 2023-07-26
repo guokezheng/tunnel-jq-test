@@ -137,4 +137,15 @@ public interface CorniceTunnelRobot {
      * @return
      */
     int InitializeRobot(String deviceId,String baseUrl);
+
+    /**
+     * 一键到达指定位置
+     * @param deviceId
+     * @param posX
+     * @param posY
+     * @param angle
+     * @param baseUrl
+     * @return
+     */
+    int OneClickArrival(String deviceId, String posX, String posY, String angle, String baseUrl);
 }

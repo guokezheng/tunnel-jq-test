@@ -552,7 +552,7 @@
               <el-input
                 v-model="searchValue"
                 placeholder="请输入设备名称"
-                @keyup.enter.native="getTable"
+                @keyup.enter.native="getTable()"
                 size="small"
               >
                 <el-button

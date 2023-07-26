@@ -532,6 +532,7 @@
             y.type_name AS typeName,-- 设备类型
             fsd.mac,
             d.protocol_id,
+            sdp.is_reserved,
             sdp.function_json
         FROM
             sd_patrol_list p

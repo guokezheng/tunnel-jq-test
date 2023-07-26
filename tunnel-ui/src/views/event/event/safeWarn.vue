@@ -2352,7 +2352,7 @@ export default {
 
       });
       this.getEventList();
-      debugger
+      // debugger
       if (item.stakeNum) {
         let stake = "";
 

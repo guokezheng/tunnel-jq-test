@@ -153,7 +153,6 @@ export default {
 
     // 获取树结构
     async getSiteTree() {
-      console.log("00000000000")
       const response = await siteTree();
       if (response.code === 200) {
         this.siteTreeOptions =

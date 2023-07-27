@@ -58,7 +58,7 @@ public class ExternalSystemServiceImpl implements IExternalSystemService
                         for(int j=0;j<result.size();j++){
                             for(int k=0;k<list.size();k++){
                                 if(result.get(j).equals(list.get(k).getTunnelId())){
-                                    tunnelName += list.get(k).getTunnelName()+"\n";
+                                    tunnelName += list.get(k).getTunnelName()+",";
 
                                 }
                             }

@@ -53,7 +53,7 @@ public class EnergySjfxElectricityController extends BaseController {
         if (codeList.size() == 0) {
             return error("未选择仓储");
         }
-        if (!"1".equals(type) && StringUtils.isEmpty(deptCode)) {
+        if (!"1".equals(tabType) && StringUtils.isEmpty(deptCode)) {
             return error("请选择归属部门");
         }
         Integer statisticType = null;

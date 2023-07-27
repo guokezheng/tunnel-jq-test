@@ -63,9 +63,6 @@
         energy_configcenter_classification f
         <where>
             and f.classification_code in ('50','49','55','56','58')
-            <if test="classificationName != null  and classificationName != ''"> and f.classification_name like concat('%', #{classificationName}, '%')</if>
-            <if test="classificationCode != null  and classificationCode != ''"> and f.classification_code = #{classificationCode}</if>
-            <if test="parentCode != null  and parentCode != ''"> and f.parent_code = #{parentCode}</if>
         </where>
     </select>
 

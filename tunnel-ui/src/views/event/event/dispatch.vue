@@ -629,7 +629,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-callPolice>
-    <com-robot
+    <!-- <com-robot
       class="comClass"
       v-if="this.eqInfo.clickEqType == 29"
       :brandList="this.brandList"
@@ -637,7 +637,7 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-robot>
+    ></com-robot> -->
     <com-bright
       class="comClass"
       v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
@@ -1514,6 +1514,8 @@ export default {
     // 关闭弹窗子组件
     dialogClose() {
       this.eqInfo.clickEqType = 0;
+      this.clickEqType = 0;
+      this.$forceUpdate();
     },
     // 点设备弹窗
     openStateSwitch(item) {

@@ -105,7 +105,7 @@ public class EnergyDaypartingDataTask {
                                 double fValue = 0.00;
                                 double pValue = 0.00;
                                 double jValue = 0.00;
-                                double sumValue = 0.00;
+                                double sValue = 0.00;
                                 double gValue = 0.00;
                                 if(data.getJSONObject(j).get("fValue").toString()!=null){
                                     fValue = Double.parseDouble(data.getJSONObject(j).get("fValue").toString());
@@ -119,10 +119,10 @@ public class EnergyDaypartingDataTask {
                                     jValue = Double.parseDouble(data.getJSONObject(j).get("jValue").toString());
                                 }
                                 energyDayparting.setjValue(jValue);
-                                if(data.getJSONObject(j).get("sumValue").toString()!=null){
-                                    sumValue = Double.parseDouble(data.getJSONObject(j).get("sumValue").toString());
+                                if(data.getJSONObject(j).get("sValue").toString()!=null){
+                                    sValue = Double.parseDouble(data.getJSONObject(j).get("sValue").toString());
                                 }
-                                energyDayparting.setsValue(sumValue);
+                                energyDayparting.setsValue(sValue);
                                 if(data.getJSONObject(j).get("gValue").toString()!=null){
                                     gValue = Double.parseDouble(data.getJSONObject(j).get("gValue").toString());
                                 }

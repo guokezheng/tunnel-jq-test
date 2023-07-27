@@ -384,6 +384,7 @@ public class SdFaultListController extends BaseController {
         sdFaultList.setFaultLevel("0");//故障等级  一般
         sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
         sdFaultList.setFaultStatus("0");//故障状态  已发布
+        sdFaultListService.faultSendWeb(sdFaultList);//故障推送
         sdFaultListMapper.insertSdFaultList(sdFaultList);
     }
 

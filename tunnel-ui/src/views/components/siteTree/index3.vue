@@ -48,6 +48,7 @@
 
 <script>
 import { treeselectExcYG1 } from "@/api/system/dept";
+import { siteTree } from "@/api/energy/api";
 
 export default {
   name: "loopTree",
@@ -123,7 +124,7 @@ export default {
 
     // 获取树结构
     async getSiteTree() {
-      const response = await treeselectExcYG1();
+      const response = await siteTree();
       if (response.code === 200) {
         this.siteTreeOptions =
           response.data == null || response.data.length === 0

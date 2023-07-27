@@ -112,6 +112,7 @@
                 :filter-node-method="filterNode"
                 accordion
                 ref="tree"
+                node-key="id"
               ></el-tree>
             </div>
           </div>
@@ -160,15 +161,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>控制策略</span>
           </el-button>
-<!--          <el-button-->
-<!--            class="buttons"-->
-<!--            type="primary"-->
-<!--            size="mini"-->
-<!--            @click="strategyPage1"-->
-<!--          >-->
-<!--            <img src="../../../assets/icons/kzcl.png" />-->
-<!--            <span>控制策略1</span>-->
-<!--          </el-button>-->
+          <!--          <el-button-->
+          <!--            class="buttons"-->
+          <!--            type="primary"-->
+          <!--            size="mini"-->
+          <!--            @click="strategyPage1"-->
+          <!--          >-->
+          <!--            <img src="../../../assets/icons/kzcl.png" />-->
+          <!--            <span>控制策略1</span>-->
+          <!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -285,17 +286,14 @@
           @mouseover="mouseoversImage"
           @mouseleave="mouseleaveImage"
         >
-        <!-- 右键拖拽 勿删 -->
+          <!-- 右键拖拽 勿删 -->
           <!-- <div
             class="workbench-content"
             @mousedown="dragImg"
             ref="dragImgDom"
             @contextmenu.prevent
           > -->
-          <div
-            class="workbench-content"
-            ref="dragImgDom"
-          >
+          <div class="workbench-content" ref="dragImgDom">
             <!--画布区域-->
             <div>
               <el-row
@@ -462,7 +460,20 @@
                   >
                     <!-- 设备图标上提示文字 -->
 
-                    <div v-if="item.click" class="screenEqNameBox">
+                    <div
+                      v-if="item.click"
+                      class="screenEqNameBox"
+                      :style="{
+                        top:
+                          item.tooltipType == 1 || item.tooltipType == 2
+                            ? '35px'
+                            : '-50px',
+                        left:
+                          item.tooltipType == 1 || item.tooltipType == 3
+                            ? '0px'
+                            : '-100px',
+                      }"
+                    >
                       {{ item.eqName }}
                     </div>
                     <div v-if="item.textFalse" class="textFalseBox">
@@ -1334,7 +1345,12 @@
           :show-overflow-tooltip="true"
           :formatter="controlTypeFormat"
         />
-        <el-table-column label="操作结果" align="center" prop="state" width="70"/>
+        <el-table-column
+          label="操作结果"
+          align="center"
+          prop="state"
+          width="70"
+        />
         <el-table-column label="操作地址" align="center" prop="operIp" />
         <el-table-column
           label="创建时间"
@@ -1486,45 +1502,45 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-<!--          <el-col :span="12">-->
-<!--            <el-form-item-->
-<!--              label="当前亮度值"-->
-<!--              prop="beforeLuminance"-->
-<!--              v-if="lightingForm.modeType == 1"-->
-<!--            >-->
-<!--              <el-input-->
-<!--                v-model="lightingForm.beforeLuminance"-->
-<!--                placeholder="请输入当前亮度值(0-100)"-->
-<!--              />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
+          <!--          <el-col :span="12">-->
+          <!--            <el-form-item-->
+          <!--              label="当前亮度值"-->
+          <!--              prop="beforeLuminance"-->
+          <!--              v-if="lightingForm.modeType == 1"-->
+          <!--            >-->
+          <!--              <el-input-->
+          <!--                v-model="lightingForm.beforeLuminance"-->
+          <!--                placeholder="请输入当前亮度值(0-100)"-->
+          <!--              />-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
         </el-row>
-<!--        <el-row>-->
-<!--          <el-col :span="12">-->
-<!--            <el-form-item-->
-<!--              label="最小亮度值"-->
-<!--              prop="minLuminance"-->
-<!--              v-if="lightingForm.modeType != 0"-->
-<!--            >-->
-<!--              <el-input-->
-<!--                v-model="lightingForm.minLuminance"-->
-<!--                placeholder="请输入最小亮度值(0-100)"-->
-<!--              />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--          <el-col :span="12">-->
-<!--            <el-form-item-->
-<!--              label="响应时长(毫秒)"-->
-<!--              prop="respondTime"-->
-<!--              v-if="lightingForm.modeType != 0"-->
-<!--            >-->
-<!--              <el-input-->
-<!--                v-model="lightingForm.respondTime"-->
-<!--                placeholder="请输入响应时长 单位：秒s"-->
-<!--              />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
+        <!--        <el-row>-->
+        <!--          <el-col :span="12">-->
+        <!--            <el-form-item-->
+        <!--              label="最小亮度值"-->
+        <!--              prop="minLuminance"-->
+        <!--              v-if="lightingForm.modeType != 0"-->
+        <!--            >-->
+        <!--              <el-input-->
+        <!--                v-model="lightingForm.minLuminance"-->
+        <!--                placeholder="请输入最小亮度值(0-100)"-->
+        <!--              />-->
+        <!--            </el-form-item>-->
+        <!--          </el-col>-->
+        <!--          <el-col :span="12">-->
+        <!--            <el-form-item-->
+        <!--              label="响应时长(毫秒)"-->
+        <!--              prop="respondTime"-->
+        <!--              v-if="lightingForm.modeType != 0"-->
+        <!--            >-->
+        <!--              <el-input-->
+        <!--                v-model="lightingForm.respondTime"-->
+        <!--                placeholder="请输入响应时长 单位：秒s"-->
+        <!--              />-->
+        <!--            </el-form-item>-->
+        <!--          </el-col>-->
+        <!--        </el-row>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="submitLightingForm"
@@ -2035,7 +2051,7 @@ export default {
     comDeawer, //抽屉
     comFooter, //底部echarts
     timingTask,
-    comXfp
+    comXfp,
   },
 
   data() {
@@ -2158,7 +2174,7 @@ export default {
       brandList: [],
       directionList: [{}, {}], //设备方向字典
       dictList: [],
-      leftButtonS:'leftButtonS',
+      leftButtonS: "leftButtonS",
       robotShow: false,
       drawerLineList: [
         {
@@ -2589,7 +2605,7 @@ export default {
       ],
       // 表单参数
       lightingForm: {},
-      timingTaskShow:false,
+      timingTaskShow: false,
     };
   },
 
@@ -2888,10 +2904,10 @@ export default {
   methods: {
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey1(row) {
-      return row.infoId
+      return row.infoId;
     },
     getRowKey2(row) {
-      return row.id
+      return row.id;
     },
     isDrawer() {
       this.buttonsDeawer = !this.buttonsDeawer;
@@ -3067,6 +3083,10 @@ export default {
     },
     // 模糊查询
     treeClick() {
+      const nodes = this.$refs.tree.store._getAllNodes();
+      nodes.forEach((item) => {
+        item.expanded = false;
+      });
       this.treeShow = !this.treeShow;
     },
     //点击树状图获取值
@@ -3091,7 +3111,7 @@ export default {
         }
       });
     },
-    async richangUpdate(row){
+    async richangUpdate(row) {
       let params = row;
       await listRl({ strategyId: params.id }).then((response) => {
         // console.log(response, "设备数据");
@@ -3130,14 +3150,14 @@ export default {
       });
     },
     richanghandleUpdate(row) {
-      let that = this
-      this.$confirm('是否确认执行控制?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          that.richangUpdate(row)
-        })
+      let that = this;
+      this.$confirm("是否确认执行控制?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(function () {
+        that.richangUpdate(row);
+      });
     },
     directionFormat(row, column) {
       return this.selectDictLabel(this.directionList, row.direction);
@@ -3267,7 +3287,7 @@ export default {
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
-      this.operationList2 = []
+      this.operationList2 = [];
       if (this.manageStation == "1") {
         this.operationParam.tunnelId = this.$cache.local.get(
           "manageStationSelect"
@@ -3454,19 +3474,42 @@ export default {
     // 筛选设备名称
     screenEqNameButton() {
       if (this.screenEqName) {
-        let bigType = ''
-        let param = document.getElementsByClassName("content")
+        let bigType = "";
+        let param = document.getElementsByClassName("content");
         for (var item of this.selectedIconList) {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
-            bigType = item.bigType
+            bigType = item.bigType;
             this.resetCanvasFlag = true;
-            if(this.currentTunnel.lane.width - item.position.left > 864 && item.position.left > 864){
-              this.$refs.dragImgDom.style.left = -item.position.left + 864 + "px";
-            }else if(item.position.left < 864){
-              param[0].scrollLeft = 0
+            if (
+              this.currentTunnel.lane.width - item.position.left > 864 &&
+              item.position.left > 864
+            ) {
+              this.$refs.dragImgDom.style.left =
+                -item.position.left + 864 + "px";
+            } else if (item.position.left < 864) {
+              param[0].scrollLeft = 0;
               this.$refs.dragImgDom.style.left = "0px";
-            }else if(this.currentTunnel.lane.width - item.position.left < 864){
-              this.$refs.dragImgDom.style.left = 1728 - this.currentTunnel.lane.width + 'px'
+            } else if (
+              this.currentTunnel.lane.width - item.position.left <
+              864
+            ) {
+              this.$refs.dragImgDom.style.left =
+                1728 - this.currentTunnel.lane.width + "px";
+            }
+            console.log(item.position.left,"item.position.left")
+            console.log(item.position.top,"item.position.top")
+            if(item.position.left <= this.currentTunnel.lane.width - 100 && item.position.top <= 480){
+              console.log(1)
+              item.tooltipType = 1
+            }else if(item.position.left > this.currentTunnel.lane.width - 100 && item.position.top <= 480){
+              console.log(2)
+              item.tooltipType = 2
+            }else if(item.position.left <= this.currentTunnel.lane.width - 100 && item.position.top > 480){
+              console.log(3)
+              item.tooltipType = 3
+            }else{
+              console.log(4)
+              item.tooltipType = 4
             }
             // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
@@ -3474,16 +3517,15 @@ export default {
             item.click = false;
           }
         }
-        if(bigType.includes('0')){
-            this.displayControl(0,'全部设备')
-        }else{
-          for(let itm of this.dictList){
-            if(bigType == itm.value){
-              this.displayControl(bigType,item.label)
+        if (bigType.includes("0")) {
+          this.displayControl(0, "全部设备");
+        } else {
+          for (let itm of this.dictList) {
+            if (bigType == itm.value) {
+              this.displayControl(bigType, item.label);
             }
           }
         }
-        
       } else {
         for (var item of this.selectedIconList) {
           item.click = false;
@@ -3601,8 +3643,8 @@ export default {
       this.strategyLoading = true;
       this.queryParams.pageSize = 10;
       this.queryParams.pageNum = 1;
-      this.queryParams.direction = ''
-      this.queryParams.strategyName = ''
+      this.queryParams.direction = "";
+      this.queryParams.strategyName = "";
       this.getStrategyQuery(this.dictCode);
       // this.handleQueryOperationParam();
       this.handlestrategyQuery();
@@ -4326,10 +4368,10 @@ export default {
         }
         // console.log(this.dictList,"this.dictList")
         for (let i = 0; i < this.dictList.length; i++) {
-          if( this.dictList[i].label=="火灾报警"){
-            this.dictList[i].labelClass = "huozaibaojing"
-          }else if( this.dictList[i].label=="紧急电话"){
-            this.dictList[i].labelClass = "jinjidianhua"
+          if (this.dictList[i].label == "火灾报警") {
+            this.dictList[i].labelClass = "huozaibaojing";
+          } else if (this.dictList[i].label == "紧急电话") {
+            this.dictList[i].labelClass = "jinjidianhua";
           }
         }
         this.checkboxTunnel = [];
@@ -4522,7 +4564,7 @@ export default {
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
                     res.eqList[i].iconHeight = iconHeight;
-                    res.eqList[i].bigType = response.rows[j].bigType
+                    res.eqList[i].bigType = response.rows[j].bigType;
                     break;
                   }
                 }
@@ -4607,7 +4649,7 @@ export default {
       });
       // 树状搜索
       getCategoryDeviceTree(tunnelId).then((res) => {
-        // console.log(res.data, "res.data");
+        console.log(res.data, "res.data");
         this.treeData = res.data;
       });
     },
@@ -4775,13 +4817,13 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
-      this.resetCanvas()
+      this.resetCanvas();
       const loading = this.$loading({
         lock: true,
         text: "Loading",
         spinner: "el-icon-loading",
         background: "rgba(0, 0, 0, 0.7)",
-        });
+      });
       this.tunnelItem = item; //勿动
       this.closeBatchManageDialog();
       this.screenEqName = "";
@@ -4829,7 +4871,6 @@ export default {
       this.carList = [];
       this.carList = new Map();
       loading.close();
-
     },
     onActivated(key) {},
     onDragging(key) {},
@@ -5103,7 +5144,7 @@ export default {
           } else if (item.eqType == 29) {
             // 巡检机器人
             this.robotIframeShow = true;
-          }else if(item.eqType == 33){
+          } else if (item.eqType == 33) {
             // 智能消防炮
             this.$refs.xfpRef.init(
               this.eqInfo,
@@ -5261,12 +5302,12 @@ export default {
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
     },
-    strategyPage1(){
-      this.timingTaskShow = !this.timingTaskShow
+    strategyPage1() {
+      this.timingTaskShow = !this.timingTaskShow;
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;
-      this.strategResetQuery()
+      this.strategResetQuery();
       // this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.handleQueryOperationParam();
       this.handlestrategyQuery(this.dictCode);
@@ -5804,8 +5845,8 @@ export default {
   width: 120px;
   // height: 40px;
   position: absolute;
-  top: -42px;
-  left: 10px;
+  // top: -42px;
+  // left: 10px;
   line-height: 1;
   text-align: center;
   padding: 10px;
@@ -5976,8 +6017,7 @@ export default {
   width: 5.4vw;
   line-height: 28px;
 }
-.leftButtonSone{
-
+.leftButtonSone {
 }
 .leftButtonS {
   position: relative;
@@ -7371,12 +7411,18 @@ input {
 .my-div {
   cursor: pointer;
 }
-.jinjidianhua{
+.jinjidianhua {
   animation: blink 1s infinite;
 }
 @keyframes blink {
-  0% { background-color: red; }
-  50% { background-color: transparent; }
-  100% { background-color: red; }
+  0% {
+    background-color: red;
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: red;
+  }
 }
 </style>

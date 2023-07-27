@@ -160,25 +160,28 @@ export default {
           this.nowData = parseFloat(response.data.nowData).toFixed(2);
         }
         var xData = [];
-        var yData = [];
+        var yData1 = [];
+        var yData2 = [];
 
         if (this.eqInfo.clickEqType == 5) {
           for (var item of response.data.todayLDOutsideData) {
             xData.push(item.order_hour);
-            yData.push(item.count);
+            yData1.push(item.count);
+            yData2.push(item.ctCount);
           }
         } else if (this.eqInfo.clickEqType == 18) {
           for (var item of response.data.todayLDInsideData) {
             xData.push(item.order_hour);
-            yData.push(item.count);
+            yData1.push(item.count);
           }
         }
-        this.brightValue = yData[yData.length - 1];
+        this.brightValue = yData1[yData1.length - 1];
         console.log(xData, "xData");
-        console.log(yData, "yData");
+        console.log(yData1, "yData1");
+        console.log(yData2, "yData2");
 
         this.$nextTick(() => {
-          this.initChart(xData, yData);
+          this.initChart(xData, yData1, yData2);
         });
       });
     },
@@ -208,7 +211,7 @@ export default {
     handleClosee() {
       this.visible = false;
     },
-    initChart(xData, yData) {
+    initChart(xData, yData1, yData2) {
       this.mychart = echarts.init(document.getElementById("Inside"));
       var option = {
         tooltip: {
@@ -220,6 +223,22 @@ export default {
             // magicType: { show: true, type: ['stack', 'tiled'] },
             // saveAsImage: { show: true }
           },
+        },
+        legend: {
+          show: true,
+          data: this.eqInfo.clickEqType == 18?[]:["当前隧道", "传统隧道"],
+          textStyle: {
+            color: "#AFAFAF",
+            fontSize: 10,
+          },
+          itemWidth: 10,
+          itemHeight: 10,
+          itemStyle: {},
+          top: "top",
+          left: "center",
+          padding: [6, 15, 0, 15],
+          icon: "circle",
+          orient: "horizontal",
         },
         grid: {
           top: "24%",
@@ -277,6 +296,7 @@ export default {
         },
         series: [
           {
+            name: "当前隧道",
             type: "line",
             color: "#00AAF2",
             symbol: "none",
@@ -309,8 +329,30 @@ export default {
                 ]),
               },
             },
-            data: yData,
+            data: yData1,
           },
+          {
+              type: "line",
+              smooth: true, // 平滑曲线显示
+              color: "#FAC858",
+              lineStyle: {
+                width: 1,
+              },
+              // stack: "Total",
+              // areaStyle: {},
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              // emphasis: {
+              //   focus: "series",
+              // },
+              name: "传统隧道",
+              data: yData2,
+            },
         ],
       };
 

@@ -2148,6 +2148,7 @@ public class SdEventServiceImpl implements ISdEventService {
             String time = formatter.format(new Date());
             sdEvent.setEventTime(dateZh(time));
             sdEvent.setCreateTime(dateZh(time));
+            sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
             sdEventMapper.insertSdEvent(sdEvent);
             eventSendWeb(sdEvent);
         } else {

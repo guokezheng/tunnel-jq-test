@@ -240,6 +240,7 @@
                 AND B.tunnel_id = #{tunnelId}
             </if>
         </where>
+        GROUP BY A.dept_id
     </select>
 
 

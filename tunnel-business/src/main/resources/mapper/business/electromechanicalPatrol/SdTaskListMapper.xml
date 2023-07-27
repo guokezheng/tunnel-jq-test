@@ -46,7 +46,16 @@
     </sql>
 
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
-        select t.id,t.task_name, s.tunnel_name, t.end_plantime, u.nick_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.nick_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task from sd_task_list t
+        select t.id,t.task_name, s.tunnel_name, t.end_plantime, u.nick_name dispatcher,t.dispatch_time, b.dept_name bzName,t.bz_id, t.task_description, t.publish_status, t.task_status, w.nick_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time,p.dict_label publish,a.dict_label task
+
+   /*     ,CASE t.publish_status
+        WHEN 0 THEN '0'
+        WHEN 2 THEN '1'
+        WHEN 1 THEN '2'
+        ELSE '999'
+        end as publishStatusOrder*/
+
+        from sd_task_list t
         left join sys_user u on t.dispatcher = u.user_id
         left join sd_teams b on b.dept_id =  t.bz_id
         left join sys_user w on t.walker_id = w.user_id
@@ -82,7 +91,7 @@
             </if>
 
         </where>
-        order  by  t.create_time desc,t.update_time desc
+        order  by t.task_status asc, t.create_time desc,t.update_time desc/*, publishStatusOrder asc*/
     </select>
 
 
@@ -466,6 +475,7 @@
             t.task_name as taskName,   -- 任务名称
             e.tunnel_name as tunnelName,  -- 隧道名称
             d.dept_name zzjgId, -- 管理站名称
+            t.dispatch_time as dispatchTime,
             DATE_FORMAT(t.end_plantime , '%Y-%m-%d %H:%i:%s') as endPlantime,     -- 计划完成时间
             u.nick_name dispatcher, -- 派单人员
             t.task_description as taskDescription,  -- 任务描述
@@ -562,6 +572,7 @@
                 y.type_name,
                 fsd.mac,
                 d.protocol_id,
+                sdp.is_reserved,
                 sdp.function_json
 
             FROM

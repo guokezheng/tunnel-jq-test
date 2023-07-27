@@ -12,6 +12,8 @@
             v-model="tunnelQueryParams.deptId"
             :options="siteList"
             :props="siteProps"
+            @visible-change="cascaderHandleChange"
+            @expand-change="cascaderHandleChange"
             :show-all-levels="false"
             @change="changeSite"
             placeholder="请选择"
@@ -227,7 +229,6 @@
         :modal="false"
         :append-to-body="true"
         class="drawerBox"
-        :close-on-click-modal="false"
       >
         <el-row>
           <el-col :span="12">
@@ -2572,7 +2573,7 @@ export default {
       // 巡检机器人-----------------------------------------------------------------end
       isManagementStation: false, // 当前账号的权限是否是管理站
       tooltipType: false,
-      showTooltipIndex: 999,
+      showTooltipIndex: 9999,
       showTooltip: false,
       tooltipShow: false, //是否展示提示内容
       imageTimer: null, //定时器
@@ -2902,6 +2903,46 @@ export default {
   },
 
   methods: {
+    // 管理站级联回显选中效果
+    cascaderHandleChange() {
+      console.log(this.siteList, "siteList");
+      let handleText = "";
+      for (let item of this.siteList) {
+        if (this.tunnelQueryParams.deptId == item.id) {
+          handleText = item.label;
+        } else {
+          for (let itm of item.children) {
+            if (this.tunnelQueryParams.deptId == itm.id) {
+              handleText = itm.label;
+            }
+          }
+        }
+      }
+
+      console.log(handleText, "handleText");
+      // 事件监听实现懒加载选择任意一级
+      this.$nextTick(() => {
+        //获取label
+        const labelDoms = document.querySelectorAll(
+          ".el-cascader-node .el-cascader-node__label"
+        );
+        console.log(labelDoms, "labelDoms");
+
+        //获取radio 级联带单选框时使用
+        // const radioDoms = document.querySelectorAll('.el-cascader-node .el-radio')
+        //由于label是被radio覆盖，所以循环raidoDoms，反之循环labelDoms
+        labelDoms.forEach((item, index) => {
+          item.removeEventListener("click", function () {
+            const labelDom = labelDoms[index];
+            labelDom.click();
+          });
+          item.addEventListener("click", function () {
+            const labelDom = labelDoms[index];
+            labelDom.click();
+          });
+        });
+      });
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey1(row) {
       return row.infoId;
@@ -3496,20 +3537,29 @@ export default {
               this.$refs.dragImgDom.style.left =
                 1728 - this.currentTunnel.lane.width + "px";
             }
-            console.log(item.position.left,"item.position.left")
-            console.log(item.position.top,"item.position.top")
-            if(item.position.left <= this.currentTunnel.lane.width - 100 && item.position.top <= 480){
-              console.log(1)
-              item.tooltipType = 1
-            }else if(item.position.left > this.currentTunnel.lane.width - 100 && item.position.top <= 480){
-              console.log(2)
-              item.tooltipType = 2
-            }else if(item.position.left <= this.currentTunnel.lane.width - 100 && item.position.top > 480){
-              console.log(3)
-              item.tooltipType = 3
-            }else{
-              console.log(4)
-              item.tooltipType = 4
+            console.log(item.position.left, "item.position.left");
+            console.log(item.position.top, "item.position.top");
+            if (
+              item.position.left <= this.currentTunnel.lane.width - 100 &&
+              item.position.top <= 480
+            ) {
+              console.log(1);
+              item.tooltipType = 1;
+            } else if (
+              item.position.left > this.currentTunnel.lane.width - 100 &&
+              item.position.top <= 480
+            ) {
+              console.log(2);
+              item.tooltipType = 2;
+            } else if (
+              item.position.left <= this.currentTunnel.lane.width - 100 &&
+              item.position.top > 480
+            ) {
+              console.log(3);
+              item.tooltipType = 3;
+            } else {
+              console.log(4);
+              item.tooltipType = 4;
             }
             // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
@@ -3585,18 +3635,22 @@ export default {
           Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
           parent[0].scrollWidth
         ) {
-          clearInterval(this.imageTimer);
-          this.imageTimer = setInterval(() => {
-            parent[0].scrollLeft--;
-            if (
-              Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
-              parent[0].clientWidth
-            ) {
-              this.srollAuto();
-            }
-          }, 20);
+          setTimeout(() => {
+            clearInterval(this.imageTimer);
+            this.imageTimer = setInterval(() => {
+              parent[0].scrollLeft--;
+              if (
+                Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
+                parent[0].clientWidth
+              ) {
+                this.srollAuto();
+              }
+            }, 20);
+          }, 2000);
         } else {
-          parent[0].scrollLeft++;
+          setTimeout(() => {
+            parent[0].scrollLeft++;
+          }, 2000);
         }
       }, 20);
     },
@@ -3702,7 +3756,7 @@ export default {
       // this.sensorDisabled(item);
     },
     closeTooltip(item) {
-      this.showTooltipIndex = 999;
+      this.showTooltipIndex = 9999;
     },
     getDeptList() {
       var userDeptId = this.userDeptId;
@@ -3740,21 +3794,21 @@ export default {
     },
 
     checkData(obj, arr) {
+      console.log(arr, "arr");
       if (obj.children && obj.children.length > 0) {
         arr.push(obj.id);
         this.checkData(obj.children[0], arr);
       } else {
         arr.push(obj.id);
-        arr.shift();
+        // arr.shift();
         this.changeSite(arr);
-
         this.$forceUpdate();
       }
     },
 
     // 改变站点
     changeSite(index) {
-      // console.log(index, "index");
+      console.log(index, "index");
       if (index) {
         console.log(
           this.$cache.local.get("deptId"),
@@ -3780,6 +3834,7 @@ export default {
             this.$cache.local.set("deptId", index[index.length - 1]);
           }
         }
+
         this.$forceUpdate();
         this.getTunnelList();
       }
@@ -5077,7 +5132,7 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          } else if ([14, 15, 35, 41, 42, 47, 48].includes(item.eqType)) {
+          } else if ([14, 15, 35, 41, 42, 48].includes(item.eqType)) {
             this.$refs.dataRef.init(
               this.eqInfo,
               this.brandList,
@@ -5144,7 +5199,7 @@ export default {
           } else if (item.eqType == 29) {
             // 巡检机器人
             this.robotIframeShow = true;
-          } else if (item.eqType == 33) {
+          } else if (item.eqType == 33 || item.eqType == 47) {
             // 智能消防炮
             this.$refs.xfpRef.init(
               this.eqInfo,
@@ -5749,13 +5804,13 @@ export default {
   }
 }
 .drawerBox {
-  width: 22.6%;
+  width: 100%;
   right: 38px;
-  height: 12vh;
+  height: 100%;
   top: 81px;
   left: unset;
   ::v-deep .el-drawer.rtl {
-    width: 100% !important;
+    width: 22.6% !important;
     height: 12vh;
     color: #fff;
     .el-drawer__header {
@@ -7373,9 +7428,9 @@ input {
 }
 .syxt_searchBox {
   position: absolute;
-  top: 145px;
-  right: 25px;
-  width: 39%;
+  top: 121px;
+  right: 14px;
+  width: 41%;
   z-index: 1996;
   background-color: #00335a;
   padding: 20px;

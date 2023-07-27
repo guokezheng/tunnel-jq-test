@@ -156,6 +156,8 @@ export default {
         console.log(res,"echarts数据")
         this.linksData = res.data
         this.loading = false
+      }else{
+        this.loading = false
       }
 
       // 获取namesData

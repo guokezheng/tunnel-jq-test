@@ -114,7 +114,7 @@
           <div class="equipment-img-box">
             <el-row v-if="eqTypeList[equipmentTypeflag].url.length>0">
               <!-- 此处将el-image更换为img、动态更换图片尺寸 -->
-              <img :width="eqTypeList[equipmentTypeflag].iconWidth" :height="eqTypeList[equipmentTypeflag].iconHeight>80?'82px':eqTypeList[equipmentTypeflag].iconHeight"
+              <img :width="eqTypeList[equipmentTypeflag].iconWidth" :height="eqTypeList[equipmentTypeflag].iconHeight"
                    :class="[item.exist == true ? 'eq-exist' : '']" v-for="(url,index) in eqTypeList[equipmentTypeflag].url"
                    :key="index" :src="url" @click="getEquipment(item,eqTypeList[equipmentTypeflag])">
             </el-row>
@@ -2155,7 +2155,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100px;
+  min-height: 100px;
   width: 100px;
 
   .el-row {

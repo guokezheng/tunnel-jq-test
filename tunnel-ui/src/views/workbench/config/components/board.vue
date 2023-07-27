@@ -445,10 +445,9 @@ export default {
             .catch(() => {});
         })
         .catch(() => {
-          console.log("已取消发布情报板");
           this.$message({
             type: "info",
-            message: "已取消发布情报板",
+            message: "发布失败，请联系管理员",
           });
         });
     },

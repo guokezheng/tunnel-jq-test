@@ -553,7 +553,19 @@
       <div class="show-right">
         <el-row :gutter="20" style="margin: 10px 0px 0px">
           <el-col class="show-title" :span="4"> 设备清单 </el-col>
-          <el-col :span="12" :offset="8">
+          <el-col :span="8" :offset="4">
+            <el-cascader
+                v-model="eqType"
+                :options="eqTypeData"
+                :props="equipmentTypeProps"
+                :show-all-levels="false"
+                @change="getTable()"
+                style="width: 100%"
+                size="small"
+                clearable
+              ></el-cascader>
+          </el-col>
+          <el-col :span="8" >
             <div class="grid-content bg-purple" ref="main1">
               <el-input
                 v-model="searchValue"
@@ -561,16 +573,16 @@
                 @keyup.enter.native="getTable()"
                 size="small"
               >
-                <el-button
+                <!-- <el-button
                   slot="append"
                   class="searchTable"
                   @click="boxShow1 = !boxShow1"
-                ></el-button>
+                ></el-button> -->
               </el-input>
             </div>
           </el-col>
         </el-row>
-        <div class="searchBox showSearchBox" v-show="boxShow1" ref="cc1">
+        <!-- <div class="searchBox showSearchBox" v-show="boxShow1" ref="cc1">
           <el-form
             ref="show1FormRef"
             :inline="true"
@@ -604,7 +616,7 @@
               >
             </el-form-item>
           </el-form>
-        </div>
+        </div> -->
         <!-- <div class="right-button">
           <el-select v-model="options1value" @change="changeDevList">
             <el-option
@@ -718,24 +730,35 @@
       <div class="show-right">
         <el-row :gutter="20" style="margin: 10px 0px 0px">
           <el-col class="show-title" :span="4"> 故障清单 </el-col>
-          <el-col :span="12" :offset="8">
+          <el-col :span="8" :offset="4">
+            <el-select v-model="options2value" @change="getGzTable()">
+                <el-option
+                  v-for="dict in dict.type.fault_level"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                  size="small"
+                />
+              </el-select>
+          </el-col>
+          <el-col :span="8">
             <div class="grid-content bg-purple" ref="main2">
               <el-input
                 v-model="search2Value"
                 placeholder="请输入设备名称"
-                @keyup.enter.native="getGzTable"
+                @keyup.enter.native="getGzTable()"
                 size="small"
               >
-                <el-button
+                <!-- <el-button
                   slot="append"
                   class="searchTable"
                   @click="boxShow2 = !boxShow2"
-                ></el-button>
+                ></el-button> -->
               </el-input>
             </div>
           </el-col>
         </el-row>
-        <div class="searchBox showSearchBox" v-show="boxShow2" ref="cc2">
+        <!-- <div class="searchBox showSearchBox" v-show="boxShow2" ref="cc2">
           <el-form
             ref="show1FormRef"
             :inline="true"
@@ -769,7 +792,7 @@
               >
             </el-form-item>
           </el-form>
-        </div>
+        </div> -->
         <!-- <div class="show-title">故障清单</div>
         <div class="right-button">
           <el-select v-model="options2value" @change="getGzTable">
@@ -829,7 +852,7 @@
                 }}</span>
               </template></el-table-column
             >
-            <el-table-column prop="dict_label" label="故障描述">
+            <el-table-column prop="dict_label" label="故障描述" show-overflow-tooltip>
             </el-table-column>
           </el-table>
           <pagination
@@ -1371,7 +1394,7 @@ export default {
     },
     changeDevList() {
       this.searchValue = "";
-      this.getTable(this.options1value);
+      this.getTable();
     },
 
     //更换隧道，更新隧道下关联班组列表
@@ -1522,7 +1545,7 @@ export default {
         if (i > -1) {
           this.boxList.splice(i, 1);
         }
-        console.log("clickDelete====================" + this.boxList);
+        console.log(this.boxList,"clickDelete");
       }
     },
     // 弹窗表格翻页
@@ -1535,7 +1558,21 @@ export default {
     },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
-      this.dialogSelection = selection;
+      // if(this.boxList.length>0){
+      //   this.dialogSelection = selection
+        // for(let i=0;i<this.boxList.length;i++){
+        //   for(let j=0;j<this.dialogSelection.length;j++){
+        //     if(this.boxList[i].eq_id == this.dialogSelection[j].eq_id){
+        //       this.dialogSelection.splice(j, 1)
+        //     }
+        //   }
+        // }
+      // }else{
+        this.dialogSelection = selection
+      // }
+      console.log(this.boxList,"this.boxList获取巡检点弹窗表格选中项")
+      
+      // this.dialogSelection = selection;
       console.log(this.dialogSelection, "this.dialogSelection");
     },
     /** 所属隧道 */
@@ -1559,16 +1596,13 @@ export default {
     },
 
     // 获取设备table
-    getTable(deviceType) {
+    getTable() {
       if(this.boxShow1){
         this.boxShow1 = false
       }
-      console.log(deviceType, "deviceType");
-      if (deviceType) {
-        this.deviceType = deviceType;
-      }
-      if(this.searchValue){
-        this.eqType = ''
+      this.deviceType = this.options1value;
+      if(this.eqType == null){
+        this.eqType = ""
       }
       getDevicesList(
         this.eqType,
@@ -1581,6 +1615,7 @@ export default {
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
+          console.log(this.boxList,"this.boxList")
           console.log(this.tableData1, "this.tableData1");
           // if (this.boxList[0].eq_type == deviceType) {
           this.tableData1.forEach((item) => {
@@ -1588,6 +1623,7 @@ export default {
               const eq_id = row.eq_id.slice(0, -2);
               if (item.eq_id == eq_id) {
                 this.$nextTick(() => {
+                  this.$refs.multipleTable1.clearSelection();
                   this.$refs.multipleTable1.toggleRowSelection(item, true);
                 });
               }
@@ -1600,13 +1636,14 @@ export default {
       });
     },
     // 获取设备table
-    getGzTable(deviceType) {
+    getGzTable() {
       if(this.boxShow2){
         this.boxShow2 = false
       }
-      if (deviceType) {
-        this.faultLevel = deviceType;
-      }
+      // console.log(deviceType,"deviceType")
+      // if (deviceType) {
+        this.faultLevel = this.options2value;
+      // }
       if(this.search2Value){
         this.eqType2 = ''
       }
@@ -1619,10 +1656,7 @@ export default {
         this.pageSize
       ).then((res) => {
         console.log(res, "获取故障table");
-        console.log(
-          "==================getFaultListthis.boxList==" + this.boxList,
-          "boxList"
-        );
+        console.log(this.boxList,"boxList");
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
@@ -1633,6 +1667,7 @@ export default {
               const eq_id = row.eq_id.slice(0, -2);
               if (item.eq_id == eq_id) {
                 this.$nextTick(() => {
+                  this.$refs.multipleTable2.clearSelection();
                   this.$refs.multipleTable2.toggleRowSelection(item, true);
                 });
               }
@@ -1911,17 +1946,16 @@ export default {
       });
       this.isShow1 = true;
       this.searchValue = '';
-      this.options1value = "0";
+      this.options1value = "";
       this.eqType = '';
       //点击确定，数据还原
       if (this.openCz) {
-        this.options1value = "0";
+        this.options1value = "";
         this.tableData1 = [];
         this.dialogTotal = 0;
-        console.log("=========" + this.options1value);
-        this.getTable(this.options1value);
+        this.getTable();
       } else {
-        this.getTable(this.options1value);
+        this.getTable();
       }
       this.openCz = false;
     },
@@ -1939,13 +1973,12 @@ export default {
         console.log(response.data, "隧道部门树");
       });
 
-      this.getGzTable(this.options2value);
+      this.getGzTable();
       if (this.openGz) {
         this.options2value = "0";
         this.tableData2 = [];
         this.dialogTotal = 0;
-        console.log("=========" + this.options2value);
-        this.getGzTable(this.options2value);
+        this.getGzTable();
       }
       this.openGz = false;
     },
@@ -2641,6 +2674,10 @@ img {
         // border-bottom: 1px solid rgb(204, 204, 204);
         padding-left: 10px;
       }
+      // ::v-deep .el-input--medium .el-input__inner{
+      //   height: 32px;
+      //   line-height: 32px;
+      // }
     }
     .show-left {
       width: 25%;

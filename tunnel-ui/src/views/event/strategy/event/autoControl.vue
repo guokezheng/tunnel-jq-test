@@ -7,7 +7,7 @@
       label-width="100px"
     >
       <el-row>
-        <el-col>
+        <el-col :span="8">
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
               style="width: 100%"
@@ -16,7 +16,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="隧道名称" prop="tunnelId">
             <el-select
               style="width: 100%"
@@ -34,7 +34,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="隧道方向" prop="direction">
             <el-select
               clearable
@@ -52,7 +52,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="12">
           <el-form-item label="事件类型" prop="eventType">
             <el-select
               clearable
@@ -69,8 +69,8 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col>
-          <el-col :span="4">
+        <el-col :span="12">
+          <el-col :span="22">
             <!--            <el-form-item-->
             <!--              label="定时频率"-->
             <!--              prop="schedulerTime"-->
@@ -101,7 +101,7 @@
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4" style="margin-top: 6px">
+          <el-col :span="2" style="margin-top: 6px;padding-left: 10px;">
             <span>(分钟)</span>
           </el-col>
         </el-col>

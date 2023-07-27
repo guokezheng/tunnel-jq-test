@@ -1647,9 +1647,9 @@ export default {
           if (item.children) {
             item.children.map((res) => {
               console.log(res);
-              if (res.eqTypeId == 29) {
-                this.clickEqType = 29;
-              }
+              // if (res.eqTypeId == 29) {
+              //   this.clickEqType = 29;
+              // }
             });
           }
           console.log(item);
@@ -2981,7 +2981,7 @@ export default {
   width: 770px !important;
   height: 90%;
   position: absolute;
-  left: 30%;
+  left: 30% !important;
   z-index: 96659;
   background: #071727;
   pointer-events: auto !important;

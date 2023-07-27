@@ -202,6 +202,9 @@
     .el-checkbox{
       color:#fff;
     }
+    .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
+      background: rgba(0, 0, 0, 0.1) !important;
+    }
   }
   .el-tree-node:focus > .el-tree-node__content{
     background-color: #326CA9;
@@ -1051,6 +1054,7 @@
     .patrol .box-father .box .number{
       color: #fff !important;
     }
+    
     .show-left{
       .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
         background: #004375;

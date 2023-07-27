@@ -147,8 +147,8 @@ public class FireMonitorDataParse {
                     sdFaultList.setFaultLevel("0");//故障等级  一般
                     sdFaultList.setFalltRemoveStatue("1");//故障消除状态  未消除
                     sdFaultList.setFaultStatus("0");//故障状态  已发布
-                    sdFaultListService.faultSendWeb(sdFaultList);//故障推送
                     sdFaultListMapper.insertSdFaultList(sdFaultList);
+                    sdFaultListService.faultSendWeb(sdFaultList);//故障推送
                 }
                 if(deviceStateLow.substring(6,7).equals("1")){//火警
                     eqStatus = "4";
@@ -165,8 +165,8 @@ public class FireMonitorDataParse {
                     sdEvent.setStakeNum(sdDevices.getPile());//事件桩号
                     sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
                     sdEvent.setDirection(sdDevices.getDirection());//方向
-                    sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
                     sdEventMapper.insertSdEvent(sdEvent);
+                    sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
                 }
                 //高字节状态解析
                 if(deviceStateHigh.substring(4,5).equals("1")){//阀开

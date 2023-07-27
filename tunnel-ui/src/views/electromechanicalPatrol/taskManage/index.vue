@@ -401,6 +401,12 @@
               <el-col :span="8">
                 <el-form-item label="预完成时" prop="endPlantime">
                   <el-date-picker
+                    v-model="form.endPlantime"
+                    type="date"
+                    placeholder="选择预完成时"
+                  >
+                  </el-date-picker>
+<!--                  <el-date-picker
                     clearable
                     :picker-options="forbiddenTime"
                     size="small"
@@ -411,7 +417,7 @@
                     placeholder="选择预完成时"
                     @focus="focus"
                   >
-                  </el-date-picker>
+                  </el-date-picker>-->
                 </el-form-item>
               </el-col>
               <el-col :span="24">

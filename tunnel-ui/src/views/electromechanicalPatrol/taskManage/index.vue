@@ -172,7 +172,7 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ scope.row.endPlantime }}</span>
+          <span>{{scope.row.endPlantime|formatDate('yyyy-MM-dd')}}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布状态" align="center" prop="publishStatus">
@@ -900,7 +900,7 @@
           </el-col>
           <el-col :span="8">
             <div>预完成时：</div>
-            <span>{{ item.endPlantime }}</span>
+            <span>{{item.endPlantime|formatDate('yyyy-MM-dd')}}</span>
           </el-col>
           <el-col :span="24" style="display: inline-block">
             <div style="display: inline-block">任务描述：</div>
@@ -1811,6 +1811,7 @@ export default {
             } else {
               item.task1 = item.task;
             }
+
           }
           this.listList = response.rows;
           this.total = response.total;
@@ -2264,6 +2265,41 @@ export default {
         this.isClick = true;
       }, 500);
     },
+  },
+  filters: {
+    formatDate: function (value, args) {
+      if(!value){
+        return '';
+      }
+      var dt = new Date(value);
+      if (args == 'yyyy-M-d') {// yyyy-M-d
+        let year = dt.getFullYear();
+        let month = dt.getMonth() + 1;
+        let date = dt.getDate();
+        return `${year}-${month}-${date}`;
+      } else if (args == 'yyyy-M-d H:m:s') {// yyyy-M-d H:m:s
+        let year = dt.getFullYear();
+        let month = dt.getMonth() + 1;
+        let date = dt.getDate();
+        let hour = dt.getHours();
+        let minute = dt.getMinutes();
+        let second = dt.getSeconds();
+        return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
+      } else if (args == 'yyyy-MM-dd') {// yyyy-MM-dd
+        let year = dt.getFullYear();
+        let month = (dt.getMonth() + 1).toString().padStart(2, '0');
+        let date = dt.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${date}`;
+      } else {// yyyy-MM-dd HH:mm:ss
+        let year = dt.getFullYear();
+        let month = (dt.getMonth() + 1).toString().padStart(2, '0');
+        let date = dt.getDate().toString().padStart(2, '0');
+        let hour = dt.getHours().toString().padStart(2, '0');
+        let minute = dt.getMinutes().toString().padStart(2, '0');
+        let second = dt.getSeconds().toString().padStart(2, '0');
+        return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
+      }
+    }
   },
   watch: {
     isShow1: {

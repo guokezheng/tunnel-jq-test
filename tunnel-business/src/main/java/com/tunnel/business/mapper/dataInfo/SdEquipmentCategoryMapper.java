@@ -3,6 +3,7 @@ package com.tunnel.business.mapper.dataInfo;
 import com.ruoyi.common.core.domain.SdEquipmentCategoryDto;
 import com.tunnel.business.domain.dataInfo.SdEquipmentCategory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,4 +73,6 @@ public interface SdEquipmentCategoryMapper
      * @return
      */
     List<SdEquipmentCategoryDto> getCategoryAllList(Map<String,Object> paramMap);
+
+    List<SdEquipmentCategoryDto> getCategoryTypeDeviceList(HashMap<String, Object> paramMap);
 }

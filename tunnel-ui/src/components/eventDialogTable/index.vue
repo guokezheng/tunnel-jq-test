@@ -613,7 +613,7 @@ export default {
   }
 }
 .overflowText {
-  width: 260px;
+  width: 248px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

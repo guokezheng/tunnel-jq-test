@@ -3124,11 +3124,14 @@ export default {
     },
     // 模糊查询
     treeClick() {
+      // 点击输入框 折叠之前打开的树形菜单
       const nodes = this.$refs.tree.store._getAllNodes();
       nodes.forEach((item) => {
         item.expanded = false;
       });
-      this.treeShow = !this.treeShow;
+      setTimeout(()=>{
+        this.treeShow = !this.treeShow;
+      },50)
     },
     //点击树状图获取值
     handleNodeClick(data) {
@@ -3543,22 +3546,18 @@ export default {
               item.position.left <= this.currentTunnel.lane.width - 100 &&
               item.position.top <= 480
             ) {
-              console.log(1);
               item.tooltipType = 1;
             } else if (
               item.position.left > this.currentTunnel.lane.width - 100 &&
               item.position.top <= 480
             ) {
-              console.log(2);
               item.tooltipType = 2;
             } else if (
               item.position.left <= this.currentTunnel.lane.width - 100 &&
               item.position.top > 480
             ) {
-              console.log(3);
               item.tooltipType = 3;
             } else {
-              console.log(4);
               item.tooltipType = 4;
             }
             // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";

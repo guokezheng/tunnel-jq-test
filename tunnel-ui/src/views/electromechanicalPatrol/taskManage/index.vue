@@ -1168,7 +1168,6 @@ export default {
   },
   data() {
     return {
-
       eqType2: "",
       search2Value: "",
       boxShow1: false,
@@ -1388,7 +1387,6 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus1);
     document.addEventListener("click", this.bodyCloseMenus2);
 
-
   },
   methods: {
     /** 设备类型 */
@@ -1584,7 +1582,7 @@ export default {
         this.dialogSelection = selection
       // }
       console.log(this.boxList,"this.boxList获取巡检点弹窗表格选中项")
-
+      
       // this.dialogSelection = selection;
       console.log(this.dialogSelection, "this.dialogSelection");
     },
@@ -1978,6 +1976,7 @@ export default {
         return this.$modal.msgWarning("请选择所属隧道");
       }
       this.isShow2 = true;
+      this.search2Value = ''
       this.options2value = "0";
       this.tunnelId = this.form.tunnelId;
 
@@ -2310,7 +2309,6 @@ export default {
         this.isClick = true;
       }, 500);
     },
-
   },
   filters: {
     formatDate: function (value, args) {

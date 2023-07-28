@@ -109,12 +109,13 @@
             </div>
           </div>
           <!-- 表格 -->
-          <div id="tableid" class="table">
+          <div id="tableid" class="table energyTable">
             <el-table
               :data="list"
               style="width: 100%"
               ref="multipleTable"
               height="100%"
+              class="allTable"
             >
               <el-table-column
                 fixed
@@ -312,11 +313,11 @@
               <el-table-column
                 align="center"
                 label="合计"
-                min-width="180"
+                min-width="200"
                 fixed="right"
               >
                 <el-table-column
-                  min-width="90"
+                  min-width="100"
                   align="center"
                   prop="sumValue"
                   label="电量/kW·h"
@@ -330,7 +331,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column
-                  min-width="90"
+                  min-width="100"
                   align="center"
                   prop="sumPrice"
                   label="金额/元"
@@ -356,7 +357,7 @@
 import * as echarts from "echarts";
 import SiteTree from "@/views/components/siteTree";
 import CircuitTree from "@/views/components/circuitTree";
-//   import { getSplitTimeByDept, getSplitTimeByLoop } from '@/api/analysis/energyAnalyze'
+import { getSplitTimeByDept } from '@/api/energy/api'
 import { mapState } from "vuex";
 import departmentSelect from "@/views/components/department/index2.vue";
 
@@ -493,7 +494,7 @@ export default {
           });
           return;
         }
-        // this.loading = true;
+        this.loading = true;
         // 参数
         this.queryParams.deptCodeList = this.loopIds
           .filter((e) => e != null)
@@ -502,29 +503,29 @@ export default {
         this.queryParams.type = this.tabType;
 
         // 回路接口请求
-        //   await getSplitTimeByDept(this.queryParams)
-        //     .then(res => {
-        //       if (res.code === 200) {
-        //         this.list = res.data
-        //         this.$nextTick(function () {
-        //           //清除选中行
-        //           this.$refs.multipleTable.doLayout()
-        //         })
+          await getSplitTimeByDept(this.queryParams)
+            .then(res => {
+              if (res.code === 200) {
+                this.list = res.data
+                this.$nextTick(function () {
+                  //清除选中行
+                  this.$refs.multipleTable.doLayout()
+                })
 
-        //         // 计算金额
-        //         let that = this
-        //         this.list.forEach(item => {
-        //           item.f_EpiJAmount = item.jValue == null || item.jPrice == null ? null : that.numberMul(item.jValue, item.jPrice).toFixed(2)
-        //           item.f_EpiFAmount = item.fValue == null || item.fPrice == null ? null : that.numberMul(item.fValue, item.fPrice).toFixed(2)
-        //           item.f_EpiPAmount = item.pValue == null || item.pPrice == null ? null : that.numberMul(item.pValue, item.pPrice).toFixed(2)
-        //           item.f_EpiGAmount = item.gValue == null || item.gPrice == null ? null : that.numberMul(item.gValue, item.gPrice).toFixed(2)
-        //           item.f_EpiSAmount = item.sValue == null || item.sPrice == null ? null : that.numberMul(item.sValue, item.sPrice).toFixed(2)
-        //         })
-        //         this.openChart()
-        //       }
-        //     })
-        //     .catch(err => {
-        //     })
+                // 计算金额
+                let that = this
+                this.list.forEach(item => {
+                  item.f_EpiJAmount = item.jValue == null || item.jPrice == null ? null : that.numberMul(item.jValue, item.jPrice).toFixed(2)
+                  item.f_EpiFAmount = item.fValue == null || item.fPrice == null ? null : that.numberMul(item.fValue, item.fPrice).toFixed(2)
+                  item.f_EpiPAmount = item.pValue == null || item.pPrice == null ? null : that.numberMul(item.pValue, item.pPrice).toFixed(2)
+                  item.f_EpiGAmount = item.gValue == null || item.gPrice == null ? null : that.numberMul(item.gValue, item.gPrice).toFixed(2)
+                  item.f_EpiSAmount = item.sValue == null || item.sPrice == null ? null : that.numberMul(item.sValue, item.sPrice).toFixed(2)
+                })
+                this.openChart()
+              }
+            })
+            .catch(err => {
+            })
         this.loading = false;
       }
       // else if (this.activeName === "first") {
@@ -767,7 +768,7 @@ export default {
           legend: {
             bottom: "5%",
             textStyle: {
-              color: "#6B6B6B",
+              color: "#fff",
             },
           },
           grid: [
@@ -783,7 +784,7 @@ export default {
               type: "category",
               axisTick: { show: false },
               axisLabel: {
-                color: "#919191",
+                color: "#fff",
               },
               data: xLables,
             },
@@ -799,7 +800,7 @@ export default {
                 },
               },
               axisLabel: {
-                color: "#919191",
+                color: "#fff",
               },
             },
           ],

@@ -39,3 +39,12 @@ export function getEnergyTrackList(params) {
       method: 'get'
     })
   }
+
+      // 分时段用能
+export function getSplitTimeByDept(params) {
+  return request({
+    url: '/analysis/getSplitTimeByDept',
+    method: 'get',
+    params: params
+  })
+}

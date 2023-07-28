@@ -42,7 +42,7 @@ public class EnergySiteDataTask {
 
 
 
-    @Async(value = "synchronousEnergyTaskExecutor")
+//    @Async(value = "synchronousEnergyTaskExecutor")
     @Scheduled(cron="30 5 * * * ?")
     //@Scheduled(fixedRate = 5000*60*60)
     public void synchronousEnergyDataTask() throws ParseException {

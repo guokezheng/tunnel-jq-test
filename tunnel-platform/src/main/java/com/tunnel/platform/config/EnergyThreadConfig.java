@@ -14,8 +14,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 自定义线程池
  * tjw
  */
-@EnableAsync
-@Configuration
+//@EnableAsync
+//@Configuration
 public class EnergyThreadConfig {
 
     private static final Logger log = LoggerFactory.getLogger(EnergyThreadConfig.class);
@@ -25,7 +25,7 @@ public class EnergyThreadConfig {
      * 作用：定时同步能源数据
      * @return
      */
-    @Bean(name = "synchronousEnergyTaskExecutor")
+//    @Bean(name = "synchronousEnergyTaskExecutor")
     public ThreadPoolTaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor poolTaskExecutor = new ThreadPoolTaskExecutor();
         poolTaskExecutor.setCorePoolSize(10);

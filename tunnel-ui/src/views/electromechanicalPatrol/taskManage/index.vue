@@ -563,15 +563,17 @@
                 style="width: 100%"
                 size="small"
                 clearable
+                placeholder="请选择设备类型" 
               ></el-cascader>
           </el-col>
           <el-col :span="8" >
             <div class="grid-content bg-purple" ref="main1">
               <el-input
                 v-model="searchValue"
-                placeholder="请输入设备名称"
+                placeholder="请输入设备名称，回车搜索"
                 @keyup.enter.native="getTable()"
                 size="small"
+                clearable
               >
                 <!-- <el-button
                   slot="append"
@@ -745,9 +747,10 @@
             <div class="grid-content bg-purple" ref="main2">
               <el-input
                 v-model="search2Value"
-                placeholder="请输入设备名称"
+                placeholder="请输入设备名称,回车搜索"
                 @keyup.enter.native="getGzTable()"
                 size="small"
+                clearable
               >
                 <!-- <el-button
                   slot="append"
@@ -1856,7 +1859,6 @@ export default {
             } else {
               item.task1 = item.task;
             }
-
           }
           this.listList = response.rows;
           this.total = response.total;

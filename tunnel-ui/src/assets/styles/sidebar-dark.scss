@@ -966,6 +966,31 @@
     .el-table__footer-wrapper tbody td.el-table__cell{
 
     }
+    .el-table__fixed-right-patch{
+      background-color: #0090D8;
+      border-bottom: 1px solid #0090D8;
+    }
+    .energyTable{
+      .el-table__body-wrapper{
+        height: calc(100% - 7.4vh) !important;
+      }
+      .el-table__fixed{
+        height: calc(100% - 1vh) !important;
+      }
+      .el-table::before{
+        background-color: #0090D8;
+      }
+      .el-table__body-wrapper .el-table__cell{
+        border-right: none;
+      }
+      .el-table td.el-table__cell{
+        border-right: none;
+      }
+      // 表格右侧边框白线
+      .el-table--group::after, .el-table--border::after{
+        background-color: #326CA9 !important;
+      }
+    }
     // 隧道配置页面下拉框
     .tunnelNameSelect{
       .el-input--small .el-input__inner{

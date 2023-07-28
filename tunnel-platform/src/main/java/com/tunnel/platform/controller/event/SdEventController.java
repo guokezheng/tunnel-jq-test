@@ -537,8 +537,8 @@ public class SdEventController extends BaseController
         sdEvent.setStakeNum("YK16+678");//事件桩号
         sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
         sdEvent.setDirection("1");//方向
-        sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
         sdEventMapper.insertSdEvent(sdEvent);
+        sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
     }
 
 }

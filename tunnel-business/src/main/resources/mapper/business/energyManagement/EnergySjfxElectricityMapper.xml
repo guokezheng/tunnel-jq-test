@@ -140,7 +140,7 @@
 
 
     <select id="getEnergyDayparting" resultType="com.tunnel.business.domain.energyManagement.EnergyDayparting">
-        select ef.tunnel_id tunnelId,st.tunnel_id tunnelName,ef.jValue jValue,ef.fValue fValue,ef.pValue pValue,ef.gValue gValue,ef.sValue sValue
+        select ef.tunnel_id tunnelId,st.tunnel_name tunnelName,ef.jValue jValue,ef.fValue fValue,ef.pValue pValue,ef.gValue gValue,ef.sValue sValue
         from energy_dayparting ef left join sd_tunnels st on ef.tunnel_id = st.tunnel_id
         where ef.tunnel_id in
         <foreach collection="deptCodeList" item="item" open="(" close=")" separator=",">

@@ -1323,7 +1323,7 @@ public class SdEventServiceImpl implements ISdEventService {
         //查询事件信息
         SdEvent sdEvent = sdEventMapper.selectSdEventById(sdEventData.getId());
         //整形桩号
-        Integer stakeNum = Integer.valueOf(sdEvent.getStakeNum().replaceAll("K", "").replaceAll(Pattern.quote("+"), "").replaceAll(" ", ""));
+        Integer stakeNum = Integer.valueOf(sdEvent.getStakeNum().replaceAll("ZK","").replaceAll("YK","").replaceAll("K", "").replaceAll(Pattern.quote("+"), "").replaceAll(" ", ""));
         List<String> rlDeviceList = new ArrayList<>();
         //检索规则条件
         String retrievalRule = sdStrategyRl.getRetrievalRule();
@@ -2149,6 +2149,7 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEvent.setEventTime(dateZh(time));
             sdEvent.setCreateTime(dateZh(time));
             sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+            sdEvent.setEventGrade("1");
             sdEventMapper.insertSdEvent(sdEvent);
             eventSendWeb(sdEvent);
         } else {
@@ -2180,7 +2181,7 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEvent sdEventData = new SdEvent();
         sdEventData.setId(sdEvent.getId());
         List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
-        //新增事件后推送前端  弹出视频
+//        sdEventList.get(0).setId(22l);
         JSONObject object = new JSONObject();
         object.put("sdEventList", sdEventList);
         WebSocketService.broadcast("sdEventList",object.toString());

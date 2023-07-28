@@ -144,7 +144,68 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
         Map<String, EnergyConfigcenterElectricityPrice> priceMap = priceList.stream().collect(Collectors.toMap(EnergyConfigcenterElectricityPrice::getMonth, e->e));
 
         if("year".equals(type)){
-
+            //单价总和
+            double jPriceCount = 0;
+            double gPriceCount = 0;
+            double fPriceCount = 0;
+            double sPriceCount = 0;
+            double pPriceCount = 0;
+            //金额总和
+            double sumJPriceCount = 0;
+            double sumFPriceCount = 0;
+            double sumPPriceCount = 0;
+            double sumGPriceCount = 0;
+            double sumSPriceCount = 0;
+            //年报总用电量
+            for(EnergyDayparting energyDayparting : energyDataList){
+                for(EnergyConfigcenterElectricityPrice item : priceList){
+                    //计算每月单价
+                    double jPrice = getPrice(item, item.getJianCof().doubleValue());
+                    double gPrice = getPrice(item, item.getGuCof().doubleValue());
+                    double fPrice = getPrice(item, item.getFengCof().doubleValue());
+                    double sPrice = getPrice(item, item.getShenCof().doubleValue());
+                    double pPrice = getPrice(item, 1.00);
+                    //计算每月金额
+                    double sumJPrice = ArithUtil.accurateDecimal((energyDayparting.getjValue() * jPrice), 2);
+                    double sumFPrice = ArithUtil.accurateDecimal((energyDayparting.getfValue() * fPrice), 2);
+                    double sumPPrice = ArithUtil.accurateDecimal((energyDayparting.getpValue() * pPrice), 2);
+                    double sumGPrice = ArithUtil.accurateDecimal((energyDayparting.getgValue() * gPrice), 2);
+                    double sumSPrice = ArithUtil.accurateDecimal((energyDayparting.getsValue() * sPrice), 2);
+                    //计算全年总单价
+                    jPriceCount = jPriceCount + jPrice;
+                    gPriceCount = gPriceCount + gPrice;
+                    fPriceCount = fPriceCount + fPrice;
+                    sPriceCount = sPriceCount + sPrice;
+                    pPriceCount = pPriceCount + pPrice;
+                    //计算全年总金额
+                    sumJPriceCount = sumJPriceCount+ sumJPrice;
+                    sumFPriceCount = sumFPriceCount+ sumFPrice;
+                    sumPPriceCount = sumPPriceCount+ sumPPrice;
+                    sumGPriceCount = sumGPriceCount+ sumGPrice;
+                    sumSPriceCount = sumSPriceCount+ sumSPrice;
+                }
+                SplitTimeDto dto = new SplitTimeDto();
+                dto.setCode(energyDayparting.getTunnelId());
+                dto.setName(energyDayparting.getTunnelName());
+                dto.setjPrice(ArithUtil.accurateDecimal(jPriceCount / 12,2));
+                dto.setpPrice(ArithUtil.accurateDecimal(pPriceCount / 12,2));
+                dto.setsPrice(ArithUtil.accurateDecimal(sPriceCount / 12,2));
+                dto.setgPrice(ArithUtil.accurateDecimal(gPriceCount / 12,2));
+                dto.setfPrice(ArithUtil.accurateDecimal(fPriceCount / 12,2));
+                dto.setSumGPrice(sumGPriceCount);
+                dto.setSumJPrice(sumJPriceCount);
+                dto.setSumPPrice(sumPPriceCount);
+                dto.setSumSPrice(sumSPriceCount);
+                dto.setSumFPrice(sumFPriceCount);
+                dto.setfValue(energyDayparting.getfValue());
+                dto.setgValue(energyDayparting.getgValue());
+                dto.setjValue(energyDayparting.getjValue());
+                dto.setpValue(energyDayparting.getpValue());
+                dto.setsValue(energyDayparting.getsValue());
+                dto.setSumValue(energyDayparting.getsValue());
+                dto.setSumPrice(sumGPriceCount+sumJPriceCount+sumPPriceCount+sumSPriceCount+sumFPriceCount);
+                result.add(dto);
+            }
         }else{
             for(int i = 0;i<energyDataList.size();i++){//按月统计的话
                 SplitTimeDto dto = new SplitTimeDto();
@@ -158,23 +219,21 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                 Double sumValue= energyDataList.get(i).getpValue()+energyDataList.get(i).getjValue()+energyDataList.get(i).getfValue()+energyDataList.get(i).getgValue()+energyDataList.get(i).getsValue();
                 dto.setSumValue(sumValue);
 
-                dto.setSumPrice(ArithUtil.accurateDecimal(sumValue, 2));
                 dto.setSumJPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getjValue(), 2));
                 dto.setSumFPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getfValue(), 2));
                 dto.setSumPPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getpValue(), 2));
                 dto.setSumGPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getgValue(), 2));
                 dto.setSumSPrice(ArithUtil.accurateDecimal(energyDataList.get(i).getsValue(), 2));
+                dto.setSumPrice(ArithUtil.accurateDecimal(dto.getSumFPrice()+dto.getSumGPrice()+dto.getSumJPrice()+dto.getSumPPrice()+dto.getSumSPrice(), 2));
+                dto.setfValue(energyDataList.get(i).getfValue());
+                dto.setgValue(energyDataList.get(i).getgValue());
+                dto.setjValue(energyDataList.get(i).getjValue());
+                dto.setpValue(energyDataList.get(i).getpValue());
+                dto.setsValue(energyDataList.get(i).getsValue());
                 result.add(dto);
             }
         }
-
-
-
-
-
-
-
-        return null;
+        return result;
     }
 
     private HashMap<String, Double> getMeanUnitPriceOfYear(Date baseTime) {

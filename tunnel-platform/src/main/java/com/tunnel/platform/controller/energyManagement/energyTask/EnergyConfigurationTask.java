@@ -50,7 +50,7 @@ public class EnergyConfigurationTask {
     @Autowired
     private SdEnergyConfigcenterItemizedMapper sdEnergyConfigcenterItemizedMapper;
 
-    @Async(value = "synchronousEnergyTaskExecutor")
+//    @Async(value = "synchronousEnergyTaskExecutor")
     //@Scheduled(fixedRate = 5000*60*60)
     @Scheduled(cron = "0 0 1 * * ?")//每天凌晨一点执行一次
     public void synchronousEnergyConfigurationTask() throws ParseException {

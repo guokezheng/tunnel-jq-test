@@ -629,7 +629,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-callPolice>
-    <com-robot
+    <!-- <com-robot
       class="comClass"
       v-if="this.eqInfo.clickEqType == 29"
       :brandList="this.brandList"
@@ -637,7 +637,7 @@
       :eqTypeDialogList="this.eqTypeDialogList"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
-    ></com-robot>
+    ></com-robot> -->
     <com-bright
       class="comClass"
       v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
@@ -942,13 +942,19 @@
       </span>
     </el-dialog>
     <!-- <el-dialog> -->
-        <robot class="comClass robotHtmlBox" v-if="this.clickEqType == 29"></robot>
+      <el-dialog
+      class="robotDialog"
+      :visible.sync="robotDialogVisible"
+      width="770px"
+      >
+        <robot class="comClass robotHtmlBox" ></robot>
         <img
           @click="dialogClose"
           src="../../../assets/cloudControl/closeIcon.png"
           class="closeRobot"
-          v-if="this.clickEqType == 29"
         />
+      </el-dialog>
+       
     <jointControl ref = "jointControl" :show="visibleSync" :eqIdList="eqIdList"></jointControl>
     <!-- </el-dialog> -->
   </div>
@@ -1029,6 +1035,7 @@ export default {
   },
   data() {
     return {
+      robotDialogVisible:false,
       clickEqType: "",
       yjShow: true,
       emergencyList: [],
@@ -1293,8 +1300,7 @@ export default {
     getManagementDevice(item) {
       console.log(item);
       if (item.eqTypeId == 29) {
-        this.clickEqType = item.eqTypeId;
-        console.log(this.clickEqType);
+        this.robotDialogVisible = true
         return;
       }
       if (item.eventState != "0" && item.processId) {
@@ -1514,6 +1520,8 @@ export default {
     // 关闭弹窗子组件
     dialogClose() {
       this.eqInfo.clickEqType = 0;
+      this.robotDialogVisible = false
+      this.$forceUpdate();
     },
     // 点设备弹窗
     openStateSwitch(item) {
@@ -1645,9 +1653,9 @@ export default {
           if (item.children) {
             item.children.map((res) => {
               console.log(res);
-              if (res.eqTypeId == 29) {
-                this.clickEqType = 29;
-              }
+              // if (res.eqTypeId == 29) {
+              //   this.clickEqType = 29;
+              // }
             });
           }
           console.log(item);
@@ -2035,6 +2043,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.robotDialog{
+  ::v-deep .el-dialog{
+    height: 90%;
+    border: none;
+    background-color: transparent !important;
+    .el-dialog__header{
+      display:none;
+    }
+  }
+}
 .empty-text {
   text-align: center;
   padding: 35px;
@@ -2977,9 +2995,10 @@ export default {
 }
 .robotHtmlBox {
   width: 770px !important;
-  height: 90%;
+  height: 100%;
   position: absolute;
-  left: 30%;
+  left: 0% !important;
+  top:0;
   z-index: 96659;
   background: #071727;
   pointer-events: auto !important;
@@ -2996,7 +3015,7 @@ export default {
 .closeRobot {
   position: absolute;
   top: 23px;
-  left: 77%;
+  left: 95%;
   z-index: 96659;
   cursor: pointer;
   width: 13px;

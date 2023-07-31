@@ -13,24 +13,25 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.service.impl.SysJobServiceImpl;
 import com.ruoyi.quartz.util.CronUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesBrandEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.datacenter.util.CronUtil;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.instruction.EquipmentControlInstruction;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
-import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
-import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
-import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
+import com.tunnel.business.mapper.dataInfo.*;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
+import com.tunnel.deal.corniceTunnelRobot.CorniceTunnelRobot;
 import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.LightService;
@@ -120,6 +121,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
     @Autowired
     private SdJoinPlanStrategyMapper planStrategyMapper;
+
+    @Autowired
+    private SdTunnelsMapper tunnelsMapper;
+
+    @Autowired
+    private IExternalSystemService externalSystemService;
 
     /**
      * 查询控制策略
@@ -1439,6 +1446,22 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         rl.setEquipments(joinReserveHandle.getEquipments());
         rl.setEqTypeId(joinReserveHandle.getEqTypeId().toString());
         rl.setState(joinReserveHandle.getState());
+        SdEvent sdEvent1 = sdEventMapper.selectSdEventById(eventId);
+        if(joinReserveHandle.getEqTypeId() == DevicesTypeEnum.ROBOT.getCode() && TunnelEnum.HU_SHAN.getCode().equals(sdEvent1.getTunnelId())){
+            CorniceTunnelRobot corniceTunnelRobot = SpringUtils.getBean(CorniceTunnelRobot.class);
+            SdTunnels sdTunnels = tunnelsMapper.selectSdTunnelsById(TunnelEnum.HU_SHAN.getCode());
+            //事件桩号
+            Integer eventPile = Integer.valueOf(sdEvent1.getStakeNum().replaceAll("YK", "").replaceAll("ZK", "").replaceAll("K", "").replaceAll("\\+", ""));
+            //隧道起点桩号
+            Integer tunnelPile = Integer.valueOf(sdTunnels.getStartPileNum());
+            //计算距离
+            Integer distance = eventPile - tunnelPile;
+            //查询地址
+            ExternalSystem system = new ExternalSystem();
+            system.setBrandId(DevicesBrandEnum.ZHUO_SHI_ZHI_TONG.getCode());
+            List<ExternalSystem> list = externalSystemService.selectExternalSystemList(system);
+            corniceTunnelRobot.OneClickArrival(joinReserveHandle.getEquipments(),distance + "",null,null,list.get(0).getSystemUrl());
+        }
         int issueResult = issuedDevice(rl,eventId,"4");
         String deviceExecutionState = getDeviceExecutionState(processId);
         if(issueResult>0){

@@ -9,19 +9,19 @@
           type="primary"
           plain
           @click="handleAdd"
-        >新增
+          >新增
         </el-button>
         <el-button size="small" :loading="exportLoading" @click="handleExport"
-        >导出
+          >导出
         </el-button>
         <el-button size="small" @click="resetQuery" type="primary" plain
-        >刷新</el-button
+          >刷新</el-button
         >
       </el-col>
       <el-col :span="6" :offset="14">
         <div ref="main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入巡查班组，回车搜索"
+            placeholder="请输入任务名称、巡查班组，回车搜索"
             v-model="queryParams.zzjgId"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -50,14 +50,12 @@
             @change="changeGroup($event)"
             clearable
             size="small"
-
           >
             <el-option
               v-for="item in eqTunnelData"
               :key="item.tunnelId"
               :label="item.tunnelName"
               :value="item.tunnelId"
-
             />
           </el-select>
         </el-form-item>
@@ -98,20 +96,19 @@
             v-model="dateRange"
             size="small"
             style="width: 100%"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            type="datetimerange"
+            value-format="yyyy-MM-dd"
+            type="daterange"
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            :default-time="['00:00:00', '23:59:59']"
           ></el-date-picker>
         </el-form-item>
         <el-form-item class="bottomBox">
           <el-button size="small" type="primary" @click="handleQuery"
-          >搜索</el-button
+            >搜索</el-button
           >
           <el-button size="small" @click="resetQuery" type="primary" plain
-          >重置</el-button
+            >重置</el-button
           >
         </el-form-item>
       </el-form>
@@ -174,7 +171,7 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ scope.row.endPlantime }}</span>
+          <span>{{scope.row.endPlantime|formatDate('yyyy-MM-dd')}}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布状态" align="center" prop="publishStatus">
@@ -192,7 +189,7 @@
                   ? 'yellow'
                   : '#00FF00',
             }"
-          >{{ scope.row.publish }}</span
+            >{{ scope.row.publish }}</span
           >
         </template>
       </el-table-column>
@@ -211,11 +208,11 @@
                   ? '#00FF00'
                   : '#60BCFD',
             }"
-          >{{ scope.row.task1 }}</span
+            >{{ scope.row.task1 }}</span
           >
           <span v-show="scope.row.task2" class="chaoshi">{{
-              scope.row.task2
-            }}</span>
+            scope.row.task2
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -228,37 +225,60 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleRecordy(scope.row)"
-          >任务详情</el-button
+            >任务详情</el-button
           >
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="handleAbolish(scope.row)"
-            :style="{ display: scope.row.task1 == '已完结'? 'none': scope.row.publishStatus == 2 ? '' :'none' }"
-          >废止任务</el-button
+            :style="{
+              display:
+                scope.row.task1 == '已完结'
+                  ? 'none'
+                  : scope.row.publishStatus == 2
+                  ? ''
+                  : 'none',
+            }"
+            >废止任务</el-button
           >
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="exportTaskReport(scope.row)"
-            :style="{ display: (scope.row.task).indexOf( '已完结')>=0 ? '' : 'none' }"
-          >巡查报告</el-button
+            :style="{
+              display: scope.row.task.indexOf('已完结') >= 0 ? '' : 'none',
+            }"
+            >巡查报告</el-button
           >
           <el-button
             size="mini"
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-            :style="{ display: scope.row.publishStatus != 0 ? 'none' : scope.row.task1 == '已完结'? 'none':'' }"
-          >修改</el-button
+            :style="{
+              display:
+                scope.row.publishStatus != 0
+                  ? 'none'
+                  : scope.row.task1 == '已完结'
+                  ? 'none'
+                  : '',
+            }"
+            >修改</el-button
           >
           <el-button
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-            :style="{ display: scope.row.publishStatus != 0 ? 'none' : scope.row.task1 == '已完结'? 'none':'' }"
-          >删除</el-button
+            :style="{
+              display:
+                scope.row.publishStatus != 0
+                  ? 'none'
+                  : scope.row.task1 == '已完结'
+                  ? 'none'
+                  : '',
+            }"
+            >删除</el-button
           >
         </template>
       </el-table-column>
@@ -298,41 +318,13 @@
           >
             <el-row>
               <el-col :span="8">
-                <el-form-item label="派单人员" prop="dispatcher">
-                  <el-select
-                    v-model="form.dispatcher"
-                    disabled="disabled"
-                    placeholder="默认当前登录人"
-                  >
-                    <el-option
-                      v-for="item in userListData"
-                      :key="item.userId"
-                      :label="item.nickName"
-                      :value="item.userId"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-                <!--                <el-form-item label="派单人员" prop="dispatcher">
+                <el-form-item label="任务名称" prop="taskName">
                                   <el-input
-                                    ref="dispatcher"
-                                    disabled="disabled"
-                                    v-model="form.dispatcher"
-                                    placeholder="（默认当前登录人）"
-                                  ></el-input>
-                                </el-form-item>-->
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="派单时间" prop="dispatchTime">
-                  <el-date-picker
-                    clearable
-                    size="small"
-                    disabled="disabled"
-                    v-model="form.dispatchTime"
-                    type="datetime"
-                    value-format="yyyy-MM-dd hh:mm:ss"
-                    placeholder="选择派单时间"
+                    type="text"
+                    placeholder="请输入内容"
+                    v-model="form.taskName"
                   >
-                  </el-date-picker>
+                  </el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -368,8 +360,53 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
+                <el-form-item label="派单人员" prop="dispatcher">
+                  <el-select
+                    v-model="form.dispatcher"
+                    disabled="disabled"
+                    placeholder="默认当前登录人"
+                  >
+                    <el-option
+                      v-for="item in userListData"
+                      :key="item.userId"
+                      :label="item.nickName"
+                      :value="item.userId"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+                <!--                <el-form-item label="派单人员" prop="dispatcher">
+                                          <el-input
+                                            ref="dispatcher"
+                                            disabled="disabled"
+                                            v-model="form.dispatcher"
+                                            placeholder="（默认当前登录人）"
+                                          ></el-input>
+                                        </el-form-item>&ndash;&gt;-->
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="派单时间" prop="dispatchTime">
+                  <el-date-picker
+                    clearable
+                    size="small"
+                    disabled="disabled"
+                    v-model="form.dispatchTime"
+                    type="datetime"
+                    value-format="yyyy-MM-dd hh:mm:ss"
+                    placeholder="选择派单时间"
+                  >
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
                 <el-form-item label="预完成时" prop="endPlantime">
                   <el-date-picker
+                    v-model="form.endPlantime"
+                    type="date"
+                    :picker-options="pickerEndPlantime"
+                    placeholder="选择预完成时"
+                  >
+                  </el-date-picker>
+<!--                  <el-date-picker
                     clearable
                     :picker-options="forbiddenTime"
                     size="small"
@@ -380,17 +417,7 @@
                     placeholder="选择预完成时"
                     @focus="focus"
                   >
-                  </el-date-picker>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="任务名称" prop="taskName">
-                  <el-input
-                    type="text"
-                    placeholder="请输入内容"
-                    v-model="form.taskName"
-                  >
-                  </el-input>
+                  </el-date-picker>-->
                 </el-form-item>
               </el-col>
               <el-col :span="24">
@@ -416,10 +443,10 @@
           <div class="tableTopHr" style="display: none"></div>
           <div class="button-father">
             <el-button type="primary" style="height: 15%" @click="show1"
-            >选择巡检点</el-button
+              >选择巡检点</el-button
             >
             <el-button type="primary" style="height: 15%" @click="show2"
-            >选择故障点</el-button
+              >选择故障点</el-button
             >
             <!--          <el-button type="primary" style="height: 15%" disabled
             >导入巡查计划</el-button
@@ -487,7 +514,7 @@
               style="display: none"
               class="closeButton"
               @click="abolish"
-            >废止</el-button
+              >废止</el-button
             >
             <el-button class="submitButton" @click="release">发布</el-button>
           </div>
@@ -524,8 +551,75 @@
         />
       </div>
       <div class="show-right">
-        <div class="show-title">设备清单</div>
-        <div class="right-button">
+        <el-row :gutter="20" style="margin: 10px 0px 0px">
+          <el-col class="show-title" :span="4"> 设备清单 </el-col>
+          <el-col :span="8" :offset="4">
+            <el-cascader
+                v-model="eqType"
+                :options="eqTypeData"
+                :props="equipmentTypeProps"
+                :show-all-levels="false"
+                @change="getTable()"
+                style="width: 100%"
+                size="small"
+                clearable
+                placeholder="请选择设备类型"
+              ></el-cascader>
+          </el-col>
+          <el-col :span="8" >
+            <div class="grid-content bg-purple" ref="main1">
+              <el-input
+                v-model="searchValue"
+                placeholder="请输入设备名称，回车搜索"
+                @keyup.enter.native="getTable()"
+                size="small"
+                clearable
+              >
+                <!-- <el-button
+                  slot="append"
+                  class="searchTable"
+                  @click="boxShow1 = !boxShow1"
+                ></el-button> -->
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- <div class="searchBox showSearchBox" v-show="boxShow1" ref="cc1">
+          <el-form
+            ref="show1FormRef"
+            :inline="true"
+            :model="show1Form"
+            label-width="90px"
+          >
+            <el-form-item label="所属系统">
+              <el-select v-model="options1value" @change="changeDevList">
+                <el-option
+                  v-for="dict in dict.type.eq_system"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="设备类型">
+              <el-cascader
+                v-model="eqType"
+                :options="eqTypeData"
+                :props="equipmentTypeProps"
+                :show-all-levels="false"
+                @change="changeEquipmentType"
+                style="width: 100%"
+              ></el-cascader>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" @click="getTable()">搜索</el-button>
+              <el-button size="small" @click="remarkDetermine1()"
+                >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div> -->
+        <!-- <div class="right-button">
           <el-select v-model="options1value" @change="changeDevList">
             <el-option
               v-for="dict in dict.type.eq_system"
@@ -534,8 +628,7 @@
               :value="dict.value"
             />
           </el-select>
-          <div >
-
+          <div>
             <el-input placeholder="请输入设备类型、名称" clearable  @keyup.enter.native="getTable()"   v-model="searchValue" class="input-with-select">
               <el-button slot="append" icon="el-icon-search"  @click.native.prevent="getTable()"></el-button>
             </el-input>
@@ -544,7 +637,7 @@
             <el-button @click="cancelDetermine1">取消</el-button>
             <el-button type="primary" @click="determine1">确定</el-button>
           </div>
-        </div>
+        </div> -->
         <div class="table-father">
           <el-table
             ref="multipleTable1"
@@ -597,6 +690,12 @@
           />
         </div>
       </div>
+      <div class="dialog-footer" slot="footer">
+        <el-button class="submitButton" @click="determine1">确定</el-button>
+        <el-button class="closeButton" @click="cancelDetermine1"
+          >取消</el-button
+        >
+      </div>
     </el-dialog>
 
     <!-- -->
@@ -631,7 +730,73 @@
         />
       </div>
       <div class="show-right">
-        <div class="show-title">故障清单</div>
+        <el-row :gutter="20" style="margin: 10px 0px 0px">
+          <el-col class="show-title" :span="4"> 故障清单 </el-col>
+          <el-col :span="8" :offset="4">
+            <el-select v-model="options2value" @change="getGzTable()">
+                <el-option
+                  v-for="dict in dict.type.fault_level"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                  size="small"
+                />
+              </el-select>
+          </el-col>
+          <el-col :span="8">
+            <div class="grid-content bg-purple" ref="main2">
+              <el-input
+                v-model="search2Value"
+                placeholder="请输入设备名称,回车搜索"
+                @keyup.enter.native="getGzTable()"
+                size="small"
+                clearable
+              >
+                <!-- <el-button
+                  slot="append"
+                  class="searchTable"
+                  @click="boxShow2 = !boxShow2"
+                ></el-button> -->
+              </el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- <div class="searchBox showSearchBox" v-show="boxShow2" ref="cc2">
+          <el-form
+            ref="show1FormRef"
+            :inline="true"
+            :model="show1Form"
+            label-width="90px"
+          >
+            <el-form-item label="故障等级">
+              <el-select v-model="options2value" @change="getGzTable">
+                <el-option
+                  v-for="dict in dict.type.fault_level"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="设备类型">
+              <el-cascader
+                v-model="eqType2"
+                :options="eqTypeData"
+                :props="equipmentTypeProps"
+                :show-all-levels="false"
+                @change="changeEquipmentType"
+                style="width: 100%"
+              ></el-cascader>
+            </el-form-item>
+            <el-form-item class="bottomBox">
+              <el-button size="small" @click="getGzTable()">搜索</el-button>
+              <el-button size="small" @click="remarkDetermine2()"
+                >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div> -->
+        <!-- <div class="show-title">故障清单</div>
         <div class="right-button">
           <el-select v-model="options2value" @change="getGzTable">
             <el-option
@@ -641,11 +806,7 @@
               :value="dict.value"
             />
           </el-select>
-          <div class="cancel-determine">
-            <el-button @click="cancelDetermine2">取消</el-button>
-            <el-button type="primary" @click="determine2">确定</el-button>
-          </div>
-        </div>
+        </div> -->
         <div class="table-father">
           <el-table
             ref="multipleTable2"
@@ -686,15 +847,15 @@
             <el-table-column prop="fault_fxtime" label="发现时间">
               <template slot-scope="scope">
                 <span>{{
-                    !!scope.row.fault_fxtime
-                      ? scope.row.fault_fxtime
+                  !!scope.row.fault_fxtime
+                    ? scope.row.fault_fxtime
                         .replace(/T/g, " ")
                         .replace(/.[\d]{3}Z/, " ")
-                      : ""
-                  }}</span>
+                    : ""
+                }}</span>
               </template></el-table-column
             >
-            <el-table-column prop="dict_label" label="故障描述">
+            <el-table-column prop="dict_label" label="故障描述" show-overflow-tooltip>
             </el-table-column>
           </el-table>
           <pagination
@@ -707,6 +868,12 @@
           />
         </div>
       </div>
+      <div class="dialog-footer" slot="footer">
+        <el-button class="submitButton" @click="determine2">确定</el-button>
+        <el-button class="closeButton" @click="cancelDetermine2"
+          >取消</el-button
+        >
+      </div>
     </el-dialog>
 
     <!--巡查任务及执行记录单-->
@@ -717,7 +884,7 @@
       title="巡检任务及执行记录单"
       class="xjDialog"
       :close-on-click-modal="false"
-      :destroy-on-close ="true"
+      :destroy-on-close="true"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -737,6 +904,10 @@
             <div>任务编号：</div>
             <span>{{ item.id }}</span>
           </el-col>
+          <el-col :span="8" style="display:inline-block">
+            <div style="display:inline-block">任务名称：</div>
+            <span style="width: calc(100% - 110px);display:inline-flex">{{ item.taskName }}</span>
+          </el-col>
           <!--          <el-col :span="8">
             <div>所属单位：</div>
             <span>{{ item.zzjgId }}</span>
@@ -746,10 +917,6 @@
             <span>{{ item.bzName }}</span>
           </el-col>
           <el-col :span="8">
-            <div>预完成时：</div>
-            <span>{{ item.endPlantime }}</span>
-          </el-col>
-          <el-col :span="8">
             <div>派单人员：</div>
             <span>{{ item.dispatcher }}</span>
           </el-col>
@@ -757,15 +924,15 @@
             <div>派单时间：</div>
             <span>{{ item.dispatchTime }}</span>
           </el-col>
-          <el-col :span="8" style="display:inline-block">
-            <div style="display:inline-block">任务名称：</div>
-            <span style="width: calc(100% - 110px);display:inline-flex">{{ item.taskName }}</span>
+          <el-col :span="8">
+            <div>预完成时：</div>
+            <span>{{item.endPlantime|formatDate('yyyy-MM-dd')}}</span>
           </el-col>
-          <el-col :span="24" style="display:inline-block">
-            <div style="display:inline-block">任务描述：</div>
-            <span style="width: calc(100% - 110px);display:inline-flex">{{
-                item.taskDescription == "null" ? "" : item.taskDescription
-              }}</span>
+          <el-col :span="24" style="display: inline-block">
+            <div style="display: inline-block">任务描述：</div>
+            <span style="width: calc(100% - 110px); display: inline-flex">{{
+              item.taskDescription == "null" ? "" : item.taskDescription
+            }}</span>
           </el-col>
         </el-row>
       </div>
@@ -793,32 +960,33 @@
         </el-row>
         <el-row style="margin-left: 2em; margin-top: 10px">
           <el-col :span="8">
-            <div>设备描述：</div>
-            <span>{{ pat.eqFaultDescription }}</span>
-          </el-col>
-          <el-col :span="8">
             <div>外观情况：</div>
             <span>{{ pat.impression }}</span>
           </el-col>
           <el-col :span="8">
-            <div style="width: auto;">通信和网络情况：</div>
+            <div style="width: auto">通信和网络情况：</div>
             <span>{{ pat.network }}</span>
           </el-col>
           <el-col :span="8">
             <div>供配电情况：</div>
             <span>{{ pat.power }}</span>
           </el-col>
-          <el-col :span="8">
+<!--          <el-col :span="8">
             <div>现场故障情况：</div>
             <span>{{ pat.eqFaultCode }}</span>
-          </el-col>
+          </el-col>-->
+
           <el-col :span="8">
             <div>设备状态：</div>
             <span>{{ pat.eqStatus }}</span>
           </el-col>
-          <el-col :span="8">
+          <el-col v-if="pat.runStatus" :span="8">
             <div>设备运行状态：</div>
             <span>{{ pat.runStatus }}</span>
+          </el-col>
+          <el-col :span="8">
+            <div>设备描述：</div>
+            <span>{{ pat.eqFaultDescription }}</span>
           </el-col>
           <el-col>
             <div style="width:12%">现场情况照片：</div>
@@ -855,8 +1023,8 @@
           <el-col :span="8">
             <div>现场情况描述：</div>
             <span>{{
-                tas.siteDescription == "null" ? "" : tas.siteDescription
-              }}</span>
+              tas.siteDescription == "null" ? "" : tas.siteDescription
+            }}</span>
           </el-col>
         </el-row>
       </div>
@@ -938,7 +1106,8 @@ import {
   getFaultList,
   updateTask,
   //test11,
-  selectBzByTunnel, getUserInfo,
+  selectBzByTunnel,
+  getUserInfo,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import {
   getEquipmentInfo,
@@ -947,8 +1116,8 @@ import {
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { color } from "echarts";
 import { download } from "@/utils/request";
-import {getUser} from "@/api/system/user";
-
+import { getUser } from "@/api/system/user";
+import { getCategoryAllTree } from "@/api/event/strategy";
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
@@ -999,15 +1168,28 @@ export default {
   },
   data() {
     return {
-      picUrl:'',
-      picVisible:false,
+      eqType2: "",
+      search2Value: "",
+      boxShow1: false,
+      boxShow2: false,
+      eqType: "",
+      show1Form: {},
+      eqTypeData: [],
+      equipmentTypeProps: {
+        value: "id",
+        label: "label",
+        // checkStrictly: true,
+        emitPath: false,
+      },
+      picUrl: "",
+      picVisible: false,
       isActive: false,
       task_boxShow: false,
       isClick: true,
       userName: "",
       currentTime: "",
       deviceType: "",
-      searchValue:"",
+      searchValue: "",
       faultLevel: "",
       // 获取巡检点 表格选中项
       dialogSelection: [],
@@ -1055,7 +1237,7 @@ export default {
       // 巡查任务表格数据
       listList: [],
       //巡查班组
-      bzData: {},
+      bzData: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -1120,16 +1302,24 @@ export default {
       },
       //巡查点参数
       patrolNews: {
-        tunnelName: "",
-        xcTime: "",
-        bzId: "",
-        walkerId: "",
-        impression: 0,
-        network: 0,
-        power: 0,
-        eqStatus: "",
-        runStatus: "",
-        eqFaultDescription: "",
+          tunnelName: "",
+          xcTime: "",
+          bzId: "",
+          walkerId: "",
+          impression: 0,
+          network: 0,
+          power: 0,
+          eqStatus: "",
+          runStatus: "",
+          eqFaultDescription: "",
+        },
+      pickerEndPlantime: {
+        // 时间不能大于当前时间
+        disabledDate(time) {
+          //Date.now()是javascript中的内置函数，它返回自1970年1月1日00:00:00 UTC以来经过的毫秒数。
+          return time.getTime() < (Date.now()+24*60*60*1000 - 8.64e7);
+        },
+        selectableRange: "00:00:00 - 23:59:59",
       },
       //禁用当前日期之前的日期
       forbiddenTime: {
@@ -1149,7 +1339,7 @@ export default {
             message: "请填写任务名称",
             trigger: "blur",
           },
-          { max: 50, message: '最长输入50个字符', trigger: 'change' }
+          { max: 50, message: "最长输入50个字符", trigger: "change" },
         ],
         tunnelId: [
           {
@@ -1166,11 +1356,10 @@ export default {
     };
   },
   created() {
-    this.getBz();
     this.getList();
     this.getTunnel();
     this.getTreeSelect();
-
+    this.getEqType();
     //this.test11()
     //外观情况
     this.getDicts("impression").then((response) => {
@@ -1195,24 +1384,34 @@ export default {
   //点击空白区域关闭全局搜索弹窗
   mounted() {
     document.addEventListener("click", this.bodyCloseMenus);
+    document.addEventListener("click", this.bodyCloseMenus1);
+    document.addEventListener("click", this.bodyCloseMenus2);
+
   },
   methods: {
-    handleCloseImg(){
-      this.picVisible = false
+    /** 设备类型 */
+    getEqType() {
+      getCategoryAllTree().then((data) => {
+        this.eqTypeData = data.data;
+      });
     },
-    openPic(src){
-      this.picUrl = src
-      this.picVisible = true
+    changeEquipmentType() {},
+    handleCloseImg() {
+      this.picVisible = false;
     },
-    changeDevList(){
-      this.searchValue = '';
-      this.getTable(this.options1value);
+    openPic(src) {
+      this.picUrl = src;
+      this.picVisible = true;
+    },
+    changeDevList() {
+      this.searchValue = "";
+      this.getTable();
     },
 
     //更换隧道，更新隧道下关联班组列表
-    changeGroup(e){
-      this.getBz(e)
-      this.form.bzId = '';
+    changeGroup(e) {
+      this.getBz(e);
+      this.form.bzId = "";
       this.boxList = [];
     },
     closeRecord() {
@@ -1241,6 +1440,32 @@ export default {
         ) {
           if (self.task_boxShow == true) {
             self.task_boxShow = false;
+          }
+        }
+      }
+    },
+    bodyCloseMenus1(e) {
+      let self = this;
+      if (self.boxShow1 == true) {
+        if (
+          !this.$refs.main1.contains(e.target) &&
+          !this.$refs.cc1.contains(e.target)
+        ) {
+          if (self.boxShow1 == true) {
+            self.boxShow1 = false;
+          }
+        }
+      }
+    },
+    bodyCloseMenus2(e) {
+      let self = this;
+      if (self.boxShow2 == true) {
+        if (
+          !this.$refs.main2.contains(e.target) &&
+          !this.$refs.cc2.contains(e.target)
+        ) {
+          if (self.boxShow2 == true) {
+            self.boxShow2 = false;
           }
         }
       }
@@ -1331,7 +1556,7 @@ export default {
         if (i > -1) {
           this.boxList.splice(i, 1);
         }
-        console.log("clickDelete====================" + this.boxList);
+        console.log(this.boxList,"clickDelete");
       }
     },
     // 弹窗表格翻页
@@ -1344,7 +1569,21 @@ export default {
     },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
-      this.dialogSelection = selection;
+      // if(this.boxList.length>0){
+      //   this.dialogSelection = selection
+        // for(let i=0;i<this.boxList.length;i++){
+        //   for(let j=0;j<this.dialogSelection.length;j++){
+        //     if(this.boxList[i].eq_id == this.dialogSelection[j].eq_id){
+        //       this.dialogSelection.splice(j, 1)
+        //     }
+        //   }
+        // }
+      // }else{
+        this.dialogSelection = selection
+      // }
+      console.log(this.boxList,"this.boxList获取巡检点弹窗表格选中项")
+
+      // this.dialogSelection = selection;
       console.log(this.dialogSelection, "this.dialogSelection");
     },
     /** 所属隧道 */
@@ -1360,20 +1599,24 @@ export default {
       });
     },
     /*获取当前登录人*/
-    getLoginUser(){
+    getLoginUser() {
       getUserInfo().then((response) => {
         this.userListData = response.rows;
         this.form.dispatcher = this.userListData[0].userId;
       });
     },
 
-
     // 获取设备table
-    getTable(deviceType) {
-      if (deviceType) {
-        this.deviceType = deviceType;
+    getTable() {
+      if(this.boxShow1){
+        this.boxShow1 = false
+      }
+      this.deviceType = this.options1value;
+      if(this.eqType == null){
+        this.eqType = ""
       }
       getDevicesList(
+        this.eqType,
         this.searchValue,
         this.tunnelId,
         this.deviceType,
@@ -1383,13 +1626,15 @@ export default {
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
-          //console.log(this.boxList[0].eq_type, deviceType, "0000000000");
+          console.log(this.boxList,"this.boxList")
+          console.log(this.tableData1, "this.tableData1");
           // if (this.boxList[0].eq_type == deviceType) {
           this.tableData1.forEach((item) => {
             this.boxList.forEach((row) => {
               const eq_id = row.eq_id.slice(0, -2);
               if (item.eq_id == eq_id) {
                 this.$nextTick(() => {
+                  this.$refs.multipleTable1.clearSelection();
                   this.$refs.multipleTable1.toggleRowSelection(item, true);
                 });
               }
@@ -1402,21 +1647,27 @@ export default {
       });
     },
     // 获取设备table
-    getGzTable(deviceType) {
-      if (deviceType) {
-        this.faultLevel = deviceType;
+    getGzTable() {
+      if(this.boxShow2){
+        this.boxShow2 = false
+      }
+      // console.log(deviceType,"deviceType")
+      // if (deviceType) {
+        this.faultLevel = this.options2value;
+      // }
+      if(this.search2Value){
+        this.eqType2 = ''
       }
       getFaultList(
+        this.search2Value,
+        this.eqType2,
         this.tunnelId,
         this.faultLevel,
         this.pageNum,
         this.pageSize
       ).then((res) => {
         console.log(res, "获取故障table");
-        console.log(
-          "==================getFaultListthis.boxList==" + this.boxList,
-          "boxList"
-        );
+        console.log(this.boxList,"boxList");
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
@@ -1427,6 +1678,7 @@ export default {
               const eq_id = row.eq_id.slice(0, -2);
               if (item.eq_id == eq_id) {
                 this.$nextTick(() => {
+                  this.$refs.multipleTable2.clearSelection();
                   this.$refs.multipleTable2.toggleRowSelection(item, true);
                 });
               }
@@ -1441,8 +1693,12 @@ export default {
     //设备节点单击事件
     handleNodeClick1(data) {
       this.tunnelId = data.id;
-
+      console.log(this.searchValue, "this.searchValue");
+      if(this.searchValue){
+        this.eqType = ''
+      }
       getDevicesList(
+        this.eqType,
         this.searchValue,
         this.tunnelId,
         this.deviceType,
@@ -1475,7 +1731,12 @@ export default {
     //故障节点单击事件
     handleNodeClick2(data) {
       this.tunnelId = data.id;
+      if(this.search2Value){
+        this.eqType2 = ''
+      }
       getFaultList(
+        this.search2Value,
+        this.eqType2,
         this.tunnelId,
         this.faultLevel,
         this.pageNum,
@@ -1612,10 +1873,9 @@ export default {
 
     /** 巡查班组 */
     getBz(tunnelId) {
-
       let param = {
-        "tunnelId":tunnelId
-      }
+        tunnelId: tunnelId,
+      };
 
       listBz(param).then((response) => {
         this.bzData = response.rows;
@@ -1631,7 +1891,6 @@ export default {
         console.log(response.data, "隧道部门树");
       });
     },
-
 
     /** 测试 */
     // test11() {
@@ -1691,22 +1950,23 @@ export default {
       }
       this.dialogSelection = [];
       //  this.$refs.multipleTable1.toggleRowSelection(item, true);
-      this.isShow1 = true;
       this.tunnelId = this.form.tunnelId;
       treeselect(this.tunnelId).then((response) => {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
       });
-
-      this.options1value = "0";
-      this.getTable(this.options1value);
+      this.isShow1 = true;
+      this.searchValue = '';
+      this.options1value = "";
+      this.eqType = '';
       //点击确定，数据还原
       if (this.openCz) {
-        this.options1value = "0";
-        this.tableData1 = null;
-        this.dialogTotal = null;
-        console.log("=========" + this.options1value);
-        this.getTable(this.options1value);
+        this.options1value = "";
+        this.tableData1 = [];
+        this.dialogTotal = 0;
+        this.getTable();
+      } else {
+        this.getTable();
       }
       this.openCz = false;
     },
@@ -1716,6 +1976,7 @@ export default {
         return this.$modal.msgWarning("请选择所属隧道");
       }
       this.isShow2 = true;
+      this.search2Value = ''
       this.options2value = "0";
       this.tunnelId = this.form.tunnelId;
 
@@ -1724,15 +1985,24 @@ export default {
         console.log(response.data, "隧道部门树");
       });
 
-      this.getGzTable(this.options2value);
+      this.getGzTable();
       if (this.openGz) {
         this.options2value = "0";
-        this.tableData2 = null;
-        this.dialogTotal = null;
-        console.log("=========" + this.options2value);
-        this.getGzTable(this.options2value);
+        this.tableData2 = [];
+        this.dialogTotal = 0;
+        this.getGzTable();
       }
       this.openGz = false;
+    },
+    remarkDetermine1() {
+      this.searchValue = "";
+      this.options1value = "";
+      this.eqType = "";
+    },
+    remarkDetermine2() {
+      this.search2Value = "";
+      this.options2value = "";
+      this.eqType2 = "";
     },
     cancelDetermine1() {
       this.dialogSelection = [];
@@ -1766,15 +2036,15 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.boxList = "";
+      this.boxList = [];
       this.boxIds = "";
       this.reset();
       this.open = true;
       this.openGz = true;
       this.openCz = true;
       this.title = "新增巡查任务";
-      this.tableData1 = null;
-      this.tableData2 = null;
+      this.tableData1 = [];
+      this.tableData2 = [];
       this.form.dispatcher = this.userName;
       this.form.dispatchTime = this.currentTime;
       this.getLoginUser();
@@ -2040,16 +2310,51 @@ export default {
       }, 500);
     },
   },
+  filters: {
+    formatDate: function (value, args) {
+      if(!value){
+        return '';
+      }
+      var dt = new Date(value);
+      if (args == 'yyyy-M-d') {// yyyy-M-d
+        let year = dt.getFullYear();
+        let month = dt.getMonth() + 1;
+        let date = dt.getDate();
+        return `${year}-${month}-${date}`;
+      } else if (args == 'yyyy-M-d H:m:s') {// yyyy-M-d H:m:s
+        let year = dt.getFullYear();
+        let month = dt.getMonth() + 1;
+        let date = dt.getDate();
+        let hour = dt.getHours();
+        let minute = dt.getMinutes();
+        let second = dt.getSeconds();
+        return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
+      } else if (args == 'yyyy-MM-dd') {// yyyy-MM-dd
+        let year = dt.getFullYear();
+        let month = (dt.getMonth() + 1).toString().padStart(2, '0');
+        let date = dt.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${date}`;
+      } else {// yyyy-MM-dd HH:mm:ss
+        let year = dt.getFullYear();
+        let month = (dt.getMonth() + 1).toString().padStart(2, '0');
+        let date = dt.getDate().toString().padStart(2, '0');
+        let hour = dt.getHours().toString().padStart(2, '0');
+        let minute = dt.getMinutes().toString().padStart(2, '0');
+        let second = dt.getSeconds().toString().padStart(2, '0');
+        return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
+      }
+    }
+  },
   watch: {
     isShow1: {
       handler(val) {
-        this.$refs.multipleTable1.clearSelection();
+        // this.$refs.multipleTable1.clearSelection();
         this.dialogSelection = [];
       },
     },
     isShow2: {
       handler(val) {
-        this.$refs.multipleTable2.clearSelection();
+        // this.$refs.multipleTable2.clearSelection();
         this.dialogSelection = [];
       },
     },
@@ -2197,8 +2502,9 @@ h1 {
   // .el-dialog__body {
   //   padding: 15px 20px;
   // }
-  .el-table--group::after, .el-table--border::after{
-    width:0px;
+  .el-table--group::after,
+  .el-table--border::after {
+    width: 0px;
   }
 }
 img {
@@ -2415,6 +2721,10 @@ img {
         // border-bottom: 1px solid rgb(204, 204, 204);
         padding-left: 10px;
       }
+      // ::v-deep .el-input--medium .el-input__inner{
+      //   height: 32px;
+      //   line-height: 32px;
+      // }
     }
     .show-left {
       width: 25%;
@@ -2480,7 +2790,7 @@ img {
 }
 ::v-deep .xjDialog {
   .el-dialog__body {
-    max-height: 70vh;
+    max-height: 77vh;
     overflow: auto;
   }
 }
@@ -2492,8 +2802,8 @@ img {
     color: #fff;
   }
   .el-tree--highlight-current
-  .el-tree-node.is-current
-  > .el-tree-node__content {
+    .el-tree-node.is-current
+    > .el-tree-node__content {
     background-color: #89c2f7;
     color: #fff;
   }
@@ -2505,13 +2815,36 @@ img {
   font-size: 12px;
   margin-left: 4px;
 }
-::v-deep .el-textarea .el-input__count{
+::v-deep .el-textarea .el-input__count {
   background: transparent !important;
 }
-.picDialog{
-  ::v-deep .el-dialog__body{
+.picDialog {
+  ::v-deep .el-dialog__body {
     max-height: 78vh;
     overflow: auto;
+  }
+}
+.show {
+  ::v-deep .el-dialog .el-dialog__footer {
+    padding-top: 0px !important;
+  }
+}
+.showSearchBox {
+  width: 34%;
+  height: 193px;
+  position: absolute;
+  background: #00335a;
+  z-index: 1;
+  right: 30px;
+  padding: 20px;
+  top: 100px;
+  box-sizing: border-box;
+  ::v-deep .el-form--inline .el-form-item {
+    display: inline-flex !important;
+    margin-right: 0 !important;
+  }
+  .bottomBox {
+    margin-top: 0 !important;
   }
 }
 </style>

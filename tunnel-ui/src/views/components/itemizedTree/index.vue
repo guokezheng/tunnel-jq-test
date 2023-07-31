@@ -1,54 +1,74 @@
 <!-- 分项-多选 -->
 <template>
   <div>
-    <div style="
-        width: 100%;
-        padding: 10px 0;
-      " class="box">
+    <div style="width: 100%; padding: 10px 0" class="box">
       <el-row>
         <!-- <department-select @getTree="clickTree" @clearTree="clearTree"></department-select> -->
       </el-row>
       <el-row v-if="filter">
-        <el-input v-model="label" placeholder="请输入分项名称" clearable size="small" suffix-icon="el-icon-search" />
+        <el-input
+          v-model="label"
+          placeholder="请输入分项名称"
+          clearable
+          size="small"
+          suffix-icon="el-icon-search"
+        />
       </el-row>
     </div>
     <el-scrollbar>
-      <el-row :style="{height:height}">
+      <el-row :style="{ height: height }">
         <!-- 级联 全选 -->
         <div class="check" v-if="show_checkbox">
           <el-checkbox v-model="check_strictly">级联选择</el-checkbox>
-          <el-checkbox v-model="default_check_all" @change="handleCheckedTreeNodeAll($event, 'menu')">全选</el-checkbox>
+          <el-checkbox
+            v-model="default_check_all"
+            @change="handleCheckedTreeNodeAll($event, 'menu')"
+            >全选</el-checkbox
+          >
         </div>
-        <el-tree class="tree" :data="itemizedOptions" :props="defaultProps" :expand-on-click-node="false" :check-on-click-node="true" :show-checkbox="show_checkbox" :check-strictly="!check_strictly" :filter-node-method="filterNode" ref="tree" default-expand-all @node-click="handleNodeClick" @check="handleCheckChange" node-key="code">
+        <el-tree
+          class="tree"
+          :data="itemizedOptions"
+          :props="defaultProps"
+          :expand-on-click-node="false"
+          :check-on-click-node="true"
+          :show-checkbox="show_checkbox"
+          :check-strictly="!check_strictly"
+          :filter-node-method="filterNode"
+          ref="tree"
+          default-expand-all
+          @node-click="handleNodeClick"
+          @check="handleCheckChange"
+          node-key="id"
+        >
           <div class="showName" slot-scope="{ node, data }">
-            <el-tooltip :content="node.label" placement="top" effect="light">
-              <span>{{node.label}}</span>
-            </el-tooltip>
+            <!-- <el-tooltip :content="node.label" placement="top" effect="light"> -->
+              <span>{{ node.label }}</span>
+            <!-- </el-tooltip> -->
           </div>
         </el-tree>
       </el-row>
     </el-scrollbar>
   </div>
-
 </template>
 
 <script>
-// import { getItemizedTree } from '@/api/configcenter/itemized'
-import departmentSelect from '@/views/components/department'
+// import departmentSelect from '@/views/components/department'
+import { itemizedTreeselect } from "@/api/energy/api";
 
 export default {
-  name: 'itemizedTree',
-  components: { departmentSelect },
+  name: "itemizedTree",
+  // components: { departmentSelect },
   props: {
     //开启过滤
     filter: {
       type: Boolean,
-      default: true
+      default: true,
     },
     //节点是否可被选择
     show_checkbox: {
       type: Boolean,
-      default: false
+      default: false,
     },
     //是否级联
     // check_strictly:{
@@ -68,16 +88,16 @@ export default {
     //默认第一个子节点高亮选中
     default_select_first: {
       type: Boolean,
-      default: false
+      default: false,
     },
     powerCode: {
       type: String,
-      default: ''
+      default: "",
     },
     height: {
       type: String,
-      default: 'calc(100vh - 280px)'
-    }
+      default: "calc(100vh - 280px)",
+    },
   },
   data() {
     return {
@@ -86,24 +106,23 @@ export default {
       //分项选项
       itemizedOptions: [],
       defaultProps: {
-        value: 'code',
-        label: 'label',
-        children: 'children'
+        value: "id",
+        label: "label",
+        children: "children",
       },
       default_check_first: true, //默认选中第一项
       check_strictly: false, //级联选择
       default_check_all: false, //全选
-
-    }
+    };
   },
   watch: {
     // 根据名称筛选部门树
     label(val) {
-      this.$refs.tree.filter(val)
-    }
+      this.$refs.tree.filter(val);
+    },
   },
   created() {
-    this.getLoopTree()
+    this.getLoopTree();
   },
   methods: {
     //节点选中状态发生变化时的回调
@@ -116,67 +135,72 @@ export default {
     // },
     // 树权限（全选/全不选）
     handleCheckedTreeNodeAll(value, type) {
-      let arr = []
+      console.log(value, "value");
+      let arr = [];
       if (value) {
-        this.getAllKeys(this.itemizedOptions, arr, 'menuId')
+        this.getAllKeys(this.itemizedOptions, arr, "menuId");
       }
-      this.$refs.tree.setCheckedKeys(arr)
-      this.$emit('defaultCheck', arr)
+      this.$refs.tree.setCheckedKeys(arr);
+      this.$emit("defaultCheck", arr);
     },
     // 筛选节点
     filterNode(value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
     },
     /** 查询回路树结构 */
     async getLoopTree() {
-      // const response = await getItemizedTree()
-      // this.itemizedOptions = response.data == null || response.data.length === 0 ? [] : response.data
-      // this.$nextTick(() => {
-      //   this.showCheckBox()
-      //   this.selectFirstChild()
-      // })
+      const response = await itemizedTreeselect();
+      this.itemizedOptions =
+        response.data == null || response.data.length === 0
+          ? []
+          : response.data;
+      this.$nextTick(() => {
+        this.showCheckBox();
+        this.selectFirstChild();
+      });
     },
 
     //节点单击事件
     handleNodeClick(data) {
-      this.$emit('nodeClick', data)
+      this.$emit("nodeClick", data);
     },
 
     //第一个子节点，高亮选中
     selectFirstChild() {
       if (this.default_select_first) {
-        let first = this.getFirstChildren(this.itemizedOptions)
-        this.$refs.tree.setCurrentKey(first)
-        this.$emit('defaultSelect', first, this.$refs.tree.getCurrentNode())
+        let first = this.getFirstChildren(this.itemizedOptions);
+        this.$refs.tree.setCurrentKey(first);
+        this.$emit("defaultSelect", first, this.$refs.tree.getCurrentNode());
       }
     },
     //节点选中事件--复选框
     handleCheckChange(data, checked) {
-      let n = this.getAllKeys(this.itemizedOptions)
+      let n = this.getAllKeys(this.itemizedOptions);
       if (checked.checkedKeys.length === n.length) {
-        this.default_check_all = true
+        this.default_check_all = true;
       } else {
-        this.default_check_all = false
+        this.default_check_all = false;
       }
-      this.$emit('nodeCheck', data, checked)
+      this.$emit("nodeCheck", data, checked);
     },
     //默认选中--复选框
     showCheckBox() {
+      console.log("11111111111");
       if (this.show_checkbox) {
         //默认全选
         if (this.default_check_all) {
-          let all = this.getAllKeys(this.itemizedOptions)
-          this.$refs.tree.setCheckedKeys(all)
-          this.$emit('defaultCheck', all)
+          let all = this.getAllKeys(this.itemizedOptions);
+          this.$refs.tree.setCheckedKeys(all);
+          this.$emit("defaultCheck", all);
         }
         //默认选中第一个子节点
         if (this.default_check_first) {
-          let arr = []
-          let first = this.getFirstChildren(this.itemizedOptions)
-          if (first) arr.push(first)
-          this.$refs.tree.setCheckedKeys(arr)
-          this.$emit('defaultCheck', arr)
+          let arr = [];
+          let first = this.getFirstChildren(this.itemizedOptions);
+          if (first) arr.push(first);
+          this.$refs.tree.setCheckedKeys(arr);
+          this.$emit("defaultCheck", arr);
         }
       }
     },
@@ -184,12 +208,12 @@ export default {
     //获取所有节点
     getAllKeys(node, arr = []) {
       for (let item of node) {
-        arr.push(item.code)
-        let parentArr = []
-        if (item.children) parentArr.push(...item.children)
-        if (parentArr && parentArr.length) this.getAllKeys(parentArr, arr)
+        arr.push(item.id);
+        let parentArr = [];
+        if (item.children) parentArr.push(...item.children);
+        if (parentArr && parentArr.length) this.getAllKeys(parentArr, arr);
       }
-      return arr
+      return arr;
     },
     //获取第一个子节点
     getFirstChildren(node) {
@@ -197,11 +221,11 @@ export default {
         // return node[0].children && node[0].children.length > 0
         //   ? this.getFirstChildren(node[0].children)
         //   : node[0].code;
-        return node[0].code
+        return node[0].id;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -218,9 +242,9 @@ export default {
 ::v-deep .el-tree-node__content {
   margin: 3px 0 !important;
 }
-::v-deep .el-input--small .el-input__inner {
-  text-align: center;
-}
+// ::v-deep .el-input--small .el-input__inner {
+//   text-align: center;
+// }
 .check {
   padding: 10px 10px;
   ::v-deep .el-checkbox {

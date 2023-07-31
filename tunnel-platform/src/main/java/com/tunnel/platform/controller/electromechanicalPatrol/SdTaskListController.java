@@ -259,10 +259,10 @@ public class SdTaskListController extends BaseController
      * @return
      */
     @GetMapping("/getDevicesList")
-    public TableDataInfo getDevicesList(String searchValue,String tunnelId, String deviceType){
+    public TableDataInfo getDevicesList(String searchValue,String tunnelId, String deviceType,String eqType){
         startPage();
         searchValue = searchValue.replace(" ","+");
-        List<SdDevices> devices = devicesService.getDevicesList(searchValue,tunnelId,deviceType);
+        List<SdDevices> devices = devicesService.getDevicesList(searchValue,tunnelId,deviceType,eqType);
         return getDataTable(devices);
     }
 
@@ -273,9 +273,9 @@ public class SdTaskListController extends BaseController
      * @return
      */
     @GetMapping("/getFaultList")
-    public TableDataInfo getFaultList(String tunnelId,String faultLevel){
+    public TableDataInfo getFaultList(String tunnelId,String faultLevel,String searchValue,String eqType){
         startPage();
-        List<SdFaultList> faultList = sdFaultListService.getFaultList(tunnelId,faultLevel);
+        List<SdFaultList> faultList = sdFaultListService.getFaultList(tunnelId,faultLevel,searchValue,eqType);
         return getDataTable(faultList);
     }
 

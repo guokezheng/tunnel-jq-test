@@ -260,6 +260,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         1=1 and  s.dict_type= 'fault_type' and f.fallt_remove_statue = '1' and f.fault_status = '0'
         <if test="tunnelId != null and tunnelId != '' ">and t.tunnel_id = #{tunnelId}</if>
         <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
+        <if test="searchValue != null and searchValue != '' ">and d.eq_name LIKE CONCAT('%',#{searchValue},'%')</if>
+        <if test="eqType != null and eqType != '' ">and d.eq_type = #{eqType}</if>
     </where>
         order by f.create_time desc
     </select>
@@ -445,6 +447,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getFaultDictValue" parameterType="String" resultMap="SdFaultListResult">
         select dict_label,dict_value from sys_dict_data where dict_type = #{dictType}
+    </select>
+
+
+
+
+    <select id ="selectSdFaultList" resultType="hashmap" parameterType="SdFaultList">
+        SELECT
+            fault.id id,
+            concat(
+                    ifnull( tunnel.tunnel_name, '' ),
+                    ifnull( DATA.dict_label, '' ),
+                    ifnull( devices.eq_name, '' ),
+                    ifnull( type.dict_label, '' )
+                ) AS frameEventTitle,
+            tunnel.tunnel_id tunnelId,
+            fault.fault_fxtime AS eventTime,
+            '故障' AS simplifyName,
+            ( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl,
+            devices.eq_direction direction,
+            '' as eventTypeId
+        FROM
+            sd_fault_list fault
+                LEFT JOIN sd_tunnels tunnel ON fault.tunnel_id = tunnel.tunnel_id
+                LEFT JOIN sd_devices devices ON devices.eq_id = fault.eq_id
+                LEFT JOIN sys_dict_data DATA ON DATA.dict_value = devices.eq_direction
+                AND DATA.dict_type = 'sd_direction'
+                LEFT JOIN sys_dict_data type ON type.dict_value = fault.fault_type
+                AND type.dict_type = 'fault_type'
+        WHERE
+            fault.fault_status = '0'
+          AND fault.fallt_remove_statue = '1'
+          AND  fault.id = #{id}
     </select>
 
 

@@ -1323,7 +1323,7 @@ public class SdEventServiceImpl implements ISdEventService {
         //查询事件信息
         SdEvent sdEvent = sdEventMapper.selectSdEventById(sdEventData.getId());
         //整形桩号
-        Integer stakeNum = Integer.valueOf(sdEvent.getStakeNum().replaceAll("K", "").replaceAll(Pattern.quote("+"), "").replaceAll(" ", ""));
+        Integer stakeNum = Integer.valueOf(sdEvent.getStakeNum().replaceAll("ZK","").replaceAll("YK","").replaceAll("K", "").replaceAll(Pattern.quote("+"), "").replaceAll(" ", ""));
         List<String> rlDeviceList = new ArrayList<>();
         //检索规则条件
         String retrievalRule = sdStrategyRl.getRetrievalRule();
@@ -1720,7 +1720,7 @@ public class SdEventServiceImpl implements ISdEventService {
             //查询设备信息以及状态
             List<Map<String, Object>> maps = new ArrayList<>();
             if(eqTypeId == DevicesTypeEnum.VMS.getCode() || eqTypeId == DevicesTypeEnum.MEN_JIA_VMS.getCode()){
-                maps = sdDevicesMapper.selectVmsDevicesOld(item.getEquipments(), item.getState(), "2");
+                maps = sdDevicesMapper.selectVmsDevicesOld(item.getEquipments(), item.getState(), "2", item.getCurrentId());
                 if(maps.size() == 0){
                     maps = sdDevicesMapper.selectVmsDevices(item.getEquipments(), item.getState());
                 }
@@ -2148,6 +2148,8 @@ public class SdEventServiceImpl implements ISdEventService {
             String time = formatter.format(new Date());
             sdEvent.setEventTime(dateZh(time));
             sdEvent.setCreateTime(dateZh(time));
+            sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));
+            sdEvent.setEventGrade("1");
             sdEventMapper.insertSdEvent(sdEvent);
             eventSendWeb(sdEvent);
         } else {
@@ -2179,7 +2181,7 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEvent sdEventData = new SdEvent();
         sdEventData.setId(sdEvent.getId());
         List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
-        //新增事件后推送前端  弹出视频
+//        sdEventList.get(0).setId(22l);
         JSONObject object = new JSONObject();
         object.put("sdEventList", sdEventList);
         WebSocketService.broadcast("sdEventList",object.toString());

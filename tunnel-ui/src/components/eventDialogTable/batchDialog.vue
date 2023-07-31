@@ -240,6 +240,9 @@ export default {
       listEventType(prevControlType).then((response) => {
         this.eventTypeData = response.rows;
         this.form.eventTypeId = Number(item.eventTypeId);
+        if(this.form.eventTypeId == 20){
+          this.form.laneNo = ['1','2','3']
+        }
       });
     },
     cancel() {
@@ -250,7 +253,11 @@ export default {
       this.$emit("clearClick", 1);
     },
     // 预估等级 预估类型
-    getReservePlanData() {},
+    getReservePlanData() {
+      if(this.form.eventTypeId == 20){
+        this.form.laneNo = ['1','2','3']
+      }
+    },
     // 复核结果
     eventStateChange() {
       console.log(this.form.eventState, "this.form.eventState");

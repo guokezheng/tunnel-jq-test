@@ -7,7 +7,7 @@
       label-width="100px"
     >
       <el-row>
-        <el-col :span="24">
+        <el-col :span="8">
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
               style="width: 100%"
@@ -16,7 +16,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="隧道名称" prop="tunnelId">
             <el-select
               style="width: 100%"
@@ -34,7 +34,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="隧道方向" prop="direction">
             <el-select
               clearable
@@ -53,8 +53,8 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col >
+      <el-row >
+        <el-col :span="14">
           <el-form-item label="执行日期" prop="execDate">
             <el-date-picker
               v-model="strategyForm.execDate"
@@ -63,20 +63,19 @@
               placeholder="请选择日期"
               :picker-options="forbiddenTime"
               @change="changeTime"
-              >
+              style="width: calc(100% - 155px);">
             </el-date-picker>
             <i style="color: red;margin-left: 10px;">不选择日期则每日执行</i>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row>
-        <el-col >
+        <el-col :span="10">
           <el-form-item label="执行时间" prop="execTime">
             <el-time-picker
               v-model="strategyForm.execTime"
               placeholder="请选择时间"
               value-format="HH:mm:ss"
               @change="changeTime"
+              style="width:100%"
             >
             </el-time-picker>
           </el-form-item>

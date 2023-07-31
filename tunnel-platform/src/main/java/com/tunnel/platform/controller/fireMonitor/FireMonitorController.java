@@ -26,7 +26,7 @@ public class FireMonitorController {
      * 获取rtsp流地址
      */
     @GetMapping("/getRtspStreamAddr")
-    public String getRtspStreamAddr(RedirectAttributes redirectAttributes)
+    public String getRtspStreamAddr(RedirectAttributes redirectAttributes,String ip)
     {
 
         //从数据库中查询视频流地址

@@ -68,24 +68,24 @@ public class NettyClient {
                         }
                     });
             ChannelFuture future = bootstrap.connect();
-            //客户端断线重连逻辑
-            future.addListener((ChannelFutureListener) future1 -> {
-                if (future1.isSuccess()) {
-                    log.info("连接Netty服务端成功");
-                } else {
-                    log.info("连接失败，进行断线重连");
-                    future1.channel().eventLoop().schedule(() -> {
-                        try {
-                            start();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }, 20, TimeUnit.SECONDS);
-                }
-            });
+//            //客户端断线重连逻辑
+//            future.addListener((ChannelFutureListener) future1 -> {
+//                if (future1.isSuccess()) {
+//                    log.info("连接Netty服务端成功");
+//                } else {
+//                    log.info("连接失败，进行断线重连");
+//                    future1.channel().eventLoop().schedule(() -> {
+//                        try {
+//                            start();
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }, 20, TimeUnit.SECONDS);
+//                }
+//            });
 
-            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-            executorService.scheduleAtFixedRate(() -> {
+//            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//            executorService.scheduleAtFixedRate(() -> {
                 // 定时发送消息给服务端
                 String systemMsg = SendMsgCodeEnum.XIAOFANGPAO_SYSTEM_STATUS_CODE.getCode();
                 try {
@@ -93,7 +93,7 @@ public class NettyClient {
                 } catch (DecoderException e) {
                     e.printStackTrace();
                 }
-            }, 60, 60, TimeUnit.SECONDS);
+//            }, 60, 60, TimeUnit.SECONDS);
             future.channel().closeFuture().sync();
         }catch (Exception e){
             log.info("服务端异常");

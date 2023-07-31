@@ -84,7 +84,7 @@ public interface ISdFaultListService
      * @param faultLevel
      * @return
      */
-    List<SdFaultList> getFaultList(String tunnelId, String faultLevel);
+    List<SdFaultList> getFaultList(String tunnelId, String faultLevel,String searchValue,String eqType);
 
     /**
      * 根据故障id查设备
@@ -112,4 +112,6 @@ public interface ISdFaultListService
      * @return
      */
     int saveFault(SdFaultList sdFaultList);
+
+    void faultSendWeb(SdFaultList sdFaultList);
 }

@@ -12,6 +12,8 @@
             v-model="tunnelQueryParams.deptId"
             :options="siteList"
             :props="siteProps"
+            @visible-change="cascaderHandleChange"
+            @expand-change="cascaderHandleChange"
             :show-all-levels="false"
             @change="changeSite"
             placeholder="请选择"
@@ -112,6 +114,7 @@
                 :filter-node-method="filterNode"
                 accordion
                 ref="tree"
+                node-key="id"
               ></el-tree>
             </div>
           </div>
@@ -160,15 +163,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>控制策略</span>
           </el-button>
-<!--          <el-button-->
-<!--            class="buttons"-->
-<!--            type="primary"-->
-<!--            size="mini"-->
-<!--            @click="strategyPage1"-->
-<!--          >-->
-<!--            <img src="../../../assets/icons/kzcl.png" />-->
-<!--            <span>控制策略1</span>-->
-<!--          </el-button>-->
+          <!--          <el-button-->
+          <!--            class="buttons"-->
+          <!--            type="primary"-->
+          <!--            size="mini"-->
+          <!--            @click="strategyPage1"-->
+          <!--          >-->
+          <!--            <img src="../../../assets/icons/kzcl.png" />-->
+          <!--            <span>控制策略1</span>-->
+          <!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -226,7 +229,6 @@
         :modal="false"
         :append-to-body="true"
         class="drawerBox"
-        :close-on-click-modal="false"
       >
         <el-row>
           <el-col :span="12">
@@ -285,17 +287,14 @@
           @mouseover="mouseoversImage"
           @mouseleave="mouseleaveImage"
         >
-        <!-- 右键拖拽 勿删 -->
+          <!-- 右键拖拽 勿删 -->
           <!-- <div
             class="workbench-content"
             @mousedown="dragImg"
             ref="dragImgDom"
             @contextmenu.prevent
           > -->
-          <div
-            class="workbench-content"
-            ref="dragImgDom"
-          >
+          <div class="workbench-content" ref="dragImgDom">
             <!--画布区域-->
             <div>
               <el-row
@@ -462,7 +461,20 @@
                   >
                     <!-- 设备图标上提示文字 -->
 
-                    <div v-if="item.click" class="screenEqNameBox">
+                    <div
+                      v-if="item.click"
+                      class="screenEqNameBox"
+                      :style="{
+                        top:
+                          item.tooltipType == 1 || item.tooltipType == 2
+                            ? '35px'
+                            : '-50px',
+                        left:
+                          item.tooltipType == 1 || item.tooltipType == 3
+                            ? '0px'
+                            : '-100px',
+                      }"
+                    >
                       {{ item.eqName }}
                     </div>
                     <div v-if="item.textFalse" class="textFalseBox">
@@ -1334,7 +1346,12 @@
           :show-overflow-tooltip="true"
           :formatter="controlTypeFormat"
         />
-        <el-table-column label="操作结果" align="center" prop="state" width="70"/>
+        <el-table-column
+          label="操作结果"
+          align="center"
+          prop="state"
+          width="70"
+        />
         <el-table-column label="操作地址" align="center" prop="operIp" />
         <el-table-column
           label="创建时间"
@@ -1486,45 +1503,45 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-<!--          <el-col :span="12">-->
-<!--            <el-form-item-->
-<!--              label="当前亮度值"-->
-<!--              prop="beforeLuminance"-->
-<!--              v-if="lightingForm.modeType == 1"-->
-<!--            >-->
-<!--              <el-input-->
-<!--                v-model="lightingForm.beforeLuminance"-->
-<!--                placeholder="请输入当前亮度值(0-100)"-->
-<!--              />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
+          <!--          <el-col :span="12">-->
+          <!--            <el-form-item-->
+          <!--              label="当前亮度值"-->
+          <!--              prop="beforeLuminance"-->
+          <!--              v-if="lightingForm.modeType == 1"-->
+          <!--            >-->
+          <!--              <el-input-->
+          <!--                v-model="lightingForm.beforeLuminance"-->
+          <!--                placeholder="请输入当前亮度值(0-100)"-->
+          <!--              />-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
         </el-row>
-<!--        <el-row>-->
-<!--          <el-col :span="12">-->
-<!--            <el-form-item-->
-<!--              label="最小亮度值"-->
-<!--              prop="minLuminance"-->
-<!--              v-if="lightingForm.modeType != 0"-->
-<!--            >-->
-<!--              <el-input-->
-<!--                v-model="lightingForm.minLuminance"-->
-<!--                placeholder="请输入最小亮度值(0-100)"-->
-<!--              />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--          <el-col :span="12">-->
-<!--            <el-form-item-->
-<!--              label="响应时长(毫秒)"-->
-<!--              prop="respondTime"-->
-<!--              v-if="lightingForm.modeType != 0"-->
-<!--            >-->
-<!--              <el-input-->
-<!--                v-model="lightingForm.respondTime"-->
-<!--                placeholder="请输入响应时长 单位：秒s"-->
-<!--              />-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
+        <!--        <el-row>-->
+        <!--          <el-col :span="12">-->
+        <!--            <el-form-item-->
+        <!--              label="最小亮度值"-->
+        <!--              prop="minLuminance"-->
+        <!--              v-if="lightingForm.modeType != 0"-->
+        <!--            >-->
+        <!--              <el-input-->
+        <!--                v-model="lightingForm.minLuminance"-->
+        <!--                placeholder="请输入最小亮度值(0-100)"-->
+        <!--              />-->
+        <!--            </el-form-item>-->
+        <!--          </el-col>-->
+        <!--          <el-col :span="12">-->
+        <!--            <el-form-item-->
+        <!--              label="响应时长(毫秒)"-->
+        <!--              prop="respondTime"-->
+        <!--              v-if="lightingForm.modeType != 0"-->
+        <!--            >-->
+        <!--              <el-input-->
+        <!--                v-model="lightingForm.respondTime"-->
+        <!--                placeholder="请输入响应时长 单位：秒s"-->
+        <!--              />-->
+        <!--            </el-form-item>-->
+        <!--          </el-col>-->
+        <!--        </el-row>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="submitButton" @click="submitLightingForm"
@@ -2035,7 +2052,7 @@ export default {
     comDeawer, //抽屉
     comFooter, //底部echarts
     timingTask,
-    comXfp
+    comXfp,
   },
 
   data() {
@@ -2158,7 +2175,7 @@ export default {
       brandList: [],
       directionList: [{}, {}], //设备方向字典
       dictList: [],
-      leftButtonS:'leftButtonS',
+      leftButtonS: "leftButtonS",
       robotShow: false,
       drawerLineList: [
         {
@@ -2556,7 +2573,7 @@ export default {
       // 巡检机器人-----------------------------------------------------------------end
       isManagementStation: false, // 当前账号的权限是否是管理站
       tooltipType: false,
-      showTooltipIndex: 999,
+      showTooltipIndex: 9999,
       showTooltip: false,
       tooltipShow: false, //是否展示提示内容
       imageTimer: null, //定时器
@@ -2589,7 +2606,7 @@ export default {
       ],
       // 表单参数
       lightingForm: {},
-      timingTaskShow:false,
+      timingTaskShow: false,
     };
   },
 
@@ -2727,7 +2744,7 @@ export default {
       this.$refs.tree.filter(val);
     },
     "batchManageForm.state": function (newVal, oldVal) {
-      console.log(newVal, "newVal");
+      // console.log(newVal, "newVal");
       if ([7, 9].includes(this.itemEqType)) {
         // 基础照明、加强照明  state == 1 开启  state == 2  关闭
         if (newVal == "1" && this.batchManageForm.brightness == 0) {
@@ -2886,18 +2903,59 @@ export default {
   },
 
   methods: {
+    // 管理站级联回显选中效果
+    cascaderHandleChange() {
+      console.log(this.siteList, "siteList");
+      let handleText = "";
+      for (let item of this.siteList) {
+        if (this.tunnelQueryParams.deptId == item.id) {
+          handleText = item.label;
+        } else {
+          for (let itm of item.children) {
+            if (this.tunnelQueryParams.deptId == itm.id) {
+              handleText = itm.label;
+            }
+          }
+        }
+      }
+
+      console.log(handleText, "handleText");
+      // 事件监听实现懒加载选择任意一级
+      this.$nextTick(() => {
+        //获取label
+        const labelDoms = document.querySelectorAll(
+          ".el-cascader-node .el-cascader-node__label"
+        );
+        console.log(labelDoms, "labelDoms");
+
+        //获取radio 级联带单选框时使用
+        // const radioDoms = document.querySelectorAll('.el-cascader-node .el-radio')
+        //由于label是被radio覆盖，所以循环raidoDoms，反之循环labelDoms
+        labelDoms.forEach((item, index) => {
+          item.removeEventListener("click", function () {
+            const labelDom = labelDoms[index];
+            labelDom.click();
+          });
+          item.addEventListener("click", function () {
+            const labelDom = labelDoms[index];
+            labelDom.click();
+          });
+        });
+      });
+    },
     // 保存选中的数据id,row-key就是要指定一个key标识这一行的数据
     getRowKey1(row) {
-      return row.infoId
+      return row.infoId;
     },
     getRowKey2(row) {
-      return row.id
+      return row.id;
     },
     isDrawer() {
       this.buttonsDeawer = !this.buttonsDeawer;
     },
     //拆分拼接数据
     splitData(item) {
+      // console.log(item,"item")
       item = item.replace(/\s*/g, "");
       let ago = item.substring(0, item.indexOf("右"));
       let after = item.substring(item.indexOf("右"), item.length);
@@ -3066,7 +3124,14 @@ export default {
     },
     // 模糊查询
     treeClick() {
-      this.treeShow = !this.treeShow;
+      // 点击输入框 折叠之前打开的树形菜单
+      const nodes = this.$refs.tree.store._getAllNodes();
+      nodes.forEach((item) => {
+        item.expanded = false;
+      });
+      setTimeout(()=>{
+        this.treeShow = !this.treeShow;
+      },50)
     },
     //点击树状图获取值
     handleNodeClick(data) {
@@ -3090,7 +3155,7 @@ export default {
         }
       });
     },
-    async richangUpdate(row){
+    async richangUpdate(row) {
       let params = row;
       await listRl({ strategyId: params.id }).then((response) => {
         // console.log(response, "设备数据");
@@ -3129,14 +3194,14 @@ export default {
       });
     },
     richanghandleUpdate(row) {
-      let that = this
-      this.$confirm('是否确认执行控制?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          that.richangUpdate(row)
-        })
+      let that = this;
+      this.$confirm("是否确认执行控制?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(function () {
+        that.richangUpdate(row);
+      });
     },
     directionFormat(row, column) {
       return this.selectDictLabel(this.directionList, row.direction);
@@ -3266,7 +3331,7 @@ export default {
       this.getOperationList(this.operationActive);
     },
     getOperationList(inx) {
-      this.operationList2 = []
+      this.operationList2 = [];
       if (this.manageStation == "1") {
         this.operationParam.tunnelId = this.$cache.local.get(
           "manageStationSelect"
@@ -3453,28 +3518,63 @@ export default {
     // 筛选设备名称
     screenEqNameButton() {
       if (this.screenEqName) {
-        let bigType = ''
+        let bigType = "";
+        let param = document.getElementsByClassName("content");
         for (var item of this.selectedIconList) {
           if (item.eqName.indexOf(this.screenEqName) > -1) {
-            bigType = item.bigType
+            bigType = item.bigType;
             this.resetCanvasFlag = true;
-            this.$refs.dragImgDom.style.left = -item.position.left + 864 + "px";
+            if (
+              this.currentTunnel.lane.width - item.position.left > 864 &&
+              item.position.left > 864
+            ) {
+              this.$refs.dragImgDom.style.left =
+                -item.position.left + 864 + "px";
+            } else if (item.position.left < 864) {
+              param[0].scrollLeft = 0;
+              this.$refs.dragImgDom.style.left = "0px";
+            } else if (
+              this.currentTunnel.lane.width - item.position.left <
+              864
+            ) {
+              this.$refs.dragImgDom.style.left =
+                1728 - this.currentTunnel.lane.width + "px";
+            }
+            console.log(item.position.left, "item.position.left");
+            console.log(item.position.top, "item.position.top");
+            if (
+              item.position.left <= this.currentTunnel.lane.width - 100 &&
+              item.position.top <= 480
+            ) {
+              item.tooltipType = 1;
+            } else if (
+              item.position.left > this.currentTunnel.lane.width - 100 &&
+              item.position.top <= 480
+            ) {
+              item.tooltipType = 2;
+            } else if (
+              item.position.left <= this.currentTunnel.lane.width - 100 &&
+              item.position.top > 480
+            ) {
+              item.tooltipType = 3;
+            } else {
+              item.tooltipType = 4;
+            }
             // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
             item.click = true;
           } else {
             item.click = false;
           }
         }
-        if(bigType.includes('0')){
-            this.displayControl(0,'全部设备')
-        }else{
-          for(let itm of this.dictList){
-            if(bigType == itm.value){
-              this.displayControl(bigType,item.label)
+        if (bigType.includes("0")) {
+          this.displayControl(0, "全部设备");
+        } else {
+          for (let itm of this.dictList) {
+            if (bigType == itm.value) {
+              this.displayControl(bigType, item.label);
             }
           }
         }
-
       } else {
         for (var item of this.selectedIconList) {
           item.click = false;
@@ -3534,18 +3634,22 @@ export default {
           Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
           parent[0].scrollWidth
         ) {
-          clearInterval(this.imageTimer);
-          this.imageTimer = setInterval(() => {
-            parent[0].scrollLeft--;
-            if (
-              Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
-              parent[0].clientWidth
-            ) {
-              this.srollAuto();
-            }
-          }, 20);
+          setTimeout(() => {
+            clearInterval(this.imageTimer);
+            this.imageTimer = setInterval(() => {
+              parent[0].scrollLeft--;
+              if (
+                Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
+                parent[0].clientWidth
+              ) {
+                this.srollAuto();
+              }
+            }, 20);
+          }, 2000);
         } else {
-          parent[0].scrollLeft++;
+          setTimeout(() => {
+            parent[0].scrollLeft++;
+          }, 2000);
         }
       }, 20);
     },
@@ -3592,8 +3696,8 @@ export default {
       this.strategyLoading = true;
       this.queryParams.pageSize = 10;
       this.queryParams.pageNum = 1;
-      this.queryParams.direction = ''
-      this.queryParams.strategyName = ''
+      this.queryParams.direction = "";
+      this.queryParams.strategyName = "";
       this.getStrategyQuery(this.dictCode);
       // this.handleQueryOperationParam();
       this.handlestrategyQuery();
@@ -3651,7 +3755,7 @@ export default {
       // this.sensorDisabled(item);
     },
     closeTooltip(item) {
-      this.showTooltipIndex = 999;
+      this.showTooltipIndex = 9999;
     },
     getDeptList() {
       var userDeptId = this.userDeptId;
@@ -3681,7 +3785,7 @@ export default {
         })
         .then(() => {
           if (this.manageStation == "1") {
-            console.log("this.deptId3333");
+            // console.log("this.deptId3333");
             let arr = ["YG118", "YG11801", "YG1180103"];
             this.changeSite(arr);
           }
@@ -3689,14 +3793,14 @@ export default {
     },
 
     checkData(obj, arr) {
+      console.log(arr, "arr");
       if (obj.children && obj.children.length > 0) {
         arr.push(obj.id);
         this.checkData(obj.children[0], arr);
       } else {
         arr.push(obj.id);
-        arr.shift();
+        // arr.shift();
         this.changeSite(arr);
-
         this.$forceUpdate();
       }
     },
@@ -3729,6 +3833,7 @@ export default {
             this.$cache.local.set("deptId", index[index.length - 1]);
           }
         }
+
         this.$forceUpdate();
         this.getTunnelList();
       }
@@ -4301,7 +4406,7 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
-      debugger
+      // debugger
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
@@ -4315,12 +4420,12 @@ export default {
         } else if (this.currentTunnel.id == "JQ-JiNan-WenZuBei-MJY") {
           this.dictList = this.dict.type.sd_sys_name;
         }
-        console.log(this.dictList,"this.dictList")
+        // console.log(this.dictList,"this.dictList")
         for (let i = 0; i < this.dictList.length; i++) {
-          if( this.dictList[i].label=="火灾报警"){
-            this.dictList[i].labelClass = "huozaibaojing"
-          }else if( this.dictList[i].label=="紧急电话"){
-            this.dictList[i].labelClass = "jinjidianhua"
+          if (this.dictList[i].label == "火灾报警") {
+            this.dictList[i].labelClass = "huozaibaojing";
+          } else if (this.dictList[i].label == "紧急电话") {
+            this.dictList[i].labelClass = "jinjidianhua";
           }
         }
         this.checkboxTunnel = [];
@@ -4439,7 +4544,7 @@ export default {
         stateName: null,
       };
       await listEqTypeState(queryParams).then((response) => {
-        console.log(response.rows,"response.rows111")
+        // console.log(response.rows,"response.rows111")
         let list = response.rows;
         that.getEqUrl(list);
       });
@@ -4504,7 +4609,7 @@ export default {
 
           listType("")
             .then((response) => {
-              console.log(response,"response888")
+              // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
                 for (let j = 0; j < response.rows.length; j++) {
@@ -4513,7 +4618,7 @@ export default {
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
                     res.eqList[i].iconHeight = iconHeight;
-                    res.eqList[i].bigType = response.rows[j].bigType
+                    res.eqList[i].bigType = response.rows[j].bigType;
                     break;
                   }
                 }
@@ -4598,7 +4703,7 @@ export default {
       });
       // 树状搜索
       getCategoryDeviceTree(tunnelId).then((res) => {
-        // console.log(res.data, "res.data");
+        console.log(res.data, "res.data");
         this.treeData = res.data;
       });
     },
@@ -4766,12 +4871,13 @@ export default {
 
     /* 选择隧道*/
     setTunnel(item, index) {
+      this.resetCanvas();
       const loading = this.$loading({
         lock: true,
         text: "Loading",
         spinner: "el-icon-loading",
         background: "rgba(0, 0, 0, 0.7)",
-        });
+      });
       this.tunnelItem = item; //勿动
       this.closeBatchManageDialog();
       this.screenEqName = "";
@@ -4819,7 +4925,6 @@ export default {
       this.carList = [];
       this.carList = new Map();
       loading.close();
-
     },
     onActivated(key) {},
     onDragging(key) {},
@@ -4828,7 +4933,7 @@ export default {
 
     /*点击设备类型*/
     displayControl(value, lable) {
-      console.log(value, lable,"value, lable")
+      // console.log(value, lable,"value, lable")
       // carShow
       for (var item of this.selectedIconList) {
         if (
@@ -4853,7 +4958,7 @@ export default {
 
       var val = value.toString();
       hasListByBigType(val).then((response) => {
-        console.log(response.rows,"response.rows")
+        // console.log(response.rows,"response.rows")
         let typelist = response.rows;
         let typeIndex = [];
         if (typelist.length > 0) {
@@ -5026,7 +5131,7 @@ export default {
               this.directionList,
               this.eqTypeDialogList
             );
-          } else if ([14, 15, 35, 41, 42, 47, 48].includes(item.eqType)) {
+          } else if ([14, 15, 35, 41, 42, 48].includes(item.eqType)) {
             this.$refs.dataRef.init(
               this.eqInfo,
               this.brandList,
@@ -5093,7 +5198,7 @@ export default {
           } else if (item.eqType == 29) {
             // 巡检机器人
             this.robotIframeShow = true;
-          }else if(item.eqType == 33){
+          } else if (item.eqType == 33 || item.eqType == 47) {
             // 智能消防炮
             this.$refs.xfpRef.init(
               this.eqInfo,
@@ -5257,7 +5362,7 @@ export default {
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;
-      this.strategResetQuery()
+      this.strategResetQuery();
       // this.queryParams.strategyGroup = Number(tab.index) + Number(1);
       this.handleQueryOperationParam();
       this.handlestrategyQuery(this.dictCode);
@@ -5306,7 +5411,7 @@ export default {
         this.queryParams.strategyGroup = Number(1);
         this.queryParams.strategyType = "2";
       }
-      console.log(this.queryParams);
+      // console.log(this.queryParams);
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;
@@ -5699,13 +5804,13 @@ export default {
   }
 }
 .drawerBox {
-  width: 22.6%;
+  width: 100%;
   right: 38px;
-  height: 12vh;
+  height: 100%;
   top: 81px;
   left: unset;
   ::v-deep .el-drawer.rtl {
-    width: 100% !important;
+    width: 22.6% !important;
     height: 12vh;
     color: #fff;
     .el-drawer__header {
@@ -5795,8 +5900,8 @@ export default {
   width: 120px;
   // height: 40px;
   position: absolute;
-  top: -42px;
-  left: 10px;
+  // top: -42px;
+  // left: 10px;
   line-height: 1;
   text-align: center;
   padding: 10px;
@@ -5967,8 +6072,7 @@ export default {
   width: 5.4vw;
   line-height: 28px;
 }
-.leftButtonSone{
-
+.leftButtonSone {
 }
 .leftButtonS {
   position: relative;
@@ -7324,9 +7428,9 @@ input {
 }
 .syxt_searchBox {
   position: absolute;
-  top: 145px;
-  right: 25px;
-  width: 39%;
+  top: 121px;
+  right: 14px;
+  width: 41%;
   z-index: 1996;
   background-color: #00335a;
   padding: 20px;
@@ -7362,12 +7466,18 @@ input {
 .my-div {
   cursor: pointer;
 }
-.jinjidianhua{
+.jinjidianhua {
   animation: blink 1s infinite;
 }
 @keyframes blink {
-  0% { background-color: red; }
-  50% { background-color: transparent; }
-  100% { background-color: red; }
+  0% {
+    background-color: red;
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: red;
+  }
 }
 </style>

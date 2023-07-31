@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.energyManagement.SdEnergyConfigcenterClassificationMapper">
+    <resultMap type="EnergyConfigcenterClassification" id="EnergyConfigcenterClassificationResult">
+        <result property="id"    column="id"    />
+        <result property="classificationName"    column="classification_name"    />
+        <result property="classificationCode"    column="classification_code"    />
+        <result property="parentCode"    column="parent_code"    />
+        <result property="type"    column="type"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+
+
+    <insert id="insertEnergyTypeData" parameterType="java.util.List">
+        insert  into energy_configcenter_classification
+        (
+        classification_name,classification_code,parent_code,type,remark,create_by,create_time
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.classificationName}, #{item.classificationCode}, #{item.parentCode}, #{item.type}, #{item.remark}, #{item.createBy}, #{item.createTime}
+            )
+        </foreach>
+    </insert>
+
+
+    <delete id="deleteEnergyTypeData" parameterType="String">
+        delete from energy_configcenter_classification where classification_code = #{classificationCode}
+    </delete>
+
+
+    <select id="getEnergyTypeData"  resultMap="EnergyConfigcenterClassificationResult">
+       select * from energy_configcenter_classification
+        where classification_code in
+        <foreach collection="codeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+
+
+
+    <select id="selectClassificationList" parameterType="EnergyConfigcenterClassification" resultMap="EnergyConfigcenterClassificationResult">
+        SELECT
+        f.id,
+        f.classification_name,
+        f.classification_code,
+        f.parent_code,
+        f.remark,
+        f.create_by,
+        f.create_time,
+        f.update_by,
+        f.update_time
+        FROM
+        energy_configcenter_classification f
+        <where>
+            and f.classification_code in ('50','49','55','56','58')
+        </where>
+    </select>
+
+
+    <update id="updateEnergyTypeData" parameterType="list">
+        <foreach collection="list" item="item" index="index" >
+            update energy_configcenter_classification
+            <trim prefix="SET" suffixOverrides=",">
+            <if test="item.classificationName != null">classification_name = #{item.classificationName},</if>
+            <if test="item.parentCode != null">parent_code = #{item.parentCode},</if>
+            update_time = now(),
+            </trim>
+            where classification_code = #{item.classificationCode};
+        </foreach>
+    </update>
+
+
+
+
+
+
+
+</mapper>

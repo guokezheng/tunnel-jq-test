@@ -202,6 +202,9 @@
     .el-checkbox{
       color:#fff;
     }
+    .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
+      background: rgba(0, 0, 0, 0.1) !important;
+    }
   }
   .el-tree-node:focus > .el-tree-node__content{
     background-color: #326CA9;
@@ -741,7 +744,7 @@
         color: #fff;
       }
       .el-tree-node__content:hover{
-        background: #165484;
+        background: rgba(0,0,0,0.1) !important;
 
       }
       .dialogBg{
@@ -1039,6 +1042,43 @@
     }
   }
   #app {
+    .el-table__body tr .hover-row > td .el-table__cell{
+      background-color: #0064B0 !important;
+    }
+    .el-table__fixed tr .hover-row > td .el-table__cell{
+      background-color: #0064B0 !important;
+    }
+    .el-table__body tr.hover-row > td.el-table__cell{
+      background-color: #0064B0 !important;
+    }
+    .el-table__footer-wrapper tbody td.el-table__cell{
+
+    }
+    .el-table__fixed-right-patch{
+      background-color: #0090D8;
+      border-bottom: 1px solid #0090D8;
+    }
+    .energyTable{
+      .el-table__body-wrapper{
+        height: calc(100% - 7.4vh) !important;
+      }
+      .el-table__fixed{
+        height: calc(100% - 1vh) !important;
+      }
+      .el-table::before{
+        background-color: #0090D8;
+      }
+      .el-table__body-wrapper .el-table__cell{
+        border-right: none;
+      }
+      .el-table td.el-table__cell{
+        border-right: none;
+      }
+      // 表格右侧边框白线
+      .el-table--group::after, .el-table--border::after{
+        background-color: #326CA9 !important;
+      }
+    }
     // 隧道配置页面下拉框
     .tunnelNameSelect{
       .el-input--small .el-input__inner{
@@ -1127,13 +1167,14 @@
     .patrol .box-father .box .number{
       color: #fff !important;
     }
+    
     .show-left{
       .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
         background: #004375;
       }
     }
     .el-tree-node__content:hover{
-      background: #004375;
+      background: rgba(0,0,0,0.1) !important;
     }
     .el-textarea__inner{
       border: solid 1px #65bfff;
@@ -1355,13 +1396,28 @@
     .el-table .el-table__header-wrapper th:last-of-type{
       border-right: 1px solid rgba(225,228,230,.16);
     }
-
+    .el-table__fixed-footer-wrapper tbody td.el-table__cell{
+      background-color: #004F8B;
+      border:none;
+      color: white;
+    }
+    .el-table__footer-wrapper tbody td.el-table__cell{
+      background-color: #004F8B;
+      border:none;
+      color: white;
+    }
     // 表格鼠标移入行选中
     .el-table--enable-row-hover .el-table__body tr:hover > td {
       background-color: #0064B0;
    }
    .el-table__body tr .hover-row > td .el-table__cell{
-    background-color: #0064B0;
+    background-color: #0064B0 !important;
+  }
+  .el-table__fixed tr .hover-row > td .el-table__cell{
+    background-color: #0064B0 !important;
+  }
+  .el-table__body tr.hover-row > td.el-table__cell{
+    background-color: #0064B0 !important;
   }
   //  表格下边框
   .el-table td.el-table__cell{
@@ -1375,6 +1431,9 @@
   }
   .el-table .el-button--text{
     color: white;
+  }
+  .el-table tr{
+    background: #004375;
   }
     // 表单label
     .el-form-item__label{
@@ -1437,9 +1496,9 @@
     .tableOddRow{
       background: #004F8B !important;
     }
-    .hover-row{
-      background: #0064B0 !important;
-    }
+    // .hover-row{
+    //   background: #0064B0 !important;
+    // }
     // 系统监控-服务监控页面 不规则表格
     .othertableRowClass{
       .el-table th.el-table__cell{
@@ -2559,11 +2618,11 @@
       background: #0064B0 !important;
       color: #fff;
     }
-
+    // .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
+    //   background: #0064B0 !important;
+    // }
   }
-  .allTable .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
-    background: #0064B0 !important;
-  }
+  
   .explain-table {
     .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
       border-bottom: solid 1px  #0a88bd !important;

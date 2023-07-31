@@ -807,6 +807,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="searchValue != null and searchValue != ''">AND CONCAT(d.eq_name, t.type_name) LIKE CONCAT('%',#{searchValue},'%')</if>
             <if test="tunnelId != null and tunnelId != ''">and d.eq_tunnel_id = #{tunnelId}</if>
             <if test="deviceType != null and deviceType != ''">and t.eq_system = #{deviceType}</if>
+            <if test="eqType != null and eqType != ''">and d.eq_type = #{eqType}</if>
         </where>
     </select>
 
@@ -958,7 +959,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_devices d
         left join sd_equipment_type t on d.eq_type = t.type_id
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
-        left join sys_dict_data c on c. dict_value = d.eq_direction and  c.dict_type = 'sd_direction_list'
+        left join sys_dict_data c on c. dict_value = d.eq_direction and  c.dict_type = 'sd_direction'
         where d.eq_id = #{eqId}
     </select>
 
@@ -1254,6 +1255,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND jps.template_id = #{state}
           AND FIND_IN_SET(d.eq_id,#{ids})
           AND jps.type = #{type}
+          AND jps.current_id = #{currentId}
     </select>
 
     <select id="selectLsDevices" parameterType="java.lang.String" resultType="hashmap">

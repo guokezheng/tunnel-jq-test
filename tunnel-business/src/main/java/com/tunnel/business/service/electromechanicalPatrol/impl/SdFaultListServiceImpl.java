@@ -1,12 +1,14 @@
 package com.tunnel.business.service.electromechanicalPatrol.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
+import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdPatrolListMapper;
@@ -15,6 +17,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
 
+import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -386,8 +389,8 @@ public class SdFaultListServiceImpl implements ISdFaultListService
      * @return
      */
     @Override
-    public List<SdFaultList> getFaultList(String tunnelId, String faultLevel) {
-        return sdFaultListMapper.getFaultList1(tunnelId,faultLevel);
+    public List<SdFaultList> getFaultList(String tunnelId, String faultLevel,String searchValue,String eqType) {
+        return sdFaultListMapper.getFaultList1(tunnelId,faultLevel,searchValue,eqType);
     }
 
     @Override
@@ -435,5 +438,20 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         result = sdFaultListMapper.insertSdFaultList(sdFaultList);
 
         return result;
+    }
+    /**
+     * 将故障推送到前端
+     *  @param sdFaultList
+     */
+    @Override
+    public void faultSendWeb(SdFaultList sdFaultList) {
+        //新增后再查询数据库，返回给前端事件图标等字段s
+        SdFaultList sdFaultListData = new SdFaultList();
+        sdFaultListData.setId(sdFaultList.getId());
+        List<SdEvent> sdEventList = sdFaultListMapper.selectSdFaultList(sdFaultListData);
+        //新增故障后推送前端
+        JSONObject object = new JSONObject();
+        object.put("sdEventList", sdEventList);
+        WebSocketService.broadcast("sdEventList",object.toString());
     }
 }

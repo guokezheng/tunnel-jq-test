@@ -214,7 +214,7 @@ public interface SdDevicesMapper
 	 * @param deviceType
 	 * @return
 	 */
-	List<SdDevices> getDevicesList(@Param("searchValue")String searchValue,@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
+	List<SdDevices> getDevicesList(@Param("searchValue")String searchValue,@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType,@Param("eqType")String eqType);
 
 	public List<String> getDevicesFireMarkList(SdDevices sdDevices);
 
@@ -385,7 +385,8 @@ public interface SdDevicesMapper
 	 */
 	List<Map<String, Object>> selectVmsDevicesOld(@Param("ids") String ids,
 											      @Param("state") String state,
-											      @Param("type") String type);
+											      @Param("type") String type,
+												  @Param("currentId") Long currentId);
 
 	/**
 	 * 批量查询扬声器设备信息

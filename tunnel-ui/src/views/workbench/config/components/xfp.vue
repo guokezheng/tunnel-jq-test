@@ -15,16 +15,24 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <div class="picVideoBox">
+      <div class="picVideoBox" v-if="eqInfo.clickEqType == 33">
         <img :src="picUrl" v-if="radio1 == '图像'" />
         <videoPlayer
-          v-if="videoForm.liveUrl"
+          v-if="videoForm.liveUrl && radio1 == '视频'"
           :rtsp="videoForm.liveUrl"
           :open="cameraPlayer"
         ></videoPlayer>
+        <img :src="noPicUrl" v-if="radio1 == '视频' && !videoForm.liveUrl" />
+      </div>
+      <div class="picVideoBox" v-if="eqInfo.clickEqType == 47">
+        <img :src="ckUrl" />
       </div>
       <div class="picButton">
-        <el-radio-group v-model="radio1" class="picVideo">
+        <el-radio-group
+          v-model="radio1"
+          class="picVideo"
+          v-if="eqInfo.clickEqType == 33"
+        >
           <el-radio-button label="图像"></el-radio-button>
           <el-radio-button label="视频"></el-radio-button>
         </el-radio-group>
@@ -74,8 +82,12 @@
               {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
-
           <el-col :span="13">
+            <el-form-item label="IP:">
+              
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
             <el-form-item
               label="设备状态:"
               :style="{
@@ -107,7 +119,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <img :src="picUrl" v-if="radio1 == '图像'" />
+      <img :src="eqInfo.clickEqType == 33?picUrl:ckUrl" v-if="radio1 == '图像'" />
       <videoPlayer
         v-if="videoForm.liveUrl"
         :rtsp="videoForm.liveUrl"
@@ -128,7 +140,7 @@
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
       </div>
-      <img :src="picUrl" v-if="radio1 == '图像'" />
+      <img :src="eqInfo.clickEqType == 33?picUrl:ckUrl" v-if="radio1 == '图像'" />
       <videoPlayer
         v-if="videoForm.liveUrl"
         :rtsp="videoForm.liveUrl"
@@ -154,7 +166,10 @@ export default {
       picFullVisible: false,
       stateForm: {},
       brandList: [],
-      eqInfo: {},
+      eqInfo: {
+        clickEqType:'',
+        equipmentId:''
+      },
       eqTypeDialogList: [],
       directionList: [],
       radio1: "图像",
@@ -163,12 +178,15 @@ export default {
         liveUrl: "",
       },
       picUrl: require("@/assets/image/xfp.png"),
+      noPicUrl: require("@/assets/image/noVideo.png"),
+      ckUrl: require("@/assets/image/ck2.png"),
     };
   },
   created() {},
   methods: {
     init(eqInfo, brandList, directionList, eqTypeDialogList) {
       this.eqInfo = eqInfo;
+      console.log(this.eqInfo, "this.eqInfo");
       this.brandList = brandList;
       this.directionList = directionList;
       this.eqTypeDialogList = eqTypeDialogList;
@@ -183,13 +201,16 @@ export default {
         console.log(res, "查询单选框弹窗信息");
         this.stateForm = res.data;
         this.title = this.stateForm.eqName;
-        this.getVideo();
+        if(this.eqInfo.clickEqType == 33){
+          this.getVideo();
+        }
       });
     },
     getVideo() {
       // getRtspStreamAddr(this.eqInfo.ip).then((res)=>{
       //     console.log(res,"消防炮视频流")
       // })
+      this.$modal.msgWarning("获取视频失败");
     },
     pic2X() {
       this.picVisible = true;
@@ -217,7 +238,7 @@ export default {
     handleClosee() {
       this.visible = false;
       this.cameraPlayer = false;
-      this.picHandleClosee()
+      this.picHandleClosee();
     },
     picHandleClosee() {
       this.picVisible = false;
@@ -242,11 +263,12 @@ export default {
   width: calc(100% - 30px);
   height: 30px;
   position: absolute;
-  top: calc(4vh + 15px);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  top: calc(4vh + 20px);
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
   .picVideo {
+    float: left;
     ::v-deep .el-radio-button--medium .el-radio-button__inner {
       padding: 4px 8px;
     }
@@ -265,6 +287,7 @@ export default {
     }
   }
   .x2all {
+    float: right;
     display: flex;
     align-items: center;
     .button {
@@ -303,8 +326,10 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 86vh;
+    overflow: auto;
     img {
-      max-height: 86vh;
+      height: 100%;
     }
   }
 }

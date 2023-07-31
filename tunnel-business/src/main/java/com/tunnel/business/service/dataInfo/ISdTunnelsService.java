@@ -135,6 +135,15 @@ public interface ISdTunnelsService {
      */
     List<SdTunnels> selectTunnels(String deptId);
 
+    List<SdTunnels> selectSiteTunnelList(String deptId, String deptName);
+
+    /**
+     * 查询所包含隧道
+     * @param deptCode
+     * @return
+     */
+    /*List<String> getChildCodeList(String deptCode);*/
+
 
     List<SdTunnels> deptIdList(String[] ids);
 }

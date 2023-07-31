@@ -8,7 +8,7 @@
       label-width="100px"
     >
       <el-row>
-        <el-col :span="24">
+        <el-col :span="8">
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
               style="width: 100%"
@@ -17,7 +17,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="隧道名称" prop="tunnelId">
             <el-select
               style="width: 100%"
@@ -35,7 +35,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="隧道方向" prop="direction">
             <el-select
               clearable

@@ -187,4 +187,6 @@ public interface ISysDeptService
      * @return
      */
     List<SysDept> selectChildrenIncludeSelfByIdNormal(String deptId);
+
+    List<SysDept> listSiteDeptYG1(SysDept dept);
 }

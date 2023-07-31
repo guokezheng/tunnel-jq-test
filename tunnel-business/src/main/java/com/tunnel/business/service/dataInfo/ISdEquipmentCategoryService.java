@@ -80,4 +80,6 @@ public interface ISdEquipmentCategoryService {
     List<SdEquipmentCategoryDto> buildCategoryTree(List<SdEquipmentCategoryDto> categoryList);
 
     List<TreeCategorySelect> buildCategoryTreeSelect(List<SdEquipmentCategoryDto> CategoryDtoList);
+
+    List<SdEquipmentCategoryDto> getCategoryTypeDeviceList();
 }

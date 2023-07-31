@@ -96,7 +96,7 @@ export default {
     sdEventList: {
       immediate: true,
       handler: function (event) {
-        debugger
+        // debugger
         // 存储集合
         let  key = this.$store.state.user.name+"suidao"
 
@@ -121,7 +121,7 @@ export default {
   },
   mounted() {
     bus.$on("forceUpdateTable", (id) => {
-      debugger
+      // debugger
       let index = this.list.findIndex((item) => {
         if (item.id == id) {
           return true;
@@ -161,7 +161,7 @@ export default {
       const params = { status: 0 };
       getTreeByDeptId(params)
         .then((response) => {
-          debugger
+          // debugger
           console.log(response.data, "级联");
           const options = response.data;
           let childs = [];
@@ -195,7 +195,7 @@ export default {
             ids:ids.join(",")
           }
           getdeptIdTunnelList(query).then((res) => {
-            debugger
+            // debugger
             console.log(res, "根据管理机构筛选所属隧道");
             this.tunnelList = res.data;
             let  key = this.$store.state.user.name+"suidao"

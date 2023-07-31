@@ -803,15 +803,33 @@ export default {
         const swiperThumbs = this.$refs.swiperThumbs.$el.swiper;
         swiperTop.controller.control = swiperThumbs;
         swiperThumbs.controller.control = swiperTop;
+        swiperThumbs.activeIndex = 0;
+        swiperTop.activeIndex = 0;
       })
       this.getEventList();
       if (item.stakeNum) {
+        let stake = "";
+
+        let letterCount = this.countLetters(item.stakeNum.split("+")[0]);
+        console.log("字母数量：" + letterCount);
+        console.log(item.stakeNum.split("+")[0])
+        if( letterCount>=2){
+          stake = item.stakeNum.split("+")[0].substr(2)
+        }else if( letterCount>=1){
+          stake = item.stakeNum.split("+")[0].substr(1)
+        }else{
+          stake = item.stakeNum.split("+")[0]
+        }
         this.$set(
           this.eventFormDetail,
           "stakeNum1",
-          item.stakeNum.split("+")[0].substr(1)
+          stake
         );
-        this.$set(this.eventFormDetail, "stakeNum2", item.stakeNum.split("+")[1]);
+        this.$set(
+          this.eventFormDetail,
+          "stakeNum2",
+          item.stakeNum.split("+")[1]
+        );
       }
       if (item.stakeEndNum) {
         this.$set(
@@ -875,6 +893,11 @@ export default {
           return item.dictLabel;
         }
       }
+    },
+    countLetters(string) {
+      var pattern = /[A-Za-z]/g;  // 匹配所有字母的正则表达式
+      var match = string.match(pattern);
+      return match ? match.length : 0;
     },
     eventIsShow(value,state){
       if(value != null){

@@ -401,7 +401,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" v-if="!isWritable">
               <el-form-item label="故障来源" prop="faultEscalationType">
                 <el-select
                   v-model="form.faultEscalationType"
@@ -437,16 +437,16 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
-              <el-form-item label="持续时间" prop="faultCxtime">
-                <el-input
-                  :disabled="disstate"
-                  v-model="form.faultCxtime"
-                  style="width: 100%"
-                  :placeholder= holderFaultCxtime
-                />
-              </el-form-item>
-            </el-col>
+<!--            <el-col :span="8" v-if="!isWritable">-->
+<!--              <el-form-item label="持续时间" prop="faultCxtime">-->
+<!--                <el-input-->
+<!--                  :disabled="disstate"-->
+<!--                  v-model="form.faultCxtime"-->
+<!--                  style="width: 100%"-->
+<!--                  :placeholder= holderFaultCxtime-->
+<!--                />-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
             <el-col :span="8" v-show="removeStata">
               <el-form-item label="故障填报时间" prop="faultTbtime">
                 <el-date-picker
@@ -500,7 +500,7 @@
                   style="width: 100%"
                   ref="cascader"
                   :key="cascaderKey"
-                ></el-cascader> 
+                ></el-cascader>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -570,15 +570,15 @@
               <div class="topTxt">故障描述</div>
               <div class="tableTopHr" style="display: none"></div>
             </el-col>
-            <el-col :span="8">
-              <el-form-item label="故障代码" prop="faultCode">
-                <el-input
-                  v-model="form.faultCode"
-                  :disabled="disstate"
-                  :placeholder = holderFaultCode
-                />
-              </el-form-item>
-            </el-col>
+<!--            <el-col :span="8">-->
+<!--              <el-form-item label="故障代码" prop="faultCode">-->
+<!--                <el-input-->
+<!--                  v-model="form.faultCode"-->
+<!--                  :disabled="disstate"-->
+<!--                  :placeholder = holderFaultCode-->
+<!--                />-->
+<!--              </el-form-item>-->
+<!--            </el-col>-->
             <el-col :span="8">
               <el-form-item label="故障等级" prop="faultLevel">
                 <el-select
@@ -1657,10 +1657,8 @@ export default {
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("faultType", this.form.faultType);
       this.fileData.append("faultSource", this.form.faultSource);
-      this.fileData.append(
-        "faultEscalationType",
-        this.form.faultEscalationType
-      );
+      // this.fileData.append("faultEscalationType",this.form.faultEscalationType);
+      this.fileData.append("faultEscalationType",'0');
       this.fileData.append("faultFxtime", this.form.faultFxtime);
       this.fileData.append("imgFileId", this.form.imgFileId);
       this.fileData.append("faultCxtime", this.form.faultCxtime);
@@ -1726,10 +1724,8 @@ export default {
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
       this.fileData.append("imgFileId", this.form.imgFileId);
-      this.fileData.append(
-        "faultEscalationType",
-        this.form.faultEscalationType
-      );
+     // this.fileData.append("faultEscalationType",this.form.faultEscalationType);
+      this.fileData.append("faultEscalationType",'0');
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
       this.fileData.append("eqStatus", this.form.eqStatus);

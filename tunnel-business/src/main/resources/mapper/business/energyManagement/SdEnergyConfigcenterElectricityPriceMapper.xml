@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.energyManagement.SdEnergyConfigcenterElectricityPriceMapper">
+    <resultMap type="EnergyConfigcenterElectricityPrice" id="EnergyConfigcenterElectricityPriceResult">
+        <result property="id"    column="id"    />
+        <result property="unitPrice2"    column="unit_price2"    />
+        <result property="unitPrice3"    column="unit_price3"    />
+        <result property="unitPrice4"    column="unit_price4"    />
+        <result property="unitPrice5"    column="unit_price5"    />
+        <result property="unitPrice6"    column="unit_price6"    />
+        <result property="jianCof"    column="jian_cof"    />
+        <result property="fengCof"    column="feng_cof"    />
+        <result property="guCof"    column="gu_cof"    />
+        <result property="shenCof"    column="shen_cof"    />
+        <result property="month"    column="month"    />
+    </resultMap>
+
+
+    <insert id="insertEnergyPriceData" parameterType="java.util.List">
+        insert  into energy_configcenter_electricity_price
+        (unit_price2,unit_price3,unit_price4,unit_price5,unit_price6,jian_cof,feng_cof,gu_cof,shen_cof,month)
+        values
+        <foreach collection="list" index="index" item="item" separator=","  >
+            (#{item.unitPrice2}, #{item.unitPrice3}, #{item.unitPrice4}, #{item.unitPrice5}, #{item.unitPrice6}, #{item.jianCof}, #{item.fengCof}, #{item.guCof}, #{item.shenCof}, #{item.month})
+        </foreach>
+    </insert>
+
+
+    <delete id="deleteEnergyPriceData" parameterType="String">
+        delete from energy_configcenter_electricity_price where month = #{month}
+    </delete>
+
+
+    <select id="getEnergyPriceData"  resultMap="EnergyConfigcenterElectricityPriceResult">
+       select * from energy_configcenter_electricity_price
+        where month in
+        <foreach collection="codeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="updateEnergyPriceData" parameterType="list">
+        <foreach collection="list" item="item" index="index" >
+            update energy_configcenter_electricity_price
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.unitPrice2 != null">unit_price2 = #{item.unitPrice2},</if>
+                <if test="item.unitPrice3 != null">unit_price3 = #{item.unitPrice3},</if>
+                <if test="item.unitPrice4 != null">unit_price4 = #{item.unitPrice4},</if>
+                <if test="item.unitPrice5 != null">unit_price5 = #{item.unitPrice5},</if>
+                <if test="item.unitPrice6 != null">unit_price6 = #{item.unitPrice6},</if>
+                <if test="item.jianCof != null">jian_cof = #{item.jianCof},</if>
+                <if test="item.fengCof != null">feng_cof = #{item.fengCof},</if>
+                <if test="item.guCof != null">gu_cof = #{item.guCof},</if>
+                <if test="item.shenCof != null">shen_cof = #{item.shenCof},</if>
+                update_time = now(),
+            </trim>
+            where month = #{item.month};
+        </foreach>
+    </update>
+
+
+
+
+
+
+</mapper>

@@ -200,4 +200,55 @@
         group by et.type_id
         having count(d.eq_type) > 0
     </select>
+    <select id="getCategoryTypeDeviceList" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
+
+        select concat('ec_', ec.id) as id, ec.`name`, ec.parent_id as parentId
+        from sd_equipment_category ec
+        left join sd_equipment_type et on ec.id = et.eq_category
+        left join sd_devices d on et.type_id = d.eq_type
+        <where>
+            1 = 1
+            <if test="tunnelIds != null">
+                and d.eq_tunnel_id in
+                <foreach collection="tunnelIds" item="tunnelId" open="(" separator="," close=")">
+                    #{tunnelId}
+                </foreach>
+            </if>
+        </where>
+        group by ec.id
+        having count(d.eq_id) > 0
+
+        union
+
+        select concat('ecc_', et.type_id) as id, et.type_name as name, concat('ec_', et.eq_category) as parentId
+        from sd_equipment_type et
+        left join sd_devices d on et.type_id = d.eq_type
+        <where>
+            1 = 1
+            <if test="null != tunnelIds">
+                and d.eq_tunnel_id in
+                <foreach collection="tunnelIds" item="tunnelId" open="(" separator="," close=")">
+                    #{tunnelId}
+                </foreach>
+            </if>
+        </where>
+        group by et.type_id
+        having count(d.eq_type) > 0
+
+
+        union
+        select d.eq_id as id, d.eq_name as name, concat('ecc_', d.eq_type) as parentId
+        from sd_devices d
+        left join sd_equipment_type et on d.eq_type = et.type_id
+        <where>
+            1 = 1
+            <if test="null != tunnelIds">
+                and d.eq_tunnel_id in
+                <foreach collection="tunnelIds" item="tunnelId" open="(" separator="," close=")">
+                    #{tunnelId}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
 </mapper>

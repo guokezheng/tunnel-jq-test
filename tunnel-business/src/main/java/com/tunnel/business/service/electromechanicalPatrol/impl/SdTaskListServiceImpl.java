@@ -1170,6 +1170,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                     String siteDescription = zc.getString("siteDescription"); //巡检描述
                     Date taskEndtime = zc.getDate("taskEndtime"); // 选件完成时间
                     sdTaskList.setSiteDescription(siteDescription);
+                    sdTaskList.setWalkerId(SecurityUtils.getUserId() +"");
+               //     sdTaskList.setTaskCxtime(DateUtils.getTime());
                     sdTaskList.setTaskEndtime(taskEndtime);
                 }
                 // 更新基本信息
@@ -1197,7 +1199,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                         // ? 缺个巡查时间 xcTime
                         sdPatrolList.setEqStatus(patrolJSON.getString("eqStatus"));
                         sdPatrolList.setRunStatus(patrolJSON.getString("runStatus"));
-                        sdPatrolList.setXcTime(patrolJSON.getDate("xcTime"));
+                       // sdPatrolList.setXcTime(patrolJSON.getDate("xcTime"));
 
                         sdPatrolList.setEqFaultCode(patrolJSON.getString("eqFaultCode"));
                         sdPatrolList.setEqFaultDescription(patrolJSON.getString("eqFaultDescription"));
@@ -1207,6 +1209,13 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 
                         sdPatrolListMapper.updateSdPatrolList(sdPatrolList);
                     }
+
+                    SdTaskOpt sdTaskOpt = new SdTaskOpt();
+                    sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
+                    sdTaskOpt.setTaskId(sdTaskList.getId());
+                    sdTaskOpt.setOptType(OptType.TIJIAO.getCode());
+                    sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
+                    sdTaskListMapper.insertTaskOpt(sdTaskOpt);
                 }else{
                     error.add(id);
                 }

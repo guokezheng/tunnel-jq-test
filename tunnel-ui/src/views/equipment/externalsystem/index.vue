@@ -137,9 +137,11 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column label="所属隧道" align="center" prop="tunnelId">
+      <el-table-column label="所属隧道" align="center" prop="tunnelId" style="white-space: pre-wrap;">
         <template slot-scope="scope">
-          <span>{{ getTunnelName(scope.row.tunnelId) }}</span>
+          <div v-for="(item,index) in scope.row.tunnelId" :key="index">
+            {{ item }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="是否映射方向" align="center" prop="isDirection" />
@@ -199,6 +201,7 @@
       :title="title"
       :visible.sync="open"
       width="500px"
+      class="eqTypeDialog"
       append-to-body
       :close-on-click-modal="false"
       :before-close="cancel"
@@ -223,8 +226,15 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="所属隧道" prop="tunnelId">
-          <el-select
+        <el-form-item label="所属隧道" class="checkboxFormDialog" prop="tunnelId">
+          <el-checkbox
+            v-for="dict in tunnelList"
+            :key="dict.tunnelId"
+            :label="dict.tunnelId"
+            v-model="result"
+          >{{ dict.tunnelName }}</el-checkbox
+          >
+<!--          <el-select
             v-model="form.tunnelId"
             placeholder="请选择所属隧道"
             style="width: 100%"
@@ -235,7 +245,7 @@
               :label="item.tunnelName"
               :value="item.tunnelId"
             />
-          </el-select>
+          </el-select>-->
         </el-form-item>
 
         <!--<el-form-item label="隧道管理站" prop="deptId">
@@ -350,6 +360,7 @@ export default {
       total: 0,
       // 外部系统表格数据
       systemList: [],
+      result: [], //获取选中后的checkbox的数组值
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -462,6 +473,16 @@ export default {
           } else if (this.systemList[i].isDirection == "1") {
             this.systemList[i].isDirection = "否";
           }
+          var a = this.systemList[i].tunnelId;
+          if(a!=null){
+            this.systemList[i].tunnelId  = a.split(',');
+          }
+
+          /*if(this.systemList[i].tunnelId!=null){
+            let str = this.systemList[i].tunnelId.replace(/\,/g, '<br>');
+            this.systemList[i].tunnelId = str;
+          }*/
+
         }
         this.total = response.total;
         this.loading = false;
@@ -519,13 +540,21 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
+      this.result = [];
       this.title = "添加外部系统";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
+      this.result = [];
       const id = row.id || this.ids;
       getSystem(id).then((response) => {
+        var resultData = response.data;
+        if (resultData.tunnelId != null) {
+          this.result = resultData.tunnelId.split(",");
+        } else {
+          this.result = [];
+        }
         this.form = response.data;
         this.open = true;
         this.title = "修改外部系统";
@@ -533,6 +562,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      this.form.tunnelId = this.result.toString();
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
@@ -587,3 +617,24 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+::v-deep .checkboxFormDialog .el-checkbox {
+  width: 120px;
+}
+ .el-table .cell {
+   white-space: pre-wrap;   /*这是重点。文本换行*/
+ }
+
+</style>
+<style lang="scss">
+.eqTypeDialog {
+  .el-dialog__body {
+    max-height: 700px;
+    overflow: auto;
+  }
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+}
+</style>
+

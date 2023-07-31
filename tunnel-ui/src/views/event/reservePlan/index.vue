@@ -286,7 +286,7 @@
       append-to-body
       :before-close="handleFileClose"
       :close-on-click-modal="false"
-      class="explain-table operationDiglog"
+      class="explain-table"
     >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>

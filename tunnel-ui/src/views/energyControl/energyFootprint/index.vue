@@ -85,7 +85,7 @@
   <script>
 import * as echarts from "echarts";
 import SiteTree from "@/views/components/siteTree/index3.vue";
-//   import {getEnergyTrackList} from "@/api/analysis/energyAnalyze";
+  import {getEnergyTrackList} from "@/api/energy/api";
 
 export default {
   name: "Online",
@@ -143,7 +143,7 @@ export default {
         });
         return;
       }
-      // this.loading = true
+      this.loading = true
       // 参数
       this.queryParams.deptCodeList = this.loopIds
         .filter((e) => e != null)
@@ -151,12 +151,14 @@ export default {
       this.queryParams.baseTime = this.parseTime(this.base_date);
       this.queryParams.type = this.tabType;
 
-      // const res = await getEnergyTrackList(this.queryParams)
-      // if (res.code === 200) {
-      //   console.log(res)
-      //   this.linksData = res.data
-      //   this.loading = false
-      // }
+      const res = await getEnergyTrackList(this.queryParams)
+      if (res.code === 200) {
+        console.log(res,"echarts数据")
+        this.linksData = res.data
+        this.loading = false
+      }else{
+        this.loading = false
+      }
 
       // 获取namesData
       let names = [];
@@ -164,13 +166,16 @@ export default {
         names.push(item.source);
         names.push(item.target);
       });
+      console.log(names,"names111")
       names = Array.from(new Set(names)); //去重
+      console.log(names,"names222")
+
       for (let i in names) {
         this.namesData.push({
           name: names[i],
         });
       }
-      // console.log(this.namesData);
+      console.log(this.namesData,"this.namesData");
 
       this.openChart();
     },
@@ -216,27 +221,35 @@ export default {
             emphasi: "inEdges", // 鼠标划上时高亮的节点和连线，allEdges表示鼠标划到节点上点亮节点上的连线及连线对应的节点
             levels: [
               {
+                // 左侧竖线
                 depth: 0,
                 itemStyle: {
-                  color: "#F27E7E",
+                  color: "#7ECEF4",
                 },
+                // 左侧大色块
                 lineStyle: {
-                  color: "source",
-                  opacity: 0.2,
+                  color: "#7ECEF4",
+                  opacity: 0.4,
                 },
               },
-              {
+              {// 右侧大色块
                 depth: 1,
                 lineStyle: {
-                  color: "source",
-                  opacity: 0.2,
+                  color: "#44EDA1",
+                  opacity: 0.4,
+                },
+                itemStyle: {
+                  color: "#00C8FF ",
                 },
               },
               {
                 depth: 2,
                 lineStyle: {
-                  color: "source",
-                  opacity: 0.2,
+                  color: "#fff",
+                  opacity: 0.4,
+                },
+                itemStyle: {
+                  color: "#44EDA1",
                 },
               },
               {
@@ -248,7 +261,7 @@ export default {
             ],
             label: {
               fontSize: 14,
-              color: "#666",
+              color: "#fff",
             },
             itemStyle: {
               borderWidth: 0,
@@ -291,6 +304,7 @@ export default {
   height: calc(100% - 56px);
 }
 .my-card-height {
+  height: 100%;
   .right_tabs {
     width: 100%;
     display: flex;
@@ -332,6 +346,12 @@ export default {
 ::v-deep .el-card {
   border: none !important;
   border-radius: 2px;
+}
+.el-row{
+  height: 100%;
+  .el-col{
+    height: 100%;
+  }
 }
 </style>
   

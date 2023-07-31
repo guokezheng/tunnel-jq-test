@@ -129,6 +129,18 @@ public class SdEquipmentCategoryServiceImpl implements ISdEquipmentCategoryServi
         return sdEquipmentCategoryMapper.getCategoryAllList(paramMap);
     }
 
+    @Override
+    public List<SdEquipmentCategoryDto> getCategoryTypeDeviceList() {
+        String deptId = SecurityUtils.getDeptId();
+        List<SdTunnels> sdTunnels = sdTunnelsService.selectTunnelsList(deptId);
+        List<String> tunnelIds = sdTunnels.stream().map(tunnel -> tunnel.getTunnelId()).collect(Collectors.toList());
+
+        //Map参数，根据需要可添加其他参数
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("tunnelIds",tunnelIds);
+        return sdEquipmentCategoryMapper.getCategoryTypeDeviceList(paramMap);
+    }
+
     /**
      * 构建前端所需要树结构
      *

@@ -64,7 +64,7 @@
         left join sys_dict_data a on a.dict_value= t.task_status and a.dict_type = 'task_status'
         <where>
             1=1 and t.task_status!= "3"
-            <if test="zzjgId != null  and zzjgId != ''"> and b.dept_name like concat('%', #{zzjgId}, '%')</if>
+            <if test="zzjgId != null  and zzjgId != ''">AND CONCAT(t.task_name, b.dept_name) LIKE CONCAT('%', #{zzjgId},'%')</if>
             <if test="endPlantime != null and endPlantime!=''"> and t.end_plantime = #{endPlantime}</if>
             <if test="dispatcher != null  and dispatcher != ''"> and t.dispatcher = #{dispatcher}</if>
             <if test="dispatchTime != null and dispatchTime!=''"> and t.dispatch_time = #{dispatchTime}</if>

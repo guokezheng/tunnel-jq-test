@@ -330,7 +330,16 @@ export default {
       // 设备点位状态详情表格数据
       pointList: [],
       // 是否可控字典
-      isControlOptions: [],
+      isControlOptions: [
+        {
+          "dictLabel":"否",
+          "dictValue":"1"
+        },
+        {
+          "dictLabel":"是",
+          "dictValue":"2"
+        }
+      ],
       //设备编号
       eqId:0,
       //设备类型编号
@@ -391,10 +400,10 @@ export default {
     this.getDicts("sd_device_point_data_type").then(response => {
       this.dataTypeList = response.data;
     });
-    this.getDicts("sys_type_control").then((response) => {
+/*    this.getDicts("sys_type_control").then((response) => {
       // console.log(response.data,'response.dataresponse.data')
       this.isControlOptions = response.data;
-    });
+    });*/
 
     this.typeId = this.$route.query.typeId;
     this.eqId = this.$route.query.eqId;
@@ -474,7 +483,7 @@ export default {
           let serverJSON = [];
           let clientJSON = [];
           // 可控设备
-          if(this.form.isReserved == '1' ){
+          if(this.form.isReserved == '2' ){
             let param = {
               stateTypeId :this.typeId,
               isControl : 1

@@ -21,7 +21,7 @@
       <el-col :span="6" :offset="14">
         <div ref="main" class="grid-content bg-purple">
           <el-input
-            placeholder="请输入巡查班组，任务名称，回车搜索"
+            placeholder="请输入任务名称、巡查班组，回车搜索"
             v-model="queryParams.zzjgId"
             @keyup.enter.native="handleQuery"
             size="small"
@@ -563,7 +563,7 @@
                 style="width: 100%"
                 size="small"
                 clearable
-                placeholder="请选择设备类型" 
+                placeholder="请选择设备类型"
               ></el-cascader>
           </el-col>
           <el-col :span="8" >
@@ -1582,7 +1582,7 @@ export default {
         this.dialogSelection = selection
       // }
       console.log(this.boxList,"this.boxList获取巡检点弹窗表格选中项")
-      
+
       // this.dialogSelection = selection;
       console.log(this.dialogSelection, "this.dialogSelection");
     },

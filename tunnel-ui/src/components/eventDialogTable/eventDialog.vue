@@ -59,7 +59,7 @@
               <div class="swiper-button-prev" slot="button-prev"></div>
               <div class="swiper-button-next" slot="button-next"></div>
             </swiper>
-            <div v-show="eventFormDetail.iconUrlList.length < 1" style="width: 100%; height: 329px;">
+            <div v-show="eventFormDetail.iconUrlList.length < 1" style="width: 100%; height: 300px;">
               <el-image
                 style="width: 100%; height: 100%"
                 :src="noPic"
@@ -141,11 +141,11 @@
             </el-col>
             <el-col :span="8">
               <el-form-item
-                label="预计解除时间"
+                label="持续时长"
                 prop="endTime"
                 label-width="100px"
               >
-                <el-date-picker
+                <!-- <el-date-picker
                   @change="changeEndTime"
                   clearable
                   size="small"
@@ -155,7 +155,11 @@
                   placeholder="选择预计解除时间"
                   style="width: calc(100% - 10px)"
                 >
-                </el-date-picker>
+                </el-date-picker> -->
+                <el-input
+                  v-model="eventFormDetail.continuedTime"
+                  readonly
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -178,30 +182,40 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
-              <el-form-item label="事件起点">
-                <el-row>
-                  <el-col :span="11">
-                    <el-input
-                      v-model="eventFormDetail.stakeNum1"
-                      placeholder="Km"
-                      oninput="value=value.replace(/[^\d]/g,'')"
-                      width="100%"
-                    >
-                      <template slot="prepend">K</template>
-                    </el-input>
-                  </el-col>
-                  <el-col :span="1">+</el-col>
-                  <el-col :span="11">
-                    <el-input
-                      v-model="eventFormDetail.stakeNum2"
-                      placeholder="m"
-                      oninput="value=value.replace(/[^\d]/g,'')"
-                      width="100%"
-                    />
-                  </el-col>
-                </el-row>
-              </el-form-item>
+            <el-col :span="8" >
+              <el-row>
+                <el-col :span="15">
+                  <el-form-item label="事件起点" prop="stakeNum1">
+                    <el-row>
+                      <el-col :span="22" style="margin-right: 2px;">
+                        <el-input
+                          v-model="eventFormDetail.stakeNum1"
+                          placeholder="Km"
+                          oninput="value=value.replace(/[^\d]/g,'')"
+                          width="100%"
+                        >
+                          <template slot="prepend">K</template>
+                        </el-input>
+                      </el-col>
+                      <el-col :span="1"> +</el-col>
+                    </el-row>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="9">
+                  <el-form-item prop="stakeNum2" label-width="0px">
+                    <el-row>
+                      <el-col :span="22">
+                        <el-input
+                          v-model="eventFormDetail.stakeNum2"
+                          placeholder="m"
+                          oninput="value=value.replace(/[^\d]/g,'')"
+                          width="100%"
+                        />
+                      </el-col>
+                    </el-row>
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </el-col>
             <el-col :span="8">
               <el-form-item label="事件终点" label-width="100px">
@@ -539,7 +553,42 @@ export default {
       rules:{
         otherContent:[
           { max: 100, message: '最长输入100个字符', trigger: 'blur' }
-        ]
+        ],
+        stakeNum1:[
+        {
+            required: true,
+            message: "请输入事件起点",
+            trigger: "change",
+          },
+        ],
+        stakeNum2:[
+        {
+            required: true,
+            message: "请输入事件起点",
+            trigger: "change",
+          },
+        ],
+        direction:[
+        {
+            required: true,
+            message: "请选择影响车道",
+            trigger: "change",
+          },
+        ],
+        eventTypeId:[
+        {
+            required: true,
+            message: "请选择预估类型",
+            trigger: "change",
+          },
+        ],
+        eventGrade:[
+        {
+            required: true,
+            message: "请选择预估等级",
+            trigger: "change",
+          },
+        ],
       },
       processDialog:"false",
       deviceIndexShow:0,
@@ -1572,10 +1621,10 @@ export default {
       //   height:378px;
       // }
       .picBox{
-        height: calc(400px - 71px);
+        height: 300px;
       }
       ::v-deep .el-image{
-        height: calc(400px - 71px);
+        height: 300px;
         width: 100%;
         image{width:100%;height:100%;}
       }
@@ -1662,7 +1711,7 @@ export default {
       }
     }
     .el-form-item {
-      margin-bottom: 10px !important;
+      margin-bottom: 14px !important;
     }
     .evtCarStyle {
       width: calc(100% - 10px);
@@ -2081,6 +2130,12 @@ export default {
   .detailsDialog{
     ::v-deep .el-dialog__body{
       max-height: 88vh;
+      overflow: auto;
+    }
+  }
+  ::v-deep .explain-table{
+    .el-dialog__body{
+      max-height: 78vh;
       overflow: auto;
     }
   }

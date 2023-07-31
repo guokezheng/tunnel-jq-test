@@ -11,10 +11,15 @@
       :modal="false"
       append-to-body
     >
-      <el-form :model="form" label-width="80px" class="dialogForm" :rules="rules">
+      <el-form
+        :model="form"
+        label-width="80px"
+        class="dialogForm"
+        :rules="rules"
+      >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="影响方向">
+            <el-form-item label="影响方向" prop="direction">
               <el-select
                 v-model="form.direction"
                 placeholder="方向"
@@ -145,7 +150,10 @@
             <el-checkbox-button label="其他" value="其他"></el-checkbox-button>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item v-show="eventIsShow(form.reviewRemark)" prop="otherContent">
+        <el-form-item
+          v-show="eventIsShow(form.reviewRemark)"
+          prop="otherContent"
+        >
           <el-input
             placeholder="请输入其他原因内容"
             v-model="form.otherContent"
@@ -182,11 +190,32 @@ export default {
       eventTypeData: [],
       eventGradeList: [],
       tunnelId: "",
-      rules:{
-        otherContent:[
-          { max: 100, message: '最长输入100个字符', trigger: 'blur' }
-        ]
-      }
+      rules: {
+        otherContent: [
+          { max: 100, message: "最长输入100个字符", trigger: "blur" },
+        ],
+        direction: [
+          {
+            required: true,
+            message: "请选择影响方向",
+            trigger: "change",
+          },
+        ],
+        eventTypeId: [
+          {
+            required: true,
+            message: "请选择预估类型",
+            trigger: "change",
+          },
+        ],
+        eventGrade: [
+          {
+            required: true,
+            message: "请选择预估等级",
+            trigger: "change",
+          },
+        ],
+      },
     };
   },
   watch: {
@@ -249,7 +278,7 @@ export default {
       this.batchDialog = false;
       this.eventState = 4;
       this.form.laneNo = [];
-      this.form.eventDescription = '';
+      this.form.eventDescription = "";
       this.$emit("clearClick", 1);
     },
     // 预估等级 预估类型
@@ -271,19 +300,23 @@ export default {
         return false;
       }
     },
-    
+
     // 复核弹窗内单选改变事件
     eventStateChange() {
       this.form.reviewRemark = [];
     },
     submitDialog() {
-      this.form.ids = this.list.toString();
-      this.form.laneNo = this.form.laneNo.toString();
-      this.form.reviewRemark = this.form.reviewRemark.toString();
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          this.form.ids = this.list.toString();
+          this.form.laneNo = this.form.laneNo.toString();
+          this.form.reviewRemark = this.form.reviewRemark.toString();
 
-      batchHandleEvent(this.form).then((res) => {
-        this.$modal.msgSuccess("批量执行成功");
-        this.cancel();
+          batchHandleEvent(this.form).then((res) => {
+            this.$modal.msgSuccess("批量执行成功");
+            this.cancel();
+          });
+        }
       });
     },
   },

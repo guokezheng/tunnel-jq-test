@@ -423,11 +423,11 @@
             </el-col>
             <el-col :span="8">
               <el-form-item
-                label="预计解除时间"
+                label="持续时长"
                 prop="endTime"
                 label-width="100px"
               >
-                <el-date-picker
+                <!-- <el-date-picker
                   @change="changeEndTime"
                   clearable
                   size="small"
@@ -437,7 +437,11 @@
                   placeholder="选择预计解除时间"
                   style="width: calc(100% - 10px)"
                 >
-                </el-date-picker>
+                </el-date-picker> -->
+                <el-input
+                  v-model="eventFormDetail.continuedTime"
+                  readonly
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -2298,15 +2302,15 @@ export default {
         }
       });
     },
-    changeEndTime() {
-      let startTime = new Date(this.eventFormDetail.eventTime).getTime();
-      let endTime = new Date(this.eventFormDetail.endTime).getTime();
-      console.log(startTime, endTime);
-      if (endTime < startTime) {
-        this.$modal.msgWarning("结束时间必须大于开始时间");
-        this.eventFormDetail.endTime = "";
-      }
-    },
+    // changeEndTime() {
+    //   let startTime = new Date(this.eventFormDetail.eventTime).getTime();
+    //   let endTime = new Date(this.eventFormDetail.endTime).getTime();
+    //   console.log(startTime, endTime);
+    //   if (endTime < startTime) {
+    //     this.$modal.msgWarning("结束时间必须大于开始时间");
+    //     this.eventFormDetail.endTime = "";
+    //   }
+    // },
     // 获取车道数
     getTunnelLane() {
       getTunnelLane(this.tunnelId).then((res) => {
@@ -2379,6 +2383,7 @@ export default {
     },
     //详情弹窗
     detailsButton(item) {
+      console.log(item,"000000000")
       // 获取对应事件
       this.getEventType(item);
       console.log(item, "点击弹窗");

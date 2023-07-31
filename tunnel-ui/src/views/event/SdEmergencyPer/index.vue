@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20">
+    <!-- <el-row :gutter="20"> -->
       <!--部门数据-->
-      <el-col :span="4" :xs="24">
+      <!-- <el-col :span="4" :xs="24">
         <div class="head-container">
           <el-input
             v-model="deptName"
@@ -24,9 +24,9 @@
             style="height: 100%; overflow: auto"
           />
         </div>
-      </el-col>
-      <el-col :span="20" :xs="24">
-        <el-row :gutter="20" class="mb8">
+      </el-col> -->
+      <!-- <el-col :span="20" :xs="24"> -->
+        <!-- <el-row :gutter="20" class="mb8"> -->
           <!-- 全局搜索 -->
           <el-row :gutter="20" class="topFormRow">
             <el-col :span="6">
@@ -171,8 +171,8 @@
             :limit.sync="queryParams.pageSize"
             @pagination="getList"
           />
-        </el-row>
-      </el-col>
+        <!-- </el-row> -->
+      <!-- </el-col> -->
 
       <!-- 添加或修改应急人员信息对话框 -->
       <el-dialog
@@ -233,7 +233,7 @@
           </div>
         </el-form>
       </el-dialog>
-    </el-row>
+    <!-- </el-row> -->
   </div>
 </template>
 

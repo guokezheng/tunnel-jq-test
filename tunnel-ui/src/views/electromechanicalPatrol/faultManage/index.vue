@@ -200,11 +200,11 @@
         prop="eqName"
         width="220"
       />
-      <el-table-column label="设备状态" align="center" prop="eqStatus">
+<!--      <el-table-column label="设备状态" align="center" prop="eqStatus">
         <template slot-scope="scope">
           <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="故障位置" align="center" prop="faultLocation" />
       <el-table-column
         label="故障描述"
@@ -500,6 +500,7 @@
                   style="width: 100%"
                   ref="cascader"
                   :key="cascaderKey"
+                  @change="selDevChange"
                 ></el-cascader>
               </el-form-item>
             </el-col>
@@ -513,7 +514,6 @@
                   @change="eqStatusGet"
                   style="width: 100%"
                   id="deviceSel"
-                  @click.native="selChange"
                 >
                   <el-option
                     v-for="item in eqListData"
@@ -524,7 +524,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+<!--            <el-col :span="8">
               <el-form-item label="设备状态" prop="eqStatus">
                 <el-select
                   v-model="form.eqStatus"
@@ -540,7 +540,7 @@
                   />
                 </el-select>
               </el-form-item>
-            </el-col>
+            </el-col>-->
             <el-col :span="8">
               <el-form-item label="故障位置" prop="faultLocation">
                 <el-input
@@ -552,7 +552,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+<!--            <el-col :span="8">
               <el-form-item label="设备运行状态" prop="eqRunStatus">
                 <el-input
                   v-model="form.eqRunStatus"
@@ -561,7 +561,7 @@
                   style="width: 100%"
                 />
               </el-form-item>
-            </el-col>
+            </el-col>-->
           </el-row>
         </el-card>
         <el-card>
@@ -735,13 +735,13 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 15px; color: #05aafd;">
+<!--        <div class="card-cols" style="font-size: 15px; color: #05aafd;">
           <div style  ="width:60%;">
             <span style="margin-right: 46%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
 
-        </div>
+        </div>-->
         <div class="card-col" style="font-size: 15px; color: #05aafd">
           <div>
             现场故障情况:
@@ -1220,6 +1220,7 @@ export default {
       }
     },
     eqStatusGet(e) {
+
       getEquipmentInfo(e).then((response) => {
         this.form.faultLocation = "";
         this.form.eqRunStatus = "";
@@ -1230,6 +1231,7 @@ export default {
           this.form.eqStatus = response.data[0].eq_status=="undefined"?"":response.data[0].eq_status;;
           //this.$refs(this.form, "eqStatus", 1);
         }
+        this.$forceUpdate();
         // this.$modal.msgSuccess("修改成功");
         // this.open = false;
         // this.getList();
@@ -1395,31 +1397,43 @@ export default {
       );
     },
 
-    /*设备名称点击事件*/
-    selChange() {
-      if (this.title != "故障详情") {
-        if (
-          this.form.tunnelId == null ||
-          typeof this.form.tunnelId == "undefined"
-        ) {
-          this.disstateDevice = true;
-          this.$modal.msgWarning("请先选择隧道");
-          return;
-        }
-        if (
-          this.form.typeId == null ||
-          typeof this.form.typeId == "undefined"
-        ) {
-          this.disstateDevice = true;
-          this.$modal.msgWarning("请先选择设备类型");
-          return;
-        } else {
-          this.disstateDevice = false;
-          this.getDevices();
-          //$("#deviceSel").attr("pointer-events", "none");
-        }
+    selDevChange(){
+      console.log("selDevChange", this.form.typeId)
+
+      if (this.form.tunnelId == "") {
+        this.$message.warning("请先选择所属隧道");
+        return;
       }
+
+      this.form.eqId = null;
+      this.form.faultLocation = null;
+      this.getDevices();
     },
+
+    // /*设备名称点击事件*/
+    // selChange() {
+    //
+    //   if(this.title == "故障详情"){
+    //     return;
+    //   }
+    //
+    //   if(!this.form.tunnelId){
+    //     this.disstateDevice = true;
+    //     this.$modal.msgWarning("请先选择隧道");
+    //     return;
+    //   }
+    //
+    //   if(!this.form.tunnelId){
+    //     this.disstateDevice = true;
+    //     this.$modal.msgWarning("请先选择设备类型");
+    //     return;
+    //   }
+    //
+    //   this.disstateDevice = false;
+    //   this.getDevices();
+    //   this.$forceUpdate();
+    //
+    // },
 
     /*设备类型点击事件*/
     /*selEqTypeChange() {
@@ -1462,19 +1476,13 @@ export default {
     },
     /** 设备 */
     getDevices() {
-      if (this.form.tunnelId == "") {
-        this.$message.warning("请先选择所属隧道");
-        return;
-      }
-      if (this.form.typeId == "") {
-        this.$message.warning("请先选择设备类型");
-        return;
-      }
       listDevices({
         eqTunnelId: this.form.tunnelId,
         eqType: this.form.typeId,
       }).then((response) => {
+        this.disstateDevice = false;
         this.eqListData = response.rows;
+        this.$forceUpdate();
       });
     },
 

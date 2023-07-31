@@ -532,6 +532,7 @@ public class SdEventController extends BaseController
         sdEvent.setEventTypeId((long) 20);//事件类型
         sdEvent.setEventTitle("马家峪隧道潍坊方向智能消防炮YK16+678发生火警");//事件标题  隧道+方向+桩号+发生火警
         sdEvent.setEventTime(DateUtils.getNowDate());//时间
+        sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));//开始时间
         sdEvent.setEventState("3");//状态  待确认
         sdEvent.setEventGrade("1");//事件等级 一般
         sdEvent.setStakeNum("YK16+678");//事件桩号

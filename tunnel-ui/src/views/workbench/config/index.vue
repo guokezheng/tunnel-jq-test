@@ -477,10 +477,31 @@
                     >
                       {{ item.eqName }}
                     </div>
-                    <div v-if="item.textFalse" class="textFalseBox">
+                    <div v-if="item.textFalse" class="textFalseBox"
+                    :style="{
+                        top:
+                          item.tooltipType1 == 1 || item.tooltipType1 == 2
+                            ? '35px'
+                            : '-50px',
+                        left:
+                          item.tooltipType1 == 1 || item.tooltipType1 == 3
+                            ? '0px'
+                            : '-100px',
+                      }"
+                    >
                       请选择同种设备
                     </div>
-                    <div v-if="item.textKKFalse" class="textFalseBox">
+                    <div v-if="item.textKKFalse" class="textFalseBox"
+                    :style="{
+                        top:
+                          item.tooltipType1 == 1 || item.tooltipType1 == 2
+                            ? '35px'
+                            : '-50px',
+                        left:
+                          item.tooltipType1 == 1 || item.tooltipType1 == 3
+                            ? '0px'
+                            : '-100px',
+                      }">
                       请选择可控设备
                     </div>
                     <div
@@ -494,7 +515,7 @@
                         left:
                           item.tooltipType == 1 || item.tooltipType == 3
                             ? '0px'
-                            : -item.eqName.length * 10 - 40 + 'px',
+                            : - (item.eqName.length * 10 + 40) + 'px',
                       }"
                     >
                       <span>名称：{{ item.eqName }}</span
@@ -2905,6 +2926,7 @@ export default {
   methods: {
     // 管理站级联回显选中效果
     cascaderHandleChange() {
+      console.log(1)
       console.log(this.siteList, "siteList");
       let handleText = "";
       for (let item of this.siteList) {
@@ -3129,9 +3151,13 @@ export default {
       nodes.forEach((item) => {
         item.expanded = false;
       });
-      setTimeout(()=>{
+      if (this.resetCanvasFlag && this.treeShow) {
+        setTimeout(() => {
+          this.treeShow = false;
+        }, 50);
+      }else{
         this.treeShow = !this.treeShow;
-      },50)
+      }
     },
     //点击树状图获取值
     handleNodeClick(data) {
@@ -3807,12 +3833,13 @@ export default {
 
     // 改变站点
     changeSite(index) {
-      console.log(index, "index");
+      console.log(2)
+      console.log(index, "index000000000000000000000000");
       if (index) {
-        console.log(
-          this.$cache.local.get("deptId"),
-          "this.$cache.local.get('deptId')"
-        );
+        // console.log(
+        //   this.$cache.local.get("deptId"),
+        //   "this.$cache.local.get('deptId')"
+        // );
         // 判断是否有缓存的管理站id
         // 1. get不到管理站id this.tunnelQueryParams.deptId为空 是第一次进入 正常赋值
         // 2. get不到管理站id this.tunnelQueryParams.deptId有 是切换隧道 set到缓存 并赋值
@@ -3833,7 +3860,6 @@ export default {
             this.$cache.local.set("deptId", index[index.length - 1]);
           }
         }
-
         this.$forceUpdate();
         this.getTunnelList();
       }
@@ -4140,7 +4166,9 @@ export default {
     },
     //地图复位
     resetCanvas() {
-      this.resetCanvasFlag = false;
+      setTimeout(() => {
+        this.resetCanvasFlag = false;
+      }, 50);
       this.$refs.dragImgDom.style.left = "0px";
       this.$refs.dragImgDom.style.top = "0px";
     },
@@ -5025,7 +5053,7 @@ export default {
       console.log(item, "item");
       if (this.addBatchManage == true) {
         // 判断设备是否可控 不可控的不弹批量弹窗
-        if (item.isControl == "1" && ![16, 22, 36].includes(item.eqType)) {
+        if (item.isControl == "1" && ![16, 22, 36, 29].includes(item.eqType)) {
           // 判断是否有选中项 有的话 判断本次点击和上次点击 设备类型是否一样
           // 要求每次点击选中的设备类型相同
           if (this.itemEqType) {
@@ -5059,7 +5087,11 @@ export default {
                 itm.eqId == item.eqId &&
                 this.itemEqType != item.eqType
               ) {
+                this.tooltipType1(item)
                 itm.textFalse = true;
+                setTimeout(() => {
+                  item.textFalse = false;
+                }, 2000);
                 this.$forceUpdate();
               }
             }
@@ -5084,14 +5116,18 @@ export default {
           }
         } else if (
           item.isControl == "0" ||
-          [16, 22, 36].includes(item.eqType)
+          [16, 22, 29, 33, 36].includes(item.eqType)
         ) {
+          // 可控设备里 情报板 消防炮 巡检机器人 广播 也不可批量控制
+          console.log(item,"1111111111111111")
+          this.tooltipType1(item)
+          
           item.textKKFalse = true;
           setTimeout(() => {
             item.textKKFalse = false;
           }, 2000);
           this.$forceUpdate();
-        }
+        } 
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
         this.eqInfo = {
@@ -5208,6 +5244,26 @@ export default {
             );
           }
         });
+      }
+    },
+    tooltipType1(item){
+      if (
+        item.position.left <= this.currentTunnel.lane.width - 100 &&
+        item.position.top <= 450
+      ) {
+        return item.tooltipType1 = 1;
+      } else if (
+        item.position.left > this.currentTunnel.lane.width - 100 &&
+        item.position.top <= 450
+      ) {
+        return item.tooltipType1 = 2;
+      } else if (
+        item.position.left <= this.currentTunnel.lane.width - 100 &&
+        item.position.top > 450
+      ) {
+        return item.tooltipType1 = 3;
+      } else {
+        return item.tooltipType1 = 4;
       }
     },
     sendAnalogCommand(param) {
@@ -5857,7 +5913,7 @@ export default {
   position: absolute;
   left: 30%;
   z-index: 96659;
-  background: #071727;
+  // background: #071727;
   pointer-events: auto;
   border-left: 1px solid rgba(1, 152, 255, 0.8);
   border-right: 1px solid rgba(1, 152, 255, 0.8);
@@ -5919,10 +5975,10 @@ export default {
 }
 .textFalseBox {
   width: 120px;
-  height: 40px;
+  height: 28px;
   position: absolute;
-  top: -40px;
-  left: 30px;
+  // top: -40px;
+  // left: 30px;
   line-height: 28px;
   text-align: center;
   font-size: 10px;
@@ -5930,9 +5986,12 @@ export default {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   color: #da4a64;
-  opacity: 0;
-  animation: fadenum 2s;
+  opacity: 1;
+  // animation: fadenum 2s;
   z-index: 100;
+  background: #fff;
+  border-radius: 10px;
+  border: solid 1px #da4a64;
 }
 @keyframes fadenum {
   0% {
@@ -7248,7 +7307,6 @@ input {
 
 .tooltipBox {
   position: absolute;
-
   padding: 10px 20px;
   white-space: nowrap;
   border-radius: 4px;

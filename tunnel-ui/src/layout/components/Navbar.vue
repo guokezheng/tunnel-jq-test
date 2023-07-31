@@ -759,7 +759,7 @@ export default {
       if (checkPermi(["fullViewShow"])) {
         let routeUrl = this.$router.resolve({
           path: "/bigScreen2/index.html",
-          query: {},
+          query: {}, 
         });
         window.open(routeUrl.href, "_blank");
       } else {

@@ -1010,11 +1010,12 @@ export default {
       await listRl({ strategyId: params.id }).then((response) => {
         // console.log(response, "设备数据");
         params.manualControl = response.rows;
+        debugger
         params.manualControl.equipmentTypeId = params.manualControl.eqTypeId;
         for (let i = 0; i < response.rows.length; i++) {
           let attr = response.rows[i];
           let manualControl = params.manualControl[i];
-
+          this.$set(params.manualControl[i], "value", params.manualControl[i].equipments.split(","));
           // console.log(params.manualControl[i].value, "选择的设备");
           params.manualControl[i].state = attr.state;
           params.manualControl[i].stateNum = attr.stateNum;
@@ -1279,6 +1280,7 @@ export default {
     },
     /** 查询控制策略列表 */
     getList() {
+      console.log( this.queryParams )
       this.loading = true;
       this.queryParams.strategyGroup = this.activeName == 'one' ? '1' : '2'
       listStrategy(this.queryParams).then((response) => {
@@ -1353,17 +1355,13 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams = {
-        pageNum: 1,
-        pageSize: 10,
-        tunnelId: null,
-        strategyName: null,
-        strategyType: null,
-        strategyInfo: null,
-        schedulerTime: null,
-        jobTime: null,
-        strategyGroup: this.queryParams.strategyGroup
-      };
+      debugger
+      this.queryParams.tunnelId = null
+      this.queryParams.strategyName = null
+      this.queryParams.strategyInfo = null
+      this.queryParams.schedulerTime = null
+      this.queryParams.jobTime = null
+      console.log( this.queryParams )
       this.handleQuery();
       this.getList();
     },

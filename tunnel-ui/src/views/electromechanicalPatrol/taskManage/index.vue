@@ -563,7 +563,7 @@
                 style="width: 100%"
                 size="small"
                 clearable
-                placeholder="请选择设备类型"
+                placeholder="请选择设备类型" 
               ></el-cascader>
           </el-col>
           <el-col :span="8" >
@@ -1570,21 +1570,8 @@ export default {
     },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
-      // if(this.boxList.length>0){
-      //   this.dialogSelection = selection
-        // for(let i=0;i<this.boxList.length;i++){
-        //   for(let j=0;j<this.dialogSelection.length;j++){
-        //     if(this.boxList[i].eq_id == this.dialogSelection[j].eq_id){
-        //       this.dialogSelection.splice(j, 1)
-        //     }
-        //   }
-        // }
-      // }else{
-        this.dialogSelection = selection
-      // }
+      this.dialogSelection = selection
       console.log(this.boxList,"this.boxList获取巡检点弹窗表格选中项")
-
-      // this.dialogSelection = selection;
       console.log(this.dialogSelection, "this.dialogSelection");
     },
     /** 所属隧道 */
@@ -2019,6 +2006,7 @@ export default {
         item.eq_id = item.eq_id + "_1";
       });
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
+      this.$refs.multipleTable1.clearSelection();
       this.dialogSelection = [];
     },
     determine2() {
@@ -2027,6 +2015,8 @@ export default {
         item.eq_id = item.eq_id + "_2";
       });
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
+      this.$refs.multipleTable2.clearSelection();
+
       this.dialogSelection = [];
     },
     // 多选框选中数据

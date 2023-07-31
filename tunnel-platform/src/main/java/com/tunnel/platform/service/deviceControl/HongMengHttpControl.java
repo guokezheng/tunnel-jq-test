@@ -2,6 +2,7 @@ package com.tunnel.platform.service.deviceControl;
 
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.datacenter.domain.enumeration.OperationLogEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+
+import static com.ruoyi.common.utils.SecurityUtils.getUsername;
 
 /**
  * describe: 鸿蒙控制器控制-杭山东
@@ -100,6 +103,7 @@ public class HongMengHttpControl implements GeneralControlBean {
 
             //生成日志
             SdOperationLog sdOperationLog = commonControlService.getOperationLog(map,sdDevices,controlState);
+
             sdOperationLogService.insertSdOperationLog(sdOperationLog);
         }
 

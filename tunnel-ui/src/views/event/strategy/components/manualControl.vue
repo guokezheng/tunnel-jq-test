@@ -400,7 +400,7 @@ export default {
     },
     // 组件调用方法;回显数据;
     async getStrategyData(row) {
-
+      debugger
       console.log(row, "当前策略数据");
       await  getCategoryTree().then((data) => {
         this.equipmentTypeData = data.data;
@@ -477,6 +477,7 @@ export default {
             listDevices(params).then((res) => {
               this.$set(manualControl, "equipmentData", res.rows);
               console.log(manualControl.equipmentData, "设备列表数据1");
+              console.log(attr.equipments.split(","))
               this.strategyForm.manualControl[i].value = attr.equipments.split(",");
             });
           }

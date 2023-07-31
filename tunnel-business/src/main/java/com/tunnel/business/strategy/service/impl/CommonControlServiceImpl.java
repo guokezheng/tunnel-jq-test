@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.ruoyi.common.utils.SecurityUtils.getUsername;
+
 /**
  * describe: 公共控制方法
  *
@@ -222,6 +224,8 @@ public class CommonControlServiceImpl implements CommonControlService {
         }
 
         sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLog.setCreateTime(DateUtils.getNowDate());
+        sdOperationLog.setCreateBy(getUsername());
         return sdOperationLog;
     }
 

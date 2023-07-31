@@ -37,6 +37,7 @@ import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.tunnel.platform.service.event.ISdStrategyService;
+import com.tunnel.platform.task.StrategyTask;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +128,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
     @Autowired
     private IExternalSystemService externalSystemService;
+
+    @Autowired
+    private StrategyTask strategyTask;
 
     /**
      * 查询控制策略
@@ -875,6 +879,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             sdStrategyRl.setEqTypeId(equipmentTypeId);
             sdStrategyRl.setStrategyId(sty.getId());
             addRows += sdStrategyRlMapper.insertSdStrategyRl(sdStrategyRl);
+            try{
+                strategyTask.triggerJobParams(sdStrategyRl.getId().toString());
+            }catch (Exception e){
+
+            }
             map.put("id",sdStrategyRl.getId());
         }
         if(addRows < 1){

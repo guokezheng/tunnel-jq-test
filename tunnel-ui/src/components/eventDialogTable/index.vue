@@ -264,7 +264,7 @@ export default {
       this.batchManageType = true;
     },
     handleSee(item) {
-      // console.log(item, "item");
+      console.log(item, "item");
       // 不是批量时单独弹窗
       if (item.prevControlType != 2 && !this.batchManageType) {
         setTimeout(() => {
@@ -275,7 +275,7 @@ export default {
       } else {
         // 点击批量后 batchManageType == true 可多选弹窗
         if (this.simplifyName) {
-          if (this.simplifyName == item.simplifyName) {
+          if (this.simplifyName == item.simplifyName && this.eqDirection == item.direction && this.tunnelId == item.tunnelId) {
             const result = this.itemEvtIdList.findIndex((a) => a == item.id);
             if (result === -1) {
               item.click = true;
@@ -296,6 +296,8 @@ export default {
             this.$modal.msgWarning("请选择同种事件类型");
           } else if (this.eqDirection != item.direction) {
             this.$modal.msgWarning("请选择同方向事件");
+          } else if(this.tunnelId != item.tunnelId){
+            this.$modal.msgWarning("请选择同隧道事件");
           }
         } else {
           // 第一次点击时

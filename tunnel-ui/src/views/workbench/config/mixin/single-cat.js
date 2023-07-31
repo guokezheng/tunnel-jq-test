@@ -47,7 +47,6 @@ export const singleCat = {
       let centreHigh = 57/580
       //下道
       let nextHigh = 73/580
-      console.log(eventIndex)
       if(eventIndex.roadDir == 2){//上行
         if(leftCount==true){ //通过距离计算桩号
           //计算最终经度 右边距

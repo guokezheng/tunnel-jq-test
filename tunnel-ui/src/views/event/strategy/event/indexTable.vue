@@ -1066,7 +1066,7 @@ export default {
             break;
 
           case "1":
-
+            debugger
             console.log(this.insertStrategyTypeOptions)
             this.insertStrategyTypeOptionsCopy=[]
             let dictLabelStrategy = this.insertStrategyTypeOptions.find((item) => item.dictLabel =="定时控制")

@@ -67,9 +67,10 @@ public class SdEnhancedLightingConfigServiceImpl implements ISdEnhancedLightingC
      * @return 结果
      */
     @Override
-    public int insertSdEnhancedLightingConfig(SdEnhancedLightingConfig sdEnhancedLightingConfig)
+    public SdEnhancedLightingConfig insertSdEnhancedLightingConfig(SdEnhancedLightingConfig sdEnhancedLightingConfig)
     {
-        return sdEnhancedLightingConfigMapper.insertSdEnhancedLightingConfig(sdEnhancedLightingConfig);
+        sdEnhancedLightingConfigMapper.insertSdEnhancedLightingConfig(sdEnhancedLightingConfig);
+        return sdEnhancedLightingConfig;
     }
 
     /**

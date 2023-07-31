@@ -1832,7 +1832,7 @@
         class="paginationWorkbench"
       />
     </el-dialog>
-    <timingTask :show="timingTaskShow"></timingTask>
+    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>
   </div>
 </template>
 
@@ -3474,7 +3474,7 @@ export default {
             }
           }
         }
-        
+
       } else {
         for (var item of this.selectedIconList) {
           item.click = false;
@@ -5253,6 +5253,7 @@ export default {
     },
     strategyPage1(){
       this.timingTaskShow = !this.timingTaskShow
+      this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;

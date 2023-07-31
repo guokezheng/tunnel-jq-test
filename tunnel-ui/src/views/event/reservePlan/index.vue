@@ -1402,7 +1402,6 @@ export default {
           },
         ],
       };
-      this.getRules();
       this.planTypeIdList.splice(index + 1, 0, data);
     },
     /** 查询设备类型列表 */
@@ -1528,7 +1527,6 @@ export default {
       };
       this.planTypeIdList[number].processesList.splice(index + 1, 0, data);
       this.getEquipmentType();
-      this.getRules();
     },
     //获得预案类别
     // selectPlanType() {
@@ -1803,6 +1801,7 @@ export default {
     },
     // 配置策略
     async chooseStrategyInfo(row) {
+      this.getRules();
       this.getEquipmentType();
       this.reserveId = row.id;
       this.currentClickData = row;
@@ -1814,7 +1813,7 @@ export default {
         // this.getRules();
         this.openFullScreen2();
         if (this.planTypeIdList.length == 0) {
-          this.getRules();
+          //this.getRules();
           this.planTypeIdList = [
             {
               stageName: "",

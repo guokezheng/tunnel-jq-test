@@ -671,7 +671,8 @@
       class="jingqing"
       :visible.sync="dialogVisible"
       width="30%"
-      :before-close="handleClose">
+      :before-close="handleClose"
+      :close-on-click-modal="false">
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
         <div class="dialogCloseButton"></div>
@@ -749,6 +750,8 @@
       width="50%"
       text-align="center"
       class="IssuedDialog"
+      append-to-body
+      :close-on-click-modal="false"
       >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -839,6 +842,7 @@
       width="60%"
       :before-close="oneKeyHandleClose"
       :append-to-body="true"
+      :close-on-click-modal="false"
       >
       <div class="dialogStyleBox">
         <div class="dialogLine"></div>
@@ -946,6 +950,7 @@
       class="robotDialog"
       :visible.sync="robotDialogVisible"
       width="770px"
+      :close-on-click-modal="false"
       >
         <robot class="comClass robotHtmlBox" ></robot>
         <img
@@ -983,7 +988,7 @@ import comData from "@/views/workbench/config/components/data"; //只有数据�
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
 import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
-import  jointControl  from "@/views/event/event/projectionScreen/jointControl.vue";
+import jointControl from "@/views/event/event/projectionScreen/jointControl.vue";
 
 import {
   listEventType,
@@ -1031,11 +1036,11 @@ export default {
     comBoard,
     workBench,
     videoPlayer,
-    jointControl
+    jointControl,
   },
   data() {
     return {
-      robotDialogVisible:false,
+      robotDialogVisible: false,
       clickEqType: "",
       yjShow: true,
       emergencyList: [],
@@ -1114,7 +1119,7 @@ export default {
       videoForm3: {},
       videoForm4: {},
       //存放设备id
-      eqIdList:[],
+      eqIdList: [],
 
       fromList: [],
       reservePlan: {
@@ -1137,7 +1142,7 @@ export default {
       lineHeight: 0,
       circlePosition: "",
       deviceIconUrl: [],
-      visibleSync:false,
+      visibleSync: false,
     };
   },
   computed: {
@@ -1206,15 +1211,17 @@ export default {
   //   clearInterval(this.deadline4);
   // },
   methods: {
-    handleTouping(){
+    handleTouping() {
       this.$confirm("即将投屏, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
-        // debugger
-        this.visibleSync = !this.visibleSync
-        }).catch(() => {
+      })
+        .then(() => {
+          // debugger
+          this.visibleSync = !this.visibleSync;
+        })
+        .catch(() => {
           this.$message({
             type: "info",
             message: "已取消操作",
@@ -1241,21 +1248,23 @@ export default {
     },
     oneKeyExecute() {
       const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
       let planId = this.reserveId;
       let eventId = this.$route.query.id;
-      implementPlan(planId, eventId).then((res) => {
-        loading.close();
-        this.$modal.msgSuccess(res.msg);
-        this.oneKeyDialogVisible = false;
-        this.evtHandle();
-      }).catch(()=>{
-        loading.close();
-      });
+      implementPlan(planId, eventId)
+        .then((res) => {
+          loading.close();
+          this.$modal.msgSuccess(res.msg);
+          this.oneKeyDialogVisible = false;
+          this.evtHandle();
+        })
+        .catch(() => {
+          loading.close();
+        });
     },
     // 事件处置 一键
     getYiJian(item) {
@@ -1300,7 +1309,7 @@ export default {
     getManagementDevice(item) {
       console.log(item);
       if (item.eqTypeId == 29) {
-        this.robotDialogVisible = true
+        this.robotDialogVisible = true;
         return;
       }
       if (item.eventState != "0" && item.processId) {
@@ -1520,7 +1529,7 @@ export default {
     // 关闭弹窗子组件
     dialogClose() {
       this.eqInfo.clickEqType = 0;
-      this.robotDialogVisible = false
+      this.robotDialogVisible = false;
       this.$forceUpdate();
     },
     // 点设备弹窗
@@ -1563,25 +1572,27 @@ export default {
     changeIncHand() {
       var that = this;
       const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
       // if (this.IssuedItem.flowPid == "7") {
       let processId = that.processId;
       let eventId = that.$route.query.id;
-      implementProcess(processId, eventId).then((response) => {
-        loading.close();
-        that.$modal.msgSuccess("执行成功");
-        this.IssuedDialog = false;
-        this.getDispatchExecuted();
-        that.evtHandle();
-        that.getEventList();
-        this.processId = "";
-      }).catch(()=>{
-        loading.close();
-      });
+      implementProcess(processId, eventId)
+        .then((response) => {
+          loading.close();
+          that.$modal.msgSuccess("执行成功");
+          this.IssuedDialog = false;
+          this.getDispatchExecuted();
+          that.evtHandle();
+          that.getEventList();
+          this.processId = "";
+        })
+        .catch(() => {
+          loading.close();
+        });
       // } else if (this.IssuedItem.flowId == "17") {
       //   let eventId = that.$route.query.id;
       //   let handleId = this.IssuedItem.id;
@@ -1726,12 +1737,12 @@ export default {
 
       console.log(this.eventForm, "this.eventForm");
       // this.videoList = []
-      this.eqIdList = []
+      this.eqIdList = [];
       getEntranceExitVideo(
         this.eventForm.tunnelId,
         this.eventForm.direction
       ).then((response) => {
-        this.eqIdList.push(response.data[0].inlet)
+        this.eqIdList.push(response.data[0].inlet);
         videoStreaming(response.data[0].inlet).then((response) => {
           if (response.data) {
             response.data.title = "入口";
@@ -1741,7 +1752,7 @@ export default {
             }
           }
         });
-        this.eqIdList.push(response.data[0].outlet)
+        this.eqIdList.push(response.data[0].outlet);
         videoStreaming(response.data[0].outlet).then((response) => {
           if (response.data) {
             response.data.title = "出口";
@@ -1758,7 +1769,7 @@ export default {
           this.eventForm.stakeNum,
           this.eventForm.direction
         ).then((res) => {
-          this.eqIdList.push(res.data[0].eqId)
+          this.eqIdList.push(res.data[0].eqId);
           videoStreaming(res.data[0].eqId).then((response) => {
             if (response.data) {
               response.data.title = "现场1";
@@ -1768,7 +1779,7 @@ export default {
               }
             }
           });
-          this.eqIdList.push(res.data[1].eqId)
+          this.eqIdList.push(res.data[1].eqId);
           videoStreaming(res.data[1].eqId).then((response) => {
             if (response.data) {
               response.data.title = "现场2";
@@ -2043,13 +2054,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.robotDialog{
-  ::v-deep .el-dialog{
+.robotDialog {
+  ::v-deep .el-dialog {
     height: 90%;
     border: none;
     background-color: transparent !important;
-    .el-dialog__header{
-      display:none;
+    .el-dialog__header {
+      display: none;
     }
   }
 }
@@ -2223,18 +2234,18 @@ export default {
           background-repeat: no-repeat;
           background-size: 100% 100%;
           background-color: rgba(1, 46, 81, 0.7);
-          .touping{
-            float:right;
-            display:inline-block;
+          .touping {
+            float: right;
+            display: inline-block;
             margin-right: 10px;
-            border-radius:3px;
+            border-radius: 3px;
             padding: 2px 12px;
             line-height: 20px;
             margin-top: 8px;
-            color:#fff;
-            background: #39ADFF;
+            color: #fff;
+            background: #39adff;
             cursor: pointer;
-            font-size:0.68vw;
+            font-size: 0.68vw;
           }
         }
         .videoBox1 {
@@ -2998,9 +3009,9 @@ export default {
   height: 100%;
   position: absolute;
   left: 0% !important;
-  top:0;
+  top: 0;
   z-index: 96659;
-  background: #071727;
+  // background: #071727;
   pointer-events: auto !important;
   border-left: 1px solid rgba(1, 152, 255, 0.8);
   border-right: 1px solid rgba(1, 152, 255, 0.8);
@@ -3059,5 +3070,4 @@ export default {
     padding-left: 15px;
   }
 }
-
 </style>

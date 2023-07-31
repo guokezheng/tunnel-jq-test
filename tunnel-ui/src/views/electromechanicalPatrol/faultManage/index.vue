@@ -437,16 +437,16 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-<!--            <el-col :span="8" v-if="!isWritable">-->
-<!--              <el-form-item label="持续时间" prop="faultCxtime">-->
-<!--                <el-input-->
-<!--                  :disabled="disstate"-->
-<!--                  v-model="form.faultCxtime"-->
-<!--                  style="width: 100%"-->
-<!--                  :placeholder= holderFaultCxtime-->
-<!--                />-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
+            <!--            <el-col :span="8" v-if="!isWritable">-->
+            <!--              <el-form-item label="持续时间" prop="faultCxtime">-->
+            <!--                <el-input-->
+            <!--                  :disabled="disstate"-->
+            <!--                  v-model="form.faultCxtime"-->
+            <!--                  style="width: 100%"-->
+            <!--                  :placeholder= holderFaultCxtime-->
+            <!--                />-->
+            <!--              </el-form-item>-->
+            <!--            </el-col>-->
             <el-col :span="8" v-show="removeStata">
               <el-form-item label="故障填报时间" prop="faultTbtime">
                 <el-date-picker
@@ -500,7 +500,6 @@
                   style="width: 100%"
                   ref="cascader"
                   :key="cascaderKey"
-                  @change="selDevChange"
                 ></el-cascader>
               </el-form-item>
             </el-col>
@@ -514,6 +513,7 @@
                   @change="eqStatusGet"
                   style="width: 100%"
                   id="deviceSel"
+                  @click.native="selChange"
                 >
                   <el-option
                     v-for="item in eqListData"
@@ -570,15 +570,15 @@
               <div class="topTxt">故障描述</div>
               <div class="tableTopHr" style="display: none"></div>
             </el-col>
-<!--            <el-col :span="8">-->
-<!--              <el-form-item label="故障代码" prop="faultCode">-->
-<!--                <el-input-->
-<!--                  v-model="form.faultCode"-->
-<!--                  :disabled="disstate"-->
-<!--                  :placeholder = holderFaultCode-->
-<!--                />-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
+            <!--            <el-col :span="8">-->
+            <!--              <el-form-item label="故障代码" prop="faultCode">-->
+            <!--                <el-input-->
+            <!--                  v-model="form.faultCode"-->
+            <!--                  :disabled="disstate"-->
+            <!--                  :placeholder = holderFaultCode-->
+            <!--                />-->
+            <!--              </el-form-item>-->
+            <!--            </el-col>-->
             <el-col :span="8">
               <el-form-item label="故障等级" prop="faultLevel">
                 <el-select
@@ -1220,7 +1220,6 @@ export default {
       }
     },
     eqStatusGet(e) {
-
       getEquipmentInfo(e).then((response) => {
         this.form.faultLocation = "";
         this.form.eqRunStatus = "";
@@ -1229,9 +1228,9 @@ export default {
           this.form.faultLocation = response.data[0].pile;
           this.form.eqRunStatus = typeof response.data[0].runStatus=="undefined"?"":response.data[0].runStatus;
           this.form.eqStatus = response.data[0].eq_status=="undefined"?"":response.data[0].eq_status;;
+          this.$forceUpdate();
           //this.$refs(this.form, "eqStatus", 1);
         }
-        this.$forceUpdate();
         // this.$modal.msgSuccess("修改成功");
         // this.open = false;
         // this.getList();
@@ -1397,43 +1396,31 @@ export default {
       );
     },
 
-    selDevChange(){
-      console.log("selDevChange", this.form.typeId)
-
-      if (this.form.tunnelId == "") {
-        this.$message.warning("请先选择所属隧道");
-        return;
+    /*设备名称点击事件*/
+    selChange() {
+      if (this.title != "故障详情") {
+        if (
+          this.form.tunnelId == null ||
+          typeof this.form.tunnelId == "undefined"
+        ) {
+          this.disstateDevice = true;
+          this.$modal.msgWarning("请先选择隧道");
+          return;
+        }
+        if (
+          this.form.typeId == null ||
+          typeof this.form.typeId == "undefined"
+        ) {
+          this.disstateDevice = true;
+          this.$modal.msgWarning("请先选择设备类型");
+          return;
+        } else {
+          this.disstateDevice = false;
+          this.getDevices();
+          //$("#deviceSel").attr("pointer-events", "none");
+        }
       }
-
-      this.form.eqId = null;
-      this.form.faultLocation = null;
-      this.getDevices();
     },
-
-    // /*设备名称点击事件*/
-    // selChange() {
-    //
-    //   if(this.title == "故障详情"){
-    //     return;
-    //   }
-    //
-    //   if(!this.form.tunnelId){
-    //     this.disstateDevice = true;
-    //     this.$modal.msgWarning("请先选择隧道");
-    //     return;
-    //   }
-    //
-    //   if(!this.form.tunnelId){
-    //     this.disstateDevice = true;
-    //     this.$modal.msgWarning("请先选择设备类型");
-    //     return;
-    //   }
-    //
-    //   this.disstateDevice = false;
-    //   this.getDevices();
-    //   this.$forceUpdate();
-    //
-    // },
 
     /*设备类型点击事件*/
     /*selEqTypeChange() {
@@ -1476,13 +1463,20 @@ export default {
     },
     /** 设备 */
     getDevices() {
+      if (this.form.tunnelId == "") {
+        this.$message.warning("请先选择所属隧道");
+        return;
+      }
+      if (this.form.typeId == "") {
+        this.$message.warning("请先选择设备类型");
+        return;
+      }
       listDevices({
         eqTunnelId: this.form.tunnelId,
         eqType: this.form.typeId,
       }).then((response) => {
-        this.disstateDevice = false;
         this.eqListData = response.rows;
-        this.$forceUpdate();
+        this.$forceUpdate()
       });
     },
 
@@ -1732,7 +1726,7 @@ export default {
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
       this.fileData.append("imgFileId", this.form.imgFileId);
-     // this.fileData.append("faultEscalationType",this.form.faultEscalationType);
+      // this.fileData.append("faultEscalationType",this.form.faultEscalationType);
       this.fileData.append("faultEscalationType",'0');
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
@@ -1866,9 +1860,9 @@ export default {
   .card-cols {
     margin-top: 10px;
     display: flex;
-   /* div {
-      width: 50%;
-    }*/
+    /* div {
+       width: 50%;
+     }*/
     .col-test {
       text-align: right;
       color: #79949c;

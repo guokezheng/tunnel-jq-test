@@ -210,6 +210,9 @@ public class SdEventServiceImpl implements ISdEventService {
             if(item.getVideoUrl()!=null){
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
+            //计算累计时间
+            String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.getEndTime()) == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.getEndTime()), DateUtils.parseDate(item.getStartTime()));
+            item.setContinuedTime(endDatePoor);
             SdTrafficImage image = new SdTrafficImage();
             image.setBusinessId(item.getId().toString());
             image.setImgType("1");
@@ -586,8 +589,22 @@ public class SdEventServiceImpl implements ISdEventService {
         String prevControlType = sdEvent.getPrevControlType();
         if(prevControlType == null || "".equals(prevControlType)){
             mapList = sdEventMapper.eventPopAll(sdEvent);
+            mapList.stream().forEach(item -> {
+                if(!"2".equals(item.get("prevControlType").toString())){
+                    //计算累计时间
+                    String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.get("endTime")) == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.get("endTime")), DateUtils.parseDate(item.get("startTime")));
+                    item.put("continuedTime",endDatePoor);
+                }
+            });
         }else if(PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(prevControlType) || PrevControlTypeEnum.ACTIVE_SAFETY.getCode().equals(prevControlType)){
             mapList = sdEventMapper.eventOrdinaryOrSecurity(sdEvent);
+            mapList.stream().forEach(item -> {
+                if(!"2".equals(item.get("prevControlType").toString())){
+                    //计算累计时间
+                    String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.get("endTime")) == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.get("endTime")), DateUtils.parseDate(item.get("startTime")));
+                    item.put("continuedTime",endDatePoor);
+                }
+            });
         }else {
             mapList = sdEventMapper.eventPopFault(sdEvent);
         }

@@ -942,7 +942,7 @@
               {{index+1}}设备巡检点:
             </el-col>-->
           <div class="topTxt">
-            {{ index + 1 }}&nbsp;&nbsp;&nbsp;&nbsp;、设备巡检点
+            {{ index + 1 }}&nbsp;&nbsp;&nbsp;&nbsp;、{{ pat.patrolType == '0' ? '设备巡检点' : '故障检修点' }}
           </div>
           <el-col
             :span="2"
@@ -1302,6 +1302,7 @@ export default {
       },
       //巡查点参数
       patrolNews: {
+          patrolType : "0",
           tunnelName: "",
           xcTime: "",
           bzId: "",

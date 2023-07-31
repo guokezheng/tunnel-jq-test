@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectSdStrategyVo">
-        select id, tunnel_id, strategy_name, strategy_type, strategy_state, strategy_info, warning_id, scheduler_time, job_relation_id,direction, create_by, create_time, update_by, update_time, is_automatic from sd_strategy
+        select sd_strategy.id, tunnel_id, strategy_name, strategy_type, strategy_state, strategy_info, warning_id, scheduler_time, job_relation_id,direction, create_by, create_time, update_by, update_time, is_automatic from sd_strategy
     </sql>
 
     <select id="selectSdStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
@@ -327,5 +327,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="id != null">
             AND id <![CDATA[ <> ]]> #{id}
         </if>
+    </select>
+
+    <select id="getSdStrategyAll" parameterType="SdStrategy" resultMap="SdStrategyResult">
+        <include refid="selectSdStrategyVo"/>
+        LEFT JOIN sd_strategy_rl ON sd_strategy_rl.strategy_id = sd_strategy.id
+        <where>
+        1=1 and  (sd_strategy_rl.eq_type_id ="9" or sd_strategy_rl.eq_type_id ="7")
+        <if test="strategyGroup != null  and strategyGroup != ''"> and sd_strategy.strategy_group = #{strategyGroup}</if>
+        <if test="strategyType != null  and strategyType != ''"> and sd_strategy.strategy_type = #{strategyType}</if>
+        </where>
     </select>
 </mapper>

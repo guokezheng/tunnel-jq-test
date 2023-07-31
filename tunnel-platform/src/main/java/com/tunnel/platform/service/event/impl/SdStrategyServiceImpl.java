@@ -1563,6 +1563,49 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         return AjaxResult.success(sdStrategies);
     }
 
+    @Override
+    public List<SdStrategy> getSdStrategyAll(SdStrategy sdStrategy) {
+        List<SdStrategy> sdStrategyAll = sdStrategyMapper.getSdStrategyAll(sdStrategy);
+        sdStrategyAll.forEach(sdStrategyitem -> {
+            //定时策略-执行时间
+            if(StringUtils.isNotBlank(sdStrategyitem.getSchedulerTime())){
+                sdStrategyitem.setExecDate(CronUtil.CronConvertDate(sdStrategyitem.getSchedulerTime()));
+            }
+            //定时策略-执行日期
+            if(StringUtils.isNotBlank(sdStrategyitem.getSchedulerTime())) {
+                sdStrategyitem.setExecTime(CronUtil.CronConvertDateTime(sdStrategyitem.getSchedulerTime()));
+            }
+
+        });
+
+        // 使用流对实体集合按照时间属性排序
+        List<SdStrategy> sortedEntities = sdStrategyAll.stream()
+                .sorted(Comparator.comparing(SdStrategy::getExecTime))
+                .collect(Collectors.toList());
+
+
+        return sortedEntities;
+    }
+
+    public static void main(String[] args) {
+        List<SdStrategy> entities = new ArrayList<>();
+        SdStrategy sdStrategy = new SdStrategy();
+        sdStrategy.setExecTime("10:30");
+        entities.add(sdStrategy);
+        SdStrategy sdStrategy1 = new SdStrategy();
+        sdStrategy.setExecTime("08:15");
+        entities.add(sdStrategy1);
+
+        // 使用流对实体集合按照时间属性排序
+        List<SdStrategy> sortedEntities = entities.stream()
+                .sorted(Comparator.comparing(SdStrategy::getExecTime))
+                .collect(Collectors.toList());
+
+        // 打印排序后的实体集合
+        for (SdStrategy entity : sortedEntities) {
+            System.out.println(entity.getExecTime());
+        }
+    }
     /**
      * 更新事件处置记录表状态
      * @param processId

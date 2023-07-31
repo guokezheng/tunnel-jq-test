@@ -66,6 +66,10 @@ public class SdEnhancedLightingConfig extends BaseEntity
     @Excel(name = "是否开启车流量模式 0 关闭  1开启")
     private Integer isTrafficVolume;
 
+    /** 隧道方向 */
+    @Excel(name = "上行下行")
+    private String direction;
+
     public String getTunnelName() {
         return tunnelName;
     }
@@ -181,6 +185,14 @@ public class SdEnhancedLightingConfig extends BaseEntity
     public Integer getIsTrafficVolume()
     {
         return isTrafficVolume;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     @Override

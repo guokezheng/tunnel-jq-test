@@ -215,4 +215,15 @@ public class SdStrategyController extends BaseController
     public AjaxResult getStrategyData(SdStrategy strategy){
         return sdStrategyService.getStrategyData(strategy);
     }
+
+    /**
+     * 查询所有定时策略详情信息
+     */
+    @GetMapping("/getSdStrategyAll")
+    public TableDataInfo<List<SdStrategy>> getSdStrategyAll(SdStrategy sdStrategy)
+    {
+        startPage();
+        List<SdStrategy> list = sdStrategyService.getSdStrategyAll(sdStrategy);
+        return getDataTable(list);
+    }
 }

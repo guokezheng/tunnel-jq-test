@@ -316,8 +316,19 @@
     // 联控策略弹窗
     .celueDialog,.strategyDialog{
       .el-dialog__body{
-        max-height: 70vh;
+        max-height: 83vh;
         overflow: auto;
+      }
+      //单选框
+      .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+        background: #00aaf2 !important;
+        border-radius: 20px !important;
+        color:#fff;
+      }
+      .el-radio-button__inner{
+        background: transparent;
+        border: 1px solid transparent;
+        color: #fff;
       }
       .menu{
         background-color: #034A77 !important;
@@ -362,6 +373,83 @@
         background-color: #fff !important;
       }
     }
+
+      // 定时控制心页面
+      .timedControl{
+        .el-dialog__body{
+          max-height: 95vh;
+          overflow: hidden;
+        }
+        .el-dialog:not(.is-fullscreen){
+          margin-top: 1vh !important;
+        }
+        //选项卡样式
+        .el-tabs__item{
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          padding-top: 0px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+        //选项卡点击
+        .el-tabs__item.is-active{
+          color:#fff !important;
+          background-color: #00AAF2;
+        }
+        //单选框
+        .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+          background: #00aaf2 !important;
+          border-radius: 20px !important;
+          color:#fff;
+        }
+        .el-radio-button__inner{
+          background: transparent;
+          border: 1px solid transparent;
+          color: #fff;
+        }
+        .menu{
+          background-color: #034A77 !important;
+        }
+        .planBox .el-col {
+          margin-right: 4px;
+          .el-form-item, .el-select{
+            width: 100%;
+            margin-right: 0px;
+            .el-form-item__content{
+              width: 100%;
+            }
+          }
+        }
+        .buttonBox{
+          border:solid 1px #094875;
+          .el-button--medium{
+            padding: 0;
+          }
+        }
+        .el-radio{
+          background: #034A77;
+          border: none;
+          border-radius: 2px;
+        }
+        .el-radio.is-bordered.is-checked{
+          background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+        }
+        .el-radio__input.is-checked + .el-radio__label{
+          color: #fff;
+        }
+        .el-radio--medium.is-bordered .el-radio__inner{
+          background: #034A77;
+        }
+        .el-radio__input.is-checked .el-radio__inner{
+          border: solid 1px #fff;
+          background: transparent;
+        }
+        .el-radio__inner::after{
+          width: 8px;
+          height: 8px;
+          background-color: #fff !important;
+        }
+      }
     .tunnelRelationDialog{
       .dialogButton{
         background: #034A77;

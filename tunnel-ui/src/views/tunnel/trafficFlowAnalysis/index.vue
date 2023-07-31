@@ -251,6 +251,7 @@ export default {
     },
     // 日期变更
     examTimesClick(key){
+      debugger
       // 季度
       var dateRange = [];
       if(key == 'quarter'){

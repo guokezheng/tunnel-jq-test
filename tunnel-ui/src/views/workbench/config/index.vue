@@ -1849,7 +1849,7 @@
         class="paginationWorkbench"
       />
     </el-dialog>
-    <timingTask :show="timingTaskShow"></timingTask>
+    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>
   </div>
 </template>
 
@@ -5356,8 +5356,9 @@ export default {
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
     },
-    strategyPage1() {
-      this.timingTaskShow = !this.timingTaskShow;
+    strategyPage1(){
+      this.timingTaskShow = !this.timingTaskShow
+      this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;

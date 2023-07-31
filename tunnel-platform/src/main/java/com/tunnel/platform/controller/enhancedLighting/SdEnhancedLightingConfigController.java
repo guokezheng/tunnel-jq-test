@@ -83,7 +83,7 @@ public class SdEnhancedLightingConfigController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody SdEnhancedLightingConfig sdEnhancedLightingConfig)
     {
-        return toAjax(sdEnhancedLightingConfigService.insertSdEnhancedLightingConfig(sdEnhancedLightingConfig));
+        return AjaxResult.success(sdEnhancedLightingConfigService.insertSdEnhancedLightingConfig(sdEnhancedLightingConfig));
     }
 
     /**

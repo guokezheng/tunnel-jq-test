@@ -16,6 +16,14 @@ export function listStrategy(query) {
     params: query
   })
 }
+//查询所有定时策略详情信息
+export function getSdStrategyAll(query) {
+  return request({
+    url: '/strategy/getSdStrategyAll',
+    method: 'get',
+    params: query
+  })
+}
 
 // 查询控制策略详细
 export function getStrategy(id) {

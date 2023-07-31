@@ -40,7 +40,7 @@ public interface ISdEnhancedLightingConfigService
      * @param sdEnhancedLightingConfig 【加强照明配置】
      * @return 结果
      */
-    public int insertSdEnhancedLightingConfig(SdEnhancedLightingConfig sdEnhancedLightingConfig);
+    public SdEnhancedLightingConfig insertSdEnhancedLightingConfig(SdEnhancedLightingConfig sdEnhancedLightingConfig);
 
     /**
      * 修改【加强照明配置】

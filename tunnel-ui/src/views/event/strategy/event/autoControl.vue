@@ -133,9 +133,10 @@
                   multiple
                   collapse-tags
                   style="width: 100%"
-                  @visible-change="selectDataItem"
+
                   @change="optionDataItem()"
                 >
+<!--                  @visible-change="selectDataItem"-->
                   <!-- @change="selectDataItem()" -->
                   <el-option
                     v-for="item in deviceName"
@@ -1073,6 +1074,7 @@ export default {
       }
     },
     selectDataItem(e) {
+      debugger
       console.log(this.strategyForm.triggers.deviceId, "111111111");
       if (e == true) {
         if (!this.strategyForm.tunnelId) {
@@ -1089,6 +1091,7 @@ export default {
     },
     getListItem() {
       //给设备数据项赋值
+      debugger
       console.log(this.strategyForm.triggers.deviceId, "00000000000");
       if (this.strategyForm.triggers.deviceId) {
         listItem({

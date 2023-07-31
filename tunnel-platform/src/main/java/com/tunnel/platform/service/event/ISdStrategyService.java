@@ -160,4 +160,12 @@ public interface ISdStrategyService {
      */
     AjaxResult getStrategyData(SdStrategy strategy);
 
+    /**
+     * 查询所有定时策略详情信息
+     *
+     * @param sdStrategy 控制策略
+     * @return 控制策略集合
+     */
+    List<SdStrategy> getSdStrategyAll(SdStrategy sdStrategy);
+
 }

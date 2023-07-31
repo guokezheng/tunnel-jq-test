@@ -140,4 +140,13 @@ public interface SdStrategyMapper
      * @return
      */
     int checkStrName(SdStrategy strategy);
+
+
+    /**
+     * 查询所有定时策略详情信息
+     *
+     * @param sdStrategy 控制策略
+     * @return 控制策略集合
+     */
+    public List<SdStrategy> getSdStrategyAll(SdStrategy sdStrategy);
 }

@@ -18,6 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="maxTrafficFlow"    column="max_traffic_flow"    />
         <result property="isStatus"    column="is_status"    />
         <result property="isTrafficVolume"    column="is_traffic_volume"    />
+        <result property="direction"    column="direction"    />
     </resultMap>
 
     <sql id="selectSdEnhancedLightingConfigVo">
@@ -45,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isStatus != null "> and elc.is_status = #{isStatus}</if>
             <if test="isTrafficVolume != null "> and elc.is_traffic_volume = #{isTrafficVolume}</if>
             <if test="tunnelName != null and tunnelName != ''"> and INSTR(t.tunnel_name, #{tunnelName}) > 0</if>
+            <if test="direction != null "> and direction = #{direction}</if>
         </where>
     </select>
     
@@ -53,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <insert id="insertSdEnhancedLightingConfig" parameterType="SdEnhancedLightingConfig" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSdEnhancedLightingConfig" parameterType="SdEnhancedLightingConfig"  useGeneratedKeys="true" keyProperty="id">
         insert into sd_enhanced_lighting_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">tunnel_id,</if>
@@ -67,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="maxTrafficFlow != null">max_traffic_flow,</if>
             <if test="isStatus != null">is_status,</if>
             <if test="isTrafficVolume != null">is_traffic_volume,</if>
+            <if test="direction != null "> direction</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -80,6 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="maxTrafficFlow != null">#{maxTrafficFlow},</if>
             <if test="isStatus != null">#{isStatus},</if>
             <if test="isTrafficVolume != null">#{isTrafficVolume},</if>
+            <if test="direction != null "> #{direction}</if>
         </trim>
     </insert>
 
@@ -97,6 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="maxTrafficFlow != null">max_traffic_flow = #{maxTrafficFlow},</if>
             <if test="isStatus != null">is_status = #{isStatus},</if>
             <if test="isTrafficVolume != null">is_traffic_volume = #{isTrafficVolume},</if>
+            <if test="direction != null ">  direction = #{direction}</if>
         </trim>
         where id = #{id}
     </update>
@@ -125,6 +130,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="maxLuminanceRange != null "> and max_luminance_range = #{maxLuminanceRange}</if>
             <if test="minLuminanceRange != null "> and min_luminance_range = #{minLuminanceRange}</if>
             <if test="maxTrafficFlow != null "> and max_traffic_flow = #{maxTrafficFlow}</if>
+            <if test="direction != null "> and direction = #{direction}</if>
         </where>
     </select>
 </mapper>

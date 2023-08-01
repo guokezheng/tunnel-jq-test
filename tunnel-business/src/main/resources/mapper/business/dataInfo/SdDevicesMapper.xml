@@ -1367,7 +1367,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             B.item_name,
             A.function_json as equipment_state,
             C.is_control as control,
-            D.`data` as state
+            D.`data` as state,
+            B.unit as unit
         from
             sd_device_point A
                 left join sd_device_type_item B on
@@ -1378,7 +1379,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                         A.item_id = D.item_id
                     and A.eq_id = D.item_id
         WHERE
-            A.eq_id = #{devId} and C.is_reserved = 1
+            A.eq_id = #{devId} and A.is_reserved = 1
     </select>
 
     <select id="getXfpDevicesInfo" parameterType="java.lang.String" resultMap="SdDevicesResult">

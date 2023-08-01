@@ -16,19 +16,20 @@ public class SdDeviceTypeItem extends BaseEntity
     /** 主键 */
     private Long id;
 
-    /** 数据项编号 */
-    @Excel(name = "数据项编号")
-    private String itemCode;
+
+    @Excel(name = "设备类型")
+    public String typeName;
 
     /** 数据项名称 */
     @Excel(name = "数据项名称")
     private String itemName;
 
+    /** 数据项编号 */
+    @Excel(name = "数据项编号")
+    private String itemCode;
+
     /** 设备类型id */
     private Long deviceTypeId;
-
-    @Excel(name = "设备类型")
-    public String typeName;
 
     /** 单位 */
     @Excel(name = "单位名称")

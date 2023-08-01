@@ -142,11 +142,9 @@
         width="68"
         align="center"
       ></el-table-column>
-      <el-table-column label="数据项编号" align="center" prop="itemCode" />
+      <el-table-column label="设备类型" align="center" prop="typeName"/>
       <el-table-column label="数据项名称" align="center" prop="itemName" />
-      <el-table-column label="设备类型" align="center" prop="typeName">
-      </el-table-column>
-
+      <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="单位名称" align="center" prop="unit" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
@@ -195,12 +193,6 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="数据项编号" prop="itemCode">
-          <el-input v-model="form.itemCode" placeholder="请输入数据项编号" />
-        </el-form-item>
-        <el-form-item label="数据项名称" prop="itemName">
-          <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
-        </el-form-item>
         <el-form-item label="设备类型" prop="deviceTypeId">
           <el-select
             v-model="form.deviceTypeId"
@@ -215,6 +207,12 @@
             >
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="数据项名称" prop="itemName">
+          <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
+        </el-form-item>
+        <el-form-item label="数据项编号" prop="itemCode">
+          <el-input v-model="form.itemCode" placeholder="请输入数据项编号" />
         </el-form-item>
         <el-form-item label="单位" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位" />

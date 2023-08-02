@@ -19,11 +19,11 @@ public class SdConfig extends BaseEntity
     private Long id;
 
     /** 所属部门名称 */
-    @Excel(name = "所属部门名称")
+    @Excel(name = "所属部门")
     private String deptId;
 
 
-    @Excel(name = "页面配置模板", dictType = "sd_config_module")
+    @Excel(name = "所属模块", dictType = "sd_config_module")
     private String configModule;
 
     /** 页面名称 */
@@ -32,11 +32,11 @@ public class SdConfig extends BaseEntity
 
 
     /** 页面编码 */
-    @Excel(name = "页面编码")
+    @Excel(name = "页面标识符")
     private String code;
 
     /** 页面地址 */
-    @Excel(name = "页面地址")
+    @Excel(name = "页面路径")
     private String url;
 
 

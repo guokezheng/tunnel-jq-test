@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.energyManagement.SdEnergyAnalysisElectricityBillMapper">
+    
+    <resultMap type="EnergyAnalysisElectricityBill" id="EnergyAnalysisElectricityBillResult">
+        <result property="id"    column="id"    />
+        <result property="deptCode"    column="dept_code"    />
+        <result property="statisticsType"    column="statistics_type"    />
+        <result property="statisticsDate"    column="statistics_date"    />
+        <result property="splitTimeType"    column="split_time_type"    />
+        <result property="value"    column="value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectEnergyAnalysisElectricityBillVo">
+        select id, dept_code, statistics_type, statistics_date, split_time_type, value, create_time, update_time from energy_analysis_electricity_bill
+    </sql>
+
+    <select id="selectEnergyAnalysisElectricityBillList" parameterType="EnergyAnalysisElectricityBill" resultMap="EnergyAnalysisElectricityBillResult">
+        <include refid="selectEnergyAnalysisElectricityBillVo"/>
+        <where>  
+            <if test="deptCode != null  and deptCode != ''"> and dept_code = #{deptCode}</if>
+            <if test="statisticsType != null "> and statistics_type = #{statisticsType}</if>
+            <if test="statisticsDate != null "> and statistics_date = #{statisticsDate}</if>
+            <if test="splitTimeType != null  and splitTimeType != ''"> and split_time_type = #{splitTimeType}</if>
+            <if test="value != null "> and value = #{value}</if>
+        </where>
+    </select>
+    
+    <select id="selectEnergyAnalysisElectricityBillById" parameterType="Long" resultMap="EnergyAnalysisElectricityBillResult">
+        <include refid="selectEnergyAnalysisElectricityBillVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEnergyAnalysisElectricityBill" parameterType="java.util.List">
+        insert into energy_analysis_electricity_bill
+        (dept_code,statistics_type,statistics_date,split_time_type,value,create_time,update_time)
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.deptCode}, #{item.statisticsType}, #{item.statisticsDate}, #{item.splitTimeType}, #{item.value}, #{item.createTime}, #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateEnergyAnalysisElectricityBill" parameterType="EnergyAnalysisElectricityBill">
+        update energy_analysis_electricity_bill
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptCode != null">dept_code = #{deptCode},</if>
+            <if test="statisticsType != null">statistics_type = #{statisticsType},</if>
+            <if test="statisticsDate != null">statistics_date = #{statisticsDate},</if>
+            <if test="splitTimeType != null">split_time_type = #{splitTimeType},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEnergyAnalysisElectricityBillById" parameterType="Long">
+        delete from energy_analysis_electricity_bill where id = #{id}
+    </delete>
+
+    <delete id="deleteEnergyAnalysisElectricityBillByIds" parameterType="String">
+        delete from energy_analysis_electricity_bill where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

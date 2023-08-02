@@ -4,6 +4,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.energyManagement.EnergySjfxElectricityMapper">
 
+    <resultMap id="eneDataMap" type="energyAnalysisElectricityBill">
+        <result column="deptCode" property="deptCode"/>
+        <result column="tunnelName" property="tunnelName"/>
+        <result column="rt" property="rt"/>
+        <association property="map" javaType="map" autoMapping="true"/>
+    </resultMap>
+
+    <resultMap id="eneDataResuleMap" type="energyAnalysisElectricityBill">
+        <result column="deptCode" property="deptCode"/>
+        <result column="tunnelName" property="tunnelName"/>
+        <collection property="eneDataList" ofType="energyAnalysisElectricityBill">
+            <result column="rt" property="rt"/>
+            <result column="splitTimeType" property="splitTimeType"/>
+            <result column="value" property="value"/>
+        </collection>
+    </resultMap>
+
     <select id="getSiteByDateType" resultType="com.tunnel.business.domain.energyManagement.ElectricityData">
         select es.tunnel_id id,es.energy_value value,CASE es.statistics_type
         WHEN 0 THEN DATE_FORMAT(es.create_time,'%Y-%m-%d %H')
@@ -188,6 +205,46 @@
      from energy_configcenter_electricity_price order by `month` desc limit 1
   </select>
 
-
+  <select id="getElectricityBillByDept" resultMap="eneDataResuleMap">
+      SELECT
+          ea.dept_code AS deptCode,
+          st.tunnel_name AS tunnelName,
+          DATE_FORMAT( ea.statistics_date,
+            <choose>
+             <when test="statisticsType == 1">'%Y-%m-%d'</when>
+             <when test="statisticsType == 2">'%Y-%m'</when>
+            </choose>
+          ) AS rt,
+          ea.split_time_type AS splitTimeType,
+          sum( ea.`value` ) AS value
+      FROM
+          energy_analysis_electricity_bill ea
+          LEFT JOIN sd_tunnels st ON ea.dept_code = st.tunnel_id
+      WHERE
+          ea.dept_code in
+      <foreach collection="deptCodeList" item="item" open="(" close=")" separator=",">
+          #{item}
+      </foreach>
+        AND ea.statistics_type = #{statisticsType}
+        AND ea.statistics_date <![CDATA[ >= ]]> STR_TO_DATE(#{baseTime},
+        <choose>
+            <when test="statisticsType == 1">'%Y-%m'</when>
+            <when test="statisticsType == 2">'%Y'</when>
+        </choose>
+        )
+        AND ea.statistics_date <![CDATA[ < ]]> STR_TO_DATE(
+        date_add( #{baseTime},
+        <choose>
+            <when test="statisticsType == 1"> interval 1 month), '%Y-%m'</when>
+            <when test="statisticsType == 2"> interval 1 year), '%Y'</when>
+        </choose>
+        )
+      GROUP BY ea.split_time_type,ea.dept_code,DATE_FORMAT( ea.statistics_date,
+      <choose>
+          <when test="statisticsType == 1">'%Y-%m-%d'</when>
+          <when test="statisticsType == 2">'%Y-%m'</when>
+      </choose>
+      )
+  </select>
 
 </mapper>

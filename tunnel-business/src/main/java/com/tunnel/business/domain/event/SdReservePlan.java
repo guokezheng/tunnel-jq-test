@@ -41,12 +41,24 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("预案类型")
     private String category;
 
+    @Excels({
+            @Excel(name = "隧道名称", targetAttr = "tunnelName"),
+    })
+    @ApiModelProperty("隧道对象")
+    private SdTunnels sdTunnels;
+
+    @Excel(name = "方向")
+    private String fx;
+
     /** 预案类型对象 */
     @Excels({
         @Excel(name = "事件类型", targetAttr = "eventType"),
     })
     @ApiModelProperty("预案类型对象")
     private SdEventType eventType;
+
+    @Excel(name = "事件等级")
+    private String dj;
 
     @ApiModelProperty("预案文件")
     private List<SdReservePlanFile> pFileList;
@@ -58,15 +70,15 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("策略对象")
     private SdStrategy strategy;
 
-    /** 预案描述 */
-    @Excel(name = "预案描述")
-    @ApiModelProperty("预案描述")
-    private String planDescription;
-
     /** 预案名称 */
     @Excel(name = "预案名称")
     @ApiModelProperty("预案名称")
     private String planName;
+
+    /** 预案描述 */
+    @Excel(name = "预案描述")
+    @ApiModelProperty("预案描述")
+    private String planDescription;
 
     /** 预案文件ID */
     /*@Excel(name = "预案文件ID")*/
@@ -84,16 +96,10 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("隧道分区对象")
     private SdTunnelSubarea sdTunnelSubarea;
 
-    @Excels({
-            @Excel(name = "隧道名称", targetAttr = "tunnelName"),
-    })
-    @ApiModelProperty("隧道对象")
-    private SdTunnels sdTunnels;
 
-    @Excel(name = "方向")
-    private String fx;
-    @Excel(name = "事件等级")
-    private String dj;
+
+
+
 
     @ApiModelProperty("管控方向")
     private String controlDirection;

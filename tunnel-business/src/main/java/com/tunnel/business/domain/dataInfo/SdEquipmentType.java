@@ -38,6 +38,10 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     @ApiModelProperty("设备类型默认图标ID")
     private String iconFileId;
 
+    @Excel(name = "是否可控", readConverterExp = "0=否,1=是")
+    @ApiModelProperty("是否可控1：是 0：否")
+    private String isControl;
+
     /** 图片宽度 */
     @Excel(name = "图标宽度(px)")
     @ApiModelProperty("图片宽度")
@@ -46,10 +50,6 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     @Excel(name = "图标高度(px)")
     @ApiModelProperty("图片高度")
     private String iconHeight;
-
-    @Excel(name = "是否可控", readConverterExp = "0=否,1=是")
-    @ApiModelProperty("是否可控1：是 0：否")
-    private String isControl;
 
     @ApiModelProperty("所属模块")
     private String bigType;

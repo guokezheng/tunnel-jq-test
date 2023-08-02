@@ -968,7 +968,7 @@
         </el-form-item>
         <el-row
           style="margin-top: 10px"
-          v-show="[7, 9, 30, 31, 45].includes(batchManageForm.eqType)"
+          v-show="[7, 9, 30, 31].includes(batchManageForm.eqType)"
         >
           <el-col :span="15">
             <el-form-item label="亮度调整:">
@@ -1030,7 +1030,7 @@
       :close-on-click-modal="false"
       :visible.sync="operationLogDialog"
       :before-close="cancel"
-      width="1000px"
+      width="1100px"
       :destroy-on-close="true"
       append-to-body
       v-dialogDrag
@@ -1055,7 +1055,7 @@
         <el-col :span="10" :offset="10">
           <div class="grid-content bg-purple" ref="main">
             <el-input
-              placeholder="请输入登录地址、用户名称，回车搜索"
+              placeholder="请输入用户名称、登录地址，回车搜索"
               v-model="operationParam_xt.ipaddr"
               @keyup.enter.native="handleQueryOperationParam"
               size="small"
@@ -1262,20 +1262,20 @@
           label="用户名称"
           align="center"
           prop="userName"
-          width="70"
+          width="80"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="登录地址"
           align="center"
           prop="ipaddr"
-          width="100"
+          width="120"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="登录地点"
           align="center"
-          width="70"
+          width="90"
           prop="loginLocation"
           :show-overflow-tooltip="true"
         />
@@ -1283,7 +1283,7 @@
           label="浏览器"
           align="center"
           prop="browser"
-          width="100"
+          width="110"
           :show-overflow-tooltip="true"
         />
         <el-table-column label="操作系统" align="center" prop="os" />
@@ -1313,7 +1313,7 @@
           align="center"
           prop="loginTime"
           sortable
-          width="150"
+          width="170"
         >
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.loginTime) }}</span>
@@ -1353,22 +1353,22 @@
           label="设备名称"
           align="center"
           prop="eqName.eqName"
-          width="120"
+          width="130"
           :show-overflow-tooltip="true"
         />
-        <el-table-column label="桩号" align="center" prop="pile" />
+        <el-table-column label="桩号" align="center" prop="pile" width="120"/>
         <el-table-column
           label="操作状态"
           align="center"
           prop="stateName.stateName"
-          width="70"
+          width="130"
           :show-overflow-tooltip="true"
         />
         <el-table-column
           label="控制方式"
           align="center"
           prop="controlType"
-          width="80"
+          width="90"
           :show-overflow-tooltip="true"
           :formatter="controlTypeFormat"
         />
@@ -1376,7 +1376,7 @@
           label="操作结果"
           align="center"
           prop="state"
-          width="70"
+          width="80"
         />
         <el-table-column label="操作地址" align="center" prop="operIp" />
         <el-table-column
@@ -2796,15 +2796,16 @@ export default {
           this.batchManageForm.frequency = 1;
           this.min = 1;
         }
-      } else if (this.itemEqType == 45) {
-        if (newVal == "") {
-          this.min = 0;
-          this.batchManageForm.brightness = 0;
-        } else {
-          this.batchManageForm.brightness = 1;
-          this.min = 1;
-        }
-      }
+      } 
+      // else if (this.itemEqType == 45) {
+      //   if (newVal == "") {
+      //     this.min = 0;
+      //     this.batchManageForm.brightness = 0;
+      //   } else {
+      //     this.batchManageForm.brightness = 1;
+      //     this.min = 1;
+      //   }
+      // }
       // else {
       //   if (this.batchManageForm.brightness == 0) {
       //     this.min = 1;

@@ -566,7 +566,7 @@
                 style="width: 100%"
                 size="small"
                 clearable
-                placeholder="请选择设备类型"
+                placeholder="请选择设备类型" 
               ></el-cascader>
           </el-col>
           <el-col :span="8" >
@@ -1629,16 +1629,16 @@ export default {
       ).then((res) => {
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
-        if (this.boxList != []) {
+        if (this.boxList.length > 0) {
           console.log(this.boxList,"this.boxList")
           console.log(this.tableData1, "this.tableData1");
           // if (this.boxList[0].eq_type == deviceType) {
+          this.$refs.multipleTable1.clearSelection();
           this.tableData1.forEach((item) => {
             this.boxList.forEach((row) => {
               const eq_id = row.eq_id.slice(0, -2);
               if (item.eq_id == eq_id) {
                 this.$nextTick(() => {
-                  this.$refs.multipleTable1.clearSelection();
                   this.$refs.multipleTable1.toggleRowSelection(item, true);
                 });
               }
@@ -1670,19 +1670,20 @@ export default {
         this.pageNum,
         this.pageSize
       ).then((res) => {
-        console.log(res, "获取故障table");
+        console.log(res, "获取故障table getGzTable");
         console.log(this.boxList,"boxList");
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
-        if (this.boxList != []) {
+        if (this.boxList.length > 0) {
           // console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
+          this.$refs.multipleTable2.clearSelection();
+
           this.tableData2.forEach((item) => {
             this.boxList.forEach((row) => {
               const eq_id = row.eq_id.slice(0, -2);
               if (item.eq_id == eq_id) {
                 this.$nextTick(() => {
-                  this.$refs.multipleTable2.clearSelection();
                   this.$refs.multipleTable2.toggleRowSelection(item, true);
                 });
               }
@@ -1746,7 +1747,7 @@ export default {
         this.pageNum,
         this.pageSize
       ).then((res) => {
-        console.log(res, "获取故障table");
+        console.log(res, "获取故障table 故障节点单击事件");
         console.log(
           "==================getFaultListthis.boxList==" + this.boxList,
           "boxList"
@@ -1928,6 +1929,7 @@ export default {
         devicesList: "",
       };
       this.boxList = [];
+      this.dialogSelection = []
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -1948,6 +1950,7 @@ export default {
       this.handleQuery();
     },
     show1() {
+      this.getEqType()
       //this.tableData1 = null
       if (typeof this.form.tunnelId == "undefined") {
         return this.$modal.msgWarning("请选择所属隧道");
@@ -1983,7 +1986,12 @@ export default {
       this.search2Value = ''
       this.options2value = "0";
       this.tunnelId = this.form.tunnelId;
-
+      console.log(this.boxList,"show2")
+      this.boxList.forEach((item) => {
+        this.$nextTick(() => {
+          this.$refs.multipleTable2.toggleRowSelection(item, true);
+        });
+      });
       treeselect(this.tunnelId).then((response) => {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
@@ -2011,12 +2019,14 @@ export default {
     cancelDetermine1() {
       this.dialogSelection = [];
       this.isShow1 = false;
+      this.eqTypeData = []
     },
     cancelDetermine2() {
       this.dialogSelection = [];
       this.isShow2 = false;
     },
     determine1() {
+      this.eqTypeData = []
       this.isShow1 = false;
       this.dialogSelection.forEach((item) => {
         item.eq_id = item.eq_id + "_1";
@@ -2064,14 +2074,14 @@ export default {
       getList(id).then((response) => {
         that.form = response.data.task[0];
         this.boxList = response.data.list;
-        console.log("handleUpdate=============" + this.boxList);
+        console.log(this.boxList,"修改按钮操作boxList");
         // this.tableData1 = response.data.devicesPatrolList;//巡检点
         // this.tableData2 = response.data.faultPatrolList;//故障点
-        this.boxList.forEach((item) => {
-          this.$nextTick(() => {
-            this.$refs.multipleTable2.toggleRowSelection(item, true);
-          });
-        });
+        // this.boxList.forEach((item) => {
+        //   this.$nextTick(() => {
+        //     this.$refs.multipleTable2.toggleRowSelection(item, true);
+        //   });
+        // });
         this.boxList.forEach((item) => {
           if (item.patrol_type == 0) {
             item.eq_id = item.eq_id + "_1";
@@ -2117,12 +2127,12 @@ export default {
       this.$modal
         .confirm("是否确认废止任务？")
         .then(() => {
-          if (id != null) {
-            abolishList(id).then((response) => {
-              this.$modal.msgSuccess("废止成功");
-              this.getList();
-            });
-          }
+      if (id != null) {
+        abolishList(id).then((response) => {
+          this.$modal.msgSuccess("废止成功");
+          this.getList();
+        });
+      }
         })
         .catch(() => {
         });

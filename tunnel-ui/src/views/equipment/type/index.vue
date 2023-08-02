@@ -580,7 +580,7 @@ export default {
     getList() {
       this.loading = true;
       this.boxShow = false;
-      listType().then((response) => {
+      listType(this.queryParams).then((response) => {
         console.log(response.rows, "列表");
         this.typeList = response.rows;
         this.total = response.total;

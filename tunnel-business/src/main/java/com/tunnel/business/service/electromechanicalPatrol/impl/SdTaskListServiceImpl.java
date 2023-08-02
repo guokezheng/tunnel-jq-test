@@ -154,7 +154,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long diff = 0;
         if(taskList.getTask()== null){//完结，已超时的情况
-            taskList.setTask(TaskStatus.YIWANJIE.getName()+","+TaskStatus.YICHAOSHI.getName());
+           // taskList.setTask(TaskStatus.YIWANJIE.getName()+","+TaskStatus.YICHAOSHI.getName());
+            taskList.setTask(TaskStatus.YIWANJIE.getName());
         }else if(taskList.getEndPlantime()!=null&&!"".equals(taskList.getEndPlantime())){
             String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
             long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
@@ -1083,6 +1084,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                         long time = sdf.parse(endPlantime, new ParsePosition(0)).getTime();
                         diff = System.currentTimeMillis() - time;
                         if((taskStatus.equals(TaskStatus.DAIXUNCHA.getName()))||(taskStatus.equals(TaskStatus.XUNCHAZHONG.getName()))) {
+                            map.put("taskStatus",map.get("taskStatus")+","+TaskStatus.YICHAOSHI.getCode());
                             if (diff > 0) {
                                 taskInfoMap.put("ifchaosgu", TaskStatus.YICHAOSHI.getName());
                             } else {

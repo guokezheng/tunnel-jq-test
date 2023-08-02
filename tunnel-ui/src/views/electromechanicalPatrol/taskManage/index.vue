@@ -563,7 +563,7 @@
                 style="width: 100%"
                 size="small"
                 clearable
-                placeholder="请选择设备类型" 
+                placeholder="请选择设备类型"
               ></el-cascader>
           </el-col>
           <el-col :span="8" >
@@ -984,16 +984,22 @@
             <div>设备运行状态：</div>
             <span>{{ pat.runStatus }}</span>
           </el-col>
-          <el-col :span="8">
-            <div>设备描述：</div>
-            <span>{{ pat.eqFaultDescription }}</span>
-          </el-col>
           <el-col>
             <div style="width:12%">现场情况照片：</div>
             <div v-for="(pic, index) in pat.iFileList" :key="index" style = "padding-right: 30px;">
               <img :src="pic.imgUrl"  @click="openPic(pic.imgUrl)"/>
             </div>
           </el-col>
+          <el-col :span="24" style="display: inline-block">
+            <div style="display: inline-block">设备描述：</div>
+            <span style="width: calc(100% - 110px); display: inline-flex">{{
+                pat.eqFaultDescription == "null" ? "" : pat.eqFaultDescription
+              }}</span>
+          </el-col>
+<!--          <el-col :span="8">
+            <div>设备描述：</div>
+            <span>{{ pat.eqFaultDescription }}</span>
+          </el-col>-->
         </el-row>
         <!-- </div> -->
       </div>
@@ -1020,12 +1026,18 @@
             <span>{{ tas.taskCxtime }}</span>
             <span :class="{ active: isActive }">{{ tas.ifchaosgu }}</span>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="24" style="display: inline-block">
+            <div style="display: inline-block">现场情况描述：</div>
+            <span style="width: calc(100% - 110px); display: inline-flex">{{
+                tas.siteDescription == "null" ? "" : tas.siteDescription
+              }}</span>
+          </el-col>
+<!--          <el-col :span="8">
             <div>现场情况描述：</div>
             <span>{{
               tas.siteDescription == "null" ? "" : tas.siteDescription
             }}</span>
-          </el-col>
+          </el-col>-->
         </el-row>
       </div>
       <div class="card">

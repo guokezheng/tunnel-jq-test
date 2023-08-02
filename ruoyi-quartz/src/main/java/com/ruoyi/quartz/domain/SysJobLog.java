@@ -1,6 +1,8 @@
 package com.ruoyi.quartz.domain;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -15,7 +17,7 @@ public class SysJobLog extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** ID */
-    @Excel(name = "日志序号")
+    @Excel(name = "日志编号")
     private Long jobLogId;
 
     /** 任务名称 */
@@ -23,7 +25,7 @@ public class SysJobLog extends BaseEntity
     private String jobName;
 
     /** 任务组名 */
-    @Excel(name = "任务组名")
+    @Excel(name = "任务分组")
     private String jobGroup;
 
     /** 调用目标字符串 */
@@ -35,11 +37,10 @@ public class SysJobLog extends BaseEntity
     private String jobMessage;
 
     /** 执行状态（0正常 1失败） */
-    @Excel(name = "执行状态", readConverterExp = "0=正常,1=失败")
+    @Excel(name = "执行状态", readConverterExp = "0=成功,1=失败")
     private String status;
 
     /** 异常信息 */
-    @Excel(name = "异常信息")
     private String exceptionInfo;
 
     /** 开始时间 */
@@ -47,6 +48,17 @@ public class SysJobLog extends BaseEntity
 
     /** 停止时间 */
     private Date stopTime;
+
+    @Excel(name = "执行时间")
+    private String executeTime;
+
+    public String getExecuteTime() {
+        return executeTime;
+    }
+
+    public void setExecuteTime(String executeTime) {
+        this.executeTime = executeTime;
+    }
 
     public Long getJobLogId()
     {

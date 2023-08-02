@@ -121,14 +121,26 @@ public class EnergySjfxElectricityController extends BaseController {
         return AjaxResult.success(energySjfxElectricityService.getSplitTimeByDept(deptCodeList, baseTime, type));
     }
 
+    /**
+     * 电费分析
+     * @param deptCodeList
+     * @param baseTime
+     * @param type
+     * @return
+     */
+    @GetMapping("/getElectricityBillByDept")
+    public AjaxResult getElectricityBillByDept(@RequestParam List<String> deptCodeList,
+                                               @RequestParam Date baseTime,
+                                               @RequestParam String type ){
+        if(deptCodeList.size() == 0){
+            return error("未选择站点");
+        }
+        return AjaxResult.success(energySjfxElectricityService.getElectricityBillByDept(deptCodeList, baseTime, type));
+    }
 
     @GetMapping("/test")
     public AjaxResult test() {
         List<EnergySjfx>list = energySjfxElectricityService.test();
         return AjaxResult.success(list);
     }
-
-
-
-
 }

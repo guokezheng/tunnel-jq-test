@@ -453,7 +453,7 @@
         >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-          <div class="el-upload__tip text-center" slot="tip">
+          <div class="el-upload__tip" slot="tip">
             <div class="el-upload__tip" slot="tip">
               <el-checkbox v-model="upload.updateSupport" />
               更新已经存在的用户数据

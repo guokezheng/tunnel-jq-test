@@ -48,3 +48,12 @@ export function getSplitTimeByDept(params) {
     params: params
   })
 }
+
+// 电费分析
+export function getElectricityBillByDept(params) {
+  return request({
+    url: '/analysis/getElectricityBillByDept',
+    method: 'get',
+    params: params
+  })
+}

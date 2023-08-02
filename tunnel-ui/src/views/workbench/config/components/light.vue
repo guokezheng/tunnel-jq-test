@@ -175,7 +175,7 @@
           </el-row>
           <el-row
             style="margin-top: 10px"
-            v-show="[7, 9, 30, 31, 45].includes(this.clickEqType)"
+            v-show="[7, 9, 30, 31].includes(this.clickEqType)"
           >
             <el-col :span="15">
               <el-form-item label="亮度调整">
@@ -295,16 +295,17 @@ export default {
             this.stateForm.frequency = 1;
           }
         }
-      }else if(this.clickEqType == 45){
-        // 警示灯带 红黄绿灯
-        if(newVal == ""){
-          this.brightnessMin = 0;
-          this.stateForm.brightness = 0;
-        }else if(newVal && this.stateForm.brightnes == 0){
-          this.stateForm.brightness = 1;
-          this.brightnessMin = 1;
-        }
       }
+      // else if(this.clickEqType == 45){
+      //   // 警示灯带 红黄绿灯
+      //   if(newVal == ""){
+      //     this.brightnessMin = 0;
+      //     this.stateForm.brightness = 0;
+      //   }else if(newVal && this.stateForm.brightnes == 0){
+      //     this.stateForm.brightness = 1;
+      //     this.brightnessMin = 1;
+      //   }
+      // }
     },
   },
   methods: {
@@ -329,11 +330,11 @@ export default {
           form.brightness = typeof(form.brightness) == "string"? Number(form.brightness):form.brightness;
           this.stateForm = form
           // 查询设备当前状态 --------------------------------
-          getDevice(this.eqInfo.equipmentId).then((response) => {
-            console.log(response, "查询设备当前状态");
-            this.stateForm.state = response.data.state;
+          // getDevice(this.eqInfo.equipmentId).then((response) => {
+          //   console.log(response, "查询设备当前状态");
+          //   this.stateForm.state = response.data.state;
             this.getEqTypeStateIcon();
-          });
+          // });
           if (this.eqInfo.clickEqType == 30) {
             this.fireMarkData = [
               {
@@ -428,7 +429,7 @@ export default {
         const param = {
           devId: this.eqInfo.equipmentId,
           state: this.stateForm.state,
-          brightness: this.stateForm.brightness,
+          // brightness: this.stateForm.brightness,
         };
         controlWarningLightStripDevice(param).then((res) => {
           console.log("警示灯带控制成功", res);

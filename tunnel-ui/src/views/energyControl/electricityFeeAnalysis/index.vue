@@ -1,6 +1,6 @@
 <!-- 电费分析 -->
 <template>
-  <div class="app-container" v-loading.fullscreen.lock="loading">
+  <div class="app-container" >
     <el-row :gutter="20">
       <!-- 左侧下拉 -->
       <el-col :span="4">
@@ -72,6 +72,7 @@
               style="width: 100%"
               ref="multipleTable"
               height="100%"
+              class="allTable"
             >
               <el-table-column
                 fixed
@@ -118,7 +119,7 @@
   <script>
 import * as echarts from "echarts";
 import SiteTree from "@/views/components/siteTree";
-//   import { getSiteElectricity } from '@/api/analysis/energyAnalyze'
+import { getElectricityBillByDept } from '@/api/energy/api'
 import { mapState } from "vuex";
 
 export default {
@@ -134,7 +135,6 @@ export default {
       },
       powerCode: null,
       loopIds: [], //选中的站点列表id
-      loading: false, // 遮罩层
       powerList: [],
       power: { powerName: "" }, //当前站点
       list: [
@@ -218,7 +218,6 @@ export default {
         });
         return;
       }
-      // this.loading = true
       // 参数
       this.queryParams.deptCodeList = this.loopIds
         .filter((e) => e != null)
@@ -229,16 +228,15 @@ export default {
       this.queryParams.type = this.tabType;
 
       // 接口请求
-      // const res = await getSiteElectricity(this.queryParams)
-      // if (res.code === 200) {
-      //   // console.log(res)
-      //   this.list = res.data
-      //   this.$nextTick(function () {
-      //     //清除选中行
-      //     this.$refs.multipleTable.doLayout()
-      //   })
-      //   this.loading = false
-      // }
+      const res = await getElectricityBillByDept(this.queryParams)
+      if (res.code === 200) {
+        // console.log(res)
+        this.list = res.data
+        this.$nextTick(function () {
+          //清除选中行
+          this.$refs.multipleTable.doLayout()
+        })
+      }
 
       // 拆分成单条数据
       let series = {
@@ -289,6 +287,7 @@ export default {
           showAllSymbol: true,
           symbolSize: 8,
           data: n.value,
+          color:"#0090D8"
         });
         this.xData = n.rt;
       }
@@ -372,7 +371,7 @@ export default {
               alignWithLabel: true,
             },
             axisLabel: {
-              color: "#919191",
+              color: "#fff",
             },
             data: this.xData,
           },
@@ -386,7 +385,7 @@ export default {
               },
             },
             axisLabel: {
-              color: "#919191",
+              color: "#fff",
             },
           },
           series: this.seriesData,

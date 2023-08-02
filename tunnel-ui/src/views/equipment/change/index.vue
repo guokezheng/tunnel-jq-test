@@ -301,20 +301,24 @@ export default {
       // 表单校验
       rules: {
         deviceName: [
-          { required: true, message: "请填写设备名称", trigger: "blur" },
+          { required: true, message: "请填写设备名称", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         deviceId: [
-          { required: true, message: "请填写设备ID", trigger: "blur" },
+          { required: true, message: "请填写设备编号", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         changeTime: [
-          { required: true, message: "请填写更换时间", trigger: "blur" },
+          { required: true, message: "请填写更换时间", trigger: "change" },
         ],
         eqDirection: [
-          { required: true, message: "请选择方向", trigger: "blur" },
+          { required: true, message: "请选择方向", trigger: "change" },
         ],
         stakeMark: [
-          { required: true, message: "请填写桩号信息", trigger: "blur" },
+          { required: true, message: "请填写桩号信息", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
+        remark: [{ max: 50, message: "最长输入50个字符", trigger: "blur" }],
       },
     };
   },

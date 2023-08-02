@@ -42,7 +42,7 @@
         <div class="grid-content bg-purple" ref="main">
           <el-input
             v-model="queryParam.ipaddr"
-            placeholder="请输入登录地址、用户名称，回车搜索"
+            placeholder="请输入用户名、称登录地址，回车搜索"
             size="small"
             @keyup.enter.native="handleQuery"
           >

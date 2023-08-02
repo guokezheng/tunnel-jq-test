@@ -323,20 +323,23 @@ export default {
       // 表单校验
       rules: {
         brandId: [
-          { required: true, message: "设备品牌不能为空", trigger: "blur" },
+          { required: true, message: "设备品牌不能为空", trigger: "change" },
         ],
         eqType: [
-          { required: true, message: "设备大类不能为空", trigger: "blur" },
+          { required: true, message: "设备大类不能为空", trigger: "change" },
         ],
         protocolName: [
-          { required: true, message: "协议名称不能为空", trigger: "blur" },
+          { required: true, message: "协议名称不能为空", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "change" },
         ],
         protocolType: [
-          { required: true, message: "协议类型不能为空", trigger: "blur" },
+          { required: true, message: "协议类型不能为空", trigger: "change" },
         ],
         className: [
-          { required: true, message: "类名不能为空", trigger: "blur" },
+          { required: true, message: "类名不能为空", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "change" },
         ],
+        note: [{ max: 50, message: "最长输入50个字符", trigger: "change" }],
       },
       //设备品牌
       brandList: [],

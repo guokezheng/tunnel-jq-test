@@ -67,11 +67,6 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("车道数量")
     private Integer lane;
 
-    /** 三维坐标 */
-    @Excel(name = "三维坐标")
-    @ApiModelProperty("三维坐标")
-    private String coordinates;
-
     /** 备注 */
     /*@Excel(name = "备注")*/
     @ApiModelProperty("备注")
@@ -89,6 +84,11 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("隧道结束桩号")
     @Excel(name = "隧道结束桩号")
     private String endPile;
+
+    /** 三维坐标 */
+    @Excel(name = "三维坐标")
+    @ApiModelProperty("三维坐标")
+    private String coordinates;
 
     @ApiModelProperty("隧道开始桩号(整形)")
     private String startPileNum;
@@ -298,6 +298,10 @@ public class SdTunnels extends BaseEntity
 		this.tunnelLength = tunnelLength;
 	}
 
+    @ApiModelProperty("隧道所属部门名称")
+    @Excel(name = "所属部门")
+    private String deptName;
+
 	/** 是否使用 */
     @Excel(name = "是否启用",readConverterExp = "0=启用,1=停用")
     @ApiModelProperty("是否启")
@@ -313,10 +317,6 @@ public class SdTunnels extends BaseEntity
      * */
     @ApiModelProperty("隧道所属部门id")
     private String deptId;
-
-    @ApiModelProperty("隧道所属部门名称")
-    @Excel(name = "所属部门")
-    private String deptName;
 
     /**
      * 隧道ID集合

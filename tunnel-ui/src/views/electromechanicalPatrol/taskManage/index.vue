@@ -402,6 +402,7 @@
                   <el-date-picker
                     v-model="form.endPlantime"
                     type="date"
+                    value-format="yyyy-MM-dd"
                     :picker-options="pickerEndPlantime"
                     placeholder="选择预完成时"
                   >

@@ -239,6 +239,15 @@ public class SdAppDevicesController extends BaseController {
         return AjaxResult.success(sdTunnelsService.getJlyTunnel());
     }
 
+    /**
+     * 根据设备名称查询设备详情
+     */
+    @GetMapping(value = "/app/getEquipmentInfo")
+    public AjaxResult getEquipmentInfo(String eqId) {
+        //eqId = "JQ-JiNan-WenZuBei-CAM-RSU-012";//模拟数据
+        return AjaxResult.success(devicesService.getEquipmentInfo(eqId));
+    }
+
 
     /**
      * 查询设备类型

@@ -45,7 +45,12 @@
       <el-table-column type="selection" width="55" align="center" />
       <!--      <el-table-column label="页面配置ID" align="center" prop="id"/>-->
       <el-table-column label="所属部门" align="center" prop="deptId" />
-      <el-table-column label="所属模块" align="center" prop="configModule"  :formatter="configModuleFormat"/>
+      <el-table-column
+        label="所属模块"
+        align="center"
+        prop="configModule"
+        :formatter="configModuleFormat"
+      />
       <el-table-column label="页面名称" align="center" prop="name" />
       <el-table-column label="页面标识符" align="center" prop="code" />
       <el-table-column label="页面路径" align="center" prop="url" />
@@ -107,10 +112,7 @@
           />
         </el-form-item>
         <el-form-item label="所属模块" prop="configModule">
-          <el-select
-            v-model="form.configModule"
-            placeholder="请选择所属模块"
-          >
+          <el-select v-model="form.configModule" placeholder="请选择所属模块">
             <el-option
               v-for="item in configModuleList"
               :key="item.dictValue"
@@ -175,7 +177,7 @@ export default {
       // 嵌入页面配置表格数据
       configList: [],
       // 配置模块列表
-      configModuleList:[],
+      configModuleList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -205,11 +207,16 @@ export default {
         ],
         name: [
           { required: true, message: "页面名称不能为空", trigger: "blur" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         code: [
           { required: true, message: "页面标识符不能为空", trigger: "blur" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
-        url: [{ required: true, message: "页面路径不能为空", trigger: "blur" }],
+        url: [
+          { required: true, message: "页面路径不能为空", trigger: "blur" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
+        ],
       },
     };
   },
@@ -289,7 +296,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       // this.form.pageNum = 1;
-      this.queryParams.searchValue = ''
+      this.queryParams.searchValue = "";
       this.resetForm("queryForm");
       this.handleQuery();
     },

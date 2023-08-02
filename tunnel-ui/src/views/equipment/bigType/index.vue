@@ -240,6 +240,7 @@ export default {
       rules: {
         name: [
           { required: true, message: "设备类型名称不能为空", trigger: "blur" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         isControl: [
           {

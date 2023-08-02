@@ -274,11 +274,13 @@ export default {
           {
             pattern: /^[a-zA-Z0-9]+$/,
             message: "类型编码为数字加字母",
-            trigger: "blur",
+            trigger: "change",
           },
+          { max: 10, message: "最长输入10个字符", trigger: "change" },
         ],
         vehicleTypeName: [
           { required: true, message: "类型名称不能为空", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "change" },
         ],
       },
       options: [

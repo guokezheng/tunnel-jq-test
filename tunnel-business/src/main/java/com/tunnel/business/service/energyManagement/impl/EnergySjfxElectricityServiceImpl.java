@@ -9,6 +9,7 @@ import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.energyManagement.EnergySjfxElectricityMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.energyManagement.EnergySjfxElectricityService;
+import com.tunnel.business.utils.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -232,6 +233,171 @@ public class EnergySjfxElectricityServiceImpl implements EnergySjfxElectricitySe
                 dto.setsValue(energyDataList.get(i).getsValue());
                 result.add(dto);
             }
+        }
+        return result;
+    }
+
+    @Override
+    public List<List<Map<String, Object>>> getElectricityBillByDept(List<String> deptCodeList, Date baseTime, String type) {
+        Integer statisticType = null;
+        List<Map<String, Object>> result = new ArrayList<>();
+        //每月天数、每年月份
+        List<String> dateTimeList = getDateTimeList(baseTime, type);
+        //数据
+        Map<String, Object> map = new HashMap<>();
+        //区分月报年报
+        if(type.equals(StatisticTypeEnum.YUEBAO.getName())){
+            statisticType = StatisticTypeEnum.YUEBAO.getCode();
+        }else{
+            statisticType = StatisticTypeEnum.NIANBAO.getCode();
+        }
+        //查询用电量
+        List <EnergyAnalysisElectricityBill> energyDataList =  mapper.getElectricityBillByDept(deptCodeList,baseTime,statisticType);
+        if (energyDataList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        //获取用电量
+        List<EnergyConfigcenterElectricityPrice> priceList = selectPrice(type,baseTime);
+        //计算电费
+        List<List<Map<String, Object>>> list = countData(energyDataList, type, priceList, dateTimeList);
+        return list;
+    }
+
+    /**
+     * 计算电费
+     * @param energyDataList
+     * @param type
+     * @param priceList
+     * @param dateTimeList
+     * @return
+     */
+    public List<List<Map<String, Object>>> countData(List<EnergyAnalysisElectricityBill> energyDataList, String type, List<EnergyConfigcenterElectricityPrice> priceList, List<String> dateTimeList){
+        List<List<Map<String, Object>>> list = new ArrayList<>();
+        for(EnergyAnalysisElectricityBill item : energyDataList){
+            List<Map<String, Object>> mapList = new ArrayList<>();
+            if("year".equals(type)){
+                for(String time : dateTimeList){
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("rt",time);
+                    map.put("id",item.getDeptCode());
+                    map.put("name",item.getTunnelName());
+                    map.put("value",0.0);
+                    mapList.add(map);
+                }
+                for(Map<String, Object> mapVal : mapList){
+                    for(EnergyConfigcenterElectricityPrice price : priceList){
+                        if(mapVal.get("rt").toString().equals(price.getMonth())){
+                            mapVal.put("value",ArithUtil.accurateDecimal(countValue(item.getEneDataList(), mapVal.get("rt").toString(), price),2));
+                        }
+                    }
+                }
+            }else {
+                //电价
+                EnergyConfigcenterElectricityPrice dataPrice = priceList.get(0);
+                for(String time : dateTimeList){
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("rt",time);
+                    map.put("id",item.getDeptCode());
+                    map.put("name",item.getTunnelName());
+                    map.put("value",ArithUtil.accurateDecimal(countValue(item.getEneDataList(), time, dataPrice),2));
+                    mapList.add(map);
+                }
+            }
+            list.add(mapList);
+        }
+        return list;
+    }
+
+    public double countValue(List<EnergyAnalysisElectricityBill> dataList, String dateTime, EnergyConfigcenterElectricityPrice dataPrice){
+        double jPrice = getPrice(dataPrice, dataPrice.getJianCof().doubleValue());
+        double gPrice = getPrice(dataPrice, dataPrice.getGuCof().doubleValue());
+        double fPrice = getPrice(dataPrice, dataPrice.getFengCof().doubleValue());
+        double sPrice = getPrice(dataPrice, dataPrice.getShenCof().doubleValue());
+        double pPrice = getPrice(dataPrice,1.00);
+        double priceValue = 0;
+        for(EnergyAnalysisElectricityBill item : dataList){
+            if(dateTime.equals(item.getRt())){
+                //尖
+                if("1220".equals(item.getSplitTimeType())){
+                    priceValue += item.getValue().doubleValue() * jPrice;
+                }
+                //峰
+                if("1221".equals(item.getSplitTimeType())){
+                    priceValue += item.getValue().doubleValue() * fPrice;
+                }
+                //平
+                if("1222".equals(item.getSplitTimeType())){
+                    priceValue += item.getValue().doubleValue() * pPrice;
+                }
+                //谷
+                if("1223".equals(item.getSplitTimeType())){
+                    priceValue += item.getValue().doubleValue() * gPrice;
+                }
+                //深
+                if("1224".equals(item.getSplitTimeType())){
+                    priceValue += item.getValue().doubleValue() * sPrice;
+                }
+            }
+        }
+        if(priceValue == 0){
+            return 0;
+        }else {
+            return priceValue;
+        }
+    }
+
+    /**
+     * 获取用电量
+     * @param type
+     * @param baseTime
+     * @return
+     */
+    public List<EnergyConfigcenterElectricityPrice> selectPrice(String type, Date baseTime){
+        List<EnergyConfigcenterElectricityPrice> list = new ArrayList<>();
+        if ("year".equals(type)) {
+            // 获取当年电价
+            list.addAll(mapper.getListOfYear(baseTime));
+        } else {
+            // 获取当月电价
+            list.add(mapper.getListOfMonth(baseTime));
+        }
+        return list;
+    }
+
+    /**
+     * 计算每月天数、每年月数
+     * @param time
+     * @param type
+     * @return
+     */
+    public static List<String> getDateTimeList(Date time, String type) {
+        if (Objects.isNull(time) || Objects.isNull(type)) {
+            return new ArrayList<>();
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        calendar.setTime(time);
+        List<String> result = new ArrayList<>();
+         if ("month".equals(type)) {
+            int maxDay = DateUtil.getMaxDayOfMonth(time);
+            for (int i = 1; i <= maxDay; i++) {
+                calendar.set(Calendar.DAY_OF_MONTH, i);
+                result.add(DateUtil.dateToStr(calendar.getTime(), "yyyy-MM-dd"));
+            }
+            //防止计算月份出错
+            /*calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.MONTH, 1);
+            result.add(DateUtil.dateToStr(calendar.getTime(), "yyyy-MM-dd"));*/
+        } else {
+            //防止计算月份出错
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            for (int i = 0; i < 12; i++) {
+                calendar.set(Calendar.MONTH, i);
+                result.add(DateUtil.dateToStr(calendar.getTime(), "yyyy-MM"));
+            }
+            /*calendar.add(Calendar.YEAR, 1);
+            calendar.set(Calendar.MONTH, 0);
+            result.add(DateUtil.dateToStr(calendar.getTime(), "yyyy-MM"));*/
         }
         return result;
     }

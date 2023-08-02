@@ -154,7 +154,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long diff = 0;
         if(taskList.getTask()== null){//完结，已超时的情况
-            taskList.setTask(TaskStatus.YIWANJIE.getName()+","+TaskStatus.YICHAOSHI.getName());
+           // taskList.setTask(TaskStatus.YIWANJIE.getName()+","+TaskStatus.YICHAOSHI.getName());
+            taskList.setTask(TaskStatus.YIWANJIE.getName());
         }else if(taskList.getEndPlantime()!=null&&!"".equals(taskList.getEndPlantime())){
             String  plantime = sdf.format(taskList.getEndPlantime());//计划完成时间
             long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
@@ -190,7 +191,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         SdTaskOpt sdTaskOpt = new SdTaskOpt();
         if(result>0){
             /*添加操作记录*/
-            if("0".equals(sdTaskList.getTaskStatus())){//发布任务
+            if("0".equals(sdTaskList.getTaskStatus()) && "2".equals(sdTaskList.getPublishStatus())){//发布任务
                 sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
                 sdTaskOpt.setTaskId(taskId);
                 sdTaskOpt.setOptType(OptType.PAIDAN.getCode());
@@ -360,7 +361,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         }
         sdTaskList.setUpdateTime(DateUtils.getNowDate());
         result = sdTaskListMapper.updateSdTaskList(sdTaskList);
-        if(sdTaskList.getUpdateBy()==null||"".equals(sdTaskList.getUpdateBy())){
+      /*  if(sdTaskList.getUpdateBy()==null||"".equals(sdTaskList.getUpdateBy())){*/
             if(result>0){
                 result = sdPatrolListMapper.batchDeletePatrolListByTaskId(sdTaskList.getId());
             }
@@ -371,7 +372,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 
             if(result>0){
                 /*添加操作记录*/
-                if("0".equals(sdTaskList.getTaskStatus())){//发布任务
+                if("0".equals(sdTaskList.getTaskStatus()) && "2".equals(sdTaskList.getPublishStatus())){//发布任务
                     SdTaskOpt sdTaskOpt = new SdTaskOpt();
                     sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
                     sdTaskOpt.setTaskId(sdTaskList.getId());
@@ -384,7 +385,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 //            jsonObject.put("taskRecord",sdTaskList);
 //            jsonObject.put("optType",OptType.PAIDAN.getCode());//用于区分新增，修改，删除，接收，提交
 //            kafkaTwoTemplate.send(tunnelTaskList, jsonObject.toString());
-        }
+       /* }*/
         return result;
     }
 
@@ -1083,6 +1084,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                         long time = sdf.parse(endPlantime, new ParsePosition(0)).getTime();
                         diff = System.currentTimeMillis() - time;
                         if((taskStatus.equals(TaskStatus.DAIXUNCHA.getName()))||(taskStatus.equals(TaskStatus.XUNCHAZHONG.getName()))) {
+                            map.put("taskStatus",map.get("taskStatus")+","+TaskStatus.YICHAOSHI.getCode());
                             if (diff > 0) {
                                 taskInfoMap.put("ifchaosgu", TaskStatus.YICHAOSHI.getName());
                             } else {

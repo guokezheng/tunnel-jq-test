@@ -161,6 +161,9 @@ public class SdEventServiceImpl implements ISdEventService {
             //查询视频
             List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectSdTrafficImageList(image);
             sdEvent.setVideoUrl(sdTrafficImages.size() > 0 ? sdTrafficImages.get(0).getImgUrl().split(";")[0] : "");
+            //计算累计时间
+            String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(sdEvent.getEndTime()) == null ? DateUtils.getNowDate() : DateUtils.parseDate(sdEvent.getEndTime()), DateUtils.parseDate(sdEvent.getStartTime()));
+            sdEvent.setContinuedTime(endDatePoor);
             //查询视频图片
             List<SdTrafficImage> image1 = sdTrafficImageMapper.selectImageByBusinessId(sdEvent.getId().toString());
             List<SdTrafficImage> collect = image1.stream().filter(item -> !"1".equals(item.getImgType())).collect(Collectors.toList());
@@ -210,9 +213,6 @@ public class SdEventServiceImpl implements ISdEventService {
             if(item.getVideoUrl()!=null){
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
-            //计算累计时间
-            String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.getEndTime()) == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.getEndTime()), DateUtils.parseDate(item.getStartTime()));
-            item.setContinuedTime(endDatePoor);
             SdTrafficImage image = new SdTrafficImage();
             image.setBusinessId(item.getId().toString());
             image.setImgType("1");
@@ -589,22 +589,8 @@ public class SdEventServiceImpl implements ISdEventService {
         String prevControlType = sdEvent.getPrevControlType();
         if(prevControlType == null || "".equals(prevControlType)){
             mapList = sdEventMapper.eventPopAll(sdEvent);
-            mapList.stream().forEach(item -> {
-                if(!"2".equals(item.get("prevControlType").toString())){
-                    //计算累计时间
-                    String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.get("endTime")) == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.get("endTime")), DateUtils.parseDate(item.get("startTime")));
-                    item.put("continuedTime",endDatePoor);
-                }
-            });
         }else if(PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode().equals(prevControlType) || PrevControlTypeEnum.ACTIVE_SAFETY.getCode().equals(prevControlType)){
             mapList = sdEventMapper.eventOrdinaryOrSecurity(sdEvent);
-            mapList.stream().forEach(item -> {
-                if(!"2".equals(item.get("prevControlType").toString())){
-                    //计算累计时间
-                    String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.get("endTime")) == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.get("endTime")), DateUtils.parseDate(item.get("startTime")));
-                    item.put("continuedTime",endDatePoor);
-                }
-            });
         }else {
             mapList = sdEventMapper.eventPopFault(sdEvent);
         }
@@ -2150,7 +2136,7 @@ public class SdEventServiceImpl implements ISdEventService {
             } else {
                 sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
             }
-            sdEvent.setEventSource("1");
+            sdEvent.setEventSource("2");
             //要改
             sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
             //事件描述

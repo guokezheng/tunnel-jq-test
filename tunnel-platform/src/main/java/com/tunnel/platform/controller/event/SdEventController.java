@@ -534,7 +534,7 @@ public class SdEventController extends BaseController
         //存 故障清单表sd_event
         SdEvent sdEvent = new SdEvent();
         sdEvent.setTunnelId("JQ-JiNan-WenZuBei-MJY");//隧道
-        sdEvent.setEventSource("5");//事件来源  消防炮
+        sdEvent.setEventSource("2");//事件来源  消防炮
         sdEvent.setEventTypeId((long) 20);//事件类型
         sdEvent.setEventTitle("马家峪隧道潍坊方向智能消防炮YK16+678发生火警");//事件标题  隧道+方向+桩号+发生火警
         sdEvent.setEventTime(DateUtils.getNowDate());//时间

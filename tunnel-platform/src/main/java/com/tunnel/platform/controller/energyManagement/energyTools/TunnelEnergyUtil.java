@@ -28,14 +28,14 @@ public class TunnelEnergyUtil {
             ri="0"+day;
         }
         if(flag.equals("0")){
-            //return year+"-"+yue+"-"+ri;
-            return "2023-07-12";
+            return year+"-"+yue+"-"+ri;
+            //return "2023-07-12";
         }else if(flag.equals("1")){
-            //return year+"-"+yue;
-            return "2023-07";
+            return year+"-"+yue;
+            //return "2023-07";
         }else{
-            //return String.valueOf(year);
-            return "2023";
+            return String.valueOf(year);
+            //return "2023";
         }
 
     }

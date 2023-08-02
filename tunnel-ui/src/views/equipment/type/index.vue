@@ -329,7 +329,7 @@ import {
   delType,
   addType,
   updateType,
-  groupByBigType,
+  // groupByBigType,
   eqTypeList,
   loadPicture,
   exportDeviceIcon,
@@ -465,7 +465,7 @@ export default {
     });
     this.getEqBigType();
     this.getList();
-    this.getGroupByBigType();
+    // this.getGroupByBigType();
     this.fileData = new FormData(); // new formData对象
     this.getDicts("sys_type_control").then((response) => {
       this.isControlOptions = response.data;
@@ -512,12 +512,12 @@ export default {
         path: "/inductionLamp",
       });
     },
-    getGroupByBigType() {
-      groupByBigType().then((response) => {
-        // console.log(response.rows,"列表")
-        this.typeList = response.rows;
-      });
-    },
+    // getGroupByBigType() {
+    //   groupByBigType().then((response) => {
+    //     // console.log(response.rows,"列表")
+    //     this.typeList = response.rows;
+    //   });
+    // },
     //删除文件
     handleRemove(file, fileList) {
       if (file.hasOwnProperty("fId")) {

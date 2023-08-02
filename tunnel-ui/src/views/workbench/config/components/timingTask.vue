@@ -736,18 +736,18 @@ export default {
     this.initChart();
   },
   created(){
-    debugger
+    // debugger
 
     //查询方向
     this.getDirection()
-    debugger
+    // debugger
     //获取所有定时控制数据
     this.getTimingAll()
   },
   methods:{
     //获取所有定时控制数据
     getTimingAll(indextabs){
-      debugger
+      // debugger
       let queryParams = {
         pageNum:1,
         pageSize:999,
@@ -755,7 +755,7 @@ export default {
         strategyType:1
       }
       getSdStrategyAll(queryParams).then((response) => {
-        debugger
+        // debugger
         console.log(response)
         let rows = response.rows;
 
@@ -808,7 +808,7 @@ export default {
     },
     //获取定时控制详细信息
     async getStrategyData(row,indextabs) {
-      debugger
+      // debugger
       console.log(row, "当前策略数据");
       getStrategy(row.id).then((response) => {
         const loading = this.$loading({
@@ -818,7 +818,7 @@ export default {
           background: 'rgba(0, 0, 0, 0.7)',
           target:'.strategy-dialog',
         });
-        debugger
+        // debugger
         let data = response.data;
         this.strategyFormList[indextabs].id = data.id;
         this.strategyFormList[indextabs].strategyName = data.strategyName;
@@ -853,7 +853,7 @@ export default {
             let autoControl = this.strategyFormList[indextabs].autoControl[i];
             var attr = response.rows[i];
             console.log(attr.eqStateList)
-            debugger
+            // debugger
             this.strategyFormList[indextabs].autoControl[i].eqStateList = attr.eqStateList;
             this.strategyFormList[indextabs].autoControl[i].state = attr.state;
             this.strategyFormList[indextabs].autoControl[i].stateNum = attr.stateNum;
@@ -942,7 +942,7 @@ export default {
       this.yDataLight1 = []
       this.yDataLight2 = []
 
-      debugger
+      // debugger
       let tunnelItems = null;
       if(!!this.tunnelItems.tunnelId){
         tunnelItems = this.tunnelItems
@@ -954,7 +954,7 @@ export default {
         this.lightFilesModel.tunnelId= tunnelItems.tunnelId
 
       }
-      debugger
+      // debugger
       let querysParamsTab = {}
       querysParamsTab.tunnelId =   this.lightFilesModel.tunnelId
       querysParamsTab.pageNum =  1
@@ -975,7 +975,7 @@ export default {
               }
               let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModel.tunnelId)
               console.log(tunnel)
-              debugger
+              // debugger
               let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
 
               this.lightListConfig(queryParams)
@@ -1007,17 +1007,17 @@ export default {
             let ds1 = this.getdate(twoDaysAgo)//前天
             let ds2 = this.getdate(threeDaysAgo)//昨天
             console.log(ds)
-            debugger
+            // debugger
             // let ds = ['2023-07-22 00:00:00', '2023-07-22 23:59:59']
             // let ds1 = ['2023-07-21 00:00:00', '2023-07-21 23:59:59']
             // let ds2 = ['2023-07-20 00:00:00', '2023-07-20 23:59:59']
-            debugger
+            // debugger
             // this.XDataLight = this.generateTimeList()
 
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight, ds1)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               for (let i = 0; i < list1.length; i++) {
                 //前天
@@ -1026,7 +1026,7 @@ export default {
               }
               // console.log(this.XDataLight)
               console.log(this.XDataLight)
-              debugger
+              // debugger
               // setTimeout(() => {
               //   this.$nextTick(() => {
               //     this.initChart();
@@ -1036,7 +1036,7 @@ export default {
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight, ds2)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               //昨天光强
               for (let i = 0; i < list1.length; i++) {
@@ -1045,7 +1045,7 @@ export default {
               }
               console.log(this.yDataLight1)
               console.log(this.yDataLight1)
-              debugger
+              // debugger
               // setTimeout(() => {
               //   this.$nextTick(() => {
               //     this.initChart();
@@ -1055,7 +1055,7 @@ export default {
             dataLogInfoLineList(
               this.addDateRange(this.queryParamsLight, ds)
             ).then((response) => {
-              debugger
+              // debugger
               let list1 = response.rows;
               //今天
               for (let i = 0; i < list1.length; i++) {
@@ -1064,7 +1064,7 @@ export default {
               }
               // console.log(this.XDataLight)
               // console.log(this.XDataLight)
-              debugger
+              // debugger
               setTimeout(() => {
                 this.$nextTick(() => {
                   this.initChart();
@@ -1113,18 +1113,18 @@ export default {
       });
     },
     handleRowEdit(item) {
-      debugger
+      // debugger
       this.editingRow = item.row.id;
       this.$forceUpdate()
     },
     handleRowSave(item){
-      debugger
+      // debugger
       this.editingRow =""
         this.$forceUpdate()
     },
     // 改变设备类型或者方向
     changeEvent(indextabs) {
-      debugger
+      // debugger
       // 重置设备列表
       this.strategyFormList[indextabs].autoControl = [
         { state: "", value: "", equipmentTypeId: "" },
@@ -1132,7 +1132,7 @@ export default {
     },
 
     equipmenEvent(value){
-      debugger
+      // debugger
       let equipment = this.equipmentTypeData.find(item => item.value ==value.equipmentTypeId);
       value.equipmentName = equipment.keyName
     },
@@ -1419,7 +1419,7 @@ export default {
       });
     },
     renderChart() {
-      debugger
+      // debugger
       this.chart = echarts.init(this.$refs.chart);
       this.chart.setOption({
         xAxis: {
@@ -1436,7 +1436,7 @@ export default {
       });
     },
     closeLogin(){
-      debugger
+      // debugger
       this.visibleSync = false
       // this.renderChart();
     },
@@ -1451,7 +1451,7 @@ export default {
     },
 
     resetQuery(){
-      debugger
+      // debugger
       this.visibleSync = !this.visibleSync
     },
     deleteHandleUpdate(index){
@@ -1459,10 +1459,10 @@ export default {
         return this.$modal.msgWarning("至少保留一条执行操作");
       }
       this.formItems.splice(index,1)
-      debugger
+      // debugger
     },
     addHandleUpdate(index){
-      debugger
+      // debugger
       let form={
         label: '',
         startTime: '',
@@ -1506,7 +1506,7 @@ export default {
     },
     //选项卡删除
     removeTab(){
-      debugger
+      // debugger
     },
 
     //表单重置方法
@@ -1533,10 +1533,10 @@ export default {
     },
     // 添加执行操作
     addItem(indextabs) {
-      debugger
+      // debugger
       // this.$refs["timingControl"].validate((valid) => {
       //   if (valid) {
-          debugger
+          // debugger
           this.addCf(indextabs);
           this.strategyFormList[indextabs].autoControl.push({
             value: "", //设备
@@ -1622,7 +1622,7 @@ export default {
     },
     // 查询设备可控状态
     listEqTypeStateIsControl(indextabs,index) {
-      debugger
+      // debugger
       var stateTypeId = this.strategyFormList[indextabs].autoControl[index].equipmentTypeId;
       var direction = this.strategyFormList[indextabs].direction;
       let params = {
@@ -1634,7 +1634,7 @@ export default {
         params.eqDirection = null;
       }
       listEqTypeStateIsControl(params).then((response) => {
-        debugger
+        // debugger
         console.log(response.rows)
         this.strategyFormList[indextabs].autoControl[index].eqStateList = response.rows;
       });
@@ -1664,7 +1664,7 @@ export default {
       }
     },
     selectStateVal(indextabs,index){
-      debugger
+      // debugger
       console.log(index)
       if(this.strategyFormList[indextabs].autoControl[index].state == 1){
         this.$set(this.strategyFormList[indextabs].autoControl[index], "stateNum", 100);
@@ -1730,10 +1730,10 @@ export default {
     },
     /** 提交按钮 */
     async submitStrategyForm(indextabs) {
-      debugger
+      // debugger
       // this.$refs["timingControlindextabs"][this.activeName].validate((valid) => {
       //   if (valid) {
-          debugger
+          // debugger
           var autoControl = this.strategyFormList[this.activeName].autoControl;
           let response = JSON.parse(JSON.stringify(autoControl))
           console.log(response,"response")
@@ -1815,7 +1815,7 @@ export default {
       this.formItems =  formItemsOne
       console.log(this.formItems)
       console.log(this.catFilesModel)
-      debugger
+      // debugger
       //模式1 车辆 0光强
       this.catFilesModel.modeType = 1
       if (!!this.catFilesModel.id) {
@@ -1827,7 +1827,7 @@ export default {
         });
       } else {
         addConfig(this.catFilesModel).then((response) => {
-          debugger
+          // debugger
           this.catFilesModel.id =response.data.id
           this.$modal.msgSuccess("新增成功");
           this.open = false;
@@ -1890,9 +1890,9 @@ export default {
     },
     //光强照明配置查询
     lightListConfig(queryParams){
-      debugger
+      // debugger
       listConfig(queryParams).then((response) => {
-        debugger
+        // debugger
         if( response.rows.length>0){
           let rows = response.rows[0];
           this.lightFilesModel.id = rows.id
@@ -1915,7 +1915,7 @@ export default {
     lightChangeEvent(indextabs) {
       let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.lightFilesModel.tunnelId)
       console.log(tunnel)
-      debugger
+      // debugger
       let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.lightFilesModel.direction,modeType:0}
 
       this.lightListConfig(queryParams)
@@ -1925,12 +1925,12 @@ export default {
     catChangeEvent(){
       let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
       console.log(tunnel)
-      debugger
+      // debugger
       let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
       this.catListConfig(queryParams)
     },
     beforeLuminanceEvent(e){
-      debugger
+      // debugger
       console.log(e)
       this.catFilesModel.beforeLuminance  = e
       this.$forceUpdate()
@@ -1938,7 +1938,7 @@ export default {
     //车辆状态
     changeCattate(e){
       console.log(e)
-      debugger
+      // debugger
     },
     // 编辑操作
     async updateStrategyInfoData() {
@@ -1981,7 +1981,7 @@ export default {
     //切换选项卡
     handleTabsClick(tab, event) {
       console.log(tab, event);
-      debugger
+      // debugger
       console.log(this.strategyRowList)
       if(!!this.strategyRowList[parseInt(tab.index)].id){
         //默认获取选项卡详情数据
@@ -2042,7 +2042,7 @@ export default {
       }else{
         tunnelItems = this.tunnelLists[0]
       }
-      debugger
+      // debugger
       console.log(this.catFilesModel.tunnelId)
       if(!!tunnelItems.tunnelId&&(this.catFilesModel.tunnelId==null||this.catFilesModel.tunnelId==""||this.catFilesModel.tunnelId=="undefined")){//首次
         // this.queryParamsLight.tunnelId = tunnelItems.tunnelId
@@ -2050,7 +2050,7 @@ export default {
         this.catFilesModel.direction= "1"
         let  tunnel = this.tunnelData.find(tunnelItem => tunnelItem.tunnelId ==  this.catFilesModel.tunnelId)
         console.log(tunnel)
-        debugger
+        // debugger
         let queryParams = {tunnelName:tunnel.tunnelName,pageSize:1,pageNum:2,direction:this.catFilesModel.direction,modeType:1}
         this.catListConfig(queryParams)
         // listConfig(queryParams).then((response) => {
@@ -2112,7 +2112,7 @@ export default {
       });
       setTimeout(() => {
         this.$nextTick(() => {
-          debugger
+          // debugger
           console.log( this.yData1)
           console.log( this.yData2)
           console.log( this.yData3)
@@ -2124,7 +2124,7 @@ export default {
     },
     //光照下修比例保存
     submitlightForm(){
-      debugger
+      // debugger
       console.log(this.lightFilesModel)
       //模式1 车辆 0光强
       this.lightFilesModel.modeType = 0
@@ -2134,7 +2134,7 @@ export default {
         });
       } else {
         addConfig(this.lightFilesModel).then((response) => {
-          debugger
+          // debugger
           this.lightFilesModel.id =response.data.id
           this.$modal.msgSuccess("新增成功");
         });
@@ -2163,7 +2163,7 @@ export default {
   watch:{
     show:{
       handler(newValue, oldValue){
-        debugger
+        // debugger
         this.visibleSync = !this.visibleSync
         //查询隧道列表
         this.getTunnels()

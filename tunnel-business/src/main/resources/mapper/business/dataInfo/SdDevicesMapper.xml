@@ -1362,21 +1362,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getMacItem" resultType="map">
-        SELECT
-            B.item_id as type_item,
-            D.item_name,
-            D.unit,
-            B.function_json as equipment_state,
-            C.`data` as state,
-            A.is_control as control
-        FROM
-            sd_device_point B
-                LEFT JOIN sd_equipment_type A ON A.type_id = B.eq_type
-                LEFT JOIN sd_device_data C ON B.eq_id = C.device_id  and B.item_id = C.item_id
-                left join sd_device_type_item D on B.item_id = D.id
-                AND B.item_id = C.item_id
+        select
+            B.id as type_item,
+            B.item_name,
+            A.function_json as equipment_state,
+            C.is_control as control,
+            D.`data` as state,
+            B.unit as unit
+        from
+            sd_device_point A
+                left join sd_device_type_item B on
+                A.item_id = B.id
+                left join sd_equipment_type C on
+                B.device_type_id = C.type_id
+                left join sd_device_data D on
+                        A.item_id = D.item_id
+                    and A.eq_id = D.item_id
         WHERE
-            B.eq_id = #{devId} and B.is_reserved = 1
+            A.eq_id = #{devId} and A.is_reserved = 1
     </select>
 
     <select id="getXfpDevicesInfo" parameterType="java.lang.String" resultMap="SdDevicesResult">

@@ -422,11 +422,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item
-                label="持续时长"
-                prop="endTime"
-                label-width="100px"
-              >
+              <el-form-item label="持续时长" prop="endTime" >
                 <!-- <el-date-picker
                   @change="changeEndTime"
                   clearable
@@ -441,6 +437,7 @@
                 <el-input
                   v-model="eventFormDetail.continuedTime"
                   readonly
+                  style="width: calc(100% - 10px)"
                 ></el-input>
               </el-form-item>
             </el-col>
@@ -464,12 +461,12 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8" >
+            <el-col :span="8">
               <el-row>
                 <el-col :span="15">
                   <el-form-item label="事件起点" prop="stakeNum1">
-                    <el-row>
-                      <el-col :span="22" style="margin-right: 2px;">
+                    <el-row class="inputNumStyle">
+                      <el-col :span="22" style="margin-right: 2px">
                         <el-input
                           v-model="eventFormDetail.stakeNum1"
                           placeholder="Km"
@@ -500,8 +497,8 @@
               </el-row>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="事件终点" label-width="100px" >
-                <el-row>
+              <el-form-item label="事件终点" >
+                <el-row class="inputNumStyle">
                   <el-col :span="11">
                     <el-input
                       v-model="eventFormDetail.stakeEndNum1"
@@ -525,48 +522,45 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="影响车道" prop="direction">
-                <el-row>
-                  <el-col :span="10">
-                    <el-select
-                      v-model="eventFormDetail.direction"
-                      placeholder="方向"
-                      clearable
-                      size="small"
-                      style="width: 100%"
-                      @change="getReservePlanData"
-                    >
-                      <el-option
-                        v-for="item in directionList"
-                        :key="item.dictValue"
-                        :label="item.dictLabel"
-                        :value="item.dictValue"
-                      />
-                    </el-select>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-select
-                      v-model="eventFormDetail.laneNo"
-                      placeholder="车道"
-                      clearable
-                      size="small"
-                      multiple
-                      collapse-tags
-                      style="width: 100%; margin-left: 8px"
-                    >
-                      <el-option
-                        v-for="(item, index) in chezhiLaneList"
-                        :key="index"
-                        :label="item.dictLabel"
-                        :value="item.dictValue"
-                      />
-                    </el-select>
-                  </el-col>
-                </el-row>
+              <el-form-item label="影响方向" prop="direction">
+                <el-select
+                  v-model="eventFormDetail.direction"
+                  placeholder="方向"
+                  clearable
+                  size="small"
+                  style="width: calc(100% - 10px)"
+                  @change="getReservePlanData"
+                >
+                  <el-option
+                    v-for="item in directionList"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
-
-            <el-col :span="16">
+            <el-col :span="8">
+              <el-form-item label="影响车道" prop="laneNo">
+                <el-select
+                  v-model="eventFormDetail.laneNo"
+                  placeholder="车道"
+                  clearable
+                  size="small"
+                  multiple
+                  collapse-tags
+                  style="width: calc(100% - 10px)"
+                >
+                  <el-option
+                    v-for="(item, index) in chezhiLaneList"
+                    :key="index"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
               <el-form-item label="事件车辆" prop="confidenceList">
                 <el-input
                   v-model="eventFormDetail.confidenceList"
@@ -1745,36 +1739,36 @@ export default {
         //     trigger: "change",
         //   },
         // ],
-        stakeNum1:[
-        {
+        stakeNum1: [
+          {
             required: true,
             message: "请输入事件起点",
             trigger: "change",
           },
         ],
-        stakeNum2:[
-        {
+        stakeNum2: [
+          {
             required: true,
             message: "请输入事件起点",
             trigger: "change",
           },
         ],
-        direction:[
-        {
+        direction: [
+          {
             required: true,
             message: "请选择影响车道",
             trigger: "change",
           },
         ],
-        eventTypeId:[
-        {
+        eventTypeId: [
+          {
             required: true,
             message: "请选择预估类型",
             trigger: "change",
           },
         ],
-        eventGrade:[
-        {
+        eventGrade: [
+          {
             required: true,
             message: "请选择预估等级",
             trigger: "change",
@@ -2020,8 +2014,8 @@ export default {
     getReservePlanData() {
       this.ReservePlanList = [];
       this.eventFormDetail.currencyId = "";
-      if(this.eventFormDetail.eventTypeId == 20){
-        this.eventFormDetail.laneNo = ['1','2','3']
+      if (this.eventFormDetail.eventTypeId == 20) {
+        this.eventFormDetail.laneNo = ["1", "2", "3"];
       }
       let data = {
         tunnelId: this.eventFormDetail.tunnelId,
@@ -2377,13 +2371,13 @@ export default {
       });
     },
     countLetters(string) {
-      var pattern = /[A-Za-z]/g;  // 匹配所有字母的正则表达式
+      var pattern = /[A-Za-z]/g; // 匹配所有字母的正则表达式
       var match = string.match(pattern);
       return match ? match.length : 0;
     },
     //详情弹窗
     detailsButton(item) {
-      console.log(item,"000000000")
+      console.log(item, "000000000");
       // 获取对应事件
       this.getEventType(item);
       console.log(item, "点击弹窗");
@@ -2413,7 +2407,6 @@ export default {
         swiperThumbs.controller.control = swiperTop;
         swiperThumbs.activeIndex = 0;
         swiperTop.activeIndex = 0;
-
       });
       this.getEventList();
       // debugger
@@ -2422,19 +2415,15 @@ export default {
 
         let letterCount = this.countLetters(item.stakeNum.split("+")[0]);
         console.log("字母数量：" + letterCount);
-        console.log(item.stakeNum.split("+")[0])
-        if( letterCount>=2){
-          stake = item.stakeNum.split("+")[0].substr(2)
-        }else if( letterCount>=1){
-          stake = item.stakeNum.split("+")[0].substr(1)
-        }else{
-          stake = item.stakeNum.split("+")[0]
+        console.log(item.stakeNum.split("+")[0]);
+        if (letterCount >= 2) {
+          stake = item.stakeNum.split("+")[0].substr(2);
+        } else if (letterCount >= 1) {
+          stake = item.stakeNum.split("+")[0].substr(1);
+        } else {
+          stake = item.stakeNum.split("+")[0];
         }
-        this.$set(
-          this.eventFormDetail,
-          "stakeNum1",
-          stake
-        );
+        this.$set(this.eventFormDetail, "stakeNum1", stake);
         this.$set(
           this.eventFormDetail,
           "stakeNum2",
@@ -3014,9 +3003,9 @@ export default {
   background-color: rgba(31, 45, 61, 0.8);
 }
 .gallery-thumbs {
-  height: 75px;
+  height: 56px;
   box-sizing: border-box;
-  padding: 10px 0;
+  // padding: 10px 0;
 }
 .gallery-thumbs .swiper-slide {
   width: 25%;
@@ -3272,14 +3261,14 @@ export default {
     color: #fff;
   }
   .dialogBg2 {
-    width: 55% !important;
+    width: 59% !important;
     padding: 0px 10px 10px 10px !important;
     margin-left: 10px;
     // ::v-deep .el-carousel__container{
     //   height:378px;
     // }
     .picBox {
-      height: 300px;
+      height: 304px;
     }
     ::v-deep .el-image {
       height: 300px;
@@ -3293,16 +3282,16 @@ export default {
   .dialogBg {
     background: #f7f7f7;
     height: 100%;
-    width: 45%;
+    width: 41%;
     color: #0087e7;
-    padding: 0px 10px 10px 20px;
+    padding: 0px 10px 10px 10px;
     span {
       color: #767676 !important;
       padding-left: 10px;
     }
     .leftVideo {
       width: 100%;
-      height: 251px;
+      height: 240px;
     }
     .picBox {
       width: 100%;
@@ -3809,6 +3798,14 @@ hr {
   padding: 20px 10px 20px 25px;
   .el-card {
     background: #052c4d !important;
+  }
+}
+::v-deep .inputNumStyle {
+  .el-input-group__prepend {
+    padding: 0 0px 0 16px;
+  }
+  .el-input__inner {
+    padding: 0 15px 0 10px;
   }
 }
 </style>

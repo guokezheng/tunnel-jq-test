@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.energyManagement.enumeration;
 
 import com.tunnel.business.datacenter.domain.enumeration.TunnelCodeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 
 /**
  * @author yangqichao
@@ -38,5 +39,17 @@ public enum EnergyTunnelEnum implements TunnelCodeEnum {
     @Override
     public String getEnergy() {
         return energyCode;
+    }
+
+    public static String getValue(String code) {
+        // 遍历枚举
+        for (EnergyTunnelEnum value : EnergyTunnelEnum.values()) {
+            String s = value.getEnergy() + "";
+            if (s.equals(String.valueOf(code))) {
+                return value.getTunnel();
+            }
+        }
+        // 其他情况
+        return null;
     }
 }

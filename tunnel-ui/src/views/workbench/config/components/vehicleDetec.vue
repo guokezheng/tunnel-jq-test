@@ -181,9 +181,9 @@ export default {
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
 
-          getTodayCOVIData(this.eqInfo.equipmentId).then((response) => {
-            console.log(response, "covi数据");
-          });
+          // getTodayCOVIData(this.eqInfo.equipmentId).then((response) => {
+          //   console.log(response, "covi数据");
+          // });
           this.title = res.data.eqName;
           this.stateForm = res.data;
           console.log(this.stateForm, "stateForm");
@@ -395,9 +395,7 @@ export default {
     handleClosee() {
       this.visible = false;
     },
-    handleOK() {
-      this.visible = false;
-    },
+    
   },
 };
 </script>

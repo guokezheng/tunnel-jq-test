@@ -38,14 +38,14 @@ public class SdDeviceChange extends BaseEntity
     private String changeTime;
 
     /** 桩号 */
-    @Excel(name = "方向",dictType = "sd_direction")
-    @ApiModelProperty("方向")
-    private String eqDirection;
-
-    /** 方向 */
     @ApiModelProperty("桩号")
     @Excel(name = "桩号")
     private String stakeMark;
+
+    /** 方向 */
+    @Excel(name = "方向",dictType = "sd_direction")
+    @ApiModelProperty("方向")
+    private String eqDirection;
 
     @ApiModelProperty("备注")
     @Excel(name = "备注")

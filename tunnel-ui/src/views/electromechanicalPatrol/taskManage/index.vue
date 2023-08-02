@@ -402,6 +402,7 @@
                   <el-date-picker
                     v-model="form.endPlantime"
                     type="date"
+                    value-format="yyyy-MM-dd"
                     :picker-options="pickerEndPlantime"
                     placeholder="选择预完成时"
                   >
@@ -458,16 +459,18 @@
           >
             <div style="height: 4vh">
               <div class="titleRow" style="width: 8%">序号</div>
+              <div class="titleRow" style="width: 10%">巡检类型</div>
               <div class="titleRow" style="width: 12%">所属隧道</div>
               <div class="titleRow" style="width: 15%">设备/故障类型</div>
               <div class="titleRow" style="width: 20%">设备名称</div>
-              <div class="titleRow" style="width: 30%">设备位置</div>
+              <div class="titleRow" style="width: 20%">设备位置</div>
               <div class="titleRow" style="width: 15%">操作</div>
             </div>
             <div class="box" :key="index" v-for="(item, index) in boxList">
               <div class="contentTextRow" style="float: left">
                 <div class="number" style="width: 10%">{{ index + 1 }}</div>
                 <div class="text" style="padding-left: 0px; margin-left: 0px">
+                  <div style="width: 10%">{{ item.patrol_type == 0 ? '巡检点' : '故障点' }}</div>
                   <div style="width: 12%">{{ item.tunnel_name }}</div>
                   <div style="width: 15%; margin-left: 30px">
                     {{ item.type_name }}
@@ -475,7 +478,7 @@
                   <div style="width: 20%; margin-left: 40px">
                     {{ item.eq_name }}
                   </div>
-                  <div style="width: 30%; margin-left: 62px">
+                  <div style="width: 20%; margin-left: 62px">
                     {{ item.pile }}
                   </div>
                 </div>
@@ -984,16 +987,22 @@
             <div>设备运行状态：</div>
             <span>{{ pat.runStatus }}</span>
           </el-col>
-          <el-col :span="8">
-            <div>设备描述：</div>
-            <span>{{ pat.eqFaultDescription }}</span>
-          </el-col>
           <el-col>
             <div style="width:12%">现场情况照片：</div>
             <div v-for="(pic, index) in pat.iFileList" :key="index" style = "padding-right: 30px;">
               <img :src="pic.imgUrl"  @click="openPic(pic.imgUrl)"/>
             </div>
           </el-col>
+          <el-col :span="24" style="display: inline-block">
+            <div style="display: inline-block">设备描述：</div>
+            <span style="width: calc(100% - 110px); display: inline-flex">{{
+                pat.eqFaultDescription == "null" ? "" : pat.eqFaultDescription
+              }}</span>
+          </el-col>
+<!--          <el-col :span="8">
+            <div>设备描述：</div>
+            <span>{{ pat.eqFaultDescription }}</span>
+          </el-col>-->
         </el-row>
         <!-- </div> -->
       </div>
@@ -1020,12 +1029,18 @@
             <span>{{ tas.taskCxtime }}</span>
             <span :class="{ active: isActive }">{{ tas.ifchaosgu }}</span>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="24" style="display: inline-block">
+            <div style="display: inline-block">现场情况描述：</div>
+            <span style="width: calc(100% - 110px); display: inline-flex">{{
+                tas.siteDescription == "null" ? "" : tas.siteDescription
+              }}</span>
+          </el-col>
+<!--          <el-col :span="8">
             <div>现场情况描述：</div>
             <span>{{
               tas.siteDescription == "null" ? "" : tas.siteDescription
             }}</span>
-          </el-col>
+          </el-col>-->
         </el-row>
       </div>
       <div class="card">
@@ -1118,6 +1133,7 @@ import { color } from "echarts";
 import { download } from "@/utils/request";
 import { getUser } from "@/api/system/user";
 import { getCategoryAllTree } from "@/api/event/strategy";
+import {delItem} from "@/api/equipment/eqTypeItem/item";
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
@@ -1613,16 +1629,16 @@ export default {
       ).then((res) => {
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
-        if (this.boxList != []) {
+        if (this.boxList.length > 0) {
           console.log(this.boxList,"this.boxList")
           console.log(this.tableData1, "this.tableData1");
           // if (this.boxList[0].eq_type == deviceType) {
+          this.$refs.multipleTable1.clearSelection();
           this.tableData1.forEach((item) => {
             this.boxList.forEach((row) => {
               const eq_id = row.eq_id.slice(0, -2);
               if (item.eq_id == eq_id) {
                 this.$nextTick(() => {
-                  this.$refs.multipleTable1.clearSelection();
                   this.$refs.multipleTable1.toggleRowSelection(item, true);
                 });
               }
@@ -1654,19 +1670,20 @@ export default {
         this.pageNum,
         this.pageSize
       ).then((res) => {
-        console.log(res, "获取故障table");
+        console.log(res, "获取故障table getGzTable");
         console.log(this.boxList,"boxList");
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
-        if (this.boxList != []) {
+        if (this.boxList.length > 0) {
           // console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
+          this.$refs.multipleTable2.clearSelection();
+
           this.tableData2.forEach((item) => {
             this.boxList.forEach((row) => {
               const eq_id = row.eq_id.slice(0, -2);
               if (item.eq_id == eq_id) {
                 this.$nextTick(() => {
-                  this.$refs.multipleTable2.clearSelection();
                   this.$refs.multipleTable2.toggleRowSelection(item, true);
                 });
               }
@@ -1730,7 +1747,7 @@ export default {
         this.pageNum,
         this.pageSize
       ).then((res) => {
-        console.log(res, "获取故障table");
+        console.log(res, "获取故障table 故障节点单击事件");
         console.log(
           "==================getFaultListthis.boxList==" + this.boxList,
           "boxList"
@@ -1912,6 +1929,7 @@ export default {
         devicesList: "",
       };
       this.boxList = [];
+      this.dialogSelection = []
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -1932,6 +1950,7 @@ export default {
       this.handleQuery();
     },
     show1() {
+      this.getEqType()
       //this.tableData1 = null
       if (typeof this.form.tunnelId == "undefined") {
         return this.$modal.msgWarning("请选择所属隧道");
@@ -1967,7 +1986,12 @@ export default {
       this.search2Value = ''
       this.options2value = "0";
       this.tunnelId = this.form.tunnelId;
-
+      console.log(this.boxList,"show2")
+      this.boxList.forEach((item) => {
+        this.$nextTick(() => {
+          this.$refs.multipleTable2.toggleRowSelection(item, true);
+        });
+      });
       treeselect(this.tunnelId).then((response) => {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
@@ -1995,12 +2019,14 @@ export default {
     cancelDetermine1() {
       this.dialogSelection = [];
       this.isShow1 = false;
+      this.eqTypeData = []
     },
     cancelDetermine2() {
       this.dialogSelection = [];
       this.isShow2 = false;
     },
     determine1() {
+      this.eqTypeData = []
       this.isShow1 = false;
       this.dialogSelection.forEach((item) => {
         item.eq_id = item.eq_id + "_1";
@@ -2048,14 +2074,14 @@ export default {
       getList(id).then((response) => {
         that.form = response.data.task[0];
         this.boxList = response.data.list;
-        console.log("handleUpdate=============" + this.boxList);
+        console.log(this.boxList,"修改按钮操作boxList");
         // this.tableData1 = response.data.devicesPatrolList;//巡检点
         // this.tableData2 = response.data.faultPatrolList;//故障点
-        this.boxList.forEach((item) => {
-          this.$nextTick(() => {
-            this.$refs.multipleTable2.toggleRowSelection(item, true);
-          });
-        });
+        // this.boxList.forEach((item) => {
+        //   this.$nextTick(() => {
+        //     this.$refs.multipleTable2.toggleRowSelection(item, true);
+        //   });
+        // });
         this.boxList.forEach((item) => {
           if (item.patrol_type == 0) {
             item.eq_id = item.eq_id + "_1";
@@ -2098,12 +2124,27 @@ export default {
     /** 废止按钮操作 */
     handleAbolish(row) {
       const id = row.id || this.ids;
+      this.$modal
+        .confirm("是否确认废止任务？")
+        .then(() => {
       if (id != null) {
         abolishList(id).then((response) => {
           this.$modal.msgSuccess("废止成功");
           this.getList();
         });
       }
+        })
+        .catch(() => {
+        });
+
+  /*
+      const id = row.id || this.ids;
+      if (id != null) {
+        abolishList(id).then((response) => {
+          this.$modal.msgSuccess("废止成功");
+          this.getList();
+        });
+      }*/
     },
     /** 提交按钮 */
     submitForm() {

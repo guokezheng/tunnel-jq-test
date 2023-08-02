@@ -143,7 +143,6 @@
               <el-form-item
                 label="持续时长"
                 prop="endTime"
-                label-width="100px"
               >
                 <!-- <el-date-picker
                   @change="changeEndTime"
@@ -159,6 +158,7 @@
                 <el-input
                   v-model="eventFormDetail.continuedTime"
                   readonly
+                  style="width: calc(100% - 10px)"
                 ></el-input>
               </el-form-item>
             </el-col>
@@ -186,7 +186,7 @@
               <el-row>
                 <el-col :span="15">
                   <el-form-item label="事件起点" prop="stakeNum1">
-                    <el-row>
+                    <el-row class="inputNumStyle">
                       <el-col :span="22" style="margin-right: 2px;">
                         <el-input
                           v-model="eventFormDetail.stakeNum1"
@@ -203,7 +203,7 @@
                 </el-col>
                 <el-col :span="9">
                   <el-form-item prop="stakeNum2" label-width="0px">
-                    <el-row>
+                    <el-row >
                       <el-col :span="22">
                         <el-input
                           v-model="eventFormDetail.stakeNum2"
@@ -218,8 +218,8 @@
               </el-row>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="事件终点" label-width="100px">
-                <el-row>
+              <el-form-item label="事件终点" >
+                <el-row class="inputNumStyle">
                   <el-col :span="11">
                     <el-input
                       v-model="eventFormDetail.stakeEndNum1"
@@ -243,48 +243,45 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="影响车道">
-                <el-row>
-                  <el-col :span="11">
-                    <el-select
-                      v-model="eventFormDetail.direction"
-                      placeholder="方向"
-                      clearable
-                      size="small"
-                      style="width: 100%"
-                      @change="getReservePlanData"
-                    >
-                      <el-option
-                        v-for="item in directionList"
-                        :key="item.dictValue"
-                        :label="item.dictLabel"
-                        :value="item.dictValue"
-                      />
-                    </el-select>
-                  </el-col>
-                  <el-col :span="11">
-                    <el-select
-                      v-model="eventFormDetail.laneNo"
-                      placeholder="车道"
-                      clearable
-                      size="small"
-                      multiple
-                      collapse-tags
-                      style="width: 100%; margin-left: 8px"
-                    >
-                      <el-option
-                        v-for="(item, index) in chezhiLaneList"
-                        :key="index"
-                        :label="item.dictLabel"
-                        :value="item.dictValue"
-                      />
-                    </el-select>
-                  </el-col>
-                </el-row>
+              <el-form-item label="影响方向" prop="direction">
+                <el-select
+                  v-model="eventFormDetail.direction"
+                  placeholder="方向"
+                  clearable
+                  size="small"
+                  style="width: calc(100% - 10px)"
+                  @change="getReservePlanData"
+                >
+                  <el-option
+                    v-for="item in directionList"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
-
-            <el-col :span="16">
+            <el-col :span="8">
+              <el-form-item label="影响车道" prop="laneNo">
+                <el-select
+                  v-model="eventFormDetail.laneNo"
+                  placeholder="车道"
+                  clearable
+                  size="small"
+                  multiple
+                  collapse-tags
+                  style="width: calc(100% - 10px)"
+                >
+                  <el-option
+                    v-for="(item, index) in chezhiLaneList"
+                    :key="index"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
               <el-form-item label="事件车辆" prop="confidenceList">
                 <el-input
                   v-model="eventFormDetail.confidenceList"
@@ -840,6 +837,8 @@ export default {
       this.direction = item.direction;
       this.details = true;
       this.eventFormDetail = {...item};
+      console.log(this.eventFormDetail,"11111111111")
+      console.log(this.eventFormDetail.continuedTime,"0000000000")
       this.eventFormDetail.eventState = 4;
       if(item.prevControlType == 1){
         this.getStrategyData(item);
@@ -959,7 +958,10 @@ export default {
     },
     // 复核弹窗内单选改变事件
     eventStateChange(){
-      this.eventForm.reviewRemark = [];
+      if (this.eventFormDetail.eventState != 0) {
+        this.eventFormDetail.currencyId = "";
+      }
+      this.eventFormDetail.reviewRemark = [];
     },
     // 复核提交
     submitDialog() {
@@ -1377,9 +1379,9 @@ export default {
   ::v-deep .el-carousel__arrow{background-color: rgba(31, 45, 61, 0.8);}
   ::v-deep .el-carousel__arrow:hover{background-color: rgba(31, 45, 61, 0.8);}
   .gallery-thumbs {
-    height: 75px;
+    height: 56px;
     box-sizing: border-box;
-    padding: 10px 0;
+    // padding: 10px 0;
   }
   .gallery-thumbs .swiper-slide {
     width: 25%;
@@ -1614,14 +1616,14 @@ export default {
       color: #fff;
     }
     .dialogBg2 {
-      width: 55% !important;
+      width: 59% !important;
       padding: 0px 10px 10px 10px !important;
       margin-left: 10px;
       // ::v-deep .el-carousel__container{
       //   height:378px;
       // }
       .picBox{
-        height: 300px;
+        height: 304px;
       }
       ::v-deep .el-image{
         height: 300px;
@@ -1632,16 +1634,16 @@ export default {
     .dialogBg {
       background: #f7f7f7;
       height: 100%;
-      width: 45%;
+      width: 41%;
       color: #0087e7;
-      padding: 0px 10px 10px 20px;
+      padding: 0px 10px 10px 10px;
       span {
         color: #767676 !important;
         padding-left: 10px;
       }
       .leftVideo {
         width: 100%;
-        height: 251px;
+        height: 240px;
       }
       .picBox {
         width: 100%;
@@ -2139,4 +2141,12 @@ export default {
       overflow: auto;
     }
   }
+  ::v-deep .inputNumStyle{
+  .el-input-group__prepend{
+    padding: 0 0px 0 16px;
+  }
+  .el-input__inner{
+    padding: 0 15px 0 10px;
+  }
+}
 </style>

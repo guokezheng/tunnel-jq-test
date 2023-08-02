@@ -200,11 +200,11 @@
         prop="eqName"
         width="220"
       />
-      <el-table-column label="设备状态" align="center" prop="eqStatus">
+<!--      <el-table-column label="设备状态" align="center" prop="eqStatus">
         <template slot-scope="scope">
           <span>{{ getEqStatus(scope.row.eqStatus) }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="故障位置" align="center" prop="faultLocation" />
       <el-table-column
         label="故障描述"
@@ -437,16 +437,16 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-<!--            <el-col :span="8" v-if="!isWritable">-->
-<!--              <el-form-item label="持续时间" prop="faultCxtime">-->
-<!--                <el-input-->
-<!--                  :disabled="disstate"-->
-<!--                  v-model="form.faultCxtime"-->
-<!--                  style="width: 100%"-->
-<!--                  :placeholder= holderFaultCxtime-->
-<!--                />-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
+            <!--            <el-col :span="8" v-if="!isWritable">-->
+            <!--              <el-form-item label="持续时间" prop="faultCxtime">-->
+            <!--                <el-input-->
+            <!--                  :disabled="disstate"-->
+            <!--                  v-model="form.faultCxtime"-->
+            <!--                  style="width: 100%"-->
+            <!--                  :placeholder= holderFaultCxtime-->
+            <!--                />-->
+            <!--              </el-form-item>-->
+            <!--            </el-col>-->
             <el-col :span="8" v-show="removeStata">
               <el-form-item label="故障填报时间" prop="faultTbtime">
                 <el-date-picker
@@ -524,7 +524,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+<!--            <el-col :span="8">
               <el-form-item label="设备状态" prop="eqStatus">
                 <el-select
                   v-model="form.eqStatus"
@@ -540,7 +540,7 @@
                   />
                 </el-select>
               </el-form-item>
-            </el-col>
+            </el-col>-->
             <el-col :span="8">
               <el-form-item label="故障位置" prop="faultLocation">
                 <el-input
@@ -552,7 +552,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+<!--            <el-col :span="8">
               <el-form-item label="设备运行状态" prop="eqRunStatus">
                 <el-input
                   v-model="form.eqRunStatus"
@@ -561,7 +561,7 @@
                   style="width: 100%"
                 />
               </el-form-item>
-            </el-col>
+            </el-col>-->
           </el-row>
         </el-card>
         <el-card>
@@ -570,15 +570,15 @@
               <div class="topTxt">故障描述</div>
               <div class="tableTopHr" style="display: none"></div>
             </el-col>
-<!--            <el-col :span="8">-->
-<!--              <el-form-item label="故障代码" prop="faultCode">-->
-<!--                <el-input-->
-<!--                  v-model="form.faultCode"-->
-<!--                  :disabled="disstate"-->
-<!--                  :placeholder = holderFaultCode-->
-<!--                />-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
+            <!--            <el-col :span="8">-->
+            <!--              <el-form-item label="故障代码" prop="faultCode">-->
+            <!--                <el-input-->
+            <!--                  v-model="form.faultCode"-->
+            <!--                  :disabled="disstate"-->
+            <!--                  :placeholder = holderFaultCode-->
+            <!--                />-->
+            <!--              </el-form-item>-->
+            <!--            </el-col>-->
             <el-col :span="8">
               <el-form-item label="故障等级" prop="faultLevel">
                 <el-select
@@ -735,13 +735,13 @@
             <span>{{ item.power }}</span>
           </div>
         </div>
-        <div class="card-cols" style="font-size: 15px; color: #05aafd;">
+<!--        <div class="card-cols" style="font-size: 15px; color: #05aafd;">
           <div style  ="width:60%;">
             <span style="margin-right: 46%">设备状态:{{ item.eqStatus }}</span
             ><span> 设备运行状态:{{ item.runStatus }}</span>
           </div>
 
-        </div>
+        </div>-->
         <div class="card-col" style="font-size: 15px; color: #05aafd">
           <div>
             现场故障情况:
@@ -1228,6 +1228,7 @@ export default {
           this.form.faultLocation = response.data[0].pile;
           this.form.eqRunStatus = typeof response.data[0].runStatus=="undefined"?"":response.data[0].runStatus;
           this.form.eqStatus = response.data[0].eq_status=="undefined"?"":response.data[0].eq_status;;
+          this.$forceUpdate();
           //this.$refs(this.form, "eqStatus", 1);
         }
         // this.$modal.msgSuccess("修改成功");
@@ -1475,6 +1476,7 @@ export default {
         eqType: this.form.typeId,
       }).then((response) => {
         this.eqListData = response.rows;
+        this.$forceUpdate()
       });
     },
 
@@ -1724,7 +1726,7 @@ export default {
       this.fileData.append("faultSource", this.form.faultSource);
       this.fileData.append("faultFxtime", this.form.faultFxtime);
       this.fileData.append("imgFileId", this.form.imgFileId);
-     // this.fileData.append("faultEscalationType",this.form.faultEscalationType);
+      // this.fileData.append("faultEscalationType",this.form.faultEscalationType);
       this.fileData.append("faultEscalationType",'0');
       this.fileData.append("faultCxtime", this.form.faultCxtime);
       this.fileData.append("eqId", this.form.eqId);
@@ -1858,9 +1860,9 @@ export default {
   .card-cols {
     margin-top: 10px;
     display: flex;
-   /* div {
-      width: 50%;
-    }*/
+    /* div {
+       width: 50%;
+     }*/
     .col-test {
       text-align: right;
       color: #79949c;

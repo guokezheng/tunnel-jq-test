@@ -9,6 +9,7 @@ import com.tunnel.business.domain.energyManagement.SplitTimeDto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * EnergySjfxElectricity
@@ -42,4 +43,13 @@ public interface EnergySjfxElectricityService {
      * @return
      */
     List<SplitTimeDto> getSplitTimeByDept(List<String> deptCodeList, Date baseTime, String type);
+
+    /**
+     * 电费分析
+     * @param deptCodeList
+     * @param baseTime
+     * @param type
+     * @return
+     */
+    List<List<Map<String, Object>>> getElectricityBillByDept(List<String> deptCodeList, Date baseTime, String type);
 }

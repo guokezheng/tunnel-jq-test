@@ -142,11 +142,9 @@
         width="68"
         align="center"
       ></el-table-column>
-      <el-table-column label="数据项编号" align="center" prop="itemCode" />
+      <el-table-column label="设备类型" align="center" prop="typeName" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />
-      <el-table-column label="设备类型" align="center" prop="typeName">
-      </el-table-column>
-
+      <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="单位名称" align="center" prop="unit" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
@@ -195,12 +193,6 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="数据项编号" prop="itemCode">
-          <el-input v-model="form.itemCode" placeholder="请输入数据项编号" />
-        </el-form-item>
-        <el-form-item label="数据项名称" prop="itemName">
-          <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
-        </el-form-item>
         <el-form-item label="设备类型" prop="deviceTypeId">
           <el-select
             v-model="form.deviceTypeId"
@@ -215,6 +207,12 @@
             >
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="数据项名称" prop="itemName">
+          <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
+        </el-form-item>
+        <el-form-item label="数据项编号" prop="itemCode">
+          <el-input v-model="form.itemCode" placeholder="请输入数据项编号" />
         </el-form-item>
         <el-form-item label="单位" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位" />
@@ -287,6 +285,8 @@ export default {
             trigger: "blur",
           },
           { validator: this.checkData, trigger: "blur" },
+          { max: 30, message: "最长输入30个字符", trigger: "blur" },
+
           // {
           //   pattern: /^[0-9]*$/,
           //   message: "数据项编号需为数字",
@@ -295,16 +295,13 @@ export default {
         ],
         itemName: [
           { required: true, message: "请输入数据项名称", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         deviceTypeId: [
           { required: true, message: "请输入设备类型ID", trigger: "change" },
         ],
-        // unit: [
-        //   { required: true, message: '请输入单位', trigger: 'change' }
-        // ],
-        // remark: [
-        //   { required: true, message: '请输入备注', trigger: 'change' }
-        // ],
+        unit: [{ max: 18, message: "最长输入18个字符", trigger: "blur" }],
+        remark: [{ max: 50, message: "最长输入50个字符", trigger: "blur" }],
       },
       eqTypeData: [], //设备类型
     };

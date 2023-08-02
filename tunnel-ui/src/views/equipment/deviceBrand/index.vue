@@ -240,10 +240,13 @@ export default {
       rules: {
         supplierName: [
           { required: true, message: "设备厂商名称不能为空", trigger: "blur" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         shortName: [
           { required: true, message: "简称不能为空", trigger: "blur" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
+        remark: [{ max: 50, message: "最长输入50个字符", trigger: "blur" }],
       },
     };
   },

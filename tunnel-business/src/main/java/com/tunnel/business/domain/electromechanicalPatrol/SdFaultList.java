@@ -30,6 +30,9 @@ public class SdFaultList extends BaseEntity
     /*@Excel(name = "隧道id")*/
     private String tunnelId;
 
+    @Excel(name = "所属隧道")
+    private String tunnelName;
+
     /** 设备id */
     @Excel(name = "故障设备")
     private String eqName;
@@ -64,10 +67,7 @@ public class SdFaultList extends BaseEntity
     private String faultSource;
 
 
-    /** 故障发现时间 */
-    @JsonFormat(timezone = "GMT+8",pattern="yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "发现时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
-    private Date faultFxtime;
+
 
 
 
@@ -109,8 +109,7 @@ public class SdFaultList extends BaseEntity
     /** 故障代码 */
     /*@Excel(name = "故障代码")*/
     private String faultCode;
-    @Excel(name = "设备状态")
-    private String fstatus;
+
 
 
     /** 故障等级 */
@@ -121,15 +120,20 @@ public class SdFaultList extends BaseEntity
     /*@Excel(name = "消除状态")*/
     private String falltRemoveStatue;
 
-    @Excel(name = "消除状态")
-    private String fremove;
-
     @Excel(name = "故障等级")
     private String flevel;
+
     @Excel(name = "故障类型")
     private String ftype;
-    @Excel(name = "所属隧道")
-    private String tunnelName;
+
+
+
+
+
+
+
+  //  @Excel(name = "设备状态")
+    private String fstatus;
 
     private String ids;
 
@@ -266,9 +270,7 @@ public class SdFaultList extends BaseEntity
         this.ftype = ftype;
     }
 
-    /** 状态（0：已发布；1：未发布） */
-   @Excel(name = "发布状态", dictType = "fault_status")
-    private String faultStatus;
+
 
     /** 创建者 */
    /* @ApiModelProperty("创建者")*/
@@ -303,6 +305,18 @@ public class SdFaultList extends BaseEntity
 
     @Excel(name = "故障来源")
     private String fEscalationType;
+
+    /** 故障发现时间 */
+    @JsonFormat(timezone = "GMT+8",pattern="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "发现时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    private Date faultFxtime;
+
+    /** 状态（0：已发布；1：未发布） */
+    @Excel(name = "发布状态", dictType = "fault_status")
+    private String faultStatus;
+
+    @Excel(name = "消除状态")
+    private String fremove;
 
     @ApiModelProperty("设备类型")
     private String eqType;

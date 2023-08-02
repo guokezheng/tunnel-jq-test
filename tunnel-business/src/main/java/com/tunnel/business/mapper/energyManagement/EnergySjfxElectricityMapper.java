@@ -1,15 +1,13 @@
 package com.tunnel.business.mapper.energyManagement;
 
 
-import com.tunnel.business.domain.energyManagement.ElectricityData;
-import com.tunnel.business.domain.energyManagement.EnergyConfigcenterElectricityPrice;
-import com.tunnel.business.domain.energyManagement.EnergyDayparting;
-import com.tunnel.business.domain.energyManagement.EnergySjfx;
+import com.tunnel.business.domain.energyManagement.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * EnergySjfxElectricityMapper
@@ -73,4 +71,15 @@ public interface EnergySjfxElectricityMapper {
     EnergyConfigcenterElectricityPrice getListOfMonth(Date baseTime);
 
     EnergyConfigcenterElectricityPrice getInfoByLastMonth();
+
+    /**
+     * 电量分析
+     * @param deptCodeList
+     * @param baseTime
+     * @param statisticsType
+     * @return
+     */
+    List<EnergyAnalysisElectricityBill> getElectricityBillByDept(@Param("deptCodeList")List<String> deptCodeList,
+                                                  @Param("baseTime")Date baseTime,
+                                                  @Param("statisticsType")Integer statisticsType);
 }

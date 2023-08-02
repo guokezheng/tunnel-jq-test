@@ -1133,6 +1133,7 @@ import { color } from "echarts";
 import { download } from "@/utils/request";
 import { getUser } from "@/api/system/user";
 import { getCategoryAllTree } from "@/api/event/strategy";
+import {delItem} from "@/api/equipment/eqTypeItem/item";
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
@@ -2113,12 +2114,27 @@ export default {
     /** 废止按钮操作 */
     handleAbolish(row) {
       const id = row.id || this.ids;
+      this.$modal
+        .confirm("是否确认废止任务？")
+        .then(() => {
+          if (id != null) {
+            abolishList(id).then((response) => {
+              this.$modal.msgSuccess("废止成功");
+              this.getList();
+            });
+          }
+        })
+        .catch(() => {
+        });
+
+  /*
+      const id = row.id || this.ids;
       if (id != null) {
         abolishList(id).then((response) => {
           this.$modal.msgSuccess("废止成功");
           this.getList();
         });
-      }
+      }*/
     },
     /** 提交按钮 */
     submitForm() {

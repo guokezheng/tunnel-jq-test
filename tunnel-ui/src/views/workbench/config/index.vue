@@ -90,13 +90,13 @@
               class="input-with-select"
               clearable
               @click.native="treeClick()"
-              @keyup.enter.native="screenEqNameButton(screenEqName)"
+              @keyup.enter.native="screenEqNameButton()"
               @clear="treeClear"
             >
               <el-button
                 slot="append"
                 icon="el-icon-search"
-                @click="screenEqNameButton(screenEqName)"
+                @click="screenEqNameButton()"
               ></el-button>
             </el-input>
             <!-- 搜索栏树状结构 -->
@@ -145,7 +145,7 @@
               ></el-switch>
             </div> -->
           <el-button
-            v-if="resetCanvasFlag"
+            v-if="resetCanvasFlag && currentTunnel.lane.width>1728"
             class="flex-row"
             type="primary"
             size="mini"
@@ -477,8 +477,10 @@
                     >
                       {{ item.eqName }}
                     </div>
-                    <div v-if="item.textFalse" class="textFalseBox"
-                    :style="{
+                    <div
+                      v-if="item.textFalse"
+                      class="textFalseBox"
+                      :style="{
                         top:
                           item.tooltipType1 == 1 || item.tooltipType1 == 2
                             ? '35px'
@@ -491,8 +493,10 @@
                     >
                       请选择同种设备
                     </div>
-                    <div v-if="item.textKKFalse" class="textFalseBox"
-                    :style="{
+                    <div
+                      v-if="item.textKKFalse"
+                      class="textFalseBox"
+                      :style="{
                         top:
                           item.tooltipType1 == 1 || item.tooltipType1 == 2
                             ? '35px'
@@ -501,7 +505,8 @@
                           item.tooltipType1 == 1 || item.tooltipType1 == 3
                             ? '0px'
                             : '-100px',
-                      }">
+                      }"
+                    >
                       请选择可控设备
                     </div>
                     <div
@@ -515,7 +520,7 @@
                         left:
                           item.tooltipType == 1 || item.tooltipType == 3
                             ? '0px'
-                            : - (item.eqName.length * 10 + 40) + 'px',
+                            : -(item.eqName.length * 10 + 40) + 'px',
                       }"
                     >
                       <span>名称：{{ item.eqName }}</span
@@ -1870,7 +1875,12 @@
         class="paginationWorkbench"
       />
     </el-dialog>
-    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>
+    <timingTask
+      ref="timingTask"
+      :tunnelItem="tunnelItem"
+      :tunnelList="tunnelList"
+      :show="timingTaskShow"
+    ></timingTask>
   </div>
 </template>
 
@@ -2926,7 +2936,7 @@ export default {
   methods: {
     // 管理站级联回显选中效果
     cascaderHandleChange() {
-      console.log(1)
+      console.log(1);
       console.log(this.siteList, "siteList");
       let handleText = "";
       for (let item of this.siteList) {
@@ -3137,7 +3147,7 @@ export default {
       }
     },
     treeClear() {
-      this.resetCanvas();
+      // this.resetCanvas();
       for (var item of this.selectedIconList) {
         if (item.eqName.indexOf(this.screenEqName) > -1) {
           item.click = false;
@@ -3155,7 +3165,7 @@ export default {
         setTimeout(() => {
           this.treeShow = false;
         }, 50);
-      }else{
+      } else {
         this.treeShow = !this.treeShow;
       }
     },
@@ -3168,7 +3178,7 @@ export default {
       } else {
         this.treeShow = false;
         this.screenEqName = data.label;
-        this.screenEqNameButton(data.label);
+        this.screenEqNameButton("treeNodeClick");
       }
     },
     changeStrategyState(row) {
@@ -3542,54 +3552,98 @@ export default {
       this.$forceUpdate();
     },
     // 筛选设备名称
-    screenEqNameButton() {
+    screenEqNameButton(treeNodeClick) {
+      let that = this;
       if (this.screenEqName) {
         let bigType = "";
         let param = document.getElementsByClassName("content");
         for (var item of this.selectedIconList) {
-          if (item.eqName.indexOf(this.screenEqName) > -1) {
-            bigType = item.bigType;
-            this.resetCanvasFlag = true;
-            if (
-              this.currentTunnel.lane.width - item.position.left > 864 &&
-              item.position.left > 864
-            ) {
-              this.$refs.dragImgDom.style.left =
-                -item.position.left + 864 + "px";
-            } else if (item.position.left < 864) {
-              param[0].scrollLeft = 0;
-              this.$refs.dragImgDom.style.left = "0px";
-            } else if (
-              this.currentTunnel.lane.width - item.position.left <
-              864
-            ) {
-              this.$refs.dragImgDom.style.left =
-                1728 - this.currentTunnel.lane.width + "px";
-            }
-            console.log(item.position.left, "item.position.left");
-            console.log(item.position.top, "item.position.top");
-            if (
-              item.position.left <= this.currentTunnel.lane.width - 100 &&
-              item.position.top <= 480
-            ) {
-              item.tooltipType = 1;
-            } else if (
-              item.position.left > this.currentTunnel.lane.width - 100 &&
-              item.position.top <= 480
-            ) {
-              item.tooltipType = 2;
-            } else if (
-              item.position.left <= this.currentTunnel.lane.width - 100 &&
-              item.position.top > 480
-            ) {
-              item.tooltipType = 3;
+          if (treeNodeClick) {
+            if (item.eqName == this.screenEqName) {
+              bigType = item.bigType;
+              this.resetCanvasFlag = true;
+              if (
+                this.currentTunnel.lane.width - item.position.left > 864 &&
+                item.position.left > 864
+              ) {
+                this.$refs.dragImgDom.style.left =
+                  -item.position.left + 864 + "px";
+              } else if (item.position.left < 864) {
+                param[0].scrollLeft = 0;
+                this.$refs.dragImgDom.style.left = "0px";
+              } else if (
+                this.currentTunnel.lane.width - item.position.left <
+                864
+              ) {
+                this.$refs.dragImgDom.style.left =
+                  1728 - this.currentTunnel.lane.width + "px";
+              }
+              if (
+                item.position.left <= this.currentTunnel.lane.width - 100 &&
+                item.position.top <= 450
+              ) {
+                item.tooltipType = 1;
+              } else if (
+                item.position.left > this.currentTunnel.lane.width - 100 &&
+                item.position.top <= 450
+              ) {
+                item.tooltipType = 2;
+              } else if (
+                item.position.left <= this.currentTunnel.lane.width - 100 &&
+                item.position.top > 450
+              ) {
+                item.tooltipType = 3;
+              } else {
+                item.tooltipType = 4;
+              }
+              // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
+              item.click = true;
             } else {
-              item.tooltipType = 4;
+              item.click = false;
             }
-            // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-            item.click = true;
           } else {
-            item.click = false;
+            if (item.eqName.indexOf(this.screenEqName) > -1) {
+              bigType = item.bigType;
+              this.resetCanvasFlag = true;
+              if (
+                this.currentTunnel.lane.width - item.position.left > 864 &&
+                item.position.left > 864
+              ) {
+                this.$refs.dragImgDom.style.left =
+                  -item.position.left + 864 + "px";
+              } else if (item.position.left < 864) {
+                param[0].scrollLeft = 0;
+                this.$refs.dragImgDom.style.left = "0px";
+              } else if (
+                this.currentTunnel.lane.width - item.position.left <
+                864
+              ) {
+                this.$refs.dragImgDom.style.left =
+                  1728 - this.currentTunnel.lane.width + "px";
+              }
+              if (
+                item.position.left <= this.currentTunnel.lane.width - 100 &&
+                item.position.top <= 450
+              ) {
+                item.tooltipType = 1;
+              } else if (
+                item.position.left > this.currentTunnel.lane.width - 100 &&
+                item.position.top <= 450
+              ) {
+                item.tooltipType = 2;
+              } else if (
+                item.position.left <= this.currentTunnel.lane.width - 100 &&
+                item.position.top > 450
+              ) {
+                item.tooltipType = 3;
+              } else {
+                item.tooltipType = 4;
+              }
+              // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
+              item.click = true;
+            } else {
+              item.click = false;
+            }
           }
         }
         if (bigType.includes("0")) {
@@ -3833,7 +3887,7 @@ export default {
 
     // 改变站点
     changeSite(index) {
-      console.log(2)
+      console.log(2);
       console.log(index, "index000000000000000000000000");
       if (index) {
         // console.log(
@@ -4851,9 +4905,8 @@ export default {
                       if (this.eqTypeStateList[k].state == deviceData.state) {
                         // 照明图标后加数据
                         if (deviceData.eqType == 7 || deviceData.eqType == 9) {
-                          // console.log(deviceData,"deviceData")
-                          this.selectedIconList[j].num =
-                            deviceData.brightness + "%";
+                          // console.log(deviceData, "deviceData");
+                          this.selectedIconList[j].num = deviceData.brightness;
                         }
                         //取设备运行状态图标
                         let url = this.eqTypeStateList[k].url;
@@ -5087,7 +5140,7 @@ export default {
                 itm.eqId == item.eqId &&
                 this.itemEqType != item.eqType
               ) {
-                this.tooltipType1(item)
+                this.tooltipType1(item);
                 itm.textFalse = true;
                 setTimeout(() => {
                   item.textFalse = false;
@@ -5119,15 +5172,15 @@ export default {
           [16, 22, 29, 33, 36].includes(item.eqType)
         ) {
           // 可控设备里 情报板 消防炮 巡检机器人 广播 也不可批量控制
-          console.log(item,"1111111111111111")
-          this.tooltipType1(item)
-          
+          console.log(item, "1111111111111111");
+          this.tooltipType1(item);
+
           item.textKKFalse = true;
           setTimeout(() => {
             item.textKKFalse = false;
           }, 2000);
           this.$forceUpdate();
-        } 
+        }
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
         this.eqInfo = {
@@ -5246,24 +5299,24 @@ export default {
         });
       }
     },
-    tooltipType1(item){
+    tooltipType1(item) {
       if (
         item.position.left <= this.currentTunnel.lane.width - 100 &&
         item.position.top <= 450
       ) {
-        return item.tooltipType1 = 1;
+        return (item.tooltipType1 = 1);
       } else if (
         item.position.left > this.currentTunnel.lane.width - 100 &&
         item.position.top <= 450
       ) {
-        return item.tooltipType1 = 2;
+        return (item.tooltipType1 = 2);
       } else if (
         item.position.left <= this.currentTunnel.lane.width - 100 &&
         item.position.top > 450
       ) {
-        return item.tooltipType1 = 3;
+        return (item.tooltipType1 = 3);
       } else {
-        return item.tooltipType1 = 4;
+        return (item.tooltipType1 = 4);
       }
     },
     sendAnalogCommand(param) {
@@ -5412,9 +5465,9 @@ export default {
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
     },
-    strategyPage1(){
-      this.timingTaskShow = !this.timingTaskShow
-      this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
+    strategyPage1() {
+      this.timingTaskShow = !this.timingTaskShow;
+      this.$refs.timingTask.getEchartsData(this.tunnelList, this.tunnelItem);
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;
@@ -5977,14 +6030,9 @@ export default {
   width: 120px;
   height: 28px;
   position: absolute;
-  // top: -40px;
-  // left: 30px;
   line-height: 28px;
   text-align: center;
   font-size: 10px;
-  background-image: url(../../../assets/cloudControl/screenEqName.png);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
   color: #da4a64;
   opacity: 1;
   // animation: fadenum 2s;

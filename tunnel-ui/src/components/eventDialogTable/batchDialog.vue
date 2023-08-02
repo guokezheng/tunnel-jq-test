@@ -13,6 +13,7 @@
     >
       <el-form
         :model="form"
+        ref="form"
         label-width="80px"
         class="dialogForm"
         :rules="rules"

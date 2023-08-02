@@ -292,12 +292,12 @@ export default {
                 this.$forceUpdate();
               }
             }
-          } else if (this.simplifyName != item.simplifyName) {
-            this.$modal.msgWarning("请选择同种事件类型");
-          } else if (this.eqDirection != item.direction) {
-            this.$modal.msgWarning("请选择同方向事件");
           } else if(this.tunnelId != item.tunnelId){
             this.$modal.msgWarning("请选择同隧道事件");
+          } else if (this.eqDirection != item.direction) {
+            this.$modal.msgWarning("请选择同方向事件");
+          } else if (this.simplifyName != item.simplifyName) {
+            this.$modal.msgWarning("请选择同种事件类型");
           }
         } else {
           // 第一次点击时

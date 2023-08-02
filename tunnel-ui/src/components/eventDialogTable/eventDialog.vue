@@ -186,7 +186,7 @@
               <el-row>
                 <el-col :span="15">
                   <el-form-item label="事件起点" prop="stakeNum1">
-                    <el-row>
+                    <el-row class="inputNumStyle">
                       <el-col :span="22" style="margin-right: 2px;">
                         <el-input
                           v-model="eventFormDetail.stakeNum1"
@@ -203,7 +203,7 @@
                 </el-col>
                 <el-col :span="9">
                   <el-form-item prop="stakeNum2" label-width="0px">
-                    <el-row>
+                    <el-row >
                       <el-col :span="22">
                         <el-input
                           v-model="eventFormDetail.stakeNum2"
@@ -219,7 +219,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="事件终点" label-width="100px">
-                <el-row>
+                <el-row class="inputNumStyle">
                   <el-col :span="11">
                     <el-input
                       v-model="eventFormDetail.stakeEndNum1"
@@ -840,6 +840,8 @@ export default {
       this.direction = item.direction;
       this.details = true;
       this.eventFormDetail = {...item};
+      console.log(this.eventFormDetail,"11111111111")
+      console.log(this.eventFormDetail.continuedTime,"0000000000")
       this.eventFormDetail.eventState = 4;
       if(item.prevControlType == 1){
         this.getStrategyData(item);
@@ -959,7 +961,10 @@ export default {
     },
     // 复核弹窗内单选改变事件
     eventStateChange(){
-      this.eventForm.reviewRemark = [];
+      if (this.eventFormDetail.eventState != 0) {
+        this.eventFormDetail.currencyId = "";
+      }
+      this.eventFormDetail.reviewRemark = [];
     },
     // 复核提交
     submitDialog() {
@@ -2139,4 +2144,12 @@ export default {
       overflow: auto;
     }
   }
+  ::v-deep .inputNumStyle{
+  .el-input-group__prepend{
+    padding: 0 0px 0 16px;
+  }
+  .el-input__inner{
+    padding: 0 15px 0 10px;
+  }
+}
 </style>

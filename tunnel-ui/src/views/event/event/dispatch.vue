@@ -1166,13 +1166,19 @@ export default {
     },
   },
   async created() {
+    const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
     await this.getEqTypeStateIcon();
     // await this.getTunnelData();
     await this.getDispatchExecuted();
     this.getListEvent();
     this.stateByData();
     this.getEventList();
-
+    loading.close();
     //当前等级
     this.getDicts("sd_event_grade").then((response) => {
       this.eventGradeList = response.data;
@@ -1413,11 +1419,18 @@ export default {
         type: "warning",
       })
         .then(() => {
+          const loading = this.$loading({
+            lock: true,
+            text: "Loading",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)",
+          });
           const param = {
             id: this.eventForm.id,
             eventState: 1,
           };
           updateEvent(param).then((response) => {
+            loading.close();
             this.$message({
               type: "success",
               message: "操作成功!",
@@ -1427,6 +1440,7 @@ export default {
           });
         })
         .catch(() => {
+          loading.close();
           this.$message({
             type: "info",
             message: "已取消操作",
@@ -1705,6 +1719,7 @@ export default {
     },
     // 事件详情
     async getListEvent() {
+      
       if (this.$route.query.id) {
         const param = {
           id: this.$route.query.id,

@@ -468,7 +468,7 @@
               <el-row>
                 <el-col :span="15">
                   <el-form-item label="事件起点" prop="stakeNum1">
-                    <el-row>
+                    <el-row class="inputNumStyle">
                       <el-col :span="22" style="margin-right: 2px;">
                         <el-input
                           v-model="eventFormDetail.stakeNum1"
@@ -485,7 +485,7 @@
                 </el-col>
                 <el-col :span="9">
                   <el-form-item prop="stakeNum2" label-width="0px">
-                    <el-row>
+                    <el-row >
                       <el-col :span="22">
                         <el-input
                           v-model="eventFormDetail.stakeNum2"
@@ -501,7 +501,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="事件终点" label-width="100px" >
-                <el-row>
+                <el-row class="inputNumStyle">
                   <el-col :span="11">
                     <el-input
                       v-model="eventFormDetail.stakeEndNum1"
@@ -3809,6 +3809,14 @@ hr {
   padding: 20px 10px 20px 25px;
   .el-card {
     background: #052c4d !important;
+  }
+}
+::v-deep .inputNumStyle{
+  .el-input-group__prepend{
+    padding: 0 0px 0 16px;
+  }
+  .el-input__inner{
+    padding: 0 15px 0 10px;
   }
 }
 </style>

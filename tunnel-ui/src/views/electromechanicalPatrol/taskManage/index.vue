@@ -459,16 +459,18 @@
           >
             <div style="height: 4vh">
               <div class="titleRow" style="width: 8%">序号</div>
+              <div class="titleRow" style="width: 10%">巡检类型</div>
               <div class="titleRow" style="width: 12%">所属隧道</div>
               <div class="titleRow" style="width: 15%">设备/故障类型</div>
               <div class="titleRow" style="width: 20%">设备名称</div>
-              <div class="titleRow" style="width: 30%">设备位置</div>
+              <div class="titleRow" style="width: 20%">设备位置</div>
               <div class="titleRow" style="width: 15%">操作</div>
             </div>
             <div class="box" :key="index" v-for="(item, index) in boxList">
               <div class="contentTextRow" style="float: left">
                 <div class="number" style="width: 10%">{{ index + 1 }}</div>
                 <div class="text" style="padding-left: 0px; margin-left: 0px">
+                  <div style="width: 10%">{{ item.patrol_type == 0 ? '巡检点' : '故障点' }}</div>
                   <div style="width: 12%">{{ item.tunnel_name }}</div>
                   <div style="width: 15%; margin-left: 30px">
                     {{ item.type_name }}
@@ -476,7 +478,7 @@
                   <div style="width: 20%; margin-left: 40px">
                     {{ item.eq_name }}
                   </div>
-                  <div style="width: 30%; margin-left: 62px">
+                  <div style="width: 20%; margin-left: 62px">
                     {{ item.pile }}
                   </div>
                 </div>

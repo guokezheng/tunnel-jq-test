@@ -4694,6 +4694,9 @@ export default {
             .then((response) => {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
+                if(res.eqList[i].eqType == 7){
+                  console.log(res.eqList[i],"加强照明")
+                }
                 res.eqList[i].focus = false;
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {

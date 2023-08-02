@@ -495,6 +495,7 @@ export default {
       rules: {
         eventType: [
           { required: true, message: "请输入事件类型", trigger: "blur" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         prevControlType: [
           { required: true, message: "请选择防控类型", trigger: "change" },
@@ -504,6 +505,7 @@ export default {
         ],
         simplifyName: [
           { required: true, message: "请输入简称", trigger: "blur" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         iconUrl: [
           { required: true, message: "请上传默认图标", trigger: "blur" },

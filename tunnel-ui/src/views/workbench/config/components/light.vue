@@ -330,11 +330,11 @@ export default {
           form.brightness = typeof(form.brightness) == "string"? Number(form.brightness):form.brightness;
           this.stateForm = form
           // 查询设备当前状态 --------------------------------
-          getDevice(this.eqInfo.equipmentId).then((response) => {
-            console.log(response, "查询设备当前状态");
-            this.stateForm.state = response.data.state;
+          // getDevice(this.eqInfo.equipmentId).then((response) => {
+          //   console.log(response, "查询设备当前状态");
+          //   this.stateForm.state = response.data.state;
             this.getEqTypeStateIcon();
-          });
+          // });
           if (this.eqInfo.clickEqType == 30) {
             this.fireMarkData = [
               {

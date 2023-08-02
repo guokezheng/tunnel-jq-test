@@ -142,7 +142,7 @@
         width="68"
         align="center"
       ></el-table-column>
-      <el-table-column label="设备类型" align="center" prop="typeName"/>
+      <el-table-column label="设备类型" align="center" prop="typeName" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="单位名称" align="center" prop="unit" />
@@ -285,6 +285,8 @@ export default {
             trigger: "blur",
           },
           { validator: this.checkData, trigger: "blur" },
+          { max: 30, message: "最长输入30个字符", trigger: "blur" },
+
           // {
           //   pattern: /^[0-9]*$/,
           //   message: "数据项编号需为数字",
@@ -293,16 +295,13 @@ export default {
         ],
         itemName: [
           { required: true, message: "请输入数据项名称", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         deviceTypeId: [
           { required: true, message: "请输入设备类型ID", trigger: "change" },
         ],
-        // unit: [
-        //   { required: true, message: '请输入单位', trigger: 'change' }
-        // ],
-        // remark: [
-        //   { required: true, message: '请输入备注', trigger: 'change' }
-        // ],
+        unit: [{ max: 18, message: "最长输入18个字符", trigger: "blur" }],
+        remark: [{ max: 50, message: "最长输入50个字符", trigger: "blur" }],
       },
       eqTypeData: [], //设备类型
     };

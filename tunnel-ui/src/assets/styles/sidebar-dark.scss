@@ -317,6 +317,7 @@
     .celueDialog,.strategyDialog{
       .el-dialog__body{
         max-height: 83vh;
+        height: 500px;
         overflow: auto;
       }
       //单选框
@@ -1167,7 +1168,7 @@
     .patrol .box-father .box .number{
       color: #fff !important;
     }
-    
+
     .show-left{
       .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
         background: #004375;
@@ -2622,7 +2623,7 @@
     //   background: #0064B0 !important;
     // }
   }
-  
+
   .explain-table {
     .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
       border-bottom: solid 1px  #0a88bd !important;

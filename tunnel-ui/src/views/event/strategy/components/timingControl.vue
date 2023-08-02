@@ -5,6 +5,7 @@
       :model="strategyForm"
       :rules="formDataValidator"
       label-width="100px"
+      height="700px"
     >
       <el-row>
         <el-col :span="8">

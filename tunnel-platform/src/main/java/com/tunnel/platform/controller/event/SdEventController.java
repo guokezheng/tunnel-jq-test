@@ -17,12 +17,14 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventHandleMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.event.ISdEventHandleService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.impl.SdEventServiceImpl;
@@ -221,6 +223,10 @@ public class SdEventController extends BaseController
     @GetMapping("/getEventUntreatedNum")
     @ApiOperation("当日未处理事件数量")
     public Result getEventUntreatedNum() {
+//        List<SdTunnels> jlyTunnel = SpringUtils.getBean(ISdTunnelsService.class).getJlyTunnel();
+//        jlyTunnel.forEach(tunnel ->{
+////            tunnel.gt
+//        });
         return  Result.success(SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum());
     }
 

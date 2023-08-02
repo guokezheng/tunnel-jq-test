@@ -163,15 +163,24 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>控制策略</span>
           </el-button>
-          <!--          <el-button-->
-          <!--            class="buttons"-->
-          <!--            type="primary"-->
-          <!--            size="mini"-->
-          <!--            @click="strategyPage1"-->
-          <!--          >-->
-          <!--            <img src="../../../assets/icons/kzcl.png" />-->
-          <!--            <span>控制策略1</span>-->
-          <!--          </el-button>-->
+<!--          <el-button-->
+<!--            class="buttons"-->
+<!--            type="primary"-->
+<!--            size="mini"-->
+<!--            @click="strategyPage1"-->
+<!--          >-->
+<!--            <img src="../../../assets/icons/kzcl.png" />-->
+<!--            <span>控制策略1</span>-->
+<!--          </el-button>-->
+<!--          <el-button-->
+<!--            class="buttons"-->
+<!--            type="primary"-->
+<!--            size="mini"-->
+<!--            @click="strategyPage2"-->
+<!--          >-->
+<!--            <img src="../../../assets/icons/kzcl.png" />-->
+<!--            <span>控制策略2</span>-->
+<!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -1871,6 +1880,7 @@
       />
     </el-dialog>
     <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>
+    <jointControlStrategy ref ='jointControlStrategy' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="jointControlShow"></jointControlStrategy>
   </div>
 </template>
 
@@ -1887,7 +1897,7 @@ import "jquery-ui-dist/jquery-ui.min.css";
 import bus from "@/utils/bus";
 import { mapState } from "vuex";
 import timingTask from "@/views/workbench/config/components/timingTask";
-
+import jointControlStrategy from "@/views/workbench/config/components/jointControlStrategy";
 import {
   getLiPowerDevices,
   //initLipowerDevice
@@ -2074,6 +2084,7 @@ export default {
     comFooter, //底部echarts
     timingTask,
     comXfp,
+    jointControlStrategy
   },
 
   data() {
@@ -2628,6 +2639,7 @@ export default {
       // 表单参数
       lightingForm: {},
       timingTaskShow: false,
+      jointControlShow: false,
     };
   },
 
@@ -5121,13 +5133,13 @@ export default {
           // 可控设备里 情报板 消防炮 巡检机器人 广播 也不可批量控制
           console.log(item,"1111111111111111")
           this.tooltipType1(item)
-          
+
           item.textKKFalse = true;
           setTimeout(() => {
             item.textKKFalse = false;
           }, 2000);
           this.$forceUpdate();
-        } 
+        }
       } else if (this.addBatchManage == false) {
         this.mouseoversImplement = false;
         this.eqInfo = {
@@ -5415,6 +5427,10 @@ export default {
     strategyPage1(){
       this.timingTaskShow = !this.timingTaskShow
       this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
+    },
+    strategyPage2(){
+      this.jointControlShow = !this.jointControlShow
+      // this.$refs.jointControlStrategy.getEchartsData(this.tunnelList,this.tunnelItem,true)
     },
     handleClick(tab, event) {
       this.dictCode = tab.index;

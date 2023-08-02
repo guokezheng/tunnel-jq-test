@@ -959,6 +959,7 @@ export default {
       this.strategyForm.strategyType = row.strategyType;
       this.sink = "edit";
       console.log(this.queryParams.strategyGroup)
+      debugger
       if (this.queryParams.strategyGroup == 1) {
         this.$nextTick(() => {
           this.dialogVisible = true;

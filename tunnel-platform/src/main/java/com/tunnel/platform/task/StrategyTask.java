@@ -349,7 +349,9 @@ public class StrategyTask {
                     if(s.get("warning_type").equals("0")){
                         this.triggerComparison(s);
                     }else{
-                        // 自动触发控制策略执行
+                        //生成事件
+                        this.triggerComparison(s);
+                        // 自动触发控制策略执行 控制设备
                         this.triggerJobParams(triggerId);
                     }
                     break out;

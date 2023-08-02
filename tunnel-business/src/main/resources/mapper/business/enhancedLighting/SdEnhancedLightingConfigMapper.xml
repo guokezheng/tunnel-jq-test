@@ -19,6 +19,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isStatus"    column="is_status"    />
         <result property="isTrafficVolume"    column="is_traffic_volume"    />
         <result property="direction"    column="direction"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
     </resultMap>
 
     <sql id="selectSdEnhancedLightingConfigVo">
@@ -27,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="sdEnhancedLightingConfigVo">
         select elc.id, elc.tunnel_id, elc.mode_type, elc.time_slot, elc.before_luminance, elc.min_luminance, elc.respond_time, elc.max_luminance_range, elc.min_luminance_range, elc.max_traffic_flow, elc.is_status, elc.is_traffic_volume
+                     , elc.create_by, elc.create_time, elc.direction,t.tunnel_name
     </sql>
 
     <select id="selectSdEnhancedLightingConfigList" parameterType="SdEnhancedLightingConfig" resultMap="SdEnhancedLightingConfigResult">

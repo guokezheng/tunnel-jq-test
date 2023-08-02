@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.sql.Date;
+
 /**
  * 【加强照明配置】对象 sd_enhanced_lighting_config
  * 
@@ -69,6 +71,11 @@ public class SdEnhancedLightingConfig extends BaseEntity
     /** 隧道方向 */
     @Excel(name = "上行下行")
     private String direction;
+
+
+    private String createBy;
+
+    private Date createTime;
 
     public String getTunnelName() {
         return tunnelName;
@@ -193,6 +200,26 @@ public class SdEnhancedLightingConfig extends BaseEntity
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+
+    @Override
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    @Override
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     @Override

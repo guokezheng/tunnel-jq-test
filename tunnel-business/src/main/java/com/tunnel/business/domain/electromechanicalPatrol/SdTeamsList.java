@@ -29,6 +29,13 @@ public class SdTeamsList extends BaseEntity {
     private String deptId;
 
     /**
+     * 部门名称
+     */
+    @Excel(name = "班组名称")
+    @ApiModelProperty("班组名称")
+    private String deptName;
+
+    /**
      * 父部门ID
      */
     @Excel(name = "所属部门")
@@ -41,12 +48,7 @@ public class SdTeamsList extends BaseEntity {
     @ApiModelProperty("祖级列表")
     private String ancestors;
 
-    /**
-     * 部门名称
-     */
-    @Excel(name = "班组名称")
-    @ApiModelProperty("班组名称")
-    private String deptName;
+
 
     /**
      * 显示顺序

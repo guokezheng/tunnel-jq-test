@@ -306,7 +306,7 @@
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'"
+      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频' && tunnelId == 'JQ-JiNan-WenZuBei-MJY'"
       :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
         <div class="footTitle">
           <div class="footTitleCont">
@@ -320,7 +320,7 @@
           </div>
         </div>
         <videoPlayer
-          v-if="liveUrl5 && tunnelId == 'JQ-JiNan-WenZuBei-MJY'"
+          v-if="liveUrl5"
           :rtsp="liveUrl5"
           :open="cameraPlayer5"
         ></videoPlayer>

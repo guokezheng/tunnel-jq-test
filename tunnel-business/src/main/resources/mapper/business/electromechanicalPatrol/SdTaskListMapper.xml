@@ -478,6 +478,7 @@
             d.dept_name zzjgId, -- 管理站名称
             t.dispatch_time as dispatchTime,
             DATE_FORMAT(t.end_plantime , '%Y-%m-%d %H:%i:%s') as endPlantime,     -- 计划完成时间
+            DATE_FORMAT(t.task_endtime , '%Y-%m-%d %H:%i:%s') as taskEndtime,     -- 完成时间
             u.nick_name dispatcher, -- 派单人员
             t.task_description as taskDescription,  -- 任务描述
             t.task_status as taskStatus,  -- 任务状态

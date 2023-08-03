@@ -1084,8 +1084,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                         long time = sdf.parse(endPlantime, new ParsePosition(0)).getTime();
                         diff = System.currentTimeMillis() - time;
                         if((taskStatus.equals(TaskStatus.DAIXUNCHA.getName()))||(taskStatus.equals(TaskStatus.XUNCHAZHONG.getName()))) {
-                            map.put("taskStatus",map.get("taskStatus")+","+TaskStatus.YICHAOSHI.getCode());
                             if (diff > 0) {
+                                map.put("taskStatus",map.get("taskStatus")+","+TaskStatus.YICHAOSHI.getCode());
                                 taskInfoMap.put("ifchaosgu", TaskStatus.YICHAOSHI.getName());
                             } else {
                                 taskInfoMap.put("ifchaosgu", "");
@@ -1174,10 +1174,16 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                     sdTaskList.setSiteDescription(siteDescription);
                     sdTaskList.setWalkerId(SecurityUtils.getUserId() +"");
                //     sdTaskList.setTaskCxtime(DateUtils.getTime());
+                    // 没有结束时间，则默认当前时间
+                    if(taskEndtime == null){
+                        taskEndtime = new Date();
+                    }
                     sdTaskList.setTaskEndtime(taskEndtime);
+                    sdTaskList.setUpdateTime(new Date());
                 }
+                updateGsySdTaskList(sdTaskList);
                 // 更新基本信息
-                if(updateSdTaskList(sdTaskList) != 0){
+    /*            if(updateSdTaskList(sdTaskList) != 0){*/
                     success.add(id);
 
                     // 巡检设备信息
@@ -1218,9 +1224,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                     sdTaskOpt.setOptType(OptType.TIJIAO.getCode());
                     sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
                     sdTaskListMapper.insertTaskOpt(sdTaskOpt);
-                }else{
+               /* }else{
                     error.add(id);
-                }
+                }*/
             }
 
         }

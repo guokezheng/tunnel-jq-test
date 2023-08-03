@@ -144,7 +144,7 @@ export default {
           var yData = [];
           for (var item of response.data.todayFSData) {
             xData.push(item.order_hour);
-            yData.push(item.count);
+            yData.push(parseFloat(item.count).toFixed(2));
           }
           // this.fengValue = yData[yData.length-1]
           this.fengDirection = response.data.windDirection;

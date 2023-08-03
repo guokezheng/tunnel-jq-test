@@ -166,13 +166,13 @@ export default {
         if (this.eqInfo.clickEqType == 5) {
           for (var item of response.data.todayLDOutsideData) {
             xData.push(item.order_hour);
-            yData1.push(item.count);
-            yData2.push(item.ctCount);
+            yData1.push(parseFloat(item.count).toFixed(2));
+            yData2.push(parseFloat(item.ctCount).toFixed(2));
           }
         } else if (this.eqInfo.clickEqType == 18) {
           for (var item of response.data.todayLDInsideData) {
             xData.push(item.order_hour);
-            yData1.push(item.count);
+            yData1.push(parseFloat(item.count).toFixed(2));
           }
         }
         this.brightValue = yData1[yData1.length - 1];
@@ -216,6 +216,17 @@ export default {
       var option = {
         tooltip: {
           trigger: "axis",
+          formatter: function (params) {
+            var str = params[0].marker;
+            if (params.length>1) {
+              str += params[0].value + "</br>";
+              str += params[1].marker;
+              str += params[1].value;
+            }else {
+              str += params[0].value;
+            }
+            return str;
+          }
         },
         toolbox: {
           show: true,

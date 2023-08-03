@@ -136,7 +136,7 @@ export default {
           let yData = [];
           for (var item of res.data.todayYcylData) {
             xData.push(item.order_hour);
-            yData.push(item.count);
+            yData.push(parseFloat(item.count).toFixed(2));
           }
           this.initChart(xData, yData);
         });
@@ -150,6 +150,11 @@ export default {
       var option = {
         tooltip: {
           trigger: "axis",
+          formatter: function (params) {
+              var str = params[0].marker ;
+              str += params[0].value ;
+              return str;
+          }
         },
         toolbox: {
           show: true,

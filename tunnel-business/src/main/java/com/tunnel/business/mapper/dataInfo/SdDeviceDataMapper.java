@@ -73,7 +73,7 @@ public interface SdDeviceDataMapper
 
     public SdDeviceData selectLastRecord(SdDeviceData sdDeviceData);
 
-    public List<Map<String, Object>> getTodayCOVIData(@Param("deviceId") String deviceId, @Param("itemId") Long itemId, @Param("today") String today);
+    public List<Map<String, Double>> getTodayCOVIData(@Param("deviceId") String deviceId, @Param("itemId") Long itemId, @Param("today") String today);
 
     public List<Map<String, String>> selectCOVIDataList(@Param("beginTime") String beginTime,@Param("endTime") String endTime,@Param("deviceId") String deviceId);
 

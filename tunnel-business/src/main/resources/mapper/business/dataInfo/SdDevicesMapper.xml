@@ -798,7 +798,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getDevicesList" resultType="hashmap">
-        select d.eq_id,d.eq_type,t.type_name,d.eq_name,d.eq_direction,d.pile,s.dict_label,u.tunnel_id,u.tunnel_name from  sd_devices d
+        select 0 as patrol_type,d.eq_id,d.eq_type,t.type_name,d.eq_name,d.eq_direction,d.pile,s.dict_label,u.tunnel_id,u.tunnel_name from  sd_devices d
         left join sd_equipment_type t on t.type_id = d.eq_type
         left join sys_dict_data s on d.eq_direction = s.dict_value
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id

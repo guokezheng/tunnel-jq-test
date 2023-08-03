@@ -240,7 +240,7 @@ export default {
       //拖拽组件
       draggedNode: null,
       dropTargetNode: null,
-      eqIdList:[],
+      // eqIdList:[],
       defaultProps: {
         children: 'children',
         label: 'label'

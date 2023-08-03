@@ -171,7 +171,7 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{scope.row.endPlantime|formatDate('yyyy-MM-dd')}}</span>
+          <span>{{ scope.row.endPlantime | formatDate("yyyy-MM-dd") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布状态" align="center" prop="publishStatus">
@@ -319,7 +319,7 @@
             <el-row>
               <el-col :span="8">
                 <el-form-item label="任务名称" prop="taskName">
-                                  <el-input
+                  <el-input
                     type="text"
                     placeholder="请输入内容"
                     v-model="form.taskName"
@@ -407,7 +407,7 @@
                     placeholder="选择预完成时"
                   >
                   </el-date-picker>
-<!--                  <el-date-picker
+                  <!--                  <el-date-picker
                     clearable
                     :picker-options="forbiddenTime"
                     size="small"
@@ -470,7 +470,9 @@
               <div class="contentTextRow" style="float: left">
                 <div class="number" style="width: 10%">{{ index + 1 }}</div>
                 <div class="text" style="padding-left: 0px; margin-left: 0px">
-                  <div style="width: 10%">{{ item.patrol_type == 0 ? '巡检点' : '故障点' }}</div>
+                  <div style="width: 10%">
+                    {{ item.patrol_type == 0 ? "巡检点" : "故障点" }}
+                  </div>
                   <div style="width: 12%">{{ item.tunnel_name }}</div>
                   <div style="width: 15%; margin-left: 30px">
                     {{ item.type_name }}
@@ -558,18 +560,19 @@
           <el-col class="show-title" :span="4"> 设备清单 </el-col>
           <el-col :span="8" :offset="4">
             <el-cascader
-                v-model="eqType"
-                :options="eqTypeData"
-                :props="equipmentTypeProps"
-                :show-all-levels="false"
-                @change="getTable()"
-                style="width: 100%"
-                size="small"
-                clearable
-                placeholder="请选择设备类型" 
-              ></el-cascader>
+              v-model="eqType"
+              :options="eqTypeData"
+              :props="equipmentTypeProps"
+              :show-all-levels="false"
+              @change="getTable()"
+              style="width: 100%"
+              size="small"
+              clearable
+              placeholder="请选择设备类型"
+              ref="myCascader"
+            ></el-cascader>
           </el-col>
-          <el-col :span="8" >
+          <el-col :span="8">
             <div class="grid-content bg-purple" ref="main1">
               <el-input
                 v-model="searchValue"
@@ -737,14 +740,14 @@
           <el-col class="show-title" :span="4"> 故障清单 </el-col>
           <el-col :span="8" :offset="4">
             <el-select v-model="options2value" @change="getGzTable()">
-                <el-option
-                  v-for="dict in dict.type.fault_level"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                  size="small"
-                />
-              </el-select>
+              <el-option
+                v-for="dict in dict.type.fault_level"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+                size="small"
+              />
+            </el-select>
           </el-col>
           <el-col :span="8">
             <div class="grid-content bg-purple" ref="main2">
@@ -858,7 +861,11 @@
                 }}</span>
               </template></el-table-column
             >
-            <el-table-column prop="dict_label" label="故障描述" show-overflow-tooltip>
+            <el-table-column
+              prop="dict_label"
+              label="故障描述"
+              show-overflow-tooltip
+            >
             </el-table-column>
           </el-table>
           <pagination
@@ -907,9 +914,11 @@
             <div>任务编号：</div>
             <span>{{ item.id }}</span>
           </el-col>
-          <el-col :span="8" style="display:inline-block">
-            <div style="display:inline-block">任务名称：</div>
-            <span style="width: calc(100% - 110px);display:inline-flex">{{ item.taskName }}</span>
+          <el-col :span="8" style="display: inline-block">
+            <div style="display: inline-block">任务名称：</div>
+            <span style="width: calc(100% - 110px); display: inline-flex">{{
+              item.taskName
+            }}</span>
           </el-col>
           <!--          <el-col :span="8">
             <div>所属单位：</div>
@@ -929,7 +938,7 @@
           </el-col>
           <el-col :span="8">
             <div>预完成时：</div>
-            <span>{{item.endPlantime|formatDate('yyyy-MM-dd')}}</span>
+            <span>{{ item.endPlantime | formatDate("yyyy-MM-dd") }}</span>
           </el-col>
           <el-col :span="24" style="display: inline-block">
             <div style="display: inline-block">任务描述：</div>
@@ -945,7 +954,9 @@
               {{index+1}}设备巡检点:
             </el-col>-->
           <div class="topTxt">
-            {{ index + 1 }}&nbsp;&nbsp;&nbsp;&nbsp;、{{ pat.patrolType == '0' ? '设备巡检点' : '故障检修点' }}
+            {{ index + 1 }}&nbsp;&nbsp;&nbsp;&nbsp;、{{
+              pat.patrolType == "0" ? "设备巡检点" : "故障检修点"
+            }}
           </div>
           <el-col
             :span="2"
@@ -974,7 +985,7 @@
             <div>供配电情况：</div>
             <span>{{ pat.power }}</span>
           </el-col>
-<!--          <el-col :span="8">
+          <!--          <el-col :span="8">
             <div>现场故障情况：</div>
             <span>{{ pat.eqFaultCode }}</span>
           </el-col>-->
@@ -988,18 +999,22 @@
             <span>{{ pat.runStatus }}</span>
           </el-col>
           <el-col>
-            <div style="width:12%">现场情况照片：</div>
-            <div v-for="(pic, index) in pat.iFileList" :key="index" style = "padding-right: 30px;">
-              <img :src="pic.imgUrl"  @click="openPic(pic.imgUrl)"/>
+            <div style="width: 12%">现场情况照片：</div>
+            <div
+              v-for="(pic, index) in pat.iFileList"
+              :key="index"
+              style="padding-right: 30px"
+            >
+              <img :src="pic.imgUrl" @click="openPic(pic.imgUrl)" />
             </div>
           </el-col>
           <el-col :span="24" style="display: inline-block">
             <div style="display: inline-block">设备描述：</div>
             <span style="width: calc(100% - 110px); display: inline-flex">{{
-                pat.eqFaultDescription == "null" ? "" : pat.eqFaultDescription
-              }}</span>
+              pat.eqFaultDescription == "null" ? "" : pat.eqFaultDescription
+            }}</span>
           </el-col>
-<!--          <el-col :span="8">
+          <!--          <el-col :span="8">
             <div>设备描述：</div>
             <span>{{ pat.eqFaultDescription }}</span>
           </el-col>-->
@@ -1032,10 +1047,10 @@
           <el-col :span="24" style="display: inline-block">
             <div style="display: inline-block">现场情况描述：</div>
             <span style="width: calc(100% - 110px); display: inline-flex">{{
-                tas.siteDescription == "null" ? "" : tas.siteDescription
-              }}</span>
+              tas.siteDescription == "null" ? "" : tas.siteDescription
+            }}</span>
           </el-col>
-<!--          <el-col :span="8">
+          <!--          <el-col :span="8">
             <div>现场情况描述：</div>
             <span>{{
               tas.siteDescription == "null" ? "" : tas.siteDescription
@@ -1133,7 +1148,7 @@ import { color } from "echarts";
 import { download } from "@/utils/request";
 import { getUser } from "@/api/system/user";
 import { getCategoryAllTree } from "@/api/event/strategy";
-import {delItem} from "@/api/equipment/eqTypeItem/item";
+import { delItem } from "@/api/equipment/eqTypeItem/item";
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
@@ -1318,23 +1333,23 @@ export default {
       },
       //巡查点参数
       patrolNews: {
-          patrolType : "0",
-          tunnelName: "",
-          xcTime: "",
-          bzId: "",
-          walkerId: "",
-          impression: 0,
-          network: 0,
-          power: 0,
-          eqStatus: "",
-          runStatus: "",
-          eqFaultDescription: "",
-        },
+        patrolType: "0",
+        tunnelName: "",
+        xcTime: "",
+        bzId: "",
+        walkerId: "",
+        impression: 0,
+        network: 0,
+        power: 0,
+        eqStatus: "",
+        runStatus: "",
+        eqFaultDescription: "",
+      },
       pickerEndPlantime: {
         // 时间不能大于当前时间
         disabledDate(time) {
           //Date.now()是javascript中的内置函数，它返回自1970年1月1日00:00:00 UTC以来经过的毫秒数。
-          return time.getTime() < (Date.now()+24*60*60*1000 - 8.64e7);
+          return time.getTime() < Date.now() + 24 * 60 * 60 * 1000 - 8.64e7;
         },
         selectableRange: "00:00:00 - 23:59:59",
       },
@@ -1342,7 +1357,7 @@ export default {
       forbiddenTime: {
         disabledDate(time) {
           //Date.now()是javascript中的内置函数，它返回自1970年1月1日00:00:00 UTC以来经过的毫秒数。
-          return time.getTime() < (Date.now()+24*60*60*1000 - 8.64e7);
+          return time.getTime() < Date.now() + 24 * 60 * 60 * 1000 - 8.64e7;
         },
       },
       // 表单参数
@@ -1403,7 +1418,6 @@ export default {
     document.addEventListener("click", this.bodyCloseMenus);
     document.addEventListener("click", this.bodyCloseMenus1);
     document.addEventListener("click", this.bodyCloseMenus2);
-
   },
   methods: {
     /** 设备类型 */
@@ -1573,7 +1587,7 @@ export default {
         if (i > -1) {
           this.boxList.splice(i, 1);
         }
-        console.log(this.boxList,"clickDelete");
+        console.log(this.boxList, "clickDelete");
       }
     },
     // 弹窗表格翻页
@@ -1586,8 +1600,8 @@ export default {
     },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
-      this.dialogSelection = selection
-      console.log(this.boxList,"this.boxList获取巡检点弹窗表格选中项")
+      this.dialogSelection = selection;
+      console.log(this.boxList, "this.boxList获取巡检点弹窗表格选中项");
       console.log(this.dialogSelection, "this.dialogSelection");
     },
     /** 所属隧道 */
@@ -1612,12 +1626,13 @@ export default {
 
     // 获取设备table
     getTable() {
-      if(this.boxShow1){
-        this.boxShow1 = false
+      console.log(11111111);
+      if (this.boxShow1) {
+        this.boxShow1 = false;
       }
       this.deviceType = this.options1value;
-      if(this.eqType == null){
-        this.eqType = ""
+      if (this.eqType == null) {
+        this.eqType = "";
       }
       getDevicesList(
         this.eqType,
@@ -1630,7 +1645,7 @@ export default {
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList.length > 0) {
-          console.log(this.boxList,"this.boxList")
+          console.log(this.boxList, "this.boxList");
           console.log(this.tableData1, "this.tableData1");
           // if (this.boxList[0].eq_type == deviceType) {
           this.$refs.multipleTable1.clearSelection();
@@ -1652,15 +1667,15 @@ export default {
     },
     // 获取设备table
     getGzTable() {
-      if(this.boxShow2){
-        this.boxShow2 = false
+      if (this.boxShow2) {
+        this.boxShow2 = false;
       }
       // console.log(deviceType,"deviceType")
       // if (deviceType) {
-        this.faultLevel = this.options2value;
+      this.faultLevel = this.options2value;
       // }
-      if(this.search2Value){
-        this.eqType2 = ''
+      if (this.search2Value) {
+        this.eqType2 = "";
       }
       getFaultList(
         this.search2Value,
@@ -1671,7 +1686,7 @@ export default {
         this.pageSize
       ).then((res) => {
         console.log(res, "获取故障table getGzTable");
-        console.log(this.boxList,"boxList");
+        console.log(this.boxList, "boxList");
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList.length > 0) {
@@ -1699,8 +1714,8 @@ export default {
     handleNodeClick1(data) {
       this.tunnelId = data.id;
       console.log(this.searchValue, "this.searchValue");
-      if(this.searchValue){
-        this.eqType = ''
+      if (this.searchValue) {
+        this.eqType = "";
       }
       getDevicesList(
         this.eqType,
@@ -1736,8 +1751,8 @@ export default {
     //故障节点单击事件
     handleNodeClick2(data) {
       this.tunnelId = data.id;
-      if(this.search2Value){
-        this.eqType2 = ''
+      if (this.search2Value) {
+        this.eqType2 = "";
       }
       getFaultList(
         this.search2Value,
@@ -1929,7 +1944,7 @@ export default {
         devicesList: "",
       };
       this.boxList = [];
-      this.dialogSelection = []
+      this.dialogSelection = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -1950,7 +1965,6 @@ export default {
       this.handleQuery();
     },
     show1() {
-      this.getEqType()
       //this.tableData1 = null
       if (typeof this.form.tunnelId == "undefined") {
         return this.$modal.msgWarning("请选择所属隧道");
@@ -1963,9 +1977,9 @@ export default {
         console.log(response.data, "隧道部门树");
       });
       this.isShow1 = true;
-      this.searchValue = '';
+      this.searchValue = "";
       this.options1value = "";
-      this.eqType = '';
+      this.eqType = "";
       //点击确定，数据还原
       if (this.openCz) {
         this.options1value = "";
@@ -1983,10 +1997,10 @@ export default {
         return this.$modal.msgWarning("请选择所属隧道");
       }
       this.isShow2 = true;
-      this.search2Value = ''
+      this.search2Value = "";
       this.options2value = "0";
       this.tunnelId = this.form.tunnelId;
-      console.log(this.boxList,"show2")
+      console.log(this.boxList, "show2");
       this.boxList.forEach((item) => {
         this.$nextTick(() => {
           this.$refs.multipleTable2.toggleRowSelection(item, true);
@@ -2019,14 +2033,29 @@ export default {
     cancelDetermine1() {
       this.dialogSelection = [];
       this.isShow1 = false;
-      this.eqTypeData = []
+      // this.eqTypeData = JSON.parse(JSON.stringify([]))
+
+      // console.log(JSON.parse(JSON.stringify(this.eqTypeData)),"eqTypeeqTypeeqTypeeqTypeeqTypeeqTypeeqTypeeqTypeeqTypeeqTypeeqTypeeqType")
+
+      this.getEqType();
+      this.clearCascader()
+      
+    },
+    clearCascader(){
+      const _cascader = this.$refs.myCascader;
+      if (_cascader) {
+        _cascader.$refs.panel.checkedValue = [];
+        _cascader.$refs.panel.activePath = [];
+        _cascader.$refs.panel.syncActivePath();
+      }
     },
     cancelDetermine2() {
       this.dialogSelection = [];
       this.isShow2 = false;
     },
     determine1() {
-      this.eqTypeData = []
+      this.getEqType();
+      this.clearCascader()
       this.isShow1 = false;
       this.dialogSelection.forEach((item) => {
         item.eq_id = item.eq_id + "_1";
@@ -2074,7 +2103,7 @@ export default {
       getList(id).then((response) => {
         that.form = response.data.task[0];
         this.boxList = response.data.list;
-        console.log(this.boxList,"修改按钮操作boxList");
+        console.log(this.boxList, "修改按钮操作boxList");
         // this.tableData1 = response.data.devicesPatrolList;//巡检点
         // this.tableData2 = response.data.faultPatrolList;//故障点
         // this.boxList.forEach((item) => {
@@ -2127,17 +2156,16 @@ export default {
       this.$modal
         .confirm("是否确认废止任务？")
         .then(() => {
-      if (id != null) {
-        abolishList(id).then((response) => {
-          this.$modal.msgSuccess("废止成功");
-          this.getList();
-        });
-      }
+          if (id != null) {
+            abolishList(id).then((response) => {
+              this.$modal.msgSuccess("废止成功");
+              this.getList();
+            });
+          }
         })
-        .catch(() => {
-        });
+        .catch(() => {});
 
-  /*
+      /*
       const id = row.id || this.ids;
       if (id != null) {
         abolishList(id).then((response) => {
@@ -2344,16 +2372,18 @@ export default {
   },
   filters: {
     formatDate: function (value, args) {
-      if(!value){
-        return '';
+      if (!value) {
+        return "";
       }
       var dt = new Date(value);
-      if (args == 'yyyy-M-d') {// yyyy-M-d
+      if (args == "yyyy-M-d") {
+        // yyyy-M-d
         let year = dt.getFullYear();
         let month = dt.getMonth() + 1;
         let date = dt.getDate();
         return `${year}-${month}-${date}`;
-      } else if (args == 'yyyy-M-d H:m:s') {// yyyy-M-d H:m:s
+      } else if (args == "yyyy-M-d H:m:s") {
+        // yyyy-M-d H:m:s
         let year = dt.getFullYear();
         let month = dt.getMonth() + 1;
         let date = dt.getDate();
@@ -2361,21 +2391,23 @@ export default {
         let minute = dt.getMinutes();
         let second = dt.getSeconds();
         return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
-      } else if (args == 'yyyy-MM-dd') {// yyyy-MM-dd
+      } else if (args == "yyyy-MM-dd") {
+        // yyyy-MM-dd
         let year = dt.getFullYear();
-        let month = (dt.getMonth() + 1).toString().padStart(2, '0');
-        let date = dt.getDate().toString().padStart(2, '0');
+        let month = (dt.getMonth() + 1).toString().padStart(2, "0");
+        let date = dt.getDate().toString().padStart(2, "0");
         return `${year}-${month}-${date}`;
-      } else {// yyyy-MM-dd HH:mm:ss
+      } else {
+        // yyyy-MM-dd HH:mm:ss
         let year = dt.getFullYear();
-        let month = (dt.getMonth() + 1).toString().padStart(2, '0');
-        let date = dt.getDate().toString().padStart(2, '0');
-        let hour = dt.getHours().toString().padStart(2, '0');
-        let minute = dt.getMinutes().toString().padStart(2, '0');
-        let second = dt.getSeconds().toString().padStart(2, '0');
+        let month = (dt.getMonth() + 1).toString().padStart(2, "0");
+        let date = dt.getDate().toString().padStart(2, "0");
+        let hour = dt.getHours().toString().padStart(2, "0");
+        let minute = dt.getMinutes().toString().padStart(2, "0");
+        let second = dt.getSeconds().toString().padStart(2, "0");
         return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
       }
-    }
+    },
   },
   watch: {
     isShow1: {

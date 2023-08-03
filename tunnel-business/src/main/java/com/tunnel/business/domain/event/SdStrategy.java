@@ -43,28 +43,30 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("策略名称")
     private String strategyName;
 
+    @Excel(name = "方向")
+    private String fx;
+
+    @Excel(name = "策略类型")
+    private String lx;
+
     /** 策略类型 */
    /* @Excel(name = "策略类型")*/
     @ApiModelProperty("策略类型")
     private String strategyType;
-
-    @Excel(name = "状态", readConverterExp = "0=启用,1=弃用")
-    @ApiModelProperty("预案状态")
-    private String strategyState;
 
     /** 策略信息 */
     @Excel(name = "策略信息")
     @ApiModelProperty("策略信息策略信息")
     private String strategyInfo;
 
+    @Excel(name = "状态", readConverterExp = "0=启用,1=弃用")
+    @ApiModelProperty("预案状态")
+    private String strategyState;
+
     @ApiModelProperty("列表")
     private List<String> slist;
 
-    @Excel(name = "方向")
-    private String fx;
 
-    @Excel(name = "策略类型")
-    private String lx;
 
 
     private String ids;

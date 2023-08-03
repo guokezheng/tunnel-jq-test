@@ -260,9 +260,9 @@ export const singleCat = {
         }else if(event[i].vehicleType == "26"||event[i].vehicleType == "14"||event[i].vehicleType == "17"){//货车
           event[i].background = "yellow";
         }else if(event[i].vehicleType == "16"||event[i].vehicleType == "25"||event[i].vehicleType == "15"){//客车
-          event[i].background = "blue";
+          event[i].background = "#4E82F7";
         }else{
-          event[i].background = "blue";
+          event[i].background = "#4E82F7";
         }
         this.carList.set(event[i].vehicleLicense, event[i]);
       }

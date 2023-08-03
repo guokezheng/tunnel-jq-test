@@ -1884,8 +1884,8 @@
         class="paginationWorkbench"
       />
     </el-dialog>
-    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>
-    <jointControlStrategy ref ='jointControlStrategy' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="jointControlShow"></jointControlStrategy>
+<!--    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>-->
+    <jointControlStrategy ref ='jointControlStrategy'  :show="jointControlShow"></jointControlStrategy>
   </div>
 </template>
 
@@ -1901,7 +1901,7 @@ import "jquery-ui-dist/jquery-ui";
 import "jquery-ui-dist/jquery-ui.min.css";
 import bus from "@/utils/bus";
 import { mapState } from "vuex";
-import timingTask from "@/views/workbench/config/components/timingTask";
+// import timingTask from "@/views/workbench/config/components/timingTask";
 import jointControlStrategy from "@/views/workbench/config/components/jointControlStrategy";
 import {
   getLiPowerDevices,
@@ -2087,7 +2087,6 @@ export default {
     comLiquidLevel, //液位传感器
     comDeawer, //抽屉
     comFooter, //底部echarts
-    timingTask,
     comXfp,
     jointControlStrategy
   },
@@ -5477,8 +5476,8 @@ export default {
       this.getStrategyQuery(0);
     },
     strategyPage1(){
-      this.timingTaskShow = !this.timingTaskShow
-      this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
+      // this.timingTaskShow = !this.timingTaskShow
+      // this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
     },
     strategyPage2(){
       this.jointControlShow = !this.jointControlShow

@@ -223,11 +223,13 @@ public class SdEventController extends BaseController
     @GetMapping("/getEventUntreatedNum")
     @ApiOperation("当日未处理事件数量")
     public Result getEventUntreatedNum() {
-//        List<SdTunnels> jlyTunnel = SpringUtils.getBean(ISdTunnelsService.class).getJlyTunnel();
-//        jlyTunnel.forEach(tunnel ->{
-////            tunnel.gt
-//        });
-        return  Result.success(SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum());
+
+        List<SdTunnels> jlyTunnel = SpringUtils.getBean(ISdTunnelsService.class).getJlyTunnel();
+        String[] tunnels = new String[jlyTunnel.size()];
+        for (int i = 0; i < jlyTunnel.size(); i++) {
+            tunnels[i] = jlyTunnel.get(i).getTunnelId();
+        }
+        return  Result.success(SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum(tunnels));
     }
 
     /*@GetMapping("/eventPopAll")

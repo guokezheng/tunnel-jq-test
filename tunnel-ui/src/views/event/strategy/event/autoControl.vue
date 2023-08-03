@@ -929,14 +929,20 @@ export default {
           this.strategyForm.id = this.id;
         });
       }
+      console.log(this.strategyForm.triggers.deviceId )
+      let deviceIdList =  JSON.parse(JSON.stringify(this.strategyForm.triggers.deviceId))
       this.strategyForm.triggers.deviceId =
         this.strategyForm.triggers.deviceId.toString();
+      console.log(this.strategyForm.triggers.deviceId )
       let data = this.strategyForm.autoControl;
       data.forEach((item) => {
         item.state = item.state.toString();
       });
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
+        console.log(deviceIdList )
+        this.strategyForm.triggers.deviceId =deviceIdList
+        console.log(this.strategyForm.triggers.deviceId )
         this.$modal.msgSuccess("修改策略成功");
         this.$emit("dialogVisibleCloseEvent");
         this.getList();
@@ -1105,8 +1111,8 @@ export default {
     },
     //重置方法
     rest() {
-      this.strategyForm.triggers.deviceId = null;
-      this.strategyForm.triggers.elementId = null;
+      this.strategyForm.triggers.deviceId = "";
+      this.strategyForm.triggers.elementId = "";
       this.deviceName = [];
       this.dataItem = [];
     },

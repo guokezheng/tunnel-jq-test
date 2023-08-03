@@ -109,7 +109,7 @@ public interface SdEventMapper
      * 事件当日未处理总条数
      * @return
      */
-    Integer getEventUntreatedNum();
+    Integer getEventUntreatedNum(String[] tunnels);
 
     /**
      * 事件弹窗设备故障

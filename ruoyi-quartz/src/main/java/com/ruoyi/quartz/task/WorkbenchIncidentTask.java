@@ -19,11 +19,11 @@ import java.util.Random;
 @Component("WorkbenchIncidentTask")
 public class WorkbenchIncidentTask {
 
-    @Scheduled(fixedDelay=500)
+//    @Scheduled(fixedDelay=500)
     public void incidentNumTask(){
         try{
 //            Integer eventUntreatedNum = SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum();
-////            WebSocketService.broadcastCloser("eventUntreatedNum", eventUntreatedNum);
+//////            WebSocketService.broadcastCloser("eventUntreatedNum", eventUntreatedNum);
 //            WebSocketService.broadcast("eventUntreatedNum", eventUntreatedNum);
         }catch (Exception e){
             e.printStackTrace();

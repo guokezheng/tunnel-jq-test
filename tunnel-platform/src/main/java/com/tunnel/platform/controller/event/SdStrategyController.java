@@ -57,7 +57,17 @@ public class SdStrategyController extends BaseController
         if("1".equals(sdStrategy.getStrategyGroup())){//日常策略
             List<SdStrategy> list = sdStrategyService.selectSdStrategyList(sdStrategy);
             ExcelUtil<SdStrategy> util = new ExcelUtil<SdStrategy>(SdStrategy.class);
-            return util.exportExcel(list, "日常策略");
+            String SdStrategyName = "";
+            if("0".equals(sdStrategy.getStrategyType())){
+                SdStrategyName = "手动控制策略";
+            }
+            if("1".equals(sdStrategy.getStrategyType())){
+                SdStrategyName = "定时控制策略";
+            }
+            if("2".equals(sdStrategy.getStrategyType())){
+                SdStrategyName = "触发控制策略";
+            }
+            return util.exportExcel(list, SdStrategyName);
         }else{//控制策略
             List<SdStrategy> list = sdStrategyService.selectSdStrategyList(sdStrategy);
             ExcelUtil<SdStrategy> util = new ExcelUtil<SdStrategy>(SdStrategy.class);

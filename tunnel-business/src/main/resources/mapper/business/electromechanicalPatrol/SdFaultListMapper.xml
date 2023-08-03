@@ -251,7 +251,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getFaultList1"  resultType="hashmap">
-        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name,f.fault_fxtime
+        select 1 as patrol_type,s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name,f.fault_fxtime
         from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id

@@ -494,8 +494,8 @@ export default {
       // 表单校验
       rules: {
         eventType: [
-          { required: true, message: "请输入事件类型", trigger: "blur" },
-          { max: 50, message: "最长输入50个字符", trigger: "blur" },
+          { required: true, message: "请输入事件类型", trigger: "change" },
+          { max: 50, message: "最长输入50个字符", trigger: "change" },
         ],
         prevControlType: [
           { required: true, message: "请选择防控类型", trigger: "change" },
@@ -504,11 +504,11 @@ export default {
           { required: true, message: "请配置是否可用", trigger: "change" },
         ],
         simplifyName: [
-          { required: true, message: "请输入简称", trigger: "blur" },
-          { max: 50, message: "最长输入50个字符", trigger: "blur" },
+          { required: true, message: "请输入简称", trigger: "change" },
+          { max: 15, message: "最长输入15个字符", trigger: "change" },
         ],
         iconUrl: [
-          { required: true, message: "请上传默认图标", trigger: "blur" },
+          { required: true, message: "请上传默认图标", trigger: "change" },
         ],
       },
       //是否可用

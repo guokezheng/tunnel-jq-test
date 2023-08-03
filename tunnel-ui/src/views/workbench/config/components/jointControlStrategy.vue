@@ -1610,12 +1610,7 @@ export default {
   },
   props:{
     show:Boolean,
-    tunnelItem: {
-      type: Object
-    },
-    tunnelList: {
-      type: Array
-    }
+
   },
   watch:{
     show:{

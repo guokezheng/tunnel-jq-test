@@ -1884,8 +1884,8 @@
         class="paginationWorkbench"
       />
     </el-dialog>
-    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>
-    <jointControlStrategy ref ='jointControlStrategy' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="jointControlShow"></jointControlStrategy>
+<!--    <timingTask ref ='timingTask' :tunnelItem='tunnelItem' :tunnelList= 'tunnelList' :show="timingTaskShow"></timingTask>-->
+    <jointControlStrategy ref ='jointControlStrategy'  :show="jointControlShow"></jointControlStrategy>
   </div>
 </template>
 
@@ -1901,7 +1901,7 @@ import "jquery-ui-dist/jquery-ui";
 import "jquery-ui-dist/jquery-ui.min.css";
 import bus from "@/utils/bus";
 import { mapState } from "vuex";
-import timingTask from "@/views/workbench/config/components/timingTask";
+// import timingTask from "@/views/workbench/config/components/timingTask";
 import jointControlStrategy from "@/views/workbench/config/components/jointControlStrategy";
 import {
   getLiPowerDevices,
@@ -2087,7 +2087,6 @@ export default {
     comLiquidLevel, //液位传感器
     comDeawer, //抽屉
     comFooter, //底部echarts
-    timingTask,
     comXfp,
     jointControlStrategy
   },
@@ -3792,6 +3791,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.eqTypeData = []
+      this.getEqType()
       this.dateRange = this.getPastTime();
       this.dateRange1 = this.getPastTime();
       this.resetForm("queryForm");
@@ -4677,10 +4678,10 @@ export default {
       return resolve(base64);
     },
     /* 视频 */
-    changeLoading() {
-      this.loading = false;
-      this.cameraErrorInfo = "抱歉！视频信号丢失！";
-    },
+    // changeLoading() {
+    //   this.loading = false;
+    //   this.cameraErrorInfo = "抱歉！视频信号丢失！";
+    // },
     /* 获取隧道配置信息*/
     getTunnelData(tunnelId) {
       let that = this;
@@ -4696,14 +4697,11 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-
+          console.log(res,"获取隧道配置信息")
           listType("")
             .then((response) => {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
-                if(res.eqList[i].eqType == 7){
-                  console.log(res.eqList[i],"加强照明")
-                }
                 res.eqList[i].focus = false;
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
@@ -4802,16 +4800,16 @@ export default {
     },
 
     /* 根据车道数获取车道图*/
-    getLanUrl(num) {
-      let lane = this.laneUrlList[0];
-      for (let i = 0; i < this.laneUrlList.length; i++) {
-        if (this.laneUrlList[i].num == num) {
-          lane = this.laneUrlList[i];
-          break;
-        }
-      }
-      return lane;
-    },
+    // getLanUrl(num) {
+    //   let lane = this.laneUrlList[0];
+    //   for (let i = 0; i < this.laneUrlList.length; i++) {
+    //     if (this.laneUrlList[i].num == num) {
+    //       lane = this.laneUrlList[i];
+    //       break;
+    //     }
+    //   }
+    //   return lane;
+    // },
     /* 获取照明设备数据*/
     getLiPowerDevice() {
       getLiPowerDevices().then((response) => {
@@ -5374,51 +5372,51 @@ export default {
           console.log("记录失败,后台报错：" + err);
         });
     },
-    setWebsocket(param) {
-      let actions = "";
-      // 发送指令
-      if (param.devType == 21) {
-        actions = "Light LightValue " + param.devId + " ";
-        actions = actions + this.stateForm.lightValue;
-      } else {
-        let state = "";
-        if (param.state == 1) {
-          state = 1;
-        } else if (param.state == 2) {
-          state = 0;
-        }
-        actions = "Device PowerSet " + param.devId + " " + state;
-      }
+    // setWebsocket(param) {
+    //   let actions = "";
+    //   // 发送指令
+    //   if (param.devType == 21) {
+    //     actions = "Light LightValue " + param.devId + " ";
+    //     actions = actions + this.stateForm.lightValue;
+    //   } else {
+    //     let state = "";
+    //     if (param.state == 1) {
+    //       state = 1;
+    //     } else if (param.state == 2) {
+    //       state = 0;
+    //     }
+    //     actions = "Device PowerSet " + param.devId + " " + state;
+    //   }
 
-      this.websocketsend(actions);
-    },
+    //   this.websocketsend(actions);
+    // },
 
     /* 诱导确认配置（单项）*/
-    submitCorLight() {
-      if (this.stateForm.corModel == null) {
-        this.$modal.msgError("请选择控制模式后重试！");
-        return;
-      }
-      let param = {
-        hostIP: this.stateForm.eqFeedbackAddress1,
-        corModel: this.stateForm.corModel,
-        Zlane: this.stateForm.Zlane,
-        Ylane: this.stateForm.Ylane,
-        whiteLight: this.stateForm.whiteLight,
-        yellowLight: this.stateForm.yellowLight,
-        twinkleModel: this.stateForm.twinkleModel,
-        twinkleFrequency: this.stateForm.twinkleFrequency,
-        lightTime: this.stateForm.lightTime,
-      };
-      this.setCorLight(param)
-        .then((response) => {
-          this.$modal.msgSuccess("控制成功");
-          this.youdaoVisible = false;
-        })
-        .catch(() => {
-          this.$modal.msgError("控制失败，请检查设备或稍后重试！");
-        });
-    },
+    // submitCorLight() {
+    //   if (this.stateForm.corModel == null) {
+    //     this.$modal.msgError("请选择控制模式后重试！");
+    //     return;
+    //   }
+    //   let param = {
+    //     hostIP: this.stateForm.eqFeedbackAddress1,
+    //     corModel: this.stateForm.corModel,
+    //     Zlane: this.stateForm.Zlane,
+    //     Ylane: this.stateForm.Ylane,
+    //     whiteLight: this.stateForm.whiteLight,
+    //     yellowLight: this.stateForm.yellowLight,
+    //     twinkleModel: this.stateForm.twinkleModel,
+    //     twinkleFrequency: this.stateForm.twinkleFrequency,
+    //     lightTime: this.stateForm.lightTime,
+    //   };
+    //   this.setCorLight(param)
+    //     .then((response) => {
+    //       this.$modal.msgSuccess("控制成功");
+    //       this.youdaoVisible = false;
+    //     })
+    //     .catch(() => {
+    //       this.$modal.msgError("控制失败，请检查设备或稍后重试！");
+    //     });
+    // },
     setCorLight(param) {
       setCorLight(param)
         .then((response) => {})
@@ -5477,8 +5475,8 @@ export default {
       this.getStrategyQuery(0);
     },
     strategyPage1(){
-      this.timingTaskShow = !this.timingTaskShow
-      this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
+      // this.timingTaskShow = !this.timingTaskShow
+      // this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
     },
     strategyPage2(){
       this.jointControlShow = !this.jointControlShow
@@ -5596,20 +5594,20 @@ export default {
       this.explainVisible = false;
       this.lightingVisible = false;
       this.batchVisible = false;
-      this.shuibengVisible = false;
-      this.lumianVisible = false;
-      this.weiboVisible = false;
-      this.cameraVisible = false;
-      this.daolujiebingVisible = false;
-      this.lightControlDialog = false;
-      this.youdaoVisible = false;
-      this.cameraErrorInfo = "";
+      // this.shuibengVisible = false;
+      // this.lumianVisible = false;
+      // this.weiboVisible = false;
+      // this.cameraVisible = false;
+      // this.daolujiebingVisible = false;
+      // this.lightControlDialog = false;
+      // this.youdaoVisible = false;
+      // this.cameraErrorInfo = "";
       this.batchForm = {
         eqType: "",
         eqList: [],
         state: "",
       };
-      this.stateForm = {};
+      // this.stateForm = {};
     },
     handleTableWheel(event) {
       let obj = this.$refs.divRoller;

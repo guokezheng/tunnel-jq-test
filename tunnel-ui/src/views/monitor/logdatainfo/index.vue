@@ -42,7 +42,7 @@
         <div class="grid-content bg-purple" ref="main">
           <el-input
             v-model="queryParam.ipaddr"
-            placeholder="请输入用户名、称登录地址，回车搜索"
+            placeholder="请输入用户名称、登录地址，回车搜索"
             size="small"
             @keyup.enter.native="handleQuery"
           >
@@ -752,6 +752,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.eqTypeData = []
+      this.getEqType()
       this.dateRangeDl = this.getPastTime();
       this.dateRangeCz = this.getPastTime();
       this.resetForm("queryForm");

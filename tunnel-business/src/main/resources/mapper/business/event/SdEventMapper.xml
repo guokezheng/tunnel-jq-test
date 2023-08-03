@@ -239,13 +239,21 @@
                 WHERE
                     fault_status = '0' and fallt_remove_statue = '1'
                   AND TO_DAYS( fault_fxtime ) = TO_DAYS(
-                        NOW()) ) as num
+                        NOW())
+                  AND tunnel_id in
+                      <foreach item="id" collection="array" open="(" separator="," close=")">
+                        #{id}
+                      </foreach>) as num
         FROM
             sd_event
         WHERE
             event_state = '3'
           AND TO_DAYS( event_time ) = TO_DAYS(
                 NOW())
+        AND tunnel_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </select>
 
     <select id="selectSdEventList" parameterType="SdEvent" resultMap="SdEventResult">

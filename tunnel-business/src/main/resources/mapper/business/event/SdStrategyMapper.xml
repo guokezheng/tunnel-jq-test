@@ -324,6 +324,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
             1 = 1
           AND strategy_name = #{strategyName}
+          AND strategy_type = #{strategyType}
           AND strategy_group = #{strategyGroup}
         <if test="id != null">
             AND id <![CDATA[ <> ]]> #{id}

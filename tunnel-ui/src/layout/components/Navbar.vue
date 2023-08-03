@@ -494,6 +494,9 @@ import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import earlyWarning from "@/components/earlyWarning"; // 路侧设备
 import { checkPermi } from "@/utils/permission.js";
 import { getUserProfile } from "@/api/system/user";
+import {
+  getEventUntreatedNum
+} from "@/api/event/event";
 
 export default {
   data() {
@@ -696,10 +699,10 @@ export default {
     // }, 5000 * 1);
   },
   mounted() {
-    // setInterval(()=>{
-    //   this.getNodealNum()
-    //
-    // },5000)
+    setInterval(()=>{
+      this.getNodealNum()
+
+    },5000)
 
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
@@ -710,12 +713,12 @@ export default {
     // });
   },
   methods: {
-    // getNodealNum() {
-    //   getEventUntreatedNum().then((res) => {
-    //     // console.log(res, "事件总数");
-    //     this.nodealNum = res.data;
-    //   });
-    // },
+    getNodealNum() {
+      getEventUntreatedNum().then((res) => {
+        // console.log(res, "事件总数");
+        this.nodealNum = res.data;
+      });
+    },
     getRoute(path) {
       var arr = [
         "/index",
@@ -759,7 +762,7 @@ export default {
       if (checkPermi(["fullViewShow"])) {
         let routeUrl = this.$router.resolve({
           path: "/bigScreen2/index.html",
-          query: {}, 
+          query: {},
         });
         window.open(routeUrl.href, "_blank");
       } else {

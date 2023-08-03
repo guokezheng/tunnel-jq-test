@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -99,7 +100,14 @@ public class SdEquipmentCategoryController extends BaseController {
         List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryDeviceList(tunnelId);
 
         List<TreeCategorySelect> treeCategoryDevice = sdEquipmentCategoryService.buildCategoryTreeSelect(list);
-
+        //过滤没有子节点的节点
+        Iterator<TreeCategorySelect> iterator = treeCategoryDevice.iterator();
+        while (iterator.hasNext()) {
+            TreeCategorySelect entity = iterator.next();
+            if (entity.getChildren().size() == 0) {
+                iterator.remove();
+            }
+        }
         return AjaxResult.success(treeCategoryDevice);
     }
 

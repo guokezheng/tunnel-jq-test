@@ -42,7 +42,7 @@
             <el-col :span="7" :offset="11">
               <div ref="main" class="grid-content bg-purple">
                 <el-input
-                  placeholder="请输入姓名、所属部门，回车搜索"
+                  placeholder="请输入姓名、所属管理站，回车搜索"
                   v-model="queryParams.userName"
                   @keyup.enter.native="handleQuery"
                   size="small"
@@ -136,7 +136,7 @@
               align="center"
             ></el-table-column>
             <!--      <el-table-column label="隧道" align="center" prop="tunnelName" />-->
-            <el-table-column label="所属部门" align="center" prop="deptName" />
+            <el-table-column label="所属管理站" align="center" prop="deptName" />
             <el-table-column label="姓名" align="center" prop="userName" />
             <el-table-column label="岗位" align="center" prop="groupName" />
             <el-table-column label="电话" align="center" prop="phone" />
@@ -193,12 +193,12 @@
             <el-input v-model="form.userName" placeholder="请输入应急人员" />
           </el-form-item>
 
-          <el-form-item label="归属部门" prop="deptId">
+          <el-form-item label="管理站" prop="deptId">
             <treeselect
               v-model="form.deptId"
               :options="deptOptions"
               :disable-branch-nodes="true"
-              placeholder="请选择归属部门"
+              placeholder="请选择管理站"
               noResultsText="暂无数据"
               @input="changeParentDept"
             />
@@ -315,7 +315,7 @@ export default {
       rules: {
         deptId: {
           required: true,
-          message: "请选择归属部门",
+          message: "请选择管理站",
           trigger: "blur",
         },
         userName: [

@@ -457,6 +457,7 @@ export default {
 
   methods: {
     selectEqType(e){
+      debugger
       console.log(this.deviceEqTypeList)
       console.log(this.deviceEqType)
       let value = e
@@ -471,7 +472,8 @@ export default {
       console.log( img)
       for (let i = 0; i <  img.length; i++) {
         img[i].attr({
-          opacity: 0  // 设置透明度为0，使图像不可见
+          opacity: 0 , // 设置透明度为0，使图像不可见
+          display:"none"
         });
       }
       hasListByBigType(val).then((response) => {
@@ -485,7 +487,8 @@ export default {
               }
               this.selectedIconList[i].display = false;
               img[i].attr({
-                opacity: 0  // 设置透明度为0，使图像不可见
+                opacity: 0,  // 设置透明度为0，使图像不可见
+                display:"none"
               });
 
               // 没有eqType属性的图片依旧显示 例如：隧道名称
@@ -495,7 +498,8 @@ export default {
               ) {
                 this.selectedIconList[i].display = true;
                 img[i].attr({
-                  opacity: 1  // 设置透明度为0，使图像不可见
+                  opacity: 1 , // 设置透明度为0，使图像不可见
+                  display:"inline"
                 });
               }
             }
@@ -503,14 +507,16 @@ export default {
           for (let i = 0; i < typeIndex.length; i++) {
             this.selectedIconList[typeIndex[i]].display = true;
             img[typeIndex[i]].attr({
-              opacity: 1  // 设置透明度为0，使图像不可见
+              opacity: 1,  // 设置透明度为0，使图像不可见
+              display:"inline"
             });
           }
         } else {
           for (let i = 0; i < this.selectedIconList.length; i++) {
             this.selectedIconList[i].display = false;
             img[i].attr({
-              opacity: 0  // 设置透明度为0，使图像不可见
+              opacity: 0  ,// 设置透明度为0，使图像不可见
+              display:"none"
             });
           }
         }
@@ -1546,7 +1552,6 @@ export default {
          *  outerheight： 属性是一个只读的整数，声明了整个窗口的高度。
 
          */
-
         drag: function (event, ui) {
           // console.log(event)
           // debugger
@@ -1611,6 +1616,7 @@ export default {
                     event.toElement.parentNode,
                     null
                   );
+                  debugger
                   let paddingL = parseFloat(style.getPropertyValue("left")); //获取左侧内边距
                   console.log(paddingL)
                   let paddingtop = parseFloat(style.getPropertyValue("top")); //获取左侧内边距
@@ -1640,6 +1646,10 @@ export default {
                     styleas1.getPropertyValue("width")
                   ); //获取左侧内边距
                   console.log(paddingLa2)
+                  //说明有滚动
+                  if(paddingLa1<paddingLa2){
+                    paddingLa1 = paddingLa2+30
+                  }
 
                   guide1.left = paddingL + (paddingLa1 - paddingLa2) / 2 - 16;
                   guide1.top = paddingtop + paddingLa;
@@ -2262,20 +2272,20 @@ input {
 
 #guide-h {
   border-top: 1px solid red;
-  width: 100%;
+  width: 200%;
 }
 #guide-h1 {
   border-top: 1px solid red;
-  width: 100%;
+  width: 200%;
 }
 
 #guide-v {
   border-left: 1px solid red;
-  height: 100%;
+  height: 200%;
 }
 #guide-v1 {
   border-left: 1px solid red;
-  height: 100%;
+  height: 200%;
 }
 </style>
 <style lang="scss">

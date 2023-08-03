@@ -461,7 +461,13 @@ public class StrategyTask {
             map.put("brightness",sdStrategyRl.getStateNum());
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
-            map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
+            //手动执行 设置时间为当前时间
+            if("0".equals(sdStrategy.getStrategyType())){
+                map.put("controlTime", CommonUtil.get_Date());
+            }else{
+                map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
+            }
+
             map.put("type","1");
             map.put("currentId",sdStrategyRl.getId());
 

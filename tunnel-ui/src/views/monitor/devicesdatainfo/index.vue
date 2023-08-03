@@ -179,6 +179,8 @@
                   :default-time="['00:00:00', '23:59:59']"
                   append-to-body
                   popper-class="DataStyle"
+                  :picker-options="setDateRange"
+
                 ></el-date-picker>
               </el-form>
             </div>
@@ -481,6 +483,15 @@ export default {
       // 部门树选项
       jgOptions: undefined,
       currentData: "",
+      setDateRange: {
+        // 时间不能大于当前时间
+        disabledDate(time) {
+          let current_time = new Date().format("yyyy-MM-dd") + " 23:59:59"; //时间日期为：‘当前日期 23:59:59’
+          let t = new Date(current_time).getTime(); //‘当前日期 23:59:59’的时间戳
+          return time.getTime() > t;
+        },
+        selectableRange: "00:00:00 - 23:59:59",
+      },
     };
   },
   created() {

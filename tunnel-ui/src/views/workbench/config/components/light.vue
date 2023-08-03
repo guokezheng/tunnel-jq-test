@@ -418,14 +418,15 @@ export default {
     },
     handleOK() {
       let that = this;
-      const loading = this.$loading({
+      
+      // 警示灯带
+      if (this.eqInfo.clickEqType == 45) {
+        const loading = this.$loading({
           lock: true,
           text: 'Loading',
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         });
-      // 警示灯带
-      if (this.eqInfo.clickEqType == 45) {
         const param = {
           devId: this.eqInfo.equipmentId,
           state: this.stateForm.state,
@@ -447,6 +448,12 @@ export default {
         this.eqInfo.clickEqType == 13 ||
         this.eqInfo.clickEqType == 49
       ) {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const param = {
           eqId: this.stateForm.eqId, //设备id
           data: this.stateForm.state,
@@ -465,6 +472,12 @@ export default {
           loading.close();
         });
       } else if (this.stateForm.eqType == 30) {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state, //设备状态
@@ -486,6 +499,12 @@ export default {
           loading.close();
         });
       } else if (this.stateForm.eqType == 31) {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state, //设备状态
@@ -508,10 +527,15 @@ export default {
           this.stateForm.state == 1 &&
           this.stateForm.brightness < 30
         ) {
-          loading.close();
           this.$modal.msgWarning("基本照明亮度不得低于30");
           return;
         }
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const param = {
           devId: this.stateForm.eqId, //设备id
           state: this.stateForm.state,

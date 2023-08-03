@@ -1442,6 +1442,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.eqTypeData = []
+      this.getEqType()
       this.checkeBox = [];
       this.queryParams.remark = "";
       this.queryParams.searchValue = "";

@@ -7,6 +7,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 	<select id="getExternalSystemEnergy" resultType="hashmap">
-		select * from external_system where tunnel_id = #{tunnelId} and system_name = #{sysName}
+		select * from external_system where INSTR(tunnel_id, #{tunnelId}) > 0 and system_name = #{sysName}
 	</select>
 </mapper>

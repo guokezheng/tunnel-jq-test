@@ -172,11 +172,11 @@ export default {
 
         for (var item of response.data.todayCOData) {
           coXdata.push(item.order_hour);
-          coYdata.push(item.count);
+          coYdata.push(parseFloat(item.count).toFixed(2));
         }
         for (var item of response.data.todayVIData) {
           viXdata.push(item.order_hour);
-          viYdata.push(item.count);
+          viYdata.push(parseFloat(item.count).toFixed(2));
         }
         this.$nextTick(() => {
           this.initChart(coXdata, coYdata, viXdata, viYdata);
@@ -213,6 +213,11 @@ export default {
         var option = {
           tooltip: {
             trigger: "axis",
+            formatter: function (params) {
+              var str = params[0].marker ;
+              str += params[0].value ;
+              return str;
+            }
           },
           toolbox: {
             show: true,

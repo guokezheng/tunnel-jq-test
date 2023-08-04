@@ -163,7 +163,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
               WHEN (sa.avgSpeed IS NULL or sa.avgSpeed = '')
             THEN 0
             ELSE
-                sa.avgSpeed / sa.countNum
+                ROUND((sa.avgSpeed / sa.countNum),2)
             END avgSpeed
         FROM
             (

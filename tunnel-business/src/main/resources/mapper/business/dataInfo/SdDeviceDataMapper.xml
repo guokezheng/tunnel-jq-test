@@ -203,7 +203,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getTodayCOVIData" resultType="hashmap">
-        SELECT HOUR(t.time) order_hour, ifnull(sa.num,0) AS count FROM
+        SELECT HOUR(t.time) order_hour, ROUND(ifnull(sa.num,0),2) AS count FROM
             (SELECT   DATE_FORMAT( DATE_SUB( #{today},INTERVAL ( -(@i:=@i-1) ) HOUR ) ,'%Y-%m-%d %H') AS 'time'
             FROM (
             SELECT a  FROM

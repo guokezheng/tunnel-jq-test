@@ -213,6 +213,9 @@ public class SdEventServiceImpl implements ISdEventService {
             if(item.getVideoUrl()!=null){
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
+            //计算累计时间
+            String endDatePoor = DateUtils.getDatePoor(DateUtils.parseDate(item.getEndTime()) == null ? DateUtils.getNowDate() : DateUtils.parseDate(item.getEndTime()), DateUtils.parseDate(item.getStartTime()));
+            item.setContinuedTime(endDatePoor);
             SdTrafficImage image = new SdTrafficImage();
             image.setBusinessId(item.getId().toString());
             image.setImgType("1");

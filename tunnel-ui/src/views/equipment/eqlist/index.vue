@@ -1235,7 +1235,10 @@ export default {
       });
     },
     getExternalSystemList() {
-      listAllSystem().then((result) => {
+      let params = {
+        tunnelId : this.form.eqTunnelId
+      }
+      listAllSystem(params).then((result) => {
         console.log("externalSystemList:>>>", result.data);
         this.externalSystemList = result.data;
       });
@@ -1337,6 +1340,8 @@ export default {
         //   eqName: "未关联PLC设备",
         // });
       });
+      this.form.externalSystemId = "";
+      this.getExternalSystemList();
     },
     /** 所属隧道 */
     getTunnel() {
@@ -1442,6 +1447,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.eqTypeData = []
+      this.getEqType()
       this.checkeBox = [];
       this.queryParams.remark = "";
       this.queryParams.searchValue = "";
@@ -1589,6 +1596,7 @@ export default {
         this.submitMode = 0;
         this.title = "修改设备";
       });
+      this.getExternalSystemList();
     },
     /** 提交按钮 */
     submitForm() {

@@ -222,13 +222,13 @@ export default {
         console.log(res, "微波车检 echarts");
         for (let item of res.data.laneNoOne) {
           this.XData.push(item.order_hour);
-          this.yData1.push(item.avgSpeed);
+          this.yData1.push(parseFloat(item.avgSpeed).toFixed(2));
         }
         for (let item of res.data.laneNoTwo) {
-          this.yData2.push(item.avgSpeed);
+          this.yData2.push(parseFloat(item.avgSpeed).toFixed(2));
         }
         for (let item of res.data.laneNoThree) {
-          this.yData3.push(item.avgSpeed);
+          this.yData3.push(parseFloat(item.avgSpeed).toFixed(2));
         }
         setTimeout(() => {
           this.$nextTick(() => {
@@ -248,6 +248,15 @@ export default {
         var option = {
           tooltip: {
             trigger: "axis",
+            formatter: function (params) {
+              var str = params[0].marker ;
+              str += params[0].value + "</br>";
+              str += params[1].marker ;
+              str += params[1].value + "</br>";
+              str += params[2].marker ;
+              str += params[2].value + "</br>";
+              return str;
+            }
           },
           legend: {
             show: true,

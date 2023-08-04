@@ -527,7 +527,7 @@ export default {
     },
 
     //获取车辆数据
-    getEchartsTrend(row){
+    async getEchartsTrend(row){
       this.XData = []
       this.yData3 = []
       this.yData2 = []
@@ -571,7 +571,7 @@ export default {
         holes: 2
       }
       //今天
-      analysisDataByTime(this.addDateRange(json, ds)).then(response => {
+      await analysisDataByTime(this.addDateRange(json, ds)).then(response => {
         if(response.code == 200){
           for (let i = 0; i < response.data.length; i++) {
             const randomNumber = Math.floor(Math.random() * 70);
@@ -582,7 +582,7 @@ export default {
         }
       });
       //昨天
-      analysisDataByTime(this.addDateRange(json, ds2)).then(response => {
+      await analysisDataByTime(this.addDateRange(json, ds2)).then(response => {
         if(response.code == 200){
           for (let i = 0; i < response.data.length; i++) {
             // this.XData.push(response.data[i].date)
@@ -593,7 +593,7 @@ export default {
         }
       });
       //前天
-      analysisDataByTime(this.addDateRange(json, ds1)).then(response => {
+      await analysisDataByTime(this.addDateRange(json, ds1)).then(response => {
         if(response.code == 200){
           for (let i = 0; i < response.data.length; i++) {
             // this.XData.push(response.data[i].date)
@@ -604,12 +604,12 @@ export default {
 
         }
       });
-      setTimeout(() => {
+      await setTimeout(() => {
         this.$nextTick(() => {
           //获取车辆数据
           this.initCatChart();
         });
-      }, 500);
+      }, 10);
       //潍坊方向
       let json1 = {
         eqDirection:"hour",
@@ -617,7 +617,7 @@ export default {
         holes: 1
       }
       //今天
-      analysisDataByTime(this.addDateRange(json1, ds)).then(response => {
+      await analysisDataByTime(this.addDateRange(json1, ds)).then(response => {
         if(response.code == 200){
           for (let i = 0; i < response.data.length; i++) {
             const randomNumber = Math.floor(Math.random() * 70);
@@ -628,7 +628,7 @@ export default {
         }
       });
       //昨天
-      analysisDataByTime(this.addDateRange(json1, ds2)).then(response => {
+      await  analysisDataByTime(this.addDateRange(json1, ds2)).then(response => {
         if(response.code == 200){
           for (let i = 0; i < response.data.length; i++) {
             const randomNumber = Math.floor(Math.random() * 70);
@@ -638,7 +638,7 @@ export default {
         }
       });
       //前天
-      analysisDataByTime(this.addDateRange(json1, ds1)).then(response => {
+      await analysisDataByTime(this.addDateRange(json1, ds1)).then(response => {
         if(response.code == 200){
           for (let i = 0; i < response.data.length; i++) {
             // this.XData.push(response.data[i].date)
@@ -649,12 +649,12 @@ export default {
 
         }
       });
-      setTimeout(() => {
+      await   setTimeout(() => {
         this.$nextTick(() => {
           //获取车辆数据
           this.initCatChart1();
         });
-      }, 500);
+      }, 10);
     },
 
     /** 查询隧道列表 */
@@ -1043,4 +1043,25 @@ export default {
 
 <style scoped>
 
+.buttonBox {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 36px;
+.delete,.add{
+  width:16px;
+  height: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  border:none;
+  background-color: transparent;
+}
+.delete{
+  background-image: url(../../../../assets/icons/delete.png);
+}
+.add{
+  background-image: url(../../../../assets/icons/add.png);
+}
+}
 </style>

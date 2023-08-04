@@ -172,24 +172,24 @@
 <!--            <img src="../../../assets/icons/kzcl.png" />-->
 <!--            <span>控制策略1</span>-->
 <!--          </el-button>-->
-<!--          <el-button-->
-<!--            class="buttons"-->
-<!--            type="primary"-->
-<!--            size="mini"-->
-<!--            @click="strategyPage2"-->
-<!--          >-->
-<!--            <img src="../../../assets/icons/kzcl.png" />-->
-<!--            <span>控制策略2</span>-->
-<!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
             size="mini"
-            @click="iconLighting"
+            @click="strategyPage2"
           >
-            <img src="../../../assets/icons/zmpz.png" />
+            <img src="../../../assets/icons/kzcl.png" />
             <span>照明配置</span>
           </el-button>
+<!--          <el-button-->
+<!--            class="buttons"-->
+<!--            type="primary"-->
+<!--            size="mini"-->
+<!--            @click="iconLighting"-->
+<!--          >-->
+<!--            <img src="../../../assets/icons/zmpz.png" />-->
+<!--            <span>照明配置</span>-->
+<!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"

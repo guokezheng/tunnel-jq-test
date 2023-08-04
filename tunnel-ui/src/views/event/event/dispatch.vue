@@ -20,6 +20,12 @@
         src="http://106.120.201.126:14712/dashboard"
       ></iframe>
     </div>
+    <div class="workBenchButton">
+      <img
+        src="../../../assets/cloudControl/tunnelBox2.png"
+        @click="openWorkBench()"
+      />
+    </div>
     <div class="drawerBox" @click="drawerHandleOpen()" >
       <i class="el-icon-d-arrow-left" v-show="drawer"></i>
       <i class="el-icon-d-arrow-right" v-show="drawer == false"></i>
@@ -349,7 +355,7 @@
       </div>
     </div>
     </div>
-    <el-row style="display: none;">
+    <!-- <el-row style="display: none;">
       <el-col :span="7">
       </el-col>
       <el-col :span="17">
@@ -421,7 +427,6 @@
                           :height="item.iconHeight"
                           :src="getTypePic(item)"
                         />
-                        <!-- 情报板洞内 -->
                         <div
                           v-show="item.eqType == '16' || item.eqType == '36'"
                           style="
@@ -490,6 +495,7 @@
                 />
               </div>
               <div>
+               
                 <img
                   src="../../../assets/cloudControl/tunnelBox2.png"
                   @click="changeActiveMap(1)"
@@ -553,8 +559,7 @@
           </div>
         </div>
       </el-col>
-    </el-row>
-
+    </el-row> -->
     <com-video
       class="comClass"
       v-if="[23, 24, 25].includes(this.eqInfo.clickEqType)"
@@ -665,7 +670,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-board>
-    <work-bench ref="workBench"></work-bench>
+    <!-- <work-bench ref="workBench"></work-bench> -->
     <el-dialog
       title="警情升级"
       class="jingqing"
@@ -945,7 +950,7 @@
         <el-button @click="oneKeyDialogVisible = false" class="closeButton">取 消</el-button>
       </span>
     </el-dialog>
-    <!-- <el-dialog> -->
+      <!-- 巡检机器人 -->
       <el-dialog
       class="robotDialog"
       :visible.sync="robotDialogVisible"
@@ -961,6 +966,8 @@
       </el-dialog>
        
     <jointControl ref = "jointControl" :show="visibleSync" :eqIdList="eqIdList"></jointControl>
+    <workBench class="workBenchBox" ref="workBenchRef" />
+
     <!-- </el-dialog> -->
   </div>
 </template>
@@ -975,7 +982,7 @@ import { getDeviceData } from "@/api/workbench/config.js";
 import { getEventCamera, getEntranceExitVideo } from "@/api/eventDialog/api.js";
 import { videoStreaming } from "@/api/equipment/eqlist/api";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
-import workBench from "@/views/event/reservePlan/workBench";
+// import workBench from "@/views/event/reservePlan/workBench";
 import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
 import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
 import comCovi from "@/views/workbench/config/components/covi"; //covi弹窗
@@ -989,6 +996,7 @@ import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯�
 import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 import jointControl from "@/views/event/event/projectionScreen/jointControl.vue";
+import workBench from "./workBench.vue";
 
 import {
   listEventType,
@@ -1040,6 +1048,7 @@ export default {
   },
   data() {
     return {
+      workBenchProp:{},
       robotDialogVisible: false,
       clickEqType: "",
       yjShow: true,
@@ -1103,7 +1112,7 @@ export default {
       timer: null,
       laneUrlList: laneImage,
       eqTypeStateList: null,
-      selectedIconList: [],
+      // selectedIconList: [],
       backImg: "",
       eqRecordIcon: require("@/assets/cloudControl/eqRecord.png"),
       incHand1: require("@/assets/cloudControl/incHand1.png"),
@@ -1217,6 +1226,9 @@ export default {
   //   clearInterval(this.deadline4);
   // },
   methods: {
+    openWorkBench(){
+      this.$refs.workBenchRef.init(this.workBenchProp)
+    },
     handleTouping() {
       this.$confirm("即将投屏, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -1333,7 +1345,7 @@ export default {
         : (this.deviceStateName = "已执行");
       //请求详情
       getManagementDevice(params).then((res) => {
-        console.log(res);
+        // console.log(res);
         let data = res.data;
         // 广播
         if (data.deviceType == 22) {
@@ -1464,54 +1476,54 @@ export default {
       done();
     },
     //右键拖动
-    dragImg(e) {
-      // console.log(e, "e");
-      // console.log(
-      //   this.$refs.dragImgDom.offsetLeft,
-      //   "this.$refs.dragImgDom.offsetLeft"
-      // );
-      if (e.button == 0) {
-        return;
-      }
-      this.dragFlag = true;
-      this.mouseLeft =
-        e.clientX - parseInt(this.$refs.dragImgDom.offsetLeft) + 560;
-      this.mouseTop = e.clientY - parseInt(this.$refs.dragImgDom.offsetTop);
-      document.onmousemove = (e) => {
-        if (this.dragFlag) {
-          this.curX = e.clientX - this.mouseLeft;
-          this.curY = e.clientY - this.mouseTop;
-          this.$refs.dragImgDom.style.left = this.curX + "px";
-          this.$refs.dragImgDom.style.top = this.curY + "px";
-        }
-      };
-      document.onmouseup = () => {
-        this.dragFlag = false;
-      };
-    },
+    // dragImg(e) {
+    //   // console.log(e, "e");
+    //   // console.log(
+    //   //   this.$refs.dragImgDom.offsetLeft,
+    //   //   "this.$refs.dragImgDom.offsetLeft"
+    //   // );
+    //   if (e.button == 0) {
+    //     return;
+    //   }
+    //   this.dragFlag = true;
+    //   this.mouseLeft =
+    //     e.clientX - parseInt(this.$refs.dragImgDom.offsetLeft) + 560;
+    //   this.mouseTop = e.clientY - parseInt(this.$refs.dragImgDom.offsetTop);
+    //   document.onmousemove = (e) => {
+    //     if (this.dragFlag) {
+    //       this.curX = e.clientX - this.mouseLeft;
+    //       this.curY = e.clientY - this.mouseTop;
+    //       this.$refs.dragImgDom.style.left = this.curX + "px";
+    //       this.$refs.dragImgDom.style.top = this.curY + "px";
+    //     }
+    //   };
+    //   document.onmouseup = () => {
+    //     this.dragFlag = false;
+    //   };
+    // },
     // 预览按钮
-    getPreview(type) {
-      // 查预案ID
-      const params = {
-        tunnelId: this.eventForm.tunnelId,
-        category: this.reservePlan.oneWay,
-        controlDirection: type,
-        direction: this.eventForm.direction,
-        eventId: this.eventForm.id,
-        planTypeId: this.eventForm.eventTypeId,
-      };
-      getReserveId(params).then((res) => {
-        console.log(res, "获取的预案id");
-        var planId = res.data;
-        this.$nextTick(() => {
-          this.$refs.workBench.eventId = this.$route.query.id;
-          this.$refs.workBench.id = planId; //预案ID
-          this.$refs.workBench.tunnelId = this.eventForm.tunnelId;
-          this.$refs.workBench.init();
-        });
-      });
-      // this.workbenchOpen = true;
-    },
+    // getPreview(type) {
+    //   // 查预案ID
+    //   const params = {
+    //     tunnelId: this.eventForm.tunnelId,
+    //     category: this.reservePlan.oneWay,
+    //     controlDirection: type,
+    //     direction: this.eventForm.direction,
+    //     eventId: this.eventForm.id,
+    //     planTypeId: this.eventForm.eventTypeId,
+    //   };
+    //   getReserveId(params).then((res) => {
+    //     console.log(res, "获取的预案id");
+    //     var planId = res.data;
+    //     this.$nextTick(() => {
+    //       this.$refs.workBench.eventId = this.$route.query.id;
+    //       this.$refs.workBench.id = planId; //预案ID
+    //       this.$refs.workBench.tunnelId = this.eventForm.tunnelId;
+    //       this.$refs.workBench.init();
+    //     });
+    //   });
+    //   // this.workbenchOpen = true;
+    // },
     // 事件点图片
     getAccIcon() {
       let id = this.eventForm.eventTypeId;
@@ -1555,22 +1567,22 @@ export default {
     },
 
     // 关联事件
-    relation(type) {
-      const params = {
-        tunnelId: this.eventForm.tunnelId,
-        category: this.reservePlan.oneWay,
-        controlDirection: type,
-        direction: this.eventForm.direction,
-        eventId: this.eventForm.id,
-        planTypeId: this.eventForm.eventTypeId,
-      };
-      getRelation(params).then((res) => {
-        this.$modal.msgSuccess("关联成功");
-        this.getListEvent();
-        this.relationDisabled = true;
-        this.disabledRadio = true;
-      });
-    },
+    // relation(type) {
+    //   const params = {
+    //     tunnelId: this.eventForm.tunnelId,
+    //     category: this.reservePlan.oneWay,
+    //     controlDirection: type,
+    //     direction: this.eventForm.direction,
+    //     eventId: this.eventForm.id,
+    //     planTypeId: this.eventForm.eventTypeId,
+    //   };
+    //   getRelation(params).then((res) => {
+    //     this.$modal.msgSuccess("关联成功");
+    //     this.getListEvent();
+    //     this.relationDisabled = true;
+    //     this.disabledRadio = true;
+    //   });
+    // },
     // 打开下发事件弹窗
     // openIssuedDialog(item) {
 
@@ -1677,13 +1689,13 @@ export default {
         this.incHandList.map((item) => {
           if (item.children) {
             item.children.map((res) => {
-              console.log(res);
+              // console.log(res);
               // if (res.eqTypeId == 29) {
               //   this.clickEqType = 29;
               // }
             });
           }
-          console.log(item);
+          // console.log(item);
         });
         this.$nextTick(() => {
           const incHandContentBox =
@@ -1725,6 +1737,12 @@ export default {
           id: this.$route.query.id,
         };
         await listEvent(param).then((response) => {
+          console.log(response.rows,"事件详情")
+          this.workBenchProp = {
+            tunnelStationName:response.rows[0].tunnelStationName,
+            tunnelName:response.rows[0].tunnelName,
+            tunnelId:response.rows[0].tunnelId
+          }
           this.eventForm = response.rows[0];
           this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(
             0,
@@ -1736,7 +1754,7 @@ export default {
           this.getVideoList();
           this.getpersonnelList();
           this.evtHandle();
-          this.getTunnelData();
+          // this.getTunnelData();
           setTimeout(() => {
             this.getAcc();
           }, 500);
@@ -1862,145 +1880,145 @@ export default {
       });
     },
     /* 获取隧道配置信息*/
-    async getTunnelData() {
-      let tunnelId = this.eventForm.tunnelId;
-      // var tunnelId = this.eventMsg.tunnelId; //"WLJD-JiNan-YanJiuYuan-FHS";
-      let that = this;
+    // async getTunnelData() {
+    //   let tunnelId = this.eventForm.tunnelId;
+    //   // var tunnelId = this.eventMsg.tunnelId; //"WLJD-JiNan-YanJiuYuan-FHS";
+    //   let that = this;
 
-      await getTunnels(tunnelId).then((response) => {
-        this.tunnelLane = Number(response.data.lane);
-        let res = response.data.storeConfigure;
-        //存在配置内容
-        if (res != null && res != "" && res != undefined) {
-          res = JSON.parse(res);
-          let id = res.lane;
-          for (let i = 0; i < that.laneUrlList.length; i++) {
-            if (that.laneUrlList[i].id == id) {
-              that.backImg = that.laneUrlList[i].url;
-              that.picWidth = that.laneUrlList[i].width;
-            }
-          }
-          listType().then((response) => {
-            // var arr = [];
-            for (let i = 0; i < res.eqList.length; i++) {
-              res.eqList[i].focus = false;
-              for (let j = 0; j < response.rows.length; j++) {
-                if (response.rows[j].typeId == res.eqList[i].eqType) {
-                  let iconWidth = Number(response.rows[j].iconWidth);
-                  let iconHeight = Number(response.rows[j].iconHeight);
-                  res.eqList[i].iconWidth = iconWidth;
-                  res.eqList[i].iconHeight = iconHeight;
-                  break;
-                }
-              }
-            }
-            this.selectedIconList = res.eqList; //这是最终需要挂载到页面上的值
-            that.getRealTimeData();
-          });
-        } else {
-          //不存在
-          that.selectedIconList = [];
-        }
-      });
-    },
-    getRealTimeData() {
-      getDeviceData({
-        tunnelId: this.eventForm.tunnelId,
-      }).then((response) => {
-        for (let j = 0; j < this.selectedIconList.length; j++) {
-          var eqId = this.selectedIconList[j].eqId;
-          var deviceData = response.data[eqId];
-          if (deviceData) {
-            // let type = deviceData.eqType;
+    //   await getTunnels(tunnelId).then((response) => {
+    //     this.tunnelLane = Number(response.data.lane);
+    //     let res = response.data.storeConfigure;
+    //     //存在配置内容
+    //     if (res != null && res != "" && res != undefined) {
+    //       res = JSON.parse(res);
+    //       let id = res.lane;
+    //       for (let i = 0; i < that.laneUrlList.length; i++) {
+    //         if (that.laneUrlList[i].id == id) {
+    //           that.backImg = that.laneUrlList[i].url;
+    //           that.picWidth = that.laneUrlList[i].width;
+    //         }
+    //       }
+    //       listType().then((response) => {
+    //         // var arr = [];
+    //         for (let i = 0; i < res.eqList.length; i++) {
+    //           res.eqList[i].focus = false;
+    //           for (let j = 0; j < response.rows.length; j++) {
+    //             if (response.rows[j].typeId == res.eqList[i].eqType) {
+    //               let iconWidth = Number(response.rows[j].iconWidth);
+    //               let iconHeight = Number(response.rows[j].iconHeight);
+    //               res.eqList[i].iconWidth = iconWidth;
+    //               res.eqList[i].iconHeight = iconHeight;
+    //               break;
+    //             }
+    //           }
+    //         }
+    //         this.selectedIconList = res.eqList; //这是最终需要挂载到页面上的值
+    //         that.getRealTimeData();
+    //       });
+    //     } else {
+    //       //不存在
+    //       that.selectedIconList = [];
+    //     }
+    //   });
+    // },
+    // getRealTimeData() {
+    //   getDeviceData({
+    //     tunnelId: this.eventForm.tunnelId,
+    //   }).then((response) => {
+    //     for (let j = 0; j < this.selectedIconList.length; j++) {
+    //       var eqId = this.selectedIconList[j].eqId;
+    //       var deviceData = response.data[eqId];
+    //       if (deviceData) {
+    //         // let type = deviceData.eqType;
 
-            // 需要换光标的
-            for (let k = 0; k < this.eqTypeStateList.length; k++) {
-              if (
-                this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
-              ) {
-                //无法控制设备状态的设备类型，比如PLC、摄像机
-                let arr = [
-                  // 5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
-                  5,
-                  14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48, 45,
-                ];
-                if (arr.includes(deviceData.eqType)) {
-                  if (
-                    // 摄像机之类的只有在线 离线 故障图标
-                    this.eqTypeStateList[k].stateType == "1" &&
-                    this.eqTypeStateList[k].state == deviceData.eqStatus
-                  ) {
-                    //取设备监测状态图标
-                    this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                    if (deviceData.eqType == 19) {
-                      this.selectedIconList[j].num =
-                        "CO:" +
-                        parseFloat(deviceData.CO).toFixed(2) +
-                        "/PPM  VI:" +
-                        parseFloat(deviceData.VI).toFixed(2) +
-                        "M";
-                    } else if (deviceData.eqType == 17) {
-                      this.selectedIconList[j].num =
-                        parseFloat(deviceData.FS).toFixed(2) +
-                        "m/s " +
-                        deviceData.FX;
-                    } else if (deviceData.eqType == 5) {
-                      if (deviceData.DWLD) {
-                        this.selectedIconList[j].num =
-                          parseFloat(deviceData.DWLD).toFixed(2) + "lux";
-                      }
-                    } else if (deviceData.eqType == 18) {
-                      if (deviceData.DNLD) {
-                        this.selectedIconList[j].num =
-                          parseFloat(deviceData.DNLD).toFixed(2) + "lux";
-                      }
-                    }
-                  }
-                } else {
-                  //可以控制设备状态的设备类型，比如车指
-                  if (deviceData.eqStatus == "1") {
-                    // 在线
-                    if (
-                      // 车指之类的包括正红反绿之类的图标 == 2
-                      this.eqTypeStateList[k].stateType == "2"
-                    ) {
-                      if (this.eqTypeStateList[k].state == deviceData.state) {
-                        //取设备运行状态图标
-                        let url = this.eqTypeStateList[k].url;
-                        this.selectedIconList[j].eqDirection =
-                          deviceData.eqDirection;
-                        if (deviceData.eqDirection == "1") {
-                          //上行车道
-                          if (url.length > 1) {
-                            this.selectedIconList[j].url = [url[1], url[0]];
-                          } else {
-                            this.selectedIconList[j].url = url;
-                          }
-                        } else {
-                          this.selectedIconList[j].url =
-                            this.eqTypeStateList[k].url;
-                        }
-                      }
-                    }
-                  } else {
-                    //如果是离线、故障等状态
-                    if (
-                      this.eqTypeStateList[k].stateType == "1" &&
-                      this.eqTypeStateList[k].state == deviceData.eqStatus
-                    ) {
-                      //取设备监测状态图标
-                      this.selectedIconList[j].url =
-                        this.eqTypeStateList[k].url;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      });
-    },
+    //         // 需要换光标的
+    //         for (let k = 0; k < this.eqTypeStateList.length; k++) {
+    //           if (
+    //             this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
+    //           ) {
+    //             //无法控制设备状态的设备类型，比如PLC、摄像机
+    //             let arr = [
+    //               // 5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
+    //               5,
+    //               14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
+    //               40, 39, 48, 45,
+    //             ];
+    //             if (arr.includes(deviceData.eqType)) {
+    //               if (
+    //                 // 摄像机之类的只有在线 离线 故障图标
+    //                 this.eqTypeStateList[k].stateType == "1" &&
+    //                 this.eqTypeStateList[k].state == deviceData.eqStatus
+    //               ) {
+    //                 //取设备监测状态图标
+    //                 this.selectedIconList[j].url = this.eqTypeStateList[k].url;
+    //                 if (deviceData.eqType == 19) {
+    //                   this.selectedIconList[j].num =
+    //                     "CO:" +
+    //                     parseFloat(deviceData.CO).toFixed(2) +
+    //                     "/PPM  VI:" +
+    //                     parseFloat(deviceData.VI).toFixed(2) +
+    //                     "M";
+    //                 } else if (deviceData.eqType == 17) {
+    //                   this.selectedIconList[j].num =
+    //                     parseFloat(deviceData.FS).toFixed(2) +
+    //                     "m/s " +
+    //                     deviceData.FX;
+    //                 } else if (deviceData.eqType == 5) {
+    //                   if (deviceData.DWLD) {
+    //                     this.selectedIconList[j].num =
+    //                       parseFloat(deviceData.DWLD).toFixed(2) + "lux";
+    //                   }
+    //                 } else if (deviceData.eqType == 18) {
+    //                   if (deviceData.DNLD) {
+    //                     this.selectedIconList[j].num =
+    //                       parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+    //                   }
+    //                 }
+    //               }
+    //             } else {
+    //               //可以控制设备状态的设备类型，比如车指
+    //               if (deviceData.eqStatus == "1") {
+    //                 // 在线
+    //                 if (
+    //                   // 车指之类的包括正红反绿之类的图标 == 2
+    //                   this.eqTypeStateList[k].stateType == "2"
+    //                 ) {
+    //                   if (this.eqTypeStateList[k].state == deviceData.state) {
+    //                     //取设备运行状态图标
+    //                     let url = this.eqTypeStateList[k].url;
+    //                     this.selectedIconList[j].eqDirection =
+    //                       deviceData.eqDirection;
+    //                     if (deviceData.eqDirection == "1") {
+    //                       //上行车道
+    //                       if (url.length > 1) {
+    //                         this.selectedIconList[j].url = [url[1], url[0]];
+    //                       } else {
+    //                         this.selectedIconList[j].url = url;
+    //                       }
+    //                     } else {
+    //                       this.selectedIconList[j].url =
+    //                         this.eqTypeStateList[k].url;
+    //                     }
+    //                   }
+    //                 }
+    //               } else {
+    //                 //如果是离线、故障等状态
+    //                 if (
+    //                   this.eqTypeStateList[k].stateType == "1" &&
+    //                   this.eqTypeStateList[k].state == deviceData.eqStatus
+    //                 ) {
+    //                   //取设备监测状态图标
+    //                   this.selectedIconList[j].url =
+    //                     this.eqTypeStateList[k].url;
+    //                 }
+    //               }
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   });
+    // },
 
     /* 根据车道数获取车道图*/
     getLanUrl(num) {
@@ -2221,10 +2239,16 @@ export default {
       height: 100%;
     }
   }
+  .workBenchButton{
+    position: fixed;
+    top: 9.1%;
+    right: 23%;
+    cursor: pointer;
+  }
   .drawerBox {
     position: fixed;
     top: 9.1%;
-    left: 24%;
+    left: 24.5%;
     z-index: 619;
     color: white;
     height: 120px;
@@ -2236,7 +2260,7 @@ export default {
   .disRightBox {
     position: fixed;
     top: 9vh;
-    right: 1px;
+    right: 1vw;
     width: 400px;
     height: 87%;
     .dispatchLeft {
@@ -2542,7 +2566,7 @@ export default {
   .disLeftBox {
     position: fixed;
     top: 9vh;
-    left: 1vh;
+    left: 1vw;
     width: 450px;
     height: 87%;
 
@@ -2759,175 +2783,175 @@ export default {
     background-color: transparent;
   }
 }
-.dispatchRight {
-  margin-left: 10px;
-  .workBenchBox {
-    width: 100%;
-    height: 59%;
-    display: flex;
-    .tunnelBox1 {
-      width: 95%;
-      height: 100%;
-      .tunnelMap {
-        height: 100%;
-        width: 100%;
-        position: relative;
-        margin-bottom: 10px;
-        // padding-bottom: 10px;
-        .back-img {
-          // width: 100% !important;
-          height: 502px !important;
-          position: absolute;
-        }
-        .wrapper {
-          height: 100%;
-          width: 100%;
-          position: absolute;
-          z-index: 3;
-          top: 0px;
-          left: 0px;
-          .icon-box {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            // align-items: center;
-            width: 30px !important;
-          }
-        }
-        .accBox {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          .accTop {
-            position: absolute;
-            width: calc(100% - 200px);
-            height: 160px;
-            top: 60px;
-            left: 100px;
-          }
-          .accBottom {
-            position: absolute;
-            width: calc(100% - 200px);
-            height: 160px;
-            top: 270px;
-            left: 100px;
-          }
-          .accPoint {
-            border-radius: 50px;
-            position: absolute;
-            // border: solid 1px red;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-        }
-      }
-    }
-    .tunnelBox2 {
-      width: 5%;
-      position: relative;
-      > div:nth-of-type(1) {
-        position: absolute;
-        top: 0;
-        left: 20px;
-        width: 48px;
-        height: 48px;
-      }
-      > div:nth-of-type(2) {
-        position: absolute;
-        bottom: 0;
-        left: 20px;
-        width: 48px;
-        height: 150px;
-      }
-    }
-  }
-  .rightBottom {
-    width: 100%;
-    height: calc(41% - 10px);
-    margin-top: 10px;
-    display: flex;
-    .evtManagement {
-      width: calc(67% - 10px);
-      height: 100%;
-      display: flex;
-      // background: #012e51;
-      .IncHand {
-        width: 60%;
-        height: 100%;
-      }
-      .DisRecords {
-        width: 40%;
-        height: 100%;
-        // border-left: solid 1px #E0E7ED;
-        overflow: hidden;
-      }
-    }
-    .implement1 {
-      width: 33%;
-      height: 100%;
-      margin-left: 10px;
-      .phone {
-        width: 100%;
-        height: calc(50% - 5px);
-        .phoneTable {
-          background: transparent !important;
-          padding: 10px;
+// .dispatchRight {
+//   margin-left: 10px;
+//   .workBenchBox {
+//     width: 100%;
+//     height: 59%;
+//     display: flex;
+//     .tunnelBox1 {
+//       width: 95%;
+//       height: 100%;
+//       .tunnelMap {
+//         height: 100%;
+//         width: 100%;
+//         position: relative;
+//         margin-bottom: 10px;
+//         // padding-bottom: 10px;
+//         .back-img {
+//           // width: 100% !important;
+//           height: 502px !important;
+//           position: absolute;
+//         }
+//         .wrapper {
+//           height: 100%;
+//           width: 100%;
+//           position: absolute;
+//           z-index: 3;
+//           top: 0px;
+//           left: 0px;
+//           .icon-box {
+//             position: absolute;
+//             display: flex;
+//             flex-direction: column;
+//             // align-items: center;
+//             width: 30px !important;
+//           }
+//         }
+//         .accBox {
+//           width: 100%;
+//           height: 100%;
+//           position: relative;
+//           .accTop {
+//             position: absolute;
+//             width: calc(100% - 200px);
+//             height: 160px;
+//             top: 60px;
+//             left: 100px;
+//           }
+//           .accBottom {
+//             position: absolute;
+//             width: calc(100% - 200px);
+//             height: 160px;
+//             top: 270px;
+//             left: 100px;
+//           }
+//           .accPoint {
+//             border-radius: 50px;
+//             position: absolute;
+//             // border: solid 1px red;
+//             display: flex;
+//             justify-content: center;
+//             align-items: center;
+//           }
+//         }
+//       }
+//     }
+//     .tunnelBox2 {
+//       width: 5%;
+//       position: relative;
+//       > div:nth-of-type(1) {
+//         position: absolute;
+//         top: 0;
+//         left: 20px;
+//         width: 48px;
+//         height: 48px;
+//       }
+//       > div:nth-of-type(2) {
+//         position: absolute;
+//         bottom: 0;
+//         left: 20px;
+//         width: 48px;
+//         height: 150px;
+//       }
+//     }
+//   }
+//   .rightBottom {
+//     width: 100%;
+//     height: calc(41% - 10px);
+//     margin-top: 10px;
+//     display: flex;
+//     .evtManagement {
+//       width: calc(67% - 10px);
+//       height: 100%;
+//       display: flex;
+//       // background: #012e51;
+//       .IncHand {
+//         width: 60%;
+//         height: 100%;
+//       }
+//       .DisRecords {
+//         width: 40%;
+//         height: 100%;
+//         // border-left: solid 1px #E0E7ED;
+//         overflow: hidden;
+//       }
+//     }
+//     .implement1 {
+//       width: 33%;
+//       height: 100%;
+//       margin-left: 10px;
+//       .phone {
+//         width: 100%;
+//         height: calc(50% - 5px);
+//         .phoneTable {
+//           background: transparent !important;
+//           padding: 10px;
 
-          img {
-            margin-left: 10px;
-          }
-        }
-      }
-      .eqRecord {
-        width: 100%;
-        height: 100%;
-        .eqRecordBox {
-          height: calc(100% - 40px);
-          overflow: auto;
-          .implementContent {
-            width: 100%;
-            height: 50px;
-            padding-right: 10px;
-            .implementIcon {
-              width: 10px;
-              height: 84%;
-              text-align: center;
-              padding-top: 11px;
-              margin-left: 3%;
-              margin-right: 3%;
-            }
-            .contentBox {
-              display: inline-block;
-              height: 100%;
-              width: 90%;
-              font-size: 12px;
-              // color:#fff;
-              .row1 {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                height: 30px;
-                > div:nth-of-type(1) {
-                  // color: #00A0FF;
-                }
-                > div:nth-of-type(2) {
-                  // color: #999999;
-                }
-              }
-              .row2 {
-                display: flex;
-                align-items: center;
-                height: 20px;
-                // color: #333;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+//           img {
+//             margin-left: 10px;
+//           }
+//         }
+//       }
+//       .eqRecord {
+//         width: 100%;
+//         height: 100%;
+//         .eqRecordBox {
+//           height: calc(100% - 40px);
+//           overflow: auto;
+//           .implementContent {
+//             width: 100%;
+//             height: 50px;
+//             padding-right: 10px;
+//             .implementIcon {
+//               width: 10px;
+//               height: 84%;
+//               text-align: center;
+//               padding-top: 11px;
+//               margin-left: 3%;
+//               margin-right: 3%;
+//             }
+//             .contentBox {
+//               display: inline-block;
+//               height: 100%;
+//               width: 90%;
+//               font-size: 12px;
+//               // color:#fff;
+//               .row1 {
+//                 display: flex;
+//                 justify-content: space-between;
+//                 align-items: center;
+//                 height: 30px;
+//                 > div:nth-of-type(1) {
+//                   // color: #00A0FF;
+//                 }
+//                 > div:nth-of-type(2) {
+//                   // color: #999999;
+//                 }
+//               }
+//               .row2 {
+//                 display: flex;
+//                 align-items: center;
+//                 height: 20px;
+//                 // color: #333;
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 // 修改封装样式
 ::v-deep .el-timeline {
   padding: 10px;

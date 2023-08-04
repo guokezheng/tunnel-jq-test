@@ -3207,7 +3207,7 @@ export default {
         for (let i = 0; i < response.rows.length; i++) {
           let attr = response.rows[i];
           let manualControl = params.manualControl[i];
-
+          this.$set(params.manualControl[i], "value", params.manualControl[i].equipments.split(","));
           // console.log(params.manualControl[i].value, "选择的设备");
           params.manualControl[i].state = attr.state;
           params.manualControl[i].stateNum = attr.stateNum;

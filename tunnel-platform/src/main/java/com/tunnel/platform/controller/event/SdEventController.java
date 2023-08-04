@@ -46,6 +46,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 事件管理Controller
@@ -72,6 +73,9 @@ public class SdEventController extends BaseController
 
     @Autowired
     private SdEventServiceImpl sdEventServiceImpl;
+
+    @Autowired
+    private ISdTunnelsService tunnelsService;
 
     /**
      * 查询事件管理列表
@@ -538,7 +542,7 @@ public class SdEventController extends BaseController
         sdEvent.setTunnelId("JQ-JiNan-WenZuBei-MJY");//隧道
         sdEvent.setEventSource("2");//事件来源  消防炮
         sdEvent.setEventTypeId((long) 20);//事件类型
-        sdEvent.setEventTitle("马家峪隧道潍坊方向智能消防炮YK16+678发生火警");//事件标题  隧道+方向+桩号+发生火警
+        sdEvent.setEventTitle("胡山隧道潍坊方向智能消防炮YK16+678发生火警");//事件标题  隧道+方向+桩号+发生火警
         sdEvent.setEventTime(DateUtils.getNowDate());//时间
         sdEvent.setStartTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getNowDate()));//开始时间
         sdEvent.setEventState("3");//状态  待确认
@@ -547,7 +551,11 @@ public class SdEventController extends BaseController
         sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
         sdEvent.setDirection("1");//方向
         sdEventMapper.insertSdEvent(sdEvent);
-        sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
+        List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
+        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals("JQ-JiNan-WenZuBei-MJY")).collect(Collectors.toList());
+        if(collect.size() > 0){
+            sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
+        }
     }
 
 }

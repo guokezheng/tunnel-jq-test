@@ -52,7 +52,7 @@
         <div ref="main" class="grid-content bg-purple">
           <el-input
             v-model="queryParams.deviceName"
-            placeholder="请输入设备名称、设备编号，回车搜索"
+            placeholder="请输入设备名称、设备ID，回车搜索"
             clearable
             size="small"
             @keyup.enter.native="handleQuery"
@@ -123,7 +123,7 @@
       ></el-table-column>
       <!-- <el-table-column label="更换时间" align="center" prop="id" /> -->
       <el-table-column
-        label="设备编号"
+        label="设备ID"
         align="center"
         prop="deviceId"
         width="300"
@@ -193,8 +193,8 @@
         <div class="dialogCloseButton"></div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="设备编号" prop="deviceId">
-          <el-input v-model="form.deviceId" placeholder="请输入设备编号" />
+        <el-form-item label="设备ID" prop="deviceId">
+          <el-input v-model="form.deviceId" placeholder="请输入设备ID" />
         </el-form-item>
         <el-form-item label="设备名称" prop="deviceName">
           <el-input v-model="form.deviceName" placeholder="请输入设备名称" />
@@ -305,7 +305,7 @@ export default {
           { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         deviceId: [
-          { required: true, message: "请填写设备编号", trigger: "change" },
+          { required: true, message: "请填写设备ID", trigger: "change" },
           { max: 50, message: "最长输入50个字符", trigger: "blur" },
         ],
         changeTime: [

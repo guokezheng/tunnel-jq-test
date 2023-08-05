@@ -113,7 +113,8 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20" style="clear:both;">
+      <el-row :gutter="20" style="clear:both; height: 28vh;
+        overflow: auto;     margin-bottom: 0px;">
         <el-col :span="24">
           <el-form-item
             v-for="(items, index) in strategyForm.autoControl"
@@ -225,15 +226,24 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item class="dialog-footer">
-        <el-button class="submitButton" @click="submitStrategyForm"
-        >提交</el-button
-        >
-        <el-button class="closeButton" @click="strategyFormClose"
-        >取 消</el-button
-        >
-      </el-form-item>
+
     </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button class="submitButton" @click="submitStrategyForm"
+      >提交</el-button
+      >
+      <el-button class="closeButton" @click="strategyFormClose"
+      >取 消</el-button
+      >
+    </div>
+<!--    <div class="dialog-footer" slot="footer">-->
+<!--      <el-button class="submitButton" @click="submitStrategyForm"-->
+<!--      >提交</el-button-->
+<!--      >-->
+<!--      <el-button class="closeButton" @click="strategyFormClose"-->
+<!--      >取 消</el-button-->
+<!--      >-->
+<!--    </div>-->
     <el-dialog
       title="Cron表达式生成器"
       :visible.sync="openCron"

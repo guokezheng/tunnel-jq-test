@@ -305,16 +305,21 @@ public class StrategyTask {
     public void triggerJob(String triggerId) throws UnknownHostException {
         //SdTrigger trigger = SpringUtils.getBean(SdTriggerMapper.class).selectSdTriggerById(Long.parseLong(triggerId));
         //触发器数据
-        SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(triggerId));
+//        SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(triggerId));
+//
+//        SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+//
+//        List<Map> triggerData = SpringUtils.getBean(SdTriggerMapper.class).getTriggerInfo(sdStrategy.getId());
 
-        SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
-
-        List<Map> triggerData = SpringUtils.getBean(SdTriggerMapper.class).getTriggerInfo(sdStrategy.getId());
+        //触发器数据
+        List<Map> triggerData = SpringUtils.getBean(SdTriggerMapper.class).getTriggerInfo(triggerId);
         Map<String,Object> issuedParam = new HashMap<>();
+        List<Long> strategyIdList = new ArrayList<>();
         String serverIp = InetAddress.getLocalHost().getHostAddress();
         out: for(Map s:triggerData){
             String equipment = s.get("device_id").toString();
             String itemId = s.get("element_id").toString();
+            strategyIdList.add(Long.valueOf(s.get("id").toString()));
             String[] equipmentIds = equipment.split(",");
             for(String eq:equipmentIds){
                 //redis取当前设备实时数据
@@ -351,8 +356,14 @@ public class StrategyTask {
                     }else{
                         //生成事件
                         this.triggerComparison(s);
-                        // 自动触发控制策略执行 控制设备
-                        this.triggerJobParams(triggerId);
+                        for (Long  id : strategyIdList){
+                            List<SdStrategyRl> sdStrategyRls = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(id);
+                            for (SdStrategyRl sdStrategyRl : sdStrategyRls) {
+                                // 自动触发控制策略执行 控制设备triggerId 策略关联设备信息id
+                                this.autoJobParams(sdStrategyRl.getId());
+                            }
+                        }
+
                     }
                     break out;
                 }
@@ -467,6 +478,72 @@ public class StrategyTask {
             }else{
                 map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
             }
+
+            map.put("type","1");
+            map.put("currentId",sdStrategyRl.getId());
+
+            //按照设备初始化默认值
+            //疏散标志
+            if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().toString())) {
+
+                // 1 关闭 2常亮
+                if(sdStrategyRl.getState().equals("1")){
+                    map.put("fireMark","0");
+                    map.put("brightness","0");
+                    map.put("frequency","0");
+                } else if (sdStrategyRl.getState().equals("2")) {
+                    map.put("fireMark","255");
+                    map.put("brightness","50");
+                    map.put("frequency","60");
+                }
+
+            }
+            //诱导灯
+            if(sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
+                map.put("brightness","50");
+                map.put("frequency","60");
+            }
+            SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
+        }
+    }
+
+    /**
+     * 自动触发控制策略执行
+     * @param strategyRlId
+     * @throws UnknownHostException
+     */
+    public  void autoJobParams(Long strategyRlId) throws UnknownHostException {
+        SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(strategyRlId);
+
+        SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+
+        // 默认执行策略关联设备
+        String[] split = sdStrategyRl.getEquipments().split(",");
+        // 加强照明 基本照明 支持双向执行
+        if (sdStrategy.getDirection().equals(DeviceDirectionEnum.ALl.getCode().toString()) &&
+                (
+                        sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().toString()) ||
+                                sdStrategyRl.getEqTypeId().equals(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().toString())
+                )
+        ){
+            split = SpringUtils.getBean(SdStrategyRlMapper.class).selectAllDirectionSdDevListByDevId(split,sdStrategy.getTunnelId(),sdStrategyRl.getEqTypeId());
+
+        }
+
+        for (String devId : split){
+            Map<String,Object> map = new HashMap<>();
+
+            if(DevicesTypeEnum.VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId()) || DevicesTypeEnum.MEN_JIA_VMS.getCode().toString().equals(sdStrategyRl.getEqTypeId())){
+                map.put("templateId",sdStrategyRl.getState());
+            }
+            map.put("devId",devId);
+            map.put("state",sdStrategyRl.getState());
+            map.put("brightness",sdStrategyRl.getStateNum());
+            map.put("controlType",sdStrategy.getStrategyType());
+            map.put("operIp",InetAddress.getLocalHost().getHostAddress());
+            //触发执行 设置时间为当前时间
+            map.put("controlTime", CommonUtil.get_Date());
+
 
             map.put("type","1");
             map.put("currentId",sdStrategyRl.getId());

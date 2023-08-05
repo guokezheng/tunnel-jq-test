@@ -67,7 +67,9 @@
           </el-col>
         </el-row>
       </el-row>
-      <el-row class="planBox">
+<!--      style="clear:both; height: 300px;-->
+<!--      overflow: auto;"-->
+      <el-row class="planBox" >
         <el-form-item
           v-for="(items, index) in strategyForm.manualControl"
           :key="index"

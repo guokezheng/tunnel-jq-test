@@ -317,8 +317,6 @@
     .celueDialog,.strategyDialog{
       .el-dialog__body{
         max-height: 83vh;
-        height: 500px;
-        overflow: auto;
       }
       //单选框
       .el-radio-button__orig-radio:checked + .el-radio-button__inner{

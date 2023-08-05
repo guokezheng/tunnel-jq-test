@@ -1107,6 +1107,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         int updateRows = sdStrategyMapper.updateSdStrategyById(sty);
         return updateRows;
     }
+
     /**
      * 触发控制
      * @param model
@@ -1115,13 +1116,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      */
     private int triggerControl(SdStrategyModel model,SdStrategy sty){
         List<Map> autoControl = model.getAutoControl();
-        List<String> jobIdList = new ArrayList<>();
         //预警联动
         if(model.getTriggers().getWarningType().equals("1")){
             if(autoControl.isEmpty()){
                 throw new RuntimeException("请填写完整策略信息！");
             }
-
             for (Map<String,Object> map : autoControl) {
                 if(StrUtil.isEmpty(map.get("state").toString())){
                     throw new RuntimeException("请填写完整策略信息！");
@@ -1142,46 +1141,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 rl.setStrategyId(sty.getId());
                 sdStrategyRlMapper.insertSdStrategyRl(rl);
                 map.put("id",rl.getId());
-
-                //新增定时任务
-                //分钟转换为表达式
-                String schedulerTime =CronUtil.ConvertFrequencyToCron(Integer.parseInt(sty.getSchedulerTime()));
-                //新增定时任务 corn表达式 校验是否合规
-                if(!CronUtils.isValid(schedulerTime)){
-                    throw new RuntimeException("当前日期表达式选择有误，请重新选择！");
-                }
-                Long refId = rl.getId();
-                SdTrigger sdTrigger = model.getTriggers();
-//                Long refId = sdTrigger.getId();
-                // 新增定时任务
-                SysJob job = new SysJob();
-                // 定时任务名称
-                job.setJobName(model.getStrategyName() + "-" + refId);
-                // 调用目标字符串
-                job.setInvokeTarget("strategyTask.triggerJob('" + refId + "')");
-                //分钟转换为表达式
-                job.setCronExpression(schedulerTime);
-                // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
-                job.setMisfirePolicy("1");
-                // 是否并发执行（0允许 1禁止）
-                job.setConcurrent("0");
-                if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
-                    job.setStatus("0");
-                }else{
-                    // 状态（0正常 1暂停）
-                    job.setStatus("1");
-                }
-                try{
-                    sysJobService.insertJob(job);
-                    jobIdList.add(job.getJobId().toString());
-                }catch (Exception ex){
-                    ex.printStackTrace();
-                    System.out.print(ex.getMessage());
-                    throw new RuntimeException("新增数据失败！");
-                }
             }
-
-
             // 情报板增加历史记录
             autoControl.stream().forEach(item -> {
                 if(DevicesTypeEnum.VMS.getCode() == Long.parseLong(item.get("equipmentTypeId").toString())
@@ -1195,18 +1155,48 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         SdTrigger sdTrigger = model.getTriggers();
         sdTrigger.setRelateId(sty.getId());
         int insertSdTrigger = sdTriggerMapper.insertSdTrigger(sdTrigger);
+
+        //分钟转换为表达式
+        String schedulerTime =CronUtil.ConvertFrequencyToCron(Integer.parseInt(sty.getSchedulerTime()));
+        //新增定时任务 corn表达式 校验是否合规
+        if(!CronUtils.isValid(schedulerTime)){
+            throw new RuntimeException("当前日期表达式选择有误，请重新选择！");
+        }
+        Long refId = sdTrigger.getId();
+        // 新增定时任务
+        SysJob job = new SysJob();
+        // 定时任务名称
+        job.setJobName(model.getStrategyName());
+        // 调用目标字符串
+        job.setInvokeTarget("strategyTask.triggerJob('" + refId + "')");
+        job.setCronExpression(schedulerTime);
+        // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
+        job.setMisfirePolicy("1");
+        // 是否并发执行（0允许 1禁止）
+        job.setConcurrent("0");
+        if(null != model.getStrategyState() && model.getStrategyState().equals("0")){
+            job.setStatus("0");
+        }else{
+            // 状态（0正常 1暂停）
+            job.setStatus("1");
+        }
+        try{
+            sysJobService.insertJob(job);
+        }catch (Exception ex){
+            throw new RuntimeException("新增数据失败！");
+        }
+        sty.setJobRelationId(job.getJobId().toString());
+        int updateRows = sdStrategyMapper.updateSdStrategyById(sty);
         // 添加触发器关联设备表
         if (insertSdTrigger > 0) {
             SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
             sdTriggerDevice.setTriggerId(sdTrigger.getId());
             sdTriggerDevice.setDeviceId(sdTrigger.getDeviceId());
             int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
+            if(insertSdTriggerDevice > 0){
+                return 1;
+            }
         }
-
-        String jobIdStr = jobIdList.stream().collect(Collectors.joining(","));
-        sty.setJobRelationId(jobIdStr);
-        int updateRows = sdStrategyMapper.updateSdStrategyById(sty);
-
         return updateRows;
     }
     /**

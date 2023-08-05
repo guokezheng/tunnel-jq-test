@@ -8,6 +8,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.event.SdStrategy;
+import com.tunnel.business.domain.event.SdStrategyExport;
 import com.tunnel.business.domain.event.SdStrategyModel;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.tunnel.business.utils.util.UUIDUtil;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -57,9 +59,21 @@ public class SdStrategyController extends BaseController
         if("1".equals(sdStrategy.getStrategyGroup())){//日常策略
             List<SdStrategy> list = sdStrategyService.selectSdStrategyList(sdStrategy);
             ExcelUtil<SdStrategy> util = new ExcelUtil<SdStrategy>(SdStrategy.class);
+            ExcelUtil<SdStrategyExport> sdStrategyUtil = new ExcelUtil<SdStrategyExport>(SdStrategyExport.class);
             String SdStrategyName = "";
             if("0".equals(sdStrategy.getStrategyType())){
                 SdStrategyName = "手动控制策略";
+                List<SdStrategyExport> sdStrategyList = new ArrayList<>();
+                list.forEach(SdStrategy ->{
+                    SdStrategyExport sdStrategyExport = new SdStrategyExport();
+                    sdStrategyExport.setStrategyName(SdStrategy.getStrategyName());
+                    sdStrategyExport.setTunnels(SdStrategy.getTunnels());
+                    sdStrategyExport.setFx(SdStrategy.getFx());
+                    sdStrategyExport.setLx(SdStrategy.getLx());
+                    sdStrategyExport.setStrategyInfo(SdStrategy.getStrategyInfo());
+                    sdStrategyList.add(sdStrategyExport);
+                });
+                return sdStrategyUtil.exportExcel(sdStrategyList, SdStrategyName);
             }
             if("1".equals(sdStrategy.getStrategyType())){
                 SdStrategyName = "定时控制策略";

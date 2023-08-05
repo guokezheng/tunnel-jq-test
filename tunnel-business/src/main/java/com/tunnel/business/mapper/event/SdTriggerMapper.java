@@ -89,5 +89,5 @@ public interface SdTriggerMapper
      * 获取所有触发器
      * @return
      */
-    public List<Map> getTriggerInfo(Long triggerId);
+    public List<Map> getTriggerInfo(String triggerId);
 }

@@ -413,6 +413,7 @@
       :append-to-body="true"
       class="celueDialog"
       width="70%"
+      height="500px"
       :close-on-click-modal="false"
     >
       <div class="dialogStyleBox">
@@ -1742,5 +1743,10 @@ export default {
 .chartTow {
   flex: 0 0 40%;
   height: 400px;
+}
+.celueDialog {
+  .el-dialog__body{
+    height: 500px;
+  }
 }
 </style>

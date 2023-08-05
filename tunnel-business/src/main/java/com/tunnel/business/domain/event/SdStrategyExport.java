@@ -1,9 +1,9 @@
 package com.tunnel.business.domain.event;
 
-import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -18,7 +18,7 @@ import java.util.List;
  * @date 2020-08-27
  */
 @ApiModel("控制策略实体")
-public class SdStrategy extends BaseEntity
+public class SdStrategyExport extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -59,8 +59,7 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("策略信息策略信息")
     private String strategyInfo;
 
-    @Excel(name = "状态", readConverterExp = "0=开启,1=关闭,''=关闭")
-    @ApiModelProperty("预案状态")
+
     private String strategyState;
 
     @ApiModelProperty("列表")

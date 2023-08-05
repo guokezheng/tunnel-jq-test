@@ -1467,16 +1467,22 @@ export default {
       if (flag == 1) {
 
         if(this.tableType=="shoudong"){
-          confirmInfo = "是否确认导出手动控制策略数据项？";
+          confirmInfo = "是否确认导出所有的手动控制策略数据项？";
         }else if(this.tableType=="dingshi"){
-          confirmInfo = "是否确认导出定时控制策略数据项？";
+          confirmInfo = "是否确认导出所有的定时控制策略数据项？";
         }else if(this.tableType=="zidong"){
-          confirmInfo = "是否确认导出触发控制策略数据项？";
+          confirmInfo = "是否确认导出所有的触发控制策略数据项？";
         }
         // confirmInfo = "是否确认导出所有的日常策略数据项？";
-        // if (this.ids.length > 0) {
-        //   confirmInfo = "是否确认导出所选的日常策略数据项？";
-        // }
+        if (this.ids.length > 0) {
+          if(this.tableType=="shoudong"){
+            confirmInfo = "是否确认导出所选手动控制策略数据项？";
+          }else if(this.tableType=="dingshi"){
+            confirmInfo = "是否确认导出所选定时控制策略数据项？";
+          }else if(this.tableType=="zidong"){
+            confirmInfo = "是否确认导出所选触发控制策略数据项？";
+          }
+        }
       }
       if (flag == 2) {
         confirmInfo = "是否确认导出所有的预警策略数据项？";

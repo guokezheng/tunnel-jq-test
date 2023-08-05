@@ -209,7 +209,8 @@
         </el-row>
       </el-row>
       <div v-show="strategyForm.triggers.warningType == 1">
-        <el-row :gutter="20" style="clear: both">
+        <el-row :gutter="20"style="clear:both; height: 300px;
+        overflow: auto;">
           <el-col :span="24">
             <el-form-item
               v-for="(dain, index) in strategyForm.autoControl"
@@ -349,15 +350,16 @@
           </el-col>
         </el-row>
       </div>
-      <el-form-item class="dialog-footer">
-        <el-button class="submitButton" @click="submitStrategyForm"
-          >提交</el-button
-        >
-        <el-button class="closeButton" @click="strategyFormClose"
-          >取 消</el-button
-        >
-      </el-form-item>
+
     </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button class="submitButton" @click="submitStrategyForm"
+      >提交</el-button
+      >
+      <el-button class="closeButton" @click="strategyFormClose"
+      >取 消</el-button
+      >
+    </div>
     <el-dialog
       title="Cron表达式生成器"
       :visible.sync="openCron"
@@ -930,18 +932,17 @@ export default {
         });
       }
       console.log(this.strategyForm.triggers.deviceId )
-      let deviceIdList =  JSON.parse(JSON.stringify(this.strategyForm.triggers.deviceId))
-      this.strategyForm.triggers.deviceId =
-        this.strategyForm.triggers.deviceId.toString();
+      let strategyFormStr =  JSON.parse(JSON.stringify( this.strategyForm))
+      strategyFormStr.triggers.deviceId =
+        strategyFormStr.triggers.deviceId.toString();
       console.log(this.strategyForm.triggers.deviceId )
-      let data = this.strategyForm.autoControl;
+      let data = strategyFormStr.autoControl;
       data.forEach((item) => {
         item.state = item.state.toString();
       });
-      let params = this.strategyForm;
+      let params = strategyFormStr
       updateStrategyInfo(params).then((res) => {
-        console.log(deviceIdList )
-        this.strategyForm.triggers.deviceId =deviceIdList
+        // this.strategyForm =strategyFormStr
         console.log(this.strategyForm.triggers.deviceId )
         this.$modal.msgSuccess("修改策略成功");
         this.$emit("dialogVisibleCloseEvent");

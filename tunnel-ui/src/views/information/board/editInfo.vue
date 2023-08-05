@@ -4,7 +4,7 @@
     <el-dialog
       title="修改"
       :visible.sync="dialogVisible"
-      width="44%"
+      width="42%"
       :before-close="closeDialog"
       :close-on-click-modal="false"
     >

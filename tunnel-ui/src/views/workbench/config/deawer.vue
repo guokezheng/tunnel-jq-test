@@ -249,7 +249,7 @@
       :visible.sync="drawerB"
       :modal="false"
       :append-to-body="true"
-      class="drawerTop"
+      class="drawerCenter"
     >
       <div
         v-for="item in timStrategyList"
@@ -861,6 +861,13 @@ export default {
   height: 62%;
   top: 120px;
   right: 38px;
+}
+.drawerCenter {
+  height: 62%;
+  top: 120px;
+  right: 38px;
+
+  // top: 33%;
 }
 .chezhiDrawerDirection {
   width: 100%;

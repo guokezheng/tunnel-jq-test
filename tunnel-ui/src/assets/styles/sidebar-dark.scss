@@ -491,13 +491,33 @@
       }
     }
   }
-  // .dispatchWorkBench{
-  //   .zoomClass {
-  //     .el-input__inner{
-  //       border: solid 1px #00c8ff !important;
-  //     }
-  //   }
-  // }
+  .dispatchWorkBench{
+    .el-dialog{
+      .el-tree{
+        background: #004375 !important;
+      }
+      .zoomClass .input-with-select {
+        .el-input-group__append {
+          background: #05669d;
+          color: #00c8ff;
+          border: 1px solid #00c8ff;
+          border-left: transparent;
+          .el-button{
+            width: 10px;
+          }
+          .el-button:hover{
+            background: transparent !important;
+          }
+        }
+        .el-input__suffix{
+          transform: translate(-29px,-4px) !important;
+        }
+      }
+      
+      
+      
+    }
+  }
   .el-dialog{
     background-color: #00152B !important;
     border-bottom: solid 2px white;

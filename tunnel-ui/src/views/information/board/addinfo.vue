@@ -4,7 +4,7 @@
     <el-dialog
       title="新增"
       :visible.sync="dialogVisible"
-      width="44%"
+      width="42%"
       :before-close="handleClose"
       :close-on-click-modal="false"
     >

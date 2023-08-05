@@ -3565,10 +3565,12 @@ export default {
         let bigType = "";
         let param = document.getElementsByClassName("content");
         for (var item of this.selectedIconList) {
-          if (treeNodeClick) {
+          // if (treeNodeClick) {
+            // 根据treeNodeClick 判断是输入框输入还是菜单选择 
+            // 输入框输入的 输入内容要和设备名称相等 防止出现输入测控执行器1 测控执行器11 12 13...也被圈选
             if (item.eqName == this.screenEqName) {
               bigType = item.bigType;
-              this.resetCanvasFlag = true;
+              
               if (
                 this.currentTunnel.lane.width - item.position.left > 864 &&
                 item.position.left > 864
@@ -3608,50 +3610,54 @@ export default {
             } else {
               item.click = false;
             }
-          } else {
-            if (item.eqName.indexOf(this.screenEqName) > -1) {
-              bigType = item.bigType;
-              this.resetCanvasFlag = true;
-              if (
-                this.currentTunnel.lane.width - item.position.left > 864 &&
-                item.position.left > 864
-              ) {
-                this.$refs.dragImgDom.style.left =
-                  -item.position.left + 864 + "px";
-              } else if (item.position.left < 864) {
-                param[0].scrollLeft = 0;
-                this.$refs.dragImgDom.style.left = "0px";
-              } else if (
-                this.currentTunnel.lane.width - item.position.left <
-                864
-              ) {
-                this.$refs.dragImgDom.style.left =
-                  1728 - this.currentTunnel.lane.width + "px";
+          // } else {
+          //   if (item.eqName.indexOf(this.screenEqName) > -1) {
+          //     bigType = item.bigType;
+          //     // this.resetCanvasFlag = true;
+          //     if (
+          //       this.currentTunnel.lane.width - item.position.left > 864 &&
+          //       item.position.left > 864
+          //     ) {
+          //       this.$refs.dragImgDom.style.left =
+          //         -item.position.left + 864 + "px";
+          //     } else if (item.position.left < 864) {
+          //       param[0].scrollLeft = 0;
+          //       this.$refs.dragImgDom.style.left = "0px";
+          //     } else if (
+          //       this.currentTunnel.lane.width - item.position.left <
+          //       864
+          //     ) {
+          //       this.$refs.dragImgDom.style.left =
+          //         1728 - this.currentTunnel.lane.width + "px";
+          //     }
+          //     if (
+          //       item.position.left <= this.currentTunnel.lane.width - 100 &&
+          //       item.position.top <= 450
+          //     ) {
+          //       item.tooltipType = 1;
+          //     } else if (
+          //       item.position.left > this.currentTunnel.lane.width - 100 &&
+          //       item.position.top <= 450
+          //     ) {
+          //       item.tooltipType = 2;
+          //     } else if (
+          //       item.position.left <= this.currentTunnel.lane.width - 100 &&
+          //       item.position.top > 450
+          //     ) {
+          //       item.tooltipType = 3;
+          //     } else {
+          //       item.tooltipType = 4;
+          //     }
+          //     // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
+          //     item.click = true;
+          //   } else {
+          //     item.click = false;
+          //   }
+          // }
+          console.log(this.$refs.dragImgDom.style.left,"this.$refs.dragImgDom.style.left")
+          if(this.$refs.dragImgDom.style.left != '0px'){
+                this.resetCanvasFlag = true;
               }
-              if (
-                item.position.left <= this.currentTunnel.lane.width - 100 &&
-                item.position.top <= 450
-              ) {
-                item.tooltipType = 1;
-              } else if (
-                item.position.left > this.currentTunnel.lane.width - 100 &&
-                item.position.top <= 450
-              ) {
-                item.tooltipType = 2;
-              } else if (
-                item.position.left <= this.currentTunnel.lane.width - 100 &&
-                item.position.top > 450
-              ) {
-                item.tooltipType = 3;
-              } else {
-                item.tooltipType = 4;
-              }
-              // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
-              item.click = true;
-            } else {
-              item.click = false;
-            }
-          }
         }
         if (bigType.includes("0")) {
           this.displayControl(0, "全部设备");

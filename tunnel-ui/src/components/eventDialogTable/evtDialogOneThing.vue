@@ -22,7 +22,7 @@
           :key="index"
           @click="handleSee(item.id)"
         >
-          <el-row style="color: white; font-size: 14px">
+          <el-row >
             <el-col :span="2">
               <img
                 :src="item.eventType.iconUrl"
@@ -32,7 +32,7 @@
             <el-col :span="3">
               <div>{{ item.eventType.eventType }}</div>
             </el-col>
-            <el-col :span="19">
+            <el-col :span="19" style="display:flex;justify-content:space-between">
               <div class="overflowText">{{ item.eventTitle }}</div>
               <div style="float: right; margin-right: 16px">
                 {{ item.startTime }}
@@ -193,13 +193,23 @@ export default {
   }
 }
 .listContent {
-  max-height: 290px;
+  height: 40px;
   overflow: auto;
   background: #44576f;
   margin: 10px;
   > div {
-    padding: 10px;
-    padding-bottom: 0px;
+    height: 100%;
+  }
+  .el-row{
+    color: white;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    .el-col{
+      height: 100%;
+      line-height: 37px;
+    }
   }
 }
 /*table滚动条背景色 */

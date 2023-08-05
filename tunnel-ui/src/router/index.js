@@ -237,12 +237,12 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/bigscreen/index.html',
-  //   name: '数据可视化大屏',
-  //   component: (resolve) => require(['@/views/bigscreen/index2'], resolve),
-  //   hidden: true
-  // },
+  {
+    path: '/bigscreen/index.html',
+    name: '数据可视化大屏',
+    component: (resolve) => require(['@/views/bigscreen/index2'], resolve),
+    hidden: true
+  },
   {
     path: '/bigScreen2/index.html',
     name: '数据可视化大屏',

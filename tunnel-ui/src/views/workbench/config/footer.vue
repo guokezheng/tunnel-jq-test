@@ -25,7 +25,7 @@
               v-show="sideTheme != 'theme-blue'"
             />
             <p>能耗监测</p>
-            <p>Energy consumption monitoring</p>
+            <p>Energy monitoring</p>
           </div>
         </div>
         <div id="energyConsumption"></div>
@@ -40,7 +40,7 @@
               v-show="sideTheme != 'theme-blue'"
             />
             <p>设备健康监测</p>
-            <p>Equipment health monitoring</p>
+            <p>Equipment monitoring</p>
           </div>
         </div>
         <div class="deviceBox">
@@ -60,6 +60,20 @@
           </div>
           <div id="deviceChart"></div>
         </div>
+      </div>
+      <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
+        <div class="footTitle">
+          <div class="footTitleCont">
+            <img
+              :src="keyVehiclesIcon"
+              style="width: 0.8vw; margin-right: 5px"
+              v-show="sideTheme != 'theme-blue'"
+            />
+            <p>洞口不降速监测</p>
+            <p>Opening speed</p>
+          </div>
+        </div>
+        <div id="chartBJS"></div>
       </div>
       <div class="footerRight footMiniBox" v-show="footChangeRadio == '图表'">
         <div class="footTitle">
@@ -137,7 +151,7 @@
                       }}事件 -->
                     <div
                       style="
-                        width: 210px;
+                        width: 145px;
                         overflow: hidden;
                         white-space: nowrap;
                         text-overflow: ellipsis;
@@ -166,8 +180,14 @@
           </vue-seamless-scroll>
         </div>
       </div>
-      <div class="footMiniBox" v-show="footChangeRadio == '视频'"
-      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
+      <div
+        class="footMiniBox"
+        v-show="footChangeRadio == '视频'"
+        :style="{
+          width:
+            tunnelId == 'JQ-JiNan-WenZuBei-MJY' ? '19.5%' : '24.5% !important',
+        }"
+      >
         <div class="footTitle">
           <div class="footTitleCont">
             <img
@@ -198,8 +218,14 @@
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'"
-      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
+      <div
+        class="footMiniBox footerRight"
+        v-show="footChangeRadio == '视频'"
+        :style="{
+          width:
+            tunnelId == 'JQ-JiNan-WenZuBei-MJY' ? '19.5%' : '24.5% !important',
+        }"
+      >
         <div class="footTitle">
           <div class="footTitleCont">
             <img
@@ -234,8 +260,44 @@
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'"
-      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
+      <div
+        class="footMiniBox footerRight"
+        v-show="
+          footChangeRadio == '视频' && tunnelId == 'JQ-JiNan-WenZuBei-MJY'
+        "
+        :style="{
+          width:
+            tunnelId == 'JQ-JiNan-WenZuBei-MJY' ? '19.5%' : '24.5% !important',
+        }"
+      >
+        <div class="footTitle">
+          <div class="footTitleCont">
+            <img
+              :src="warningIcon"
+              style="width: 16px; margin-right: 5px"
+              v-show="sideTheme != 'theme-blue'"
+            />
+            <p>{{ videoTitle5 }}</p>
+            <p>inspection robot</p>
+          </div>
+        </div>
+        <videoPlayer
+          v-if="liveUrl5"
+          :rtsp="liveUrl5"
+          :open="cameraPlayer5"
+        ></videoPlayer>
+        <div class="noPicBox" v-show="videoNoPic3">
+          <img src="../../../assets/image/noVideo.png" />
+        </div>
+      </div>
+      <div
+        class="footMiniBox footerRight"
+        v-show="footChangeRadio == '视频'"
+        :style="{
+          width:
+            tunnelId == 'JQ-JiNan-WenZuBei-MJY' ? '19.5%' : '24.5% !important',
+        }"
+      >
         <div class="footTitle">
           <div class="footTitleCont">
             <img
@@ -270,8 +332,14 @@
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频'"
-      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
+      <div
+        class="footMiniBox footerRight"
+        v-show="footChangeRadio == '视频'"
+        :style="{
+          width:
+            tunnelId == 'JQ-JiNan-WenZuBei-MJY' ? '19.5%' : '24.5% !important',
+        }"
+      >
         <div class="footTitle">
           <div class="footTitleCont">
             <img
@@ -306,28 +374,6 @@
           <img src="../../../assets/image/noVideo.png" />
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '视频' && tunnelId == 'JQ-JiNan-WenZuBei-MJY'"
-      :style="{width:tunnelId == 'JQ-JiNan-WenZuBei-MJY'?'19.5%':'24.5% !important'}">
-        <div class="footTitle">
-          <div class="footTitleCont">
-            <img
-              :src="warningIcon"
-              style="width: 16px; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
-            />
-            <p>{{ videoTitle5 }}</p>
-            <p>inspection robot</p>
-          </div>
-        </div>
-        <videoPlayer
-          v-if="liveUrl5"
-          :rtsp="liveUrl5"
-          :open="cameraPlayer5"
-        ></videoPlayer>
-        <div class="noPicBox" v-show="videoNoPic3">
-          <img src="../../../assets/image/noVideo.png" />
-        </div>
-      </div>
     </div>
 
     <div class="footChangeButton">
@@ -350,6 +396,7 @@ import {
   getHoursTrafficVolume,
   getStatisticalDevice,
   specialVehicleMonitoringInRecent24Hours,
+  getNoDeceleration,
 } from "@/api/workbench/config.js";
 import { energyConsumptionDetection } from "@/api/equipment/tunnel/api.js";
 import { getWarnEvent } from "@/api/event/event";
@@ -421,13 +468,14 @@ export default {
   },
   methods: {
     init(tunnelId) {
-      console.log(tunnelId,"tunnelId")
+      console.log(tunnelId, "tunnelId");
       this.tunnelId = tunnelId;
       this.getWarnList();
       this.vehicleEcharts();
       // this.specialVehicleEcharts()
       this.getEnergyConsumption();
       this.getDeviceChart();
+      this.getNoDecelerationChart();
     },
     // 车辆监测数据
     vehicleEcharts() {
@@ -503,6 +551,54 @@ export default {
     //     query: {},
     //   });
     // },
+    getNoDecelerationChart() {
+      const param = {
+        tunnelId: this.tunnelId,
+      };
+      // getNoDeceleration(param).then((res)=>{
+      // console.log(res,"洞口不降速监测")
+      let data = {
+        oneLane: {
+          oneListOne: [133, 130, 125, 110],
+          oneListTwo: [100, 96, 106, 116, 120],
+        },
+        twoLane: {
+          twoListOne: [128, 126, 128, 113],
+          twoListTwo: [103, 108, 110, 112, 118],
+        },
+        threeLane: {
+          threeListOne: [110, 108, 96, 90],
+          threeListTwo: [80, 90, 100, 100, 103],
+        },
+      };
+      console.log(data, "洞口不降速监测");
+      let oneListOne = data.oneLane.oneListOne;
+      let oneListTwo = data.oneLane.oneListTwo;
+      let twoListOne = data.twoLane.twoListOne;
+      let twoListTwo = data.twoLane.twoListTwo;
+      let threeListOne = data.threeLane.threeListOne;
+      let threeListTwo = data.threeLane.threeListTwo;
+      let arr = [
+        ...oneListOne,
+        ...oneListTwo,
+        ...twoListOne,
+        ...twoListTwo,
+        ...threeListOne,
+        ...threeListTwo,
+      ];
+      let max = this.getMax(arr);
+      console.log(max, "洞口不降速监测111");
+      let oneList = [...oneListOne, ...oneListTwo];
+      let twoList = [...twoListOne, ...twoListTwo];
+      let threeList = [...threeListOne, ...threeListTwo];
+      console.log(oneList, twoList, threeList, "洞口不降速监测222");
+      this.initNoDecelerationChart(oneList, twoList, threeList);
+      // })
+    },
+    // 取数组最大值
+    getMax(arr) {
+      return Math.max.apply(Math, arr);
+    },
     // 预警事件列表
     getWarnList() {
       const param = {
@@ -515,7 +611,7 @@ export default {
     },
     // 预警事件点击跳转应急调度
     jumpYingJi(e) {
-      console.log(e)
+      console.log(e);
       const item = e.target.closest(".listRow");
       if (item) {
         // 是否是滚动组件的某一行/列
@@ -620,6 +716,260 @@ export default {
         }
       );
       this.videoNoPic3 = true;
+    },
+    initNoDecelerationChart(oneList, twoList, threeList) {
+      let newPromise = new Promise((resolve) => {
+        resolve();
+      });
+      //然后异步执行echarts的初始化函数
+      newPromise.then(() => {
+        //	此dom为echarts图标展示dom
+        var chartBJS = echarts.init(document.getElementById("chartBJS"));
+        let lineColor = ["red","yellow","green"];
+        let lineColor2 = ["white","grey","blue"];
+        const option = {
+          tooltip: {
+            trigger: "axis",
+            backgroundColor: "rgba(1, 29, 63, .8)", // 设置背景颜色
+            textStyle: {
+              color: "#fff",
+              fontSize: 12,
+            },
+            borderColor: "rgba(1, 29, 63,.8)",
+            axisPointer: {
+              type: "shadow",
+              shadowStyle: {
+                fontSize: 12,
+                color: "rgba(0, 11, 34, 0)",
+              },
+            },
+            formatter: function (param) {
+              var tooltip = param[0].name == '0' ||param[0].name == '1'||param[0].name == '2'||param[0].name == '3'?"洞外" + "<br>" :"洞内" + "<br>";
+              tooltip +=
+                param[0].marker +
+                param[0].seriesName +
+                " : " +
+                param[0].value +
+                "km/h<br>";
+              tooltip +=
+                param[1].marker +
+                param[1].seriesName +
+                " : " +
+                param[1].value +
+                "km/h<br>";
+                tooltip +=
+                param[2].marker +
+                param[2].seriesName +
+                " : " +
+                param[2].value +
+                "km/h<br>";
+              return tooltip;
+            },
+            //   提示框超出范围时调整位置
+            position: function (point, params, dom, rect, size) {
+              // 鼠标坐标和提示框位置的参考坐标系是：以外层div的左上角那一点为原点，x轴向右，y轴向下
+              // 提示框位置
+              let x = 0; // x坐标位置
+              let y = 0; // y坐标位置
+
+              // 当前鼠标位置
+              let pointX = point[0];
+              let pointY = point[1];
+
+              // 外层div大小
+              // var viewWidth = size.viewSize[0];
+              // var viewHeight = size.viewSize[1];
+
+              // 提示框大小
+              let boxWidth = size.contentSize[0];
+              let boxHeight = size.contentSize[1];
+
+              // boxWidth > pointX 说明鼠标左边放不下提示框
+              if (boxWidth > pointX) {
+                x = 5;
+              } else {
+                // 左边放的下
+                x = pointX - boxWidth;
+              }
+
+              // boxHeight > pointY 说明鼠标上边放不下提示框
+              if (boxHeight > pointY) {
+                y = 5;
+              } else {
+                // 上边放得下
+                y = pointY - boxHeight;
+              }
+
+              return [x, y];
+            },
+          },
+          legend: {
+            show: true,
+            data: ["一车道", "二车道", "三车道"],
+            textStyle: {
+              color: "#AFAFAF",
+              fontSize: 10,
+            },
+            itemWidth: 10,
+            itemHeight: 10,
+            itemStyle: {},
+            top: "top",
+            left: "center",
+            padding: [20, 15, 0, 15],
+            icon: "circle",
+            orient: "horizontal",
+          },
+          grid: {
+            left: "6%",
+            right: "8%",
+            bottom: "1%",
+            top: "25%",
+            containLabel: true,
+          },
+
+          xAxis: {
+            type: "category",
+
+            // data: [0,1,2,3,4],
+            axisLabel: {
+              show: true,
+              textStyle: {
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                fontSize: 10,
+              },
+              formatter: function (value, index) {
+                if (value == "0") {
+                  return "洞外";
+                } else if(value == "4"){
+                  return "洞口"
+                } else if(value == "8"){
+                  return "洞内"
+                } else {
+                  return '';
+                }
+              },
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              },
+            },
+            axisTick: {
+              show: false,
+            },
+          },
+          yAxis: {
+            // name: "km/h",
+            // nameTextStyle: {
+            //   color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+            //   fontSize: 10,
+            //   padding: [0, 20, 0, 0],
+            // },
+            type: "value",
+            min: 0,
+            // max: max,
+            minInterval: 1,
+            splitArea: {
+              show: false,
+            },
+            axisLabel: {
+              textStyle: {
+                color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+                fontSize: 10,
+              },
+            },
+            axisLine: {
+              show: false,
+            },
+            axisTick: {
+              show: false,
+            },
+            splitLine: {
+              lineStyle: {
+                color: "#11395D",
+                type: "dashed", // dotted 虚线
+              },
+            },
+          },
+          // visualMap: {
+          //   type: "piecewise",
+          //   show: false,
+          //   dimension: 0,
+          //   seriesIndex: [0,1,2],
+          //   pieces: [
+          //     {
+          //       gt: 0,
+          //       lt: 4,
+          //       color: seriesIndex == 0?"red":"green", //大于0小于12为蓝色
+          //     },
+          //     {
+          //       gt: 4,
+          //       color: seriesIndex == 0?"yellow":"blue", //大于12区间为红色
+          //     },
+          //   ],
+          // },
+          
+          series: [
+            {
+              type: "line",
+              smooth: true,
+              color:"#31CEFF",
+              lineStyle:{
+                normal:{
+                  width:2,
+                }
+              },
+              markLine: {
+                    silent: true,
+                    symbol: ["circle", "circle"],
+                    lineStyle: {
+                        color: "#AFAFAF",
+                    },
+                    animation: false, //关闭动画
+                    label: {
+                        show: false,
+                    },
+                    data: [
+                        {
+                            xAxis: 4,//在x轴12格处设置一条参考线
+                        },
+                    ],
+                },
+              name: "一车道",
+              data: oneList,
+            },
+            {
+              type: "line",
+              smooth: true, // 平滑曲线显示
+              color:"yellow",
+              lineStyle:{
+                normal:{
+                  width:2,
+                }
+              },
+              name: "二车道",
+              data: twoList,
+            },
+            {
+              type: "line",
+              smooth: true, // 平滑曲线显示
+              color:"#00E15C",
+              lineStyle:{
+                normal:{
+                  width:2,
+                }
+              },
+              name: "三车道",
+              data: threeList,
+            },
+          ],
+        };
+        chartBJS.setOption(option);
+        window.addEventListener("resize", function () {
+          chartBJS.resize();
+        });
+      });
     },
     initeChartsEnd(huoArr, keArr, keyArr, timeArr) {
       let newPromise = new Promise((resolve) => {
@@ -1579,7 +1929,7 @@ export default {
   }
 
   .footMiniBox {
-    width: 24.5%;
+    width: 19.5%;
     height: 100%;
     overflow: hidden;
     // background-image: url(../../../assets/cloudControl/footer_bg.png);
@@ -1648,6 +1998,10 @@ export default {
       }
     }
   }
+  #chartBJS {
+    width: 100%;
+    height: calc(100% - 2vw);
+  }
 }
 #vehicle,
 #energyConsumption,
@@ -1659,7 +2013,7 @@ export default {
 #deviceChart {
   height: calc(75% - 4px);
 }
-.jumpBox{
+.jumpBox {
   height: calc(100% - 2.4vh - 10px);
   margin-top: 10px;
 }

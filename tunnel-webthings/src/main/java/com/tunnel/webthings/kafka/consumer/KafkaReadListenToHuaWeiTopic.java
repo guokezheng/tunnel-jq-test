@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.WindDirectionUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -128,6 +129,9 @@ public class KafkaReadListenToHuaWeiTopic {
 
     @Value("${authorize.name}")
     private String authorizeName;
+
+    @Autowired
+    private ISdTunnelsService tunnelsService;
 
     /**
      * 监听风机实时运行状态
@@ -1355,10 +1359,10 @@ public class KafkaReadListenToHuaWeiTopic {
             radarEventServiceImpl.sendDataToOtherSystem(map);
         }
         //查询主动安全事件类型
-        SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
+        /*SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
         SdEventType sdEventType = new SdEventType();
         sdEventType.setPrevControlType("1");
-        List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
+        List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);*/
         /*//判断此事件是否是主动安全事件
         List<SdEventType> collect = sdEventTypes.stream().filter(item -> item.getId() == eventTypeId).collect(Collectors.toList());
         //优先级 0低，1中，2高，3紧急
@@ -1403,10 +1407,14 @@ public class KafkaReadListenToHuaWeiTopic {
                 redisCache.setCacheObject(getCacheEventKey(sdEventItem.getId().toString()),sdEventItem);
             }
         });
-        //新增事件后推送前端  弹出视频
-        JSONObject object = new JSONObject();
-        object.put("sdEventList", sdEventList);
-        WebSocketService.broadcast("sdEventList",object.toString());
+        List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
+        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
+        if(collect.size() > 0){
+            //新增事件后推送前端  弹出视频
+            JSONObject object = new JSONObject();
+            object.put("sdEventList", sdEventList);
+            WebSocketService.broadcast("sdEventList",object.toString());
+        }
     }
 
 

@@ -15,6 +15,7 @@ import com.tunnel.business.domain.event.SdEventType;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.deal.phone.LdPhoneSpeak;
 import com.tunnel.deal.phone.PhoneSpeak;
 import com.zc.common.core.secret.smutil.SecretUtil;
@@ -50,6 +51,9 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
 
     @Autowired
     private SdEventMapper sdEventMapper;
+
+    @Autowired
+    private ISdTunnelsService tunnelsService;
 
     @Override
     public int playVoice(Map<String, Object> map, SdDevices sdDevices) {
@@ -122,10 +126,14 @@ public class LiDianPhoneSpeak implements LdPhoneSpeak {
         SdEvent sdEventData = new SdEvent();
         sdEventData.setId(sdEvent.getId());
         List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
-        //新增事件后推送前端  弹出视频
-        JSONObject object = new JSONObject();
-        object.put("sdEventList", sdEventList);
-        WebSocketService.broadcast("sdEventList",object.toString());
+        List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
+        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
+        if(collect.size() > 0){
+            JSONObject object = new JSONObject();
+            object.put("sdEventList", sdEventList);
+            WebSocketService.broadcast("sdEventList",object.toString());
+        }
+
     }
 
 //    @PostConstruct

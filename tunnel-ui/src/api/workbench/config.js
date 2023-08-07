@@ -40,6 +40,14 @@ export function getHoursTrafficVolume(query) {
   })
 }
 
+// 洞口不降速监测
+export function getNoDeceleration(query) {
+  return request({
+    url: '/eventWarning/getNoDeceleration',
+    method: 'get',
+    // params: query
+  })
+}
 // 设备健康监测
 export function getStatisticalDevice(query) {
   return request({

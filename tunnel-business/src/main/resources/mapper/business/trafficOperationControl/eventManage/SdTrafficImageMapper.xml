@@ -149,7 +149,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         values
         <foreach collection="list" index="index" item="item" separator=",">
             (
-             #{item.imgName}, #{item.imgUrl},#{item.businessId},#{item.imgType},  #{item.createTime},#{item.createBy}
+             #{item.imgName}, #{item.imgUrl},#{item.businessId},#{item.imgType},#{item.createTime},#{item.createBy}
             )
         </foreach>
     </insert>

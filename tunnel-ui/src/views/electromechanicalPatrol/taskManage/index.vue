@@ -998,6 +998,12 @@
             <div>设备运行状态：</div>
             <span>{{ pat.runStatus }}</span>
           </el-col>
+          <el-col :span="24" style="display: inline-block">
+            <div style="display: inline-block">设备描述：</div>
+            <span style="width: calc(100% - 110px); display: inline-flex">{{
+                pat.eqFaultDescription == "null" ? "" : pat.eqFaultDescription
+              }}</span>
+          </el-col>
           <el-col>
             <div style="width: 12%">现场情况照片：</div>
             <div
@@ -1008,12 +1014,7 @@
               <img :src="pic.imgUrl" @click="openPic(pic.imgUrl)" />
             </div>
           </el-col>
-          <el-col :span="24" style="display: inline-block">
-            <div style="display: inline-block">设备描述：</div>
-            <span style="width: calc(100% - 110px); display: inline-flex">{{
-              pat.eqFaultDescription == "null" ? "" : pat.eqFaultDescription
-            }}</span>
-          </el-col>
+
           <!--          <el-col :span="8">
             <div>设备描述：</div>
             <span>{{ pat.eqFaultDescription }}</span>
@@ -2039,7 +2040,7 @@ export default {
 
       this.getEqType();
       this.clearCascader()
-      
+
     },
     clearCascader(){
       const _cascader = this.$refs.myCascader;

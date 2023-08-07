@@ -980,6 +980,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
             guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
             //sdPatrolList.setImgFileId(guid);// 文件关联ID
             for (int i = 0; i < file.length; i++) {
+               if(file[i] == null){
+                   break;
+               }
                 // 图片Base64
                 String imageBaseStr = null;
                 try {
@@ -1234,5 +1237,30 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         res.put("error",error);
 
         return res;
+    }
+
+    @Override
+    public void modifyTaskFilesData(String reqJson) {
+
+
+        JSONObject jsonObject = JSONObject.parseObject(reqJson);
+        SdPatrolList sdPatrolList = new SdPatrolList();
+        sdPatrolList.setId(jsonObject.getString("patrolId"));
+        sdPatrolList.setImgFileId(jsonObject.getString("filesId"));
+        sdPatrolListMapper.updateSdPatrolList(sdPatrolList);
+
+
+       /* JSONArray jsonArray = JSONArray.parseArray(reqJson);
+
+        for(Object obj : jsonArray){
+
+            JSONObject jsonObject = (JSONObject) obj;
+
+            SdPatrolList sdPatrolList = new SdPatrolList();
+            sdPatrolList.setId(jsonObject.getString("patrolId"));
+            sdPatrolList.setImgFileId(jsonObject.getString("filesId"));
+            sdPatrolListMapper.updateSdPatrolList(sdPatrolList);
+
+        }*/
     }
 }

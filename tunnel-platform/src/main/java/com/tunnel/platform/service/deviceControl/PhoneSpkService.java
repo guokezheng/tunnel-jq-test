@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONValidator;
 import com.google.gson.JsonObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
@@ -269,10 +270,14 @@ public class PhoneSpkService {
         SdEvent sdEventData = new SdEvent();
         sdEventData.setId(sdEvent.getId());
         List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
-        //新增事件后推送前端  弹出视频
-        JSONObject object = new JSONObject();
-        object.put("sdEventList", sdEventList);
-        WebSocketService.broadcast("sdEventList",object.toString());
+        List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
+        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
+        if(collect.size() > 0){
+            //新增事件后推送前端  弹出视频
+            JSONObject object = new JSONObject();
+            object.put("sdEventList", sdEventList);
+            WebSocketService.broadcast("sdEventList",object.toString());
+        }
     }
 
 

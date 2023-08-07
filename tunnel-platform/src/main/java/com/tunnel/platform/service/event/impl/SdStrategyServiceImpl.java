@@ -661,6 +661,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         });
 
         String strategyType = model.getStrategyType();
+        //查询最新SdStrategy 赋值定时任务id
+        SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(sty.getId());
+        sty.setJobRelationId(sdStrategy.getJobRelationId());
         //更新策略 主表
         int updatePrimary = sdStrategyMapper.updateSdStrategyById(sty);
         //删除关联子表相关信息

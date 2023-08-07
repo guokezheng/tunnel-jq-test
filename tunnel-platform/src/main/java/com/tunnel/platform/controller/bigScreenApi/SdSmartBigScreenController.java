@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -224,5 +227,64 @@ public class SdSmartBigScreenController extends BaseController {
     @GetMapping("/getStatisticalDevice")
     public AjaxResult getStatisticalDevice(String tunnelId){
         return sdSmartBigScreenService.getStatisticalDevice(tunnelId);
+    }
+
+    /**
+     * 模拟不降速报表数据
+     * @return
+     */
+    @GetMapping("/getNoDeceleration")
+    public AjaxResult getNoDeceleration(){
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> one = new HashMap<>();
+        List<Integer> oneListOne = new ArrayList<>();
+        List<Integer> oneListTwo = new ArrayList<>();
+        int oneCountOne = 95;
+        int oneCountTwo = 99;
+        int twoCountOne = 105;
+        int twoCountTwo = 110;
+        int threeCount = 120;
+        for(int i = 0; i < 10; i++){
+            if(i < 5){
+                oneCountOne = oneCountOne +1;
+                oneListOne.add(oneCountOne);
+            }else {
+                oneCountTwo = oneCountTwo +1;
+                oneListTwo.add(oneCountTwo);
+            }
+        }
+        one.put("oneListOne",oneListOne);
+        one.put("oneListTwo",oneListTwo);
+        map.put("oneLane",one);
+        Map<String, Object> two = new HashMap<>();
+        List<Integer> twoListOne = new ArrayList<>();
+        List<Integer> twoListTwo = new ArrayList<>();
+        for(int i = 0; i < 10; i++){
+            if(i < 5){
+                twoCountOne = twoCountOne +1;
+                twoListOne.add(twoCountOne);
+            }else {
+                twoCountTwo = twoCountTwo -1;
+                twoListTwo.add(twoCountTwo);
+            }
+        }
+        two.put("twoListOne",twoListOne);
+        two.put("twoListTwo",twoListTwo);
+        map.put("twoLane",two);
+        Map<String, Object> three = new HashMap<>();
+        List<Integer> threeListOne = new ArrayList<>();
+        List<Integer> threeListTwo = new ArrayList<>();
+        for(int i = 0; i < 10; i++){
+            threeCount = threeCount -1;
+            if(i < 5){
+                threeListOne.add(threeCount);
+            }else {
+                threeListTwo.add(threeCount);
+            }
+        }
+        three.put("threeListOne",threeListOne);
+        three.put("threeListTwo",threeListTwo);
+        map.put("threeLane",three);
+        return AjaxResult.success(map);
     }
 }

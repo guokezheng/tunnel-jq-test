@@ -3566,11 +3566,11 @@ export default {
         let param = document.getElementsByClassName("content");
         for (var item of this.selectedIconList) {
           // if (treeNodeClick) {
-            // 根据treeNodeClick 判断是输入框输入还是菜单选择 
+            // 根据treeNodeClick 判断是输入框输入还是菜单选择
             // 输入框输入的 输入内容要和设备名称相等 防止出现输入测控执行器1 测控执行器11 12 13...也被圈选
             if (item.eqName == this.screenEqName) {
               bigType = item.bigType;
-              
+
               if (
                 this.currentTunnel.lane.width - item.position.left > 864 &&
                 item.position.left > 864

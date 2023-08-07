@@ -31,6 +31,7 @@ import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
@@ -144,6 +145,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Resource(name = "HttpTemplate")
     private RestTemplate template;
+
+    @Autowired
+    private ISdTunnelsService tunnelsService;
 
     /**
      * 查询事件管理
@@ -2187,9 +2191,12 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEvent sdEventData = new SdEvent();
         sdEventData.setId(sdEvent.getId());
         List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
-//        sdEventList.get(0).setId(22l);
-        JSONObject object = new JSONObject();
-        object.put("sdEventList", sdEventList);
-        WebSocketService.broadcast("sdEventList",object.toString());
+        List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
+        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
+        if(collect.size() > 0){
+            JSONObject object = new JSONObject();
+            object.put("sdEventList", sdEventList);
+            WebSocketService.broadcast("sdEventList",object.toString());
+        }
     }
 }

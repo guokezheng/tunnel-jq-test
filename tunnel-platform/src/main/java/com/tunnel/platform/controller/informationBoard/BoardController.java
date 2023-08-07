@@ -24,6 +24,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -1131,5 +1132,39 @@ public class BoardController extends BaseController {
     @GetMapping("/getFontSizeByDevicePixel/{devicePixel}")
     public AjaxResult getFontSizeByDevicePixel(@PathVariable("devicePixel") String devicePixel) {
         return AjaxResult.success(iIotBoradFontService.getFontSizeByDevicePixel(devicePixel));
+    }
+
+    /**
+     * 为第三方提供控制接口
+     * @param deviceIds
+     * @param protocolType
+     * @param parameters
+     * @return
+     */
+    @GetMapping("/commonControlBoard")
+    public AjaxResult commonControlBoard(String deviceIds, String protocolType,List<Map<String, Object>> parameters){
+        try {
+            //拼接内容
+            StringBuffer content = new StringBuffer();
+            content.append("[Playlist]<r><n>ITEM_NO=").append(parameters.size());
+            for(int i = 0; i < parameters.size(); i++){
+                Map<String, Object> map = parameters.get(i);
+                content.append("<r><n>ITEM").append(String.format("%03d",i)).append("=");
+                content.append(map.get("STAY")).append(",").append(map.get("ACTION")).append(",");
+                content.append(map.get("SPEED")).append(",").append("\\").append("C");
+                content.append(map.get("COORDINATE")).append("\\").append("S00\\").append("c");
+                content.append(map.get("COLOR")).append("\\").append("f").append(map.get("FONT"));
+                content.append(map.get("FONT_SIZE")).append(map.get("FONT_SIZE")).append(map.get("CONTENT"));
+            }
+            String encode = URLEncoder.encode(String.valueOf(content), "UTF-8");
+            AjaxResult ajaxResult = uploadBoardEditInfo(deviceIds, protocolType, encode);
+            if(Integer.valueOf(ajaxResult.get("code").toString()) == 200){
+                return AjaxResult.success();
+            }else {
+                return AjaxResult.error();
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

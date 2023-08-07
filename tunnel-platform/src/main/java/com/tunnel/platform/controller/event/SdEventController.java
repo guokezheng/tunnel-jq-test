@@ -551,11 +551,7 @@ public class SdEventController extends BaseController
         sdEvent.setCreateTime(DateUtils.getNowDate());//创建时间
         sdEvent.setDirection("1");//方向
         sdEventMapper.insertSdEvent(sdEvent);
-        List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
-        List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals("JQ-JiNan-WenZuBei-MJY")).collect(Collectors.toList());
-        if(collect.size() > 0){
-            sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
-        }
+        sdEventServiceImpl.eventSendWeb(sdEvent);//事件推送
     }
 
 }

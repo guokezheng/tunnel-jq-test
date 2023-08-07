@@ -59,6 +59,7 @@
         //   console.log(this.rtsp,"this.rtsp")
         },
         methods: {
+
             fullScreen () {
                 if (this.$refs.player.requestFullScreen) {
                     this.$refs.player.requestFullScreen()
@@ -69,6 +70,8 @@
                 }
             },
             playVideo () {
+              const video = document.querySelector('video');
+              video.disablePictureInPicture = true;
                 console.log(this.rtsp,"this.rtspthis.rtspthis.rtsp");
               this.loading = true
                 // const time1 = new Date().getTime();
@@ -83,9 +86,11 @@
                             // enableStashBuffer: false,
                             cors: true, // 是否跨域
                             enableWorker: true, // 是否多线程工作
-                            enableStashBuffer: false, // 是否启用缓存
-                            stashInitialSize: 128, // 缓存大小(kb)  默认384kb
-                            autoCleanupSourceBuffer: true // 是否自动清理缓存
+                            // enableStashBuffer: true, // 是否启用缓存
+                            // stashInitialSize: 384 * 1024, // 缓存大小(kb)  默认384kb
+                            // autoCleanupSourceBuffer: true ,// 是否自动清理缓存
+                            enableAutoQuality:true,
+                            autoReloadOnError:true,
                         }
                         // ,{
                         //     cors: true, // 是否跨域
@@ -95,6 +100,10 @@
                         //     autoCleanupSourceBuffer: true // 是否自动清理缓存
                         // }
                         );
+                        debugger
+                      console.log(this.player)
+                        this.playerList.push(this.player)
+                      console.log( this.playerList)
                         this.player.attachMediaElement(video);
                         try {
                             this.player.load();
@@ -105,9 +114,87 @@
                         } catch (error) {
                             console.log(error)
                         }
+                        let that = this
+                      this.player.on( flvjs.Events.ERROR, function(errorType, errorDetails) {
+                        // 处理错误
+                        console.log("3333333333333333333333333333333333333")
+                        // console.error(`FLV.js Error - Type: ${errorType}, Details: ${errorDetails}`);
+                        debugger
+                        // if (this.player) {
+                        debugger
+                        that.destroyFlv();
+                        // that.playVideo();
+                        that.init();
+                      });
                     }
                 }
+            },
+          destroyFlv() {
+              debugger
+            console.log(this.player)
+            if (this.player) {
+              this.player.pause();
+              this.player.unload();
+              this.player.detachMediaElement();
+              this.player.destroy();
+              this.player = null;
             }
+          },
+          init(){
+            if (flvjs.isSupported()) {
+              let video = this.$refs.player;
+              if (video) {
+                //创建播放器实例
+                this.player = flvjs.createPlayer({
+                    type: 'flv',
+                    isLive: true,
+                    url: this.rtsp,
+                    // enableStashBuffer: false,
+                    cors: true, // 是否跨域
+                    enableWorker: true, // 是否多线程工作
+                    // enableStashBuffer: true, // 是否启用缓存
+                    // stashInitialSize: 384 * 1024, // 缓存大小(kb)  默认384kb
+                    // autoCleanupSourceBuffer: true ,// 是否自动清理缓存
+                    enableAutoQuality:true,
+                    autoReloadOnError:true,
+                  }
+                  // ,{
+                  //     cors: true, // 是否跨域
+                  //     enableWorker: true, // 是否多线程工作
+                  //     enableStashBuffer: false, // 是否启用缓存
+                  //     stashInitialSize: 128, // 缓存大小(kb)  默认384kb
+                  //     autoCleanupSourceBuffer: true // 是否自动清理缓存
+                  // }
+                );
+                debugger
+                console.log(this.player)
+                this.playerList.push(this.player)
+                console.log( this.playerList)
+                this.player.attachMediaElement(video);
+                try {
+                  this.player.load();
+                  this.player.play().then(() => {
+                    // console.log(new Date().getTime() - time1);
+                    // this.loading = false
+                  })
+                } catch (error) {
+                  console.log(error)
+                }
+                let that = this
+                this.player.on( flvjs.Events.ERROR, function(errorType, errorDetails) {
+                  // 处理错误
+                  console.log("3333333333333333333333333333333333333")
+                  // console.error(`FLV.js Error - Type: ${errorType}, Details: ${errorDetails}`);
+                  debugger
+                  // if (this.player) {
+                  debugger
+                  that.destroyFlv();
+                  // that.playVideo();
+                  that.init();
+                });
+              }
+            }
+          },
         },
         beforeDestroy () {
             if (this.player) {

@@ -59,7 +59,7 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("策略信息策略信息")
     private String strategyInfo;
 
-    @Excel(name = "状态", readConverterExp = "0=开启,1=关闭,''=关闭")
+    @Excel(name = "状态", readConverterExp = "0=开启,1=关闭,''=关闭",defaultValue ="关闭")
     @ApiModelProperty("预案状态")
     private String strategyState;
 

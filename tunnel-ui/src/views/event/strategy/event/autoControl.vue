@@ -353,7 +353,7 @@
 
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button class="submitButton" @click="submitStrategyForm"
+      <el-button class="submitButton" :loading="submitStrategyLoading" @click="submitStrategyForm"
       >提交</el-button
       >
       <el-button class="closeButton" @click="strategyFormClose"
@@ -596,6 +596,7 @@ export default {
           ],
         },
       },
+      submitStrategyLoading:false,
     };
   },
   methods: {
@@ -898,8 +899,10 @@ export default {
     },
     /** 提交按钮 */
     async submitStrategyForm() {
+      this.submitStrategyLoading = true
       this.$refs["autoControl"].validate((valid) => {
         if (valid) {
+          this.submitStrategyLoading = true
           var autoControl = this.strategyForm.autoControl;
           let response = JSON.parse(JSON.stringify(autoControl));
           // console.log(response,"response");
@@ -945,9 +948,14 @@ export default {
         // this.strategyForm =strategyFormStr
         console.log(this.strategyForm.triggers.deviceId )
         this.$modal.msgSuccess("修改策略成功");
+        this.submitStrategyLoading = false
         this.$emit("dialogVisibleCloseEvent");
         this.getList();
-      });
+      }).finally(
+        setTimeout(() => {
+          this.submitStrategyLoading = false
+        }, 1000)
+      );
     },
     // 提交保存方法
     async addStrategyInfoData() {
@@ -964,9 +972,15 @@ export default {
       addStrategyInfo(params).then((res) => {
         this.resetForm();
         let data = true;
+        this.submitStrategyLoading = false
         this.$emit("dialogVisibleClose", data);
         this.$modal.msgSuccess("新增策略成功");
-      });
+      }).finally(
+        setTimeout(() => {
+          this.submitStrategyLoading = false
+        }, 1000)
+
+      );
     },
     //二次弹窗选择设备提交按钮
     submitChooseEqForm() {

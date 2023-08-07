@@ -145,7 +145,7 @@
               ></el-switch>
             </div> -->
           <el-button
-            v-if="resetCanvasFlag && currentTunnel.lane.width > 1728"
+            v-if="resetCanvasFlag && currentTunnel.lane.width>1728"
             class="flex-row"
             type="primary"
             size="mini"
@@ -163,15 +163,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>控制策略</span>
           </el-button>
-          <!--          <el-button-->
-          <!--            class="buttons"-->
-          <!--            type="primary"-->
-          <!--            size="mini"-->
-          <!--            @click="strategyPage1"-->
-          <!--          >-->
-          <!--            <img src="../../../assets/icons/kzcl.png" />-->
-          <!--            <span>控制策略1</span>-->
-          <!--          </el-button>-->
+<!--          <el-button-->
+<!--            class="buttons"-->
+<!--            type="primary"-->
+<!--            size="mini"-->
+<!--            @click="strategyPage1"-->
+<!--          >-->
+<!--            <img src="../../../assets/icons/kzcl.png" />-->
+<!--            <span>控制策略1</span>-->
+<!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -181,15 +181,15 @@
             <img src="../../../assets/icons/kzcl.png" />
             <span>照明配置</span>
           </el-button>
-          <!--          <el-button-->
-          <!--            class="buttons"-->
-          <!--            type="primary"-->
-          <!--            size="mini"-->
-          <!--            @click="iconLighting"-->
-          <!--          >-->
-          <!--            <img src="../../../assets/icons/zmpz.png" />-->
-          <!--            <span>照明配置</span>-->
-          <!--          </el-button>-->
+<!--          <el-button-->
+<!--            class="buttons"-->
+<!--            type="primary"-->
+<!--            size="mini"-->
+<!--            @click="iconLighting"-->
+<!--          >-->
+<!--            <img src="../../../assets/icons/zmpz.png" />-->
+<!--            <span>照明配置</span>-->
+<!--          </el-button>-->
           <el-button
             class="buttons"
             type="primary"
@@ -1366,7 +1366,7 @@
           width="130"
           :show-overflow-tooltip="true"
         />
-        <el-table-column label="桩号" align="center" prop="pile" width="120" />
+        <el-table-column label="桩号" align="center" prop="pile" width="120"/>
         <el-table-column
           label="操作状态"
           align="center"
@@ -2092,7 +2092,7 @@ export default {
     comDeawer, //抽屉
     comFooter, //底部echarts
     comXfp,
-    jointControlStrategy,
+    jointControlStrategy
   },
 
   data() {
@@ -2961,6 +2961,8 @@ export default {
     },
     // 管理站级联回显选中效果
     cascaderHandleChange() {
+      console.log(1);
+      console.log(this.siteList, "siteList");
       let handleText = "";
       for (let item of this.siteList) {
         if (this.tunnelQueryParams.deptId == item.id) {
@@ -3227,11 +3229,7 @@ export default {
         for (let i = 0; i < response.rows.length; i++) {
           let attr = response.rows[i];
           let manualControl = params.manualControl[i];
-          this.$set(
-            params.manualControl[i],
-            "value",
-            params.manualControl[i].equipments.split(",")
-          );
+          this.$set(params.manualControl[i], "value", params.manualControl[i].equipments.split(","));
           // console.log(params.manualControl[i].value, "选择的设备");
           params.manualControl[i].state = attr.state;
           params.manualControl[i].stateNum = attr.stateNum;
@@ -3590,49 +3588,49 @@ export default {
         let param = document.getElementsByClassName("content");
         for (var item of this.selectedIconList) {
           // if (treeNodeClick) {
-          // 根据treeNodeClick 判断是输入框输入还是菜单选择
-          // 输入框输入的 输入内容要和设备名称相等 防止出现输入测控执行器1 测控执行器11 12 13...也被圈选
-          if (item.eqName == this.screenEqName) {
-            bigType = item.bigType;
+            // 根据treeNodeClick 判断是输入框输入还是菜单选择
+            // 输入框输入的 输入内容要和设备名称相等 防止出现输入测控执行器1 测控执行器11 12 13...也被圈选
+            if (item.eqName == this.screenEqName) {
+              bigType = item.bigType;
 
-            if (
-              this.currentTunnel.lane.width - item.position.left > 864 &&
-              item.position.left > 864
-            ) {
+              if (
+                this.currentTunnel.lane.width - item.position.left > 864 &&
+                item.position.left > 864
+              ) {
               // 中间
               param[0].scrollLeft = item.position.left - 864;
-            } else if (item.position.left < 864) {
-              // 左边
-              param[0].scrollLeft = 0;
-            } else if (
-              this.currentTunnel.lane.width - item.position.left <
-              864
-            ) {
+              } else if (item.position.left < 864) {
+                param[0].scrollLeft = 0;
+              } else if (
+                this.currentTunnel.lane.width - item.position.left <
+                864
+              ) {
               // 右边
               param[0].scrollLeft = this.currentTunnel.lane.width - 1728;
-            }
-            if (
-              item.position.left <= this.currentTunnel.lane.width - 100 &&
-              item.position.top <= 450
-            ) {
-              item.tooltipType = 1;
-            } else if (
-              item.position.left > this.currentTunnel.lane.width - 100 &&
-              item.position.top <= 450
-            ) {
-              item.tooltipType = 2;
-            } else if (
-              item.position.left <= this.currentTunnel.lane.width - 100 &&
-              item.position.top > 450
-            ) {
-              item.tooltipType = 3;
+              }
+              if (
+                item.position.left <= this.currentTunnel.lane.width - 100 &&
+                item.position.top <= 450
+              ) {
+                item.tooltipType = 1;
+              } else if (
+                item.position.left > this.currentTunnel.lane.width - 100 &&
+                item.position.top <= 450
+              ) {
+                item.tooltipType = 2;
+              } else if (
+                item.position.left <= this.currentTunnel.lane.width - 100 &&
+                item.position.top > 450
+              ) {
+                item.tooltipType = 3;
+              } else {
+                item.tooltipType = 4;
+              }
+              // this.$refs.dragImgDom.style.top = 290 - item.position.top + "px";
+              item.click = true;
             } else {
-              item.tooltipType = 4;
+              item.click = false;
             }
-            item.click = true;
-          } else {
-            item.click = false;
-          }
           // } else {
           //   if (item.eqName.indexOf(this.screenEqName) > -1) {
           //     bigType = item.bigType;
@@ -3678,8 +3676,8 @@ export default {
           //   }
           // }
           if (param[0].scrollLeft != 0) {
-            this.resetCanvasFlag = true;
-          }
+                this.resetCanvasFlag = true;
+              }
         }
         if (bigType.includes("0")) {
           this.displayControl(0, "全部设备");
@@ -3737,8 +3735,7 @@ export default {
     },
 
     // 滚动条动画
-    srollAuto(e) {
-      
+    srollAuto() {
       if (this.mouseoversImplement == false) {
         return;
       }
@@ -3754,9 +3751,6 @@ export default {
             clearInterval(this.imageTimer);
             this.imageTimer = setInterval(() => {
               parent[0].scrollLeft--;
-              // parent[0].scrollLeft = 100
-              // console.log(parent[0].scrollLeft,"parent[0].scrollLeft-------")
-
               if (
                 Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
                 parent[0].clientWidth
@@ -3768,9 +3762,6 @@ export default {
         } else {
           setTimeout(() => {
             parent[0].scrollLeft++;
-            // parent[0].scrollLeft = 400
-
-            // console.log(parent[0].scrollLeft,"parent[0].scrollLeft+++++++++++")
           }, 2000);
         }
       }, 20);
@@ -3826,8 +3817,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.eqTypeData = [];
-      this.getEqType();
+      this.eqTypeData = []
+      this.getEqType()
       this.dateRange = this.getPastTime();
       this.dateRange1 = this.getPastTime();
       this.resetForm("queryForm");
@@ -3931,6 +3922,8 @@ export default {
 
     // 改变站点
     changeSite(index) {
+      console.log(2);
+      console.log(index, "index000000000000000000000000");
       if (index) {
         // console.log(
         //   this.$cache.local.get("deptId"),
@@ -4732,7 +4725,7 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          console.log(res, "获取隧道配置信息");
+          console.log(res,"获取隧道配置信息")
           listType("")
             .then((response) => {
               // console.log(response,"response888")
@@ -5509,12 +5502,12 @@ export default {
       this.queryParams.pageNum = 1;
       this.getStrategyQuery(0);
     },
-    strategyPage1() {
+    strategyPage1(){
       // this.timingTaskShow = !this.timingTaskShow
       // this.$refs.timingTask.getEchartsData(this.tunnelList,this.tunnelItem)
     },
-    strategyPage2() {
-      this.jointControlShow = !this.jointControlShow;
+    strategyPage2(){
+      this.jointControlShow = !this.jointControlShow
       // this.$refs.jointControlStrategy.getEchartsData(this.tunnelList,this.tunnelItem,true)
     },
     handleClick(tab, event) {

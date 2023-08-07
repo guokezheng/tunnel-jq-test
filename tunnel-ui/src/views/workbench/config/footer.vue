@@ -149,20 +149,28 @@
                     <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                         item.eventType.eventType
                       }}事件 -->
-                    <div
-                      style="
-                        width: 145px;
-                        overflow: hidden;
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
-                        z-index: 10;
-                      "
+                    <el-tooltip
+                      class="item"
+                      effect="dark"
+                      :content="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'?item.eventTitle:item.frameEventTitle"
+                      placement="top"
                     >
-                      <span v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'">{{
-                        item.eventTitle
-                      }}</span>
-                      <span v-else>{{ item.frameEventTitle }}</span>
-                    </div>
+                      <div
+                        style="
+                          width: 145px;
+                          overflow: hidden;
+                          white-space: nowrap;
+                          text-overflow: ellipsis;
+                          z-index: 10;
+                        "
+                      >
+                        <span v-if="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'">{{
+                          item.eventTitle
+                        }}</span>
+                        <span v-else>{{ item.frameEventTitle }}</span>
+                      </div>
+                    </el-tooltip>
+
                     <div
                       style="font-size: 12px; float: right; margin-right: 10px"
                     >
@@ -725,8 +733,7 @@ export default {
       newPromise.then(() => {
         //	此dom为echarts图标展示dom
         var chartBJS = echarts.init(document.getElementById("chartBJS"));
-        let lineColor = ["red","yellow","green"];
-        let lineColor2 = ["white","grey","blue"];
+
         const option = {
           tooltip: {
             trigger: "axis",
@@ -744,25 +751,25 @@ export default {
               },
             },
             formatter: function (param) {
-              var tooltip = param[0].name == '0' ||param[0].name == '1'||param[0].name == '2'||param[0].name == '3'?"洞外" + "<br>" :"洞内" + "<br>";
-              tooltip +=
-                param[0].marker +
-                param[0].seriesName +
-                " : " +
-                param[0].value +
-                "km/h<br>";
-              tooltip +=
-                param[1].marker +
-                param[1].seriesName +
-                " : " +
-                param[1].value +
-                "km/h<br>";
+              console.log(param, "param");
+              var tooltip = "";
+              if (param.length > 0) {
                 tooltip +=
-                param[2].marker +
-                param[2].seriesName +
-                " : " +
-                param[2].value +
-                "km/h<br>";
+                  param[0].name == "0" ||
+                  param[0].name == "1" ||
+                  param[0].name == "2" ||
+                  param[0].name == "3"
+                    ? "洞外" + "<br>"
+                    : "洞内" + "<br>";
+              }
+              for (let item of param) {
+                tooltip +=
+                  item.marker +
+                  item.seriesName +
+                  " : " +
+                  item.value +
+                  "km/h<br>";
+              }
               return tooltip;
             },
             //   提示框超出范围时调整位置
@@ -840,12 +847,12 @@ export default {
               formatter: function (value, index) {
                 if (value == "0") {
                   return "洞外";
-                } else if(value == "4"){
-                  return "洞口"
-                } else if(value == "8"){
-                  return "洞内"
+                } else if (value == "4") {
+                  return "洞口";
+                } else if (value == "8") {
+                  return "洞内";
                 } else {
-                  return '';
+                  return "";
                 }
               },
             },
@@ -909,44 +916,60 @@ export default {
           //     },
           //   ],
           // },
-          
+
           series: [
             {
               type: "line",
               smooth: true,
-              color:"#31CEFF",
-              lineStyle:{
-                normal:{
-                  width:2,
-                }
+              color: "#31CEFF",
+              lineStyle: {
+                normal: {
+                  width: 2,
+                },
               },
               markLine: {
-                    silent: true,
-                    symbol: ["circle", "circle"],
-                    lineStyle: {
-                        color: "#AFAFAF",
-                    },
-                    animation: false, //关闭动画
-                    label: {
-                        show: false,
-                    },
-                    data: [
-                        {
-                            xAxis: 4,//在x轴12格处设置一条参考线
-                        },
-                    ],
+                silent: true,
+                symbol: ["circle", "circle"],
+                lineStyle: {
+                  color: "#AFAFAF",
                 },
+                animation: false, //关闭动画
+                label: {
+                  show: false,
+                },
+                data: [
+                  {
+                    xAxis: 4, //在x轴12格处设置一条参考线
+                  },
+                ],
+              },
               name: "一车道",
               data: oneList,
             },
             {
               type: "line",
               smooth: true, // 平滑曲线显示
-              color:"yellow",
-              lineStyle:{
-                normal:{
-                  width:2,
-                }
+              color: "yellow",
+              lineStyle: {
+                normal: {
+                  width: 2,
+                },
+              },
+              markLine: {
+                silent: true,
+                symbol: ["circle", "circle"],
+                lineStyle: {
+                  color: "#AFAFAF",
+                },
+                animation: false, //关闭动画
+                label: {
+                  show: false,
+                },
+                data: [
+                  {
+                    xAxis: 4, //在x轴12格处设置一条参考线
+                  },
+                ],
               },
               name: "二车道",
               data: twoList,
@@ -954,11 +977,27 @@ export default {
             {
               type: "line",
               smooth: true, // 平滑曲线显示
-              color:"#00E15C",
-              lineStyle:{
-                normal:{
-                  width:2,
-                }
+              color: "#00E15C",
+              lineStyle: {
+                normal: {
+                  width: 2,
+                },
+              },
+              markLine: {
+                silent: true,
+                symbol: ["circle", "circle"],
+                lineStyle: {
+                  color: "#AFAFAF",
+                },
+                animation: false, //关闭动画
+                label: {
+                  show: false,
+                },
+                data: [
+                  {
+                    xAxis: 4, //在x轴12格处设置一条参考线
+                  },
+                ],
               },
               name: "三车道",
               data: threeList,

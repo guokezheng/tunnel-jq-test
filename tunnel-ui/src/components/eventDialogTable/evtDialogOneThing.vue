@@ -22,7 +22,7 @@
           :key="index"
           @click="handleSee(item.id)"
         >
-          <el-row >
+          <el-row>
             <el-col :span="2">
               <img
                 :src="item.eventType.iconUrl"
@@ -32,8 +32,18 @@
             <el-col :span="3">
               <div>{{ item.eventType.eventType }}</div>
             </el-col>
-            <el-col :span="19" style="display:flex;justify-content:space-between">
-              <div class="overflowText">{{ item.eventTitle }}</div>
+            <el-col
+              :span="19"
+              style="display: flex; justify-content: space-between"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="item.eventTitle"
+                placement="top"
+              >
+                <div class="overflowText">{{ item.eventTitle }}</div>
+              </el-tooltip>
               <div style="float: right; margin-right: 16px">
                 {{ item.startTime }}
               </div>
@@ -200,13 +210,13 @@ export default {
   > div {
     height: 100%;
   }
-  .el-row{
+  .el-row {
     color: white;
     font-size: 14px;
     display: flex;
     align-items: center;
     height: 30px;
-    .el-col{
+    .el-col {
       height: 100%;
       line-height: 37px;
     }
@@ -231,8 +241,9 @@ export default {
   padding: 0 20px;
   line-height: 40px;
   .overflowText {
-    white-space: nowrap;
+    width: 248px;
     overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
   }
 }

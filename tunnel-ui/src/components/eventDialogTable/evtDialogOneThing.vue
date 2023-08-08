@@ -42,7 +42,17 @@
                 :content="item.eventTitle"
                 placement="top"
               >
-                <div class="overflowText">{{ item.eventTitle }}</div>
+                <div
+                  class="overflowText"
+                  style="
+                    width: 248px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                  "
+                >
+                  {{ item.eventTitle }}
+                </div>
               </el-tooltip>
               <div style="float: right; margin-right: 16px">
                 {{ item.startTime }}
@@ -240,12 +250,12 @@ export default {
   font-size: 14px;
   padding: 0 20px;
   line-height: 40px;
-  .overflowText {
-    width: 248px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
+}
+.overflowText {
+  width: 248px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .lineBT {
   width: 100%;

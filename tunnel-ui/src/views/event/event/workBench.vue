@@ -11,6 +11,10 @@
       :close-on-click-modal="false"
       :modal="false"
     >
+      <div class="dialogStyleBox">
+        <div class="dialogLine"></div>
+        <div class="dialogCloseButton"></div>
+      </div>
       <div class="header">
         <div class="headerLeft">
           <div>{{ tunnelStationName }}</div>

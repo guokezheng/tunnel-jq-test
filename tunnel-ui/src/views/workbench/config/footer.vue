@@ -737,21 +737,16 @@ export default {
         const option = {
           tooltip: {
             trigger: "axis",
-            backgroundColor: "rgba(1, 29, 63, .8)", // 设置背景颜色
+            backgroundColor: "rgba(1, 29, 63, .8)", //设置背景颜色
             textStyle: {
               color: "#fff",
               fontSize: 12,
             },
             borderColor: "rgba(1, 29, 63,.8)",
             axisPointer: {
-              type: "shadow",
-              shadowStyle: {
-                fontSize: 12,
-                color: "rgba(0, 11, 34, 0)",
-              },
+              type: "none",
             },
             formatter: function (param) {
-              console.log(param, "param");
               var tooltip = "";
               if (param.length > 0) {
                 tooltip +=
@@ -867,12 +862,12 @@ export default {
             },
           },
           yAxis: {
-            // name: "km/h",
-            // nameTextStyle: {
-            //   color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
-            //   fontSize: 10,
-            //   padding: [0, 20, 0, 0],
-            // },
+            name: "km/h",
+            nameTextStyle: {
+              color: this.sideTheme != "theme-blue" ? "#AFAFAF" : "#003a5d",
+              fontSize: 10,
+              padding: [0, 20, 0, 0],
+            },
             type: "value",
             min: 0,
             // max: max,
@@ -927,11 +922,18 @@ export default {
                   width: 2,
                 },
               },
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
               markLine: {
                 silent: true,
                 symbol: ["circle", "circle"],
                 lineStyle: {
-                  color: "#AFAFAF",
+                  color: "#33b0ee",
                 },
                 animation: false, //关闭动画
                 label: {
@@ -949,10 +951,17 @@ export default {
             {
               type: "line",
               smooth: true, // 平滑曲线显示
-              color: "yellow",
+              color: "#FAC858",
               lineStyle: {
                 normal: {
                   width: 2,
+                },
+              },
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
                 },
               },
               markLine: {
@@ -977,10 +986,17 @@ export default {
             {
               type: "line",
               smooth: true, // 平滑曲线显示
-              color: "#00E15C",
+              color: "#7BE748",
               lineStyle: {
                 normal: {
                   width: 2,
+                },
+              },
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
                 },
               },
               markLine: {

@@ -179,7 +179,7 @@
             @click="strategyPage2"
           >
             <img src="../../../assets/icons/kzcl.png" />
-            <span>照明配置</span>
+            <span>智慧调光</span>
           </el-button>
 <!--          <el-button-->
 <!--            class="buttons"-->

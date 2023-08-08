@@ -30,7 +30,26 @@
         </div>
         <div id="energyConsumption"></div>
       </div>
+      <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
+        <div class="footTitle">
+          <div class="footTitleCont">
+            <img
+              :src="keyVehiclesIcon"
+              style="width: 0.8vw; margin-right: 5px"
+              v-show="sideTheme != 'theme-blue'"
+            />
+            <p>洞内外速度监测</p>
+            <p>Opening speed</p>
+          </div>
+        </div>
+          <el-radio-group v-model="tabModel" class="tabButton">
+            <el-radio-button label="chartJN">济南方向</el-radio-button>
+            <el-radio-button label="chartWF">潍坊方向</el-radio-button>
+          </el-radio-group>
+        <div id="chartJN" v-show="tabModel == 'chartJN'"></div>
+        <div id="chartWF" v-show="tabModel == 'chartWF'"></div>
 
+      </div>
       <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
         <div class="footTitle">
           <div class="footTitleCont">
@@ -61,20 +80,7 @@
           <div id="deviceChart"></div>
         </div>
       </div>
-      <div class="footMiniBox footerRight" v-show="footChangeRadio == '图表'">
-        <div class="footTitle">
-          <div class="footTitleCont">
-            <img
-              :src="keyVehiclesIcon"
-              style="width: 0.8vw; margin-right: 5px"
-              v-show="sideTheme != 'theme-blue'"
-            />
-            <p>洞口不降速监测</p>
-            <p>Opening speed</p>
-          </div>
-        </div>
-        <div id="chartBJS"></div>
-      </div>
+      
       <div class="footerRight footMiniBox" v-show="footChangeRadio == '图表'">
         <div class="footTitle">
           <div class="footTitleCont">
@@ -152,7 +158,11 @@
                     <el-tooltip
                       class="item"
                       effect="dark"
-                      :content="tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'?item.eventTitle:item.frameEventTitle"
+                      :content="
+                        tunnelId == 'WLJD-JiNan-YanJiuYuan-FHS'
+                          ? item.eventTitle
+                          : item.frameEventTitle
+                      "
                       placement="top"
                     >
                       <div
@@ -448,6 +458,7 @@ export default {
       option: null,
       nameArr: [],
       myChart: null,
+      tabModel:'chartJN'
     };
   },
   computed: {
@@ -467,6 +478,11 @@ export default {
         singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
         waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
       };
+    },
+  },
+  watch: {
+    tabModel: function (newValue, oldValue) {
+      this.getNoDecelerationChart();
     },
   },
   created() {
@@ -567,16 +583,16 @@ export default {
       // console.log(res,"洞口不降速监测")
       let data = {
         oneLane: {
-          oneListOne: [133, 130, 125, 110],
-          oneListTwo: [100, 96, 106, 116, 120],
+          oneListOne: [118, 114, 105, 100],
+          oneListTwo: [100, 103, 106, 116, 118],
         },
         twoLane: {
-          twoListOne: [128, 126, 128, 113],
-          twoListTwo: [103, 108, 110, 112, 118],
+          twoListOne: [105, 100, 98, 90],
+          twoListTwo: [86, 84, 86, 89, 98],
         },
         threeLane: {
-          threeListOne: [110, 108, 96, 90],
-          threeListTwo: [80, 90, 100, 100, 103],
+          threeListOne: [76, 73, 68, 66],
+          threeListTwo: [64, 69, 75, 82, 85],
         },
       };
       // console.log(data, "洞口不降速监测");
@@ -731,8 +747,10 @@ export default {
       });
       //然后异步执行echarts的初始化函数
       newPromise.then(() => {
+        let tab = ''
+        
         //	此dom为echarts图标展示dom
-        var chartBJS = echarts.init(document.getElementById("chartBJS"));
+        var chartBJS = echarts.init(document.getElementById(this.tabModel));
 
         const option = {
           tooltip: {
@@ -817,14 +835,14 @@ export default {
             itemStyle: {},
             top: "top",
             left: "center",
-            padding: [20, 15, 0, 15],
+            padding: [10, 15, 0, 15],
             icon: "circle",
             orient: "horizontal",
           },
           grid: {
             left: "6%",
             right: "8%",
-            bottom: "1%",
+            bottom: "3%",
             top: "25%",
             containLabel: true,
           },
@@ -2053,9 +2071,9 @@ export default {
       }
     }
   }
-  #chartBJS {
+  #chartJN,#chartWF {
     width: 100%;
-    height: calc(100% - 2vw);
+    height: calc(100% - 2vw - 22px);
   }
 }
 #vehicle,
@@ -2072,4 +2090,26 @@ export default {
   height: calc(100% - 2.4vh - 10px);
   margin-top: 10px;
 }
+.tabButton {
+    margin: 4px 0;
+    .el-radio-button {
+      margin-right: 4px;
+    }
+    ::v-deep .el-radio-button--medium .el-radio-button__inner {
+      padding: 4px 20px !important;
+    }
+  }
+  ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+    background: linear-gradient(180deg, #ffc606, #ff8200) !important;
+    border: none;
+  }
+  ::v-deep .el-radio-group .el-radio-button__inner {
+    background: linear-gradient(
+      180deg,
+      rgba($color: #00aced, $alpha: 0.8),
+      rgba($color: #0079db, $alpha: 0.8)
+    ) !important;
+    border: none;
+    color: #fff;
+  }
 </style>

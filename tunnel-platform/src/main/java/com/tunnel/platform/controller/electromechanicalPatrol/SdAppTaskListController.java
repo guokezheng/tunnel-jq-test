@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.service.ISdAppVersionService;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
@@ -32,6 +33,9 @@ public class SdAppTaskListController extends BaseController
 
     @Autowired
     private ISdTeamsListService sdTeamsListService;
+
+    @Autowired
+    private ISdAppVersionService sdAppVersionService;
 
 
     /**
@@ -265,6 +269,19 @@ public class SdAppTaskListController extends BaseController
         MultipartFile[] fileArray = new MultipartFile[]{file1,file2,file3};
 
         return sdTaskListService.uploadPicture(fileArray);
+    }
+
+
+
+    /**
+     * APP 同步巡检任务信息
+     * @return
+     */
+    @GetMapping("/app/versionList")
+    public Result versionList(String edition_type,String version_type,String edition_number){
+
+        return Result.success(sdAppVersionService.getVersionList(edition_type,version_type,edition_number));
+
     }
 
 

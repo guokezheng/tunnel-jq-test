@@ -4731,6 +4731,10 @@ export default {
               // console.log(response,"response888")
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
+                if(res.eqList[i].eqType == 16){
+                  console.log(res.eqList[i],"情报板")
+
+                }
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -7575,7 +7579,7 @@ input {
 }
 .syxt_searchBox {
   position: absolute;
-  top: 121px;
+  top: 140px;
   right: 14px;
   width: 41%;
   z-index: 1996;

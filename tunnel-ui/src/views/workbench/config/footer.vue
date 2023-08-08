@@ -579,7 +579,7 @@ export default {
           threeListTwo: [80, 90, 100, 100, 103],
         },
       };
-      console.log(data, "洞口不降速监测");
+      // console.log(data, "洞口不降速监测");
       let oneListOne = data.oneLane.oneListOne;
       let oneListTwo = data.oneLane.oneListTwo;
       let twoListOne = data.twoLane.twoListOne;
@@ -595,11 +595,11 @@ export default {
         ...threeListTwo,
       ];
       let max = this.getMax(arr);
-      console.log(max, "洞口不降速监测111");
+      // console.log(max, "洞口不降速监测111");
       let oneList = [...oneListOne, ...oneListTwo];
       let twoList = [...twoListOne, ...twoListTwo];
       let threeList = [...threeListOne, ...threeListTwo];
-      console.log(oneList, twoList, threeList, "洞口不降速监测222");
+      // console.log(oneList, twoList, threeList, "洞口不降速监测222");
       this.initNoDecelerationChart(oneList, twoList, threeList);
       // })
     },
@@ -1114,7 +1114,7 @@ export default {
           grid: {
             left: "6%",
             right: "8%",
-            bottom: "1%",
+            bottom: "2%",
             top: "25%",
             containLabel: true,
           },
@@ -1435,7 +1435,7 @@ export default {
         calculable: true,
         grid: {
           top: "24%",
-          bottom: "12%",
+          bottom: "13%",
           left: "10%",
           right: "10%",
         },

@@ -2191,6 +2191,7 @@ public class SdEventServiceImpl implements ISdEventService {
         SdEvent sdEventData = new SdEvent();
         sdEventData.setId(sdEvent.getId());
         List<SdEvent> sdEventList = sdEventMapper.selectSdEventList(sdEventData);
+        sdEventList.stream().forEach(item -> item.setIds(item.getId().toString()));
         List<SdTunnels> sdTunnelsList = tunnelsService.selectTunnels(SecurityUtils.getDeptId());
         List<SdTunnels> collect = sdTunnelsList.stream().filter(item -> item.getTunnelId().equals(sdEventList.get(0).getTunnelId())).collect(Collectors.toList());
         if(collect.size() > 0){

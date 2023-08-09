@@ -889,6 +889,14 @@ export default {
       for (let i = 0; i < autoControl.length; i++) {
 
         getCategoryTree().then((data) => {
+          let dataNum = 0;
+          for (let j = 0; j < data.data.length; j++) {
+            if( data.data[j].label=="巡检机器人"){
+              dataNum = j
+              break;
+            }
+          }
+          data.data.splice(dataNum, 1);
           this.$set(autoControl[i], "equipmentTypeData", data.data);
           this.equipmentTypeData = data.data;
         });

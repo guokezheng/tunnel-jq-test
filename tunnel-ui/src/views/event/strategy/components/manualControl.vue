@@ -405,6 +405,14 @@ export default {
       debugger
       console.log(row, "当前策略数据");
       await  getCategoryTree().then((data) => {
+        let dataNum = 0;
+        for (let j = 0; j < data.data.length; j++) {
+          if( data.data[j].label=="巡检机器人"){
+            dataNum = j
+            break;
+          }
+        }
+        data.data.splice(dataNum, 1);
         this.equipmentTypeData = data.data;
       });
 
@@ -823,6 +831,14 @@ export default {
         });*/
         getCategoryTree().then((data) => {
           console.log(data.rows, "设备类型");
+          let dataNum = 0;
+          for (let j = 0; j < data.data.length; j++) {
+            if( data.data[j].label=="巡检机器人"){
+              dataNum = j
+              break;
+            }
+          }
+          data.data.splice(dataNum, 1);
           this.$set(manualControl[i], "equipmentTypeData", data.data);
           this.equipmentTypeData = data.data;
         });

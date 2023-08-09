@@ -52,7 +52,7 @@ public class EnergyConfigurationTask {
 
 //    @Async(value = "synchronousEnergyTaskExecutor")
     //@Scheduled(fixedRate = 5000*60*60)
-    @Scheduled(cron = "0 0 1 * * ?")//每天凌晨一点执行一次
+    //@Scheduled(cron = "0 0 1 * * ?")//每天凌晨一点执行一次
     public void synchronousEnergyConfigurationTask() throws ParseException {
         ExternalSystem externalSystem = new ExternalSystem();
         List<EnergyConfigcenterClassification>eccList  = new ArrayList<>();

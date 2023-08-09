@@ -666,6 +666,7 @@ export default {
           console.log(this.selectedIconList, "this.selectedIconList");
           listType("").then((response) => {
             this.drawSvg(response.rows);
+            this.selectEqType(0)
           });
 
           if (res.upList != undefined) {
@@ -689,6 +690,7 @@ export default {
               this.laneRadio = i;
             }
           }
+          // this.selectEqType(0)
         } else {
           this.selectedIconList = [];
         }

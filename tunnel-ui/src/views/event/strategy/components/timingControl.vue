@@ -511,6 +511,14 @@ export default {
       debugger
       console.log(row, "当前策略数据");
       await  getCategoryTree().then((data) => {
+        let dataNum = 0;
+        for (let j = 0; j < data.data.length; j++) {
+          if( data.data[j].label=="巡检机器人"){
+            dataNum = j
+            break;
+          }
+        }
+        data.data.splice(dataNum, 1);
         this.equipmentTypeData = data.data;
       });
       getStrategy(this.id).then((response) => {
@@ -987,6 +995,14 @@ export default {
       let autoControl = this.strategyForm.autoControl;
       for (let i = 0; i < autoControl.length; i++) {
         getCategoryTree().then((data) => {
+          let dataNum = 0;
+          for (let j = 0; j < data.data.length; j++) {
+            if( data.data[j].label=="巡检机器人"){
+              dataNum = j
+              break;
+            }
+          }
+          data.data.splice(dataNum, 1);
           this.$set(autoControl[i], "equipmentTypeData", data.data);
           this.equipmentTypeData = data.data;
         });

@@ -1397,6 +1397,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
         List<Map> SdEventMaps = new ArrayList<>();
         sdEventList.stream().forEach( (sdEventItem)->{
+            sdEventItem.setIds(sdEventItem.getId().toString());
             //设置视频地址
             sdEventItem.setVideoUrl(
                     StringUtils.isNotEmpty(jsonObject.getString("eventVideoUrl"))&&jsonObject.getString("eventVideoUrl").indexOf(";")!=-1

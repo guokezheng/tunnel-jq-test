@@ -38,7 +38,7 @@ public class EnergyItemDataTask {
 
 
 //    @Async(value = "synchronousEnergyTaskExecutor")
-    @Scheduled(cron="30 5 * * * ?")
+    //@Scheduled(cron="30 5 * * * ?")
     //@Scheduled(fixedRate = 5000*60*60)
     public void synchronousEnergyDataTask() throws ParseException {
         ExternalSystem externalSystem = new ExternalSystem();
